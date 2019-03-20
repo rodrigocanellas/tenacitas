@@ -1,0 +1,12 @@
+@startuml
+title Software Structure - version MAMBA
+[machine_human_interface] --> [bridge]
+[bridge] --> [business_local]
+[business_local] -->  [business_client]
+[business_client] --> [communicator]
+[communicator] --> [business_server]
+[business_local] -right-> [persistence]
+[business_local] ---> [entities]
+[business_client] ---> [entities]
+[persistence] --> [entities]
+@enduml

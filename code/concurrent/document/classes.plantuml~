@@ -1,0 +1,10 @@
+@startuml
+class async_loop
+class work
+class provider
+
+async_loop --> work
+async_loop --> provider
+
+
+@enduml
