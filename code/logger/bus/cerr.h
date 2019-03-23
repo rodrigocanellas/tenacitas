@@ -53,6 +53,35 @@ configure_cerr_log();
 } // namespace logger
 } // namespace tenacitas
 
+/// \brief cerr_set_test sets the log level to 'test'. Aftet this call, only
+/// log messages 'test' will de written
+#define cerr_set_test()                                                        \
+    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::test)
+
+/// \brief cerr_set_debug sets the log level to 'debug'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cerr_set_debug()                                                       \
+    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::debug)
+
+/// \brief cerr_set_info sets the log level to 'info'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cerr_set_info()                                                        \
+    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::info)
+
+/// \brief cerr_set_warn sets the log level to 'warn'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cerr_set_warn()                                                        \
+    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::warn)
+
+/// \brief cerr_set_no_log makes no message to be logged to std::cerr
+#define cerr_set_no_log()                                                      \
+    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::no_log)
+
 /// \brief cerr_debug allows to log with 'test' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
@@ -68,7 +97,7 @@ configure_cerr_log();
 ///
 #define cerr_test(p_params...)                                                 \
     tenacitas::logger::bus::cerr_log_t::instance().test(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -93,7 +122,7 @@ configure_cerr_log();
 ///
 #define cerr_debug(p_params...)                                                \
     tenacitas::logger::bus::cerr_log_t::instance().debug(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -118,7 +147,7 @@ configure_cerr_log();
 ///
 #define cerr_info(p_params...)                                                 \
     tenacitas::logger::bus::cerr_log_t::instance().info(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -143,7 +172,7 @@ configure_cerr_log();
 ///
 #define cerr_warn(p_params...)                                                 \
     tenacitas::logger::bus::cerr_log_t::instance().warn(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -168,7 +197,7 @@ configure_cerr_log();
 ///
 #define cerr_error(p_params...)                                                \
     tenacitas::logger::bus::cerr_log_t::instance().error(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -193,7 +222,7 @@ configure_cerr_log();
 ///
 #define cerr_fatal(p_params...)                                                \
     tenacitas::logger::bus::cerr_log_t::instance().fatal(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
@@ -202,29 +231,5 @@ configure_cerr_log();
       __LINE__,                                                                \
       tenacitas::logger::bus::cerr_log_t::instance().get_separator(),          \
       p_params)
-
-/// \brief cerr_set_test sets the log level to 'test'. Aftet this call, only
-/// log messages 'test' will de written
-#define cerr_set_test()                                                        \
-    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::test)
-
-/// \brief cerr_set_debug sets the log level to 'debug'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cerr_set_debug()                                                       \
-    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::debug)
-
-/// \brief cerr_set_info sets the log level to 'info'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cerr_set_info()                                                        \
-    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::info)
-
-/// \brief cerr_set_warn sets the log level to 'warn'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cerr_set_warn()                                                        \
-    tenacitas::logger::bus::cerr_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::warn)
 
 #endif

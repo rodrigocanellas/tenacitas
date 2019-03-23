@@ -52,6 +52,35 @@ configure_cout_log();
 } // namespace logger
 } // namespace tenacitas
 
+/// \brief cout_set_test sets the log level to 'test'. Aftet this call, all
+/// the log messages from 'test' up will de written
+#define cout_set_test()                                                        \
+    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::test)
+
+/// \brief cout_set_debug sets the log level to 'debug'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cout_set_debug()                                                       \
+    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::debug)
+
+/// \brief cout_set_info sets the log level to 'info'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cout_set_info()                                                        \
+    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::info)
+
+/// \brief cout_set_warn sets the log level to 'warn'. Aftet this call, all
+/// the log messages from 'debug' up will de written
+#define cout_set_warn()                                                        \
+    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::warn)
+
+/// \brief cout_set_no_log makes no message to be logged to std::cout
+#define cout_set_no_log()                                                      \
+    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
+      tenacitas::logger::bus::level::no_log)
+
 /// \brief cerr_debug allows to log with 'test' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
@@ -67,7 +96,7 @@ configure_cout_log();
 ///
 #define cout_test(p_params...)                                                 \
     tenacitas::logger::bus::cout_log_t::instance().test(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -92,7 +121,7 @@ configure_cout_log();
 ///
 #define cout_debug(p_params...)                                                \
     tenacitas::logger::bus::cout_log_t::instance().debug(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -117,7 +146,7 @@ configure_cout_log();
 ///
 #define cout_info(p_params...)                                                 \
     tenacitas::logger::bus::cout_log_t::instance().info(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -142,7 +171,7 @@ configure_cout_log();
 ///
 #define cout_warn(p_params...)                                                 \
     tenacitas::logger::bus::cout_log_t::instance().warn(                       \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -167,7 +196,7 @@ configure_cout_log();
 ///
 #define cout_error(p_params...)                                                \
     tenacitas::logger::bus::cout_log_t::instance().error(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -192,7 +221,7 @@ configure_cout_log();
 ///
 #define cout_fatal(p_params...)                                                \
     tenacitas::logger::bus::cout_log_t::instance().fatal(                      \
-      tenacitas::calendar::bus::epoch::millisecs(),                                 \
+      tenacitas::calendar::bus::epoch::millisecs(),                            \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       std::this_thread::get_id(),                                              \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
@@ -201,29 +230,5 @@ configure_cout_log();
       __LINE__,                                                                \
       tenacitas::logger::bus::cout_log_t::instance().get_separator(),          \
       p_params)
-
-/// \brief cout_set_test sets the log level to 'test'. Aftet this call, all
-/// the log messages from 'test' up will de written
-#define cout_set_test()                                                        \
-    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::test)
-
-/// \brief cout_set_debug sets the log level to 'debug'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cout_set_debug()                                                       \
-    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::debug)
-
-/// \brief cout_set_info sets the log level to 'info'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cout_set_info()                                                        \
-    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::info)
-
-/// \brief cout_set_warn sets the log level to 'warn'. Aftet this call, all
-/// the log messages from 'debug' up will de written
-#define cout_set_warn()                                                        \
-    tenacitas::logger::bus::cout_log_t::instance().set_level(                  \
-      tenacitas::logger::bus::level::warn)
 
 #endif

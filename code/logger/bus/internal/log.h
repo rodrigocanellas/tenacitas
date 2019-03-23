@@ -228,7 +228,7 @@ class log
     /// \param p_params are the values to be logged
     ///
     template<typename... t_params>
-    void write(level p_level, const t_params&... p_params)
+    inline void write(level p_level, const t_params&... p_params)
     {
         if (can_log(p_level)) {
             std::ostringstream _stream;
@@ -248,8 +248,11 @@ class log
     ///
     /// \return \p true if the messsage can be logged, \p false otherwise
     ///
-    inline bool can_log(level p_level)
+    inline bool can_log(level p_level) const
     {
+        if (m_level == level::no_log) {
+            return false;
+        }
         if (p_level == level::test) {
             return true;
         }

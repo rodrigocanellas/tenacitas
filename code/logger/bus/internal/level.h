@@ -21,7 +21,8 @@ enum class level : char
     info = 'I',
     warn = 'W',
     error = 'E',
-    fatal = 'F'
+    fatal = 'F',
+    no_log = 'N'
 };
 
 } // namespace bus
