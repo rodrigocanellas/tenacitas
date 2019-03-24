@@ -8,11 +8,11 @@
 #include <sstream>
 #include <thread>
 
-#include <calendar/bus/epoch.h>
-#include <concurrent/bus/sleeping_loop.h>
-#include <concurrent/bus/traits.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <calendar/business/epoch.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <concurrent/business/traits.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 struct msg
 {
@@ -57,7 +57,7 @@ operator<<(std::ostream& p_out, const msg& p_msg)
     return p_out;
 }
 
-typedef tenacitas::concurrent::bus::sleeping_loop<msg> loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<msg> loop_t;
 
 struct provider
 {
@@ -89,7 +89,7 @@ struct sleeping_loop_013
           [this](msg&& p_msg) {
               if ((this->m_i % 2) == 0) {
                   cerr_test(
-                    tenacitas::calendar::bus::epoch::millisecs(), ", '", p_msg, "'");
+                    tenacitas::calendar::business::epoch::millisecs(), ", '", p_msg, "'");
               } else {
                   cerr_test("m_i = ", m_i, ". Sleeping for a while...");
                   std::this_thread::sleep_for(std::chrono::milliseconds(101));

@@ -2,10 +2,10 @@
 #include <sstream>
 #include <string>
 
-#include <calendar/bus/epoch.h>
-#include <logger/bus/cerr.h>
-#include <logger/bus/cout.h>
-#include <tester/bus/run.h>
+#include <calendar/business/epoch.h>
+#include <logger/business/cerr.h>
+#include <logger/business/cout.h>
+#include <tester/business/run.h>
 
 class cerr_log_creation
 {
@@ -15,7 +15,7 @@ class cerr_log_creation
     {
 
         try {
-            tenacitas::logger::bus::configure_cerr_log();
+            tenacitas::logger::business::configure_cerr_log();
 
             cerr_set_debug();
 

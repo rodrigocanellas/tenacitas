@@ -6,10 +6,10 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/bus/thread.h>
+#include <concurrent/business/thread.h>
 #include <concurrent/async.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 #define DESCRIPTION                                                            \
     "Time out of a function object with no parameters, and returning "         \

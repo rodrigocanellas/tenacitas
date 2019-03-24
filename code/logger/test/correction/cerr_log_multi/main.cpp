@@ -1,12 +1,12 @@
 
 #include <iostream>
 
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/cerr.h>
-#include <logger/bus/cout.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/cerr.h>
+#include <logger/business/cout.h>
+#include <tester/business/run.h>
 
-typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
 
 class cout_log_multi
 {
@@ -15,7 +15,7 @@ class cout_log_multi
     bool operator()()
     {
         try {
-            tenacitas::logger::bus::configure_cout_log();
+            tenacitas::logger::business::configure_cout_log();
             cout_set_debug();
 
             sleeping_loop_t _loop1(std::chrono::milliseconds(1000),

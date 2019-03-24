@@ -1,13 +1,13 @@
-#include <logger/bus/cerr.h>
-#include <logger/bus/file.h>
-#include <tester/bus/run.h>
+#include <logger/business/cerr.h>
+#include <logger/business/file.h>
+#include <tester/business/run.h>
 
 struct file_log_how_to
 {
     bool operator()()
     {
         try {
-            tenacitas::logger::bus::configure_file_log(
+            tenacitas::logger::business::configure_file_log(
               ".", "how_to", 10 * 1024, std::chrono::minutes(15));
 
             file_set_debug();

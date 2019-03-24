@@ -1,12 +1,12 @@
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 struct cerr_log_how_to
 {
     bool operator()()
     {
         try {
-            tenacitas::logger::bus::configure_cerr_log();
+            tenacitas::logger::business::configure_cerr_log();
 
             cerr_set_debug();
 

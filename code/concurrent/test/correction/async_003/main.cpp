@@ -7,9 +7,9 @@
 #include <string>
 
 #include <concurrent/async.h>
-#include <concurrent/bus/thread.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/thread.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 
 #define DESCRIPTION                                                            \

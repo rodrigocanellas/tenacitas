@@ -7,14 +7,14 @@
 
 #include <concurrent/inc/async_loop.h>
 #include <concurrent/inc/sleeping_loop_controller.h>
-#include <concurrent/bus/thread.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/thread.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
-typedef tenacitas::concurrent::bus::sleeping_loop_controller controller_t;
-typedef tenacitas::concurrent::bus::async_loop<controller_t, std::string>
+typedef tenacitas::concurrent::business::sleeping_loop_controller controller_t;
+typedef tenacitas::concurrent::business::async_loop<controller_t, std::string>
   async_loop_t;
-typedef tenacitas::concurrent::bus::thread thread_t;
+typedef tenacitas::concurrent::business::thread thread_t;
 
 struct provider
 {
@@ -92,7 +92,7 @@ struct test011
 int
 main()
 {
-    tenacitas::logger::bus::configure_cerr_log();
+    tenacitas::logger::business::configure_cerr_log();
     cerr_set_debug();
     run(test011);
 }

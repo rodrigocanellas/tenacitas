@@ -12,20 +12,20 @@ TARGET = tenacitas.concurrent
 
 
 HEADERS += \ 
-    ../../../../code/concurrent/bus/sleeping_loop.h \
-    ../../../../code/concurrent/bus/thread.h \
-    ../../../../code/concurrent/bus/thread_pool.h \
-    ../../../../code/concurrent/bus/dispatcher.h \
-    ../../../../code/concurrent/bus/traits.h \
-    ../../../../code/concurrent/bus/internal/loop.h \
-    ../../../../code/concurrent/bus/internal/async_loop.h \
-    ../../../../code/logger/bus/cerr.h
+    ../../../../code/concurrent/business/sleeping_loop.h \
+    ../../../../code/concurrent/business/thread.h \
+    ../../../../code/concurrent/business/thread_pool.h \
+    ../../../../code/concurrent/business/dispatcher.h \
+    ../../../../code/concurrent/business/traits.h \
+    ../../../../code/concurrent/business/internal/loop.h \
+    ../../../../code/concurrent/business/internal/async_loop.h \
+    ../../../../code/logger/business/cerr.h
 
 
 
 include (../../common.pri)
 
 SOURCES += \
-    ../../../../code/logger/bus/internal/cerr.cpp
+    ../../../../code/logger/business/internal/cerr.cpp
 
 

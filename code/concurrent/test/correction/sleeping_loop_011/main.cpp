@@ -8,12 +8,12 @@
 #include <sstream>
 #include <thread>
 
-#include <calendar/bus/epoch.h>
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <calendar/business/epoch.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
-typedef tenacitas::concurrent::bus::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
 struct work1
 {
     bool operator()()

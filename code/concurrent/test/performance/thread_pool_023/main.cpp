@@ -1,7 +1,7 @@
-#include <concurrent/bus/thread_pool.h>
+#include <concurrent/business/thread_pool.h>
 #include <concurrent/test/performance/thread_pool_tester.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 struct thread_pool_023
 {

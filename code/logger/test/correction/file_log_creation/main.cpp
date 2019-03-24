@@ -2,9 +2,9 @@
 #include <sstream>
 #include <string>
 
-#include <calendar/bus/epoch.h>
-#include <logger/bus/file.h>
-#include <tester/bus/run.h>
+#include <calendar/business/epoch.h>
+#include <logger/business/file.h>
+#include <tester/business/run.h>
 
 class file_log_creation
 {
@@ -16,7 +16,7 @@ class file_log_creation
     {
 
         try {
-            tenacitas::logger::bus::configure_file_log(
+            tenacitas::logger::business::configure_file_log(
               ".", "file_log_creation", 100, std::chrono::minutes(10));
 
             file_set_debug();

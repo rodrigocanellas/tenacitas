@@ -4,10 +4,10 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/bus/dispatcher.h>
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/dispatcher.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 using namespace tenacitas;
 
@@ -69,7 +69,7 @@ struct publisher_1
         msg_a _msg(++i);
         cerr_test("P 1", _msg);
 
-        concurrent::bus::dispatcher<msg_a>::publish(_msg);
+        concurrent::business::dispatcher<msg_a>::publish(_msg);
         return true;
     }
     int16_t i = { 10 };
@@ -83,12 +83,12 @@ struct publisher_2
         i += 10;
         msg_a _msg_a(i);
         cerr_test("P 2", _msg_a);
-        concurrent::bus::dispatcher<msg_a>::publish(_msg_a);
+        concurrent::business::dispatcher<msg_a>::publish(_msg_a);
 
         d *= 2.5;
         msg_c _msg_c(d);
         cerr_test("P 2", _msg_c);
-        concurrent::bus::dispatcher<msg_c>::publish(_msg_c);
+        concurrent::business::dispatcher<msg_c>::publish(_msg_c);
 
         return true;
     }
@@ -106,7 +106,7 @@ struct publisher_3
         msg_b _msg_b(i);
 
         cerr_test("P 3", _msg_b);
-        concurrent::bus::dispatcher<msg_b>::publish(_msg_b);
+        concurrent::business::dispatcher<msg_b>::publish(_msg_b);
 
         return true;
     }
@@ -166,7 +166,7 @@ struct subscriber_4
     }
 };
 
-typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
 
 // ############################## subscribers
 struct dispatcher_000
@@ -183,7 +183,7 @@ struct dispatcher_000
         sleeping_loop_t _sl3(std::chrono::milliseconds(1500),
                              publisher_3(),
                              std::chrono::milliseconds(1000));
-        using namespace tenacitas::concurrent::bus;
+        using namespace tenacitas::concurrent::business;
         bool _rc = true;
         std::chrono::milliseconds _work_timeout(500);
         dispatcher<msg_a>::subscribe(

@@ -2,10 +2,10 @@
 #include <sstream>
 #include <string>
 
-#include <calendar/bus/epoch.h>
-#include <logger/bus/cerr.h>
-#include <logger/bus/cout.h>
-#include <tester/bus/run.h>
+#include <calendar/business/epoch.h>
+#include <logger/business/cerr.h>
+#include <logger/business/cout.h>
+#include <tester/business/run.h>
 
 struct cout_log_creation
 {
@@ -13,7 +13,7 @@ struct cout_log_creation
     {
 
         try {
-            tenacitas::logger::bus::configure_cout_log();
+            tenacitas::logger::business::configure_cout_log();
 
             cout_set_debug();
 

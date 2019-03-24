@@ -1,11 +1,11 @@
 
 #include <iostream>
 
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/file.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/file.h>
+#include <tester/business/run.h>
 
-typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
 
 class file_log_multi
 {
@@ -16,7 +16,7 @@ class file_log_multi
     bool operator()()
     {
         try {
-            tenacitas::logger::bus::configure_file_log(
+            tenacitas::logger::business::configure_file_log(
               "./", "file_log_multi", 1 * 1024 * 1024, std::chrono::minutes(3));
             file_set_debug();
 

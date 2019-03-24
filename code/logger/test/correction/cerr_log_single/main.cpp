@@ -1,11 +1,11 @@
 
 #include <iostream>
 
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
-typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
 
 struct cerr_log_single
 {
@@ -13,7 +13,7 @@ struct cerr_log_single
     {
         try {
 
-            tenacitas::logger::bus::configure_cerr_log();
+            tenacitas::logger::business::configure_cerr_log();
 
             sleeping_loop_t _loop1(std::chrono::milliseconds(10000),
                                    []() {

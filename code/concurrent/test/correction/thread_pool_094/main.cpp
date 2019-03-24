@@ -1,14 +1,14 @@
-#include <concurrent/bus/sleeping_loop.h>
+#include <concurrent/business/sleeping_loop.h>
 #include <concurrent/test/msg_a.h>
-#include <concurrent/bus/thread_pool.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/thread_pool.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 #include <chrono>
 
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::bus::thread_pool<msg_t> thread_pool_t;
-typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::thread_pool<msg_t> thread_pool_t;
+typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
 
 struct work
 {

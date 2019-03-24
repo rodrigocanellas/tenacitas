@@ -5,8 +5,8 @@
 #include <iostream>
 #include <sstream>
 
-#include <calendar/bus/epoch.h>
-#include <string/bus/format_number.h>
+#include <calendar/business/epoch.h>
+#include <string/business/format_number.h>
 
 namespace tenacitas {
 namespace concurrent {
@@ -21,7 +21,7 @@ struct msg_a
   private:
     static const char* m_s;
     uint32_t m_counter = 0;
-    uint64_t m_timestamp = tenacitas::calendar::bus::epoch::millisecs();
+    uint64_t m_timestamp = tenacitas::calendar::business::epoch::millisecs();
 };
 
 } // namespace tst

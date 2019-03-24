@@ -1,12 +1,12 @@
-#include <logger/bus/cout.h>
-#include <tester/bus/run.h>
+#include <logger/business/cout.h>
+#include <tester/business/run.h>
 
 struct cout_log_how_to
 {
     bool operator()()
     {
         try {
-            tenacitas::logger::bus::configure_cout_log();
+            tenacitas::logger::business::configure_cout_log();
 
             cout_set_debug();
 

@@ -1,9 +1,9 @@
 
 #include <iostream>
 
-#include <concurrent/bus/sleeping_loop.h>
-#include <logger/bus/file.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/file.h>
+#include <tester/business/run.h>
 
 class file_log_single
 {
@@ -14,11 +14,11 @@ class file_log_single
         try {
             using namespace tenacitas;
 
-            tenacitas::logger::bus::configure_file_log(
+            tenacitas::logger::business::configure_file_log(
               ".", "file_log_single", 10 * 1024, std::chrono::minutes(1));
             file_set_debug();
 
-            concurrent::bus::sleeping_loop<void> _loop1(
+            concurrent::business::sleeping_loop<void> _loop1(
               std::chrono::milliseconds(500),
               []() {
                   cerr_test("work!");

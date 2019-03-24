@@ -5,10 +5,10 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/bus/internal//async_loop.h>
-#include <concurrent/bus/thread.h>
-#include <logger/bus/cerr.h>
-#include <tester/bus/run.h>
+#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/thread.h>
+#include <logger/business/cerr.h>
+#include <tester/business/run.h>
 
 struct work1
 {
@@ -47,7 +47,7 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::bus::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
 
 struct async_loop_012
 {
