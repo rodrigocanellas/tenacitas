@@ -108,8 +108,18 @@ struct loop
     /// \brief copy assignment not allowed
     loop& operator=(const loop&) = delete;
 
-    /// \brief move assignment not allowed
-    loop& operator=(loop&&) noexcept = delete;
+    /// \brief move assignment
+    loop& operator=(loop&& p_loop) noexcept
+    {
+        if (this != &p_loop) {
+            m_work = std::move(p_loop.m_work);
+            m_timeout = std::move(p_loop.m_timeout);
+            m_break = std::move(p_loop.m_break);
+            m_provide = std::move(p_loop.m_provide);
+            m_stopped = true;
+        }
+        return *this;
+    }
 
     ///
     /// \brief is_stopped
@@ -302,23 +312,14 @@ struct loop<void>
     /// \brief copy constructor not allowed
     loop(const loop&) = delete;
 
-    ///
-    /// \brief loop move constructor
-    /// \param p_loop an instance o \p loop to be moved
-    ///
-    loop(loop&& p_loop) noexcept
-      : m_work(std::move(p_loop.m_work))
-      , m_timeout(std::move(p_loop.m_timeout))
-      , m_break(std::move(p_loop.m_break))
-      , m_provide(std::move(p_loop.m_provide))
-      , m_stopped(true)
-    {}
+    /// \brief loop move constructor not allowed
+    loop(loop&& p_loop) noexcept = delete;
 
     /// \brief copy assignment not allowed
     loop& operator=(const loop&) = delete;
 
     /// \brief move assignment not allowed
-    loop& operator=(loop&&) noexcept = delete;
+    loop& operator=(loop&& p_loop) noexcept = delete;
 
     ///
     /// \brief is_stopped
@@ -435,7 +436,7 @@ struct loop<void>
     ///
     /// \brief m_stopped indicates if the loop is running or not
     ///
-    bool m_stopped;
+    bool m_stopped = true;
 };
 
 } // namespace bus

@@ -1,12 +1,20 @@
 #ifndef TENACITAS_CONCURRENT_BUS_THREAD_H
 #define TENACITAS_CONCURRENT_BUS_THREAD_H
 
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
+
 #include <functional>
 #include <mutex>
 #include <thread>
 
+/// \brief namespace of the organization
 namespace tenacitas {
+/// \brief namespace of the project
 namespace concurrent {
+/// \brief namespace of the class group
 namespace bus {
 
 ///

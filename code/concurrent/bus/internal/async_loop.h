@@ -42,7 +42,6 @@ namespace bus {
 ///    - default constructible
 ///    - move constructible
 ///
-///
 template<typename t_data>
 struct async_loop
 {
@@ -122,26 +121,26 @@ struct async_loop
     /// \brief copy constructor not allowed
     async_loop(const async_loop&) = delete;
 
-    ///
-    /// \brief async_loop
-    /// \param p_async an instance o \p async_loop to be moved
-    ///
+    /// \brief async_loop move constructor not allowed
     async_loop(async_loop&& p_async) noexcept
       : m_loop(std::move(p_async.m_loop))
-      , m_thread()
-    {
-        if (!p_async.is_stopped()) {
-            run_core();
-        }
-    }
+    {}
 
     /// \brief copy assignment not allowed
     async_loop& operator=(const async_loop&) = delete;
 
     /// \brief move assignment not allowed
-    async_loop& operator=(async_loop&& p_loop) noexcept = delete;
+    async_loop& operator=(async_loop&&) noexcept = default;
+    //    {
+    //        if (this != &p_async) {
+    //            m_loop = std::move(p_async.m_loop);
+    //            if (!p_async.is_stopped()) {
+    //                run_core();
+    //            }
+    //        }
+    //    }
 
-    /// \brief destructor
+    /// \brief destructor stops the loop
     inline ~async_loop()
     {
         cerr_debug(this, " destructor");
