@@ -4,7 +4,7 @@ A place to study C++
 
 ![tenacitas](etapas_sw_landscape.png)
 
-# Directory Structure
+# Directory Structure PP
 The **tenacitas** repository directory structure allows different build tools to be used to build any of its components. This is accomplished by having the code in a separate directory tree from the build tools configured.
 ## tenacitas/code ##
 Under the `tenacitas` directory we have:
