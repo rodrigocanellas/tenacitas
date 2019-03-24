@@ -5,9 +5,6 @@
 #include <logger/bus/file.h>
 #include <tester/bus/run.h>
 
-namespace tenacitas {
-namespace logger {
-namespace tst {
 class file_log_single
 {
 
@@ -15,6 +12,8 @@ class file_log_single
     bool operator()()
     {
         try {
+            using namespace tenacitas;
+
             tenacitas::logger::bus::configure_file_log(
               ".", "file_log_single", 10 * 1024, std::chrono::minutes(1));
             file_set_debug();
@@ -50,12 +49,9 @@ class file_log_single
         return false;
     }
 };
-} // namespace tst
-} // namespace logger
-} // namespace tenacitas
 
 int
 main(int argc, char** argv)
 {
-    run_test(tenacitas::logger::tst::file_log_single, argc, argv, "NO DESC");
+    run_test(file_log_single, argc, argv, "Single thread logging to 'file'");
 }

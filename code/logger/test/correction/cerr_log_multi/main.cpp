@@ -8,15 +8,10 @@
 
 typedef tenacitas::concurrent::bus::sleeping_loop<void> sleeping_loop_t;
 
-namespace tenacitas {
-namespace logger {
-namespace tst {
 class cout_log_multi
 {
 
   public:
-    cout_log_multi() = default;
-
     bool operator()()
     {
         try {
@@ -82,16 +77,9 @@ class cout_log_multi
         return false;
     }
 };
-} // namespace tst
-} // namespace logger
-} // namespace tenacitas
 
 int
 main(int argc, char** argv)
 {
-    tenacitas::logger::bus::configure_cerr_log();
-    cerr_set_debug();
-
-    using namespace tenacitas::logger::tst;
-    run_test(cout_log_multi, argc, argv, "NO DESC");
+    run_test(cout_log_multi, argc, argv, "Multiple threads logging to 'cerr'");
 }

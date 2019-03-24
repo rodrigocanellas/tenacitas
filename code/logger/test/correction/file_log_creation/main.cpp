@@ -6,9 +6,6 @@
 #include <logger/bus/file.h>
 #include <tester/bus/run.h>
 
-namespace tenacitas {
-namespace logger {
-namespace tst {
 class file_log_creation
 {
 
@@ -34,12 +31,9 @@ class file_log_creation
   private:
     std::string m_base_file_name;
 };
-} // namespace tst
-} // namespace logger
-} // namespace tenacitas
 
 int
 main(int argc, char** argv)
 {
-    run_test(tenacitas::logger::tst::file_log_creation, argc, argv, "NO DESC");
+    run_test(file_log_creation, argc, argv, "'file_log' creation");
 }

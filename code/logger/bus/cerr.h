@@ -1,8 +1,10 @@
-#ifndef TENACITAS_LOGGER_CERR_H
-#define TENACITAS_LOGGER_CERR_H
+#ifndef TENACITAS_LOGGER_BUS_CERR_H
+#define TENACITAS_LOGGER_BUS_CERR_H
+
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
-/// \date nov/2018
 
 #include <chrono>
 #include <cstddef>
@@ -15,36 +17,27 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
+/// \brief namespace of the class group
 namespace bus {
 
 ///
-/// \brief configure_cerr_log configures logging to cerr
+/// \brief configure_cerr_log configures logging to \p cerr
 ///
-/// \details There are 5 log levels, from the lowest: 'debug', 'info', 'warn',
-/// 'error' and 'fatal'. The log level starts in 'error', so only 'error' and
-/// 'fatal' messages will be logged.
+/// This namespace function must be called only one time to configure logging to
+/// \p cerr
 ///
-/// If one wants to change the log level, the 'cerr_set_debug', 'cerr_set_info'
-/// or 'cerr_set_warn' macro command must be called
+/// \details There are 6 log levels, from the lowest: 'test', 'debug', 'info',
+/// 'warn', 'error' and 'fatal'. The log level starts in 'error', so only
+/// 'error' and 'fatal' messages will be logged.
 ///
-/// \code
-//#include <logger/bus/cerr.h>
-//
-// int
-// main(int argc, char **argv)
-//{
-//    tenacitas::logger::bus::configure_cerr_log();
-//
-//    cerr_set_debug();
-//
-//    cerr_debug("hello! ", 309);
-//    cerr_debug("how are you doing? ", 3.14);
-//    cerr_info("fine!! ", 'W');
-//    cerr_info("and you?");
-//    cerr_warn("great! got a new job!! ", 6987.58f);
-//    cerr_warn("nice!! ", 10);
-//}
-/// \endcode
+/// If one wants to change the log level, the 'cerr_set_test', 'cerr_set_debug',
+/// 'cerr_set_info' or 'cerr_set_warn' macro command must be called
+///
+/// A log line has this format:
+/// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+/// \example
+/// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
+/// (0000000005,012345678901234567890123456789,1552098707355)
 ///
 void
 configure_cerr_log();

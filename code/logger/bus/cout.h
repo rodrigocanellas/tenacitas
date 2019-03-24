@@ -1,8 +1,10 @@
-#ifndef TENACITAS_LOGGER_COUT_H
-#define TENACITAS_LOGGER_COUT_H
+#ifndef TENACITAS_LOGGER_BUS_COUT_H
+#define TENACITAS_LOGGER_BUS_COUT_H
+
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
-/// \date nov/2018
 
 #include <cstddef>
 #include <thread>
@@ -14,36 +16,27 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
+/// \brief namespace of the class group
 namespace bus {
 
 ///
 /// \brief configure_cout_log configures logging to cout
 ///
-/// \details There are 5 log levels, from the lowest: 'debug', 'info', 'warn',
-/// 'error' and 'fatal'. The log level starts in 'error', so only 'error' and
-/// 'fatal' messages will be logged.
+/// This namespace function must be called only one time to configure logging to
+/// \p cout
 ///
-/// If one wants to change the log level, the 'cout_set_debug', 'cout_set_info'
-/// or 'cout_set_warn' must be called
+/// \details There are 6 log levels, from the lowest: 'test', 'debug', 'info',
+/// 'warn', 'error' and 'fatal'. The log level starts in 'error', so only
+/// 'error' and 'fatal' messages will be logged.
 ///
-/// \code
-//#include <logger/bus/cout.h>
-//
-// int
-// main(int argc, char **argv)
-//{
-//    tenacitas::logger::bus::configure_cout_log();
-//
-//    cout_set_debug();
-//
-//    cout_debug("hello! ", 309);
-//    cout_debug("how are you doing? ", 3.14);
-//    cout_info("fine!! ", 'W');
-//    cout_info("and you?");
-//    cout_warn("great! got a new job!! ", 6987.58f);
-//    cout_warn("nice!! ", 10);
-//}
-/// \endcode
+/// If one wants to change the log level, the 'cout_set_test', 'cout_set_debug',
+/// 'cout_set_info' or 'cout_set_warn' must be called
+///
+/// A log line has this format:
+/// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+/// \example
+/// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
+/// (0000000005,012345678901234567890123456789,1552098707355)
 ///
 void
 configure_cout_log();

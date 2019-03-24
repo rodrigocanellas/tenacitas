@@ -7,15 +7,8 @@
 #include <logger/bus/cout.h>
 #include <tester/bus/run.h>
 
-namespace tenacitas {
-namespace logger {
-namespace tst {
-class cout_log_creation
+struct cout_log_creation
 {
-
-  public:
-    explicit cout_log_creation() = default;
-
     bool operator()()
     {
 
@@ -30,20 +23,10 @@ class cout_log_creation
         }
         return false;
     }
-
-  private:
-    std::string m_base_cout_name;
 };
-} // namespace tst
-} // namespace logger
-} // namespace tenacitas
 
 int
 main(int argc, char** argv)
 {
-
-    tenacitas::logger::bus::configure_cerr_log();
-    cerr_set_debug();
-    using namespace tenacitas::logger::tst;
-    run_test(cout_log_creation, argc, argv, "NO DESC");
+    run_test(cout_log_creation, argc, argv, "'cout_log' creation");
 }
