@@ -3,4 +3,6 @@
 
 ![tenacitas](documentation/tenacitas_logo.png)
 
-A place to study [C++](documentation/index.html).
+A place to study C++.
+
+Please, to access the documentation, clone the repository, and open the *documentation/index.html* file.
