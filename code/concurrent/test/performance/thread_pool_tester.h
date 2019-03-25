@@ -59,20 +59,6 @@ struct thread_pool_tester
             cerr_test("adding ", _msg);
             m_pool.handle(_msg);
         }
-        //        uint32_t _producer = 0;
-        //        for (producers_t::iterator _ite = m_producers.begin();
-        //             _ite != m_producers.end();
-        //             ++_ite) {
-        //            ++_producer;
-        //            *_ite = thread_t([this, _producer]() {
-        //                for (uint32_t _count_msg = 0; _count_msg < num_msgs;
-        //                     ++_count_msg) {
-        //                    msg_t _msg(_producer, _count_msg);
-        //                    cerr_test("adding ", _msg);
-        //                    this->m_pool.handle(_msg);
-        //                }
-        //            });
-        //        }
     }
 
   private:

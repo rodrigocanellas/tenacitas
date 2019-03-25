@@ -5,7 +5,7 @@
 /// at the root of \p tenacitas directory
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
-///
+
 #include <chrono>
 #include <condition_variable>
 #include <functional>

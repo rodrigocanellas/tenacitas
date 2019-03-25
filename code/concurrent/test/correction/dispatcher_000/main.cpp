@@ -1,4 +1,4 @@
-
+/// \example
 #include <chrono>
 #include <cstdint>
 #include <sstream>

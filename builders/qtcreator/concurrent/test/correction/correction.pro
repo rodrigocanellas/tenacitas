@@ -28,7 +28,8 @@ SUBDIRS = \
     thread_pool_093 \
     thread_pool_094 \
     thread_pool_095 \
-    thread_pool_096
+    thread_pool_096 \
+    thread_pool_097 \
 
 
 TEMPLATE = subdirs

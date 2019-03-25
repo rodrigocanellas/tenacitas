@@ -1,0 +1,12 @@
+@startuml
+[user] --> [business_client]
+[user] --> [entity]
+[business_client] --> [communicator_client]
+[business_client] --> [serializer]
+[communicator_client] --> [communicator_server]
+[communicator_server] --> [business_server]
+[business_server] --> [serializer]
+[business_server] --> [business]
+[business] --> [persistence]
+[persistence] --> [entity]
+@enduml

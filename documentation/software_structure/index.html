@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 6.0.7.3 (Linux)"/>
+	<meta name="created" content="2019-03-24T21:53:19.105081023"/>
+	<meta name="changed" content="2019-03-24T22:49:01.623047059"/>
+	<style type="text/css">
+		@page { margin: 2cm }
+		p { margin-top: 0.28cm; margin-bottom: 0.28cm; line-height: 115% }
+		a:link { so-language: zxx }
+		code.western { font-family: "Courier New", monospace; font-size: 11pt }
+		code.cjk { font-family: "WenQuanYi Micro Hei"; font-size: 10pt }
+		code.ctl { font-family: "Lohit Devanagari" }
+	</style>
+</head>
+<body lang="pt-BR" dir="ltr">
+<p align="center" style="margin-top: 0.42cm; margin-bottom: 1.1cm; line-height: 100%; page-break-after: avoid">
+<font face="Liberation Sans, sans-serif"><font size="6" style="font-size: 28pt"><b>Software
+Structure</b></font></font></p>
+<p><b>tenacitas</b> proposes a software strucure, for code and
+directories, that groups code (classes, functions, etc) in, at least
+four layers:</p>
+<p><font face="Courier New, monospace"><font size="2" style="font-size: 11pt">entities</font></font>
+– code that implements the objects, or data, found in the problem.
+<code class="western">Employee</code>, <code class="western">Rotation</code>,
+<code class="western">Planet</code>, <code class="western">Phone</code>
+are examples of entities.</p>
+<p><font face="Courier New, monospace"><font size="2" style="font-size: 11pt">business</font></font>
+– code that implements the business functions that manipulate the
+entities. <code class="western">Hire Employee</code>, <code class="western">Apply
+Rotation</code>, <code class="western">Draw Planet</code>, <code class="western">Send
+SMS to Phone</code> are examples of business functions.</p>
+<p class="code"><code class="western">user</code>  - code that allows
+the User to interact with the <code class="western">business</code>
+layer.</p>
+<p><code class="western">persistence</code> – code that saves
+entities in a media. <code class="western">Update</code><code class="western">
+Employee </code><code class="western">Address</code>, <code class="western">Save
+Last Rotation</code>, <code class="western">Save Planet Color</code>,
+<code class="western">Delete Phone</code> are examples of persistence
+functions.</p>
+<p>The following diagram show a macro perspective of these layers:</p>
+<p><img src="index_html_c0ac2f608035a59d.gif" name="Figura2" align="left" width="211" height="246">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>It is importante to notice that the <code class="western">user</code>
+layer does not access the <code class="western">persistence</code>
+layer; the <code class="western">business</code> does not access the
+<code class="western">user</code>; the <code class="western">persistence</code>
+does not interact with the <code class="western">user</code>; the
+<code class="western">persistence</code> does not access the
+<code class="western">business</code>; all layers access the <code class="western">entit</code><code class="western">y</code>.</p>
+<p>If the software is distributed, layers of communication become
+necessary. However, the layers described above should not be aware
+that the layer it is interacting is remote. We propose the use of
+clients with the same interface that the original layer would
+provide. So, there would be a <code class="western">business_client</code>,
+with the same interface as <code class="western">business</code>. The
+<code class="western">user</code> would call <code class="western">business_client</code>
+functions, not aware that the functions will be executed remotely.
+The <code class="western">business_client</code> would interact with
+a <code class="western">serializer</code> and a <code class="western">communication</code>
+layer, in order to send serialized <code class="western">entity</code>
+to a remote <code class="western">communication</code> layer, which
+will deliver the serialized <code class="western">entity</code> to a
+<code class="western">business_server</code>, which would use the
+same <code class="western">serializer</code> to reconstruct the
+<code class="western">entitiy</code>, in order to finally pass it to
+a <code class="western">business</code> function.</p>
+<p>The diagram below revisits the structure above, introducing the
+proper clients, servers, communication and serializers.</p>
+<p><img src="index_html_17fcd0be0e11aaad.gif" name="Figura3" align="left" width="321" height="726">
+  <br clear="left"/>
+</img>
+<br/>
+<br/>
+
+</p>
+<p>The diagram ilustrates the situation where the business becomes
+remote, but the same principles apply if the persistence run on a
+different machine.</p>
+</body>
+</html>

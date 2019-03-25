@@ -1,4 +1,4 @@
-
+/// \example
 #include <iostream>
 
 #include <concurrent/business/sleeping_loop.h>

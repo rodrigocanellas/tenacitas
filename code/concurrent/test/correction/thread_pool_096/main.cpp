@@ -1,6 +1,6 @@
 #include <concurrent/business/sleeping_loop.h>
-#include <concurrent/test/msg_a.h>
 #include <concurrent/business/thread_pool.h>
+#include <concurrent/test/msg_a.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 

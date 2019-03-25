@@ -57,7 +57,8 @@ namespace business {
 ///
 /// A log line has this format:
 /// log-level|timestamp-millisecs|thread-id|file|line|user-contents
-/// \example
+///
+/// For example
 /// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
 /// (0000000005,012345678901234567890123456789,1552098707355)
 ///
@@ -76,30 +77,30 @@ configure_file_log(
 /// \brief file_set_test sets the log level to 'test'. Aftet this call, all
 /// the log messages from 'test' up will de written
 #define file_set_test()                                                        \
-    tenacitas::logger::business::cout_log_t::instance().set_level(                  \
+    tenacitas::logger::business::cout_log_t::instance().set_level(             \
       tenacitas::logger::business::level::test)
 
 /// \brief file_set_debug sets the log level to 'debug'. Aftet this call, all
 /// the log messages from 'debug' up will de written
 #define file_set_debug()                                                       \
-    tenacitas::logger::business::file_log_t::instance().set_level(                  \
+    tenacitas::logger::business::file_log_t::instance().set_level(             \
       tenacitas::logger::business::level::debug)
 
 /// \brief file_set_info sets the log level to 'info'. Aftet this call, all
 /// the log messages from 'info' up will de written
 #define file_set_info()                                                        \
-    tenacitas::logger::business::file_log_t::instance().set_level(                  \
+    tenacitas::logger::business::file_log_t::instance().set_level(             \
       tenacitas::logger::business::level::info)
 
 /// \brief file_set_warn sets the debug level to 'warn'. Aftet this call, all
 /// the log messages from 'warn' up will de written
 #define file_set_warn()                                                        \
-    tenacitas::logger::business::file_log_t::instance().set_level(                  \
+    tenacitas::logger::business::file_log_t::instance().set_level(             \
       tenacitas::logger::business::level::warn)
 
 /// \brief file_set_no_log makes no message to be logged to file
 #define file_set_no_log()                                                      \
-    tenacitas::logger::business::file_log_t::instance().set_level(                  \
+    tenacitas::logger::business::file_log_t::instance().set_level(             \
       tenacitas::logger::business::level::no_log)
 
 /// \brief file_test allows to log with 'test' level
@@ -111,20 +112,20 @@ configure_file_log(
 /// \details the log line will be:
 /// T|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example cerr_debug("hello! ", 390) will generate
+/// For example <tt>cerr_debug("hello! ", 390)</tt> will generate
 ///
 /// T|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_test(p_params...)                                                 \
-    tenacitas::logger::business::file_log_t::instance().test(                       \
-      tenacitas::calendar::business::epoch::millisecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().test(                  \
+      tenacitas::calendar::business::epoch::millisecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 /// \brief file_debug allows to log with 'debug' level
@@ -136,20 +137,20 @@ configure_file_log(
 /// \details the log line will be:
 /// D|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example file_debug("hello! ", 390) will generate
+/// For example <tt>file_debug("hello! ", 390)</tt> will generate
 ///
 /// D|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_debug(p_params...)                                                \
-    tenacitas::logger::business::file_log_t::instance().debug(                      \
-      tenacitas::calendar::business::epoch::microsecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().debug(                 \
+      tenacitas::calendar::business::epoch::microsecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 /// \brief file_info allows to log with 'info' level
@@ -161,20 +162,20 @@ configure_file_log(
 /// \details the log line will be:
 /// I|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example file_info("hello! ", 390) will generate
+/// For example <tt>file_info("hello! ", 390)</tt> will generate
 ///
 /// I|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_info(p_params...)                                                 \
-    tenacitas::logger::business::file_log_t::instance().info(                       \
-      tenacitas::calendar::business::epoch::microsecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().info(                  \
+      tenacitas::calendar::business::epoch::microsecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 /// \brief file_warn allows to log with 'warning' level
@@ -186,20 +187,20 @@ configure_file_log(
 /// \details the log line will be:
 /// W|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example file_warn("hello! ", 390) will generate
+/// For example <tt>file_warn("hello! ", 390)</tt> will generate
 ///
 /// W|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_warn(p_params...)                                                 \
-    tenacitas::logger::business::file_log_t::instance().warn(                       \
-      tenacitas::calendar::business::epoch::microsecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().warn(                  \
+      tenacitas::calendar::business::epoch::microsecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 /// \brief file_error allows to log with 'warning' level
@@ -211,20 +212,20 @@ configure_file_log(
 /// \details the log line will be:
 /// E|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example file_error("hello! ", 390) will generate
+/// For example <tt>file_error("hello! ", 390)</tt> will generate
 ///
 /// E|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_error(p_params...)                                                \
-    tenacitas::logger::business::file_log_t::instance().error(                      \
-      tenacitas::calendar::business::epoch::microsecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().error(                 \
+      tenacitas::calendar::business::epoch::microsecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 /// \brief file_fatal allows to log with 'warning' level
@@ -236,20 +237,20 @@ configure_file_log(
 /// \details the log line will be:
 /// F|epoch-microsecs|thread-id|file-name|line-number|other-params
 ///
-/// \example file_fatal("hello! ", 390) will generate
+/// For example <tt>file_fatal("hello! ", 390)</tt> will generate
 ///
 /// F|1545843634258841|140072767514368|main.cpp|28|hello! 390
 ///
 #define file_fatal(p_params...)                                                \
-    tenacitas::logger::business::file_log_t::instance().fatal(                      \
-      tenacitas::calendar::business::epoch::microsecs(),                            \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+    tenacitas::logger::business::file_log_t::instance().fatal(                 \
+      tenacitas::calendar::business::epoch::microsecs(),                       \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       std::this_thread::get_id(),                                              \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __FILE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       __LINE__,                                                                \
-      tenacitas::logger::business::file_log_t::instance().get_separator(),          \
+      tenacitas::logger::business::file_log_t::instance().get_separator(),     \
       p_params)
 
 #endif // FILE_H
