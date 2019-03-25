@@ -5,4 +5,4 @@
 
 A place to study C++.
 
-Please, to access the documentation, clone the repository, and open the *documentation/index.html* file.
+Please, to access the documentation, clone the repository, and open the *tenacitas/documentation/index.html* file.

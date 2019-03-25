@@ -47,7 +47,7 @@ configure_cerr_log();
 } // namespace tenacitas
 
 /// \brief cerr_set_test sets the log level to 'test'. Aftet this call, only
-/// log messages 'test' will de written
+/// log messages 'test' will de wrien
 #define cerr_set_test()                                                        \
     tenacitas::logger::business::cerr_log_t::instance().set_level(             \
       tenacitas::logger::business::level::test)
@@ -103,8 +103,8 @@ configure_cerr_log();
 /// \brief cerr_debug allows to log with 'debug' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// D|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -128,8 +128,8 @@ configure_cerr_log();
 /// \brief cerr_debug allows to log with 'info' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// I|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -153,8 +153,8 @@ configure_cerr_log();
 /// \brief cerr_debug allows to log with 'warn' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// W|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -178,8 +178,8 @@ configure_cerr_log();
 /// \brief cerr_debug allows to log with 'error' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// E|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -203,8 +203,8 @@ configure_cerr_log();
 /// \brief cerr_debug allows to log with 'fatal' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// F|epoch-microsecs|thread-id|file-name|line-number|other-params

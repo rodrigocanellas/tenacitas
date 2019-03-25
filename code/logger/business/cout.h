@@ -78,8 +78,8 @@ configure_cout_log();
 /// \brief cerr_debug allows to log with 'test' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// T|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -103,8 +103,8 @@ configure_cout_log();
 /// \brief cout_debug allows to log with 'debug' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// D|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -128,8 +128,8 @@ configure_cout_log();
 /// \brief cout_debug allows to log with 'info' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// I|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -153,8 +153,8 @@ configure_cout_log();
 /// \brief cout_debug allows to log with 'warn' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// W|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -178,8 +178,8 @@ configure_cout_log();
 /// \brief cout_debug allows to log with 'error' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// E|epoch-microsecs|thread-id|file-name|line-number|other-params
@@ -203,8 +203,8 @@ configure_cout_log();
 /// \brief cout_debug allows to log with 'fatal' level
 ///
 /// \param p_params is a variadic macro parameter (GNU GCC only extension), and
-/// each parameter \p p, of type \p t, must implement the \tt std::ostream &
-/// operator<<(const t &)\tt operator
+/// each parameter \p p, of type \p t, must implement the <tt> std::ostream &
+/// operator<<(const t &)</tt> operator
 ///
 /// \details the log line will be:
 /// F|epoch-microsecs|thread-id|file-name|line-number|other-params
