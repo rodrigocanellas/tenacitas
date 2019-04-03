@@ -1,0 +1,6 @@
+SUBDIRS = \
+    correction
+
+TEMPLATE = subdirs
+
+

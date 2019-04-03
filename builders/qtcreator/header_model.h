@@ -1,45 +1,44 @@
-#ifndef TENACITAS_CONCURRENT_TIME_OUT_H
-#define TENACITAS_CONCURRENT_TIME_OUT_H
-
-/** @file */
+#ifndef TENACITAS_project_group_class_H
+#define TENACITAS_project_group_class_H
 
 
-#include <cstddef>
-#include <exception>
-#include <new>
-#include <memory>
-#include <cstdint>
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
 
-/** @brief namespace of the organization */
+/// \author Rodrigo Canellas rodrigo.canellas@gmail.com
+
+
+
+/// \brief namespace of the organization
 namespace tenacitas {
-/** @brief namespace of the project */
-namespace concurrent {
+/// \brief namespace of the project
+namespace project {
+/// \brief namespace of the group
+namespace group {
 
-/**
- * @brief The time_out class
- */
-class time_out {
+  /// \brief class
+struct class {
 
 public:
 
 
     /** @brief @brief not allowed */
-    inline time_out() = delete;
+    inline class() = delete;
 
     /** @brief not allowed */
-    inline time_out(const time_out &) = delete;
+     class(const class &) = delete;
 
     /** @brief not allowed */
-    inline time_out(time_out &&) = delete;
+     class(class &&) = delete;
 
     /** Destructor */
-    inline ~time_out();
+     ~class();
 
     /** @brief not allowed */
-    inline time_out & operator=(const time_out &) = delete;
+     class & operator=(const class &) = delete;
 
     /** @brief not allowed */
-    inline time_out & operator=(time_out &&) = delete;
+     class & operator=(class &&) = delete;
 
     /** @brief not allowed */
     void *operator new[] (size_t) = delete;
@@ -54,9 +53,9 @@ public:
     void *operator new(size_t) = delete;
 
 
-    private:
 };
-} // namespace concurrent
+} // namespace group
+} // namespace project
 } // namespace tenacitas
 
 
