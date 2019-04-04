@@ -7,10 +7,10 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
-#include <list>
+#include <set>
 #include <string>
 
-#include <interpreter/business/value.h>
+#include <interpreter/business/internal/lexeme.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -24,12 +24,26 @@ namespace business {
 ///
 struct type
 {
+    ///
+    /// \brief operator <<
+    /// \param p_out
+    /// \param p_type
+    /// \return
+    ///
+    inline friend std::ostream& operator<<(std::ostream& p_out,
+                                           const type& p_type)
+    {
+        p_out << p_type.m_str;
+        return p_out;
+    }
 
     /// \brief
     type() = delete;
 
     /// \brief
-    explicit type(const std::string& p_str);
+    inline explicit type(const std::string& p_str)
+      : m_str(p_str)
+    {}
 
     /// \brief not allowed
     type(const type&) = default;
@@ -47,13 +61,28 @@ struct type
     type& operator=(type&&) = default;
 
     /// \brief equal-to
-    inline bool operator==(const type& p_type) const;
+    inline bool operator==(const type& p_type) const
+    {
+        return m_str == p_type.m_str;
+    }
 
     /// \brief not-equal-to
-    inline bool operator!=(const type& p_type) const;
+    inline bool operator!=(const type& p_type) const
+    {
+        return m_str != p_type.m_str;
+    }
 
     /// \brief less-than
-    inline bool operator<(const type& p_type) const;
+    inline bool operator<(const type& p_type) const
+    {
+        return m_str < p_type.m_str;
+    }
+
+    /// \brief greater-than
+    inline bool operator>(const type& p_type) const
+    {
+        return m_str > p_type.m_str;
+    }
 
     /// \brief not allowed
     void* operator new[](size_t) = delete;
@@ -68,6 +97,9 @@ struct type
     void* operator new(size_t) = delete;
 
   private:
+    ///
+    /// \brief m_str the value of the @p type
+    ///
     std::string m_str;
 };
 
@@ -77,7 +109,28 @@ struct type
 struct types
 {
     /// \brief
-    typedef std::list<value>::const_iterator const_iterator;
+    typedef std::set<type>::const_iterator const_iterator;
+
+    ///
+    /// \brief value_t
+    ///
+    typedef type value_t;
+
+    ///
+    /// \brief operator <<
+    /// \param p_out
+    /// \param p_types
+    /// \return
+    ///
+    inline friend std::ostream& operator<<(std::ostream& p_out,
+                                           const types& p_types)
+    {
+        static const std::string _space(" ");
+        for (const type& _type : p_types.m_set) {
+            p_out << _type << _space;
+        }
+        return p_out;
+    }
 
     /// \brief
     types() = delete;
@@ -87,7 +140,10 @@ struct types
     /// \param p_types_str is a string that contains space separated @p
     /// value objects, like "= == ;"
     ///
-    explicit types(const std::string& p_types_str);
+    explicit types(const std::string& p_types_str)
+    {
+        str2col(p_types_str, *this);
+    }
 
     /// \brief not allowed
     types(const types&) = delete;
@@ -116,14 +172,23 @@ struct types
     /// \brief not allowed
     void* operator new(size_t) = delete;
 
-    /// \brief
-    const_iterator begin() const;
+    ///
+    /// \brief add
+    /// \param p_type
+    ///
+    inline void add(type&& p_type) { m_set.insert(std::move(p_type)); }
 
     /// \brief
-    const_iterator end() const;
+    inline const_iterator begin() const { return m_set.begin(); }
+
+    /// \brief
+    inline const_iterator end() const { return m_set.end(); }
 
   private:
-    std::list<type> m_types;
+    ///
+    /// \brief m_set the set of @p type objects
+    ///
+    std::set<type> m_set;
 };
 
 } // namespace business

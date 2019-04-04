@@ -7,11 +7,11 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
-#include <list>
+#include <set>
 #include <string>
 
-#include <interpreter/business/type.h>
-#include <interpreter/business/value.h>
+#include <interpreter/business/internal/lexeme.h>
+#include <interpreter/business/internal/type.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -22,8 +22,8 @@ namespace business {
 
 /// \brief symbol Represents a symbol read from the text being interpreted
 ///
-///  A symbol contains a value, usualy called lexema, which is the string
-///  read from the text being analysed.
+///  A symbol contains a lexeme, which is the string read from the text being
+///  analysed.
 ///
 ///  A symbol has a type, like "integer", "variable_identifier" or
 ///  "reserved_word". The type of a symbol is determined by a
@@ -32,11 +32,31 @@ struct symbol
 {
 
   public:
-    /// \brief
-    inline symbol();
+    ///
+    /// \brief operator <<
+    /// \param p_out
+    /// \param p_symbol
+    /// \return
+    ///
+    inline friend std::ostream& operator<<(std::ostream& p_out,
+                                           const symbol& p_symbol)
+    {
+        static const std::string _space = " ";
+        static const std::string _open = "[";
+        static const std::string _close = "]";
+        p_out << _open << p_symbol.m_lexeme << _space << p_symbol.m_type
+              << _close;
+        return p_out;
+    }
 
     /// \brief
-    inline explicit symbol(const value& p_value, const type& p_type);
+    inline symbol() = default;
+
+    /// \brief
+    inline explicit symbol(const lexeme& p_lexeme, const type& p_type)
+      : m_lexeme(p_lexeme)
+      , m_type(p_type)
+    {}
 
     /// \brief not allowed
     symbol(const symbol&) = default;
@@ -54,13 +74,31 @@ struct symbol
     symbol& operator=(symbol&&) = default;
 
     /// \brief equal-to
-    inline bool operator==(const symbol& p_symbol) const;
+    inline bool operator==(const symbol& p_symbol) const
+    {
+        return ((m_lexeme == p_symbol.m_lexeme) && (m_type == p_symbol.m_type));
+    }
 
     /// \brief not-equal-to
-    inline bool operator!=(const symbol& p_symbol) const;
+    inline bool operator!=(const symbol& p_symbol) const
+    {
+        return ((m_lexeme != p_symbol.m_lexeme) || (m_type != p_symbol.m_type));
+    }
 
     /// \brief less-than
-    inline bool operator<(const symbol& p_symbol) const;
+    inline bool operator<(const symbol& p_symbol) const
+    {
+        if (m_lexeme < p_symbol.m_lexeme) {
+            return true;
+        }
+        if (m_lexeme > p_symbol.m_lexeme) {
+            return false;
+        }
+        if (m_type < p_symbol.m_type) {
+            return true;
+        }
+        return false;
+    }
 
     /// \brief not allowed
     void* operator new[](size_t) = delete;
@@ -75,17 +113,17 @@ struct symbol
     void* operator new(size_t) = delete;
 
     /// \brief Very special, indicating that all the input text was analysed
-    static const value eot;
+    static const lexeme eot;
 
   private:
     /// \brief
-    static const value m_dummy_value;
+    static const lexeme m_dummy_lexeme;
 
     /// \brief
     static const type m_dummy_type;
 
     /// \brief
-    value m_value = m_dummy_value;
+    lexeme m_lexeme = m_dummy_lexeme;
 
     /// \brief
     type m_type = m_dummy_type;
@@ -97,7 +135,23 @@ struct symbol
 struct symbols
 {
     /// \brief
-    typedef std::list<value>::const_iterator const_iterator;
+    typedef std::set<symbol>::const_iterator const_iterator;
+
+    ///
+    /// \brief operator <<
+    /// \param p_out
+    /// \param p_symbols
+    /// \return
+    ///
+    inline friend std::ostream& operator<<(std::ostream& p_out,
+                                           const symbols& p_symbols)
+    {
+        static const std::string _space(" ");
+        for (const symbol& _symbol : p_symbols.m_set) {
+            p_out << _symbol << _space;
+        }
+        return p_out;
+    }
 
     /// \brief
     symbols() = default;
@@ -130,16 +184,19 @@ struct symbols
     void* operator new(size_t) = delete;
 
     /// \brief
-    void push_back(symbol&& p_symbol);
+    inline void add(symbol&& p_symbol) { m_set.insert(std::move(p_symbol)); }
 
     /// \brief
-    const_iterator begin() const;
+    const_iterator begin() const { return m_set.begin(); }
 
     /// \brief
-    const_iterator end() const;
+    const_iterator end() const { return m_set.end(); }
 
   private:
-    std::list<symbol> m_symbols;
+    ///
+    /// \brief m_set
+    ///
+    std::set<symbol> m_set;
 };
 
 } // namespace business
