@@ -1,4 +1,5 @@
-SUBDIRS =
+SUBDIRS = \
+    lexeme
 
   
 TEMPLATE = subdirs

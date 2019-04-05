@@ -10,7 +10,7 @@
 #include <set>
 #include <string>
 
-#include <interpreter/business/internal/str2lcol.h>
+#include <string/business/split_str.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -41,9 +41,20 @@ struct lexeme
     /// \brief
     lexeme() = delete;
 
-    /// \brief
+    /// \brief constructor by copy
+    ///
+    /// \param p_str is the identifier of the lexeme
+    ///
     inline explicit lexeme(const std::string& p_str)
       : m_str(p_str)
+    {}
+
+    /// \brief constructor by move
+    ///
+    /// \param p_str is the identifier of the lexeme
+    ///
+    inline explicit lexeme(std::string&& p_str)
+      : m_str(std::move(p_str))
     {}
 
     /// \brief not allowed
@@ -143,7 +154,10 @@ struct lexemes
     ///
     explicit lexemes(const std::string& p_lexemes_str)
     {
-        str2col(p_lexemes_str, *this);
+        string::business::slipt_str(p_lexemes_str,
+                                    [this](std::string&& p_str) -> void {
+                                        m_set.insert(lexeme(std::move(p_str)));
+                                    });
     }
 
     /// \brief not allowed

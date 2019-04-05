@@ -10,7 +10,7 @@
 #include <set>
 #include <string>
 
-#include <interpreter/business/internal/lexeme.h>
+#include <string/business/split_str.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -40,9 +40,20 @@ struct type
     /// \brief
     type() = delete;
 
-    /// \brief
+    /// \brief constructor by copy
+    ///
+    /// \param p_str is the identifier of the type
+    ///
     inline explicit type(const std::string& p_str)
       : m_str(p_str)
+    {}
+
+    /// \brief constructor by move
+    ///
+    /// \param p_str is the identifier of the type
+    ///
+    inline explicit type(std::string&& p_str)
+      : m_str(std::move(p_str))
     {}
 
     /// \brief not allowed
@@ -142,7 +153,10 @@ struct types
     ///
     explicit types(const std::string& p_types_str)
     {
-        str2col(p_types_str, *this);
+        string::business::slipt_str(p_types_str,
+                                    [this](std::string&& p_str) -> void {
+                                        m_set.insert(type(std::move(p_str)));
+                                    });
     }
 
     /// \brief not allowed

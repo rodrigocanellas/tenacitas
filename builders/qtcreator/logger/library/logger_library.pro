@@ -37,7 +37,6 @@ SOURCES += \
 
 include (../../common.pri)
 
-#LIBS+=-ltenacitas.concurrent
 
 message("LIBS = "$$LIBS)
 

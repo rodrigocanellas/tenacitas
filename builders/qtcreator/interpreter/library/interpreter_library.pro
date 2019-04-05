@@ -17,12 +17,12 @@ LIBS+=-ltenacitas.logger
 
 HEADERS += \
     ../../../../code/interpreter/business/internal/lexeme.h \
-    ../../../../code/interpreter/business/internal/lexeme.h \
-    ../../../../code/interpreter/business/internal/str2lcol.h \
     ../../../../code/interpreter/business/internal/symbol.h \
-    ../../../../code/interpreter/business/internal/type.h
+    ../../../../code/interpreter/business/internal/type.h \
+    ../../../../code/string/business/split_str.h
 
 SOURCES += \
     ../../../../code/interpreter/business/internal/symbol.cpp
 
 
+LIBS+=-ltenacitas.string
