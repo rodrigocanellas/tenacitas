@@ -7,6 +7,7 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
+#include <cstdint>
 #include <set>
 #include <string>
 
@@ -124,11 +125,6 @@ struct lexemes
     typedef std::set<lexeme>::const_iterator const_iterator;
 
     ///
-    /// \brief value_t
-    ///
-    typedef lexeme value_t;
-
-    ///
     /// \brief operator <<
     /// \param p_out
     /// \param p_lexemes
@@ -167,7 +163,7 @@ struct lexemes
     lexemes(lexemes&&) = delete;
 
     /// \brief Destructor
-    ~lexemes() = delete;
+    ~lexemes() = default;
 
     /// \brief not allowed
     lexemes& operator=(const lexemes&) = delete;
@@ -198,6 +194,12 @@ struct lexemes
 
     /// \brief
     inline const_iterator end() const { return m_set.end(); }
+
+    /// \brief
+    inline bool empty() const { return m_set.empty(); }
+
+    /// \brief
+    inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
 
   private:
     ///

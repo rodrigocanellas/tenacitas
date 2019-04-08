@@ -1,5 +1,6 @@
 SUBDIRS = \
-  string/library/string_library.pro
+  string/library/string_library.pro \
+  string/test/string_test.pro
 
 
 
