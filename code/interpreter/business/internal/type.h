@@ -198,6 +198,12 @@ struct types
     /// \brief
     inline const_iterator end() const { return m_set.end(); }
 
+    /// \brief
+    inline bool empty() const { return m_set.empty(); }
+
+    /// \brief
+    inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
+
   private:
     ///
     /// \brief m_set the set of @p type objects
