@@ -45,7 +45,7 @@ struct symbol
         static const std::string _open = "[";
         static const std::string _close = "]";
         p_out << _open << p_symbol.m_lexeme << _space << p_symbol.m_type
-              << _close;
+              << _close << _space;
         return p_out;
     }
 
@@ -111,6 +111,18 @@ struct symbol
 
     /// \brief not allowed
     void* operator new(size_t) = delete;
+
+    ///
+    /// \brief get_lexeme
+    /// \return the @p lexeme associated to the @p symbol
+    ///
+    inline const lexeme& get_lexeme() const { return m_lexeme; }
+
+    ///
+    /// \brief get_type
+    /// \return the @p type associated to the @p symbol
+    ///
+    inline const type& get_type() const { return m_type; }
 
     /// \brief Very special, indicating that all the input text was analysed
     static const lexeme eot;
@@ -191,6 +203,12 @@ struct symbols
 
     /// \brief
     const_iterator end() const { return m_set.end(); }
+
+    /// \brief
+    inline bool empty() const { return m_set.empty(); }
+
+    /// \brief
+    inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
 
   private:
     ///

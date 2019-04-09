@@ -1,5 +1,6 @@
 SUBDIRS = \
     lexeme \
+    symbol \
     type
 
   
