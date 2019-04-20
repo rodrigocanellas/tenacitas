@@ -2,33 +2,37 @@
 
 hide empty members
 
-package unp {
+package layer {
+    enum datalink {
+        ethernet
+        gprs
+        wifi
+    }
+    enum  network {
+        ipv4
+        ipv6
+    }
+    enum transport {
+        tcp
+        udp
+    }
+    enum application {
+        web_server
+        mamba
+    }
 
-    package layer {
-        enum datalink {
-            ethernet
-            gprs
-            wifi
-        }
-        enum  network {
-            ip4
-            ip6
-        }
-       enum transport {
-            tcp
-            udp
-        }
-        enum application {
-            web_server
-        }
+    application --> transport
+    transport --> network
+    network --> datalink
+}    
+class buffer
+class connection {
+    + read() : buffer
+    + write(buffer)
 }
+note top of connection : equivalent to socket in BSD 
 
-@endumlml enum transport {
-           tcp
-        }
-        enum application {
-            web_server
-        }
-}
-
-@endumlml
+connection ..> "uses" transport
+network ..> "determines" address
+connection ..> "uses" network
+@enduml

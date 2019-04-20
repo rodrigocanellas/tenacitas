@@ -80,7 +80,5 @@ interfaces *-- "*" interface
 interface *-- interface_type
 interface *-- interface_status
 interface *-- transmission_status
-
 }
-
-@enduml
+@endumlml
