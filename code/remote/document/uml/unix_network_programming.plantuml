@@ -1,0 +1,34 @@
+@startuml
+
+hide empty members
+
+package unp {
+
+    package layer {
+        enum datalink {
+            ethernet
+            gprs
+            wifi
+        }
+        enum  network {
+            ip4
+            ip6
+        }
+       enum transport {
+            tcp
+            udp
+        }
+        enum application {
+            web_server
+        }
+}
+
+@endumlml enum transport {
+           tcp
+        }
+        enum application {
+            web_server
+        }
+}
+
+@endumlml
