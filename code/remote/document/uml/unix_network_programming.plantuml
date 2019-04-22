@@ -32,6 +32,8 @@ class connection {
 }
 note top of connection : equivalent to socket in BSD 
 
+class connector
+
 connection ..> "uses" transport
 network ..> "determines" address
 connection ..> "uses" network
