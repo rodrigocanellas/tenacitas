@@ -10,11 +10,13 @@ package layer {
     }
     enum  network {
         ipv4
-        ipv6
+        ipv6        
     }
     enum transport {
         tcp
         udp
+        icpm
+        igmp
     }
     enum application {
         web_server
@@ -26,13 +28,17 @@ package layer {
     network --> datalink
 }    
 class buffer
-class connection {
+class connection  <<BSD socket>> {
     + read() : buffer
     + write(buffer)
 }
-note top of connection : equivalent to socket in BSD 
 
 class connector
+
+class bpf <<???>>
+class dlpi <<???>>
+class arp <<???>>
+class rarp <<???>>>
 
 connection ..> "uses" transport
 network ..> "determines" address
