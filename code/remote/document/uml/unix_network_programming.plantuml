@@ -9,8 +9,8 @@ package layer {
         wifi
     }
     enum  network {
-        ipv4
-        ipv6        
+        ipv-4
+        ipv-6        
     }
     enum transport {
         tcp
