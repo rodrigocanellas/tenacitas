@@ -1,7 +1,7 @@
 @startuml
-[machine_human_interface] --> [business]
+[user] --> [business]
 [business] --> [persistence]
-[machine_human_interface] --> [entities]
+[user] --> [entities]
 [business] -right-> [entities]
 [persistence] -right-> [entities]
 @enduml

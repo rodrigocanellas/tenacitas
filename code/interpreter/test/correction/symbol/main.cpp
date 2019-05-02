@@ -5,7 +5,9 @@
 #include <calendar/business/epoch.h>
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/symbol.h>
+#include <interpreter/business/internal/symbols.h>
 #include <interpreter/business/internal/type.h>
+#include <interpreter/business/internal/types.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
@@ -15,7 +17,10 @@ struct symbol_creation_by_copy
 {
     bool operator()()
     {
-        symbol _symbol(lexeme("loop"), type("reserved"));
+        types _types("reserved");
+
+        types::const_iterator _type_ite =
+          _types.find() symbol _symbol(lexeme("loop"), type("reserved"));
 
         cerr_test("symbol = ", _symbol);
 

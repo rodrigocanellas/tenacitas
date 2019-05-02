@@ -4,22 +4,53 @@
 
 #include <calendar/business/epoch.h>
 #include <interpreter/business/internal/type.h>
+#include <interpreter/business/internal/types.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 using namespace tenacitas::interpreter::business;
 
+struct recognize_integer
+{
+    bool operator()(const lexeme& p_lex)
+    {
+        lexeme::const_iterator _end = p_lex.end();
+        for (lexeme::const_iterator _ite = p_lex.begin(); _ite != _end;
+             ++_ite) {
+            if (std::isdigit(*_ite) != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+struct recognize_word
+{
+    bool operator()(const lexeme& p_lex)
+    {
+        lexeme::const_iterator _end = p_lex.end();
+        for (lexeme::const_iterator _ite = p_lex.begin(); _ite != _end;
+             ++_ite) {
+            if (std::isalpha(*_ite) != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
 struct type_creation_by_copy
 {
     bool operator()()
     {
-        type _type("hello");
+        type _type("integer", recognize_integer());
         std::stringstream _stream;
         _stream << _type;
         std::string _str;
         _stream >> _str;
         cerr_test("type = ", _type, ", str = ", _str);
-        return (_str == "hello");
+        return (_str == "integer");
     }
 };
 
@@ -27,14 +58,13 @@ struct type_creation_by_move
 {
     bool operator()()
     {
-
-        type _type(std::string("bye"));
+        type _type(std::string("integer"), recognize_integer());
         std::stringstream _stream;
         _stream << _type;
         std::string _str;
         _stream >> _str;
         cerr_test("type = ", _type, ", str = ", _str);
-        return (_str == "bye");
+        return (_str == "integer");
     }
 };
 
@@ -42,9 +72,8 @@ struct type_equal_to
 {
     bool operator()()
     {
-
-        type _type_1(std::string("bye"));
-        type _type_2(std::string("bye"));
+        type _type_1(std::string("integer"), recognize_integer());
+        type _type_2(std::string("integer"), recognize_integer());
 
         return (_type_1 == _type_2);
     }
@@ -54,172 +83,51 @@ struct type_not_equal_to
 {
     bool operator()()
     {
-
-        type _type_1(std::string("bye"));
-        type _type_2(std::string("hi"));
+        type _type_1(std::string("integer"), recognize_integer());
+        type _type_2(std::string("word"), recognize_word());
 
         return (_type_1 != _type_2);
     }
 };
 
-struct type_greather_than_1
+struct type_greather_than
 {
     bool operator()()
     {
-
-        type _type_1(std::string("bye"));
-        type _type_2(std::string("byd"));
+        type _type_1(std::string("word"), recognize_word());
+        type _type_2(std::string("integer"), recognize_integer());
 
         return (_type_1 > _type_2);
     }
 };
 
-struct type_greather_than_2
+struct type_less_than
 {
     bool operator()()
     {
-
-        type _type_1(std::string("bye"));
-        type _type_2(std::string("byda"));
-
-        return (_type_1 > _type_2);
-    }
-};
-
-struct type_less_than_1
-{
-    bool operator()()
-    {
-
-        type _type_1(std::string("bye"));
-        type _type_2(std::string("byf"));
+        type _type_1(std::string("integer"), recognize_integer());
+        type _type_2(std::string("word"), recognize_word());
 
         return (_type_1 < _type_2);
     }
 };
 
-struct type_less_than_2
+struct add_types
 {
     bool operator()()
     {
 
-        type _type_1(std::string("byd"));
-        type _type_2(std::string("byea"));
+        types _types;
 
-        return (_type_1 < _type_2);
-    }
-};
-
-struct types_creation_from_string
-{
-    bool operator()()
-    {
-        types _types("; == < >=");
+        _types.add(type(std::string("integer"), recognize_integer()));
+        _types.add(type(std::string("word"), recognize_word()));
 
         if (_types.empty()) {
-            cerr_error("types should not be empty");
             return false;
         }
-
-        if (_types.size() != 4) {
-            cerr_error("types size should be 4, but it is ", _types.size());
+        if (_types.size() != 2) {
             return false;
         }
-        {
-            for (types::const_iterator _i = _types.begin(); _i != _types.end();
-                 ++_i) {
-                cerr_test("type = ", *_i);
-            }
-        }
-
-        types::const_iterator _ite = _types.begin();
-        if (*_ite != type(";")) {
-            cerr_error("types 1 should ';', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type("<")) {
-            cerr_error("types 2 should '<', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type("==")) {
-            cerr_error("types 3 should '==', but it is ", *_ite);
-            return false;
-        }
-        ++_ite;
-        if (*_ite != type(">=")) {
-            cerr_error("types 4 should '>=', but it is ", *_ite);
-            return false;
-        }
-
-        return true;
-    }
-};
-
-struct types_creation_from_string_and_add_more
-{
-    bool operator()()
-    {
-        types _types("; == < >=");
-
-        if (_types.empty()) {
-            cerr_error("types should not be empty");
-            return false;
-        }
-
-        if (_types.size() != 4) {
-            cerr_error("types size should be 4, but it is ", _types.size());
-            return false;
-        }
-
-        _types.add(type("&"));
-        _types.add(type("+="));
-
-        {
-            for (types::const_iterator _i = _types.begin(); _i != _types.end();
-                 ++_i) {
-                cerr_test("type = ", *_i);
-            }
-        }
-
-        types::const_iterator _ite = _types.begin();
-        if (*_ite != type("&")) {
-            cerr_error("types 1 should '&', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type("+=")) {
-            cerr_error("types 2 should '+=', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type(";")) {
-            cerr_error("types 3 should '+=', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type("<")) {
-            cerr_error("types 4 should '<', but it is ", *_ite);
-            return false;
-        }
-
-        ++_ite;
-        if (*_ite != type("==")) {
-            cerr_error("types 5 should '==', but it is ", *_ite);
-            return false;
-        }
-        ++_ite;
-        if (*_ite != type(">=")) {
-            cerr_error("types 6 should '>=', but it is ", *_ite);
-            return false;
-        }
-
         return true;
     }
 };
@@ -231,27 +139,7 @@ main(int argc, char** argv)
     run_test(type_creation_by_move, argc, argv, "'type' creation by move");
     run_test(type_equal_to, argc, argv, "'type' equal_to");
     run_test(type_not_equal_to, argc, argv, "'type' not_equal_to");
-    run_test(
-      type_greather_than_1, argc, argv, "'type' greather_than, equal sizes");
-    run_test(type_greather_than_2,
-             argc,
-             argv,
-             "'type' greather_than, right longer than left, but left still "
-             "typeicographically greater");
-    run_test(type_less_than_1, argc, argv, "'type' less_than, equal sizes");
-    run_test(type_less_than_2,
-             argc,
-             argv,
-             "'type' less_than, right longer than left, but left still "
-             "typeicographically less");
-    run_test(types_creation_from_string,
-             argc,
-             argv,
-             "'types' creation with a string with 4 type: ; == < >=");
-
-    run_test(types_creation_from_string_and_add_more,
-             argc,
-             argv,
-             "'types' creation with a string with 4 type: ; == < >=, and "
-             "then added & and +=");
+    run_test(type_greather_than, argc, argv, "'type' greather_than");
+    run_test(type_less_than, argc, argv, "'type' less_than");
+    run_test(add_types, argc, argv, "add 2 types to 'types'");
 }

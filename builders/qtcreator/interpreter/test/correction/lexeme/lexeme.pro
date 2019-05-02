@@ -17,7 +17,7 @@ include (../../../../common.pri)
 message("LIBS = $$LIBS")
 
 
-LIBS += -ltenacitas.logger -ltenacitas.string
+LIBS += -ltenacitas.logger -ltenacitas.string -ltenacitas.interpreter
 
 SOURCES += \
     ../../../../../../code/interpreter/test/correction/lexeme/main.cpp

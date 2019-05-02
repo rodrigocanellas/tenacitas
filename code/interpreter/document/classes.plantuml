@@ -1,0 +1,30 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+class type
+class types
+class lexeme
+class symbol
+class symbols
+class recognizer
+
+type *-- recognizer
+
+types +--types.const_iterator
+
+
+symbol *-- lexeme 
+symbol *--  types.const_iterator
+
+symbols *-- "*" symbol
+
+token *-- "*" lexeme
+token *-- types.const_iterator
+
+tokens *-- "*" token
+
+types *-- "*" type 
+
+@enduml

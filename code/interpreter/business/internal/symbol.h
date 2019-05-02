@@ -8,10 +8,12 @@
 
 #include <cstddef>
 #include <set>
+#include <sstream>
 #include <string>
 
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/type.h>
+#include <interpreter/business/internal/types.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -41,21 +43,21 @@ struct symbol
     inline friend std::ostream& operator<<(std::ostream& p_out,
                                            const symbol& p_symbol)
     {
-        static const std::string _space = " ";
-        static const std::string _open = "[";
-        static const std::string _close = "]";
-        p_out << _open << p_symbol.m_lexeme << _space << p_symbol.m_type
+        static const char* _space = " ";
+        static const char* _open = "[";
+        static const char* _close = "]";
+        p_out << _open << p_symbol.m_lexeme << _space << *(p_symbol.m_type_ite)
               << _close << _space;
         return p_out;
     }
 
     /// \brief
-    inline symbol() = default;
+    inline symbol() = delete;
 
     /// \brief
-    inline explicit symbol(const lexeme& p_lexeme, const type& p_type)
+    inline explicit symbol(const lexeme& p_lexeme, types::const_iterator p_type)
       : m_lexeme(p_lexeme)
-      , m_type(p_type)
+      , m_type_ite(p_type)
     {}
 
     /// \brief not allowed
@@ -76,13 +78,15 @@ struct symbol
     /// \brief equal-to
     inline bool operator==(const symbol& p_symbol) const
     {
-        return ((m_lexeme == p_symbol.m_lexeme) && (m_type == p_symbol.m_type));
+        return ((m_lexeme == p_symbol.m_lexeme) &&
+                (*m_type_ite == *(p_symbol.m_type_ite)));
     }
 
     /// \brief not-equal-to
     inline bool operator!=(const symbol& p_symbol) const
     {
-        return ((m_lexeme != p_symbol.m_lexeme) || (m_type != p_symbol.m_type));
+        return ((m_lexeme != p_symbol.m_lexeme) ||
+                (*m_type_ite != *(p_symbol.m_type_ite)));
     }
 
     /// \brief less-than
@@ -94,7 +98,7 @@ struct symbol
         if (m_lexeme > p_symbol.m_lexeme) {
             return false;
         }
-        if (m_type < p_symbol.m_type) {
+        if ((*m_type_ite) < *(p_symbol.m_type_ite)) {
             return true;
         }
         return false;
@@ -116,105 +120,20 @@ struct symbol
     /// \brief get_lexeme
     /// \return the @p lexeme associated to the @p symbol
     ///
-    inline const lexeme& get_lexeme() const { return m_lexeme; }
+    inline lexeme get_lexeme() const { return m_lexeme; }
 
     ///
     /// \brief get_type
     /// \return the @p type associated to the @p symbol
     ///
-    inline const type& get_type() const { return m_type; }
-
-    /// \brief Very special, indicating that all the input text was analysed
-    static const lexeme eot;
+    inline type get_type() const { return *m_type_ite; }
 
   private:
     /// \brief
-    static const lexeme m_dummy_lexeme;
+    lexeme m_lexeme;
 
     /// \brief
-    static const type m_dummy_type;
-
-    /// \brief
-    lexeme m_lexeme = m_dummy_lexeme;
-
-    /// \brief
-    type m_type = m_dummy_type;
-};
-
-///
-/// \brief symbols
-///
-struct symbols
-{
-    /// \brief
-    typedef std::set<symbol>::const_iterator const_iterator;
-
-    ///
-    /// \brief operator <<
-    /// \param p_out
-    /// \param p_symbols
-    /// \return
-    ///
-    inline friend std::ostream& operator<<(std::ostream& p_out,
-                                           const symbols& p_symbols)
-    {
-        static const std::string _space(" ");
-        for (const symbol& _symbol : p_symbols.m_set) {
-            p_out << _symbol << _space;
-        }
-        return p_out;
-    }
-
-    /// \brief
-    symbols() = default;
-
-    /// \brief not allowed
-    symbols(const symbols&) = default;
-
-    /// \brief not allowed
-    symbols(symbols&&) = default;
-
-    /// \brief Destructor
-    ~symbols() = default;
-
-    /// \brief not allowed
-    symbols& operator=(const symbols&) = default;
-
-    /// \brief not allowed
-    symbols& operator=(symbols&&) = default;
-
-    /// \brief not allowed
-    void* operator new[](size_t) = delete;
-
-    /// \brief not allowed
-    void operator delete[](void*) = delete;
-
-    /// \brief not allowed
-    void operator delete(void* p) = delete;
-
-    /// \brief not allowed
-    void* operator new(size_t) = delete;
-
-    /// \brief
-    inline void add(symbol&& p_symbol) { m_set.insert(std::move(p_symbol)); }
-
-    /// \brief
-    const_iterator begin() const { return m_set.begin(); }
-
-    /// \brief
-    const_iterator end() const { return m_set.end(); }
-
-    /// \brief
-    inline bool empty() const { return m_set.empty(); }
-
-    /// \brief
-    inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
-
-  private:
-    ///
-    /// \brief m_set
-    ///
-    std::set<symbol> m_set;
+    types::const_iterator m_type_ite;
 };
 
 } // namespace business

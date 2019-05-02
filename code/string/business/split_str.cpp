@@ -20,14 +20,12 @@ slipt_str(const std::string& p_values,
         }
         _p2 = p_values.find(p_separator, _p1);
         if (_p2 == std::string::npos) {
-            std::string _tmp(p_values.substr(_p1, p_values.size() - _p1));
-            p_handler(std::move(_tmp));
+            p_handler(p_values.substr(_p1, p_values.size() - _p1));
             break;
         }
 
         if (_p2 != _p1) {
-            std::string _tmp(p_values.substr(_p1, (_p2 - _p1)));
-            p_handler(std::move(_tmp));
+            p_handler(p_values.substr(_p1, (_p2 - _p1)));
         }
 
         ++_p2;
