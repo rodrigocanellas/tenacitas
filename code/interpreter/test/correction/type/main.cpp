@@ -12,12 +12,11 @@ using namespace tenacitas::interpreter::business;
 
 struct recognize_integer
 {
-    bool operator()(const lexeme& p_lex)
+    bool operator()(const std::string& p_str)
     {
-        lexeme::const_iterator _end = p_lex.end();
-        for (lexeme::const_iterator _ite = p_lex.begin(); _ite != _end;
-             ++_ite) {
-            if (std::isdigit(*_ite) != 0) {
+
+        for (std::string::value_type _c : p_str) {
+            if (std::isdigit(_c) == 0) {
                 return false;
             }
         }
@@ -27,12 +26,10 @@ struct recognize_integer
 
 struct recognize_word
 {
-    bool operator()(const lexeme& p_lex)
+    bool operator()(const std::string& p_str)
     {
-        lexeme::const_iterator _end = p_lex.end();
-        for (lexeme::const_iterator _ite = p_lex.begin(); _ite != _end;
-             ++_ite) {
-            if (std::isalpha(*_ite) != 0) {
+        for (std::string::value_type _c : p_str) {
+            if (std::isalpha(_c) == 0) {
                 return false;
             }
         }
@@ -132,6 +129,21 @@ struct add_types
     }
 };
 
+struct recognize_non_type
+{
+    bool operator()()
+    {
+        types _types;
+        _types.add(type(std::string("integer"), recognize_integer()));
+        _types.add(type(std::string("word"), recognize_word()));
+        if (_types.recognize("!ola") != _types.end()) {
+            cerr_test("'!ola' recognized, but it should not");
+            return false;
+        }
+        return true;
+    }
+};
+
 int
 main(int argc, char** argv)
 {
@@ -142,4 +154,6 @@ main(int argc, char** argv)
     run_test(type_greather_than, argc, argv, "'type' greather_than");
     run_test(type_less_than, argc, argv, "'type' less_than");
     run_test(add_types, argc, argv, "add 2 types to 'types'");
+    run_test(
+      recognize_non_type, argc, argv, "does not recognize a non existing type");
 }

@@ -7,6 +7,7 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
+#include <iostream>
 #include <set>
 #include <string>
 
@@ -42,10 +43,12 @@ struct types
     inline friend std::ostream& operator<<(std::ostream& p_out,
                                            const types& p_types)
     {
-        static const std::string _space(" ");
+        p_out << "{ ";
+        static const char* _space = " ";
         for (const type& _type : p_types.m_set) {
             p_out << _type << _space;
         }
+        p_out << " }";
         return p_out;
     }
 
@@ -100,29 +103,18 @@ struct types
     ///
     /// \brief recognize checks if \p lexeme is of any known \p type
     /// \param p_les the string to be verified
-    /// \return (true, a const_iterator to the \p type), if \p p_lex is of kown
-    /// a \p type; (false, end()) otherwise
+    /// \return a valid const_iterator to the \p type, if \p p_lex is of a known
+    /// \p type; \p end() otherwise
     ///
-    inline std::pair<bool, const_iterator> recognize(const lexeme& p_lex) const
+    inline const_iterator recognize(const std::string& p_str) const
     {
         const_iterator _end = m_set.end();
         for (const_iterator _ite = m_set.begin(); _ite != _end; ++_ite) {
-            if (_ite->recognize(p_lex)) {
-                return { true, _ite };
+            if (_ite->recognize(p_str)) {
+                return _ite;
             }
         }
-        return { false, _end };
-    }
-
-  private:
-    ///
-    /// \brief find
-    /// \param p_type
-    /// \return a valid \p const_iterator if found, or \p end() if not found
-    ///
-    inline const_iterator find(const type& p_type) const
-    {
-        return m_set.find(p_type);
+        return _end;
     }
 
   private:
@@ -131,6 +123,7 @@ struct types
     ///
     typedef std::set<type> set_t;
 
+  private:
     ///
     /// \brief m_set the set of @p type objects
     ///

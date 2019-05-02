@@ -31,7 +31,7 @@ struct type
     /// \brief recognize function that recognizes, or not, if a \p lexeme is
     /// of this \p type
     ///
-    typedef std::function<bool(const lexeme&)> recognizer;
+    typedef std::function<bool(const std::string&)> recognizer;
 
     ///
     /// \brief operator <<
@@ -48,15 +48,15 @@ struct type
 
     /// \brief
     type()
-      : m_str("--- INVALID TYPE ---")
-      , m_recognize([](const lexeme&) -> bool { return false; })
+      : m_str("--- NULL TYPE ---")
+      , m_recognize([](const std::string&) -> bool { return false; })
     {}
 
     /// \brief constructor by copy
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline explicit type(const std::string& p_str, recognizer p_recognize)
+    inline type(const std::string& p_str, recognizer p_recognize)
       : m_str(p_str)
       , m_recognize(p_recognize)
     {}
@@ -65,7 +65,7 @@ struct type
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline explicit type(std::string&& p_str, recognizer p_recognize)
+    inline type(std::string&& p_str, recognizer p_recognize)
       : m_str(std::move(p_str))
       , m_recognize(p_recognize)
     {}
@@ -126,9 +126,9 @@ struct type
     /// \param p_lex
     /// \return
     ///
-    bool recognize(const lexeme& p_lexeme) const
+    bool recognize(const std::string& p_str) const
     {
-        return m_recognize(p_lexeme);
+        return m_recognize(p_str);
     }
 
   private:

@@ -7,6 +7,7 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
+#include <iostream>
 #include <set>
 #include <sstream>
 #include <string>
