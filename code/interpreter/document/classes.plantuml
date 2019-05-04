@@ -16,15 +16,14 @@ types +--types.const_iterator
 
 
 symbol *-- lexeme 
-symbol *--  types.const_iterator
+symbol *--  "m_ptr" type
 
 symbols *-- "*" symbol
 
-token *-- "*" lexeme
-token *-- types.const_iterator
-
-tokens *-- "*" token
-
 types *-- "*" type 
+
+class  tokens <<(T,#BBCCDD) type>>
+class  reserved_words <<(T,#BBCCDD) type>>
+class  identifier <<(T,#BBCCDD) type>>
 
 @enduml

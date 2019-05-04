@@ -37,6 +37,15 @@ struct recognize_word
     }
 };
 
+struct recognize_token
+{
+    bool operator()(const std::string& p_str)
+    {
+        return ((p_str[0] == ';') || (p_str[0] == ',') || (p_str[0] == ')') ||
+                (p_str[0] == '(') || (p_str == "!=") || (p_str == "=="));
+    }
+};
+
 struct type_creation_by_copy
 {
     bool operator()()
@@ -140,6 +149,54 @@ struct recognize_non_type
             cerr_test("'!ola' recognized, but it should not");
             return false;
         }
+        cerr_test("Type of '!ola' was not recognized");
+        return true;
+    }
+};
+
+struct recognize_type
+{
+    bool operator()()
+    {
+        types _types;
+        _types.add(type(std::string("integer"), recognize_integer()));
+        _types.add(type(std::string("word"), recognize_word()));
+        types::const_iterator _ite = _types.recognize("1902");
+        if (_ite == _types.end()) {
+            cerr_test("'1902' not recognized, but it should have");
+            return false;
+        }
+        cerr_test("Type of '1902' is ", *_ite);
+        return true;
+    }
+};
+
+struct recognize_by_value
+{
+    bool operator()()
+    {
+        type _tokens(std::string("token"), recognize_token());
+
+        if (!_tokens.recognize("==")) {
+            cerr_test("'==' not recognized, but it should have");
+            return false;
+        }
+        cerr_test("Type of '==' is ", _tokens);
+        return true;
+    }
+};
+
+struct dont_recognize_by_value
+{
+    bool operator()()
+    {
+        type _tokens(std::string("token"), recognize_token());
+
+        if (_tokens.recognize("!;;")) {
+            cerr_test("'!;;' recognized, but it should not have");
+            return false;
+        }
+        cerr_test("'!;;' was not recognized");
         return true;
     }
 };
@@ -156,4 +213,11 @@ main(int argc, char** argv)
     run_test(add_types, argc, argv, "add 2 types to 'types'");
     run_test(
       recognize_non_type, argc, argv, "does not recognize a non existing type");
+    run_test(recognize_type, argc, argv, "recognizes an existing type");
+    run_test(
+      recognize_by_value, argc, argv, "recognizes '==' as a 'token' type");
+    run_test(dont_recognize_by_value,
+             argc,
+             argv,
+             "do not recognize '!;;' as a 'token' type");
 }
