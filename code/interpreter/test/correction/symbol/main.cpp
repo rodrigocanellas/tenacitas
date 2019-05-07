@@ -12,23 +12,60 @@
 #include <tester/business/run.h>
 
 using namespace tenacitas::interpreter::business;
+struct recognize_integer
+{
+    bool operator()(const std::string& p_str)
+    {
 
-struct symbol_creation_by_copy
+        for (std::string::value_type _c : p_str) {
+            if (std::isdigit(_c) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+struct recognize_word
+{
+    bool operator()(const std::string& p_str)
+    {
+        for (std::string::value_type _c : p_str) {
+            if (std::isalpha(_c) == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+struct recognize_token
+{
+    bool operator()(const std::string& p_str)
+    {
+        return ((p_str[0] == ';') || (p_str[0] == ',') || (p_str[0] == ')') ||
+                (p_str[0] == '(') || (p_str == "!=") || (p_str == "=="));
+    }
+};
+
+struct recognize_char
+{
+    bool operator()(const std::string& p_str)
+    {
+        return (std::isalpha(p_str[0]) == 1);
+    }
+};
+
+struct symbol_creation
 {
     bool operator()()
     {
-        //    {
-        //        types _types;
+        type _type("char", recognize_char());
 
-        //        types::const_iterator _type_ite =
-        //          _types.find() symbol _symbol(lexeme("loop"),
-        //          type("reserved"));
+        symbol _symbol(lexeme("a"), &_type);
 
-        //        cerr_test("symbol = ", _symbol);
-
-        //        return (_symbol.get_lexeme() == lexeme("loop") &&
-        //                _symbol.get_type() == type("reserved"));
-        return true;
+        return (_symbol.get_lexeme() == lexeme("a") &&
+                _symbol.get_type() == _type);
     }
 };
 
@@ -239,7 +276,10 @@ struct symbol_creation_by_copy
 int
 main(int argc, char** argv)
 {
-    run_test(symbol_creation_by_copy, argc, argv, "'symbol' creation by copy");
+    run_test(symbol_creation,
+             argc,
+             argv,
+             "'symbol' creation with lexeme \"a\", and type \"char\"");
     //    run_test(symbol_creation_by_move, argc, argv, "'symbol' creation by
     //    move"); run_test(symbol_equal_to, argc, argv, "'symbol' equal_to");
     //    run_test(symbol_not_equal_to, argc, argv, "'symbol' not_equal_to");

@@ -31,6 +31,7 @@ namespace business {
 ///  A symbol has a type, like "integer", "variable_identifier" or
 ///  "reserved_word". The type of a symbol is determined by a
 ///  tenacitas::interpreter::scanner object.
+///
 struct symbol
 {
 
@@ -47,7 +48,7 @@ struct symbol
         static const char* _space = " ";
         static const char* _open = "[";
         static const char* _close = "]";
-        p_out << _open << p_symbol.m_lexeme << _space << *(p_symbol.m_type_ite)
+        p_out << _open << p_symbol.m_lexeme << _space << *(p_symbol.m_type)
               << _close << _space;
         return p_out;
     }
@@ -56,9 +57,9 @@ struct symbol
     inline symbol() = delete;
 
     /// \brief
-    inline explicit symbol(const lexeme& p_lexeme, types::const_iterator p_type)
+    inline explicit symbol(const lexeme& p_lexeme, const type* const p_type)
       : m_lexeme(p_lexeme)
-      , m_type_ite(p_type)
+      , m_type(p_type)
     {}
 
     /// \brief not allowed
@@ -71,23 +72,23 @@ struct symbol
     ~symbol() = default;
 
     /// \brief not allowed
-    symbol& operator=(const symbol&) = default;
+    symbol& operator=(const symbol&) = delete;
 
     /// \brief not allowed
-    symbol& operator=(symbol&&) = default;
+    symbol& operator=(symbol&&) = delete;
 
     /// \brief equal-to
     inline bool operator==(const symbol& p_symbol) const
     {
         return ((m_lexeme == p_symbol.m_lexeme) &&
-                (*m_type_ite == *(p_symbol.m_type_ite)));
+                (*m_type == *(p_symbol.m_type)));
     }
 
     /// \brief not-equal-to
     inline bool operator!=(const symbol& p_symbol) const
     {
         return ((m_lexeme != p_symbol.m_lexeme) ||
-                (*m_type_ite != *(p_symbol.m_type_ite)));
+                (*m_type != *(p_symbol.m_type)));
     }
 
     /// \brief less-than
@@ -99,7 +100,7 @@ struct symbol
         if (m_lexeme > p_symbol.m_lexeme) {
             return false;
         }
-        if ((*m_type_ite) < *(p_symbol.m_type_ite)) {
+        if ((*m_type) < *(p_symbol.m_type)) {
             return true;
         }
         return false;
@@ -127,14 +128,14 @@ struct symbol
     /// \brief get_type
     /// \return the @p type associated to the @p symbol
     ///
-    inline type get_type() const { return *m_type_ite; }
+    inline type get_type() const { return *m_type; }
 
   private:
     /// \brief
     lexeme m_lexeme;
 
     /// \brief
-    types::const_iterator m_type_ite;
+    const type* const m_type;
 };
 
 } // namespace business
