@@ -131,6 +131,8 @@ struct type
         return m_recognize(p_str);
     }
 
+    static const type unreconized_type;
+
   private:
     ///
     /// \brief m_str the value of the \p type

@@ -27,6 +27,7 @@ HEADERS += \
 SOURCES += \
     ../../../../code/interpreter/business/internal/scanner.cpp \
     ../../../../code/interpreter/business/internal/symbol.cpp \
+    ../../../../code/interpreter/business/internal/type.cpp \
     ../../../../code/interpreter/business/internal/types.cpp
 
 

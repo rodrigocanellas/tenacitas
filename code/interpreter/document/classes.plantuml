@@ -9,7 +9,10 @@ class lexeme
 class symbol
 class symbols
 class recognizer
-
+class scanner {
+    + scanner(std::string::const_iterator p_begin, std::string::const_iterator p_end)
+    + symbol operator()()
+}
 type *-- recognizer
 
 types +--types.const_iterator
