@@ -12,6 +12,7 @@
 #include <string>
 
 #include <interpreter/business/internal/lexeme.h>
+#include <interpreter/business/internal/recognizer.h>
 #include <string/business/split_str.h>
 
 /// \brief namespace of the organization
@@ -26,12 +27,6 @@ namespace business {
 ///
 struct type
 {
-
-    ///
-    /// \brief recognize function that recognizes, or not, if a \p lexeme is
-    /// of this \p type
-    ///
-    typedef std::function<bool(const std::string&)> recognizer;
 
     ///
     /// \brief operator <<

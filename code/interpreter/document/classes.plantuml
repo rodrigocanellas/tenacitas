@@ -3,30 +3,27 @@
 hide empty members
 allow_mixing
 
-class type
-class types
-class lexeme
-class symbol
-class symbols
-class recognizer
 class scanner {
     + scanner(std::string::const_iterator p_begin, std::string::const_iterator p_end)
     + symbol operator()()
 }
+class symbol
+class lexeme
+class type_ptr <<(T,#BBCCDD) type *>>
+class token <<(T,#BBCCDD) type>>
+class tokens
+
 type *-- recognizer
 
-types +--types.const_iterator
+tokens *-- "*" type
 
+types *-- "*" type
 
-symbol *-- lexeme 
-symbol *--  "m_ptr" type
+symbol *-- lexeme
+symbol *-- type_ptr
 
-symbols *-- "*" symbol
+scanner *-- types
+scanner *-- tokens
 
-types *-- "*" type 
-
-class  tokens <<(T,#BBCCDD) type>>
-class  reserved_words <<(T,#BBCCDD) type>>
-class  identifier <<(T,#BBCCDD) type>>
 
 @enduml
