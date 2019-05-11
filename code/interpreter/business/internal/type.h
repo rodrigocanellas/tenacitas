@@ -13,7 +13,7 @@
 
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/recognizer.h>
-#include <string/business/split_str.h>
+#include <string/business/identifier.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -28,6 +28,11 @@ namespace business {
 struct type
 {
 
+    /**
+     * @brief identifier of a \p type
+     */
+    typedef string::business::identifier<type> id;
+
     ///
     /// \brief operator <<
     /// \param p_out
@@ -37,22 +42,19 @@ struct type
     inline friend std::ostream& operator<<(std::ostream& p_out,
                                            const type& p_type)
     {
-        p_out << p_type.m_str;
+        p_out << p_type.m_id;
         return p_out;
     }
 
     /// \brief
-    type()
-      : m_str("--- NULL TYPE ---")
-      , m_recognize([](const std::string&) -> bool { return false; })
-    {}
+    type() = delete;
 
     /// \brief constructor by copy
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline type(const std::string& p_str, recognizer p_recognize)
-      : m_str(p_str)
+    inline type(const id& p_id, recognizer p_recognize)
+      : m_id(p_id)
       , m_recognize(p_recognize)
     {}
 
@@ -60,8 +62,8 @@ struct type
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline type(std::string&& p_str, recognizer p_recognize)
-      : m_str(std::move(p_str))
+    inline type(id&& p_id, recognizer p_recognize)
+      : m_id(std::move(p_id))
       , m_recognize(p_recognize)
     {}
 
@@ -83,25 +85,25 @@ struct type
     /// \brief equal-to
     inline bool operator==(const type& p_type) const
     {
-        return m_str == p_type.m_str;
+        return m_id == p_type.m_id;
     }
 
     /// \brief not-equal-to
     inline bool operator!=(const type& p_type) const
     {
-        return m_str != p_type.m_str;
+        return m_id != p_type.m_id;
     }
 
     /// \brief less-than
     inline bool operator<(const type& p_type) const
     {
-        return m_str < p_type.m_str;
+        return m_id < p_type.m_id;
     }
 
     /// \brief greater-than
     inline bool operator>(const type& p_type) const
     {
-        return m_str > p_type.m_str;
+        return m_id > p_type.m_id;
     }
 
     /// \brief not allowed
@@ -126,16 +128,20 @@ struct type
         return m_recognize(p_str);
     }
 
-    static const type unreconized_type;
+    ///
+    /// \brief unreconized_type is a special type, indicating a non recognized
+    /// type
+    ///
+    static const type unreconized;
 
   private:
     ///
-    /// \brief m_str the value of the \p type
+    /// \brief m_id the value of the \p type
     ///
-    std::string m_str;
+    id m_id;
 
     ///
-    /// \brief m_recognize reports if a \p lexeme is of this type
+    /// \brief m_recognize reports if a string is of this type
     ///
     recognizer m_recognize;
 };

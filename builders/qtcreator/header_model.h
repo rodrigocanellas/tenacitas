@@ -7,7 +7,7 @@
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
-
+#include <cstddef>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -22,34 +22,34 @@ struct class {
 public:
 
 
-    /** @brief @brief not allowed */
+    /// \brief default ctor not allowed
     inline class() = delete;
 
-    /** @brief not allowed */
+    /// \brief copy ctor not allowed
      class(const class &) = delete;
 
-    /** @brief not allowed */
+    /// \brief move ctor not allowed
      class(class &&) = delete;
 
-    /** Destructor */
+    // \brief destructor
      ~class();
 
-    /** @brief not allowed */
+    /// \brief copy operator not allowed
      class & operator=(const class &) = delete;
 
-    /** @brief not allowed */
+    /// \brief move operator not allowed
      class & operator=(class &&) = delete;
 
-    /** @brief not allowed */
+    /// \brief dymanic array allocation not allowed
     void *operator new[] (size_t) = delete;
 
-    /** @brief not allowed */
+    /// \brief dymanic array deallocation allowed
     void operator delete[] (void *) = delete;
 
-    /** @brief not allowed */
+    /// \brief dymanic allocation not allowed
     void operator delete (void * p) = delete;
 
-    /** @brief not allowed */
+    /// \brief dymanic deallocation not allowed
     void *operator new(size_t) = delete;
 
 

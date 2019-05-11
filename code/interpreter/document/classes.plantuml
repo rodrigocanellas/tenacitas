@@ -9,18 +9,19 @@ class scanner {
 }
 class symbol
 class lexeme
-class type_ptr <<(T,#BBCCDD) type *>>
-class token <<(T,#BBCCDD) type>>
+class token 
 class tokens
 
 type *-- recognizer
 
-tokens *-- "*" type
+token *-- "m_size" uint8_t
+token *--  type
+tokens *-- "*" token
 
 types *-- "*" type
 
 symbol *-- lexeme
-symbol *-- type_ptr
+symbol *-- type
 
 scanner *-- types
 scanner *-- tokens

@@ -63,19 +63,19 @@ struct lexeme
       : m_str(std::move(p_str))
     {}
 
-    /// \brief not allowed
+    /// \brief copy ctor
     lexeme(const lexeme&) = default;
 
-    /// \brief not allowed
+    /// \brief move ctor
     lexeme(lexeme&&) = default;
 
     /// \brief Destructor
     ~lexeme() = default;
 
-    /// \brief not allowed
+    /// \brief copy operator
     lexeme& operator=(const lexeme&) = default;
 
-    /// \brief not allowed
+    /// \brief move operator
     lexeme& operator=(lexeme&&) = default;
 
     /// \brief equal-to

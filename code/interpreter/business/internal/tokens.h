@@ -1,0 +1,206 @@
+#ifndef TENACITAS_INTERPRETER_BUSINESS_TOKENS_H
+#define TENACITAS_INTERPRETER_BUSINESS_TOKENS_H
+
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE
+/// file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas rodrigo.canellas@gmail.com
+
+#include <cstddef>
+#include <cstdint>
+#include <set>
+#include <string>
+
+#include <interpreter/business/internal/recognizer.h>
+#include <interpreter/business/internal/type.h>
+
+/// \brief namespace of the organization
+namespace tenacitas {
+/// \brief namespace of the interpreter
+namespace interpreter {
+/// \brief namespace of the business
+namespace business {
+
+/// \brief tokens allows to define symbols that will be recognized by value,
+/// like '=' or '<='
+struct tokens
+{
+
+  public:
+    /// \brief default constructor
+    tokens() = default;
+
+    /// \brief not allowed
+    tokens(const tokens&) = delete;
+
+    /// \brief not allowed
+    tokens(tokens&&) = delete;
+
+    /// \brief destructor
+    ~tokens() = default;
+
+    ///
+    /// \brief add adds a new token type
+    /// \param p_str identifier (name) of the token
+    /// \param p_recognize function that recognizes a value (string) as this
+    /// type of token
+    ///
+    inline bool add(uint8_t p_size_lexemes,
+                    type::id&& p_id,
+                    recognizer p_recognize)
+    {
+        return m_set.emplace(token(p_size_lexemes, type(p_id, p_recognize)))
+          .second;
+    }
+
+    ///
+    /// \brief recognize
+    /// \param p_str
+    /// \return
+    ///
+    type recognize(const std::string& p_str) const;
+
+    /// \brief not allowed
+    tokens& operator=(const tokens&) = delete;
+
+    /// \brief not allowed
+    tokens& operator=(tokens&&) = delete;
+
+    /// \brief not allowed
+    void* operator new[](size_t) = delete;
+
+    /// \brief not allowed
+    void operator delete[](void*) = delete;
+
+    /// \brief not allowed
+    void operator delete(void* p) = delete;
+
+    /// \brief not allowed
+    void* operator new(size_t) = delete;
+
+  private:
+    ///
+    /// \brief The token_size struct
+    ///
+    struct token
+    {
+
+        /// \brief default ctor not allowed
+        token() = delete;
+
+        ///
+        /// \brief token
+        /// \param p_size
+        /// \param p_type
+        ///
+        inline token(uint8_t p_size, type&& p_type)
+          : m_size(p_size)
+          , m_type(std::move(p_type))
+        {}
+
+        /// \brief destructor
+        ~token() = default;
+
+        /// \brief token copy ctor not allowed
+        token(const token&) = delete;
+
+        ///
+        /// \brief token move ctor
+        /// \param p_token_size
+        ///
+        token(token&& p_token_size) noexcept
+          : m_size(p_token_size.m_size)
+          , m_type(std::move(p_token_size.m_type))
+        {}
+
+        ///
+        /// \brief size
+        /// \return
+        ///
+        inline uint8_t get_size() const { return m_size; }
+
+        ///
+        /// \brief get_type
+        /// \return
+        ///
+        inline type get_type() const { return m_type; }
+
+        ///
+        /// \brief recognize
+        /// \param p_str
+        /// \return
+        ///
+        inline bool recognize(const std::string& p_str) const
+        {
+            return m_type.recognize(p_str);
+        }
+
+        /// \brief token_size copy operator not allowed
+        token& operator=(const token&) = delete;
+
+        ///
+        /// \brief operator = move operator
+        /// \param p_token_size
+        /// \return
+        ///
+        token& operator=(token&& p_token_size) noexcept
+        {
+            if (this != &p_token_size) {
+                m_size = p_token_size.m_size;
+                m_type = std::move(p_token_size.m_type);
+            }
+            return *this;
+        }
+
+        ///
+        /// \brief operator ==
+        /// \param p_token_size
+        /// \return
+        ///
+        inline bool operator==(const token& p_token_size) const
+        {
+            return m_size == p_token_size.m_size;
+        }
+
+        ///
+        /// \brief operator !=
+        /// \param p_token_size
+        /// \return
+        ///
+        inline bool operator!=(const token& p_token_size) const
+        {
+            return m_size != p_token_size.m_size;
+        }
+
+        ///
+        /// \brief operator <
+        /// \param p_token_size
+        /// \return
+        ///
+        inline bool operator<(const token& p_token_size) const
+        {
+            return m_size < p_token_size.m_size;
+        }
+
+      private:
+        uint8_t m_size;
+        type m_type;
+    };
+
+    ///
+    /// \brief set_t
+    ///
+    typedef std::set<token> set_t;
+
+  private:
+    ///
+    /// \brief m_set
+    ///
+    set_t m_set;
+};
+} // namespace business
+} // namespace interpreter
+} // namespace tenacitas
+
+#endif

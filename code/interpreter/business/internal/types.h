@@ -30,27 +30,12 @@ struct types
     typedef std::set<type>::const_iterator const_iterator;
 
     ///
-    /// \brief value_t
-    ///
-    typedef type value_t;
-
-    ///
     /// \brief operator <<
     /// \param p_out
     /// \param p_types
     /// \return
     ///
-    inline friend std::ostream& operator<<(std::ostream& p_out,
-                                           const types& p_types)
-    {
-        p_out << "{ ";
-        static const char* _space = " ";
-        for (const type& _type : p_types.m_set) {
-            p_out << _type << _space;
-        }
-        p_out << " }";
-        return p_out;
-    }
+    friend std::ostream& operator<<(std::ostream& p_out, const types& p_types);
 
     /// \brief
     types() = default;
@@ -101,21 +86,12 @@ struct types
     inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
 
     ///
-    /// \brief recognize checks if \p lexeme is of any known \p type
+    /// \brief recognize checks if \p p_str is of any known \p type
     /// \param p_les the string to be verified
     /// \return a valid const_iterator to the \p type, if \p p_lex is of a known
     /// \p type; \p end() otherwise
     ///
-    inline const_iterator recognize(const std::string& p_str) const
-    {
-        const_iterator _end = m_set.end();
-        for (const_iterator _ite = m_set.begin(); _ite != _end; ++_ite) {
-            if (_ite->recognize(p_str)) {
-                return _ite;
-            }
-        }
-        return _end;
-    }
+    const_iterator recognize(const std::string& p_str) const;
 
   private:
     ///

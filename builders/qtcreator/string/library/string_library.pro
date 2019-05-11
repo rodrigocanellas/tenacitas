@@ -16,6 +16,7 @@ include (../../common.pri)
 
 HEADERS += \
     ../../../../code/string/business/format_number.h \
+    ../../../../code/string/business/identifier.h \
     ../../../../code/string/business/max_str_length.h \
     ../../../../code/string/business/split_str.h
 

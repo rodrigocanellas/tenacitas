@@ -60,12 +60,10 @@ struct symbol_creation
 {
     bool operator()()
     {
-        type _type("char", recognize_char());
-
-        symbol _symbol(lexeme("a"), &_type);
+        symbol _symbol(lexeme("a"), type(type::id("char"), recognize_char()));
 
         return (_symbol.get_lexeme() == lexeme("a") &&
-                _symbol.get_type() == _type);
+                _symbol.get_type() == type(type::id("char"), recognize_char()));
     }
 };
 

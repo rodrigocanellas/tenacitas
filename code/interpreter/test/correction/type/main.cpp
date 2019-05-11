@@ -50,7 +50,7 @@ struct type_creation_by_copy
 {
     bool operator()()
     {
-        type _type("integer", recognize_integer());
+        type _type(type::id("integer"), recognize_integer());
         std::stringstream _stream;
         _stream << _type;
         std::string _str;
@@ -64,7 +64,7 @@ struct type_creation_by_move
 {
     bool operator()()
     {
-        type _type(std::string("integer"), recognize_integer());
+        type _type(type::id("integer"), recognize_integer());
         std::stringstream _stream;
         _stream << _type;
         std::string _str;
@@ -78,8 +78,8 @@ struct type_equal_to
 {
     bool operator()()
     {
-        type _type_1(std::string("integer"), recognize_integer());
-        type _type_2(std::string("integer"), recognize_integer());
+        type _type_1(type::id("integer"), recognize_integer());
+        type _type_2(type::id("integer"), recognize_integer());
 
         return (_type_1 == _type_2);
     }
@@ -89,8 +89,8 @@ struct type_not_equal_to
 {
     bool operator()()
     {
-        type _type_1(std::string("integer"), recognize_integer());
-        type _type_2(std::string("word"), recognize_word());
+        type _type_1(type::id("integer"), recognize_integer());
+        type _type_2(type::id("word"), recognize_word());
 
         return (_type_1 != _type_2);
     }
@@ -100,8 +100,8 @@ struct type_greather_than
 {
     bool operator()()
     {
-        type _type_1(std::string("word"), recognize_word());
-        type _type_2(std::string("integer"), recognize_integer());
+        type _type_1(type::id("word"), recognize_word());
+        type _type_2(type::id("integer"), recognize_integer());
 
         return (_type_1 > _type_2);
     }
@@ -111,8 +111,8 @@ struct type_less_than
 {
     bool operator()()
     {
-        type _type_1(std::string("integer"), recognize_integer());
-        type _type_2(std::string("word"), recognize_word());
+        type _type_1(type::id("integer"), recognize_integer());
+        type _type_2(type::id("word"), recognize_word());
 
         return (_type_1 < _type_2);
     }
@@ -125,8 +125,8 @@ struct add_types
 
         types _types;
 
-        _types.add(type(std::string("integer"), recognize_integer()));
-        _types.add(type(std::string("word"), recognize_word()));
+        _types.add(type(type::id("integer"), recognize_integer()));
+        _types.add(type(type::id("word"), recognize_word()));
 
         if (_types.empty()) {
             return false;
@@ -143,8 +143,8 @@ struct recognize_non_type
     bool operator()()
     {
         types _types;
-        _types.add(type(std::string("integer"), recognize_integer()));
-        _types.add(type(std::string("word"), recognize_word()));
+        _types.add(type(type::id("integer"), recognize_integer()));
+        _types.add(type(type::id("word"), recognize_word()));
         if (_types.recognize("!ola") != _types.end()) {
             cerr_test("'!ola' recognized, but it should not");
             return false;
@@ -159,44 +159,14 @@ struct recognize_type
     bool operator()()
     {
         types _types;
-        _types.add(type(std::string("integer"), recognize_integer()));
-        _types.add(type(std::string("word"), recognize_word()));
+        _types.add(type(type::id("integer"), recognize_integer()));
+        _types.add(type(type::id("word"), recognize_word()));
         types::const_iterator _ite = _types.recognize("1902");
         if (_ite == _types.end()) {
             cerr_test("'1902' not recognized, but it should have");
             return false;
         }
         cerr_test("Type of '1902' is ", *_ite);
-        return true;
-    }
-};
-
-struct recognize_by_value
-{
-    bool operator()()
-    {
-        type _tokens(std::string("token"), recognize_token());
-
-        if (!_tokens.recognize("==")) {
-            cerr_test("'==' not recognized, but it should have");
-            return false;
-        }
-        cerr_test("Type of '==' is ", _tokens);
-        return true;
-    }
-};
-
-struct dont_recognize_by_value
-{
-    bool operator()()
-    {
-        type _tokens(std::string("token"), recognize_token());
-
-        if (_tokens.recognize("!;;")) {
-            cerr_test("'!;;' recognized, but it should not have");
-            return false;
-        }
-        cerr_test("'!;;' was not recognized");
         return true;
     }
 };
@@ -214,10 +184,4 @@ main(int argc, char** argv)
     run_test(
       recognize_non_type, argc, argv, "does not recognize a non existing type");
     run_test(recognize_type, argc, argv, "recognizes an existing type");
-    run_test(
-      recognize_by_value, argc, argv, "recognizes '==' as a 'token' type");
-    run_test(dont_recognize_by_value,
-             argc,
-             argv,
-             "do not recognize '!;;' as a 'token' type");
 }

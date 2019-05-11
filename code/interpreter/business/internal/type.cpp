@@ -5,9 +5,9 @@ namespace tenacitas {
 namespace interpreter {
 namespace business {
 
-const type type::unreconized_type("--ur--", [](const std::string&) -> bool {
-    return false;
-});
+const type
+type::unreconized(type::id(""),
+                       [](const std::string&) -> bool { return false; });
 
 } // namespace business
 } // namespace interpreter
