@@ -36,6 +36,33 @@ tokens::recognize(const std::string& p_str) const
     return type::unreconized;
 }
 
+bool
+tokens::add(type::id&& p_id, std::string&& p_tokens)
+{
+    const std::string::size_type _pos(p_tokens.find(' '));
+    if (_pos == std::string::npos) {
+        return false;
+    }
+
+    const std::string _str(p_tokens.substr(0, _pos));
+
+    const uint8_t _size(static_cast<uint8_t>(_str.size()));
+
+    string::business::slipt_str(
+      p_tokens, [_size](const std::string& p_str) -> void {
+          if (static_cast<uint8_t>(p_str.size()) != _size) {
+              throw std::out_of_range("Size of " + p_str + " is not " +
+                                      std::to_string(_size));
+          }
+      });
+
+    token_recognizer _recognize(std::move(p_tokens));
+
+    type _type(std::move(p_id), std::move(_recognize));
+
+    return m_set.emplace(token(_size, std::move(_type))).second;
+}
+
 } // namespace business
 } // namespace interpreter
 } // namespace tenacitas

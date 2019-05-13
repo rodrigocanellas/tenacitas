@@ -10,10 +10,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <set>
+#include <stdexcept>
 #include <string>
 
 #include <interpreter/business/internal/recognizer.h>
 #include <interpreter/business/internal/type.h>
+#include <string/business/split_str.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -55,6 +57,13 @@ struct tokens
     }
 
     ///
+    /// \brief add adds a group of tokens \b of the same size encoded in a
+    /// string \param p_id identifier (name) of the token \param p_tokens
+    /// \return
+    ///
+    bool add(type::id&& p_id, std::string&& p_tokens);
+
+    ///
     /// \brief recognize
     /// \param p_str
     /// \return
@@ -80,6 +89,30 @@ struct tokens
     void* operator new(size_t) = delete;
 
   private:
+    struct token_recognizer
+    {
+        token_recognizer() = delete;
+        explicit token_recognizer(std::string&& p_tokens)
+          : m_tokens(std::move(p_tokens))
+        {}
+
+        ~token_recognizer() = default;
+
+        token_recognizer(token_recognizer&&) noexcept = default;
+        token_recognizer(const token_recognizer&) = default;
+
+        token_recognizer& operator=(token_recognizer&&) noexcept = default;
+        token_recognizer& operator=(const token_recognizer&) = default;
+
+        bool operator()(const std::string& p_str)
+        {
+            return m_tokens.find(p_str) != std::string::npos;
+        }
+
+      private:
+        std::string m_tokens;
+    };
+
     ///
     /// \brief The token_size struct
     ///
