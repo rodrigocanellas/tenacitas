@@ -28,9 +28,9 @@ namespace business {
 struct type
 {
 
-    /**
-     * @brief identifier of a \p type
-     */
+    ///
+    /// \brief id identifier of a \p type
+    ///
     typedef string::business::identifier<type> id;
 
     ///

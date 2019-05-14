@@ -1,7 +1,14 @@
 @startuml
 
 hide empty members
+hide circle
 allow_mixing
+
+namespace std {
+    class set<t>
+    class string
+    class function <t>
+}
 
 class scanner {
     + scanner(std::string::const_iterator p_begin, std::string::const_iterator p_end)
@@ -9,22 +16,38 @@ class scanner {
 }
 class symbol
 class lexeme
-class token 
-class tokens
+class value_recognizer {
+    + type operator()(const std.string &)
+}
 
-type *-- recognizer
+class value_recognizers
+class type {
+    + {static} unrecognized
+}
+class types <<static>>
+class "std.set<std.string>" as string_set
 
-token *-- "m_size" uint8_t
-token *--  type
-tokens *-- "*" token
+class pattern_recognizers
+class pattern_recognizer {
+    + type operator()(const std.string &)
+}
 
-types *-- "*" type
+pattern_recognizers *-- pattern_recognizer
+
+pattern_recognizer *-- type
+
+types *-- type
+
+value_recognizer *-- "m_size" uint8_t
+value_recognizer *--  type
+value_recognizer *-- string_set
+value_recognizers *-- "*" value_recognizer
 
 symbol *-- lexeme
 symbol *-- type
 
 scanner *-- types
-scanner *-- tokens
-
+scanner *-- value_recognizers
+scanner *-- pattern_recognizers
 
 @enduml

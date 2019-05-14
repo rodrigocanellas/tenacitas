@@ -43,25 +43,11 @@ struct tokens
     ~tokens() = default;
 
     ///
-    /// \brief add adds a new token type
-    /// \param p_str identifier (name) of the token
-    /// \param p_recognize function that recognizes a value (string) as this
-    /// type of token
-    ///
-    inline bool add(uint8_t p_size_lexemes,
-                    type::id&& p_id,
-                    recognizer p_recognize)
-    {
-        return m_set.emplace(token(p_size_lexemes, type(p_id, p_recognize)))
-          .second;
-    }
-
-    ///
     /// \brief add adds a group of tokens \b of the same size encoded in a
     /// string \param p_id identifier (name) of the token \param p_tokens
     /// \return
     ///
-    bool add(type::id&& p_id, std::string&& p_tokens);
+    void add(type::id&& p_id, std::string&& p_tokens);
 
     ///
     /// \brief recognize
@@ -89,29 +75,34 @@ struct tokens
     void* operator new(size_t) = delete;
 
   private:
-    struct token_recognizer
-    {
-        token_recognizer() = delete;
-        explicit token_recognizer(std::string&& p_tokens)
-          : m_tokens(std::move(p_tokens))
-        {}
+    //    struct token_recognizer
+    //    {
+    //        token_recognizer() = default;
 
-        ~token_recognizer() = default;
+    //        ~token_recognizer() = default;
 
-        token_recognizer(token_recognizer&&) noexcept = default;
-        token_recognizer(const token_recognizer&) = default;
+    //        token_recognizer(token_recognizer&&) noexcept = default;
+    //        token_recognizer(const token_recognizer&) = default;
 
-        token_recognizer& operator=(token_recognizer&&) noexcept = default;
-        token_recognizer& operator=(const token_recognizer&) = default;
+    //        token_recognizer& operator=(token_recognizer&&) noexcept =
+    //        default; token_recognizer& operator=(const token_recognizer&) =
+    //        default;
 
-        bool operator()(const std::string& p_str)
-        {
-            return m_tokens.find(p_str) != std::string::npos;
-        }
+    //        bool operator()(const std::string& p_str)
+    //        {
+    //            //            return m_tokens.find(p_str) !=
+    //            std::string::npos; return (m_set.find(p_str) != m_set.end());
+    //        }
 
-      private:
-        std::string m_tokens;
-    };
+    //        void add(std::string&& p_str) { m_set.emplace(std::move(p_str)); }
+    //        void add(const std::string& p_str) { m_set.emplace(p_str); }
+
+    //      private:
+    //        typedef std::set<std::string> set;
+
+    //      private:
+    //        set m_set;
+    //    };
 
     ///
     /// \brief The token_size struct
@@ -169,6 +160,8 @@ struct tokens
             return m_type.recognize(p_str);
         }
 
+        inline void add(const std::string& p_str) { m_strings.emplace(p_str); }
+
         /// \brief token_size copy operator not allowed
         token& operator=(const token&) = delete;
 
@@ -217,8 +210,12 @@ struct tokens
         }
 
       private:
+        typedef std::set<std::string> strings;
+
+      private:
         uint8_t m_size;
         type m_type;
+        strings m_strings;
     };
 
     ///
