@@ -14,7 +14,6 @@
 
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/type.h>
-#include <interpreter/business/internal/types.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {

@@ -7,7 +7,7 @@ namespace business {
 types::const_iterator
 types::add(type&& p_type)
 {
-    std::pair<std::set<type>::iterator, bool> _ret = m_set.insert(p_type);
+    std::pair<set::iterator, bool> _ret = m_set.insert(p_type);
     if (_ret.second) {
         return _ret.first;
     }
@@ -29,17 +29,17 @@ operator<<(std::ostream& p_out, const types& p_types)
     return p_out;
 }
 
-types::const_iterator
-types::recognize(const std::string& p_str) const
-{
-    const_iterator _end = m_set.end();
-    for (const_iterator _ite = m_set.begin(); _ite != _end; ++_ite) {
-        if (_ite->recognize(p_str)) {
-            return _ite;
-        }
-    }
-    return _end;
-}
+// types::const_iterator
+// types::recognize(const std::string& p_str) const
+//{
+//    const_iterator _end = m_set.end();
+//    for (const_iterator _ite = m_set.begin(); _ite != _end; ++_ite) {
+//        if (_ite->recognize(p_str)) {
+//            return _ite;
+//        }
+//    }
+//    return _end;
+//}
 
 } // namespace business
 } // namespace interpreter

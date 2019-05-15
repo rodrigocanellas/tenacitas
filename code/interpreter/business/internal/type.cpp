@@ -1,13 +1,13 @@
-
 #include <interpreter/business/internal/type.h>
 
+/// \brief namespace of the organization
 namespace tenacitas {
+/// \brief namespace of the interpreter
 namespace interpreter {
+/// \brief namespace of the business
 namespace business {
 
-const type
-type::unreconized(type::id(""),
-                       [](const std::string&) -> bool { return false; });
+const type type::undefined(".U.");
 
 } // namespace business
 } // namespace interpreter

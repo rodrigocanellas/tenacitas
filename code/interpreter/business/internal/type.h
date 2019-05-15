@@ -7,13 +7,8 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
-#include <functional>
 #include <set>
 #include <string>
-
-#include <interpreter/business/internal/lexeme.h>
-#include <interpreter/business/internal/recognizer.h>
-#include <string/business/identifier.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -23,15 +18,10 @@ namespace interpreter {
 namespace business {
 
 ///
-/// \brief The type struct
+/// \brief The type struct represents a word read from input text
 ///
 struct type
 {
-
-    ///
-    /// \brief id identifier of a \p type
-    ///
-    typedef string::business::identifier<type> id;
 
     ///
     /// \brief operator <<
@@ -42,7 +32,7 @@ struct type
     inline friend std::ostream& operator<<(std::ostream& p_out,
                                            const type& p_type)
     {
-        p_out << p_type.m_id;
+        p_out << p_type.m_str;
         return p_out;
     }
 
@@ -53,57 +43,55 @@ struct type
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline type(const id& p_id, recognizer p_recognize)
-      : m_id(p_id)
-      , m_recognize(p_recognize)
+    inline explicit type(const std::string& p_str)
+      : m_str(p_str)
     {}
 
     /// \brief constructor by move
     ///
     /// \param p_str is the identifier of the type
     ///
-    inline type(id&& p_id, recognizer p_recognize)
-      : m_id(std::move(p_id))
-      , m_recognize(p_recognize)
+    inline explicit type(std::string&& p_str)
+      : m_str(std::move(p_str))
     {}
 
-    /// \brief
+    /// \brief copy ctor
     type(const type&) = default;
 
-    /// \brief
+    /// \brief move ctor
     type(type&&) = default;
 
     /// \brief Destructor
     ~type() = default;
 
-    /// \brief
+    /// \brief copy operator
     type& operator=(const type&) = default;
 
-    /// \brief
+    /// \brief move operator
     type& operator=(type&&) = default;
 
     /// \brief equal-to
     inline bool operator==(const type& p_type) const
     {
-        return m_id == p_type.m_id;
+        return m_str == p_type.m_str;
     }
 
     /// \brief not-equal-to
     inline bool operator!=(const type& p_type) const
     {
-        return m_id != p_type.m_id;
+        return m_str != p_type.m_str;
     }
 
     /// \brief less-than
     inline bool operator<(const type& p_type) const
     {
-        return m_id < p_type.m_id;
+        return m_str < p_type.m_str;
     }
 
     /// \brief greater-than
     inline bool operator>(const type& p_type) const
     {
-        return m_id > p_type.m_id;
+        return m_str > p_type.m_str;
     }
 
     /// \brief not allowed
@@ -119,31 +107,15 @@ struct type
     void* operator new(size_t) = delete;
 
     ///
-    /// \brief recognize
-    /// \param p_lex
-    /// \return
+    /// \brief undefined special type representing a fail in recognizing a type
     ///
-    bool recognize(const std::string& p_str) const
-    {
-        return m_recognize(p_str);
-    }
-
-    ///
-    /// \brief unreconized_type is a special type, indicating a non recognized
-    /// type
-    ///
-    static const type unreconized;
+    static const type undefined;
 
   private:
     ///
-    /// \brief m_id the value of the \p type
+    /// \brief m_str the value of the @p type
     ///
-    id m_id;
-
-    ///
-    /// \brief m_recognize reports if a string is of this type
-    ///
-    recognizer m_recognize;
+    std::string m_str;
 };
 
 } // namespace business

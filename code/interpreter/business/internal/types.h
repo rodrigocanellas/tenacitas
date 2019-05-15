@@ -1,4 +1,4 @@
-#ifndef TENACITAS_INTERPRETER_BUSINESS_TYPES_H
+﻿#ifndef TENACITAS_INTERPRETER_BUSINESS_TYPES_H
 #define TENACITAS_INTERPRETER_BUSINESS_TYPES_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
@@ -82,28 +82,35 @@ struct types
     /// \brief
     inline bool empty() const { return m_set.empty(); }
 
-    /// \brief
-    inline int16_t size() const { return static_cast<int16_t>(m_set.size()); }
+    //    /// \brief
+    //    inline int16_t size() const { return
+    //    static_cast<int16_t>(m_set.size()); }
 
-    ///
-    /// \brief recognize checks if \p p_str is of any known \p type
-    /// \param p_les the string to be verified
-    /// \return a valid const_iterator to the \p type, if \p p_lex is of a known
-    /// \p type; \p end() otherwise
-    ///
-    const_iterator recognize(const std::string& p_str) const;
+    //    ///
+    //    /// \brief recognize checks if \p p_str is of any known \p type
+    //    /// \param p_les the string to be verified
+    //    /// \return a valid const_iterator to the \p type, if \p p_lex is of a
+    //    known
+    //    /// \p type; \p end() otherwise
+    //    ///
+    //    const_iterator recognize(const std::string& p_str) const;
+
+    inline const_iterator find(const type& p_type) const
+    {
+        return m_set.find(p_type);
+    }
 
   private:
     ///
     /// \brief map_t
     ///
-    typedef std::set<type> set_t;
+    typedef std::set<type> set;
 
   private:
     ///
     /// \brief m_set the set of @p type objects
     ///
-    set_t m_set;
+    set m_set;
 };
 
 } // namespace business

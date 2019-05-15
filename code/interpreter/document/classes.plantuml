@@ -16,11 +16,15 @@ class scanner {
 }
 class symbol
 class lexeme
-class value_recognizer {
+class token_recognizer {
+    + token_recognizer(const std.string & p_value, type p_type)
+    + void add(const std::string & p_value)   
     + type operator()(const std.string &)
 }
 
-class value_recognizers
+class token_recognizers {
+    + void set_values(const std.string & p_values, type p_type)
+}
 class type {
     + {static} unrecognized
 }
@@ -28,9 +32,7 @@ class types <<static>>
 class "std.set<std.string>" as string_set
 
 class pattern_recognizers
-class pattern_recognizer {
-    + type operator()(const std.string &)
-}
+class pattern_recognizer <<std::function<type(const std::string &)> >>
 
 pattern_recognizers *-- pattern_recognizer
 
@@ -38,16 +40,16 @@ pattern_recognizer *-- type
 
 types *-- type
 
-value_recognizer *-- "m_size" uint8_t
-value_recognizer *--  type
-value_recognizer *-- string_set
-value_recognizers *-- "*" value_recognizer
+token_recognizer *-- "m_size" uint8_t
+token_recognizer *--  "m_type" type
+token_recognizer *-- string_set
+token_recognizers *-- "*" token_recognizer
 
 symbol *-- lexeme
 symbol *-- type
 
 scanner *-- types
-scanner *-- value_recognizers
+scanner *-- token_recognizers
 scanner *-- pattern_recognizers
 
 @enduml

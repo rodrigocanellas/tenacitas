@@ -1,3 +1,4 @@
+
 TEMPLATE = app
 TARGET = tenacitas.interpreter.test.correction.type
 CONFIG+=test
@@ -9,13 +10,11 @@ QT -= gui
 
 include (../../../../common.pri)
 
-
-
 message("LIBS = $$LIBS")
 
 
-LIBS += -ltenacitas.logger -ltenacitas.string -ltenacitas.interpreter
+LIBS += -ltenacitas.interpreter -ltenacitas.logger -ltenacitas.string
 
 SOURCES += \
-    ../../../../../../code/interpreter/test/correction/type/main.cpp
+    ../../../../../../code/interpreter/test/correction/pattern/main.cpp
 
