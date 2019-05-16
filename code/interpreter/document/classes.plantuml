@@ -17,9 +17,9 @@ class scanner {
 class symbol
 class lexeme
 class token_recognizer {
-    + token_recognizer(const std.string & p_value, type p_type)
+    + token_recognizer(uint8_t p_size, type p_type)
     + void add(const std::string & p_value)   
-    + type operator()(const std.string &)
+    + type recognize()(const std.string &)
 }
 
 class token_recognizers {
@@ -38,7 +38,7 @@ pattern_recognizers *-- pattern_recognizer
 
 pattern_recognizer *-- type
 
-types *-- type
+types *-- "*" type
 
 token_recognizer *-- "m_size" uint8_t
 token_recognizer *--  "m_type" type

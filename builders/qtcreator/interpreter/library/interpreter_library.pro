@@ -21,6 +21,7 @@ HEADERS += \
     ../../../../code/interpreter/business/internal/pattern_recognizers.h \
     ../../../../code/interpreter/business/internal/symbol.h \
     ../../../../code/interpreter/business/internal/symbols.h \
+    ../../../../code/interpreter/business/internal/token.h \
     ../../../../code/interpreter/business/internal/type.h \
     ../../../../code/interpreter/business/internal/types.h \
     ../../../../code/string/business/split_str.h
