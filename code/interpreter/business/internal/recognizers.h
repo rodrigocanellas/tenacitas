@@ -7,11 +7,11 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <cstddef>
+#include <functional>
 #include <iostream>
 #include <list>
 #include <string>
 
-#include <interpreter/business/internal/pattern_recognizer.h>
 #include <interpreter/business/internal/type.h>
 
 /// \brief namespace of the organization
@@ -24,28 +24,31 @@ namespace business {
 ///
 /// \brief pattern_recognizers
 ///
-struct pattern_recognizers
+struct recognizers
 {
     /// \brief
     typedef std::set<type>::const_iterator const_iterator;
 
+    /// \brief type of function that tries recognize a \p type from a string
+    typedef std::function<type(const std::string&)> recognizer;
+
     /// \brief
-    pattern_recognizers() = default;
+    recognizers() = default;
 
     /// \brief not allowed
-    pattern_recognizers(const pattern_recognizers&) = delete;
+    recognizers(const recognizers&) = delete;
 
     /// \brief not allowed
-    pattern_recognizers(pattern_recognizers&&) = delete;
+    recognizers(recognizers&&) = default;
 
     /// \brief Destructor
-    ~pattern_recognizers() = default;
+    ~recognizers() = default;
 
     /// \brief not allowed
-    pattern_recognizers& operator=(const pattern_recognizers&) = delete;
+    recognizers& operator=(const recognizers&) = delete;
 
     /// \brief not allowed
-    pattern_recognizers& operator=(pattern_recognizers&&) = delete;
+    recognizers& operator=(recognizers&&) = delete;
 
     /// \brief not allowed
     void* operator new[](size_t) = delete;
@@ -59,23 +62,19 @@ struct pattern_recognizers
     /// \brief not allowed
     void* operator new(size_t) = delete;
 
-    ///
-    /// \brief add
-    /// \param p_type
-    ///
-    inline void add(pattern_recognizer&& p_recognizer)
+    /// \brief add adds a \p recognizer to the set
+    /// \param p_recognizer is a new recognizer
+    inline void add(recognizer&& p_recognizer)
     {
         m_list.push_back(std::move(p_recognizer));
     }
 
-    ///
-    /// \brief recognize
-    /// \param p_str
+    /// \brief recognize tries to recognize a \p type among the \p recognizer
+    /// objects, based on a string \param p_str the value to be recognized
     /// \return if not recognized, \p type::undefined; otherwise a valid \p type
-    ///
     inline type recognize(const std::string& p_str)
     {
-        for (pattern_recognizer& _recognize : m_list) {
+        for (recognizer& _recognize : m_list) {
             type _type(_recognize(p_str));
             if (_type != type::undefined) {
                 return _type;
@@ -88,7 +87,7 @@ struct pattern_recognizers
     ///
     /// \brief map_t
     ///
-    typedef std::list<pattern_recognizer> list;
+    typedef std::list<recognizer> list;
 
   private:
     ///

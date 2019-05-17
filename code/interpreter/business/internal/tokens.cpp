@@ -9,6 +9,7 @@ namespace interpreter {
 /// \brief namespace of the business
 namespace business {
 
+// -----------------------------------------------------------------------------
 std::ostream&
 operator<<(std::ostream& p_out, const tokens& p_tokens)
 {
@@ -41,6 +42,7 @@ operator<<(std::ostream& p_out, const tokens& p_tokens)
     return p_out;
 }
 
+// -----------------------------------------------------------------------------
 type
 tokens::recognize(const std::string& p_str) const
 {
@@ -73,6 +75,7 @@ tokens::recognize(const std::string& p_str) const
     return _type;
 }
 
+// -----------------------------------------------------------------------------
 void
 tokens::add(const type& p_type, const std::string& p_tokens)
 {

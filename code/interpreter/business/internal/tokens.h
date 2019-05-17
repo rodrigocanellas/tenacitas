@@ -41,7 +41,7 @@ struct tokens
     tokens(const tokens&) = delete;
 
     /// \brief not allowed
-    tokens(tokens&&) = delete;
+    tokens(tokens&&) = default;
 
     /// \brief destructor
     ~tokens() = default;

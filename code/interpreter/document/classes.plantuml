@@ -36,7 +36,7 @@ class pattern_recognizer <<std::function<type(const std::string &)> >>
 
 pattern_recognizers *-- pattern_recognizer
 
-pattern_recognizer *-- type
+pattern_recognizer ..> type : local
 
 types *-- "*" type
 

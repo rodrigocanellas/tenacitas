@@ -17,11 +17,9 @@ LIBS+=-ltenacitas.logger
 
 HEADERS += \
     ../../../../code/interpreter/business/internal/lexeme.h \
-    ../../../../code/interpreter/business/internal/pattern_recognizer.h \
-    ../../../../code/interpreter/business/internal/pattern_recognizers.h \
+    ../../../../code/interpreter/business/internal/recognizers.h \
     ../../../../code/interpreter/business/internal/symbol.h \
     ../../../../code/interpreter/business/internal/symbols.h \
-    ../../../../code/interpreter/business/internal/token.h \
     ../../../../code/interpreter/business/internal/tokens.h \
     ../../../../code/interpreter/business/internal/type.h \
     ../../../../code/interpreter/business/internal/types.h \
