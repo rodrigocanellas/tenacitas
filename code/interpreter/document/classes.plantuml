@@ -1,13 +1,14 @@
 @startuml
 
 hide empty members
-hide circle
+
 allow_mixing
 
 namespace std {
     class set<t>
     class string
     class function <t>
+    class map<k,v>
 }
 
 class scanner {
@@ -16,20 +17,19 @@ class scanner {
 }
 class symbol
 class lexeme
-class token_recognizer {
-    + token_recognizer(uint8_t p_size, type p_type)
-    + void add(const std::string & p_value)   
-    + type recognize()(const std.string &)
-}
 
-class token_recognizers {
-    + void set_values(const std.string & p_values, type p_type)
+
+class tokens {
+    + void set_values(type p_type, const std.string & p_values)
 }
 class type {
     + {static} unrecognized
 }
 class types <<static>>
+
 class "std.set<std.string>" as string_set
+class "std.map<type, string_set>" as type_set
+class "std.map<uint8_t, type_set>" as token_set
 
 class pattern_recognizers
 class pattern_recognizer <<std::function<type(const std::string &)> >>
@@ -40,16 +40,13 @@ pattern_recognizer *-- type
 
 types *-- "*" type
 
-token_recognizer *-- "m_size" uint8_t
-token_recognizer *--  "m_type" type
-token_recognizer *-- string_set
-token_recognizers *-- "*" token_recognizer
+tokens *--  token_set
 
 symbol *-- lexeme
 symbol *-- type
 
 scanner *-- types
-scanner *-- token_recognizers
+scanner *-- tokens
 scanner *-- pattern_recognizers
 
 @enduml

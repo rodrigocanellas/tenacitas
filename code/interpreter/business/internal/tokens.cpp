@@ -12,76 +12,43 @@ namespace business {
 type
 tokens::recognize(const std::string& p_str) const
 {
+    type _type(type::undefined);
 
-    if (m_set.empty()) {
-        return type::unreconized;
+    if (m_token_set.empty()) {
+        // there are no tokens
+        return _type;
     }
 
     uint8_t _size = static_cast<uint8_t>(p_str.size());
 
-    set_t::const_iterator _ite = m_set.begin();
-    set_t::const_iterator _end = m_set.end();
-
-    while (true) {
-        if ((_ite == _end) || (_ite->get_size() > _size)) {
-            // there is no token with \p _size size
-            break;
-        }
-        if (_ite->get_size() == _size) {
-            if (_ite->recognize(p_str)) {
-                return _ite->get_type();
-            }
-            break;
-        }
-        ++_ite;
+    token_set::const_iterator _token_ite = m_token_set.find(_size);
+    if (_token_ite == m_token_set.end()) {
+        // there is no token of \p _size size
+        return _type;
     }
-    return type::unreconized;
+
+    type_set::const_iterator _type_ite = _token_ite->second.begin();
+    type_set::const_iterator _type_end = _token_ite->second.end();
+
+    while (_type_ite != _type_end) {
+        if (_type_ite->second.find(p_str) != _type_ite->second.end()) {
+            // \p p_str is recognized among the values of the current type
+            _type = _type_ite->first;
+            break;
+        }
+        ++_type_ite;
+    }
+    return _type;
 }
 
 void
-tokens::add(type::id&& p_id, std::string&& p_tokens)
+tokens::add(const type& p_type, const std::string& p_tokens)
 {
     string::business::slipt_str(
-      p_tokens, [this, p_id](const std::string& p_str) -> void {
+      p_tokens, [this, p_type](const std::string& p_str) -> void {
           const uint8_t _size(static_cast<uint8_t>(p_str.size()));
-          set_t::iterator _ite =
-            std::find_if(this->m_set.begin(),
-                         this->m_set.end(),
-                         [_size](const token& p_token) -> bool {
-                             return p_token.get_size() == _size;
-                         });
-          if (_ite == this->m_set.end()) {
-              token_recognizer _recognize;
-              _recognize.add(p_str);
-              type _type(std::move(p_id), std::move(_recognize));
-              m_set.emplace(token(_size, std::move(_type)));
-          } else {
-              _ite->add
-          }
+          this->m_token_set[_size][p_type].emplace(p_str);
       });
-
-    //    const std::string::size_type _pos(p_tokens.find(' '));
-    //    if (_pos == std::string::npos) {
-    //        return false;
-    //    }
-
-    //    const std::string _str(p_tokens.substr(0, _pos));
-
-    //    const uint8_t _size(static_cast<uint8_t>(_str.size()));
-
-    //    string::business::slipt_str(
-    //      p_tokens, [_size](const std::string& p_str) -> void {
-    //          if (static_cast<uint8_t>(p_str.size()) != _size) {
-    //              throw std::out_of_range("Size of " + p_str + " is not " +
-    //                                      std::to_string(_size));
-    //          }
-    //      });
-
-    //    token_recognizer _recognize(std::move(p_tokens));
-
-    //    type _type(std::move(p_id), std::move(_recognize));
-
-    //    return m_set.emplace(token(_size, std::move(_type))).second;
 }
 
 } // namespace business
