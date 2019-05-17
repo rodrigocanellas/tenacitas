@@ -9,6 +9,38 @@ namespace interpreter {
 /// \brief namespace of the business
 namespace business {
 
+std::ostream&
+operator<<(std::ostream& p_out, const tokens& p_tokens)
+{
+    tokens::token_set::const_iterator _token_ite = p_tokens.m_token_set.begin();
+    tokens::token_set::const_iterator _token_end = p_tokens.m_token_set.end();
+    p_out << "\n";
+    while (_token_ite != _token_end) {
+        p_out << "size = " << static_cast<uint16_t>(_token_ite->first)
+              << std::endl;
+
+        tokens::type_set::const_iterator _type_ite = _token_ite->second.begin();
+        tokens::type_set::const_iterator _type_end = _token_ite->second.end();
+
+        while (_type_ite != _type_end) {
+            p_out << "\ttype = " << _type_ite->first << std::endl;
+            tokens::string_set::const_iterator _string_ite =
+              _type_ite->second.begin();
+            tokens::string_set::const_iterator _string_end =
+              _type_ite->second.end();
+
+            while (_string_ite != _string_end) {
+                p_out << "\t\t" << *_string_ite << std::endl;
+                ++_string_ite;
+            }
+            ++_type_ite;
+        }
+        ++_token_ite;
+    }
+
+    return p_out;
+}
+
 type
 tokens::recognize(const std::string& p_str) const
 {

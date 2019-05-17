@@ -2,7 +2,8 @@ SUBDIRS = \
     lexeme \
     symbol \
     type \
-    token
+    token \
+    tokens
 
   
 TEMPLATE = subdirs

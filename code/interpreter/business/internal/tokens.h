@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
 #include <map>
 #include <set>
 #include <stdexcept>
@@ -29,6 +30,8 @@ namespace business {
 /// like '=' or '<=', or reserverd words, like 'while' or 'if'
 struct tokens
 {
+    friend std::ostream& operator<<(std::ostream& p_out,
+                                    const tokens& p_tokens);
 
   public:
     /// \brief default constructor
