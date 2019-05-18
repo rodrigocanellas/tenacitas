@@ -12,7 +12,7 @@
 
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/symbol.h>
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/type.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {

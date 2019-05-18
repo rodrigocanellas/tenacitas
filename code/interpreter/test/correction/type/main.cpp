@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/type.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 

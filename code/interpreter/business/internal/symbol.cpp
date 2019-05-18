@@ -4,6 +4,8 @@ namespace tenacitas {
 namespace interpreter {
 namespace business {
 
+const symbol symbol::eot(lexeme("EOT"), type("EOT"));
+
 std::ostream&
 operator<<(std::ostream& p_out, const symbol& p_symbol)
 {

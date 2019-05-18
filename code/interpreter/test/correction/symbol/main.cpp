@@ -6,7 +6,7 @@
 #include <interpreter/business/internal/lexeme.h>
 #include <interpreter/business/internal/symbol.h>
 #include <interpreter/business/internal/symbols.h>
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/type.h>
 #include <interpreter/business/internal/types.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>

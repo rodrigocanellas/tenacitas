@@ -13,7 +13,7 @@
 #include <string>
 
 #include <interpreter/business/internal/lexeme.h>
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/type.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -54,7 +54,7 @@ struct symbol
     {}
 
     /// \brief not allowed
-    symbol(const symbol&) = delete;
+    symbol(const symbol&) = default;
 
     /// \brief not allowed
     symbol(symbol&&) = default;
@@ -118,6 +118,9 @@ struct symbol
     /// \return the @p type associated to the @p symbol
     ///
     inline type get_type() const { return m_type; }
+
+    /// \brief eot end-of-text symbol
+    static const symbol eot;
 
   private:
     /// \brief

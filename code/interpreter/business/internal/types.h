@@ -11,7 +11,7 @@
 #include <set>
 #include <string>
 
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/type.h>
 #include <string/business/split_str.h>
 
 /// \brief namespace of the organization

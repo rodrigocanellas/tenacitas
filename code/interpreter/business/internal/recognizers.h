@@ -12,7 +12,8 @@
 #include <list>
 #include <string>
 
-#include <interpreter/business/internal/type.h>
+#include <interpreter/business/recognizer.h>
+#include <interpreter/business/type.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -21,16 +22,12 @@ namespace interpreter {
 /// \brief namespace of the business
 namespace business {
 
-///
-/// \brief pattern_recognizers
-///
+/// \brief recognizers group of \p recognizer objects, which try to recognize a
+/// \p type based on a string
 struct recognizers
 {
     /// \brief
     typedef std::set<type>::const_iterator const_iterator;
-
-    /// \brief type of function that tries recognize a \p type from a string
-    typedef std::function<type(const std::string&)> recognizer;
 
     /// \brief
     recognizers() = default;
