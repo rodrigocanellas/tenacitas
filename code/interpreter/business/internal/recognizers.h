@@ -80,16 +80,15 @@ struct recognizers
         return type::undefined;
     }
 
+    /// \brief identifies if the list of recognizers is empty
+    inline bool empty() const { return m_list.empty(); }
+
   private:
-    ///
-    /// \brief map_t
-    ///
+    /// \brief type for the list of \p recognizer objects
     typedef std::list<recognizer> list;
 
   private:
-    ///
-    /// \brief m_set the set of @p type objects
-    ///
+    /// \brief m_list is the list of \p recognizer objects
     list m_list;
 };
 

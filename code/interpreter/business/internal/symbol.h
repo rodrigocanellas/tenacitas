@@ -48,9 +48,9 @@ struct symbol
     inline symbol() = delete;
 
     /// \brief
-    inline explicit symbol(lexeme&& p_lexeme, type&& p_type)
+    inline explicit symbol(lexeme&& p_lexeme, const type& p_type)
       : m_lexeme(std::move(p_lexeme))
-      , m_type(std::move(p_type))
+      , m_type(p_type)
     {}
 
     /// \brief not allowed
@@ -66,7 +66,7 @@ struct symbol
     symbol& operator=(const symbol&) = delete;
 
     /// \brief not allowed
-    symbol& operator=(symbol&&) = delete;
+    symbol& operator=(symbol&&) noexcept = default;
 
     /// \brief equal-to
     inline bool operator==(const symbol& p_symbol) const

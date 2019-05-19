@@ -58,6 +58,9 @@ struct tokens
     /// p_str, or a valid \p type otherwise
     type recognize(const std::string& p_str) const;
 
+    /// \brief indicates is the set o tokens is empty
+    bool empty() const { return m_token_set.empty(); }
+
     /// \brief not allowed
     tokens& operator=(const tokens&) = delete;
 

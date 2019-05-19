@@ -47,6 +47,7 @@ class scanner
       , m_curr_col(1)
       , m_begin()
       , m_end()
+      , m_current()
       , m_walker()
       , m_line_last_symbol(1)
       , m_col_last_symbol(1)
@@ -126,8 +127,13 @@ class scanner
     /// \brief Informs if all the input text was analysed
     inline bool is_eot() const
     {
-        return ((m_walker == m_end) || (*m_walker == '\0'));
+        return ((m_current == m_end) || (*m_current == '\0'));
     }
+
+    //    type recognize(recognizer p_recognizer);
+
+    symbol recognize_by_token();
+    symbol recognize_by_type();
 
   private:
     /// \brief set of tokens
@@ -153,6 +159,9 @@ class scanner
     std::string::const_iterator m_end;
 
     /// \brief Current position in the text to be parsed
+    std::string::const_iterator m_current;
+
+    /// \brief possible next current possition
     std::string::const_iterator m_walker;
 
     /// \brief Row where the last symbol was recognized
@@ -169,59 +178,5 @@ class scanner
 
 //// ####################################################################
 ////                                    scanner
-
-// template<typename t_recognizer>
-// memory::ptr<const symbol>
-// scanner::recognize(const t_recognizer& p_recognizer)
-//{
-
-//    /// the resulting symbol
-//    memory::ptr<const symbol> rc;
-
-//    /// saving the current position being analysed in the text
-//    std::string::const_iterator l_walker = m_walker;
-
-//    rc = p_recognizer.recognize(m_end, l_walker);
-
-//    if (rc) {
-//        // a tenacitas::interpreter::symbol was recognized, so we update the
-// current position to be analysed in the text
-
-//        if (l_walker == m_walker) {
-//            /// however, if <tt> l_walker == m_walker </tt> this means that
-//            the
-//            /// @p symbol recognized is one byte long
-
-//            /// so, we need to move @p m_walker forward here
-//            ++m_walker;
-
-//            ++m_curr_col;
-
-//        } else {
-//            /// @p l_walker was "naturally" moved forward
-
-//            /// so, we update the column being analysed
-//            m_curr_col +=
-//              static_cast<column>(std::distance(m_walker, l_walker));
-
-//            /// and update @p m_walker
-//            m_walker = l_walker;
-//        }
-
-//        /// saving the row and column where the last symbol was recognized
-//        m_line_last_symbol = m_curr_line;
-//        m_col_last_symbol = m_curr_col;
-
-//    } else {
-//        /// no @p symbol was recognized, so we restore the position in the
-//        text,
-//        /// so that we try to recognize a @p symbol with another @p recognizer
-//        /
-//    l_walker = m_walker;
-
-//}
-
-//    return rc;
-//}
 
 #endif
