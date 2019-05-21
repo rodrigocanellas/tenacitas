@@ -51,6 +51,7 @@ struct scanner_1
         scanner _scanner;
         const std::string _text("hi");
         _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
         while (true) {
             symbol _symbol(_scanner.get_symbol());
             if (_symbol == symbol::eot) {
@@ -58,11 +59,14 @@ struct scanner_1
             }
             type _type(_symbol.get_type());
             if (_type != type::undefined) {
-                cerr_debug("'",
+                cerr_error("'",
                            _symbol.get_lexeme(),
                            "' should not have been recognized, but it was as '",
                            _type,
-                           "'");
+                           "'. Line ",
+                           _scanner.get_line(),
+                           ", column ",
+                           _scanner.get_column());
             }
             cerr_test("'",
                       _symbol.get_lexeme(),
@@ -82,6 +86,7 @@ struct scanner_2
         scanner _scanner;
         const std::string _text("hi 123");
         _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
         while (true) {
             symbol _symbol(_scanner.get_symbol());
             if (_symbol == symbol::eot) {
@@ -89,11 +94,14 @@ struct scanner_2
             }
             type _type(_symbol.get_type());
             if (_type != type::undefined) {
-                cerr_debug("'",
+                cerr_error("'",
                            _symbol.get_lexeme(),
                            "' should not have been recognized, but it was as '",
                            _type,
-                           "'");
+                           "'. Line ",
+                           _scanner.get_line(),
+                           ", column ",
+                           _scanner.get_column());
                 return false;
             }
             cerr_test("'",
@@ -119,6 +127,7 @@ struct scanner_3
 
         const std::string _text("for != while");
         _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
         while (true) {
             symbol _symbol(_scanner.get_symbol());
             if (_symbol == symbol::eot) {
@@ -126,14 +135,18 @@ struct scanner_3
             }
             type _type(_symbol.get_type());
             if (_type == type::undefined) {
-                cerr_debug("'",
-                           _symbol.get_lexeme(),
-                           "' should have been recognized, but it was as not");
+                cerr_error(
+                  "'",
+                  _symbol.get_lexeme(),
+                  "' should have been recognized, but it was as not. Line ",
+                  _scanner.get_line(),
+                  ", column ",
+                  _scanner.get_column());
                 return false;
             }
             cerr_test("'",
                       _symbol.get_lexeme(),
-                      "' not recognized as '",
+                      "' recognized as '",
                       _type,
                       "' as expected");
         }

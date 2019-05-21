@@ -42,7 +42,7 @@ scanner::get_symbol()
         _symbol = recognize_by_type();
     }
     m_curr_col = static_cast<column>(std::distance(m_current, m_walker));
-    m_current = ++m_walker;
+    m_current = m_walker;
     m_line_last_symbol = m_curr_line;
     m_col_last_symbol = m_curr_col;
 
@@ -129,7 +129,7 @@ scanner::recognize_by_token()
             } else {
                 std::string::const_iterator _aux = m_walker;
                 ++_aux;
-                const std::string _str(std::string(m_walker, _aux));
+                const std::string _str(std::string(m_current, _aux));
                 _type = m_tokens.recognize(_str);
             }
 
