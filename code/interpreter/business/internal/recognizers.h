@@ -71,10 +71,12 @@ struct recognizers
     /// \return if not recognized, \p type::undefined; otherwise a valid \p type
     inline type recognize(const std::string& p_str)
     {
-        for (recognizer& _recognize : m_list) {
-            type _type(_recognize(p_str));
-            if (_type != type::undefined) {
-                return _type;
+        if (!m_list.empty()) {
+            for (recognizer& _recognize : m_list) {
+                type _type(_recognize(p_str));
+                if (_type != type::undefined) {
+                    return _type;
+                }
             }
         }
         return type::undefined;

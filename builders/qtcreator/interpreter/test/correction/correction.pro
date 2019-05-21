@@ -3,7 +3,8 @@ SUBDIRS = \
     symbol \
     type \
     tokens \
-    recognizers
+    recognizers \
+    scanner
 
   
 TEMPLATE = subdirs

@@ -41,15 +41,12 @@ scanner::get_symbol()
     if (_symbol.get_type() == type::undefined) {
         _symbol = recognize_by_type();
     }
-    if (_symbol.get_type() != type::undefined) {
-        m_curr_col = static_cast<column>(std::distance(m_walker, m_current));
-        m_current = ++m_walker;
-        m_line_last_symbol = m_curr_line;
-        m_col_last_symbol = m_curr_col;
-        return _symbol;
-    }
+    m_curr_col = static_cast<column>(std::distance(m_current, m_walker));
+    m_current = ++m_walker;
+    m_line_last_symbol = m_curr_line;
+    m_col_last_symbol = m_curr_col;
 
-    return symbol(lexeme(""), type::undefined);
+    return _symbol;
 }
 
 //----------------------------------------------------------------------------
@@ -83,56 +80,27 @@ scanner::skip()
 symbol
 scanner::recognize_by_type()
 {
-    return symbol(lexeme(""), type::undefined);
+
+    m_walker = m_current;
+    ++m_walker;
+    while (true) {
+
+        // any of these conditions makes us stop
+        if ((m_walker == m_end) || (*m_walker == '\0') || (*m_walker == ' ') ||
+            (*m_walker == '\n')) {
+            break;
+        }
+
+        ++m_walker;
+    }
+
+    const std::string _str(m_current, m_walker);
+    type _type = m_recognizers.recognize(_str);
+    if (_type != type::undefined) {
+        return symbol(lexeme(_str), _type);
+    }
+    return symbol(lexeme(_str), type::undefined);
 }
-
-////----------------------------------------------------------------------------
-// type
-// scanner::recognize(recognizer p_recognizer)
-//{
-
-//    /// saving the current position being analysed in the text
-//    std::string::const_iterator _walker = m_current;
-
-//    type _type = p_recognizer(std::string(m_end, _walker));
-
-//    if (_type == type::undefined) {
-//        // no @p symbol was recognized, so we restore the position in the
-//        text,
-//        // so that we try to recognize a @p symbol with another @p recognizer
-
-//        _walker = m_current;
-//    } else {
-
-//        // a \p type recognized, so we update the current position to be
-//        // analysed in the text
-
-//        if (_walker == m_current) {
-//            // however, if <tt> _walker == m_current </tt> this means that the
-//            // @p symbol recognized is one byte long
-
-//            // so, we need to move @p m_current forward here
-//            ++m_current;
-
-//            ++m_curr_col;
-
-//        } else {
-//            // @p _walker was "naturally" moved forward
-
-//            // so, we update the column being analysed
-//            m_curr_col += static_cast<column>(std::distance(m_current,
-//            _walker));
-
-//            // and update @p m_current
-//            m_current = _walker;
-//        }
-
-//        /// saving the row and column where the last symbol was recognized
-//        m_line_last_symbol = m_curr_line;
-//        m_col_last_symbol = m_curr_col;
-//    }
-//    return _type;
-//}
 
 // ----------------------------------------------------------------------------
 symbol
@@ -143,7 +111,7 @@ scanner::recognize_by_token()
     m_walker = m_current;
     bool _ever_recognized = false;
 
-    if (m_tokens.empty()) {
+    if (!m_tokens.empty()) {
 
         while (true) {
 
@@ -180,7 +148,7 @@ scanner::recognize_by_token()
     if (_ever_recognized) {
         return symbol(lexeme(std::string(m_current, m_walker)), _type);
     }
-    return symbol(lexeme(""), type::undefined);
+    return symbol(lexeme(std::string(m_current, m_walker)), type::undefined);
 }
 
 } // namespace business
