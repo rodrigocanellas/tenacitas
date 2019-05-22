@@ -108,6 +108,7 @@ scanner::recognize_by_token()
 {
 
     type _type(type::undefined);
+    type _last_type(_type);
     m_walker = m_current;
     bool _ever_recognized = false;
 
@@ -140,13 +141,16 @@ scanner::recognize_by_token()
                 // then "==" is again recognized, making \p _ever_recognized to
                 // be set again to \p true;
                 _ever_recognized = true;
+                _last_type = _type;
+            } else if (_ever_recognized) {
+                break;
             }
             ++m_walker;
         }
     }
 
     if (_ever_recognized) {
-        return symbol(lexeme(std::string(m_current, m_walker)), _type);
+        return symbol(lexeme(std::string(m_current, m_walker)), _last_type);
     }
     return symbol(lexeme(std::string(m_current, m_walker)), type::undefined);
 }

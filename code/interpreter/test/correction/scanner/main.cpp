@@ -154,6 +154,123 @@ struct scanner_3
     }
 };
 
+struct scanner_4
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        const std::string _text;
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol != symbol::eot) {
+                cerr_error("Text is empty, so first 'get_symbol' should be "
+                           "'symbol::eot', but it is not");
+                return false;
+            }
+            cerr_test("Text is empty, and the first 'get_symbol' is "
+                      "'symbol::eot', as it should");
+            break;
+        }
+        return true;
+    }
+};
+
+struct scanner_5
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        const std::string _text("    ");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol != symbol::eot) {
+                cerr_error(
+                  "Text is made of spaces, so first 'get_symbol' should be "
+                  "'symbol::eot', but it is not");
+                return false;
+            }
+            cerr_test("Text is made of spaces, and the first 'get_symbol' is "
+                      "'symbol::eot', as it should");
+            break;
+        }
+        return true;
+    }
+};
+
+struct scanner_6
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        const std::string _text("\n\n\n");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol != symbol::eot) {
+                cerr_error(
+                  "Text is made of CRs, so first 'get_symbol' should be "
+                  "'symbol::eot', but it is not");
+                return false;
+            }
+            cerr_test("Text is made of CRs, and the first 'get_symbol' is "
+                      "'symbol::eot', as it should");
+            break;
+        }
+        return true;
+    }
+};
+
+struct scanner_7
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        _scanner.add_tokens(relational_operator, "< > >= <=");
+        _scanner.add_tokens(equality_operator, "== !=");
+        _scanner.add_tokens(reserved_words, "if for while break");
+
+        const std::string _text("for !=> while");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol == symbol::eot) {
+                break;
+            }
+            type _type(_symbol.get_type());
+            if (_type == type::undefined) {
+                cerr_error(
+                  "'",
+                  _symbol.get_lexeme(),
+                  "' should have been recognized, but it was as not. Line ",
+                  _scanner.get_line(),
+                  ", column ",
+                  _scanner.get_column());
+                return false;
+            }
+            cerr_test("'",
+                      _symbol.get_lexeme(),
+                      "' recognized as '",
+                      _type,
+                      "' as expected");
+        }
+        return true;
+    }
+};
+
 int
 main(int argc, char** argv)
 {
@@ -174,4 +291,26 @@ main(int argc, char** argv)
              argv,
              "'scanner' recognizes < > <= >= == != if for while break, and "
              "text is 'for != while'");
+
+    run_test(scanner_4,
+             argc,
+             argv,
+             "scanning empty text, should recognize only 'symbol::eot'");
+
+    run_test(
+      scanner_5,
+      argc,
+      argv,
+      "scanning text made of space, should recognize only 'symbol::eot'");
+
+    run_test(scanner_6,
+             argc,
+             argv,
+             "scanning text made of CRs, should recognize only 'symbol::eot'");
+
+    run_test(scanner_7,
+             argc,
+             argv,
+             "'scanner' recognizes < > <= >= == != if for while break, and "
+             "text is 'for !=> while'");
 }
