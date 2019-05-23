@@ -130,10 +130,10 @@ class scanner
         return ((m_current == m_end) || (*m_current == '\0'));
     }
 
-    //    type recognize(recognizer p_recognizer);
-
-    symbol recognize_by_token();
-    symbol recognize_by_type();
+    /// \brief recognize recognizes the next symbol according to a recognizer
+    /// \param p_recognizer tries to recognize the the type of a string
+    /// \return the symbol found
+    symbol recognize(recognizer p_recognizer);
 
   private:
     /// \brief set of tokens

@@ -1,7 +1,7 @@
 @startuml
 
 hide empty members
-
+hide circle
 allow_mixing
 
 namespace std {
@@ -13,11 +13,10 @@ namespace std {
 
 class scanner {
     + scanner(std::string::const_iterator p_begin, std::string::const_iterator p_end)
-    + symbol operator()()
+    + symbol get_symbol()
 }
 class symbol
 class lexeme
-
 
 class tokens {
     + void set_values(type p_type, const std.string & p_values)
@@ -25,28 +24,28 @@ class tokens {
 class type {
     + {static} unrecognized
 }
-class types <<static>>
 
-class "std.set<std.string>" as string_set
-class "std.map<type, string_set>" as type_set
-class "std.map<uint8_t, type_set>" as token_set
+class lexeme_set <<std::set<lexeme>>
+class type_set <<std::map<type, lexeme_set>>>
+class specials <<std::map<uint8_t, type_set>>>
+class reserveds <<lexeme_set>> 
 
-class pattern_recognizers
-class pattern_recognizer <<std::function<type(const std::string &)> >>
+class recognizers
+class recognizer <<std::function<type(const std::string &)> >>
 
-pattern_recognizers *-- pattern_recognizer
+recognizers *-- recognizer
 
-pattern_recognizer ..> type : local
+recognizer ..> type : local
 
-types *-- "*" type
-
-tokens *--  token_set
+tokens *-- specials
+tokens *-- reserveds
 
 symbol *-- lexeme
 symbol *-- type
 
-scanner *-- types
 scanner *-- tokens
-scanner *-- pattern_recognizers
+scanner *-- recognizers
+
+
 
 @enduml
