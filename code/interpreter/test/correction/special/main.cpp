@@ -2,37 +2,37 @@
 #include <sstream>
 #include <string>
 
-#include <interpreter/business/internal/tokens.h>
+#include <interpreter/business/internal/special.h>
 #include <interpreter/business/type.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 using namespace tenacitas::interpreter::business;
 
-struct list_tokens_1
+struct list_special_1
 {
     bool operator()()
     {
-        tokens _tokens;
+        special _special;
 
-        _tokens.add(type("relational-operator"), "< > <= >=");
+        _special.add(type("relational-operator"), "< > <= >=");
 
-        cerr_test("tokens: ", _tokens);
+        cerr_test("special: ", _special);
 
         return true;
     }
 };
 
-struct list_tokens_2
+struct list_special_2
 {
     bool operator()()
     {
-        tokens _tokens;
+        special _special;
 
-        _tokens.add(type("relational-operator"), "< > <= >=");
-        _tokens.add(type("reserved-word"), "while if for");
+        _special.add(type("relational-operator"), "< > <= >=");
+        _special.add(type("reserved-word"), "while if for");
 
-        cerr_test("tokens: ", _tokens);
+        cerr_test("special: ", _special);
 
         return true;
     }
@@ -42,12 +42,12 @@ struct recognize_1
 {
     bool operator()()
     {
-        tokens _tokens;
+        special _special;
 
-        _tokens.add(type("relational-operator"), "< > <= >=");
-        _tokens.add(type("reserved-word"), "while if for");
+        _special.add(type("relational-operator"), "< > <= >=");
+        _special.add(type("reserved-word"), "while if for");
 
-        type _type = _tokens.recognize("<");
+        type _type = _special("<");
         if (_type == type::undefined) {
             cerr_error("'<' should have been recognized, but it was not");
             return false;
@@ -68,12 +68,12 @@ struct recognize_2
 {
     bool operator()()
     {
-        tokens _tokens;
+        special _special;
 
-        _tokens.add(type("relational-operator"), "< > <= >=");
-        _tokens.add(type("reserved-word"), "while if for");
+        _special.add(type("relational-operator"), "< > <= >=");
+        _special.add(type("reserved-word"), "while if for");
 
-        type _type = _tokens.recognize("!");
+        type _type = _special("!");
         if (_type != type::undefined) {
             cerr_error("'!' should not have been recognized, but it not as '",
                        _type,
@@ -89,12 +89,12 @@ struct recognize_3
 {
     bool operator()()
     {
-        tokens _tokens;
+        special _special;
 
-        _tokens.add(type("relational-operator"), "< > <= >=");
-        _tokens.add(type("reserved-word"), "while if for");
+        _special.add(type("relational-operator"), "< > <= >=");
+        _special.add(type("reserved-word"), "while if for");
 
-        type _type = _tokens.recognize(">=");
+        type _type = _special(">=");
         if (_type == type::undefined) {
             cerr_error("'<' should have been recognized, but it was not");
             return false;
@@ -108,7 +108,7 @@ struct recognize_3
         }
         cerr_test("'>=' recognized as '", _type, "'");
 
-        _type = _tokens.recognize(">");
+        _type = _special(">");
         if (_type == type::undefined) {
             cerr_error("'<' should have been recognized, but it was not");
             return false;
@@ -122,7 +122,7 @@ struct recognize_3
         }
         cerr_test("'>' recognized as '", _type, "'");
 
-        _type = _tokens.recognize("if");
+        _type = _special("if");
         if (_type == type::undefined) {
             cerr_error("'<' should have been recognized, but it was not");
             return false;
@@ -142,15 +142,15 @@ struct recognize_3
 int
 main(int argc, char** argv)
 {
-    run_test(list_tokens_1,
+    run_test(list_special_1,
              argc,
              argv,
-             "list 'relational-operators' tokens '< > <= >='");
+             "list 'relational-operators' special '< > <= >='");
 
-    run_test(list_tokens_2,
+    run_test(list_special_2,
              argc,
              argv,
-             "list 'relational-operators' tokens '< > <= >=', and "
+             "list 'relational-operators' special '< > <= >=', and "
              "'reserved-words' 'while for if'");
 
     run_test(

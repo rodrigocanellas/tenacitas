@@ -18,34 +18,37 @@ class scanner {
 class symbol
 class lexeme
 
-class tokens {
+class special {
     + void set_values(type p_type, const std.string & p_values)
 }
+
 class type {
     + {static} unrecognized
 }
 
-class lexeme_set <<std::set<lexeme>>
-class type_set <<std::map<type, lexeme_set>>>
-class specials <<std::map<uint8_t, type_set>>>
-class reserveds <<lexeme_set>> 
+class string_set <<std::set<std::string>>
+class type_set <<std::map<type, string_set>>>
+class special_set <<std::map<uint8_t, type_set>>>
+
+class reserved <<string_set>> 
 
 class recognizers
 class recognizer <<std::function<type(const std::string &)> >>
+
+
 
 recognizers *-- recognizer
 
 recognizer ..> type : local
 
-tokens *-- specials
-tokens *-- reserveds
-
 symbol *-- lexeme
 symbol *-- type
 
-scanner *-- tokens
+scanner *-- special
+scanner *-- reserved
 scanner *-- recognizers
 
+special *-- "m_special_set" special_set
 
 
 @enduml

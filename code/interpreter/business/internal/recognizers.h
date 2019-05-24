@@ -19,7 +19,7 @@
 namespace tenacitas {
 /// \brief namespace of the interpreter
 namespace interpreter {
-/// \brief namespace of the business
+/// \brief namespace of the group
 namespace business {
 
 /// \brief recognizers group of \p recognizer objects, which try to recognize a
@@ -69,7 +69,7 @@ struct recognizers
     /// \brief recognize tries to recognize a \p type among the \p recognizer
     /// objects, based on a string \param p_str the value to be recognized
     /// \return if not recognized, \p type::undefined; otherwise a valid \p type
-    inline type recognize(const std::string& p_str)
+    inline type operator()(const std::string& p_str)
     {
         if (!m_list.empty()) {
             for (recognizer& _recognize : m_list) {

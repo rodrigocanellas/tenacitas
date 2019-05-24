@@ -47,7 +47,7 @@ struct recognize_1
 
         _recognizers.add(integer_recognizer());
 
-        type _type = _recognizers.recognize("1245");
+        type _type = _recognizers("1245");
 
         if (_type == type::undefined) {
             cerr_error(
@@ -77,7 +77,7 @@ struct recognize_2
         _recognizers.add(integer_recognizer());
         _recognizers.add(word_recognizer());
 
-        type _type = _recognizers.recognize("1245");
+        type _type = _recognizers("1245");
 
         if (_type == type::undefined) {
             cerr_error(
@@ -107,7 +107,7 @@ struct recognize_3
         _recognizers.add(integer_recognizer());
         _recognizers.add(word_recognizer());
 
-        type _type = _recognizers.recognize("bycicle");
+        type _type = _recognizers("bycicle");
 
         if (_type == type::undefined) {
             cerr_error(
@@ -137,7 +137,7 @@ struct recognize_4
         _recognizers.add(integer_recognizer());
         _recognizers.add(word_recognizer());
 
-        type _type = _recognizers.recognize("bycicle+");
+        type _type = _recognizers("bycicle+");
 
         if (_type != type::undefined) {
             cerr_error(

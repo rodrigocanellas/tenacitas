@@ -14,7 +14,7 @@
 namespace tenacitas {
 /// \brief namespace of the interpreter
 namespace interpreter {
-/// \brief namespace of the business
+/// \brief namespace of the group
 namespace business {
 
 ///
@@ -107,9 +107,14 @@ struct type
     void* operator new(size_t) = delete;
 
     ///
-    /// \brief undefined special type representing a fail in recognizing a type
+    /// \brief undefined type representing a fail in recognizing a type
     ///
     static const type undefined;
+
+    ///
+    /// \brief reserved type of a reserved word, like 'while'
+    ///
+    static const type reserved;
 
   private:
     ///

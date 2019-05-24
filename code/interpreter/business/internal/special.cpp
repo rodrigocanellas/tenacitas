@@ -1,33 +1,36 @@
 #include <algorithm>
 
-#include <interpreter/business/internal/tokens.h>
+#include <interpreter/business/internal/special.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the interpreter
 namespace interpreter {
-/// \brief namespace of the business
+/// \brief namespace of the group
 namespace business {
 
 // -----------------------------------------------------------------------------
 std::ostream&
-operator<<(std::ostream& p_out, const tokens& p_tokens)
+operator<<(std::ostream& p_out, const special& p_tokens)
 {
-    tokens::token_set::const_iterator _token_ite = p_tokens.m_token_set.begin();
-    tokens::token_set::const_iterator _token_end = p_tokens.m_token_set.end();
+    special::special_set::const_iterator _token_ite =
+      p_tokens.m_special_set.begin();
+    special::special_set::const_iterator _token_end =
+      p_tokens.m_special_set.end();
     p_out << "\n";
     while (_token_ite != _token_end) {
         p_out << "size = " << static_cast<uint16_t>(_token_ite->first)
               << std::endl;
 
-        tokens::type_set::const_iterator _type_ite = _token_ite->second.begin();
-        tokens::type_set::const_iterator _type_end = _token_ite->second.end();
+        special::type_set::const_iterator _type_ite =
+          _token_ite->second.begin();
+        special::type_set::const_iterator _type_end = _token_ite->second.end();
 
         while (_type_ite != _type_end) {
             p_out << "\ttype = " << _type_ite->first << std::endl;
-            tokens::string_set::const_iterator _string_ite =
+            special::string_set::const_iterator _string_ite =
               _type_ite->second.begin();
-            tokens::string_set::const_iterator _string_end =
+            special::string_set::const_iterator _string_end =
               _type_ite->second.end();
 
             while (_string_ite != _string_end) {
@@ -44,19 +47,19 @@ operator<<(std::ostream& p_out, const tokens& p_tokens)
 
 // -----------------------------------------------------------------------------
 type
-tokens::recognize(const std::string& p_str) const
+special::operator()(const std::string& p_str) const
 {
     type _type(type::undefined);
 
-    if (m_token_set.empty()) {
+    if (m_special_set.empty()) {
         // there are no tokens
         return _type;
     }
 
     uint8_t _size = static_cast<uint8_t>(p_str.size());
 
-    token_set::const_iterator _token_ite = m_token_set.find(_size);
-    if (_token_ite == m_token_set.end()) {
+    special_set::const_iterator _token_ite = m_special_set.find(_size);
+    if (_token_ite == m_special_set.end()) {
         // there is no token of \p _size size
         return _type;
     }
@@ -77,12 +80,12 @@ tokens::recognize(const std::string& p_str) const
 
 // -----------------------------------------------------------------------------
 void
-tokens::add(const type& p_type, const std::string& p_tokens)
+special::add(const type& p_type, const std::string& p_tokens)
 {
     string::business::slipt_str(
       p_tokens, [this, p_type](const std::string& p_str) -> void {
           const uint8_t _size(static_cast<uint8_t>(p_str.size()));
-          this->m_token_set[_size][p_type].emplace(p_str);
+          this->m_special_set[_size][p_type].emplace(p_str);
       });
 }
 

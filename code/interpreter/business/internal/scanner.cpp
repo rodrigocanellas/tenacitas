@@ -43,12 +43,12 @@ scanner::get_symbol()
     //    }
 
     symbol _symbol = recognize([this](const std::string& p_str) -> type {
-        return this->m_tokens.recognize(p_str);
+        return this->m_tokens(p_str);
     });
 
     if (_symbol.get_type() == type::undefined) {
         _symbol = recognize([this](const std::string& p_str) -> type {
-            return this->m_recognizers.recognize(p_str);
+            return this->m_recognizers(p_str);
         });
     }
 

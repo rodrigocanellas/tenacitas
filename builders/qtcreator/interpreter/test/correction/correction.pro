@@ -2,8 +2,8 @@ SUBDIRS = \
     lexeme \
     symbol \
     type \
-    tokens \
     recognizers \
+    special \
     scanner
 
   

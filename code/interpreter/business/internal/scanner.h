@@ -14,7 +14,7 @@
 
 #include <interpreter/business/internal/recognizers.h>
 #include <interpreter/business/internal/symbol.h>
-#include <interpreter/business/internal/tokens.h>
+#include <interpreter/business/internal/special.h>
 #include <interpreter/business/type.h>
 
 /// \brief Namespace of the organization
@@ -137,7 +137,7 @@ class scanner
 
   private:
     /// \brief set of tokens
-    tokens m_tokens;
+    special m_tokens;
 
     /// \brief set og \p recognizer objects
     recognizers m_recognizers;

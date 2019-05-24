@@ -19,7 +19,7 @@
 namespace tenacitas {
 /// \brief namespace of the interpreter
 namespace interpreter {
-/// \brief namespace of the business
+/// \brief namespace of the group
 namespace business {
 
 /// \brief symbol Represents a symbol read from the text being interpreted
