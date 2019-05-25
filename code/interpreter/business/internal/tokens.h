@@ -27,23 +27,23 @@ namespace business {
 
 /// \brief specials allows to define symbols that will be recognized by value,
 /// like '=' '<=' or '.'
-struct special
+struct tokens
 {
     friend std::ostream& operator<<(std::ostream& p_out,
-                                    const special& p_specials);
+                                    const tokens& p_specials);
 
   public:
     /// \brief default constructor
-    special() = default;
+    tokens() = default;
 
     /// \brief not allowed
-    special(const special&) = delete;
+    tokens(const tokens&) = delete;
 
     /// \brief not allowed
-    special(special&&) = default;
+    tokens(tokens&&) = default;
 
     /// \brief destructor
-    ~special() = default;
+    ~tokens() = default;
 
     /// \brief add adds a group of value strings encoded in a string
     /// \param p_type identifier of the group of specials, like
@@ -61,10 +61,10 @@ struct special
     bool empty() const { return m_special_set.empty(); }
 
     /// \brief not allowed
-    special& operator=(const special&) = delete;
+    tokens& operator=(const tokens&) = delete;
 
     /// \brief not allowed
-    special& operator=(special&&) = delete;
+    tokens& operator=(tokens&&) = delete;
 
     /// \brief not allowed
     void* operator new[](size_t) = delete;

@@ -25,42 +25,6 @@ scanner::set_text(std::string::const_iterator p_begin,
 }
 
 //----------------------------------------------------------------------------
-symbol
-scanner::get_symbol()
-{
-
-    // before anything, let's skip the chars defined to be ignored
-    skip();
-
-    if (is_eot()) {
-        // we reached the end of the text
-        return symbol::eot;
-    }
-
-    //    symbol _symbol = recognize_by_token();
-    //    if (_symbol.get_type() == type::undefined) {
-    //        _symbol = recognize_by_type();
-    //    }
-
-    symbol _symbol = recognize([this](const std::string& p_str) -> type {
-        return this->m_tokens(p_str);
-    });
-
-    if (_symbol.get_type() == type::undefined) {
-        _symbol = recognize([this](const std::string& p_str) -> type {
-            return this->m_recognizers(p_str);
-        });
-    }
-
-    m_curr_col = static_cast<column>(std::distance(m_current, m_walker));
-    m_current = m_walker;
-    m_line_last_symbol = m_curr_line;
-    m_col_last_symbol = m_curr_col;
-
-    return _symbol;
-}
-
-//----------------------------------------------------------------------------
 void
 scanner::skip()
 {
@@ -87,7 +51,7 @@ scanner::skip()
     }
 }
 
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 symbol
 scanner::recognize(recognizer p_recognizer)
 {
@@ -113,6 +77,110 @@ scanner::recognize(recognizer p_recognizer)
         _type = p_recognizer(_str);
     }
     return symbol(lexeme(_str), _type);
+}
+
+//----------------------------------------------------------------------------
+symbol
+scanner::get_symbol()
+{
+
+    // before anything, let's skip the chars defined to be ignored
+    skip();
+
+    if (is_eot()) {
+        // we reached the end of the text
+        return symbol::eot;
+    }
+
+    symbol _symbol = recognize_by_token();
+    if (_symbol.get_type() == type::undefined) {
+        _symbol = recognize_by_type();
+    }
+    m_curr_col = static_cast<column>(std::distance(m_current, m_walker));
+    m_current = m_walker;
+    m_line_last_symbol = m_curr_line;
+    m_col_last_symbol = m_curr_col;
+
+    return _symbol;
+}
+
+//----------------------------------------------------------------------------
+symbol
+scanner::recognize_by_type()
+{
+
+    m_walker = m_current;
+    ++m_walker;
+    while (true) {
+
+        // any of these conditions makes us stop
+        if ((m_walker == m_end) || (*m_walker == '\0') || (*m_walker == ' ') ||
+            (*m_walker == '\n')) {
+            break;
+        }
+
+        ++m_walker;
+    }
+
+    const std::string _str(m_current, m_walker);
+    type _type = m_recognizers(_str);
+    if (_type != type::undefined) {
+        return symbol(lexeme(_str), _type);
+    }
+    return symbol(lexeme(_str), type::undefined);
+}
+
+// ----------------------------------------------------------------------------
+symbol
+scanner::recognize_by_token()
+{
+
+    type _type(type::undefined);
+    type _last_type(_type);
+    m_walker = m_current;
+    bool _ever_recognized = false;
+
+    if (!m_tokens.empty()) {
+
+        while (true) {
+
+            // any of these conditions makes us stop
+            if ((m_walker == m_end) || (*m_walker == '\0') ||
+                (*m_walker == ' ') || (*m_walker == '\n')) {
+                break;
+            }
+
+            // if the string value parsed so far matches one of the registered
+            // tokens
+            if (std::distance(m_current, m_walker) == 0) {
+                const std::string _str(std::string(1, *m_walker));
+                _type = m_tokens(_str);
+            } else {
+                std::string::const_iterator _aux = m_walker;
+                ++_aux;
+                const std::string _str(std::string(m_current, _aux));
+                _type = m_tokens(_str);
+            }
+
+            if (_type != type::undefined) {
+                // @note if \p m_tokens recognizes "=" and "==", and if the \p
+                // m_walker is at the start of "== b", the first "=" will be
+                // recognized, \p _ever_recognized will be set to \p true; but
+                // then "==" is again recognized, making \p _ever_recognized to
+                // be set again to \p true;
+                _ever_recognized = true;
+                _last_type = _type;
+            } else if (_ever_recognized) {
+                break;
+            }
+            ++m_walker;
+        }
+    }
+
+    if (_ever_recognized) {
+        return symbol(lexeme(std::string(m_current, m_walker)), _last_type);
+    }
+    return symbol(lexeme(std::string(m_current, m_walker)), type::undefined);
 }
 
 } // namespace business

@@ -3,7 +3,7 @@ SUBDIRS = \
     symbol \
     type \
     recognizers \
-    special \
+    tokens \
     scanner
 
   

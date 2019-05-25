@@ -12,10 +12,11 @@ using namespace tenacitas::interpreter::business;
 
 static const type relational_operator("relational-operator");
 static const type equality_operator("equality-operator");
-static const type reserved_words("reserved-words");
 static const type assignment_operator("assignment-operator");
+static const type reserved_word("reserved-word");
 static const type integer("integer");
 static const type word("word");
+static const type delimeter("delimeter");
 
 struct integer_recognizer
 {
@@ -118,7 +119,7 @@ struct scanner_3
 
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
 
         const std::string _text("for != while");
         _scanner.set_text(_text.begin(), _text.end());
@@ -235,7 +236,7 @@ struct scanner_7
 
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
 
         const std::string _text("for != > while");
         _scanner.set_text(_text.begin(), _text.end());
@@ -273,18 +274,31 @@ struct scanner_8
         scanner _scanner;
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
 
         const std::string _text("!=>");
         _scanner.set_text(_text.begin(), _text.end());
         cerr_test("text = '", _text, "'");
         symbol _symbol = _scanner.get_symbol();
         type _type(_symbol.get_type());
-        if (_type != type::undefined) {
-            cerr_error("'!=>' was recognized as '", _type, "'");
+        lexeme _lexeme(_symbol.get_lexeme());
+        if (_type == type::undefined) {
+            cerr_error(
+              "'", _lexeme, "' was not recognized, but should have been");
             return false;
         }
-        cerr_test("'!=>' was not recognized, as expected");
+        cerr_test("'", _lexeme, "' recognized as '", _type, "', as expected");
+
+        _symbol = _scanner.get_symbol();
+        _type = _symbol.get_type();
+        _lexeme = _symbol.get_lexeme();
+        if (_type == type::undefined) {
+            cerr_error(
+              "'", _lexeme, "' was not recognized, but should have been");
+            return false;
+        }
+        cerr_test("'", _lexeme, "' recognized as '", _type, "', as expected");
+
         return true;
     }
 };
@@ -296,7 +310,7 @@ struct scanner_9
         scanner _scanner;
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
         _scanner.add_tokens(assignment_operator, "=");
 
         const std::string _text("=");
@@ -328,7 +342,7 @@ struct scanner_10
 
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
         _scanner.add_tokens(assignment_operator, "=");
 
         const std::string _text("for = != = > while");
@@ -369,7 +383,7 @@ struct scanner_11
 
         _scanner.add_tokens(relational_operator, "< > >= <=");
         _scanner.add_tokens(equality_operator, "== !=");
-        _scanner.add_tokens(reserved_words, "if for while break");
+        _scanner.add_tokens(reserved_word, "if for while break");
         _scanner.add_tokens(assignment_operator, "=");
 
         const std::string _text("for !==");
@@ -421,6 +435,90 @@ struct scanner_11
     }
 };
 
+struct scanner_12
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        _scanner.add_tokens(relational_operator, "< > >= <=");
+        _scanner.add_tokens(equality_operator, "== !=");
+        _scanner.add_tokens(delimeter, "( )");
+        _scanner.add_tokens(reserved_word, "if for while break");
+        _scanner.add_tokens(assignment_operator, "=");
+
+        const std::string _text("for( )");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol == symbol::eot) {
+                break;
+            }
+            type _type(_symbol.get_type());
+            if (_type == type::undefined) {
+                cerr_error(
+                  "'",
+                  _symbol.get_lexeme(),
+                  "' should have been recognized, but it was as not. Line ",
+                  _scanner.get_line(),
+                  ", column ",
+                  _scanner.get_column());
+                return false;
+            }
+            cerr_test("'",
+                      _symbol.get_lexeme(),
+                      "' recognized as '",
+                      _type,
+                      "' as expected");
+        }
+        return true;
+    }
+};
+
+struct scanner_13
+{
+
+    bool operator()()
+    {
+        scanner _scanner;
+
+        _scanner.add_tokens(relational_operator, "< > >= <=");
+        _scanner.add_tokens(equality_operator, "== !=");
+        _scanner.add_tokens(delimeter, "( ) ;");
+        _scanner.add_tokens(reserved_word, "if for while break");
+        _scanner.add_tokens(assignment_operator, "=");
+
+        const std::string _text("for() while == break ;>=");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol == symbol::eot) {
+                break;
+            }
+            type _type(_symbol.get_type());
+            if (_type == type::undefined) {
+                cerr_error(
+                  "'",
+                  _symbol.get_lexeme(),
+                  "' should have been recognized, but it was as not. Line ",
+                  _scanner.get_line(),
+                  ", column ",
+                  _scanner.get_column());
+                return false;
+            }
+            cerr_test("'",
+                      _symbol.get_lexeme(),
+                      "' recognized as '",
+                      _type,
+                      "' as expected");
+        }
+        return true;
+    }
+};
+
 int
 main(int argc, char** argv)
 {
@@ -461,31 +559,45 @@ main(int argc, char** argv)
     run_test(scanner_7,
              argc,
              argv,
-             "'scanner' recognizes < > <= >= == != if for while break, and "
+             "'scanner' recognizes '< > <= >= == != if for while break', and "
              "text is 'for != > while', which should be all recognized");
 
     run_test(scanner_8,
              argc,
              argv,
-             "'scanner' recognizes < > <= >= == != if for while break, and "
+             "'scanner' recognizes '< > <= >= == != if for while break', and "
              "text is '!=>', which should not be recognized");
 
     run_test(scanner_9,
              argc,
              argv,
-             "'scanner' recognizes = < > <= >= == != if for while break, and "
+             "'scanner' recognizes '= < > <= >= == != if for while break', and "
              "text is '=', which should be recognized");
 
     run_test(scanner_10,
              argc,
              argv,
-             "'scanner' recognizes = < > <= >= == != if for while break, and "
+             "'scanner' recognizes '= < > <= >= == != if for while break', and "
              "text is 'for = != = > while', which should be all recognized");
 
     run_test(
       scanner_11,
       argc,
       argv,
-      "'scanner' recognizes = < > <= >= == != if for while break, and "
+      "'scanner' recognizes '= < > <= >= == != if for while break', and "
       "text is 'for  !=='. 'for' should be recognized, but '!==' should not");
+
+    run_test(
+      scanner_12,
+      argc,
+      argv,
+      "'scanner' recognizes '( ) = < > <= >= == != if for while break', and "
+      "text is 'for( )', which should be all recognized");
+
+    run_test(scanner_13,
+             argc,
+             argv,
+             "'scanner' recognizes '( ) = < > <= >= == != if for while break "
+             ";', and text is 'for( ) while == break ;>=', so all symbols "
+             "should be recognized");
 }

@@ -14,7 +14,7 @@
 
 #include <interpreter/business/internal/recognizers.h>
 #include <interpreter/business/internal/symbol.h>
-#include <interpreter/business/internal/special.h>
+#include <interpreter/business/internal/tokens.h>
 #include <interpreter/business/type.h>
 
 /// \brief Namespace of the organization
@@ -77,10 +77,21 @@ class scanner
     /// text being analysed
     inline column get_column() const { return m_col_last_symbol; }
 
-    /// \brief add_tokens adds a set of string values associated to a \p type
-    /// \param p_type identifier of the group of tokens, like
-    /// 'relational-operator'
-    /// \param p_tokens the tokens, like '> < <= >='
+    /// \brief add_tokens adds a set of string values that are tokens symbols,
+    /// like '>' '<' '<'= '>=' '.' 'while' 'if' 'break'.
+    /// \param p_type is the type of this set of tokens symbols, like
+    /// 'relational-operator', 'dot-operator' or 'reserved-word'.
+    /// \param p_tokens contains the tokens strings, encoded in one string. For
+    /// example:
+    ///
+    /// \code
+    /// scanner _scanner;
+    /// _scanner.add_tokens(type("relational_operator"), "< > >= <=");
+    /// _scanner.add_tokens(type("equality_operator"), "== !=");
+    /// _scanner.add_tokens(type("assignment_operator"), "=");
+    /// _scanner.add_tokens(type("reserved-word"), "while");
+    /// \endcode
+    ///
     void add_tokens(const type& p_type, const std::string& p_tokens)
     {
         m_tokens.add(p_type, p_tokens);
@@ -93,12 +104,12 @@ class scanner
         m_recognizers.add(std::move(p_recognizer));
     }
 
-    /// \brief Returns the next \p:symbol object found in the text, which begin
+    /// \brief Returns the next \p symbol object found in the text, which begin
     /// and end were defined using the @p set_text method
     ///
     /// \return a \p symbol reference to the symbol read from the
-    /// text, or symbol::eot, which \p type is \p type::eot if all the text has
-    /// been read
+    /// text, or \p symbol::eot, which \p type is \p type::eot if all the text
+    /// has been read
     symbol get_symbol();
 
     /// \brief not allowed
@@ -135,12 +146,18 @@ class scanner
     /// \return the symbol found
     symbol recognize(recognizer p_recognizer);
 
+    symbol recognize_by_type();
+    symbol recognize_by_token();
+
   private:
     /// \brief set of tokens
-    special m_tokens;
+    tokens m_tokens;
 
-    /// \brief set og \p recognizer objects
+    /// \brief set of \p recognizer objects
     recognizers m_recognizers;
+
+    //    /// \brief set of reserved words
+    //    reserved m_reserved;
 
     /// \brief A std::string containing chars to be ignored while analysing the
     /// text
@@ -164,10 +181,10 @@ class scanner
     /// \brief possible next current possition
     std::string::const_iterator m_walker;
 
-    /// \brief Row where the last symbol was recognized
+    /// \brief line where the last symbol was recognized
     line m_line_last_symbol;
 
-    /// \brief Col where the last symbol was recognized
+    /// \brief column where the last symbol was recognized
     column m_col_last_symbol;
 };
 } // namespace business

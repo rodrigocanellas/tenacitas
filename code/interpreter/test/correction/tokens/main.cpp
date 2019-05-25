@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include <interpreter/business/internal/special.h>
+#include <interpreter/business/internal/tokens.h>
 #include <interpreter/business/type.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -13,7 +13,7 @@ struct list_special_1
 {
     bool operator()()
     {
-        special _special;
+        tokens _special;
 
         _special.add(type("relational-operator"), "< > <= >=");
 
@@ -27,7 +27,7 @@ struct list_special_2
 {
     bool operator()()
     {
-        special _special;
+        tokens _special;
 
         _special.add(type("relational-operator"), "< > <= >=");
         _special.add(type("reserved-word"), "while if for");
@@ -42,7 +42,7 @@ struct recognize_1
 {
     bool operator()()
     {
-        special _special;
+        tokens _special;
 
         _special.add(type("relational-operator"), "< > <= >=");
         _special.add(type("reserved-word"), "while if for");
@@ -68,7 +68,7 @@ struct recognize_2
 {
     bool operator()()
     {
-        special _special;
+        tokens _special;
 
         _special.add(type("relational-operator"), "< > <= >=");
         _special.add(type("reserved-word"), "while if for");
@@ -89,7 +89,7 @@ struct recognize_3
 {
     bool operator()()
     {
-        special _special;
+        tokens _special;
 
         _special.add(type("relational-operator"), "< > <= >=");
         _special.add(type("reserved-word"), "while if for");

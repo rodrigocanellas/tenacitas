@@ -1,6 +1,6 @@
 
 TEMPLATE = app
-TARGET = tenacitas.interpreter.test.correction.special
+TARGET = tenacitas.interpreter.test.correction.tokens
 CONFIG+=test
 
 QT -= core
@@ -16,7 +16,7 @@ message("LIBS = $$LIBS")
 LIBS += -ltenacitas.interpreter -ltenacitas.logger -ltenacitas.string
 
 SOURCES += \
-    ../../../../../../code/interpreter/test/correction/special/main.cpp
+    ../../../../../../code/interpreter/test/correction/tokens/main.cpp
 
 
 

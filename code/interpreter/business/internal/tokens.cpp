@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include <interpreter/business/internal/special.h>
+#include <interpreter/business/internal/tokens.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -11,26 +11,26 @@ namespace business {
 
 // -----------------------------------------------------------------------------
 std::ostream&
-operator<<(std::ostream& p_out, const special& p_tokens)
+operator<<(std::ostream& p_out, const tokens& p_tokens)
 {
-    special::special_set::const_iterator _token_ite =
+    tokens::special_set::const_iterator _token_ite =
       p_tokens.m_special_set.begin();
-    special::special_set::const_iterator _token_end =
+    tokens::special_set::const_iterator _token_end =
       p_tokens.m_special_set.end();
     p_out << "\n";
     while (_token_ite != _token_end) {
         p_out << "size = " << static_cast<uint16_t>(_token_ite->first)
               << std::endl;
 
-        special::type_set::const_iterator _type_ite =
+        tokens::type_set::const_iterator _type_ite =
           _token_ite->second.begin();
-        special::type_set::const_iterator _type_end = _token_ite->second.end();
+        tokens::type_set::const_iterator _type_end = _token_ite->second.end();
 
         while (_type_ite != _type_end) {
             p_out << "\ttype = " << _type_ite->first << std::endl;
-            special::string_set::const_iterator _string_ite =
+            tokens::string_set::const_iterator _string_ite =
               _type_ite->second.begin();
-            special::string_set::const_iterator _string_end =
+            tokens::string_set::const_iterator _string_end =
               _type_ite->second.end();
 
             while (_string_ite != _string_end) {
@@ -47,7 +47,7 @@ operator<<(std::ostream& p_out, const special& p_tokens)
 
 // -----------------------------------------------------------------------------
 type
-special::operator()(const std::string& p_str) const
+tokens::operator()(const std::string& p_str) const
 {
     type _type(type::undefined);
 
@@ -80,7 +80,7 @@ special::operator()(const std::string& p_str) const
 
 // -----------------------------------------------------------------------------
 void
-special::add(const type& p_type, const std::string& p_tokens)
+tokens::add(const type& p_type, const std::string& p_tokens)
 {
     string::business::slipt_str(
       p_tokens, [this, p_type](const std::string& p_str) -> void {
