@@ -1,1 +1,1 @@
-'scanner' was the last class implemented, and the test suite misses recognition by pattern ('recognizer')
+

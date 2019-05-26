@@ -69,10 +69,10 @@ struct recognizers
     /// \brief recognize tries to recognize a \p type among the \p recognizer
     /// objects, based on a string \param p_str the value to be recognized
     /// \return if not recognized, \p type::undefined; otherwise a valid \p type
-    inline type operator()(const std::string& p_str)
+    inline type operator()(const std::string& p_str) const
     {
         if (!m_list.empty()) {
-            for (recognizer& _recognize : m_list) {
+            for (const recognizer& _recognize : m_list) {
                 type _type(_recognize(p_str));
                 if (_type != type::undefined) {
                     return _type;

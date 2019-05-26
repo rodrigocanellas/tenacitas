@@ -45,6 +45,24 @@ struct word_recognizer
     }
 };
 
+// struct float_recognizer
+//{
+//    type operator()(const std::string& p_str)
+//    {
+//        bool _decimal_found = false;
+//        for (std::string::value_type _c : p_str) {
+//            if (std::isalnum(_c) == 0) {
+//                if ((static_cast<std::string::value_type>(_c) == '.') &&
+//                    (!_decimal_found)) {
+//                    _decimal_found=true;
+//                }
+//                return type::undefined;
+//            }
+//        }
+//        return word;
+//    }
+//};
+
 struct scanner_1
 {
 
@@ -519,6 +537,50 @@ struct scanner_13
     }
 };
 
+struct scanner_14
+{
+    bool operator()()
+    {
+        scanner _scanner;
+
+        _scanner.add_tokens(relational_operator, "< > >= <=");
+        _scanner.add_tokens(equality_operator, "== !=");
+        _scanner.add_tokens(delimeter, "( ) ;");
+        _scanner.add_tokens(reserved_word, "if for while break");
+        _scanner.add_tokens(assignment_operator, "=");
+
+        _scanner.add_recognizer(word_recognizer());
+        _scanner.add_recognizer(integer_recognizer());
+
+        const std::string _text("a = 2;");
+        _scanner.set_text(_text.begin(), _text.end());
+        cerr_test("text = '", _text, "'");
+        while (true) {
+            symbol _symbol(_scanner.get_symbol());
+            if (_symbol == symbol::eot) {
+                break;
+            }
+            type _type(_symbol.get_type());
+            if (_type == type::undefined) {
+                cerr_error(
+                  "'",
+                  _symbol.get_lexeme(),
+                  "' should have been recognized, but it was as not. Line ",
+                  _scanner.get_line(),
+                  ", column ",
+                  _scanner.get_column());
+                return false;
+            }
+            cerr_test("'",
+                      _symbol.get_lexeme(),
+                      "' recognized as '",
+                      _type,
+                      "' as expected");
+        }
+        return true;
+    }
+};
+
 int
 main(int argc, char** argv)
 {
@@ -600,4 +662,11 @@ main(int argc, char** argv)
              "'scanner' recognizes '( ) = < > <= >= == != if for while break "
              ";', and text is 'for( ) while == break ;>=', so all symbols "
              "should be recognized");
+
+    run_test(scanner_14,
+             argc,
+             argv,
+             "'scanner' recognizes '( ) = < > <= >= == != if for while break "
+             ";', it has 'word_recognizer' and 'integer_recognizer', and text "
+             "is 'a = 2;', so all symbols should be recognized");
 }
