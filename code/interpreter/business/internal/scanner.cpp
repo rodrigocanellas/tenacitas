@@ -33,8 +33,6 @@ scanner::skip()
         if (*m_current == '\n') {
             ++m_curr_line;
             m_curr_col = 1;
-            //             ++m_current;
-            //             break;
         }
 
         if (m_to_ignore.find(*m_current) == std::string::npos) {

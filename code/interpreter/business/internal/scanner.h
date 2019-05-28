@@ -40,8 +40,9 @@ class scanner
     ///
     /// \param[in] p_to_ignore is a std::string containing chars to be ignored
     /// while analysing the text
-    explicit scanner(std::string&& p_to_ignore = " \r\n\t")
+    inline explicit scanner(std::string&& p_to_ignore = " \r\n\t")
       : m_tokens()
+      , m_recognizers()
       , m_to_ignore(p_to_ignore)
       , m_curr_line(1)
       , m_curr_col(1)
@@ -152,9 +153,6 @@ class scanner
 
     /// \brief set of \p recognizer objects
     recognizers m_recognizers;
-
-    //    /// \brief set of reserved words
-    //    reserved m_reserved;
 
     /// \brief A std::string containing chars to be ignored while analysing the
     /// text
