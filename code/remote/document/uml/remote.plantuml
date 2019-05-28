@@ -60,7 +60,7 @@ enum signal_strength {
      9
 }
      
-class interface {
+interface  interface {
 +load() : interface_status
 +open() : interface_status
 +close() : interface_status
