@@ -1,6 +1,7 @@
 #ifndef TENACITAS_LOGGER_BUS_LOG_H
 #define TENACITAS_LOGGER_BUS_LOG_H
 
+#include <functional>
 #include <iomanip>
 #include <limits>
 #include <memory>
@@ -8,7 +9,9 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <thread>
 
+#include <calendar/business/epoch.h>
 #include <logger/business/internal/level.h>
 #include <type/business/enum.h>
 
@@ -21,55 +24,23 @@ namespace business {
 
 ///
 /// \brief log is a template class that guarantees thread safe writing to the
-/// log media
+/// log writer
 ///
-/// \tparam t_media is the actual media where the log messages will be written
-/// to. It must implement:
-/// - move constructor
-/// - move assignment
-/// - \code void operator()(std::string &&) \endcode operator
-/// - \code static std::string type() \endcode method, which should return a
-/// string identifying the media
-///
-/// \details log is a singleton, and the static method \p configure must be
-/// called, only once, to define the actual media and before the first call to
-/// any \p instance, or a a\p runtime_error exception will be thrown.
-///
-template<typename t_media>
 class log
 {
   public:
+    /// \brief function responsible for acually writing the log message to a
+    /// writer
+    typedef std::function<void(std::string&&)> writer;
+
+  public:
     ///
-    /// \brief configure defines the media that will be used to log messages
-    /// \param p_media the actual media. Please, read the \p log class
-    /// documentation above to be aware of the methods \p t_media should
+    /// \brief configure defines the writer that will be used to log messages
+    /// \param p_writer the actual writer. Please, read the \p log class
+    /// documentation above to be aware of the methods \p t_writer should
     /// implement
     ///
-    static inline void configure(t_media&& p_media)
-    {
-        if (m_singleton == nullptr) {
-            m_singleton = std::shared_ptr<log>(new log(std::move(p_media)));
-        }
-    }
-
-    ///
-    /// \brief instance returns the single instance of the \p log class
-    /// \return the single instance of the \p log class
-    ///
-    /// \attention the \p configure method above should be called, only once,
-    /// before the first call to \p instance, or a \p runtime_error exception
-    /// will be thrown.
-    ///
-    static inline log& instance()
-    {
-        if (m_singleton == nullptr) {
-            std::stringstream _stream;
-            _stream << t_media::type()
-                    << ": must call 'log::configure' before 'log::instance'";
-            throw std::runtime_error(_stream.str());
-        }
-        return *m_singleton;
-    }
+    inline static void configure(writer&& p_writer) { m_writer = p_writer; }
 
     log() = delete;
     log(const log&) = delete;
@@ -79,10 +50,29 @@ class log
     ~log() = default;
 
     ///
-    /// \brief set_level defines the log level
-    /// \param p_level
+    /// \brief set_test defines the log level to 'test'
     ///
-    inline void set_level(level p_level) { m_level = p_level; }
+    inline static void set_test() { m_level = level::test; }
+
+    ///
+    /// \brief set_debug defines the log level to 'debug'
+    ///
+    inline static void set_debug() { m_level = level::debug; }
+
+    ///
+    /// \brief set_info defines the log level to 'info'
+    ///
+    inline static void set_info() { m_level = level::info; }
+
+    ///
+    /// \brief set_warn defines the log level to 'warn'
+    ///
+    inline static void set_warn() { m_level = level::warn; }
+
+    ///
+    /// \brief set_error defines the log level to 'error'
+    ///
+    inline static void set_error() { m_level = level::error; }
 
     ///
     /// \brief set_separator defines the separator to be used in the log
@@ -90,14 +80,17 @@ class log
     ///
     /// \param p_separator the value of the separator
     ///
-    inline void set_separator(char p_separator) { m_separator = p_separator; }
+    inline static void set_separator(char p_separator)
+    {
+        m_separator = p_separator;
+    }
 
     ///
     /// \brief get_separator retrieves the separator used in the log messages
     ///
     /// \return the value of the separator
     ///
-    inline char get_separator() { return m_separator; }
+    inline static char get_separator() { return m_separator; }
 
     ///
     /// \brief logs message with \p test severity
@@ -111,10 +104,12 @@ class log
     /// \details the log message will only be printed if the current log level
     /// is \p level::test
     ///
-    template<typename... t_params>
-    inline void test(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void test(t_str p_class,
+                            t_int p_line,
+                            const t_params&... p_params)
     {
-        write(level::test, m_separator, p_params...);
+        write(level::test, p_class, p_line, m_separator, p_params...);
     }
 
     ///
@@ -129,10 +124,12 @@ class log
     /// \details the log message will only be printed if the current log level
     /// is \p level::debug
     ///
-    template<typename... t_params>
-    inline void debug(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void debug(t_str p_class,
+                             t_int p_line,
+                             const t_params&... p_params)
     {
-        write(level::debug, m_separator, p_params...);
+        write(level::debug, p_class, p_line, m_separator, p_params...);
     }
 
     ///
@@ -147,10 +144,12 @@ class log
     /// \details the log message will only be printed if the current log level
     /// is at least \p level::info
     ///
-    template<typename... t_params>
-    inline void info(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void info(t_str p_class,
+                            t_int p_line,
+                            const t_params&... p_params)
     {
-        write(level::info, m_separator, p_params...);
+        write(level::info, p_class, p_line, m_separator, p_params...);
     }
 
     ///
@@ -165,10 +164,12 @@ class log
     /// \details the log message will only be printed if the current log level
     /// is at least \p level::warn
     ///
-    template<typename... t_params>
-    inline void warn(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void warn(t_str p_class,
+                            t_int p_line,
+                            const t_params&... p_params)
     {
-        write(level::warn, m_separator, p_params...);
+        write(level::warn, p_class, p_line, m_separator, p_params...);
     }
 
     ///
@@ -182,10 +183,12 @@ class log
     ///
     /// \details the log message with this severity will always be printed
     ///
-    template<typename... t_params>
-    inline void error(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void error(t_str p_class,
+                             t_int p_line,
+                             const t_params&... p_params)
     {
-        write(level::error, m_separator, p_params...);
+        write(level::error, p_class, p_line, m_separator, p_params...);
     }
 
     ///
@@ -199,23 +202,15 @@ class log
     ///
     /// \details the log message with this severity will always be printed
     ///
-    template<typename... t_params>
-    inline void fatal(const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void fatal(t_str p_class,
+                             t_int p_line,
+                             const t_params&... p_params)
     {
-        write(level::fatal, m_separator, p_params...);
+        write(level::fatal, p_class, p_line, m_separator, p_params...);
     }
 
   private:
-    ///
-    /// \brief log constructor
-    /// \param p_media the actual media. Please, read the \p log class
-    /// documentation above to be aware of the methods \p t_media should
-    /// implement
-    ///
-    explicit log(t_media&& p_media)
-      : m_media(std::move(p_media))
-    {}
-
     ///
     /// \brief write will actually write the message
     ///
@@ -227,15 +222,28 @@ class log
     ///
     /// \param p_params are the values to be logged
     ///
-    template<typename... t_params>
-    inline void write(level p_level, const t_params&... p_params)
+    template<typename t_str, typename t_int, typename... t_params>
+    inline static void write(level p_level,
+                             t_str p_class,
+                             t_int p_line,
+                             const t_params&... p_params)
     {
         if (can_log(p_level)) {
             std::ostringstream _stream;
-            format(_stream, type::business::e2t(p_level), p_params...);
+            _stream << type::business::e2t(p_level)
+                    << tenacitas::logger::business::log::get_separator()
+                    << tenacitas::calendar::business::epoch::millisecs()
+                    << tenacitas::logger::business::log::get_separator()
+                    << std::this_thread::get_id()
+                    << tenacitas::logger::business::log::get_separator()
+                    << p_class
+                    << tenacitas::logger::business::log::get_separator()
+                    << p_line
+                    << tenacitas::logger::business::log::get_separator();
+            format(_stream, p_params...);
             _stream << std::endl;
             std::lock_guard<std::mutex> _lock(m_mutex);
-            m_media(_stream.str());
+            m_writer(_stream.str());
         }
     }
 
@@ -248,7 +256,7 @@ class log
     ///
     /// \return \p true if the messsage can be logged, \p false otherwise
     ///
-    inline bool can_log(level p_level) const
+    inline static bool can_log(level p_level)
     {
         if (m_level == level::no_log) {
             return false;
@@ -299,35 +307,27 @@ class log
 
   private:
     ///
-    /// \brief m_media is the media where the messages will be logged. Please,
+    /// \brief m_writer is the writer where the messages will be logged. Please,
     /// read the \p log class documentation above to be aware of the methods \p
-    /// t_media should implement
+    /// t_writer should implement
     ///
-    t_media m_media;
+    static writer m_writer;
 
     ///
-    /// \brief m_mutex allows a thread safe writing to the log media
+    /// \brief m_mutex allows a thread safe writing to the log writer
     ///
-    std::mutex m_mutex;
+    static std::mutex m_mutex;
 
     ///
     /// \brief m_level is the current log level
     ///
-    level m_level = { level::error };
+    static level m_level;
 
     ///
     /// \brief m_separator is used to separate parts of the log message
     ///
-    char m_separator = { '|' };
-
-    ///
-    /// \brief m_singleton is the single instance of the log class
-    ///
-    static std::shared_ptr<log> m_singleton;
+    static char m_separator;
 };
-
-template<typename t_media>
-typename std::shared_ptr<log<t_media>> log<t_media>::m_singleton;
 
 } // namespace business
 } // namespace logger

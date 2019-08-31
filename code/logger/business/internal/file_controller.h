@@ -64,15 +64,16 @@ struct file_controller
       , m_last(0)
       , m_pid(getpid())
       , m_max_file_size(p_max_file_size)
-      , m_deleter(
-          m_path,
-          m_base_name,
-          m_closed_extension,
-          std::chrono::seconds(calendar::business::min2sec(p_retention.count())))
-      , m_sleeping_loop(std::chrono::milliseconds(
-                          calendar::business::min2mil(p_retention.count())),
-                        [this]() -> bool { return this->m_deleter(); },
-                        std::chrono::milliseconds(calendar::business::min2mil(20)))
+      , m_deleter(m_path,
+                  m_base_name,
+                  m_closed_extension,
+                  std::chrono::seconds(
+                    calendar::business::min2sec(p_retention.count())))
+      , m_sleeping_loop(
+          std::chrono::milliseconds(
+            calendar::business::min2mil(p_retention.count())),
+          [this]() -> bool { return this->m_deleter(); },
+          std::chrono::milliseconds(calendar::business::min2mil(20)))
     {}
 
     file_controller() = delete;
@@ -90,15 +91,9 @@ struct file_controller
       , m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
                         [this]() -> bool { return this->m_deleter(); },
                         p_controller.m_sleeping_loop.get_timeout())
-    {
-        cerr_debug(this, " moving from ", &p_controller);
-    }
+    {}
 
-    ~file_controller()
-    {
-        cerr_debug(this, " destructor, calling 'stop' on ", &m_sleeping_loop);
-        m_sleeping_loop.stop();
-    }
+    ~file_controller() { m_sleeping_loop.stop(); }
 
     file_controller& operator=(const file_controller&) = delete;
     file_controller& operator=(file_controller&& p_ctrl) noexcept = delete;
@@ -136,11 +131,7 @@ struct file_controller
     /// \brief remove initiates a asynchronous loop, time controlled, that will
     /// check which files can be deleted
     ///
-    inline void remove()
-    {
-        cerr_debug(this, " removing");
-        m_sleeping_loop.run();
-    }
+    inline void remove() { m_sleeping_loop.run(); }
 
   private:
     ///

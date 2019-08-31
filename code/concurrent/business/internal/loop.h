@@ -10,7 +10,9 @@
 #include <future>
 
 #include <concurrent/business/traits.h>
-#include <logger/business/cerr.h>
+#include <logger/business/log.h>
+
+using namespace tenacitas::logger::business;
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -167,7 +169,7 @@ struct loop
     void start()
     {
         if (!m_stopped) {
-            cerr_debug(this, " not starting because it was not stopped");
+            log::debug("loop", __LINE__,this, " not starting because it was not stopped");
             return;
         }
 
@@ -176,38 +178,38 @@ struct loop
         while (true) {
 
             if (m_stopped) {
-                cerr_debug(this, " stopping loop");
+                log::debug("loop", __LINE__,this, " stopping loop");
                 break;
             }
 
-            cerr_debug(this, " waiting for data");
+            log::debug("loop", __LINE__,this, " waiting for data");
             std::pair<bool, t_data> _provide = m_provide();
             if (!_provide.first) {
-                cerr_debug(this, " breaking because there is no data");
+                log::debug("loop", __LINE__,this, " breaking because there is no data");
                 break;
             }
 
-            cerr_debug(this, " data received ", _provide.second);
+            log::debug("loop", __LINE__,this, " data received ", _provide.second);
 
             std::future<bool> _future = std::async(
               std::launch::async, std::ref(m_work), std::move(_provide.second));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    cerr_debug(this, " breaking because there is no more work");
+                    log::debug("loop", __LINE__,this, " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
             } else {
-                cerr_warn(this, " timeout for data ", _provide.second);
+                log::warn(this, " timeout for data ", _provide.second);
             }
 
             if (m_stopped) {
-                cerr_debug(this, " stopping loop");
+                log::debug("loop", __LINE__,this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                cerr_debug(this, " stopping because breaker said so");
+                log::debug("loop", __LINE__,this, " stopping because breaker said so");
                 m_stopped = true;
                 break;
             }
@@ -367,7 +369,7 @@ struct loop<void>
     void start()
     {
         if (m_stopped == false) {
-            cerr_debug(this, " not starting beacause it was not stopped");
+//            log::debug("loop", __LINE__,this, " not starting beacause it was not stopped");
             return;
         }
 
@@ -375,33 +377,33 @@ struct loop<void>
 
         while (true) {
 
-            cerr_debug(this, " one more loop");
+//            log::debug("loop", __LINE__,this, " one more loop");
 
             if (m_stopped) {
-                cerr_debug(this, " stopping loop");
+                log::debug("loop", __LINE__,this, " stopping loop");
                 break;
             }
 
-            cerr_debug(this, " calling work");
+//            log::debug("loop", __LINE__,this, " calling work");
             std::future<bool> _future =
               std::async(std::launch::async, std::ref(m_work));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    cerr_debug(this, " breaking because there is no more work");
+                    log::debug("loop", __LINE__,this, " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
             } else {
-                cerr_warn(this, " timeout");
+                log::warn(this, " timeout");
             }
 
             if (m_stopped) {
-                cerr_debug(this, " stopping loop");
+                log::debug("loop", __LINE__,this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                cerr_debug(this, " breaker said to stop");
+                log::debug("loop", __LINE__,this, " breaker said to stop");
                 m_stopped = true;
                 break;
             }

@@ -14,7 +14,9 @@
 
 #include <concurrent/business/internal/async_loop.h>
 #include <concurrent/business/traits.h>
-#include <logger/business/cerr.h>
+#include <logger/business/log.h>
+
+using namespace tenacitas::logger::business;
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -105,7 +107,6 @@ struct sleeping_loop
     /// \brief destructor interrupts the loop
     inline ~sleeping_loop()
     {
-        cerr_debug(this, " destructor");
         stop();
     }
 
@@ -161,11 +162,11 @@ struct sleeping_loop
     void run()
     {
         if (!m_async.is_stopped()) {
-            cerr_debug(this,
+            log::debug("sleeping_loop", __LINE__,this,
                        " not running async loop because it was not stopped");
             return;
         }
-        cerr_debug(this, " running async loop");
+        log::debug("sleeping_loop", __LINE__,this, " running async loop");
         m_async.run();
     }
 
@@ -173,14 +174,14 @@ struct sleeping_loop
     void stop()
     {
         if (m_async.is_stopped()) {
-            cerr_debug(this,
+            log::debug("sleeping_loop", __LINE__,this,
                        " not stopping async loop because it was not running");
             return;
         }
-        cerr_debug(this, " stop");
+        log::debug("sleeping_loop", __LINE__,this, " stop");
         m_cond_var.notify_all();
 
-        cerr_debug(this, " all notified, and m_async = ", &m_async);
+        log::debug("sleeping_loop", __LINE__,this, " all notified, and m_async = ", &m_async);
         m_async.stop();
     }
 
@@ -225,11 +226,11 @@ struct sleeping_loop
         std::unique_lock<std::mutex> _lock(m_mutex);
         if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
             // timeout, so do not stop
-            cerr_debug(this, " must not stop");
+            log::debug("sleeping_loop", __LINE__,this, " must not stop");
             return false;
         }
         // no timeout, so do stop
-        cerr_debug(this, " must stop");
+        log::debug("sleeping_loop", __LINE__,this, " must stop");
         return true;
     }
 

@@ -62,7 +62,6 @@ file_controller::name()
 bool
 file_controller::deleter::operator()()
 {
-    cerr_debug(this, " m_retention = ", m_retention.count());
     tenacitas::logger::business::configure_cerr_log();
     DIR* _dir = nullptr;
     struct dirent* _ent = nullptr;
@@ -81,7 +80,6 @@ file_controller::deleter::operator()()
                  m_retention.count()) &&
                 // name matches the pattern
                 (match(_ent->d_name))) {
-                cerr_info("removing ", _ent->d_name);
                 std::remove(_ent->d_name);
             }
             _ent = readdir(_dir);
@@ -89,7 +87,6 @@ file_controller::deleter::operator()()
         closedir(_dir);
     }
 
-    cerr_debug(this, " leaving");
     return true;
 }
 

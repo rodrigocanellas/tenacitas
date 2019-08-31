@@ -143,7 +143,7 @@ struct async_loop
     /// \brief destructor stops the loop
     inline ~async_loop()
     {
-        cerr_debug(this, " destructor");
+        log::debug("async_loop", __LINE__,this, " destructor");
         stop();
     }
 
@@ -190,11 +190,11 @@ struct async_loop
     {
 
         if (!m_loop.is_stopped()) {
-            cerr_debug(this,
+            log::debug("async_loop", __LINE__,this,
                        " not starting the loop because it is already running");
             return;
         }
-        cerr_debug(this, " starting the loop");
+        log::debug("async_loop", __LINE__,this, " starting the loop");
         run_core();
     }
 
@@ -204,15 +204,15 @@ struct async_loop
     void stop()
     {
         if (m_loop.is_stopped()) {
-            cerr_debug(this,
+            log::debug("async_loop", __LINE__,this,
                        " not stopping the loop because it was not running");
             return;
         }
 
         std::lock_guard<std::mutex> _lock(m_mutex);
-        cerr_debug(this, " marking to stop");
+        log::debug("async_loop", __LINE__,this, " marking to stop");
         m_loop.stop();
-        cerr_debug(this, " joining");
+        log::debug("async_loop", __LINE__,this, " joining");
     }
 
   private:

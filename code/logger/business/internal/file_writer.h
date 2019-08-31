@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-#include <logger/business/internal/log.h>
+#include <logger/business/log.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -21,8 +21,8 @@ namespace business {
 
 ///
 /// \brief The file_media struct implements a \p t_media type to be used in a
-/// tenacitas::logger::business::log class, allowing log messages to be written to a
-/// file
+/// tenacitas::logger::business::log class, allowing log messages to be written
+/// to a file
 ///
 /// \tparam t_controller is a class that will help controlling how the messages
 /// will be written, how the files will be created, among other things. It must
@@ -43,7 +43,7 @@ namespace business {
 /// file_controller.h
 ///
 template<typename t_controller>
-struct file_media
+struct file_writer_t
 {
   public:
     ///
@@ -51,7 +51,7 @@ struct file_media
     /// \param p_controller the controller of the file, as described in the
     /// class documentation above
     ///
-    explicit inline file_media(t_controller&& p_controller = t_controller())
+    explicit inline file_writer_t(t_controller&& p_controller = t_controller())
       : m_controller(std::move(p_controller))
       , m_file_name(m_controller.name())
       , m_stream(std::make_shared<std::ofstream>(m_file_name,
@@ -65,7 +65,7 @@ struct file_media
     /// \brief file_media move constructor
     /// \param p_file_media \p file_media to be moved
     ///
-    inline file_media(file_media&& p_file_media) noexcept
+    inline file_writer_t(file_writer_t&& p_file_media) noexcept
       : m_controller(std::move(p_file_media.m_controller))
       , m_file_name(std::move(p_file_media.m_file_name))
       , m_stream(p_file_media.m_stream)
@@ -74,21 +74,21 @@ struct file_media
         m_controller.remove();
     }
 
-    file_media(const file_media&) = delete;
+    file_writer_t(const file_writer_t&) = delete;
 
     ///
     /// \brief operator = move assignment
     /// \param p_file_media \p file_media to be moved
     /// \return
     ///
-    inline file_media& operator=(file_media&& p_file_media) = delete;
+    inline file_writer_t& operator=(file_writer_t&& p_file_media) = delete;
 
-    file_media& operator=(const file_media&) = delete;
+    file_writer_t& operator=(const file_writer_t&) = delete;
 
     ///
     /// \brief ~file_media destructor
     ///
-    ~file_media()
+    ~file_writer_t()
     {
         if (!m_file_name.empty()) {
             if (m_stream->is_open()) {
@@ -119,12 +119,6 @@ struct file_media
         (*m_stream) << p_str;
         m_stream->flush();
     }
-
-    ///
-    /// \brief type returns a string identifying the media type
-    /// \return "file"
-    ///
-    inline static std::string type() { return "file"; }
 
   private:
     ///
