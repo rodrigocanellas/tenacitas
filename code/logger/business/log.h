@@ -40,7 +40,10 @@ class log
     /// documentation above to be aware of the methods \p t_writer should
     /// implement
     ///
-    inline static void configure(writer&& p_writer) { m_writer = p_writer; }
+    inline static void configure(writer&& p_writer)
+    {
+        m_writer = std::move(p_writer);
+    }
 
     log() = delete;
     log(const log&) = delete;
@@ -109,7 +112,7 @@ class log
                             t_int p_line,
                             const t_params&... p_params)
     {
-        write(level::test, p_class, p_line, m_separator, p_params...);
+        write(level::test, p_class, p_line, p_params...);
     }
 
     ///
@@ -129,7 +132,7 @@ class log
                              t_int p_line,
                              const t_params&... p_params)
     {
-        write(level::debug, p_class, p_line, m_separator, p_params...);
+        write(level::debug, p_class, p_line, p_params...);
     }
 
     ///
@@ -149,7 +152,7 @@ class log
                             t_int p_line,
                             const t_params&... p_params)
     {
-        write(level::info, p_class, p_line, m_separator, p_params...);
+        write(level::info, p_class, p_line, p_params...);
     }
 
     ///
@@ -169,7 +172,7 @@ class log
                             t_int p_line,
                             const t_params&... p_params)
     {
-        write(level::warn, p_class, p_line, m_separator, p_params...);
+        write(level::warn, p_class, p_line, p_params...);
     }
 
     ///
@@ -188,7 +191,7 @@ class log
                              t_int p_line,
                              const t_params&... p_params)
     {
-        write(level::error, p_class, p_line, m_separator, p_params...);
+        write(level::error, p_class, p_line, p_params...);
     }
 
     ///
@@ -207,7 +210,7 @@ class log
                              t_int p_line,
                              const t_params&... p_params)
     {
-        write(level::fatal, p_class, p_line, m_separator, p_params...);
+        write(level::fatal, p_class, p_line, p_params...);
     }
 
   private:
@@ -223,24 +226,18 @@ class log
     /// \param p_params are the values to be logged
     ///
     template<typename t_str, typename t_int, typename... t_params>
-    inline static void write(level p_level,
-                             t_str p_class,
-                             t_int p_line,
-                             const t_params&... p_params)
+    static void write(level p_level,
+                      t_str p_class,
+                      t_int p_line,
+                      const t_params&... p_params)
     {
         if (can_log(p_level)) {
             std::ostringstream _stream;
-            _stream << type::business::e2t(p_level)
-                    << tenacitas::logger::business::log::get_separator()
+            _stream << type::business::e2t(p_level) << m_separator
                     << tenacitas::calendar::business::epoch::millisecs()
-                    << tenacitas::logger::business::log::get_separator()
-                    << std::this_thread::get_id()
-                    << tenacitas::logger::business::log::get_separator()
-                    << p_class
-                    << tenacitas::logger::business::log::get_separator()
-                    << p_line
-                    << tenacitas::logger::business::log::get_separator();
-            format(_stream, p_params...);
+                    << m_separator << std::this_thread::get_id() << m_separator
+                    << p_class << m_separator << p_line;
+            format(_stream, m_separator, p_params...);
             _stream << std::endl;
             std::lock_guard<std::mutex> _lock(m_mutex);
             m_writer(_stream.str());
@@ -256,7 +253,7 @@ class log
     ///
     /// \return \p true if the messsage can be logged, \p false otherwise
     ///
-    inline static bool can_log(level p_level)
+    static bool can_log(level p_level)
     {
         if (m_level == level::no_log) {
             return false;
@@ -275,9 +272,9 @@ class log
     /// parameter
     ///
     template<typename t, typename... ts>
-    void static format(std::ostringstream& p_stream,
-                       const t& p_t,
-                       const ts&... p_ts)
+    inline static void format(std::ostringstream& p_stream,
+                              const t& p_t,
+                              const ts&... p_ts)
     {
         format(p_stream, p_t);
         format(p_stream, p_ts...);
@@ -288,18 +285,18 @@ class log
     /// parameter
     ///
     template<typename t>
-    void static format(std::ostringstream& p_stream, const t& p_t)
+    inline void static format(std::ostringstream& p_stream, const t& p_t)
     {
         p_stream << p_t;
     }
 
-    void static format(std::ostringstream& p_stream, const double& p_t)
+    inline void static format(std::ostringstream& p_stream, const double& p_t)
     {
         p_stream << std::setprecision(std::numeric_limits<double>::max_digits10)
                  << p_t;
     }
 
-    void static format(std::ostringstream& p_stream, const float& p_t)
+    inline void static format(std::ostringstream& p_stream, const float& p_t)
     {
         p_stream << std::setprecision(std::numeric_limits<float>::max_digits10)
                  << p_t;

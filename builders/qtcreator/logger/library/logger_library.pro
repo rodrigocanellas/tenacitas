@@ -30,7 +30,9 @@ SOURCES += \
 
 include (../../common.pri)
 
-#LIBS+=-ltenacitas.concurrent
+LIBS+=-lpthread
+
+
 
 message("LIBS = "$$LIBS)
 

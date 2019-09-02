@@ -14,9 +14,6 @@
 
 #include <concurrent/business/internal/async_loop.h>
 #include <concurrent/business/traits.h>
-#include <logger/business/log.h>
-
-using namespace tenacitas::logger::business;
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -34,20 +31,40 @@ namespace business {
 ///    - default constructible
 ///    - move constructible
 ///
-template<typename t_data>
-struct sleeping_loop
+/// \tparam t_log provides log funcionality:
+/// static void set_debug()
+/// static void set_info()
+/// static void set_warn()
+/// static void set_error()
+/// static void debug(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void error(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void fatal(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+template<typename t_data, typename t_log>
+struct sleeping_loop_t
 {
     ///
     /// \brief work_t is the type of work function, i.e., the function that will
     /// be called in a loop in order to execute some work
     ///
-    typedef typename loop_traits<t_data>::work_t work_t;
+    typedef typename loop_traits_t<t_data>::worker worker;
 
     ///
     /// \brief provide_t is the type of function that provides data to the work
     /// function during the loop execution, if \p t_data is not void
     ///
-    typedef typename loop_traits<t_data>::provide_t provide_t;
+    typedef typename loop_traits_t<t_data>::provider provider;
+
+    ///
+    /// \brief log alias for @p t_log
+    ///
+    typedef t_log log;
 
     ///
     /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>bt_data
@@ -61,10 +78,10 @@ struct sleeping_loop
     /// \param p_provide function that will provide data to the work function,
     /// each time the loop wakes up
     ///
-    sleeping_loop(std::chrono::milliseconds p_interval,
-                  work_t&& p_work,
-                  std::chrono::milliseconds p_timeout,
-                  provide_t&& p_provide)
+    sleeping_loop_t(std::chrono::milliseconds p_interval,
+                    worker&& p_work,
+                    std::chrono::milliseconds p_timeout,
+                    provider&& p_provide)
       : m_async(std::move(p_work),
                 std::move(p_timeout),
                 [this]() -> bool { return this->break_loop(); },
@@ -82,9 +99,9 @@ struct sleeping_loop
     /// \param p_timeout amount of time that the loop will wait for \p p_work to
     /// execute
     ///
-    sleeping_loop(std::chrono::milliseconds p_interval,
-                  work_t&& p_work,
-                  std::chrono::milliseconds p_timeout)
+    sleeping_loop_t(std::chrono::milliseconds p_interval,
+                    worker&& p_work,
+                    std::chrono::milliseconds p_timeout)
       : m_async(std::move(p_work),
                 std::move(p_timeout),
                 [this]() -> bool { return this->break_loop(); },
@@ -93,28 +110,25 @@ struct sleeping_loop
     {}
 
     /// \brief default constructor not allowed
-    sleeping_loop() = delete;
+    sleeping_loop_t() = delete;
 
     /// \brief copy constructor not allowed
-    sleeping_loop(const sleeping_loop&) = delete;
+    sleeping_loop_t(const sleeping_loop_t&) = delete;
 
     /// \brief move constructor
-    sleeping_loop(sleeping_loop&& p_sleep) noexcept
+    sleeping_loop_t(sleeping_loop_t&& p_sleep) noexcept
     {
         move(std::move(p_sleep));
     }
 
     /// \brief destructor interrupts the loop
-    inline ~sleeping_loop()
-    {
-        stop();
-    }
+    inline ~sleeping_loop_t() { stop(); }
 
     /// \brief copy assignment not allowed
-    sleeping_loop& operator=(const sleeping_loop&) = delete;
+    sleeping_loop_t& operator=(const sleeping_loop_t&) = delete;
 
     /// \brief move assignment
-    sleeping_loop& operator=(sleeping_loop&& p_sleep) noexcept
+    sleeping_loop_t& operator=(sleeping_loop_t&& p_sleep) noexcept
     {
         if (this != &p_sleep) {
             move(std::move(p_sleep));
@@ -133,14 +147,14 @@ struct sleeping_loop
     /// \return a copy of the function that executes a defined work in each
     /// round of the loop
     ///
-    inline work_t get_work() const { return m_async.get_work(); }
+    inline worker get_work() const { return m_async.get_work(); }
 
     ///
     /// \brief get_provide
     /// \return a copy of the function that provides an instance of \p t_data,
     /// if available, to the work function
     ///
-    inline provide_t get_provide() const { return m_async.get_provide(); }
+    inline provider get_provide() const { return m_async.get_provide(); }
 
     ///
     /// \brief get_timeout
@@ -162,11 +176,13 @@ struct sleeping_loop
     void run()
     {
         if (!m_async.is_stopped()) {
-            log::debug("sleeping_loop", __LINE__,this,
+            log::debug(m_name,
+                       __LINE__,
+                       this,
                        " not running async loop because it was not stopped");
             return;
         }
-        log::debug("sleeping_loop", __LINE__,this, " running async loop");
+        log::debug(m_name, __LINE__, this, " running async loop");
         m_async.run();
     }
 
@@ -174,27 +190,30 @@ struct sleeping_loop
     void stop()
     {
         if (m_async.is_stopped()) {
-            log::debug("sleeping_loop", __LINE__,this,
+            log::debug(m_name,
+                       __LINE__,
+                       this,
                        " not stopping async loop because it was not running");
             return;
         }
-        log::debug("sleeping_loop", __LINE__,this, " stop");
+        log::debug(m_name, __LINE__, this, " stop");
         m_cond_var.notify_all();
 
-        log::debug("sleeping_loop", __LINE__,this, " all notified, and m_async = ", &m_async);
+        log::debug(
+          m_name, __LINE__, this, " all notified, and m_async = ", &m_async);
         m_async.stop();
     }
 
   private:
     /// \brief a simpler name
-    typedef business::async_loop<t_data> async_loop_t;
+    typedef business::async_loop_t<t_data, t_log> async_loop;
 
   private:
     ///
     /// \brief move a \p sleeping_loop to this
     /// \param p_sleep the \p sleeping_loop to be moved
     ///
-    inline void move(sleeping_loop&& p_sleep) noexcept
+    inline void move(sleeping_loop_t&& p_sleep) noexcept
     {
         // save if the right side was running
         bool _stopped = p_sleep.is_stopped();
@@ -205,10 +224,10 @@ struct sleeping_loop
         m_interval = std::move(p_sleep.m_interval);
 
         // move the async_loop, reseting the break loop
-        m_async = async_loop_t(std::move(p_sleep.get_work()),
-                               std::move(p_sleep.get_timeout()),
-                               [this]() -> bool { return this->break_loop(); },
-                               std::move(p_sleep.get_provide()));
+        m_async = async_loop(std::move(p_sleep.get_work()),
+                             std::move(p_sleep.get_timeout()),
+                             [this]() -> bool { return this->break_loop(); },
+                             std::move(p_sleep.get_provide()));
 
         // if the right side was not stopped
         if (!_stopped) {
@@ -226,17 +245,17 @@ struct sleeping_loop
         std::unique_lock<std::mutex> _lock(m_mutex);
         if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
             // timeout, so do not stop
-            log::debug("sleeping_loop", __LINE__,this, " must not stop");
+            log::debug(m_name, __LINE__, this, " must not stop");
             return false;
         }
         // no timeout, so do stop
-        log::debug("sleeping_loop", __LINE__,this, " must stop");
+        log::debug(m_name, __LINE__, this, " must stop");
         return true;
     }
 
   private:
     /// \brief m_loop the async_loop used
-    async_loop_t m_async;
+    async_loop m_async;
 
     /// \brief m_interval
     std::chrono::milliseconds m_interval;
@@ -246,7 +265,12 @@ struct sleeping_loop
 
     /// \brief m_cond_var
     std::condition_variable m_cond_var;
+
+    static const std::string m_name;
 };
+
+template<typename t_data, typename t_log>
+const std::string sleeping_loop_t<t_data, t_log>::m_name("sleeping_loop");
 
 } // namespace business
 } // namespace concurrent

@@ -14,7 +14,7 @@
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop_t<void> loop_t;
 
 struct work1
 {

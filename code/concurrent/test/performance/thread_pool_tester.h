@@ -36,7 +36,7 @@ struct thread_pool_tester
 
   private:
     typedef tenacitas::concurrent::tst::msg_a msg_t;
-    typedef tenacitas::concurrent::business::thread_pool<msg_t> thread_pool_t;
+    typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
     typedef tenacitas::concurrent::business::thread thread_t;
 
     struct work

@@ -1,4 +1,4 @@
-#ifndef TENACITAS_CONCURRENT_BUS_LOOP_H
+﻿#ifndef TENACITAS_CONCURRENT_BUS_LOOP_H
 #define TENACITAS_CONCURRENT_BUS_LOOP_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
@@ -10,9 +10,6 @@
 #include <future>
 
 #include <concurrent/business/traits.h>
-#include <logger/business/log.h>
-
-using namespace tenacitas::logger::business;
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -26,7 +23,7 @@ namespace business {
 ///
 /// A loop needs a work function, that will execute a defined work at each round
 /// of the loop; an amount of time that the work function has to execute; a
-/// break function, that indicates when the loop should break; and a provide
+/// break function, that indicates when the loop should break; and a provider
 /// function, that will provide data for the work function, if available
 ///
 /// In this version of the loop class, the work function actually needs a data,
@@ -38,31 +35,51 @@ namespace business {
 ///    - default constructible
 ///    - move constructible
 ///
-template<typename t_data>
-struct loop
+/// \tparam t_log provides log funcionality:
+/// static void set_debug()
+/// static void set_info()
+/// static void set_warn()
+/// static void set_error()
+/// static void debug(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void error(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void fatal(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+template<typename t_data, typename t_log>
+struct loop_t
 {
 
     ///
-    /// \brief work_t type of function to be called during the loop, responsible
+    /// \brief worker type of function to be called during the loop, responsible
     /// for doing the work defined
     ///
     /// loop_traits<t_data>::work_t evaluates to std::function<bool(t_data&&)>
-    typedef typename loop_traits<t_data>::work_t work_t;
+    typedef typename loop_traits_t<t_data>::worker worker;
 
     ///
-    /// \brief provide_t type of function that will provide, if available, an
+    /// \brief provider type of function that will provide, if available, an
     /// instance of \p t_data
     ///
     /// loop_traits<t_data>::provide_t evaluates to
     /// std::function<std::pair<bool, t_data>()>
-    typedef typename loop_traits<t_data>::provide_t provide_t;
+    typedef typename loop_traits_t<t_data>::provider provider;
 
     ///
-    /// \brief break_t type of function that will indicate that the loop must
+    /// \brief breaker type of function that will indicate that the loop must
     /// stop
     ///
     /// loop_traits<t_data>::break_t evaluates to std::function<bool()>
-    typedef typename loop_traits<t_data>::break_t break_t;
+    typedef typename loop_traits_t<t_data>::breaker breaker;
+
+    ///
+    /// \brief log alias for @p t_log
+    ///
+    typedef t_log log;
 
     ///
     /// \brief loop constructor
@@ -75,10 +92,10 @@ struct loop
     /// \param p_provide instance of the function that will provide an instance
     /// of \p t_data, if available
     ///
-    loop(work_t&& p_work,
-         std::chrono::milliseconds p_timeout,
-         break_t&& p_break,
-         provide_t&& p_provide)
+    loop_t(worker&& p_work,
+           std::chrono::milliseconds p_timeout,
+           breaker&& p_break,
+           provider&& p_provide)
       : m_work(std::move(p_work))
       , m_timeout(std::move(p_timeout))
       , m_break(std::move(p_break))
@@ -87,19 +104,19 @@ struct loop
     {}
 
     /// \brief loop decault constuctor not allowed
-    loop() = delete;
+    loop_t() = delete;
 
     /// \brief destructor
-    ~loop() = default;
+    ~loop_t() = default;
 
     /// \brief copy constructor not allowed
-    loop(const loop&) = delete;
+    loop_t(const loop_t&) = delete;
 
     ///
     /// \brief loop move constructor
     /// \param p_loop an instance o \p loop to be moved
     ///
-    loop(loop&& p_loop) noexcept
+    loop_t(loop_t&& p_loop) noexcept
       : m_work(std::move(p_loop.m_work))
       , m_timeout(std::move(p_loop.m_timeout))
       , m_break(std::move(p_loop.m_break))
@@ -108,10 +125,10 @@ struct loop
     {}
 
     /// \brief copy assignment not allowed
-    loop& operator=(const loop&) = delete;
+    loop_t& operator=(const loop_t&) = delete;
 
     /// \brief move assignment
-    loop& operator=(loop&& p_loop) noexcept
+    loop_t& operator=(loop_t&& p_loop) noexcept
     {
         if (this != &p_loop) {
             m_work = std::move(p_loop.m_work);
@@ -134,20 +151,20 @@ struct loop
     /// \return a copy of the function that executes a defined work in each
     /// round of the loop
     ///
-    inline work_t get_work() const { return m_work; }
+    inline worker get_worker() const { return m_work; }
 
     ///
     /// \brief get_break
     /// \return a copy of the function that can make the loop stop
     ///
-    inline break_t get_break() const { return m_break; }
+    inline breaker get_breaker() const { return m_break; }
 
     ///
     /// \brief get_provide
     /// \return a copy of the function that provides an instance of \p t_data,
     /// if available, to the work function
     ///
-    inline provide_t get_provide() const { return m_provide; }
+    inline provider get_provider() const { return m_provide; }
 
     ///
     /// \brief get_timeout
@@ -169,7 +186,10 @@ struct loop
     void start()
     {
         if (!m_stopped) {
-            log::debug("loop", __LINE__,this, " not starting because it was not stopped");
+            log::debug(m_name,
+                       __LINE__,
+                       this,
+                       " not starting because it was not stopped");
             return;
         }
 
@@ -178,24 +198,29 @@ struct loop
         while (true) {
 
             if (m_stopped) {
-                log::debug("loop", __LINE__,this, " stopping loop");
+                log::debug(m_name, __LINE__, this, " stopping loop");
                 break;
             }
 
-            log::debug("loop", __LINE__,this, " waiting for data");
+            log::debug(m_name, __LINE__, this, " waiting for data");
             std::pair<bool, t_data> _provide = m_provide();
             if (!_provide.first) {
-                log::debug("loop", __LINE__,this, " breaking because there is no data");
+                log::debug(
+                  m_name, __LINE__, this, " breaking because there is no data");
                 break;
             }
 
-            log::debug("loop", __LINE__,this, " data received ", _provide.second);
+            log::debug(
+              m_name, __LINE__, this, " data received ", _provide.second);
 
             std::future<bool> _future = std::async(
               std::launch::async, std::ref(m_work), std::move(_provide.second));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    log::debug("loop", __LINE__,this, " breaking because there is no more work");
+                    log::debug(m_name,
+                               __LINE__,
+                               this,
+                               " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
@@ -204,12 +229,13 @@ struct loop
             }
 
             if (m_stopped) {
-                log::debug("loop", __LINE__,this, " stopping loop");
+                log::debug(m_name, __LINE__, this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                log::debug("loop", __LINE__,this, " stopping because breaker said so");
+                log::debug(
+                  m_name, __LINE__, this, " stopping because breaker said so");
                 m_stopped = true;
                 break;
             }
@@ -221,7 +247,7 @@ struct loop
     /// \brief m_work instance of the function that will execute the defined
     /// work
     ///
-    work_t m_work;
+    worker m_work;
 
     ///
     /// \brief m_timeout amount of time that the loop will wait for \p p_work to
@@ -233,19 +259,24 @@ struct loop
     /// \brief m_break instance of the function that will indicate when the loop
     /// must stop
     ///
-    break_t m_break;
+    breaker m_break;
 
     ///
     /// \brief m_provide instance of the function that will provide an instance
     /// of \p t_data, if available
     ///
-    provide_t m_provide;
+    provider m_provide;
 
     ///
     /// \brief m_stopped indicates if the loop is running or not
     ///
     bool m_stopped;
+
+    static const std::string m_name;
 };
+
+template<typename t_data, typename t_log>
+const std::string loop_t<t_data, t_log>::m_name("loop");
 
 ///
 /// \brief loop implements a generic loop
@@ -257,15 +288,30 @@ struct loop
 /// In this specialization of the loop class, the work function actually does
 /// needs a data, so the type parameter is set to \p void.
 ///
-template<>
-struct loop<void>
+/// \tparam t_log provides log funcionality:
+/// static void set_debug()
+/// static void set_info()
+/// static void set_warn()
+/// static void set_error()
+/// static void debug(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void error(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void fatal(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+template<typename t_log>
+struct loop_t<void, t_log>
 {
     ///
     /// \brief work_t type of function to be called during the loop, responsible
     /// for doing the work defined
     ///
     /// loop_traits<void>::work_t evaluates to std::function<bool(void)>
-    typedef typename loop_traits<void>::work_t work_t;
+    typedef typename loop_traits_t<void>::worker worker;
 
     ///
     /// \brief provide_t type of function that will provide, if available, an
@@ -273,14 +319,19 @@ struct loop<void>
     ///
     /// loop_traits<t_data>::provide_t evaluates to
     /// std::function<void()>
-    typedef typename loop_traits<void>::provide_t provide_t;
+    typedef typename loop_traits_t<void>::provider provider;
 
     ///
     /// \brief break_t type of function that will indicate that the loop must
     /// stop
     ///
     /// loop_traits<t_data>::break_t evaluates to std::function<bool()>
-    typedef typename loop_traits<void>::break_t break_t;
+    typedef typename loop_traits_t<void>::breaker breaker;
+
+    ///
+    /// \brief log alias for @p t_log
+    ///
+    typedef t_log log;
 
     ///
     /// \brief loop constructor
@@ -294,10 +345,10 @@ struct loop<void>
     /// specialization of \p loop, or the other one where the \p provide_t
     /// actually provides data
     ///
-    loop(work_t&& p_work,
-         std::chrono::milliseconds p_timeout,
-         break_t&& p_break,
-         provide_t&& p_provide)
+    loop_t(worker&& p_work,
+           std::chrono::milliseconds p_timeout,
+           breaker&& p_break,
+           provider&& p_provide)
       : m_work(std::move(p_work))
       , m_timeout(std::move(p_timeout))
       , m_break(std::move(p_break))
@@ -306,22 +357,22 @@ struct loop<void>
     {}
 
     /// \brief loop decault constuctor not allowed
-    loop() = delete;
+    loop_t() = delete;
 
     /// \brief destructor
-    ~loop() = default;
+    ~loop_t() = default;
 
     /// \brief copy constructor not allowed
-    loop(const loop&) = delete;
+    loop_t(const loop_t&) = delete;
 
     /// \brief loop move constructor not allowed
-    loop(loop&& p_loop) noexcept = delete;
+    loop_t(loop_t&& p_loop) noexcept = delete;
 
     /// \brief copy assignment not allowed
-    loop& operator=(const loop&) = delete;
+    loop_t& operator=(const loop_t&) = delete;
 
     /// \brief move assignment not allowed
-    loop& operator=(loop&& p_loop) noexcept = delete;
+    loop_t& operator=(loop_t&& p_loop) noexcept = delete;
 
     ///
     /// \brief is_stopped
@@ -334,20 +385,20 @@ struct loop<void>
     /// \return a copy of the function that executes a defined work in each
     /// round of the loop
     ///
-    inline work_t get_work() const { return m_work; }
+    inline worker get_worker() const { return m_work; }
 
     ///
     /// \brief get_break
     /// \return a copy of the function that can make the loop stop
     ///
-    inline break_t get_break() const { return m_break; }
+    inline breaker get_breaker() const { return m_break; }
 
     ///
     /// \brief get_provide
     /// \return a copy of the function that provides an instance of \p t_data,
     /// if available, to the work function
     ///
-    inline provide_t get_provide() const { return m_provide; }
+    inline provider get_provider() const { return m_provide; }
 
     ///
     /// \brief get_timeout
@@ -369,7 +420,10 @@ struct loop<void>
     void start()
     {
         if (m_stopped == false) {
-//            log::debug("loop", __LINE__,this, " not starting beacause it was not stopped");
+            log::debug(m_name,
+                       __LINE__,
+                       this,
+                       " not starting beacause it was not stopped");
             return;
         }
 
@@ -377,19 +431,22 @@ struct loop<void>
 
         while (true) {
 
-//            log::debug("loop", __LINE__,this, " one more loop");
+            log::debug(m_name, __LINE__, this, " one more loop");
 
             if (m_stopped) {
-                log::debug("loop", __LINE__,this, " stopping loop");
+                log::debug(m_name, __LINE__, this, " stopping loop");
                 break;
             }
 
-//            log::debug("loop", __LINE__,this, " calling work");
+            log::debug(m_name, __LINE__, this, " calling work");
             std::future<bool> _future =
               std::async(std::launch::async, std::ref(m_work));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    log::debug("loop", __LINE__,this, " breaking because there is no more work");
+                    log::debug(m_name,
+                               __LINE__,
+                               this,
+                               " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
@@ -398,12 +455,12 @@ struct loop<void>
             }
 
             if (m_stopped) {
-                log::debug("loop", __LINE__,this, " stopping loop");
+                log::debug(m_name, __LINE__, this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                log::debug("loop", __LINE__,this, " breaker said to stop");
+                log::debug(m_name, __LINE__, this, " breaker said to stop");
                 m_stopped = true;
                 break;
             }
@@ -415,7 +472,7 @@ struct loop<void>
     /// \brief m_work instance of the function that will execute the defined
     /// work
     ///
-    work_t m_work;
+    worker m_work;
 
     ///
     /// \brief m_timeout amount of time that the loop will wait for \p p_work to
@@ -427,19 +484,23 @@ struct loop<void>
     /// \brief m_break instance of the function that will indicate when the loop
     /// must stop
     ///
-    break_t m_break;
+    breaker m_break;
 
     ///
     /// \brief m_provide instance of the function that will provide an instance
     /// of \p t_data, if available
     ///
-    provide_t m_provide;
+    provider m_provide;
 
     ///
     /// \brief m_stopped indicates if the loop is running or not
     ///
     bool m_stopped = true;
+
+    static const std::string m_name;
 };
+template<typename t_log>
+const std::string loop_t<void, t_log>::m_name("loop");
 
 } // namespace business
 } // namespace concurrent

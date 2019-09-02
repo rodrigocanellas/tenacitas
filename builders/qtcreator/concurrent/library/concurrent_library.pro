@@ -18,14 +18,12 @@ HEADERS += \
     ../../../../code/concurrent/business/dispatcher.h \
     ../../../../code/concurrent/business/traits.h \
     ../../../../code/concurrent/business/internal/loop.h \
-    ../../../../code/concurrent/business/internal/async_loop.h \
-    ../../../../code/logger/business/cerr.h
+    ../../../../code/concurrent/business/internal/async_loop.h
 
 
 
 include (../../common.pri)
 
-SOURCES += \
-    ../../../../code/logger/business/internal/cerr.cpp
+
 
 

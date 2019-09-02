@@ -11,15 +11,17 @@ struct cout_log_creation
 {
     bool operator()()
     {
-
+        using namespace tenacitas::logger::business;
         try {
-            tenacitas::logger::business::configure_cout_log();
 
-            cout_set_debug();
+            configure_cout_log();
+
+            log::set_debug();
 
             return true;
         } catch (std::exception& _ex) {
-            cerr_fatal("ERRO cout_log_creation: '", _ex.what(), "'");
+            std::cerr << "ERRO cout_log_creation: '" << _ex.what() << "'"
+                      << std::endl;
         }
         return false;
     }

@@ -10,6 +10,8 @@ level log::m_level = { level::error };
 
 char log::m_separator = { '|' };
 
+std::mutex log::m_mutex;
+
 } // namespace business
 } // namespace logger
 } // namespace tenacitas

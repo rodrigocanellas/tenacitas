@@ -62,7 +62,6 @@ file_controller::name()
 bool
 file_controller::deleter::operator()()
 {
-    tenacitas::logger::business::configure_cerr_log();
     DIR* _dir = nullptr;
     struct dirent* _ent = nullptr;
     _dir = opendir(m_path.c_str());

@@ -5,6 +5,7 @@
 #include <calendar/business/epoch.h>
 #include <logger/business/cerr.h>
 #include <logger/business/cout.h>
+#include <logger/business/log.h>
 #include <tester/business/run.h>
 
 class cerr_log_creation
@@ -13,11 +14,11 @@ class cerr_log_creation
   public:
     bool operator()()
     {
-
+        using namespace tenacitas::logger::business;
         try {
-            tenacitas::logger::business::configure_cerr_log();
+            configure_cerr_log();
 
-            cerr_set_debug();
+            log::set_debug();
 
             return true;
         } catch (std::exception& _ex) {

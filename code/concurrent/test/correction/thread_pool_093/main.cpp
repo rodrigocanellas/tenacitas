@@ -7,8 +7,8 @@
 #include <chrono>
 
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::business::thread_pool<msg_t> thread_pool_t;
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
+typedef tenacitas::concurrent::business::sleeping_loop_t<void> sleeping_loop_t;
 
 struct work
 {

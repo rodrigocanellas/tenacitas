@@ -6,16 +6,19 @@ struct cout_log_how_to
     bool operator()()
     {
         try {
-            tenacitas::logger::business::configure_cout_log();
+            using namespace tenacitas::logger::business;
+            configure_cout_log();
 
-            cout_set_debug();
+            log::set_debug();
 
-            cout_debug("hello! ", 309);
-            cout_debug("how are you doing? ", 3.14);
-            cout_info("fine!! ", 'W');
-            cout_info("and you?");
-            cout_warn("great! got a new job!! ", 6987.58f);
-            cout_warn("nice!! ", 10);
+            log::debug("cout_log_how_to", __LINE__, "hello!", 309);
+            log::debug(
+              "cout_log_how_to", __LINE__, "how are you doing? ", 3.14);
+            log::info("cout_log_how_to", __LINE__, "fine!! ", 'W');
+            log::info("cout_log_how_to", __LINE__, "and you?");
+            log::warn(
+              "cout_log_how_to", __LINE__, "great! got a new job!! ", 6987.58f);
+            log::warn("cout_log_how_to", __LINE__, "nice!! ", 10);
             return true;
         } catch (std::exception& _ex) {
             std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"

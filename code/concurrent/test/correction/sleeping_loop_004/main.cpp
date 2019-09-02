@@ -24,7 +24,7 @@ struct work1
     uint64_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop_t<void> loop_t;
 
 struct sleeping_loop_004
 {

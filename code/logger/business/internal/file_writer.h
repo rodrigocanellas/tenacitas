@@ -57,7 +57,6 @@ struct file_writer_t
       , m_stream(std::make_shared<std::ofstream>(m_file_name,
                                                  std::ios::app | std::ios::ate))
     {
-        cerr_debug(this, " calling remove on ", &m_controller);
         m_controller.remove();
     }
 
@@ -70,7 +69,6 @@ struct file_writer_t
       , m_file_name(std::move(p_file_media.m_file_name))
       , m_stream(p_file_media.m_stream)
     {
-        cerr_debug(this, " moving from ", &p_file_media);
         m_controller.remove();
     }
 
@@ -81,7 +79,7 @@ struct file_writer_t
     /// \param p_file_media \p file_media to be moved
     /// \return
     ///
-    inline file_writer_t& operator=(file_writer_t&& p_file_media) = delete;
+    file_writer_t& operator=(file_writer_t&& p_file_media) noexcept = default;
 
     file_writer_t& operator=(const file_writer_t&) = delete;
 
@@ -115,7 +113,6 @@ struct file_writer_t
             m_stream = std::make_shared<std::ofstream>(m_file_name);
             m_controller.rename(_old_file_name);
         }
-        cerr_debug(this, " writing '", p_str, "' to '", m_file_name, "'");
         (*m_stream) << p_str;
         m_stream->flush();
     }

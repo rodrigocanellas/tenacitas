@@ -69,7 +69,7 @@ struct publisher_1
         msg_a _msg(++i);
         cerr_test("P 1", _msg);
 
-        concurrent::business::dispatcher<msg_a>::publish(_msg);
+        concurrent::business::dispatcher_t<msg_a>::publish(_msg);
         return true;
     }
     int16_t i = { 10 };
@@ -83,12 +83,12 @@ struct publisher_2
         i += 10;
         msg_a _msg_a(i);
         cerr_test("P 2", _msg_a);
-        concurrent::business::dispatcher<msg_a>::publish(_msg_a);
+        concurrent::business::dispatcher_t<msg_a>::publish(_msg_a);
 
         d *= 2.5;
         msg_c _msg_c(d);
         cerr_test("P 2", _msg_c);
-        concurrent::business::dispatcher<msg_c>::publish(_msg_c);
+        concurrent::business::dispatcher_t<msg_c>::publish(_msg_c);
 
         return true;
     }
@@ -106,7 +106,7 @@ struct publisher_3
         msg_b _msg_b(i);
 
         cerr_test("P 3", _msg_b);
-        concurrent::business::dispatcher<msg_b>::publish(_msg_b);
+        concurrent::business::dispatcher_t<msg_b>::publish(_msg_b);
 
         return true;
     }
@@ -166,7 +166,7 @@ struct subscriber_4
     }
 };
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::sleeping_loop_t<void> sleeping_loop_t;
 
 // ############################## subscribers
 struct dispatcher_000
@@ -186,14 +186,14 @@ struct dispatcher_000
         using namespace tenacitas::concurrent::business;
         bool _rc = true;
         std::chrono::milliseconds _work_timeout(500);
-        dispatcher<msg_a>::subscribe(
+        dispatcher_t<msg_a>::subscribe(
           []() { return subscriber_1(); }, 2, _work_timeout);
-        dispatcher<msg_a>::subscribe(subscriber_2(), _work_timeout);
-        dispatcher<msg_a>::subscribe(subscriber_4(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_2(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_3(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_4(), _work_timeout);
-        dispatcher<msg_c>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_a>::subscribe(subscriber_2(), _work_timeout);
+        dispatcher_t<msg_a>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_b>::subscribe(subscriber_2(), _work_timeout);
+        dispatcher_t<msg_b>::subscribe(subscriber_3(), _work_timeout);
+        dispatcher_t<msg_b>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_c>::subscribe(subscriber_4(), _work_timeout);
 
         _sl1.run();
         _sl2.run();

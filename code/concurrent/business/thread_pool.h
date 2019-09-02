@@ -20,7 +20,6 @@
 
 #include <concurrent/business/internal/async_loop.h>
 #include <concurrent/business/traits.h>
-#include <logger/business/cerr.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -42,29 +41,46 @@ namespace business {
 ///    - default constructible
 ///    - move constructible
 ///
-template<typename t_data>
-class thread_pool
+/// \tparam t_log provides log funcionality:
+/// static void set_debug()
+/// static void set_info()
+/// static void set_warn()
+/// static void set_error()
+/// static void debug(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// p_params)
+/// static void error(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+/// static void fatal(const std::string & p_class, int p_line, const
+/// t_params&... p_params)
+template<typename t_data, typename t_log>
+class thread_pool_t
 {
   public:
     ///
     /// \brief work_t is the type of work function, i.e., the function that will
     /// be called in a loop in order to execute some work
     ///
-    typedef typename loop_traits<t_data>::work_t work_t;
+    typedef typename loop_traits_t<t_data>::worker worker;
+
+    ///
+    /// \brief log alias for @p t_log
+    ///
+    typedef t_log log;
 
     /// \brief thread_pool constructor
-    thread_pool()
+    thread_pool_t()
       : m_loops()
       , m_values()
       , m_stopped(true)
       , m_destroying(false)
-    {
-        // initiating the cerr_log
-        tenacitas::logger::business::configure_cerr_log();
-    }
+    {}
 
     /// \brief move constructor
-    thread_pool(thread_pool&& p_pool) noexcept
+    thread_pool_t(thread_pool_t&& p_pool) noexcept
     {
         // save if the right side was stopped
         bool _stopped = p_pool.is_stopped();
@@ -77,8 +93,8 @@ class thread_pool
 
         // build the work function collection, moving the work function from the
         // right side, and reseting the provide and break function
-        for (async_loop_t& _loop_right : p_pool.m_loops) {
-            async_loop_t _loop(
+        for (async_loop& _loop_right : p_pool.m_loops) {
+            async_loop _loop(
               std::move(_loop_right.get_work()),
               _loop_right.get_timeout(),
               [this]() -> bool { return this->stop_condition(); },
@@ -100,36 +116,43 @@ class thread_pool
     }
 
     /// \brief copy constructor not allowed
-    thread_pool(const thread_pool&) = delete;
+    thread_pool_t(const thread_pool_t&) = delete;
 
     ///
     /// \brief if 'stop ' was not called, empties the pool, waiting for all the
     /// data to be processed
     ///
-    ~thread_pool()
+    ~thread_pool_t()
     {
         m_destroying = true;
-        cerr_debug(this, " m_values.size() = ", m_values.size());
+        debug(m_name, __LINE__, this, " m_values.size() = ", m_values.size());
 
         if (!m_stopped) {
             while (!m_values.empty()) {
-                cerr_debug(this, " m_values.size() = ", m_values.size());
+                log::debug(m_name,
+                           __LINE__,
+                           this,
+                           " m_values.size() = ",
+                           m_values.size());
                 m_cv_data.notify_all();
-                cerr_debug(this, " waiting for poping, ", this);
+                log::debug(
+                  m_name, __LINE__, this, " waiting for poping, ", this);
                 std::unique_lock<std::mutex> _lock(m_mutex_poped);
                 m_cv_poped.wait(_lock, [this] {
-                    cerr_debug(this, " poping signal arrived, ", this);
+                    log::debug(
+                      m_name, __LINE__, this, " poping signal arrived, ", this);
                     return true;
                 });
-                cerr_debug(this, " lock free");
+                log::debug(m_name, __LINE__, this, " lock free");
             }
-            cerr_debug("this, m_values.size() = ", m_values.size());
+            log::debug(
+              m_name, __LINE__, "this, m_values.size() = ", m_values.size());
             stop();
         }
     }
 
     /// \brief move assignment
-    thread_pool& operator=(thread_pool&& p_pool) noexcept
+    thread_pool_t& operator=(thread_pool_t&& p_pool) noexcept
     {
         if (this != &p_pool) {
             // save if the right side was stopped
@@ -143,8 +166,8 @@ class thread_pool
 
             // build the work function collection, moving the work function from
             // the right side, and reseting the provide and break function
-            for (async_loop_t& _loop_right : p_pool.m_loops) {
-                async_loop_t _loop(
+            for (async_loop& _loop_right : p_pool.m_loops) {
+                async_loop _loop(
                   std::move(_loop_right.get_work()),
                   _loop_right.get_timeout(),
                   [this]() -> bool { return this->stop_condition(); },
@@ -168,7 +191,7 @@ class thread_pool
     }
 
     /// \brief copy assignment not allowed
-    thread_pool& operator=(const thread_pool&) = delete;
+    thread_pool_t& operator=(const thread_pool_t&) = delete;
 
     ///
     /// \brief is_stopped
@@ -183,11 +206,11 @@ class thread_pool
     /// \param p_work_timeout timeout for the \p work_t functions
     ///
     void add_work(uint16_t p_num_works,
-                  std::function<work_t()> p_work_factory,
+                  std::function<worker()> p_work_factory,
                   std::chrono::milliseconds p_work_timeout)
     {
         for (uint16_t _i = 0; _i < p_num_works; ++_i) {
-            async_loop_t _loop(
+            async_loop _loop(
               p_work_factory(),
               p_work_timeout,
               [this]() -> bool { return this->stop_condition(); },
@@ -202,9 +225,9 @@ class thread_pool
     /// \param p_work the \p work_t fuction to be added
     /// \param p_work_timeout timeout of this \p work_t function
     ///
-    void add_work(work_t&& p_work, std::chrono::milliseconds p_work_timeout)
+    void add_work(worker&& p_work, std::chrono::milliseconds p_work_timeout)
     {
-        async_loop_t _loop(
+        async_loop _loop(
           std::move(p_work),
           p_work_timeout,
           [this]() -> bool { return this->stop_condition(); },
@@ -254,8 +277,8 @@ class thread_pool
         }
 
         m_cv_data.notify_all();
-        for (async_loop_t& _loop : m_loops) {
-            cerr_debug("stopping loop ", &_loop);
+        for (async_loop& _loop : m_loops) {
+            log::debug(m_name, __LINE__, "stopping loop ", &_loop);
             _loop.stop();
         }
     }
@@ -264,17 +287,17 @@ class thread_pool
     /// \brief provide_t is a simpler name for the provide function, which
     /// removes the \p t_data from \p m_values, and passes to a \p work_t
     /// function
-    typedef typename loop_traits<t_data>::provide_t provide_t;
+    typedef typename loop_traits_t<t_data>::provider provide_t;
 
     /// \brief the collection of values
     typedef std::list<t_data> values_t;
 
     /// \brief async_loop_t is an simples for the \p async_loop where a \p
     /// work_t function will be running
-    typedef business::async_loop<t_data> async_loop_t;
+    typedef business::async_loop_t<t_data, t_log> async_loop;
 
     /// \brief async_loops_t is the collection of \p async_loop
-    typedef std::vector<async_loop_t> async_loops_t;
+    typedef std::vector<async_loop> async_loops_t;
 
   private:
     /// \brief run_common is called from other functions, in order to start the
@@ -282,27 +305,27 @@ class thread_pool
     void run_common()
     {
 
-        cerr_debug(this, " running ", this);
+        log::debug(m_name, __LINE__, this, " running ", this);
         std::unique_lock<std::mutex> _lock(m_mutex_stop);
         if (m_loops.empty()) {
-            cerr_debug(this, " cant run because it is empty");
+            log::debug(m_name, __LINE__, this, " cant run because it is empty");
             return;
         }
         m_stopped = false;
-        cerr_debug(this, " m_stopped = ", m_stopped);
+        log::debug(m_name, __LINE__, this, " m_stopped = ", m_stopped);
 
-        for (async_loop_t& _loop : m_loops) {
-            cerr_debug(this, " starting loop ", &_loop);
+        for (async_loop& _loop : m_loops) {
+            log::debug(m_name, __LINE__, this, " starting loop ", &_loop);
             _loop.run();
         }
-        cerr_debug(this, " started ");
+        log::debug(m_name, __LINE__, this, " started ");
     }
 
     ///
     /// \brief add_work common function called to add a \p work_t function
     /// \param p_loop the new \p work_t function to be added
     ///
-    void add_work(async_loop_t&& p_loop)
+    void add_work(async_loop&& p_loop)
     {
         std::lock_guard<std::mutex> _lock(m_add_work);
         m_loops.push_back(std::move(p_loop));
@@ -316,7 +339,7 @@ class thread_pool
     bool stop_condition()
     {
 
-        cerr_debug(this, " stopped = ", m_stopped);
+        log::debug(m_name, __LINE__, this, " stopped = ", m_stopped);
         return m_stopped;
     }
 
@@ -333,7 +356,9 @@ class thread_pool
         using namespace std;
 
         if (m_stopped) {
-            cerr_debug(this,
+            log::debug(m_name,
+                       __LINE__,
+                       this,
                        " not waiting for more data because it is stopped ");
 
             return std::make_pair(false, t_data());
@@ -341,22 +366,23 @@ class thread_pool
 
         unique_lock<std::mutex> _lock(m_mutex_data);
         m_cv_data.wait(_lock, [this] {
-            cerr_debug(this, " waiting");
+            log::debug(m_name, __LINE__, this, " waiting");
             return (!m_values.empty() || m_stopped);
         });
 
         if (m_stopped) {
-            cerr_debug(this, " m_stopped, returning 'false'");
+            log::debug(m_name, __LINE__, this, " m_stopped, returning 'false'");
             return std::make_pair(false, t_data());
         }
 
         std::pair<bool, t_data> _return =
           std::make_pair(true, std::move(m_values.front()));
-        cerr_debug(this, " data to be handled ", _return.second);
+        log::debug(
+          m_name, __LINE__, this, " data to be handled ", _return.second);
         m_values.pop_front();
 
         if (m_destroying && !m_values.empty()) {
-            cerr_debug(this, " signaling poped");
+            log::debug(m_name, __LINE__, this, " signaling poped");
             m_cv_poped.notify_all();
         }
 
@@ -369,13 +395,13 @@ class thread_pool
     ///
     void add_data(const t_data& p_value)
     {
-        cerr_debug(this, " adding ", p_value);
+        log::debug(m_name, __LINE__, this, " adding ", p_value);
         {
             std::lock_guard<std::mutex> _lock(m_mutex_data);
             m_values.push_back(p_value);
         }
         m_cv_data.notify_all();
-        cerr_debug(this, " added and notified ", this);
+        log::debug(m_name, __LINE__, this, " added and notified ", this);
     }
 
   private:
@@ -390,6 +416,7 @@ class thread_pool
 
     /// \brief m_mutex_data controls access to \p m_values
     std::mutex m_mutex_data;
+
     /// \brief m_cv_data signalizes if there is \p t_data available
     std::condition_variable m_cv_data;
 
@@ -412,7 +439,12 @@ class thread_pool
 
     /// \brief m_destroying indicates that the \p thread_pool should stop
     bool m_destroying = false;
+
+    static const std::string m_name;
 };
+
+template<typename t_data, typename t_log>
+const std::string thread_pool_t<t_data, t_log>::m_name("thread_pool");
 
 } // namespace business
 } // namespace concurrent

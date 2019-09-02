@@ -35,7 +35,7 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::async_loop_t<uint32_t> async_loop_t;
 
 struct async_loop_006
 {

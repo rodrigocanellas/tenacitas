@@ -26,7 +26,7 @@ struct work1
     uint16_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<void> async_loop_t;
+typedef tenacitas::concurrent::business::async_loop_t<void> async_loop_t;
 
 struct async_loop_000
 {

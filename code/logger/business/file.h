@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include <logger/business/internal/file_controller.h>
@@ -75,8 +76,17 @@ configure_file_log(
 
     file_controller _file_controller(
       p_path, p_base_name, p_max_file_size, p_retention, p_closed_extension);
-    file_writer_t<file_controller> _file_writer(std::move(_file_controller));
-    log::configure(std::move(_file_writer));
+
+    typedef file_writer_t<file_controller> file_writer;
+    typedef std::shared_ptr<file_writer> file_writer_ptr;
+
+    file_writer_ptr _file_writer_ptr(
+      std::make_shared<file_writer>(std::move(_file_controller)));
+
+    //    log::configure(std::move(_file_writer));
+    log::configure([_file_writer_ptr](std::string&& p_str) -> void {
+        (*_file_writer_ptr)(std::move(p_str));
+    });
 }
 
 } // namespace business

@@ -9,6 +9,6 @@ CONFIG+=test
 SOURCES += \ 
     ../../../../../../code/concurrent/test/correction/thread_pool_097/main.cpp
 include (../../../../common.pri)
-LIBS+=-ltenacitas.logger
+
 HEADERS += \ 
     

@@ -14,6 +14,7 @@
 #include <calendar/business/conversions.h>
 #include <calendar/business/epoch.h>
 #include <concurrent/business/sleeping_loop.h>
+#include <logger/business/log.h>
 #include <string/business/max_str_length.h>
 
 /// \brief namespace of the organization
@@ -137,7 +138,7 @@ struct file_controller
     ///
     /// \brief sleeping_loop_t an alias for the sleeping loop used
     ///
-    typedef concurrent::business::sleeping_loop<void> sleeping_loop_t;
+    typedef concurrent::business::sleeping_loop_t<void, log> sleeping_loop;
 
     struct deleter
     {
@@ -267,7 +268,7 @@ struct file_controller
     /// \brief m_sleeping_loop asynchronous time controlled loop that will check
     /// if files should be removed
     ///
-    sleeping_loop_t m_sleeping_loop;
+    sleeping_loop m_sleeping_loop;
 };
 
 } // namespace business

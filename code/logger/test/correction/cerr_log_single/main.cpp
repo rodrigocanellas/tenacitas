@@ -5,41 +5,47 @@
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+using namespace tenacitas;
+
+typedef concurrent::business::sleeping_loop_t<void, logger::business::log>
+  sleeping_loop;
 
 struct cerr_log_single
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
 
-            tenacitas::logger::business::configure_cerr_log();
+            configure_cerr_log();
 
-            sleeping_loop_t _loop1(std::chrono::milliseconds(10000),
-                                   []() {
-                                       cerr_debug("work! ", time(nullptr));
-                                       for (uint32_t _i = 0; _i < 100; ++_i) {
-                                           cerr_debug("ola! ", _i);
-                                           cerr_debug("como vai? ", _i);
-                                           cerr_info("vou bem!! ", _i);
-                                           cerr_info("e vc? ", _i);
-                                           cerr_warn("ótimo! novo emprego! ",
-                                                     _i);
-                                           cerr_warn("que bom! ", _i);
-                                       }
-                                       return true;
-                                   },
-                                   std::chrono::milliseconds(1000));
+            std::function<bool(void)> _work = []() {
+                log::debug(
+                  "cerr_log_single", __LINE__, "work! ", time(nullptr));
+                for (uint32_t _i = 0; _i < 100; ++_i) {
+                    log::debug("cerr_log_single", __LINE__, "ola! ", _i);
+                    log::debug("cerr_log_single", __LINE__, "como vai? ", _i);
+                    log::info("cerr_log_single", __LINE__, "vou bem!! ", _i);
+                    log::info("cerr_log_single", __LINE__, "e vc? ", _i);
+                    log::warn(
+                      "cerr_log_single", __LINE__, "ótimo! novo emprego! ", _i);
+                    log::warn("cerr_log_single", __LINE__, "que bom! ", _i);
+                }
+                return true;
+            };
+            sleeping_loop _loop1(std::chrono::milliseconds(10000),
+                                 std::move(_work),
+                                 std::chrono::milliseconds(1000));
 
             _loop1.run();
 
-            cerr_debug("---- sleeping");
+            log::debug("cerr_log_single", __LINE__, "---- sleeping");
             std::this_thread::sleep_for(std::chrono::minutes(1));
-            cerr_debug("---- waking up");
+            log::debug("cerr_log_single", __LINE__, "---- waking up");
 
             return true;
         } catch (std::exception& _ex) {
-            cerr_fatal("ERRO cerr_log_single: '", _ex.what(), "'");
+            log::fatal("ERRO log::log_single: '", _ex.what(), "'");
         }
         return false;
     }
