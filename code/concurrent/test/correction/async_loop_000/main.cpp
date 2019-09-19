@@ -5,20 +5,22 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
-#include <concurrent/business/internal//async_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
+using namespace tenacitas::logger::business;
+
 struct work1
 {
-
     bool operator()()
     {
         if (counter > 100) {
             return false;
         }
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         ++counter;
         return true;
     }
@@ -26,7 +28,7 @@ struct work1
     uint16_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop_t<void> async_loop_t;
+typedef tenacitas::concurrent::business::async_loop_t<void, log> async_loop_t;
 
 struct async_loop_000
 {
@@ -43,11 +45,12 @@ struct async_loop_000
 
             std::this_thread::sleep_for(std::chrono::seconds(4));
 
-            cerr_test("counter = ", _work.counter);
+            concurrent_log_test(log, "counter = ", _work.counter);
             _result = (_work.counter == 101);
 
         } catch (std::exception& _ex) {
-            cerr_fatal("ERROR async_loop_000: '", _ex.what(), "'");
+            concurrent_log_fatal(
+              log, "ERROR async_loop_000: '", _ex.what(), "'");
             return false;
         }
         return _result;
@@ -57,6 +60,7 @@ struct async_loop_000
 int
 main(int argc, char** argv)
 {
+    configure_cerr_log();
     run_test(
       async_loop_000,
       argc,
@@ -65,5 +69,5 @@ main(int argc, char** argv)
 
       "\nMain thread will sleep for 4 secs."
 
-      "\nCounter should be 101.");
+      "\nCounter should be 101.")
 }

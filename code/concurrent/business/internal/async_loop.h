@@ -22,6 +22,7 @@
 #include <tuple>
 #include <type_traits>
 
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/internal/loop.h>
 #include <concurrent/business/thread.h>
 #include <concurrent/business/traits.h>
@@ -42,19 +43,15 @@ namespace business {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void set_debug()
-/// static void set_info()
-/// static void set_warn()
-/// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_data, typename t_log>
 struct async_loop_t
@@ -149,7 +146,7 @@ struct async_loop_t
     /// \brief destructor stops the loop
     inline ~async_loop_t()
     {
-        log::debug(m_name, __LINE__, this, " destructor");
+        concurrent_log_debug(log, this, " destructor");
         stop();
     }
 
@@ -196,13 +193,13 @@ struct async_loop_t
     {
 
         if (!m_loop.is_stopped()) {
-            log::debug(m_name,
-                       __LINE__,
-                       this,
-                       " not starting the loop because it is already running");
+            concurrent_log_debug(
+              log,
+              this,
+              " not starting the loop because it is already running");
             return;
         }
-        log::debug(m_name, __LINE__, this, " starting the loop");
+        concurrent_log_debug(log, this, " starting the loop");
         run_core();
     }
 
@@ -212,17 +209,15 @@ struct async_loop_t
     void stop()
     {
         if (m_loop.is_stopped()) {
-            log::debug(m_name,
-                       __LINE__,
-                       this,
-                       " not stopping the loop because it was not running");
+            concurrent_log_debug(
+              log, this, " not stopping the loop because it was not running");
             return;
         }
 
         std::lock_guard<std::mutex> _lock(m_mutex);
-        log::debug(m_name, __LINE__, this, " marking to stop");
+        concurrent_log_debug(log, this, " marking to stop");
         m_loop.stop();
-        log::debug(m_name, __LINE__, this, " joining");
+        concurrent_log_debug(log, this, " joining");
     }
 
   private:
@@ -250,12 +245,7 @@ struct async_loop_t
 
     /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
     std::mutex m_mutex;
-
-    static const std::string m_name;
 };
-
-template<typename t_data, typename t_log>
-const std::string async_loop_t<t_data, t_log>::m_name("async_loop");
 
 } // namespace business
 } // namespace concurrent

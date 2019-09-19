@@ -14,6 +14,8 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
+#include <concurrent/test/log.h>
+
 struct sleeping_loop_000
 {
 
@@ -27,7 +29,7 @@ struct sleeping_loop_000
 
         loop _loop(std::chrono::milliseconds(100),
                    [] {
-                       log::test("sleeping_loop_000", __LINE__, "loop1");
+                       log_test("loop1");
                        return true;
                    },
                    std::chrono::milliseconds(100));
@@ -39,5 +41,5 @@ struct sleeping_loop_000
 int
 main(int argc, char** argv)
 {
-    run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test");
+    run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test")
 }

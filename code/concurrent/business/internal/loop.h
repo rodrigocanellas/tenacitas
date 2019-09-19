@@ -9,6 +9,7 @@
 #include <chrono>
 #include <future>
 
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/traits.h>
 
 /// \brief namespace of the organization
@@ -36,19 +37,15 @@ namespace business {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void set_debug()
-/// static void set_info()
-/// static void set_warn()
-/// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_data, typename t_log>
 struct loop_t
@@ -186,10 +183,8 @@ struct loop_t
     void start()
     {
         if (!m_stopped) {
-            log::debug(m_name,
-                       __LINE__,
-                       this,
-                       " not starting because it was not stopped");
+            concurrent_log_debug(
+              log, this, " not starting because it was not stopped");
             return;
         }
 
@@ -198,44 +193,42 @@ struct loop_t
         while (true) {
 
             if (m_stopped) {
-                log::debug(m_name, __LINE__, this, " stopping loop");
+                concurrent_log_debug(log, this, " stopping loop");
                 break;
             }
 
-            log::debug(m_name, __LINE__, this, " waiting for data");
+            concurrent_log_debug(log, this, " waiting for data");
             std::pair<bool, t_data> _provide = m_provide();
             if (!_provide.first) {
-                log::debug(
-                  m_name, __LINE__, this, " breaking because there is no data");
+                concurrent_log_debug(
+                  log, this, " breaking because there is no data");
                 break;
             }
 
-            log::debug(
-              m_name, __LINE__, this, " data received ", _provide.second);
+            concurrent_log_debug(log, this, " data received ", _provide.second);
 
             std::future<bool> _future = std::async(
               std::launch::async, std::ref(m_work), std::move(_provide.second));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    log::debug(m_name,
-                               __LINE__,
-                               this,
-                               " breaking because there is no more work");
+                    concurrent_log_debug(
+                      log, this, " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
             } else {
-                log::warn(this, " timeout for data ", _provide.second);
+                concurrent_log_warn(
+                  log, this, " timeout for data ", _provide.second);
             }
 
             if (m_stopped) {
-                log::debug(m_name, __LINE__, this, " stopping loop");
+                concurrent_log_debug(log, this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                log::debug(
-                  m_name, __LINE__, this, " stopping because breaker said so");
+                concurrent_log_debug(
+                  log, this, " stopping because breaker said so");
                 m_stopped = true;
                 break;
             }
@@ -293,15 +286,15 @@ const std::string loop_t<t_data, t_log>::m_name("loop");
 /// static void set_info()
 /// static void set_warn()
 /// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_log>
 struct loop_t<void, t_log>
@@ -420,10 +413,8 @@ struct loop_t<void, t_log>
     void start()
     {
         if (m_stopped == false) {
-            log::debug(m_name,
-                       __LINE__,
-                       this,
-                       " not starting beacause it was not stopped");
+            concurrent_log_debug(
+              log, this, " not starting beacause it was not stopped");
             return;
         }
 
@@ -431,36 +422,34 @@ struct loop_t<void, t_log>
 
         while (true) {
 
-            log::debug(m_name, __LINE__, this, " one more loop");
+            concurrent_log_debug(log, this, " one more loop");
 
             if (m_stopped) {
-                log::debug(m_name, __LINE__, this, " stopping loop");
+                concurrent_log_debug(log, this, " stopping loop");
                 break;
             }
 
-            log::debug(m_name, __LINE__, this, " calling work");
+            concurrent_log_debug(log, this, " calling work");
             std::future<bool> _future =
               std::async(std::launch::async, std::ref(m_work));
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
-                    log::debug(m_name,
-                               __LINE__,
-                               this,
-                               " breaking because there is no more work");
+                    concurrent_log_debug(
+                      log, this, " breaking because there is no more work");
                     m_stopped = true;
                     break;
                 }
             } else {
-                log::warn(this, " timeout");
+                concurrent_log_warn(log, this, " timeout");
             }
 
             if (m_stopped) {
-                log::debug(m_name, __LINE__, this, " stopping loop");
+                concurrent_log_debug(log, this, " stopping loop");
                 break;
             }
 
             if (m_break()) {
-                log::debug(m_name, __LINE__, this, " breaker said to stop");
+                concurrent_log_debug(log, this, " breaker said to stop");
                 m_stopped = true;
                 break;
             }
@@ -496,11 +485,7 @@ struct loop_t<void, t_log>
     /// \brief m_stopped indicates if the loop is running or not
     ///
     bool m_stopped = true;
-
-    static const std::string m_name;
 };
-template<typename t_log>
-const std::string loop_t<void, t_log>::m_name("loop");
 
 } // namespace business
 } // namespace concurrent

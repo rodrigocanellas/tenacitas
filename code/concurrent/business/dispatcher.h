@@ -15,6 +15,7 @@
 #include <thread>
 #include <tuple>
 
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread_pool.h>
 
 /// \brief namespace of the organization
@@ -33,19 +34,15 @@ namespace business {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void set_debug()
-/// static void set_info()
-/// static void set_warn()
-/// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_msg, typename t_log>
 class dispatcher_t
@@ -82,7 +79,7 @@ class dispatcher_t
     /// Stops all the \p thread_pool
     ~dispatcher_t()
     {
-        log::debug(m_name, __LINE__, "leaving");
+        concurrent_log_debug(log, "leaving");
         for (thread_pool& _pool : m_thread_pool_list) {
             _pool.stop();
         }
@@ -143,7 +140,7 @@ class dispatcher_t
     static void publish(const t_msg& p_msg)
     {
         if (m_thread_pool_list.empty()) {
-            log::warn(m_name, __LINE__, "there are no subscribers for ", p_msg);
+            concurrent_log_warn(log, "there are no subscribers for ", p_msg);
         }
         for (thread_pool& _pool : m_thread_pool_list) {
             _pool.handle(p_msg);
@@ -176,9 +173,6 @@ class dispatcher_t
 template<typename t_msg, typename t_log>
 typename dispatcher_t<t_msg, t_log>::thread_pool_list
   dispatcher_t<t_msg, t_log>::m_thread_pool_list;
-
-template<typename t_msg, typename t_log>
-const std::string dispatcher_t<t_msg, t_log>::m_name("dispatcher");
 
 } // namespace business
 } // namespace concurrent

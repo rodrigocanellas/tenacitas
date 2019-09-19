@@ -12,6 +12,7 @@
 #include <mutex>
 #include <thread>
 
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/internal/async_loop.h>
 #include <concurrent/business/traits.h>
 
@@ -32,19 +33,15 @@ namespace business {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void set_debug()
-/// static void set_info()
-/// static void set_warn()
-/// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_data, typename t_log>
 struct sleeping_loop_t
@@ -176,13 +173,12 @@ struct sleeping_loop_t
     void run()
     {
         if (!m_async.is_stopped()) {
-            log::debug(m_name,
-                       __LINE__,
+            concurrent_log_debug(log,
                        this,
                        " not running async loop because it was not stopped");
             return;
         }
-        log::debug(m_name, __LINE__, this, " running async loop");
+        concurrent_log_debug(log, this, " running async loop");
         m_async.run();
     }
 
@@ -190,17 +186,16 @@ struct sleeping_loop_t
     void stop()
     {
         if (m_async.is_stopped()) {
-            log::debug(m_name,
-                       __LINE__,
+            concurrent_log_debug(log,
                        this,
                        " not stopping async loop because it was not running");
             return;
         }
-        log::debug(m_name, __LINE__, this, " stop");
+        concurrent_log_debug(log, this, " stop");
         m_cond_var.notify_all();
 
-        log::debug(
-          m_name, __LINE__, this, " all notified, and m_async = ", &m_async);
+        concurrent_log_debug(
+          log, this, " all notified, and m_async = ", &m_async);
         m_async.stop();
     }
 
@@ -245,11 +240,11 @@ struct sleeping_loop_t
         std::unique_lock<std::mutex> _lock(m_mutex);
         if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
             // timeout, so do not stop
-            log::debug(m_name, __LINE__, this, " must not stop");
+            concurrent_log_debug(log, this, " must not stop");
             return false;
         }
         // no timeout, so do stop
-        log::debug(m_name, __LINE__, this, " must stop");
+        concurrent_log_debug(log, this, " must stop");
         return true;
     }
 
@@ -266,11 +261,7 @@ struct sleeping_loop_t
     /// \brief m_cond_var
     std::condition_variable m_cond_var;
 
-    static const std::string m_name;
 };
-
-template<typename t_data, typename t_log>
-const std::string sleeping_loop_t<t_data, t_log>::m_name("sleeping_loop");
 
 } // namespace business
 } // namespace concurrent

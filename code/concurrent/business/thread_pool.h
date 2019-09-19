@@ -19,6 +19,7 @@
 #include <vector>
 
 #include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/traits.h>
 
 /// \brief namespace of the organization
@@ -42,19 +43,15 @@ namespace business {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void set_debug()
-/// static void set_info()
-/// static void set_warn()
-/// static void set_error()
-/// static void debug(const std::string & p_class, int p_line, const
+/// static void debug(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void info(const std::string & p_class, int p_line, const t_params&...
+/// static void info(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void warn(const std::string & p_class, int p_line, const t_params&...
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
 /// p_params)
-/// static void error(const std::string & p_class, int p_line, const
+/// static void error(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-/// static void fatal(const std::string & p_class, int p_line, const
+/// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template<typename t_data, typename t_log>
 class thread_pool_t
@@ -125,28 +122,24 @@ class thread_pool_t
     ~thread_pool_t()
     {
         m_destroying = true;
-        debug(m_name, __LINE__, this, " m_values.size() = ", m_values.size());
+        concurrent_log_debug(log, this, " m_values.size() = ", m_values.size());
 
         if (!m_stopped) {
             while (!m_values.empty()) {
-                log::debug(m_name,
-                           __LINE__,
-                           this,
-                           " m_values.size() = ",
-                           m_values.size());
+                concurrent_log_debug(
+                  log, this, " m_values.size() = ", m_values.size());
                 m_cv_data.notify_all();
-                log::debug(
-                  m_name, __LINE__, this, " waiting for poping, ", this);
+                concurrent_log_debug(log, this, " waiting for poping, ", this);
                 std::unique_lock<std::mutex> _lock(m_mutex_poped);
                 m_cv_poped.wait(_lock, [this] {
-                    log::debug(
-                      m_name, __LINE__, this, " poping signal arrived, ", this);
+                    concurrent_log_debug(
+                      log, this, " poping signal arrived, ", this);
                     return true;
                 });
-                log::debug(m_name, __LINE__, this, " lock free");
+                concurrent_log_debug(log, this, " lock free");
             }
-            log::debug(
-              m_name, __LINE__, "this, m_values.size() = ", m_values.size());
+            concurrent_log_debug(
+              log, "this, m_values.size() = ", m_values.size());
             stop();
         }
     }
@@ -278,7 +271,7 @@ class thread_pool_t
 
         m_cv_data.notify_all();
         for (async_loop& _loop : m_loops) {
-            log::debug(m_name, __LINE__, "stopping loop ", &_loop);
+            concurrent_log_debug(log, "stopping loop ", &_loop);
             _loop.stop();
         }
     }
@@ -305,20 +298,20 @@ class thread_pool_t
     void run_common()
     {
 
-        log::debug(m_name, __LINE__, this, " running ", this);
+        concurrent_log_debug(log, this, " running ", this);
         std::unique_lock<std::mutex> _lock(m_mutex_stop);
         if (m_loops.empty()) {
-            log::debug(m_name, __LINE__, this, " cant run because it is empty");
+            concurrent_log_debug(log, this, " cant run because it is empty");
             return;
         }
         m_stopped = false;
-        log::debug(m_name, __LINE__, this, " m_stopped = ", m_stopped);
+        concurrent_log_debug(log, this, " m_stopped = ", m_stopped);
 
         for (async_loop& _loop : m_loops) {
-            log::debug(m_name, __LINE__, this, " starting loop ", &_loop);
+            concurrent_log_debug(log, this, " starting loop ", &_loop);
             _loop.run();
         }
-        log::debug(m_name, __LINE__, this, " started ");
+        concurrent_log_debug(log, this, " started ");
     }
 
     ///
@@ -339,7 +332,7 @@ class thread_pool_t
     bool stop_condition()
     {
 
-        log::debug(m_name, __LINE__, this, " stopped = ", m_stopped);
+        concurrent_log_debug(log, this, " stopped = ", m_stopped);
         return m_stopped;
     }
 
@@ -356,33 +349,30 @@ class thread_pool_t
         using namespace std;
 
         if (m_stopped) {
-            log::debug(m_name,
-                       __LINE__,
-                       this,
-                       " not waiting for more data because it is stopped ");
+            concurrent_log_debug(
+              log, this, " not waiting for more data because it is stopped ");
 
             return std::make_pair(false, t_data());
         }
 
         unique_lock<std::mutex> _lock(m_mutex_data);
         m_cv_data.wait(_lock, [this] {
-            log::debug(m_name, __LINE__, this, " waiting");
+            concurrent_log_debug(log, this, " waiting");
             return (!m_values.empty() || m_stopped);
         });
 
         if (m_stopped) {
-            log::debug(m_name, __LINE__, this, " m_stopped, returning 'false'");
+            concurrent_log_debug(log, this, " m_stopped, returning 'false'");
             return std::make_pair(false, t_data());
         }
 
         std::pair<bool, t_data> _return =
           std::make_pair(true, std::move(m_values.front()));
-        log::debug(
-          m_name, __LINE__, this, " data to be handled ", _return.second);
+        concurrent_log_debug(log, this, " data to be handled ", _return.second);
         m_values.pop_front();
 
         if (m_destroying && !m_values.empty()) {
-            log::debug(m_name, __LINE__, this, " signaling poped");
+            concurrent_log_debug(log, this, " signaling poped");
             m_cv_poped.notify_all();
         }
 
@@ -395,13 +385,13 @@ class thread_pool_t
     ///
     void add_data(const t_data& p_value)
     {
-        log::debug(m_name, __LINE__, this, " adding ", p_value);
+        concurrent_log_debug(log, this, " adding ", p_value);
         {
             std::lock_guard<std::mutex> _lock(m_mutex_data);
             m_values.push_back(p_value);
         }
         m_cv_data.notify_all();
-        log::debug(m_name, __LINE__, this, " added and notified ", this);
+        concurrent_log_debug(log, this, " added and notified ", this);
     }
 
   private:
@@ -439,12 +429,7 @@ class thread_pool_t
 
     /// \brief m_destroying indicates that the \p thread_pool should stop
     bool m_destroying = false;
-
-    static const std::string m_name;
 };
-
-template<typename t_data, typename t_log>
-const std::string thread_pool_t<t_data, t_log>::m_name("thread_pool");
 
 } // namespace business
 } // namespace concurrent
