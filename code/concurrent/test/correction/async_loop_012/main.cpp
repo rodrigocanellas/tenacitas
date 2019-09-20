@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -14,8 +15,9 @@ struct work1
 {
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         data += p_data;
-        cerr_test("1 -> ", data);
+        concurrent_log_test(log, "1 -> ", data);
         return true;
     }
     uint32_t data = 0;
@@ -25,8 +27,9 @@ struct work2
 {
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         data = p_data;
-        cerr_test("2 -> ", data);
+        concurrent_log_test(log, "2 -> ", data);
         return true;
     }
     uint32_t data = 0;
@@ -47,12 +50,15 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<uint32_t, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_012
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
             provide _provide;
             work1 _work_1;
@@ -86,11 +92,11 @@ struct async_loop_012
             _al_1.stop();
             _al_2.stop();
 
-            cerr_test("work 1 data = ", _work_1.data);
-            cerr_test("work 2 data = ", _work_2.data);
+            concurrent_log_test(log, "work 1 data = ", _work_1.data);
+            concurrent_log_test(log, "work 2 data = ", _work_2.data);
 
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -101,6 +107,7 @@ struct async_loop_012
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_012,
       argc,
@@ -113,5 +120,5 @@ main(int argc, char** argv)
 
       "\nMain thread will run a 'sleeping_loop'; stop for 10 secs."
 
-      "\nThe final data for Work 1 and Work 2 is unpredictable.");
+      "\nThe final data for Work 1 and Work 2 is unpredictable.")
 }

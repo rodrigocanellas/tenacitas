@@ -4,7 +4,7 @@
 #include <functional>
 #include <string>
 
-#include <logger/business/cerr.h>
+#include <logger/business/log.h>
 
 namespace tenacitas {
 namespace tester {
@@ -13,17 +13,18 @@ namespace business {
 struct test
 {
     template<typename t_function>
-    bool operator()(const std::string& p_name, t_function && p_function)
+    bool operator()(const std::string& p_name, t_function&& p_function)
     {
+        using namespace tenacitas::logger::business;
         bool _result = false;
         try {
-            cerr_test("############ ", p_name);
+            log::test("############ ", __LINE__, p_name);
             _result = p_function();
         } catch (std::exception& _ex) {
-            cerr_fatal("ERROR ", p_name, ": '", _ex.what(), "'");
+            log::fatal("ERROR ", p_name, ": '", _ex.what(), "'");
             _result = false;
         }
-        cerr_test(p_name, " ############");
+        log::test(p_name, __LINE__, "############");
         return _result;
     }
 };

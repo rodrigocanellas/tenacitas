@@ -5,6 +5,7 @@
 #include <string>
 
 #include <concurrent/business/dispatcher.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -66,10 +67,11 @@ struct publisher_1
   public:
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         msg_a _msg(++i);
-        cerr_test("P 1", _msg);
+        concurrent_log_test(log, "P 1", _msg);
 
-        concurrent::business::dispatcher<msg_a>::publish(_msg);
+        concurrent::business::dispatcher_t<msg_a, log>::publish(_msg);
         return true;
     }
     int16_t i = { 10 };
@@ -80,15 +82,16 @@ struct publisher_2
   public:
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         i += 10;
         msg_a _msg_a(i);
-        cerr_test("P 2", _msg_a);
-        concurrent::business::dispatcher<msg_a>::publish(_msg_a);
+        concurrent_log_test(log, "P 2", _msg_a);
+        concurrent::business::dispatcher_t<msg_a, log>::publish(_msg_a);
 
         d *= 2.5;
         msg_c _msg_c(d);
-        cerr_test("P 2", _msg_c);
-        concurrent::business::dispatcher<msg_c>::publish(_msg_c);
+        concurrent_log_test(log, "P 2", _msg_c);
+        concurrent::business::dispatcher_t<msg_c, log>::publish(_msg_c);
 
         return true;
     }
@@ -101,12 +104,12 @@ struct publisher_3
   public:
     bool operator()()
     {
-
+        using namespace tenacitas::logger::business;
         i += 300;
         msg_b _msg_b(i);
 
-        cerr_test("P 3", _msg_b);
-        concurrent::business::dispatcher<msg_b>::publish(_msg_b);
+        concurrent_log_test(log, "P 3", _msg_b);
+        concurrent::business::dispatcher_t<msg_b, log>::publish(_msg_b);
 
         return true;
     }
@@ -119,7 +122,8 @@ struct subscriber_1
 {
     bool operator()(msg_a&& p_msg)
     {
-        cerr_test("S 1", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 1", p_msg);
         return true;
     }
 };
@@ -128,12 +132,14 @@ struct subscriber_2
 {
     bool operator()(msg_a&& p_msg)
     {
-        cerr_test("S 2", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 2", p_msg);
         return true;
     }
     bool operator()(msg_b&& p_msg)
     {
-        cerr_test("S 2", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 2", p_msg);
         return true;
     }
 };
@@ -142,7 +148,8 @@ struct subscriber_3
 {
     bool operator()(msg_b&& p_msg)
     {
-        cerr_test("S 3", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 3", p_msg);
         return true;
     }
 };
@@ -151,22 +158,27 @@ struct subscriber_4
 {
     bool operator()(msg_a&& p_msg)
     {
-        cerr_test("S 4", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 4", p_msg);
         return true;
     }
     bool operator()(msg_b&& p_msg)
     {
-        cerr_test("S 4", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 4", p_msg);
         return true;
     }
     bool operator()(msg_c&& p_msg)
     {
-        cerr_test("S 4", p_msg);
+        using namespace tenacitas::logger::business;
+        concurrent_log_test(log, "S 4", p_msg);
         return true;
     }
 };
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    sleeping_loop_t;
 
 // ############################## subscribers
 struct dispatcher_000
@@ -174,6 +186,7 @@ struct dispatcher_000
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         sleeping_loop_t _sl1(std::chrono::milliseconds(1000),
                              publisher_1(),
                              std::chrono::milliseconds(1000));
@@ -186,22 +199,22 @@ struct dispatcher_000
         using namespace tenacitas::concurrent::business;
         bool _rc = true;
         std::chrono::milliseconds _work_timeout(500);
-        dispatcher<msg_a>::subscribe(
+        dispatcher_t<msg_a, log>::subscribe(
           []() { return subscriber_1(); }, 2, _work_timeout);
-        dispatcher<msg_a>::subscribe(subscriber_2(), _work_timeout);
-        dispatcher<msg_a>::subscribe(subscriber_4(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_2(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_3(), _work_timeout);
-        dispatcher<msg_b>::subscribe(subscriber_4(), _work_timeout);
-        dispatcher<msg_c>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_a, log>::subscribe(subscriber_2(), _work_timeout);
+        dispatcher_t<msg_a, log>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_b, log>::subscribe(subscriber_2(), _work_timeout);
+        dispatcher_t<msg_b, log>::subscribe(subscriber_3(), _work_timeout);
+        dispatcher_t<msg_b, log>::subscribe(subscriber_4(), _work_timeout);
+        dispatcher_t<msg_c, log>::subscribe(subscriber_4(), _work_timeout);
 
         _sl1.run();
         _sl2.run();
         _sl3.run();
 
-        cerr_test("------> starting to sleep");
+        concurrent_log_test(log, "------> starting to sleep");
         std::this_thread::sleep_for(std::chrono::seconds(10));
-        cerr_test("------> waking up");
+        concurrent_log_test(log, "------> waking up");
         return _rc;
     }
 
@@ -211,6 +224,7 @@ struct dispatcher_000
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       dispatcher_000,
       argc,
@@ -237,5 +251,5 @@ main(int argc, char** argv)
       "each 1500ms."
 
       "\n\nMain thread will sleep for 10 seconds, while publishers send "
-      "messages.");
+      "messages.")
 }

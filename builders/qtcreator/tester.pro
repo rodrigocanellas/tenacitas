@@ -1,6 +1,5 @@
 SUBDIRS = \
-  tester/tester_lib \
-  tester/tester_tst
+  tester/tester_lib
 
 
 TEMPLATE = subdirs

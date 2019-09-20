@@ -1,21 +1,25 @@
 #include <logger/business/cerr.h>
+#include <logger/business/log.h>
 #include <tester/business/run.h>
 
 struct cerr_log_how_to
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
-            tenacitas::logger::business::configure_cerr_log();
+            configure_cerr_log();
 
-            cerr_set_debug();
+            log::set_debug();
 
-            cerr_debug("hello! ", 309);
-            cerr_debug("how are you doing? ", 3.14);
-            cerr_info("fine!! ", 'W');
-            cerr_info("and you?");
-            cerr_warn("great! got a new job!! ", 6987.58f);
-            cerr_warn("nice!! ", 10);
+            log::debug("cerr_log_how_to", __LINE__, "hello! ", 309);
+            log::debug(
+              "cerr_log_how_to", __LINE__, "how are you doing? ", 3.14);
+            log::info("cerr_log_how_to", __LINE__, "fine!! ", 'W');
+            log::info("cerr_log_how_to", __LINE__, "and you?");
+            log::warn(
+              "cerr_log_how_to", __LINE__, "great! got a new job!! ", 6987.58f);
+            log::warn("cerr_log_how_to", __LINE__, "nice!! ", 10);
             return true;
         } catch (std::exception& _ex) {
             std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"

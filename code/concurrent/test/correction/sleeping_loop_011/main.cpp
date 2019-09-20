@@ -9,17 +9,22 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    loop_t;
+
+using namespace tenacitas::logger::business;
 struct work1
 {
     bool operator()()
     {
         ++counter;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -30,7 +35,7 @@ struct work2
     bool operator()()
     {
         counter += 100;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -41,7 +46,7 @@ struct work3
     bool operator()()
     {
         counter += 1000;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -70,26 +75,25 @@ struct sleeping_loop_011
         _loop_1.run();
         _loop_2.run();
         _loop_3.run();
-        ;
 
         std::this_thread::sleep_for(std::chrono::seconds(12));
 
-        cerr_test("stopping");
+        concurrent_log_test(log, "stopping");
         _loop_1.stop();
         _loop_2.stop();
         _loop_3.stop();
 
-        cerr_test("data 1 = ", _work_1.counter);
+        concurrent_log_test(log, "data 1 = ", _work_1.counter);
         if (_work_1.counter != 12) {
             return false;
         }
 
-        cerr_test("data 2 = ", _work_2.counter);
+        concurrent_log_test(log, "data 2 = ", _work_2.counter);
         if (_work_2.counter != 1200) {
             return false;
         }
 
-        cerr_test("data 3 = ", _work_3.counter);
+        concurrent_log_test(log, "data 3 = ", _work_3.counter);
         if (_work_3.counter != 12000) {
             return false;
         }
@@ -103,6 +107,7 @@ struct sleeping_loop_011
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       sleeping_loop_011,
       argc,

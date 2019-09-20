@@ -10,7 +10,8 @@ SOURCES += \
     ../../../../../../code/concurrent/test/performance/thread_pool_027/main.cpp \ 
     ../../../../../../code/concurrent/test/msa_a.cpp 
 include (../../../../common.pri)
-LIBS+=-ltenacitas.logger
+
 HEADERS += \ 
      
      
+LIBS+=-ltenacitas.concurrent -ltenacitas.logger

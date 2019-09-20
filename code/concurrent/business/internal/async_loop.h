@@ -22,10 +22,10 @@
 #include <tuple>
 #include <type_traits>
 
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/internal/loop.h>
 #include <concurrent/business/thread.h>
 #include <concurrent/business/traits.h>
-#include <logger/business/cerr.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -42,26 +42,42 @@ namespace business {
 ///    - default constructible
 ///    - move constructible
 ///
-template<typename t_data>
-struct async_loop
+/// \tparam t_log provides log funcionality:
+/// static void debug(const std::string & p_file, int p_line, const
+/// t_params&... p_params)
+/// static void info(const std::string & p_file, int p_line, const t_params&...
+/// p_params)
+/// static void warn(const std::string & p_file, int p_line, const t_params&...
+/// p_params)
+/// static void error(const std::string & p_file, int p_line, const
+/// t_params&... p_params)
+/// static void fatal(const std::string & p_file, int p_line, const
+/// t_params&... p_params)
+template<typename t_data, typename t_log>
+struct async_loop_t
 {
     ///
     /// \brief work_t is the type of work function, i.e., the function that will
     /// be called in a loop in order to execute some work
     ///
-    typedef typename loop_traits<t_data>::work_t work_t;
+    typedef typename loop_traits_t<t_data>::worker worker;
 
     ///
     /// \brief provide_t is the type of function that provides data to the work
     /// function during the loop execution, if \p t_data is not void
     ///
-    typedef typename loop_traits<t_data>::provide_t provide_t;
+    typedef typename loop_traits_t<t_data>::provider provider;
 
     ///
     /// \brief break_t is the type of function that indicates if the loop should
     /// stop
     ///
-    typedef typename loop_traits<t_data>::break_t break_t;
+    typedef typename loop_traits_t<t_data>::breaker breaker;
+
+    ///
+    /// \brief log alias for @p t_log
+    ///
+    typedef t_log log;
 
     ///
     /// \brief async_loop constructor
@@ -77,19 +93,16 @@ struct async_loop
     /// \param p_provide instance of the function that will provide an instance
     /// of \p t_data, if available
     ///
-    async_loop(work_t&& p_work,
-               std::chrono::milliseconds p_timeout,
-               break_t&& p_break,
-               provide_t&& p_provide)
+    async_loop_t(worker&& p_work,
+                 std::chrono::milliseconds p_timeout,
+                 breaker&& p_break,
+                 provider&& p_provide)
       : m_loop(std::move(p_work),
                std::move(p_timeout),
                std::move(p_break),
                std::move(p_provide))
       , m_thread()
-    {
-        // initiates the log library
-        tenacitas::logger::business::configure_cerr_log();
-    }
+    {}
 
     ///
     /// \brief async_loop constructor
@@ -103,47 +116,37 @@ struct async_loop
     /// \param p_break instance of the function that will indicate when the loop
     /// must stop
     ///
-    async_loop(work_t&& p_work,
-               std::chrono::milliseconds p_timeout,
-               break_t&& p_break)
+    async_loop_t(worker&& p_work,
+                 std::chrono::milliseconds p_timeout,
+                 breaker&& p_break)
       : m_loop(std::move(p_work),
                std::move(p_timeout),
                std::move(p_break),
                []() -> void {})
       , m_thread()
-    {
-        tenacitas::logger::business::configure_cerr_log();
-    }
+    {}
 
     /// \brief default constructor not allowed
-    async_loop() = delete;
+    async_loop_t() = delete;
 
     /// \brief copy constructor not allowed
-    async_loop(const async_loop&) = delete;
+    async_loop_t(const async_loop_t&) = delete;
 
     /// \brief async_loop move constructor not allowed
-    async_loop(async_loop&& p_async) noexcept
+    async_loop_t(async_loop_t&& p_async) noexcept
       : m_loop(std::move(p_async.m_loop))
     {}
 
     /// \brief copy assignment not allowed
-    async_loop& operator=(const async_loop&) = delete;
+    async_loop_t& operator=(const async_loop_t&) = delete;
 
     /// \brief move assignment not allowed
-    async_loop& operator=(async_loop&&) noexcept = default;
-    //    {
-    //        if (this != &p_async) {
-    //            m_loop = std::move(p_async.m_loop);
-    //            if (!p_async.is_stopped()) {
-    //                run_core();
-    //            }
-    //        }
-    //    }
+    async_loop_t& operator=(async_loop_t&&) noexcept = default;
 
     /// \brief destructor stops the loop
-    inline ~async_loop()
+    inline ~async_loop_t()
     {
-        cerr_debug(this, " destructor");
+        concurrent_log_debug(log, this, " destructor");
         stop();
     }
 
@@ -158,20 +161,20 @@ struct async_loop
     /// \return a copy of the function that executes a defined work in each
     /// round of the loop
     ///
-    inline work_t get_work() const { return m_loop.get_work(); }
+    inline worker get_work() const { return m_loop.get_worker(); }
 
     ///
     /// \brief get_break
     /// \return a copy of the function that can make the loop stop
     ///
-    inline break_t get_break() const { return m_loop.get_break(); }
+    inline breaker get_break() const { return m_loop.get_breaker(); }
 
     ///
     /// \brief get_provide
     /// \return a copy of the function that provides an instance of \p t_data,
     /// if available, to the work function
     ///
-    inline provide_t get_provide() const { return m_loop.get_provide(); }
+    inline provider get_provide() const { return m_loop.get_provider(); }
 
     ///
     /// \brief get_timeout
@@ -190,11 +193,13 @@ struct async_loop
     {
 
         if (!m_loop.is_stopped()) {
-            cerr_debug(this,
-                       " not starting the loop because it is already running");
+            concurrent_log_debug(
+              log,
+              this,
+              " not starting the loop because it is already running");
             return;
         }
-        cerr_debug(this, " starting the loop");
+        concurrent_log_debug(log, this, " starting the loop");
         run_core();
     }
 
@@ -204,20 +209,20 @@ struct async_loop
     void stop()
     {
         if (m_loop.is_stopped()) {
-            cerr_debug(this,
-                       " not stopping the loop because it was not running");
+            concurrent_log_debug(
+              log, this, " not stopping the loop because it was not running");
             return;
         }
 
         std::lock_guard<std::mutex> _lock(m_mutex);
-        cerr_debug(this, " marking to stop");
+        concurrent_log_debug(log, this, " marking to stop");
         m_loop.stop();
-        cerr_debug(this, " joining");
+        concurrent_log_debug(log, this, " joining");
     }
 
   private:
     /// \brief loop_t is an easier name for the loop
-    typedef loop<t_data> loop_t;
+    typedef loop_t<t_data, t_log> loop;
 
     /// \brief thread_t is an easier name for our wrapper to std::thread
     typedef concurrent::business::thread thread_t;
@@ -233,7 +238,7 @@ struct async_loop
 
   private:
     /// \brief m_loop is the \p loop to be executed asyncronously
-    loop_t m_loop;
+    loop m_loop;
 
     /// \brief m_thread is the thread where the \p loop will run
     thread_t m_thread;

@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -14,8 +15,9 @@ struct work1
 {
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         data = p_data;
-        cerr_test(p_data);
+        concurrent_log_test(log, p_data);
         return true;
     }
     uint32_t data = 0;
@@ -36,12 +38,15 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<uint32_t, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_004
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
             work1 _work;
             async_loop_t _async_loop(
@@ -56,9 +61,10 @@ struct async_loop_004
 
             _async_loop.stop();
 
-            cerr_test("data 1 ", _work.data);
+            concurrent_log_test(log, "data 1 ", _work.data);
             if (_work.data != 99) {
-                cerr_error("wrong value for data, it should be 99");
+                concurrent_log_error(log,
+                                     "wrong value for data, it should be 99");
                 return false;
             }
 
@@ -70,14 +76,15 @@ struct async_loop_004
 
             _async_loop.stop();
 
-            cerr_test("data 2 ", _work.data);
+            concurrent_log_test(log, "data 2 ", _work.data);
             if (_work.data != 199) {
-                cerr_error("wrong value for data, it should be 199");
+                concurrent_log_error(log,
+                                     "wrong value for data, it should be 199");
                 return false;
             }
 
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -88,6 +95,7 @@ struct async_loop_004
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_004,
       argc,
@@ -101,5 +109,5 @@ main(int argc, char** argv)
       "thread will sleep for 4 secs; 'async_loop' will run again; main thread "
       "will sleep for 20 secs; 'async_loop' stops."
 
-      "\nData in work should be 199");
+      "\nData in work should be 199")
 }

@@ -5,8 +5,9 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
-#include <concurrent/business/internal//async_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
@@ -15,8 +16,9 @@ struct work1
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         ++counter;
         return true;
     }
@@ -24,12 +26,15 @@ struct work1
     uint64_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<void> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<void, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_001
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
             work1 _work;
             async_loop_t _async_loop([&_work]() -> bool { return _work(); },
@@ -39,13 +44,14 @@ struct async_loop_001
 
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
-            cerr_test("counter = ", _work.counter);
+            concurrent_log_test(log, "counter = ", _work.counter);
             if (_work.counter != 4) {
-                cerr_error("wrong value for data, it should be 4");
+                concurrent_log_test(log,
+                                    "wrong value for data, it should be 4");
                 return false;
             }
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -56,6 +62,7 @@ struct async_loop_001
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_001,
       argc,
@@ -65,5 +72,5 @@ main(int argc, char** argv)
 
       "\nMain thread will stop for 1 sec."
 
-      "\nCounter should be 4.");
+      "\nCounter should be 4.")
 }

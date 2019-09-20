@@ -1,3 +1,4 @@
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <concurrent/business/thread_pool.h>
 #include <concurrent/test/msg_a.h>
@@ -7,14 +8,18 @@
 #include <chrono>
 
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::business::thread_pool<msg_t> thread_pool_t;
+typedef tenacitas::concurrent::business::
+  thread_pool_t<msg_t, tenacitas::logger::business::log>
+    thread_pool_t;
+
+using namespace tenacitas::logger::business;
 
 struct work
 {
     bool operator()(msg_t&& p_msg)
     {
 
-        cerr_test("handling msg ", p_msg);
+        concurrent_log_test(log, "handling msg ", p_msg);
         if ((p_msg.counter() % 2) == 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             ++m_timeout;
@@ -39,20 +44,20 @@ struct thread_pool_096
 
         for (uint16_t _i = 0; _i < 20; ++_i) {
             msg_t _msg(_i);
-            cerr_test("adding msg ", _msg);
+            concurrent_log_test(log, "adding msg ", _msg);
             _pool.handle(_msg);
         }
 
-        cerr_test("start pool");
+        concurrent_log_test(log, "start pool");
         _pool.run();
 
-        cerr_test("sleeping for 1 s");
+        concurrent_log_test(log, "sleeping for 1 s");
         std::this_thread::sleep_for(std::chrono::seconds(10));
-        cerr_test("waking up");
+        concurrent_log_test(log, "waking up");
 
-        cerr_test("timeout = ", _work.m_timeout);
+        concurrent_log_test(log, "timeout = ", _work.m_timeout);
         if (_work.m_timeout != 10) {
-            cerr_error("# of timeout should be equal to 10");
+            concurrent_log_error(log, "# of timeout should be equal to 10");
             return false;
         }
 
@@ -63,6 +68,7 @@ struct thread_pool_096
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(thread_pool_096,
              argc,
              argv,

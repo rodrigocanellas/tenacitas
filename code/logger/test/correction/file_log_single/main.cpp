@@ -5,6 +5,11 @@
 #include <logger/business/file.h>
 #include <tester/business/run.h>
 
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
+typedef sleeping_loop_t<void, tenacitas::logger::business::log> sleeping_loop;
+
 class file_log_single
 {
 
@@ -16,35 +21,43 @@ class file_log_single
 
             tenacitas::logger::business::configure_file_log(
               ".", "file_log_single", 10 * 1024, std::chrono::minutes(1));
-            file_set_debug();
+            log::set_debug();
 
-            concurrent::business::sleeping_loop<void> _loop1(
+            sleeping_loop _loop1(
               std::chrono::milliseconds(500),
               []() {
-                  cerr_test("work!");
-                  file_test(std::string(10, 't'));
-                  file_debug(std::string(511, 'd'));
-                  file_info(std::string(511, 'i'));
-                  file_warn(std::string(511, 'w'));
-                  file_error(std::string(511, 'e'));
-                  file_test(std::string(511, 'T'));
-                  file_debug(std::string(511, 'D'));
-                  file_info(std::string(511, 'I'));
-                  file_warn(std::string(511, 'W'));
-                  file_error(std::string(511, 'E'));
+                  log::test("file_log_single", __LINE__, "work!");
+                  log::test("file_log_single", __LINE__, std::string(10, 't'));
+                  log::debug(
+                    "file_log_single", __LINE__, std::string(511, 'd'));
+                  log::info("file_log_single", __LINE__, std::string(511, 'i'));
+                  log::warn("file_log_single", __LINE__, std::string(511, 'w'));
+                  log::error(
+                    "file_log_single", __LINE__, std::string(511, 'e'));
+                  log::test("file_log_single", __LINE__, std::string(511, 'T'));
+                  log::debug(
+                    "file_log_single", __LINE__, std::string(511, 'D'));
+                  log::info("file_log_single", __LINE__, std::string(511, 'I'));
+                  log::warn("file_log_single", __LINE__, std::string(511, 'W'));
+                  log::error(
+                    "file_log_single", __LINE__, std::string(511, 'E'));
                   return true;
               },
               std::chrono::seconds(5));
 
             _loop1.run();
 
-            cerr_test("---- sleeping 3 minutes");
+            log::test("file_log_single", __LINE__, "---- sleeping 3 minutes");
             std::this_thread::sleep_for(std::chrono::minutes(3));
-            cerr_test("---- waking up");
+            log::test("file_log_single", __LINE__, "---- waking up");
 
             return true;
         } catch (std::exception& _ex) {
-            cerr_fatal("ERRO file_log_single: '", _ex.what(), "'");
+            log::fatal("file_log_single",
+                       __LINE__,
+                       "ERRO log::log_single: '",
+                       _ex.what(),
+                       "'");
         }
         return false;
     }

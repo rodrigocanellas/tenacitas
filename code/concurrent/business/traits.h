@@ -24,7 +24,7 @@ namespace business {
 ///    - move constructible
 ///
 template<typename t_data>
-struct loop_traits
+struct loop_traits_t
 {
     ///
     /// \brief work_t is the type of work function, i.e., the function that will
@@ -34,7 +34,7 @@ struct loop_traits
     ///
     /// \return \p true if the loop in which this work function is being called
     /// should stop; \p false is it should continue
-    typedef std::function<bool(t_data&&)> work_t;
+    typedef std::function<bool(t_data&&)> worker;
 
     ///
     /// \brief provide_t is the type of function that provides data to the work
@@ -44,14 +44,14 @@ struct loop_traits
     /// meaningful data; if \p first is \p false, then \p second has a default
     /// value of \p t_data
     ///
-    typedef std::function<std::pair<bool, t_data>()> provide_t;
+    typedef std::function<std::pair<bool, t_data>()> provider;
 
     ///
     /// \brief break_t is the type of function that indicates if the loop should
     /// stop
     ///
     /// \return \p true if the loop should break; \p false otherwise
-    typedef std::function<bool()> break_t;
+    typedef std::function<bool()> breaker;
 };
 
 ///
@@ -59,7 +59,7 @@ struct loop_traits
 /// loop with no data
 ///
 template<>
-struct loop_traits<void>
+struct loop_traits_t<void>
 {
     ///
     /// \brief work_t is the type of work function, i.e., the function that will
@@ -67,19 +67,19 @@ struct loop_traits<void>
     ///
     /// \return \p true if the loop in which this work function is being called
     /// should stop; \p false is it should continue
-    typedef std::function<bool()> work_t;
+    typedef std::function<bool()> worker;
 
     ///
     /// \brief provide_t in the case of a \p void data has no effect
     ///
-    typedef std::function<void()> provide_t;
+    typedef std::function<void()> provider;
 
     ///
     /// \brief break_t is the type of function that indicates if the loop should
     /// stop
     ///
     /// \return \p true if the loop should break; \p false otherwise/
-    typedef std::function<bool()> break_t;
+    typedef std::function<bool()> breaker;
 };
 
 } // namespace business

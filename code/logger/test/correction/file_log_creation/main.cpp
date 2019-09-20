@@ -4,6 +4,7 @@
 
 #include <calendar/business/epoch.h>
 #include <logger/business/file.h>
+#include <logger/business/log.h>
 #include <tester/business/run.h>
 
 class file_log_creation
@@ -14,16 +15,20 @@ class file_log_creation
 
     bool operator()()
     {
-
+        using namespace tenacitas::logger::business;
         try {
-            tenacitas::logger::business::configure_file_log(
+            configure_file_log(
               ".", "file_log_creation", 100, std::chrono::minutes(10));
 
-            file_set_debug();
+            log::set_debug();
 
             return true;
         } catch (std::exception& _ex) {
-            cerr_fatal("ERRO file_log_creation: '", _ex.what(), "'");
+            log::fatal("file_log_creation",
+                       __LINE__,
+                       "ERRO file_log_creation: '",
+                       _ex.what(),
+                       "'");
         }
         return false;
     }

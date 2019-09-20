@@ -5,7 +5,10 @@
 #include <logger/business/cout.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
+typedef sleeping_loop_t<void, log> sleeping_loop;
 
 struct cout_log_single
 {
@@ -14,33 +17,37 @@ struct cout_log_single
     {
         try {
 
-            tenacitas::logger::business::configure_cout_log();
+            configure_cout_log();
 
-            sleeping_loop_t _loop1(std::chrono::milliseconds(10000),
-                                   []() {
-                                       cout_debug("work! ", time(nullptr));
-                                       for (uint32_t _i = 0; _i < 100; ++_i) {
-                                           cout_debug("ola! ", _i);
-                                           cout_debug("como vai? ", _i);
-                                           cout_info("vou bem!! ", _i);
-                                           cout_info("e vc? ", _i);
-                                           cout_warn("ótimo! novo emprego! ",
-                                                     _i);
-                                           cout_warn("que bom! ", _i);
-                                       }
-                                       return true;
-                                   },
-                                   std::chrono::milliseconds(1000));
+            sleeping_loop _loop1(
+              std::chrono::milliseconds(10000),
+              []() {
+                  log::debug(
+                    "cout_log_single", __LINE__, "work! ", time(nullptr));
+                  for (uint32_t _i = 0; _i < 100; ++_i) {
+                      log::debug("cout_log_single", __LINE__, "ola! ", _i);
+                      log::debug("cout_log_single", __LINE__, "como vai? ", _i);
+                      log::info("cout_log_single", __LINE__, "vou bem!! ", _i);
+                      log::info("cout_log_single", __LINE__, "e vc? ", _i);
+                      log::warn("cout_log_single",
+                                __LINE__,
+                                "ótimo! novo emprego! ",
+                                _i);
+                      log::warn("cout_log_single", __LINE__, "que bom! ", _i);
+                  }
+                  return true;
+              },
+              std::chrono::milliseconds(1000));
 
             _loop1.run();
 
-            cout_debug("---- sleeping");
+            log::debug("cout_log_single", __LINE__, "---- sleeping");
             std::this_thread::sleep_for(std::chrono::minutes(4));
-            cout_debug("---- waking up");
+            log::debug("cout_log_single", __LINE__, "---- waking up");
 
             return true;
         } catch (std::exception& _ex) {
-            std::cerr << "ERRO cout_log_single: '" << _ex.what() << "'"
+            std::cerr << "ERRO log::log_single: '" << _ex.what() << "'"
                       << std::endl;
         }
         return false;

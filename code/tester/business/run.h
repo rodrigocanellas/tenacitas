@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-#include <logger/business/cerr.h>
+#include <logger/business/log.h>
 #include <tester/business/internal/test.h>
 
 inline static std::string
@@ -23,8 +23,8 @@ syntax(char** argv)
 
 #define run_test(test_class, argc, argv, desc)                                 \
     {                                                                          \
-        tenacitas::logger::business::configure_cerr_log();                          \
-        cerr_set_info();                                                       \
+        using namespace tenacitas::logger::business;                           \
+        log::set_info();                                                       \
         bool _execute = false;                                                 \
         if ((argc) == 1) {                                                     \
             std::cout << syntax(argv);                                         \
@@ -36,11 +36,11 @@ syntax(char** argv)
                 std::cout << #test_class << ": " << (desc) << std::endl;       \
             } else if (_param == "debug") {                                    \
                 _execute = true;                                               \
-                cerr_set_debug();                                              \
+                log::set_debug();                                              \
             }                                                                  \
         }                                                                      \
         if (_execute) {                                                        \
-            tenacitas::tester::business::test _test;                                \
+            tenacitas::tester::business::test _test;                           \
             test_class _test_obj;                                              \
             bool _rc = _test(#test_class, std::move(_test_obj));               \
             std::cout << #test_class << (_rc ? " SUCCESS" : " FAIL")           \

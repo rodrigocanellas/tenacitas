@@ -60,7 +60,7 @@ equals(TEMPLATE,lib) {
 
 
 LIBS += -L$$libs_dir -L$${third_dir}/lib
-# LIBS += -lstdc++fs
+LIBS += -lpthread
 
 unix {
     static_lib_ext=a

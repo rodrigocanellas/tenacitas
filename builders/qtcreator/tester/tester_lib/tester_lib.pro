@@ -15,6 +15,7 @@ TARGET = tenacitas.tester
 include (../../common.pri)
 
 HEADERS += \
-    ../../../../code/tester/run.h \
-    ../../../../code/tester/inc/test.h
+    ../../../../code/tester/business/internal/test.h \
+    ../../../../code/tester/business/run.h
 
+LIBS += -ltenacitas.logger

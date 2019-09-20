@@ -9,6 +9,7 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -17,21 +18,24 @@ struct work1
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         ++counter;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    loop_t;
 
 struct sleeping_loop_003
 {
 
     bool operator()()
     {
-
+        using namespace tenacitas::logger::business;
         work1 _work;
         loop_t _loop(std::chrono::milliseconds(1000),
                      [&_work]() { return _work(); },
@@ -41,7 +45,7 @@ struct sleeping_loop_003
         std::this_thread::sleep_for(std::chrono::seconds(10));
         _loop.stop();
 
-        cerr_test("data = ", _work.counter);
+        concurrent_log_test(log, "data = ", _work.counter);
         if (_work.counter != 10) {
             return false;
         }
@@ -51,7 +55,7 @@ struct sleeping_loop_003
         _loop.run();
         std::this_thread::sleep_for(std::chrono::seconds(8));
 
-        cerr_test("data = ", _work.counter);
+        concurrent_log_test(log, "data = ", _work.counter);
         if (_work.counter != 18) {
             return false;
         }
@@ -63,6 +67,7 @@ struct sleeping_loop_003
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       sleeping_loop_003,
       argc,

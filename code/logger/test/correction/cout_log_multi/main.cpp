@@ -5,7 +5,10 @@
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> sleeping_loop_t;
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
+typedef sleeping_loop_t<void, log> sleeping_loop;
 
 class cerr_log_multi
 {
@@ -16,48 +19,70 @@ class cerr_log_multi
     bool operator()()
     {
         try {
-            tenacitas::logger::business::configure_cerr_log();
-            cerr_set_debug();
+            configure_cerr_log();
+            log::set_debug();
 
-            sleeping_loop_t _loop1(std::chrono::milliseconds(1000),
-                                   []() {
-                                       for (uint32_t _i = 0; _i < 1000; ++_i) {
-                                           cerr_debug("ola! ", 33);
-                                           cerr_debug("como vai? ", _i);
-                                           cerr_info("vou bem!! ", _i);
-                                           cerr_info("e vc? ", _i);
-                                           cerr_warn("ótimo! novo emprego! ",
-                                                     _i);
-                                           cerr_warn("que bom! ", _i);
-                                       }
-                                       return true;
-                                   },
-                                   std::chrono::milliseconds(1000));
+            sleeping_loop _loop1(
+              std::chrono::milliseconds(1000),
+              []() {
+                  for (uint32_t _i = 0; _i < 1000; ++_i) {
+                      log::debug("cerr_log_multi", __LINE__, "ola! ", 33);
+                      log::debug("cerr_log_multi", __LINE__, "como vai? ", _i);
+                      log::info("cerr_log_multi", __LINE__, "vou bem!! ", _i);
+                      log::info("cerr_log_multi", __LINE__, "e vc? ", _i);
+                      log::warn("cerr_log_multi",
+                                __LINE__,
+                                "ótimo! novo emprego! ",
+                                _i);
+                      log::warn("cerr_log_multi", __LINE__, "que bom! ", _i);
+                  }
+                  return true;
+              },
+              std::chrono::milliseconds(1000));
 
-            sleeping_loop_t _loop2(std::chrono::milliseconds(500),
-                                   []() {
-                                       for (uint32_t _i = 0; _i < 1500; ++_i) {
-                                           cerr_debug("aaa! ", 33);
-                                           cerr_debug("bbb? ", _i);
-                                           cerr_info("ccc!! ", _i);
-                                           cerr_info("ddd ", _i);
-                                           cerr_warn("eee! ", _i);
-                                           cerr_warn("fff! ", _i);
-                                       }
-                                       return true;
-                                   },
-                                   std::chrono::milliseconds(1000));
+            sleeping_loop _loop2(
+              std::chrono::milliseconds(500),
+              []() {
+                  for (uint32_t _i = 0; _i < 1500; ++_i) {
+                      log::debug("cerr_log_multi", __LINE__, "aaa! ", 33);
+                      log::debug("cerr_log_multi", __LINE__, "bbb? ", _i);
+                      log::info("cerr_log_multi", __LINE__, "ccc!! ", _i);
+                      log::info("cerr_log_multi", __LINE__, "ddd ", _i);
+                      log::warn("cerr_log_multi", __LINE__, "eee! ", _i);
+                      log::warn("cerr_log_multi", __LINE__, "fff! ", _i);
+                  }
+                  return true;
+              },
+              std::chrono::milliseconds(1000));
 
-            sleeping_loop_t _loop3(
+            sleeping_loop _loop3(
               std::chrono::milliseconds(100),
               []() {
                   for (uint32_t _i = 0; _i < 3000; ++_i) {
-                      cerr_debug("abcdefghijklmnopqrstivwxyz! ", 33);
-                      cerr_debug("abcdefghijklmnopqrstivwxyz? ", _i);
-                      cerr_info("abcdefghijklmnopqrstivwxyz!! ", _i);
-                      cerr_info("abcdefghijklmnopqrstivwxyz ", _i);
-                      cerr_warn("abcdefghijklmnopqrstivwxyz! ", _i);
-                      cerr_warn("abcdefghijklmnopqrstivwxyz! ", _i);
+                      log::debug("cerr_log_multi",
+                                 __LINE__,
+                                 "abcdefghijklmnopqrstivwxyz! ",
+                                 33);
+                      log::debug("cerr_log_multi",
+                                 __LINE__,
+                                 "abcdefghijklmnopqrstivwxyz? ",
+                                 _i);
+                      log::info("cerr_log_multi",
+                                __LINE__,
+                                "abcdefghijklmnopqrstivwxyz!! ",
+                                _i);
+                      log::info("cerr_log_multi",
+                                __LINE__,
+                                "abcdefghijklmnopqrstivwxyz ",
+                                _i);
+                      log::warn("cerr_log_multi",
+                                __LINE__,
+                                "abcdefghijklmnopqrstivwxyz! ",
+                                _i);
+                      log::warn("cerr_log_multi",
+                                __LINE__,
+                                "abcdefghijklmnopqrstivwxyz! ",
+                                _i);
                   }
                   return true;
               },
@@ -67,13 +92,13 @@ class cerr_log_multi
             _loop2.run();
             _loop3.run();
 
-            cerr_debug("---- sleeping");
+            log::debug("cerr_log_multi", __LINE__, "---- sleeping");
             std::this_thread::sleep_for(std::chrono::seconds(50));
-            cerr_debug("---- waking up");
+            log::debug("cerr_log_multi", __LINE__, "---- waking up");
 
             return true;
         } catch (std::exception& _ex) {
-            std::cerr << "ERRO cerr_log_multi: '" << _ex.what() << "'"
+            std::cerr << "ERRO log::log_multi: '" << _ex.what() << "'"
                       << std::endl;
         }
         return false;

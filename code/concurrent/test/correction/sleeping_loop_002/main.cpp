@@ -10,18 +10,22 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    loop_t;
 
 struct work1
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         ++counter;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -32,6 +36,7 @@ struct sleeping_loop_002
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         work1 _work;
         loop_t _loop(std::chrono::milliseconds(1000),
                      [&_work]() { return _work(); },
@@ -41,7 +46,7 @@ struct sleeping_loop_002
         std::this_thread::sleep_for(std::chrono::seconds(10));
         _loop.stop();
 
-        cerr_test("data = ", _work.counter);
+        concurrent_log_test(log, "data = ", _work.counter);
         if (_work.counter != 10) {
             return false;
         }
@@ -53,6 +58,7 @@ struct sleeping_loop_002
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(sleeping_loop_002,
              argc,
              argv,
@@ -63,5 +69,5 @@ main(int argc, char** argv)
              "\nThe main function will sleep for 10 secs, and the "
              "'sleeping_loop' will stop by calling 'stop'."
 
-             "\nWork counter must be 10");
+             "\nWork counter must be 10")
 }

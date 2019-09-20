@@ -9,10 +9,13 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <concurrent/business/traits.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
+
+using namespace tenacitas::logger::business;
 
 struct msg
 {
@@ -53,7 +56,9 @@ operator<<(std::ostream& p_out, const msg& p_msg)
     return p_out;
 }
 
-typedef tenacitas::concurrent::business::sleeping_loop<msg> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<msg, tenacitas::logger::business::log>
+    loop_t;
 
 struct provide_1
 {
@@ -105,7 +110,7 @@ struct work_1
     bool operator()(msg&& p_msg)
     {
         m_msg = std::move(p_msg);
-        cerr_test("1: ", m_msg);
+        concurrent_log_test(log, "1: ", m_msg);
         return true;
     }
     msg m_msg;
@@ -116,7 +121,7 @@ struct work_2
     bool operator()(msg&& p_msg)
     {
         m_msg = std::move(p_msg);
-        cerr_test("2: ", m_msg);
+        concurrent_log_test(log, "2: ", m_msg);
         return true;
     }
     msg m_msg;
@@ -127,7 +132,7 @@ struct work_3
     bool operator()(msg&& p_msg)
     {
         m_msg = std::move(p_msg);
-        cerr_test("3: ", m_msg);
+        concurrent_log_test(log, "3: ", m_msg);
         return true;
     }
     msg m_msg;
@@ -169,23 +174,23 @@ struct sleeping_loop_012
 
         std::this_thread::sleep_for(std::chrono::seconds(10));
 
-        cerr_test("stopping");
+        concurrent_log_test(log, "stopping");
         _loop_1.stop();
         _loop_2.stop();
         _loop_3.stop();
 
-        cerr_test("data 1 = ", _work_1.m_msg);
+        concurrent_log_test(log, "data 1 = ", _work_1.m_msg);
         if ((_work_1.m_msg.m_i != 10) && (_work_1.m_msg.m_f != 1024.0)) {
             return false;
         }
 
-        cerr_test("data 2 = ", _work_2.m_msg);
+        concurrent_log_test(log, "data 2 = ", _work_2.m_msg);
         if ((_work_2.m_msg.m_i != 2000) &&
             (_work_2.m_msg.m_f != 3486784401.0)) {
             return false;
         }
 
-        cerr_test("data 3 = ", _work_3.m_msg);
+        concurrent_log_test(log, "data 3 = ", _work_3.m_msg);
         if ((_work_3.m_msg.m_i != 5000) && (_work_3.m_msg.m_f != 1024.0)) {
             return false;
         }
@@ -197,6 +202,7 @@ struct sleeping_loop_012
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       sleeping_loop_012,
       argc,

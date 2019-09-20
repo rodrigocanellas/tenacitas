@@ -9,22 +9,29 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
+#include <logger/business/log.h>
 #include <tester/business/run.h>
 
 struct sleeping_loop_000
 {
+
     bool operator()()
     {
-        typedef tenacitas::concurrent::business::sleeping_loop<void> loop_t;
+        using namespace tenacitas::logger::business;
+        configure_cerr_log();
 
-        loop_t _loop(std::chrono::milliseconds(100),
-                     [] {
-                         cerr_test("loop1");
-                         return true;
-                     },
-                     std::chrono::milliseconds(100));
+        typedef tenacitas::concurrent::business::sleeping_loop_t<void, log>
+          loop;
+
+        loop _loop(std::chrono::milliseconds(100),
+                   [] {
+                       concurrent_log_test(log, "loop1");
+                       return true;
+                   },
+                   std::chrono::milliseconds(100));
 
         return true;
     }
@@ -33,5 +40,5 @@ struct sleeping_loop_000
 int
 main(int argc, char** argv)
 {
-    run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test");
+    run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test")
 }

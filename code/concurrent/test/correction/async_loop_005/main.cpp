@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -14,8 +15,9 @@ struct work1
 {
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        cerr_test(p_data);
+        concurrent_log_test(log, p_data);
         return true;
     }
 };
@@ -34,12 +36,15 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<uint32_t, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_005
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
             async_loop_t sl1(work1(),
                              std::chrono::milliseconds(1000),
@@ -55,7 +60,8 @@ struct async_loop_005
             // tenacitas::concurrent::business::async_loop<t_timeout,
             // t_data>::provide_t&&) [with t_timeout =
             // std::chrono::duration<long int, std::ratio<1, 1000> >; t_data =
-            // unsigned int; tenacitas::concurrent::business::async_loop<t_timeout,
+            // unsigned int;
+            // tenacitas::concurrent::business::async_loop<t_timeout,
             // t_data>::work_t = std::function<bool(unsigned int&&)>;
             // tenacitas::concurrent::business::async_loop<t_timeout,
             // t_data>::control_t = std::function<bool()>;
@@ -137,7 +143,7 @@ struct async_loop_005
             //            sl5 = std::move(sl1);
 
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -148,11 +154,12 @@ struct async_loop_005
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_005,
       argc,
       argv,
       "Testing compile failing for private constructor, default constructor, "
       "copy constructor, move constructor, copy assignment and move assignment "
-      "of 'async_loop'");
+      "of 'async_loop'")
 }

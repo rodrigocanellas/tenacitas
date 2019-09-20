@@ -14,6 +14,7 @@
 #include <calendar/business/conversions.h>
 #include <calendar/business/epoch.h>
 #include <concurrent/business/sleeping_loop.h>
+#include <logger/business/log.h>
 #include <string/business/max_str_length.h>
 
 /// \brief namespace of the organization
@@ -64,15 +65,16 @@ struct file_controller
       , m_last(0)
       , m_pid(getpid())
       , m_max_file_size(p_max_file_size)
-      , m_deleter(
-          m_path,
-          m_base_name,
-          m_closed_extension,
-          std::chrono::seconds(calendar::business::min2sec(p_retention.count())))
-      , m_sleeping_loop(std::chrono::milliseconds(
-                          calendar::business::min2mil(p_retention.count())),
-                        [this]() -> bool { return this->m_deleter(); },
-                        std::chrono::milliseconds(calendar::business::min2mil(20)))
+      , m_deleter(m_path,
+                  m_base_name,
+                  m_closed_extension,
+                  std::chrono::seconds(
+                    calendar::business::min2sec(p_retention.count())))
+      , m_sleeping_loop(
+          std::chrono::milliseconds(
+            calendar::business::min2mil(p_retention.count())),
+          [this]() -> bool { return this->m_deleter(); },
+          std::chrono::milliseconds(calendar::business::min2mil(20)))
     {}
 
     file_controller() = delete;
@@ -90,15 +92,9 @@ struct file_controller
       , m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
                         [this]() -> bool { return this->m_deleter(); },
                         p_controller.m_sleeping_loop.get_timeout())
-    {
-        cerr_debug(this, " moving from ", &p_controller);
-    }
+    {}
 
-    ~file_controller()
-    {
-        cerr_debug(this, " destructor, calling 'stop' on ", &m_sleeping_loop);
-        m_sleeping_loop.stop();
-    }
+    ~file_controller() { m_sleeping_loop.stop(); }
 
     file_controller& operator=(const file_controller&) = delete;
     file_controller& operator=(file_controller&& p_ctrl) noexcept = delete;
@@ -136,17 +132,13 @@ struct file_controller
     /// \brief remove initiates a asynchronous loop, time controlled, that will
     /// check which files can be deleted
     ///
-    inline void remove()
-    {
-        cerr_debug(this, " removing");
-        m_sleeping_loop.run();
-    }
+    inline void remove() { m_sleeping_loop.run(); }
 
   private:
     ///
     /// \brief sleeping_loop_t an alias for the sleeping loop used
     ///
-    typedef concurrent::business::sleeping_loop<void> sleeping_loop_t;
+    typedef concurrent::business::sleeping_loop_t<void, log> sleeping_loop;
 
     struct deleter
     {
@@ -276,7 +268,7 @@ struct file_controller
     /// \brief m_sleeping_loop asynchronous time controlled loop that will check
     /// if files should be removed
     ///
-    sleeping_loop_t m_sleeping_loop;
+    sleeping_loop m_sleeping_loop;
 };
 
 } // namespace business

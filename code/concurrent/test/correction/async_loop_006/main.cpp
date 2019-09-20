@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -15,8 +16,9 @@ struct work1
 
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         std::this_thread::sleep_for(std::chrono::milliseconds(1001));
-        cerr_test(p_data);
+        concurrent_log_test(log, p_data);
         return true;
     }
 };
@@ -35,12 +37,15 @@ struct provide
     uint32_t m_data = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<uint32_t, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_006
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
 
             async_loop_t _async_loop(work1(),
@@ -55,7 +60,7 @@ struct async_loop_006
             _async_loop.stop();
 
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -66,6 +71,7 @@ struct async_loop_006
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_006,
       argc,
@@ -78,5 +84,5 @@ main(int argc, char** argv)
 
       "\nMain thread will stop for 4 secs; 'async_loop' stops."
 
-      "\n4 timeouts warnings will be printed");
+      "\n4 timeouts warnings will be printed")
 }
