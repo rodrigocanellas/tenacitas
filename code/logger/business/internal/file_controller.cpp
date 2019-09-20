@@ -75,7 +75,8 @@ file_controller::deleter::operator()()
                 // it is writable
                 (_stat.st_mode & S_IWUSR) &&
                 // is old enough
-                ((time(nullptr) - _stat.st_mtim.tv_sec) >
+//                ((time(nullptr) - _stat.st_mtim.tv_sec) >
+                 ((time(nullptr) - _stat.st_mtime) >
                  m_retention.count()) &&
                 // name matches the pattern
                 (match(_ent->d_name))) {

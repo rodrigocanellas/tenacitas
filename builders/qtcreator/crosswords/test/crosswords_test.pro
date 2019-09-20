@@ -1,0 +1,6 @@
+SUBDIRS = \
+    positioning 
+
+TEMPLATE = subdirs
+
+
