@@ -9,12 +9,11 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <logger/business/log.h>
 #include <tester/business/run.h>
-
-#include <concurrent/test/log.h>
 
 struct sleeping_loop_000
 {
@@ -29,7 +28,7 @@ struct sleeping_loop_000
 
         loop _loop(std::chrono::milliseconds(100),
                    [] {
-                       log_test("loop1");
+                       concurrent_log_test(log, "loop1");
                        return true;
                    },
                    std::chrono::milliseconds(100));

@@ -11,5 +11,6 @@ SOURCES += \
     ../../../../../../code/concurrent/test/msa_a.cpp
 include (../../../../common.pri)
 
-HEADERS += \ 
+
+LIBS+=-ltenacitas.concurrent -ltenacitas.logger
 

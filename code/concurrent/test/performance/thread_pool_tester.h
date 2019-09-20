@@ -13,6 +13,7 @@
 #include <concurrent/business/thread_pool.h>
 #include <logger/business/cerr.h>
 #include <logger/business/cout.h>
+#include <concurrent/business/internal/log.h>
 
 template<uint32_t num_consumers, uint32_t num_msgs, uint32_t work_sleep_ms>
 struct thread_pool_tester
@@ -20,8 +21,9 @@ struct thread_pool_tester
     thread_pool_tester()
       : m_pool()
     {
-        tenacitas::logger::business::configure_cout_log();
-        cout_set_test();
+        using namespace tenacitas::logger::business;
+        configure_cout_log();
+        log::set_test();
 
         m_pool.add_work(num_consumers,
                         [] { return work(); },
@@ -36,14 +38,15 @@ struct thread_pool_tester
 
   private:
     typedef tenacitas::concurrent::tst::msg_a msg_t;
-    typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
+    typedef tenacitas::concurrent::business::thread_pool_t<msg_t, tenacitas::logger::business::log> thread_pool_t;
     typedef tenacitas::concurrent::business::thread thread_t;
 
     struct work
     {
         bool operator()(msg_t&& p_msg)
         {
-            cerr_test("consuming ", p_msg);
+            using namespace tenacitas::logger::business;
+            concurrent_log_test(log, "consuming ", p_msg);
             std::this_thread::sleep_for(
               std::chrono::milliseconds(work_sleep_ms));
 
@@ -53,10 +56,11 @@ struct thread_pool_tester
 
     void produce()
     {
+        using namespace tenacitas::logger::business;
 
         for (uint32_t _count_msg = 0; _count_msg < num_msgs; ++_count_msg) {
             msg_t _msg(_count_msg);
-            cerr_test("adding ", _msg);
+            concurrent_log_test(log, "adding ", _msg);
             m_pool.handle(_msg);
         }
     }

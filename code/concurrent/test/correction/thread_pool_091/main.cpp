@@ -1,20 +1,24 @@
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
-#include <concurrent/test/msg_a.h>
 #include <concurrent/business/thread_pool.h>
+#include <concurrent/test/msg_a.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 #include <chrono>
 
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
+typedef tenacitas::concurrent::business::
+  thread_pool_t<msg_t, tenacitas::logger::business::log>
+    thread_pool_t;
 
+using namespace tenacitas::logger::business;
 struct work
 {
     bool operator()(msg_t&& p_msg)
     {
         m_msg = p_msg;
-        cerr_test("handling msg ", m_msg);
+        concurrent_log_test(log, "handling msg ", m_msg);
         return true;
     }
     msg_t m_msg;
@@ -32,7 +36,7 @@ struct thread_pool_091
 
         for (uint16_t _i = 0; _i < 20; ++_i) {
             msg_t _msg(_i);
-            cerr_test("adding msg ", _msg);
+            concurrent_log_test(log, "adding msg ", _msg);
             _pool.handle(_msg);
         }
 
@@ -40,9 +44,10 @@ struct thread_pool_091
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        cerr_test("consumed = ", _work.m_msg.counter());
+        concurrent_log_test(log, "consumed = ", _work.m_msg.counter());
         if (_work.m_msg.counter() != 19) {
-            cerr_error("Data value consumed should be equal to 19");
+            concurrent_log_error(log,
+                                 "Data value consumed should be equal to 19");
             return false;
         }
 
@@ -53,6 +58,7 @@ struct thread_pool_091
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(thread_pool_091,
              argc,
              argv,

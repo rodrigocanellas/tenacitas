@@ -1,14 +1,21 @@
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
-#include <concurrent/test/msg_a.h>
 #include <concurrent/business/thread_pool.h>
+#include <concurrent/test/msg_a.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 #include <chrono>
 
+using namespace tenacitas::logger::business;
+
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
-typedef tenacitas::concurrent::business::sleeping_loop_t<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::
+  thread_pool_t<msg_t, tenacitas::logger::business::log>
+    thread_pool_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    sleeping_loop_t;
 
 struct work
 {
@@ -16,7 +23,7 @@ struct work
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
         m_msg = p_msg;
-        cerr_test("handling msg ", m_msg);
+        concurrent_log_test(log, "handling msg ", m_msg);
         return true;
     }
     msg_t m_msg;
@@ -34,34 +41,35 @@ struct thread_pool_093
 
         for (uint16_t _i = 0; _i < 200; ++_i) {
             msg_t _msg(_i);
-            cerr_test("adding msg ", _msg);
+            concurrent_log_test(log, "adding msg ", _msg);
             _pool_1.handle(_msg);
         }
 
-        cerr_test("starting pool");
+        concurrent_log_test(log, "starting pool");
         _pool_1.run();
 
-        cerr_test("sleeping for 2 s");
+        concurrent_log_test(log, "sleeping for 2 s");
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        cerr_test("waking up");
+        concurrent_log_test(log, "waking up");
 
-        cerr_test("stopping pool");
+        concurrent_log_test(log, "stopping pool");
         _pool_1.stop();
 
-        cerr_test("moving pool");
+        concurrent_log_test(log, "moving pool");
         thread_pool_t _pool_2(std::move(_pool_1));
 
-        cerr_test("sleeping for 3 s");
+        concurrent_log_test(log, "sleeping for 3 s");
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        cerr_test("starting new pool");
+        concurrent_log_test(log, "starting new pool");
         _pool_2.run();
 
         std::this_thread::sleep_for(std::chrono::seconds(10));
 
-        cerr_test("consumed = ", _work.m_msg.counter());
+        concurrent_log_test(log, "consumed = ", _work.m_msg.counter());
         if (_work.m_msg.counter() != 199) {
-            cerr_error("Data value consumed should be equal to 199");
+            concurrent_log_error(log,
+                                 "Data value consumed should be equal to 199");
             return false;
         }
 
@@ -74,6 +82,7 @@ struct thread_pool_093
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       thread_pool_093,
       argc,

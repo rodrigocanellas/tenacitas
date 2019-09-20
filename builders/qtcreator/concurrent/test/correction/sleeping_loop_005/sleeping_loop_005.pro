@@ -19,3 +19,4 @@ SOURCES += \
 include (../../../../common.pri)
 
 
+LIBS+=-ltenacitas.concurrent -ltenacitas.logger

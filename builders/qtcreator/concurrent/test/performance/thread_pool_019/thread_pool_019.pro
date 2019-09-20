@@ -14,3 +14,4 @@ include (../../../../common.pri)
 HEADERS += \ 
      
      
+LIBS+=-ltenacitas.concurrent -ltenacitas.logger

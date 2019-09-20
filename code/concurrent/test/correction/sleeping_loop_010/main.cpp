@@ -9,18 +9,22 @@
 #include <thread>
 
 #include <calendar/business/epoch.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop_t<void> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    loop_t;
 
 struct work1
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         ++counter;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -30,8 +34,9 @@ struct work2
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         counter += 100;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -41,8 +46,9 @@ struct work3
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         counter += 1000;
-        cerr_test(counter);
+        concurrent_log_test(log, counter);
         return true;
     }
     uint64_t counter = 0;
@@ -53,6 +59,7 @@ struct sleeping_loop_010
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         work1 _work_1;
         loop_t _loop_1(std::chrono::milliseconds(1000),
                        [&_work_1]() { return _work_1(); },
@@ -74,22 +81,22 @@ struct sleeping_loop_010
 
         std::this_thread::sleep_for(std::chrono::seconds(6));
 
-        cerr_test("stopping 2");
+        concurrent_log_test(log, "stopping 2");
         _loop_2.stop();
 
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        cerr_test("data 1 = ", _work_1.counter);
+        concurrent_log_test(log, "data 1 = ", _work_1.counter);
         if (_work_1.counter != 9) {
             return false;
         }
 
-        cerr_test("data 2 = ", _work_2.counter);
+        concurrent_log_test(log, "data 2 = ", _work_2.counter);
         if (_work_2.counter != 600) {
             return false;
         }
 
-        cerr_test("data 3 = ", _work_3.counter);
+        concurrent_log_test(log, "data 3 = ", _work_3.counter);
         if (_work_3.counter != 9000) {
             return false;
         }
@@ -101,6 +108,7 @@ struct sleeping_loop_010
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       sleeping_loop_010,
       argc,

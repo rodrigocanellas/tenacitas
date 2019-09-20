@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/business/internal//async_loop.h>
+#include <concurrent/business/internal/async_loop.h>
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/thread.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
@@ -14,8 +15,9 @@ struct work1
 {
     bool operator()(uint32_t&& p_data)
     {
+        using namespace tenacitas::logger::business;
         data = p_data;
-        cerr_test(p_data);
+        concurrent_log_test(log, p_data);
         return true;
     }
     uint32_t data = 0;
@@ -38,12 +40,15 @@ struct provide
     uint32_t m_data = 1;
 };
 
-typedef tenacitas::concurrent::business::async_loop_t<uint32_t> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<uint32_t, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_007
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         try {
             work1 _work;
             provide _provide;
@@ -61,20 +66,23 @@ struct async_loop_007
 
             _async_loop_1.stop();
 
-            cerr_test("work data = ",
-                      _work.data,
-                      ", provider data = ",
-                      _provide.get_data());
+            concurrent_log_test(log,
+                                "work data = ",
+                                _work.data,
+                                ", provider data = ",
+                                _provide.get_data());
 
             if (_work.data != 19) {
-                cerr_error("wrong value for data, it should be 19");
+                concurrent_log_error(log,
+                                     "wrong value for data, it should be 19");
                 return false;
             }
 
-            cerr_test("work data = ",
-                      _work.data,
-                      ", provider data = ",
-                      _provide.get_data());
+            concurrent_log_test(log,
+                                "work data = ",
+                                _work.data,
+                                ", provider data = ",
+                                _provide.get_data());
 
             async_loop_t _async_loop_2(
               [&_work](uint32_t&& p_data) { return _work(std::move(p_data)); },
@@ -84,17 +92,19 @@ struct async_loop_007
                   return _provide();
               });
 
-            cerr_test("work data = ",
-                      _work.data,
-                      ", provider data = ",
-                      _provide.get_data());
+            concurrent_log_test(log,
+                                "work data = ",
+                                _work.data,
+                                ", provider data = ",
+                                _provide.get_data());
 
             std::this_thread::sleep_for(std::chrono::seconds(2));
 
-            cerr_test("work data = ",
-                      _work.data,
-                      ", provider data = ",
-                      _provide.get_data());
+            concurrent_log_test(log,
+                                "work data = ",
+                                _work.data,
+                                ", provider data = ",
+                                _provide.get_data());
 
             _async_loop_2.run();
 
@@ -102,18 +112,20 @@ struct async_loop_007
 
             _async_loop_2.stop();
 
-            cerr_test("work data = ",
-                      _work.data,
-                      ", provider data = ",
-                      _provide.get_data());
+            concurrent_log_test(log,
+                                "work data = ",
+                                _work.data,
+                                ", provider data = ",
+                                _provide.get_data());
 
             if (_work.data != 34) {
-                cerr_error("wrong value for data, it should be 35");
+                concurrent_log_error(log,
+                                     "wrong value for data, it should be 35");
                 return false;
             }
 
         } catch (std::exception& _ex) {
-            cerr_error(_ex.what());
+            concurrent_log_error(log, _ex.what());
             return false;
         }
 
@@ -124,6 +136,7 @@ struct async_loop_007
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_007,
       argc,
@@ -140,5 +153,5 @@ main(int argc, char** argv)
       "sleeps for 2 secs, second 'async_loop' will run. Main thread sleeps for "
       "3 secs, and second 'async_loop' stops. "
 
-      "\nData in work should be 34.");
+      "\nData in work should be 34.")
 }

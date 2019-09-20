@@ -15,13 +15,12 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas::logger::business;
-
 struct work1
 {
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         ++counter;
         concurrent_log_test(log, counter);
         return true;
@@ -30,13 +29,16 @@ struct work1
     uint64_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::sleeping_loop_t<void, log> loop_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    loop_t;
 
 struct sleeping_loop_001
 {
 
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         work1 _work;
         loop_t _loop(std::chrono::milliseconds(1000),
                      [&_work]() { return _work(); },
@@ -58,7 +60,7 @@ struct sleeping_loop_001
 int
 main(int argc, char** argv)
 {
-    configure_cerr_log();
+    tenacitas::logger::business::configure_cerr_log();
     run_test(sleeping_loop_001,
              argc,
              argv,

@@ -1,14 +1,20 @@
 /// \example
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <concurrent/business/thread_pool.h>
-
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 #include <chrono>
 
-typedef tenacitas::concurrent::business::thread_pool_t<int32_t> thread_pool_t;
-typedef tenacitas::concurrent::business::sleeping_loop_t<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::
+  thread_pool_t<int32_t, tenacitas::logger::business::log>
+    thread_pool_t;
+typedef tenacitas::concurrent::business::
+  sleeping_loop_t<void, tenacitas::logger::business::log>
+    sleeping_loop_t;
+
+using namespace tenacitas::logger::business;
 
 struct work_1
 {
@@ -16,7 +22,7 @@ struct work_1
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
         ++counter;
-        cerr_test("work 1 handling msg ", p_value);
+        concurrent_log_test(log, "work 1 handling msg ", p_value);
         return true;
     }
     int16_t counter = 0;
@@ -28,7 +34,7 @@ struct work_2
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(60));
         ++counter;
-        cerr_test("work 2 handling msg ", p_value);
+        concurrent_log_test(log, "work 2 handling msg ", p_value);
         return true;
     }
     int16_t counter = 0;
@@ -71,12 +77,12 @@ struct thread_pool_097
 
             _loop.stop();
 
-            cerr_test("counter = ", _counter);
+            concurrent_log_test(log, "counter = ", _counter);
 
             _pool.run();
         }
-        cerr_test("work 1 counter = ", _work_1.counter);
-        cerr_test("work 2 counter = ", _work_2.counter);
+        concurrent_log_test(log, "work 1 counter = ", _work_1.counter);
+        concurrent_log_test(log, "work 2 counter = ", _work_2.counter);
         return ((_work_1.counter + _work_2.counter) == 60);
     }
 };
@@ -84,6 +90,7 @@ struct thread_pool_097
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       thread_pool_097,
       argc,

@@ -1,21 +1,25 @@
+#include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
-#include <concurrent/test/msg_a.h>
 #include <concurrent/business/thread_pool.h>
+#include <concurrent/test/msg_a.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
 #include <chrono>
 
+typedef tenacitas::logger::business::log log_t;
 typedef tenacitas::concurrent::tst::msg_a msg_t;
-typedef tenacitas::concurrent::business::thread_pool_t<msg_t> thread_pool_t;
-typedef tenacitas::concurrent::business::sleeping_loop_t<void> sleeping_loop_t;
+typedef tenacitas::concurrent::business::thread_pool_t<msg_t, log_t>
+  thread_pool_t;
+typedef tenacitas::concurrent::business::sleeping_loop_t<void, log_t>
+  sleeping_loop_t;
 
 struct work
 {
     bool operator()(msg_t&& p_msg)
     {
         m_msg = p_msg;
-        cerr_test("handling msg ", m_msg);
+        concurrent_log_test(log_t, "handling msg ", m_msg);
         return true;
     }
     msg_t m_msg;
@@ -34,7 +38,8 @@ struct thread_pool_090
         sleeping_loop_t _loop(std::chrono::milliseconds(500),
                               [&_pool, &_value]() {
                                   msg_t _msg(++_value);
-                                  cerr_test("adding msg ", _msg);
+                                  concurrent_log_test(
+                                    log_t, "adding msg ", _msg);
                                   _pool.handle(std::move(_msg));
                                   return true;
                               },
@@ -47,28 +52,29 @@ struct thread_pool_090
         _pool.run();
         _loop.run();
 
-        cerr_test("sleeping for 10 secs");
+        concurrent_log_test(log_t, "sleeping for 10 secs");
         std::this_thread::sleep_for(std::chrono::seconds(10));
-        cerr_test("waking up after 10 secs");
+        concurrent_log_test(log_t, "waking up after 10 secs");
 
-        cerr_test("stopping the pool");
+        concurrent_log_test(log_t, "stopping the pool");
         _pool.stop();
 
-        cerr_test("sleeping for 5 secs");
+        concurrent_log_test(log_t, "sleeping for 5 secs");
         std::this_thread::sleep_for(std::chrono::seconds(5));
-        cerr_test("waking up after 5 secs");
+        concurrent_log_test(log_t, "waking up after 5 secs");
 
-        cerr_test("runnig the pool");
+        concurrent_log_test(log_t, "runnig the pool");
         _pool.run();
 
-        cerr_test("sleeping for 4 secs");
+        concurrent_log_test(log_t, "sleeping for 4 secs");
         std::this_thread::sleep_for(std::chrono::seconds(4));
-        cerr_test("waking up after 4 secs");
+        concurrent_log_test(log_t, "waking up after 4 secs");
 
-        cerr_test(
-          "consumed = ", _work.m_msg.counter(), ", provided = ", _value);
+        concurrent_log_test(
+          log_t, "consumed = ", _work.m_msg.counter(), ", provided = ", _value);
         if (_work.m_msg.counter() != _value) {
-            cerr_error("Data value consumed should be equal to provided");
+            concurrent_log_error(
+              log_t, "Data value consumed should be equal to provided");
             return false;
         }
 
@@ -78,6 +84,7 @@ struct thread_pool_090
 int
 main(int argc, char** argv)
 {
+    tenacitas::logger::business::configure_cerr_log();
     run_test(thread_pool_090,
              argc,
              argv,

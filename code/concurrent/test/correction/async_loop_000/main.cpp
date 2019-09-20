@@ -11,12 +11,11 @@
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas::logger::business;
-
 struct work1
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         if (counter > 100) {
             return false;
         }
@@ -28,12 +27,15 @@ struct work1
     uint16_t counter = 0;
 };
 
-typedef tenacitas::concurrent::business::async_loop_t<void, log> async_loop_t;
+typedef tenacitas::concurrent::business::
+  async_loop_t<void, tenacitas::logger::business::log>
+    async_loop_t;
 
 struct async_loop_000
 {
     bool operator()()
     {
+        using namespace tenacitas::logger::business;
         bool _result = true;
         try {
             work1 _work;
@@ -60,7 +62,7 @@ struct async_loop_000
 int
 main(int argc, char** argv)
 {
-    configure_cerr_log();
+    tenacitas::logger::business::configure_cerr_log();
     run_test(
       async_loop_000,
       argc,
