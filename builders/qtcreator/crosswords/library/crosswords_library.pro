@@ -24,6 +24,8 @@ HEADERS += \  \ \
     ../../../../code/crosswords/entities/word.h
 
 
+SOURCES +=
+
 
 include (../../common.pri)
 
