@@ -1,14 +1,15 @@
 SUBDIRS = \
-  logger/library/logger_library.pro \
-  concurrent/library/concurrent_library.pro \
-  concurrent/test/concurrent_test.pro
-
+  business/concurrent_business.pro \
 
 
 TEMPLATE = subdirs
 
 # build the project sequentially as listed in SUBDIRS !
 CONFIG += ordered
+
+
+
+
 
 
 

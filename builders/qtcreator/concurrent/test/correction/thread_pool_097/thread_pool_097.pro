@@ -10,5 +10,5 @@ SOURCES += \
     ../../../../../../code/concurrent/test/correction/thread_pool_097/main.cpp
 include (../../../../common.pri)
 
-LIBS+=-ltenacitas.concurrent -ltenacitas.logger
+LIBS+=-ltenacitas.concurrent.business -ltenacitas.logger.business
     
