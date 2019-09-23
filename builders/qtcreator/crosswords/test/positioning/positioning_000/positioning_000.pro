@@ -16,6 +16,9 @@ include (../../../../common.pri)
 
 LIBS += -ltenacitas.logger -ltenacitas.crosswords
 
+#SOURCES += \
+#    ../../../../../../code/crosswords/test/positioning/positioning_000/main.cpp
+
 SOURCES += \
     ../../../../../../code/crosswords/test/positioning/positioning_000/main.cpp
 

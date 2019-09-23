@@ -1,15 +1,15 @@
-#ifndef TENACITAS_CROSSWORDS_ENTITIES_POSITIONS_H
-#define TENACITAS_CROSSWORDS_ENTITIES_POSITIONS_H
+#ifndef TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
+#define TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
 
 #include <list>
 
-#include <crosswords/entities/position.h>
+#include <crosswords/entities/word.h>
 
 namespace tenacitas {
 namespace crosswords {
 namespace entities {
 
-typedef std::list<position> positions;
+typedef std::list<word> words;
 
 
 //struct positions {

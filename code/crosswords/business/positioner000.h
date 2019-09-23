@@ -13,20 +13,15 @@
 #include <crosswords/business/internal/log.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/limit.h>
-#include <crosswords/entities/position.h>
-#include <crosswords/entities/positions.h>
 #include <crosswords/entities/word.h>
+#include <crosswords/entities/words.h>
+#include <crosswords/entities/lexeme.h>
 
 namespace tenacitas {
 namespace crosswords {
 namespace business {
 
-/// \brief positioner000_t positions words
-///
-/// \param t_data is the type of the data to be handled. If it is not \p void,
-/// it must be:
-///    - default constructible
-///    - move constructible
+/// \brief positioner000_t position \p words
 ///
 /// \tparam t_log provides log funcionality:
 /// static void debug(const std::string & p_file, int p_line, const
@@ -44,11 +39,11 @@ template<typename t_log>
 struct positioner000_t
 {
 
-    typedef entities::positions positions;
-    typedef entities::position position;
-    typedef position::direction direction;
-    typedef position::orientation orientation;
+    typedef entities::words words;
     typedef entities::word word;
+    typedef word::direction direction;
+    typedef word::orientation orientation;
+    typedef entities::lexeme lexeme;
     typedef entities::description description;
     typedef entities::limit limit;
     typedef t_log log;
@@ -56,122 +51,122 @@ struct positioner000_t
     enum class result : int16_t
     {
         ok = 0,
-        word_overflows_horizontal = 1,
-        word_overflows_vertical = 2
+        lexeme_overflows_horizontal = 1,
+        lexeme_overflows_vertical = 2
     };
 
     positioner000_t(limit p_vertical_limit, limit p_horizontal_limit)
-      : m_vertical(p_vertical_limit)
-      , m_horizontal(p_horizontal_limit)
+        : m_vertical(p_vertical_limit)
+        , m_horizontal(p_horizontal_limit)
     {
         crosswords_log_debug(
-          log, "vertical = ", m_vertical, ", horizontal = ", m_horizontal);
+                    log, "vertical = ", m_vertical, ", horizontal = ", m_horizontal);
     }
 
-    result add(const word& p_word, const description& p_description)
+    result add(const lexeme& p_lexeme, const description& p_description)
     {
-        limit _word_size = static_cast<limit>(p_word.size());
+        limit _word_size = static_cast<limit>(p_lexeme.size());
         if (_word_size > m_vertical) {
             crosswords_log_error(
-              log,
-              p_word,
-              "'s size is ",
-              _word_size,
-              ", which is bigger than the vertical limit of ",
-              m_vertical);
-            return result::word_overflows_vertical;
+                        log,
+                        p_lexeme,
+                        "'s size is ",
+                        _word_size,
+                        ", which is bigger than the vertical limit of ",
+                        m_vertical);
+            return result::lexeme_overflows_vertical;
         }
         if (_word_size > m_horizontal) {
             crosswords_log_error(
-              log,
-              p_word,
-              "'s size is ",
-              _word_size,
-              ", which is bigger than the horizontal limit of ",
-              m_horizontal);
-            return result::word_overflows_horizontal;
+                        log,
+                        p_lexeme,
+                        "'s size is ",
+                        _word_size,
+                        ", which is bigger than the horizontal limit of ",
+                        m_horizontal);
+            return result::lexeme_overflows_horizontal;
         }
         crosswords_log_debug(log,
                              "'",
-                             p_word,
+                             p_lexeme,
                              "', with description '",
                              p_description,
                              "' was added");
-        m_positions.push_back(
-          position(static_cast<position::id>(m_positions.size() + 1),
-                   p_word,
-                   p_description));
+        m_words.push_back(
+                    word(static_cast<word::id>(m_words.size() + 1),
+                         p_lexeme,
+                         p_description));
         return result::ok;
     }
 
-    positions operator()()
+    words operator()()
     {
-        log_positions();
-        order_positions_by_size();
-        create_first_history();
-        log_current_history();
+        log_words();
+        sort_words_by_size();
+        create_first_words_configuration();
+        log_current_words_configuration();
         position_words();
-        optimize_positions();
-        return m_positions;
+        optimize_words();
+        return m_words;
     }
 
-  private:
-    typedef std::list<typename positions::const_iterator> positions_iterators;
+private:
+    typedef std::list<typename words::const_iterator> words_iterators;
 
-    typedef std::list<positions_iterators> positions_history;
+    typedef std::list<words_iterators> words_configurations;
 
-  private:
-    inline void order_positions_by_size()
+private:
+    inline void sort_words_by_size()
     {
         crosswords_log_debug(log,
-                             "ordering positions by word size, descending");
-        m_positions.sort(
-          [](const position& p_pos1, const position& p_pos2) -> bool {
-              return (p_pos1.get_word().size() > p_pos2.get_word().size());
-          });
+                             "ordering words by lexeme size, descending");
+        m_words.sort(
+                    [](const word& p_pos1, const word& p_pos2) -> bool {
+            return (p_pos1.get_lexeme().size() > p_pos2.get_lexeme().size());
+        });
     }
 
-    inline void create_first_history()
+    inline void create_first_words_configuration()
     {
-        positions_iterators _first;
-        crosswords_log_debug(log, "creating first positions history");
-        for (positions::const_iterator _ite = m_positions.begin();
-             _ite != m_positions.end();
+        words_iterators _first;
+        crosswords_log_debug(log, "creating first words history");
+        for (words::const_iterator _ite = m_words.begin();
+             _ite != m_words.end();
              ++_ite) {
             _first.push_back(_ite);
         }
-        m_positions_history.push_back(std::move(_first));
+        m_words_configurations.push_back(std::move(_first));
     }
 
-    void log_current_history()
+    void log_current_words_configuration()
     {
-        define_current_history();
-        crosswords_log_debug(log, "log_current_history");
-        positions_iterators::const_iterator _end = m_current_history->end();
-        positions_iterators::const_iterator _ite = m_current_history->begin();
+        define_current_words_configuration();
+        crosswords_log_debug(log, "log_current_words_configuration");
+        words_iterators::const_iterator _end = m_current_configuration->end();
+        words_iterators::const_iterator _ite = m_current_configuration->begin();
 
         int16_t _i = 0;
         for (; _ite != _end; ++_ite) {
-            positions::const_iterator _pos = *_ite;
+            words::const_iterator _pos = *_ite;
             crosswords_log_debug(log, "\t", _i, ":", &(*_pos));
             ++_i;
         }
     }
 
-    std::string positions_ite2str(
-      positions_iterators::const_iterator p_ite) const
+    std::string words_ite2str(
+            words_iterators::const_iterator p_ite) const
     {
         std::stringstream _stream;
-        positions::const_iterator _pos = *p_ite;
+        words::const_iterator _pos = *p_ite;
         _stream << "(" << &(*_pos) << "," << (*p_ite)->get_id() << ","
-                << (*p_ite)->get_word() << ")";
+                << (*p_ite)->get_lexeme() << ")";
         return _stream.str();
     }
-    void log_positions() const
+    void log_words() const
     {
-        crosswords_log_debug(log, "log_positions");
-        positions::const_iterator _end = m_positions.end();
-        positions::const_iterator _ite = m_positions.begin();
+        crosswords_log_debug(log, "log_words");
+        words::const_iterator _end = m_words.end();
+        words::const_iterator _ite = m_words.begin();
         int16_t _i = 0;
         for (; _ite != _end; ++_ite) {
             crosswords_log_debug(log,
@@ -182,7 +177,7 @@ struct positioner000_t
                                  ",",
                                  _ite->get_id(),
                                  ",",
-                                 _ite->get_word(),
+                                 _ite->get_lexeme(),
                                  ")");
 
             ++_i;
@@ -195,80 +190,80 @@ struct positioner000_t
 
         bool _is_positioned = true;
 
-        define_current_history();
-        positions_iterators::const_iterator _current_history_ite =
-          m_current_history->begin();
+        define_current_words_configuration();
+        words_iterators::const_iterator _current_words_cfg_ite =
+                m_current_configuration->begin();
 
         while (true) {
             crosswords_log_debug(log,
-                                 "starting loop, trying to position ",
-                                 positions_ite2str(_current_history_ite));
-            if (positioned(_current_history_ite)) {
+                                 "starting loop, trying to word ",
+                                 words_ite2str(_current_words_cfg_ite));
+            if (positioned(_current_words_cfg_ite)) {
                 crosswords_log_debug(log,
-                                     positions_ite2str(_current_history_ite),
+                                     words_ite2str(_current_words_cfg_ite),
                                      " was positioned ");
-                if (m_positioned.size() == m_current_history->size()) {
+                if (m_positioned.size() == m_current_configuration->size()) {
                     crosswords_log_debug(log, "all positioned");
                     _is_positioned = true;
                     break;
                 }
-                ++_current_history_ite;
+                ++_current_words_cfg_ite;
                 crosswords_log_debug(log,
                                      "new current_history_ite = ",
-                                     positions_ite2str(_current_history_ite));
+                                     words_ite2str(_current_words_cfg_ite));
             } else {
                 crosswords_log_debug(log,
-                                     positions_ite2str(_current_history_ite),
+                                     words_ite2str(_current_words_cfg_ite),
                                      " was not positioned");
-                if ((*_current_history_ite)->get_id() ==
-                    m_current_history->back()->get_id()) {
+                if ((*_current_words_cfg_ite)->get_id() ==
+                        m_current_configuration->back()->get_id()) {
                     crosswords_log_debug(
-                      log, "and it was the last, so we clear positioned list");
+                                log, "and it was the last, so we clear positioned list");
                     m_positioned.clear();
                 }
                 crosswords_log_debug(log, "updating history");
-                update_history(_current_history_ite);
+                update_words_configuration(_current_words_cfg_ite);
                 crosswords_log_debug(log, "checking for cycle");
                 if (cycle()) {
                     crosswords_log_debug(log, "CYCLE!!");
                     _is_positioned = false;
                     break;
                 }
-                define_current_history();
-                _current_history_ite = m_current_history->begin();
+                define_current_words_configuration();
+                _current_words_cfg_ite = m_current_configuration->begin();
+
                 crosswords_log_debug(log,
                                      "new current history defined, ",
-                                     positions_ite2str(_current_history_ite),
+                                     words_ite2str(_current_words_cfg_ite),
                                      " and is the new current");
-                positions_iterators::size_type _size = m_positioned.size();
+                words_iterators::size_type _size = m_positioned.size();
+
                 crosswords_log_debug(
-                  log, "moving to the right position in the history");
-                for (positions_iterators::size_type _counter = 0;
+                            log, "moving to the right word in the history");
+                for (words_iterators::size_type _counter = 0;
                      _counter < _size;
                      ++_counter) {
                     crosswords_log_debug(
-                      log, "\t", positions_ite2str(_current_history_ite));
-                    ++_current_history_ite;
+                                log, "\t", words_ite2str(_current_words_cfg_ite));
+                    ++_current_words_cfg_ite;
                 }
             }
         }
         return _is_positioned;
     }
 
-    void update_history(positions_iterators::const_iterator p_ite)
+    void update_words_configuration(words_iterators::const_iterator p_ite)
     {
-        //        crosswords_log_debug(log, "updating history");
+        words_iterators _words_iterators(*m_current_configuration);
 
-        positions_iterators _positions_iterators(*m_current_history);
+        _words_iterators.remove(*p_ite);
 
-        _positions_iterators.remove(*p_ite);
+        _words_iterators.push_back(*p_ite);
 
-        _positions_iterators.push_back(*p_ite);
-
-        m_positions_history.push_back(std::move(_positions_iterators));
+        m_words_configurations.push_back(std::move(_words_iterators));
     }
 
-    bool positioned(positions_iterators::const_iterator /*p_positon_iterator*/)
+    bool positioned(words_iterators::const_iterator /*p_positon_iterator*/)
     {
         if (m_positioned.empty()) {
             position_first();
@@ -277,21 +272,21 @@ struct positioner000_t
         return false;
     }
 
-    inline void define_current_history()
+    inline void define_current_words_configuration()
     {
-        m_current_history = m_positions_history.end();
-        --m_current_history;
+        m_current_configuration = m_words_configurations.end();
+        --m_current_configuration;
     }
 
     bool cycle()
     {
-        if (m_positions_history.size() <= 1) {
+        if (m_words_configurations.size() <= 1) {
             return false;
         }
 
-        positions_history::const_iterator _last = m_positions_history.end();
+        words_configurations::const_iterator _last = m_words_configurations.end();
         --_last;
-        positions_history::const_iterator _ite = m_positions_history.begin();
+        words_configurations::const_iterator _ite = m_words_configurations.begin();
         while (true) {
             if (_ite == _last) {
                 break;
@@ -304,14 +299,14 @@ struct positioner000_t
         return true;
     }
 
-    bool equals(const positions_iterators& p_ite1,
-                const positions_iterators& p_ite2)
+    bool equals(const words_iterators& p_ite1,
+                const words_iterators& p_ite2)
     {
-        positions_iterators::const_iterator _end1 = p_ite1.end();
-        positions_iterators::const_iterator _ite1 = p_ite1.begin();
+        words_iterators::const_iterator _end1 = p_ite1.end();
+        words_iterators::const_iterator _ite1 = p_ite1.begin();
 
-        positions_iterators::const_iterator _end2 = p_ite2.end();
-        positions_iterators::const_iterator _ite2 = p_ite2.begin();
+        words_iterators::const_iterator _end2 = p_ite2.end();
+        words_iterators::const_iterator _ite2 = p_ite2.begin();
 
         while (true) {
             if ((_ite1 == _end1) || (_ite2 == _end2)) {
@@ -327,50 +322,31 @@ struct positioner000_t
         return true;
     }
 
-    //    bool equals(const positons_iterators& p_ids1,
-    //                const positons_iterators& p_ids2)
-    //    {
-    //        positons_ids::const_iterator _end1 = p_ids1.end();
-    //        positons_ids::const_iterator _ite1 = p_ids1.begin();
-    //        positons_ids::const_iterator _end2 = p_ids2.end();
-    //        positons_ids::const_iterator _ite2 = p_ids2.begin();
-    //        while (true) {
-    //            if ((_ite1 == _end1) || (_ite2 != _end2)) {
-    //                break;
-    //            }
-
-    //            if (*_ite1 != *_ite2) {
-    //                return false;
-    //            }
-    //        }
-    //        return true;
-    //    }
-
     void position_first()
     {
-        typename positions::iterator _begin = m_positions.begin();
+        typename words::iterator _begin = m_words.begin();
         if (m_vertical < m_horizontal) {
             limit x = static_cast<limit>(m_horizontal / 2);
             limit y = static_cast<limit>(m_vertical / 2) -
-                      static_cast<limit>(_begin->get_word().size() / 2);
-            _begin->define(x, y, direction::vertical, orientation::forward);
+                    static_cast<limit>(_begin->get_lexeme().size() / 2);
+            _begin->position(x, y, direction::vertical, orientation::forward);
         } else {
             limit x = static_cast<limit>(m_horizontal / 2) -
-                      static_cast<limit>(_begin->get_word().size() / 2);
+                    static_cast<limit>(_begin->get_lexeme().size() / 2);
             limit y = static_cast<limit>(m_vertical / 2);
-            _begin->define(x, y, direction::horizontal, orientation::forward);
+            _begin->position(x, y, direction::horizontal, orientation::forward);
         }
         m_positioned.push_back(_begin);
     }
 
-    void optimize_positions()
+    void optimize_words()
     {
         limit _min_x = std::numeric_limits<limit>::max();
         limit _min_y = _min_x;
 
         {
-            positions::const_iterator _end = m_positions.end();
-            for (positions::const_iterator _ite = m_positions.begin();
+            words::const_iterator _end = m_words.end();
+            for (words::const_iterator _ite = m_words.begin();
                  _ite != _end;
                  ++_ite) {
                 if (_ite->get_x() < _min_x) {
@@ -381,26 +357,26 @@ struct positioner000_t
                 }
             }
         }
-        positions::iterator _end = m_positions.end();
+        words::iterator _end = m_words.end();
         if ((_min_x > 0) || (_min_y > 0)) {
-            for (positions::iterator _ite = m_positions.begin(); _ite != _end;
+            for (words::iterator _ite = m_words.begin(); _ite != _end;
                  ++_ite) {
-                _ite->define(_ite->get_x() - _min_x,
-                             _ite->get_y() - _min_y,
-                             _ite->get_direction(),
-                             _ite->get_orientation());
+                _ite->position(_ite->get_x() - _min_x,
+                               _ite->get_y() - _min_y,
+                               _ite->get_direction(),
+                               _ite->get_orientation());
             }
         }
     }
 
-  private:
+private:
     limit m_vertical;
     limit m_horizontal;
 
-    positions m_positions;
-    positions_history m_positions_history;
-    positions_iterators m_positioned;
-    positions_history::const_iterator m_current_history;
+    words m_words;
+    words_configurations m_words_configurations;
+    words_iterators m_positioned;
+    words_configurations::const_iterator m_current_configuration;
 };
 
 } // namespace business

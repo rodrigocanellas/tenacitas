@@ -18,10 +18,10 @@ HEADERS += \  \ \
     ../../../../code/crosswords/entities/description.h \
     ../../../../code/crosswords/entities/dictionary.h \
     ../../../../code/crosswords/entities/item.h \
+    ../../../../code/crosswords/entities/lexeme.h \
     ../../../../code/crosswords/entities/limit.h \
-    ../../../../code/crosswords/entities/position.h \
-    ../../../../code/crosswords/entities/positions.h \
-    ../../../../code/crosswords/entities/word.h
+    ../../../../code/crosswords/entities/word.h \
+    ../../../../code/crosswords/entities/words.h
 
 
 SOURCES +=

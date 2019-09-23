@@ -7,9 +7,9 @@
 #include <tuple>
 
 #include <crosswords/entities/description.h>
+#include <crosswords/entities/lexeme.h>
 #include <crosswords/entities/word.h>
-#include <crosswords/entities/position.h>
-#include <crosswords/entities/positions.h>
+#include <crosswords/entities/words.h>
 #include <crosswords/entities/limit.h>
 
 namespace tenacitas {
@@ -30,20 +30,20 @@ struct board_t {
     board_t&operator=(board_t&&)noexcept=default;
     ~board_t()=default;
 
-    inline positions::const_iterator begin() const {return m_positions.begin();}
-    inline positions::const_iterator end() const {return m_positions.end();}
+    inline words::const_iterator begin() const {return m_positions.begin();}
+    inline words::const_iterator end() const {return m_positions.end();}
 
-    inline bool test_answer(position::id p_id
+    inline bool test_answer(word::id p_id
                             , const std::string & p_value) {
-        positions::iterator _end = m_positions.end();
-        positions::iterator _begin = m_positions.begin();
-        positions::iterator _ite = std::find_if(_begin
+        words::iterator _end = m_positions.end();
+        words::iterator _begin = m_positions.begin();
+        words::iterator _ite = std::find_if(_begin
                                                 , _end
-                                                , [&p_id](const position & p_pos) -> bool {
+                                                , [&p_id](const word & p_pos) -> bool {
             return (p_pos.get_id() == p_id);
         });
 
-        if ( (_ite != _end) && (_ite->get_word() == p_value)) {
+        if ( (_ite != _end) && (_ite->get_lexeme() == p_value)) {
             _ite->set_answer(p_value);
             return true;
         }
@@ -51,7 +51,7 @@ struct board_t {
     }
 
 private:
-    positions m_positions;
+    words m_positions;
 };
 
 

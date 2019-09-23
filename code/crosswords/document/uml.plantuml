@@ -1,0 +1,81 @@
+@startuml
+hide methods
+
+namespace crosswords {
+namespace entities {
+
+enum difficulty {
+hard
+medium
+easy
+fill
+}
+
+user *-- user_id
+
+entry *-- difficulty
+entry *-- "value" lexeme
+entry *-- description
+entry o-- language
+
+languages *-- "*" language
+
+user *-- "*" dictionary
+
+dictionary *-- "*" entry
+dictionary *-- dictionary_id
+dictionary_id *-- "author" user_id
+
+enum direction {
+vertical
+horizontal
+}
+
+enum orientation {
+forward
+backward
+}
+
+word *-- "entry_positioned" bool
+word *-- direction
+word *-- orientation
+word *-- "entry" lexeme
+word *-- coordinate
+word *-- "answer" lexeme
+word *-- description
+
+board *-- "*" word
+board *-- "vertical" lexeme_size
+board *-- "horizontal" lexeme_size
+
+game *-- "player" user_id
+game *-- "*" dictionary_id
+game *-- board
+
+
+}
+}
+
+namespace crosswords {
+namespace business {
+positioner --> crosswords.entities.board
+}
+}
+
+namespace crosswords {
+namespace persistence {
+db --> crosswords.entities.user
+db --> crosswords.entities.dictionary
+db --> crosswords.entities.game
+}
+}
+
+
+namespace crosswords {
+namespace application {
+app --> crosswords.entities.board
+app --> crosswords.business.positioner
+app --> crosswords.persistence.db
+}
+}
+@enduml
