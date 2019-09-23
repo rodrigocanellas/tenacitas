@@ -14,7 +14,7 @@ CONFIG+=test
 
 include (../../../../common.pri)
 
-LIBS += -ltenacitas.logger -ltenacitas.crosswords
+LIBS += -ltenacitas.logger -ltenacitas.crosswords.entities -ltenacitas.crosswords.business
 
 #SOURCES += \
 #    ../../../../../../code/crosswords/test/positioning/positioning_000/main.cpp

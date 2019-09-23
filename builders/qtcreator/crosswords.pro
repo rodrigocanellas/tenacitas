@@ -24,5 +24,3 @@ CONFIG += ordered
 
 
 
-
-
