@@ -3,8 +3,10 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <ctime>
 #include <limits>
 #include <list>
+#include <sstream>
 #include <string>
 #include <utility>
 
@@ -108,8 +110,8 @@ struct positioner000_t
         order_positions_by_size();
         create_first_history();
         log_current_history();
-        //        position_words();
-        //        optimize_positions();
+        position_words();
+        optimize_positions();
         return m_positions;
     }
 
@@ -123,19 +125,10 @@ struct positioner000_t
     {
         crosswords_log_debug(log,
                              "ordering positions by word size, descending");
-        struct
-        {
-            bool operator()(const position& p_pos1,
-                            const position& p_pos2) const
-            {
-                return (p_pos1.get_word().size() > p_pos2.get_word().size());
-            }
-        } cmp_size_desc;
-
-        //        std::sort(m_positions.begin(), m_positions.end(),
-        //        cmp_size_desc);
-        //        cmp_size_desc _cmp;
-        m_positions.sort(cmp_size_desc);
+        m_positions.sort(
+          [](const position& p_pos1, const position& p_pos2) -> bool {
+              return (p_pos1.get_word().size() > p_pos2.get_word().size());
+          });
     }
 
     inline void create_first_history()
@@ -165,6 +158,15 @@ struct positioner000_t
         }
     }
 
+    std::string positions_ite2str(
+      positions_iterators::const_iterator p_ite) const
+    {
+        std::stringstream _stream;
+        positions::const_iterator _pos = *p_ite;
+        _stream << "(" << &(*_pos) << "," << (*p_ite)->get_id() << ","
+                << (*p_ite)->get_word() << ")";
+        return _stream.str();
+    }
     void log_positions() const
     {
         crosswords_log_debug(log, "log_positions");
@@ -182,32 +184,80 @@ struct positioner000_t
                                  ",",
                                  _ite->get_word(),
                                  ")");
+
             ++_i;
         }
     }
 
     bool position_words()
     {
-        bool _is_positioned = false;
-        while (!_is_positioned) {
-            define_current_history();
-            positions_iterators::const_iterator _end = m_current_history->end();
-            positions_iterators::const_iterator _ite =
-              m_current_history->begin();
+        crosswords_log_debug(log, "positon_words");
 
-            for (; _ite != _end; ++_ite) {
-                if (positioned(_ite)) {
+        bool _is_positioned = true;
+
+        define_current_history();
+        positions_iterators::const_iterator _current_history_ite =
+          m_current_history->begin();
+
+        while (true) {
+            crosswords_log_debug(log,
+                                 "starting loop, trying to position ",
+                                 positions_ite2str(_current_history_ite));
+            if (positioned(_current_history_ite)) {
+                crosswords_log_debug(log,
+                                     positions_ite2str(_current_history_ite),
+                                     " was positioned ");
+                if (m_positioned.size() == m_current_history->size()) {
+                    crosswords_log_debug(log, "all positioned");
                     _is_positioned = true;
                     break;
                 }
+                ++_current_history_ite;
+                crosswords_log_debug(log,
+                                     "new current_history_ite = ",
+                                     positions_ite2str(_current_history_ite));
+            } else {
+                crosswords_log_debug(log,
+                                     positions_ite2str(_current_history_ite),
+                                     " was not positioned");
+                if ((*_current_history_ite)->get_id() ==
+                    m_current_history->back()->get_id()) {
+                    crosswords_log_debug(
+                      log, "and it was the last, so we clear positioned list");
+                    m_positioned.clear();
+                }
+                crosswords_log_debug(log, "updating history");
+                update_history(_current_history_ite);
+                crosswords_log_debug(log, "checking for cycle");
+                if (cycle()) {
+                    crosswords_log_debug(log, "CYCLE!!");
+                    _is_positioned = false;
+                    break;
+                }
+                define_current_history();
+                _current_history_ite = m_current_history->begin();
+                crosswords_log_debug(log,
+                                     "new current history defined, ",
+                                     positions_ite2str(_current_history_ite),
+                                     " and is the new current");
+                positions_iterators::size_type _size = m_positioned.size();
+                crosswords_log_debug(
+                  log, "moving to the right position in the history");
+                for (positions_iterators::size_type _counter = 0;
+                     _counter < _size;
+                     ++_counter) {
+                    crosswords_log_debug(
+                      log, "\t", positions_ite2str(_current_history_ite));
+                    ++_current_history_ite;
+                }
             }
         }
-        return true;
+        return _is_positioned;
     }
 
     void update_history(positions_iterators::const_iterator p_ite)
     {
-        crosswords_log_debug(log, "updating history");
+        //        crosswords_log_debug(log, "updating history");
 
         positions_iterators _positions_iterators(*m_current_history);
 
@@ -218,13 +268,12 @@ struct positioner000_t
         m_positions_history.push_back(std::move(_positions_iterators));
     }
 
-    bool positioned(positions_iterators::const_iterator p_positon_iterator)
+    bool positioned(positions_iterators::const_iterator /*p_positon_iterator*/)
     {
         if (m_positioned.empty()) {
-            position_first(p_positon_iterator);
+            position_first();
             return true;
         }
-        // for now
         return false;
     }
 
@@ -234,8 +283,12 @@ struct positioner000_t
         --m_current_history;
     }
 
-    bool cicle()
+    bool cycle()
     {
+        if (m_positions_history.size() <= 1) {
+            return false;
+        }
+
         positions_history::const_iterator _last = m_positions_history.end();
         --_last;
         positions_history::const_iterator _ite = m_positions_history.begin();
@@ -246,6 +299,7 @@ struct positioner000_t
             if (!equals(*_ite, *_last)) {
                 return false;
             }
+            ++_ite;
         }
         return true;
     }
@@ -255,17 +309,20 @@ struct positioner000_t
     {
         positions_iterators::const_iterator _end1 = p_ite1.end();
         positions_iterators::const_iterator _ite1 = p_ite1.begin();
+
         positions_iterators::const_iterator _end2 = p_ite2.end();
         positions_iterators::const_iterator _ite2 = p_ite2.begin();
 
         while (true) {
-            if ((_ite1 == _end1) || (_ite2 != _end2)) {
+            if ((_ite1 == _end1) || (_ite2 == _end2)) {
                 break;
             }
 
             if ((*_ite1)->get_id() != (*_ite2)->get_id()) {
                 return false;
             }
+            ++_ite1;
+            ++_ite2;
         }
         return true;
     }
@@ -297,7 +354,6 @@ struct positioner000_t
             limit y = static_cast<limit>(m_vertical / 2) -
                       static_cast<limit>(_begin->get_word().size() / 2);
             _begin->define(x, y, direction::vertical, orientation::forward);
-            m_positioned.push_back(_begin);
         } else {
             limit x = static_cast<limit>(m_horizontal / 2) -
                       static_cast<limit>(_begin->get_word().size() / 2);
