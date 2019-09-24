@@ -1,5 +1,5 @@
 SUBDIRS = \
-    business/logger_library_business.pro 
+    business/logger_business.pro
 
 TEMPLATE = subdirs
 

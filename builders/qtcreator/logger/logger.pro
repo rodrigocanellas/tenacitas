@@ -1,7 +1,7 @@
 SUBDIRS = \
-    ../concurrent/library/business/concurrent_library_business.pro \
-    library/logger_library.pro \
-    test/logger_test.pro
+    dependencies/dependencies.pro \
+    library/library.pro \
+    test/test.pro
 
 TEMPLATE = subdirs
 

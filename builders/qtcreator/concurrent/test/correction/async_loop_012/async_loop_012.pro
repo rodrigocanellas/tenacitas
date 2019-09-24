@@ -20,3 +20,4 @@ include (../../../../common.pri)
 LIBS += -ltenacitas.logger.business
 
 
+LIBS += -ltenacitas.tester.business

@@ -1,9 +1,10 @@
 SUBDIRS = \
+    dependencies \
     correction \
-    performance   \
-    ../dependencies/dependencies.pro
-    
+    performance
 
 TEMPLATE = subdirs
 
+
+CONFIG += ordered
 

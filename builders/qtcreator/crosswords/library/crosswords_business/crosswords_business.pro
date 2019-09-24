@@ -18,4 +18,6 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/log.h \
     ../../../../../code/crosswords/business/positioner000.h
 
+LIBS += -ltenacitas.crosswords.entities
+
 

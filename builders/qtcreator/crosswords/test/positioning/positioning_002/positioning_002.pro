@@ -14,7 +14,7 @@ CONFIG+=test
 
 include (../../../../common.pri)
 
-LIBS += -ltenacitas.logger -ltenacitas.crosswords.entities -ltenacitas.crosswords.business
+LIBS += -ltenacitas.logger.business -ltenacitas.crosswords.entities -ltenacitas.crosswords.business
 
 
 SOURCES += \

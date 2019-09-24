@@ -1,5 +1,6 @@
 SUBDIRS = \
-
+  dependencies \
+  library
 
 
 TEMPLATE = subdirs
