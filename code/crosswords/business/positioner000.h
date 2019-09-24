@@ -111,9 +111,9 @@ struct positioner000_t
     }
 
 private:
-    typedef std::list<typename words::const_iterator> words_iterators;
+    typedef std::list<words::iterator> words_pointers;
 
-    typedef std::list<words_iterators> words_configurations;
+    typedef std::list<words_pointers> words_configurations;
 
 private:
     inline void sort_words_by_size()
@@ -128,9 +128,9 @@ private:
 
     inline void create_first_words_configuration()
     {
-        words_iterators _first;
+        words_pointers _first;
         crosswords_log_debug(log, "creating first words history");
-        for (words::const_iterator _ite = m_words.begin();
+        for (words::iterator _ite = m_words.begin();
              _ite != m_words.end();
              ++_ite) {
             _first.push_back(_ite);
@@ -142,8 +142,8 @@ private:
     {
         define_current_words_configuration();
         crosswords_log_debug(log, "log_current_words_configuration");
-        words_iterators::const_iterator _end = m_current_configuration->end();
-        words_iterators::const_iterator _ite = m_current_configuration->begin();
+        words_pointers::const_iterator _end = m_current_configuration->end();
+        words_pointers::const_iterator _ite = m_current_configuration->begin();
 
         int16_t _i = 0;
         for (; _ite != _end; ++_ite) {
@@ -154,7 +154,7 @@ private:
     }
 
     std::string words_ite2str(
-            words_iterators::const_iterator p_ite) const
+            words_pointers::const_iterator p_ite) const
     {
         std::stringstream _stream;
         words::const_iterator _pos = *p_ite;
@@ -191,38 +191,35 @@ private:
         bool _is_positioned = true;
 
         define_current_words_configuration();
-        words_iterators::const_iterator _current_words_cfg_ite =
+        words_pointers::iterator _ptr_word_to_position =
                 m_current_configuration->begin();
 
         while (true) {
             crosswords_log_debug(log,
-                                 "starting loop, trying to word ",
-                                 words_ite2str(_current_words_cfg_ite));
-            if (positioned(_current_words_cfg_ite)) {
+                                 "starting loop, trying to position word ",
+                                 words_ite2str(_ptr_word_to_position));
+            if (position(*_ptr_word_to_position)) {
                 crosswords_log_debug(log,
-                                     words_ite2str(_current_words_cfg_ite),
+                                     words_ite2str(_ptr_word_to_position),
                                      " was positioned ");
                 if (m_positioned.size() == m_current_configuration->size()) {
                     crosswords_log_debug(log, "all positioned");
                     _is_positioned = true;
                     break;
                 }
-                ++_current_words_cfg_ite;
-                crosswords_log_debug(log,
-                                     "new current_history_ite = ",
-                                     words_ite2str(_current_words_cfg_ite));
+                ++_ptr_word_to_position;
             } else {
                 crosswords_log_debug(log,
-                                     words_ite2str(_current_words_cfg_ite),
+                                     words_ite2str(_ptr_word_to_position),
                                      " was not positioned");
-                if ((*_current_words_cfg_ite)->get_id() ==
+                if ((*_ptr_word_to_position)->get_id() ==
                         m_current_configuration->back()->get_id()) {
                     crosswords_log_debug(
                                 log, "and it was the last, so we clear positioned list");
                     m_positioned.clear();
                 }
                 crosswords_log_debug(log, "updating history");
-                update_words_configuration(_current_words_cfg_ite);
+                update_words_configuration(_ptr_word_to_position);
                 crosswords_log_debug(log, "checking for cycle");
                 if (cycle()) {
                     crosswords_log_debug(log, "CYCLE!!");
@@ -230,46 +227,133 @@ private:
                     break;
                 }
                 define_current_words_configuration();
-                _current_words_cfg_ite = m_current_configuration->begin();
+                _ptr_word_to_position = m_current_configuration->begin();
 
                 crosswords_log_debug(log,
                                      "new current history defined, ",
-                                     words_ite2str(_current_words_cfg_ite),
+                                     words_ite2str(_ptr_word_to_position),
                                      " and is the new current");
-                words_iterators::size_type _size = m_positioned.size();
+                words_pointers::size_type _size = m_positioned.size();
 
                 crosswords_log_debug(
                             log, "moving to the right word in the history");
-                for (words_iterators::size_type _counter = 0;
+                for (words_pointers::size_type _counter = 0;
                      _counter < _size;
                      ++_counter) {
                     crosswords_log_debug(
-                                log, "\t", words_ite2str(_current_words_cfg_ite));
-                    ++_current_words_cfg_ite;
+                                log, "\t", words_ite2str(_ptr_word_to_position));
+                    ++_ptr_word_to_position;
                 }
             }
         }
         return _is_positioned;
     }
 
-    void update_words_configuration(words_iterators::const_iterator p_ite)
+    void update_words_configuration(words_pointers::const_iterator p_ite)
     {
-        words_iterators _words_iterators(*m_current_configuration);
+        words_pointers _words_pointers(*m_current_configuration);
 
-        _words_iterators.remove(*p_ite);
+        _words_pointers.remove(*p_ite);
 
-        _words_iterators.push_back(*p_ite);
+        _words_pointers.push_back(*p_ite);
 
-        m_words_configurations.push_back(std::move(_words_iterators));
+        m_words_configurations.push_back(std::move(_words_pointers));
     }
 
-    bool positioned(words_iterators::const_iterator /*p_positon_iterator*/)
+    bool position(words::iterator p_ptr_word_to_position)
     {
         if (m_positioned.empty()) {
-            position_first();
+            position_first(p_ptr_word_to_position);
             return true;
         }
+        words_pointers::const_iterator _positioned_end = m_positioned.end();
+        words_pointers::const_iterator _positioned_ite = m_positioned.begin();
+        while(true) {
+            if (_positioned_ite==_positioned_end) {
+                return false;
+            }
+
+            bool _positioned=
+                    position(*_positioned_ite, p_ptr_word_to_position);
+
+            if (_positioned) {
+
+                if (!position(_positioned_ite, p_ptr_word_to_position)) {
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+                if (p_ptr_word_to_position->get_x() < 0) {
+                    crosswords_log_debug(log, "underflow in x position for ", *p_ptr_word_to_position);
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+                if (p_ptr_word_to_position->get_x() > m_horizontal) {
+                    crosswords_log_debug(log, "overflow in x position for ", *p_ptr_word_to_position);
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+                if (p_ptr_word_to_position->get_y() < 0) {
+                    crosswords_log_debug(log, "underflow in y position for ", *p_ptr_word_to_position);
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+                if (p_ptr_word_to_position->get_y() > m_vertical) {
+                    crosswords_log_debug(log, "overflow in y position for ", *p_ptr_word_to_position);
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+
+                m_positioned.push_back(p_ptr_word_to_position);
+                return true;
+            }
+            else {
+                ++_positioned_ite;
+            }
+        }
         return false;
+    }
+
+    bool position(words::const_iterator p_positioned, words::iterator p_to_position) {
+        const lexeme & _positioned = p_positioned->get_lexeme();
+        lexeme::size_type _positioned_size = _positioned.size();
+
+        const lexeme & _to_position = p_to_position->get_lexeme();
+        lexeme::size_type _to_position_size = _to_position.size();
+
+        for (lexeme::size_type _i_positioned = 0;
+             _i_positioned < _positioned_size;
+             ++_i_positioned) {
+            for (lexeme::size_type _i_to_position = 0;
+                 _i_to_position < _to_position_size;
+                 ++_i_to_position) {
+                if (_to_position[_i_to_position] == _positioned[_i_positioned]) {
+                    if (p_positioned->get_direction()==word::direction::vertical) {
+
+                        p_to_position->position(p_positioned->get_x()-
+                                                static_cast<word::x>(_i_to_position)
+                                                , p_positioned->get_y()+
+                                                static_cast<word::y>(_i_positioned)
+                                                , word::direction::horizontal
+                                                , word::orientation::forward);
+                    }
+                    else {
+                        p_to_position->position(p_positioned->get_x()-
+                                                static_cast<word::x>(_i_positioned)
+                                                , p_positioned->get_y()-
+                                                static_cast<word::y>(_i_to_position)
+                                                , word::direction::vertical
+                                                , word::orientation::forward);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    bool position(words_pointers::const_iterator /*p_positioned_ite*/
+                  , words::const_iterator /*p_ptr_word_to_position*/) {
+        return true;
     }
 
     inline void define_current_words_configuration()
@@ -299,14 +383,14 @@ private:
         return true;
     }
 
-    bool equals(const words_iterators& p_ite1,
-                const words_iterators& p_ite2)
+    bool equals(const words_pointers& p_ite1,
+                const words_pointers& p_ite2)
     {
-        words_iterators::const_iterator _end1 = p_ite1.end();
-        words_iterators::const_iterator _ite1 = p_ite1.begin();
+        words_pointers::const_iterator _end1 = p_ite1.end();
+        words_pointers::const_iterator _ite1 = p_ite1.begin();
 
-        words_iterators::const_iterator _end2 = p_ite2.end();
-        words_iterators::const_iterator _ite2 = p_ite2.begin();
+        words_pointers::const_iterator _end2 = p_ite2.end();
+        words_pointers::const_iterator _ite2 = p_ite2.begin();
 
         while (true) {
             if ((_ite1 == _end1) || (_ite2 == _end2)) {
@@ -322,21 +406,20 @@ private:
         return true;
     }
 
-    void position_first()
+    void position_first(words::iterator p_ptr_word_to_position)
     {
-        typename words::iterator _begin = m_words.begin();
         if (m_vertical < m_horizontal) {
             limit x = static_cast<limit>(m_horizontal / 2);
             limit y = static_cast<limit>(m_vertical / 2) -
-                    static_cast<limit>(_begin->get_lexeme().size() / 2);
-            _begin->position(x, y, direction::vertical, orientation::forward);
+                    static_cast<limit>(p_ptr_word_to_position->get_lexeme().size() / 2);
+            p_ptr_word_to_position->position(x, y, direction::vertical, orientation::forward);
         } else {
             limit x = static_cast<limit>(m_horizontal / 2) -
-                    static_cast<limit>(_begin->get_lexeme().size() / 2);
+                    static_cast<limit>(p_ptr_word_to_position->get_lexeme().size() / 2);
             limit y = static_cast<limit>(m_vertical / 2);
-            _begin->position(x, y, direction::horizontal, orientation::forward);
+            p_ptr_word_to_position->position(x, y, direction::horizontal, orientation::forward);
         }
-        m_positioned.push_back(_begin);
+        m_positioned.push_back(p_ptr_word_to_position);
     }
 
     void optimize_words()
@@ -375,8 +458,8 @@ private:
 
     words m_words;
     words_configurations m_words_configurations;
-    words_iterators m_positioned;
-    words_configurations::const_iterator m_current_configuration;
+    words_pointers m_positioned;
+    words_configurations::iterator m_current_configuration;
 };
 
 } // namespace business

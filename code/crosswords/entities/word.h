@@ -40,7 +40,7 @@ struct word
               << "\t \"id\": \"" << p_pos.m_id << "\", \n"
               << "\t \"x\": \"" << p_pos.m_x << "\", \n"
               << "\t \"y\": \"" << p_pos.m_y << "\", \n"
-              << "\t \"defined\": \"" << (p_pos.m_defined ? "true" : "false")
+              << "\t \"defined\": \"" << (p_pos.m_positioned ? "true" : "false")
               << "\", \n"
               << "\t \"direction\": \"" << p_pos.direction2str() << "\", \n"
               << "\t \"orientation\": \"" << p_pos.orientation2str() << "\", \n"
@@ -57,7 +57,7 @@ struct word
                     const lexeme& p_lexeme,
                     const description& p_description)
       : m_id(p_id)
-      , m_defined(false)
+      , m_positioned(false)
       , m_x(-1)
       , m_y(-1)
       , m_lexeme(p_lexeme)
@@ -78,7 +78,7 @@ struct word
         m_y = p_y;
         m_direction = p_direction;
         m_orientation = p_orientation;
-        m_defined = true;
+        m_positioned = true;
     }
 
     void unposition()
@@ -87,7 +87,7 @@ struct word
         m_y = -1;
         m_direction = direction::unset;
         m_orientation = orientation::unset;
-        m_defined = false;
+        m_positioned = false;
     }
 
     inline id get_id() const { return m_id; }
@@ -96,7 +96,7 @@ struct word
     inline const lexeme& get_lexeme() const { return m_lexeme; }
     inline direction get_direction() const { return m_direction; }
     inline orientation get_orientation() const { return m_orientation; }
-    inline bool defined() const { return m_defined; }
+    inline bool positioned() const { return m_positioned; }
 
     inline const lexeme& get_answer() const { return m_answer; }
 
@@ -144,7 +144,7 @@ struct word
 
   private:
     id m_id;
-    bool m_defined;
+    bool m_positioned;
     x m_x;
     y m_y;
     lexeme m_lexeme;

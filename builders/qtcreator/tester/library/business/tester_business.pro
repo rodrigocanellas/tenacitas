@@ -18,4 +18,4 @@ HEADERS += \
 include (../../../common.pri)
 
 
-LIBS += -ltenacitas.logger.business.business
+LIBS += -ltenacitas.logger.business
