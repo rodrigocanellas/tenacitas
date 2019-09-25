@@ -106,7 +106,7 @@ struct positioner000_t
         create_first_words_configuration();
         log_current_words_configuration();
         position_words();
-        optimize_words();
+//        optimize_words();
         return m_words;
     }
 
@@ -277,28 +277,40 @@ private:
                     position(*_positioned_ite, p_ptr_word_to_position);
 
             if (_positioned) {
-
-                if (!position(_positioned_ite, p_ptr_word_to_position)) {
-                    p_ptr_word_to_position->unposition();
-                    return false;
-                }
                 if (p_ptr_word_to_position->get_x() < 0) {
-                    crosswords_log_debug(log, "underflow in x position for ", *p_ptr_word_to_position);
+                    crosswords_log_debug(log, "underflow in x position for "
+                                         , *p_ptr_word_to_position);
                     p_ptr_word_to_position->unposition();
                     return false;
                 }
                 if (p_ptr_word_to_position->get_x() > m_horizontal) {
-                    crosswords_log_debug(log, "overflow in x position for ", *p_ptr_word_to_position);
+                    crosswords_log_debug(log, "overflow in x position for "
+                                         , *p_ptr_word_to_position);
                     p_ptr_word_to_position->unposition();
                     return false;
                 }
                 if (p_ptr_word_to_position->get_y() < 0) {
-                    crosswords_log_debug(log, "underflow in y position for ", *p_ptr_word_to_position);
+                    crosswords_log_debug(log, "underflow in y position for "
+                                         , *p_ptr_word_to_position);
                     p_ptr_word_to_position->unposition();
                     return false;
                 }
                 if (p_ptr_word_to_position->get_y() > m_vertical) {
-                    crosswords_log_debug(log, "overflow in y position for ", *p_ptr_word_to_position);
+                    crosswords_log_debug(log, "overflow in y position for "
+                                         , *p_ptr_word_to_position);
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+
+                // check if any of the positions is occupied, except against the one
+                // it relatevely positioned
+                if (!check_positions_occupied(_positioned_ite, p_ptr_word_to_position)) {
+                    p_ptr_word_to_position->unposition();
+                    return false;
+                }
+
+                // checking interesections with the other posisitioned words
+                if (!check_intersections(_positioned_ite, p_ptr_word_to_position)) {
                     p_ptr_word_to_position->unposition();
                     return false;
                 }
@@ -351,7 +363,13 @@ private:
         return false;
     }
 
-    bool position(words_pointers::const_iterator /*p_positioned_ite*/
+    bool check_positions_occupied(words_pointers::const_iterator /*p_positioned_ite*/
+                                  , words::const_iterator /*p_ptr_word_to_position*/) {
+
+        return true;
+    }
+
+    bool check_intersections(words_pointers::const_iterator /*p_positioned_ite*/
                   , words::const_iterator /*p_ptr_word_to_position*/) {
         return true;
     }
