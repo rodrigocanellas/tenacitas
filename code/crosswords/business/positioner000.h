@@ -9,6 +9,9 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <map>
+#include <tuple>
+
 
 #include <crosswords/business/internal/log.h>
 #include <crosswords/entities/description.h>
@@ -115,7 +118,20 @@ private:
 
     typedef std::list<words_pointers> words_configurations;
 
+    typedef std::pair<word::x, word::y> coordinate;
+
+//    struct cmp_item {
+//        bool operator()(const item & p_left, const item & p_right) {
+//            return ( (std::get<0>(p_left) < std::get<0>(p_right)) &&
+//                     (std::get<1>(p_left) < std::get<1>(p_right)) ) ;
+//        }
+//    };
+
+
+    typedef std::map<coordinate, char> occupied;
+
 private:
+
     inline void sort_words_by_size()
     {
         crosswords_log_debug(log,
@@ -302,20 +318,10 @@ private:
                     return false;
                 }
 
-                // check if any of the positions is occupied, except against the one
-                // it relatevely positioned
-                if (!check_positions_occupied(_positioned_ite, p_ptr_word_to_position)) {
-                    p_ptr_word_to_position->unposition();
-                    return false;
-                }
-
-                // checking interesections with the other posisitioned words
-                if (!check_intersections(_positioned_ite, p_ptr_word_to_position)) {
-                    p_ptr_word_to_position->unposition();
-                    return false;
-                }
 
                 m_positioned.push_back(p_ptr_word_to_position);
+                add_to_occupied(p_ptr_word_to_position);
+
                 return true;
             }
             else {
@@ -356,6 +362,9 @@ private:
                                                 , word::direction::vertical
                                                 , word::orientation::forward);
                     }
+                    if (!valid_position(p_to_position, _i_to_position)) {
+                        p_to_position->unposition();
+                    }
                     return true;
                 }
             }
@@ -363,15 +372,122 @@ private:
         return false;
     }
 
-    bool check_positions_occupied(words_pointers::const_iterator /*p_positioned_ite*/
-                                  , words::const_iterator /*p_ptr_word_to_position*/) {
+    bool valid_position(words::const_iterator p_to_position
+                        , lexeme::size_type p_intersection_idx) const {
+
+        const lexeme & _lexeme = p_to_position->get_lexeme();
+        lexeme::size_type _size = _lexeme.size();
+
+
+        // intersection is not at the begining
+        if (p_intersection_idx != 0) {
+            word::x _x0 = p_to_position->get_x();
+            word::y _y0 = p_to_position->get_y();
+
+            if (!is_valid_extreme(_x0, _y0, p_to_position->get_direction())) {
+                return false;
+            }
+
+        }
+        else if (p_intersection_idx != (_size - 1)) {
+            // intersection is not at the end
+
+            if (p_to_position->get_direction() == word::direction::horizontal) {
+                word::x _x0 = p_to_position->get_x() + _size;
+                word::y _y0 = p_to_position->get_y();
+
+                if (!is_valid_extreme(_x0, _y0, word::direction::horizontal)) {
+                    return false;
+                }
+            }
+            else {
+                word::x _x0 = p_to_position->get_x();
+                word::y _y0 = p_to_position->get_y()+_size;
+
+                if (!is_valid_extreme(_x0, _y0, word::direction::vertical)) {
+                    return false;
+                }
+            }
+        }
+
+
+
+
+//        if (p_to_position->get_direction() == word::direction::horizontal){
+//            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+//                if (_i != p_intersection_idx) {
+//                    // AQUI
+
+//                }
+//            }
+//        }
+
+
+
+//        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+//            if (_i != p_intersection_idx) {
+//                if (p_to_position->get_direction() == word::direction::vertical) {
+//                    word::x _x = p_to_position->get_x();
+//                    word::y _y = p_to_position->get_y() + _i;
+//                    std::pair<bool, char> _occupied = is_occupied(_x, _y);
+//                    if (_occupied.first) {
+//                        if (_occupied.second != _lexeme[_i]) {
+//                            return false;
+//                        }
+//                        else {
+
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         return true;
     }
 
-    bool check_intersections(words_pointers::const_iterator /*p_positioned_ite*/
-                  , words::const_iterator /*p_ptr_word_to_position*/) {
+    bool is_valid_extreme(word::x p_x, word::y p_y, word::direction p_direction) const {
+        if (p_direction == word::direction::horizontal) {
+            if  (p_x > 0) {
+                if (is_occupied(p_x-1, p_y).first) {
+                    return false;
+                }
+
+                if ( (p_y > 0) && (is_occupied(p_x-1, p_y-1).first) ) {
+                    return false;
+
+                }
+                if ( (p_y < m_vertical) && (is_occupied(p_x-1, p_y+1).first)) {
+                    return false;
+                }
+            }
+        }
+        else {
+            if  (p_y > 0) {
+                if (is_occupied(p_x, p_y-1).first) {
+                    return false;
+                }
+
+                if ( (p_x > 0) && (is_occupied(p_x-1, p_y-1).first) ) {
+                    return false;
+
+                }
+                if ( (p_x < m_horizontal) && (is_occupied(p_x+1, p_y-1).first)) {
+                    return false;
+                }
+            }
+
+        }
         return true;
+    }
+
+
+    std::pair<bool, char> is_occupied(word::x p_x, word::y p_y) const {
+        coordinate _coordinate = {p_x, p_y};
+        occupied::const_iterator _ite =  m_occupied.find(_coordinate);
+        if (_ite == m_occupied.end()) {
+            return {false, ' '};
+        }
+        return {true, _ite->second};
     }
 
     inline void define_current_words_configuration()
@@ -438,6 +554,7 @@ private:
             p_ptr_word_to_position->position(x, y, direction::horizontal, orientation::forward);
         }
         m_positioned.push_back(p_ptr_word_to_position);
+        add_to_occupied(p_ptr_word_to_position);
     }
 
     void optimize_words()
@@ -470,6 +587,23 @@ private:
         }
     }
 
+    void add_to_occupied(words::const_iterator p_word) {
+        const lexeme & _lexeme = p_word->get_lexeme();
+        word::x _x = p_word->get_x();
+        word::y _y = p_word->get_y();
+        lexeme::size_type _size = _lexeme.size();
+        if (p_word->get_direction() == word::direction::vertical) {
+            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                m_occupied[{_x, _y + _i}] = _lexeme[_i];
+            }
+        }
+        else {
+            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                m_occupied[{_x + _i, _y}] = _lexeme[_i];
+            }
+        }
+    }
+
 private:
     limit m_vertical;
     limit m_horizontal;
@@ -478,6 +612,7 @@ private:
     words_configurations m_words_configurations;
     words_pointers m_positioned;
     words_configurations::iterator m_current_configuration;
+    occupied m_occupied;
 };
 
 } // namespace business
