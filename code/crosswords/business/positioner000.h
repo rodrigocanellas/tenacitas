@@ -58,11 +58,11 @@ struct positioner000_t
     };
 
     positioner000_t(limit p_vertical_limit, limit p_horizontal_limit)
-      : m_vertical(p_vertical_limit)
-      , m_horizontal(p_horizontal_limit)
+        : m_vertical(p_vertical_limit)
+        , m_horizontal(p_horizontal_limit)
     {
         crosswords_log_debug(
-          log, "vertical = ", m_vertical, ", horizontal = ", m_horizontal);
+                    log, "vertical = ", m_vertical, ", horizontal = ", m_horizontal);
     }
 
     result add(const lexeme& p_lexeme, const description& p_description)
@@ -70,22 +70,22 @@ struct positioner000_t
         limit _word_size = static_cast<limit>(p_lexeme.size());
         if (_word_size > m_vertical) {
             crosswords_log_error(
-              log,
-              p_lexeme,
-              "'s size is ",
-              _word_size,
-              ", which is bigger than the vertical limit of ",
-              m_vertical);
+                        log,
+                        p_lexeme,
+                        "'s size is ",
+                        _word_size,
+                        ", which is bigger than the vertical limit of ",
+                        m_vertical);
             return result::lexeme_overflows_vertical;
         }
         if (_word_size > m_horizontal) {
             crosswords_log_error(
-              log,
-              p_lexeme,
-              "'s size is ",
-              _word_size,
-              ", which is bigger than the horizontal limit of ",
-              m_horizontal);
+                        log,
+                        p_lexeme,
+                        "'s size is ",
+                        _word_size,
+                        ", which is bigger than the horizontal limit of ",
+                        m_horizontal);
             return result::lexeme_overflows_horizontal;
         }
         crosswords_log_debug(log,
@@ -95,7 +95,7 @@ struct positioner000_t
                              p_description,
                              "' was added");
         m_words.push_back(word(
-          static_cast<word::id>(m_words.size() + 1), p_lexeme, p_description));
+                              static_cast<word::id>(m_words.size() + 1), p_lexeme, p_description));
         return result::ok;
     }
 
@@ -110,7 +110,7 @@ struct positioner000_t
         return m_words;
     }
 
-  private:
+private:
     typedef std::list<words::iterator> words_pointers;
 
     typedef std::list<words_pointers> words_configurations;
@@ -126,7 +126,7 @@ struct positioner000_t
 
     typedef std::map<coordinate, char> occupied;
 
-  private:
+private:
     inline void sort_words_by_size()
     {
         crosswords_log_debug(log, "ordering words by lexeme size, descending");
@@ -199,7 +199,7 @@ struct positioner000_t
 
         define_current_words_configuration();
         words_pointers::iterator _ptr_word_to_position =
-          m_current_configuration->begin();
+                m_current_configuration->begin();
 
         while (true) {
             crosswords_log_debug(log,
@@ -208,7 +208,7 @@ struct positioner000_t
             if (position(*_ptr_word_to_position)) {
                 crosswords_log_debug(log,
                                      words_ite2str(_ptr_word_to_position),
-                                     " was positioned ");
+                                     " was positioned: ", *(*_ptr_word_to_position));
                 if (m_positioned.size() == m_current_configuration->size()) {
                     crosswords_log_debug(log, "all positioned");
                     _is_positioned = true;
@@ -220,9 +220,9 @@ struct positioner000_t
                                      words_ite2str(_ptr_word_to_position),
                                      " was not positioned");
                 if ((*_ptr_word_to_position)->get_id() ==
-                    m_current_configuration->back()->get_id()) {
+                        m_current_configuration->back()->get_id()) {
                     crosswords_log_debug(
-                      log, "and it was the last, so we clear positioned list");
+                                log, "and it was the last, so we clear positioned list");
                     m_positioned.clear();
                 }
                 crosswords_log_debug(log, "updating history");
@@ -247,7 +247,7 @@ struct positioner000_t
                 for (words_pointers::size_type _counter = 0; _counter < _size;
                      ++_counter) {
                     crosswords_log_debug(
-                      log, "\t", words_ite2str(_ptr_word_to_position));
+                                log, "\t", words_ite2str(_ptr_word_to_position));
                     ++_ptr_word_to_position;
                 }
             }
@@ -280,19 +280,19 @@ struct positioner000_t
             }
 
             bool _positioned =
-              position(*_positioned_ite, p_ptr_word_to_position);
+                    position(*_positioned_ite, p_ptr_word_to_position);
 
             if (_positioned) {
 
                 m_positioned.push_back(p_ptr_word_to_position);
                 add_to_occupied(p_ptr_word_to_position);
 
-                return true;
+                break;
             }
 
             ++_positioned_ite;
         }
-        return false;
+        return true;
     }
 
     bool position(words::const_iterator p_positioned,
@@ -311,30 +311,32 @@ struct positioner000_t
                  _i_to_position < _to_position_size;
                  ++_i_to_position) {
                 if (_to_position[_i_to_position] ==
-                    _positioned[_i_positioned]) {
+                        _positioned[_i_positioned]) {
                     if (p_positioned->get_direction() ==
-                        word::direction::vertical) {
+                            word::direction::vertical) {
 
                         p_to_position->position(
-                          p_positioned->get_x() -
-                            static_cast<word::x>(_i_to_position),
-                          p_positioned->get_y() +
-                            static_cast<word::y>(_i_positioned),
-                          word::direction::horizontal,
-                          word::orientation::forward);
+                                    p_positioned->get_x() -
+                                    static_cast<word::x>(_i_to_position),
+                                    p_positioned->get_y() +
+                                    static_cast<word::y>(_i_positioned),
+                                    word::direction::horizontal,
+                                    word::orientation::forward);
                     } else {
                         p_to_position->position(
-                          p_positioned->get_x() -
-                            static_cast<word::x>(_i_positioned),
-                          p_positioned->get_y() -
-                            static_cast<word::y>(_i_to_position),
-                          word::direction::vertical,
-                          word::orientation::forward);
+                                    p_positioned->get_x() -
+                                    static_cast<word::x>(_i_positioned),
+                                    p_positioned->get_y() -
+                                    static_cast<word::y>(_i_to_position),
+                                    word::direction::vertical,
+                                    word::orientation::forward);
                     }
-                    if (!valid_position(p_to_position, _i_to_position)) {
-                        p_to_position->unposition();
+                    if (valid_position(p_to_position, _i_to_position)) {
+                        return true;
                     }
-                    return true;
+
+                    p_to_position->unposition();
+
                 }
             }
         }
@@ -348,25 +350,25 @@ struct positioner000_t
         // check boundaries overflow and underflow
         if (p_to_position->get_x() < 0) {
             crosswords_log_debug(
-              log, "underflow in x position for ", *p_to_position);
+                        log, "underflow in x position for ", *p_to_position);
             p_to_position->unposition();
             return false;
         }
         if (p_to_position->get_x() > m_horizontal) {
             crosswords_log_debug(
-              log, "overflow in x position for ", *p_to_position);
+                        log, "overflow in x position for ", *p_to_position);
             p_to_position->unposition();
             return false;
         }
         if (p_to_position->get_y() < 0) {
             crosswords_log_debug(
-              log, "underflow in y position for ", *p_to_position);
+                        log, "underflow in y position for ", *p_to_position);
             p_to_position->unposition();
             return false;
         }
         if (p_to_position->get_y() > m_vertical) {
             crosswords_log_debug(
-              log, "overflow in y position for ", *p_to_position);
+                        log, "overflow in y position for ", *p_to_position);
             p_to_position->unposition();
             return false;
         }
@@ -390,7 +392,7 @@ struct positioner000_t
 
             if (p_to_position->get_direction() == word::direction::horizontal) {
                 word::x _x0 =
-                  p_to_position->get_x() + static_cast<word::x>(_size);
+                        p_to_position->get_x() + static_cast<word::x>(_size);
                 word::y _y0 = p_to_position->get_y();
 
                 if (!is_valid_extreme(_x0, _y0, word::direction::horizontal)) {
@@ -399,7 +401,7 @@ struct positioner000_t
             } else {
                 word::x _x0 = p_to_position->get_x();
                 word::y _y0 =
-                  p_to_position->get_y() + static_cast<word::x>(_size);
+                        p_to_position->get_y() + static_cast<word::x>(_size);
 
                 if (!is_valid_extreme(_x0, _y0, word::direction::vertical)) {
                     return false;
@@ -407,9 +409,51 @@ struct positioner000_t
             }
         }
 
-        // check all the letters, except the one that intersects
-        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
-            // AQUI
+        {
+            word::x _x0 = p_to_position->get_x();
+            word::y _y0 = p_to_position->get_y();
+
+            // check all the letters, except the one that intersects
+            if (p_to_position->get_direction() == word::direction::horizontal) {
+                for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                    if (_i != p_intersection_idx) {
+                        word::x _x = _x0 + static_cast<word::x>(_i);
+                        std::pair<bool, char> _occupied =
+                                is_occupied(_x, _y0);
+                        if ( (_occupied.first) && (_occupied.second != _lexeme[_i]) ) {
+                            return false;
+                        }
+
+                        if ( (_y0 > 0) && (is_occupied(_x, _y0 -1).first) ) {
+                            return false;
+                        }
+
+                        if ( (_y0 < (m_vertical - 1)) && (is_occupied(_x, _y0 + 1).first) ) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else {
+                for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                    if (_i != p_intersection_idx) {
+                        word::y _y = _y0 + static_cast<word::y>(_i);
+                        std::pair<bool, char> _occupied =
+                                is_occupied(_y, _y0);
+                        if ( (_occupied.first) && (_occupied.second != _lexeme[_i]) ) {
+                            return false;
+                        }
+
+                        if ( (_x0 > 0) && (is_occupied(_x0 - 1, _y0).first) ) {
+                            return false;
+                        }
+
+                        if ( (_x0 < (m_horizontal - 1)) && (is_occupied(_x0+1, _y0).first) ) {
+                            return false;
+                        }
+                    }
+                }
+            }
         }
 
         return true;
@@ -429,7 +473,7 @@ struct positioner000_t
                     return false;
                 }
                 if ((p_y < m_vertical) &&
-                    (is_occupied(p_x - 1, p_y + 1).first)) {
+                        (is_occupied(p_x - 1, p_y + 1).first)) {
                     return false;
                 }
             }
@@ -443,7 +487,7 @@ struct positioner000_t
                     return false;
                 }
                 if ((p_x < m_horizontal) &&
-                    (is_occupied(p_x + 1, p_y - 1).first)) {
+                        (is_occupied(p_x + 1, p_y - 1).first)) {
                     return false;
                 }
             }
@@ -453,8 +497,7 @@ struct positioner000_t
 
     std::pair<bool, char> is_occupied(word::x p_x, word::y p_y) const
     {
-        coordinate _coordinate = { p_x, p_y };
-        occupied::const_iterator _ite = m_occupied.find(_coordinate);
+        occupied::const_iterator _ite = m_occupied.find({ p_x, p_y });
         if (_ite == m_occupied.end()) {
             return { false, ' ' };
         }
@@ -474,10 +517,10 @@ struct positioner000_t
         }
 
         words_configurations::const_iterator _last =
-          m_words_configurations.end();
+                m_words_configurations.end();
         --_last;
         words_configurations::const_iterator _ite =
-          m_words_configurations.begin();
+                m_words_configurations.begin();
         while (true) {
             if (_ite == _last) {
                 break;
@@ -517,17 +560,17 @@ struct positioner000_t
         if (m_vertical < m_horizontal) {
             limit x = static_cast<limit>(m_horizontal / 2);
             limit y = static_cast<limit>(m_vertical / 2) -
-                      static_cast<limit>(
+                    static_cast<limit>(
                         p_ptr_word_to_position->get_lexeme().size() / 2);
             p_ptr_word_to_position->position(
-              x, y, direction::vertical, orientation::forward);
+                        x, y, direction::vertical, orientation::forward);
         } else {
             limit x = static_cast<limit>(m_horizontal / 2) -
-                      static_cast<limit>(
+                    static_cast<limit>(
                         p_ptr_word_to_position->get_lexeme().size() / 2);
             limit y = static_cast<limit>(m_vertical / 2);
             p_ptr_word_to_position->position(
-              x, y, direction::horizontal, orientation::forward);
+                        x, y, direction::horizontal, orientation::forward);
         }
         m_positioned.push_back(p_ptr_word_to_position);
         add_to_occupied(p_ptr_word_to_position);
@@ -578,7 +621,7 @@ struct positioner000_t
         }
     }
 
-  private:
+private:
     limit m_vertical;
     limit m_horizontal;
 
