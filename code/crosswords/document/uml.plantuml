@@ -58,7 +58,7 @@ game *-- board
 
 namespace crosswords {
 namespace business {
-positioner --> crosswords.entities.board
+positioner000 --> crosswords.entities.board
 }
 }
 
@@ -74,7 +74,7 @@ db --> crosswords.entities.game
 namespace crosswords {
 namespace application {
 app --> crosswords.entities.board
-app --> crosswords.business.positioner
+app --> crosswords.business.positioner000
 app --> crosswords.persistence.db
 }
 }
