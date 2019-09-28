@@ -3,6 +3,7 @@
 
 #include <crosswords/business/positioner000.h>
 #include <crosswords/entities/board.h>
+#include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
 #include <crosswords/entities/words.h>
 #include <logger/business/cerr.h>
@@ -19,13 +20,12 @@ struct positioning_000
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
         typedef board_t<positioner> board;
 
-        positioner _positioner(9, 12);
+        positioner _positioner(coordinate::x(9), coordinate::y(12));
         _positioner.add("mamão", "fruta com pequenos caroços pretos");
 
         board _board(std::move(_positioner));
 
-        for (words::const_iterator _pos = _board.begin();
-             _pos != _board.end();
+        for (words::const_iterator _pos = _board.begin(); _pos != _board.end();
              ++_pos) {
             std::cout << *_pos << std::endl;
         }

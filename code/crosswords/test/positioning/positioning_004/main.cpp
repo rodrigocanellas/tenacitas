@@ -3,6 +3,7 @@
 
 #include <crosswords/business/positioner000.h>
 #include <crosswords/entities/board.h>
+#include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
 #include <crosswords/entities/words.h>
 #include <logger/business/cerr.h>
@@ -18,11 +19,11 @@ struct positioning_004
     {
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(12, 9);
+        positioner _positioner(coordinate::x(12), coordinate::y(9));
         _positioner.add("mamão", "fruta com pequenos caroços pretos");
         _positioner.add("abacaxi", "fruta com coroa");
 
-        words _words (_positioner());
+        words _words(_positioner());
 
         words::const_iterator _ite = _words.begin();
 
@@ -38,8 +39,7 @@ struct positioning_004
             return false;
         }
 
-        for (words::const_iterator _pos = _words.begin();
-             _pos != _words.end();
+        for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
              ++_pos) {
             if (!_pos->positioned()) {
                 crosswords_log_error(log, *_pos, " not positioned");
@@ -55,6 +55,9 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(positioning_004, argc, argv, "positioning 'abacaxi' horizontaly and 'mamão' verticaly");
+    run_test(positioning_004,
+             argc,
+             argv,
+             "positioning 'abacaxi' horizontaly and 'mamão' verticaly");
     return 0;
 }

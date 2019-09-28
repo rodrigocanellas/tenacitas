@@ -2,11 +2,13 @@
 #define TENACITAS_CROSSWORDS_ENTITIES_WORD_H
 
 #include <cstdint>
+#include <functional>
 #include <iostream>
+#include <vector>
 
+#include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
-#include <crosswords/entities/coordinate.h>
 
 namespace tenacitas {
 namespace crosswords {
@@ -14,6 +16,7 @@ namespace entities {
 
 struct word
 {
+    typedef std::vector<coordinate> coordinates;
 
     enum class direction : int8_t
     {
@@ -31,13 +34,12 @@ struct word
 
     typedef uint16_t id;
 
-
     friend std::ostream& operator<<(std::ostream& p_out, const word& p_pos)
     {
         p_out << "{"
               << "\"id\": \"" << p_pos.m_id << "\", "
               << "\"lexeme\": \"" << p_pos.m_lexeme << "\", "
-              << "\"coord\": \"" << p_pos.m_coord << "\", "
+              << "\"coord\": \"" << p_pos.m_coords[0] << "\", "
               << "\"direction\": \"" << p_pos.direction2str() << "\", "
               << "\"orientation\": \"" << p_pos.orientation2str() << "\", "
               << "}";
@@ -47,11 +49,11 @@ struct word
     word() = delete;
 
     inline word(id p_id,
-                    const lexeme& p_lexeme,
-                    const description& p_description)
+                const lexeme& p_lexeme,
+                const description& p_description)
       : m_id(p_id)
       , m_positioned(false)
-      , m_coord()
+      , m_coords()
       , m_lexeme(p_lexeme)
       , m_description(p_description)
       , m_direction(direction::unset)
@@ -64,26 +66,40 @@ struct word
     word& operator=(word&&) noexcept = default;
     ~word() = default;
 
-    void position(coordinate p_coord, direction p_direction, orientation p_orientation)
+    void position(coordinate p_coord,
+                  direction p_direction,
+                  orientation p_orientation)
     {
-        m_coord = p_coord;
+        m_coords = coordinates(m_lexeme.size());
+        coordinate::x _x = p_coord.get_x();
+        coordinate::y _y = p_coord.get_y();
+        lexeme::size_type _size = m_lexeme.size();
+        if (get_direction() == direction::vertical) {
+            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                m_coords[_i] = { _x, _y + coordinate::y(_i) };
+            }
+        } else {
+            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+                m_coords[_i] = { _x + coordinate::x(_i), _y };
+            }
+        }
+
         m_direction = p_direction;
         m_orientation = p_orientation;
         m_positioned = true;
     }
 
-    void position(coordinate::x p_x, coordinate::y p_y
-                  , direction p_direction, orientation p_orientation)
+    void position(coordinate::x p_x,
+                  coordinate::y p_y,
+                  direction p_direction,
+                  orientation p_orientation)
     {
-        m_coord = coordinate(std::move(p_x), std::move(p_y));
-        m_direction = p_direction;
-        m_orientation = p_orientation;
-        m_positioned = true;
+        position(coordinate(p_x, p_y), p_direction, p_orientation);
     }
 
     void unposition()
     {
-        m_coord.reset();
+        reset_coords();
 
         m_direction = direction::unset;
         m_orientation = orientation::unset;
@@ -91,9 +107,9 @@ struct word
     }
 
     inline id get_id() const { return m_id; }
-    inline coordinate::x get_x() const { return m_coord.get_x(); }
-    inline coordinate::y get_y() const { return m_coord.get_y(); }
-    inline coordinate coord() const { return m_coord; }
+    inline coordinate::x get_x() const { return m_coords[0].get_x(); }
+    inline coordinate::y get_y() const { return m_coords[0].get_y(); }
+    inline const coordinates& get_coord() const { return m_coords; }
     inline const lexeme& get_lexeme() const { return m_lexeme; }
     inline direction get_direction() const { return m_direction; }
     inline orientation get_orientation() const { return m_orientation; }
@@ -113,9 +129,15 @@ struct word
         return m_id != p_pos.m_id;
     }
 
-    inline bool operator<(const word& p_pos) const
+    inline bool operator<(const word& p_pos) const { return m_id < p_pos.m_id; }
+
+    void traverse(std::function<void(const coordinate& p_coord, char p_char)>
+                    p_function) const
     {
-        return m_id < p_pos.m_id;
+        lexeme::size_type _size = m_lexeme.size();
+        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+            p_function(m_coords[_i], m_lexeme[_i]);
+        }
     }
 
   private:
@@ -143,10 +165,17 @@ struct word
         }
     }
 
+    void reset_coords()
+    {
+        for (coordinate& _coord : m_coords) {
+            _coord.reset();
+        }
+    }
+
   private:
     id m_id;
     bool m_positioned;
-    coordinate m_coord;
+    coordinates m_coords;
     lexeme m_lexeme;
     description m_description;
     direction m_direction;
