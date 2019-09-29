@@ -107,13 +107,14 @@ struct positioner000_t
     {
         log_words();
         sort_words_by_size();
-        std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+        //        std::this_thread::sleep_for(std::chrono::milliseconds(2500));
         create_first_words_configuration();
         log_current_words_configuration();
         log_positioned();
-        std::this_thread::sleep_for(std::chrono::milliseconds(8000));
-        position_words();
-        optimize_words();
+        //        std::this_thread::sleep_for(std::chrono::milliseconds(8000));
+        if (position_words()) {
+            optimize_words();
+        }
         return m_words;
     }
 
@@ -218,8 +219,7 @@ struct positioner000_t
               (_pos->get_direction() == word::direction::vertical ? "V" : "H"),
               ":",
               (_pos->get_orientation() == word::orientation::forward ? "F"
-                                                                     : "B"),
-              ":");
+                                                                     : "B"));
             ++_i;
         }
     }
@@ -255,19 +255,21 @@ struct positioner000_t
                                      words_ite2str(_ptr_word_to_position),
                                      " was not positioned");
                 log_positioned();
-                std::this_thread::sleep_for(std::chrono::milliseconds(2500));
-                if ((*_ptr_word_to_position)->get_id() ==
-                    m_current_configuration->back()->get_id()) {
-                    crosswords_log_debug(
-                      log, "and it was the last, so we clear positioned list");
-                    m_positioned.clear();
-                }
+                //                std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+                //                if ((*_ptr_word_to_position)->get_id() ==
+                //                    m_current_configuration->back()->get_id())
+                //                    { crosswords_log_debug(
+                //                      log, "and it was the last, so we clear
+                //                      positioned list");
+                //                    m_positioned.clear();
+                //                }
                 crosswords_log_debug(log, "updating configuration");
                 update_words_configuration(_ptr_word_to_position);
                 crosswords_log_debug(log, "checking for cycle");
                 if (cycle()) {
                     crosswords_log_debug(log, "CYCLE!!");
                     _is_positioned = false;
+                    //                    m_positioned.clear();
                     break;
                 }
                 define_current_words_configuration();
@@ -277,7 +279,7 @@ struct positioner000_t
                   log,
                   "######################## new current configuration defined");
                 log_current_words_configuration();
-                std::this_thread::sleep_for(std::chrono::milliseconds(8000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(3000));
                 words_pointers::size_type _size = m_positioned.size();
 
                 crosswords_log_debug(
@@ -352,21 +354,42 @@ struct positioner000_t
                  ++_i_to_position) {
                 if (_to_position[_i_to_position] ==
                     _positioned[_i_positioned]) {
+                    crosswords_log_debug(log,
+                                         "intesect at ",
+                                         _i_positioned,
+                                         " in positioned ",
+                                         _positioned,
+                                         " and in ",
+                                         _i_to_position,
+                                         " in ",
+                                         _to_position);
                     if (p_positioned->get_direction() ==
                         word::direction::vertical) {
 
                         p_to_position->position(
+                          //                          p_positioned->get_x() -
+                          //                          x(_i_to_position),
+                          //                          p_positioned->get_y() +
+                          //                          y(_i_positioned),
+
                           p_positioned->get_x() - x(_i_to_position),
                           p_positioned->get_y() + y(_i_positioned),
+
                           word::direction::horizontal,
                           word::orientation::forward);
                     } else {
                         p_to_position->position(
-                          p_positioned->get_x() - x(_i_positioned),
+                          //                          p_positioned->get_x() -
+                          //                          x(_i_positioned),
+                          //                          p_positioned->get_y() -
+                          //                          y(_i_to_position),
+                          p_positioned->get_x() + x(_i_positioned),
                           p_positioned->get_y() - y(_i_to_position),
+
                           word::direction::vertical,
                           word::orientation::forward);
                     }
+                    crosswords_log_debug(log, "positioned at ", *p_to_position);
                     if (valid_position(p_to_position, _i_to_position)) {
                         return true;
                     }
@@ -389,7 +412,9 @@ struct positioner000_t
             p_to_position->unposition();
             return false;
         }
-        if (p_to_position->get_x() > m_x_limit) {
+        if ((p_to_position->get_direction() == word::direction::horizontal) &&
+            (p_to_position->get_x() + x(p_to_position->get_lexeme().size()) >
+             m_x_limit)) {
             crosswords_log_debug(
               log, "overflow in x position for ", *p_to_position);
             p_to_position->unposition();
@@ -401,7 +426,9 @@ struct positioner000_t
             p_to_position->unposition();
             return false;
         }
-        if (p_to_position->get_y() > m_y_limit) {
+        if ((p_to_position->get_direction() == word::direction::vertical) &&
+            (p_to_position->get_y() + y(p_to_position->get_lexeme().size()) >
+             m_y_limit)) {
             crosswords_log_debug(
               log, "overflow in y position for ", *p_to_position);
             p_to_position->unposition();
@@ -563,12 +590,12 @@ struct positioner000_t
             if (_ite == _last) {
                 break;
             }
-            if (!equals(*_ite, *_last)) {
-                return false;
+            if (equals(*_ite, *_last)) {
+                return true;
             }
             ++_ite;
         }
-        return true;
+        return false;
     }
 
     bool equals(const words_pointers& p_ite1, const words_pointers& p_ite2)
