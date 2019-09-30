@@ -41,7 +41,7 @@ struct word
               << "\"lexeme\": \"" << p_pos.m_lexeme << "\", "
               << "\"coord\": \"" << p_pos.m_coords[0] << "\", "
               << "\"direction\": \"" << p_pos.direction2str() << "\", "
-              << "\"orientation\": \"" << p_pos.orientation2str() << "\", "
+              << "\"orientation\": \"" << p_pos.orientation2str() << "\""
               << "}";
         return p_out;
     }
@@ -53,7 +53,8 @@ struct word
                 const description& p_description)
       : m_id(p_id)
       , m_positioned(false)
-      , m_coords()
+      , m_coords(p_lexeme.size(),
+                 coordinate(coordinate::x(-1), coordinate::y(-1)))
       , m_lexeme(p_lexeme)
       , m_description(p_description)
       , m_direction(direction::unset)
@@ -70,7 +71,6 @@ struct word
                   direction p_direction,
                   orientation p_orientation)
     {
-        m_coords = coordinates(m_lexeme.size());
         coordinate::x _x = p_coord.get_x();
         coordinate::y _y = p_coord.get_y();
         lexeme::size_type _size = m_lexeme.size();
@@ -137,6 +137,30 @@ struct word
         lexeme::size_type _size = m_lexeme.size();
         for (lexeme::size_type _i = 0; _i < _size; ++_i) {
             p_function(m_coords[_i], m_lexeme[_i]);
+        }
+    }
+
+    static std::string direction2str(direction p_direction)
+    {
+        switch (p_direction) {
+            case direction::vertical:
+                return "vertical";
+            case direction::horizontal:
+                return "horizontal";
+            default:
+                return "not set";
+        }
+    }
+
+    std::string orientation2str(orientation p_orientation)
+    {
+        switch (p_orientation) {
+            case orientation::forward:
+                return "forward";
+            case orientation::backward:
+                return "backward";
+            default:
+                return "not set";
         }
     }
 

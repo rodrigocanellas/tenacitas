@@ -13,28 +13,17 @@ using namespace tenacitas::crosswords::entities;
 using namespace tenacitas::crosswords::business;
 using namespace tenacitas::logger::business;
 
-struct positioning_007
+struct positioning_008
 {
     bool operator()()
     {
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(9), coordinate::y(11));
-        _positioner.add("molusco", "teste");
-        _positioner.add("horario", "teste");
-        _positioner.add("lebre", "teste");
-        _positioner.add("habitat", "teste");
-        _positioner.add("ima", "teste");
-        _positioner.add("psd", "teste");
-        _positioner.add("pos", "teste");
-        _positioner.add("estibordo", "teste");
-        _positioner.add("interesse", "teste");
-        _positioner.add("borboleta", "teste");
-        _positioner.add("iab", "teste");
-        _positioner.add("set", "teste");
-        _positioner.add("tutor", "teste");
-        _positioner.add("tubarao", "teste");
-        _positioner.add("discoteca", "teste");
+        _positioner.add("ab", "teste");
+        _positioner.add("cd", "teste");
+        _positioner.add("ef", "teste");
+        _positioner.add("gh", "teste");
 
         words _words(_positioner());
 
@@ -56,6 +45,10 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(positioning_007, argc, argv, "positioning a bunch of words");
+    run_test(positioning_008,
+             argc,
+             argv,
+             "testing if detects that there is no solution with 'ab' 'cd' 'ef' "
+             "'gh'");
     return 0;
 }

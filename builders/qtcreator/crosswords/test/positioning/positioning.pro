@@ -5,7 +5,8 @@ SUBDIRS = positioning_000 \
     positioning_004 \
     positioning_005 \
     positioning_006 \
-    positioning_007
+    positioning_007 \
+    positioning_008
 
 
 

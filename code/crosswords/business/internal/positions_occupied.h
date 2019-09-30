@@ -35,7 +35,7 @@ struct positions_occupied_t
     void add(const word& p_word)
     {
         p_word.traverse([this](const coordinate& p_coord, char p_char) -> void {
-            m_map[p_coord] = p_char;
+            this->m_map[p_coord] = p_char;
         });
     }
 

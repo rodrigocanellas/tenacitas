@@ -31,10 +31,10 @@ struct words_references_t
 {
     typedef entities::words words;
     typedef entities::word word;
-    typedef std::list<words::iterator> list;
-    typedef list::size_type size;
-    typedef list::const_iterator const_iterator;
-    typedef list::iterator iterator;
+    typedef std::list<words::iterator> references;
+    typedef references::size_type size;
+    typedef references::const_iterator const_iterator;
+    typedef references::iterator iterator;
     typedef t_log log;
 
     friend std::ostream& operator<<(std::ostream& p_out,
@@ -58,7 +58,7 @@ struct words_references_t
     {
         for (words::iterator _ite = p_words.begin(); _ite != p_words.end();
              ++_ite) {
-            m_list.push_back(_ite);
+            m_references.push_back(_ite);
         }
     }
 
@@ -72,12 +72,12 @@ struct words_references_t
 
     ~words_references_t() = default;
 
-    size get_size() const { return m_list.size(); }
-    bool empty() const { return m_list.empty(); }
+    size get_size() const { return m_references.size(); }
+    bool empty() const { return m_references.empty(); }
 
-    void add(words::iterator p_ite) { m_list.push_back(p_ite); }
-    void clear() { m_list.clear(); }
-    void remove(const_iterator p_ite) { m_list.remove(p_ite); }
+    void add(words::iterator p_ite) { m_references.push_back(p_ite); }
+    void clear() { m_references.clear(); }
+    void remove(const_iterator p_ite) { m_references.remove(p_ite); }
 
     void move_to_end(const_iterator p_ite)
     {
@@ -116,9 +116,9 @@ struct words_references_t
     {
         size _size = get_size();
         if (p_steps > _size) {
-            return m_list.end();
+            return m_references.end();
         }
-        const_iterator _ite = m_list.begin();
+        const_iterator _ite = m_references.begin();
         for (size _counter = 0; _counter < get_size(); ++_counter) {
             ++_ite;
         }
@@ -129,9 +129,9 @@ struct words_references_t
     {
         size _size = get_size();
         if (p_steps > _size) {
-            return m_list.end();
+            return m_references.end();
         }
-        iterator _ite = m_list.begin();
+        iterator _ite = m_references.begin();
         for (size _counter = 0; _counter < get_size(); ++_counter) {
             ++_ite;
         }
@@ -140,28 +140,28 @@ struct words_references_t
 
     void traverse(std::function<void(const word& p_word)> p_function)
     {
-        const_iterator _end = m_list.end();
-        for (const_iterator _ite = m_list.begin(); _ite != _end; ++_ite) {
+        const_iterator _end = m_references.end();
+        for (const_iterator _ite = m_references.begin(); _ite != _end; ++_ite) {
             p_function(*(*_ite));
         }
     }
 
     void traverse(std::function<void(words::iterator p_iterator)> p_function)
     {
-        const_iterator _end = m_list.end();
-        for (const_iterator _ite = m_list.begin(); _ite != _end; ++_ite) {
+        const_iterator _end = m_references.end();
+        for (const_iterator _ite = m_references.begin(); _ite != _end; ++_ite) {
             p_function(*_ite);
         }
     }
 
   private:
-    iterator begin() { return m_list.begin(); }
-    iterator end() { return m_list.end(); }
-    const_iterator begin() const { return m_list.begin(); }
-    const_iterator end() const { return m_list.end(); }
+    iterator begin() { return m_references.begin(); }
+    iterator end() { return m_references.end(); }
+    const_iterator begin() const { return m_references.begin(); }
+    const_iterator end() const { return m_references.end(); }
 
   private:
-    list m_list;
+    references m_references;
 };
 
 } // namespace business
