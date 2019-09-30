@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <vector>
 
 #include <type/entities/number.h>
 
@@ -461,6 +462,8 @@ struct coordinate
     x m_x;
     y m_y;
 };
+
+typedef std::vector<coordinate> coordinates;
 
 } // namespace entities
 } // namespace crosswords

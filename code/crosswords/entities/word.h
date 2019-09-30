@@ -16,7 +16,7 @@ namespace entities {
 
 struct word
 {
-    typedef std::vector<coordinate> coordinates;
+
 
     enum class direction : int8_t
     {
@@ -59,6 +59,7 @@ struct word
       , m_description(p_description)
       , m_direction(direction::unset)
       , m_orientation(orientation::unset)
+      , m_size(m_lexeme.size())
     {}
 
     word(const word&) = default;
@@ -73,13 +74,12 @@ struct word
     {
         coordinate::x _x = p_coord.get_x();
         coordinate::y _y = p_coord.get_y();
-        lexeme::size_type _size = m_lexeme.size();
         if (get_direction() == direction::vertical) {
-            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+            for (lexeme::size_type _i = 0; _i < m_size; ++_i) {
                 m_coords[_i] = { _x, _y + coordinate::y(_i) };
             }
         } else {
-            for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+            for (lexeme::size_type _i = 0; _i < m_size; ++_i) {
                 m_coords[_i] = { _x + coordinate::x(_i), _y };
             }
         }
@@ -107,13 +107,16 @@ struct word
     }
 
     inline id get_id() const { return m_id; }
-    inline coordinate::x get_x() const { return m_coords[0].get_x(); }
-    inline coordinate::y get_y() const { return m_coords[0].get_y(); }
-    inline const coordinates& get_coord() const { return m_coords; }
+    inline coordinate::x get_x0() const { return m_coords[0].get_x(); }
+    inline coordinate::y get_y0() const { return m_coords[0].get_y(); }
+    inline coordinate::x get_xn() const { return m_coords[m_size-1].get_x(); }
+    inline coordinate::y get_yn() const { return m_coords[m_size-1].get_y(); }
+    inline const coordinates& get_coordinates() const { return m_coords; }
     inline const lexeme& get_lexeme() const { return m_lexeme; }
     inline direction get_direction() const { return m_direction; }
     inline orientation get_orientation() const { return m_orientation; }
     inline bool positioned() const { return m_positioned; }
+    inline lexeme::size_type get_size()const{return m_size;}
 
     inline const lexeme& get_answer() const { return m_answer; }
 
@@ -134,8 +137,7 @@ struct word
     void traverse(std::function<void(const coordinate& p_coord, char p_char)>
                     p_function) const
     {
-        lexeme::size_type _size = m_lexeme.size();
-        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+        for (lexeme::size_type _i = 0; _i < m_size; ++_i) {
             p_function(m_coords[_i], m_lexeme[_i]);
         }
     }
@@ -205,6 +207,7 @@ struct word
     direction m_direction;
     orientation m_orientation;
     lexeme m_answer;
+    lexeme::size_type m_size;
 };
 
 } // namespace entities

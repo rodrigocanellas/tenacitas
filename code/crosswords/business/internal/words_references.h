@@ -12,7 +12,7 @@ namespace tenacitas {
 namespace crosswords {
 namespace business {
 
-/// \brief positioner000_t position \p words
+/// \brief
 ///
 /// \tparam t_log provides log funcionality:
 /// static void debug(const std::string & p_file, int p_line, const
