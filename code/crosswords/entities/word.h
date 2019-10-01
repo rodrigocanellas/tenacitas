@@ -39,8 +39,11 @@ struct word
         p_out << "{"
               << "\"id\": \"" << p_pos.m_id << "\", "
               << "\"lexeme\": \"" << p_pos.m_lexeme << "\", "
-              << "\"coord\": \"" << p_pos.m_coords[0] << "\", "
-              << "\"direction\": \"" << p_pos.direction2str() << "\", "
+              << "\"coord\": \"";
+        for (lexeme::size_type _i = 0; _i < p_pos.get_size(); ++_i) {
+            p_out << p_pos.m_coords[_i] << "\", ";
+        }
+        p_out << "\"direction\": \"" << p_pos.direction2str() << "\", "
               << "\"orientation\": \"" << p_pos.orientation2str() << "\""
               << "}";
         return p_out;
@@ -74,7 +77,7 @@ struct word
     {
         coordinate::x _x = p_coord.get_x();
         coordinate::y _y = p_coord.get_y();
-        if (get_direction() == direction::vertical) {
+        if (p_direction == direction::vertical) {
             for (lexeme::size_type _i = 0; _i < m_size; ++_i) {
                 m_coords[_i] = { _x, _y + coordinate::y(_i) };
             }

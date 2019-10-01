@@ -20,7 +20,7 @@ struct positioning_004
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(12), coordinate::y(9));
-        _positioner.add("mamão", "fruta com pequenos caroços pretos");
+        _positioner.add("mamao", "fruta com pequenos caroços pretos");
         _positioner.add("abacaxi", "fruta com coroa");
 
         words _words(_positioner());
