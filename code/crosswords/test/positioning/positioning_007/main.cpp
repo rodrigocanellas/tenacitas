@@ -48,7 +48,7 @@ struct positioning_007
                 crosswords_log_test(log, *_pos, " positioned");
             }
         }
-        return (_res ? false : true);
+        return _res;
     }
 };
 

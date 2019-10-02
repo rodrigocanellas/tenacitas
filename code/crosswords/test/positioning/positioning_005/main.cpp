@@ -26,26 +26,26 @@ struct positioning_005
 
         words _words(_positioner());
 
-        words::const_iterator _ite = _words.begin();
+        //        words::const_iterator _ite = _words.begin();
 
-        if (_ite->get_direction() != word::direction::vertical) {
-            crosswords_log_error(log, *_ite, " should be vertical");
-            return false;
-        }
+        //        if (_ite->get_direction() != word::direction::vertical) {
+        //            crosswords_log_error(log, *_ite, " should be vertical");
+        //            return false;
+        //        }
 
-        ++_ite;
+        //        ++_ite;
 
-        if (_ite->get_direction() != word::direction::horizontal) {
-            crosswords_log_error(log, *_ite, " should be horizontal");
-            return false;
-        }
+        //        if (_ite->get_direction() != word::direction::horizontal) {
+        //            crosswords_log_error(log, *_ite, " should be horizontal");
+        //            return false;
+        //        }
 
-        ++_ite;
+        //        ++_ite;
 
-        if (_ite->get_direction() != word::direction::horizontal) {
-            crosswords_log_error(log, *_ite, " should be horizontal");
-            return false;
-        }
+        //        if (_ite->get_direction() != word::direction::horizontal) {
+        //            crosswords_log_error(log, *_ite, " should be horizontal");
+        //            return false;
+        //        }
 
         for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
              ++_pos) {

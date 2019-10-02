@@ -52,6 +52,16 @@ struct coordinate
 
         bool operator>(const xy& p_xy) const { return m_value > p_xy.m_value; }
 
+        bool operator<=(const xy& p_xy) const
+        {
+            return m_value <= p_xy.m_value;
+        }
+
+        bool operator>=(const xy& p_xy) const
+        {
+            return m_value >= p_xy.m_value;
+        }
+
         xy operator+(const xy& p_xy) const
         {
             xy _tmp(m_value + p_xy.m_value);
@@ -89,6 +99,8 @@ struct coordinate
         }
 
         explicit operator int16_t() const { return m_value; }
+
+        int16_t get_value() const { return m_value; }
 
       private:
         int16_t m_value;
