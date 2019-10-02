@@ -9,6 +9,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <set>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -56,6 +57,7 @@ struct positioner000_t
     typedef coordinate::x x;
     typedef coordinate::y y;
     typedef t_log log;
+    typedef std::set<lexeme::size_type> intersections;
 
     enum class result : int16_t
     {
@@ -260,13 +262,14 @@ struct positioner000_t
 
         while (true) {
             crosswords_log_debug(log,
-                                 "starting loop, trying to position word ",
+                                 "===> starting loop, trying to position word ",
                                  words_ite2str(_ptr_word_to_position));
             if (position(*_ptr_word_to_position)) {
                 crosswords_log_debug(log,
                                      words_ite2str(_ptr_word_to_position),
                                      " was positioned: ",
                                      *(*_ptr_word_to_position));
+                print();
 
                 if (m_positioned.size() == m_current_configuration->size()) {
                     crosswords_log_debug(log, "all positioned");
@@ -475,8 +478,22 @@ struct positioner000_t
         return { true, _ite->second };
     }
 
-    bool valid_extremes_horizontal(words::const_iterator p_word) const
+    std::pair<bool, char> is_occupied(const coordinate& p_coord) const
     {
+        occupied::const_iterator _ite =
+          m_occupied.find({ p_coord.get_x(), p_coord.get_y() });
+        if (_ite == m_occupied.end()) {
+            return { false, ' ' };
+        }
+        return { true, _ite->second };
+    }
+
+    bool valid_extremes_horizontal(
+      words::const_iterator p_word,
+      const intersections& /*p_intersections*/) const
+    {
+
+        // AQUI
 
         std::pair<bool, char> _occupied({ false, ' ' });
         y _y0 = p_word->get_y0();
@@ -608,255 +625,145 @@ struct positioner000_t
         return true;
     }
 
-    bool valid_extremes_vertical(words::const_iterator p_word) const
+    bool valid_extremes_vertical(words::const_iterator p_word,
+                                 const intersections& p_intersections) const
     {
-
         std::pair<bool, char> _occupied({ false, ' ' });
-        x _x0 = p_word->get_x0();
-        x _x0_plus_1 = _x0 + x(1);
-        x _x0_minus_1 = _x0 - x(1);
+        intersections::const_iterator _end = p_intersections.end();
+        if (p_intersections.find(0) == _end) {
+            if (p_word->get_y0() != y(0)) {
+                _occupied =
+                  is_occupied(p_word->get_x0(), p_word->get_y0() - y(1));
 
-        y _y0 = p_word->get_y0();
-        if (_y0 != y(0)) {
-            y _y0_minus_1 = _y0 - y(1);
-
-            _occupied = is_occupied(_x0, _y0_minus_1);
-            if (_occupied.first) {
-                crosswords_log_debug(
-                  log, "(", _x0, ",", _y0_minus_1, ") has ", _occupied.second);
-                return false;
-            }
-
-            if (_x0 == x(0)) {
-                _occupied = is_occupied(_x0_plus_1, _y0_minus_1);
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
-                                         _x0_plus_1,
+                                         p_word->get_x0(),
                                          ",",
-                                         _y0_minus_1,
-                                         ") has ",
-                                         _occupied.second);
+                                         p_word->get_y0() - y(1),
+                                         ") has '",
+                                         _occupied.second,
+                                         "'");
                     return false;
                 }
-            } else if (_x0 == x(m_x_limit - x(1))) {
-                _occupied = is_occupied(_x0_minus_1, _y0_minus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_minus_1,
-                                         ",",
-                                         _y0_minus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
+
+                if (p_word->get_x0() != x(0)) {
+                    _occupied = is_occupied(p_word->get_x0() - x(1),
+                                            p_word->get_y0() - y(1));
+                    if (_occupied.first) {
+                        crosswords_log_debug(log,
+                                             "(",
+                                             p_word->get_x0() - x(1),
+                                             ",",
+                                             p_word->get_y0() - y(1),
+                                             ") has '",
+                                             _occupied.second,
+                                             "'");
+                        return false;
+                    }
                 }
-            } else {
-                _occupied = is_occupied(_x0_minus_1, _y0_minus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_minus_1,
-                                         ",",
-                                         _y0_minus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-                _occupied = is_occupied(_x0_plus_1, _y0_minus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_plus_1,
-                                         ",",
-                                         _y0_minus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
+
+                if (p_word->get_x0() != (m_x_limit - x(1))) {
+                    _occupied = is_occupied(p_word->get_x0() + x(1),
+                                            p_word->get_y0() - y(1));
+                    if (_occupied.first) {
+                        crosswords_log_debug(log,
+                                             "(",
+                                             p_word->get_x0() + x(1),
+                                             ",",
+                                             p_word->get_y0() - y(1),
+                                             ") has '",
+                                             _occupied.second,
+                                             "'");
+                    }
                 }
             }
         }
 
-        y _yn = p_word->get_yn();
-
-        if (_yn != y(m_y_limit - y(1))) {
-            y _yn_plus_1 = _yn + y(1);
-
-            _occupied = is_occupied(_x0, _yn_plus_1);
-            if (_occupied.first) {
-                crosswords_log_debug(
-                  log, "(", _x0, ",", _yn_plus_1, ") has ", _occupied.second);
-                return false;
-            }
-
-            if (_x0 == x(0)) {
-                _occupied = is_occupied(_x0_plus_1, _yn_plus_1);
+        if (p_intersections.find(p_word->get_size() - 1) == _end) {
+            if (p_word->get_yn() != (m_y_limit - y(1))) {
+                _occupied =
+                  is_occupied(p_word->get_x0(), p_word->get_y0() + y(1));
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
-                                         _x0_plus_1,
+                                         p_word->get_x0(),
                                          ",",
-                                         _yn_plus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
+                                         p_word->get_y0() + y(1),
+                                         ") has '",
+                                         _occupied.second,
+                                         "'");
+                    return true;
                 }
-            } else if (_x0 == x(m_x_limit - x(1))) {
-                _occupied = is_occupied(_x0_minus_1, _yn_plus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_minus_1,
-                                         ",",
-                                         _yn_plus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
+
+                if (p_word->get_x0() != x(0)) {
+                    _occupied = is_occupied(p_word->get_x0() - x(1),
+                                            p_word->get_y0() + y(1));
+                    if (_occupied.first) {
+                        crosswords_log_debug(log,
+                                             "(",
+                                             p_word->get_x0() - x(1),
+                                             ",",
+                                             p_word->get_y0() + y(1),
+                                             ") has '",
+                                             _occupied.second);
+                        return false;
+                    }
                 }
-            } else {
-                _occupied = is_occupied(_x0_plus_1, _yn_plus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_plus_1,
-                                         ",",
-                                         _yn_plus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-                _occupied = is_occupied(_x0_minus_1, _yn_plus_1);
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _x0_minus_1,
-                                         ",",
-                                         _yn_plus_1,
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
+
+                if (p_word->get_x0() != (m_x_limit - x(1))) {
+                    _occupied = is_occupied(p_word->get_x0() + x(1),
+                                            p_word->get_y0() + y(1));
+                    if (_occupied.first) {
+                        crosswords_log_debug(log,
+                                             "(",
+                                             p_word->get_x0() + x(1),
+                                             ",",
+                                             p_word->get_y0() + y(1),
+                                             ") has '",
+                                             _occupied.second,
+                                             ")");
+                        return false;
+                    }
                 }
             }
         }
+
         return true;
     }
 
     bool valid_extremes(words::const_iterator p_word,
-                        lexeme::size_type p_intersection_idx) const
+                        const intersections& p_intersections) const
     {
-        if ((p_intersection_idx == 0) ||
-            (p_intersection_idx == (p_word->get_size() - 1))) {
+        //        if ((p_intersection_idx == 0) ||
+        //            (p_intersection_idx == (p_word->get_size() - 1))) {
+        //            return true;
+        //        }
+
+        intersections::const_iterator _end = p_intersections.end();
+        if ((p_intersections.find(0) != _end) &&
+            (p_intersections.find(p_word->get_size() - 1) != _end)) {
             return true;
         }
 
         // horizontal
         if ((p_word->get_direction() == word::direction::horizontal) &&
-            (!valid_extremes_horizontal(p_word))) {
+            (!valid_extremes_horizontal(p_word, p_intersections))) {
             return false;
         }
 
         if ((p_word->get_direction() == word::direction::horizontal) &&
-            (!valid_extremes_vertical(p_word))) {
+            (!valid_extremes_vertical(p_word, p_intersections))) {
             return false;
         }
 
         return true;
     }
 
-    bool above_and_below_are_free(words::const_iterator p_word,
-                                  lexeme::size_type p_intersection_idx) const
-    {
-
-        if (p_word->get_direction() != word::direction::horizontal) {
-            return true;
-        }
-
-        const coordinates& _coords = p_word->get_coordinates();
-        lexeme::size_type _size = p_word->get_size();
-        std::pair<bool, char> _occupied({ false, ' ' });
-
-        y _y0 = p_word->get_y0();
-        y _yn = p_word->get_yn();
-        y _y_last = m_y_limit - y(1);
-
-        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
-            if (_i == p_intersection_idx) {
-                continue;
-            }
-
-            //            if ((_i == 0) && (p_intersection_idx == (_i + 1))) {
-            //                continue;
-            //            }
-
-            //            if ((_i == (_size - 1)) && (p_intersection_idx == (_i
-            //            - 1))) {
-            //                continue;
-            //            }
-
-            //            if (p_intersection_idx == (_i - 1)) {
-            //                continue;
-            //            }
-
-            //            if (p_intersection_idx == (_i + 1)) {
-            //                continue;
-            //            }
-
-            if (_y0 == y(0)) {
-                _occupied =
-                  is_occupied(_coords[_i].get_x(), _coords[_i].get_y() + y(1));
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _coords[_i].get_x(),
-                                         ",",
-                                         _coords[_i].get_y() + y(1),
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-            } else if (_yn == _y_last) {
-                _occupied =
-                  is_occupied(_coords[_i].get_x(), _coords[_i].get_y() - y(1));
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _coords[_i].get_x(),
-                                         ",",
-                                         _coords[_i].get_y() - y(1),
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-            } else {
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _coords[_i].get_x(),
-                                         ",",
-                                         _coords[_i].get_y() + y(1),
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _coords[_i].get_x(),
-                                         ",",
-                                         _coords[_i].get_y() - y(1),
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     bool left_and_right_are_free(words::const_iterator p_word,
-                                 lexeme::size_type p_intersection_idx) const
+                                 const intersections& p_intersections) const
     {
+
         if (p_word->get_direction() != word::direction::vertical) {
             return true;
         }
@@ -865,46 +772,13 @@ struct positioner000_t
         lexeme::size_type _size = p_word->get_size();
         std::pair<bool, char> _occupied({ false, ' ' });
 
-        x _x0 = p_word->get_x0();
-        x _xn = p_word->get_xn();
-        x _x_last = m_x_limit - x(1);
-
+        intersections::const_iterator _end = p_intersections.end();
         for (lexeme::size_type _i = 0; _i < _size; ++_i) {
-            if (_i == p_intersection_idx) {
+            if (p_intersections.find(_i) != _end) {
                 continue;
             }
 
-            //            if ((_i == 0) && (p_intersection_idx == (_i + 1))) {
-            //                continue;
-            //            }
-
-            //            if ((_i == _size) && (p_intersection_idx == (_i - 1)))
-            //            {
-            //                continue;
-            //            }
-
-            //            if (p_intersection_idx == (_i - 1)) {
-            //                continue;
-            //            }
-
-            //            if (p_intersection_idx == (_i + 1)) {
-            //                continue;
-            //            }
-
-            if (_x0 == x(0)) {
-                _occupied =
-                  is_occupied(_coords[_i].get_x() + x(1), _coords[_i].get_y());
-                if (_occupied.first) {
-                    crosswords_log_debug(log,
-                                         "(",
-                                         _coords[_i].get_x() + x(1),
-                                         ",",
-                                         _coords[_i].get_y(),
-                                         ") has ",
-                                         _occupied.second);
-                    return false;
-                }
-            } else if (_xn == _x_last) {
+            if (p_word->get_x0() != x(0)) {
                 _occupied =
                   is_occupied(_coords[_i].get_x() - x(1), _coords[_i].get_y());
                 if (_occupied.first) {
@@ -917,7 +791,11 @@ struct positioner000_t
                                          _occupied.second);
                     return false;
                 }
-            } else {
+            }
+
+            if (p_word->get_xn() != (m_x_limit - x(1))) {
+                _occupied =
+                  is_occupied(_coords[_i].get_x() + x(1), _coords[_i].get_y());
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
@@ -928,13 +806,52 @@ struct positioner000_t
                                          _occupied.second);
                     return false;
                 }
+            }
+        }
+        return true;
+    }
 
+    bool above_and_below_are_free(words::const_iterator p_word,
+                                  const intersections& p_intersections) const
+    {
+        if (p_word->get_direction() != word::direction::horizontal) {
+            return true;
+        }
+
+        const coordinates& _coords = p_word->get_coordinates();
+        lexeme::size_type _size = p_word->get_size();
+        std::pair<bool, char> _occupied({ false, ' ' });
+
+        intersections::const_iterator _end = p_intersections.end();
+
+        for (lexeme::size_type _i = 0; _i < _size; ++_i) {
+            if (p_intersections.find(_i) != _end) {
+                continue;
+            }
+
+            if (p_word->get_y0() != y(0)) {
+                _occupied =
+                  is_occupied(_coords[_i].get_x(), _coords[_i].get_y() - y(1));
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
-                                         _coords[_i].get_x() - x(1),
+                                         _coords[_i].get_x(),
                                          ",",
-                                         _coords[_i].get_y(),
+                                         _coords[_i].get_y() - y(1),
+                                         ") has ",
+                                         _occupied.second);
+                    return false;
+                }
+            }
+
+            if (p_word->get_y0() != (m_y_limit - y(1))) {
+                is_occupied(_coords[_i].get_x(), _coords[_i].get_y() + y(1));
+                if (_occupied.first) {
+                    crosswords_log_debug(log,
+                                         "(",
+                                         _coords[_i].get_x(),
+                                         ",",
+                                         _coords[_i].get_y() + y(1),
                                          ") has ",
                                          _occupied.second);
                     return false;
@@ -954,6 +871,9 @@ struct positioner000_t
 
         print();
 
+        intersections _intersections;
+        _intersections.emplace(p_intersection_idx);
+
         std::pair<bool, char> _occupied({ false, ' ' });
         lexeme::size_type _size = p_to_position->get_size();
         const coordinates& _coordinates = p_to_position->get_coordinates();
@@ -964,50 +884,30 @@ struct positioner000_t
             }
             _occupied =
               is_occupied(_coordinates[_i].get_x(), _coordinates[_i].get_y());
-            if ((_occupied.first) && (_occupied.second != _lexeme[_i])) {
-                crosswords_log_debug(log,
-                                     _coordinates[_i],
-                                     " has '",
-                                     _occupied.second,
-                                     "', BUT '",
-                                     _lexeme[_i],
-                                     "' was expected");
-                return false;
+            if (_occupied.first) {
+                if (_occupied.second != _lexeme[_i]) {
+                    crosswords_log_debug(log,
+                                         _coordinates[_i],
+                                         " has '",
+                                         _occupied.second,
+                                         "', BUT '",
+                                         _lexeme[_i],
+                                         "' was expected");
+                    return false;
+                }
+                _intersections.emplace(_i);
             }
         }
 
-        if (!valid_extremes(p_to_position, p_intersection_idx)) {
+        if (!valid_extremes(p_to_position, _intersections)) {
             return false;
         }
 
-        if (!above_and_below_are_free(p_to_position, p_intersection_idx)) {
+        if (!above_and_below_are_free(p_to_position, _intersections)) {
             return false;
         }
 
-        return (left_and_right_are_free(p_to_position, p_intersection_idx));
-
-        //        lexeme::size_type _size = p_to_position->get_size();
-        //        const coordinates & _coordinates =
-        //        p_to_position->get_coordinates(); for (lexeme::size_type _i =
-        //        0; _i < _size; ++_i) {
-        //            if (_i == p_intersection_idx) {
-        //                continue;
-        //            }
-
-        //            if (_i == 0) {
-        //                // first coordinate
-
-        //                x _x0 (p_to_position->get_x0());
-        //                if (_x0 < x(0)) {
-        //                    return false;
-        //                }
-
-        //                y _y0 (p_to_position->get_y0());
-        //                if (_y0 < u(0)) {
-        //                    return false;
-        //                }
-
-        //            }
+        return (left_and_right_are_free(p_to_position, _intersections));
 
         return true;
     }
@@ -1091,6 +991,7 @@ struct positioner000_t
 
         m_positioned.push_back(p_ptr_word_to_position);
         add_to_occupied(p_ptr_word_to_position);
+        print();
     }
 
     void optimize_words()
