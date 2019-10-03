@@ -19,7 +19,7 @@ struct positioning_007
     {
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(coordinate::x(9), coordinate::y(11));
+        positioner _positioner(coordinate::x(13), coordinate::y(13));
         _positioner.add("molusco", "teste");
         _positioner.add("horario", "teste");
         _positioner.add("lebre", "teste");

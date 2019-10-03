@@ -904,17 +904,17 @@ struct positioner000_t
             }
         }
 
-        if (!valid_extremes(p_to_position, _intersections)) {
-            return false;
-        }
+//        if (!valid_extremes(p_to_position, _intersections)) {
+//            return false;
+//        }
 
-        if (!above_and_below_are_free(p_to_position, _intersections)) {
-            return false;
-        }
+//        if (!above_and_below_are_free(p_to_position, _intersections)) {
+//            return false;
+//        }
 
-        return (left_and_right_are_free(p_to_position, _intersections));
+//        return (left_and_right_are_free(p_to_position, _intersections));
 
-        //        return true;
+        return true;
     }
 
     words_pointers::const_iterator find(const coordinate& p_coord) const
@@ -1070,7 +1070,7 @@ struct positioner000_t
         string::size_type _y_size =
           static_cast<string::size_type>(m_y_limit.get_value());
 
-        matrix _m(_x_size, string(_y_size, '-'));
+        matrix _m(_x_size, string(_y_size, ' '));
 
         words::const_iterator _end = m_words.end();
         for (words::const_iterator _ite = m_words.begin(); _ite != _end;

@@ -13,30 +13,37 @@ using namespace tenacitas::crosswords::entities;
 using namespace tenacitas::crosswords::business;
 using namespace tenacitas::logger::business;
 
+// from http://www.emogic.com/crosswords/common/1570122125/index.html#self
 struct positioning_009
 {
     bool operator()()
     {
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(coordinate::x(9), coordinate::y(11));
-        _positioner.add("reluzente", "teste");
-        _positioner.add("negar", "teste");
-        _positioner.add("franqueza", "teste");
-        _positioner.add("silvestre", "teste");
-        _positioner.add("confundir", "teste");
-        _positioner.add("ovo", "teste");
-        _positioner.add("aroma", "teste");
-        _positioner.add("rmn", "teste");
-        _positioner.add("socio", "teste");
-        _positioner.add("rei", "teste");
-        _positioner.add("lagoa", "teste");
-        _positioner.add("lindo", "teste");
-        _positioner.add("zurique", "teste");
-        _positioner.add("uma", "teste");
-        _positioner.add("noz", "teste");
-        _positioner.add("estadio", "teste");
-        _positioner.add("planear", "teste");
+        positioner _positioner(coordinate::x(13), coordinate::y(13));
+        _positioner.add("THREECAMPBEDS", "teste");
+        _positioner.add("IDOUBTIT", "teste");
+        _positioner.add("ENNA", "teste");
+        _positioner.add("POMPOMS", "teste");
+        _positioner.add("GTPSY", "teste");
+        _positioner.add("OVOID", "teste");
+        _positioner.add("MOBBISH", "teste");
+        _positioner.add("HALB", "teste");
+        _positioner.add("PNEUMATO", "teste");
+        _positioner.add("HERDSOFCATTLE", "teste");
+        _positioner.add("SHED", "teste");
+        _positioner.add("REPUMP", "teste");
+        _positioner.add("ICETIME", "teste");
+        _positioner.add("SMOTE", "teste");
+        _positioner.add("OBVERT", "teste");
+        _positioner.add("ADONISES", "teste");
+        _positioner.add("OBVIATES", "teste");
+        _positioner.add("COGENCY", "teste");
+        _positioner.add("IMBEDS", "teste");
+        _positioner.add("BSMITH", "teste");
+        _positioner.add("APTOS", "teste");
+        _positioner.add("TMLR ", "teste");
+
 
         words _words(_positioner());
 
