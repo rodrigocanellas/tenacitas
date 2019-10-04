@@ -20,20 +20,33 @@ struct positioning_007
         typedef positioner000_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(13), coordinate::y(13));
+
+        _positioner.add("interesse", "teste");
+        _positioner.add("lebre", "teste");
+
         _positioner.add("molusco", "teste");
         _positioner.add("horario", "teste");
-        _positioner.add("lebre", "teste");
+        _positioner.add("estibordo", "teste");
+
         _positioner.add("habitat", "teste");
+
+        _positioner.add("tutor", "teste");
+
+        _positioner.add("tubarao", "teste");
+
+
+
+        _positioner.add("pos", "teste");
+
+
         _positioner.add("ima", "teste");
         _positioner.add("psd", "teste");
-        _positioner.add("pos", "teste");
-        _positioner.add("estibordo", "teste");
-        _positioner.add("interesse", "teste");
+
         _positioner.add("borboleta", "teste");
         _positioner.add("iab", "teste");
         _positioner.add("set", "teste");
-        _positioner.add("tutor", "teste");
-        _positioner.add("tubarao", "teste");
+
+
         _positioner.add("discoteca", "teste");
 
         words _words(_positioner());
