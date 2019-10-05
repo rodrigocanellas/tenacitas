@@ -16,6 +16,7 @@ include(../../../common.pri)
 
 HEADERS += \
     ../../../../../code/crosswords/business/internal/log.h \
+    ../../../../../code/crosswords/business/internal/matrix.h \
     ../../../../../code/crosswords/business/internal/positioning_history.h \
     ../../../../../code/crosswords/business/internal/positions_occupied.h \
     ../../../../../code/crosswords/business/internal/words_references.h \

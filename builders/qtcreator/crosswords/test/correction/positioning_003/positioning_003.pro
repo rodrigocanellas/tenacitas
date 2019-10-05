@@ -7,7 +7,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 TEMPLATE = app
 
-TARGET = tenacitas.crosswords.test.positioning.positioning_009
+TARGET = tenacitas.crosswords.test.correction.positioning_003
 
 CONFIG+=test
 
@@ -18,6 +18,6 @@ LIBS += -ltenacitas.logger.business -ltenacitas.crosswords.entities -ltenacitas.
 
 
 SOURCES += \
-    ../../../../../../code/crosswords/test/positioning/positioning_009/main.cpp
+    ../../../../../../code/crosswords/test/correction/positioning_003/main.cpp
 
 

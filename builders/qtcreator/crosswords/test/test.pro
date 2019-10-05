@@ -1,6 +1,6 @@
 SUBDIRS = \
     dependencies \
-    positioning 
+    correction
 
 TEMPLATE = subdirs
 

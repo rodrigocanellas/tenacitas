@@ -100,7 +100,17 @@ struct coordinate
 
         explicit operator int16_t() const { return m_value; }
 
-        int16_t get_value() const { return m_value; }
+        template<typename t_int>
+        t_int get_value() const
+        {
+            return static_cast<t_int>(m_value);
+        }
+
+        template<typename t_int>
+        explicit operator t_int() const
+        {
+            return static_cast<t_int>(m_value);
+        }
 
       private:
         int16_t m_value;
