@@ -34,10 +34,7 @@ struct positioning_007
 
         _positioner.add("tubarao", "teste");
 
-
-
         _positioner.add("pos", "teste");
-
 
         _positioner.add("ima", "teste");
         _positioner.add("psd", "teste");
@@ -45,7 +42,6 @@ struct positioning_007
         _positioner.add("borboleta", "teste");
         _positioner.add("iab", "teste");
         _positioner.add("set", "teste");
-
 
         _positioner.add("discoteca", "teste");
 

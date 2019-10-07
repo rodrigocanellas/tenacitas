@@ -17,62 +17,6 @@ namespace tenacitas {
 namespace crosswords {
 namespace business {
 
-struct matrix
-{
-    typedef entities::coordinate::x x;
-    typedef entities::coordinate::y y;
-
-    matrix() = delete;
-    matrix(x p_x, y p_y)
-      : m_x(p_x)
-      , m_y(p_y)
-      , m_letters(m_x.get_value<size>() * m_y.get_value<size>(), ' ')
-    {}
-    matrix(const matrix&) = default;
-    matrix(matrix&&) noexcept = default;
-
-    matrix& operator=(const matrix&) = default;
-    matrix& operator=(matrix&&) noexcept = default;
-
-    ~matrix() = default;
-
-    void set(x p_x, y p_y, char p_c)
-    {
-        m_letters[p_x.get_value<size>() * p_y.get_value<size>()] = p_c;
-    }
-
-    char get(x p_x, y p_y) const
-    {
-        return m_letters[p_x.get_value<size>() * p_y.get_value<size>()];
-    }
-
-    void print() const
-    {
-        using namespace std;
-
-        size _x_size = m_x.get_value<size>();
-        size _y_size = m_y.get_value<size>();
-
-        cerr << "    ";
-
-        for (size _x = 0; _x < _x_size; ++_x) {
-            for (size _y = 0; _y < _y_size; ++_y) {
-                cerr << setw(2) << setfill('0') << m_letters[_x * _y] << " ";
-            }
-            cerr << endl;
-        }
-    }
-
-  private:
-    typedef std::string letters;
-    typedef letters::size_type size;
-
-  private:
-    x m_x;
-    y m_y;
-    letters m_letters;
-};
-
 /// \brief positioner000_t position \p words
 ///
 /// \tparam t_log provides log funcionality:
