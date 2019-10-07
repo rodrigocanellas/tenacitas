@@ -11,7 +11,7 @@ namespace tenacitas {
 namespace crosswords {
 namespace business {
 
-/// \brief positioner000_t position \p words
+/// \brief keeps track of positioned that are occupied
 ///
 /// \tparam t_log provides log funcionality:
 /// static void debug(const std::string & p_file, int p_line, const
@@ -42,6 +42,15 @@ struct positions_occupied_t
     std::pair<bool, char> find(const coordinate& p_coord) const
     {
         map::const_iterator _ite = m_map.find(p_coord);
+        if (_ite == m_map.end()) {
+            return { false, ' ' };
+        }
+        return { true, _ite->second };
+    }
+
+    std::pair<bool, char> find(const coordinate::x& p_x, const coordinate::y &p_y) const
+    {
+        map::const_iterator _ite = m_map.find(coordinate(p_x, p_y);
         if (_ite == m_map.end()) {
             return { false, ' ' };
         }
