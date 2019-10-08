@@ -1,81 +1,65 @@
 @startuml
-hide methods
+hide attribute
 
 namespace crosswords {
-namespace entities {
 
-enum difficulty {
-hard
-medium
-easy
-fill
-}
+	namespace entities {
 
-user *-- user_id
+		enum direction {
+			vertical
+			horizontal
+		}
 
-entry *-- difficulty
-entry *-- "value" lexeme
-entry *-- description
-entry o-- language
+		enum orientation {
+			forward
+			backward
+		}
 
-languages *-- "*" language
+		coordinate +-- coord_x
+		coordinate +-- coord_y
 
-user *-- "*" dictionary
+		word *-- direction
+		word *-- orientation
+		word *-- "entry" lexeme
+		word *-- "*" coordinate
+		word *-- "answer" lexeme
+		word *-- description
+		word +-- word_size
 
-dictionary *-- "*" entry
-dictionary *-- dictionary_id
-dictionary_id *-- "author" user_id
+		words *-- "*" word
+		words +-- words_iterator
+	}
 
-enum direction {
-vertical
-horizontal
-}
+	namespace business {
+		positioner *-- "*" crosswords.entities.words_iterator
 
-enum orientation {
-forward
-backward
-}
+		words_by_size *-- crosswords.entities.word_size
 
-word *-- "entry_positioned" bool
-word *-- direction
-word *-- orientation
-word *-- "entry" lexeme
-word *-- coordinate
-word *-- "answer" lexeme
-word *-- description
+		words_by_size *-- "begin" words_iterators
+		words_by_size *-- "end" words_iterators
 
-board *-- "*" word
-board *-- "vertical" lexeme_size
-board *-- "horizontal" lexeme_size
+		positioner *-- "*" words_by_size
+		positioner *-- crosswords.entities.words
 
-game *-- "player" user_id
-game *-- "*" dictionary_id
-game *-- board
+		class position_word {
+		- position_word(all : crosswords.entities.words_iterator[], 
+			to_position : crosswords.entities.words_iterator) : bool
+		- is_valid(all : words_iterators, to_position : words_iterators_iterator) : bool
+		}
 
+		class positioner {
+		+ add(word)
+   		+ operator()(crosswords.entities.coord_x
+			, crosswords.entities.coord_y) : crosswords.entities.words
+		}
 
-}
-}
-
-namespace crosswords {
-namespace business {
-positioner000 --> crosswords.entities.board
-}
-}
-
-namespace crosswords {
-namespace persistence {
-db --> crosswords.entities.user
-db --> crosswords.entities.dictionary
-db --> crosswords.entities.game
-}
-}
+		words_by_size ..> position_word : <<local>>
+		class words_by_size {
+		+ position(words_iterators): bool
+		}
+		words_by_size *-- "attempts" crosswords.entities.words_iterator
 
 
-namespace crosswords {
-namespace application {
-app --> crosswords.entities.board
-app --> crosswords.business.positioner000
-app --> crosswords.persistence.db
-}
+	}
 }
 @enduml
