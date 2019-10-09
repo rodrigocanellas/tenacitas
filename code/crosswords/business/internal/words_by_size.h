@@ -6,11 +6,12 @@
 #include <string>
 
 #include <crosswords/business/internal/log.h>
+#include <crosswords/business/internal/positions_occupied.h>
+#include <crosswords/business/internal/position_word.h>
 #include <crosswords/entities/coordinate.h>
-#include <crosswords/entities/description.h>
-#include <crosswords/entities/lexeme.h>
 #include <crosswords/entities/word.h>
 #include <crosswords/entities/words.h>
+
 
 namespace tenacitas {
 namespace crosswords {
@@ -33,14 +34,22 @@ namespace business {
 template<typename t_log>
 struct words_by_size_t
 {
-    typedef entities::words::iterator words_iterator;
-    typedef entities::words::const_iterator word_const_iterator;
+    typedef t_log log;
+
+    typedef entities::words words;
+    typedef entities::word word;
     typedef entities::lexeme::size_type size;
+    typedef entities::coordinate::x x;
+    typedef entities::coordinate::y y;
+
+    typedef positions_occupied_t<log> positions_occupied;
+    typedef position_word_t<log> position_word;
 
     words_by_size_t() = delete;
 
     explicit words_by_size_t(size p_size)
-      : m_size(p_size)
+        : m_size(p_size)
+        , m_limits_defined(false)
     {}
 
     words_by_size_t(const words_by_size_t&) = default;
@@ -52,8 +61,24 @@ struct words_by_size_t
 
     inline size get_size() const { return m_size; }
 
-    bool position(words_iterator /*p_all_begin*/, words_iterator /*p_all_end*/)
-    {}
+    bool position(words & p_words,
+                  x p_x_limit,
+                  y p_y_limit,
+                  positions_occupied& p_positions_occupied)
+    {
+        if (!m_limits_defined) {
+            define_limits(p_words);
+        }
+        position_word _position_word;
+        for (words::iterator _ite = m_begin; _ite != m_end; ++_ite) {
+            if (!_position_word(p_words, _ite, p_x_limit, p_y_limit,
+                                p_positions_occupied)) {
+                // for now, we give up
+                return false;
+            }
+        }
+        return true;
+    }
 
     bool operator==(const words_by_size_t& p_words_by_size) const
     {
@@ -74,11 +99,34 @@ struct words_by_size_t
     {
         return m_size > p_words_by_size.m_size;
     }
+private:
+    void define_limits(words & p_words) {
+        words::iterator _end = p_words.end();
+        m_begin = _end;
+        m_end = _end;
+        m_limits_defined= true;
+        for (words::iterator _ite1 = p_words.begin();
+             _ite1 != _end;
+             ++_ite1) {
+            if (_ite1->get_size() == m_size) {
+                m_begin = _ite1;
+                for (m_end = m_begin; m_end != _end; ++m_end) {
+                    if (m_end->get_size() < m_size) {
+                        break;
+                    }
+                }
+                break;
+            }
+        }
 
-  private:
-    words_iterator m_begin;
-    words_iterator m_end;
+    }
+private:
     size m_size;
+    bool m_limits_defined;
+    words::iterator m_begin;
+    words::iterator m_end;
+
+
 };
 
 } // namespace business

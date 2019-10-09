@@ -361,9 +361,11 @@ struct positioner000_t
             position_first(p_ptr_word_to_position);
             return true;
         }
-        words_pointers::const_iterator _positioned_ite = m_positioned.end();
+        words_pointers::const_iterator _positioned_ite =
+                m_positioned.end();
         --_positioned_ite;
-        words_pointers::const_iterator _positioned_begin = m_positioned.begin();
+        words_pointers::const_iterator _positioned_begin =
+                m_positioned.begin();
         while (true) {
             if (_positioned_ite == _positioned_begin) {
                 bool _positioned =

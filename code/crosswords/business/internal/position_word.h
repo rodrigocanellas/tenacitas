@@ -34,6 +34,7 @@ struct position_word_t
     typedef t_log log;
 
     typedef entities::words words;
+    typedef entities::word word;
     typedef entities::lexeme lexeme;
     typedef entities::coordinate::x x;
     typedef entities::coordinate::y y;
@@ -47,57 +48,81 @@ struct position_word_t
                     y p_y_limit,
                     positions_occupied& p_positions_occupied)
     {
-        if (p_words.empty()) {
-            position_first(
-              p_to_position, p_x_limit, p_y_limit, p_positions_occupied);
+        if (no_word_positioned(p_words)) {
+            position_first(p_to_position,
+                           p_x_limit,
+                           p_y_limit,
+                           p_positions_occupied);
+            return true;
         }
-        words::const_iterator _ite = p_to_position;
-        words::const_iterator _begin = p_words.begin();
-        --_ite;
-        std::pair<bool, lexeme::size_type> _res = { false, -1 };
+        words::iterator _positioned = p_to_position;
+        --_positioned;
+        words::const_iterator _positioned_begin =
+                p_words.begin();
         while (true) {
-            if (_ite == _begin) {
-                _res = position(_ite,
-                                p_to_position,
-                                p_x_limit,
-                                p_y_limit,
-                                p_positions_occupied);
-                break;
-            }
+            if (_positioned == _positioned_begin) {
+                bool _is_positioned =
+                        position(p_words,
+                                 p_to_position,
+                                 _positioned,
+                                 p_positions_occupied,
+                                 p_x_limit,
+                                 p_y_limit);
 
-            _res = position(
-              _ite, p_to_position, p_x_limit, p_y_limit, p_positions_occupied);
-            if (_res.first) {
-                break;
-            }
 
-            --_ite;
-        }
-        if (_res.first) {
-            if (!validate_position(p_words,
-                                   p_to_position,
-                                   _res.second,
-                                   p_positions_occupied,
-                                   p_x_limit,
-                                   p_y_limit)) {
-                p_to_position->unposition();
+                if (_is_positioned) {
+
+                    p_positions_occupied.add(*p_to_position);
+                    break;
+                }
+
                 return false;
             }
+
+            bool _is_positioned =
+                    position(p_words, p_to_position,
+                             _positioned,
+                             p_positions_occupied,
+                             p_x_limit,
+                             p_y_limit);
+
+            if (_is_positioned) {
+                p_positions_occupied.add(*p_to_position);
+
+                break;
+            }
+
+            --_positioned;
         }
-        p_positions_occupied.add(p_to_position);
         return true;
     }
 
-  private:
-    std::pair<bool, lexeme::size_type> position(
-      words::const_iterator p_positioned,
-      words::iterator p_to_position)
+private:
+
+    bool no_word_positioned(const words & p_words)const {
+        for (const word& _word : p_words) {
+            if (_word.positioned()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool
+    position(const words & p_words,
+             words::iterator p_to_position,
+             words::const_iterator p_positioned,
+             positions_occupied& p_positions_occupied,
+             x p_x_limit,
+             y p_y_limit)
     {
         crosswords_log_debug(log,
                              "trying to position ",
                              p_to_position->get_lexeme(),
                              " against ",
                              *p_positioned);
+
+        validate_position _validate_position;
 
         const lexeme& _positioned = p_positioned->get_lexeme();
         lexeme::size_type _positioned_size = _positioned.size();
@@ -112,7 +137,7 @@ struct position_word_t
                  _i_to_position < _to_position_size;
                  ++_i_to_position) {
                 if (_to_position[_i_to_position] ==
-                    _positioned[_i_positioned]) {
+                        _positioned[_i_positioned]) {
                     crosswords_log_debug(log,
                                          "intesect at ",
                                          _i_positioned,
@@ -123,36 +148,45 @@ struct position_word_t
                                          " in ",
                                          _to_position);
                     if (p_positioned->get_direction() ==
-                        word::direction::vertical) {
+                            word::direction::vertical) {
 
                         p_to_position->position(
-                          p_positioned->get_coordinates()[_i_positioned]
-                              .get_x() -
-                            x(_i_to_position),
-                          p_positioned->get_coordinates()[_i_positioned]
-                            .get_y(),
+                                    p_positioned->get_coordinates()[_i_positioned]
+                                    .get_x() -
+                                    x(_i_to_position),
+                                    p_positioned->get_coordinates()[_i_positioned]
+                                    .get_y(),
 
-                          word::direction::horizontal,
-                          word::orientation::forward);
+                                    word::direction::horizontal,
+                                    word::orientation::forward);
                     } else {
                         p_to_position->position(
-                          p_positioned->get_coordinates()[_i_positioned]
-                            .get_x(),
-                          p_positioned->get_coordinates()[_i_positioned]
-                              .get_y() -
-                            y(_i_to_position),
+                                    p_positioned->get_coordinates()[_i_positioned]
+                                    .get_x(),
+                                    p_positioned->get_coordinates()[_i_positioned]
+                                    .get_y() -
+                                    y(_i_to_position),
 
-                          word::direction::vertical,
-                          word::orientation::forward);
+                                    word::direction::vertical,
+                                    word::orientation::forward);
                     }
                     crosswords_log_debug(
-                      log, "it seems ", *p_to_position, " was positioned");
-
-                    return { true, _i_to_position };
+                                log, "it seems ", *p_to_position, " was positioned");
+                    if (_validate_position(p_words,
+                                          p_to_position,
+                                          _i_to_position,
+                                          p_positions_occupied,
+                                          p_x_limit,
+                                          p_y_limit)) {
+                        return true;
+                    }
+                    crosswords_log_debug(log, "invalid position");
+                    p_to_position->unposition();
                 }
             }
         }
-        return { false, -1 };
+        return false;
+
     }
 
     void position_first(words::iterator p_to_position,
@@ -174,7 +208,7 @@ struct position_word_t
         }
 
         //        m_positioned.push_back(p_ptr_word_to_position);
-        p_positions_occupied.add(p_to_position);
+        p_positions_occupied.add(*p_to_position);
     }
 };
 

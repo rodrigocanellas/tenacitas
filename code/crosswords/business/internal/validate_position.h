@@ -36,7 +36,9 @@ struct validate_position_t
 
     typedef entities::lexeme lexeme;
     typedef entities::words words;
+    typedef entities::word word;
     typedef entities::coordinates coordinates;
+    typedef entities::coordinate coordinate;
     typedef entities::coordinate::x x;
     typedef entities::coordinate::y y;
 
@@ -51,8 +53,8 @@ struct validate_position_t
                     y p_y_limit) const
     {
 
-        if (!check_boundaries_over_under_flow(
-              p_to_position, p_x_limit, p_y_limit)) {
+        if (!check_boundaries(
+                    p_to_position, p_x_limit, p_y_limit)) {
             return false;
         }
 
@@ -69,56 +71,59 @@ struct validate_position_t
             return false;
         }
 
-        if (!valid_extremes(p_to_position, _intersections)) {
+        if (!valid_extremes(p_to_position,                            p_positions_occupied,p_x_limit, p_y_limit, _intersections)) {
             return false;
         }
 
-        if (!above_and_below_are_free(p_to_position, _intersections)) {
+        if (!above_and_below_are_free(p_to_position,
+                                      p_positions_occupied,
+                                      p_y_limit,
+                                      _intersections)) {
             return false;
         }
 
-        return (left_and_right_are_free(p_to_position, _intersections));
+        return (left_and_right_are_free(p_to_position,  p_positions_occupied,p_x_limit, _intersections));
     }
 
-  private:
-    bool check_boundaries_over_under_flow(words::const_iterator p_to_position,
-                                          x p_x_limit,
-                                          y p_y_limit) const
+private:
+    bool check_boundaries(words::const_iterator p_to_position,
+                          x p_x_limit,
+                          y p_y_limit) const
     {
         // check boundaries overflow and underflow
         if (p_to_position->get_x0() < x(0)) {
             crosswords_log_debug(
-              log, "underflow in x position for ", *p_to_position);
+                        log, "underflow in x position for ", *p_to_position);
             return false;
         }
 
         if (p_to_position->get_y0() < y(0)) {
             crosswords_log_debug(
-              log, "underflow in y position for ", *p_to_position);
+                        log, "underflow in y position for ", *p_to_position);
             return false;
         }
 
         if ((p_to_position->get_direction() == word::direction::horizontal) &&
-            (p_to_position->get_xn() >= p_x_limit)) {
+                (p_to_position->get_xn() >= p_x_limit)) {
             crosswords_log_debug(
-              log, "overflow in x position for ", *p_to_position);
+                        log, "overflow in x position for ", *p_to_position);
             return false;
         }
 
         if ((p_to_position->get_direction() == word::direction::vertical) &&
-            (p_to_position->get_yn() >= p_y_limit)) {
+                (p_to_position->get_yn() >= p_y_limit)) {
             crosswords_log_debug(
-              log, "overflow in y position for ", *p_to_position);
+                        log, "overflow in y position for ", *p_to_position);
             return false;
         }
         return true;
     }
 
     bool valid_extremes_horizontal(
-      words::const_iterator p_word,
-      positions_occupied& p_positions_occupied,
-      x p_x_limit,
-      const intersections& /*p_intersections*/) const
+            words::const_iterator p_word,
+            const positions_occupied& p_positions_occupied,
+            x p_x_limit,
+            const intersections& /*p_intersections*/) const
     {
 
         std::pair<bool, char> _occupied({ false, ' ' });
@@ -237,7 +242,7 @@ struct validate_position_t
     }
 
     bool valid_extremes_vertical(words::const_iterator p_word,
-                                 positions_occupied& p_positions_occupied,
+                                 const positions_occupied& p_positions_occupied,
                                  y p_y_limit,
                                  const intersections& /*p_intersections*/) const
     {
@@ -377,14 +382,14 @@ struct validate_position_t
     {
         // horizontal
         if ((p_word->get_direction() == word::direction::horizontal) &&
-            (!valid_extremes_horizontal(
-              p_word, p_positions_occupied, p_x_limit, p_intersections))) {
+                (!valid_extremes_horizontal(
+                     p_word, p_positions_occupied, p_x_limit, p_intersections))) {
             return false;
         }
 
         if ((p_word->get_direction() == word::direction::vertical) &&
-            (!valid_extremes_vertical(
-              p_word, p_positions_occupied, p_y_limit, p_intersections))) {
+                (!valid_extremes_vertical(
+                     p_word, p_positions_occupied, p_y_limit, p_intersections))) {
             return false;
         }
 
@@ -413,7 +418,7 @@ struct validate_position_t
 
             if (p_word->get_x0() != x(0)) {
                 _occupied = p_positions_occupied.find(
-                  _coords[_i].get_x() - x(1), _coords[_i].get_y());
+                            _coords[_i].get_x() - x(1), _coords[_i].get_y());
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
@@ -428,7 +433,7 @@ struct validate_position_t
 
             if (p_word->get_x0() != (p_x_limit - x(1))) {
                 _occupied = p_positions_occupied.find(
-                  _coords[_i].get_x() + x(1), _coords[_i].get_y());
+                            _coords[_i].get_x() + x(1), _coords[_i].get_y());
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
@@ -445,7 +450,7 @@ struct validate_position_t
     }
 
     bool above_and_below_are_free(words::const_iterator p_word,
-                                  positions_occupied& p_positions_occupied,
+                                  const positions_occupied& p_positions_occupied,
                                   y p_y_limit,
                                   const intersections& p_intersections) const
     {
@@ -466,7 +471,7 @@ struct validate_position_t
 
             if (p_word->get_y0() != y(0)) {
                 _occupied = p_positions_occupied.find(
-                  _coords[_i].get_x(), _coords[_i].get_y() - y(1));
+                            _coords[_i].get_x(), _coords[_i].get_y() - y(1));
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
@@ -481,7 +486,7 @@ struct validate_position_t
 
             if (p_word->get_y0() != (p_y_limit - y(1))) {
                 _occupied = p_positions_occupied.find(
-                  _coords[_i].get_x(), _coords[_i].get_y() + y(1));
+                            _coords[_i].get_x(), _coords[_i].get_y() + y(1));
                 if (_occupied.first) {
                     crosswords_log_debug(log,
                                          "(",
@@ -501,7 +506,7 @@ struct validate_position_t
                        words::const_iterator p_to_position,
                        lexeme::size_type p_intersection_idx,
                        const positions_occupied& p_positions_occupied,
-                       intersections& p_intersections)
+                       intersections& p_intersections) const
     {
 
         std::pair<bool, char> _occupied({ false, ' ' });
@@ -526,7 +531,7 @@ struct validate_position_t
                     return false;
                 }
                 words::const_iterator _intersected =
-                  find(p_words.begin(), p_to_position, _coordinates[_i]);
+                        find(p_words.begin(), p_to_position, _coordinates[_i]);
 
                 if (_intersected == p_words.end()) {
                     throw std::runtime_error("ERROR at line " +
@@ -534,19 +539,20 @@ struct validate_position_t
                 }
 
                 if (_intersected->get_direction() ==
-                    p_to_position->get_direction()) {
+                        p_to_position->get_direction()) {
                     crosswords_log_debug(
-                      log,
-                      *p_to_position,
-                      " and ",
-                      *_intersected,
-                      " intersect, but have the same direction");
+                                log,
+                                *p_to_position,
+                                " and ",
+                                *_intersected,
+                                " intersect, but have the same direction");
                     return false;
                 }
 
                 p_intersections.emplace(_i);
             }
         }
+        return true;
     }
 
     words::const_iterator find(words::const_iterator p_first_positioned,
