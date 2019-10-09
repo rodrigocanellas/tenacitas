@@ -110,7 +110,7 @@ struct positioner000_t
     words operator()()
     {
         log_words();
-        sort_words_by_size();
+        // sort_words_by_size();
         //        std::this_thread::sleep_for(std::chrono::milliseconds(2500));
         create_first_words_configuration();
         log_current_words_configuration();
@@ -337,7 +337,20 @@ struct positioner000_t
 
         _words_pointers.remove(*p_ite);
 
-        _words_pointers.push_back(*p_ite);
+        lexeme::size_type _size = (*p_ite)->get_size();
+
+        words_pointers::iterator _ite = _words_pointers.begin();
+        while (_ite != _words_pointers.end()) {
+            if ((*_ite)->get_size() < _size) {
+                --_ite;
+                _words_pointers.insert(_ite, *p_ite);
+                break;
+            }
+
+            ++_ite;
+        }
+
+        //        _words_pointers.push_back(*p_ite);
 
         m_words_configurations.push_back(std::move(_words_pointers));
     }
@@ -954,8 +967,6 @@ struct positioner000_t
         }
 
         return (left_and_right_are_free(p_to_position, _intersections));
-
-        return true;
     }
 
     words_pointers::const_iterator find(const coordinate& p_coord) const

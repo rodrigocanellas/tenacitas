@@ -48,9 +48,10 @@ struct positions_occupied_t
         return { true, _ite->second };
     }
 
-    std::pair<bool, char> find(const coordinate::x& p_x, const coordinate::y &p_y) const
+    std::pair<bool, char> find(const coordinate::x& p_x,
+                               const coordinate::y& p_y) const
     {
-        map::const_iterator _ite = m_map.find(coordinate(p_x, p_y);
+        map::const_iterator _ite = m_map.find(coordinate(p_x, p_y));
         if (_ite == m_map.end()) {
             return { false, ' ' };
         }

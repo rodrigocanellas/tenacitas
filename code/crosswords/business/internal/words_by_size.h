@@ -33,15 +33,14 @@ namespace business {
 template<typename t_log>
 struct words_by_size_t
 {
-    typedef entities::words::iterator word_pointer;
-    typedef entities::words::const_iterator word_const_pointer;
+    typedef entities::words::iterator words_iterator;
+    typedef entities::words::const_iterator word_const_iterator;
     typedef entities::lexeme::size_type size;
 
     words_by_size_t() = delete;
 
     explicit words_by_size_t(size p_size)
       : m_size(p_size)
-      , m_words_references()
     {}
 
     words_by_size_t(const words_by_size_t&) = default;
@@ -51,33 +50,10 @@ struct words_by_size_t
 
     ~words_by_size_t() = default;
 
-    inline void traverse(
-      std::function<void(word_pointer p_word_pointer)> p_function)
-    {
-        for (word_pointer _word_pointer : m_words_references) {
-            p_function(_word_pointer);
-        }
-    }
-
-    inline void traverse(
-      std::function<void(word_const_pointer p_word_pointer)> p_function) const
-    {
-        for (word_const_pointer _word_pointer : m_words_references) {
-            p_function(_word_pointer);
-        }
-    }
-
-    void add(word_pointer p_word_pointer)
-    {
-        if (p_word_pointer->get_size() != m_size) {
-            throw std::runtime_error(
-              std::to_string(p_word_pointer->get_size()) + " is not " +
-              std::to_string(m_size));
-        }
-        m_words_references.push_back(p_word_pointer);
-    }
-
     inline size get_size() const { return m_size; }
+
+    bool position(words_iterator /*p_all_begin*/, words_iterator /*p_all_end*/)
+    {}
 
     bool operator==(const words_by_size_t& p_words_by_size) const
     {
@@ -100,11 +76,9 @@ struct words_by_size_t
     }
 
   private:
-    typedef std::list<word_pointer> words_references;
-
-  private:
+    words_iterator m_begin;
+    words_iterator m_end;
     size m_size;
-    words_references m_words_references;
 };
 
 } // namespace business
