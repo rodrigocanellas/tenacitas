@@ -1,7 +1,7 @@
 #ifndef TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
 #define TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
 
-#include <list>
+#include <vector>
 
 #include <crosswords/entities/word.h>
 
@@ -9,7 +9,7 @@ namespace tenacitas {
 namespace crosswords {
 namespace entities {
 
-typedef std::list<word> words;
+typedef std::vector<word> words;
 
 
 //struct positions {

@@ -138,16 +138,16 @@ private:
     }
     void sort_words() {
         crosswords_log_debug(log, "ordering words by lexeme size, descending");
-        //        std::sort(m_words.begin(),
-        //                  m_words.end(),
-        //                  [](const word& p_pos1, const word& p_pos2) -> bool {
-        //            return p_pos1.get_lexeme().size() >
-        //                    p_pos2.get_lexeme().size();
-        //        });
-        m_words.sort([](const word& p_pos1, const word& p_pos2) -> bool {
-            return p_pos1.get_lexeme().size() >
-                    p_pos2.get_lexeme().size();
-        });
+                std::sort(m_words.begin(),
+                          m_words.end(),
+                          [](const word& p_pos1, const word& p_pos2) -> bool {
+                    return p_pos1.get_lexeme().size() >
+                            p_pos2.get_lexeme().size();
+                });
+//        m_words.sort([](const word& p_pos1, const word& p_pos2) -> bool {
+//            return p_pos1.get_lexeme().size() >
+//                    p_pos2.get_lexeme().size();
+//        });
     }
 
 private:
