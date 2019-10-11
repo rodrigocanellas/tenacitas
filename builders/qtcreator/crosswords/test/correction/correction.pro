@@ -10,6 +10,7 @@ SUBDIRS =  \
 #    positioning_008 \
 #    positioning_009 \
     positioning_010 \
+    positioning_011
 #    matrix_000
 
 

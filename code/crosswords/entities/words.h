@@ -1,7 +1,7 @@
 #ifndef TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
 #define TENACITAS_CROSSWORDS_ENTITIES_WORDS_H
 
-#include <vector>
+#include <list>
 
 #include <crosswords/entities/word.h>
 
@@ -9,16 +9,14 @@ namespace tenacitas {
 namespace crosswords {
 namespace entities {
 
-typedef std::vector<word> words;
+typedef std::list<word> words;
 
-
-//struct positions {
+// struct positions {
 
 //    typedef std::list<position> list;
 //    typedef list::iterator iterator;
 //    typedef list::const_iterator const_iterator;
 //    typedef list::size_type size;
-
 
 //    void add(const std::string & p_word
 //             , const std::string & p_description) {
@@ -36,13 +34,12 @@ typedef std::vector<word> words;
 
 //    inline size get_size() const {return m_list.size();}
 
-//private:
+// private:
 //    std::list<position>  m_list;
 //};
 
 } // namespace entities
 } // namespace crosswords
 } // namespace tenacitas
-
 
 #endif // POSITIONS_H

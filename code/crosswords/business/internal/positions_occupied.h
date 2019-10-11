@@ -58,6 +58,8 @@ struct positions_occupied_t
         return { true, _ite->second };
     }
 
+    void clear() { m_map.clear(); }
+
   private:
     typedef std::map<coordinate, char> map;
 

@@ -24,7 +24,8 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/words_by_size.h \
     ../../../../../code/crosswords/business/internal/words_references.h \
     ../../../../../code/crosswords/business/positioner000.h \
-    ../../../../../code/crosswords/business/positioner001.h
+    ../../../../../code/crosswords/business/positioner001.h \
+    ../../../../../code/crosswords/business/positioner002.h
 
 LIBS += -ltenacitas.crosswords.entities
 

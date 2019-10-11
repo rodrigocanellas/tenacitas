@@ -13,37 +13,34 @@ using namespace tenacitas::crosswords::entities;
 using namespace tenacitas::crosswords::business;
 using namespace tenacitas::logger::business;
 
-struct positioning_010
+struct positioning_011
 {
     bool operator()()
     {
         typedef positioner002_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(coordinate::x(13), coordinate::y(13));
+        positioner _positioner(coordinate::x(9), coordinate::y(11));
 
-        _positioner.add("interesse", "teste");
-        _positioner.add("estibordo", "teste");
-        _positioner.add("borboleta", "teste");
-        _positioner.add("discoteca", "teste");
+        _positioner.add("graduação", "teste");
+        _positioner.add("existir", "teste");
+        _positioner.add("unida", "teste");
+        _positioner.add("ocidental", "teste");
 
-        _positioner.add("habitat", "teste");
-        _positioner.add("horario", "teste");
-        _positioner.add("molusco", "teste");
-        _positioner.add("tubarao", "teste");
-
-        _positioner.add("lebre", "teste");
-
-        _positioner.add("tutor", "teste");
-
-        _positioner.add("pos", "teste");
-        _positioner.add("ima", "teste");
+        _positioner.add("oco", "teste");
         _positioner.add("psd", "teste");
-        _positioner.add("iab", "teste");
-        _positioner.add("set", "teste");
+        _positioner.add("ansioso", "teste");
 
-        // 408966 tentativas
-        // interesse estibordo discoteca borboleta tubarao horario habitat tutor
-        // lebre molusco set pos psd ima iab
+        _positioner.add("gorduroso", "teste");
+        _positioner.add("aperitivo", "teste");
+        _positioner.add("umidade", "teste");
+        _positioner.add("pos", "teste");
+
+        _positioner.add("til", "teste");
+
+        _positioner.add("tedio", "teste");
+
+        _positioner.add("ali", "teste");
+        _positioner.add("revelação", "teste");
 
         words _words(_positioner());
 
@@ -65,7 +62,7 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(positioning_010,
+    run_test(positioning_011,
              argc,
              argv,
              "positioning a bunch of words using 'positioner_002'");

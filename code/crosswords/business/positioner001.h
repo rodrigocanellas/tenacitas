@@ -3,14 +3,14 @@
 
 #include <algorithm>
 #include <iostream>
-#include <string>
 #include <list>
 #include <set>
 #include <sstream>
+#include <string>
 
 #include <crosswords/business/internal/log.h>
-#include <crosswords/business/internal/words_by_size.h>
 #include <crosswords/business/internal/positions_occupied.h>
+#include <crosswords/business/internal/words_by_size.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
@@ -51,31 +51,31 @@ struct positioner001_t
     typedef std::list<words_by_size> words_by_size_list;
     typedef positions_occupied_t<log> positions_occupied;
 
-    positioner001_t(x p_x_limit = x(13), y p_y_limit = y(13))
-        :m_x_limit(p_x_limit)
-        , m_y_limit(p_y_limit) {}
+    explicit positioner001_t(x p_x_limit = x(13), y p_y_limit = y(13))
+      : m_x_limit(p_x_limit)
+      , m_y_limit(p_y_limit)
+    {}
 
-    void add(lexeme && p_lexeme, description && p_description) {
+    void add(lexeme&& p_lexeme, description&& p_description)
+    {
         lexeme::size_type _word_size = p_lexeme.size();
         if (m_y_limit < y(_word_size)) {
             std::stringstream _stream;
-            _stream << p_lexeme <<
-                       "'s size is " <<
-                       _word_size <<
-                       ", which is bigger than the vertical limit of " <<
-                       m_y_limit;
+            _stream << p_lexeme << "'s size is " << _word_size
+                    << ", which is bigger than the vertical limit of "
+                    << m_y_limit;
             std::string _msg = _stream.str();
 
-            crosswords_log_error(log,_stream.str());
+            crosswords_log_error(log, _stream.str());
             throw std::runtime_error(_msg);
         }
         if (m_x_limit < x(_word_size)) {
-            std::string _msg (p_lexeme + "'s size is " +
-                              std::to_string(_word_size) +
-                              ", which is bigger than the horizontal "
-                              "limit of " +
-                              std::to_string(m_x_limit.get_value<int16_t>()));
-            crosswords_log_error(log,_msg);
+            std::string _msg(p_lexeme + "'s size is " +
+                             std::to_string(_word_size) +
+                             ", which is bigger than the horizontal "
+                             "limit of " +
+                             std::to_string(m_x_limit.get_value<int16_t>()));
+            crosswords_log_error(log, _msg);
             throw std::runtime_error(_msg);
         }
         crosswords_log_debug(log,
@@ -85,16 +85,15 @@ struct positioner001_t
                              p_description,
                              "' was added");
         m_words.push_back(word(
-                              static_cast<word::id>(m_words.size() + 1),
-                              p_lexeme, p_description));
-
+          static_cast<word::id>(m_words.size() + 1), p_lexeme, p_description));
     }
 
-    words operator()() {
+    words operator()()
+    {
         sort_words();
         group_words();
         typedef typename words_by_size_list::iterator iterator;
-        iterator _end =  m_words_by_size_list.end();
+        iterator _end = m_words_by_size_list.end();
         iterator _begin = m_words_by_size_list.begin();
         iterator _ite = _begin;
         while (true) {
@@ -102,61 +101,60 @@ struct positioner001_t
                 return m_words;
             }
 
-            bool _positioned = _ite->position(m_words, m_x_limit,
-                                              m_y_limit,
-                                              m_positions_occupied);
+            bool _positioned = _ite->position(
+              m_words, m_x_limit, m_y_limit, m_positions_occupied);
             if (!_positioned) {
                 if (_ite == _begin) {
                     crosswords_log_error(log, "fail to position");
                     return m_words;
                 }
-                crosswords_log_warn(log, "could not position words of"
-                                         "size ", _ite->get_size());
+                crosswords_log_warn(log,
+                                    "could not position words of"
+                                    "size ",
+                                    _ite->get_size());
                 --_ite;
-            }
-            else {
+            } else {
                 ++_ite;
             }
-
         }
     }
 
-private:
-    void group_words() {
+  private:
+    void group_words()
+    {
         lexeme::size_type _size = 0;
-        for(const word & _word:m_words) {
+        for (const word& _word : m_words) {
             lexeme::size_type _word_size = _word.get_size();
             if (_word_size != _size) {
                 _size = _word_size;
                 m_words_by_size_list.push_back(words_by_size(_size));
             }
         }
-        m_words_by_size_list.sort([](const words_by_size & p_wbs1,
-                                  const words_by_size & p_wbs2) -> bool {
-          return p_wbs1.get_size() > p_wbs2.get_size();
+        m_words_by_size_list.sort(
+          [](const words_by_size& p_wbs1, const words_by_size& p_wbs2) -> bool {
+              return p_wbs1.get_size() > p_wbs2.get_size();
+          });
+    }
+    void sort_words()
+    {
+        crosswords_log_debug(log, "ordering words by lexeme size, descending");
+        //        std::sort(m_words.begin(),
+        //                  m_words.end(),
+        //                  [](const word& p_pos1, const word& p_pos2) -> bool {
+        //                      return p_pos1.get_lexeme().size() >
+        //                             p_pos2.get_lexeme().size();
+        //                  });
+        m_words.sort([](const word& p_pos1, const word& p_pos2) -> bool {
+            return p_pos1.get_lexeme().size() > p_pos2.get_lexeme().size();
         });
     }
-    void sort_words() {
-        crosswords_log_debug(log, "ordering words by lexeme size, descending");
-                std::sort(m_words.begin(),
-                          m_words.end(),
-                          [](const word& p_pos1, const word& p_pos2) -> bool {
-                    return p_pos1.get_lexeme().size() >
-                            p_pos2.get_lexeme().size();
-                });
-//        m_words.sort([](const word& p_pos1, const word& p_pos2) -> bool {
-//            return p_pos1.get_lexeme().size() >
-//                    p_pos2.get_lexeme().size();
-//        });
-    }
 
-private:
+  private:
     x m_x_limit;
     y m_y_limit;
     words m_words;
     words_by_size_list m_words_by_size_list;
     positions_occupied m_positions_occupied;
-
 };
 
 } // namespace business
