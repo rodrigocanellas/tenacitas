@@ -2,6 +2,7 @@
 #define TENACITAS_CROSSWORDS_BUSINESS_POSITIONER_001_H
 
 #include <algorithm>
+#include <ctime>
 #include <iostream>
 #include <list>
 #include <set>
@@ -59,24 +60,27 @@ struct positioner001_t
     void add(lexeme&& p_lexeme, description&& p_description)
     {
         lexeme::size_type _word_size = p_lexeme.size();
-        if (m_y_limit < y(_word_size)) {
-            std::stringstream _stream;
-            _stream << p_lexeme << "'s size is " << _word_size
-                    << ", which is bigger than the vertical limit of "
-                    << m_y_limit;
-            std::string _msg = _stream.str();
+        if ((m_y_limit < y(_word_size)) && (m_x_limit < x(_word_size))) {
 
-            crosswords_log_error(log, _stream.str());
-            throw std::runtime_error(_msg);
-        }
-        if (m_x_limit < x(_word_size)) {
-            std::string _msg(p_lexeme + "'s size is " +
-                             std::to_string(_word_size) +
-                             ", which is bigger than the horizontal "
-                             "limit of " +
-                             std::to_string(m_x_limit.get_value<int16_t>()));
-            crosswords_log_error(log, _msg);
-            throw std::runtime_error(_msg);
+            if (m_y_limit < y(_word_size)) {
+                std::stringstream _stream;
+                _stream << p_lexeme << "'s size is " << _word_size
+                        << ", which is bigger than the vertical limit of "
+                        << m_y_limit;
+                std::string _msg = _stream.str();
+
+                crosswords_log_error(log, _stream.str());
+                throw std::runtime_error(_msg);
+            }
+            if (m_x_limit < x(_word_size)) {
+                std::string _msg(
+                  p_lexeme + "'s size is " + std::to_string(_word_size) +
+                  ", which is bigger than the horizontal "
+                  "limit of " +
+                  std::to_string(m_x_limit.get_value<int16_t>()));
+                crosswords_log_error(log, _msg);
+                throw std::runtime_error(_msg);
+            }
         }
         crosswords_log_debug(log,
                              "'",
@@ -90,13 +94,17 @@ struct positioner001_t
 
     words operator()()
     {
-        sort_words();
+        std::sort(m_words.begin(), m_words.end(), entities::cmp_words());
         group_words();
         typedef typename words_by_size_list::iterator iterator;
         iterator _end = m_words_by_size_list.end();
         iterator _begin = m_words_by_size_list.begin();
         iterator _ite = _begin;
+        uint32_t _counter = 0;
+        crosswords_log_info(log, "STARTING ", std::time(nullptr));
+
         while (true) {
+            crosswords_log_debug(log, "===========> ", _counter++);
             if (_ite == _end) {
                 return m_words;
             }
@@ -116,7 +124,12 @@ struct positioner001_t
             } else {
                 ++_ite;
             }
+            //            std::cerr << "type to continue...";
+            //            char _go;
+            //            std::cin >> _go;
         }
+        crosswords_log_info(log, "FINISHING ", std::time(nullptr));
+        return m_words;
     }
 
   private:
@@ -134,19 +147,6 @@ struct positioner001_t
           [](const words_by_size& p_wbs1, const words_by_size& p_wbs2) -> bool {
               return p_wbs1.get_size() > p_wbs2.get_size();
           });
-    }
-    void sort_words()
-    {
-        crosswords_log_debug(log, "ordering words by lexeme size, descending");
-        //        std::sort(m_words.begin(),
-        //                  m_words.end(),
-        //                  [](const word& p_pos1, const word& p_pos2) -> bool {
-        //                      return p_pos1.get_lexeme().size() >
-        //                             p_pos2.get_lexeme().size();
-        //                  });
-        m_words.sort([](const word& p_pos1, const word& p_pos2) -> bool {
-            return p_pos1.get_lexeme().size() > p_pos2.get_lexeme().size();
-        });
     }
 
   private:

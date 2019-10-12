@@ -420,8 +420,8 @@ struct coordinate
 
     void reset()
     {
-        m_x = x();
-        m_y = y();
+        m_x = x(-1);
+        m_y = y(-1);
     }
 
     bool operator==(const coordinate& p_coord) const
