@@ -1,5 +1,10 @@
 @startuml
 hide methods
+hide attributes
+skinparam monochrome true
+skinparam class {
+	fontSize<< >> 15
+}
 
 namespace crosswords {
 	namespace entities {
@@ -12,10 +17,11 @@ namespace crosswords {
 			answer :   lexeme
 			des :  description
 		}
-		word +-u- word_size
-		word *-r- "*" coordinate
+		word +-u- word_id
+		word *-l- "*" coordinate
 		words *-- "*" word
-		words +-- words_iterator
+		class words_iterator << >>
+		words +-u- words_iterator
 	}
 
 	namespace business {
@@ -26,13 +32,19 @@ namespace crosswords {
 		class positions_occupied {
 			m_map : map<crosswords.entities.coordinate, char> 
 		}
-		word_positioner *-u- positions_occupied
-		words_references *-- "*" crosswords.entities.words_iterator
-		word_positioner .l.> words_references : <<parameter>>
-		word_positioner ..>crosswords.entities.words_iterator : <<parameter>>
-		words_positioner *-d- "current" words_references
-		words_positioner *-- "* failures" words_references 
+		word_positioner *-d- positions_occupied
+
+		word_positioner ..r..> crosswords.entities.words_iterator : <<begin - parameter>>
+		word_positioner ..r..> crosswords.entities.words_iterator : <<end - parameter>>
+		word_positioner ..r..> crosswords.entities.words_iterator : <<to_position - parameter>>
+
+		words_positioner *-d--- "begin" crosswords.entities.words_iterator
+		words_positioner *-d--- "end" crosswords.entities.words_iterator
+		words_positioner *-- "* failures" crosswords.entities.word_id 
+		words_positioner .d.> word_positioner : <<local>>
 
 	}
+	
 }
+
 @enduml
