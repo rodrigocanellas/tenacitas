@@ -1,23 +1,10 @@
 @startuml
-left to right direction
+hide methods
+
 namespace crosswords {
 	namespace entities {
-		enum direction {
-			vertical
-			horizontal
-		}
-
-		enum orientation {
-			forward
-			backward
-		}
-
-		coordinate +-- coord_x
-		coordinate +-- coord_y
-		
-		class lexeme 
-		class description
-
+		coordinate +-u- coord_x
+		coordinate +-u- coord_y
 		class word {
 			dir : direction
 		 	ori : orientation
@@ -25,48 +12,26 @@ namespace crosswords {
 			answer :   lexeme
 			des :  description
 		}
-		word +-- word_size
-		word *-- "*" coordinate
+		word +-u- word_size
+		word *-r- "*" coordinate
 		words *-- "*" word
 		words +-- words_iterator
-		words +-- words_const_iterator
 	}
 
 	namespace business {
-		words_by_size *-- crosswords.entities.word_size
-
-		words_by_size *-- "begin" crosswords.entities.words_iterator
-		words_by_size *-- "end" crosswords.entities.words_iterator
-
-		positioner *-- "*" words_by_size
-		positioner *-- crosswords.entities.words
-
-		class position_word {
-		+position_word(first_positioned : crosswords.entities.words_const_iterator, 
-			end : crosswords.entities.words_const_iterator, 
-			to_position : crosswords.entities.words_iterator) : bool
-		- is_valid(all : words_iterators, to_position : words_iterators_iterator) : bool
+		class words_positioner {
+			+ add(word)
+   			+ operator()(crosswords.entities.coord_x, crosswords.entities.coord_y) : crosswords.entities.words
 		}
-
-		class positioner {
-		+ add(word)
-   		+ operator()(crosswords.entities.coord_x
-			, crosswords.entities.coord_y) : crosswords.entities.words
-		}
-
-		words_by_size ..> position_word : <<local>>
-		class words_by_size {
-		+ position(first_positioned : crosswords.entities.words_const_iterator,
-			end : crosswords.entities.words_iterator,  
-			last_positioned : crosswords.entities.words_iterator) : bool
-		}
-		words_by_size *-- "attempts" crosswords.entities.words_iterator
-		positioner *-- "last_positioned" crosswords.entities.words_iterator
-
 		class positions_occupied {
-		m_map : map<crosswords.entities.coordinate, char> 
+			m_map : map<crosswords.entities.coordinate, char> 
 		}
-		positioner *-- positions_occupied
+		word_positioner *-u- positions_occupied
+		words_references *-- "*" crosswords.entities.words_iterator
+		word_positioner .l.> words_references : <<parameter>>
+		word_positioner ..>crosswords.entities.words_iterator : <<parameter>>
+		words_positioner *-d- "current" words_references
+		words_positioner *-- "* failures" words_references 
 
 	}
 }

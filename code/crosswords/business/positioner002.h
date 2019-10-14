@@ -93,18 +93,16 @@ struct positioner002_t
 
     words operator()()
     {
-        m_words.sort(cmp_words());
+        std::sort(m_words.begin(), m_words.end(), cmp_words());
         position_word _position_word;
         uint32_t _counter = 0;
         crosswords_log_info(log, "STARTING ", std::time(nullptr));
         while (true) {
-            crosswords_log_debug(log, "===========> ", _counter++);
-
             std::stringstream _stream;
             for (const word& _w : m_words) {
                 _stream << _w.get_lexeme() << " ";
             }
-            crosswords_log_debug(log, _stream.str());
+            std::cerr << _counter++ << " - " << _stream.str() << std::endl;
 
             bool _positioned = true;
             words::iterator _end = m_words.end();
@@ -123,14 +121,15 @@ struct positioner002_t
                 break;
             }
 
+            m_positions_occupied.clear();
+            for (word& _w : m_words) {
+                _w.unposition();
+            }
+
             // find next permutation
             if (!std::next_permutation(_begin, _end, cmp_words())) {
                 break;
             }
-            for (word& _w : m_words) {
-                _w.unposition();
-            }
-            m_positions_occupied.clear();
         }
         crosswords_log_info(log, "FINISHING ", std::time(nullptr));
         return m_words;
