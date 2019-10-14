@@ -21,11 +21,13 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/positioning_history.h \
     ../../../../../code/crosswords/business/internal/positions_occupied.h \
     ../../../../../code/crosswords/business/internal/validate_position.h \
+    ../../../../../code/crosswords/business/internal/word_positioner.h \
     ../../../../../code/crosswords/business/internal/words_by_size.h \
     ../../../../../code/crosswords/business/internal/words_references.h \
     ../../../../../code/crosswords/business/positioner000.h \
     ../../../../../code/crosswords/business/positioner001.h \
-    ../../../../../code/crosswords/business/positioner002.h
+    ../../../../../code/crosswords/business/positioner002.h \
+    ../../../../../code/crosswords/business/positioner003.h
 
 LIBS += -ltenacitas.crosswords.entities
 

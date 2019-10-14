@@ -37,15 +37,14 @@ struct word
     friend std::ostream& operator<<(std::ostream& p_out, const word& p_pos)
     {
         p_out << "{"
-              << "\"id\": \"" << p_pos.m_id << "\", "
-              << "\"lexeme\": \"" << p_pos.m_lexeme << "\", "
-              << "\"coord\": \"";
+              << "id " << p_pos.m_id << ", "
+              << "lex " << p_pos.m_lexeme << ", "
+              << "coord ";
         for (lexeme::size_type _i = 0; _i < p_pos.get_size(); ++_i) {
-            p_out << p_pos.m_coords[_i] << "\", ";
+            p_out << p_pos.m_coords[_i] << ", ";
         }
-        p_out << "\"direction\": \"" << p_pos.direction2str() << "\", "
-              << "\"orientation\": \"" << p_pos.orientation2str() << "\""
-              << "}";
+        p_out << "dir " << p_pos.direction2str() << ", "
+              << "ori " << p_pos.orientation2str() << "}";
         return p_out;
     }
 
