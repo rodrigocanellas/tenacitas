@@ -32,6 +32,16 @@ struct words
 
     void add(word&& p_word) { m_list.push_back(std::move(p_word)); }
 
+    iterator insert(word && p_word, iterator p_ite) {
+        return m_list.insert(p_ite, std::move(p_word));
+    }
+
+    void swap(iterator & p_left, iterator & p_right) {
+        word _word_left = *p_left;
+        remove(p_left);
+        p_left = insert(std::move(_word_left), p_right);
+    }
+
     inline iterator begin() { return m_list.begin(); }
     inline iterator end() { return m_list.end(); }
 
@@ -98,6 +108,10 @@ struct words
         for (word& _w : m_list) {
             _w.unposition();
         }
+    }
+
+    void remove(const_iterator p_ite) {
+        m_list.remove(*p_ite);
     }
 
     struct cmp_words

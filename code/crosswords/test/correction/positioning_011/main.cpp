@@ -41,6 +41,7 @@ struct positioning_011
 
         _positioner.add("ali", "teste");
         _positioner.add("revelacao", "teste");
+//        _positioner.add("roda", "teste");
 
         words _words(_positioner());
 

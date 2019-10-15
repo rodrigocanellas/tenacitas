@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CROSSWORDS_BUSINESS_POSITIONER003_H
-#define TENACITAS_CROSSWORDS_BUSINESS_POSITIONER003_H
+#ifndef TENACITAS_CROSSWORDS_BUSINESS_POSITIONER004_H
+#define TENACITAS_CROSSWORDS_BUSINESS_POSITIONER004_H
 
 #include <algorithm>
 #include <ctime>
@@ -21,7 +21,7 @@ namespace tenacitas {
 namespace crosswords {
 namespace business {
 
-/// \brief positioner003_t position \p words
+/// \brief positioner004_t position \p words
 ///
 /// \tparam t_log provides log funcionality:
 /// static void debug(const std::string & p_file, int p_line, const
@@ -36,7 +36,7 @@ namespace business {
 /// t_params&... p_params)
 ///
 template<typename t_log>
-struct positioner003_t
+struct positioner004_t
 {
     typedef t_log log;
 
@@ -49,7 +49,7 @@ struct positioner003_t
 
     typedef word_positioner_t<log> word_positioner;
 
-    explicit positioner003_t(x p_x_limit = x(13), y p_y_limit = y(13))
+    explicit positioner004_t(x p_x_limit = x(13), y p_y_limit = y(13))
         : m_x_limit(p_x_limit)
         , m_y_limit(p_y_limit)
     {}
@@ -91,130 +91,88 @@ struct positioner003_t
     }
 
 
-//    words operator()()
-//    {
-//        m_words.sort();
-//        word_positioner _word_positioner;
-//        uint32_t _counter = 0;
-//        crosswords_log_info(log, "STARTING ", std::time(nullptr));
+    words operator()()
+    {
+        m_words.sort();
+        word_positioner _word_positioner;
+        uint32_t _counter = 0;
+        crosswords_log_info(log, "STARTING ", std::time(nullptr));
 
-//        words::iterator _begin = m_words.begin();
-//        words::iterator _end = m_words.end();
-//        words::iterator _ite = _begin;
+        words::iterator _begin = m_words.begin();
+        words::iterator _end = m_words.end();
+        words::iterator _ite = _begin;
 
-//        bool _no_more_permutations = false;
-//        while (true) {
-//            if (_ite == _end) {
-//                break;
-//            }
+        positioning _positioning = positioning::positioned;
 
-//            if (_no_more_permutations) {
+        while (true) {
+            if (_ite == _end) {
+                break;
+            }
 
-//            }
-
-//            if (already_tried(_begin, _ite)) {
-//                crosswords_log_debug(log, "-----> already tried");
-//                continue;
-//            }
-
-//            while (true) {
-//                if (_counter >  100000) {
-//                    crosswords_log_fatal(log, "counter overflow");
-//                    return m_words;
-//                }
-//                crosswords_log_info(log,
-//                                    "############ ",
-//                                    _counter++,
-//                                    " - ",
-//                                    print_words(_begin, _ite));
-
-//                if (_word_positioner(_begin, _ite, m_x_limit, m_y_limit)) {
-//                    m_words.print_positioned(m_x_limit, m_y_limit);
-//                    crosswords_log_info(log, *_ite, " was positioned");
-//                    break;
-//                }
-//                crosswords_log_debug(log, _ite->get_lexeme(),
-//                                     " was NOT positioned");
-//                add_failure(_begin, _ite);
-
-
-//                if (!std::next_permutation(
-//                            _begin, std::next(_ite), words::cmp_words())) {
-//                    crosswords_log_warn(log, "no more permutations");
-//                    _no_more_permutations = true;
-//                    break;
-//                }
-//                _ite = _begin;
-//            }
-//            if (!_no_more_permutations) {
-//                ++_ite;
-//            }
-//        }
-//        crosswords_log_info(log, "FINISHING ", std::time(nullptr));
-//        return m_words;
-//    }
-
-
-        words operator()()
-        {
-            m_words.sort();
-            word_positioner _word_positioner;
-            uint32_t _counter = 0;
-            crosswords_log_info(log, "STARTING ", std::time(nullptr));
-
-            words::iterator _begin = m_words.begin();
-            words::iterator _end = m_words.end();
-            words::iterator _ite = _begin;
-
-            while (true) {
-                if (_ite == _end) {
-                    break;
-                }
-
-                while (true) {
-                    if (_counter >  100000) {
-                        crosswords_log_fatal(log, "counter overflow");
-                        return m_words;
-                    }
-                    crosswords_log_info(log,
-                                        "############ ",
-                                        _counter++,
-                                        " - ",
-                                        print_words(_begin, _ite));
-                    if (!already_tried(_begin, _ite)) {
-                        if (_word_positioner(_begin, _ite, m_x_limit, m_y_limit)) {
-                            m_words.print_positioned(m_x_limit, m_y_limit);
-                            crosswords_log_debug(log, *_ite, " was positioned");
-                            break;
-                        }
-                        crosswords_log_debug(log, _ite->get_lexeme(), " was not positioned");
-                        add_failure(_begin, _ite);
-
-                    } else {
-                        crosswords_log_debug(log, "-----> already tried");
-                    }
-
-                    if (!std::next_permutation(
-                          _begin, std::next(_ite), words::cmp_words())) {
-                        crosswords_log_warn(log, "no more permutations");
-                        break;
-                    }
-                    _ite = _begin;
-                }
-
+            _positioning = position_set(_begin, _ite);
+            if (_positioning == positioning::positioned) {
                 ++_ite;
             }
-            crosswords_log_info(log, "FINISHING ", std::time(nullptr));
-            return m_words;
+            else {
+
+            }
+
         }
+        crosswords_log_info(log, "FINISHING ", std::time(nullptr));
+        return m_words;
+    }
+
 
 
 private:
     typedef std::list<word::id> words_ids;
     typedef std::list<words_ids> failures;
 
+    enum class positioning : char {
+        positioned = 'p',
+        no_more_partions = 'm'
+    };
+
+    struct update_set{
+        void operator()(words::iterator p_begin, words::iterator &p_end) {
+
+        }
+
+    };
+
 private:
 
+    positioning position_set(words::iterator p_begin,
+                      words::iterator p_ite) {
+        word_positioner _word_positioner;
+
+        bool _no_more_permutations = false;
+
+        while (true) {
+            crosswords_log_info(log,
+                                "############ ",
+                                print_words(p_begin, p_ite));
+
+            if (_word_positioner(p_begin, p_ite, m_x_limit, m_y_limit)) {
+                m_words.print_positioned(m_x_limit, m_y_limit);
+                crosswords_log_info(log, *p_ite, " was positioned");
+                break;
+            }
+            crosswords_log_debug(log, p_ite->get_lexeme(),
+                                 " was NOT positioned");
+
+            if (!std::next_permutation(
+                        p_begin, std::next(p_ite), words::cmp_words())) {
+                crosswords_log_warn(log, "no more permutations");
+                _no_more_permutations=true;
+                break;
+            }
+            p_ite = p_begin;
+        }
+        return (_no_more_permutations ?
+                    positioning::no_more_partitions :
+                    positioning::positioned);
+    }
 
     bool already_tried(words::const_iterator p_begin,
                        words::const_iterator p_end)
@@ -243,6 +201,30 @@ private:
         return false;
     }
 
+    //    bool already_tried(words::const_iterator p_begin,
+    //                       words::const_iterator p_end)
+    //    {
+    //        for (const words_ids& _words_ids : m_failures) {
+    //            if (_words_ids.size() == static_cast<words_ids::size_type>(
+    //                                       std::distance(p_begin, p_end))) {
+    //                words_ids::const_iterator _ids_end = _words_ids.end();
+    //                bool _match = true;
+    //                words::const_iterator _ite = p_begin;
+    //                for (words_ids::const_iterator _ids_ite = _words_ids.begin();
+    //                     _ids_ite != _ids_end;
+    //                     ++_ids_ite) {
+    //                    if (_ite->get_id() != *_ids_ite) {
+    //                        _match = false;
+    //                        break;
+    //                    }
+    //                }
+    //                if (_match) {
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //        return false;
+    //    }
     void add_failure(words::const_iterator p_begin, words::const_iterator p_end)
     {
         words_ids _words_ids;
