@@ -1,7 +1,7 @@
 #include <iostream>
 #include <utility>
 
-#include <crosswords/business/positioner002.h>
+#include <crosswords/business/positioner003.h>
 #include <crosswords/entities/board.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
@@ -17,9 +17,9 @@ struct positioning_011
 {
     bool operator()()
     {
-        typedef positioner002_t<tenacitas::logger::business::log> positioner;
+        typedef positioner003_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(coordinate::x(13), coordinate::y(13));
+        positioner _positioner(coordinate::x(12), coordinate::y(12));
 
         _positioner.add("graduacao", "teste");
         _positioner.add("existir", "teste");
