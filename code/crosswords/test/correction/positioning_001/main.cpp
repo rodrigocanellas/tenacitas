@@ -1,7 +1,7 @@
 #include <iostream>
 #include <utility>
 
-#include <crosswords/business/positioner000.h>
+#include <crosswords/business/positioner004.h>
 #include <crosswords/entities/board.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
@@ -17,20 +17,26 @@ struct positioning_001
 {
     bool operator()()
     {
-        typedef positioner000_t<tenacitas::logger::business::log> positioner;
-        typedef board_t<positioner> board;
+        typedef positioner004_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(9), coordinate::y(12));
-        _positioner.add("abacaxi", "fruta com coroa");
-        _positioner.add("lego", "brinquedo de montar");
+        _positioner.add("aa", "teste");
+        _positioner.add("ab", "teste");
 
-        board _board(std::move(_positioner));
 
-        for (words::const_iterator _pos = _board.begin(); _pos != _board.end();
+        words _words(_positioner());
+
+        bool _res = true;
+        for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
              ++_pos) {
-            std::cout << *_pos << std::endl;
+            if (!_pos->positioned()) {
+                crosswords_log_error(log, *_pos, " NOT positioned");
+                _res = false;
+            } else {
+                crosswords_log_test(log, *_pos, " positioned");
+            }
         }
-        return true;
+        return _res;
     }
 };
 
@@ -38,7 +44,6 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(
-      positioning_001, argc, argv, "could not position 'abacaxi' and 'lego'");
+    run_test(positioning_001, argc, argv, "checking if it positions 'aa' and 'ab'");
     return 0;
 }

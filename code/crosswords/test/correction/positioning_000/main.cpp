@@ -20,12 +20,8 @@ struct positioning_000
         typedef positioner004_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(9), coordinate::y(12));
-        _positioner.add("interesse", "teste");
-        _positioner.add("estibordo", "teste");
-        _positioner.add("borboleta", "teste");
-        _positioner.add("xxx", "teste");
-        _positioner.add("yyy", "teste");
-        //        _positioner.add("zzz", "teste");
+        _positioner.add("aa", "teste");
+
 
         words _words(_positioner());
 
@@ -47,6 +43,7 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(positioning_000, argc, argv, "positioning a single word");
+//    run_test(positioning_000, argc, argv, "checking if it stops if it was not possible to position, with 'aa' and 'bb'");
+    run_test(positioning_000, argc, argv, "checking if it positions a single word");
     return 0;
 }

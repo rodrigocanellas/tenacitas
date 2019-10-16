@@ -1,7 +1,7 @@
 #include <iostream>
 #include <utility>
 
-#include <crosswords/business/positioner000.h>
+#include <crosswords/business/positioner004.h>
 #include <crosswords/entities/board.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
@@ -17,14 +17,26 @@ struct positioning_002
 {
     bool operator()()
     {
-        typedef positioner000_t<tenacitas::logger::business::log> positioner;
+        typedef positioner004_t<tenacitas::logger::business::log> positioner;
 
-        positioner _positioner(coordinate::x(4), coordinate::y(4));
-        if (_positioner.add("police", "organization to server and protect") !=
-            positioner::result::ok) {
-            return true;
+        positioner _positioner(coordinate::x(9), coordinate::y(12));
+        _positioner.add("aa", "teste");
+        _positioner.add("bb", "teste");
+
+
+        words _words(_positioner());
+
+        bool _res = true;
+        for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
+             ++_pos) {
+            if (!_pos->positioned()) {
+                crosswords_log_error(log, *_pos, " NOT positioned");
+                _res = false;
+            } else {
+                crosswords_log_test(log, *_pos, " positioned");
+            }
         }
-        return false;
+        return !_res;
     }
 };
 
@@ -32,7 +44,6 @@ int
 main(int argc, char** argv)
 {
     tenacitas::logger::business::configure_cerr_log();
-    run_test(
-      positioning_002, argc, argv, "positioning 'police' in a 4x4 board");
+    run_test(positioning_002, argc, argv, "checking if it stops when it was not possible to position 'aa' and 'bb'");
     return 0;
 }

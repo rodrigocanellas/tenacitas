@@ -218,6 +218,7 @@ struct word_positioner_t
 
   private:
     positions_occupied m_positions_occupied;
+    uint8_t m_position_first_word = {0};
 };
 
 } // namespace business
