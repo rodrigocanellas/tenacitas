@@ -1,5 +1,5 @@
 SUBDIRS =  \
-#    positioning_000 \
+    positioning_000 \
 #    positioning_001 \
 #    positioning_002 \
 #    positioning_003 \

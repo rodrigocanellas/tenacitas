@@ -1,7 +1,7 @@
 #include <iostream>
 #include <utility>
 
-#include <crosswords/business/positioner000.h>
+#include <crosswords/business/positioner004.h>
 #include <crosswords/entities/board.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
@@ -17,19 +17,29 @@ struct positioning_000
 {
     bool operator()()
     {
-        typedef positioner000_t<tenacitas::logger::business::log> positioner;
-        typedef board_t<positioner> board;
+        typedef positioner004_t<tenacitas::logger::business::log> positioner;
 
         positioner _positioner(coordinate::x(9), coordinate::y(12));
-        _positioner.add("mamão", "fruta com pequenos caroços pretos");
+        _positioner.add("interesse", "teste");
+        _positioner.add("estibordo", "teste");
+        _positioner.add("borboleta", "teste");
+        _positioner.add("xxx", "teste");
+        _positioner.add("yyy", "teste");
+        //        _positioner.add("zzz", "teste");
 
-        board _board(std::move(_positioner));
+        words _words(_positioner());
 
-        for (words::const_iterator _pos = _board.begin(); _pos != _board.end();
+        bool _res = true;
+        for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
              ++_pos) {
-            std::cout << *_pos << std::endl;
+            if (!_pos->positioned()) {
+                crosswords_log_error(log, *_pos, " NOT positioned");
+                _res = false;
+            } else {
+                crosswords_log_test(log, *_pos, " positioned");
+            }
         }
-        return true;
+        return _res;
     }
 };
 
