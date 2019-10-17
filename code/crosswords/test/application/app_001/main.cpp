@@ -44,10 +44,15 @@ main(int argc, char** argv)
 
     string _line;
 
-    getline(_file, _line);
-    if (!_file.good()) {
+    while (true) {
+      getline(_file, _line);
+      if (!_file.good()) {
         cout << "Error reading number of columns" << endl;
         return 3;
+      }
+      if (_line[0] != '#') {
+        break;
+      }
     }
     coordinate::x _x_limit (atoi(_line.c_str()));
 

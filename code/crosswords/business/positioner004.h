@@ -219,27 +219,47 @@ private:
   bool already_tried(words::const_iterator p_begin,
                      words::const_iterator p_end)
   {
-    for (words::const_iterator _word_ite = p_begin; _word_ite != p_end;
-         ++_word_ite) {
-      words_ids::size_type _size = static_cast<words_ids::size_type>(
-            std::distance(p_begin, _word_ite));
+    //    for (words::const_iterator _word_ite = p_begin; _word_ite != p_end;
+    //         ++_word_ite) {
+    //      words_ids::size_type _size = static_cast<words_ids::size_type>(
+    //            std::distance(p_begin, _word_ite));
+    //      bool _match = true;
+    //      for (const words_ids& _words_ids : m_failures) {
+    //        if (_words_ids.size() == _size) {
+    //          words_ids::const_iterator _ids_ends = _words_ids.end();
+    //          words::const_iterator _word_aux = p_begin;
+    //          for (words_ids::const_iterator _ids_ite =
+    //               _words_ids.begin();
+    //               _ids_ite != _ids_ends;
+    //               ++_ids_ite) {
+    //            if ((*_ids_ite) != _word_aux->get_id()) {
+    //              _match = false;
+    //              break;
+    //            }
+    //          }
+    //          if (_match) {
+    //            return true;
+    //          }
+    //        }
+    //      }
+    //    }
+    //    return false;
+
+    auto _num_words = std::distance(p_begin, p_end);
+
+    for (const words_ids& _words_ids : m_failures) {
       bool _match = true;
-      for (const words_ids& _words_ids : m_failures) {
-        if (_words_ids.size() == _size) {
-          words_ids::const_iterator _ids_ends = _words_ids.end();
-          words::const_iterator _word_aux = p_begin;
-          for (words_ids::const_iterator _ids_ite =
-               _words_ids.begin();
-               _ids_ite != _ids_ends;
-               ++_ids_ite) {
-            if ((*_ids_ite) != _word_aux->get_id()) {
-              _match = false;
-              break;
-            }
+      if (_words_ids.size() == static_cast<words_ids::size_type>(_num_words)) {
+        words::const_iterator _word_ite = p_begin;
+        for (const word::id _word_id : _words_ids) {
+          if (_word_id != _word_ite->get_id()) {
+            _match = false;
+            break;
           }
-          if (_match) {
-            return true;
-          }
+          ++_word_ite;
+        }
+        if (_match) {
+          return true;
         }
       }
     }
