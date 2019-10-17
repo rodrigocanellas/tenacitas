@@ -101,7 +101,10 @@ struct words
         }
     }
 
-    inline void sort() { m_list.sort(cmp_words()); }
+    inline void sort() { m_list.sort([](const word &p_w1, const word &p_w2) -> bool {
+        return (p_w1.get_size() > p_w2.get_size());
+      });
+                       }
 
     inline void unposition()
     {
@@ -118,11 +121,12 @@ struct words
     {
         bool operator()(const word& p_w1, const word& p_w2)
         {
+
             if (p_w1.get_size() > p_w2.get_size()) {
                 return true;
             }
             if (p_w1.get_size() == p_w2.get_size()) {
-                return p_w1.get_lexeme() > p_w2.get_lexeme();
+                return p_w1.get_lexeme() < p_w2.get_lexeme();
             }
             return false;
         }

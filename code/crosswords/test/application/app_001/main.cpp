@@ -3,7 +3,7 @@
 #include <utility>
 #include <fstream>
 
-#include <crosswords/business/positioner003.h>
+#include <crosswords/business/positioner004.h>
 #include <crosswords/entities/board.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/word.h>
@@ -58,7 +58,7 @@ main(int argc, char** argv)
     }
     coordinate::y _y_limit (atoi(_line.c_str()));
 
-    typedef positioner003_t<tenacitas::logger::business::log> positioner;
+    typedef positioner004_t<tenacitas::logger::business::log> positioner;
 
     positioner _positioner(_x_limit, _y_limit);
 
@@ -73,7 +73,7 @@ main(int argc, char** argv)
             return 5;
         }
 
-        _positioner.add(std::move(_line), "word #" + to_string(_counter));
+        _positioner.add(std::move(_line), "word #" + to_string(_counter++));
 
     }
 

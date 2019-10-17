@@ -21,6 +21,9 @@ SOURCES += \
     ../../../../../../code/crosswords/test/application/app_001/main.cpp
 
 DISTFILES += \
-    ../../../../../../code/crosswords/test/application/app_001/crosswords_000.txt
+    ../../../../../../code/crosswords/test/application/app_001/crosswords_000.txt \
+    ../../../../../../code/crosswords/test/application/app_001/crosswords_001.txt \
+    ../../../../../../code/crosswords/test/application/app_001/crosswords_002.txt \
+    ../../../../../../code/crosswords/test/application/app_001/crosswords_003.txt
 
 
