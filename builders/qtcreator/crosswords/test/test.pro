@@ -1,7 +1,8 @@
 SUBDIRS = \
     dependencies \
-    correction \
-    application
+    correction
+# \
+#    application
 
 TEMPLATE = subdirs
 

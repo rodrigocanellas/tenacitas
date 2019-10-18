@@ -106,6 +106,8 @@ struct words
       });
                        }
 
+
+
     inline void unposition()
     {
         for (word& _w : m_list) {

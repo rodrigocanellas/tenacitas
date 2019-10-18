@@ -165,13 +165,14 @@ private:
 
 
     crosswords_log_info(log, "############ ", _counter++, " - ",
-          print_words(p_first, p_end));
+                        print_words(p_first, p_end));
 
     while (true) {
-      //crosswords_log_info(log, "           COUNTER = ", m_counter++);
-      //      if (m_counter > 100000) {
-      //        return false;
-      //      }
+
+      if (m_counter > 100000) {
+        crosswords_log_fatal(log, "Maximum number of permutations in set ", print_words(p_first, p_end));
+        return false;
+      }
 
       if (_ite == p_end) {
         break;
@@ -193,7 +194,7 @@ private:
           return false;
         }
         crosswords_log_info(log, "############ ", _counter++, " - ",
-              print_words(p_first, p_end));
+                            print_words(p_first, p_end));
 
         _ite = p_first;
       }
@@ -201,50 +202,9 @@ private:
     return true;
   }
 
-  bool loop(words::const_iterator p_begin,
-            words::const_iterator p_end,
-            const words& p_original)
-  {
-    words::const_iterator _orig_ite = p_original.begin();
-    words::const_iterator _ite = p_begin;
-    for (; _ite != p_end; ++_ite) {
-      if (_ite->get_id() != _orig_ite->get_id()) {
-        return false;
-      }
-      ++_orig_ite;
-    }
-    return true;
-  }
-
   bool already_tried(words::const_iterator p_begin,
                      words::const_iterator p_end)
   {
-    //    for (words::const_iterator _word_ite = p_begin; _word_ite != p_end;
-    //         ++_word_ite) {
-    //      words_ids::size_type _size = static_cast<words_ids::size_type>(
-    //            std::distance(p_begin, _word_ite));
-    //      bool _match = true;
-    //      for (const words_ids& _words_ids : m_failures) {
-    //        if (_words_ids.size() == _size) {
-    //          words_ids::const_iterator _ids_ends = _words_ids.end();
-    //          words::const_iterator _word_aux = p_begin;
-    //          for (words_ids::const_iterator _ids_ite =
-    //               _words_ids.begin();
-    //               _ids_ite != _ids_ends;
-    //               ++_ids_ite) {
-    //            if ((*_ids_ite) != _word_aux->get_id()) {
-    //              _match = false;
-    //              break;
-    //            }
-    //          }
-    //          if (_match) {
-    //            return true;
-    //          }
-    //        }
-    //      }
-    //    }
-    //    return false;
-
     auto _num_words = std::distance(p_begin, p_end);
 
     for (const words_ids& _words_ids : m_failures) {

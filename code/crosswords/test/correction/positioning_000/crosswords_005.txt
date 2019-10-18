@@ -1,3 +1,5 @@
+# Test of a 13x13 that should all be positioned
+RESULT all
 13
 13
 pos

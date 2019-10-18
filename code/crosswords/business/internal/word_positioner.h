@@ -98,6 +98,17 @@ struct word_positioner_t
         return true;
     }
 
+private:
+    enum class corner : char {
+      UP_LEFT = 'L',
+      UP_RIGHT = 'R',
+      DOWN_LEFT = 'l',
+      DOWN_RIGHT = 'r'
+    };
+
+    typedef std::map<lexeme, corner> last_corner_when_first;
+
+
   private:
     bool no_word_positioned(words::const_iterator p_begin,
                             words::const_iterator p_end) const

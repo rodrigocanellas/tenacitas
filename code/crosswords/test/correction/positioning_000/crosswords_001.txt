@@ -1,0 +1,9 @@
+# Very simple test
+RESULT all
+13
+13
+ab
+bc
+cd
+ef
+de
