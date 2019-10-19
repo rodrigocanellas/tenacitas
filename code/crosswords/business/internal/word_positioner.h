@@ -55,59 +55,69 @@ struct word_positioner_t
                     x p_x_limit,
                     y p_y_limit)
     {
-        if (no_word_positioned(p_first_positioned, p_to_position)) {
-            position_first(p_to_position, p_x_limit, p_y_limit);
-            return true;
-        }
-
-        words::const_iterator _last_positioned = p_to_position;
-        --_last_positioned;
+        bool _positioned = false;
         while (true) {
-            if (_last_positioned == p_first_positioned) {
-                bool _is_positioned = position(p_first_positioned,
+            if (_positioned) {
+                break;
+            }
+            if (no_word_positioned(p_first_positioned, p_to_position)) {
+                if (!position_first(p_to_position, p_x_limit, p_y_limit)) {
+                    _positioned = false;
+
+                } else {
+                    _positioned = true;
+                }
+            } else {
+
+                words::const_iterator _last_positioned = p_to_position;
+                --_last_positioned;
+                while (true) {
+                    if (_last_positioned == p_first_positioned) {
+                        _positioned = position(p_first_positioned,
                                                _last_positioned,
                                                p_to_position,
                                                p_x_limit,
                                                p_y_limit);
 
-                if (_is_positioned) {
-                    m_positions_occupied.add(*p_to_position);
-                    break;
+                        if (_positioned) {
+                            m_positions_occupied.add(*p_to_position);
+                            break;
+                        }
+
+                        m_positions_occupied.clear();
+                        unposition(p_first_positioned, p_to_position);
+                        _positioned = false;
+                    } else {
+
+                        _positioned = position(p_first_positioned,
+                                               _last_positioned,
+                                               p_to_position,
+                                               p_x_limit,
+                                               p_y_limit);
+
+                        if (_positioned) {
+                            m_positions_occupied.add(*p_to_position);
+                            break;
+                        }
+
+                        --_last_positioned;
+                    }
                 }
-
-                m_positions_occupied.clear();
-                unposition(p_first_positioned, p_to_position);
-
-                return false;
             }
-
-            bool _is_positioned = position(p_first_positioned,
-                                           _last_positioned,
-                                           p_to_position,
-                                           p_x_limit,
-                                           p_y_limit);
-
-            if (_is_positioned) {
-                m_positions_occupied.add(*p_to_position);
-
-                break;
-            }
-
-            --_last_positioned;
         }
-        return true;
+        return _positioned;
     }
 
-private:
-    enum class corner : char {
-      UP_LEFT = 'L',
-      UP_RIGHT = 'R',
-      DOWN_LEFT = 'l',
-      DOWN_RIGHT = 'r'
+  private:
+    enum class first_position : char
+    {
+        UP_LEFT = 'L',
+        UP_RIGHT = 'R',
+        DOWN_RIGHT = 'r',
+        DOWN_LEFT = 'l',
+        CENTER = 'c'
     };
-
-    typedef std::map<lexeme, corner> last_corner_when_first;
-
+    typedef std::map<lexeme, first_position> last_position_when_first;
 
   private:
     bool no_word_positioned(words::const_iterator p_begin,
@@ -201,23 +211,101 @@ private:
         return false;
     }
 
-    void position_first(words::iterator p_to_position, x p_x_limit, y p_y_limit)
+    bool position_first(words::iterator p_to_position, x p_x_limit, y p_y_limit)
     {
+        typename last_position_when_first::iterator _ite =
+          m_last_position_when_first.find(p_to_position->get_lexeme());
 
-        if (p_y_limit > y(p_x_limit)) {
-            p_to_position->position(x(0),
-                                    y(0),
-                                    word::direction::horizontal,
-                                    word::orientation::forward);
+        first_position _first_position;
+
+        if (_ite != m_last_position_when_first.end()) {
+            switch (_ite->second) {
+                case first_position::UP_LEFT:
+                    _first_position = first_position::UP_RIGHT;
+                    break;
+                case first_position::UP_RIGHT:
+                    _first_position = first_position::DOWN_RIGHT;
+                    break;
+                case first_position::DOWN_RIGHT:
+                    _first_position = first_position::DOWN_LEFT;
+                    break;
+                case first_position::DOWN_LEFT:
+                    _first_position = first_position::CENTER;
+                    break;
+                default:
+                    // all positions were tried
+                    return false;
+            }
         } else {
-            p_to_position->position(x(0),
-                                    y(0),
-                                    word::direction::vertical,
-                                    word::orientation::forward);
+            m_last_position_when_first[p_to_position->get_lexeme()] =
+              first_position::UP_LEFT;
+            _first_position = first_position::UP_LEFT;
+        }
+
+        x _x;
+        y _y;
+        if (p_y_limit > y(p_x_limit)) {
+            switch (_first_position) {
+                case first_position::UP_LEFT:
+                    _x = x(0);
+                    _y = y(0);
+                    break;
+                case first_position::UP_RIGHT:
+                    _x =
+                      p_x_limit - x(1) - x(p_to_position->get_lexeme().size());
+                    _y = y(0);
+                    break;
+                case first_position::DOWN_RIGHT:
+                    _x =
+                      p_x_limit - x(1) - x(p_to_position->get_lexeme().size());
+                    _y = p_y_limit - y(1);
+                    break;
+                case first_position::DOWN_LEFT:
+                    _x = x(0);
+                    _y = p_y_limit - y(1);
+                    break;
+                default:
+                    _x = (p_x_limit - x(p_to_position->get_lexeme().size())) /
+                         x(2);
+                    _y = p_y_limit / y(2);
+            }
+
+            p_to_position->position(
+              _x, _y, word::direction::horizontal, word::orientation::forward);
+        } else {
+            switch (_first_position) {
+                case first_position::UP_LEFT:
+                    _x = x(0);
+                    _y = y(0);
+                    break;
+                case first_position::UP_RIGHT:
+                    _x =
+                      p_x_limit - x(1) - x(p_to_position->get_lexeme().size());
+                    _y = y(0);
+                    break;
+                case first_position::DOWN_RIGHT:
+                    _x = p_x_limit - x(1);
+                    _y =
+                      p_y_limit - y(1) - y(p_to_position->get_lexeme().size());
+                    break;
+                case first_position::DOWN_LEFT:
+                    _x = x(0);
+                    _y =
+                      p_y_limit - y(1) - y(p_to_position->get_lexeme().size());
+                    break;
+                default:
+                    _y = (p_y_limit - y(p_to_position->get_lexeme().size())) /
+                         y(2);
+                    _x = p_x_limit / x(2);
+            }
+
+            p_to_position->position(
+              _x, _y, word::direction::vertical, word::orientation::forward);
         }
 
         //        m_positioned.push_back(p_ptr_word_to_position);
         m_positions_occupied.add(*p_to_position);
+        return true;
     }
 
     void unposition(words::iterator p_begin, words::iterator p_end)
@@ -229,7 +317,8 @@ private:
 
   private:
     positions_occupied m_positions_occupied;
-    uint8_t m_position_first_word = {0};
+    last_position_when_first m_last_position_when_first;
+    uint8_t m_position_first_word = { 0 };
 };
 
 } // namespace business
