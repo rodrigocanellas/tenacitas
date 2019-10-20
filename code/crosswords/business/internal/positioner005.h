@@ -113,6 +113,7 @@ struct positioner005_t
             if (position(_begin, std::next(_ite))) {
                 ++_ite;
             } else {
+                m_word_positioner.reset();
                 crosswords_log_warn(log,
                                     "failed to position ",
                                     print_words(_begin, std::next(_ite)));
@@ -191,15 +192,23 @@ struct positioner005_t
                 crosswords_log_debug(
                   log, _ite->get_lexeme(), " was previously positioned");
                 ++_ite;
-            } else if (m_word_positioner(p_first, _ite, m_x_limit, m_y_limit)) {
-                crosswords_log_debug(
-                  log, _ite->get_lexeme(), " was positioned");
-                m_words.print_positioned(m_x_limit, m_y_limit);
-                ++_ite;
             } else {
-                crosswords_log_debug(
-                  log, _ite->get_lexeme(), " was not positioned");
-                return false;
+                std::pair<bool, bool> _res =
+                  m_word_positioner(p_first, _ite, m_x_limit, m_y_limit);
+                if (_res.first) {
+                    crosswords_log_debug(
+                      log, _ite->get_lexeme(), " was positioned");
+                    m_words.print_positioned(m_x_limit, m_y_limit);
+                    ++_ite;
+                } else {
+                    if (_res.second) {
+                        _ite = p_first;
+                    } else {
+                        crosswords_log_debug(
+                          log, _ite->get_lexeme(), " was not positioned");
+                        return false;
+                    }
+                }
             }
         }
         return true;
