@@ -32,11 +32,13 @@ struct words
 
     void add(word&& p_word) { m_list.push_back(std::move(p_word)); }
 
-    iterator insert(word && p_word, iterator p_ite) {
+    iterator insert(word&& p_word, iterator p_ite)
+    {
         return m_list.insert(p_ite, std::move(p_word));
     }
 
-    void swap(iterator & p_left, iterator & p_right) {
+    void swap(iterator& p_left, iterator& p_right)
+    {
         word _word_left = *p_left;
         remove(p_left);
         p_left = insert(std::move(_word_left), p_right);
@@ -101,12 +103,12 @@ struct words
         }
     }
 
-    inline void sort() { m_list.sort([](const word &p_w1, const word &p_w2) -> bool {
-        return (p_w1.get_size() > p_w2.get_size());
-      });
-                       }
-
-
+    inline void sort()
+    {
+        m_list.sort([](const word& p_w1, const word& p_w2) -> bool {
+            return (p_w1.get_size() > p_w2.get_size());
+        });
+    }
 
     inline void unposition()
     {
@@ -115,9 +117,7 @@ struct words
         }
     }
 
-    void remove(const_iterator p_ite) {
-        m_list.remove(*p_ite);
-    }
+    void remove(const_iterator p_ite) { m_list.remove(*p_ite); }
 
     struct cmp_words
     {
@@ -137,6 +137,66 @@ struct words
   private:
     list m_list;
 };
+
+std::string
+print_words(words::const_iterator p_begin, words::const_iterator p_end)
+{
+    words::const_iterator _last = std::prev(p_end);
+    std::stringstream _stream;
+    _stream << "{";
+    for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
+        _stream << _ite->get_lexeme();
+        if (_ite != _last) {
+            _stream << " ";
+        }
+    }
+    _stream << "}";
+    return _stream.str();
+}
+
+void
+print_positioned(words::const_iterator p_begin,
+                 words::const_iterator p_end,
+                 entities::coordinate::x p_x_limit,
+                 entities::coordinate::y p_y_limit)
+{
+    using namespace std;
+
+    typedef std::vector<std::string> matrix;
+
+    string::size_type _x_size = p_x_limit.get_value<string::size_type>();
+    string::size_type _y_size = p_y_limit.get_value<string::size_type>();
+
+    matrix _m(_x_size, string(_y_size, ' '));
+
+    for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
+        if (_ite->positioned()) {
+            const coordinates& _coords = _ite->get_coordinates();
+            const lexeme& _lexeme = _ite->get_lexeme();
+            for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
+                matrix::size_type _x =
+                  _coords[_i].get_x().get_value<string::size_type>();
+                string::size_type _y =
+                  _coords[_i].get_y().get_value<std::string::size_type>();
+                char _c = _lexeme[_i];
+                _m[_x][_y] = _c;
+            }
+        }
+    }
+
+    cerr << "    ";
+    for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
+        cerr << setw(2) << setfill('0') << _x << " ";
+    }
+    std::cerr << std::endl;
+    for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
+        cerr << setw(2) << setfill('0') << _y << " ";
+        for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
+            cerr << "  " << _m[_x][_y];
+        }
+        cerr << std::endl;
+    }
+}
 
 // struct cmp_words
 //{

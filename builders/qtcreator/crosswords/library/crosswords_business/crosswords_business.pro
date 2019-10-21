@@ -29,6 +29,7 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/validate_position.h \
     ../../../../../code/crosswords/business/internal/word_positioner.h \
     ../../../../../code/crosswords/business/internal/words_by_size.h \
+    ../../../../../code/crosswords/business/internal/words_positioner.h \
     ../../../../../code/crosswords/business/internal/words_references.h \
     ../../../../../code/crosswords/business/positioner.h \
     ../../../../../code/crosswords/business/internal/positioner000.h \

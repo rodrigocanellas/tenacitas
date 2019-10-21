@@ -11,7 +11,7 @@
 #include <utility>
 
 #include <crosswords/business/internal/log.h>
-#include <crosswords/business/internal/word_positioner.h>
+#include <crosswords/business/internal/words_positioner.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
@@ -48,7 +48,7 @@ struct positioner005_t
     typedef entities::coordinate::x x;
     typedef entities::coordinate::y y;
 
-    typedef word_positioner_t<log> word_positioner;
+    typedef words_positioner_t<log> words_positioner;
 
     explicit positioner005_t(x p_x_limit = x(13), y p_y_limit = y(13))
       : m_x_limit(p_x_limit)
@@ -110,16 +110,23 @@ struct positioner005_t
                 break;
             }
 
-            if (position(_begin, std::next(_ite))) {
+            if (m_words_positioner(
+                  _begin, std::next(_ite), m_x_limit, m_y_limit)) {
                 ++_ite;
             } else {
-                m_word_positioner.reset();
+                m_words_positioner.reset();
                 crosswords_log_warn(log,
                                     "failed to position ",
                                     print_words(_begin, std::next(_ite)));
                 add_failure(_begin, std::next(_ite));
                 uint8_t _shifter = 0;
                 while (true) {
+                    //                    bool _was_last = false;
+                    if (_ite == std::prev(_end)) {
+                        crosswords_log_error(
+                          log, "fail to position ", print_words(_begin, _end));
+                        return m_words;
+                    }
 
                     words::iterator _aux = std::next(_ite, ++_shifter);
                     crosswords_log_debug(log,
@@ -149,7 +156,12 @@ struct positioner005_t
                     crosswords_log_debug(log,
                                          "before swapping back ",
                                          print_words(_begin, std::next(_ite)));
+
+                    //                    if (_was_last) {
+
+                    //                    } else {
                     std::iter_swap(_aux, _ite);
+                    //                    }
                     crosswords_log_debug(log,
                                          "after swapping ",
                                          print_words(_begin, std::next(_ite)));
@@ -165,55 +177,6 @@ struct positioner005_t
     typedef std::list<words_ids> failures;
 
   private:
-    bool position(words::iterator p_first, words::iterator p_end)
-    {
-        words::iterator _ite = p_first;
-        uint32_t _counter = 0;
-
-        crosswords_log_info(
-          log, "############ ", _counter++, " - ", print_words(p_first, p_end));
-
-        while (true) {
-
-            if (m_counter > 100000) {
-                crosswords_log_fatal(log,
-                                     "Maximum number of permutations in set ",
-                                     print_words(p_first, p_end));
-                return false;
-            }
-
-            if (_ite == p_end) {
-                break;
-            }
-
-            crosswords_log_debug(
-              log, "trying to position ", _ite->get_lexeme());
-            if (_ite->positioned()) {
-                crosswords_log_debug(
-                  log, _ite->get_lexeme(), " was previously positioned");
-                ++_ite;
-            } else {
-                std::pair<bool, bool> _res =
-                  m_word_positioner(p_first, _ite, m_x_limit, m_y_limit);
-                if (_res.first) {
-                    crosswords_log_debug(
-                      log, _ite->get_lexeme(), " was positioned");
-                    m_words.print_positioned(m_x_limit, m_y_limit);
-                    ++_ite;
-                } else {
-                    if (_res.second) {
-                        _ite = p_first;
-                    } else {
-                        crosswords_log_debug(
-                          log, _ite->get_lexeme(), " was not positioned");
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
     bool already_tried(words::const_iterator p_begin,
                        words::const_iterator p_end)
     {
@@ -276,7 +239,7 @@ struct positioner005_t
     y m_y_limit;
     words m_words;
     failures m_failures;
-    word_positioner m_word_positioner;
+    words_positioner m_words_positioner;
 };
 } // namespace business
 } // namespace crosswords
