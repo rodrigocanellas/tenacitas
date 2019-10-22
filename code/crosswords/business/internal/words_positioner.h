@@ -116,6 +116,35 @@ struct words_positioner_t
                          x p_x_limit,
                          y p_y_limit)
     {
+        positioning _positioning = position_from_first(
+          p_first_positioned, p_to_position, p_x_limit, p_y_limit);
+
+        if (_positioning == positioning::ok) {
+            return positioning::ok;
+        }
+
+        _positioning = position_from_last(
+          p_first_positioned, p_to_position, p_x_limit, p_y_limit);
+
+        if (_positioning == positioning::ok) {
+            return positioning::ok;
+        }
+
+        if (_positioning == positioning::first_not_positioned) {
+            return positioning::first_not_positioned;
+        }
+
+        m_positions_occupied.clear();
+        unposition(p_first_positioned, p_to_position);
+
+        return positioning::other_not_positioned;
+    }
+
+    positioning position_from_last(words::iterator p_first_positioned,
+                                   words::iterator p_to_position,
+                                   x p_x_limit,
+                                   y p_y_limit)
+    {
         while (true) {
             if (no_word_positioned(p_first_positioned, p_to_position)) {
                 if (!position_first(p_to_position, p_x_limit, p_y_limit)) {
@@ -145,9 +174,6 @@ struct words_positioner_t
                                          " against ",
                                          _last_positioned->get_lexeme());
 
-                    m_positions_occupied.clear();
-                    unposition(p_first_positioned, p_to_position);
-
                     crosswords_log_debug(log,
                                          "trying to reposition first word");
 
@@ -174,6 +200,45 @@ struct words_positioner_t
                 --_last_positioned;
             }
         }
+    }
+
+    positioning position_from_first(words::iterator p_first_positioned,
+                                    words::iterator p_to_position,
+                                    x p_x_limit,
+                                    y p_y_limit)
+    {
+        if (no_word_positioned(p_first_positioned, p_to_position)) {
+            if (!position_first(p_to_position, p_x_limit, p_y_limit)) {
+                return positioning::first_not_positioned;
+            }
+            return positioning::ok;
+        }
+
+        words::const_iterator _last_positioned = p_first_positioned;
+        while (true) {
+            if (_last_positioned == p_to_position) {
+                break;
+            }
+            bool _is_positioned = position(p_first_positioned,
+                                           _last_positioned,
+                                           p_to_position,
+                                           p_x_limit,
+                                           p_y_limit);
+
+            if (_is_positioned) {
+                m_positions_occupied.add(*p_to_position);
+                return positioning::ok;
+            }
+
+            crosswords_log_debug(log,
+                                 "unable to position ",
+                                 p_to_position->get_lexeme(),
+                                 " against ",
+                                 _last_positioned->get_lexeme());
+
+            ++_last_positioned;
+        }
+        return positioning::other_not_positioned;
     }
 
     bool no_word_positioned(words::const_iterator p_begin,
