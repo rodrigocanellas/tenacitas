@@ -39,395 +39,406 @@ namespace business {
 template<typename t_log>
 struct words_positioner_t
 {
-    typedef t_log log;
+  typedef t_log log;
 
-    typedef entities::words words;
-    typedef entities::word word;
-    typedef entities::lexeme lexeme;
-    typedef entities::coordinate coordinate;
-    typedef entities::coordinate::x x;
-    typedef entities::coordinate::y y;
+  typedef entities::words words;
+  typedef entities::word word;
+  typedef entities::lexeme lexeme;
+  typedef entities::coordinate coordinate;
+  typedef entities::coordinate::x x;
+  typedef entities::coordinate::y y;
 
-    typedef positions_occupied_t<log> positions_occupied;
-    typedef validate_position_t<log> validate_position;
+  typedef positions_occupied_t<log> positions_occupied;
+  typedef validate_position_t<log> validate_position;
 
-    void reset()
-    {
-        m_last_first_position_horizontal.reset();
-        m_last_first_position_vertical.reset();
+  words_positioner_t(x m_x_limit, y m_y_limit)
+    : m_x_limit(m_x_limit)
+    , m_y_limit(m_y_limit) {}
+
+  void reset()
+  {
+    m_last_first_position_horizontal.reset();
+    m_last_first_position_vertical.reset();
+
+    if ( (m_position_from_first) && (m_position_first_horizontal)) {
+      m_position_from_first = true;
+      m_position_first_horizontal = false;
+    }
+    else if ( (m_position_from_first) && (!m_position_first_horizontal)) {
+      m_position_from_first = false;
+      m_position_first_horizontal = true;
+    }
+    else {
+      m_position_from_first = false;
+      m_position_first_horizontal = false;
+    }
+  }
+
+  bool operator()(words::iterator p_first,
+                  words::iterator p_end)
+  {
+
+    if ( (!m_position_from_first) && (!m_position_first_horizontal)) {
+      return false;
     }
 
-    bool operator()(words::iterator p_first,
-                    words::iterator p_end,
-                    x p_x_limit,
-                    y p_y_limit)
-    {
-        words::iterator _ite = p_first;
-        uint32_t _counter = 0;
+    words::iterator _ite = p_first;
+    uint32_t _counter = 0;
 
-        crosswords_log_info(
+    crosswords_log_info(
           log, "############ ", _counter++, " - ", print_words(p_first, p_end));
 
-        while (true) {
+    while (true) {
 
-            if (_ite == p_end) {
-                break;
-            }
+      if (_ite == p_end) {
+        break;
+      }
 
+      crosswords_log_debug(
+            log, "trying to position ", _ite->get_lexeme());
+      if (_ite->positioned()) {
+        crosswords_log_debug(
+              log, _ite->get_lexeme(), " was previously positioned");
+        ++_ite;
+      } else {
+        positioning _positioning =
+            position(p_first, _ite);
+        if (_positioning == positioning::ok) {
+          crosswords_log_debug(
+                log, _ite->get_lexeme(), " was positioned");
+          print_positioned(p_first, p_end, m_x_limit, m_y_limit);
+          ++_ite;
+        } else {
+          if (_positioning == positioning::other_not_positioned) {
+            _ite = p_first;
+          } else {
             crosswords_log_debug(
-              log, "trying to position ", _ite->get_lexeme());
-            if (_ite->positioned()) {
-                crosswords_log_debug(
-                  log, _ite->get_lexeme(), " was previously positioned");
-                ++_ite;
-            } else {
-                positioning _positioning =
-                  position(p_first, _ite, p_x_limit, p_y_limit);
-                if (_positioning == positioning::ok) {
-                    crosswords_log_debug(
-                      log, _ite->get_lexeme(), " was positioned");
-                    print_positioned(p_first, p_end, p_x_limit, p_y_limit);
-                    ++_ite;
-                } else {
-                    if (_positioning == positioning::other_not_positioned) {
-                        _ite = p_first;
-                    } else {
-                        crosswords_log_debug(
-                          log, _ite->get_lexeme(), " was not positioned");
-                        return false;
-                    }
-                }
-            }
+                  log, _ite->get_lexeme(), " was not positioned");
+            return false;
+          }
         }
-        return true;
+      }
+    }
+    return true;
+  }
+
+private:
+  enum class positioning : char
+  {
+    ok = 'o',
+    first_not_positioned = 'f',
+    other_not_positioned = 'n'
+  };
+
+private:
+  positioning position(words::iterator p_first_positioned,
+                       words::iterator p_to_position)
+  {
+
+    if (no_word_positioned(p_first_positioned, p_to_position)) {
+      if (!position_first(p_to_position)) {
+        return positioning::first_not_positioned;
+      }
+      return positioning::ok;
     }
 
-  private:
-    enum class positioning : char
-    {
-        ok = 'o',
-        first_not_positioned = 'f',
-        other_not_positioned = 'n'
-    };
+    positioning _positioning = positioning::ok;
+    if (m_position_from_first) {
+      _positioning = position_from_first(p_first_positioned, p_to_position);
 
-  private:
-    positioning position(words::iterator p_first_positioned,
-                         words::iterator p_to_position,
-                         x p_x_limit,
-                         y p_y_limit)
-    {
-        positioning _positioning = position_from_first(
-          p_first_positioned, p_to_position, p_x_limit, p_y_limit);
+      if (_positioning == positioning::ok) {
+        return positioning::ok;
+      }
 
-        if (_positioning == positioning::ok) {
-            return positioning::ok;
+      m_positions_occupied.clear();
+      unposition(p_first_positioned, p_to_position);
+
+      return _positioning;
+
+    }
+
+    _positioning = position_from_last(p_first_positioned, p_to_position);
+
+    if (_positioning == positioning::ok) {
+      return positioning::ok;
+    }
+
+    m_positions_occupied.clear();
+    unposition(p_first_positioned, p_to_position);
+
+    return _positioning;
+  }
+
+  positioning position_from_last(words::iterator p_first_positioned,
+                                 words::iterator p_to_position)
+  {
+
+    words::const_iterator _last_positioned = p_to_position;
+    --_last_positioned;
+    while (true) {
+      if (_last_positioned == p_first_positioned) {
+        bool _is_positioned = position(p_first_positioned,
+                                       _last_positioned,
+                                       p_to_position);
+
+        if (_is_positioned) {
+          m_positions_occupied.add(*p_to_position);
+          return positioning::ok;
         }
 
-        _positioning = position_from_last(
-          p_first_positioned, p_to_position, p_x_limit, p_y_limit);
+        crosswords_log_debug(log,
+                             "unable to position ",
+                             p_to_position->get_lexeme(),
+                             " against ",
+                             _last_positioned->get_lexeme());
 
-        if (_positioning == positioning::ok) {
-            return positioning::ok;
-        }
-
-        if (_positioning == positioning::first_not_positioned) {
-            return positioning::first_not_positioned;
-        }
-
-        m_positions_occupied.clear();
-        unposition(p_first_positioned, p_to_position);
+        crosswords_log_debug(log,
+                             "trying to reposition first word");
 
         return positioning::other_not_positioned;
+      }
+
+      bool _is_positioned = position(p_first_positioned,
+                                     _last_positioned,
+                                     p_to_position);
+
+      if (_is_positioned) {
+        m_positions_occupied.add(*p_to_position);
+        return positioning::ok;
+      }
+
+      crosswords_log_debug(log,
+                           "unable to position ",
+                           p_to_position->get_lexeme(),
+                           " against ",
+                           _last_positioned->get_lexeme());
+
+      --_last_positioned;
+    }
+  }
+
+  positioning position_from_first(words::iterator p_first_positioned,
+                                  words::iterator p_to_position)
+  {
+    if (no_word_positioned(p_first_positioned, p_to_position)) {
+      if (!position_first(p_to_position)) {
+        return positioning::first_not_positioned;
+      }
+      return positioning::ok;
     }
 
-    positioning position_from_last(words::iterator p_first_positioned,
-                                   words::iterator p_to_position,
-                                   x p_x_limit,
-                                   y p_y_limit)
-    {
-        while (true) {
-            if (no_word_positioned(p_first_positioned, p_to_position)) {
-                if (!position_first(p_to_position, p_x_limit, p_y_limit)) {
-                    return positioning::first_not_positioned;
-                }
-                return positioning::ok;
-            }
+    words::const_iterator _last_positioned = p_first_positioned;
+    while (true) {
+      if (_last_positioned == p_to_position) {
+        break;
+      }
+      bool _is_positioned = position(p_first_positioned,
+                                     _last_positioned,
+                                     p_to_position);
 
-            words::const_iterator _last_positioned = p_to_position;
-            --_last_positioned;
-            while (true) {
-                if (_last_positioned == p_first_positioned) {
-                    bool _is_positioned = position(p_first_positioned,
-                                                   _last_positioned,
-                                                   p_to_position,
-                                                   p_x_limit,
-                                                   p_y_limit);
+      if (_is_positioned) {
+        m_positions_occupied.add(*p_to_position);
+        return positioning::ok;
+      }
 
-                    if (_is_positioned) {
-                        m_positions_occupied.add(*p_to_position);
-                        return positioning::ok;
-                    }
+      crosswords_log_debug(log,
+                           "unable to position ",
+                           p_to_position->get_lexeme(),
+                           " against ",
+                           _last_positioned->get_lexeme());
 
-                    crosswords_log_debug(log,
-                                         "unable to position ",
-                                         p_to_position->get_lexeme(),
-                                         " against ",
-                                         _last_positioned->get_lexeme());
-
-                    crosswords_log_debug(log,
-                                         "trying to reposition first word");
-
-                    return positioning::other_not_positioned;
-                }
-
-                bool _is_positioned = position(p_first_positioned,
-                                               _last_positioned,
-                                               p_to_position,
-                                               p_x_limit,
-                                               p_y_limit);
-
-                if (_is_positioned) {
-                    m_positions_occupied.add(*p_to_position);
-                    return positioning::ok;
-                }
-
-                crosswords_log_debug(log,
-                                     "unable to position ",
-                                     p_to_position->get_lexeme(),
-                                     " against ",
-                                     _last_positioned->get_lexeme());
-
-                --_last_positioned;
-            }
-        }
+      ++_last_positioned;
     }
+    return positioning::other_not_positioned;
+  }
 
-    positioning position_from_first(words::iterator p_first_positioned,
-                                    words::iterator p_to_position,
-                                    x p_x_limit,
-                                    y p_y_limit)
-    {
-        if (no_word_positioned(p_first_positioned, p_to_position)) {
-            if (!position_first(p_to_position, p_x_limit, p_y_limit)) {
-                return positioning::first_not_positioned;
-            }
-            return positioning::ok;
-        }
-
-        words::const_iterator _last_positioned = p_first_positioned;
-        while (true) {
-            if (_last_positioned == p_to_position) {
-                break;
-            }
-            bool _is_positioned = position(p_first_positioned,
-                                           _last_positioned,
-                                           p_to_position,
-                                           p_x_limit,
-                                           p_y_limit);
-
-            if (_is_positioned) {
-                m_positions_occupied.add(*p_to_position);
-                return positioning::ok;
-            }
-
-            crosswords_log_debug(log,
-                                 "unable to position ",
-                                 p_to_position->get_lexeme(),
-                                 " against ",
-                                 _last_positioned->get_lexeme());
-
-            ++_last_positioned;
-        }
-        return positioning::other_not_positioned;
-    }
-
-    bool no_word_positioned(words::const_iterator p_begin,
-                            words::const_iterator p_end) const
-    {
-        for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
-            if (_ite->positioned()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool position(words::const_iterator p_first_positioned,
-                  words::const_iterator p_last_positioned,
-                  words::iterator p_to_position,
-                  x p_x_limit,
-                  y p_y_limit)
-    {
-        //        crosswords_log_debug(log,
-        //                             "trying to position ",
-        //                             p_to_position->get_lexeme(),
-        //                             " against ",
-        //                             *p_last_positioned);
-
-        validate_position _validate_position;
-
-        const lexeme& _positioned = p_last_positioned->get_lexeme();
-        lexeme::size_type _positioned_size = _positioned.size();
-
-        const lexeme& _to_position = p_to_position->get_lexeme();
-        lexeme::size_type _to_position_size = _to_position.size();
-
-        for (lexeme::size_type _i_positioned = 0;
-             _i_positioned < _positioned_size;
-             ++_i_positioned) {
-            for (lexeme::size_type _i_to_position = 0;
-                 _i_to_position < _to_position_size;
-                 ++_i_to_position) {
-                if (_to_position[_i_to_position] ==
-                    _positioned[_i_positioned]) {
-                    //                    crosswords_log_debug(log,
-                    //                                         "intesect at ",
-                    //                                         _i_positioned,
-                    //                                         " in positioned
-                    //                                         ", _positioned,
-                    //                                         " and in ",
-                    //                                         _i_to_position,
-                    //                                         " in ",
-                    //                                         _to_position);
-                    if (p_last_positioned->get_direction() ==
-                        word::direction::vertical) {
-
-                        p_to_position->position(
-                          p_last_positioned->get_coordinates()[_i_positioned]
-                              .get_x() -
-                            x(_i_to_position),
-                          p_last_positioned->get_coordinates()[_i_positioned]
-                            .get_y(),
-
-                          word::direction::horizontal,
-                          word::orientation::forward);
-                    } else {
-                        p_to_position->position(
-                          p_last_positioned->get_coordinates()[_i_positioned]
-                            .get_x(),
-                          p_last_positioned->get_coordinates()[_i_positioned]
-                              .get_y() -
-                            y(_i_to_position),
-
-                          word::direction::vertical,
-                          word::orientation::forward);
-                    }
-                    //                    crosswords_log_debug(
-                    //                      log, "it seems ", *p_to_position, "
-                    //                      was positioned");
-                    if (_validate_position(p_first_positioned,
-                                           p_to_position,
-                                           _i_to_position,
-                                           m_positions_occupied,
-                                           p_x_limit,
-                                           p_y_limit)) {
-                        return true;
-                    }
-                    //                    crosswords_log_debug(log, "invalid
-                    //                    position");
-                    p_to_position->unposition();
-                }
-            }
-        }
+  bool no_word_positioned(words::const_iterator p_begin,
+                          words::const_iterator p_end) const
+  {
+    for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
+      if (_ite->positioned()) {
         return false;
+      }
     }
+    return true;
+  }
 
-    bool position_first_horizontal(words::iterator p_to_position,
-                                   x p_x_limit,
-                                   y p_y_limit,
-                                   lexeme::size_type p_lexeme_size)
-    {
-        if (x(p_lexeme_size) > p_x_limit) {
-            return false;
-        }
-        if (m_last_first_position_horizontal == coordinate(x(-1), y(-1))) {
-            m_last_first_position_horizontal = coordinate(x(0), y(0));
-        } else {
-            if ((m_last_first_position_horizontal.get_x() + x(1) +
-                 x(p_lexeme_size)) >= p_x_limit) {
-                if (m_last_first_position_horizontal.get_y() ==
-                    (p_y_limit - y(1))) {
-                    return false;
-                }
-                m_last_first_position_horizontal = coordinate(
-                  x(0), m_last_first_position_horizontal.get_y() + y(1));
-            } else {
-                m_last_first_position_horizontal =
-                  coordinate(m_last_first_position_horizontal.get_x() + x(1),
-                             m_last_first_position_horizontal.get_y());
-            }
-        }
+  bool position(words::const_iterator p_first_positioned,
+                words::const_iterator p_last_positioned,
+                words::iterator p_to_position)
+  {
+    //        crosswords_log_debug(log,
+    //                             "trying to position ",
+    //                             p_to_position->get_lexeme(),
+    //                             " against ",
+    //                             *p_last_positioned);
 
-        p_to_position->position(m_last_first_position_horizontal.get_x(),
-                                m_last_first_position_horizontal.get_y(),
-                                word::direction::horizontal,
-                                word::orientation::forward);
-        return true;
-    }
+    validate_position _validate_position;
 
-    bool position_first_verical(words::iterator p_to_position,
-                                x p_x_limit,
-                                y p_y_limit,
-                                lexeme::size_type p_lexeme_size)
-    {
-        if (y(p_lexeme_size) > p_y_limit) {
-            return false;
-        }
-        if (m_last_first_position_vertical == coordinate(x(-1), y(-1))) {
-            m_last_first_position_vertical = coordinate(x(0), y(0));
-        } else {
-            if ((m_last_first_position_vertical.get_y() + y(1) +
-                 y(p_lexeme_size)) >= p_y_limit) {
-                if (m_last_first_position_vertical.get_x() ==
-                    (p_x_limit - x(1))) {
-                    return false;
-                }
-                m_last_first_position_vertical = coordinate(
-                  m_last_first_position_vertical.get_x() + x(1), y(0));
-            } else {
-                m_last_first_position_vertical =
-                  coordinate(m_last_first_position_vertical.get_x(),
-                             m_last_first_position_vertical.get_y() + y(1));
-            }
-        }
-        p_to_position->position(m_last_first_position_vertical.get_x(),
-                                m_last_first_position_vertical.get_y(),
-                                word::direction::vertical,
-                                word::orientation::forward);
+    const lexeme& _positioned = p_last_positioned->get_lexeme();
+    lexeme::size_type _positioned_size = _positioned.size();
 
-        return true;
-    }
+    const lexeme& _to_position = p_to_position->get_lexeme();
+    lexeme::size_type _to_position_size = _to_position.size();
 
-    bool position_first(words::iterator p_to_position, x p_x_limit, y p_y_limit)
-    {
+    for (lexeme::size_type _i_positioned = 0;
+         _i_positioned < _positioned_size;
+         ++_i_positioned) {
+      for (lexeme::size_type _i_to_position = 0;
+           _i_to_position < _to_position_size;
+           ++_i_to_position) {
+        if (_to_position[_i_to_position] ==
+            _positioned[_i_positioned]) {
+          //                    crosswords_log_debug(log,
+          //                                         "intesect at ",
+          //                                         _i_positioned,
+          //                                         " in positioned
+          //                                         ", _positioned,
+          //                                         " and in ",
+          //                                         _i_to_position,
+          //                                         " in ",
+          //                                         _to_position);
+          if (p_last_positioned->get_direction() ==
+              word::direction::vertical) {
 
-        lexeme::size_type _lexeme_size = p_to_position->get_lexeme().size();
+            p_to_position->position(
+                  p_last_positioned->get_coordinates()[_i_positioned]
+                  .get_x() -
+                  x(_i_to_position),
+                  p_last_positioned->get_coordinates()[_i_positioned]
+                  .get_y(),
 
-        if (position_first_horizontal(
-              p_to_position, p_x_limit, p_y_limit, _lexeme_size)) {
-            m_positions_occupied.add(*p_to_position);
+                  word::direction::horizontal,
+                  word::orientation::forward);
+          } else {
+            p_to_position->position(
+                  p_last_positioned->get_coordinates()[_i_positioned]
+                  .get_x(),
+                  p_last_positioned->get_coordinates()[_i_positioned]
+                  .get_y() -
+                  y(_i_to_position),
+
+                  word::direction::vertical,
+                  word::orientation::forward);
+          }
+          //                    crosswords_log_debug(
+          //                      log, "it seems ", *p_to_position, "
+          //                      was positioned");
+          if (_validate_position(p_first_positioned,
+                                 p_to_position,
+                                 _i_to_position,
+                                 m_positions_occupied,
+                                 m_x_limit,
+                                 m_y_limit)) {
             return true;
+          }
+          //                    crosswords_log_debug(log, "invalid
+          //                    position");
+          p_to_position->unposition();
         }
+      }
+    }
+    return false;
+  }
 
-        if (position_first_verical(
-              p_to_position, p_x_limit, p_y_limit, _lexeme_size)) {
-            m_positions_occupied.add(*p_to_position);
-            return true;
+  bool position_first_horizontal(words::iterator p_to_position,
+                                 lexeme::size_type p_lexeme_size)
+  {
+    if (x(p_lexeme_size) > m_x_limit) {
+      return false;
+    }
+    if (m_last_first_position_horizontal == coordinate(x(-1), y(-1))) {
+      m_last_first_position_horizontal = coordinate(x(0), y(0));
+    } else {
+      if ((m_last_first_position_horizontal.get_x() + x(1) +
+           x(p_lexeme_size)) >= m_x_limit) {
+        if (m_last_first_position_horizontal.get_y() ==
+            (m_y_limit - y(1))) {
+          return false;
         }
-        return false;
+        m_last_first_position_horizontal = coordinate(
+              x(0), m_last_first_position_horizontal.get_y() + y(1));
+      } else {
+        m_last_first_position_horizontal =
+            coordinate(m_last_first_position_horizontal.get_x() + x(1),
+                       m_last_first_position_horizontal.get_y());
+      }
     }
 
-    void unposition(words::iterator p_begin, words::iterator p_end)
-    {
-        for (words::iterator _ite = p_begin; _ite != p_end; ++_ite) {
-            _ite->unposition();
+    p_to_position->position(m_last_first_position_horizontal.get_x(),
+                            m_last_first_position_horizontal.get_y(),
+                            word::direction::horizontal,
+                            word::orientation::forward);
+    return true;
+  }
+
+  bool position_first_verical(words::iterator p_to_position,
+                              lexeme::size_type p_lexeme_size)
+  {
+    if (y(p_lexeme_size) > m_y_limit) {
+      return false;
+    }
+    if (m_last_first_position_vertical == coordinate(x(-1), y(-1))) {
+      m_last_first_position_vertical = coordinate(x(0), y(0));
+    } else {
+      if ((m_last_first_position_vertical.get_y() + y(1) +
+           y(p_lexeme_size)) >= m_y_limit) {
+        if (m_last_first_position_vertical.get_x() ==
+            (m_x_limit - x(1))) {
+          return false;
         }
+        m_last_first_position_vertical = coordinate(
+              m_last_first_position_vertical.get_x() + x(1), y(0));
+      } else {
+        m_last_first_position_vertical =
+            coordinate(m_last_first_position_vertical.get_x(),
+                       m_last_first_position_vertical.get_y() + y(1));
+      }
+    }
+    p_to_position->position(m_last_first_position_vertical.get_x(),
+                            m_last_first_position_vertical.get_y(),
+                            word::direction::vertical,
+                            word::orientation::forward);
+
+    return true;
+  }
+
+  bool position_first(words::iterator p_to_position)
+  {
+
+    lexeme::size_type _lexeme_size = p_to_position->get_lexeme().size();
+
+    if (m_position_first_horizontal) {
+
+      if (position_first_horizontal(p_to_position, _lexeme_size)) {
+        m_positions_occupied.add(*p_to_position);
+        return true;
+      }
+      return false;
     }
 
-  private:
-    positions_occupied m_positions_occupied;
-    coordinate m_last_first_position_horizontal = { x(-1), y(-1) };
-    coordinate m_last_first_position_vertical = { x(-1), y(-1) };
+    if (position_first_verical(p_to_position, _lexeme_size)) {
+      m_positions_occupied.add(*p_to_position);
+      return true;
+    }
+    return false;
+  }
+
+  void unposition(words::iterator p_begin, words::iterator p_end)
+  {
+    for (words::iterator _ite = p_begin; _ite != p_end; ++_ite) {
+      _ite->unposition();
+    }
+  }
+
+private:
+  positions_occupied m_positions_occupied;
+  coordinate m_last_first_position_horizontal = { x(-1), y(-1) };
+  coordinate m_last_first_position_vertical = { x(-1), y(-1) };
+  x m_x_limit;
+  y m_y_limit;
+  bool m_position_from_first = {true};
+  bool m_position_first_horizontal = {true};
 };
 
 } // namespace business
