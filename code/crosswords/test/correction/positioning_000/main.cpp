@@ -98,7 +98,7 @@ struct positioning_000
         for (words::const_iterator _pos = _words.begin(); _pos != _words.end();
              ++_pos) {
             if (_pos->positioned()) {
-                crosswords_log_error(log, *_pos, " positioned");
+                crosswords_log_test(log, *_pos, " positioned");
                 ++_ok_counter;
             } else {
                 crosswords_log_test(log, *_pos, " NOT positioned");

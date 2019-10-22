@@ -98,6 +98,8 @@ struct positioner005_t
     crosswords_log_debug(log,
                          "words after ordered ",
                          print_words(m_words.begin(), m_words.end()));
+    // save original set
+    words _original(m_words);
 
     crosswords_log_info(log, "STARTING ", std::time(nullptr));
 
@@ -111,64 +113,82 @@ struct positioner005_t
         break;
       }
 
-      if (m_words_positioner(
-            _begin, std::next(_ite))) {
+      if (m_words_positioner(_begin, std::next(_ite))) {
         ++_ite;
       } else {
-        m_words_positioner.reset();
-        crosswords_log_warn(log,
-                            "failed to position ",
-                            print_words(_begin, std::next(_ite)));
-        add_failure(_begin, std::next(_ite));
-        uint8_t _shifter = 0;
-        while (true) {
-          //                    bool _was_last = false;
-          if (_ite == std::prev(_end)) {
-            crosswords_log_error(
-                  log, "fail to position ", print_words(_begin, _end));
-            return m_words;
-          }
 
-          words::iterator _aux = std::next(_ite, ++_shifter);
-          crosswords_log_debug(log,
-                               "before swapping ",
-                               print_words(_begin, std::next(_ite)));
-          std::iter_swap(_ite, _aux);
-          crosswords_log_debug(log,
-                               "after swapping ",
-                               print_words(_begin, std::next(_ite)));
+        crosswords_log_error(log, "unable to position "
+                             , print_words(_begin, _ite));
+        break;
 
-          if (_ite == _end) {
-            break;
-          }
+//        std::iter_swap(_begin, std::prev(_end));
+//        crosswords_log_info(log, "new order ", print_words(_begin, _end));
+//        if (m_words == _original) {
+//          crosswords_log_fatal(log, "LOOP!!!");
+//          break;
+//        }
+//        else {
+//          _ite = _begin;
+//        }
 
-          if (!already_tried(_begin, std::next(_ite))) {
-            crosswords_log_debug(
-                  log,
-                  "new set ",
-                  print_words(_begin, std::next(_ite)));
-            break;
-          }
-          crosswords_log_debug(log,
-                               "new set ",
-                               print_words(_begin, std::next(_ite)),
-                               " was already tried");
 
-          crosswords_log_debug(log,
-                               "before swapping back ",
-                               print_words(_begin, std::next(_ite)));
+//        if (_ite == std::prev(_end)) {
+//          // current sub set is the whole set
+//          crosswords_log_info(log, "current sub set is the whole set");
+//          std::iter_swap(_begin, std::next(_begin));
+//          crosswords_log_info(log, "new order ", print_words(_begin, _end));
+//          if (m_words == _original) {
+//            crosswords_log_fatal(log, "LOOP!!!");
+//            break;
+//          }
+//          else {
+//            _ite = _begin;
+//          }
+//        }
+//        else {
+//          crosswords_log_info(log, "current sub set is part of the whole set");
+//          add_failure(_begin, std::next(_ite));
+//          uint8_t _shifter = 0;
+//          while (true) {
+//            words::iterator _aux = std::next(_ite, ++_shifter);
+//            crosswords_log_debug(log,
+//                                 "before swapping ",
+//                                 print_words(_begin, std::next(_ite)));
+//            std::iter_swap(_ite, _aux);
+//            crosswords_log_debug(log,
+//                                 "after swapping ",
+//                                 print_words(_begin, std::next(_ite)));
 
-          //                    if (_was_last) {
+//            if (_ite == _end) {
+//              break;
+//            }
 
-          //                    } else {
-          std::iter_swap(_aux, _ite);
-          //                    }
-          crosswords_log_debug(log,
-                               "after swapping ",
-                               print_words(_begin, std::next(_ite)));
-        }
+//            if (!already_tried(_begin, std::next(_ite))) {
+//              crosswords_log_debug(
+//                    log,
+//                    "new set ",
+//                    print_words(_begin, std::next(_ite)));
+//              _ite = _begin;
+//              break;
+//            }
+//            crosswords_log_debug(log,
+//                                 "new set ",
+//                                 print_words(_begin, std::next(_ite)),
+//                                 " was already tried");
+
+//            crosswords_log_debug(log,
+//                                 "before swapping back ",
+//                                 print_words(_begin, std::next(_ite)));
+
+//            std::iter_swap(_aux, _ite);
+//            crosswords_log_debug(log,
+//                                 "after swapping ",
+//                                 print_words(_begin, std::next(_ite)));
+//          }
+//        }
       }
     }
+    return m_words;
     crosswords_log_info(log, "FINISHING ", std::time(nullptr));
     return m_words;
   }

@@ -233,7 +233,8 @@ class log
     {
         if (can_log(p_level)) {
             std::ostringstream _stream;
-            _stream << type::business::e2t(p_level) << m_separator
+//            _stream << type::business::e2t(p_level) << m_separator
+            _stream << level2str(p_level) << m_separator
                     << tenacitas::calendar::business::epoch::millisecs()
                     << m_separator << std::this_thread::get_id() << m_separator
                     << p_class << m_separator << p_line;
@@ -243,6 +244,8 @@ class log
             m_writer(_stream.str());
         }
     }
+
+
 
     ///
     /// \brief can_log informs if a message with a certain log level can be

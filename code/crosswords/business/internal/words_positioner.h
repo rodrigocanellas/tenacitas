@@ -45,6 +45,7 @@ struct words_positioner_t
   typedef entities::word word;
   typedef entities::lexeme lexeme;
   typedef entities::coordinate coordinate;
+  typedef entities::coordinates coordinates;
   typedef entities::coordinate::x x;
   typedef entities::coordinate::y y;
 
@@ -55,69 +56,118 @@ struct words_positioner_t
     : m_x_limit(m_x_limit)
     , m_y_limit(m_y_limit) {}
 
-  void reset()
+  //  void reset()
+  //  {
+  //    m_last_first_position_horizontal.reset();
+  //    m_last_first_position_vertical.reset();
+
+  //    if ( (m_position_from_first) && (m_position_first_horizontal)) {
+  //      m_position_from_first = true;
+  //      m_position_first_horizontal = false;
+  //    }
+  //    else if ( (m_position_from_first) && (!m_position_first_horizontal)) {
+  //      m_position_from_first = false;
+  //      m_position_first_horizontal = true;
+  //    }
+  //    else {
+  //      m_position_from_first = false;
+  //      m_position_first_horizontal = false;
+  //    }
+  //  }
+
+  bool operator()(words::iterator p_begin, words::iterator p_end)
   {
-    m_last_first_position_horizontal.reset();
-    m_last_first_position_vertical.reset();
+    words::iterator _ite = p_begin;
 
-    if ( (m_position_from_first) && (m_position_first_horizontal)) {
-      m_position_from_first = true;
-      m_position_first_horizontal = false;
-    }
-    else if ( (m_position_from_first) && (!m_position_first_horizontal)) {
-      m_position_from_first = false;
-      m_position_first_horizontal = true;
-    }
-    else {
-      m_position_from_first = false;
-      m_position_first_horizontal = false;
-    }
-  }
+    //    uint32_t _counter = 0;
 
-  bool operator()(words::iterator p_first,
-                  words::iterator p_end)
-  {
+    uint8_t _shifter = 0;
 
-    if ( (!m_position_from_first) && (!m_position_first_horizontal)) {
-      return false;
-    }
-
-    words::iterator _ite = p_first;
-    uint32_t _counter = 0;
-
-    crosswords_log_info(
-          log, "############ ", _counter++, " - ", print_words(p_first, p_end));
+    crosswords_log_info(log, "####### ", print_words(p_begin, p_end));
 
     while (true) {
+      m_position_from_first = true;
+      m_position_first_horizontal = true;
+      bool _all_set_positioned = true;
+      while (true) {
+        if ( (!m_position_from_first) && (!m_position_first_horizontal)) {
+          _all_set_positioned = false;
+          break;
+        }
+        bool _hope_to_position = true;
+        while (true) {
+          if (_ite == p_end) {
+            break;
+          }
 
-      if (_ite == p_end) {
+          crosswords_log_debug(log, "trying to position ", _ite->get_lexeme());
+          if (_ite->positioned()) {
+            crosswords_log_debug(log, _ite->get_lexeme(), " already positioned");
+            ++_ite;
+          } else {
+            positioning _positioning = position(p_begin, _ite);
+            if (_positioning == positioning::ok) {
+              crosswords_log_debug(log, _ite->get_lexeme(), " positioned!");
+              print_positioned(p_begin, p_end);
+              ++_ite;
+            } else {
+              if (_positioning == positioning::some_not_positioned) {
+                m_positions_occupied.clear();
+                unposition(p_begin, _ite);
+//                m_last_first_position_horizontal.reset();
+//                m_last_first_position_vertical.reset();
+                _ite = p_begin;
+              } else { // positioning::first_not_positioned
+                crosswords_log_debug(log, _ite->get_lexeme(), " not positioned");
+                _hope_to_position = false;
+                break;
+              }
+            }
+          }
+        }
+        if (_hope_to_position) {
+          break;
+        }
+
+        if ( (m_position_from_first) && (m_position_first_horizontal)) {
+          crosswords_log_debug(log, "(true, true) to (true, false)");
+          m_position_from_first = true;
+          m_position_first_horizontal = false;
+        }
+        else if ( (m_position_from_first) && (!m_position_first_horizontal)) {
+          crosswords_log_debug(log, "(true, false) to (false, true)");
+          m_position_from_first = false;
+          m_position_first_horizontal = true;
+        }
+        else {
+          crosswords_log_debug(log, "(false, true) to (false, false)");
+          m_position_from_first = false;
+          m_position_first_horizontal = false;
+        }
+        m_positions_occupied.clear();
+        unposition(p_begin, p_end);
+        m_last_first_position_horizontal.reset();
+        m_last_first_position_vertical.reset();
+        _ite = p_begin;
+
+      }
+      if (_all_set_positioned) {
         break;
       }
 
-      crosswords_log_debug(
-            log, "trying to position ", _ite->get_lexeme());
-      if (_ite->positioned()) {
-        crosswords_log_debug(
-              log, _ite->get_lexeme(), " was previously positioned");
-        ++_ite;
-      } else {
-        positioning _positioning =
-            position(p_first, _ite);
-        if (_positioning == positioning::ok) {
-          crosswords_log_debug(
-                log, _ite->get_lexeme(), " was positioned");
-          print_positioned(p_first, p_end, m_x_limit, m_y_limit);
-          ++_ite;
-        } else {
-          if (_positioning == positioning::other_not_positioned) {
-            _ite = p_first;
-          } else {
-            crosswords_log_debug(
-                  log, _ite->get_lexeme(), " was not positioned");
-            return false;
-          }
-        }
+      crosswords_log_warn(log, "unable to position ", print_words(p_begin, p_end));
+      if (_shifter == static_cast<uint8_t>(std::distance(p_begin, p_end))) {
+        crosswords_log_warn(log, "all the possible changes, (" ,
+                            static_cast<uint16_t>(_shifter), ") were made: ");
+        return false;
       }
+      std::iter_swap(p_begin, std::next(p_begin, ++_shifter));
+      crosswords_log_debug(log, "new order: ", print_words(p_begin, p_end));
+      m_positions_occupied.clear();
+      unposition(p_begin, p_end);
+      m_last_first_position_horizontal.reset();
+      m_last_first_position_vertical.reset();
+      _ite = p_begin;
     }
     return true;
   }
@@ -127,7 +177,7 @@ private:
   {
     ok = 'o',
     first_not_positioned = 'f',
-    other_not_positioned = 'n'
+    some_not_positioned = 'n'
   };
 
 private:
@@ -162,10 +212,6 @@ private:
     if (_positioning == positioning::ok) {
       return positioning::ok;
     }
-
-    m_positions_occupied.clear();
-    unposition(p_first_positioned, p_to_position);
-
     return _positioning;
   }
 
@@ -195,7 +241,7 @@ private:
         crosswords_log_debug(log,
                              "trying to reposition first word");
 
-        return positioning::other_not_positioned;
+        return positioning::some_not_positioned;
       }
 
       bool _is_positioned = position(p_first_positioned,
@@ -249,7 +295,7 @@ private:
 
       ++_last_positioned;
     }
-    return positioning::other_not_positioned;
+    return positioning::some_not_positioned;
   }
 
   bool no_word_positioned(words::const_iterator p_begin,
@@ -428,6 +474,48 @@ private:
   {
     for (words::iterator _ite = p_begin; _ite != p_end; ++_ite) {
       _ite->unposition();
+    }
+  }
+
+  void
+  print_positioned(words::const_iterator p_begin,
+                   words::const_iterator p_end)
+  {
+    using namespace std;
+
+    typedef std::vector<std::string> matrix;
+
+    string::size_type _x_size = m_x_limit.get_value<string::size_type>();
+    string::size_type _y_size = m_y_limit.get_value<string::size_type>();
+
+    matrix _m(_x_size, string(_y_size, ' '));
+
+    for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
+      if (_ite->positioned()) {
+        const coordinates& _coords = _ite->get_coordinates();
+        const lexeme& _lexeme = _ite->get_lexeme();
+        for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
+          matrix::size_type _x =
+              _coords[_i].get_x().get_value<string::size_type>();
+          string::size_type _y =
+              _coords[_i].get_y().get_value<std::string::size_type>();
+          char _c = _lexeme[_i];
+          _m[_x][_y] = _c;
+        }
+      }
+    }
+
+    cerr << "    ";
+    for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
+      cerr << setw(2) << setfill('0') << _x << " ";
+    }
+    std::cerr << std::endl;
+    for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
+      cerr << setw(2) << setfill('0') << _y << " ";
+      for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
+        cerr << "  " << _m[_x][_y];
+      }
+      cerr << std::endl;
     }
   }
 
