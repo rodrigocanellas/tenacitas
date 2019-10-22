@@ -157,7 +157,7 @@ struct words_positioner_t
 
       crosswords_log_warn(log, "unable to position ", print_words(p_begin, p_end));
       if (_shifter == static_cast<uint8_t>(std::distance(p_begin, p_end))) {
-        crosswords_log_warn(log, "all the possible changes, (" ,
+        crosswords_log_warn(log, "all the possible changes (" ,
                             static_cast<uint16_t>(_shifter), ") were made: ");
         return false;
       }

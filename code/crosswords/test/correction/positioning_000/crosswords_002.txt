@@ -1,7 +1,7 @@
 # Testing a bunch of words in a 15x15 matrix
 RESULT all
-13
-13
+9
+11
 graduacao
 existir
 unida
