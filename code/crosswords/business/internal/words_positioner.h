@@ -61,10 +61,12 @@ struct words_positioner_t
   {
     words::iterator _ite = p_begin;
 
-    m_positions_occupied.clear();
-    unposition(p_begin, p_end);
-    m_position_from_first = true;
-    m_position_first_horizontal = true;
+    crosswords_log_info(log, "####### ", print_words(p_begin, p_end));
+
+//    m_positions_occupied.clear();
+//    unposition(p_begin, p_end);
+//    m_position_from_first = true;
+//    m_position_first_horizontal = true;
 
     //    uint32_t _counter = 0;
 
@@ -79,6 +81,12 @@ struct words_positioner_t
       if ((!m_position_from_first) && (!m_position_first_horizontal)) {
         //          _all_set_positioned = false;
         //          break;
+        m_positions_occupied.clear();
+        unposition(p_begin, p_end);
+        m_position_from_first = true;
+        m_position_first_horizontal = true;
+        m_last_first_position_horizontal.reset();
+        m_last_first_position_vertical.reset();
         return false;
       }
       bool _hope_to_position = true;
@@ -95,21 +103,26 @@ struct words_positioner_t
           positioning _positioning = position(p_begin, _ite);
           if (_positioning == positioning::ok) {
             crosswords_log_debug(log, _ite->get_lexeme(), " positioned!");
-            //            print_positioned(p_begin, p_end, m_x_limit,
-            //            m_y_limit);
+            print_positioned(p_begin, p_end, m_x_limit, m_y_limit);
             ++_ite;
           } else {
             if (_positioning == positioning::some_not_positioned) {
               m_positions_occupied.clear();
               unposition(p_begin, _ite);
+              crosswords_log_debug(log, _ite->get_lexeme(), " not positioned");
               //                m_last_first_position_horizontal.reset();
               //                m_last_first_position_vertical.reset();
               _ite = p_begin;
             } else { // positioning::first_not_positioned
-              crosswords_log_debug(log, _ite->get_lexeme(), " not positioned");
+              crosswords_log_debug(log, "first word ", _ite->get_lexeme(), " not positioned");
               _hope_to_position = false;
               break;
             }
+//            m_positions_occupied.clear();
+//            unposition(p_begin, _ite);
+//            crosswords_log_debug(log, _ite->get_lexeme(), " not positioned");
+//            _hope_to_position = false;
+//            break;
           }
         }
       }

@@ -154,11 +154,13 @@ struct positioner005_t
             log, print_words(_begin, _ite), " have already been tried");
           iter_swap(_aux, _begin);
         } // while
+
         if (_swapper == static_cast<uint8_t>(distance(_begin, _ite))) {
           // all the swaps in this set have been tried
           if (next(_ite) == _end) {
             crosswords_log_error(
               log, "no solution for ", print_words(_begin, next(_ite)));
+            _ite = _end;
             break;
           }
 
