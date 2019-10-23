@@ -38,30 +38,33 @@ namespace business {
 template<typename t_log>
 struct positioner_t
 {
-    typedef t_log log;
+  typedef t_log log;
 
-    typedef entities::words words;
-    typedef entities::lexeme lexeme;
-    typedef entities::description description;
-    typedef entities::coordinate::x x;
-    typedef entities::coordinate::y y;
+  typedef entities::words words;
+  typedef entities::lexeme lexeme;
+  typedef entities::description description;
+  typedef entities::coordinate::x x;
+  typedef entities::coordinate::y y;
 
-    inline explicit positioner_t(x p_x_limit = x(13), y p_y_limit = y(13))
-      : m_positioner(p_x_limit, p_y_limit)
-    {}
+  inline explicit positioner_t(x p_x_limit = x(13), y p_y_limit = y(13))
+    : m_positioner(p_x_limit, p_y_limit)
+  {}
 
-    inline void add(lexeme&& p_lexeme, description&& p_description)
-    {
-        m_positioner.add(std::move(p_lexeme), std::move(p_description));
-    }
+  inline void add(lexeme&& p_lexeme, description&& p_description)
+  {
+    m_positioner.add(std::move(p_lexeme), std::move(p_description));
+  }
 
-    inline words operator()() { return m_positioner(); }
+  inline words operator()() { return m_positioner(); }
 
-  private:
-    typedef positioner005_t<log> positioner;
+  inline x get_x_limit() const { return m_positioner.get_x_limit(); }
+  inline y get_y_limit() const { return m_positioner.get_y_limit(); }
 
-  private:
-    positioner m_positioner;
+private:
+  typedef positioner005_t<log> positioner;
+
+private:
+  positioner m_positioner;
 };
 } // namespace business
 } // namespace crosswords
