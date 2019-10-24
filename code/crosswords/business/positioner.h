@@ -11,7 +11,7 @@
 #include <utility>
 
 #include <crosswords/business/internal/log.h>
-#include <crosswords/business/internal/positioner005.h>
+#include <crosswords/business/internal/positioner006.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
@@ -61,7 +61,7 @@ struct positioner_t
   inline y get_y_limit() const { return m_positioner.get_y_limit(); }
 
 private:
-  typedef positioner005_t<log> positioner;
+  typedef positioner006_t<log> positioner;
 
 private:
   positioner m_positioner;

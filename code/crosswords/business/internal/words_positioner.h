@@ -70,7 +70,7 @@ struct words_positioner_t
 
     //    uint32_t _counter = 0;
 
-    uint8_t _shifter = 0;
+    //    uint8_t _shifter = 0;
 
     while (true) {
       crosswords_log_info(log, "####### ", print_words(p_begin, p_end));
@@ -147,17 +147,26 @@ struct words_positioner_t
         break;
       }
 
-      crosswords_log_warn(
-        log, "unable to position ", print_words(p_begin, p_end));
-      if (_shifter == static_cast<uint8_t>(std::distance(p_begin, p_end))) {
-        crosswords_log_warn(log,
-                            "all the possible changes (",
-                            static_cast<uint16_t>(_shifter),
-                            ") were made: ");
-        return false;
+      crosswords_log_warn(log, "ZZZZ old: ", print_words(p_begin, p_end));
+
+      if (!std::next_permutation(p_begin, p_end, words::cmp_words())) {
+        crosswords_log_warn(log, "no more permutations");
+        break;
       }
-      std::iter_swap(p_begin, std::next(p_begin, ++_shifter));
-      crosswords_log_warn(log, "new order: ", print_words(p_begin, p_end));
+
+      crosswords_log_warn(log, "ZZZZ new: ", print_words(p_begin, p_end));
+
+      //      if (_shifter == static_cast<uint8_t>(std::distance(p_begin,
+      //      p_end))) {
+      //        crosswords_log_warn(log,
+      //                            "all the possible changes (",
+      //                            static_cast<uint16_t>(_shifter),
+      //                            ") were made: ");
+      //        return false;
+      //      }
+      //      std::iter_swap(p_begin, std::next(p_begin, ++_shifter));
+      //      crosswords_log_warn(log, "new order: ", print_words(p_begin,
+      //      p_end));
       m_positions_occupied.clear();
       unposition(p_begin, p_end);
       m_last_first_position_horizontal.reset();

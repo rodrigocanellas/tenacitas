@@ -24,6 +24,7 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/positioner003.h \
     ../../../../../code/crosswords/business/internal/positioner004.h \
     ../../../../../code/crosswords/business/internal/positioner005.h \
+    ../../../../../code/crosswords/business/internal/positioner006.h \
     ../../../../../code/crosswords/business/internal/positioning_history.h \
     ../../../../../code/crosswords/business/internal/positions_occupied.h \
     ../../../../../code/crosswords/business/internal/validate_position.h \
