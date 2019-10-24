@@ -124,24 +124,28 @@ struct positioner005_t
           add_failure(_begin, next(_ite));
         }
 
-        uint8_t _swapper = 0;
+        if (next(_ite) == _end) {
+          crosswords_log_error(
+            log, "no solution for ", print_words(_begin, next(_ite)));
+          _ite = _end;
+          break;
+        }
+
+        // changing [_begin, _ite] for [_begin, next(_ite, _shifter)]
+
+        uint8_t _shifter = 0;
+
         while (true) {
+          words::iterator _aux = next(_ite, ++_shifter);
 
-          // changing the order in [_begin, _ite]
-
-          words::iterator _aux = next(_begin, ++_swapper);
-
-          if (_aux == next(_ite)) {
-            crosswords_log_warn(log,
-                                "all the swaps in ",
-                                print_words(_begin, next(_ite)),
-                                " have been tried");
+          if (_aux == _end) {
+            crosswords_log_error(
+              log, "no solution for ", print_words(_begin, _end));
+            _ite = _end;
             break;
           }
 
-          iter_swap(_begin, _aux);
-
-          crosswords_log_info(log, "trying ", print_words(_begin, next(_ite)));
+          iter_swap(_ite, _aux);
 
           if (!already_tried(_begin, next(_ite))) {
             crosswords_log_info(
@@ -150,49 +154,11 @@ struct positioner005_t
             break;
           }
 
-          crosswords_log_info(
-            log, print_words(_begin, _ite), " have already been tried");
-          iter_swap(_aux, _begin);
+          crosswords_log_info(log,
+                              print_words(_begin, std::next(_ite)),
+                              " have already been tried");
+          iter_swap(_aux, _ite);
         } // while
-
-        if (_swapper == static_cast<uint8_t>(distance(_begin, _ite))) {
-          // all the swaps in this set have been tried
-          if (next(_ite) == _end) {
-            crosswords_log_error(
-              log, "no solution for ", print_words(_begin, next(_ite)));
-            _ite = _end;
-            break;
-          }
-
-          // changing [_begin, _ite] for [_begin, next(_ite, _shifter)]
-
-          uint8_t _shifter = 0;
-
-          while (true) {
-            words::iterator _aux = next(_ite, ++_shifter);
-
-            if (_aux == _end) {
-              crosswords_log_error(
-                log, "no solution for ", print_words(_begin, _end));
-              _ite = _end;
-              break;
-            }
-
-            iter_swap(_ite, _aux);
-
-            if (!already_tried(_begin, next(_ite))) {
-              crosswords_log_info(
-                log, "new set ", print_words(_begin, next(_ite)));
-              _ite = _begin;
-              break;
-            }
-
-            crosswords_log_info(log,
-                                print_words(_begin, std::next(_ite)),
-                                " have already been tried");
-            iter_swap(_aux, _ite);
-          } // while
-        }
       }
     } // while
 
@@ -274,43 +240,78 @@ private:
 } // namespace crosswords
 } // namespace tenacitas
 
-// if (_ite == std::prev(_end)) {
-//  crosswords_log_error(
-//    log, "unable to position ", print_words(_begin, _ite));
-//  break;
+#endif // POSITIONER003_H
+
+// if (!already_tried(_begin, next(_ite))) {
+//  add_failure(_begin, next(_ite));
 //}
 
-// add_failure(_begin, std::next(_ite));
-// uint8_t _shifter = 0;
+// uint8_t _swapper = 0;
 // while (true) {
-//  words::iterator _aux = std::next(_ite, ++_shifter);
-//  crosswords_log_debug(
-//    log, "before swapping ", print_words(_begin, std::next(_ite)));
-//  std::iter_swap(_ite, _aux);
-//  crosswords_log_debug(
-//    log, "after swapping ", print_words(_begin, std::next(_ite)));
 
-//  if (_ite == _end) {
+//  // changing the order in [_begin, _ite]
+
+//  words::iterator _aux = next(_begin, ++_swapper);
+
+//  if (_aux == next(_ite)) {
+//    crosswords_log_warn(log,
+//                        "all the swaps in ",
+//                        print_words(_begin, next(_ite)),
+//                        " have been tried");
 //    break;
 //  }
 
-//  if (!already_tried(_begin, std::next(_ite))) {
-//    crosswords_log_debug(
-//      log, "new set ", print_words(_begin, std::next(_ite)));
+//  iter_swap(_begin, _aux);
+
+//  crosswords_log_info(log, "trying ", print_words(_begin, next(_ite)));
+
+//  if (!already_tried(_begin, next(_ite))) {
+//    crosswords_log_info(
+//      log, "new set ", print_words(_begin, next(_ite)));
 //    _ite = _begin;
 //    break;
 //  }
-//  crosswords_log_debug(log,
-//                       "new set ",
-//                       print_words(_begin, std::next(_ite)),
-//                       " was already tried");
 
-//  crosswords_log_debug(
-//    log, "before swapping back ", print_words(_begin, std::next(_ite)));
+//  crosswords_log_info(
+//    log, print_words(_begin, _ite), " have already been tried");
+//  iter_swap(_aux, _begin);
+//} // while
 
-//  std::iter_swap(_aux, _ite);
-//  crosswords_log_debug(
-//    log, "after swapping ", print_words(_begin, std::next(_ite)));
+// if (_swapper == static_cast<uint8_t>(distance(_begin, _ite))) {
+//  // all the swaps in this set have been tried
+//  if (next(_ite) == _end) {
+//    crosswords_log_error(
+//      log, "no solution for ", print_words(_begin, next(_ite)));
+//    _ite = _end;
+//    break;
+//  }
+
+//  // changing [_begin, _ite] for [_begin, next(_ite, _shifter)]
+
+//  uint8_t _shifter = 0;
+
+//  while (true) {
+//    words::iterator _aux = next(_ite, ++_shifter);
+
+//    if (_aux == _end) {
+//      crosswords_log_error(
+//        log, "no solution for ", print_words(_begin, _end));
+//      _ite = _end;
+//      break;
+//    }
+
+//    iter_swap(_ite, _aux);
+
+//    if (!already_tried(_begin, next(_ite))) {
+//      crosswords_log_info(
+//        log, "new set ", print_words(_begin, next(_ite)));
+//      _ite = _begin;
+//      break;
+//    }
+
+//    crosswords_log_info(log,
+//                        print_words(_begin, std::next(_ite)),
+//                        " have already been tried");
+//    iter_swap(_aux, _ite);
+//  } // while
 //}
-//}
-#endif // POSITIONER003_H
