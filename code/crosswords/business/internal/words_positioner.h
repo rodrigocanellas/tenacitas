@@ -52,9 +52,9 @@ struct words_positioner_t
   typedef positions_occupied_t<log> positions_occupied;
   typedef validate_position_t<log> validate_position;
 
-  words_positioner_t(x m_x_limit, y m_y_limit)
-    : m_x_limit(m_x_limit)
-    , m_y_limit(m_y_limit)
+  words_positioner_t(x p_x_limit, y p_y_limit)
+    : m_x_limit(p_x_limit)
+    , m_y_limit(p_y_limit)
   {}
 
   bool operator()(words::iterator p_begin, words::iterator p_end)

@@ -1,8 +1,10 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    dependencies \
     crosswords_entities \
-    crosswords_business
+    crosswords_business \
+
 
 CONFIG += ordered
 

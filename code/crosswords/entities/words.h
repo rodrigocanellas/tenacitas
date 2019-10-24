@@ -30,6 +30,19 @@ struct words
     return p_out;
   }
 
+  words()=default;
+  words(const words&)=default;
+  words(words&&)noexcept=default;
+  ~words()=default;
+
+
+  words&operator=(const words&)=default;
+  words&operator=(words&&)noexcept=default;
+
+
+  words(const_iterator p_begin, const_iterator p_end)
+    : m_list(p_begin, p_end){}
+
   bool operator==(const words& p_words) const
   {
     return m_list == p_words.m_list;
@@ -84,9 +97,9 @@ struct words
         const lexeme& _lexeme = _ite->get_lexeme();
         for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
           matrix::size_type _x =
-            _coords[_i].get_x().get_value<string::size_type>();
+              _coords[_i].get_x().get_value<string::size_type>();
           string::size_type _y =
-            _coords[_i].get_y().get_value<std::string::size_type>();
+              _coords[_i].get_y().get_value<std::string::size_type>();
           char _c = _lexeme[_i];
           _m[_x][_y] = _c;
         }
@@ -179,9 +192,9 @@ print_positioned(words::const_iterator p_begin,
       const lexeme& _lexeme = _ite->get_lexeme();
       for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
         matrix::size_type _x =
-          _coords[_i].get_x().get_value<string::size_type>();
+            _coords[_i].get_x().get_value<string::size_type>();
         string::size_type _y =
-          _coords[_i].get_y().get_value<std::string::size_type>();
+            _coords[_i].get_y().get_value<std::string::size_type>();
         char _c = _lexeme[_i];
         _m[_x][_y] = _c;
       }
