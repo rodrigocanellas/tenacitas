@@ -12,7 +12,7 @@
 #include <utility>
 
 #include <crosswords/business/internal/log.h>
-#include <crosswords/business/internal/words_positioner.h>
+#include <crosswords/business/internal/words_positioner_group.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
@@ -49,13 +49,19 @@ struct positioner006_t
   typedef entities::coordinate::x x;
   typedef entities::coordinate::y y;
 
-  typedef words_positioner_t<log> words_positioner;
+  typedef words_positioner_group_t<log> words_positioner_group;
 
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-    , m_words_positioner(p_x_limit, p_y_limit)
+    , m_words_positioner_group(p_x_limit, p_y_limit)
   {}
+
+  positioner006_t(const positioner006_t&)=delete;
+  positioner006_t(positioner006_t&&)noexcept=default;
+  positioner006_t&operator=(const positioner006_t&)=delete;
+  positioner006_t&operator=(positioner006_t&&)noexcept=default;
+  ~positioner006_t()=default;
 
   void add(lexeme&& p_lexeme, description&& p_description)
   {
@@ -114,8 +120,19 @@ struct positioner006_t
         break;
       }
 
-      if (m_words_positioner(_begin, next(_ite))) {
+      std::pair<bool, words> _res = m_words_positioner_group(_begin, next(_ite));
+      if (_res.first) {
+        crosswords_log_debug(log, "old order: ",
+                             print_words(m_words.begin(), m_words.end()));
+        crosswords_log_debug(log, "result: ",
+                             print_words(_res.second.begin(), _res.second.end()));
+        std::copy(_res.second.begin(), _res.second.end(), m_words.begin());
+        crosswords_log_debug(log, "new order: ",
+                             print_words(m_words.begin(), m_words.end()));
         ++_ite;
+        crosswords_log_debug(log, "new set: ",
+                             print_words(m_words.begin(), std::next(_ite)));
+
       } else {
         crosswords_log_error(
           log, "unable to position ", print_words(_begin, next(_ite)));
@@ -234,7 +251,7 @@ private:
   y m_y_limit;
   words m_words;
   failures m_failures;
-  words_positioner m_words_positioner;
+  words_positioner_group m_words_positioner_group;
 };
 } // namespace business
 } // namespace crosswords
