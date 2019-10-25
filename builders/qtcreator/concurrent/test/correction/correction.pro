@@ -23,6 +23,7 @@ SUBDIRS = \
     sleeping_loop_012 \
     dispatcher_000 \
     dispatcher_001 \
+    dispatcher_002 \
     thread_pool_090 \
     thread_pool_091 \
     thread_pool_092 \
