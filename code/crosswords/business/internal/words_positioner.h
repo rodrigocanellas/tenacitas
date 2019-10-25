@@ -76,7 +76,7 @@ struct words_positioner_t
       crosswords_log_info(log, "####### ", print_words(p_begin, p_end));
       m_position_first_status = position_first_status::horizontal;
       bool _all_set_positioned = true;
-      if (_counter++ > 100000 ) {
+      if (_counter++ > 100000) {
         crosswords_log_warn(log, "ZZZZ counter overflow");
         return false;
       }
@@ -107,7 +107,8 @@ struct words_positioner_t
             positioning _positioning = position(p_begin, _ite);
             if (_positioning == positioning::ok) {
               crosswords_log_debug(log, _ite->get_lexeme(), " positioned!");
-//              print_positioned(p_begin, p_end, m_x_limit, m_y_limit);
+              //              print_positioned(p_begin, p_end, m_x_limit,
+              //              m_y_limit);
               ++_ite;
             } else {
               if (_positioning == positioning::some_not_positioned) {
@@ -160,17 +161,6 @@ struct words_positioner_t
 
       crosswords_log_warn(log, "ZZZZ new: ", print_words(p_begin, p_end));
 
-      //      if (_shifter == static_cast<uint8_t>(std::distance(p_begin,
-      //      p_end))) {
-      //        crosswords_log_warn(log,
-      //                            "all the possible changes (",
-      //                            static_cast<uint16_t>(_shifter),
-      //                            ") were made: ");
-      //        return false;
-      //      }
-      //      std::iter_swap(p_begin, std::next(p_begin, ++_shifter));
-      //      crosswords_log_warn(log, "new order: ", print_words(p_begin,
-      //      p_end));
       m_positions_occupied.clear();
       unposition(p_begin, p_end);
       m_last_first_position_horizontal.reset();
