@@ -12,6 +12,10 @@
 #include <string>
 #include <thread>
 
+#include <crosswords/messages/to_position.h>
+#include <crosswords/messages/positioned.h>
+#include <crosswords/messages/not_positioned.h>
+#include <concurrent/business/dispatcher.h>
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/positions_occupied.h>
 #include <crosswords/business/internal/validate_position.h>
@@ -39,11 +43,10 @@ namespace business {
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 ///
-template<typename t_owner, typename t_log>
+template<typename t_log>
 struct words_positioner_t
 {
   typedef t_log log;
-  typedef t_owner owner;
 
   typedef entities::words words;
   typedef entities::word word;
@@ -56,11 +59,14 @@ struct words_positioner_t
   typedef positions_occupied_t<log> positions_occupied;
   typedef validate_position_t<log> validate_position;
 
-  words_positioner_t(owner* p_owner, x p_x_limit, y p_y_limit)
+  words_positioner_t(x p_x_limit, y p_y_limit)
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-    , m_owner(p_owner)
-  {}
+  {
+    dispatcher_to_position::subscribe([this](messages::to_position && p_to_position)->bool {
+      return this->handle_to_position(std::move(p_to_position));
+    });
+  }
 
   words_positioner_t() = default;
   words_positioner_t(const words_positioner_t&) = default;
@@ -69,9 +75,9 @@ struct words_positioner_t
   words_positioner_t& operator=(words_positioner_t&&) noexcept = default;
   ~words_positioner_t() = default;
 
-  bool operator()(words&& p_words)
+  bool handle_to_position(messages::to_position && p_to_position)
   {
-    m_words = std::move(p_words);
+    m_words = std::move(p_to_position.get_words());
     words::iterator _begin = m_words.begin();
     words::iterator _end = m_words.end();
     words::iterator _ite = _begin;
@@ -86,9 +92,11 @@ struct words_positioner_t
         m_last_first_position_horizontal.reset();
         m_last_first_position_vertical.reset();
 
-        //_all_set_positioned = false;
-        return true;
-        //        return false;
+        crosswords_log_debug(log, print_words(m_words.begin(), m_words.end()),
+                             " was not positioned");
+        // give up this set of words, in this order
+        // returns true to indicate that it will receive other messages
+        dispatcher_not_positioned::publish(messages::not_positioned());
       }
       bool _hope_to_position = true;
       while (true) {
@@ -96,7 +104,7 @@ struct words_positioner_t
           crosswords_log_debug(log,
                                "defining result: ",
                                print_words(m_words.begin(), m_words.end()));
-          m_owner->set_result(std::move(m_words));
+          dispatcher_positioned::publish(messages::positioned(m_words));
           break;
         }
 
@@ -148,7 +156,8 @@ struct words_positioner_t
       m_last_first_position_vertical.reset();
       _ite = _begin;
     }
-    return false;
+    // false to stop the async_loop where this function is running
+    return true;
   }
 
 private:
@@ -453,13 +462,23 @@ private:
   }
 
 private:
+
+  typedef concurrent::business::dispatcher_t<messages::to_position,
+  log> dispatcher_to_position;
+
+  typedef concurrent::business::dispatcher_t<messages::positioned,
+  log> dispatcher_positioned;
+
+  typedef concurrent::business::dispatcher_t<messages::not_positioned,
+  log> dispatcher_not_positioned;
+
+private:
   positions_occupied m_positions_occupied;
   coordinate m_last_first_position_horizontal = { x(-1), y(-1) };
   coordinate m_last_first_position_vertical = { x(-1), y(-1) };
   words m_words;
   x m_x_limit;
   y m_y_limit;
-  owner* m_owner = nullptr;
 
   position_first_status m_position_first_status =
     position_first_status::horizontal;

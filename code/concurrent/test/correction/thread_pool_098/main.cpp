@@ -8,38 +8,36 @@
 #include <chrono>
 
 typedef tenacitas::concurrent::business::
-  thread_pool_t<int32_t, tenacitas::logger::business::log>
-    thread_pool_t;
+thread_pool_t<int32_t, tenacitas::logger::business::log>
+thread_pool_t;
 typedef tenacitas::concurrent::business::
-  sleeping_loop_t<void, tenacitas::logger::business::log>
-    sleeping_loop_t;
+sleeping_loop_t<void, tenacitas::logger::business::log>
+sleeping_loop_t;
 
 using namespace tenacitas::logger::business;
 
-struct thread_pool_098;
+template <typename t_notifier>
 struct work_1
 {
-  work_1(thread_pool_098* p_098)
-    : m_098(p_098)
+  work_1(t_notifier* p_notifier)
+    : m_notifier(p_notifier)
   {}
 
-  bool operator()(int32_t&& p_value);
+  bool operator()(int32_t&& p_value){
+    std::this_thread::sleep_for(std::chrono::milliseconds(170));
+    concurrent_log_test(log, "work 1 handling msg ", p_value);
+    if (p_value > 200) {
+      m_notifier->stop("work1");
+      return false;
+    }
+    return true;
+  }
+
 
 private:
-  thread_pool_098* m_098 = nullptr;
+  t_notifier* m_notifier = nullptr;
 };
 
-struct work_2
-{
-  work_2(thread_pool_098* p_098)
-    : m_098(p_098)
-  {}
-
-  bool operator()(int32_t&& p_value);
-
-private:
-  thread_pool_098* m_098 = nullptr;
-};
 
 struct thread_pool_098
 {
@@ -52,7 +50,7 @@ struct thread_pool_098
     //    m_pool.add_work(work_1(this), std::chrono::milliseconds(200));
 
     m_pool.add_work(
-      4, [this]() { return work_1(this); }, std::chrono::milliseconds(200));
+          4, [this]() { return work_1<thread_pool_098>(this); }, std::chrono::milliseconds(200));
   }
 
   bool operator()()
@@ -102,28 +100,7 @@ private:
   std::mutex m_mutex_stop;
 };
 
-bool
-work_1::operator()(int32_t&& p_value)
-{
-  std::this_thread::sleep_for(std::chrono::milliseconds(170));
-  concurrent_log_test(log, "work 1 handling msg ", p_value);
-  if (p_value > 200) {
-    m_098->stop("work1");
-    return false;
-  }
-  return true;
-}
 
-bool
-work_2::operator()(int32_t&& p_value)
-{
-  concurrent_log_test(log, "work 1 handling msg ", p_value);
-  if (p_value > 100) {
-    m_098->stop("work2");
-    return false;
-  }
-  return true;
-}
 
 int
 main(int argc, char** argv)

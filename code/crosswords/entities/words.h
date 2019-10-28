@@ -50,6 +50,8 @@ struct words
 
   void add(word&& p_word) { m_list.push_back(std::move(p_word)); }
 
+  void clear() {m_list.clear();}
+
   iterator insert(word&& p_word, iterator p_ite)
   {
     return m_list.insert(p_ite, std::move(p_word));

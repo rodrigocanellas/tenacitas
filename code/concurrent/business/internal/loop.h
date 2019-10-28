@@ -212,10 +212,12 @@ struct loop_t
             if (_future.wait_for(m_timeout) == std::future_status::ready) {
                 if (!_future.get()) {
                     concurrent_log_debug(
-                      log, this, " breaking because there is no more work");
+                      log, this, " breaking because worker returned 'false'");
                     m_stopped = true;
                     break;
                 }
+                concurrent_log_debug(log, this,
+                                     "will continue because worker returned 'true'");
             } else {
                 concurrent_log_warn(
                   log, this, " timeout for data ", _provide.second);

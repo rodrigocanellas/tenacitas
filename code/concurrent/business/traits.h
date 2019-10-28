@@ -32,8 +32,8 @@ struct loop_traits_t
     ///
     /// \param t_data is an instance of the data to be handled
     ///
-    /// \return \p true if the loop in which this work function is being called
-    /// should stop; \p false is it should continue
+    /// \return \p false if the loop in which this work function is being called
+    /// should stop; \p true is it should continue
     typedef std::function<bool(t_data&&)> worker;
 
     ///

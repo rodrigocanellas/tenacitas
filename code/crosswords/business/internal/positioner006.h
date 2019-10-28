@@ -54,7 +54,7 @@ struct positioner006_t
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-  //    , m_words_positioner_group(p_x_limit, p_y_limit)
+      , m_words_positioner_group(p_x_limit, p_y_limit)
   {}
 
   positioner006_t(const positioner006_t&) = delete;
@@ -104,7 +104,8 @@ struct positioner006_t
     using namespace std;
     m_words.sort();
     crosswords_log_debug(
-      log, "words after ordered ", print_words(m_words.begin(), m_words.end()));
+      log, "words after ordered ",
+          print_words(m_words.begin(), m_words.end()));
     // save original set
     words _original(m_words);
 
@@ -120,14 +121,15 @@ struct positioner006_t
         break;
       }
 
-      words_positioner_group _words_positioner_group(m_x_limit, m_y_limit);
-
-      std::pair<bool, words> _res = _words_positioner_group(_begin, next(_ite));
+      std::pair<bool, words> _res =
+          m_words_positioner_group(_begin, next(_ite));
       if (_res.first) {
         crosswords_log_info(
-          log, "old order: ", print_words(m_words.begin(), m_words.end()));
+          log, "old order: ",
+              print_words(m_words.begin(), m_words.end()));
         crosswords_log_info(
-          log, "result: ", print_words(_res.second.begin(), _res.second.end()));
+          log, "result: ",
+              print_words(_res.second.begin(), _res.second.end()));
         //        std::copy(_res.second.begin(), _res.second.end(),
         //        m_words.begin());
         words::size _size = _res.second.get_size();
@@ -140,12 +142,15 @@ struct positioner006_t
 
         m_words = std::move(_res.second);
         crosswords_log_info(
-          log, "new order: ", print_words(m_words.begin(), m_words.end()));
+          log, "new order: ",
+              print_words(m_words.begin(), m_words.end()));
         _ite = std::next(m_words.begin(), _size);
         crosswords_log_info(
-          log, "new set: ", print_words(m_words.begin(), std::next(_ite)));
+          log, "new set: ",
+              print_words(m_words.begin(), std::next(_ite)));
         _end = m_words.end();
         _begin = m_words.begin();
+        print_positioned(m_words.begin(), m_words.end(), m_x_limit, m_y_limit);
 
       } else {
         crosswords_log_error(
@@ -265,7 +270,7 @@ private:
   y m_y_limit;
   words m_words;
   failures m_failures;
-  //  words_positioner_group m_words_positioner_group;
+  words_positioner_group m_words_positioner_group;
 };
 } // namespace business
 } // namespace crosswords
