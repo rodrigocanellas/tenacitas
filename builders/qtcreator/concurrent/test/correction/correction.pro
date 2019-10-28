@@ -24,6 +24,7 @@ SUBDIRS = \
     dispatcher_000 \
     dispatcher_001 \
     dispatcher_002 \
+    dispatcher_003 \
     thread_pool_090 \
     thread_pool_091 \
     thread_pool_092 \
@@ -32,6 +33,7 @@ SUBDIRS = \
     thread_pool_095 \
     thread_pool_096 \
     thread_pool_097 \
+    thread_pool_098
 
 
 TEMPLATE = subdirs

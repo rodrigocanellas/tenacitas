@@ -1,17 +1,16 @@
 #ifndef TENACITAS_CROSSWORDS_BUSINESS_WORDS_POSITIONER_GROUP_H
 #define TENACITAS_CROSSWORDS_BUSINESS_WORDS_POSITIONER_GROUP_H
 
+#include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <thread>
-#include <chrono>
 #include <vector>
 
 #include <concurrent/business/thread_pool.h>
+#include <crosswords/business/internal/words_positioner.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/words.h>
-#include <crosswords/business/internal/words_positioner.h>
-
 
 namespace tenacitas {
 namespace crosswords {
@@ -36,7 +35,8 @@ struct words_positioner_group_t
 {
   typedef t_log log;
   typedef entities::words words;
-  typedef business::words_positioner_t<log> words_positioner;
+  typedef business::words_positioner_t<words_positioner_group_t, log>
+    words_positioner;
   typedef concurrent::business::thread_pool_t<words, log> thread_pool;
   typedef typename thread_pool::worker worker;
   typedef entities::coordinate coordinate;
@@ -50,22 +50,20 @@ struct words_positioner_group_t
   {
     m_thread_pool.add_work(8,
                            [this]() -> worker {
-                             return words_positioner (m_x_limit, m_y_limit,
-//                                                      &m_cond, &m_mutex,
-                             [this](const words & p_words) -> void
-                             {this->set_result(p_words);});
+                             return words_positioner(
+                               this, m_x_limit, m_y_limit);
                            },
-                           std::chrono::milliseconds (10000)
-                           );
-
-
+                           std::chrono::milliseconds(10000));
+    m_thread_pool.run();
   }
 
-//  words_positioner_group_t()=default;
-  words_positioner_group_t(const words_positioner_group_t&)=delete;
-  words_positioner_group_t(words_positioner_group_t&&)noexcept=default;
-  words_positioner_group_t&operator=(const words_positioner_group_t&)=delete;
-  words_positioner_group_t&operator=(words_positioner_group_t&&p_positioner)noexcept {
+  //  words_positioner_group_t()=default;
+  words_positioner_group_t(const words_positioner_group_t&) = delete;
+  words_positioner_group_t(words_positioner_group_t&&) noexcept = default;
+  words_positioner_group_t& operator=(const words_positioner_group_t&) = delete;
+  words_positioner_group_t& operator=(
+    words_positioner_group_t&& p_positioner) noexcept
+  {
     if (this != &p_positioner) {
       m_x_limit = std::move(p_positioner.m_x_limit);
       m_y_limit = std::move(p_positioner.m_y_limit);
@@ -73,67 +71,71 @@ struct words_positioner_group_t
     }
     return *this;
   }
-  ~words_positioner_group_t()=default;
+  ~words_positioner_group_t() = default;
 
-
-  void set_result(const words & p_words) {
-    crosswords_log_debug(log, "defining result before: ",
+  void set_result(words&& p_words)
+  {
+    crosswords_log_debug(log,
+                         "defining result before: ",
                          print_words(p_words.begin(), p_words.end()));
     {
       std::lock_guard<std::mutex> _lock(m_mutex_result);
-      if (m_result.get_size() == 0){
-        m_result = p_words;
-        crosswords_log_debug(log, "defining result after: ",
+      if (m_result.get_size() == 0) {
+        m_result = std::move(p_words);
+        crosswords_log_debug(log,
+                             "defining result after: ",
                              print_words(m_result.begin(), m_result.end()));
-      }
-      else {
+      } else {
         crosswords_log_debug(log, "ignoring results");
       }
     }
-
   }
 
-  std::pair<bool, words> operator()(words::iterator p_begin, words::iterator p_end) {
-    m_thread_pool.run();
-    words _words(p_begin, p_end);
-    std::pair<bool, words> _res = {false, words()};
-    while (true) {
-      m_thread_pool.handle(_words);
+  std::pair<bool, words> operator()(words::iterator p_begin,
+                                    words::iterator p_end)
+  {
 
+    words _words(p_begin, p_end);
+    std::pair<bool, words> _res = { false, words() };
+
+    //    m_thread_pool.run();
+    while (true) {
+      crosswords_log_debug(
+        log, "adding ", print_words(_words.begin(), _words.end()));
+
+      m_thread_pool.handle(_words);
       {
+        crosswords_log_debug(log, "waiting for result or timeout");
         std::unique_lock<std::mutex> _lock(m_mutex);
-        m_cond.wait_for(_lock,
-                        std::chrono::milliseconds(50),
-                        [this](){return m_result.get_size();});
-        crosswords_log_debug(log, "m_result.get_size() = ", m_result.get_size());
-        if (m_result.get_size()) {
-          crosswords_log_debug(log, "we have a result: ",
-                               print_words(m_result.begin(),
-                                           m_result.end()));
-          _res = {true, m_result};
+        if (m_cond.wait_for(_lock, std::chrono::milliseconds(100), [this]() {
+              return m_result.get_size();
+            })) {
+          crosswords_log_debug(log,
+                               "we have a result: ",
+                               print_words(m_result.begin(), m_result.end()));
+          _res = { true, m_result };
           break;
         }
       }
       if (!std::next_permutation(p_begin, p_end, words::cmp_words())) {
         crosswords_log_warn(log, "no more permutations");
 
-        _res = {false, words()};
+        _res = { false, words() };
         break;
       }
-      crosswords_log_debug(log, "new permutation before: ",
-                           print_words(p_begin, p_end));
+      crosswords_log_debug(
+        log, "new permutation before: ", print_words(p_begin, p_end));
       words _words(p_begin, p_end);
-      crosswords_log_debug(log, "new permutation after: ",
+      crosswords_log_debug(log,
+                           "new permutation after: ",
                            print_words(_words.begin(), _words.end()));
     }
 
-    m_thread_pool.stop();
+    //    m_thread_pool.stop();
     return _res;
   }
 
 private:
-
-
 private:
   x m_x_limit;
   y m_y_limit;
@@ -144,12 +146,9 @@ private:
   thread_pool m_thread_pool;
 
   words m_result;
-
-
 };
 } // namespace business
 } // namespace crosswords
 } // namespace tenacitas
-
 
 #endif // WORDS_POSITIONER_GROUP_H
