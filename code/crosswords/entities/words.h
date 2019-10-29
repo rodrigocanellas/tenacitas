@@ -204,7 +204,7 @@ print_positioned(words::const_iterator p_begin,
   }
 
   stringstream _stream;
-  _stream << "\n\n    ";
+  _stream << "\n    ";
   for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
     _stream << setw(2) << setfill('0') << _x << " ";
   }

@@ -3,6 +3,5 @@ RESULT all
 13
 13
 ab
-bc
-de
 cd
+bc

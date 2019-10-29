@@ -60,7 +60,7 @@ public:
   typedef t_log log;
 
   /// \brief dispatcher default constructor not allowed
-  dispatcher_t() = delete;
+  dispatcher_t() = default;
 
   /// \brief dispatcher copy constructor not allowed
   dispatcher_t(const dispatcher_t&) = delete;
@@ -92,7 +92,7 @@ public:
   /// "fight" among each other to handle a \p t_msg object
   /// \param p_work_timeout is the maximum amount of time for a \p work_t
   /// function can take to handle a \p t_msg instance
-  static void subscribe(std::function<worker()> p_work_factory,
+   void subscribe(std::function<worker()> p_work_factory,
                         uint16_t p_num_handlers,
                         std::chrono::milliseconds p_work_timeout)
   {
@@ -117,7 +117,7 @@ public:
   /// \param p_work_timeout is the maximum amount of time for a \p work_t
   /// function can take to handle a \p t_msg instance
   ///
-  static void subscribe(worker&& p_work,
+  void subscribe(worker&& p_work,
                         std::chrono::milliseconds p_work_timeout)
   {
     // creating a \p thread_pool
@@ -137,7 +137,7 @@ public:
   /// \brief handle sends a message to the \p work_t objects to be handled
   /// \param p_msg an instance of \p t_msg
   ///
-  static void publish(const t_msg& p_msg)
+  void publish(const t_msg& p_msg)
   {
     if (m_thread_pool_list.empty()) {
       concurrent_log_warn(log, "there are no subscribers for ", p_msg);
@@ -163,17 +163,17 @@ private:
   ///
   /// \brief m_thread_pool_list the single list of pools object
   ///
-  static thread_pool_list m_thread_pool_list;
+  thread_pool_list m_thread_pool_list;
 
-  static const std::string m_name;
+//  const std::string m_name;
 };
 
 ///
 /// \brief definition of the single list of pools object
 ///
-template<typename t_msg, typename t_log>
-typename dispatcher_t<t_msg, t_log>::thread_pool_list
-  dispatcher_t<t_msg, t_log>::m_thread_pool_list;
+//template<typename t_msg, typename t_log>
+//typename dispatcher_t<t_msg, t_log>::thread_pool_list
+//  dispatcher_t<t_msg, t_log>::m_thread_pool_list;
 
 } // namespace business
 } // namespace concurrent

@@ -54,28 +54,43 @@ struct positioner006_t
 
   typedef words_positioner_group_t<log> words_positioner_group;
 
+  typedef concurrent::business::dispatcher_t<messages::positioned<log>, log>
+  dispatcher_positioned;
+
+  typedef typename std::shared_ptr<dispatcher_positioned> dispatcher_positioned_ptr;
+
+  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
+  dispatcher_not_positioned;
+
+  typedef typename std::shared_ptr<dispatcher_not_positioned> dispatcher_not_positioned_ptr;
+
+
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-    , m_words_positioner_group(p_x_limit, p_y_limit)
+    , m_dispatcher_positioned_ptr(std::make_shared<dispatcher_positioned>())
+    , m_dispatcher_not_positioned_ptr(std::make_shared<dispatcher_not_positioned>())
+    , m_words_positioner_group(p_x_limit, p_y_limit,
+                               m_dispatcher_positioned_ptr,
+                               m_dispatcher_not_positioned_ptr)
   {
 
     crosswords_log_debug(log, "creating positioner 006");
 
-    if (!m_dipatcher_created) {
-      dispatcher_positioned::subscribe(
-        [this](messages::positioned&& p_positioned) -> bool {
+    if (!m_dispatcher_created) {
+      m_dispatcher_positioned_ptr->subscribe(
+        [this](messages::positioned<log>&& p_positioned) -> bool {
           return m_words_positioner_group(std::move(p_positioned));
         },
         std::chrono::milliseconds(1000));
 
-      dispatcher_not_positioned::subscribe(
+      m_dispatcher_not_positioned_ptr->subscribe(
         [this](messages::not_positioned&& p_not_positioned) -> bool {
           return m_words_positioner_group(std::move(p_not_positioned));
         },
         std::chrono::milliseconds(1000));
 
-      m_dipatcher_created = true;
+      m_dispatcher_created = true;
     }
   }
 
@@ -167,10 +182,11 @@ struct positioner006_t
           log, "new set: ", print_words(m_words.begin(), std::next(_ite)));
         _end = m_words.end();
         _begin = m_words.begin();
-        crosswords_log_info(
-          log,
-          print_positioned(
-            m_words.begin(), m_words.end(), m_x_limit, m_y_limit));
+//        crosswords_log_info(
+//          log,
+//          print_positioned(
+//            m_words.begin(), m_words.end(), m_x_limit, m_y_limit));
+        crosswords_log_info(log, m_words.print_words());
 
       } else {
         crosswords_log_error(
@@ -229,16 +245,6 @@ private:
   typedef std::list<words_ids> failures;
 
 private:
-  typedef concurrent::business::dispatcher_t<messages::to_position, log>
-    dispatcher_to_position;
-
-  typedef concurrent::business::dispatcher_t<messages::positioned, log>
-    dispatcher_positioned;
-
-  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
-    dispatcher_not_positioned;
-
-private:
   bool already_tried(words::const_iterator p_begin, words::const_iterator p_end)
   {
     auto _num_words = std::distance(p_begin, p_end);
@@ -295,16 +301,20 @@ private:
   }
 
 private:
-  uint32_t m_counter = { 0 };
   x m_x_limit;
   y m_y_limit;
+  dispatcher_positioned_ptr m_dispatcher_positioned_ptr;
+  dispatcher_not_positioned_ptr m_dispatcher_not_positioned_ptr;
+  words_positioner_group m_words_positioner_group;
+  uint32_t m_counter = { 0 };
   words m_words;
   failures m_failures;
-  words_positioner_group m_words_positioner_group;
-  static bool m_dipatcher_created;
+
+
+  static bool m_dispatcher_created;
 };
 template<typename t_log>
-bool positioner006_t<t_log>::m_dipatcher_created(false);
+bool positioner006_t<t_log>::m_dispatcher_created(false);
 } // namespace business
 } // namespace crosswords
 } // namespace tenacitas

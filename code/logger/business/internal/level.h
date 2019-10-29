@@ -53,12 +53,19 @@ enum class level : char
 inline static const std::string&
 level2str(level p_level)
 {
-  static const std::string _debug(BOLDBLACK + "DEB" + RESET);
-  static const std::string _test(BOLDGREEN + "TST" + RESET);
-  static const std::string _info(BOLDCYAN + "INF" + RESET);
-  static const std::string _warn(BOLDBLUE + "WAR" + RESET);
-  static const std::string _error(BOLDMAGENTA + "ERR" + RESET);
-  static const std::string _fatal(BOLDRED + "FAT" + RESET);
+//  static const std::string _debug(BOLDBLACK + "DEB" + RESET);
+//  static const std::string _test(BOLDGREEN + "TST" + RESET);
+//  static const std::string _info(BOLDCYAN + "INF" + RESET);
+//  static const std::string _warn(BOLDBLUE + "WAR" + RESET);
+//  static const std::string _error(BOLDMAGENTA + "ERR" + RESET);
+//  static const std::string _fatal(BOLDRED + "FAT" + RESET);
+
+  static const std::string _debug("DEB");
+  static const std::string _test("TST");
+  static const std::string _info("INF");
+  static const std::string _warn("WAR");
+  static const std::string _error("ERR");
+  static const std::string _fatal("FAT");
   static const std::string _no_log("NO LOG");
 
   switch (p_level) {

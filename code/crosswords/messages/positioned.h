@@ -2,13 +2,19 @@
 #define TENACITAS_CROSSWORDS_BUSINESS_POSITIONED_H
 
 #include <crosswords/entities/words.h>
+#include <crosswords/business/internal/positions_occupied.h>
 
 namespace tenacitas {
 namespace crosswords {
 namespace messages {
 
-struct positioned
+template <typename t_log>
+struct positioned   
 {
+
+  typedef t_log log;
+  typedef business::positions_occupied_t<log> positions_occupied;
+
   friend std::ostream& operator<<(std::ostream& p_out,
                                   const positioned& p_positioned)
   {
@@ -19,12 +25,17 @@ struct positioned
   }
 
   positioned() = default;
-  inline explicit positioned(const entities::words& p_words)
-    : m_words(p_words)
+  inline explicit positioned(const entities::words& p_words,
+                             const positions_occupied & p_positions_occupied)
+    : m_words(p_words),
+      m_positions_occupied(p_positions_occupied)
+
   {}
   inline positioned(entities::words::const_iterator p_begin,
-                    entities::words::const_iterator& p_end)
-    : m_words(p_begin, p_end)
+                    entities::words::const_iterator& p_end,
+                    const positions_occupied & p_positions_occupied)
+    : m_words(p_begin, p_end),
+      m_positions_occupied(p_positions_occupied)
   {}
 
   positioned(positioned&&) noexcept = default;
@@ -36,9 +47,10 @@ struct positioned
   ~positioned() = default;
 
   inline entities::words get_words() const { return m_words; }
-
+  inline positions_occupied get_positions_occupied(){return m_positions_occupied;}
 private:
   entities::words m_words;
+  positions_occupied m_positions_occupied;
 };
 
 } // namespace messages

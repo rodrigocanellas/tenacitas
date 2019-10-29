@@ -20,6 +20,7 @@ LIBS += -ltenacitas.crosswords.entities
 HEADERS += \
     ../../../../../code/crosswords/messages/not_positioned.h \
     ../../../../../code/crosswords/messages/positioned.h \
+    ../../../../../code/crosswords/messages/stop_positioning.h \
     ../../../../../code/crosswords/messages/to_position.h
 
 

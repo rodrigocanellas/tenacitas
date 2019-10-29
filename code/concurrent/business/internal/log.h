@@ -1,6 +1,7 @@
 #ifndef TENACITAS_CONCURRENT_CONCURRENT_LOG_H
 #define TENACITAS_CONCURRENT_CONCURRENT_LOG_H
 
+/*
 #define concurrent_log_test(log, p_params...)                                  \
   log::test(__FILE__, __LINE__, p_params)
 
@@ -18,8 +19,9 @@
 
 #define concurrent_log_fatal(log, p_params...)                                 \
   log::fatal(__FILE__, __LINE__, p_params)
+*/
 
-/*
+
 #define concurrent_log_test(log, p_params...)                                  \
   {}
 
@@ -37,5 +39,7 @@
 
 #define concurrent_log_fatal(log, p_params...)                                 \
   {}
-*/
+
+
 #endif // concurrent_log_H
+
