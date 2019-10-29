@@ -4,6 +4,5 @@ RESULT all
 13
 ab
 bc
-cd
-ef
 de
+cd

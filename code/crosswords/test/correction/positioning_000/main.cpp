@@ -109,10 +109,10 @@ struct positioning_000
     if (m_result == "all") {
       if (_ok_counter == _num_words) {
         cout << "SUCCESS\n" << endl;
-        print_positioned(_words.begin(),
-                         _words.end(),
-                         m_positioner.get_x_limit(),
-                         m_positioner.get_y_limit());
+        cout << print_positioned(_words.begin(),
+                                 _words.end(),
+                                 m_positioner.get_x_limit(),
+                                 m_positioner.get_y_limit());
       } else {
         cout << "FAIL";
       }

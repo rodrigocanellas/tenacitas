@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 
+#include <concurrent/business/dispatcher.h>
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/words_positioner_group.h>
 #include <crosswords/entities/coordinate.h>
@@ -18,6 +19,8 @@
 #include <crosswords/entities/lexeme.h>
 #include <crosswords/entities/word.h>
 #include <crosswords/entities/words.h>
+#include <crosswords/messages/positioned.h>
+#include <crosswords/messages/to_position.h>
 
 namespace tenacitas {
 namespace crosswords {
@@ -54,8 +57,27 @@ struct positioner006_t
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-      , m_words_positioner_group(p_x_limit, p_y_limit)
-  {}
+    , m_words_positioner_group(p_x_limit, p_y_limit)
+  {
+
+    crosswords_log_debug(log, "creating positioner 006");
+
+    if (!m_dipatcher_created) {
+      dispatcher_positioned::subscribe(
+        [this](messages::positioned&& p_positioned) -> bool {
+          return m_words_positioner_group(std::move(p_positioned));
+        },
+        std::chrono::milliseconds(1000));
+
+      dispatcher_not_positioned::subscribe(
+        [this](messages::not_positioned&& p_not_positioned) -> bool {
+          return m_words_positioner_group(std::move(p_not_positioned));
+        },
+        std::chrono::milliseconds(1000));
+
+      m_dipatcher_created = true;
+    }
+  }
 
   positioner006_t(const positioner006_t&) = delete;
   positioner006_t(positioner006_t&&) noexcept = default;
@@ -104,8 +126,7 @@ struct positioner006_t
     using namespace std;
     m_words.sort();
     crosswords_log_debug(
-      log, "words after ordered ",
-          print_words(m_words.begin(), m_words.end()));
+      log, "words after ordered ", print_words(m_words.begin(), m_words.end()));
     // save original set
     words _original(m_words);
 
@@ -122,14 +143,12 @@ struct positioner006_t
       }
 
       std::pair<bool, words> _res =
-          m_words_positioner_group(_begin, next(_ite));
+        m_words_positioner_group(_begin, next(_ite));
       if (_res.first) {
         crosswords_log_info(
-          log, "old order: ",
-              print_words(m_words.begin(), m_words.end()));
+          log, "old order: ", print_words(m_words.begin(), m_words.end()));
         crosswords_log_info(
-          log, "result: ",
-              print_words(_res.second.begin(), _res.second.end()));
+          log, "result: ", print_words(_res.second.begin(), _res.second.end()));
         //        std::copy(_res.second.begin(), _res.second.end(),
         //        m_words.begin());
         words::size _size = _res.second.get_size();
@@ -142,15 +161,16 @@ struct positioner006_t
 
         m_words = std::move(_res.second);
         crosswords_log_info(
-          log, "new order: ",
-              print_words(m_words.begin(), m_words.end()));
+          log, "new order: ", print_words(m_words.begin(), m_words.end()));
         _ite = std::next(m_words.begin(), _size);
         crosswords_log_info(
-          log, "new set: ",
-              print_words(m_words.begin(), std::next(_ite)));
+          log, "new set: ", print_words(m_words.begin(), std::next(_ite)));
         _end = m_words.end();
         _begin = m_words.begin();
-        print_positioned(m_words.begin(), m_words.end(), m_x_limit, m_y_limit);
+        crosswords_log_info(
+          log,
+          print_positioned(
+            m_words.begin(), m_words.end(), m_x_limit, m_y_limit));
 
       } else {
         crosswords_log_error(
@@ -207,6 +227,16 @@ struct positioner006_t
 private:
   typedef std::list<word::id> words_ids;
   typedef std::list<words_ids> failures;
+
+private:
+  typedef concurrent::business::dispatcher_t<messages::to_position, log>
+    dispatcher_to_position;
+
+  typedef concurrent::business::dispatcher_t<messages::positioned, log>
+    dispatcher_positioned;
+
+  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
+    dispatcher_not_positioned;
 
 private:
   bool already_tried(words::const_iterator p_begin, words::const_iterator p_end)
@@ -271,7 +301,10 @@ private:
   words m_words;
   failures m_failures;
   words_positioner_group m_words_positioner_group;
+  static bool m_dipatcher_created;
 };
+template<typename t_log>
+bool positioner006_t<t_log>::m_dipatcher_created(false);
 } // namespace business
 } // namespace crosswords
 } // namespace tenacitas
