@@ -3,5 +3,5 @@ RESULT all
 13
 13
 ab
-cd
+cb
 bc
