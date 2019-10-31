@@ -2,6 +2,7 @@
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <concurrent/business/thread_pool.h>
+#include <concurrent/business/traits.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
@@ -9,23 +10,24 @@
 
 typedef tenacitas::concurrent::business::
 thread_pool_t<int32_t, tenacitas::logger::business::log>
-thread_pool_t;
+thread_pool;
 typedef tenacitas::concurrent::business::
 sleeping_loop_t<void, tenacitas::logger::business::log>
-sleeping_loop_t;
+sleeping_loop;
 
 using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
 
 struct work_1
 {
-  bool operator()(int32_t&& p_value){
+  result operator()(int32_t&& p_value){
     std::this_thread::sleep_for(std::chrono::milliseconds(170));
     concurrent_log_test(log, "work 1 handling msg ", p_value);
     if (p_value > 200) {
       concurrent_log_test(log, "stopping this worker");
-      return false;
+      return result::stop;
     }
-    return true;
+    return result::dont_stop;
   }
 };
 
@@ -58,7 +60,7 @@ struct thread_pool_099
   }
 
 private:
-  thread_pool_t m_pool;
+  thread_pool m_pool;
 };
 
 

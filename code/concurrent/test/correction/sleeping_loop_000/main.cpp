@@ -8,6 +8,7 @@
 #include <sstream>
 #include <thread>
 
+#include <concurrent/business/traits.h>
 #include <calendar/business/epoch.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
@@ -15,30 +16,33 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
+using namespace tenacitas::concurrent::business;
+using namespace tenacitas::logger::business;
+
 struct sleeping_loop_000
 {
 
-    bool operator()()
-    {
-        using namespace tenacitas::logger::business;
-        configure_cerr_log();
+  bool operator()()
+  {
 
-        typedef tenacitas::concurrent::business::sleeping_loop_t<void, log>
-          loop;
+    configure_cerr_log();
 
-        loop _loop(std::chrono::milliseconds(100),
-                   [] {
-                       concurrent_log_test(log, "loop1");
-                       return true;
-                   },
-                   std::chrono::milliseconds(100));
+    typedef tenacitas::concurrent::business::sleeping_loop_t<void, log>
+        loop;
 
-        return true;
-    }
+    loop _loop(std::chrono::milliseconds(100),
+               [] {
+      concurrent_log_test(log, "loop1");
+      return result::dont_stop;
+    },
+    std::chrono::milliseconds(100));
+
+    return true;
+  }
 };
 
 int
 main(int argc, char** argv)
 {
-    run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test")
+  run_test(sleeping_loop_000, argc, argv, "'sleeping_loop' creation test")
 }

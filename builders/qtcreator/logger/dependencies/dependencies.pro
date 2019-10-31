@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS = ../../concurrent/library/business/concurrent_business.pro
+SUBDIRS = ../../concurrent/business/business_concurrent.pro

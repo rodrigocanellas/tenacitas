@@ -1,6 +1,6 @@
 SUBDIRS = \
   dependencies \
-  library
+  business\business_tester.pro
 
 
 TEMPLATE = subdirs

@@ -5,13 +5,14 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas;
+using namespace tenacitas::concurrent::business;
 
 // ############################## messages
 struct request
@@ -54,7 +55,7 @@ struct requester
     , m_mutex(p_mutex)
   {}
 
-  bool operator()(reply&& p_reply)
+  result operator()(reply&& p_reply)
   {
     using namespace tenacitas::logger::business;
     using namespace tenacitas::concurrent::business;
@@ -68,14 +69,14 @@ struct requester
       concurrent_log_test(log, "woke up!");
       std::unique_lock<std::mutex> _lock(*m_mutex);
       m_cond->notify_all();
-      return false;
+      return result::stop;
     }
     if ((p_reply.i % 2) == 0) {
       dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
     }
-    return true;
+    return result::dont_stop;
   }
 
 private:
@@ -86,7 +87,7 @@ private:
 
 struct replier
 {
-  bool operator()(request&& p_request)
+  result operator()(request&& p_request)
   {
     using namespace tenacitas::logger::business;
     using namespace tenacitas::concurrent::business;
@@ -94,14 +95,14 @@ struct replier
     concurrent_log_test(log, "request ", p_request);
     if (p_request.i == 0) {
       concurrent_log_info(log, "stopping");
-      return false;
+      return result::stop;
     }
     if ((p_request.i % 2) == 0) {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     }
-    return true;
+    return result::dont_stop;
   }
 };
 
@@ -116,7 +117,7 @@ struct dispatcher_002
     typedef dispatcher_t<request, log> dispatcher_request;
     std::chrono::milliseconds _work_timeout(15000);
     dispatcher_reply::subscribe(
-      "req", requester(&m_cond, &m_mutex), _work_timeout);
+          "req", requester(&m_cond, &m_mutex), _work_timeout);
     dispatcher_request::subscribe("rep", replier(), _work_timeout);
 
     start();
@@ -149,8 +150,8 @@ main(int argc, char** argv)
 {
   tenacitas::logger::business::configure_cerr_log();
   run_test(
-    dispatcher_002,
-    argc,
-    argv,
-    "\nTesting asynchronous work collaboration, and ending with message.")
+        dispatcher_002,
+        argc,
+        argv,
+        "\nTesting asynchronous work collaboration, and ending with message.")
 }

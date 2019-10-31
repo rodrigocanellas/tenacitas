@@ -5,13 +5,15 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas;
+using namespace tenacitas::concurrent::business;
+using namespace tenacitas::logger::business;
 
 // ############################## messages
 struct start
@@ -56,17 +58,12 @@ struct agent_1
 {
   agent_1()
   {
-    using namespace logger::business;
-    using namespace concurrent::business;
 
     dispatcher_t<start, log>::publish(start());
   }
 
-  bool operator()(msg1&&)
+  result operator()(msg1&&)
   {
-    using namespace logger::business;
-    using namespace concurrent::business;
-
     concurrent_log_test(log, "msg1 received");
 
     dispatcher_t<msg2, log>::publish(msg2());
@@ -74,7 +71,7 @@ struct agent_1
     std::this_thread::sleep_for(std::chrono::milliseconds(40));
 
     dispatcher_t<finish, log>::publish(finish());
-    return true;
+    return result::dont_stop;
   }
 };
 
@@ -82,44 +79,36 @@ struct agent_2
 {
   agent_2()
   {
-    using namespace logger::business;
-    using namespace concurrent::business;
-
     dispatcher_t<start, log>::publish(start());
   }
 
-  bool operator()(msg2&&)
+  result operator()(msg2&&)
   {
-    using namespace logger::business;
-    using namespace concurrent::business;
-
     concurrent_log_test(log, "msg2 received");
 
     dispatcher_t<msg1, log>::publish(msg1());
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     dispatcher_t<finish, log>::publish(finish());
-    return true;
+    return result::dont_stop;
   }
 };
 
 struct controler
 {
-  bool operator()(start&&)
+  result operator()(start&&)
   {
-    using namespace logger::business;
+
     {
       std::lock_guard<std::mutex> _lock(m_mutex_counter);
       ++m_counter;
     }
     concurrent_log_test(log, "start received, counter = ", m_counter);
-    return false;
+    return result::dont_stop;
   }
 
-  bool operator()(finish&&)
+  result operator()(finish&&)
   {
-    using namespace logger::business;
-
     //    if (m_counter == 0) {
     //      concurrent_log_test(log, "finisher received, counter = ",
     //      m_counter); m_cond_finish.notify_all(); return;
@@ -129,15 +118,14 @@ struct controler
     if (m_counter == 0) {
       concurrent_log_test(log, "finisher received, counter = ", m_counter);
       m_cond_finish.notify_all();
-      return true;
+      return result::stop;
     }
     concurrent_log_test(log, "finisher received, counter = ", m_counter);
-    return false;
+    return result::dont_stop;
   }
 
   ~controler()
   {
-    using namespace logger::business;
     concurrent_log_test(log, "------> waiting...");
     std::unique_lock<std::mutex> _lock(m_mutex_finish);
     m_cond_finish.wait(_lock);
@@ -157,18 +145,14 @@ struct dispatcher_003
 
   dispatcher_003()
   {
-    using namespace logger::business;
-    using namespace concurrent::business;
-
     dispatcher_t<start, log>::subscribe("start",
-                                        [this](start&& p_start) -> bool {
-                                          return m_controler(
-                                            std::move(p_start));
+                                        [this](start&& p_start) -> result {
+                                          return m_controler(std::move(p_start));
                                         },
                                         std::chrono::milliseconds(500));
 
     dispatcher_t<finish, log>::subscribe("finish",
-                                         [this](finish&& p_finish) -> bool {
+                                         [this](finish&& p_finish) -> result {
                                            return m_controler(
                                              std::move(p_finish));
                                          },

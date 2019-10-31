@@ -4,13 +4,15 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas;
+using namespace tenacitas::concurrent::business;
+using namespace tenacitas::logger::business;
 
 // ############################## messages
 struct request
@@ -48,16 +50,16 @@ struct reply
 // ############################## processors
 struct requester
 {
-  bool start()
+  result start()
   {
     using namespace tenacitas::logger::business;
     using namespace tenacitas::concurrent::business;
     typedef dispatcher_t<request, log> dispatcher;
     dispatcher::publish(request(time(nullptr)));
-    return true;
+    return result::dont_stop;
   }
 
-  bool operator()(reply&& p_reply)
+  result operator()(reply&& p_reply)
   {
     using namespace tenacitas::logger::business;
     using namespace tenacitas::concurrent::business;
@@ -66,14 +68,14 @@ struct requester
     if (m_counter++ > 100) {
       concurrent_log_info(log, "counter = ", m_counter, ", stopping");
       dispatcher::publish(request(0));
-      return false;
+      return result::stop;
     }
     if ((p_reply.i % 2) == 0) {
       dispatcher::publish(request(5 * time(nullptr)));
     } else {
       dispatcher::publish(request(3 * time(nullptr)));
     }
-    return true;
+    return result::dont_stop;
   }
 
 private:
@@ -82,7 +84,7 @@ private:
 
 struct replier
 {
-  bool operator()(request&& p_request)
+  result operator()(request&& p_request)
   {
     using namespace tenacitas::logger::business;
     using namespace tenacitas::concurrent::business;
@@ -90,14 +92,14 @@ struct replier
     concurrent_log_test(log, "request ", p_request);
     if (p_request.i == 0) {
       concurrent_log_info(log, "stopping");
-      return false;
+      return result::stop;
     }
     if ((p_request.i % 2) == 0) {
       dispatcher::publish(reply(4 * time(nullptr)));
     } else {
       dispatcher::publish(reply(4 * time(nullptr)));
     }
-    return true;
+    return result::dont_stop;
   }
 };
 
@@ -132,5 +134,5 @@ main(int argc, char** argv)
 {
   tenacitas::logger::business::configure_cerr_log();
   run_test(
-    dispatcher_001, argc, argv, "\nTesting asynchronous work collaboration.")
+        dispatcher_001, argc, argv, "\nTesting asynchronous work collaboration.")
 }

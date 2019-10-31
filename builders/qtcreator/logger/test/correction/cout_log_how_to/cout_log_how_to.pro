@@ -19,8 +19,7 @@ SOURCES += \
 	    ../../../../../../code/logger/test/correction/cout_log_how_to/main.cpp
 
 
+LIBS += -ltenacitas.business.logger
+
+
 include (../../../../common.pri)
-
-
-
-LIBS += -ltenacitas.logger.business

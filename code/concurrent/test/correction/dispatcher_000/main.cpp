@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
@@ -11,6 +12,7 @@
 #include <tester/business/run.h>
 
 using namespace tenacitas;
+using namespace tenacitas::concurrent::business;
 
 // ############################## messages
 struct msg_a
@@ -65,14 +67,14 @@ struct msg_c
 struct publisher_1
 {
 public:
-  bool operator()()
+  result operator()()
   {
     using namespace tenacitas::logger::business;
     msg_a _msg(++i);
     concurrent_log_test(log, "P 1", _msg);
 
     concurrent::business::dispatcher_t<msg_a, log>::publish(_msg);
-    return true;
+    return result::dont_stop;
   }
   int16_t i = { 10 };
 };
@@ -80,7 +82,7 @@ public:
 struct publisher_2
 {
 public:
-  bool operator()()
+  result operator()()
   {
     using namespace tenacitas::logger::business;
     i += 10;
@@ -93,7 +95,7 @@ public:
     concurrent_log_test(log, "P 2", _msg_c);
     concurrent::business::dispatcher_t<msg_c, log>::publish(_msg_c);
 
-    return true;
+    return result::dont_stop;
   }
   int16_t i = { -100 };
   double d = { 1.0 };
@@ -102,7 +104,7 @@ public:
 struct publisher_3
 {
 public:
-  bool operator()()
+  result operator()()
   {
     using namespace tenacitas::logger::business;
     i += 300;
@@ -111,7 +113,7 @@ public:
     concurrent_log_test(log, "P 3", _msg_b);
     concurrent::business::dispatcher_t<msg_b, log>::publish(_msg_b);
 
-    return true;
+    return result::dont_stop;
   }
 
   int32_t i = { 5000 };
@@ -120,65 +122,68 @@ public:
 // ############################## subscribers
 struct subscriber_1
 {
-  bool operator()(msg_a&& p_msg)
+  result operator()(msg_a&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 1", p_msg);
-    return true;
+    return result::dont_stop;
   }
 };
 
 struct subscriber_2
 {
-  bool operator()(msg_a&& p_msg)
+  result operator()(msg_a&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 2", p_msg);
-    return true;
+    return result::dont_stop;
   }
-  bool operator()(msg_b&& p_msg)
+
+  result operator()(msg_b&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 2", p_msg);
-    return true;
+    return result::dont_stop;
   }
 };
 
 struct subscriber_3
 {
-  bool operator()(msg_b&& p_msg)
+  result operator()(msg_b&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 3", p_msg);
-    return true;
+    return result::dont_stop;
   }
 };
 
 struct subscriber_4
 {
-  bool operator()(msg_a&& p_msg)
+  result operator()(msg_a&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 4", p_msg);
-    return true;
+    return result::dont_stop;
   }
-  bool operator()(msg_b&& p_msg)
+
+  result operator()(msg_b&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 4", p_msg);
-    return true;
+    return result::dont_stop;
   }
-  bool operator()(msg_c&& p_msg)
+
+  result operator()(msg_c&& p_msg)
   {
     using namespace tenacitas::logger::business;
     concurrent_log_test(log, "S 4", p_msg);
-    return true;
+    return result::dont_stop;
   }
 };
 
 typedef tenacitas::concurrent::business::
   sleeping_loop_t<void, tenacitas::logger::business::log>
-    sleeping_loop_t;
+    sleeping_loop;
 
 // ############################## subscribers
 struct dispatcher_000
@@ -187,13 +192,13 @@ struct dispatcher_000
   bool operator()()
   {
     using namespace tenacitas::logger::business;
-    sleeping_loop_t _sl1(std::chrono::milliseconds(1000),
+    sleeping_loop _sl1(std::chrono::milliseconds(1000),
                          publisher_1(),
                          std::chrono::milliseconds(1000));
-    sleeping_loop_t _sl2(std::chrono::milliseconds(2000),
+    sleeping_loop _sl2(std::chrono::milliseconds(2000),
                          publisher_2(),
                          std::chrono::milliseconds(1000));
-    sleeping_loop_t _sl3(std::chrono::milliseconds(1500),
+    sleeping_loop _sl3(std::chrono::milliseconds(1500),
                          publisher_3(),
                          std::chrono::milliseconds(1000));
     using namespace tenacitas::concurrent::business;

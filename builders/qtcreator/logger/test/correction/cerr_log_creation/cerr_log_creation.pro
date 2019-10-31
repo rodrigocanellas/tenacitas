@@ -22,4 +22,4 @@ SOURCES += \
 
 
 
-LIBS +=-ltenacitas.logger.business
+LIBS +=-ltenacitas.business.logger

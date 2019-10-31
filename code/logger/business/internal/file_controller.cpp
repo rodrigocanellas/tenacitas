@@ -59,7 +59,7 @@ file_controller::name()
 //}
 
 // ----------------------------------------------------------------------------
-bool
+concurrent::business::result
 file_controller::deleter::operator()()
 {
     DIR* _dir = nullptr;
@@ -87,7 +87,7 @@ file_controller::deleter::operator()()
         closedir(_dir);
     }
 
-    return true;
+    return concurrent::business::result::dont_stop;
 }
 
 } // namespace business

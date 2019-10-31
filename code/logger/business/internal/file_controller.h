@@ -73,7 +73,7 @@ struct file_controller
       , m_sleeping_loop(
           std::chrono::milliseconds(
             calendar::business::min2mil(p_retention.count())),
-          [this]() -> bool { return this->m_deleter(); },
+          [this]() -> concurrent::business::result { return this->m_deleter(); },
           std::chrono::milliseconds(calendar::business::min2mil(20)))
     {}
 
@@ -90,7 +90,7 @@ struct file_controller
       , m_max_file_size(p_controller.m_max_file_size)
       , m_deleter(std::move(p_controller.m_deleter))
       , m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
-                        [this]() -> bool { return this->m_deleter(); },
+                        [this]() -> concurrent::business::result { return this->m_deleter(); },
                         p_controller.m_sleeping_loop.get_timeout())
     {}
 
@@ -162,7 +162,7 @@ struct file_controller
           , m_retention(p_retention)
         {}
 
-        bool operator()();
+        concurrent::business::result operator()();
 
       private:
         ///

@@ -18,6 +18,7 @@
 #include <thread>
 #include <vector>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/internal/async_loop.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/traits.h>
@@ -97,7 +98,7 @@ public:
       async_loop _loop(
         std::move(_loop_right.get_work()),
         _loop_right.get_timeout(),
-        [this]() -> bool { return this->stop_condition(); },
+        [this]() -> result { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -206,7 +207,7 @@ public:
       async_loop _loop(
         p_work_factory(),
         p_work_timeout,
-        [this]() -> bool { return this->stop_condition(); },
+        [this]() -> result { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -223,7 +224,7 @@ public:
     async_loop _loop(
       std::move(p_work),
       p_work_timeout,
-      [this]() -> bool { return this->stop_condition(); },
+      [this]() -> result { return this->stop_condition(); },
       [this]() -> std::pair<bool, t_data> { return this->data(); });
 
     add_work(std::move(_loop));
@@ -334,11 +335,11 @@ private:
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
   ///
-  bool stop_condition()
+  result stop_condition()
   {
 
     concurrent_log_debug(log, this, " stopped = ", m_stopped);
-    return m_stopped;
+    return (m_stopped ? result::stop : result::dont_stop);
   }
 
   ///
