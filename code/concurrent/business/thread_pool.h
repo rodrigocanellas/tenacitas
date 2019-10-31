@@ -57,11 +57,14 @@ template<typename t_data, typename t_log>
 class thread_pool_t
 {
 public:
-  ///
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  typedef typename loop_traits_t<t_data>::worker worker;
+  /// \param t_data is an instance of the data to be handled
+  ///
+  /// \return result::stop if the loop where this function is being
+  /// called should stop, or result::dont_stop if it should continue
+  typedef typename traits_t<t_data>::worker worker;
 
   ///
   /// \brief log alias for @p t_log
@@ -274,10 +277,15 @@ public:
   }
 
 private:
-  /// \brief provide_t is a simpler name for the provide function, which
-  /// removes the \p t_data from \p m_values, and passes to a \p work_t
-  /// function
-  typedef typename loop_traits_t<t_data>::provider provide_t;
+  ///
+  /// \brief provide_t is the type of function that provides data to the work
+  /// function during the loop execution
+  ///
+  /// \return a pair, where if \p first is \p true, the \p second has a
+  /// meaningful data; if \p first is \p false, then \p second has a default
+  /// value of \p t_data
+  ///
+  typedef typename traits_t<t_data>::provider provider;
 
   /// \brief the collection of values
   typedef std::list<t_data> values_t;

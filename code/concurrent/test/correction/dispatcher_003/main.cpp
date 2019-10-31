@@ -160,22 +160,24 @@ struct dispatcher_003
     using namespace logger::business;
     using namespace concurrent::business;
 
-    dispatcher_t<start, log>::subscribe(
-      [this](start&& p_start) -> bool {
-        return m_controler(std::move(p_start));
-      },
-      std::chrono::milliseconds(500));
+    dispatcher_t<start, log>::subscribe("start",
+                                        [this](start&& p_start) -> bool {
+                                          return m_controler(
+                                            std::move(p_start));
+                                        },
+                                        std::chrono::milliseconds(500));
 
-    dispatcher_t<finish, log>::subscribe(
-      [this](finish&& p_finish) -> bool {
-        return m_controler(std::move(p_finish));
-      },
-      std::chrono::milliseconds(500));
+    dispatcher_t<finish, log>::subscribe("finish",
+                                         [this](finish&& p_finish) -> bool {
+                                           return m_controler(
+                                             std::move(p_finish));
+                                         },
+                                         std::chrono::milliseconds(500));
 
-    dispatcher_t<msg2, log>::subscribe(agent_2(),
-                                       std::chrono::milliseconds(1500));
-    dispatcher_t<msg1, log>::subscribe(agent_1(),
-                                       std::chrono::milliseconds(500));
+    dispatcher_t<msg2, log>::subscribe(
+      "msg1", agent_2(), std::chrono::milliseconds(1500));
+    dispatcher_t<msg1, log>::subscribe(
+      "msg2", agent_1(), std::chrono::milliseconds(500));
   }
 
   bool operator()()

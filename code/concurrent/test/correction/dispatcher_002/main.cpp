@@ -1,9 +1,9 @@
 /// \example
 #include <chrono>
+#include <condition_variable>
 #include <cstdint>
 #include <sstream>
 #include <string>
-#include <condition_variable>
 
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
@@ -49,11 +49,10 @@ struct reply
 // ############################## processors
 struct requester
 {
-  requester(  std::condition_variable * p_cond, std::mutex *p_mutex)
-    : m_cond(p_cond),
-    m_mutex(p_mutex){}
-
-
+  requester(std::condition_variable* p_cond, std::mutex* p_mutex)
+    : m_cond(p_cond)
+    , m_mutex(p_mutex)
+  {}
 
   bool operator()(reply&& p_reply)
   {
@@ -81,9 +80,8 @@ struct requester
 
 private:
   int16_t m_counter = { 0 };
-  std::condition_variable * m_cond;
-  std::mutex *m_mutex;
-
+  std::condition_variable* m_cond;
+  std::mutex* m_mutex;
 };
 
 struct replier
@@ -107,7 +105,6 @@ struct replier
   }
 };
 
-
 struct dispatcher_002
 {
 
@@ -118,20 +115,20 @@ struct dispatcher_002
     typedef dispatcher_t<reply, log> dispatcher_reply;
     typedef dispatcher_t<request, log> dispatcher_request;
     std::chrono::milliseconds _work_timeout(15000);
-    dispatcher_reply::subscribe(requester(&m_cond, &m_mutex), _work_timeout);
-    dispatcher_request::subscribe(replier(), _work_timeout);
+    dispatcher_reply::subscribe(
+      "req", requester(&m_cond, &m_mutex), _work_timeout);
+    dispatcher_request::subscribe("rep", replier(), _work_timeout);
 
     start();
-
 
     concurrent_log_test(log, "------> waiting...");
     std::unique_lock<std::mutex> _lock(m_mutex);
     m_cond.wait(_lock);
     concurrent_log_test(log, "------> done!");
 
-
     return true;
   }
+
 private:
   bool start()
   {
@@ -152,5 +149,8 @@ main(int argc, char** argv)
 {
   tenacitas::logger::business::configure_cerr_log();
   run_test(
-        dispatcher_002, argc, argv, "\nTesting asynchronous work collaboration, and ending with message.")
+    dispatcher_002,
+    argc,
+    argv,
+    "\nTesting asynchronous work collaboration, and ending with message.")
 }

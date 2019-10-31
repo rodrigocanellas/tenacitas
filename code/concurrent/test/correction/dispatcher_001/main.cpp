@@ -108,25 +108,19 @@ struct dispatcher_001
   bool operator()()
   {
     using namespace tenacitas::logger::business;
-    //    using namespace tenacitas::concurrent::business;
-    //    typedef dispatcher_t<reply, log> dispatcher_reply;
-    //    typedef dispatcher_t<request, log> dispatcher_request;
-    //    std::chrono::milliseconds _work_timeout(500);
-    //    dispatcher_reply::subscribe(requester(), _work_timeout);
-    //    dispatcher_request::subscribe(replier(), _work_timeout);
+    using namespace tenacitas::concurrent::business;
+    typedef dispatcher_t<reply, log> dispatcher_reply;
+    typedef dispatcher_t<request, log> dispatcher_request;
+    std::chrono::milliseconds _work_timeout(500);
+    dispatcher_reply::subscribe("req", requester(), _work_timeout);
+    dispatcher_request::subscribe("rep", replier(), _work_timeout);
 
-    //    requester().start();
+    requester().start();
 
-    //    concurrent_log_test(log, "------> starting to sleep");
-    //    std::this_thread::sleep_for(std::chrono::seconds(10));
-    //    concurrent_log_test(log, "------> waking up");
-
-    concurrent_log_debug(log, "------> starting to sleep");
     concurrent_log_test(log, "------> starting to sleep");
-    concurrent_log_info(log, "------> starting to sleep");
-    concurrent_log_warn(log, "------> starting to sleep");
-    concurrent_log_error(log, "------> starting to sleep");
-    concurrent_log_fatal(log, "------> starting to sleep");
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    concurrent_log_test(log, "------> waking up");
+
     return true;
   }
 

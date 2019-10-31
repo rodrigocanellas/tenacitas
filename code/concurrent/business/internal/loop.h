@@ -51,227 +51,227 @@ template<typename t_data, typename t_log>
 struct loop_t
 {
 
-    ///
-    /// \brief worker type of function to be called during the loop, responsible
-    /// for doing the work defined
-    ///
-    /// loop_traits<t_data>::work_t evaluates to std::function<bool(t_data&&)>
-    typedef typename loop_traits_t<t_data>::worker worker;
+  /// \brief work_t is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \param t_data is an instance of the data to be handled
+  ///
+  /// \return result::stop if the loop where this function is being
+  /// called should stop, or result::dont_stop if it should continue
+  typedef typename traits_t<t_data>::worker worker;
 
-    ///
-    /// \brief provider type of function that will provide, if available, an
-    /// instance of \p t_data
-    ///
-    /// loop_traits<t_data>::provide_t evaluates to
-    /// std::function<std::pair<bool, t_data>()>
-    typedef typename loop_traits_t<t_data>::provider provider;
+  ///
+  /// \brief provide_t is the type of function that provides data to the work
+  /// function during the loop execution
+  ///
+  /// \return a pair, where if \p first is \p true, the \p second has a
+  /// meaningful data; if \p first is \p false, then \p second has a default
+  /// value of \p t_data
+  ///
+  typedef typename traits_t<t_data>::provider provider;
 
-    ///
-    /// \brief breaker type of function that will indicate that the loop must
-    /// stop
-    ///
-    /// loop_traits<t_data>::break_t evaluates to std::function<bool()>
-    typedef typename loop_traits_t<t_data>::breaker breaker;
+  ///
+  /// \brief break_t is the type of function that indicates if the loop should
+  /// stop
+  ///
+  /// \return result::stop if the loop where this function is being
+  /// called should stop, or result::dont_stop if it should continue
+  typedef typename traits_t<t_data>::breaker breaker;
 
-    ///
-    /// \brief log alias for @p t_log
-    ///
-    typedef t_log log;
+  ///
+  /// \brief log alias for @p t_log
+  ///
+  typedef t_log log;
 
-    ///
-    /// \brief loop constructor
-    /// \param p_work instance of the function that will execute the defined
-    /// work
-    /// \param p_timeout amount of time that the loop will wait for \p p_work to
-    /// execute
-    /// \param p_break instance of the function that will indicate when the loop
-    /// must stop
-    /// \param p_provide instance of the function that will provide an instance
-    /// of \p t_data, if available
-    ///
-    loop_t(worker&& p_work,
-           std::chrono::milliseconds p_timeout,
-           breaker&& p_break,
-           provider&& p_provide)
-      : m_work(std::move(p_work))
-      , m_timeout(std::move(p_timeout))
-      , m_break(std::move(p_break))
-      , m_provide(std::move(p_provide))
-      , m_stopped(true)
-    {}
+  ///
+  /// \brief loop constructor
+  /// \param p_work instance of the function that will execute the defined
+  /// work
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  /// \param p_break instance of the function that will indicate when the loop
+  /// must stop
+  /// \param p_provide instance of the function that will provide an instance
+  /// of \p t_data, if available
+  ///
+  loop_t(worker&& p_work,
+         std::chrono::milliseconds p_timeout,
+         breaker&& p_break,
+         provider&& p_provide)
+    : m_work(std::move(p_work))
+    , m_timeout(std::move(p_timeout))
+    , m_break(std::move(p_break))
+    , m_provide(std::move(p_provide))
+    , m_stopped(true)
+  {}
 
-    /// \brief loop decault constuctor not allowed
-    loop_t() = delete;
+  /// \brief loop decault constuctor not allowed
+  loop_t() = delete;
 
-    /// \brief destructor
-    ~loop_t() = default;
+  /// \brief destructor
+  ~loop_t() = default;
 
-    /// \brief copy constructor not allowed
-    loop_t(const loop_t&) = delete;
+  /// \brief copy constructor not allowed
+  loop_t(const loop_t&) = delete;
 
-    ///
-    /// \brief loop move constructor
-    /// \param p_loop an instance o \p loop to be moved
-    ///
-    loop_t(loop_t&& p_loop) noexcept
-      : m_work(std::move(p_loop.m_work))
-      , m_timeout(std::move(p_loop.m_timeout))
-      , m_break(std::move(p_loop.m_break))
-      , m_provide(std::move(p_loop.m_provide))
-      , m_stopped(true)
-    {}
+  ///
+  /// \brief loop move constructor
+  /// \param p_loop an instance o \p loop to be moved
+  ///
+  loop_t(loop_t&& p_loop) noexcept
+    : m_work(std::move(p_loop.m_work))
+    , m_timeout(std::move(p_loop.m_timeout))
+    , m_break(std::move(p_loop.m_break))
+    , m_provide(std::move(p_loop.m_provide))
+    , m_stopped(true)
+  {}
 
-    /// \brief copy assignment not allowed
-    loop_t& operator=(const loop_t&) = delete;
+  /// \brief copy assignment not allowed
+  loop_t& operator=(const loop_t&) = delete;
 
-    /// \brief move assignment
-    loop_t& operator=(loop_t&& p_loop) noexcept
-    {
-        if (this != &p_loop) {
-            m_work = std::move(p_loop.m_work);
-            m_timeout = std::move(p_loop.m_timeout);
-            m_break = std::move(p_loop.m_break);
-            m_provide = std::move(p_loop.m_provide);
-            m_stopped = true;
-        }
-        return *this;
+  /// \brief move assignment
+  loop_t& operator=(loop_t&& p_loop) noexcept
+  {
+    if (this != &p_loop) {
+      m_work = std::move(p_loop.m_work);
+      m_timeout = std::move(p_loop.m_timeout);
+      m_break = std::move(p_loop.m_break);
+      m_provide = std::move(p_loop.m_provide);
+      m_stopped = true;
+    }
+    return *this;
+  }
+
+  ///
+  /// \brief is_stopped
+  /// \return \p true if the loop is not running; \p false othewise
+  ///
+  inline bool is_stopped() const { return m_stopped; }
+
+  ///
+  /// \brief get_work
+  /// \return a copy of the function that executes a defined work in each
+  /// round of the loop
+  ///
+  inline worker get_worker() const { return m_work; }
+
+  ///
+  /// \brief get_break
+  /// \return a copy of the function that can make the loop stop
+  ///
+  inline breaker get_breaker() const { return m_break; }
+
+  ///
+  /// \brief get_provide
+  /// \return a copy of the function that provides an instance of \p t_data,
+  /// if available, to the work function
+  ///
+  inline provider get_provider() const { return m_provide; }
+
+  ///
+  /// \brief get_timeout
+  /// \return the amount of time that the loop will wait for the work function
+  /// to finish
+  ///
+  inline std::chrono::milliseconds get_timeout() const { return m_timeout; }
+
+  ///
+  /// \brief stop forces the loop to stop
+  ///
+  inline void stop() { m_stopped = true; }
+
+  ///
+  /// \brief start initates the loop,
+  ///
+  /// If the loop was already initiated, it does not start a new loop
+  ///
+  void start()
+  {
+    if (!m_stopped) {
+      concurrent_log_debug(
+        log, this, " not starting because it was not stopped");
+      return;
     }
 
-    ///
-    /// \brief is_stopped
-    /// \return \p true if the loop is not running; \p false othewise
-    ///
-    inline bool is_stopped() const { return m_stopped; }
+    m_stopped = false;
 
-    ///
-    /// \brief get_work
-    /// \return a copy of the function that executes a defined work in each
-    /// round of the loop
-    ///
-    inline worker get_worker() const { return m_work; }
+    while (true) {
 
-    ///
-    /// \brief get_break
-    /// \return a copy of the function that can make the loop stop
-    ///
-    inline breaker get_breaker() const { return m_break; }
+      if (m_stopped) {
+        concurrent_log_debug(log, this, " stopping loop");
+        break;
+      }
 
-    ///
-    /// \brief get_provide
-    /// \return a copy of the function that provides an instance of \p t_data,
-    /// if available, to the work function
-    ///
-    inline provider get_provider() const { return m_provide; }
+      concurrent_log_debug(log, this, " waiting for data");
+      std::pair<bool, t_data> _provide = m_provide();
+      if (!_provide.first) {
+        concurrent_log_debug(log, this, " breaking because there is no data");
+        break;
+      }
 
-    ///
-    /// \brief get_timeout
-    /// \return the amount of time that the loop will wait for the work function
-    /// to finish
-    ///
-    inline std::chrono::milliseconds get_timeout() const { return m_timeout; }
+      concurrent_log_debug(log, this, " data received ", _provide.second);
 
-    ///
-    /// \brief stop forces the loop to stop
-    ///
-    inline void stop() { m_stopped = true; }
-
-    ///
-    /// \brief start initates the loop,
-    ///
-    /// If the loop was already initiated, it does not start a new loop
-    ///
-    void start()
-    {
-        if (!m_stopped) {
-            concurrent_log_debug(
-              log, this, " not starting because it was not stopped");
-            return;
+      std::future<result> _future = std::async(
+        std::launch::async, std::ref(m_work), std::move(_provide.second));
+      if (_future.wait_for(m_timeout) == std::future_status::ready) {
+        if (_future.get() == result::stop) {
+          concurrent_log_debug(log, this, " worker returned 'result::stop'");
+          m_stopped = true;
+          break;
         }
+        concurrent_log_debug(log, this, " worker returned 'result::dont_stop'");
+      } else {
+        concurrent_log_warn(log, this, " timeout for data ", _provide.second);
+      }
 
-        m_stopped = false;
+      if (m_stopped) {
+        concurrent_log_debug(log, this, " stopping loop");
+        break;
+      }
 
-        while (true) {
-
-            if (m_stopped) {
-                concurrent_log_debug(log, this, " stopping loop");
-                break;
-            }
-
-            concurrent_log_debug(log, this, " waiting for data");
-            std::pair<bool, t_data> _provide = m_provide();
-            if (!_provide.first) {
-                concurrent_log_debug(
-                  log, this, " breaking because there is no data");
-                break;
-            }
-
-            concurrent_log_debug(log, this, " data received ", _provide.second);
-
-            std::future<bool> _future = std::async(
-              std::launch::async, std::ref(m_work), std::move(_provide.second));
-            if (_future.wait_for(m_timeout) == std::future_status::ready) {
-                if (!_future.get()) {
-                    concurrent_log_debug(
-                      log, this, " breaking because worker returned 'false'");
-                    m_stopped = true;
-                    break;
-                }
-                concurrent_log_debug(log, this,
-                                     "will continue because worker returned 'true'");
-            } else {
-                concurrent_log_warn(
-                  log, this, " timeout for data ", _provide.second);
-            }
-
-            if (m_stopped) {
-                concurrent_log_debug(log, this, " stopping loop");
-                break;
-            }
-
-            if (m_break()) {
-                concurrent_log_debug(
-                  log, this, " stopping because breaker said so");
-                m_stopped = true;
-                break;
-            }
-        }
+      if (m_break() == result::stop) {
+        concurrent_log_debug(log, this, " stopping because breaker said so");
+        m_stopped = true;
+        break;
+      }
     }
+  }
 
-  private:
-    ///
-    /// \brief m_work instance of the function that will execute the defined
-    /// work
-    ///
-    worker m_work;
+private:
+  ///
+  /// \brief m_work instance of the function that will execute the defined
+  /// work
+  ///
+  worker m_work;
 
-    ///
-    /// \brief m_timeout amount of time that the loop will wait for \p p_work to
-    /// execute
-    ///
-    std::chrono::milliseconds m_timeout;
+  ///
+  /// \brief m_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  ///
+  std::chrono::milliseconds m_timeout;
 
-    ///
-    /// \brief m_break instance of the function that will indicate when the loop
-    /// must stop
-    ///
-    breaker m_break;
+  ///
+  /// \brief m_break instance of the function that will indicate when the loop
+  /// must stop
+  ///
+  breaker m_break;
 
-    ///
-    /// \brief m_provide instance of the function that will provide an instance
-    /// of \p t_data, if available
-    ///
-    provider m_provide;
+  ///
+  /// \brief m_provide instance of the function that will provide an instance
+  /// of \p t_data, if available
+  ///
+  provider m_provide;
 
-    ///
-    /// \brief m_stopped indicates if the loop is running or not
-    ///
-    bool m_stopped;
+  ///
+  /// \brief m_stopped indicates if the loop is running or not
+  ///
+  bool m_stopped;
 
-    static const std::string m_name;
+  //  static const std::string m_name;
 };
 
-template<typename t_data, typename t_log>
-const std::string loop_t<t_data, t_log>::m_name("loop");
+// template<typename t_data, typename t_log>
+// const std::string loop_t<t_data, t_log>::m_name("loop");
 
 ///
 /// \brief loop implements a generic loop
@@ -301,192 +301,197 @@ const std::string loop_t<t_data, t_log>::m_name("loop");
 template<typename t_log>
 struct loop_t<void, t_log>
 {
-    ///
-    /// \brief work_t type of function to be called during the loop, responsible
-    /// for doing the work defined
-    ///
-    /// loop_traits<void>::work_t evaluates to std::function<bool(void)>
-    typedef typename loop_traits_t<void>::worker worker;
+  /// \brief work_t is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \param t_data is an instance of the data to be handled
+  ///
+  /// \return result::stop if the loop where this function is being
+  /// called should stop, or result::dont_stop if it should continue
+  typedef typename traits_t<void>::worker worker;
 
-    ///
-    /// \brief provide_t type of function that will provide, if available, an
-    /// instance of \p t_data
-    ///
-    /// loop_traits<t_data>::provide_t evaluates to
-    /// std::function<void()>
-    typedef typename loop_traits_t<void>::provider provider;
+  ///
+  /// \brief provide_t is the type of function that provides data to the work
+  /// function during the loop execution
+  ///
+  /// \return a pair, where if \p first is \p true, the \p second has a
+  /// meaningful data; if \p first is \p false, then \p second has a default
+  /// value of \p t_data
+  ///
+  typedef typename traits_t<void>::provider provider;
 
-    ///
-    /// \brief break_t type of function that will indicate that the loop must
-    /// stop
-    ///
-    /// loop_traits<t_data>::break_t evaluates to std::function<bool()>
-    typedef typename loop_traits_t<void>::breaker breaker;
+  ///
+  /// \brief break_t is the type of function that indicates if the loop should
+  /// stop
+  ///
+  /// \return result::stop if the loop where this function is being
+  /// called should stop, or result::dont_stop if it should continue
+  typedef typename traits_t<void>::breaker breaker;
 
-    ///
-    /// \brief log alias for @p t_log
-    ///
-    typedef t_log log;
+  ///
+  /// \brief log alias for @p t_log
+  ///
+  typedef t_log log;
 
-    ///
-    /// \brief loop constructor
-    /// \param p_work instance of the function that will execute the defined
-    /// work
-    /// \param p_timeout amount of time that the loop will wait for \p p_work to
-    /// execute
-    /// \param p_break instance of the function that will indicate when the loop
-    /// must stop
-    /// \param p_provide is a dummy paramter, to allow othe classes to use this
-    /// specialization of \p loop, or the other one where the \p provide_t
-    /// actually provides data
-    ///
-    loop_t(worker&& p_work,
-           std::chrono::milliseconds p_timeout,
-           breaker&& p_break,
-           provider&& p_provide)
-      : m_work(std::move(p_work))
-      , m_timeout(std::move(p_timeout))
-      , m_break(std::move(p_break))
-      , m_provide(std::move(p_provide))
-      , m_stopped(true)
-    {}
+  ///
+  /// \brief loop constructor
+  /// \param p_work instance of the function that will execute the defined
+  /// work
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  /// \param p_break instance of the function that will indicate when the loop
+  /// must stop
+  /// \param p_provide is a dummy paramter, to allow othe classes to use this
+  /// specialization of \p loop, or the other one where the \p provide_t
+  /// actually provides data
+  ///
+  loop_t(worker&& p_work,
+         std::chrono::milliseconds p_timeout,
+         breaker&& p_break,
+         provider&& p_provide)
+    : m_work(std::move(p_work))
+    , m_timeout(std::move(p_timeout))
+    , m_break(std::move(p_break))
+    , m_provide(std::move(p_provide))
+    , m_stopped(true)
+  {}
 
-    /// \brief loop decault constuctor not allowed
-    loop_t() = delete;
+  /// \brief loop decault constuctor not allowed
+  loop_t() = delete;
 
-    /// \brief destructor
-    ~loop_t() = default;
+  /// \brief destructor
+  ~loop_t() = default;
 
-    /// \brief copy constructor not allowed
-    loop_t(const loop_t&) = delete;
+  /// \brief copy constructor not allowed
+  loop_t(const loop_t&) = delete;
 
-    /// \brief loop move constructor not allowed
-    loop_t(loop_t&& p_loop) noexcept = delete;
+  /// \brief loop move constructor not allowed
+  loop_t(loop_t&& p_loop) noexcept = delete;
 
-    /// \brief copy assignment not allowed
-    loop_t& operator=(const loop_t&) = delete;
+  /// \brief copy assignment not allowed
+  loop_t& operator=(const loop_t&) = delete;
 
-    /// \brief move assignment not allowed
-    loop_t& operator=(loop_t&& p_loop) noexcept = delete;
+  /// \brief move assignment not allowed
+  loop_t& operator=(loop_t&& p_loop) noexcept = delete;
 
-    ///
-    /// \brief is_stopped
-    /// \return \p true if the loop is not running; \p false othewise
-    ///
-    inline bool is_stopped() const { return m_stopped; }
+  ///
+  /// \brief is_stopped
+  /// \return \p true if the loop is not running; \p false othewise
+  ///
+  inline bool is_stopped() const { return m_stopped; }
 
-    ///
-    /// \brief get_work
-    /// \return a copy of the function that executes a defined work in each
-    /// round of the loop
-    ///
-    inline worker get_worker() const { return m_work; }
+  ///
+  /// \brief get_work
+  /// \return a copy of the function that executes a defined work in each
+  /// round of the loop
+  ///
+  inline worker get_worker() const { return m_work; }
 
-    ///
-    /// \brief get_break
-    /// \return a copy of the function that can make the loop stop
-    ///
-    inline breaker get_breaker() const { return m_break; }
+  ///
+  /// \brief get_break
+  /// \return a copy of the function that can make the loop stop
+  ///
+  inline breaker get_breaker() const { return m_break; }
 
-    ///
-    /// \brief get_provide
-    /// \return a copy of the function that provides an instance of \p t_data,
-    /// if available, to the work function
-    ///
-    inline provider get_provider() const { return m_provide; }
+  ///
+  /// \brief get_provide
+  /// \return a copy of the function that provides an instance of \p t_data,
+  /// if available, to the work function
+  ///
+  inline provider get_provider() const { return m_provide; }
 
-    ///
-    /// \brief get_timeout
-    /// \return the amount of time that the loop will wait for the work function
-    /// to finish
-    ///
-    inline std::chrono::milliseconds get_timeout() const { return m_timeout; }
+  ///
+  /// \brief get_timeout
+  /// \return the amount of time that the loop will wait for the work function
+  /// to finish
+  ///
+  inline std::chrono::milliseconds get_timeout() const { return m_timeout; }
 
-    ///
-    /// \brief stop forces the loop to stop
-    ///
-    inline void stop() { m_stopped = true; }
+  ///
+  /// \brief stop forces the loop to stop
+  ///
+  inline void stop() { m_stopped = true; }
 
-    ///
-    /// \brief start initates the loop,
-    ///
-    /// If the loop was already initiated, it does not start a new loop
-    ///
-    void start()
-    {
-        if (m_stopped == false) {
-            concurrent_log_debug(
-              log, this, " not starting beacause it was not stopped");
-            return;
-        }
-
-        m_stopped = false;
-
-        while (true) {
-
-            concurrent_log_debug(log, this, " one more loop");
-
-            if (m_stopped) {
-                concurrent_log_debug(log, this, " stopping loop");
-                break;
-            }
-
-            concurrent_log_debug(log, this, " calling work");
-            std::future<bool> _future =
-              std::async(std::launch::async, std::ref(m_work));
-            if (_future.wait_for(m_timeout) == std::future_status::ready) {
-                if (!_future.get()) {
-                    concurrent_log_debug(
-                      log, this, " breaking because there is no more work");
-                    m_stopped = true;
-                    break;
-                }
-            } else {
-                concurrent_log_warn(log, this, " timeout");
-            }
-
-            if (m_stopped) {
-                concurrent_log_debug(log, this, " stopping loop");
-                break;
-            }
-
-            if (m_break()) {
-                concurrent_log_debug(log, this, " breaker said to stop");
-                m_stopped = true;
-                break;
-            }
-        }
+  ///
+  /// \brief start initates the loop,
+  ///
+  /// If the loop was already initiated, it does not start a new loop
+  ///
+  void start()
+  {
+    if (m_stopped == false) {
+      concurrent_log_debug(
+        log, this, " not starting beacause it was not stopped");
+      return;
     }
 
-  private:
-    ///
-    /// \brief m_work instance of the function that will execute the defined
-    /// work
-    ///
-    worker m_work;
+    m_stopped = false;
 
-    ///
-    /// \brief m_timeout amount of time that the loop will wait for \p p_work to
-    /// execute
-    ///
-    std::chrono::milliseconds m_timeout;
+    while (true) {
 
-    ///
-    /// \brief m_break instance of the function that will indicate when the loop
-    /// must stop
-    ///
-    breaker m_break;
+      concurrent_log_debug(log, this, " one more loop");
 
-    ///
-    /// \brief m_provide instance of the function that will provide an instance
-    /// of \p t_data, if available
-    ///
-    provider m_provide;
+      if (m_stopped) {
+        concurrent_log_debug(log, this, " stopping loop");
+        break;
+      }
 
-    ///
-    /// \brief m_stopped indicates if the loop is running or not
-    ///
-    bool m_stopped = true;
+      concurrent_log_debug(log, this, " calling work");
+      std::future<result> _future =
+        std::async(std::launch::async, std::ref(m_work));
+      if (_future.wait_for(m_timeout) == std::future_status::ready) {
+        if (_future.get() == result::stop) {
+          concurrent_log_debug(log, this, " worker returned 'result::stop'");
+          m_stopped = true;
+          break;
+        }
+        concurrent_log_debug(log, this, "worker returned 'result::dont_stop'");
+      } else {
+        concurrent_log_warn(log, this, " timeout");
+      }
+
+      if (m_stopped) {
+        concurrent_log_debug(log, this, " stopping loop");
+        break;
+      }
+
+      if (m_break() == result::stop) {
+        concurrent_log_debug(log, this, " breaker said to stop");
+        m_stopped = true;
+        break;
+      }
+    }
+  }
+
+private:
+  ///
+  /// \brief m_work instance of the function that will execute the defined
+  /// work
+  ///
+  worker m_work;
+
+  ///
+  /// \brief m_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  ///
+  std::chrono::milliseconds m_timeout;
+
+  ///
+  /// \brief m_break instance of the function that will indicate when the loop
+  /// must stop
+  ///
+  breaker m_break;
+
+  ///
+  /// \brief m_provide instance of the function that will provide an instance
+  /// of \p t_data, if available
+  ///
+  provider m_provide;
+
+  ///
+  /// \brief m_stopped indicates if the loop is running or not
+  ///
+  bool m_stopped = true;
 };
 
 } // namespace business
