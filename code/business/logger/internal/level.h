@@ -37,7 +37,7 @@ namespace business {
 namespace logger {
 
 ///
-/// \brief The level enum defines the possible log levels
+/// \brief The level enum defines the possible logger::log levels
 ///
 enum class level : char
 {

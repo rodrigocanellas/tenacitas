@@ -1,7 +1,6 @@
 SUBDIRS = \
-  business/business_concurrent.pro
-#  \
-#  test/test.pro
+  business/business_concurrent.pro \
+  test/test.pro
 
 
 TEMPLATE = subdirs

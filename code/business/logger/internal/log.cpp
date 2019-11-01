@@ -4,13 +4,13 @@ namespace tenacitas {
 namespace business {
 namespace logger {
 
-log::writer log::m_writer = [](std::string&&) {};
+logger::log::writer logger::log::m_writer = [](std::string&&) {};
 
-level log::m_level = { level::error };
+level logger::log::m_level = { level::error };
 
-char log::m_separator = { '|' };
+char logger::log::m_separator = { '|' };
 
-std::mutex log::m_mutex;
+std::mutex logger::log::m_mutex;
 
 } // namespace logger
 } // namespace business

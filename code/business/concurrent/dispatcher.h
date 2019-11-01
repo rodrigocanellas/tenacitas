@@ -54,8 +54,8 @@ public:
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
   typedef typename traits_t<t_msg>::worker worker;
 
   ///

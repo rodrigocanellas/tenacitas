@@ -1,7 +1,7 @@
 SUBDIRS = \
-    ../../../logger/library/business/logger_business.pro \
-    ../../../tester/library/business/tester_business.pro
-    
+    ../../../logger/business/business_logger.pro \
+    ../../../tester/business/business_tester.pro
+
 
 TEMPLATE = subdirs
 

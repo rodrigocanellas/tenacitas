@@ -18,7 +18,6 @@
 #include <thread>
 #include <vector>
 
-#include <business/concurrent/traits.h>
 #include <business/concurrent/internal/async_loop.h>
 #include <business/concurrent/internal/log.h>
 #include <business/concurrent/traits.h>
@@ -63,8 +62,8 @@ public:
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
   ///
@@ -98,7 +97,7 @@ public:
       async_loop _loop(
         std::move(_loop_right.get_work()),
         _loop_right.get_timeout(),
-        [this]() -> result { return this->stop_condition(); },
+        [this]() -> concurrent::result { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -207,7 +206,7 @@ public:
       async_loop _loop(
         p_work_factory(),
         p_work_timeout,
-        [this]() -> result { return this->stop_condition(); },
+        [this]() -> concurrent::result { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -224,7 +223,7 @@ public:
     async_loop _loop(
       std::move(p_work),
       p_work_timeout,
-      [this]() -> result { return this->stop_condition(); },
+      [this]() -> concurrent::result { return this->stop_condition(); },
       [this]() -> std::pair<bool, t_data> { return this->data(); });
 
     add_work(std::move(_loop));
@@ -293,7 +292,7 @@ private:
 
   /// \brief async_loop_t is an simples for the \p async_loop where a \p
   /// work_t function will be running
-  typedef business::async_loop_t<t_data, t_log> async_loop;
+  typedef async_loop_t<t_data, t_log> async_loop;
 
   /// \brief async_loops_t is the collection of \p async_loop
   typedef std::vector<async_loop> async_loops_t;
@@ -335,11 +334,12 @@ private:
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
   ///
-  result stop_condition()
+  concurrent::result stop_condition()
   {
 
     concurrent_log_debug(log, this, " stopped = ", m_stopped);
-    return (m_stopped ? result::stop : result::dont_stop);
+    return (m_stopped ? concurrent::result::stop
+                      : concurrent::result::dont_stop);
   }
 
   ///

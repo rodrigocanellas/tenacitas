@@ -26,15 +26,16 @@ namespace logger {
 /// This namespace function must be called only one time to configure logging to
 /// \p cerr
 ///
-/// \details There are 6 log levels, from the lowest: 'test', 'debug', 'info',
-/// 'warn', 'error' and 'fatal'. The log level starts in 'error', so only
-/// 'error' and 'fatal' messages will be logged.
+/// \details There are 6 logger::log levels, from the lowest: 'test', 'debug',
+/// 'info', 'warn', 'error' and 'fatal'. The logger::log level starts in
+/// 'error', so only 'error' and 'fatal' messages will be logged.
 ///
-/// If one wants to change the log level, the 'cerr_set_test', 'cerr_set_debug',
-/// 'cerr_set_info' or 'cerr_set_warn' macro command must be called
+/// If one wants to change the logger::log level, the 'cerr_set_test',
+/// 'cerr_set_debug', 'cerr_set_info' or 'cerr_set_warn' macro command must be
+/// called
 ///
-/// A log line has this format:
-/// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+/// A logger::log line has this format:
+/// logger::log-level|timestamp-millisecs|thread-id|file|line|user-contents
 /// For example:
 /// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
 /// (0000000005,012345678901234567890123456789,1552098707355)
@@ -42,7 +43,7 @@ namespace logger {
 inline void
 configure_cerr_log()
 {
-    log::configure([](std::string&& p_str) { std::cerr << p_str; });
+  logger::log::configure([](std::string&& p_str) { std::cerr << p_str; });
 }
 
 } // namespace logger

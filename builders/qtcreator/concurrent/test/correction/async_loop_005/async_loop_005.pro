@@ -12,13 +12,13 @@ TARGET = tenacitas.concurrent.test.correction.async_loop_005
 CONFIG+=test
 
 SOURCES += \
-    ../../../../../../code/concurrent/test/correction/async_loop_005/main.cpp
+    ../../../../../../code/test/concurrent/correction/async_loop_005/main.cpp
 
 
 include (../../../../common.pri)
 
-LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.business.logger
 
 
 
-LIBS += -ltenacitas.tester.business
+LIBS += -ltenacitas.business.tester

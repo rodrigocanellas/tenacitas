@@ -9,8 +9,9 @@
 
 
 namespace tenacitas {
-namespace string {
 namespace business {
+namespace string {
+
 
 template<typename t_num_type>
 uint16_t
@@ -24,8 +25,9 @@ max_str_length()
     return ++_log;
 }
 
-} // namespace business
+
 } // namespace string
+} // namespace business
 } // namespace tenacitas
 
 #endif // MAX_STR_LENGTH_H

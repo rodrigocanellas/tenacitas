@@ -61,8 +61,8 @@ struct async_loop_t
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
   ///
@@ -79,9 +79,9 @@ struct async_loop_t
   /// \brief break_t is the type of function that indicates if the loop should
   /// stop
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> breaker;
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
+  typedef std::function<concurrent::result()> breaker;
 
   ///
   /// \brief log alias for @p t_log
@@ -89,7 +89,7 @@ struct async_loop_t
   typedef t_log log;
 
   ///
-  /// \brief async_loop constructor
+  /// \brief concurrent::async_loop constructor
   ///
   /// This constructor should be used when \p t_data is not \p void
   ///
@@ -114,7 +114,7 @@ struct async_loop_t
   {}
 
   ///
-  /// \brief async_loop constructor
+  /// \brief concurrent::async_loop constructor
   ///
   /// This constructor should be used when \p t_data is \p void
   ///
@@ -141,7 +141,7 @@ struct async_loop_t
   /// \brief copy constructor not allowed
   async_loop_t(const async_loop_t&) = delete;
 
-  /// \brief async_loop move constructor not allowed
+  /// \brief concurrent::async_loop move constructor not allowed
   async_loop_t(async_loop_t&& p_async) noexcept
     : m_loop(std::move(p_async.m_loop))
   {}
@@ -239,8 +239,7 @@ private:
   void run_core()
   {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread =
-      concurrent::thread([this]() -> void { m_loop.start(); });
+    m_thread = concurrent::thread([this]() -> void { m_loop.start(); });
   }
 
 private:

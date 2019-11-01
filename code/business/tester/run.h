@@ -18,10 +18,10 @@ syntax(char** argv)
     std::stringstream _stream;
     _stream
       << "Syntax: \n"
-      << argv[0] << " exec  --> executes the test, with log in 'test' level\n"
+      << argv[0] << " exec  --> executes the test, with logger::log in 'test' level\n"
       << argv[0] << " desc  --> displays a description of the test\n"
       << argv[0]
-      << " debug --> sets the log level to 'debug', and executes the test\n";
+      << " debug --> sets the logger::log level to 'debug', and executes the test\n";
     return _stream.str();
 }
 

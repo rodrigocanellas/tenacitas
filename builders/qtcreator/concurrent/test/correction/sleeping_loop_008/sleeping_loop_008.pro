@@ -14,9 +14,9 @@ CONFIG+=test
 HEADERS +=
 
 SOURCES += \
-    ../../../../../../code/concurrent/test/correction/sleeping_loop_008/main.cpp
+    ../../../../../../code/test/concurrent/correction/sleeping_loop_008/main.cpp
 
 include (../../../../common.pri)
 
-LIBS+=-ltenacitas.concurrent.business -ltenacitas.logger.business
-LIBS += -ltenacitas.tester.business
+LIBS+=-ltenacitas.business.concurrent -ltenacitas.business.logger
+LIBS += -ltenacitas.business.tester

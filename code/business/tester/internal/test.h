@@ -18,19 +18,18 @@ struct test
   bool operator()(const std::string& p_name, t_function&& p_function)
   {
 
-    bool _result = false;
+    bool result = false;
     try {
       logger::log::test("############ ", __LINE__, p_name);
-      _result = p_function();
+      result = p_function();
     } catch (std::exception& _ex) {
       logger::log::fatal("ERROR ", p_name, ": '", _ex.what(), "'");
-      _result = false;
+      result = false;
     }
     logger::log::test(p_name, __LINE__, "############");
-    return _result;
+    return result;
   }
 };
-
 
 } // namespace tester
 } // namespace business

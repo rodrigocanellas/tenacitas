@@ -7,9 +7,9 @@ TEMPLATE = app
 TARGET = tenacitas.concurrent.test.performance.thread_pool_000
 CONFIG+=test
 SOURCES += \ 
-    ../../../../../../code/concurrent/test/performance/thread_pool_000/main.cpp \
-    ../../../../../../code/concurrent/test/msa_a.cpp
+    ../../../../../../code/test/concurrent/performance/thread_pool_000/main.cpp \
+    ../../../../../../code/test/concurrent/msa_a.cpp
 include (../../../../common.pri)
 
-LIBS+=-ltenacitas.concurrent.business -ltenacitas.logger.business
-LIBS += -ltenacitas.tester.business
+LIBS+=-ltenacitas.business.concurrent -ltenacitas.business.logger
+LIBS += -ltenacitas.business.tester

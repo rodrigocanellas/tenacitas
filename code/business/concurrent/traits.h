@@ -38,9 +38,9 @@ struct traits_t
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result(t_data&&)> worker;
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
+  typedef std::function<concurrent::result(t_data&&)> worker;
 
   ///
   /// \brief provide_t is the type of function that provides data to the work
@@ -56,9 +56,9 @@ struct traits_t
   /// \brief break_t is the type of function that indicates if the loop should
   /// stop
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> breaker;
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
+  typedef std::function<concurrent::result()> breaker;
 };
 
 ///
@@ -72,9 +72,9 @@ struct traits_t<void>
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> worker;
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
+  typedef std::function<concurrent::result()> worker;
 
   ///
   /// \brief provide_t in the case of a \p void data has no effect
@@ -85,9 +85,9 @@ struct traits_t<void>
   /// \brief break_t is the type of function that indicates if the loop should
   /// stop
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop
-  typedef std::function<result()> breaker;
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop
+  typedef std::function<concurrent::result()> breaker;
 };
 
 } // namespace business

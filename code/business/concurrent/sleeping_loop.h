@@ -51,8 +51,8 @@ struct sleeping_loop_t
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// \return concurrent::result::stop if the loop where this function is being
+  /// called should stop, or concurrent::result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
   ///
@@ -88,7 +88,7 @@ struct sleeping_loop_t
                   provider&& p_provide)
     : m_async(std::move(p_work),
               std::move(p_timeout),
-              [this]() -> result { return this->break_loop(); },
+              [this]() -> concurrent::result { return this->break_loop(); },
               std::move(p_provide))
     , m_interval(p_interval)
   {}
@@ -108,7 +108,7 @@ struct sleeping_loop_t
                   std::chrono::milliseconds p_timeout)
     : m_async(std::move(p_work),
               std::move(p_timeout),
-              [this]() -> result { return this->break_loop(); },
+              [this]() -> concurrent::result { return this->break_loop(); },
               []() -> void {})
     , m_interval(p_interval)
   {}
@@ -239,17 +239,17 @@ private:
   /// \brief break_loop function that defines if the loop should stop
   /// \return \p true if the loop should break; \p false othewise
   ///
-  result break_loop()
+  concurrent::result break_loop()
   {
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
       // timeout, so do not stop
       concurrent_log_debug(log, this, " must not stop");
-      return result::dont_stop;
+      return concurrent::result::dont_stop;
     }
     // no timeout, so do stop
     concurrent_log_debug(log, this, " must stop");
-    return result::stop;
+    return concurrent::result::stop;
   }
 
 private:

@@ -20,22 +20,22 @@
   log::fatal(__FILE__, __LINE__, p_params)
 
 /*
-#define concurrent_log_test(log, p_params...)                                  \
+#define concurrent_log_test(logger::log, p_params...)                                  \
   {}
 
-#define concurrent_log_debug(log, p_params...)                                 \
+#define concurrent_log_debug(logger::log, p_params...)                                 \
   {}
 
-#define concurrent_log_info(log, p_params...)                                  \
+#define concurrent_log_info(logger::log, p_params...)                                  \
   {}
 
-#define concurrent_log_warn(log, p_params...)                                  \
+#define concurrent_log_warn(logger::log, p_params...)                                  \
   {}
 
-#define concurrent_log_error(log, p_params...)                                 \
+#define concurrent_log_error(logger::log, p_params...)                                 \
   {}
 
-#define concurrent_log_fatal(log, p_params...)                                 \
+#define concurrent_log_fatal(logger::log, p_params...)                                 \
   {}
 */
 

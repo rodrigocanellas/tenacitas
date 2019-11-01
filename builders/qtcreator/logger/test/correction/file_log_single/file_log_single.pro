@@ -16,7 +16,7 @@ QT -= gui
 message("LIBS = $$LIBS")
 
 SOURCES += \
-    ../../../../../../code/logger/test/correction/file_log_single/main.cpp
+    ../../../../../../code/test/logger/correction/file_log_single/main.cpp
 
 
 include (../../../../common.pri)
