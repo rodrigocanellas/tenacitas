@@ -1,6 +1,6 @@
 SUBDIRS = \
-    ../../../logger/business/business_logger.pro \
-    ../../../tester/business/business_tester.pro
+    ../../../logger/business/logger_business.pro \
+    ../../../tester/business/tester_business.pro
 
 
 TEMPLATE = subdirs

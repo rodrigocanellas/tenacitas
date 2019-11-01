@@ -1,0 +1,111 @@
+
+#include <iostream>
+
+#include <concurrent/business/sleeping_loop.h>
+#include <logger/business/cerr.h>
+#include <logger/business/cout.h>
+#include <logger/business/log.h>
+#include <tester/business/run.h>
+#include <concurrent/business/traits.h>
+
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
+typedef sleeping_loop_t<void, log> sleeping_loop;
+
+#define log_test(p_params...)                                                  \
+    tenacitas::logger::business::log::test("cout_log_multi", __LINE__, p_params)
+
+#define log_debug(p_params...)                                                 \
+    tenacitas::logger::business::log::debug(                                   \
+      "cout_log_multi", __LINE__, p_params)
+
+#define log_info(p_params...)                                                  \
+    tenacitas::logger::business::log::info("cout_log_multi", __LINE__, p_params)
+
+#define log_warn(p_params...)                                                  \
+    tenacitas::logger::business::log::warn("cout_log_multi", __LINE__, p_params)
+
+#define log_error(p_params...)                                                 \
+    tenacitas::logger::business::log::error(                                   \
+      "cout_log_multi", __LINE__, p_params)
+
+#define log_fatal(p_params...)                                                 \
+    tenacitas::logger::business::log::error(                                   \
+      "cout_log_multi", __LINE__, p_params)
+
+class cout_log_multi
+{
+
+  public:
+    bool operator()()
+    {
+        using namespace tenacitas::logger::business;
+        try {
+            configure_cout_log();
+            log::set_debug();
+
+            sleeping_loop _loop1(std::chrono::milliseconds(1000),
+                                 []() {
+                                     for (uint32_t _i = 0; _i < 1000; ++_i) {
+                                         log_debug("ola! ", 33);
+                                         log_debug("como vai? ", _i);
+                                         log_info("vou bem!! ", _i);
+                                         log_info("e vc? ", _i);
+                                         log_warn("ótimo! novo emprego! ", _i);
+                                         log_warn("que bom! ", _i);
+                                     }
+                                     return result::dont_stop;
+                                 },
+                                 std::chrono::milliseconds(1000));
+
+            sleeping_loop _loop2(std::chrono::milliseconds(500),
+                                 []() {
+                                     for (uint32_t _i = 0; _i < 1500; ++_i) {
+                                         log_debug("aaa! ", 33);
+                                         log_debug("bbb? ", _i);
+                                         log_info("ccc!! ", _i);
+                                         log_info("ddd ", _i);
+                                         log_warn("eee! ", _i);
+                                         log_warn("fff! ", _i);
+                                     }
+                                     return result::dont_stop;
+                                 },
+                                 std::chrono::milliseconds(1000));
+
+            sleeping_loop _loop3(
+              std::chrono::milliseconds(100),
+              []() {
+                  for (uint32_t _i = 0; _i < 3000; ++_i) {
+                      log_debug("abcdefghijklmnopqrstivwxyz! ", 33);
+                      log_debug("abcdefghijklmnopqrstivwxyz? ", _i);
+                      log_info("abcdefghijklmnopqrstivwxyz!! ", _i);
+                      log_info("abcdefghijklmnopqrstivwxyz ", _i);
+                      log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
+                      log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
+                  }
+                  return result::dont_stop;
+              },
+              std::chrono::milliseconds(1000));
+
+            _loop1.run();
+            _loop2.run();
+            _loop3.run();
+
+            log_debug("---- sleeping");
+            std::this_thread::sleep_for(std::chrono::seconds(50));
+            log_debug("---- waking up");
+
+            return true;
+        } catch (std::exception& _ex) {
+            log::fatal("ERRO log::log_multi: '", _ex.what(), "'");
+        }
+        return false;
+    }
+};
+
+int
+main(int argc, char** argv)
+{
+    run_test(cout_log_multi, argc, argv, "Multiple threads logging to 'cerr'");
+}

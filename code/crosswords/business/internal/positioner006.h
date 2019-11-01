@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/words_positioner_group.h>
@@ -21,6 +22,8 @@
 #include <crosswords/entities/words.h>
 #include <crosswords/messages/positioned.h>
 #include <crosswords/messages/to_position.h>
+
+using namespace tenacitas::concurrent::business;
 
 namespace tenacitas {
 namespace crosswords {
@@ -54,38 +57,30 @@ struct positioner006_t
 
   typedef words_positioner_group_t<log> words_positioner_group;
 
-  typedef concurrent::business::dispatcher_t<messages::positioned<log>, log>
+  typedef concurrent::business::dispatcher_t<crosswords::messages::positioned<log>, log>
   dispatcher_positioned;
 
-  typedef typename std::shared_ptr<dispatcher_positioned> dispatcher_positioned_ptr;
-
-  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
+  typedef concurrent::business::dispatcher_t<crosswords::messages::not_positioned, log>
   dispatcher_not_positioned;
-
-  typedef typename std::shared_ptr<dispatcher_not_positioned> dispatcher_not_positioned_ptr;
 
 
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-    , m_dispatcher_positioned_ptr(std::make_shared<dispatcher_positioned>())
-    , m_dispatcher_not_positioned_ptr(std::make_shared<dispatcher_not_positioned>())
-    , m_words_positioner_group(p_x_limit, p_y_limit,
-                               m_dispatcher_positioned_ptr,
-                               m_dispatcher_not_positioned_ptr)
+    , m_words_positioner_group(p_x_limit, p_y_limit)
   {
 
     crosswords_log_debug(log, "creating positioner 006");
 
     if (!m_dispatcher_created) {
-      m_dispatcher_positioned_ptr->subscribe(
-        [this](messages::positioned<log>&& p_positioned) -> bool {
+      dispatcher_positioned::subscribe(
+        [this](crosswords::messages::positioned<log>&& p_positioned) -> bool {
           return m_words_positioner_group(std::move(p_positioned));
         },
         std::chrono::milliseconds(1000));
 
-      m_dispatcher_not_positioned_ptr->subscribe(
-        [this](messages::not_positioned&& p_not_positioned) -> bool {
+      dispatcher_not_positioned::subscribe(
+        [this](crosswords::messages::not_positioned&& p_not_positioned) -> bool {
           return m_words_positioner_group(std::move(p_not_positioned));
         },
         std::chrono::milliseconds(1000));
@@ -303,8 +298,6 @@ private:
 private:
   x m_x_limit;
   y m_y_limit;
-  dispatcher_positioned_ptr m_dispatcher_positioned_ptr;
-  dispatcher_not_positioned_ptr m_dispatcher_not_positioned_ptr;
   words_positioner_group m_words_positioner_group;
   uint32_t m_counter = { 0 };
   words m_words;

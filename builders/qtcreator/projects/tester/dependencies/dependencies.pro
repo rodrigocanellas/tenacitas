@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS += ../../logger/business/business_logger.pro
+SUBDIRS += ../../logger/business/logger_business.pro

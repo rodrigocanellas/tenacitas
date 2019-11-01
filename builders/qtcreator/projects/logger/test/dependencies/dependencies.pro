@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
 
-SUBDIRS += ../../../tester/business/business_tester.pro
+SUBDIRS += ../../../tester/business/tester_business.pro

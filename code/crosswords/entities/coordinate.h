@@ -5,8 +5,6 @@
 #include <iostream>
 #include <vector>
 
-#include <type/entities/number.h>
-
 namespace tenacitas {
 namespace crosswords {
 namespace entities {

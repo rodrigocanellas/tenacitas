@@ -97,7 +97,7 @@
 
 //    words operator()()
 //    {
-//        std::sort(m_words.begin(), m_words.end(), entities::cmp_words());
+//        std::sort(m_words.begin(), m_words.end(), crosswords::entities::cmp_words());
 //        group_words();
 //        typedef typename words_by_size_list::iterator iterator;
 //        iterator _end = m_words_by_size_list.end();

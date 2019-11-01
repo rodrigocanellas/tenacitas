@@ -17,9 +17,9 @@ include (../../../../../common.pri)
 message("LIBS = $$LIBS")
 
 SOURCES += \
-    ../../../../../../../code/test/logger/correction/cerr_log_creation/main.cpp
+    ../../../../../../../code/logger/test/correction/cerr_log_creation/main.cpp
 
 
 
 
-LIBS +=-ltenacitas.business.logger
+LIBS +=-ltenacitas.logger.business

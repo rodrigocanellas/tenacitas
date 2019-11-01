@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CROSSWORDS_BUSINESS_NOT_POSITIONED_H
-#define TENACITAS_CROSSWORDS_BUSINESS_NOT_POSITIONED_H
+#ifndef TENACITAS_CROSSWORDS_MESSAGES_NOT_POSITIONED_H
+#define TENACITAS_CROSSWORDS_MESSAGES_NOT_POSITIONED_H
 
 #include <crosswords/entities/words.h>
 
@@ -13,17 +13,17 @@ struct not_positioned
                                   const not_positioned& p_not_positioned)
   {
     p_out << "not_positioned msg: "
-          << entities::print_words(p_not_positioned.m_words.begin(),
+          << crosswords::entities::print_words(p_not_positioned.m_words.begin(),
                                    p_not_positioned.m_words.end());
     return p_out;
   }
 
   not_positioned() = default;
-  inline explicit not_positioned(const entities::words& p_words)
+  inline explicit not_positioned(const crosswords::entities::words& p_words)
     : m_words(p_words)
   {}
-  inline not_positioned(entities::words::const_iterator p_begin,
-                        entities::words::const_iterator& p_end)
+  inline not_positioned(crosswords::entities::words::const_iterator p_begin,
+                        crosswords::entities::words::const_iterator& p_end)
     : m_words(p_begin, p_end)
   {}
 
@@ -35,10 +35,10 @@ struct not_positioned
 
   ~not_positioned() = default;
 
-  inline entities::words get_words() const { return m_words; }
+  inline crosswords::entities::words get_words() const { return m_words; }
 
 private:
-  entities::words m_words;
+  crosswords::entities::words m_words;
 };
 
 } // namespace messages

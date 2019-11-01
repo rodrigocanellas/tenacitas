@@ -13,9 +13,9 @@ CONFIG+=test
 
 
 SOURCES += \
-    ../../../../../../../code/test/concurrent/correction/async_loop_000/main.cpp
+    ../../../../../../../code/concurrent/test/correction/async_loop_000/main.cpp
 
 include (../../../../../common.pri)
 
-LIBS += -ltenacitas.business.logger
-LIBS += -ltenacitas.business.tester
+LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.tester.business

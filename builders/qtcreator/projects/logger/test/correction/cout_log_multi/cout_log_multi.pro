@@ -16,11 +16,11 @@ QT -= gui
 message("LIBS = $$LIBS")
 
 SOURCES += \
-    ../../../../../../../code/test/logger/correction/cout_log_multi/main.cpp
+    ../../../../../../../code/logger/test/correction/cout_log_multi/main.cpp
 
 
 include (../../../../../common.pri)
 
 
 
-LIBS += -ltenacitas.business.logger
+LIBS += -ltenacitas.logger.business

@@ -1,8 +1,9 @@
 SUBDIRS = \
-  crosswords_entities \
-  crosswords_messages \
-  crosswords_business \  
-  test
+  dependencies \
+  entities/crosswords_entities.pro \
+  messages/crosswords_messages.pro \
+  business/crosswords_business.pro \
+  test/crosswords_test.pro
 
 
 

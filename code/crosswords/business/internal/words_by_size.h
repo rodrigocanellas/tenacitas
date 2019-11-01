@@ -71,7 +71,7 @@ struct words_by_size_t
 
         if (!m_limits_defined) {
             define_limits(p_words);
-            std::sort(m_begin, m_end, entities::cmp_words());
+            std::sort(m_begin, m_end, crosswords::entities::cmp_words());
         }
         reset(p_positions_occupied);
 
@@ -100,22 +100,22 @@ struct words_by_size_t
                                     p_positions_occupied)) {
                     crosswords_log_debug(log, "fail to position ", *_ite);
                     _positoned = false;
-                    entities::print(p_x_limit, p_y_limit, p_words);
+                    crosswords::entities::print(p_x_limit, p_y_limit, p_words);
                     p_positions_occupied.print();
                     break;
                 }
-                entities::print(p_x_limit, p_y_limit, p_words);
+                crosswords::entities::print(p_x_limit, p_y_limit, p_words);
                 p_positions_occupied.print();
             }
             if (_positoned) {
                 break;
             }
             reset(p_positions_occupied);
-            entities::print(p_x_limit, p_y_limit, p_words);
+            crosswords::entities::print(p_x_limit, p_y_limit, p_words);
             p_positions_occupied.print();
 
             // find next permutation
-            if (!std::next_permutation(m_begin, m_end, entities::cmp_words())) {
+            if (!std::next_permutation(m_begin, m_end, crosswords::entities::cmp_words())) {
                 break;
             }
         }

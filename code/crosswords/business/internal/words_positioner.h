@@ -61,27 +61,17 @@ struct words_positioner_t
   typedef positions_occupied_t<log> positions_occupied;
   typedef validate_position_t<log> validate_position;
 
-  typedef concurrent::business::dispatcher_t<messages::positioned<log>, log>
+  typedef concurrent::business::dispatcher_t<crosswords::messages::positioned<log>, log>
     dispatcher_positioned;
 
-  typedef typename std::shared_ptr<dispatcher_positioned>
-    dispatcher_positioned_ptr;
-
-  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
+  typedef concurrent::business::dispatcher_t<crosswords::messages::not_positioned, log>
     dispatcher_not_positioned;
-
-  typedef typename std::shared_ptr<dispatcher_not_positioned>
-    dispatcher_not_positioned_ptr;
 
   words_positioner_t(
     x p_x_limit,
-    y p_y_limit,
-    dispatcher_positioned_ptr p_dispatcher_positioned_ptr,
-    dispatcher_not_positioned_ptr p_dispatcher_not_positioned_ptr)
+    y p_y_limit)
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
-    , m_dispatcher_positioned_ptr(p_dispatcher_positioned_ptr)
-    , m_dispatcher_not_positioned_ptr(p_dispatcher_not_positioned_ptr)
   {}
 
   words_positioner_t() = default;
@@ -91,7 +81,7 @@ struct words_positioner_t
   words_positioner_t& operator=(words_positioner_t&&) noexcept = default;
   ~words_positioner_t() = default;
 
-  bool operator()(messages::stop_positioning p_stop_positioning)
+  bool operator()(crosswords::messages::stop_positioning p_stop_positioning)
   {
     crosswords_log_debug(log,
                          "received stop positioning (",
@@ -106,7 +96,7 @@ struct words_positioner_t
     return true;
   }
 
-  bool operator()(messages::to_position<log>&& p_to_position)
+  bool operator()(crosswords::messages::to_position<log>&& p_to_position)
   {
     m_words = p_to_position.get_words();
     //    crosswords_log_debug(log, "not copying positions_occupied, and
@@ -120,7 +110,7 @@ struct words_positioner_t
     crosswords_log_info(log, "####### ", print_words(_begin, _end));
 
     //    crosswords_log_debug(log, "configuration: ",
-    //                         entities::print_positioned(_begin, _end,
+    //                         crosswords::entities::print_positioned(_begin, _end,
     //                                                    m_x_limit,
     //                                                    m_y_limit));
     crosswords_log_debug(
@@ -144,8 +134,8 @@ struct words_positioner_t
                              " was not positioned");
         // give up this set of words, in this order
         // returns true to indicate that it will receive other messages
-        m_dispatcher_not_positioned_ptr->publish(
-          messages::not_positioned(m_words));
+        dispatcher_not_positioned::publish(
+          crosswords::messages::not_positioned(m_words));
       }
       bool _hope_to_position = true;
       while (true) {
@@ -157,8 +147,8 @@ struct words_positioner_t
           crosswords_log_debug(log,
                                "defining result: ",
                                print_words(m_words.begin(), m_words.end()));
-          m_dispatcher_positioned_ptr->publish(
-            messages::positioned<log>(m_words, m_positions_occupied));
+          dispatcher_positioned::publish(
+            crosswords::messages::positioned<log>(m_words, m_positions_occupied));
           break;
         }
 
@@ -561,8 +551,6 @@ private:
 
   position_first_status m_position_first_status =
     position_first_status::horizontal;
-  dispatcher_positioned_ptr m_dispatcher_positioned_ptr;
-  dispatcher_not_positioned_ptr m_dispatcher_not_positioned_ptr;
 
   bool m_stop_positioning = false;
 };

@@ -1,7 +1,7 @@
 SUBDIRS = \
     dependencies/dependencies.pro \
-    business/business_logger.pro \
-    test/test.pro
+    business/logger_business.pro \
+    test/logger_test.pro
 
 TEMPLATE = subdirs
 

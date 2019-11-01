@@ -12,10 +12,10 @@ TARGET = tenacitas.concurrent.test.correction.dispatcher_003
 CONFIG+=test
 
 SOURCES += \
-    ../../../../../../../code/test/concurrent/correction/dispatcher_003/main.cpp
+    ../../../../../../../code/concurrent/test/correction/dispatcher_003/main.cpp
 
 include (../../../../../common.pri)
 
 
-LIBS += -ltenacitas.business.logger
-LIBS += -ltenacitas.business.tester
+LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.tester.business

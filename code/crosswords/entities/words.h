@@ -18,8 +18,8 @@ struct words
   typedef std::list<word> list;
   typedef list::iterator iterator;
   typedef list::const_iterator const_iterator;
-  typedef entities::coordinate::x x;
-  typedef entities::coordinate::y y;
+  typedef crosswords::entities::coordinate::x x;
+  typedef crosswords::entities::coordinate::y y;
   typedef list::size_type size;
 
   friend std::ostream& operator<<(std::ostream& p_out, const words& p_words)
