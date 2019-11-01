@@ -72,7 +72,7 @@ public:
     msg_a _msg(++i);
     concurrent_log_test(logger::log, "P 1", _msg);
 
-    concurrent::dispatcher_t<msg_a, logger::log>::publish(_msg);
+    concurrent::dispatcher_t<msg_a, logger::log>::publish(++i);
     return concurrent::result::dont_stop;
   }
   int16_t i = { 10 };

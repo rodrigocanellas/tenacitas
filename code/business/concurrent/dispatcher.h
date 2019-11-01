@@ -167,6 +167,18 @@ public:
     }
   }
 
+  ///
+  /// \brief handle sends a message to the \p work_t objects to be handled
+  /// \tparam t_params are the types of parameters to create a \p t_msg object
+  /// \param p_params are theparameters values to create a \p t_msg object
+  ///
+  template<typename ...t_params>
+  inline static void publish(t_params... p_params)
+  {
+    t_msg _msg(p_params...);
+    publish(_msg);
+  }
+
 private:
   ///
   /// \brief thread_pool_t alias for \p thread_pool of \p t_msg
