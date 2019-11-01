@@ -1,0 +1,7 @@
+# Very simple test
+RESULT all
+13
+13
+ab
+cb
+bc

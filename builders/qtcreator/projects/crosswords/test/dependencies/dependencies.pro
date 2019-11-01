@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS = ../../../logger/library/business/logger_business.pro \
-          ../../../tester/library/business/tester_business.pro
+SUBDIRS = ../../../logger/business/business_logger.pro \
+          ../../../tester/business/business_tester.pro
 
 CONFIG += ordered

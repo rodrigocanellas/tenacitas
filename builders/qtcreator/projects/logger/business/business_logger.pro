@@ -19,8 +19,8 @@ HEADERS += \
     ../../../../../code/business/logger/internal/file_writer.h \
     ../../../../../code/business/logger/internal/level.h \
     ../../../../../code/business/logger/internal/file_controller.h \
-    ../../../../../../code/calendar/business/conversions.h \
-    ../../../../../../code/calendar/business/epoch.h
+    ../../../../../code/calendar/business/conversions.h \
+    ../../../../../code/calendar/business/epoch.h
 
 
 SOURCES += \

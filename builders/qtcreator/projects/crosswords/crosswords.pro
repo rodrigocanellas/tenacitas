@@ -1,5 +1,7 @@
 SUBDIRS = \
-  library \
+  crosswords_entities \
+  crosswords_messages \
+  crosswords_business \  
   test
 
 
