@@ -16,7 +16,7 @@ file_controller::name()
   update_last();
 
   static const uint16_t _max_str_length =
-    string::business::max_str_length<pid_t>();
+    string::max_str_length<pid_t>();
   _stream << m_path << "/" << m_base_name << "_" << std::right
           << std::setfill('0') << std::setw(_max_str_length) << m_pid << "_"
           << m_last << ".logger::log";
