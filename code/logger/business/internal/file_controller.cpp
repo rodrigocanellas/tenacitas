@@ -59,7 +59,7 @@ file_controller::name()
 //}
 
 // ----------------------------------------------------------------------------
-concurrent::business::result
+concurrent::business::work_status
 file_controller::deleter::operator()()
 {
   DIR* _dir = nullptr;
@@ -86,7 +86,7 @@ file_controller::deleter::operator()()
     closedir(_dir);
   }
 
-  return concurrent::business::result::dont_stop;
+  return concurrent::business::work_status::dont_stop;
 }
 
 } // namespace logger

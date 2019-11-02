@@ -109,33 +109,33 @@ private:
 
 struct work_1
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
     concurrent_log_test(logger::business::log, "1: ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };
 
 struct work_2
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
     concurrent_log_test(logger::business::log, "2: ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };
 
 struct work_3
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
     concurrent_log_test(logger::business::log, "3: ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };
@@ -154,19 +154,19 @@ struct sleeping_loop_012
 
     loop _loop_1(
           std::chrono::milliseconds(1000),
-          [&_work_1](msg&& p_msg) -> concurrent::business::result { return _work_1(std::move(p_msg)); },
+          [&_work_1](msg&& p_msg) -> concurrent::business::work_status { return _work_1(std::move(p_msg)); },
     std::chrono::milliseconds(100),
         [&_provide_1]() -> std::pair<bool, msg> { return _provide_1(); });
 
     loop _loop_2(
           std::chrono::milliseconds(500),
-          [&_work_2](msg&& p_msg) -> concurrent::business::result { return _work_2(std::move(p_msg)); },
+          [&_work_2](msg&& p_msg) -> concurrent::business::work_status { return _work_2(std::move(p_msg)); },
     std::chrono::milliseconds(100),
         [&_provide_2]() -> std::pair<bool, msg> { return _provide_2(); });
 
     loop _loop_3(
           std::chrono::milliseconds(2000),
-          [&_work_3](msg&& p_msg) -> concurrent::business::result { return _work_3(std::move(p_msg)); },
+          [&_work_3](msg&& p_msg) -> concurrent::business::work_status { return _work_3(std::move(p_msg)); },
     std::chrono::milliseconds(100),
         [&_provide_3]() -> std::pair<bool, msg> { return _provide_3(); });
 

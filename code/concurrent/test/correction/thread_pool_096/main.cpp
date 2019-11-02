@@ -20,7 +20,7 @@ using namespace tenacitas;
 
 struct work
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
 
     concurrent_log_test(logger::business::log, "handling msg ", p_msg);
@@ -30,7 +30,7 @@ struct work
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint16_t m_timeout = 0;
 };

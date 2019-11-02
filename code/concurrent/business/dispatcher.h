@@ -129,14 +129,14 @@ public:
   /// function can take to handle a \p t_msg instance
   ///
   static void subscribe(const queue& p_queue,
-                        worker&& p_work,
+                        worker p_work,
                         std::chrono::milliseconds p_work_timeout)
   {
     // creating a \p thread_pool
     thread_pool _thread_pool;
 
     // adding the \p work_t functions
-    _thread_pool.add_work(std::move(p_work), p_work_timeout);
+    _thread_pool.add_work(p_work, p_work_timeout);
 
     // running the \p thread_pool
     _thread_pool.run();
@@ -172,7 +172,7 @@ public:
   /// \tparam t_params are the types of parameters to create a \p t_msg object
   /// \param p_params are theparameters values to create a \p t_msg object
   ///
-  template<typename ...t_params>
+  template<typename... t_params>
   inline static void publish(t_params... p_params)
   {
     t_msg _msg(p_params...);

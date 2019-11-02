@@ -97,7 +97,7 @@ public:
       async_loop _loop(
         std::move(_loop_right.get_work()),
         _loop_right.get_timeout(),
-        [this]() -> result { return this->stop_condition(); },
+        [this]() -> work_status { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -206,7 +206,7 @@ public:
       async_loop _loop(
         p_work_factory(),
         p_work_timeout,
-        [this]() -> result { return this->stop_condition(); },
+        [this]() -> work_status { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -218,12 +218,12 @@ public:
   /// \param p_work the \p work_t fuction to be added
   /// \param p_work_timeout timeout of this \p work_t function
   ///
-  void add_work(worker&& p_work, std::chrono::milliseconds p_work_timeout)
+  void add_work(worker p_work, std::chrono::milliseconds p_work_timeout)
   {
     async_loop _loop(
-      std::move(p_work),
+      p_work,
       p_work_timeout,
-      [this]() -> result { return this->stop_condition(); },
+      [this]() -> work_status { return this->stop_condition(); },
       [this]() -> std::pair<bool, t_data> { return this->data(); });
 
     add_work(std::move(_loop));
@@ -334,12 +334,11 @@ private:
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
   ///
-  result stop_condition()
+  work_status stop_condition()
   {
 
     concurrent_log_debug(log, this, " stopped = ", m_stopped);
-    return (m_stopped ? result::stop
-                      : result::dont_stop);
+    return (m_stopped ? work_status::stop : work_status::dont_stop);
   }
 
   ///

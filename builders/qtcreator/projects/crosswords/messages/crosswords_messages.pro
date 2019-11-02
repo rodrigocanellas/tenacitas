@@ -8,14 +8,14 @@ TEMPLATE = lib
 
 CONFIG += lib
 
-TARGET = tenacitas.messages.crosswords
+TARGET = tenacitas.crosswords.messages
 
 
 
 include(../../../common.pri)
 
 
-LIBS += -ltenacitas.entities.crosswords
+LIBS += -ltenacitas.crosswords.entities
 
 HEADERS += \
     ../../../../../code/crosswords/messages/not_positioned.h \

@@ -25,12 +25,12 @@ loop;
 
 struct work1
 {
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
 
     ++counter;
     concurrent_log_test(logger::business::log, counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint64_t counter = 0;
 };

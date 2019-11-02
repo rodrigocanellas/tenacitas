@@ -60,6 +60,8 @@ struct loop_t
   /// called should stop, or result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
+  typedef typename traits_t<t_data>::worker_ptr worker_ptr;
+
   ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution
@@ -94,14 +96,14 @@ struct loop_t
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  loop_t(worker&& p_work,
-         std::chrono::milliseconds p_timeout,
-         breaker&& p_break,
-         provider&& p_provide)
-    : m_work(std::move(p_work))
-    , m_timeout(std::move(p_timeout))
-    , m_break(std::move(p_break))
-    , m_provide(std::move(p_provide))
+  inline loop_t(worker p_work,
+                std::chrono::milliseconds p_timeout,
+                breaker p_break,
+                provider p_provide)
+    : m_work(p_work)
+    , m_timeout(p_timeout)
+    , m_break(p_break)
+    , m_provide(p_provide)
     , m_stopped(true)
   {}
 
@@ -211,17 +213,15 @@ struct loop_t
 
       concurrent_log_debug(log, this, " data received ", _provide.second);
 
-      std::future<result> _future = std::async(
-        std::launch::async, std::ref(m_work), std::move(_provide.second));
+      std::future<work_status> _future =
+        std::async(std::launch::async, m_work, std::move(_provide.second));
       if (_future.wait_for(m_timeout) == std::future_status::ready) {
-        if (_future.get() == result::stop) {
-          concurrent_log_debug(
-            log, this, " worker returned 'result::stop'");
+        if (_future.get() == work_status::stop) {
+          concurrent_log_debug(log, this, " worker returned 'result::stop'");
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(
-          log, this, " worker returned 'result::dont_stop'");
+        concurrent_log_debug(log, this, " worker returned 'result::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout for data ", _provide.second);
       }
@@ -231,7 +231,7 @@ struct loop_t
         break;
       }
 
-      if (m_break() == result::stop) {
+      if (m_break() == work_status::stop) {
         concurrent_log_debug(log, this, " stopping because breaker said so");
         m_stopped = true;
         break;
@@ -268,12 +268,7 @@ private:
   /// \brief m_stopped indicates if the loop is running or not
   ///
   bool m_stopped;
-
-  //  static const std::string m_name;
 };
-
-// template<typename t_data, typename t_log>
-// const std::string loop_t<t_data, t_log>::m_name("loop");
 
 ///
 /// \brief loop implements a generic loop
@@ -312,6 +307,8 @@ struct loop_t<void, t_log>
   /// called should stop, or result::dont_stop if it should continue
   typedef typename traits_t<void>::worker worker;
 
+  typedef typename traits_t<void>::worker_ptr worker_ptr;
+
   ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution
@@ -347,14 +344,14 @@ struct loop_t<void, t_log>
   /// specialization of \p loop, or the other one where the \p provide_t
   /// actually provides data
   ///
-  loop_t(worker&& p_work,
-         std::chrono::milliseconds p_timeout,
-         breaker&& p_break,
-         provider&& p_provide)
-    : m_work(std::move(p_work))
-    , m_timeout(std::move(p_timeout))
-    , m_break(std::move(p_break))
-    , m_provide(std::move(p_provide))
+  inline loop_t(worker p_work,
+                std::chrono::milliseconds p_timeout,
+                breaker p_break,
+                provider p_provide)
+    : m_work(p_work)
+    , m_timeout(p_timeout)
+    , m_break(p_break)
+    , m_provide(p_provide)
     , m_stopped(true)
   {}
 
@@ -439,17 +436,14 @@ struct loop_t<void, t_log>
       }
 
       concurrent_log_debug(log, this, " calling work");
-      std::future<result> _future =
-        std::async(std::launch::async, std::ref(m_work));
+      std::future<work_status> _future = std::async(std::launch::async, m_work);
       if (_future.wait_for(m_timeout) == std::future_status::ready) {
-        if (_future.get() == result::stop) {
-          concurrent_log_debug(
-            log, this, " worker returned 'result::stop'");
+        if (_future.get() == work_status::stop) {
+          concurrent_log_debug(log, this, " worker returned 'result::stop'");
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(
-          log, this, "worker returned 'result::dont_stop'");
+        concurrent_log_debug(log, this, "worker returned 'result::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout");
       }
@@ -459,7 +453,7 @@ struct loop_t<void, t_log>
         break;
       }
 
-      if (m_break() == result::stop) {
+      if (m_break() == work_status::stop) {
         concurrent_log_debug(log, this, " breaker said to stop");
         m_stopped = true;
         break;

@@ -17,13 +17,13 @@ using namespace tenacitas;
 struct work1
 {
 
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     concurrent_log_test(logger::business::log, counter);
     ++counter;
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
   uint64_t counter = 0;
@@ -40,9 +40,9 @@ struct async_loop_002
     using namespace tenacitas;
     try {
       work1 _work;
-      async_loop _async_loop([&_work]() -> concurrent::business::result { return _work(); },
+      async_loop _async_loop([&_work]() -> concurrent::business::work_status { return _work(); },
                              std::chrono::milliseconds(1000),
-                             []() -> concurrent::business::result { return concurrent::business::result::dont_stop; });
+                             []() -> concurrent::business::work_status { return concurrent::business::work_status::dont_stop; });
 
       _async_loop.run();
 

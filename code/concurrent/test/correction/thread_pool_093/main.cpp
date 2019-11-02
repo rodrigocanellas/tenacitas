@@ -21,12 +21,12 @@ sleeping_loop;
 
 struct work
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     m_msg = p_msg;
     concurrent_log_test(logger::business::log, "handling msg ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };

@@ -61,15 +61,15 @@ struct words_positioner_t
   typedef positions_occupied_t<log> positions_occupied;
   typedef validate_position_t<log> validate_position;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::positioned<log>, log>
-    dispatcher_positioned;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::positioned<log>, log>
+      dispatcher_positioned;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::not_positioned, log>
-    dispatcher_not_positioned;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::not_positioned, log>
+      dispatcher_not_positioned;
 
-  words_positioner_t(
-    x p_x_limit,
-    y p_y_limit)
+  words_positioner_t(x p_x_limit, y p_y_limit)
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
   {}
@@ -110,7 +110,8 @@ struct words_positioner_t
     crosswords_log_info(log, "####### ", print_words(_begin, _end));
 
     //    crosswords_log_debug(log, "configuration: ",
-    //                         crosswords::entities::print_positioned(_begin, _end,
+    //                         crosswords::entities::print_positioned(_begin,
+    //                         _end,
     //                                                    m_x_limit,
     //                                                    m_y_limit));
     crosswords_log_debug(
@@ -145,10 +146,10 @@ struct words_positioner_t
 
         if (_ite == _end) {
           crosswords_log_debug(log,
-                               "defining result: ",
+                               "defining work_status: ",
                                print_words(m_words.begin(), m_words.end()));
-          dispatcher_positioned::publish(
-            crosswords::messages::positioned<log>(m_words, m_positions_occupied));
+          dispatcher_positioned::publish(crosswords::messages::positioned<log>(
+            m_words, m_positions_occupied));
           break;
         }
 

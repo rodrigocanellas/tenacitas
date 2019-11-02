@@ -16,12 +16,12 @@ using namespace tenacitas;
 using namespace tenacitas;
 struct work1
 {
-  concurrent::business::result operator()(uint32_t&& p_data)
+  concurrent::business::work_status operator()(uint32_t&& p_data)
   {
 
     data = p_data;
     concurrent_log_test(logger::business::log, p_data);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint32_t data = 0;
 };
@@ -55,7 +55,7 @@ struct async_loop_004
       async_loop _async_loop(
             [&_work](uint32_t&& p_data) { return _work(std::move(p_data)); },
       std::chrono::milliseconds(1000),
-          []() { return concurrent::business::result::dont_stop; },
+          []() { return concurrent::business::work_status::dont_stop; },
       provide());
 
       _async_loop.run();

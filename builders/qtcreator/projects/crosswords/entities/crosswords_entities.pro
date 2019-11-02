@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 CONFIG += lib
 
-TARGET = tenacitas.entities.crosswords
+TARGET = tenacitas.crosswords.entities
 
 
 HEADERS += \

@@ -50,16 +50,16 @@ struct reply
 // ############################## processors
 struct requester
 {
-  concurrent::business::result start()
+  concurrent::business::work_status start()
   {
     using namespace tenacitas;
     using namespace tenacitas;
     typedef concurrent::business::dispatcher_t<request, logger::business::log> dispatcher;
     dispatcher::publish(request(time(nullptr)));
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
-  concurrent::business::result operator()(reply&& p_reply)
+  concurrent::business::work_status operator()(reply&& p_reply)
   {
     using namespace tenacitas;
     using namespace tenacitas;
@@ -68,14 +68,14 @@ struct requester
     if (m_counter++ > 100) {
       concurrent_log_info(logger::business::log, "counter = ", m_counter, ", stopping");
       dispatcher::publish(request(0));
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
     if ((p_reply.i % 2) == 0) {
       dispatcher::publish(request(5 * time(nullptr)));
     } else {
       dispatcher::publish(request(3 * time(nullptr)));
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
 private:
@@ -84,7 +84,7 @@ private:
 
 struct replier
 {
-  concurrent::business::result operator()(request&& p_request)
+  concurrent::business::work_status operator()(request&& p_request)
   {
     using namespace tenacitas;
     using namespace tenacitas;
@@ -92,14 +92,14 @@ struct replier
     concurrent_log_test(logger::business::log, "request ", p_request);
     if (p_request.i == 0) {
       concurrent_log_info(logger::business::log, "stopping");
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
     if ((p_request.i % 2) == 0) {
       dispatcher::publish(reply(4 * time(nullptr)));
     } else {
       dispatcher::publish(reply(4 * time(nullptr)));
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 

@@ -19,11 +19,11 @@ thread_pool;
 using namespace tenacitas;
 struct work
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     m_msg = p_msg;
     concurrent_log_test(logger::business::log, "handling msg ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };
@@ -35,7 +35,7 @@ struct thread_pool_091
     work _work;
     thread_pool _pool;
     _pool.add_work(
-          [&_work](msg&& p_msg) -> concurrent::business::result { return _work(std::move(p_msg)); },
+          [&_work](msg&& p_msg) -> concurrent::business::work_status { return _work(std::move(p_msg)); },
     std::chrono::milliseconds(500));
 
     for (uint16_t _i = 0; _i < 20; ++_i) {

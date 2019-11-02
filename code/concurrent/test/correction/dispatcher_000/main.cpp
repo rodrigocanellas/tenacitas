@@ -66,14 +66,14 @@ struct msg_c
 struct publisher_1
 {
 public:
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     using namespace tenacitas;
     msg_a _msg(++i);
     concurrent_log_test(logger::business::log, "P 1", _msg);
 
     concurrent::business::dispatcher_t<msg_a, logger::business::log>::publish(++i);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   int16_t i = { 10 };
 };
@@ -81,7 +81,7 @@ public:
 struct publisher_2
 {
 public:
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     using namespace tenacitas;
     i += 10;
@@ -94,7 +94,7 @@ public:
     concurrent_log_test(logger::business::log, "P 2", _msg_c);
     concurrent::business::dispatcher_t<msg_c, logger::business::log>::publish(_msg_c);
 
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   int16_t i = { -100 };
   double d = { 1.0 };
@@ -103,7 +103,7 @@ public:
 struct publisher_3
 {
 public:
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     using namespace tenacitas;
     i += 300;
@@ -112,7 +112,7 @@ public:
     concurrent_log_test(logger::business::log, "P 3", _msg_b);
     concurrent::business::dispatcher_t<msg_b, logger::business::log>::publish(_msg_b);
 
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
   int32_t i = { 5000 };
@@ -121,62 +121,62 @@ public:
 // ############################## subscribers
 struct subscriber_1
 {
-  concurrent::business::result operator()(msg_a&& p_msg)
+  concurrent::business::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 1", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
 struct subscriber_2
 {
-  concurrent::business::result operator()(msg_a&& p_msg)
+  concurrent::business::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 2", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
-  concurrent::business::result operator()(msg_b&& p_msg)
+  concurrent::business::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 2", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
 struct subscriber_3
 {
-  concurrent::business::result operator()(msg_b&& p_msg)
+  concurrent::business::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 3", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
 struct subscriber_4
 {
-  concurrent::business::result operator()(msg_a&& p_msg)
+  concurrent::business::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 4", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
-  concurrent::business::result operator()(msg_b&& p_msg)
+  concurrent::business::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 4", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
-  concurrent::business::result operator()(msg_c&& p_msg)
+  concurrent::business::work_status operator()(msg_c&& p_msg)
   {
     using namespace tenacitas;
     concurrent_log_test(logger::business::log, "S 4", p_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 

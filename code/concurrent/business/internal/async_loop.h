@@ -65,6 +65,8 @@ struct async_loop_t
   /// called should stop, or result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
+  typedef typename traits_t<t_data>::worker_ptr worker_ptr;
+
   ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution
@@ -81,7 +83,7 @@ struct async_loop_t
   ///
   /// \return result::stop if the loop where this function is being
   /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> breaker;
+  typedef std::function<work_status()> breaker;
 
   ///
   /// \brief log alias for @p t_log
@@ -102,14 +104,11 @@ struct async_loop_t
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  async_loop_t(worker&& p_work,
-               std::chrono::milliseconds p_timeout,
-               breaker&& p_break,
-               provider&& p_provide)
-    : m_loop(std::move(p_work),
-             std::move(p_timeout),
-             std::move(p_break),
-             std::move(p_provide))
+  inline async_loop_t(worker p_work,
+                      std::chrono::milliseconds p_timeout,
+                      breaker p_break,
+                      provider p_provide)
+    : m_loop(p_work, p_timeout, p_break, p_provide)
     , m_thread()
   {}
 
@@ -125,13 +124,10 @@ struct async_loop_t
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
   ///
-  async_loop_t(worker&& p_work,
-               std::chrono::milliseconds p_timeout,
-               breaker&& p_break)
-    : m_loop(std::move(p_work),
-             std::move(p_timeout),
-             std::move(p_break),
-             []() -> void {})
+  inline async_loop_t(worker p_work,
+                      std::chrono::milliseconds p_timeout,
+                      breaker p_break)
+    : m_loop(p_work, p_timeout, p_break, []() -> void {})
     , m_thread()
   {}
 

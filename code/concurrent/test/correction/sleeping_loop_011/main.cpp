@@ -21,33 +21,33 @@ typedef concurrent::business::sleeping_loop_t<void, logger::business::log> loop;
 
 struct work1
 {
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     ++counter;
     concurrent_log_test(logger::business::log, counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint64_t counter = 0;
 };
 
 struct work2
 {
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     counter += 100;
     concurrent_log_test(logger::business::log, counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint64_t counter = 0;
 };
 
 struct work3
 {
-  concurrent::business::result operator()()
+  concurrent::business::work_status operator()()
   {
     counter += 1000;
     concurrent_log_test(logger::business::log, counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint64_t counter = 0;
 };

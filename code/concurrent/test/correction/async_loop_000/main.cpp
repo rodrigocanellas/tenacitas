@@ -1,7 +1,7 @@
-
 #include <chrono>
 #include <cstdint>
 #include <ctime>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -13,25 +13,26 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
-using namespace tenacitas;
+using namespace tenacitas::concurrent::business;
+using namespace tenacitas::logger::business;
 
 struct work1
 {
-  concurrent::business::result operator()()
+  work_status operator()()
   {
     using namespace tenacitas;
     if (counter > 100) {
-      return concurrent::business::result::stop;
+      return work_status::stop;
     }
     concurrent_log_test(logger::business::log, counter);
     ++counter;
-    return concurrent::business::result::dont_stop;
+    return work_status::dont_stop;
   }
 
   uint16_t counter = 0;
 };
 
-typedef concurrent::business::async_loop_t<void, logger::business::log> async_loop;
+typedef async_loop_t<void, log> async_loop;
 
 struct async_loop_000
 {
@@ -41,12 +42,10 @@ struct async_loop_000
     bool _result = true;
     try {
       work1 _work;
-      concurrent::business::traits_t<void>::worker _fc =
-        [&_work]() -> concurrent::business::result { return _work(); };
       async_loop _async_loop(
-        std::move(_fc),
-        std::chrono::milliseconds(100),
-        []() -> concurrent::business::result { return concurrent::business::result::dont_stop; });
+        _work, std::chrono::milliseconds(100), []() -> work_status {
+          return work_status::dont_stop;
+        });
 
       _async_loop.run();
 
@@ -67,7 +66,7 @@ struct async_loop_000
 int
 main(int argc, char** argv)
 {
-  logger::business::configure_cerr_log();
+  configure_cerr_log();
   run_test(
     async_loop_000,
     argc,

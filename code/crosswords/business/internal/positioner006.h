@@ -6,13 +6,14 @@
 #include <ctime>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
 #include <utility>
 
-#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
+#include <concurrent/business/traits.h>
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/words_positioner_group.h>
 #include <crosswords/entities/coordinate.h>
@@ -57,12 +58,13 @@ struct positioner006_t
 
   typedef words_positioner_group_t<log> words_positioner_group;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::positioned<log>, log>
-  dispatcher_positioned;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::positioned<log>, log>
+      dispatcher_positioned;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::not_positioned, log>
-  dispatcher_not_positioned;
-
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::not_positioned, log>
+      dispatcher_not_positioned;
 
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
     : m_x_limit(p_x_limit)
@@ -74,13 +76,15 @@ struct positioner006_t
 
     if (!m_dispatcher_created) {
       dispatcher_positioned::subscribe(
-        [this](crosswords::messages::positioned<log>&& p_positioned) -> bool {
+        "positioned",
+        [this](messages::positioned<log>&& p_positioned) -> work_status {
           return m_words_positioner_group(std::move(p_positioned));
         },
         std::chrono::milliseconds(1000));
 
       dispatcher_not_positioned::subscribe(
-        [this](crosswords::messages::not_positioned&& p_not_positioned) -> bool {
+        "not positioned",
+        [this](messages::not_positioned&& p_not_positioned) -> work_status {
           return m_words_positioner_group(std::move(p_not_positioned));
         },
         std::chrono::milliseconds(1000));
@@ -158,7 +162,9 @@ struct positioner006_t
         crosswords_log_info(
           log, "old order: ", print_words(m_words.begin(), m_words.end()));
         crosswords_log_info(
-          log, "result: ", print_words(_res.second.begin(), _res.second.end()));
+          log,
+          "work_status: ",
+          print_words(_res.second.begin(), _res.second.end()));
         //        std::copy(_res.second.begin(), _res.second.end(),
         //        m_words.begin());
         words::size _size = _res.second.get_size();
@@ -177,10 +183,10 @@ struct positioner006_t
           log, "new set: ", print_words(m_words.begin(), std::next(_ite)));
         _end = m_words.end();
         _begin = m_words.begin();
-//        crosswords_log_info(
-//          log,
-//          print_positioned(
-//            m_words.begin(), m_words.end(), m_x_limit, m_y_limit));
+        //        crosswords_log_info(
+        //          log,
+        //          print_positioned(
+        //            m_words.begin(), m_words.end(), m_x_limit, m_y_limit));
         crosswords_log_info(log, m_words.print_words());
 
       } else {
@@ -302,7 +308,6 @@ private:
   uint32_t m_counter = { 0 };
   words m_words;
   failures m_failures;
-
 
   static bool m_dispatcher_created;
 };

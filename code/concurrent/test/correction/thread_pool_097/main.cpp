@@ -22,24 +22,24 @@ using namespace tenacitas;
 
 struct work_1
 {
-  concurrent::business::result operator()(int32_t&& p_value)
+  concurrent::business::work_status operator()(int32_t&& p_value)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     ++counter;
     concurrent_log_test(logger::business::log, "work 1 handling msg ", p_value);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   int16_t counter = 0;
 };
 
 struct work_2
 {
-  concurrent::business::result operator()(int32_t&& p_value)
+  concurrent::business::work_status operator()(int32_t&& p_value)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(60));
     ++counter;
     concurrent_log_test(logger::business::log, "work 2 handling msg ", p_value);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   int16_t counter = 0;
 };
@@ -56,21 +56,21 @@ struct thread_pool_097
       int32_t _value = 0;
       int16_t _counter = 0;
       sleeping_loop _loop(std::chrono::milliseconds(100),
-                          [&_pool, &_value, &_counter]() -> concurrent::business::result {
+                          [&_pool, &_value, &_counter]() -> concurrent::business::work_status {
         ++_value;
         ++_counter;
         _pool.handle(_value);
-        return concurrent::business::result::dont_stop;
+        return concurrent::business::work_status::dont_stop;
       },
       std::chrono::milliseconds(300));
 
       _pool.add_work(
-            [&_work_1](int32_t&& p_val) -> concurrent::business::result {
+            [&_work_1](int32_t&& p_val) -> concurrent::business::work_status {
         return _work_1(std::move(p_val));
       },
       std::chrono::milliseconds(200));
       _pool.add_work(
-            [&_work_2](int32_t&& p_val) -> concurrent::business::result {
+            [&_work_2](int32_t&& p_val) -> concurrent::business::work_status {
         return _work_2(std::move(p_val));
       },
       std::chrono::milliseconds(200));

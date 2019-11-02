@@ -7,6 +7,7 @@
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
 #include <functional>
+#include <memory>
 #include <utility>
 
 /// \brief namespace of the organization
@@ -16,7 +17,7 @@ namespace concurrent {
 /// \brief namespace of the class group
 namespace business {
 
-enum class result : uint8_t
+enum class work_status : uint8_t
 {
   stop = 0,
   dont_stop = 1
@@ -40,7 +41,9 @@ struct traits_t
   ///
   /// \return result::stop if the loop where this function is being
   /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result(t_data&&)> worker;
+  typedef std::function<work_status(t_data&&)> worker;
+
+  typedef std::shared_ptr<worker> worker_ptr;
 
   ///
   /// \brief provide_t is the type of function that provides data to the work
@@ -58,7 +61,7 @@ struct traits_t
   ///
   /// \return result::stop if the loop where this function is being
   /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> breaker;
+  typedef std::function<work_status()> breaker;
 };
 
 ///
@@ -74,7 +77,9 @@ struct traits_t<void>
   ///
   /// \return result::stop if the loop where this function is being
   /// called should stop, or result::dont_stop if it should continue
-  typedef std::function<result()> worker;
+  typedef std::function<work_status()> worker;
+
+  typedef std::shared_ptr<worker> worker_ptr;
 
   ///
   /// \brief provide_t in the case of a \p void data has no effect
@@ -87,7 +92,7 @@ struct traits_t<void>
   ///
   /// \return result::stop if the loop where this function is being
   /// called should stop, or result::dont_stop
-  typedef std::function<result()> breaker;
+  typedef std::function<work_status()> breaker;
 };
 
 } // namespace business

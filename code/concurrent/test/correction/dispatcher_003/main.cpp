@@ -58,7 +58,7 @@ struct agent_1
 {
   agent_1() { concurrent::business::dispatcher_t<start, logger::business::log>::publish(start()); }
 
-  concurrent::business::result operator()(msg1&&)
+  concurrent::business::work_status operator()(msg1&&)
   {
     concurrent_log_test(logger::business::log, "msg1 received");
 
@@ -67,7 +67,7 @@ struct agent_1
     std::this_thread::sleep_for(std::chrono::milliseconds(40));
 
     concurrent::business::dispatcher_t<finish, logger::business::log>::publish(finish());
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
@@ -75,7 +75,7 @@ struct agent_2
 {
   agent_2() { concurrent::business::dispatcher_t<start, logger::business::log>::publish(start()); }
 
-  concurrent::business::result operator()(msg2&&)
+  concurrent::business::work_status operator()(msg2&&)
   {
     concurrent_log_test(logger::business::log, "msg2 received");
 
@@ -83,13 +83,13 @@ struct agent_2
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     concurrent::business::dispatcher_t<finish, logger::business::log>::publish(finish());
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
 struct controler
 {
-  concurrent::business::result operator()(start&&)
+  concurrent::business::work_status operator()(start&&)
   {
 
     {
@@ -97,10 +97,10 @@ struct controler
       ++m_counter;
     }
     concurrent_log_test(logger::business::log, "start received, counter = ", m_counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
-  concurrent::business::result operator()(finish&&)
+  concurrent::business::work_status operator()(finish&&)
   {
     //    if (m_counter == 0) {
     //      concurrent_log_test(logger::business::log, "finisher received, counter = ",
@@ -112,11 +112,11 @@ struct controler
       concurrent_log_test(
         logger::business::log, "finisher received, counter = ", m_counter);
       m_cond_finish.notify_all();
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
     concurrent_log_test(
       logger::business::log, "finisher received, counter = ", m_counter);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
   ~controler()
@@ -142,14 +142,14 @@ struct dispatcher_003
   {
     concurrent::business::dispatcher_t<start, logger::business::log>::subscribe(
       "start",
-      [this](start&& p_start) -> concurrent::business::result {
+      [this](start&& p_start) -> concurrent::business::work_status {
         return m_controler(std::move(p_start));
       },
       std::chrono::milliseconds(500));
 
     concurrent::business::dispatcher_t<finish, logger::business::log>::subscribe(
       "finish",
-      [this](finish&& p_finish) -> concurrent::business::result {
+      [this](finish&& p_finish) -> concurrent::business::work_status {
         return m_controler(std::move(p_finish));
       },
       std::chrono::milliseconds(500));

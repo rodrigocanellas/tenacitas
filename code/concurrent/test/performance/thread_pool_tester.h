@@ -46,13 +46,13 @@ struct thread_pool_tester
 
     struct work
     {
-        tenacitas::concurrent::business::result operator()(msg&& p_msg)
+        tenacitas::concurrent::business::work_status operator()(msg&& p_msg)
         {
             logger::business::concurrent_log_test(log, "consuming ", p_msg);
             std::this_thread::sleep_for(
               std::chrono::milliseconds(work_sleep_ms));
 
-            return tenacitas::concurrent::business::result::dont_stop;
+            return tenacitas::concurrent::business::work_status::dont_stop;
         }
     };
 

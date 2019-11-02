@@ -19,11 +19,11 @@ typedef concurrent::business::sleeping_loop_t<void, logger::business::log> sleep
 
 struct work
 {
-  concurrent::business::result operator()(msg&& p_msg)
+  concurrent::business::work_status operator()(msg&& p_msg)
   {
     m_msg = p_msg;
     concurrent_log_test(logger::business::log, "handling msg ", m_msg);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   msg m_msg;
 };
@@ -43,7 +43,7 @@ struct thread_pool_090
                           msg _msg(++_value);
                           concurrent_log_test(logger::business::log, "adding msg ", _msg);
                           _pool.handle(std::move(_msg));
-                          return concurrent::business::result::dont_stop;
+                          return concurrent::business::work_status::dont_stop;
                         },
                         std::chrono::milliseconds(300));
 

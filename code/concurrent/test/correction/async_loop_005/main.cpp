@@ -17,12 +17,12 @@ using namespace tenacitas;
 
 struct work1
 {
-  concurrent::business::result operator()(uint32_t&& p_data)
+  concurrent::business::work_status operator()(uint32_t&& p_data)
   {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     concurrent_log_test(logger::business::log, p_data);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
@@ -52,7 +52,7 @@ struct async_loop_005
     try {
       async_loop sl1(work1(),
                      std::chrono::milliseconds(1000),
-                     []() { return concurrent::business::result::dont_stop; },
+                     []() { return concurrent::business::work_status::dont_stop; },
       provide());
 
       // uncomment the line below for a compiler error "error:

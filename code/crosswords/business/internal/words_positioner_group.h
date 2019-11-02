@@ -8,8 +8,8 @@
 #include <thread>
 #include <vector>
 
-#include <concurrent/business/traits.h>
 #include <concurrent/business/dispatcher.h>
+#include <concurrent/business/traits.h>
 #include <crosswords/business/internal/positions_occupied.h>
 #include <crosswords/business/internal/words_positioner.h>
 #include <crosswords/entities/coordinate.h>
@@ -18,6 +18,8 @@
 #include <crosswords/messages/positioned.h>
 #include <crosswords/messages/stop_positioning.h>
 #include <crosswords/messages/to_position.h>
+
+using namespace tenacitas::concurrent::business;
 
 namespace tenacitas {
 namespace crosswords {
@@ -51,22 +53,23 @@ struct words_positioner_group_t
   typedef entities::coordinate::y y;
   typedef positions_occupied_t<log> positions_occupied;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::to_position<log>, log>
-    dispatcher_to_position;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::to_position<log>, log>
+      dispatcher_to_position;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::positioned<log>, log>
-    dispatcher_positioned;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::positioned<log>, log>
+      dispatcher_positioned;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::not_positioned, log>
-    dispatcher_not_positioned;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::not_positioned, log>
+      dispatcher_not_positioned;
 
-  typedef concurrent::business::dispatcher_t<crosswords::messages::stop_positioning, log>
-    dispatcher_stop_positioning;
+  typedef concurrent::business::
+    dispatcher_t<crosswords::messages::stop_positioning, log>
+      dispatcher_stop_positioning;
 
-
-  words_positioner_group_t(
-    x p_x_limit,
-    y p_y_limit)
+  words_positioner_group_t(x p_x_limit, y p_y_limit)
     : m_x_limit(p_x_limit)
     , m_y_limit(p_y_limit)
   {
@@ -83,9 +86,11 @@ struct words_positioner_group_t
       //                                             m_dispatcher_positioned_ptr,
       //                                             m_dispatcher_not_positioned_ptr));
 
-      //        std::function<bool(crosswords::messages::to_position<log> &&)> _work =
+      //        std::function<bool(crosswords::messages::to_position<log> &&)>
+      //        _work =
       //          [_words_positioner](
-      //            crosswords::messages::to_position<log>&& p_to_position) -> bool {
+      //            crosswords::messages::to_position<log>&& p_to_position) ->
+      //            bool {
       //          return (*_words_positioner)(std::move(p_to_position));
       //        };
 
@@ -96,18 +101,27 @@ struct words_positioner_group_t
 
       {
         std::shared_ptr<words_positioner> _words_positioner(
-          std::make_shared<words_positioner>(m_x_limit,
-                                             m_y_limit));
+          std::make_shared<words_positioner>(m_x_limit, m_y_limit));
 
         dispatcher_to_position::subscribe(
-          [_words_positioner](crosswords::messages::to_position<log>&& p_to_position)
-            -> bool { return (*_words_positioner)(std::move(p_to_position)); },
+          "to_positon",
+          [_words_positioner](
+            crosswords::messages::to_position<log>&& p_to_position)
+            -> work_status {
+            return ((*_words_positioner)(std::move(p_to_position))
+                      ? work_status::dont_stop
+                      : work_status::stop);
+          },
           std::chrono::milliseconds(5000));
 
         dispatcher_stop_positioning::subscribe(
+          "stop_positioning",
           [_words_positioner](
-            crosswords::messages::stop_positioning&& p_stop_positioning) -> bool {
-            return (*_words_positioner)(std::move(p_stop_positioning));
+            crosswords::messages::stop_positioning&& p_stop_positioning)
+            -> work_status {
+            return ((*_words_positioner)(std::move(p_stop_positioning))
+                      ? work_status::dont_stop
+                      : work_status::stop);
           },
           std::chrono::milliseconds(5000));
       }
@@ -120,16 +134,16 @@ struct words_positioner_group_t
       //                               m_dispatcher_not_positioned_ptr));
 
       //        m_dispatcher_to_position_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::to_position<log> &&
-      //              p_to_position)->bool
+      //              [_words_positioner](crosswords::messages::to_position<log>
+      //              && p_to_position)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_to_position));
       //        },
       //        std::chrono::milliseconds(5000));
 
       //        m_dispatcher_stop_positioning_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::stop_positioning &&
-      //              p_stop_positioning)->bool
+      //              [_words_positioner](crosswords::messages::stop_positioning
+      //              && p_stop_positioning)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_stop_positioning));
       //        },
@@ -144,16 +158,16 @@ struct words_positioner_group_t
       //                               m_dispatcher_not_positioned_ptr));
 
       //        m_dispatcher_to_position_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::to_position<log> &&
-      //              p_to_position)->bool
+      //              [_words_positioner](crosswords::messages::to_position<log>
+      //              && p_to_position)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_to_position));
       //        },
       //        std::chrono::milliseconds(5000));
 
       //        m_dispatcher_stop_positioning_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::stop_positioning &&
-      //              p_stop_positioning)->bool
+      //              [_words_positioner](crosswords::messages::stop_positioning
+      //              && p_stop_positioning)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_stop_positioning));
       //        },
@@ -168,16 +182,16 @@ struct words_positioner_group_t
       //                               m_dispatcher_not_positioned_ptr));
 
       //        m_dispatcher_to_position_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::to_position<log> &&
-      //              p_to_position)->bool
+      //              [_words_positioner](crosswords::messages::to_position<log>
+      //              && p_to_position)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_to_position));
       //        },
       //        std::chrono::milliseconds(5000));
 
       //        m_dispatcher_stop_positioning_ptr->subscribe(
-      //              [_words_positioner](crosswords::messages::stop_positioning &&
-      //              p_stop_positioning)->bool
+      //              [_words_positioner](crosswords::messages::stop_positioning
+      //              && p_stop_positioning)->bool
       //        {
       //          return (*_words_positioner)(std::move(p_stop_positioning));
       //        },
@@ -209,15 +223,17 @@ struct words_positioner_group_t
   }
   ~words_positioner_group_t() = default;
 
-  bool operator()(crosswords::messages::positioned<log>&& p_positioned)
+  concurrent::business::work_status operator()(
+    crosswords::messages::positioned<log>&& p_positioned)
   {
+    using namespace tenacitas::concurrent::business;
     if (p_positioned.get_words().get_size() == 1) {
       crosswords_log_debug(
         log, "size of positioned = ", p_positioned.get_words().get_size());
 
       if (m_positioned) {
         crosswords_log_debug(log, "already positioned");
-        return true;
+        return work_status::dont_stop;
       }
       crosswords_log_debug(log, "handling positioned");
       std::lock_guard<std::mutex> _lock(m_mutex_positioned);
@@ -239,11 +255,11 @@ struct words_positioner_group_t
                              ") is <= to the last size (",
                              m_last_size,
                              ")");
-        return true;
+        return work_status::dont_stop;
       }
       if (m_positioned) {
         crosswords_log_debug(log, "already positioned");
-        return true;
+        return work_status::dont_stop;
       }
       crosswords_log_debug(log, "handling positioned");
       std::lock_guard<std::mutex> _lock(m_mutex_positioned);
@@ -258,18 +274,20 @@ struct words_positioner_group_t
         crosswords_log_debug(log, "m_positioned is already set");
       }
     }
-    return true;
+    return work_status::dont_stop;
   }
 
-  bool operator()(crosswords::messages::not_positioned&& p_not_positioned)
+  concurrent::business::work_status operator()(
+    crosswords::messages::not_positioned&& p_not_positioned)
   {
+    using namespace tenacitas::concurrent::business;
     crosswords_log_debug(log, "handling not positioned");
 
     if (p_not_positioned.get_words().get_size() <= m_last_size) {
-      return true;
+      return work_status::dont_stop;
     }
     if (m_positioned) {
-      return true;
+      return work_status::dont_stop;
     }
     std::lock_guard<std::mutex> _lock(m_mutex_positioned);
     ++m_num_perms_not_positioned;
@@ -281,7 +299,7 @@ struct words_positioner_group_t
                            m_num_perms_generated);
       m_cond_wait.notify_one();
     }
-    return true;
+    return work_status::dont_stop;
   }
 
   std::pair<bool, words> operator()(words::iterator p_begin,
@@ -302,7 +320,8 @@ struct words_positioner_group_t
     }
 
     //    crosswords_log_debug(log, "configuration: ",
-    //                         crosswords::entities::print_positioned(p_begin, p_end,
+    //                         crosswords::entities::print_positioned(p_begin,
+    //                         p_end,
     //                                                    m_x_limit,
     //                                                    m_y_limit));
 

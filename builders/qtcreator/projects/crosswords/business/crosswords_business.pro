@@ -8,7 +8,7 @@ TEMPLATE = lib
 
 CONFIG += lib
 
-TARGET = tenacitas.business.crosswords
+TARGET = tenacitas.crosswords.business
 
 
 
@@ -40,6 +40,6 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/positioner003.h \
     ../../../../../code/crosswords/business/internal/positioner004.h
 
-LIBS += -ltenacitas.entities.crosswords
+LIBS += -ltenacitas.crosswords.entities
 
 

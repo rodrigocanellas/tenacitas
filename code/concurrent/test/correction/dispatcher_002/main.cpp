@@ -55,7 +55,7 @@ struct requester
     , m_mutex(p_mutex)
   {}
 
-  concurrent::business::result operator()(reply&& p_reply)
+  concurrent::business::work_status operator()(reply&& p_reply)
   {
     using namespace tenacitas;
     using namespace tenacitas;
@@ -69,14 +69,14 @@ struct requester
       concurrent_log_test(logger::business::log, "woke up!");
       std::unique_lock<std::mutex> _lock(*m_mutex);
       m_cond->notify_all();
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
     if ((p_reply.i % 2) == 0) {
       dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 
 private:
@@ -87,7 +87,7 @@ private:
 
 struct replier
 {
-  concurrent::business::result operator()(request&& p_request)
+  concurrent::business::work_status operator()(request&& p_request)
   {
     using namespace tenacitas;
     using namespace tenacitas;
@@ -95,14 +95,14 @@ struct replier
     concurrent_log_test(logger::business::log, "request ", p_request);
     if (p_request.i == 0) {
       concurrent_log_info(logger::business::log, "stopping");
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
     if ((p_request.i % 2) == 0) {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 

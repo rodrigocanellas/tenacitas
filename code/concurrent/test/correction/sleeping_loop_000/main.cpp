@@ -32,7 +32,7 @@ struct sleeping_loop_000
     loop _loop(std::chrono::milliseconds(100),
                [] {
                  concurrent_log_test(logger::business::log, "loop1");
-                 return concurrent::business::result::dont_stop;
+                 return concurrent::business::work_status::dont_stop;
                },
                std::chrono::milliseconds(100));
 

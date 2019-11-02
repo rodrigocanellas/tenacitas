@@ -12,6 +12,7 @@
 
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/positioner006.h>
+#include <crosswords/business/internal/words_positioner_group.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
 #include <crosswords/entities/lexeme.h>
@@ -50,12 +51,11 @@ struct positioner_t
     : m_positioner(p_x_limit, p_y_limit)
   {}
 
-  positioner_t(const positioner_t&)=delete;
-  positioner_t(positioner_t&&p_positioner)noexcept=default;
-  positioner_t&operator=(const positioner_t&)=delete;
-  positioner_t&operator=(positioner_t&&p_positioner)noexcept=default;
-  ~positioner_t(){}
-
+  positioner_t(const positioner_t&) = delete;
+  positioner_t(positioner_t&& p_positioner) noexcept = default;
+  positioner_t& operator=(const positioner_t&) = delete;
+  positioner_t& operator=(positioner_t&& p_positioner) noexcept = default;
+  ~positioner_t() {}
 
   inline void add(lexeme&& p_lexeme, description&& p_description)
   {

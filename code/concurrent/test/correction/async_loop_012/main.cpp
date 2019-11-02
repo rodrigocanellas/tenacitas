@@ -17,23 +17,23 @@ using namespace tenacitas;
 
 struct work1
 {
-  concurrent::business::result operator()(uint32_t&& p_data)
+  concurrent::business::work_status operator()(uint32_t&& p_data)
   {
     data += p_data;
     concurrent_log_test(logger::business::log, "1 -> ", data);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint32_t data = 0;
 };
 
 struct work2
 {
-  concurrent::business::result operator()(uint32_t&& p_data)
+  concurrent::business::work_status operator()(uint32_t&& p_data)
   {
     using namespace tenacitas;
     data = p_data;
     concurrent_log_test(logger::business::log, "2 -> ", data);
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
   uint32_t data = 0;
 };
@@ -72,7 +72,7 @@ struct async_loop_012
         return _work_1(std::move(p_data));
       },
       std::chrono::milliseconds(1000),
-          []() { return concurrent::business::result::dont_stop; },
+          []() { return concurrent::business::work_status::dont_stop; },
       [&_provide]() -> std::pair<bool, uint32_t> {
         return _provide();
       });
@@ -82,7 +82,7 @@ struct async_loop_012
         return _work_2(std::move(p_data));
       },
       std::chrono::milliseconds(1000),
-          []() { return concurrent::business::result::dont_stop; },
+          []() { return concurrent::business::work_status::dont_stop; },
       [&_provide]() -> std::pair<bool, uint32_t> {
         return _provide();
       });

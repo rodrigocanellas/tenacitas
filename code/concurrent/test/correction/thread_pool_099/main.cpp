@@ -15,15 +15,15 @@ typedef concurrent::business::sleeping_loop_t<void, logger::business::log> sleep
 
 struct work_1
 {
-  concurrent::business::result operator()(int32_t&& p_value)
+  concurrent::business::work_status operator()(int32_t&& p_value)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(170));
     concurrent_log_test(logger::business::log, "work 1 handling msg ", p_value);
     if (p_value > 200) {
       concurrent_log_test(logger::business::log, "stopping this worker");
-      return concurrent::business::result::stop;
+      return concurrent::business::work_status::stop;
     }
-    return concurrent::business::result::dont_stop;
+    return concurrent::business::work_status::dont_stop;
   }
 };
 
