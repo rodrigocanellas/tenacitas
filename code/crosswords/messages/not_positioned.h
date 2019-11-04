@@ -23,7 +23,7 @@ struct not_positioned
     : m_words(p_words)
   {}
   inline not_positioned(crosswords::entities::words::const_iterator p_begin,
-                        crosswords::entities::words::const_iterator& p_end)
+                        crosswords::entities::words::const_iterator p_end)
     : m_words(p_begin, p_end)
   {}
 

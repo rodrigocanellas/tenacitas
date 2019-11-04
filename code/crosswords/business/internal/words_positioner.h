@@ -2,7 +2,6 @@
 #define TENACITAS_CROSSWORDS_BUSINESS_WORDS_POSITIONER_H
 
 #include <algorithm>
-#include <condition_variable>
 #include <ctime>
 #include <functional>
 #include <iostream>
@@ -106,6 +105,8 @@ struct words_positioner_t
     words::iterator _begin = m_words.begin();
     words::iterator _end = m_words.end();
     words::iterator _ite = _begin;
+    m_last_first_position_horizontal.reset();
+    m_last_first_position_vertical.reset();
 
     crosswords_log_info(log, "####### ", print_words(_begin, _end));
 
@@ -136,6 +137,7 @@ struct words_positioner_t
         // give up this set of words, in this order
         // returns true to indicate that it will receive other messages
         dispatcher_not_positioned::publish(m_words);
+        return work_status::dont_stop;
       }
       bool _hope_to_position = true;
       while (true) {

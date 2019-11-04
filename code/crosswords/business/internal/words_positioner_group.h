@@ -7,6 +7,7 @@
 #include <memory>
 #include <thread>
 #include <vector>
+#include <tuple>
 
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/traits.h>
@@ -294,11 +295,13 @@ struct words_positioner_group_t
     return work_status::dont_stop;
   }
 
-  std::pair<bool, words> operator()(words::iterator p_begin,
-                                    words::iterator p_end)
+  std::tuple<bool, words, positions_occupied>
+  operator()(words::iterator p_begin,
+             words::iterator p_end,
+             positions_occupied p_positions_occupied)
   {
 
-    std::pair<bool, words> _res = { false, words() };
+    std::tuple<bool, words, positions_occupied> _res = {false, words(), positions_occupied()};
 
     bool _no_more_permutations = false;
 
@@ -308,7 +311,6 @@ struct words_positioner_group_t
       m_result.clear();
       m_num_perms_not_positioned = 0;
       m_num_perms_generated = 1;
-      //      m_positions_occupied.clear();
     }
 
     //    crosswords_log_debug(log, "configuration: ",
@@ -321,14 +323,14 @@ struct words_positioner_group_t
       log, "configuration: ", words(p_begin, p_end).print_words());
     while (true) {
       if (m_positioned) {
-        _res = { true, m_result };
+        _res = { true, m_result, m_positions_occupied };
         break;
       }
 
       if (std::distance(p_begin, p_end) == 1) {
         crosswords_log_debug(log, "publishing ", print_words(p_begin, p_end));
         dispatcher_to_position::publish(words(p_begin, p_end),
-                                        m_positions_occupied);
+                                        p_positions_occupied);
         //        crosswords_log_debug(log, "only one word to be positioned");
         _no_more_permutations = true;
         m_last_size = 1;
@@ -343,12 +345,11 @@ struct words_positioner_group_t
             log, "+++++ positioned! ", m_result.print_words());
 
           dispatcher_stop_positioning::publish(m_result);
-          _res = { true, m_result };
+          _res = { true, m_result, m_positions_occupied };
         } else if (m_num_perms_not_positioned == m_num_perms_generated) {
-          m_positions_occupied.clear();
           crosswords_log_warn(
             log, "all permutations were tried, and no was positioned");
-          _res = { false, words() };
+          _res = { false, words(), positions_occupied() };
           break;
         }
       } else {
@@ -358,10 +359,10 @@ struct words_positioner_group_t
                              ": ",
                              print_words(p_begin, p_end));
         dispatcher_to_position::publish(words(p_begin, p_end),
-                                        m_positions_occupied);
+                                        p_positions_occupied);
 
         if (m_positioned) {
-          _res = { true, m_result };
+          _res = { true, m_result, m_positions_occupied };
           break;
         }
 

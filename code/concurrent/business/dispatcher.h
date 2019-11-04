@@ -89,8 +89,11 @@ public:
   ~dispatcher_t()
   {
     concurrent_log_debug(log, "leaving");
-    for (thread_pool& _pool : m_thread_pool_list) {
-      _pool.stop();
+    typename thread_pool_list::iterator _end = m_thread_pool_list.end();
+    for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
+         _ite != _end;
+         ++_ite) {
+      _ite->second.stop;
     }
   }
 
@@ -175,8 +178,17 @@ public:
   template<typename... t_params>
   inline static void publish(t_params... p_params)
   {
-    t_msg _msg(p_params...);
+    const t_msg _msg(p_params...);
     publish(_msg);
+  }
+
+  static void stop() {
+    typename thread_pool_list::iterator _end = m_thread_pool_list.end();
+    for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
+         _ite != _end;
+         ++_ite) {
+      _ite->second.stop();
+    }
   }
 
 private:
