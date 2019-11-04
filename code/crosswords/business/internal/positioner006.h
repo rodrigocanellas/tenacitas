@@ -59,11 +59,11 @@ struct positioner006_t
   typedef words_positioner_group_t<log> words_positioner_group;
 
   typedef concurrent::business::
-    dispatcher_t<crosswords::messages::positioned<log>, log>
+    dispatcher_t<messages::positioned<log>, log>
       dispatcher_positioned;
 
   typedef concurrent::business::
-    dispatcher_t<crosswords::messages::not_positioned, log>
+    dispatcher_t<messages::not_positioned, log>
       dispatcher_not_positioned;
 
   explicit positioner006_t(x p_x_limit = x(13), y p_y_limit = y(13))
@@ -163,7 +163,7 @@ struct positioner006_t
           log, "old order: ", print_words(m_words.begin(), m_words.end()));
         crosswords_log_info(
           log,
-          "work_status: ",
+          "positioned: ",
           print_words(_res.second.begin(), _res.second.end()));
         //        std::copy(_res.second.begin(), _res.second.end(),
         //        m_words.begin());

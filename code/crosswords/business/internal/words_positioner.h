@@ -14,6 +14,7 @@
 #include <thread>
 
 #include <concurrent/business/dispatcher.h>
+#include <concurrent/business/traits.h>
 #include <crosswords/business/internal/log.h>
 #include <crosswords/business/internal/positions_occupied.h>
 #include <crosswords/business/internal/validate_position.h>
@@ -61,13 +62,12 @@ struct words_positioner_t
   typedef positions_occupied_t<log> positions_occupied;
   typedef validate_position_t<log> validate_position;
 
-  typedef concurrent::business::
-    dispatcher_t<crosswords::messages::positioned<log>, log>
-      dispatcher_positioned;
+  typedef concurrent::business::work_status work_status;
+  typedef concurrent::business::dispatcher_t<messages::positioned<log>, log>
+    dispatcher_positioned;
 
-  typedef concurrent::business::
-    dispatcher_t<crosswords::messages::not_positioned, log>
-      dispatcher_not_positioned;
+  typedef concurrent::business::dispatcher_t<messages::not_positioned, log>
+    dispatcher_not_positioned;
 
   words_positioner_t(x p_x_limit, y p_y_limit)
     : m_x_limit(p_x_limit)
@@ -81,7 +81,7 @@ struct words_positioner_t
   words_positioner_t& operator=(words_positioner_t&&) noexcept = default;
   ~words_positioner_t() = default;
 
-  bool operator()(crosswords::messages::stop_positioning p_stop_positioning)
+  work_status operator()(messages::stop_positioning p_stop_positioning)
   {
     crosswords_log_debug(log,
                          "received stop positioning (",
@@ -90,13 +90,13 @@ struct words_positioner_t
                          m_words.get_size(),
                          ")");
     if (p_stop_positioning.get_words().get_size() == m_words.get_size()) {
-      crosswords_log_debug(log, "flaginf to stop");
+      crosswords_log_debug(log, "flaging to stop");
       m_stop_positioning = true;
     }
-    return true;
+    return work_status::dont_stop;
   }
 
-  bool operator()(crosswords::messages::to_position<log>&& p_to_position)
+  work_status operator()(messages::to_position<log>&& p_to_position)
   {
     m_words = p_to_position.get_words();
     //    crosswords_log_debug(log, "not copying positions_occupied, and
@@ -121,7 +121,7 @@ struct words_positioner_t
 
     while (true) {
       if (m_stop_positioning) {
-        return true;
+        return work_status::dont_stop;
       }
       if (m_position_first_status == position_first_status::done) {
         m_positions_occupied.clear();
@@ -135,40 +135,38 @@ struct words_positioner_t
                              " was not positioned");
         // give up this set of words, in this order
         // returns true to indicate that it will receive other messages
-        dispatcher_not_positioned::publish(
-          crosswords::messages::not_positioned(m_words));
+        dispatcher_not_positioned::publish(m_words);
       }
       bool _hope_to_position = true;
       while (true) {
         if (m_stop_positioning) {
-          return true;
+          return work_status::dont_stop;
         }
 
         if (_ite == _end) {
           crosswords_log_debug(log,
-                               "defining work_status: ",
+                               "defining words: ",
                                print_words(m_words.begin(), m_words.end()));
-          dispatcher_positioned::publish(crosswords::messages::positioned<log>(
-            m_words, m_positions_occupied));
+          dispatcher_positioned::publish(m_words, m_positions_occupied);
           break;
         }
 
         crosswords_log_debug(log, "trying to position ", _ite->get_lexeme());
         if (m_stop_positioning) {
-          return true;
+          return work_status::dont_stop;
         }
         if (_ite->positioned()) {
           crosswords_log_debug(log, _ite->get_lexeme(), " already positioned");
           ++_ite;
         } else {
           if (m_stop_positioning) {
-            return true;
+            return work_status::dont_stop;
           }
           positioning _positioning = position(_begin, _end, _ite);
           if (_positioning == positioning::ok) {
             crosswords_log_debug(log, _ite->get_lexeme(), " positioned!");
             if (m_stop_positioning) {
-              return true;
+              return work_status::dont_stop;
             }
             //            crosswords_log_debug(
             //              log, print_positioned(_begin, _end, m_x_limit,
@@ -177,7 +175,7 @@ struct words_positioner_t
             ++_ite;
           } else {
             if (m_stop_positioning) {
-              return true;
+              return work_status::dont_stop;
             }
             if (_positioning == positioning::some_not_positioned) {
               m_positions_occupied.clear();
@@ -200,7 +198,7 @@ struct words_positioner_t
         }
       }
       if (m_stop_positioning) {
-        return true;
+        return work_status::dont_stop;
       }
 
       if (_hope_to_position) {
@@ -214,7 +212,7 @@ struct words_positioner_t
       }
 
       if (m_stop_positioning) {
-        return true;
+        return work_status::dont_stop;
       }
       m_positions_occupied.clear();
       unposition(_begin, _end);
@@ -223,7 +221,7 @@ struct words_positioner_t
       _ite = _begin;
     }
     // false to stop the async_loop where this function is running
-    return true;
+    return work_status::dont_stop;
   }
 
 private:
@@ -277,6 +275,7 @@ private:
     //    return _positioning;
 
     return position_from_last(p_first_positioned, p_end, p_to_position);
+    //    return position_from_first(p_first_positioned, p_to_position);
   }
 
   positioning position_from_last(words::iterator p_first_positioned,
@@ -340,20 +339,13 @@ private:
   positioning position_from_first(words::iterator p_first_positioned,
                                   words::iterator p_to_position)
   {
-    if (no_word_positioned(p_first_positioned, p_to_position)) {
-      if (!position_first(p_to_position)) {
-        return positioning::first_not_positioned;
-      }
-      return positioning::ok;
-    }
-
     words::const_iterator _last_positioned = p_first_positioned;
     while (true) {
       if (_last_positioned == p_to_position) {
         break;
       }
       bool _is_positioned =
-        position(p_first_positioned, _last_positioned, p_to_position);
+        position_x(p_first_positioned, _last_positioned, p_to_position);
 
       if (_is_positioned) {
         m_positions_occupied.add(*p_to_position);

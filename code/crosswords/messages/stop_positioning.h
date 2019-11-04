@@ -13,8 +13,9 @@ struct stop_positioning
                                   const stop_positioning& p_stop_positioning)
   {
     p_out << "stop_positioning msg: "
-          << crosswords::entities::print_words(p_stop_positioning.m_words.begin(),
-                                   p_stop_positioning.m_words.end());
+          << crosswords::entities::print_words(
+               p_stop_positioning.m_words.begin(),
+               p_stop_positioning.m_words.end());
     return p_out;
   }
 
@@ -23,7 +24,7 @@ struct stop_positioning
     : m_words(p_words)
   {}
   inline stop_positioning(crosswords::entities::words::const_iterator p_begin,
-                        crosswords::entities::words::const_iterator& p_end)
+                          crosswords::entities::words::const_iterator& p_end)
     : m_words(p_begin, p_end)
   {}
 
