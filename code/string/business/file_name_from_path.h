@@ -1,0 +1,4 @@
+#ifndef FILE_NAME_FROM_PATH_H
+#define FILE_NAME_FROM_PATH_H
+
+#endif // FILE_NAME_FROM_PATH_H
