@@ -18,8 +18,8 @@ struct words
   typedef std::list<word> list;
   typedef list::iterator iterator;
   typedef list::const_iterator const_iterator;
-  typedef entities::coordinate::x x;
-  typedef entities::coordinate::y y;
+  typedef crosswords::entities::coordinate::x x;
+  typedef crosswords::entities::coordinate::y y;
   typedef list::size_type size;
 
   friend std::ostream& operator<<(std::ostream& p_out, const words& p_words)
@@ -30,18 +30,17 @@ struct words
     return p_out;
   }
 
-  words()=default;
-  words(const words&)=default;
-  words(words&&)noexcept=default;
-  ~words()=default;
+  words() = default;
+  words(const words&) = default;
+  words(words&&) noexcept = default;
+  ~words() = default;
 
-
-  words&operator=(const words&)=default;
-  words&operator=(words&&)noexcept=default;
-
+  words& operator=(const words&) = default;
+  words& operator=(words&&) noexcept = default;
 
   words(const_iterator p_begin, const_iterator p_end)
-    : m_list(p_begin, p_end){}
+    : m_list(p_begin, p_end)
+  {}
 
   bool operator==(const words& p_words) const
   {
@@ -49,6 +48,8 @@ struct words
   }
 
   void add(word&& p_word) { m_list.push_back(std::move(p_word)); }
+
+  void clear() { m_list.clear(); }
 
   iterator insert(word&& p_word, iterator p_ite)
   {
@@ -79,7 +80,7 @@ struct words
 
   inline size get_size() const { return m_list.size(); }
 
-  void print_positioned(x p_x_limit, y p_y_limit) const
+  std::string print_positioned(x p_x_limit, y p_y_limit) const
   {
     using namespace std;
 
@@ -97,27 +98,28 @@ struct words
         const lexeme& _lexeme = _ite->get_lexeme();
         for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
           matrix::size_type _x =
-              _coords[_i].get_x().get_value<string::size_type>();
+            _coords[_i].get_x().get_value<string::size_type>();
           string::size_type _y =
-              _coords[_i].get_y().get_value<std::string::size_type>();
+            _coords[_i].get_y().get_value<std::string::size_type>();
           char _c = _lexeme[_i];
           _m[_x][_y] = _c;
         }
       }
     }
-
-    cerr << "    ";
+    stringstream _stream;
+    _stream << "\n\n    ";
     for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-      cerr << setw(2) << setfill('0') << _x << " ";
+      _stream << setw(2) << setfill('0') << _x << " ";
     }
-    std::cerr << std::endl;
+    _stream << std::endl;
     for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
-      cerr << setw(2) << setfill('0') << _y << " ";
+      _stream << setw(2) << setfill('0') << _y << " ";
       for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-        cerr << "  " << _m[_x][_y];
+        _stream << "  " << _m[_x][_y];
       }
-      cerr << std::endl;
+      _stream << std::endl;
     }
+    return _stream.str();
   }
 
   inline void sort()
@@ -171,7 +173,7 @@ print_words(words::const_iterator p_begin, words::const_iterator p_end)
   return _stream.str();
 }
 
-void
+std::string
 print_positioned(words::const_iterator p_begin,
                  words::const_iterator p_end,
                  coordinate::x p_x_limit,
@@ -192,27 +194,29 @@ print_positioned(words::const_iterator p_begin,
       const lexeme& _lexeme = _ite->get_lexeme();
       for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
         matrix::size_type _x =
-            _coords[_i].get_x().get_value<string::size_type>();
+          _coords[_i].get_x().get_value<string::size_type>();
         string::size_type _y =
-            _coords[_i].get_y().get_value<std::string::size_type>();
+          _coords[_i].get_y().get_value<std::string::size_type>();
         char _c = _lexeme[_i];
         _m[_x][_y] = _c;
       }
     }
   }
 
-  cerr << "    ";
+  stringstream _stream;
+  _stream << "\n    ";
   for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-    cerr << setw(2) << setfill('0') << _x << " ";
+    _stream << setw(2) << setfill('0') << _x << " ";
   }
-  std::cerr << std::endl;
+  _stream << std::endl;
   for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
-    cerr << setw(2) << setfill('0') << _y << " ";
+    _stream << setw(2) << setfill('0') << _y << " ";
     for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-      cerr << "  " << _m[_x][_y];
+      _stream << "  " << _m[_x][_y];
     }
-    cerr << std::endl;
+    _stream << std::endl;
   }
+  return _stream.str();
 }
 
 // struct cmp_words
