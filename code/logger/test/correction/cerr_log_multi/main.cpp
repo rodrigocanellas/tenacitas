@@ -55,7 +55,7 @@ class cout_log_multi
                                          log_warn("ótimo! novo emprego! ", _i);
                                          log_warn("que bom! ", _i);
                                      }
-                                     return result::dont_stop;
+                                     return work_status::dont_stop;
                                  },
                                  std::chrono::milliseconds(1000));
 
@@ -69,7 +69,7 @@ class cout_log_multi
                                          log_warn("eee! ", _i);
                                          log_warn("fff! ", _i);
                                      }
-                                     return result::dont_stop;
+                                     return work_status::dont_stop;
                                  },
                                  std::chrono::milliseconds(1000));
 
@@ -84,7 +84,7 @@ class cout_log_multi
                       log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
                       log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
                   }
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::milliseconds(1000));
 

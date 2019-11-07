@@ -52,7 +52,7 @@ struct sleeping_loop_t
   /// \param t_data is an instance of the data to be handled
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
   ///

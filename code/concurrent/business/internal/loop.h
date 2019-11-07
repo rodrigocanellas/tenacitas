@@ -57,7 +57,7 @@ struct loop_t
   /// \param t_data is an instance of the data to be handled
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
   ///
@@ -75,7 +75,7 @@ struct loop_t
   /// stop
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef typename traits_t<t_data>::breaker breaker;
 
   ///
@@ -219,7 +219,7 @@ struct loop_t
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(log, this, " worker returned 'result::dont_stop'");
+        concurrent_log_debug(log, this, " worker returned 'work_status::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout for data ", _provide.second);
       }
@@ -302,7 +302,7 @@ struct loop_t<void, t_log>
   /// \param t_data is an instance of the data to be handled
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef typename traits_t<void>::worker worker;
 
   typedef typename traits_t<void>::worker_ptr worker_ptr;
@@ -322,7 +322,7 @@ struct loop_t<void, t_log>
   /// stop
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef typename traits_t<void>::breaker breaker;
 
   ///
@@ -441,7 +441,7 @@ struct loop_t<void, t_log>
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(log, this, "worker returned 'result::dont_stop'");
+        concurrent_log_debug(log, this, "worker returned 'work_status::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout");
       }

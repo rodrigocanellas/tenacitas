@@ -36,7 +36,7 @@ struct cout_log_single
                                 _i);
                       log::warn("cout_log_single", __LINE__, "que bom! ", _i);
                   }
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::milliseconds(1000));
 

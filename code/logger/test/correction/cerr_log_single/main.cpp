@@ -33,7 +33,7 @@ struct cerr_log_single
                                "cerr_log_single", __LINE__, "ótimo! novo emprego! ", _i);
                                log::warn("cerr_log_single", __LINE__, "que bom! ", _i);
                              }
-                             return result::dont_stop;
+                             return work_status::dont_stop;
                            },
                            std::chrono::milliseconds(1000));
 

@@ -42,7 +42,7 @@ class file_log_single
                   log::warn("file_log_single", __LINE__, std::string(511, 'W'));
                   log::error(
                     "file_log_single", __LINE__, std::string(511, 'E'));
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::seconds(5));
 

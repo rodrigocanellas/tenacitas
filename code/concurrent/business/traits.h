@@ -40,7 +40,7 @@ struct traits_t
   /// \param t_data is an instance of the data to be handled
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef std::function<work_status(t_data&&)> worker;
 
   typedef std::shared_ptr<worker> worker_ptr;
@@ -60,7 +60,7 @@ struct traits_t
   /// stop
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef std::function<work_status()> breaker;
 };
 
@@ -76,7 +76,7 @@ struct traits_t<void>
   /// be called in a loop in order to execute some work
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop if it should continue
+  /// called should stop, or work_status::dont_stop if it should continue
   typedef std::function<work_status()> worker;
 
   typedef std::shared_ptr<worker> worker_ptr;
@@ -91,7 +91,7 @@ struct traits_t<void>
   /// stop
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or result::dont_stop
+  /// called should stop, or work_status::dont_stop
   typedef std::function<work_status()> breaker;
 };
 

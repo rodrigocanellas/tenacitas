@@ -38,7 +38,7 @@ class file_log_multi
                                 _i);
                       log::warn("file_log_multi", __LINE__, "que bom! ", _i);
                   }
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::milliseconds(1000));
 
@@ -53,7 +53,7 @@ class file_log_multi
                       log::warn("file_log_multi", __LINE__, "eee! ", _i);
                       log::warn("file_log_multi", __LINE__, "fff! ", _i);
                   }
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::milliseconds(1000));
 
@@ -86,7 +86,7 @@ class file_log_multi
                                 "abcdefghijklmnopqrstivwxyz! ",
                                 _i);
                   }
-                  return result::dont_stop;
+                  return work_status::dont_stop;
               },
               std::chrono::milliseconds(1000));
 
