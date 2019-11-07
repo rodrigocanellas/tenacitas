@@ -19,7 +19,8 @@ HEADERS += \  \
     ../../../../../code/concurrent/business/sleeping_loop.h \
     ../../../../../code/concurrent/business/thread.h \
     ../../../../../code/concurrent/business/thread_pool.h \
-    ../../../../../code/concurrent/business/traits.h
+    ../../../../../code/concurrent/business/traits.h \
+    ../../../../../code/string/business/file_name_from_path.h
 
 include (../../../common.pri)
 

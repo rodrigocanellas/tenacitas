@@ -60,8 +60,6 @@ struct loop_t
   /// called should stop, or result::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
-  typedef typename traits_t<t_data>::worker_ptr worker_ptr;
-
   ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution

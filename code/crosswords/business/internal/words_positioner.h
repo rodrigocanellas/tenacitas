@@ -108,7 +108,7 @@ struct words_positioner_t
     m_last_first_position_horizontal.reset();
     m_last_first_position_vertical.reset();
 
-    crosswords_log_info(log, "####### ", print_words(_begin, _end));
+    //    crosswords_log_info(log, "####### ", print_words(_begin, _end));
 
     //    crosswords_log_debug(log, "configuration: ",
     //                         crosswords::entities::print_positioned(_begin,
