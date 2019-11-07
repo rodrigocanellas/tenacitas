@@ -24,3 +24,4 @@ HEADERS += \  \
 
 include (../../../common.pri)
 
+LIBS += -ltenacitas.string.business

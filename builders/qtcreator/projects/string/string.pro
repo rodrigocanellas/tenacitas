@@ -1,6 +1,5 @@
 SUBDIRS = \
-  dependencies \
-  correction
+    business/string_business.pro
 
 TEMPLATE = subdirs
 

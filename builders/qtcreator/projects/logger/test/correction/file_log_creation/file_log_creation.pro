@@ -20,5 +20,5 @@ SOURCES += \
     ../../../../../../../code/logger/test/correction/file_log_creation/main.cpp
 
 
-LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.logger.business -ltenacitas.string.business
 

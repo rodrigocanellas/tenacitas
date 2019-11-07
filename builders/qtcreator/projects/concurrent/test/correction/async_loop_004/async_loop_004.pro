@@ -16,6 +16,6 @@ SOURCES += \
 
 include (../../../../../common.pri)
 
-LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.logger.business -ltenacitas.string.business -ltenacitas.string.business
 
 LIBS += -ltenacitas.tester.business

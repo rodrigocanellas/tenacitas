@@ -41,6 +41,6 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/positioner003.h \
     ../../../../../code/crosswords/business/internal/positioner004.h
 
-LIBS += -ltenacitas.crosswords.entities
+LIBS += -ltenacitas.crosswords.entities -ltenacitas.string.business
 
 

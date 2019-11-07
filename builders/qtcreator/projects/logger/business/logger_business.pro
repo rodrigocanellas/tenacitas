@@ -28,11 +28,12 @@ SOURCES += \
     ../../../../../code/logger/business/internal/log.cpp
 
 
-
-
-LIBS+=-lpthread
-
 include (../../../common.pri)
+
+LIBS += -lpthread
+LIBS += -ltenacitas.string.business
+
+
 
 message("LIBS = "$$LIBS)
 

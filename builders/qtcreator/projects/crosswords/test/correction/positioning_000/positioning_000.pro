@@ -14,7 +14,10 @@ CONFIG+=test
 
 
 
-LIBS += -ltenacitas.logger.business -ltenacitas.crosswords.entities -ltenacitas.crosswords.business
+LIBS += -ltenacitas.logger.business
+LIBS += -ltenacitas.crosswords.entities
+LIBS += -ltenacitas.crosswords.business
+LIBS += -ltenacitas.string.business
 
 #SOURCES += \
 #    ../../../../../../code/crosswords/test/correction/positioning_000/main.cpp
