@@ -1,6 +1,7 @@
 
 #include <iostream>
 
+#include <concurrent/business/traits.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/cout.h>
 #include <tester/business/run.h>
@@ -35,7 +36,7 @@ struct cout_log_single
                                 _i);
                       log::warn("cout_log_single", __LINE__, "que bom! ", _i);
                   }
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::milliseconds(1000));
 

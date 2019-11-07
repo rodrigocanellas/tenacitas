@@ -6,10 +6,12 @@
 #include <logger/business/cout.h>
 #include <logger/business/log.h>
 #include <tester/business/run.h>
+#include <concurrent/business/traits.h>
 
-typedef tenacitas::concurrent::business::
-  sleeping_loop_t<void, tenacitas::logger::business::log>
-    sleeping_loop;
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
+typedef sleeping_loop_t<void, log> sleeping_loop;
 
 #define log_test(p_params...)                                                  \
     tenacitas::logger::business::log::test("cout_log_multi", __LINE__, p_params)
@@ -53,7 +55,7 @@ class cout_log_multi
                                          log_warn("ótimo! novo emprego! ", _i);
                                          log_warn("que bom! ", _i);
                                      }
-                                     return true;
+                                     return result::dont_stop;
                                  },
                                  std::chrono::milliseconds(1000));
 
@@ -67,7 +69,7 @@ class cout_log_multi
                                          log_warn("eee! ", _i);
                                          log_warn("fff! ", _i);
                                      }
-                                     return true;
+                                     return result::dont_stop;
                                  },
                                  std::chrono::milliseconds(1000));
 
@@ -82,7 +84,7 @@ class cout_log_multi
                       log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
                       log_warn("abcdefghijklmnopqrstivwxyz! ", _i);
                   }
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::milliseconds(1000));
 

@@ -4,6 +4,7 @@
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/file.h>
 #include <tester/business/run.h>
+#include <concurrent/business/traits.h>
 
 using namespace tenacitas::logger::business;
 using namespace tenacitas::concurrent::business;
@@ -37,7 +38,7 @@ class file_log_multi
                                 _i);
                       log::warn("file_log_multi", __LINE__, "que bom! ", _i);
                   }
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::milliseconds(1000));
 
@@ -52,7 +53,7 @@ class file_log_multi
                       log::warn("file_log_multi", __LINE__, "eee! ", _i);
                       log::warn("file_log_multi", __LINE__, "fff! ", _i);
                   }
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::milliseconds(1000));
 
@@ -85,7 +86,7 @@ class file_log_multi
                                 "abcdefghijklmnopqrstivwxyz! ",
                                 _i);
                   }
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::milliseconds(1000));
 

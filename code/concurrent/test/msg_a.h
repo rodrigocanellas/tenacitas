@@ -10,7 +10,8 @@
 
 namespace tenacitas {
 namespace concurrent {
-namespace tst {
+namespace  test  {
+
 
 struct msg_a
 {
@@ -21,10 +22,12 @@ struct msg_a
   private:
     static const char* m_s;
     uint32_t m_counter = 0;
-    uint64_t m_timestamp = tenacitas::calendar::business::epoch::millisecs();
+    uint64_t m_timestamp = calendar::business::epoch::millisecs();
 };
 
-} // namespace tst
+
+
+} // namespace test
 } // namespace concurrent
 } // namespace tenacitas
 

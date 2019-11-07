@@ -12,6 +12,6 @@ char log::m_separator = { '|' };
 
 std::mutex log::m_mutex;
 
-} // namespace business
 } // namespace logger
+} // namespace business
 } // namespace tenacitas

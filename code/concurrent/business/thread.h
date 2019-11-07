@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_BUS_THREAD_H
-#define TENACITAS_CONCURRENT_BUS_THREAD_H
+#ifndef TENACITAS_CONCURRENT_BUSINESS_THREAD_H
+#define TENACITAS_CONCURRENT_BUSINESS_THREAD_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
