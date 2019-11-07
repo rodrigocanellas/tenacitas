@@ -13,7 +13,7 @@
 
 #define DESCRIPTION "Creation of a 'async' object."
 
-typedef tenacitas::concurrent::async<void> async;
+typedef tenacitas::concurrent::business::async<void> async;
 
 struct work1
 {

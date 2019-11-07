@@ -1,5 +1,5 @@
-#ifndef TENACITAS_LOGGER_BUS_FILE_MEDIA_H
-#define TENACITAS_LOGGER_BUS_FILE_MEDIA_H
+#ifndef TENACITAS_LOGGER_BUSINESS_FILE_MEDIA_H
+#define TENACITAS_LOGGER_BUSINESS_FILE_MEDIA_H
 
 #include <chrono>
 #include <cstdint>
@@ -21,7 +21,7 @@ namespace business {
 
 ///
 /// \brief The file_media struct implements a \p t_media type to be used in a
-/// tenacitas::logger::business::log class, allowing log messages to be written
+/// logger::log class, allowing logger::log messages to be written
 /// to a file
 ///
 /// \tparam t_controller is a class that will help controlling how the messages
@@ -32,7 +32,7 @@ namespace business {
 /// - \code void remove() \endcode which will control when a file must be
 /// removed
 /// - \code void rename(const std::string &) \endcode which will rename a file
-/// when no more log messages can be written to the file
+/// when no more logger::log messages can be written to the file
 /// - \code bool renew(uint32_t) \endcode which will return \p true if the file
 /// must be renewed, i.e., if no more messages shall be written to the file, and
 /// a new one must be created. To help making the decision, the file size will
@@ -98,8 +98,8 @@ struct file_writer_t
     }
 
     ///
-    /// \brief operator () writes a log message to the file
-    /// \param p_str the log message
+    /// \brief operator () writes a logger::log message to the file
+    /// \param p_str the logger::log message
     ///
     void operator()(std::string&& p_str)
     {
@@ -136,8 +136,8 @@ struct file_writer_t
     std::shared_ptr<std::ofstream> m_stream;
 };
 
-} // namespace business
 } // namespace logger
+} // namespace business
 } // namespace tenacitas
 
 #endif

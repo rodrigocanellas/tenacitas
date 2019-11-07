@@ -15,7 +15,7 @@
     "Time out of a function object with a string and float parameteres, "      \
     "with no return."
 
-typedef tenacitas::concurrent::async<void> async_t;
+typedef tenacitas::concurrent::business::async<void> async_t;
 
 struct work1
 {

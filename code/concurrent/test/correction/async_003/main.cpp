@@ -16,7 +16,7 @@
     "No time out of a function object with no parameters, and returning "      \
     "int16_t."
 
-typedef tenacitas::concurrent::async<int16_t> async_t;
+typedef tenacitas::concurrent::business::async<int16_t> async_t;
 
 struct work1
 {

@@ -1,5 +1,5 @@
-#ifndef TENACITAS_LOGGER_BUS_COUT_H
-#define TENACITAS_LOGGER_BUS_COUT_H
+#ifndef TENACITAS_LOGGER_BUSINESS_COUT_H
+#define TENACITAS_LOGGER_BUSINESS_COUT_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -25,15 +25,15 @@ namespace business {
 /// This namespace function must be called only one time to configure logging to
 /// \p cout
 ///
-/// \details There are 6 log levels, from the lowest: 'test', 'debug', 'info',
-/// 'warn', 'error' and 'fatal'. The log level starts in 'error', so only
+/// \details There are 6 logger::log levels, from the lowest: 'test', 'debug', 'info',
+/// 'warn', 'error' and 'fatal'. The logger::log level starts in 'error', so only
 /// 'error' and 'fatal' messages will be logged.
 ///
-/// If one wants to change the log level, the 'cout_set_test', 'cout_set_debug',
+/// If one wants to change the logger::log level, the 'cout_set_test', 'cout_set_debug',
 /// 'cout_set_info' or 'cout_set_warn' must be called
 ///
-/// A log line has this format:
-/// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+/// A logger::log line has this format:
+/// logger::log-level|timestamp-millisecs|thread-id|file|line|user-contents
 ///
 /// For
 /// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
@@ -45,8 +45,8 @@ configure_cout_log()
     log::configure([](std::string&& p_str) { std::cout << p_str; });
 }
 
-} // namespace business
 } // namespace logger
+} // namespace business
 } // namespace tenacitas
 
 #endif

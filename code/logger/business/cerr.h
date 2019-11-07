@@ -1,5 +1,5 @@
-#ifndef TENACITAS_LOGGER_BUS_CERR_H
-#define TENACITAS_LOGGER_BUS_CERR_H
+#ifndef TENACITAS_LOGGER_BUSINESS_CERR_H
+#define TENACITAS_LOGGER_BUSINESS_CERR_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -26,15 +26,16 @@ namespace business {
 /// This namespace function must be called only one time to configure logging to
 /// \p cerr
 ///
-/// \details There are 6 log levels, from the lowest: 'test', 'debug', 'info',
-/// 'warn', 'error' and 'fatal'. The log level starts in 'error', so only
-/// 'error' and 'fatal' messages will be logged.
+/// \details There are 6 logger::log levels, from the lowest: 'test', 'debug',
+/// 'info', 'warn', 'error' and 'fatal'. The logger::log level starts in
+/// 'error', so only 'error' and 'fatal' messages will be logged.
 ///
-/// If one wants to change the log level, the 'cerr_set_test', 'cerr_set_debug',
-/// 'cerr_set_info' or 'cerr_set_warn' macro command must be called
+/// If one wants to change the logger::log level, the 'cerr_set_test',
+/// 'cerr_set_debug', 'cerr_set_info' or 'cerr_set_warn' macro command must be
+/// called
 ///
-/// A log line has this format:
-/// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+/// A logger::log line has this format:
+/// logger::log-level|timestamp-millisecs|thread-id|file|line|user-contents
 /// For example:
 /// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
 /// (0000000005,012345678901234567890123456789,1552098707355)
@@ -42,11 +43,11 @@ namespace business {
 inline void
 configure_cerr_log()
 {
-    log::configure([](std::string&& p_str) { std::cerr << p_str; });
+  log::configure([](std::string&& p_str) { std::cerr << p_str; });
 }
 
-} // namespace business
 } // namespace logger
+} // namespace business
 } // namespace tenacitas
 
 #endif

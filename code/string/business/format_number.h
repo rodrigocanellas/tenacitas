@@ -1,5 +1,5 @@
-#ifndef TENACITAS_STRING_BUS_FORMAT_NUMBER_H
-#define TENACITAS_STRING_BUS_FORMAT_NUMBER_H
+#ifndef TENACITAS_STRING_BUSINESS_FORMAT_NUMBER_H
+#define TENACITAS_STRING_BUSINESS_FORMAT_NUMBER_H
 
 #include <cmath>
 #include <cstdint>
@@ -21,8 +21,9 @@ format_number(t_num_type p_num) {
             << std::setfill('0') << std::setw(max_str_length<t_num_type>()) << p_num;
     return _stream.str();
 }
+
 } // namespace business
 } // namespace string
 } // namespace tenacitas
 
-#endif // TENACITAS_STRING_FORMAT_NUMBER_H
+#endif 

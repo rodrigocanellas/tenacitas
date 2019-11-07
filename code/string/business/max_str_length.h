@@ -1,5 +1,5 @@
-#ifndef TENACITAS_STRING_BUS_MAX_STR_LENGTH_H
-#define TENACITAS_STRING_BUS_MAX_STR_LENGTH_H
+#ifndef TENACITAS_STRING_BUSINESS_MAX_STR_LENGTH_H
+#define TENACITAS_STRING_BUSINESS_MAX_STR_LENGTH_H
 
 #include <cmath>
 #include <cstdint>
@@ -11,6 +11,7 @@
 namespace tenacitas {
 namespace string {
 namespace business {
+
 
 template<typename t_num_type>
 uint16_t
@@ -24,8 +25,9 @@ max_str_length()
     return ++_log;
 }
 
+
 } // namespace business
 } // namespace string
 } // namespace tenacitas
 
-#endif // MAX_STR_LENGTH_H
+#endif 

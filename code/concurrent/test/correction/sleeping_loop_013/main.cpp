@@ -57,7 +57,7 @@ operator<<(std::ostream& p_out, const msg& p_msg)
     return p_out;
 }
 
-typedef tenacitas::concurrent::business::sleeping_loop<msg> loop_t;
+typedef tenacitas::concurrent::business::business::sleeping_loop<msg> loop_t;
 
 struct provider
 {

@@ -4,6 +4,7 @@
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/file.h>
 #include <tester/business/run.h>
+#include <concurrent/business/traits.h>
 
 using namespace tenacitas::logger::business;
 using namespace tenacitas::concurrent::business;
@@ -41,7 +42,7 @@ class file_log_single
                   log::warn("file_log_single", __LINE__, std::string(511, 'W'));
                   log::error(
                     "file_log_single", __LINE__, std::string(511, 'E'));
-                  return true;
+                  return result::dont_stop;
               },
               std::chrono::seconds(5));
 

@@ -15,7 +15,7 @@
     "No time out of a lambda function with a string and float parameteres, "   \
     "and returning int16_t."
 
-typedef tenacitas::concurrent::async<int16_t> async_t;
+typedef tenacitas::concurrent::business::async<int16_t> async_t;
 
 struct work1
 {

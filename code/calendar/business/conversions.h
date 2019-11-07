@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CALENDAR_BUS_CONVERSIONS_H
-#define TENACITAS_CALENDAR_BUS_CONVERSIONS_H
+#ifndef TENACITAS_CALENDAR_BUSINESS_CONVERSIONS_H
+#define TENACITAS_CALENDAR_BUSINESS_CONVERSIONS_H
 
 #include <cstdint>
 
@@ -70,5 +70,4 @@ day2mil(int64_t p_day)
 } // namespace business
 } // namespace calendar
 } // namespace tenacitas
-
 #endif // TENACITAS_CALENDAR_CONVERSIONS_H

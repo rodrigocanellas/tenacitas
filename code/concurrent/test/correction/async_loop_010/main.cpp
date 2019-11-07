@@ -11,10 +11,10 @@
 #include <logger/business/cerr.h>
 #include <tester/business/run.h>
 
-typedef tenacitas::concurrent::business::sleeping_loop_controller controller_t;
-typedef tenacitas::concurrent::business::async_loop<controller_t, int16_t>
+typedef tenacitas::concurrent::business::business::sleeping_loop_controller controller_t;
+typedef tenacitas::concurrent::business::business::async_loop<controller_t, int16_t>
   async_loop_t;
-typedef tenacitas::concurrent::business::thread thread_t;
+typedef tenacitas::concurrent::business::business::thread thread_t;
 
 struct provider
 {

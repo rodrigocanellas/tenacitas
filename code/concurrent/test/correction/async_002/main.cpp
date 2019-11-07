@@ -14,7 +14,7 @@
 #define DESCRIPTION                                                            \
     "Time out of a function object with no parameters, and returning void."
 
-typedef tenacitas::concurrent::async<void> async_t;
+typedef tenacitas::concurrent::business::async<void> async_t;
 
 struct work1
 {

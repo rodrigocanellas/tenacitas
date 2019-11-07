@@ -2,11 +2,17 @@
 #include <sstream>
 #include <string>
 
+
 #include <calendar/business/epoch.h>
 #include <logger/business/cerr.h>
 #include <logger/business/cout.h>
 #include <logger/business/log.h>
 #include <tester/business/run.h>
+#include <concurrent/business/traits.h>
+
+using namespace tenacitas::logger::business;
+using namespace tenacitas::concurrent::business;
+
 
 class cerr_log_creation
 {

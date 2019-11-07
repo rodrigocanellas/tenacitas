@@ -1,5 +1,5 @@
-#ifndef TENACITAS_TESTE_BUS_RUN_H
-#define TENACITAS_TESTE_BUS_RUN_H
+#ifndef TENACITAS_TESTER_BUSINESS_RUN_H
+#define TENACITAS_TESTER_BUSINESS_RUN_H
 
 #include <iostream>
 #include <sstream>
@@ -7,6 +7,10 @@
 
 #include <logger/business/log.h>
 #include <tester/business/internal/test.h>
+
+namespace tenacitas {
+namespace tester {
+namespace business {
 
 inline static std::string
 syntax(char** argv)
@@ -21,13 +25,18 @@ syntax(char** argv)
     return _stream.str();
 }
 
+} // namespace business
+} // namespace tester
+} // namespace tenacitas
+
 #define run_test(test_class, argc, argv, desc)                                 \
     {                                                                          \
         using namespace tenacitas::logger::business;                           \
+        using namespace tenacitas::tester::business;                           \
         log::set_info();                                                       \
         bool _execute = false;                                                 \
         if ((argc) == 1) {                                                     \
-            std::cout << syntax(argv);                                         \
+            std::cout << syntax(argv);                                       \
         } else if ((argc) == 2) {                                              \
             std::string _param((argv)[1]);                                     \
             if (_param == "exec") {                                            \
@@ -40,7 +49,7 @@ syntax(char** argv)
             }                                                                  \
         }                                                                      \
         if (_execute) {                                                        \
-            tenacitas::tester::business::test _test;                           \
+            test _test;                                                        \
             test_class _test_obj;                                              \
             bool _rc = _test(#test_class, std::move(_test_obj));               \
             std::cout << #test_class << (_rc ? " SUCCESS" : " FAIL")           \
