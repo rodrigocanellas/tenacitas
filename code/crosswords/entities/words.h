@@ -82,14 +82,15 @@ struct words
 
   std::string print_positioned(x p_x_limit, y p_y_limit) const
   {
-    using namespace std;
 
     typedef std::vector<std::string> matrix;
 
-    string::size_type _x_size = p_x_limit.get_value<string::size_type>();
-    string::size_type _y_size = p_y_limit.get_value<string::size_type>();
+    std::string::size_type _x_size =
+      p_x_limit.get_value<std::string::size_type>();
+    std::string::size_type _y_size =
+      p_y_limit.get_value<std::string::size_type>();
 
-    matrix _m(_x_size, string(_y_size, ' '));
+    matrix _m(_x_size, std::string(_y_size, ' '));
 
     words::const_iterator _end = m_list.end();
     for (words::const_iterator _ite = m_list.begin(); _ite != _end; ++_ite) {
@@ -98,22 +99,22 @@ struct words
         const lexeme& _lexeme = _ite->get_lexeme();
         for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
           matrix::size_type _x =
-            _coords[_i].get_x().get_value<string::size_type>();
-          string::size_type _y =
+            _coords[_i].get_x().get_value<std::string::size_type>();
+          std::string::size_type _y =
             _coords[_i].get_y().get_value<std::string::size_type>();
           char _c = _lexeme[_i];
           _m[_x][_y] = _c;
         }
       }
     }
-    stringstream _stream;
+    std::stringstream _stream;
     _stream << "\n\n    ";
     for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-      _stream << setw(2) << setfill('0') << _x << " ";
+      _stream << std::setw(2) << std::setfill('0') << _x << " ";
     }
     _stream << std::endl;
     for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
-      _stream << setw(2) << setfill('0') << _y << " ";
+      _stream << std::setw(2) << std::setfill('0') << _y << " ";
       for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
         _stream << "  " << _m[_x][_y];
       }
@@ -179,14 +180,15 @@ print_positioned(words::const_iterator p_begin,
                  coordinate::x p_x_limit,
                  coordinate::y p_y_limit)
 {
-  using namespace std;
 
   typedef std::vector<std::string> matrix;
 
-  string::size_type _x_size = p_x_limit.get_value<string::size_type>();
-  string::size_type _y_size = p_y_limit.get_value<string::size_type>();
+  std::string::size_type _x_size =
+    p_x_limit.get_value<std::string::size_type>();
+  std::string::size_type _y_size =
+    p_y_limit.get_value<std::string::size_type>();
 
-  matrix _m(_x_size, string(_y_size, ' '));
+  matrix _m(_x_size, std::string(_y_size, ' '));
 
   for (words::const_iterator _ite = p_begin; _ite != p_end; ++_ite) {
     if (_ite->positioned()) {
@@ -194,8 +196,8 @@ print_positioned(words::const_iterator p_begin,
       const lexeme& _lexeme = _ite->get_lexeme();
       for (lexeme::size_type _i = 0; _i < _lexeme.size(); ++_i) {
         matrix::size_type _x =
-          _coords[_i].get_x().get_value<string::size_type>();
-        string::size_type _y =
+          _coords[_i].get_x().get_value<std::string::size_type>();
+        std::string::size_type _y =
           _coords[_i].get_y().get_value<std::string::size_type>();
         char _c = _lexeme[_i];
         _m[_x][_y] = _c;
@@ -203,14 +205,14 @@ print_positioned(words::const_iterator p_begin,
     }
   }
 
-  stringstream _stream;
+  std::stringstream _stream;
   _stream << "\n    ";
   for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
-    _stream << setw(2) << setfill('0') << _x << " ";
+    _stream << std::setw(2) << std::setfill('0') << _x << " ";
   }
   _stream << std::endl;
   for (std::string::size_type _y = 0; _y < _y_size; ++_y) {
-    _stream << setw(2) << setfill('0') << _y << " ";
+    _stream << std::setw(2) << std::setfill('0') << _y << " ";
     for (matrix::size_type _x = 0; _x < _x_size; ++_x) {
       _stream << "  " << _m[_x][_y];
     }
