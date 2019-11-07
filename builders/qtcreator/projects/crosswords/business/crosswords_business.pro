@@ -34,6 +34,7 @@ HEADERS += \
     ../../../../../code/crosswords/business/internal/words_positioner.h \
     ../../../../../code/crosswords/business/internal/words_positioner_group.h \
     ../../../../../code/crosswords/business/internal/words_references.h \
+    ../../../../../code/crosswords/business/letters_distributions.h \
     ../../../../../code/crosswords/business/positioner.h \
     ../../../../../code/crosswords/business/internal/positioner000.h \
     ../../../../../code/crosswords/business/internal/positioner001.h \
