@@ -19,7 +19,7 @@ typedef entities::lexeme::value_type letter;
 typedef std::list<words::iterator> words_iterators;
 typedef uint16_t amount;
 
-
+// a letter associated to an amount that it appears in some context
 struct letter_amount {
 
   friend std::ostream & operator<<(std::ostream & p_out, const letter_amount & p_la) {
@@ -39,7 +39,6 @@ struct letter_amount {
 
   inline letter get_letter()const {return m_letter;}
   inline amount get_amount()const {return m_amount;}
-  inline letter_amount & operator++() {++m_amount;return *this;}
   inline void add(amount p_amount) {m_amount+=p_amount;}
 
   inline bool operator==(const letter_amount& p_la) const {
@@ -63,9 +62,12 @@ private:
   amount m_amount;
 };
 
+typedef std::list<letter_amount> letters_amounts;
+typedef letters_amounts::iterator  letter_amount_iterator;
+
+// amount of each letter in a word
 struct word_letters_amount {
 
-  typedef std::list<letter_amount> letters_amounts;
 
   friend std::ostream & operator<<(std::ostream & p_out, const word_letters_amount & p_wla) {
     p_out << "[" << *(p_wla.get_word_iterator()) << ": ";
@@ -90,22 +92,21 @@ struct word_letters_amount {
         m_letters_amounts.push_back(letter_amount(_letter));
       }
       else {
-        ++(*_lai);
+        _lai->add(1);
       }
     }
   }
 
-  inline words::const_iterator get_word_iterator()const{return m_word_iterator;}
+  inline words::iterator get_word_iterator(){return m_word_iterator;}
 
-  letters_amounts::const_iterator begin_letters()const{return m_letters_amounts.begin();}
+  inline letter_amount_iterator begin(){return m_letters_amounts.begin();}
 
-  letters_amounts::const_iterator end_letters()const{return m_letters_amounts.end();}
+  inline letter_amount_iterator end(){return m_letters_amounts.end();}
 
   inline amount get_amount(letter p_letter)  {
     letters_amounts::iterator _la = find(p_letter);
     return (_la == m_letters_amounts.end() ? 0 : _la->get_amount());
   }
-
 
 private:
   letters_amounts::iterator find(letter p_letter)  {
@@ -120,19 +121,37 @@ private:
   letters_amounts m_letters_amounts;
 };
 
-typedef std::list<word_letters_amount> words_letters_amounts;
 
-words_letters_amounts create(words & p_words) {
+// list of words with the amount of each letter
+typedef std::list<word_letters_amount> word_letters_amounts_list;
+typedef word_letters_amounts_list::iterator word_letters_amounts_iterator;
 
-  words_letters_amounts _wlas;
-  words::iterator _end = p_words.end();
-  for(words::iterator _ite = p_words.begin();_ite!=_end;++_ite) {
-    _wlas.push_back(word_letters_amount(_ite));
+
+struct words_letters_amounts {
+  explicit words_letters_amounts (words & p_words) {
+    words::iterator _end = p_words.end();
+    for(words::iterator _ite = p_words.begin();_ite!=_end;++_ite) {
+      m_word_letters_amounts_list.push_back(word_letters_amount(_ite));
+    }
   }
-  return _wlas;
 
-}
+  inline word_letters_amounts_iterator begin() {
+    return m_word_letters_amounts_list.begin();
+  }
 
+  inline word_letters_amounts_iterator end() {
+    return m_word_letters_amounts_list.end();
+  }
+
+
+private:
+
+private:
+  word_letters_amounts_list m_word_letters_amounts_list;
+
+};
+
+// total amount of a letter in a set of words, and the words that this letter appears
 struct letter_distribution {
 
   friend std::ostream & operator<<(std::ostream & p_out, const letter_distribution & p_ld) {
@@ -151,8 +170,6 @@ struct letter_distribution {
     return p_out;
   }
 
-  typedef std::list<words_letters_amounts::iterator> words_letters_amounts_iterators;
-
   letter_distribution(letter p_letter, words_letters_amounts & p_words_letter_amounts)
     : m_letter_total_amount(p_letter, 0){
     words_letters_amounts::iterator _end = p_words_letter_amounts.end();
@@ -165,26 +182,24 @@ struct letter_distribution {
     }
   }
 
-
-
   inline const letter_amount & get_letter_amount()const{return m_letter_total_amount;}
 
-  inline words_letters_amounts_iterators::const_iterator begin() const {
-    return m_words_letters_amounts_iterators.begin();
+  inline word_letters_amounts_iterators_iterator begin()  {
+    return m_ite_words_letters_amountsrators.begin();
   }
 
-  inline words_letters_amounts_iterators::const_iterator end() const {
-    return m_words_letters_amounts_iterators.end();
+  inline word_letters_amounts_iterators_iterator end()  {
+    return m_ite_words_letters_amountsrators.end();
   }
 
 private:
-  void add(words_letters_amounts::iterator p_wla_ite, amount p_amount) {
-    m_words_letters_amounts_iterators.push_back(p_wla_ite);
+  void add(word_letters_amounts_iterator p_wla_ite, amount p_amount) {
+    m_ite_words_letters_amountsrators.push_back(p_wla_ite);
     m_letter_total_amount.add(p_amount);
   }
 private:
   letter_amount m_letter_total_amount=0;
-  words_letters_amounts_iterators m_words_letters_amounts_iterators;
+  words_letters_amounts_iterators m_ite_words_letters_amountsrators;
 
 };
 
@@ -196,13 +211,21 @@ struct letters_distributions {
     for (letter _letter ='A'; _letter <= 'Z'; ++_letter) {
       letter_distribution _la(_letter, m_words_letters_amounts);
       if (_la.get_letter_amount().get_amount() > 0) {
-        m_list.push_back(std::move(_la));
+        m_letter_distribution_list.push_back(std::move(_la));
       }
     }
+
+    m_ite_letter_distribution = m_letter_distribution_list.begin();
+    m_end_letter_distribution = m_letter_distribution_list.end();
+
+    m_ite_words_letters_amounts = (*m_ite_letter_distribution->begin())->begin();
+    m_end_words = p_words.end();
+
+
   }
 
   void sort_by_amount() {
-    m_list.sort(
+    m_letter_distribution_list.sort(
           [](const letter_distribution & p_left,
           const letter_distribution & p_right) -> bool {
       return p_left.get_letter_amount().get_amount() <
@@ -211,16 +234,56 @@ struct letters_distributions {
   }
 
   void traverse(std::function<void(const letter_distribution&)> p_function) const {
-    for (const letter_distribution  & _ld : m_list) {
+    for (const letter_distribution  & _ld : m_letter_distribution_list) {
       p_function(_ld);
     }
   }
 
+  words::iterator next() {
+
+    if (m_ite_letter_distribution == m_end_letter_distribution) {
+      return m_end_words;
+    }
+
+    letter_distribution_list::iterator _end_letter_distribution_list =
+        m_letter_distribution_list.end();
+    letter_distribution_list::iterator _ite_letter_distribution_list =
+        m_letter_distribution_list.begin();
+
+    for (;_ite_letter_distribution_list!=_end_letter_distribution_list;
+         ++_ite_letter_distribution_list) {
+
+    }
+
+//    letter_distribution & _ld = *(m_letter_distribution_list.begin());
+
+//    letter_distribution::words_letters_amounts_iterators::iterator
+//        _wlai_ite = _ld.begin();
+
+//    words_letters_amounts::iterator _wla_ite = *_wlai_ite;
+
+//    word_letters_amount & _wla = *(_wla_ite);
+
+//    return _wla.get_word_iterator();
+
+
+  }
+
 private:
-  typedef std::list<letter_distribution>  list;
+  typedef std::list<letter_distribution>  letter_distribution_list;
+  typedef letter_distribution_list::iterator letter_distribution_iterator;
 private:
-  list m_list;
+  letter_distribution_list m_letter_distribution_list;
+  letter_distribution_iterator m_ite_letter_distribution;
+  letter_distribution_iterator m_end_letter_distribution;
+
   words_letters_amounts m_words_letters_amounts;
+  word_letters_amounts_iterator m_ite_words_letters_amounts;
+  word_letters_amounts_iterator m_end_words_letters_amounts;
+
+  words::iterator m_end_words;
+
+
 };
 
 

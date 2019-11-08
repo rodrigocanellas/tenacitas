@@ -11,7 +11,7 @@
 #include <utility>
 
 #include <crosswords/business/internal/log.h>
-#include <crosswords/business/internal/positioner006.h>
+#include <crosswords/business/internal/positioner007.h>
 #include <crosswords/business/internal/words_positioner_group.h>
 #include <crosswords/entities/coordinate.h>
 #include <crosswords/entities/description.h>
@@ -68,10 +68,10 @@ struct positioner_t
   inline y get_y_limit() const { return m_positioner.get_y_limit(); }
 
 private:
-  typedef positioner006_t<log> positioner006;
+  typedef positioner007_t<log> positioner007;
 
 private:
-  positioner006 m_positioner;
+  positioner007 m_positioner;
 };
 } // namespace business
 } // namespace crosswords
