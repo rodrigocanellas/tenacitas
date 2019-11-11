@@ -1,0 +1,87 @@
+@startuml
+
+hide empty members
+
+namespace network {
+
+enum status {
+   OK
+   ERROR_CONNECTION_SENDING
+   ERROR_CONNECTION_RECEIVING
+   ERROR_CONNECTION_SENDING_TIMEOUT
+   ERROR_CONNECTION_RECEIVING_TIMEOUT
+   ERROR_ADAPTER_UP
+   ERROR_ADAPTER_DOWN
+}
+
+enum type {
+    GPRS
+    WIFI
+    ETH
+    USB
+    SERIAL
+}
+
+enum strength {
+    UNKNOWN
+    LEVEL_0
+    LEVEL_1
+    LEVEL_2
+    LEVEL_3
+    LEVEL_4
+    LEVEL_5
+    LEVEL_6
+    LEVEL_7
+    LEVEL_8
+    LEVEL_9
+}
+
+
+class connection {
+   + send(std.string) : std.pair<status, std.string>
+   + post(std.string) : std.future<std.pair<status, std.string>>
+}
+
+
+class manager <<singleton>> {
+   + manager(adapter_chooser)
+   + start()
+   + stop()
+   + set_adapter(adapter.type)
+   == signals ==
+   adapter_changed(adapter.id old, adapter.id new)
+   error(adapter.id , status)
+}
+
+class adapter {
+     +up() : bool
+     +down() : bool
+     +quality():signal_strength
+     +get_type() : adapter_type
+     +is_up() : bool
+}
+
+class adapter_chooser  {
+   +get_adapter(adapter_type) : adapter
+   +set_criteria(choice_criteria)
+   +get_adapter() : adapter
+}
+
+enum choice_criteria {
+   VELOCITY
+   STABLILITY
+}
+
+adapter_chooser +-- choice_criteria
+manager *-- "*" adapter
+manager *--  adapter_chooser
+manager o-- "m_current" adapter
+
+adapter +-- type
+adapter *--  type
+
+adapter +-- id
+adapter *--  id
+
+adapter +-- strength
+@enduml

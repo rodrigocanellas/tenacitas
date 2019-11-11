@@ -1,0 +1,46 @@
+@startuml
+
+hide empty members
+
+package layer {
+    enum datalink {
+        ethernet
+        gprs
+        wifi
+    }
+    enum  network {
+        ipv-4
+        ipv-6        
+    }
+    enum transport {
+        tcp
+        udp
+        icpm
+        igmp
+    }
+    enum application {
+        web_server
+        mamba
+    }
+
+    application --> transport
+    transport --> network
+    network --> datalink
+}    
+class buffer
+class connection  <<BSD socket>> {
+    + read() : buffer
+    + write(buffer)
+}
+
+class connector
+
+class bpf <<???>>
+class dlpi <<???>>
+class arp <<???>>
+class rarp <<???>>>
+
+connection ..> "uses" transport
+network ..> "determines" address
+connection ..> "uses" network
+@enduml
