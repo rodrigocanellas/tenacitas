@@ -15,7 +15,6 @@ TARGET = tenacitas.crosswords.business
 include(../../../common.pri)
 
 HEADERS += \
-    ../../../../../code/crosswords/business/internal/dispatcher.h \
     ../../../../../code/crosswords/business/internal/log.h \
     ../../../../../code/crosswords/business/internal/matrix.h \
     ../../../../../code/crosswords/business/internal/position_word.h \
