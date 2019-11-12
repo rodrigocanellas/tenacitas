@@ -1,0 +1,30 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+class amount_of_letter
+class letter
+class amount
+class amount_of_letters_in_word 
+class amount_of_letters_in_words
+class words
+class words_iterator
+class amount_of_letters_in_words_iterator
+class letter_distribution 
+class letters_distributions 
+ 
+amount_of_letter *-- letter
+amount_of_letter *-- amount
+amount_of_letters_in_word *-- "*" amount_of_letter
+amount_of_letters_in_word *-- words_iterator
+amount_of_letters_in_words *-- "*" amount_of_letters_in_word 
+words +-- words_iterator
+amount_of_letters_in_words +-- amount_of_letters_in_words_iterator
+letter_distribution *-- amount_of_letter
+letter_distribution *-- "*" amount_of_letters_in_words_iterator
+letters_distributions *-- amount_of_letters_in_words
+letters_distributions *-- "*" letter_distribution 
+amount_of_letters_in_words_iterator o-- amount_of_letters_in_word
+
+@enduml
