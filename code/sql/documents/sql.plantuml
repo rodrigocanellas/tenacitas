@@ -1,0 +1,54 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+namespace  sql {
+
+namespace entities {
+class Size
+class Type
+class Name
+class Column {
+	isNull : boolean
+	isAutoIncrement : boolean
+}
+class PrimaryKey
+class Table {
+	name : Name
+}
+class Database {
+	name : Name
+}
+class Ip
+class Host
+class Server {
+	name : Name
+}
+
+Column *-- Name
+Column *-- Type
+Column *-- Size
+
+PrimaryKey o-- "*" Column
+PrimaryKey o-- Table
+
+
+Table *-- PrimaryKey
+Table o--  "fks *" PrimaryKey
+Table *-- "*" Column 
+Table o-- Database
+Database *-- "*" Table
+Host *-- "*" Server
+Server *-- "*" Database
+Host *-- Ip
+Column +-- Type
+}
+
+namespace business {
+
+}
+}
+
+
+@enduml

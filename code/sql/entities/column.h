@@ -12,14 +12,15 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
-struct column {
+template <typename t_traits>
+struct column_t {
 
   friend std::ostream  & operator<<(std::ostream & p_out,
-                                     const column & p_column) {
-    p_out << "{\n\"name\" : \"" << p_column.get_name() << "\", \n"
-          << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", \n"
-          << "\"size\" : \"" <<p_column.get_size() << "\", \n"
-          << "\"value\" : \"" << p_column.get_value() << "\" \n}";
+                                     const column_t & p_column) {
+    p_out << "{ \"name\" : \"" << p_column.get_name() << "\", "
+          << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
+          << "\"size\" : \"" <<p_column.get_size() << "\", "
+          << "\"value\" : \"" << p_column.get_value() << "\" }";
     return p_out;
   }
 
@@ -39,8 +40,8 @@ struct column {
     LONG_REAL = 12
   };
 
-  column()=delete;
-  column(const name & p_name)
+  column_t()=delete;
+  column_t(const name & p_name)
     : m_name(p_name),
       m_type(type::UNDEFINED),
       m_size(type2size(m_type)){}

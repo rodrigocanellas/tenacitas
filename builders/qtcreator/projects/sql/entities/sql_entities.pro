@@ -19,7 +19,8 @@ HEADERS += \
     ../../../../../code/sql/entities/primary_key.h \
     ../../../../../code/sql/entities/size.h \
     ../../../../../code/sql/entities/table.h \
-    ../../../../../code/sql/entities/tables.h
+    ../../../../../code/sql/entities/tables.h \
+    ../../../../../code/sql/entities/traits.h
 
 include (../../../common.pri)
 

@@ -7,7 +7,7 @@ namespace tenacitas {
 namespace string {
 namespace business {
 
-const char*
+static const char*
 file_name_from_path(const char* p_path)
 {
   const char* _p = p_path + strlen(p_path);
