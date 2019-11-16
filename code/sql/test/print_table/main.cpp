@@ -101,9 +101,11 @@ main()
 
   _table_1.add_to_primary_key("col100");
 
-  foreign_key _foreign_key("FL_001", _table_1.get_primary_key());
+  //  foreign_key _foreign_key("FL_001", &_table_1.get_primary_key());
 
-  _table_0.add_foreign_key(std::move(_foreign_key));
+  //  _table_0.add_foreign_key(std::move(_foreign_key));
+
+  _table_0.add_foreign_key(foreign_key("FL_001", &_table_1.get_primary_key()));
 
   std::cout << _table_0 << std::endl;
 }

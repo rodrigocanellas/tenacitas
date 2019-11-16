@@ -25,6 +25,11 @@ struct foreign_key
     , m_primary_key(p_primary_key)
   {}
 
+  foreign_key(foreign_key&& p_foreign_key)
+    : m_name(std::move(p_foreign_key.m_name))
+    , m_primary_key(std::move(p_foreign_key.m_primary_key))
+  {}
+
   inline const primary_key* get_pk() const { return m_primary_key; }
 
   inline const name& get_name() const { return m_name; }

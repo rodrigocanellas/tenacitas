@@ -4,6 +4,16 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+std::ostream&
+operator<<(std::ostream& p_out, const column& p_column)
+{
+  p_out << "{ \"name\" : \"" << p_column.get_name() << "\", "
+        << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
+        << "\"size\" : \"" << p_column.get_size() << "\", "
+        << "\"value\" : \"" << p_column.get_value() << "\"}";
+  return p_out;
+}
+
 size
 column::type2size(column::type p_type)
 {

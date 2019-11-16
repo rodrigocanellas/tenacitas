@@ -2,8 +2,8 @@
 #define CAPEMISA_TEST_AUTOMATION_ENTITIES_COLUMNS_H
 
 #include <algorithm>
+#include <list>
 #include <memory>
-#include <set>
 
 #include <sql/entities/column.h>
 #include <sql/entities/name.h>
@@ -15,16 +15,23 @@ namespace entities {
 struct columns
 {
 
-  typedef std::set<column> column_list;
+  typedef std::list<column> column_list;
   typedef column_list::iterator iterator;
   typedef column_list::const_iterator const_iterator;
 
-  const_iterator add(column&& p_column)
+  friend std::ostream& operator<<(std::ostream& p_out,
+                                  const columns& p_columns);
+
+  iterator add(column&& p_column)
   {
-    return m_column_list.emplace(std::move(p_column)).first;
+    //    column_list::iterator _ite =
+    //      m_column_list.emplace(std::move(p_column)).first;
+    //    return _ite;
+    m_column_list.push_back(std::move(p_column));
+    return std::prev(m_column_list.end());
   }
 
-  inline const_iterator find(const name& p_column_name) const
+  inline iterator find(const name& p_column_name)
   {
     return std::find_if(m_column_list.begin(),
                         m_column_list.end(),

@@ -30,15 +30,14 @@ struct database
 
   inline tables::iterator end() { return m_tables.end(); }
 
+  inline const name& get_name() const { return m_name; }
+
   tables::iterator add(table&& p_table)
   {
     return m_tables.add(std::move(p_table));
   }
 
-  tables::iterator find(const name& p_name) const
-  {
-    return m_tables.find(p_name);
-  }
+  tables::iterator find(const name& p_name) { return m_tables.find(p_name); }
 
 private:
   name m_name;

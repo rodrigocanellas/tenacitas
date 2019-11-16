@@ -22,11 +22,15 @@ struct primary_key
 
   friend std::ostream& operator<<(std::ostream& p_out, const primary_key& p_pk);
 
-  primary_key() = delete;
-
   inline explicit primary_key(table* p_table, const name& p_name = "PK")
     : m_name(p_name)
     , m_table(p_table)
+  {}
+
+  primary_key(primary_key&& p_pk)
+    : m_name(std::move(p_pk.m_name))
+    , m_table(p_pk.m_table)
+    , m_columns(std::move(p_pk.m_columns))
   {}
 
   const name& get_name() const { return m_name; }
@@ -49,7 +53,7 @@ struct primary_key
 
   inline table* get_table() const { return m_table; }
 
-  const std::string& get_table_name() const;
+  const name& get_table_name() const;
 
 private:
 private:

@@ -13,7 +13,7 @@ namespace entities {
 struct foreigners_keys
 {
 
-  typedef std::set<foreign_key> foreign_key_list;
+  typedef std::list<foreign_key> foreign_key_list;
 
   typedef foreign_key_list::const_iterator const_iterator;
   typedef foreign_key_list::iterator iterator;
@@ -23,7 +23,9 @@ struct foreigners_keys
 
   inline iterator add(foreign_key&& p_foreign_key)
   {
-    return m_foreign_key_list.emplace(std::move(p_foreign_key)).first;
+    //    return m_foreign_key_list.emplace(std::move(p_foreign_key)).first;
+    m_foreign_key_list.push_back(std::move(p_foreign_key));
+    return std::prev(m_foreign_key_list.end());
   }
 
   inline const_iterator end() const { return m_foreign_key_list.end(); }
@@ -34,7 +36,7 @@ struct foreigners_keys
 
   inline iterator begin() { return m_foreign_key_list.begin(); }
 
-  inline iterator find(const name& p_foreign_key_name) const
+  inline iterator find(const name& p_foreign_key_name)
   {
     return std::find_if(
       m_foreign_key_list.begin(),

@@ -8,9 +8,7 @@ namespace entities {
 std::ostream&
 operator<<(std::ostream& p_out, const primary_key& p_pk)
 {
-  p_out << "\"pk\": {"
-        << "\"columns\": [";
-
+  p_out << "[";
   primary_key::pk_columns::const_iterator _end = p_pk.end_columns();
   for (primary_key::pk_columns::const_iterator _ite = p_pk.begin_columns();
        _ite != _end;
@@ -20,11 +18,11 @@ operator<<(std::ostream& p_out, const primary_key& p_pk)
       p_out << ", ";
     }
   }
-  p_out << "]}";
+  p_out << "]";
   return p_out;
 }
 
-const std::string&
+const name&
 primary_key::get_table_name() const
 {
   return m_table->get_name();

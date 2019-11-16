@@ -4,6 +4,7 @@
 #include <thread>
 
 #include <sql/entities/column.h>
+#include <sql/entities/columns.h>
 
 using namespace capemisa::sql::entities;
 
@@ -60,4 +61,9 @@ main()
   column _c011("col011");
   _c011.set_datetime(std::time(nullptr));
   std::cout << _c011 << std::endl;
+
+  columns _cols;
+  _cols.add(std::move(_c000));
+  _cols.add(std::move(_c001));
+  std::cout << _cols << std::endl;
 }

@@ -26,9 +26,11 @@ include (../../../common.pri)
 
 SOURCES += \
   ../../../../../code/sql/entities/internal/column.cpp \
+  ../../../../../code/sql/entities/internal/columns.cpp \
   ../../../../../code/sql/entities/internal/database.cpp \
   ../../../../../code/sql/entities/internal/foreign_key.cpp \
   ../../../../../code/sql/entities/internal/foreigners_keys.cpp \
   ../../../../../code/sql/entities/internal/primary_key.cpp \
-  ../../../../../code/sql/entities/internal/table.cpp
+  ../../../../../code/sql/entities/internal/table.cpp \
+  ../../../../../code/sql/entities/internal/tables.cpp
 

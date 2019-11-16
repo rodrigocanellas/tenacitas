@@ -15,14 +15,7 @@ namespace entities {
 struct column
 {
 
-  friend std::ostream& operator<<(std::ostream& p_out, const column& p_column)
-  {
-    p_out << "{ \"name\" : \"" << p_column.get_name() << "\", "
-          << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
-          << "\"size\" : \"" << p_column.get_size() << "\", "
-          << "\"value\" : \"" << p_column.get_value() << "\" }";
-    return p_out;
-  }
+  friend std::ostream& operator<<(std::ostream& p_out, const column& p_column);
 
   enum class type : int8_t
   {

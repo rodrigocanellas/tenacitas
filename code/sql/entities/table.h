@@ -29,15 +29,22 @@ struct table
     , m_primary_key(this)
   {}
 
+  table(table&& p_table)
+    : m_name(std::move(p_table.m_name))
+    , m_primary_key(std::move(p_table.m_primary_key))
+    , m_columns(std::move(p_table.m_columns))
+    , m_foreigners_keys(std::move(p_table.m_foreigners_keys))
+  {}
+
   inline const name& get_name() const { return m_name; }
 
   columns::const_iterator begin_column() const { return m_columns.begin(); }
 
   columns::const_iterator end_column() const { return m_columns.end(); }
 
-  inline void add_column(column&& p_column)
+  inline columns::iterator add_column(column&& p_column)
   {
-    m_columns.add(std::move(p_column));
+    return m_columns.add(std::move(p_column));
   }
 
   foreigners_keys::const_iterator begin_foregign_key() const
@@ -50,7 +57,7 @@ struct table
     return m_foreigners_keys.end();
   }
 
-  inline const primary_key* get_primary_key() const { return &m_primary_key; }
+  inline const primary_key& get_primary_key() const { return m_primary_key; }
 
   inline void add_to_primary_key(const name& p_column_name)
   {
