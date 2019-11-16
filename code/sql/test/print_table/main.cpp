@@ -1,19 +1,16 @@
-#include <iostream>
-#include <ctime>
-#include <thread>
 #include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
 
 #include <sql/entities/column.h>
 #include <sql/entities/table.h>
-#include <sql/entities/traits.h>
 
-  using namespace capemisa;
+using namespace capemisa::sql::entities;
 
-
-
-int main() {
-  typedef sql::entities::traits::table table;
-  typedef sql::entities::traits::column column;
+int
+main()
+{
 
   table _table_0("table_000");
 
@@ -77,13 +74,11 @@ int main() {
     _table_0.add_column(std::move(_c009));
   }
 
-
   {
     column _c010("col010");
     _c010.set_char('M');
     _table_0.add_column(std::move(_c010));
   }
-
 
   std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -96,24 +91,19 @@ int main() {
   _table_0.add_to_primary_key("col004");
   _table_0.add_to_primary_key("col008");
 
-//  sql::entities::table _table_1("table_000");
+  table _table_1("table_000");
 
-//  {
-//    column _c100("col100");
-//    _c100.set_datetime(std::time(nullptr));
-//    _table_1.add_column(std::move(_c100));
-//  }
+  {
+    column _c100("col100");
+    _c100.set_datetime(std::time(nullptr));
+    _table_1.add_column(std::move(_c100));
+  }
 
-//  _table_1.add_to_primary_key("col100");
+  _table_1.add_to_primary_key("col100");
 
-//  sql::entities::table::foreign_key_ptr _foreign_key =
-//      std::make_shared<sql::entities::table::foreign_key>
-//      ("FL_001", _table_1.get_primary_key());
+  foreign_key _foreign_key("FL_001", _table_1.get_primary_key());
 
-//  _table_0.add_foreign_key(_foreign_key);
-
+  _table_0.add_foreign_key(std::move(_foreign_key));
 
   std::cout << _table_0 << std::endl;
-
 }
-

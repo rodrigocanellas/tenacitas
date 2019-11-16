@@ -1,15 +1,15 @@
-#include <iostream>
-#include <ctime>
-#include <thread>
 #include <chrono>
+#include <ctime>
+#include <iostream>
+#include <thread>
 
 #include <sql/entities/column.h>
-#include <sql/entities/traits.h>
 
-using namespace capemisa;
+using namespace capemisa::sql::entities;
 
-int main() {
-  typedef sql::entities::column_t<sql::entities::traits> column;
+int
+main()
+{
 
   column _c000("col000");
   _c000.set_int(static_cast<int8_t>(46));
@@ -60,5 +60,4 @@ int main() {
   column _c011("col011");
   _c011.set_datetime(std::time(nullptr));
   std::cout << _c011 << std::endl;
-
 }
