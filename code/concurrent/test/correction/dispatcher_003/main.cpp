@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 
+#include <calendar/business/epoch.h>
 #include <concurrent/business/dispatcher.h>
 #include <concurrent/business/internal/log.h>
 #include <concurrent/business/sleeping_loop.h>
@@ -13,166 +14,117 @@
 #include <tester/business/run.h>
 
 using namespace tenacitas;
-using namespace tenacitas;
+namespace ns_con = tenacitas::concurrent::business;
+namespace ns_log = tenacitas::logger::business;
+namespace ns_cal = tenacitas::calendar::business;
+
+// ############################## loops
+typedef ns_con::sleeping_loop_t<void, ns_log::log> sync_loop;
+typedef ns_con::sleeping_loop_t<void, ns_log::log> rx_loop;
 
 // ############################## messages
-struct start
+
+struct end
+{};
+
+struct msg_tpdo
 {
-  friend std::ostringstream& operator<<(std::ostringstream& p_out, const start&)
+  msg_tpdo() { ++counter; }
+
+  friend std::ostream& operator<<(std::ostream& p_out,
+                                  const msg_tpdo& /*p_msg*/)
   {
-    p_out << "start sent";
+    p_out << ns_cal::epoch::microsecs();
     return p_out;
+  }
+  static uint16_t counter;
+};
+uint16_t msg_tpdo::counter = 0;
+;
+
+struct sync
+{
+  ns_con::work_status operator()()
+  {
+    concurrent_log_test(ns_log::log, "sync");
+    return ns_con::work_status::dont_stop;
   }
 };
 
-struct finish
+// ############################## publishers
+struct rx
 {
-  friend std::ostringstream& operator<<(std::ostringstream& p_out,
-                                        const finish&)
+  ns_con::work_status operator()()
   {
-    p_out << "finish sent";
-    return p_out;
-  }
-};
+    concurrent_log_test(ns_log::log, "rx");
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
 
-struct msg1
-{
-  friend std::ostringstream& operator<<(std::ostringstream& p_out, const msg1&)
-  {
-    p_out << "msg1 sent";
-    return p_out;
-  }
-};
-
-struct msg2
-{
-  friend std::ostringstream& operator<<(std::ostringstream& p_out, const msg2&)
-  {
-    p_out << "msg2 sent";
-    return p_out;
-  }
-};
-
-// ############################## agents
-struct agent_1
-{
-  agent_1() { concurrent::business::dispatcher_t<start, logger::business::log>::publish(start()); }
-
-  concurrent::business::work_status operator()(msg1&&)
-  {
-    concurrent_log_test(logger::business::log, "msg1 received");
-
-    concurrent::business::dispatcher_t<msg2, logger::business::log>::publish(msg2());
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-
-    concurrent::business::dispatcher_t<finish, logger::business::log>::publish(finish());
     return concurrent::business::work_status::dont_stop;
   }
 };
 
-struct agent_2
+// ############################## handler
+struct tx
 {
-  agent_2() { concurrent::business::dispatcher_t<start, logger::business::log>::publish(start()); }
+  tx()
+    : m_id(++m_counter)
+  {}
 
-  concurrent::business::work_status operator()(msg2&&)
+  ns_con::work_status operator()(msg_tpdo&& p_msg)
   {
-    concurrent_log_test(logger::business::log, "msg2 received");
-
-    concurrent::business::dispatcher_t<msg1, logger::business::log>::publish(msg1());
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    concurrent::business::dispatcher_t<finish, logger::business::log>::publish(finish());
-    return concurrent::business::work_status::dont_stop;
-  }
-};
-
-struct controler
-{
-  concurrent::business::work_status operator()(start&&)
-  {
-
-    {
-      std::lock_guard<std::mutex> _lock(m_mutex_counter);
-      ++m_counter;
-    }
-    concurrent_log_test(logger::business::log, "start received, counter = ", m_counter);
-    return concurrent::business::work_status::dont_stop;
-  }
-
-  concurrent::business::work_status operator()(finish&&)
-  {
-    //    if (m_counter == 0) {
-    //      concurrent_log_test(logger::business::log, "finisher received, counter = ",
-    //      m_counter); m_cond_finish.notify_all(); return;
+    //    if (p_msg.counter > 20) {
+    //      concurrent_log_test(
+    //        ns_log::log, "stoping because counter = ", p_msg.counter);
+    //      return ns_con::work_status::stop;
     //    }
-    std::lock_guard<std::mutex> _lock(m_mutex_counter);
-    --m_counter;
-    if (m_counter == 0) {
-      concurrent_log_test(
-        logger::business::log, "finisher received, counter = ", m_counter);
-      m_cond_finish.notify_all();
-      return concurrent::business::work_status::stop;
-    }
-    concurrent_log_test(
-      logger::business::log, "finisher received, counter = ", m_counter);
-    return concurrent::business::work_status::dont_stop;
-  }
+    concurrent_log_test(logger::business::log, m_id, "|", p_msg);
 
-  ~controler()
-  {
-    concurrent_log_test(logger::business::log, "------> waiting...");
-    std::unique_lock<std::mutex> _lock(m_mutex_finish);
-    m_cond_finish.wait(_lock);
-    concurrent_log_test(logger::business::log, "------> done!");
+    return ns_con::work_status::dont_stop;
   }
 
 private:
-  std::condition_variable m_cond_finish;
-  std::mutex m_mutex_finish;
-  std::mutex m_mutex_counter;
-  uint16_t m_counter = { 0 };
+  uint16_t m_id = 0;
+  static uint16_t m_counter;
 };
+uint16_t tx::m_counter = 0;
 
 // ############################## main
 struct dispatcher_003
 {
 
-  dispatcher_003()
-  {
-    concurrent::business::dispatcher_t<start, logger::business::log>::subscribe(
-      "start",
-      [this](start&& p_start) -> concurrent::business::work_status {
-        return m_controler(std::move(p_start));
-      },
-      std::chrono::milliseconds(500));
-
-    concurrent::business::dispatcher_t<finish, logger::business::log>::subscribe(
-      "finish",
-      [this](finish&& p_finish) -> concurrent::business::work_status {
-        return m_controler(std::move(p_finish));
-      },
-      std::chrono::milliseconds(500));
-
-    concurrent::business::dispatcher_t<msg2, logger::business::log>::subscribe(
-      "msg1", agent_2(), std::chrono::milliseconds(1500));
-    concurrent::business::dispatcher_t<msg1, logger::business::log>::subscribe(
-      "msg2", agent_1(), std::chrono::milliseconds(500));
-  }
+  dispatcher_003() {}
 
   bool operator()()
   {
+    //    sync_loop _sync(
+    //      std::chrono::milliseconds(100), sync(),
+    //      std::chrono::milliseconds(2));
 
-    //    using namespace logger::business;
-    //    using namespace concurrent::business::business;
+    rx_loop _rx(
+      std::chrono::milliseconds(40), rx(), std::chrono::milliseconds(15));
 
-    //    dispatcher_t<msg1, logger::business::log>::publish(msg1());
+    ns_con::dispatcher_t<msg_tpdo, ns_log::log>::subscribe(
+      "tx", tx(), std::chrono::milliseconds(10));
 
-    return false;
+    //    _sync.run();
+    _rx.run();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(122));
+
+    return true;
   }
-
-private:
-  controler m_controler;
 };
 
 int
@@ -182,6 +134,5 @@ main(int argc, char** argv)
   run_test(dispatcher_003,
            argc,
            argv,
-           "\nTesting asynchronous work collaboration, and ending with "
-           "message. NOT WORKING")
+           "\nTest inspired in a case brought by Fabio Costa")
 }
