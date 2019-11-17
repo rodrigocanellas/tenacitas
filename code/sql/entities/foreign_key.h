@@ -6,6 +6,7 @@
 
 #include <sql/entities/name.h>
 #include <sql/entities/primary_key.h>
+#include <sql/entities/types.h>
 
 namespace capemisa {
 namespace sql {
@@ -20,7 +21,7 @@ struct foreign_key
 
   foreign_key() = delete;
 
-  explicit foreign_key(const name& p_name, const primary_key* p_primary_key)
+  explicit foreign_key(const name& p_name, ptr<primary_key> p_primary_key)
     : m_name(p_name)
     , m_primary_key(p_primary_key)
   {}
@@ -30,23 +31,13 @@ struct foreign_key
     , m_primary_key(std::move(p_foreign_key.m_primary_key))
   {}
 
-  inline const primary_key* get_pk() const { return m_primary_key; }
+  inline const ptr<primary_key> get_pk() const { return m_primary_key; }
 
   inline const name& get_name() const { return m_name; }
 
-  bool operator==(const foreign_key& p_foreign_key) const
-  {
-    return m_name == p_foreign_key.get_name();
-  }
-
-  bool operator<(const foreign_key& p_foreign_key) const
-  {
-    return m_name < p_foreign_key.get_name();
-  }
-
 private:
   name m_name;
-  const primary_key* m_primary_key;
+  ptr<primary_key> m_primary_key;
 };
 
 } // namespace entities

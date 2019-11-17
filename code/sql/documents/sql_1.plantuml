@@ -13,25 +13,41 @@ class Column {
 	isNull : boolean
 	isAutoIncrement : boolean
 }
+class Columns 
 class PrimaryKey
+class PrimaryKeys
 class ForeignKey {
 	name : Name
 }
+class ForeignersKeys
 class Table {
 	name : Name
 }
+class Tables
 class Database {
 	name : Name
 }
+class Databases
 class Ip
 class Host
 class Server {
 	name : Name
 }
+Class Servers
 
 Column *-- Name
 Column *-- Type
 Column *-- Size
+
+Columns *-- "*" Column
+Tables *-- "*" Table
+PrimaryKey *-- "*" PrimaryKey
+ForeignersKeys *-- "*" ForeignKey
+Databases *-- "*" Database
+Servers *-- "*" Server
+
+Server o-- "*" Database 
+
 
 PrimaryKey o-- "*" Column
 PrimaryKey o-- Table
@@ -46,11 +62,11 @@ Host *-- "*" Server
 Server *-- "*" Database
 Host *-- Ip
 Column +-- Type
-Database o-- Server
-Server o-- Host
-Hosts *-- "*" Host
 }
 
+namespace business {
+
+}
 }
 
 

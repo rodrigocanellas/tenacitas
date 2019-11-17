@@ -12,10 +12,13 @@
 #include <sql/entities/foreigners_keys.h>
 #include <sql/entities/name.h>
 #include <sql/entities/primary_key.h>
+#include <sql/entities/types.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
+
+struct database;
 
 struct table
 {
@@ -24,68 +27,64 @@ struct table
 
   table() = delete;
 
-  explicit inline table(const name& p_name)
-    : m_name(p_name)
-    , m_primary_key(this)
+  explicit inline table(database* p_database, const name& p_name)
+    : m_database(p_database)
+    , m_name(p_name)
+  //    , m_primary_key(make_ptr<primary_key>(this))
   {}
 
-  table(table&& p_table)
-    : m_name(std::move(p_table.m_name))
-    , m_primary_key(std::move(p_table.m_primary_key))
-    , m_columns(std::move(p_table.m_columns))
-    , m_foreigners_keys(std::move(p_table.m_foreigners_keys))
-  {}
+  database* get_database() const;
 
   inline const name& get_name() const { return m_name; }
 
-  columns::const_iterator begin_column() const { return m_columns.begin(); }
+  uint16_t get_num_cols() const { return m_columns.get_size<uint16_t>(); }
 
-  columns::const_iterator end_column() const { return m_columns.end(); }
+  ptr<column> get_column(uint16_t p_index) { return m_columns[p_index]; }
 
-  inline columns::iterator add_column(column&& p_column)
+  ptr<column> add_column(const name& p_column_name);
+
+  inline uint16_t get_num_fks() const
   {
-    return m_columns.add(std::move(p_column));
+    return m_foreigners_keys.get_size<uint16_t>();
   }
 
-  foreigners_keys::const_iterator begin_foregign_key() const
+  inline ptr<foreign_key> get_foregign_key(uint16_t p_index)
   {
-    return m_foreigners_keys.begin();
+    return m_foreigners_keys[p_index];
   }
 
-  foreigners_keys::const_iterator end_foregign_key() const
-  {
-    return m_foreigners_keys.end();
-  }
+  inline ptr<primary_key> get_primary_key() const { return m_primary_key; }
 
-  inline const primary_key& get_primary_key() const { return m_primary_key; }
+  void add_to_primary_key(ptr<column> p_col);
 
-  inline void add_to_primary_key(const name& p_column_name)
+  inline void add_foreign_key(const name& p_fk_name, ptr<primary_key> p_pk)
   {
-    columns::const_iterator _col = m_columns.find(p_column_name);
-    if (_col != m_columns.end()) {
-      m_primary_key.add_column(_col);
+    ptr<foreign_key> _fk = find_foreign_key(p_fk_name);
+    if (_fk == nullptr) {
+      _fk = make_ptr<foreign_key>(p_fk_name, p_pk);
+      m_foreigners_keys.add(_fk);
     }
   }
 
-  foreigners_keys::const_iterator add_foreign_key(foreign_key&& p_foreign_key)
+  inline ptr<column> find_column(const name& p_column_name)
   {
-    return m_foreigners_keys.add(std::move(p_foreign_key));
+    return m_columns.find([&p_column_name](const ptr<column>& p_col) -> bool {
+      return p_col->get_name() == p_column_name;
+    });
   }
 
-  inline bool operator==(const table& p_table) const
+  inline ptr<foreign_key> find_foreign_key(const name& p_fk_name)
   {
-    return m_name == p_table.get_name();
-  }
-
-  inline bool operator<(const table& p_table) const
-  {
-    return m_name < p_table.get_name();
+    return m_foreigners_keys.find(
+      [&p_fk_name](const ptr<foreign_key>& p_fk) -> bool {
+        return p_fk->get_name() == p_fk_name;
+      });
   }
 
 private:
-private:
+  database* m_database;
   name m_name;
-  primary_key m_primary_key;
+  ptr<primary_key> m_primary_key;
   columns m_columns;
   foreigners_keys m_foreigners_keys;
 };

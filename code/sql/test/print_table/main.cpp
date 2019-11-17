@@ -4,6 +4,9 @@
 #include <thread>
 
 #include <sql/entities/column.h>
+#include <sql/entities/database.h>
+#include <sql/entities/host.h>
+#include <sql/entities/server.h>
 #include <sql/entities/table.h>
 
 using namespace capemisa::sql::entities;
@@ -11,101 +14,31 @@ using namespace capemisa::sql::entities;
 int
 main()
 {
+  host _host("host000", "172.310.67.012");
+  server _server(&_host, "srv000");
 
-  table _table_0("table_000");
-
+  database _db000(&_server, "db000");
+  table _table0(&_db000, "tb000");
   {
-    column _c000("col000");
-    _c000.set_int(static_cast<int8_t>(46));
-    _table_0.add_column(std::move(_c000));
+    ptr<column> _c007 = _table0.add_column("col007");
+    _c007->set_var_size_string("string 006");
+
+    _table0.add_column("col002")->set_int(static_cast<int32_t>(46));
+
+    _table0.add_to_primary_key(_c007);
   }
 
+  table _table1(&_db000, "tb001");
   {
-    column _c001("col001");
-    _c001.set_int(static_cast<int16_t>(46));
-    _table_0.add_column(std::move(_c001));
+    ptr<column> _c009 = _table1.add_column("col009");
+    _c009->set_date(std::time(nullptr));
+
+    ptr<column> _c005 = _table1.add_column("col005");
+    _c005->set_real(static_cast<double>(46));
+
+    _table1.add_foreign_key("fk001", _table0.get_primary_key());
   }
 
-  {
-    column _c002("col002");
-    _c002.set_int(static_cast<int32_t>(46));
-    _table_0.add_column(std::move(_c002));
-  }
-
-  {
-    column _c003("col003");
-    _c003.set_int(static_cast<int64_t>(46));
-    _table_0.add_column(std::move(_c003));
-  }
-
-  {
-    column _c004("col004");
-    _c004.set_real(static_cast<float>(46));
-    _table_0.add_column(std::move(_c004));
-  }
-
-  {
-    column _c005("col005");
-    _c005.set_real(static_cast<double>(46));
-    _table_0.add_column(std::move(_c005));
-  }
-
-  {
-    column _c006("col006");
-    _c006.set_fixed_size_string("string 005");
-    _table_0.add_column(std::move(_c006));
-  }
-
-  {
-    column _c007("col007");
-    _c007.set_var_size_string("string 006");
-    _table_0.add_column(std::move(_c007));
-  }
-
-  {
-    column _c008("col008");
-    _c008.set_blob("00213p");
-    _table_0.add_column(std::move(_c008));
-  }
-
-  {
-    column _c009("col009");
-    _c009.set_date(std::time(nullptr));
-    _table_0.add_column(std::move(_c009));
-  }
-
-  {
-    column _c010("col010");
-    _c010.set_char('M');
-    _table_0.add_column(std::move(_c010));
-  }
-
-  std::this_thread::sleep_for(std::chrono::seconds(1));
-
-  {
-    column _c011("col011");
-    _c011.set_datetime(std::time(nullptr));
-    _table_0.add_column(std::move(_c011));
-  }
-
-  _table_0.add_to_primary_key("col004");
-  _table_0.add_to_primary_key("col008");
-
-  table _table_1("table_000");
-
-  {
-    column _c100("col100");
-    _c100.set_datetime(std::time(nullptr));
-    _table_1.add_column(std::move(_c100));
-  }
-
-  _table_1.add_to_primary_key("col100");
-
-  //  foreign_key _foreign_key("FL_001", &_table_1.get_primary_key());
-
-  //  _table_0.add_foreign_key(std::move(_foreign_key));
-
-  _table_0.add_foreign_key(foreign_key("FL_001", &_table_1.get_primary_key()));
-
-  std::cout << _table_0 << std::endl;
+  std::cout << _table0 << std::endl;
+  std::cout << _table1 << std::endl;
 }

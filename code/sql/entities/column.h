@@ -12,6 +12,8 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+struct table;
+
 struct column
 {
 
@@ -36,8 +38,9 @@ struct column
 
   column() = delete;
 
-  explicit inline column(const name& p_name)
-    : m_name(p_name)
+  explicit inline column(table* p_table, const name& p_name)
+    : m_table(p_table)
+    , m_name(p_name)
     , m_type(type::UNDEFINED)
     , m_size(type2size(m_type))
   {}
@@ -47,6 +50,8 @@ struct column
   inline type get_type() const { return m_type; }
 
   inline size get_size() const { return m_size; }
+
+  table* get_table();
 
   template<typename t_int>
   void set_int(t_int p_value)
@@ -118,6 +123,7 @@ private:
   }
 
 private:
+  table* m_table;
   name m_name;
   type m_type;
   size m_size;

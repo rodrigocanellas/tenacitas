@@ -1,4 +1,5 @@
 #include <sql/entities/column.h>
+#include <sql/entities/table.h>
 
 namespace capemisa {
 namespace sql {
@@ -72,6 +73,12 @@ column::type2str(column::type p_type) const
     default:
       return "UNDEFINED";
   }
+}
+
+table*
+column::get_table()
+{
+  return m_table;
 }
 
 void

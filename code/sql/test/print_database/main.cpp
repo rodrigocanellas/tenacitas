@@ -5,42 +5,30 @@
 
 #include <sql/entities/column.h>
 #include <sql/entities/database.h>
+#include <sql/entities/host.h>
+#include <sql/entities/server.h>
 #include <sql/entities/table.h>
+#include <sql/entities/types.h>
 
 using namespace capemisa::sql::entities;
 
 int
 main()
 {
-  database _database("db001");
+  host _host("host000", "172.310.67.012");
+  server _server(&_host, "srv000");
 
-  table _table0("tb000");
-  {
-    columns::iterator _c007 = _table0.add_column(column("col007"));
-    _c007->set_var_size_string("string 006");
+  database _database(&_server, "db000");
 
-    _table0.add_to_primary_key("col007");
-  }
+  ptr<table> _table0 = _database.add_table("tb000");
+  ptr<column> _pk = _table0->add_column("col007");
+  _pk->set_var_size_string("string 006");
+  _table0->add_to_primary_key(_pk);
 
-  table _table1("tb001");
-  {
-    column _c009("col009");
-    _c009.set_date(std::time(nullptr));
-    _table1.add_column(std::move(_c009));
-
-    column _c005("col005");
-    _c005.set_real(static_cast<double>(46));
-    _table1.add_column(std::move(_c005));
-
-    foreign_key _fk("fk001", &_table0.get_primary_key());
-    _table1.add_foreign_key(std::move(_fk));
-  }
-
-  std::cout << _table0 << std::endl;
-  std::cout << _table1 << std::endl;
-
-  _database.add(std::move(_table0));
-  _database.add(std::move(_table1));
+  ptr<table> _table1 = _database.add_table("tb001");
+  _table1->add_column("col009")->set_date(std::time(nullptr));
+  _table1->add_column("col005")->set_real(static_cast<double>(46));
+  _table1->add_foreign_key("fk001", _table0->get_primary_key());
 
   std::cout << _database << std::endl;
 }

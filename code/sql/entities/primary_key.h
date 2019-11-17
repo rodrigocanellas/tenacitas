@@ -8,6 +8,7 @@
 #include <sql/entities/column.h>
 #include <sql/entities/columns.h>
 #include <sql/entities/name.h>
+#include <sql/entities/types.h>
 
 namespace capemisa {
 namespace sql {
@@ -17,8 +18,6 @@ struct table;
 
 struct primary_key
 {
-
-  typedef typename std::list<columns::const_iterator> pk_columns;
 
   friend std::ostream& operator<<(std::ostream& p_out, const primary_key& p_pk);
 
@@ -36,20 +35,11 @@ struct primary_key
   const name& get_name() const { return m_name; }
   void set_name(const name& p_name) { m_name = p_name; }
 
-  inline void add_column(columns::const_iterator p_column)
-  {
-    m_columns.push_back(p_column);
-  }
+  uint16_t get_num_cols() const { return m_columns.get_size<uint16_t>(); }
 
-  inline pk_columns::const_iterator begin_columns() const
-  {
-    return m_columns.begin();
-  }
+  ptr<column> get_column(uint16_t p_index) { return m_columns[p_index]; }
 
-  inline pk_columns::const_iterator end_columns() const
-  {
-    return m_columns.end();
-  }
+  inline void add_column(ptr<column> p_column) { m_columns.add(p_column); }
 
   inline table* get_table() const { return m_table; }
 
@@ -59,7 +49,7 @@ private:
 private:
   name m_name;
   table* m_table;
-  pk_columns m_columns;
+  columns m_columns;
 };
 
 } // namespace entities

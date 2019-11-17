@@ -8,17 +8,9 @@ namespace entities {
 std::ostream&
 operator<<(std::ostream& p_out, const primary_key& p_pk)
 {
-  p_out << "[";
-  primary_key::pk_columns::const_iterator _end = p_pk.end_columns();
-  for (primary_key::pk_columns::const_iterator _ite = p_pk.begin_columns();
-       _ite != _end;
-       ++_ite) {
-    p_out << *(*_ite);
-    if (std::next(_ite) != _end) {
-      p_out << ", ";
-    }
-  }
-  p_out << "]";
+  p_out << "{"
+        << "\"table\" : \"" << p_pk.get_table_name()
+        << "\", \"columns\" : " << p_pk.m_columns << "}";
   return p_out;
 }
 
