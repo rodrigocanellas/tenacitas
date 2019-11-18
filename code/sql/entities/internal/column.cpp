@@ -5,13 +5,41 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+void
+column::set_autoincrement(bool p_value)
+{
+  m_is_auto_increment = p_value;
+  if (m_is_auto_increment) {
+    if ((m_type != type::INT_1) && (m_type != type::INT_2) &&
+        (m_type != type::INT_4) && (m_type != type::INT_8)) {
+      throw std::runtime_error(
+        "can set autoincrement only on integer column type, "
+        "and " +
+        m_name + " type is " + type2str(m_type));
+    }
+
+    m_is_null = false;
+    m_value = "0";
+  }
+}
+
+void
+column::set_is_null(bool p_value)
+{
+  m_is_null = p_value;
+  if (m_is_null) {
+    m_is_auto_increment = false;
+  }
+}
+
 std::ostream&
 operator<<(std::ostream& p_out, const column& p_column)
 {
   p_out << "{ \"name\" : \"" << p_column.get_name() << "\", "
         << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
-        << "\"size\" : \"" << p_column.get_size() << "\", "
-        << "\"value\" : \"" << p_column.get_value() << "\"}";
+        << "\"size\" : \"" << p_column.get_size() << "\"} ";
+  //        << "\"size\" : \"" << p_column.get_size() << "\", "
+  //        << "\"value\" : \"" << p_column.get_value() << "\"}";
   return p_out;
 }
 
@@ -84,23 +112,43 @@ column::get_table()
 void
 column::set_fixed_size_string(const std::string& p_value)
 {
-  m_type = type::FIXED_SIZE_CHAR;
-  m_size = static_cast<size>(p_value.size());
-  m_value = p_value;
+  if (m_type != type::FIXED_SIZE_CHAR) {
+    throw std::runtime_error("column is not FIXED_SIZE_CHAR type");
+  }
+  size _size = static_cast<size>(p_value.size());
+  if (_size > m_size) {
+    m_value = p_value.substr(0, m_size);
+  } else {
+    m_value = p_value;
+    if (_size < m_size) {
+      m_value.append(m_size - _size, ' ');
+    }
+  }
 }
 
 void
 column::set_var_size_string(const std::string& p_value)
 {
-  m_type = type::VAR_SIZE_CHAR;
-  m_size = static_cast<size>(p_value.size());
-  m_value = p_value;
+  if (m_type != type::VAR_SIZE_CHAR) {
+    throw std::runtime_error("column is not VAR_SIZE_CHAR type");
+  }
+
+  size _size = static_cast<size>(p_value.size());
+  if (_size > m_size) {
+    m_value = p_value.substr(0, m_size);
+  } else {
+    m_value = p_value;
+  }
 }
 
 void
 column::set_blob(std::string&& p_blob)
 {
-  m_type = type::BLOB;
+
+  if (m_type != type::BLOB) {
+    throw std::runtime_error("column is not BLOB type");
+  }
+
   m_size = static_cast<size>(p_blob.size());
   m_value = std::move(p_blob);
 }
@@ -108,24 +156,29 @@ column::set_blob(std::string&& p_blob)
 void
 column::set_date(time_t p_time)
 {
-  m_type = type::DATE;
-  m_size = type2size(m_type);
+  if (m_type != type::DATE) {
+    throw std::runtime_error("column is not DATE type");
+  }
+
   m_value = std::to_string(p_time);
 }
 
 void
 column::set_datetime(time_t p_time)
 {
-  m_type = type::DATE_TIME;
-  m_size = type2size(m_type);
+  if (m_type != type::DATE_TIME) {
+    throw std::runtime_error("column is not DATE_TIME type");
+  }
+
   m_value = std::to_string(p_time);
 }
 
 void
 column::set_char(char p_char)
 {
-  m_type = type::CHAR;
-  m_size = type2size(m_type);
+  if (m_type != type::CHAR) {
+    throw std::runtime_error("column is not CHAR type");
+  }
   m_value = std::string(1, p_char);
 }
 

@@ -1,0 +1,28 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+class Employee {
++ id : autoincrement
++ name : varchar[100]
++ birthday : date 
+}
+
+class Project {
++ id : autoincrement 
++ name : varchar[100]
+}
+
+class Dependent {
++ id : autoincrement
++ name : varchar[100]
++ birthday : date
+}
+
+Employee o-- "*" Project
+Project o-- "*" Employee
+Employee o-- "*" Dependent
+Employee "boss" o-- "*" Employee
+
+@enduml

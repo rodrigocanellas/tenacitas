@@ -49,9 +49,10 @@ struct collection
     return static_cast<t_size>(m_list.size());
   }
 
-  ptr<t_type> find(std::function<bool(const ptr<t_type>& p_obj)> p_function)
+  ptr<t_type> find(
+    std::function<bool(const ptr<t_type>& p_obj)> p_function) const
   {
-    typename list::iterator _ite =
+    typename list::const_iterator _ite =
       std::find_if(m_list.begin(), m_list.end(), p_function);
     if (_ite != m_list.end()) {
       return *_ite;

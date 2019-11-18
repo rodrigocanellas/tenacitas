@@ -30,7 +30,6 @@ struct table
   explicit inline table(database* p_database, const name& p_name)
     : m_database(p_database)
     , m_name(p_name)
-  //    , m_primary_key(make_ptr<primary_key>(this))
   {}
 
   database* get_database() const;
@@ -41,7 +40,11 @@ struct table
 
   ptr<column> get_column(uint16_t p_index) { return m_columns[p_index]; }
 
-  ptr<column> add_column(const name& p_column_name);
+  ptr<column> add_column(const name& p_column_name,
+                         column::type p_type,
+                         size p_size);
+
+  ptr<column> add_column(const name& p_column_name, column::type p_type);
 
   inline uint16_t get_num_fks() const
   {

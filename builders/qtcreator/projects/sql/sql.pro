@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += entities/sql_entities.pro \
-            test/sql_test.pro
+           business/sql_business.pro \
+           test/sql_test.pro
 
 CONFIG += ordered

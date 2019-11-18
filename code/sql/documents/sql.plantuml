@@ -51,6 +51,9 @@ Server o-- Host
 Hosts *-- "*" Host
 }
 
+namespace business {
+
+}
 }
 
 

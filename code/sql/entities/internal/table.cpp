@@ -26,7 +26,7 @@ table::get_database() const
 }
 
 ptr<column>
-table::add_column(const name& p_column_name)
+table::add_column(const name& p_column_name, column::type p_type, size p_size)
 {
 
   ptr<column> _col =
@@ -35,7 +35,23 @@ table::add_column(const name& p_column_name)
     });
 
   if (_col == nullptr) {
-    _col = make_ptr<column>(this, p_column_name);
+    _col = make_ptr<column>(this, p_column_name, p_type, p_size);
+    m_columns.add(_col);
+  }
+  return _col;
+}
+
+ptr<column>
+table::add_column(const name& p_column_name, column::type p_type)
+{
+
+  ptr<column> _col =
+    m_columns.find([&p_column_name](const ptr<column>& p_col) -> bool {
+      return p_col->get_name() == p_column_name;
+    });
+
+  if (_col == nullptr) {
+    _col = make_ptr<column>(this, p_column_name, p_type);
     m_columns.add(_col);
   }
   return _col;
