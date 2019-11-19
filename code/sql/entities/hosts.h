@@ -1,7 +1,7 @@
 #ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_HOSTS_H
 #define CAPEMISA_TEST_AUTOMATION_ENTITIES_HOSTS_H
 
-#include <sql/entities/collection.h>
+#include <sql/entities/internal/collection.h>
 #include <sql/entities/host.h>
 
 namespace capemisa {

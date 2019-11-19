@@ -7,7 +7,7 @@
 #include <memory>
 #include <set>
 
-#include <sql/entities/collection.h>
+#include <sql/entities/internal/collection.h>
 #include <sql/entities/table.h>
 #include <sql/entities/types.h>
 

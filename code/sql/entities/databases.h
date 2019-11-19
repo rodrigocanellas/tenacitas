@@ -1,7 +1,7 @@
 #ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_DATABASES_H
 #define CAPEMISA_TEST_AUTOMATION_ENTITIES_DATABASES_H
 
-#include <sql/entities/collection.h>
+#include <sql/entities/internal/collection.h>
 #include <sql/entities/database.h>
 
 namespace capemisa {

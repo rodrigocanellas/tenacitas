@@ -14,7 +14,6 @@ TARGET = capemisa.sql.business
 include (../../../common.pri)
 
 HEADERS += \
-  ../../../../../code/sql/business/generate_insert.h \
-  ../../../../../code/sql/business/insertion_configuration.h
+    ../../../../../code/sql/business/insert_generator.h
 
 

@@ -5,6 +5,7 @@ allow_mixing
 
 namespace  sql {
 
+
 namespace entities {
 class Size
 class Type
@@ -24,9 +25,38 @@ class Database {
 	name : Name
 }
 class Ip
-class Host
+class Host {
+	name : Name
+}
 class Server {
 	name : Name
+}
+
+class InsertDefinition {
+	hostName : Name
+	serverName : Name
+	datanaseName : Name
+	tableName : Name
+	amountOfRows : uint16_t
+}
+
+class ForeignKeyValue {
+	foreignKeyName : Name	
+}
+
+enum ColumnValuePattern {
+	userInput
+	random
+	algorithmGenerated
+}
+
+class ColumnValue {
+	columnName : Name
+}
+
+enum ForeignKeyValuePattern {
+	onePerTableLine
+	oneForAlTablelLines
 }
 
 Column *-- Name
@@ -49,11 +79,21 @@ Column +-- Type
 Database o-- Server
 Server o-- Host
 Hosts *-- "*" Host
+ColumnValue *-- ColumnValuePattern
+ForeignKeyValue *-- ForeignKeyValuePattern
+ForeignKeyValue *-- ColumnValuePattern
+InsertDefinition *-- "*"  ForeignKeyValue
+InsertDefinition *-- "*" ColumnValue
 }
 
 namespace business {
+class InsertGenerator
 
+InsertGenerator o--  "*" sql.entities.InsertDefinition
+InsertGenerator o-- sql.entities.Hosts
 }
+
+
 }
 
 
