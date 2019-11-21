@@ -1,10 +1,9 @@
-@startuml
+	@startuml
 
 hide empty members
 allow_mixing
 
 namespace  sql {
-
 
 namespace entities {
 class Size
@@ -33,31 +32,36 @@ class Server {
 }
 
 class InsertDefinition {
-	hostName : Name
-	serverName : Name
-	datanaseName : Name
-	tableName : Name
 	amountOfRows : uint16_t
 }
 
-class ForeignKeyValue {
-	foreignKeyName : Name	
+class PrimaryKeyValue {
+	value : string
+}
+
+
+class ColumnValue {
+	
 }
 
 enum ColumnValuePattern {
 	userInput
 	random
 	algorithmGenerated
+	autoIncrement
+	nullValue
 }
 
-class ColumnValue {
-	columnName : Name
+
+class ForeignKeyValue {
+	
 }
 
 enum ForeignKeyValuePattern {
-	onePerTableLine
-	oneForAlTablelLines
+	v1
+	v2
 }
+
 
 Column *-- Name
 Column *-- Type
@@ -80,10 +84,16 @@ Database o-- Server
 Server o-- Host
 Hosts *-- "*" Host
 ColumnValue *-- ColumnValuePattern
+ColumnValue +-- ColumnValuePattern
+ColumnValue o-- Column
+InsertDefinition *-- "nonPkCols *" ColumnValue
+InsertDefinition *-- "0..*" PrimaryKeyValue
+InsertDefinition o-- Table
+PrimaryKeyValue *-- ColumnValue
+ForeignKeyValue o-- ForeignKey
+ForeignKeyValue +- ForeignKeyValuePattern
 ForeignKeyValue *-- ForeignKeyValuePattern
-ForeignKeyValue *-- ColumnValuePattern
-InsertDefinition *-- "*"  ForeignKeyValue
-InsertDefinition *-- "*" ColumnValue
+InsertDefinition *-- "0..*" ForeignKeyValue
 }
 
 namespace business {
