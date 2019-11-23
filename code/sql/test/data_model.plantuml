@@ -2,6 +2,7 @@
 
 hide empty members
 allow_mixing
+left to right direction
 
 class Employee {
 + id : autoincrement

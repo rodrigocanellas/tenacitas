@@ -1,7 +1,9 @@
-	@startuml
+@startuml
 
 hide empty members
 allow_mixing
+' left to right direction
+
 
 namespace  sql {
 
@@ -9,17 +11,22 @@ namespace entities {
 class Size
 class Type
 class Name
-class Column {
+class Column  {
 	isNull : boolean
-	isAutoIncrement : boolean
+	isUnique : boolean
+	isAutoincrement : boolean
 }
-class PrimaryKey
-class ForeignKey {
-	name : Name
+
+class Table  {
+	name: Name
 }
-class Table {
-	name : Name
+
+class PrimaryKey 
+
+class ForeignKey  {
+	name: Name
 }
+
 class Database {
 	name : Name
 }
@@ -31,79 +38,74 @@ class Server {
 	name : Name
 }
 
+class InsertsDefinitions 
+
 class InsertDefinition {
 	amountOfRows : uint16_t
 }
 
-class PrimaryKeyValue {
-	value : string
-}
-
-
-class ColumnValue {
-	
-}
-
-enum ColumnValuePattern {
+enum ValuePattern {
 	userInput
 	random
 	algorithmGenerated
 	autoIncrement
 	nullValue
+	inferiorLimit
+	superiorLimit 
 }
 
-
-class ForeignKeyValue {
-	
+enum ForeignKeyMatchPattern {
+	userChoice
+	random
+	onePerOne
+	oneForAll
 }
 
-enum ForeignKeyValuePattern {
-	v1
-	v2
-}
+class TableValues
+class ColumnHeader
 
+TableValues *-- "*"  ColumnHeader
+ColumnHeader o-- Column
+ColumnHeader *-- "*" Value
 
-Column *-- Name
-Column *-- Type
-Column *-- Size
+InsertDefinition *-- TableValues
 
-PrimaryKey o-- "*" Column
-PrimaryKey o-- Table
-ForeignKey o-- PrimaryKey
-
-Table *-- PrimaryKey
-Table *--  "*" ForeignKey
-Table *-- "*" Column 
+Table  *-- "0..*" Column
+Table  *-- "0..1" PrimaryKey 
+Table  *-- "0..*" ForeignKey 
 Table o-- Database
+
+PrimaryKey   o-- Table 
+PrimaryKey  o-- "1..*" Column 
+PrimaryKey  o-- "0..*" ForeignKey 
+
+Column  *-- Type
+Column  +-- Type
+Column  *-- Size
+Column  *-- Name
+
+ForeignKey  o-- Column
+
 Database *-- "*" Table
 Host *-- "*" Server
-Server *-- "*" Database
 Host *-- Ip
-Column +-- Type
+Server *-- "*" Database
+
 Database o-- Server
+
 Server o-- Host
+
 Hosts *-- "*" Host
-ColumnValue *-- ColumnValuePattern
-ColumnValue +-- ColumnValuePattern
-ColumnValue o-- Column
-InsertDefinition *-- "nonPkCols *" ColumnValue
-InsertDefinition *-- "0..*" PrimaryKeyValue
-InsertDefinition o-- Table
-PrimaryKeyValue *-- ColumnValue
-ForeignKeyValue o-- ForeignKey
-ForeignKeyValue +- ForeignKeyValuePattern
-ForeignKeyValue *-- ForeignKeyValuePattern
-InsertDefinition *-- "0..*" ForeignKeyValue
+
+InsertsDefinitions *-- "*" InsertDefinition
 }
 
 namespace business {
 class InsertGenerator
 
-InsertGenerator o--  "*" sql.entities.InsertDefinition
+InsertGenerator o-- sql.entities.InsertsDefinitions
 InsertGenerator o-- sql.entities.Hosts
 }
-
-
 }
 
 

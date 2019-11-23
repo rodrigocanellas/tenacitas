@@ -2,6 +2,8 @@
 
 hide empty members
 allow_mixing
+' left to right direction
+
 
 namespace  sql {
 
@@ -9,63 +11,92 @@ namespace entities {
 class Size
 class Type
 class Name
-class Column {
+class Column  {
 	isNull : boolean
 	isAutoIncrement : boolean
+	isUnique : boolean
 }
-class Columns 
-class PrimaryKey
-class PrimaryKeys
-class ForeignKey {
-	name : Name
+
+class Table  {
+	name: Name
 }
-class ForeignersKeys
-class Table {
-	name : Name
+
+class PrimaryKey 
+
+class ForeignKey  {
+	name: Name
 }
-class Tables
+
 class Database {
 	name : Name
 }
-class Databases
 class Ip
-class Host
+class Host {
+	name : Name
+}
 class Server {
 	name : Name
 }
-Class Servers
 
-Column *-- Name
-Column *-- Type
-Column *-- Size
+class InsertsDefinitions 
 
-Columns *-- "*" Column
-Tables *-- "*" Table
-PrimaryKey *-- "*" PrimaryKey
-ForeignersKeys *-- "*" ForeignKey
-Databases *-- "*" Database
-Servers *-- "*" Server
+class InsertDefinition {
+	amountOfRows : uint16_t
+}
 
-Server o-- "*" Database 
+enum ValuePattern {
+	userInput
+	random
+	algorithmGenerated
+	autoIncrement
+	nullValue
+	inferiorLimit
+	superiorLimit 
+}
 
+enum ForeignKeyMatchPattern {
+	userChoice
+	random
+	onePerOne
+	oneForAll
+}
 
-PrimaryKey o-- "*" Column
-PrimaryKey o-- Table
-ForeignKey o-- PrimaryKey
-
-Table *-- PrimaryKey
-Table *--  "*" ForeignKey
-Table *-- "*" Column 
+Table  *-- "0..*" Column 
+Table  *-- "0..1" PrimaryKey 
+Table  *-- "0..*" ForeignKey 
 Table o-- Database
+
+PrimaryKey   o-- Table 
+PrimaryKey  *-- "1..*" Column 
+PrimaryKey  o-- "0..*" ForeignKey 
+
+Column  *-- Type
+Column  +-- Type
+Column  *-- Size
+Column  *-- Name
+
+ForeignKey  o-- Column 
+ForeignKey  o-- PrimaryKey 
+
 Database *-- "*" Table
 Host *-- "*" Server
-Server *-- "*" Database
 Host *-- Ip
-Column +-- Type
+Server *-- "*" Database
+
+Database o-- Server
+
+Server o-- Host
+
+Hosts *-- "*" Host
+
+InsertsDefinitions *-- "*" InsertDefinition
 }
 
 namespace business {
+class InsertGenerator
 
+InsertGenerator o-- sql.entities.InsertsDefinitions
+InsertGenerator o-- sql.entities.Hosts
 }
 }
 
