@@ -4,16 +4,24 @@ hide empty members
 allow_mixing
 ' left to right direction
 
-
 namespace  sql {
 
 namespace entities {
 class Size
 class Type
 class Name
-class Column  {
+
+class AttributeColumn  {
 	isNull : boolean
+	isUnique : boolean
+}
+
+class PrimaryKeyColumn  {
 	isAutoIncrement : boolean
+	isUnique : boolean
+}
+
+class ForeignKeyColumn  {
 	isUnique : boolean
 }
 
@@ -43,8 +51,11 @@ class InsertsDefinitions
 class InsertDefinition {
 	amountOfRows : uint16_t
 }
+class AttributeColumnInsertDefinition
+class ForeignKeyColumnInsertDefinition
+class PrimaryKeyColumnInsertDefinition
 
-enum ValuePattern {
+enum AttributeValuePattern {
 	userInput
 	random
 	algorithmGenerated
@@ -54,6 +65,13 @@ enum ValuePattern {
 	superiorLimit 
 }
 
+enum PrimaryKeyValuePattern {
+	userInput
+	random
+	algorithmGenerated
+	autoIncrement	 
+}
+
 enum ForeignKeyMatchPattern {
 	userChoice
 	random
@@ -61,22 +79,38 @@ enum ForeignKeyMatchPattern {
 	oneForAll
 }
 
-Table  *-- "0..*" Column 
+class TableValues
+class ColumnHeader
+class TestDefinition
+
+
+TestDefinition *-- InsertsDefinitions
+
+TableValues *-- "*"  ColumnHeader
+
+Table  *-- "0..*" AttributeColumn 
 Table  *-- "0..1" PrimaryKey 
 Table  *-- "0..*" ForeignKey 
 Table o-- Database
 
+AttributeColumn o-- Table
+
 PrimaryKey   o-- Table 
-PrimaryKey  *-- "1..*" Column 
-PrimaryKey  o-- "0..*" ForeignKey 
+PrimaryKey  *-- "1..*" PrimaryKeyColumn 
+PrimaryKey  *-- "0..*" ForeignKey 
 
-Column  *-- Type
-Column  +-- Type
-Column  *-- Size
-Column  *-- Name
+PrimaryKeyColumn o-- PrimaryKey
 
-ForeignKey  o-- Column 
-ForeignKey  o-- PrimaryKey 
+'Column  *-- Type
+'Column  +-- Type
+'Column  *-- Size
+'Column  *-- Name
+
+ForeignKey  *-- "1..*" ForeignKeyColumn 
+ForeignKey  o-- "*" PrimaryKeyColumn 
+ForeignKey o-- Table
+
+ForeignKeyColumn o-- ForeignKey
 
 Database *-- "*" Table
 Host *-- "*" Server
@@ -90,7 +124,27 @@ Server o-- Host
 Hosts *-- "*" Host
 
 InsertsDefinitions *-- "*" InsertDefinition
-}
+
+InsertDefinition *-- TableValues
+
+ColumnHeader *--  "*" Value
+ColumnHeader o-- "0..1" ForeignKeyColumn
+ColumnHeader o-- "0..1" PrimaryKeyColumn
+ColumnHeader o-- "0..1" AttributeColumn
+
+AttributeColumnInsertDefinition *-- AttributeValuePattern
+PrimaryKeyColumnInsertDefinition *-- PrimaryKeyValuePattern
+ForeignKeyColumnInsertDefinition *-- ForeignKeyMatchPattern
+
+AttributeColumnInsertDefinition o-- AttributeColumn 
+ForeignKeyColumnInsertDefinition o-- ForeignKeyColumn
+PrimaryKeyColumnInsertDefinition o-- PrimaryKeyColumn
+
+InsertDefinition *-- AttributeColumnInsertDefinition
+InsertDefinition *-- ForeignKeyColumnInsertDefinition
+InsertDefinition *-- PrimaryKeyColumnInsertDefinition
+
+
 
 namespace business {
 class InsertGenerator
