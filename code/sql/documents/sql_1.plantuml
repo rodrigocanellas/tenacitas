@@ -2,7 +2,7 @@
 
 hide empty members
 allow_mixing
-' left to right direction
+left to right direction
 
 namespace  sql {
 
@@ -15,6 +15,8 @@ class AttributeColumn  {
 	isNull : boolean
 	isUnique : boolean
 }
+
+class PrimaryKey
 
 class PrimaryKeyColumn  {
 	isAutoIncrement : boolean
@@ -29,7 +31,6 @@ class Table  {
 	name: Name
 }
 
-class PrimaryKey 
 
 class ForeignKey  {
 	name: Name
@@ -38,10 +39,13 @@ class ForeignKey  {
 class Database {
 	name : Name
 }
+
 class Ip
+
 class Host {
 	name : Name
 }
+
 class Server {
 	name : Name
 }
@@ -51,11 +55,13 @@ class InsertsDefinitions
 class InsertDefinition {
 	amountOfRows : uint16_t
 }
+
 class AttributeColumnInsertDefinition
 class ForeignKeyColumnInsertDefinition
 class PrimaryKeyColumnInsertDefinition
 
-enum AttributeValuePattern {
+
+enum AttributeColumnValuePattern {
 	userInput
 	random
 	algorithmGenerated
@@ -65,86 +71,80 @@ enum AttributeValuePattern {
 	superiorLimit 
 }
 
-enum PrimaryKeyValuePattern {
+enum PrimaryKeyColumnValuePattern {
 	userInput
 	random
 	algorithmGenerated
 	autoIncrement	 
 }
 
-enum ForeignKeyMatchPattern {
+enum ForeignKeyColumnValueMatchPattern {
 	userChoice
 	random
 	onePerOne
 	oneForAll
 }
 
-class TableValues
+
+class PrimaryKeySingleValueInsertDefinition
+class ForeignKeySingleValueInsertDefinition
+class AttributeSingleValueInsertDefinition
+
+enum SingleValuePattern {
+	userInput
+}
+
+class Value {
+	value : string
+}
+
 class ColumnHeader
 class TestDefinition
 
 
 TestDefinition *-- InsertsDefinitions
 
-TableValues *-- "*"  ColumnHeader
 
-Table  *-- "0..*" AttributeColumn 
-Table  *-- "0..1" PrimaryKey 
-Table  *-- "0..*" ForeignKey 
-Table o-- Database
 
-AttributeColumn o-- Table
+Table  *--o "0..*" AttributeColumn
+Table  *--o "0..1" PrimaryKey 
+Table  *--o "0..*" ForeignKey
 
-PrimaryKey   o-- Table 
-PrimaryKey  *-- "1..*" PrimaryKeyColumn 
-PrimaryKey  *-- "0..*" ForeignKey 
+PrimaryKey *--o "0..*" PrimaryKeyColumn 
+PrimaryKey o--o "0..*" ForeignKeyColumn
 
-PrimaryKeyColumn o-- PrimaryKey
+ForeignKey  *--o "1..*" ForeignKeyColumn 
 
-'Column  *-- Type
-'Column  +-- Type
-'Column  *-- Size
-'Column  *-- Name
+ForeignKeyColumn o-- "*" PrimaryKeyColumn 
 
-ForeignKey  *-- "1..*" ForeignKeyColumn 
-ForeignKey  o-- "*" PrimaryKeyColumn 
-ForeignKey o-- Table
-
-ForeignKeyColumn o-- ForeignKey
-
-Database *-- "*" Table
-Host *-- "*" Server
+Database *--o "*" Table
+Host *--o "*" Server
 Host *-- Ip
-Server *-- "*" Database
+Server *--o "*" Database
 
-Database o-- Server
-
-Server o-- Host
-
-Hosts *-- "*" Host
+Hosts *--o "*" Host
 
 InsertsDefinitions *-- "*" InsertDefinition
 
-InsertDefinition *-- TableValues
+InsertDefinition *-- "*" ColumnHeader
+InsertDefinition o-- Table
 
-ColumnHeader *--  "*" Value
-ColumnHeader o-- "0..1" ForeignKeyColumn
-ColumnHeader o-- "0..1" PrimaryKeyColumn
-ColumnHeader o-- "0..1" AttributeColumn
+AttributeColumnValueInsertDefinition *-- AttributeColumnValuePattern
+AttributeColumnValueInsertDefinition o-- AttributeColumn 
 
-AttributeColumnInsertDefinition *-- AttributeValuePattern
-PrimaryKeyColumnInsertDefinition *-- PrimaryKeyValuePattern
-ForeignKeyColumnInsertDefinition *-- ForeignKeyMatchPattern
+PrimaryKeyColumnValueInsertDefinition *-- PrimaryKeyColumnValuePattern
+PrimaryKeyColumnValueInsertDefinition o-- PrimaryKeyColumn
 
-AttributeColumnInsertDefinition o-- AttributeColumn 
-ForeignKeyColumnInsertDefinition o-- ForeignKeyColumn
-PrimaryKeyColumnInsertDefinition o-- PrimaryKeyColumn
+ForeignKeyColumnValueInsertDefinition *-- ForeignKeyColumnValueMatchPattern
+ForeignKeyColumnValueInsertDefinition o-- ForeignKeyColumn
 
-InsertDefinition *-- AttributeColumnInsertDefinition
-InsertDefinition *-- ForeignKeyColumnInsertDefinition
-InsertDefinition *-- PrimaryKeyColumnInsertDefinition
+ColumnHeader *--o  "*" Value
+ColumnHeader o-- "0..1" PrimaryKeyColumnValueInsertDefinition
+ColumnHeader o-- "0..1" ForeignKeyColumnValueInsertDefinition
+ColumnHeader o-- "0..1" AttributeColumnValueInsertDefinition
 
 
+Value o-- "0..1" SingleValuePattern
 
 namespace business {
 class InsertGenerator

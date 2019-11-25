@@ -1,0 +1,173 @@
+@startuml
+
+hide empty members
+allow_mixing
+left to right direction
+
+object db_000 { 
+	name = "db000"
+}
+
+object tb_employee {
+	name : "employee"
+}
+
+object pk_employee
+
+
+object pkcol_employee_id {
+	name : "id'
+	isAutoIncrement : "yes"
+	isUnique : "yes"
+	type : "INT_4"
+}
+
+
+object attr_employee_name {
+	name : "fullName"
+	isNull : "no"
+	isUnique : "no"
+	type  : "VAR_SIZED_CHAR"
+	size : "100"
+}
+
+object attr_employee_birthday {
+	name : "birthday"
+	isNull : "no"
+	isUnique : "no"
+	type : "DATE"
+}
+
+object fk_employee_employee {
+	name : 'boss"
+}
+
+object fkcol_employee_id {
+	name : 'id"
+}
+
+
+
+object tb_project {
+	name : "project"
+}
+
+object pkcol_project_id {
+	name : "id'
+	isAutoIncrement : "yes"
+	isUnique : "yes"
+	type : "INT_4"
+}
+
+object attr_project_name {
+	name : "fullName"
+	isNull : "no"
+	isUnique : "no"
+	type  : "VAR_SIZED_CHAR"
+	size : "100"
+}
+
+
+
+object tb_dependent {
+	name : "dependent"
+}
+
+object pk_dependent
+
+object pkcpol_dependent_id  {
+	name : "id'
+	isAutoIncrement : "yes"
+	isUnique : "yes"
+	type : "INT_4"
+}
+
+object attr_dependent_name {
+	name : "fullName"
+	isNull : "no"
+	isUnique : "no"
+	type  : "VAR_SIZED_CHAR"
+	size : "100"
+}
+
+object attr_dependent_birthday {
+	name : "birthday"
+	isNull : "no"
+	isUnique : "no"
+	type : "DATE"
+}
+
+object fk_dependent_employee {
+	name : "employee"
+}
+
+
+object fkcol_dependent_id {
+	name : "id"
+}
+
+
+
+
+object tb_alocation {
+	name = "allocatiion"
+}
+
+object fk_allocation_project {
+	name = "allocation_project"
+}
+
+object fk_allocation_employee {
+	name = "allocation_employee"
+}
+
+
+object fkcol_allocation_employee {
+	name = "allocation_employee"
+}
+
+object fkcol_allocation_project {
+	name = "allocation_project"
+}
+
+object pk_allocation
+	
+
+
+
+db_000 *---o tb_employee
+tb_employee *--o pk_employee
+pk_employee *--o  pkcol_employee_id
+tb_employee *--o attr_employee_name
+tb_employee *--o attr_employee_birthday
+tb_employee *--o fk_employee_employee 
+fk_employee_employee *--o  fkcol_employee_id
+fkcol_employee_id o-- pkcol_employee_id
+
+db_000 *---o tb_project
+tb_project *--o pkcol_project_id
+tb_project *--o attr_project_name
+
+db_000 *---o tb_dependent
+tb_dependent *--o pk_dependent
+tb_dependent *--o  attr_dependent_name
+tb_dependent *--o  attr_dependent_birthday
+tb_dependent *--o fk_dependent_employee
+pk_dependent *--o pkcpol_dependent_id
+pk_dependent o--o fkcol_dependent_id
+fk_dependent_employee *--o fkcol_dependent_id
+fkcol_dependent_id o-- pkcol_employee_id
+
+db_000 *---o tb_alocation 
+tb_alocation *--o pk_allocation
+tb_alocation *--o fk_allocation_project
+tb_alocation *--o fk_allocation_employee
+fk_allocation_employee *--o fkcol_allocation_employee
+fk_allocation_project *--o fkcol_allocation_project
+
+fkcol_allocation_project o-- pkcol_project_id
+fkcol_allocation_employee o-- pkcol_employee_id
+pk_allocation o-- fkcol_allocation_project
+pk_allocation o-- fkcol_allocation_employee
+
+@enduml
