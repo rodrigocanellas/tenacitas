@@ -6,12 +6,16 @@
 #include <iostream>
 #include <list>
 
-#include <sql/entities/types.h>
+#include <sql/entities/internal/types.h>
+#include <sql/entities/name.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
 
+/// \brief collection of pointer to a \p type
+///
+/// \tparam t_type must implement <tt>name get_name()</tt>
 template<typename t_type>
 struct collection
 {
@@ -32,7 +36,25 @@ struct collection
     return p_out;
   }
 
-  void add(ptr<t_type> p_obj) { m_list.push_back(p_obj); }
+  template<typename... t_params>
+  ptr<t_type> add(const name& p_name, t_params... p_params)
+  {
+    ptr<t_type> _obj = find(p_name);
+    if (_obj != nullptr) {
+      return _obj;
+    }
+
+    _obj = make_ptr<t_type>(p_name, p_params...);
+    m_list.push_back(_obj);
+    return _obj;
+  }
+
+  //  inline void add(ptr<t_type> p_obj)
+  //  {
+  //    if (find(p_obj) == m_list.end()) {
+  //      m_list.push_back(p_obj);
+  //    }
+  //  }
 
   template<typename t_size>
   ptr<t_type> operator[](t_size p_index)
@@ -49,11 +71,25 @@ struct collection
     return static_cast<t_size>(m_list.size());
   }
 
-  ptr<t_type> find(
-    std::function<bool(const ptr<t_type>& p_obj)> p_function) const
+  //  ptr<t_type> find(
+  //    std::function<bool(const ptr<t_type>& p_obj)> p_function) const
+  //  {
+  //    typename list::const_iterator _ite =
+  //      std::find_if(m_list.begin(), m_list.end(), p_function);
+  //    if (_ite != m_list.end()) {
+  //      return *_ite;
+  //    }
+  //    return ptr<t_type>();
+  //  }
+
+  ptr<t_type> find(const name& p_name) const
   {
     typename list::const_iterator _ite =
-      std::find_if(m_list.begin(), m_list.end(), p_function);
+      std::find_if(m_list.begin(),
+                   m_list.end(),
+                   [&p_name](const ptr<t_type>& p_type) -> bool {
+                     return p_type->get_name() == p_name;
+                   });
     if (_ite != m_list.end()) {
       return *_ite;
     }

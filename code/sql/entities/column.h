@@ -12,8 +12,6 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
-struct table;
-
 struct column
 {
 
@@ -38,101 +36,85 @@ struct column
 
   column() = delete;
 
-  explicit inline column(table* p_table,
-                         const name& p_name,
-                         type p_type,
-                         size p_size)
-    : m_table(p_table)
-    , m_name(p_name)
-    , m_type(p_type)
-    , m_size(p_size)
-  {}
-
-  explicit inline column(table* p_table, const name& p_name, type p_type)
-    : m_table(p_table)
-    , m_name(p_name)
-    , m_type(p_type)
-    , m_size(column::type2size(m_type))
-  {}
-
-  table* get_table();
-
   inline const name& get_name() const { return m_name; }
 
   inline type get_type() const { return m_type; }
 
   inline size get_size() const { return m_size; }
 
-  const std::string& get_value() const { return m_value; }
+  //  // values
 
-  inline bool get_autoincrement() const { return m_is_auto_increment; }
+  //  template<typename t_int>
+  //  void set_int(t_int p_value)
+  //  {
+  //    if ((m_type != type::INT_1) && (m_type != type::INT_2) &&
+  //        (m_type != type::INT_4) && (m_type != type::INT_8)) {
+  //      throw std::runtime_error("type is not integer");
+  //    }
 
-  inline bool get_is_null() { return m_is_null; }
+  //    if ((m_type == type::INT_1) && (sizeof(t_int) != 1)) {
+  //      throw std::runtime_error("integer size is not 1");
+  //    }
 
-  // values
+  //    if ((m_type == type::INT_2) && (sizeof(t_int) != 2)) {
+  //      throw std::runtime_error("integer size is not 2");
+  //    }
 
-  template<typename t_int>
-  void set_int(t_int p_value)
-  {
-    if ((m_type != type::INT_1) && (m_type != type::INT_2) &&
-        (m_type != type::INT_4) && (m_type != type::INT_8)) {
-      throw std::runtime_error("type is not integer");
-    }
+  //    if ((m_type == type::INT_4) && (sizeof(t_int) != 4)) {
+  //      throw std::runtime_error("integer size is not 4");
+  //    }
 
-    if ((m_type == type::INT_1) && (sizeof(t_int) != 1)) {
-      throw std::runtime_error("integer size is not 1");
-    }
+  //    if ((m_type == type::INT_8) && (sizeof(t_int) != 8)) {
+  //      throw std::runtime_error("integer size is not 8");
+  //    }
+  //    m_value = std::to_string(p_value);
+  //  }
 
-    if ((m_type == type::INT_2) && (sizeof(t_int) != 2)) {
-      throw std::runtime_error("integer size is not 2");
-    }
+  //  template<typename t_real>
+  //  void set_real(t_real p_value = 0.0)
+  //  {
+  //    if ((m_type != type::SMALL_REAL) && (m_type != type::LONG_REAL)) {
+  //      throw std::runtime_error("type is not real");
+  //    }
 
-    if ((m_type == type::INT_4) && (sizeof(t_int) != 4)) {
-      throw std::runtime_error("integer size is not 4");
-    }
+  //    if ((m_type == type::SMALL_REAL) && (sizeof(t_real) != sizeof(float))) {
+  //      throw("real size is not " + type2str(type::SMALL_REAL));
+  //    }
 
-    if ((m_type == type::INT_8) && (sizeof(t_int) != 8)) {
-      throw std::runtime_error("integer size is not 8");
-    }
-    m_value = std::to_string(p_value);
-  }
+  //    if ((m_type == type::LONG_REAL) && (sizeof(t_real) != sizeof(double))) {
+  //      throw("real size is not " + type2str(type::LONG_REAL));
+  //    }
+  //    m_value = std::to_string(p_value);
+  //  }
 
-  template<typename t_real>
-  void set_real(t_real p_value = 0.0)
-  {
-    if ((m_type != type::SMALL_REAL) && (m_type != type::LONG_REAL)) {
-      throw std::runtime_error("type is not real");
-    }
+  //  void set_fixed_size_string(const std::string& p_value);
 
-    if ((m_type == type::SMALL_REAL) && (sizeof(t_real) != sizeof(float))) {
-      throw("real size is not " + type2str(type::SMALL_REAL));
-    }
+  //  void set_var_size_string(const std::string& p_value);
 
-    if ((m_type == type::LONG_REAL) && (sizeof(t_real) != sizeof(double))) {
-      throw("real size is not " + type2str(type::LONG_REAL));
-    }
-    m_value = std::to_string(p_value);
-  }
+  //  void set_blob(std::string&& p_blob);
 
-  void set_fixed_size_string(const std::string& p_value);
+  //  void set_date(time_t p_time);
 
-  void set_var_size_string(const std::string& p_value);
+  //  void set_datetime(time_t p_time);
 
-  void set_blob(std::string&& p_blob);
+  //  void set_char(char p_char);
 
-  void set_date(time_t p_time);
+  //  inline void set_value(const std::string& p_value) { m_value = p_value; }
 
-  void set_datetime(time_t p_time);
+  static std::string type2str(type p_type);
 
-  void set_char(char p_char);
+protected:
+  explicit inline column(const name& p_name, type p_type, size p_size)
+    : m_name(p_name)
+    , m_type(p_type)
+    , m_size(p_size)
+  {}
 
-  inline void set_value(const std::string& p_value) { m_value = p_value; }
-
-  std::string type2str(type p_type) const;
-
-  void set_autoincrement(bool p_value);
-
-  void set_is_null(bool p_value);
+  explicit inline column(const name& p_name, type p_type)
+    : m_name(p_name)
+    , m_type(p_type)
+    , m_size(column::type2size(m_type))
+  {}
 
 private:
   static size type2size(type p_type);
@@ -162,13 +144,9 @@ private:
   }
 
 private:
-  table* m_table;
   name m_name;
   type m_type;
   size m_size;
-  bool m_is_null = { false };
-  bool m_is_auto_increment = { false };
-  std::string m_value;
 };
 
 } // namespace entities

@@ -4,10 +4,10 @@
 #include <cstdint>
 #include <iostream>
 
+#include <sql/entities/internal/collection.h>
+#include <sql/entities/internal/types.h>
 #include <sql/entities/name.h>
 #include <sql/entities/table.h>
-#include <sql/entities/tables.h>
-#include <sql/entities/types.h>
 
 namespace capemisa {
 namespace sql {
@@ -22,10 +22,15 @@ struct database
                                   const database& p_database);
 
   database() = delete;
+  database(const database&) = delete;
+  database(database&&) = delete;
+  database& operator=(const database&) = delete;
+  database& operator=(database&&) = delete;
+  ~database() = default;
 
-  inline explicit database(server* p_server, const name& p_name)
-    : m_server(p_server)
-    , m_name(p_name)
+  inline explicit database(const name& p_name, const server* p_server)
+    : m_name(p_name)
+    , m_server(p_server)
   {}
 
   inline uint16_t get_num_tables() const
@@ -37,20 +42,25 @@ struct database
 
   inline const name& get_name() const { return m_name; }
 
-  ptr<table> add_table(const name& p_table_name);
+  inline ptr<table> add_table(const name& p_table_name)
+  {
+    return m_tables.add(p_table_name, this);
+  }
 
   inline ptr<table> find(const name& p_table_name)
   {
-    return m_tables.find([&p_table_name](const ptr<table>& p_table) -> bool {
-      return p_table->get_name() == p_table_name;
-    });
+    return m_tables.find(p_table_name);
   }
 
-  server* get_server() const;
+  const server& get_server() const;
 
 private:
-  server* m_server;
+  typedef collection<table> tables;
+
+private:
   name m_name;
+  const server* m_server;
+
   tables m_tables;
 };
 

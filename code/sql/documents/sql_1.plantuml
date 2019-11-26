@@ -1,8 +1,10 @@
 @startuml
 
+set namespaceSeparator ::
+
 hide empty members
 allow_mixing
-left to right direction
+'left to right direction
 
 namespace  sql {
 
@@ -56,11 +58,6 @@ class InsertDefinition {
 	amountOfRows : uint16_t
 }
 
-class AttributeColumnInsertDefinition
-class ForeignKeyColumnInsertDefinition
-class PrimaryKeyColumnInsertDefinition
-
-
 enum AttributeColumnValuePattern {
 	userInput
 	random
@@ -73,9 +70,10 @@ enum AttributeColumnValuePattern {
 
 enum PrimaryKeyColumnValuePattern {
 	userInput
-	random
 	algorithmGenerated
 	autoIncrement	 
+	inferiorLimit
+	superiorLimit 
 }
 
 enum ForeignKeyColumnValueMatchPattern {
@@ -86,10 +84,6 @@ enum ForeignKeyColumnValueMatchPattern {
 }
 
 
-class PrimaryKeySingleValueInsertDefinition
-class ForeignKeySingleValueInsertDefinition
-class AttributeSingleValueInsertDefinition
-
 enum SingleValuePattern {
 	userInput
 }
@@ -99,6 +93,7 @@ class Value {
 }
 
 class ColumnHeader
+note top: Only one of '*InsertDefinition'
 class TestDefinition
 
 
@@ -141,7 +136,7 @@ ForeignKeyColumnValueInsertDefinition o-- ForeignKeyColumn
 ColumnHeader *--o  "*" Value
 ColumnHeader o-- "0..1" PrimaryKeyColumnValueInsertDefinition
 ColumnHeader o-- "0..1" ForeignKeyColumnValueInsertDefinition
-ColumnHeader o-- "0..1" AttributeColumnValueInsertDefinition
+ColumnHeader o-- "0..*" AttributeColumnValueInsertDefinition
 
 
 Value o-- "0..1" SingleValuePattern
@@ -149,8 +144,8 @@ Value o-- "0..1" SingleValuePattern
 namespace business {
 class InsertGenerator
 
-InsertGenerator o-- sql.entities.InsertsDefinitions
-InsertGenerator o-- sql.entities.Hosts
+InsertGenerator o-- sql::entities::InsertsDefinitions
+InsertGenerator o-- sql::entities::Hosts
 }
 }
 

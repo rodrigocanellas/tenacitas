@@ -3,7 +3,9 @@
 
 #include <iostream>
 
-#include <sql/entities/databases.h>
+#include <sql/entities/host.h>
+#include <sql/entities/internal/collection.h>
+#include <sql/entities/database.h>
 #include <sql/entities/name.h>
 
 namespace capemisa {
@@ -18,10 +20,15 @@ struct server
   friend std::ostream& operator<<(std::ostream& p_out, const server& p_server);
 
   server() = delete;
+  server(const server&) = delete;
+  server(server&&) = delete;
+  server& operator=(const server&) = delete;
+  server& operator=(server&&) = delete;
+  ~server() = default;
 
-  inline explicit server(host* p_host, const name& p_name)
-    : m_host(p_host)
-    , m_name(p_name)
+  inline explicit server(const name& p_name, const host* p_host)
+    : m_name(p_name)
+    , m_host(p_host)
   {}
 
   inline const name& get_name() const { return m_name; }
@@ -40,11 +47,14 @@ struct server
 
   ptr<database> add_database(const name& p_database_name);
 
-  host* get_host() const;
+  const host& get_host() const;
 
-private:
-  host* m_host;
-  name m_name;
+  private:
+  typedef collection<database> databases;
+
+  private:
+    name m_name;
+  const host * m_host;
   databases m_databases;
 };
 

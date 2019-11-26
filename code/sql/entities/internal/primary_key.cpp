@@ -17,7 +17,13 @@ operator<<(std::ostream& p_out, const primary_key& p_pk)
 const name&
 primary_key::get_table_name() const
 {
-  return m_table->get_name();
+  return m_table.get_name();
+}
+
+const table&
+primary_key::get_table() const
+{
+  return m_table;
 }
 
 } // namespace entities

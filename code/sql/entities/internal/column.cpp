@@ -1,43 +1,15 @@
 #include <sql/entities/column.h>
-#include <sql/entities/table.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
 
-void
-column::set_autoincrement(bool p_value)
-{
-  m_is_auto_increment = p_value;
-  if (m_is_auto_increment) {
-    if ((m_type != type::INT_1) && (m_type != type::INT_2) &&
-        (m_type != type::INT_4) && (m_type != type::INT_8)) {
-      throw std::runtime_error(
-        "can set autoincrement only on integer column type, "
-        "and " +
-        m_name + " type is " + type2str(m_type));
-    }
-
-    m_is_null = false;
-    m_value = "0";
-  }
-}
-
-void
-column::set_is_null(bool p_value)
-{
-  m_is_null = p_value;
-  if (m_is_null) {
-    m_is_auto_increment = false;
-  }
-}
-
 std::ostream&
 operator<<(std::ostream& p_out, const column& p_column)
 {
-  p_out << "{ \"name\" : \"" << p_column.get_name() << "\", "
+  p_out << "\"name\" : \"" << p_column.get_name() << "\", "
         << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
-        << "\"size\" : \"" << p_column.get_size() << "\"} ";
+        << "\"size\" : \"" << p_column.get_size() << "\"";
   //        << "\"size\" : \"" << p_column.get_size() << "\", "
   //        << "\"value\" : \"" << p_column.get_value() << "\"}";
   return p_out;
@@ -71,7 +43,7 @@ column::type2size(column::type p_type)
 }
 
 std::string
-column::type2str(column::type p_type) const
+column::type2str(column::type p_type)
 {
   switch (p_type) {
     case type::INT_1:

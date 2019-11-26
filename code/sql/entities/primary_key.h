@@ -5,10 +5,8 @@
 #include <list>
 #include <memory>
 
-#include <sql/entities/column.h>
-#include <sql/entities/columns.h>
-#include <sql/entities/name.h>
-#include <sql/entities/types.h>
+#include <sql/entities/internal/collection.h>
+#include <sql/entities/primary_key_column.h>
 
 namespace capemisa {
 namespace sql {
@@ -21,34 +19,41 @@ struct primary_key
 
   friend std::ostream& operator<<(std::ostream& p_out, const primary_key& p_pk);
 
-  inline explicit primary_key(table* p_table, const name& p_name = "PK")
-    : m_name(p_name)
-    , m_table(p_table)
+  primary_key() = delete;
+  primary_key(const primary_key&) = delete;
+  primary_key(primary_key&&) = delete;
+  primary_key& operator=(const primary_key&) = delete;
+  primary_key& operator=(primary_key&&) = delete;
+  ~primary_key() = default;
+
+  inline explicit primary_key(const table& p_table)
+    : m_table(p_table)
   {}
 
-  primary_key(primary_key&& p_pk)
-    : m_name(std::move(p_pk.m_name))
-    , m_table(p_pk.m_table)
-    , m_columns(std::move(p_pk.m_columns))
-  {}
+  inline uint16_t get_num_cols() const
+  {
+    return m_columns.get_size<uint16_t>();
+  }
 
-  const name& get_name() const { return m_name; }
-  void set_name(const name& p_name) { m_name = p_name; }
+  inline ptr<primary_key_column> get_column(uint16_t p_index)
+  {
+    return m_columns[p_index];
+  }
 
-  uint16_t get_num_cols() const { return m_columns.get_size<uint16_t>(); }
-
-  ptr<column> get_column(uint16_t p_index) { return m_columns[p_index]; }
-
-  inline void add_column(ptr<column> p_column) { m_columns.add(p_column); }
-
-  inline table* get_table() const { return m_table; }
+  inline void add_column(ptr<primary_key_column> p_column)
+  {
+    m_columns.add(p_column);
+  }
 
   const name& get_table_name() const;
 
+  const table& get_table() const;
+
 private:
+  typedef collection<primary_key_column> columns;
+
 private:
-  name m_name;
-  table* m_table;
+  const table& m_table;
   columns m_columns;
 };
 

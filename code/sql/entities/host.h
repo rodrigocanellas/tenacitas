@@ -4,9 +4,11 @@
 #include <algorithm>
 #include <iostream>
 
+#include <sql/entities/internal/collection.h>
+#include <sql/entities/internal/types.h>
 #include <sql/entities/ip.h>
 #include <sql/entities/name.h>
-#include <sql/entities/servers.h>
+#include <sql/entities/server.h>
 
 namespace capemisa {
 namespace sql {
@@ -18,6 +20,11 @@ struct host
   friend std::ostream& operator<<(std::ostream& p_out, const host& p_host);
 
   host() = delete;
+  host(const host&) = delete;
+  host(host&&) = delete;
+  host& operator=(const host&) = delete;
+  host& operator=(host&&) = delete;
+  ~host() = default;
 
   host(const name& p_name, const ip& p_ip)
     : m_name(p_name)
@@ -33,10 +40,7 @@ struct host
 
   inline ptr<server> find(const name& p_server_name)
   {
-    return m_servers.find(
-      [&p_server_name](const ptr<server>& p_server) -> bool {
-        return p_server->get_name() == p_server_name;
-      });
+    return m_servers.find(p_server_name);
   }
 
   ptr<server> add_server(const name& p_server_name);
@@ -44,6 +48,9 @@ struct host
   inline const name& get_name() const { return m_name; }
 
   inline const ip& get_ip() const { return m_ip; }
+
+private:
+  typedef collection<server> servers;
 
 private:
   name m_name;

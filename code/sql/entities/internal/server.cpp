@@ -16,31 +16,19 @@ operator<<(std::ostream& p_out, const server& p_server)
 ptr<database>
 server::find(const name& p_database_name)
 {
-  return m_databases.find(
-    [&p_database_name](const ptr<database>& p_db) -> bool {
-      return p_db->get_name() == p_database_name;
-    });
+  return m_databases.find(p_database_name);
 }
 
 ptr<database>
 server::add_database(const name& p_database_name)
 {
-  ptr<database> _db =
-    m_databases.find([&p_database_name](const ptr<database>& p_db) -> bool {
-      return p_db->get_name() == p_database_name;
-    });
-
-  if (_db == nullptr) {
-    _db = make_ptr<database>(this, p_database_name);
-    m_databases.add(_db);
-  }
-  return _db;
+  return m_databases.add(p_database_name, this);
 }
 
-host*
+const host&
 server::get_host() const
 {
-  return m_host;
+  return *m_host;
 }
 
 } // namespace entities
