@@ -8,14 +8,11 @@ namespace entities {
 std::ostream&
 operator<<(std::ostream& p_out, const table& p_table)
 {
-  p_out << "{\"name\": \"" << p_table.get_name() << "\"";
-  //        << "\", \"columns\" : " << p_table.m_columns;
-  //  if (p_table.get_primary_key() != nullptr) {
-  //    p_out << ", \"primary_key\" : " << *(p_table.get_primary_key());
-  //  }
-  //  p_out << ", \"foreigners_keys\" : " << p_table.m_foreigners_keys;
+  p_out << "{\"name\": \"" << p_table.get_name() << "\""
+        << ", \"pk\" : " << *p_table.m_primary_key
+        << ", \"attributes\" : " << p_table.m_attributes
+        << ", \"fks\" : " << p_table.m_foreigners_keys << "}";
 
-  p_out << "}";
   return p_out;
 }
 

@@ -10,6 +10,7 @@ operator<<(std::ostream& p_out, const server& p_server)
 {
   p_out << "{\"name\" : \"" << p_server.get_name() << "\", "
         << "\"databases\" : " << p_server.m_databases << "}";
+
   return p_out;
 }
 

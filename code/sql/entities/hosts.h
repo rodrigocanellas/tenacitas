@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_HOSTS_H
-#define CAPEMISA_TEST_AUTOMATION_ENTITIES_HOSTS_H
+#ifndef CAPEMISA_SQL_ENTITIES_HOSTS_H
+#define CAPEMISA_SQL_ENTITIES_HOSTS_H
 
 #include <sql/entities/host.h>
 #include <sql/entities/internal/collection.h>

@@ -4,7 +4,7 @@ set namespaceSeparator ::
 
 hide empty members
 allow_mixing
-'left to right direction
+left to right direction
 
 namespace  sql {
 
@@ -27,7 +27,7 @@ class Name
 
 class Column
 
-class Attribute  {
+class AttributeColumn  {
 	isNull : boolean
 	isUnique : boolean
 }
@@ -40,6 +40,7 @@ class PrimaryKeyColumn  {
 }
 
 class ForeignKeyColumn  {
+	name : Name
 	isUnique : boolean
 }
 
@@ -128,20 +129,19 @@ Column *-- Name
 
 TestDefinition *-- InsertsDefinitions
 
-Column <|-- Attribute
+Column <|-- AttributeColumn
 Column <|-- PrimaryKeyColumn 
-Column <|-- ForeignKeyColumn
 
-Table  *--o "0..*" Attribute
+Table  *--o "0..*" AttributeColumn
 Table  *--o "0..1" PrimaryKey 
 Table  *--o "0..*" ForeignKey
 
 PrimaryKey *--o "0..*" PrimaryKeyColumn 
-PrimaryKey o--o "0..*" ForeignKeyColumn
+PrimaryKey o-- "0..*" ForeignKeyColumn
 
 ForeignKey  *--o "1..*" ForeignKeyColumn 
 
-ForeignKeyColumn o-- "*" PrimaryKeyColumn 
+ForeignKeyColumn o--  PrimaryKeyColumn 
 
 Databases *-- "*" Database
 Database *--o "*" Table
@@ -159,7 +159,7 @@ InsertDefinition *-- "*" ColumnHeader
 InsertDefinition o-- Table
 
 AttributeColumnHeader *-- AttributeValuePattern
-AttributeColumnHeader o-- Attribute 
+AttributeColumnHeader o-- AttributeColumn
 
 PrimaryKeyColumnHeader *-- PrimaryKeyValuePattern
 PrimaryKeyColumnHeader o-- PrimaryKeyColumn

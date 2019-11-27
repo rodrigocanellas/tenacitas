@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_COLLECTION_H
-#define CAPEMISA_TEST_AUTOMATION_ENTITIES_COLLECTION_H
+#ifndef CAPEMISA_SQL_ENTITIES_COLLECTION_H
+#define CAPEMISA_SQL_ENTITIES_COLLECTION_H
 
 #include <algorithm>
 #include <functional>
@@ -49,12 +49,12 @@ struct collection
     return _obj;
   }
 
-  //  inline void add(ptr<t_type> p_obj)
-  //  {
-  //    if (find(p_obj) == m_list.end()) {
-  //      m_list.push_back(p_obj);
-  //    }
-  //  }
+  inline void add(ptr<t_type> p_obj)
+  {
+    if (find(p_obj->get_name()) == nullptr) {
+      m_list.push_back(p_obj);
+    }
+  }
 
   template<typename t_size>
   ptr<t_type> operator[](t_size p_index)

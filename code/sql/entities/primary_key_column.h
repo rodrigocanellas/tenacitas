@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_PRIMARY_KEY_COLUMN_H
-#define CAPEMISA_TEST_AUTOMATION_ENTITIES_PRIMARY_KEY_COLUMN_H
+#ifndef CAPEMISA_SQL_ENTITIES_PRIMARY_KEY_COLUMN_H
+#define CAPEMISA_SQL_ENTITIES_PRIMARY_KEY_COLUMN_H
 
 #include <iostream>
 
@@ -24,10 +24,10 @@ struct primary_key_column : public column
   primary_key_column(primary_key_column&&) = delete;
   primary_key_column& operator=(const primary_key_column&) = delete;
   primary_key_column& operator=(primary_key_column&&) = delete;
-  ~primary_key_column() = default;
+  ~primary_key_column() override = default;
 
-  primary_key_column(const primary_key& p_primary_key,
-                     const name& p_name,
+  primary_key_column(const name& p_name,
+                     const primary_key* p_primary_key,
                      column::type p_type,
                      size p_size,
                      bool p_is_auto_increment,
@@ -38,8 +38,8 @@ struct primary_key_column : public column
     , m_primary_key(p_primary_key)
   {}
 
-  primary_key_column(const primary_key& p_primary_key,
-                     const name& p_name,
+  primary_key_column(const name& p_name,
+                     const primary_key* p_primary_key,
                      column::type p_type,
                      bool p_is_auto_increment,
                      bool p_is_unique)
@@ -58,7 +58,7 @@ struct primary_key_column : public column
 private:
   bool m_is_autoincrement;
   bool m_is_unique;
-  const primary_key& m_primary_key;
+  const primary_key* m_primary_key;
 };
 
 } // namespace entities

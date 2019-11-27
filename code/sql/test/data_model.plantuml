@@ -23,7 +23,7 @@ class Dependent {
 
 Employee o-- "*" Project
 Project o-- "*" Employee
-Employee o-- "*" Dependent
+Employee *-- "*" Dependent
 Employee "boss" o-- "*" Employee
 
 @enduml

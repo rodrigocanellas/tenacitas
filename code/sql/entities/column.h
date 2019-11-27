@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_COLUMN_H
-#define CAPEMISA_TEST_AUTOMATION_ENTITIES_COLUMN_H
+#ifndef CAPEMISA_SQL_ENTITIES_COLUMN_H
+#define CAPEMISA_SQL_ENTITIES_COLUMN_H
 
 #include <cstdint>
 #include <ctime>
@@ -35,12 +35,19 @@ struct column
   };
 
   column() = delete;
+  column(const column&) = default;
+  column(column&&) = delete;
+  column& operator=(const column&) = default;
+  column& operator=(column&&) = delete;
+  virtual ~column() = default;
 
   inline const name& get_name() const { return m_name; }
 
   inline type get_type() const { return m_type; }
 
   inline size get_size() const { return m_size; }
+
+  static std::string type2str(type p_type);
 
   //  // values
 
@@ -100,8 +107,6 @@ struct column
   //  void set_char(char p_char);
 
   //  inline void set_value(const std::string& p_value) { m_value = p_value; }
-
-  static std::string type2str(type p_type);
 
 protected:
   explicit inline column(const name& p_name, type p_type, size p_size)

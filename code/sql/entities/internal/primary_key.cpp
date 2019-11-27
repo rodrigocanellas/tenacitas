@@ -9,21 +9,16 @@ std::ostream&
 operator<<(std::ostream& p_out, const primary_key& p_pk)
 {
   p_out << "{"
-        << "\"table\" : \"" << p_pk.get_table_name()
-        << "\", \"columns\" : " << p_pk.m_columns << "}";
-  return p_out;
-}
+        << "\"pk_columns\" : " << p_pk.m_pks_columns << ", "
+        << "\"fk_columns\" : " << p_pk.m_fks_columns << "}";
 
-const name&
-primary_key::get_table_name() const
-{
-  return m_table.get_name();
+  return p_out;
 }
 
 const table&
 primary_key::get_table() const
 {
-  return m_table;
+  return *m_table;
 }
 
 } // namespace entities

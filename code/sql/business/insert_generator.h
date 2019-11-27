@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_BUSINESS_generate_table_insert_H
-#define CAPEMISA_TEST_AUTOMATION_BUSINESS_generate_table_insert_H
+#ifndef CAPEMISA_SQL_BUSINESS_generate_table_insert_H
+#define CAPEMISA_SQL_BUSINESS_generate_table_insert_H
 
 #include <sql/entities/column.h>
 #include <sql/entities/columns.h>

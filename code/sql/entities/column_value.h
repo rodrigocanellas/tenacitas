@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_TEST_AUTOMATION_ENTITIES_COLUMN_VALUE_H
-#define CAPEMISA_TEST_AUTOMATION_ENTITIES_COLUMN_VALUE_H
+#ifndef CAPEMISA_SQL_ENTITIES_COLUMN_VALUE_H
+#define CAPEMISA_SQL_ENTITIES_COLUMN_VALUE_H
 
 #include <sql/entities/names.h>
 #include <sql/entities/column_value_pattern.h>

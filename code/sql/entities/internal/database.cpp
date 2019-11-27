@@ -11,6 +11,7 @@ operator<<(std::ostream& p_out, const database& p_database)
   p_out << "{"
         << "\"name\" : \"" << p_database.get_name() << "\", "
         << "\"tables\" : " << p_database.m_tables << "}";
+
   return p_out;
 }
 
