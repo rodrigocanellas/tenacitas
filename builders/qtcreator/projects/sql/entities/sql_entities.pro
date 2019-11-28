@@ -12,9 +12,14 @@ TARGET = capemisa.sql.entities
 
 HEADERS += \
     ../../../../../code/sql/entities/attribute_column.h \
+    ../../../../../code/sql/entities/attribute_column_header.h \
+    ../../../../../code/sql/entities/attribute_value_pattern.h \
+    ../../../../../code/sql/entities/column_header.h \
+    ../../../../../code/sql/entities/column_value.h \
     ../../../../../code/sql/entities/foreign_key_column.h \
     ../../../../../code/sql/entities/foreign_key.h \
     ../../../../../code/sql/entities/internal/collection.h \
+    ../../../../../code/sql/entities/internal/random_value_generator.h \
     ../../../../../code/sql/entities/internal/types.h \
     ../../../../../code/sql/entities/hosts.h \
     ../../../../../code/sql/entities/host.h \
@@ -33,6 +38,7 @@ HEADERS += \
 include (../../../common.pri)
 
 SOURCES += \
+  ../../../../../code/sql/entities/internal/attibute_column_header.cpp \
     ../../../../../code/sql/entities/internal/attribute_column.cpp \
     ../../../../../code/sql/entities/internal/foreign_key_column.cpp \
     ../../../../../code/sql/entities/internal/foreign_key.cpp \

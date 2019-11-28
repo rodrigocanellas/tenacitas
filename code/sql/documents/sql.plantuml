@@ -4,7 +4,8 @@ set namespaceSeparator ::
 
 hide empty members
 allow_mixing
-left to right direction
+'left to right direction
+skinparam linetype ortho
 
 namespace  sql {
 
@@ -25,7 +26,9 @@ enum Type {
 }
 class Name
 
+
 class Column
+
 
 class AttributeColumn  {
 	isNull : boolean
@@ -67,16 +70,12 @@ class Server {
 	name : Name
 }
 
-class Server
-class Databases
-
-class InsertsDefinitions 
-
 class InsertDefinition {
 	amountOfRows : uint16_t
 }
+class InsertsDefinitions 
 
-enum AttributeValuePattern {
+enum ValuePattern {
 	userInput
 	random
 	algorithmGenerated
@@ -84,17 +83,6 @@ enum AttributeValuePattern {
 	nullValue
 	inferiorLimit
 	superiorLimit 
-}
-
-enum PrimaryKeyValuePattern {
-	userInput
-	algorithmGenerated
-	autoIncrement	 
-	inferiorLimit
-	superiorLimit 
-}
-
-enum ForeignKeyValuePattern {
 	userChoice
 	random
 	onePerOne
@@ -102,20 +90,8 @@ enum ForeignKeyValuePattern {
 }
 
 
-enum SingleValuePattern {
-	userInput
-}
 
-class Value {
-	value : string
-}
-
-class ColumnHeader {
-	{abstract} + generate()
-}
-class AttributeColumnHeader
-class PrimaryKeyColumnHeader
-class ForeignKeyColumnHeader
+class ColumnHeader
 
 class TestDefinition
 class TestsDefinitions
@@ -131,6 +107,7 @@ TestDefinition *-- InsertsDefinitions
 
 Column <|-- AttributeColumn
 Column <|-- PrimaryKeyColumn 
+Column <|-- ForeignKeyColumn 
 
 Table  *--o "0..*" AttributeColumn
 Table  *--o "0..1" PrimaryKey 
@@ -143,19 +120,19 @@ ForeignKey  *--o "1..*" ForeignKeyColumn
 
 ForeignKeyColumn o--  PrimaryKeyColumn 
 
-Databases *-- "*" Database
+
 Database *--o "*" Table
-Host o--o "*" Server
+Host *--o "*" Server
 Host *-- Ip
 
-Servers *-- "*" Server 
-Server o--o "*" Database
+ 
+Server *--o "*" Database
 
 Hosts *--o "*" Host
 
 InsertsDefinitions *-- "*" InsertDefinition
 
-InsertDefinition *-- "*" ColumnHeader
+'InsertDefinition *-- "*" ColumnHeader
 InsertDefinition o-- Table
 
 AttributeColumnHeader *-- AttributeValuePattern
@@ -167,21 +144,44 @@ PrimaryKeyColumnHeader o-- PrimaryKeyColumn
 ForeignKeyColumnHeader *-- ForeignKeyValuePattern
 ForeignKeyColumnHeader o-- ForeignKeyColumn
 
-ColumnHeader *--o  "*" Value
+ColumnHeader *--o  "*" ColumnValue
 
 ColumnHeader <|-- AttributeColumnHeader
 ColumnHeader <|-- PrimaryKeyColumnHeader
 ColumnHeader <|-- ForeignKeyColumnHeader
 
-Value o-- "0..1" SingleValuePattern
+'ColumnValue *-- "0..1" SingleValuePattern
+
+'InsertDefinition *-- "0..1" PrimaryKeyColumnHeader
+'InsertDefinition *-- "0..*" AttributeColumnHeader
+'InsertDefinition *-- "0..*" ForeignKeyColumnHeader
+
+InsertDefinition *--"*" ColumnHeader
+
+'AttributeColumnHeader ..> "<<local>>" RandomValueGenerator
+}
 
 namespace business {
+class InsertsGenerators
 class InsertGenerator
-
-InsertGenerator o-- sql::entities::InsertsDefinitions
-InsertGenerator o-- sql::entities::Hosts
+class RandomValueGenerator
+class InsertGenerator {
+	{abstract} + generate(entities::InsertsDefinitions,
+		            entities::InsertDefinition)
 }
+
+
+InsertsGenerators o-- sql::entities::InsertsDefinitions
+InsertsGenerators o-- sql::entities::Hosts
+
+InsertsGenerators *-- "*" InsertGenerator
+
+InsertGenerator ..> "<<local>>"  RandomValueGenerator
+InsertGenerator ..> "<<param>>" sql::entities::InsertDefinition
+InsertGenerator ..> "<<param>>" sql::entities::InsertsDefinitions
+
+RandomValueGenerator o-- sql::entities::Column
 }
 
-
+}
 @enduml
