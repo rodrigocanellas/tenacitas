@@ -9,7 +9,8 @@ operator<<(std::ostream& p_out, const column& p_column)
 {
   p_out << "\"name\" : \"" << p_column.get_name() << "\", "
         << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
-        << "\"size\" : \"" << p_column.get_size() << "\"";
+        << "\"size\" : \"" << p_column.get_size() << "\", "
+        << "\"category\" : \"" << category2str(p_column.get_category()) << "\"";
   return p_out;
 }
 

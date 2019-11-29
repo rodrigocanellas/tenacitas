@@ -30,7 +30,7 @@ class Name
 
 class Column
 
-enum Schema {
+enum Category {
 	attribute
 	primaryKey
 	foreignKey
@@ -75,7 +75,7 @@ ColumnValues *-- ValueGenerator
 ColumnValues o-- Column
 ColumnValues *-- "*" Value
 
-ValueGenerator *-- "*" Schema
+ValueGenerator *-- "*" Category
 
 InsertsDefinitions *-- "*" InsertDefinition
 
@@ -90,7 +90,7 @@ Table *--o PrimaryKey
 Table *--o "*" ForeignKey
 Table *--o "*" AttributeColumn
 
-Column *-- Schema
+Column *-- Category
 
 Column *-- Type
 Column +-- Type

@@ -8,6 +8,7 @@
 #include <sql/entities/name.h>
 #include <sql/entities/primary_key_column.h>
 #include <sql/entities/size.h>
+#include <sql/entities/category.h>
 
 namespace capemisa {
 namespace sql {
@@ -15,7 +16,7 @@ namespace entities {
 
 struct foreign_key;
 
-struct foreign_key_column
+struct foreign_key_column : public column
 {
 
   friend std::ostream& operator<<(std::ostream& p_out,
@@ -31,12 +32,10 @@ struct foreign_key_column
   foreign_key_column(const name& p_name,
                      const foreign_key* p_foreign_key,
                      ptr<primary_key_column> p_primary_key_column)
-    : m_name(p_name)
+    : column (p_name, p_primary_key_column->get_type(), p_primary_key_column->get_size(), category::foreign_key)
     , m_foreign_key(p_foreign_key)
     , m_primary_key_column(p_primary_key_column)
   {}
-
-  inline const name& get_name() const { return m_name; }
 
   const foreign_key& get_foreign_key() const;
 
@@ -46,7 +45,6 @@ struct foreign_key_column
   }
 
 private:
-  name m_name;
   const foreign_key* m_foreign_key;
   ptr<primary_key_column> m_primary_key_column;
 };

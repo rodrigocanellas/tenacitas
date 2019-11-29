@@ -1,0 +1,12 @@
+CREATE D:\c++\tenacitas\products\win32-g++\release\library\libcapemisa.sql.business.a
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\attribute_column.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\column.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\database.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\foreign_key.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\foreign_key_column.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\host.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\primary_key.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\primary_key_column.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\server.o
+ADDMOD D:\c++\tenacitas\products\tmp\qtcreator\win32-g++\release\capemisa.sql.business\obj\table.o
+SAVE

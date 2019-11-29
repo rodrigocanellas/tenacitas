@@ -1,46 +1,49 @@
-CONFIG(debug, debug|release) {
-    build_type=debug
-    message("This is debug mode or debug_and_release")
-} else {
-    build_type=release
-    message("This is release mode or debug_and_release")
-}
 
 CONFIG += c++11
 
 
-
 spec = $$basename(QMAKESPEC)
 
-equals(spec,"") {
-    spec="spec_undefined"
-}
+#equals(spec,"") {
+#    spec="spec_undefined"
+#    contains(spec,)
+#}
+
+#build_pass:CONFIG(debug, debug|release) {
+#    build_type=debug
+#    message("This is debug mode or debug_and_release")
+#} else {
+#    build_type=release
+#    message("This is release mode or debug_and_release")
+#}
 
 
 base_dir=$$PWD/../..
 code_dir=$$base_dir/code
-builder_dir=$$base_dir/builders/qtcreator
+builder_dir=$$base_dir/builders/qt
 products_dir=$$base_dir/products
 third_dir=$$base_dir/3rd
-tmp_dir=$$products_dir/tmp/qtcreator/$$spec/$$build_type/$$TARGET
-libs_dir=$$products_dir/$$spec/$$build_type/library
-bins_dir=$$products_dir/$$spec/$$build_type/binary
-test_dir=$$products_dir/$$spec/$$build_type/test
-example_dir=$$products_dir/$$spec/$$build_type/example
+equals(Hos
+#tmp_dir=$$products_dir/tmp/qtcreator/$$spec/$$build_type/$$TARGET
+#libs_dir=$$products_dir/$$spec/library
+#bins_dir=$$products_dir/$$spec/binary
+#test_dir=$$products_dir/$$spec/test
+#example_dir=$$products_dir/$$spec/example
 
-OUT_PWD = $${tmp_dir}
-MOC_DIR += $${tmp_dir}/moc
-UI_DIR  += $${tmp_dir}/ui
+#OUT_PWD = $${tmp_dir}
+#MOC_DIR += $${tmp_dir}/moc
+#UI_DIR  += $${tmp_dir}/ui
 #UI_DIR  += $$_PRO_FILE_PWD_/../..
-OBJECTS_DIR += $${tmp_dir}/obj
-RCC_DIR += $${tmp_dir}/rsc
+#OBJECTS_DIR += $${tmp_dir}/obj
+#RCC_DIR += $${tmp_dir}/rsc
 
 QMAKE_CXXFLAGS += -std=c++11 -Werror
 QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 
 equals(TEMPLATE,app) {
-    DESTDIR = $$bins_dir
+    win32:DESTDIR=$$products_dir/windows/binary
+    unix:
     contains(CONFIG,test) {
         DESTDIR=$$test_dir
     }
@@ -56,7 +59,7 @@ equals(TEMPLATE,app) {
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
 #    CONFIG += shared_and_static
-    CONFIG += staticlib
+#    CONFIG += staticlib
 #build_all
 }
 
@@ -78,7 +81,7 @@ INCLUDEPATH += $${third_dir}/include
 #INCLUDEPATH += $$_PRO_FILE_PWD_/../../mhi
 
 message("_PRO_FILE_PWD_ = "$$_PRO_FILE_PWD_)
-message("build_type ="$$build_type)
+#message("build_type ="$$build_type)
 message("base_dir= "$$base_dir)
 message("code_dir= "$$code_dir)
 message("products_dir = "$$products_dir)
