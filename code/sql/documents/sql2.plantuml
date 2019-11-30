@@ -4,7 +4,7 @@ set namespaceSeparator ::
 
 hide empty members
 allow_mixing
-'left to right direction
+left to right direction
 skinparam linetype ortho
 
 
@@ -24,13 +24,15 @@ enum Type {
 	BLOB
 	SMALL_REAL
 	LONG_REAL
+	DATE
+	DATE_TIME
 }
 class Name
 
 
 class Column
 
-enum Category {
+enum Usage {
 	attribute
 	primaryKey
 	foreignKey
@@ -64,18 +66,27 @@ class InsertDefinition {
 	amountOfRows : uint16_t
 }
 
+class Value {
+	userInput : bool
+	value: string
+}
+
 class ColumnValues
+
+class ValuesGenerators
+
+ValuesGenerators *-- "*" ValueGenerator
 
 Hosts *-- "*" Host
 Host *--o "*" Server
 Server *--o "*" Database
 Database *--o "*" Table
 
-ColumnValues *-- ValueGenerator
+ColumnValues o-- ValueGenerator
 ColumnValues o-- Column
 ColumnValues *-- "*" Value
 
-ValueGenerator *-- "*" Category
+ValueGenerator *-- "*" Usage
 
 InsertsDefinitions *-- "*" InsertDefinition
 
@@ -90,7 +101,8 @@ Table *--o PrimaryKey
 Table *--o "*" ForeignKey
 Table *--o "*" AttributeColumn
 
-Column *-- Category
+Column *-- Usage
+Column +-- Usage
 
 Column *-- Type
 Column +-- Type

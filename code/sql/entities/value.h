@@ -7,27 +7,27 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
-struct column_value
+struct value
 {
 
-  column_value() = delete;
+  value() = delete;
 
-  column_value(const column_value&) = default;
-  column_value(column_value&&) noexcept = default;
+  value(const value&) = default;
+  value(value&&) noexcept = default;
 
-  ~column_value() = default;
+  ~value() = default;
 
-  inline column_value(const std::string& p_value, bool p_is_user_input = false)
+  inline value(const std::string& p_value, bool p_is_user_input = false)
     : m_value(p_value)
     , m_is_user_input(p_is_user_input)
   {}
 
-  inline column_value(std::string&& p_value, bool p_is_user_input = false)
+  inline value(std::string&& p_value, bool p_is_user_input = false)
     : m_value(std::move(p_value))
     , m_is_user_input(p_is_user_input)
   {}
 
-  inline column_value(const char* p_value, bool p_is_user_input = false)
+  inline value(const char* p_value, bool p_is_user_input = false)
     : m_value(p_value)
     , m_is_user_input(p_is_user_input)
   {}
@@ -54,8 +54,8 @@ struct column_value
     m_is_user_input = true;
   }
 
-  column_value& operator=(const column_value&) = default;
-  column_value& operator=(column_value&&) noexcept = default;
+  value& operator=(const value&) = default;
+  value& operator=(value&&) noexcept = default;
 
 private:
   std::string m_value;

@@ -6,7 +6,6 @@
 #include <sql/entities/column.h>
 #include <sql/entities/name.h>
 #include <sql/entities/size.h>
-#include <sql/entities/category.h>
 
 namespace capemisa {
 namespace sql {
@@ -33,7 +32,7 @@ struct primary_key_column : public column
                      size p_size,
                      bool p_is_auto_increment,
                      bool p_is_unique)
-    : column(p_name, p_type, p_size, category::primary_key)
+    : column(p_name, p_type, p_size, column::usage::primary_key)
     , m_is_autoincrement(p_is_auto_increment)
     , m_is_unique(p_is_unique)
     , m_primary_key(p_primary_key)
@@ -44,7 +43,7 @@ struct primary_key_column : public column
                      column::type p_type,
                      bool p_is_auto_increment,
                      bool p_is_unique)
-    : column(p_name, p_type, category::primary_key)
+    : column(p_name, p_type, column::usage::primary_key)
     , m_is_autoincrement(p_is_auto_increment)
     , m_is_unique(p_is_unique)
     , m_primary_key(p_primary_key)

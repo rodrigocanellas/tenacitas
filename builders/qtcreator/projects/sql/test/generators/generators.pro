@@ -7,7 +7,7 @@ QMAKE_CXXFLAGS += -std=c++11
 
 TEMPLATE = app
 
-TARGET = capemisa.sql.test.print
+TARGET = capemisa.sql.test.generators
 
 CONFIG+=test
 
@@ -19,8 +19,7 @@ LIBS += -lcapemisa.sql.entities
 
 
 SOURCES += \
-  ../../../../../../code/sql/test/print/main.cpp
-
+  ../../../../../../code/sql/test/generators/main.cpp
 include (../../../../common.pri)
 
 

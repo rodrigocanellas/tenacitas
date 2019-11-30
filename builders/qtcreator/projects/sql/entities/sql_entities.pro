@@ -15,9 +15,8 @@ include (../../../common.pri)
 
 HEADERS += \
     ../../../../../code/sql/entities/attribute_column.h \
-    ../../../../../code/sql/entities/category.h \
     ../../../../../code/sql/entities/column.h \
-    ../../../../../code/sql/entities/column_value.h \
+    ../../../../../code/sql/entities/column_values.h \
     ../../../../../code/sql/entities/database.h \
     ../../../../../code/sql/entities/foreign_key.h \
     ../../../../../code/sql/entities/foreign_key_column.h \
@@ -29,10 +28,13 @@ HEADERS += \
     ../../../../../code/sql/entities/name.h \
     ../../../../../code/sql/entities/primary_key.h \
     ../../../../../code/sql/entities/primary_key_column.h \
+    ../../../../../code/sql/entities/sequential_value_generator.h \
     ../../../../../code/sql/entities/server.h \
     ../../../../../code/sql/entities/size.h \
     ../../../../../code/sql/entities/table.h \
-    ../../../../../code/sql/entities/value_generator.h
+    ../../../../../code/sql/entities/value.h \
+    ../../../../../code/sql/entities/value_generator.h \
+    ../../../../../code/sql/entities/values.h
 
 SOURCES += \
     ../../../../../code/sql/entities/internal/attribute_column.cpp \

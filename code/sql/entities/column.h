@@ -7,7 +7,6 @@
 
 #include <sql/entities/name.h>
 #include <sql/entities/size.h>
-#include <sql/entities/category.h>
 
 namespace capemisa {
 namespace sql {
@@ -35,6 +34,13 @@ struct column
     LONG_REAL = 12
   };
 
+  enum class usage : int8_t
+  {
+    primary_key = 0x02,
+    foreign_key = 0x04,
+    attribute = 0x08
+  };
+
   column() = delete;
   column(const column&) = default;
   column(column&&) = delete;
@@ -48,9 +54,10 @@ struct column
 
   inline size get_size() const { return m_size; }
 
-  inline category get_category() const {return m_category;}
+  inline usage get_usage() const { return m_usage; }
 
   static std::string type2str(type p_type);
+  static std::string usage2str(usage p_usage);
 
   //  // values
 
@@ -112,18 +119,21 @@ struct column
   //  inline void set_value(const std::string& p_value) { m_value = p_value; }
 
 protected:
-  explicit inline column(const name& p_name, type p_type, size p_size, category p_category)
+  explicit inline column(const name& p_name,
+                         type p_type,
+                         size p_size,
+                         usage p_usage)
     : m_name(p_name)
     , m_type(p_type)
     , m_size(p_size)
-    , m_category(p_category)
+    , m_usage(p_usage)
   {}
 
-  explicit inline column(const name& p_name, type p_type, category p_category)
+  explicit inline column(const name& p_name, type p_type, usage p_usage)
     : m_name(p_name)
     , m_type(p_type)
     , m_size(column::type2size(m_type))
-    , m_category(p_category)
+    , m_usage(p_usage)
   {}
 
 private:
@@ -157,7 +167,7 @@ private:
   name m_name;
   type m_type;
   size m_size;
-  category m_category;
+  usage m_usage;
 };
 
 } // namespace entities

@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS = print
+SUBDIRS = print \
+  generators

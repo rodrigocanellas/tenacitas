@@ -10,7 +10,7 @@ operator<<(std::ostream& p_out, const column& p_column)
   p_out << "\"name\" : \"" << p_column.get_name() << "\", "
         << "\"type\" : \"" << p_column.type2str(p_column.get_type()) << "\", "
         << "\"size\" : \"" << p_column.get_size() << "\", "
-        << "\"category\" : \"" << category2str(p_column.get_category()) << "\"";
+        << "\"usage\" : \"" << column::usage2str(p_column.get_usage()) << "\"";
   return p_out;
 }
 
@@ -72,6 +72,18 @@ column::type2str(column::type p_type)
     default:
       return "UNDEFINED";
   }
+}
+
+std::string
+column::usage2str(usage p_usage)
+{
+  if (p_usage == usage::attribute) {
+    return "attribute";
+  }
+  if (p_usage == usage::primary_key) {
+    return "primary_key";
+  }
+  return "foreign_key";
 }
 
 // table*
