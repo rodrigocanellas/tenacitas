@@ -1,32 +1,47 @@
-CONFIG(debug, debug|release) {
-    build_type=debug
-    message("This is debug mode or debug_and_release")
-} else {
-    build_type=release
-    message("This is release mode or debug_and_release")
-}
+;; This buffer is for text that is not saved, and for Lisp evaluation.
+;; To create a file, visit it with C-x C-f and enter text in its buffer.
+
+#CONFIG(debug, debug|release) {
+#    build_type=debug
+#    message("This is debug mode or debug_and_release")
+#} else {
+#    build_type=release
+#    message("This is release mode or debug_and_release")
+#}
 
 CONFIG += c++11
 
 
 
-spec = $$basename(QMAKESPEC)
+#spec = $$basename(QMAKESPEC)
 
-equals(spec,"") {
-    spec="spec_undefined"
-}
+#equals(spec,"") {
+#    spec="spec_undefined"
+#}
 
+
+#base_dir=$$PWD/../..
+#code_dir=$$base_dir/code
+#builder_dir=$$base_dir/builders/qtcreator
+#products_dir=$$base_dir/products
+#third_dir=$$base_dir/3rd
+#tmp_dir=$$products_dir/tmp/qtcreator/$$spec/$$build_type/$$TARGET
+#libs_dir=$$products_dir/$$spec/$$build_type/library
+#bins_dir=$$products_dir/$$spec/$$build_type/binary
+#test_dir=$$products_dir/$$spec/$$build_type/test
+#example_dir=$$products_dir/$$spec/$$build_type/example
 
 base_dir=$$PWD/../..
 code_dir=$$base_dir/code
 builder_dir=$$base_dir/builders/qtcreator
 products_dir=$$base_dir/products
 third_dir=$$base_dir/3rd
-tmp_dir=$$products_dir/tmp/qtcreator/$$spec/$$build_type/$$TARGET
-libs_dir=$$products_dir/$$spec/$$build_type/library
-bins_dir=$$products_dir/$$spec/$$build_type/binary
-test_dir=$$products_dir/$$spec/$$build_type/test
-example_dir=$$products_dir/$$spec/$$build_type/example
+tmp_dir=$$products_dir/tmp/qtcreator/$$TARGET
+libs_dir=$$products_dir/library
+bins_dir=$$products_dir/binary
+test_dir=$$products_dir/test
+example_dir=$$products_dir/example
+
 
 OUT_PWD = $${tmp_dir}
 MOC_DIR += $${tmp_dir}/moc
@@ -55,7 +70,9 @@ equals(TEMPLATE,app) {
 
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
-    CONFIG += shared_and_static build_all
+    CONFIG += shared_and_static
+#    CONFIG += staticlib
+#build_all
 }
 
 
