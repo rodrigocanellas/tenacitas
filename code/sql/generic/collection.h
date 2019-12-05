@@ -6,12 +6,12 @@
 #include <iostream>
 #include <list>
 
-#include <sql/entities/internal/types.h>
-#include <sql/entities/name.h>
+#include <sql/generic/name.h>
+#include <sql/generic/ptr.h>
 
 namespace capemisa {
 namespace sql {
-namespace entities {
+namespace generic {
 
 /// \brief collection of pointer to a \p type
 ///
@@ -37,19 +37,19 @@ struct collection
   }
 
   template<typename... t_params>
-  ptr<t_type> add(const name& p_name, t_params... p_params)
+  generic::ptr<t_type> add(const generic::name& p_name, t_params... p_params)
   {
-    ptr<t_type> _obj = find(p_name);
+    generic::ptr<t_type> _obj = find(p_name);
     if (_obj != nullptr) {
       return _obj;
     }
 
-    _obj = make_ptr<t_type>(p_name, p_params...);
+    _obj = generic::make_ptr<t_type>(p_name, p_params...);
     m_list.push_back(_obj);
     return _obj;
   }
 
-  inline void add(ptr<t_type> p_obj)
+  inline void add(generic::ptr<t_type> p_obj)
   {
     if (find(p_obj->get_name()) == nullptr) {
       m_list.push_back(p_obj);
@@ -57,10 +57,10 @@ struct collection
   }
 
   template<typename t_size>
-  ptr<t_type> operator[](t_size p_index)
+  generic::ptr<t_type> operator[](t_size p_index) const
   {
     if (p_index >= static_cast<t_size>(m_list.size())) {
-      return ptr<t_type>();
+      return generic::ptr<t_type>();
     }
     return *(std::next(m_list.begin(), p_index));
   }
@@ -71,40 +71,49 @@ struct collection
     return static_cast<t_size>(m_list.size());
   }
 
-  //  ptr<t_type> find(
-  //    std::function<bool(const ptr<t_type>& p_obj)> p_function) const
+  //  generic::ptr<t_type> find(
+  //    std::function<bool(const generic::ptr<t_type>& p_obj)> p_function) const
   //  {
   //    typename list::const_iterator _ite =
   //      std::find_if(m_list.begin(), m_list.end(), p_function);
   //    if (_ite != m_list.end()) {
   //      return *_ite;
   //    }
-  //    return ptr<t_type>();
+  //    return generic::ptr<t_type>();
   //  }
 
-  ptr<t_type> find(const name& p_name) const
+  generic::ptr<t_type> find(const generic::name& p_name) const
   {
     typename list::const_iterator _ite =
       std::find_if(m_list.begin(),
                    m_list.end(),
-                   [&p_name](const ptr<t_type>& p_type) -> bool {
+                   [&p_name](const generic::ptr<t_type>& p_type) -> bool {
                      return p_type->get_name() == p_name;
                    });
     if (_ite != m_list.end()) {
       return *_ite;
     }
-    return ptr<t_type>();
+    return generic::ptr<t_type>();
+  }
+
+  void merge(collection& p_collection)
+  {
+    m_list.merge(p_collection.m_list,
+                 [this, &p_collection](const generic::ptr<t_type> p_l,
+                                       const generic::ptr<t_type> p_r) -> bool {
+                   return p_l->get_name() == p_r->get_name();
+                 });
   }
 
 private:
-  typedef std::list<ptr<t_type>> list;
+  typedef std::list<generic::ptr<t_type>> list;
 
 private:
   template<typename t_size>
-  ptr<t_type> get(t_size p_index) const
+  generic::ptr<t_type> get(t_size p_index) const
   {
     if (p_index >= static_cast<t_size>(m_list.size())) {
-      return ptr<t_type>();
+      return generic::ptr<t_type>();
     }
     return *(std::next(m_list.begin(), p_index));
   }
@@ -113,7 +122,7 @@ private:
   list m_list;
 };
 
-} // namespace entities
+} // namespace generic
 } // namespace sql
 } // namespace capemisa
 

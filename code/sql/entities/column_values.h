@@ -2,11 +2,12 @@
 #define CAPEMISA_SQL_ENTITIES_COLUMN_VALUES_H
 
 #include <list>
+#include <string>
+#include <utility>
 
 #include <sql/entities/column.h>
-#include <sql/entities/internal/types.h>
-#include <sql/entities/value_generator.h>
-#include <sql/entities/values.h>
+#include <sql/entities/value.h>
+#include <sql/generic/ptr.h>
 
 namespace capemisa {
 namespace sql {
@@ -14,35 +15,42 @@ namespace entities {
 
 struct column_values
 {
+
+  typedef std::list<value> list;
+  typedef list::const_iterator const_iterator;
+
   column_values() = delete;
 
-  explicit inline column_values(ptr<column> p_column,
-                                ptr<value_generator> p_value_generator)
+  inline explicit column_values(generic::ptr<column> p_column)
     : m_column(p_column)
-    , m_value_generator(p_value_generator)
+  {}
+
+  inline const_iterator add(value&& p_value)
   {
-    if (m_column->get_usage() != m_value_generator->get_usage()) {
-      throw std::runtime_error(
-        "Column " + m_column->get_name() + "'s usage (" +
-        column::usage2str(m_column->get_usage()) +
-        ") is incompatible with value generator usage (" +
-        column::usage2str(m_value_generator->get_usage()) + ")");
-    }
+    m_list.push_back(std::move(p_value));
+    return std::prev(m_list.end());
   }
 
-  void generate_values(uint16_t p_num_values)
+  inline const_iterator begin() const { return m_list.begin(); }
+
+  inline const_iterator end() const { return m_list.end(); }
+
+  inline generic::ptr<column> get_column() const { return m_column; }
+
+  inline uint16_t get_size() const { return m_list.size(); }
+
+  const value& get_value(uint16_t p_counter) const
   {
-    values _value(m_value_generator->generate(p_num_values));
+    return *(std::next(m_list.begin(), p_counter));
   }
 
 private:
-  ptr<column> m_column;
-  ptr<value_generator> m_value_generator;
-  values m_values;
+  generic::ptr<column> m_column;
+  list m_list;
 };
 
 } // namespace entities
 } // namespace sql
 } // namespace capemisa
 
-#endif // COLUMN_VALUES_H
+#endif // VALUES_H

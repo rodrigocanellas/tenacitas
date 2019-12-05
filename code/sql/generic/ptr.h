@@ -1,11 +1,11 @@
-#ifndef CAPEMISA_SQL_ENTITIES_TYPES_H
-#define CAPEMISA_SQL_ENTITIES_TYPES_H
+#ifndef CAPEMISA_SQL_ENTITIES_PTR_H
+#define CAPEMISA_SQL_ENTITIES_PTR_H
 
 #include <memory>
 
 namespace capemisa {
 namespace sql {
-namespace entities {
+namespace generic {
 
 template<class t_class>
 using ptr = std::shared_ptr<t_class>;
@@ -17,7 +17,7 @@ make_ptr(t_params... p_params)
   return std::make_shared<t_class>(p_params...);
 }
 
-} // namespace entities
+} // namespace generic
 } // namespace sql
 } // namespace capemisa
 

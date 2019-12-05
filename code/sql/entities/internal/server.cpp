@@ -14,14 +14,14 @@ operator<<(std::ostream& p_out, const server& p_server)
   return p_out;
 }
 
-ptr<database>
-server::find(const name& p_database_name)
+generic::ptr<database>
+server::find(const generic::name& p_database_name)
 {
   return m_databases.find(p_database_name);
 }
 
-ptr<database>
-server::add_database(const name& p_database_name)
+generic::ptr<database>
+server::add_database(const generic::name& p_database_name)
 {
   return m_databases.add(p_database_name, this);
 }

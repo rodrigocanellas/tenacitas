@@ -22,41 +22,41 @@ table::get_database() const
   return *m_database;
 }
 
-// ptr<column>
-// table::add_column(const name& p_column_name, column::type p_type, size
+// generic::ptr<column>
+// table::add_column(const generic::name& p_column_name, column::type p_type, size
 // p_size)
 //{
 
-//  ptr<column> _col =
-//    m_columns.find([&p_column_name](const ptr<column>& p_col) -> bool {
+//  generic::ptr<column> _col =
+//    m_columns.find([&p_column_name](const generic::ptr<column>& p_col) -> bool {
 //      return p_col->get_name() == p_column_name;
 //    });
 
 //  if (_col == nullptr) {
-//    _col = make_ptr<column>(this, p_column_name, p_type, p_size);
+//    _col = generic::make_ptr<column>(this, p_column_name, p_type, p_size);
 //    m_columns.add(_col);
 //  }
 //  return _col;
 //}
 
-// ptr<column>
-// table::add_column(const name& p_column_name, column::type p_type)
+// generic::ptr<column>
+// table::add_column(const generic::name& p_column_name, column::type p_type)
 //{
 
-//  ptr<column> _col =
-//    m_columns.find([&p_column_name](const ptr<column>& p_col) -> bool {
+//  generic::ptr<column> _col =
+//    m_columns.find([&p_column_name](const generic::ptr<column>& p_col) -> bool {
 //      return p_col->get_name() == p_column_name;
 //    });
 
 //  if (_col == nullptr) {
-//    _col = make_ptr<column>(this, p_column_name, p_type);
+//    _col = generic::make_ptr<column>(this, p_column_name, p_type);
 //    m_columns.add(_col);
 //  }
 //  return _col;
 //}
 
 // void
-// table::add_to_primary_key(ptr<column> p_col)
+// table::add_to_primary_key(generic::ptr<column> p_col)
 //{
 //  if (p_col == nullptr) {
 //    throw std::runtime_error("column is null in table::add_to_primary_key");
@@ -66,7 +66,7 @@ table::get_database() const
 //  }
 
 //  if (m_primary_key == nullptr) {
-//    m_primary_key = make_ptr<primary_key>(this);
+//    m_primary_key = generic::make_ptr<primary_key>(this);
 //  }
 //  m_primary_key->add_column(p_col);
 //}

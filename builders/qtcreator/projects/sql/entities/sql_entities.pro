@@ -23,18 +23,18 @@ HEADERS += \
     ../../../../../code/sql/entities/host.h \
     ../../../../../code/sql/entities/hosts.h \
     ../../../../../code/sql/entities/internal/collection.h \
-    ../../../../../code/sql/entities/internal/types.h \
     ../../../../../code/sql/entities/ip.h \
-    ../../../../../code/sql/entities/name.h \
+  ../../../../../code/sql/entities/tables_values.h \
+    ../../../../../code/sql/generic/name.h \
     ../../../../../code/sql/entities/primary_key.h \
     ../../../../../code/sql/entities/primary_key_column.h \
-    ../../../../../code/sql/entities/sequential_value_generator.h \
     ../../../../../code/sql/entities/server.h \
     ../../../../../code/sql/entities/size.h \
     ../../../../../code/sql/entities/table.h \
-    ../../../../../code/sql/entities/value.h \
-    ../../../../../code/sql/entities/value_generator.h \
-    ../../../../../code/sql/entities/values.h
+  ../../../../../code/sql/entities/table_values.h \
+    ../../../../../code/sql/entities/value.h \ \
+  ../../../../../code/sql/generic/ptr.h \
+  ../../../../../code/sql/generic/collection.h
 
 SOURCES += \
     ../../../../../code/sql/entities/internal/attribute_column.cpp \

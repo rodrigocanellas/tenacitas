@@ -2,13 +2,13 @@
 #define CAPEMISA_SQL_ENTITIES_HOSTS_H
 
 #include <sql/entities/host.h>
-#include <sql/entities/internal/collection.h>
+#include <sql/generic/collection.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
 
-typedef collection<host> hosts;
+typedef generic::collection<host> hosts;
 
 } // namespace entities
 } // namespace sql

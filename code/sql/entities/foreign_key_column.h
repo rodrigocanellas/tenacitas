@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-#include <sql/entities/internal/collection.h>
-#include <sql/entities/internal/types.h>
-#include <sql/entities/name.h>
+#include <sql/generic/collection.h>
+#include <sql/generic/ptr.h>
+#include <sql/generic/name.h>
 #include <sql/entities/primary_key_column.h>
 #include <sql/entities/size.h>
 
@@ -28,27 +28,26 @@ struct foreign_key_column : public column
   foreign_key_column& operator=(foreign_key_column&&) = delete;
   ~foreign_key_column() = default;
 
-  foreign_key_column(const name& p_name,
+  foreign_key_column(const generic::name& p_name,
                      const foreign_key* p_foreign_key,
-                     ptr<primary_key_column> p_primary_key_column)
+                     generic::ptr<primary_key_column> p_primary_key_column)
     : column(p_name,
              p_primary_key_column->get_type(),
-             p_primary_key_column->get_size(),
-             column::usage::foreign_key)
+             p_primary_key_column->get_size())
     , m_foreign_key(p_foreign_key)
     , m_primary_key_column(p_primary_key_column)
   {}
 
   const foreign_key& get_foreign_key() const;
 
-  inline ptr<primary_key_column> get_pk_column() const
+  inline generic::ptr<primary_key_column> get_pk_column() const
   {
     return m_primary_key_column;
   }
 
 private:
   const foreign_key* m_foreign_key;
-  ptr<primary_key_column> m_primary_key_column;
+  generic::ptr<primary_key_column> m_primary_key_column;
 };
 
 } // namespace entities

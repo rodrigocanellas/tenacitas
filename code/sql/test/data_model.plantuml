@@ -24,6 +24,6 @@ class Dependent {
 Employee o-- "*" Project
 Project o-- "*" Employee
 Employee *-- "*" Dependent
-Employee "boss" o-- "*" Employee
+Employee "0..1 boss" o-- "0..*" Employee
 
 @enduml

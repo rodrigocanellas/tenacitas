@@ -5,8 +5,8 @@
 #include <ctime>
 #include <iostream>
 
-#include <sql/entities/name.h>
 #include <sql/entities/size.h>
+#include <sql/generic/name.h>
 
 namespace capemisa {
 namespace sql {
@@ -19,27 +19,108 @@ struct column
 
   enum class type : int8_t
   {
-    UNDEFINED = 0,
-    INT_1 = 1,
-    INT_2 = 2,
-    INT_4 = 3,
-    INT_8 = 4,
-    CHAR = 5,
-    FIXED_SIZE_CHAR = 6,
-    VAR_SIZE_CHAR = 7,
-    DATE = 8,
-    DATE_TIME = 9,
-    BLOB = 10,
-    SMALL_REAL = 11,
-    LONG_REAL = 12
+    undefined = 0,
+    int_1 = 1,
+    int_2 = 2,
+    int_4 = 3,
+    int_8 = 4,
+    single_char = 5,
+    fixed_size_text = 6,
+    var_size_text = 7,
+    date = 8,
+    date_time = 9,
+    blob = 10,
+    small_real = 11,
+    long_real = 12
   };
 
-  enum class usage : int8_t
-  {
-    primary_key = 0x02,
-    foreign_key = 0x04,
-    attribute = 0x08
-  };
+  //  struct type
+  //  {
+  //    type() = delete;
+  //    type(const type&) = default;
+  //    type(type&&) = default;
+  //    type& operator=(const type&) = default;
+  //    type& operator=(type&&) = default;
+  //    ~type() = default;
+
+  //    static const type undefined;
+  //    static const type int_1;
+  //    static const type int_2;
+  //    static const type int_4;
+  //    static const type int_8;
+  //    static const type single_char;
+  //    static const type fixed_size_text;
+  //    static const type var_size_text;
+  //    static const type date;
+  //    static const type date_time;
+  //    static const type blob;
+  //    static const type small_real;
+  //    static const type long_real;
+
+  //    inline type operator|(type p_type) const
+  //    {
+  //      return type(m_value | p_type.m_value);
+  //    }
+
+  //    inline bool operator&(type p_type) const
+  //    {
+  //      return p_type.m_value & m_value;
+  //    }
+
+  //    size get_size() const;
+
+  //    std::string to_str() const;
+
+  //  private:
+  //    type(int16_t p_value)
+  //      : m_value(p_value)
+  //    {}
+
+  //  private:
+  //    int16_t m_value;
+  //  };
+
+  //  enum class usage : int8_t
+  //  {
+  //    primary_key = 0x02,
+  //    foreign_key = 0x04,
+  //    attribute = 0x08
+  //  };
+
+  //  struct usage
+  //  {
+
+  //    usage() = delete;
+  //    usage(const usage&) = default;
+  //    usage(usage&&) = default;
+  //    usage& operator=(const usage&) = default;
+  //    usage& operator=(usage&&) = default;
+  //    ~usage() = default;
+
+  //    static const usage primary_key;
+  //    static const usage foreign_key;
+  //    static const usage attribute;
+
+  //    inline usage operator|(usage p_usage) const
+  //    {
+  //      return usage(m_value | p_usage.m_value);
+  //    }
+
+  //    inline bool operator&(usage p_usage) const
+  //    {
+  //      return p_usage.m_value & m_value;
+  //    }
+
+  //    std::string to_str() const;
+
+  //  private:
+  //    usage(int8_t p_value)
+  //      : m_value(p_value)
+  //    {}
+
+  //  private:
+  //    int8_t m_value;
+  //  };
 
   column() = delete;
   column(const column&) = default;
@@ -48,16 +129,21 @@ struct column
   column& operator=(column&&) = delete;
   virtual ~column() = default;
 
-  inline const name& get_name() const { return m_name; }
+  inline const generic::name& get_name() const { return m_name; }
 
   inline type get_type() const { return m_type; }
 
   inline size get_size() const { return m_size; }
 
-  inline usage get_usage() const { return m_usage; }
+  //  inline usage get_usage() const { return m_usage; }
+
+  //  bool type_compatible(type p_type) const {
+  // if ( (m_type == type::int_1) ||
+  // return false;
+  //  }
 
   static std::string type2str(type p_type);
-  static std::string usage2str(usage p_usage);
+  //  static std::string usage2str(usage p_usage);
 
   //  // values
 
@@ -119,21 +205,16 @@ struct column
   //  inline void set_value(const std::string& p_value) { m_value = p_value; }
 
 protected:
-  explicit inline column(const name& p_name,
-                         type p_type,
-                         size p_size,
-                         usage p_usage)
+  explicit inline column(const generic::name& p_name, type p_type, size p_size)
     : m_name(p_name)
     , m_type(p_type)
     , m_size(p_size)
-    , m_usage(p_usage)
   {}
 
-  explicit inline column(const name& p_name, type p_type, usage p_usage)
+  explicit inline column(const generic::name& p_name, type p_type)
     : m_name(p_name)
     , m_type(p_type)
     , m_size(column::type2size(m_type))
-    , m_usage(p_usage)
   {}
 
 private:
@@ -143,31 +224,30 @@ private:
   type int2type()
   {
     if (sizeof(t_int) == sizeof(int8_t)) {
-      return type::INT_1;
+      return type::int_1;
     }
     if (sizeof(t_int) == sizeof(int16_t)) {
-      return type::INT_2;
+      return type::int_2;
     }
     if (sizeof(t_int) == sizeof(int32_t)) {
-      return type::INT_4;
+      return type::int_4;
     }
-    return type::INT_8;
+    return type::int_8;
   }
 
   template<typename t_real>
   type real2type()
   {
     if (sizeof(t_real) == sizeof(float)) {
-      return type::SMALL_REAL;
+      return type::small_real;
     }
-    return type::LONG_REAL;
+    return type::long_real;
   }
 
 private:
-  name m_name;
+  generic::name m_name;
   type m_type;
   size m_size;
-  usage m_usage;
 };
 
 } // namespace entities

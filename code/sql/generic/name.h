@@ -5,11 +5,11 @@
 
 namespace capemisa {
 namespace sql {
-namespace entities {
+namespace generic {
 
 typedef std::string name;
 
-} // namespace entities
+} // namespace generic
 } // namespace sql
 } // namespace capemisa
 

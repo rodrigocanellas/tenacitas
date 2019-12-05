@@ -23,4 +23,7 @@ SOURCES += \
 
 include (../../../../common.pri)
 
+HEADERS += \
+  ../../../../../../code/sql/test/create_hosts.h
+
 

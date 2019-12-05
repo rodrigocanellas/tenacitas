@@ -4,7 +4,7 @@ set namespaceSeparator ::
 
 hide empty members
 allow_mixing
-left to right direction
+'left to right direction
 skinparam linetype ortho
 
 
@@ -14,28 +14,27 @@ namespace entities {
 
 class Size
 enum Type {
-	INT_1
-	INT_2
-	INT_4
-	INT_8
-	CHAR
-	FIX_SIZE_CHAR
-	VAR_SIZE_CHAR
-	BLOB
-	SMALL_REAL
-	LONG_REAL
-	DATE
-	DATE_TIME
+	int_1
+	int_2
+	int_4
+	int_8
+	char
+	fix_size_char
+	var_size_char
+	blob
+	small_real
+	long_real
+	date
+	date_time
 }
 class Name
 
 
 class Column
 
-enum Usage {
-	attribute
-	primaryKey
-	foreignKey
+class Value {
+	isUserInput: bool
+	value : string
 }
 
 class PrimaryKeyColumn
@@ -54,60 +53,26 @@ class Hosts
 class PrimaryKey
 class ForeignKey
 
-
-class ValueGenerator
-
-'class AttributeValueGenerator
- 
-
-class InsertsDefinitions
-
-class InsertDefinition {
-	amountOfRows : uint16_t
-}
-
-class Value {
-	userInput : bool
-	value: string
-}
-
-class ColumnValues
-
-class ValuesGenerators
-
-ValuesGenerators *-- "*" ValueGenerator
-
 Hosts *-- "*" Host
 Host *--o "*" Server
 Server *--o "*" Database
 Database *--o "*" Table
 
-ColumnValues o-- ValueGenerator
-ColumnValues o-- Column
-ColumnValues *-- "*" Value
-
-ValueGenerator *-- "*" Usage
-
-InsertsDefinitions *-- "*" InsertDefinition
-
-InsertDefinition o-- Table
-InsertDefinition *-- "*" ColumnValues
 
 PrimaryKey *--o "*" PrimaryKeyColumn
-ForeignKey *--o "*" ForeignKeyColumn
+ForeignKey "1" *--o "*" ForeignKeyColumn
 PrimaryKey o--o "*" ForeignKeyColumn
 
-Table *--o PrimaryKey
-Table *--o "*" ForeignKey
+Table *--o "0..1" PrimaryKey
+Table  *--o "*" ForeignKey
 Table *--o "*" AttributeColumn
 
-Column *-- Usage
-Column +-- Usage
 
 Column *-- Type
 Column +-- Type
 Column *-- Size
 Column *-- Name
+Column *-- "*" Value
 
 Column <|-- PrimaryKeyColumn
 Column <|-- ForeignKeyColumn
@@ -115,20 +80,31 @@ Column <|-- AttributeColumn
 
 ForeignKeyColumn o-- PrimaryKeyColumn
 
+' ##########################
+ValuesGenerators *-- "*" ValueGenerator 
+ValueGenerator <|-- ForeignKeyValueGenerator
+ValueGenerator <|-- PrimaryKeyValueGenerator
+ValueGenerator <|-- AttributeValueGenerator
+
+ForeignKey o-- ForeignKeyValueGenerator
+PrimaryKeyColumn o-- PrimaryKeyValueGenerator
+AttributeColumn o-- AttributeValueGenerator
+
+ForeignKeyValueGenerator <|-- OnePkForAllFk
+ForeignKeyValueGenerator <|-- NPkForMlFk
+
+PrimaryKeyValueGenerator <|-- SequentialValueGenerator
+AttributeValueGenerator <|-- SequentialValueGenerator
+AttributeValueGenerator <|-- NullValueGenerator
+
+
+
 }
 
 namespace business {
 
-class InsertsGenerators
-class InsertGenerator
 
-InsertsGenerators *-- "*" InsertGenerator
 
-InsertsGenerators o-- sql::entities::InsertsDefinitions
-InsertsGenerators  o-- sql::entities::Hosts
-InsertGenerator ..> sql::entities::InsertsDefinitions
-InsertGenerator ..> sql::entities::InsertDefinition
-InsertGenerator ..> sql::entities::Hosts
 }
 }
 

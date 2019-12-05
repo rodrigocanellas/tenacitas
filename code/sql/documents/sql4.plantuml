@@ -1,0 +1,136 @@
+@startuml
+
+set namespaceSeparator ::
+
+hide empty members
+allow_mixing
+'left to right direction
+skinparam linetype ortho
+
+
+namespace  sql {
+
+' ============== META DATA =============
+
+namespace entities {
+class Size
+enum Type {
+	int_1
+	int_2
+	int_4
+	int_8
+	char
+	fix_size_char
+	var_size_char
+	blob
+	small_real
+	long_real
+	date
+	date_time
+}
+class Name
+
+class Column
+
+
+class PrimaryKeyColumn
+class ForeignKeyColumn
+class AttributeColumn
+
+class Table {
+	name : Name
+}
+
+class Database
+class Server
+class Host
+class Hosts
+
+class PrimaryKey
+class ForeignKey
+ {
+	canBeNull : bool
+}
+
+Hosts *-right- "*" Host
+Host *-left-o "*" Server
+Server *-left-o "*" Database
+Database *-left-o "*" Table
+
+PrimaryKey *--o "*" PrimaryKeyColumn
+ForeignKey "1" *--o "*" ForeignKeyColumn
+PrimaryKey o--o "*" ForeignKeyColumn
+
+Table "0..1" *--o  PrimaryKey
+Table  "*" *--o  ForeignKey
+Table *--o "*" AttributeColumn
+
+
+Column *-- Type
+Column +-- Type
+Column *-right- Size
+Column *-- Name
+
+Column <|-- PrimaryKeyColumn
+Column <|-- ForeignKeyColumn
+Column <|-- AttributeColumn
+
+
+ForeignKeyColumn o-- "0..1" PrimaryKeyColumn
+
+
+
+' ==============  DATA =============
+
+class Value {
+	isUserInput: bool
+	value : string
+}
+
+
+ColumnValues *-right- "*" Value
+ColumnValues o--Column
+
+TableValues *-- "*" ColumnValues
+
+TableValues o-- Table
+
+TablesValues *-left- "*" TableValues
+}
+
+' ============== GENERATOR ========
+namespace business {
+
+class TableGenerator {
++ generate(const entities::Table&,  uint16_t) : entities::TableValues
+}
+
+class AttributeGenerator <<T, typedef>> {
++ function<entities::ColumnValues(ptr<entities::AttributeColumn>,  uint16_t)>
+}
+class PrimaryKeyColumnGenerator  <<T,typedef>> {
++ function<list<entities::ColumnValues( ptr<entities::PrimaryKeyColumn>,  uint16_t)>>
+}
+class ForeignKeyGenerator  <<T,typedef>> {
++ function<list<entities::TableValues(const entities::ColumnValues, ptr<entities::ForeignKey>, , uint16_t)>>
+}
+
+TableGenerator *-left-- "*" AttributeGenerator
+TableGenerator *-left- "*" PrimaryKeyColumnGenerator
+TableGenerator *-left- "*" ForeignKeyGenerator
+TableGenerator ..> "<<return>>" sql::entities::TableValues
+TableGenerator ..> "<<param>>" sql::entities::Table
+}
+
+'sql::entities::AttributeColumn -[hidden]-> sql::entities::Column
+'sql::entities::ForeignKeyColumn -[hidden]> sql::entities::ColumnValues
+'sql::entities::Hosts -[hidden]->sql::entities::TableValues
+'sql::entities::AttributeGenerator -[hidden]-> sql::entities::PrimaryKeyColumnGenerator
+sql::business::PrimaryKeyColumnGenerator -[hidden]-> sql::business::ForeignKeyGenerator
+sql::business::ForeignKeyGenerator -[hidden]-> sql::business::AttributeGenerator
+sql::entities::Database -[hidden]> sql::entities::ColumnValues
+'sql::entities::AttributeColumn -[hidden]> sql::entities::Column
+
+}
+
+@enduml

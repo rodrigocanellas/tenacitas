@@ -4,9 +4,9 @@
 #include <iostream>
 
 #include <sql/entities/host.h>
-#include <sql/entities/internal/collection.h>
+#include <sql/generic/collection.h>
 #include <sql/entities/database.h>
-#include <sql/entities/name.h>
+#include <sql/generic/name.h>
 
 namespace capemisa {
 namespace sql {
@@ -26,34 +26,34 @@ struct server
   server& operator=(server&&) = delete;
   ~server() = default;
 
-  inline explicit server(const name& p_name, const host* p_host)
+  inline explicit server(const generic::name& p_name, const host* p_host)
     : m_name(p_name)
     , m_host(p_host)
   {}
 
-  inline const name& get_name() const { return m_name; }
+  inline const generic::name& get_name() const { return m_name; }
 
-  ptr<database> find(const name& p_database_name);
+  generic::ptr<database> find(const generic::name& p_database_name);
 
   inline uint16_t get_num_databases() const
   {
     return m_databases.get_size<uint16_t>();
   }
 
-  inline ptr<database> get_database(uint16_t p_index)
+  inline generic::ptr<database> get_database(uint16_t p_index)
   {
     return m_databases[p_index];
   }
 
-  ptr<database> add_database(const name& p_database_name);
+  generic::ptr<database> add_database(const generic::name& p_database_name);
 
   const host& get_host() const;
 
   private:
-  typedef collection<database> databases;
+  typedef generic::collection<database> databases;
 
   private:
-    name m_name;
+    generic::name m_name;
   const host * m_host;
   databases m_databases;
 };

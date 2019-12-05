@@ -1,0 +1,138 @@
+@startuml
+
+set namespaceSeparator ::
+
+hide empty members
+allow_mixing
+'left to right direction
+skinparam linetype ortho
+
+
+namespace  sql {
+
+namespace entities {
+
+class Size
+enum Type {
+	int_1
+	int_2
+	int_4
+	int_8
+	char
+	fix_size_char
+	var_size_char
+	blob
+	small_real
+	long_real
+	date
+	date_time
+}
+class Name
+
+class Column
+
+class Value {
+	isUserInput: bool
+	value : string
+}
+
+class PrimaryKeyColumn
+class ForeignKeyColumn
+class AttributeColumn
+
+class Table {
+	name : Name
+}
+
+class Database
+class Server
+class Host
+class Hosts
+
+class PrimaryKey
+class ForeignKey {
+	isNull : bool
+}
+
+Hosts *-- "*" Host
+Host *--o "*" Server
+Server *--o "*" Database
+Database *--o "*" Table
+
+
+PrimaryKey *--o "*" PrimaryKeyColumn
+ForeignKey "1" *--o "*" ForeignKeyColumn
+PrimaryKey o--o "*" ForeignKeyColumn
+
+Table *--o "0..1" PrimaryKey
+Table  *--o "*" ForeignKey
+Table *--o "*" AttributeColumn
+
+
+Column *-- Type
+Column +-- Type
+Column *-- Size
+Column *-- Name
+
+Column <|-- PrimaryKeyColumn
+Column <|-- ForeignKeyColumn
+Column <|-- AttributeColumn
+
+ForeignKeyColumn o-- "0..1" PrimaryKeyColumn
+
+'###############################
+
+class PrimaryKeyColumnValues
+class AttributeColumnValues
+class ForeignKeyColumnValues
+class TableValues
+
+AttributeColumnValues *-- "*" Value
+PrimaryKeyColumnValues *-- "*" Value
+ForeignKeyColumnValues *-- "*" Value
+
+TableValues *-- "*" AttributeColumnValues
+TableValues *-- "*" PrimaryKeyColumnValues
+TableValues *-- "*" ForeignersKeysValues
+ForeignersKeysValues o-- ForeignKey
+ForeignersKeysValues *-- "*" ForeignKeyColumnValues
+TableValues o-- Table
+
+AttributeColumnValues o-- AttributeColumn
+PrimaryKeyColumnValues o-- PrimaryKeyColumn
+ForeignKeyColumnValues o-- ForeignKeyColumn
+
+'************************************
+class  AttributeColumnValueGenerator
+class  PrimaryKeyColumnValueGenerator
+class  ForeignKeyValueGenerator
+
+class  TableGenerator
+TableGenerator *-- "*" AttributeColumnValueGenerator
+TableGenerator *-- "*" PrimaryKeyColumnValueGenerator
+TableGenerator *-- "*" ForeignKeyValueGenerator
+TableGenerator o-- Table
+TableGenerator ..> "<<return>>" TableValues
+
+AttributeColumnValueGenerator o-- AttributeColumn
+'AttributeColumnValueGenerator <|-- NullValueGenerator
+'AttributeColumnValueGenerator <|-- AttrSequentialValueGenerator
+AttributeColumnValueGenerator ..> "<<return>>" AttributeColumnValues
+
+'AttrSequentialValueGenerator *-- SequentialValueGenerator
+
+'PrimaryKeyColumnValueGenerator <|-- PkSequentialValueGenerator
+PrimaryKeyColumnValueGenerator o-- PrimaryKeyColumn
+PrimaryKeyColumnValueGenerator ..> "<<return>>" PrimaryKeyColumnValues
+
+'PkSequentialValueGenerator *-- SequentialValueGenerator
+
+ForeignKeyValueGenerator ..> "<<parameter>>" PrimaryKeyColumnValues
+ForeignKeyValueGenerator ..> "<<return>>" ForeignKeyColumnValues
+ForeignKeyValueGenerator o-- ForeignKey
+'ForeignKeyValueGenerator <|-- OnePkForAllFk
+'ForeignKeyValueGenerator <|-- nPk_For_mFk
+'ForeignKeyValueGenerator <|-- NullFk
+}
+
+@enduml
