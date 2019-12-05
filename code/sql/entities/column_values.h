@@ -31,6 +31,12 @@ struct column_values
     return std::prev(m_list.end());
   }
 
+  inline const_iterator add(const value& p_value)
+  {
+    m_list.push_back(p_value);
+    return std::prev(m_list.end());
+  }
+
   inline const_iterator begin() const { return m_list.begin(); }
 
   inline const_iterator end() const { return m_list.end(); }
@@ -43,6 +49,8 @@ struct column_values
   {
     return *(std::next(m_list.begin(), p_counter));
   }
+
+  const generic::name& get_name() const { return m_column->get_name(); }
 
 private:
   generic::ptr<column> m_column;

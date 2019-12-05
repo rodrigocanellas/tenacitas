@@ -28,11 +28,10 @@ struct table_generator
 
   table_generator() = delete;
 
-  explicit table_generator(generic::ptr<entities::table> p_table)
+  explicit table_generator(generic::ptr<entities::table> p_table,
+                           uint16_t p_num_lines)
     : m_table(p_table)
-    , m_attrs_values(generic::make_ptr<entities::table_values>(p_table))
-    , m_pks_values(generic::make_ptr<entities::table_values>(p_table))
-    , m_fks_values(generic::make_ptr<entities::table_values>(p_table))
+    , m_num_lines(p_num_lines)
   {}
 
   //  void operator()(const entities::table& p_table, uint16_t p_num_lines)
@@ -42,10 +41,29 @@ struct table_generator
   //    generate_fks(p_table, p_num_lines);
   //  }
 
-  void generate_attrs(uint16_t p_num_lines)
+  void add_attr_generator(const generic::name& p_attr_col_name,
+                          attribute_column_generator&& p_attr_col_gen)
+  {
+    m_attrs_generators.insert({ p_attr_col_name, std::move(p_attr_col_gen) });
+  }
+
+  void add_pk_generator(const generic::name& p_pk_col_name,
+                        primary_key_column_generator&& p_pk_col_gen)
+  {
+    m_pks_generators.insert({ p_pk_col_name, std::move(p_pk_col_gen) });
+  }
+
+  void add_fk_generator(const generic::name& p_fk_name,
+                        foreign_key_generator&& p_fk_gen)
+  {
+    m_fks_generators.insert({ p_fk_name, std::move(p_fk_gen) });
+  }
+
+  generic::ptr<const entities::table_values> generate_attrs()
   {
     using namespace sql::entities;
     using namespace sql::generic;
+    ptr<table_values> _attrs_values(make_ptr<table_values>(m_table));
 
     uint16_t _num_attrs = m_table->get_num_attrs();
     for (uint8_t _count_attrs = 0; _count_attrs < _num_attrs; ++_count_attrs) {
@@ -53,16 +71,19 @@ struct table_generator
       attributes_generators::iterator _ite =
         m_attrs_generators.find(_col->get_name());
       if (_ite != m_attrs_generators.end()) {
-        m_attrs_values->add(_ite->second(_col, p_num_lines));
+        _attrs_values->add(_ite->second(_col, m_num_lines));
       }
     }
+    return _attrs_values;
   }
 
-  void generate_pks(uint16_t p_num_lines,
-                    generic::ptr<entities::tables_values> p_pks)
+  generic::ptr<const entities::table_values> generate_pks(
+    generic::ptr<entities::tables_values> p_pks)
   {
     using namespace sql::entities;
     using namespace sql::generic;
+
+    ptr<table_values> _pks_values(make_ptr<table_values>(m_table));
 
     ptr<primary_key> _pk = m_table->get_primary_key();
 
@@ -72,46 +93,31 @@ struct table_generator
       ptr<primary_key_column> _col = _pk->get_pk_column(_count_pk_cols);
       pks_generators::iterator _ite = m_pks_generators.find(_col->get_name());
       if (_ite != m_pks_generators.end()) {
-        m_pks_values->add(_ite->second(_col, p_num_lines));
+        _pks_values->add(_ite->second(_col, m_num_lines));
       }
     }
-    p_pks->add(m_pks_values);
+    p_pks->add(_pks_values);
+    return _pks_values;
   }
 
-  void generate_fks(uint16_t p_num_lines,
-                    generic::ptr<const entities::tables_values>& p_pks)
+  generic::ptr<const entities::table_values> generate_fks(
+    generic::ptr<const entities::tables_values> p_pks)
   {
 
     using namespace sql::entities;
     using namespace sql::generic;
+
+    ptr<table_values> _fks_values(make_ptr<table_values>(m_table));
 
     uint16_t _num_fks = m_table->get_num_fks();
     for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
       ptr<foreign_key> _fk = m_table->get_fk(_count_fks);
       fks_generators::iterator _ite = m_fks_generators.find(_fk->get_name());
       if (_ite != m_fks_generators.end()) {
-        ptr<table_values> _fks(_ite->second(p_pks, m_table, _fk, p_num_lines));
-        uint16_t _num_cols = _fks->get_num_cols();
-        for (uint16_t _count_cols = 0; _count_cols < _num_cols; ++_count_cols) {
-          m_fks_values->add(_fks->get_column_values(_count_cols));
-        }
+        _ite->second(p_pks, _fks_values, _fk, m_num_lines);
       }
     }
-  }
-
-  inline generic::ptr<const entities::table_values> get_pk_values() const
-  {
-    return m_pks_values;
-  }
-
-  inline generic::ptr<const entities::table_values> get_fk_values() const
-  {
-    return m_fks_values;
-  }
-
-  inline generic::ptr<const entities::table_values> get_attr_values() const
-  {
-    return m_attrs_values;
+    return _fks_values;
   }
 
 private:
@@ -122,10 +128,7 @@ private:
 
 private:
   generic::ptr<entities::table> m_table;
-
-  generic::ptr<entities::table_values> m_attrs_values;
-  generic::ptr<entities::table_values> m_pks_values;
-  generic::ptr<entities::table_values> m_fks_values;
+  uint16_t m_num_lines;
 
   pks_generators m_pks_generators;
   attributes_generators m_attrs_generators;

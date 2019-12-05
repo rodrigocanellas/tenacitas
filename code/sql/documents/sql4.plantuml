@@ -52,7 +52,7 @@ class ForeignKey
 	canBeNull : bool
 }
 
-Hosts *-right- "*" Host
+Hosts *-up- "*" Host
 Host *-left-o "*" Server
 Server *-left-o "*" Database
 Database *-left-o "*" Table
@@ -101,36 +101,36 @@ TablesValues *-left- "*" TableValues
 ' ============== GENERATOR ========
 namespace business {
 
-class TableGenerator {
-+ generate(const entities::Table&,  uint16_t) : entities::TableValues
-}
+class TableGenerator
 
-class AttributeGenerator <<T, typedef>> {
-+ function<entities::ColumnValues(ptr<entities::AttributeColumn>,  uint16_t)>
-}
-class PrimaryKeyColumnGenerator  <<T,typedef>> {
-+ function<list<entities::ColumnValues( ptr<entities::PrimaryKeyColumn>,  uint16_t)>>
-}
-class ForeignKeyGenerator  <<T,typedef>> {
-+ function<list<entities::TableValues(const entities::ColumnValues, ptr<entities::ForeignKey>, , uint16_t)>>
-}
+class AttributeGenerator <<T, typedef>>
+class PrimaryKeyColumnGenerator  <<T,typedef>>
+class ForeignKeyGenerator  <<T,typedef>>
 
-TableGenerator *-left-- "*" AttributeGenerator
-TableGenerator *-left- "*" PrimaryKeyColumnGenerator
-TableGenerator *-left- "*" ForeignKeyGenerator
-TableGenerator ..> "<<return>>" sql::entities::TableValues
-TableGenerator ..> "<<param>>" sql::entities::Table
+TableGenerator *-up-- "*" AttributeGenerator
+TableGenerator *-up- "*" PrimaryKeyColumnGenerator
+TableGenerator *-up- "*" ForeignKeyGenerator
+TableGenerator o-- "attr" sql::entities::TableValues
+TableGenerator o-- "pk" sql::entities::TableValues
+TableGenerator o-- "fk" sql::entities::TableValues
+TableGenerator o-- sql::entities::Table
+TableGenerator ..>  "all_pks" sql::entities::TablesValues
+
+SqlGenerator  o-- "attr" sql::entities::TableValues
+SqlGenerator  o-- "pk" sql::entities::TableValues
+SqlGenerator  o-- "fk" sql::entities::TableValues
 }
 
 'sql::entities::AttributeColumn -[hidden]-> sql::entities::Column
 'sql::entities::ForeignKeyColumn -[hidden]> sql::entities::ColumnValues
 'sql::entities::Hosts -[hidden]->sql::entities::TableValues
 'sql::entities::AttributeGenerator -[hidden]-> sql::entities::PrimaryKeyColumnGenerator
-sql::business::PrimaryKeyColumnGenerator -[hidden]-> sql::business::ForeignKeyGenerator
-sql::business::ForeignKeyGenerator -[hidden]-> sql::business::AttributeGenerator
+sql::business::PrimaryKeyColumnGenerator -[hidden]> sql::business::ForeignKeyGenerator
+sql::business::ForeignKeyGenerator -[hidden]> sql::business::AttributeGenerator
 sql::entities::Database -[hidden]> sql::entities::ColumnValues
 'sql::entities::AttributeColumn -[hidden]> sql::entities::Column
-
+'sql::entities::ForeignKey  -[hidden]> sql::entities::AttributeColumn 
+sql::business::SqlGenerator -[hidden]> sql::business::TableGenerator
 }
 
 @enduml

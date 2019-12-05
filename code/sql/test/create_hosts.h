@@ -43,7 +43,8 @@ private:
       "name", column::type::var_size_text, 100, false, false);
     _employee->add_attribute("birthday", column::type::date, false, false);
 
-    generic::ptr<foreign_key> _employee_boss_fk = _employee->add_fk("boss_fk", true);
+    generic::ptr<foreign_key> _employee_boss_fk =
+      _employee->add_fk("boss_fk", true);
 
     _employee_boss_fk->add_column("boss_id", _pk->find_pk_column("id"));
   }
@@ -83,15 +84,18 @@ private:
 
   void create_employeess_projects(generic::ptr<database> p_db)
   {
-    generic::ptr<table> _employees_projects = p_db->add_table("employees_projects");
+    generic::ptr<table> _employees_projects =
+      p_db->add_table("employees_projects");
 
     generic::ptr<table> _employee = p_db->find("employee");
-    generic::ptr<foreign_key> _employee_fk = _employees_projects->add_fk("employee_fk");
+    generic::ptr<foreign_key> _employee_fk =
+      _employees_projects->add_fk("employee_fk");
     _employee_fk->add_column(
       "employee_id", _employee->get_primary_key()->find_pk_column("id"));
 
     generic::ptr<table> _project = p_db->find("project");
-    generic::ptr<foreign_key> _project_fk = _employees_projects->add_fk("project_fk");
+    generic::ptr<foreign_key> _project_fk =
+      _employees_projects->add_fk("project_fk");
     _project_fk->add_column("project_id",
                             _project->get_primary_key()->find_pk_column("id"));
 

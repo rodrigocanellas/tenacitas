@@ -14,7 +14,7 @@ CONFIG+=test
 
 
 LIBS += -lcapemisa.sql.entities
-#LIBS += -lcapemisa.sql.entities.a
+LIBS += -lcapemisa.sql.business
 
 
 

@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_SQL_BUSINESS_SEQUENTIAL_VALUE_GENERATOR_H
-#define CAPEMISA_SQL_BUSINESS_SEQUENTIAL_VALUE_GENERATOR_H
+#ifndef CAPEMISA_SQL_BUSINESS_NUMBER_VALUE_GENERATOR_H
+#define CAPEMISA_SQL_BUSINESS_NUMBER_VALUE_GENERATOR_H
 
 #include <cstdint>
 #include <string>
@@ -14,16 +14,19 @@ namespace sql {
 namespace business {
 
 template<typename t_num_type>
-struct sequential_value_generator
+struct number_value_generator
 {
 
   typedef entities::column_values column_values;
   typedef generic::ptr<entities::column_values> column_values_ptr;
   typedef entities::column column;
 
-  sequential_value_generator(t_num_type p_base, t_num_type p_increment = 1)
+  number_value_generator(t_num_type p_base,
+                         t_num_type p_limit,
+                         t_num_type p_increment = 1)
     : m_base(p_base)
     , m_increment(p_increment)
+    , m_limit(p_limit)
   {}
 
   column_values_ptr operator()(generic::ptr<column> p_column,
@@ -44,7 +47,9 @@ struct sequential_value_generator
     column_values_ptr _values(generic::make_ptr<column_values>(p_column));
     for (uint16_t _counter = 0; _counter < p_num_values; ++_counter) {
       _values->add(value(std::to_string(_value)));
-      _value += m_increment;
+      if (_value < m_limit) {
+        _value += m_increment;
+      }
     }
     return _values;
   }
@@ -52,6 +57,7 @@ struct sequential_value_generator
 private:
   t_num_type m_base;
   t_num_type m_increment;
+  t_num_type m_limit;
 };
 
 } // namespace business

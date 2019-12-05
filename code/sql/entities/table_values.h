@@ -26,7 +26,7 @@ struct table_values
 
   inline const generic::name& get_name() const { return m_table->get_name(); }
 
-  void merge(generic::ptr<table_values> p_table_values)
+  void add(generic::ptr<table_values> p_table_values)
   {
     m_list.merge(p_table_values->m_list);
   }
@@ -35,9 +35,15 @@ struct table_values
 
   inline uint16_t get_num_cols() const { return m_list.get_size<uint16_t>(); }
 
-  inline generic::ptr<column_values> get_column_values(uint16_t p_col_index)
+  inline generic::ptr<column_values> get_column_values(
+    uint16_t p_col_index) const
   {
     return m_list[p_col_index];
+  }
+
+  inline generic::ptr<column_values> find(const generic::name& p_col_name)
+  {
+    return m_list.find(p_col_name);
   }
 
 private:

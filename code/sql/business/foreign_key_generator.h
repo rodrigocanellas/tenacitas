@@ -14,22 +14,18 @@ namespace capemisa {
 namespace sql {
 namespace business {
 
-typedef generic::ptr<entities::table> table_ptr;
 typedef generic::ptr<entities::table_values> table_values_ptr;
 typedef generic::ptr<const entities::tables_values> tables_values_const_ptr;
-typedef generic::ptr<entities::tables_values> tables_values_ptr;
 typedef generic::ptr<entities::foreign_key> foreign_key_ptr;
 
 ///
 /// \brief foreign_key_generator
 ///
-/// \param const table_values& are the values of the PK columns
+/// \param p_pks are the values of the all the PK columns of all tables
 /// \param foreign_key_column_ptr FK to which colums values will be generated
 /// \param uint16_t is the amount of lines
-typedef std::function<table_values_ptr(tables_values_const_ptr,
-                                       table_ptr,
-                                       foreign_key_ptr,
-                                       uint16_t)>
+typedef std::function<
+  void(tables_values_const_ptr, table_values_ptr, foreign_key_ptr, uint16_t)>
   foreign_key_generator;
 
 } // namespace business
