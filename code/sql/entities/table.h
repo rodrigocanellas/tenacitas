@@ -86,7 +86,7 @@ struct table
 
   inline uint16_t get_num_attrs() const
   {
-    return m_attributes.get_size<u_int16_t>();
+    return m_attributes.get_size<uint16_t>();
   }
 
   generic::ptr<attribute_column> get_attr(uint16_t p_attr_index) const
@@ -96,7 +96,7 @@ struct table
 
   inline uint16_t get_num_fks() const
   {
-    return m_foreigners_keys.get_size<u_int16_t>();
+    return m_foreigners_keys.get_size<uint16_t>();
   }
 
   generic::ptr<foreign_key> get_fk(uint16_t p_attr_index) const

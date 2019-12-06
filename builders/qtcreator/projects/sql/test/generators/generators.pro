@@ -11,7 +11,7 @@ TARGET = capemisa.sql.test.generators
 
 CONFIG+=test
 
-
+include (../../../../common.pri)
 
 LIBS += -lcapemisa.sql.entities
 LIBS += -lcapemisa.sql.business
@@ -20,6 +20,6 @@ LIBS += -lcapemisa.sql.business
 
 SOURCES += \
   ../../../../../../code/sql/test/generators/main.cpp
-include (../../../../common.pri)
+
 
 

@@ -52,7 +52,7 @@ attribute_sequential()
             << std::endl;
   uint16_t _counter = 0;
   for (const value& _value : *_values) {
-    long _time = atol(_value.get_value().c_str());
+    time_t _time = atol(_value.get_value().c_str());
     std::cout << "value #" << ++_counter << " = " << _value.get_value() << ", "
               << ctime(&_time);
   }
@@ -75,7 +75,7 @@ pk_sequential()
   ptr<primary_key_column> _id =
     _employee->get_primary_key()->find_pk_column("id");
 
-  number_value_generator<int32_t> _pkcsvg(100, -20, -5);
+  number_value_generator<int32_t> _pkcsvg(100, 200, 5);
 
   ptr<column_values> _values = _pkcsvg(_id, 8);
 

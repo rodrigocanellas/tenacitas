@@ -30,6 +30,8 @@ SOURCES += \
   ../../../../../code/sql/business/internal/sql_generator.cpp \
   ../../../../../code/sql/business/internal/text_value_generator.cpp
 
+LIBS += $$libs_dir/libcapemisa.sql.entities.a
+
 
 
 

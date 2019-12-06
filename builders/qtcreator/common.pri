@@ -34,9 +34,22 @@ builder_dir=$$base_dir/builders/qtcreator
 products_dir=$$base_dir/products
 third_dir=$$base_dir/3rd
 tmp_dir=$$products_dir/tmp/qtcreator/$$TARGET
-libs_dir=$$products_dir/library
 bins_dir=$$products_dir/binary
-test_dir=$$products_dir/test
+unix {
+    libs_dir=$$products_dir/library
+}
+win32 {
+    libs_dir=$$bins_dir
+}
+
+unix {
+    test_dir=$$products_dir/test
+}
+
+win32 {
+    test_dir=$$bins_dir
+}
+
 example_dir=$$products_dir/example
 
 
@@ -68,6 +81,7 @@ equals(TEMPLATE,app) {
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
     CONFIG += shared_and_static
+#    CONFIG += staticlib
 #build_all
 }
 

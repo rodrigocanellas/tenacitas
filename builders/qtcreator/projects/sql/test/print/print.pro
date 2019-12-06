@@ -11,17 +11,14 @@ TARGET = capemisa.sql.test.print
 
 CONFIG+=test
 
-
+include (../../../../common.pri)
 
 LIBS += -lcapemisa.sql.entities
-#LIBS += -lcapemisa.sql.entities.a
-
-
 
 SOURCES += \
   ../../../../../../code/sql/test/print/main.cpp
 
-include (../../../../common.pri)
+
 
 HEADERS += \
   ../../../../../../code/sql/test/create_hosts.h
