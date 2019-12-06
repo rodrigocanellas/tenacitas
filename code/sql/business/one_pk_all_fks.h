@@ -46,22 +46,20 @@ struct one_pk_all_fks
       const name& _table_name = _pk.get_table().get_name();
 
       ptr<table_values> _pk_table_values = p_pks->find(_table_name);
-      if (_pk_table_values == nullptr) {
-        throw std::runtime_error(
-          "não foi possível achar valores de PKs para a tabela " + _table_name);
+      if (_pk_table_values != nullptr) {
+
+        ptr<column_values> _pk_col_values = _pk_table_values->find(_pk_col_name);
+
+        const value& _pk_col_value = _pk_col_values->get_value(0);
+
+        ptr<column_values> _fk_col_values(make_ptr<column_values>(_fk_col));
+
+        for (uint16_t _count_line = 0; _count_line < p_num_lines; ++_count_line) {
+          _fk_col_values->add(_pk_col_value);
+        }
+
+        p_fk_values->add(_fk_col_values);
       }
-
-      ptr<column_values> _pk_col_values = _pk_table_values->find(_pk_col_name);
-
-      const value& _pk_col_value = _pk_col_values->get_value(0);
-
-      ptr<column_values> _fk_col_values(make_ptr<column_values>(_fk_col));
-
-      for (uint16_t _count_line = 0; _count_line < p_num_lines; ++_count_line) {
-        _fk_col_values->add(_pk_col_value);
-      }
-
-      p_fk_values->add(_fk_col_values);
     }
   }
 };

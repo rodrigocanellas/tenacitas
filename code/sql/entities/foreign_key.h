@@ -60,7 +60,7 @@ struct foreign_key
     return m_columns.get_size<uint16_t>();
   }
 
-  generic::ptr<foreign_key_column> get_fk_col(uint16_t p_fk_index)
+  generic::ptr<foreign_key_column> get_fk_col(uint16_t p_fk_index) const
   {
     return m_columns[p_fk_index];
   }

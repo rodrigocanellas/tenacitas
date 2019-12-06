@@ -54,8 +54,8 @@ class ForeignKey
 
 Hosts *-up- "*" Host
 Host *-left-o "*" Server
-Server *-left-o "*" Database
-Database *-left-o "*" Table
+Server *-up-o "*" Database
+Database *--o "*" Table
 
 PrimaryKey *--o "*" PrimaryKeyColumn
 ForeignKey "1" *--o "*" ForeignKeyColumn

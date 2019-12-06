@@ -25,6 +25,10 @@ namespace business {
 
 struct table_generator
 {
+  typedef std::list<generic::name> tables_names;
+  typedef generic::ptr<std::list<generic::name>> tables_names_ptr;
+  typedef generic::ptr<entities::table_values> table_values_ptr;
+
 
   table_generator() = delete;
 
@@ -69,7 +73,7 @@ struct table_generator
     for (uint8_t _count_attrs = 0; _count_attrs < _num_attrs; ++_count_attrs) {
       ptr<attribute_column> _col = m_table->get_attr(_count_attrs);
       attributes_generators::iterator _ite =
-        m_attrs_generators.find(_col->get_name());
+          m_attrs_generators.find(_col->get_name());
       if (_ite != m_attrs_generators.end()) {
         _attrs_values->add(_ite->second(_col, m_num_lines));
       }
@@ -78,7 +82,7 @@ struct table_generator
   }
 
   generic::ptr<const entities::table_values> generate_pks(
-    generic::ptr<entities::tables_values> p_pks)
+      generic::ptr<entities::tables_values> p_pks)
   {
     using namespace sql::entities;
     using namespace sql::generic;
@@ -100,16 +104,34 @@ struct table_generator
     return _pks_values;
   }
 
-  generic::ptr<const entities::table_values> generate_fks(
-    generic::ptr<const entities::tables_values> p_pks)
+  std::pair<table_values_ptr, tables_names_ptr> generate_fks(
+      generic::ptr<const entities::tables_values> p_pks)
   {
 
     using namespace sql::entities;
     using namespace sql::generic;
 
+
+    tables_names_ptr _tables_names;
+    uint16_t _num_fks = m_table->get_num_fks();
+    for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
+      ptr<foreign_key> _fk = m_table->get_fk(_count_fks);
+      fks_generators::iterator _ite = m_fks_generators.find(_fk->get_name());
+      if (_ite != m_fks_generators.end()) {
+        _tables_names = make_ptr<tables_names>(tables_not_populated(_fk, p_pks));
+        //        if (!_tables_names.empty()) {
+        //          _ite->second(p_pks, _fks_values, _fk, m_num_lines);
+        //        }
+      }
+    }
+
+    if (!_tables_names->empty()) {
+
+      return {table_values_ptr(), _tables_names };
+    }
+
     ptr<table_values> _fks_values(make_ptr<table_values>(m_table));
 
-    uint16_t _num_fks = m_table->get_num_fks();
     for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
       ptr<foreign_key> _fk = m_table->get_fk(_count_fks);
       fks_generators::iterator _ite = m_fks_generators.find(_fk->get_name());
@@ -117,14 +139,39 @@ struct table_generator
         _ite->second(p_pks, _fks_values, _fk, m_num_lines);
       }
     }
-    return _fks_values;
+
+    return {_fks_values, tables_names_ptr()};
   }
 
 private:
   typedef std::map<generic::name, attribute_column_generator>
-    attributes_generators;
+  attributes_generators;
   typedef std::map<generic::name, primary_key_column_generator> pks_generators;
   typedef std::map<generic::name, foreign_key_generator> fks_generators;
+
+private:
+  std::list<generic::name>
+  tables_not_populated(generic::ptr<const entities::foreign_key> p_fk
+                       , generic::ptr<const entities::tables_values> p_pks) const{
+    using namespace sql::entities;
+    using namespace sql::generic;
+
+    std::list<generic::name> _tables_names;
+
+    uint16_t _num_cols = p_fk->get_num_cols();
+    for (uint16_t _count_col = 0; _count_col < _num_cols; ++_count_col) {
+      ptr<foreign_key_column> _fk_col = p_fk->get_fk_col(_count_col);
+      ptr<primary_key_column> _pk_col = _fk_col->get_pk_column();
+      const primary_key& _pk = _pk_col->get_primary_key();
+      const name& _table_name = _pk.get_table().get_name();
+
+      ptr<table_values> _pk_table_values = p_pks->find(_table_name);
+      if (_pk_table_values == nullptr) {
+        _tables_names.push_back(_table_name);
+      }
+    }
+    return _tables_names;
+  }
 
 private:
   generic::ptr<entities::table> m_table;

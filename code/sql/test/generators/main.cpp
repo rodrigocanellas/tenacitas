@@ -5,6 +5,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <utility>
 
 #include <sql/business/number_value_generator.h>
 #include <sql/business/one_pk_all_fks.h>
@@ -43,7 +44,7 @@ attribute_sequential()
 
   time_t _now = time(nullptr);
 
-  number_value_generator<uint32_t> _asvg(
+  number_value_generator<time_t> _asvg(
     _now, _now + 30 * day_in_secs, 2 * day_in_secs);
 
   ptr<column_values> _values = _asvg(_birthday, 8);
@@ -148,13 +149,77 @@ fk_one_pk()
       _dependent_gen.generate_pks(_all_pks);
     ptr<const table_values> _dependent_attrs_values =
       _dependent_gen.generate_attrs();
-    ptr<const table_values> _dependent_fk_values =
+
+    std::pair<ptr<table_values>, table_generator::tables_names_ptr> _result =
       _dependent_gen.generate_fks(_all_pks);
 
-    std::cout << _sql_gen(
-      _dependent_pk_values, _dependent_attrs_values, _dependent_fk_values);
+    if (_result.first) {
+      std::cout << _sql_gen(
+                     _dependent_pk_values, _dependent_attrs_values, _result.first);
+    }
+    else {
+      std::cout << "Dados para seguintes tabelas devem ser geradas primeiro: ";
+      for (const name & _name: *_result.second) {
+        std::cout << _name << std::endl;
+      }
+
+    }
   }
 }
+
+void not_all_tables_generated_1() {
+  using namespace capemisa::sql::entities;
+  using namespace capemisa::sql::generic;
+  using namespace capemisa::sql::business;
+  using namespace capemisa::sql::test;
+
+  sql_generator _sql_gen;
+
+  std::cout << std::endl;
+
+  create_hosts _create_hosts;
+  hosts _hosts(_create_hosts());
+  ptr<host> _host = _hosts[0];
+  ptr<server> _server = _host->get_server(0);
+  ptr<database> _db = _server->get_database(0);
+
+  ptr<tables_values> _all_pks(make_ptr<tables_values>());
+
+  table_generator _dependent_gen(_db->find("dependent"), 5);
+  _dependent_gen.add_pk_generator("id",
+                                  number_value_generator<uint16_t>(4, 50, 2));
+  _dependent_gen.add_attr_generator("name",
+                                    text_value_generator("dep", 15, 14));
+
+  time_t _now = time(nullptr);
+  _dependent_gen.add_attr_generator(
+    "birthday",
+    number_value_generator<time_t>(
+      _now, _now + 25 * day_in_secs, 5 * day_in_secs));
+
+  _dependent_gen.add_fk_generator("employee_fk", one_pk_all_fks());
+
+  ptr<const table_values> _dependent_pk_values =
+    _dependent_gen.generate_pks(_all_pks);
+  ptr<const table_values> _dependent_attrs_values =
+    _dependent_gen.generate_attrs();
+
+  std::pair<ptr<table_values>, table_generator::tables_names_ptr> _result =
+    _dependent_gen.generate_fks(_all_pks);
+
+  if (_result.first) {
+    std::cout << _sql_gen(
+                   _dependent_pk_values, _dependent_attrs_values, _result.first);
+  }
+  else {
+    std::cout << "Dados para seguintes tabelas devem ser gerados primeiro: \n";
+    for (const name & _name: *_result.second) {
+      std::cout << _name << std::endl;
+    }
+
+  }
+}
+
 
 void
 text_generator()
@@ -190,4 +255,5 @@ main()
   pk_sequential();
   fk_one_pk();
   text_generator();
+  not_all_tables_generated_1();
 }
