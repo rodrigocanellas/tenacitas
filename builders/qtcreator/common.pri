@@ -80,9 +80,9 @@ equals(TEMPLATE,app) {
 
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
-    CONFIG += shared_and_static
+    CONFIG += shared_and_static build_all
 #    CONFIG += staticlib
-#build_all
+
 }
 
 

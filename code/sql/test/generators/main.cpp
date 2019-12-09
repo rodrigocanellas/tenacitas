@@ -20,6 +20,7 @@
 #include <sql/entities/table.h>
 #include <sql/entities/value.h>
 #include <sql/generic/ptr.h>
+#include <sql/test/create_abstract_model.h>
 #include <sql/test/create_hosts.h>
 
 #define day_in_secs 24 * 60 * 60
@@ -127,8 +128,10 @@ fk_one_pk()
     ptr<const table_values> _employee_attrs_values =
       _employee_gen.generate_attrs();
 
-    std::cout << _sql_gen(
-      _employee_pk_values, _employee_attrs_values, ptr<table_values>());
+    std::cout << _sql_gen(_employee_pk_values,
+                          _employee_attrs_values,
+                          ptr<table_values>())
+              << std::endl;
   }
   {
     table_generator _dependent_gen(_db->find("dependent"), 5);
@@ -155,19 +158,19 @@ fk_one_pk()
 
     if (_result.first) {
       std::cout << _sql_gen(
-                     _dependent_pk_values, _dependent_attrs_values, _result.first);
-    }
-    else {
+        _dependent_pk_values, _dependent_attrs_values, _result.first);
+    } else {
       std::cout << "Dados para seguintes tabelas devem ser geradas primeiro: ";
-      for (const name & _name: *_result.second) {
+      for (const name& _name : *_result.second) {
         std::cout << _name << std::endl;
       }
-
     }
   }
 }
 
-void not_all_tables_generated_1() {
+void
+not_all_tables_generated_1()
+{
   using namespace capemisa::sql::entities;
   using namespace capemisa::sql::generic;
   using namespace capemisa::sql::business;
@@ -209,17 +212,14 @@ void not_all_tables_generated_1() {
 
   if (_result.first) {
     std::cout << _sql_gen(
-                   _dependent_pk_values, _dependent_attrs_values, _result.first);
-  }
-  else {
+      _dependent_pk_values, _dependent_attrs_values, _result.first);
+  } else {
     std::cout << "Dados para seguintes tabelas devem ser gerados primeiro: \n";
-    for (const name & _name: *_result.second) {
+    for (const name& _name : *_result.second) {
       std::cout << _name << std::endl;
     }
-
   }
 }
-
 
 void
 text_generator()
@@ -248,6 +248,56 @@ text_generator()
   }
 }
 
+void
+abstract_1()
+{
+  using namespace capemisa::sql::entities;
+  using namespace capemisa::sql::generic;
+  using namespace capemisa::sql::business;
+  using namespace capemisa::sql::test;
+  using namespace std;
+
+  cout << "\nABSTRACT 1" << endl;
+
+  create_abstract_model _cam;
+
+  ptr<hosts> _hosts = _cam();
+  ptr<host> _host = (*_hosts)[0];
+  ptr<server> _server = _host->get_server(0);
+  ptr<database> _db = _server->get_database(0);
+
+  ptr<table> _a = _db->find("A");
+
+  if (_a == nullptr) {
+    throw std::runtime_error("não foi possível achar a tabela 'A'");
+  }
+
+  table_generator _tb(_a, 5);
+
+  _tb.add_pk_generator("id", number_value_generator<uint16_t>(4, 50, 2));
+  _tb.add_attr_generator(
+    "a1", number_value_generator<uint16_t>(1000.00, 1600.00, 250.00));
+
+  generic::ptr<entities::tables_values> _all_pks(
+    make_ptr<entities::tables_values>());
+
+  _tb.generate_pks(_all_pks);
+  _tb.generate_attrs();
+
+  std::pair<ptr<table_values>, table_generator::tables_names_ptr> _result =
+    _tb.generate_fks(_all_pks);
+
+  if (_result.first != nullptr) {
+    throw std::runtime_error(
+      "FKs para 'A' geradas, mas 'D' e 'B' não foram ṕopuladas");
+  }
+
+  cout << "As tabelas abaixo devem ser povoadas: " << endl;
+  for (const name& _name : *_result.second) {
+    cout << _name << endl;
+  }
+}
+
 int
 main()
 {
@@ -256,4 +306,5 @@ main()
   fk_one_pk();
   text_generator();
   not_all_tables_generated_1();
+  abstract_1();
 }

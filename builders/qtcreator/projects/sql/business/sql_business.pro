@@ -16,6 +16,7 @@ include (../../../common.pri)
 HEADERS += \
   ../../../../../code/sql/business/attribute_column_generator.h \
   ../../../../../code/sql/business/foreign_key_generator.h \
+  ../../../../../code/sql/business/internal/tables_not_populated.h \
   ../../../../../code/sql/business/number_value_generator.h \
   ../../../../../code/sql/business/one_pk_all_fks.h \
   ../../../../../code/sql/business/primary_key_column_generator.h \
@@ -28,6 +29,7 @@ HEADERS += \
 
 SOURCES += \
   ../../../../../code/sql/business/internal/sql_generator.cpp \
+  ../../../../../code/sql/business/internal/tables_not_populated.cpp \
   ../../../../../code/sql/business/internal/text_value_generator.cpp
 
 LIBS += $$libs_dir/libcapemisa.sql.entities.a

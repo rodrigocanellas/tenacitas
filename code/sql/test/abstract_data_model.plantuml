@@ -1,0 +1,19 @@
+@startuml
+
+hide circle
+hide empty members
+allow_mixing
+skinparam linetype ortho
+'left to right direction
+
+A }|..|| B
+A }|..|| D
+B }|..|| C
+D }|..|| E
+E }|..|| F
+F }|..|| B
+D }|..|| G
+E }|..|| H
+E }|..|| J
+
+@enduml
