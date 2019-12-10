@@ -8,6 +8,7 @@ allow_mixing
 skinparam linetype ortho
 
 
+
 namespace  sql {
 
 ' ============== META DATA =============
@@ -53,9 +54,9 @@ class ForeignKey
 }
 
 Hosts *-up- "*" Host
-Host *-left-o "*" Server
-Server *-up-o "*" Database
-Database *--o "*" Table
+Host *-right-o "*" Server
+Server *-right-o "*" Database
+Database *-right-o "*" Table
 
 PrimaryKey *--o "*" PrimaryKeyColumn
 ForeignKey "1" *--o "*" ForeignKeyColumn
@@ -121,15 +122,9 @@ SqlGenerator  o-- "pk" sql::entities::TableValues
 SqlGenerator  o-- "fk" sql::entities::TableValues
 }
 
-'sql::entities::AttributeColumn -[hidden]-> sql::entities::Column
-'sql::entities::ForeignKeyColumn -[hidden]> sql::entities::ColumnValues
-'sql::entities::Hosts -[hidden]->sql::entities::TableValues
-'sql::entities::AttributeGenerator -[hidden]-> sql::entities::PrimaryKeyColumnGenerator
 sql::business::PrimaryKeyColumnGenerator -[hidden]> sql::business::ForeignKeyGenerator
 sql::business::ForeignKeyGenerator -[hidden]> sql::business::AttributeGenerator
 sql::entities::Database -[hidden]> sql::entities::ColumnValues
-'sql::entities::AttributeColumn -[hidden]> sql::entities::Column
-'sql::entities::ForeignKey  -[hidden]> sql::entities::AttributeColumn 
 sql::business::SqlGenerator -[hidden]> sql::business::TableGenerator
 }
 
