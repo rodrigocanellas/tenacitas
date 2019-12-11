@@ -141,6 +141,7 @@ MainWindow::display_hosts()
 void
 MainWindow::on_lstHosts_itemClicked(QListWidgetItem* item)
 {
+  ui->lstServers->clear();
   name _host_name = item->text().toStdString();
   m_host = m_hosts->find(_host_name);
 
@@ -155,6 +156,7 @@ MainWindow::on_lstHosts_itemClicked(QListWidgetItem* item)
 void
 MainWindow::on_lstServers_itemClicked(QListWidgetItem* item)
 {
+  ui->lstDbs->clear();
   name _server_name = item->text().toStdString();
   m_server = m_host->find(_server_name);
 
