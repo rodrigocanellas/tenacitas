@@ -9,6 +9,7 @@
 #include <sql/business/number_value_generator.h>
 
 #define GERADOR_NUMEROS "gerador de números"
+#define GERADOR_TEXTO "gerador de texto"
 
 using namespace capemisa::sql::entities;
 using namespace capemisa::sql::generic;
@@ -67,7 +68,8 @@ TableInsertGenerator::fill_pks_definitions()
       std::string _type = column::type2str(_pk_col->get_type());
       std::string _size = std::to_string(_pk_col->get_size());
       std::string _is_unique = (_pk_col->is_unique() ? "sim" : "não");
-      int _row = ui->tblPks->rowCount() - 1;
+      ui->tblPks->insertRow(ui->tblPks->rowCount());
+      int _row = ui->tblPks->rowCount()-1;
       ui->tblPks->setItem(_row, 0, new QTableWidgetItem(_name.c_str()));
       ui->tblPks->setItem(_row, 1, new QTableWidgetItem(_type.c_str()));
       ui->tblPks->setItem(_row, 2, new QTableWidgetItem(_size.c_str()));
@@ -87,10 +89,10 @@ TableInsertGenerator::fill_pks_definitions()
           break;
         case column::type::var_size_text:
         case column::type::fixed_size_text:
-          _generators->addItem("gerador de texto");
+          _generators->addItem(GERADOR_TEXTO);
           break;
         default:
-          _generators->addItem("no generator for this type yet");
+          _generators->addItem("tipo sem há gerador");
       }
 
       ui->tblPks->setCellWidget(_row, 4, _generators);
@@ -100,12 +102,7 @@ TableInsertGenerator::fill_pks_definitions()
                        this,
                        SLOT(on_currentIndexChanged(const QString&)));
 
-      //      QPushButton* btn_edit = new QPushButton();
-      //      btn_edit = new QPushButton();
-      //      btn_edit->setText("Edit");
-      //      ui->tblPks->setCellWidget(_row, 4, (QWidget*)btn_edit);
 
-      ui->tblPks->insertRow(ui->tblPks->rowCount());
     }
   }
 }
@@ -120,7 +117,6 @@ TableInsertGenerator::on_currentIndexChanged(const QString& text)
     }
     m_number_value_generator_definition->show();
     m_number_value_generator_definition->raise();
-    // number_value_generator
   }
 }
 
@@ -137,9 +133,9 @@ TableInsertGenerator::on_btnGenPks_clicked()
     m_all_pks = make_ptr<entities::tables_values>();
   }
 
-  if (ui->tblValues->rowCount() != _num_rows_values + 1) {
-    for (int _i = 0; _i < (_num_rows_values + 1); ++_i) {
-      ui->tblValues->insertRow(_i);
+  if (ui->tblValues->rowCount() != (_num_rows_values)) {
+    for (int _i = 0; _i < (_num_rows_values); ++_i) {
+      ui->tblValues->insertRow(ui->tblValues->rowCount());
       qDebug() << "i == " << _i
                << ", num row values = " << ui->tblValues->rowCount();
     }
@@ -149,7 +145,7 @@ TableInsertGenerator::on_btnGenPks_clicked()
   }
 
   int _num_rows_def = ui->tblPks->rowCount();
-  for (int _row_def = 0; _row_def < (_num_rows_def - 1); ++_row_def) {
+  for (int _row_def = 0; _row_def < _num_rows_def ; ++_row_def) {
     QComboBox* _combo = (QComboBox*)(ui->tblPks->cellWidget(_row_def, 4));
     if (_combo->currentText() == GERADOR_NUMEROS) {
 
@@ -159,7 +155,7 @@ TableInsertGenerator::on_btnGenPks_clicked()
       int _increment = _params[2].toInt();
       number_value_generator<int> _nvg(_base, _limit, _increment);
 
-      QString _col_name = ui->tblPks->item(0, 0)->text();
+      QString _col_name = ui->tblPks->item(_row_def, 0)->text();
       ptr<primary_key_column> _col =
         m_table->get_primary_key()->find_pk_column(_col_name.toStdString());
 
@@ -179,15 +175,17 @@ TableInsertGenerator::on_btnGenPks_clicked()
       m_pks_values->get_column_values(_count_cols_generated);
 
     ui->tblValues->insertColumn(ui->tblValues->columnCount());
-    int _col_value = ui->tblValues->columnCount() - 1;
+    int _col_number = ui->tblValues->columnCount() - 1;
     ui->tblValues->setHorizontalHeaderItem(
-      _col_value,
+      _col_number,
       new QTableWidgetItem(_values->get_column()->get_name().c_str()));
 
-    for (int _row_value = 0; _row_value < _num_rows_values; ++_row_value) {
-      QString _value = _values->get_value(_row_value).get_value().c_str();
+    for (int _row_count = 0; _row_count < _num_rows_values; ++_row_count) {
+      QString _value =
+          _values->get_value(static_cast<uint16_t>(_row_count)).
+          get_value().c_str();
       ui->tblValues->setItem(
-        _row_value, _col_value, new QTableWidgetItem(_value));
+        _row_count, _col_number, new QTableWidgetItem(_value));
     }
   }
   //    number_value_generator _nbg

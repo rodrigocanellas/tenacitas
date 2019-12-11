@@ -14,8 +14,8 @@
    <string>Gerador de 'insert'</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../resources/capemisa_pequeno.png</normaloff>../../resources/capemisa_pequeno.png</iconset>
+   <iconset resource="../../resources/capemisa.qrc">
+    <normaloff>:/capemisa_pequeno.png</normaloff>:/capemisa_pequeno.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -29,7 +29,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,30,65">
        <property name="spacing">
-        <number>0</number>
+        <number>9</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -44,13 +44,26 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="10,5,30,55">
          <item>
           <widget class="QLabel" name="lblAmountOfLines">
            <property name="text">
             <string>Quantas linhas?</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <widget class="QLineEdit" name="txtAmountOfLines">
@@ -87,7 +100,7 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout" stretch="10,75,15">
           <property name="spacing">
-           <number>0</number>
+           <number>9</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -135,18 +148,17 @@
           <item>
            <widget class="QTableWidget" name="tblPks">
             <property name="rowCount">
-             <number>1</number>
+             <number>0</number>
             </property>
             <property name="columnCount">
              <number>6</number>
             </property>
             <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
+             <bool>true</bool>
             </attribute>
             <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
+             <bool>true</bool>
             </attribute>
-            <row/>
             <column/>
             <column/>
             <column/>
@@ -221,6 +233,45 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QLabel" name="lblValues">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Valores</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QTableWidget" name="tblValues"/>
        </item>
        <item>
@@ -237,7 +288,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="fraBtnsValues">
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -307,6 +358,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/capemisa.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -14,8 +14,8 @@
    <string>Gerador de 'insert' SQL</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>../../resources/capemisa_pequeno.png</normaloff>../../resources/capemisa_pequeno.png</iconset>
+   <iconset resource="../../resources/capemisa.qrc">
+    <normaloff>:/capemisa_pequeno.png</normaloff>:/capemisa_pequeno.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_5" stretch="3,7">
@@ -452,6 +452,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/capemisa.qrc"/>
+ </resources>
  <connections/>
 </ui>
