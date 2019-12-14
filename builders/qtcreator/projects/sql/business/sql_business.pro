@@ -15,6 +15,7 @@ include (../../../common.pri)
 
 HEADERS += \
   ../../../../../code/sql/business/attribute_column_generator.h \
+  ../../../../../code/sql/business/column_generator.h \
   ../../../../../code/sql/business/foreign_key_generator.h \
   ../../../../../code/sql/business/internal/tables_not_populated.h \
   ../../../../../code/sql/business/number_value_generator.h \

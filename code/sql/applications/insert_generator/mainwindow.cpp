@@ -56,11 +56,11 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
 
     generic::ptr<primary_key> _pk = _employee->get_primary_key();
 
-    _pk->add_pk_column("id", column::type::int_4, false, true);
+    _pk->add_pk_column("id", column_type::int_4, false, true);
 
     _employee->add_attribute(
-      "name", column::type::var_size_text, 100, false, false);
-    _employee->add_attribute("birthday", column::type::date, false, false);
+      "name", column_type::var_size_text, 100, false, false);
+    _employee->add_attribute("birthday", column_type::date, false, false);
 
     generic::ptr<foreign_key> _employee_boss_fk =
       _employee->add_fk("boss_fk", true);
@@ -70,11 +70,11 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
   {
     generic::ptr<table> _dependent = _db->add_table("dependent");
     _dependent->get_primary_key()->add_pk_column(
-      "id", column::type::int_4, false, true);
+      "id", column_type::int_4, false, true);
 
     _dependent->add_attribute(
-      "name", column::type::var_size_text, 100, false, false);
-    _dependent->add_attribute("birthday", column::type::date, false, false);
+      "name", column_type::var_size_text, 100, false, false);
+    _dependent->add_attribute("birthday", column_type::date, false, false);
 
     generic::ptr<table> _employee = _db->find("employee");
     generic::ptr<primary_key> _employee_pk = _employee->get_primary_key();
@@ -89,12 +89,12 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
   {
     generic::ptr<table> _project = _db->add_table("project");
     _project->get_primary_key()->add_pk_column(
-      "id", column::type::int_4, true, true);
+      "id", column_type::int_4, true, true);
     _project->add_attribute(
-      "name", column::type::var_size_text, 100, false, false);
+      "name", column_type::var_size_text, 100, false, false);
 
     _project->get_primary_key()->add_pk_column(
-      "id", column::type::int_4, true, true);
+      "id", column_type::int_4, true, true);
   }
   {
     generic::ptr<table> _employees_projects =

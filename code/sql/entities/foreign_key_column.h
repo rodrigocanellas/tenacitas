@@ -3,15 +3,19 @@
 
 #include <iostream>
 
-#include <sql/generic/collection.h>
-#include <sql/generic/ptr.h>
-#include <sql/generic/name.h>
+#include <sql/entities/column.h>
+#include <sql/entities/column_usage.h>
 #include <sql/entities/primary_key_column.h>
 #include <sql/entities/size.h>
+#include <sql/generic/collection.h>
+#include <sql/generic/name.h>
+#include <sql/generic/ptr.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
+
+using namespace capemisa::sql::generic;
 
 struct foreign_key;
 
@@ -28,9 +32,9 @@ struct foreign_key_column : public column
   foreign_key_column& operator=(foreign_key_column&&) = delete;
   ~foreign_key_column() = default;
 
-  foreign_key_column(const generic::name& p_name,
+  foreign_key_column(const name& p_name,
                      const foreign_key* p_foreign_key,
-                     generic::ptr<primary_key_column> p_primary_key_column)
+                     ptr<primary_key_column> p_primary_key_column)
     : column(p_name,
              p_primary_key_column->get_type(),
              p_primary_key_column->get_size())
@@ -40,14 +44,14 @@ struct foreign_key_column : public column
 
   const foreign_key& get_foreign_key() const;
 
-  inline generic::ptr<primary_key_column> get_pk_column() const
+  inline ptr<primary_key_column> get_pk_column() const
   {
     return m_primary_key_column;
   }
 
 private:
   const foreign_key* m_foreign_key;
-  generic::ptr<primary_key_column> m_primary_key_column;
+  ptr<primary_key_column> m_primary_key_column;
 };
 
 } // namespace entities

@@ -11,6 +11,8 @@
 #include <sql/business/internal/tables_not_populated.h>
 #include <sql/business/primary_key_column_generator.h>
 #include <sql/entities/attribute_column.h>
+#include <sql/entities/column_usage.h>
+#include <sql/entities/column_values.h>
 #include <sql/entities/foreign_key.h>
 #include <sql/entities/foreign_key_column.h>
 #include <sql/entities/primary_key.h>
@@ -24,50 +26,53 @@ namespace capemisa {
 namespace sql {
 namespace business {
 
+using namespace capemisa::sql::entities;
+using namespace capemisa::sql::generic;
+
 struct table_generator
 {
-  typedef std::list<generic::name> tables_names;
-  typedef generic::ptr<std::list<generic::name>> tables_names_ptr;
-  typedef generic::ptr<entities::table_values> table_values_ptr;
+  typedef std::list<name> tables_names;
+  typedef ptr<std::list<name>> tables_names_ptr;
+  typedef ptr<table_values> table_values_ptr;
 
   table_generator() = delete;
 
-  explicit table_generator(generic::ptr<entities::table> p_table,
-                           uint16_t p_num_lines)
+  explicit table_generator(ptr<table> p_table, uint16_t p_num_lines)
     : m_table(p_table)
     , m_num_lines(p_num_lines)
   {}
 
-  //  void operator()(const entities::table& p_table, uint16_t p_num_lines)
+  //  void operator()(const table& p_table, uint16_t p_num_lines)
   //  {
   //    generate_pks(p_table, p_num_lines);
   //    generate_attrs(p_table, p_num_lines);
   //    generate_fks(p_table, p_num_lines);
   //  }
 
-  void add_attr_generator(const generic::name& p_attr_col_name,
-                          attribute_column_generator&& p_attr_col_gen)
+  void add_attr_generator(
+    const name& p_col_name,
+    ptr<column_generator<attribute_column>> p_attr_col_gen)
   {
-    m_attrs_generators.insert({ p_attr_col_name, std::move(p_attr_col_gen) });
+    m_attrs_generators.insert({ p_col_name, p_attr_col_gen });
   }
 
-  void add_pk_generator(const generic::name& p_pk_col_name,
-                        primary_key_column_generator&& p_pk_col_gen)
+  void add_pk_generator(const name& p_col_name,
+                        ptr<column_generator<primary_key_column>> p_pk_col_gen)
   {
-    m_pks_generators.insert({ p_pk_col_name, std::move(p_pk_col_gen) });
+    m_pks_generators.insert({ p_col_name, p_pk_col_gen });
   }
 
-  void add_fk_generator(const generic::name& p_fk_name,
-                        foreign_key_generator&& p_fk_gen)
+  void add_fk_generator(const name& p_col_name,
+                        ptr<foreign_key_generator> p_fk_gen)
   {
-    m_fks_generators.insert({ p_fk_name, std::move(p_fk_gen) });
+    m_fks_generators.insert({ p_col_name, p_fk_gen });
   }
 
-  generic::ptr<const entities::table_values> generate_attrs()
+  ptr<const table_values> generate_attrs()
   {
     using namespace sql::entities;
     using namespace sql::generic;
-    ptr<table_values> _attrs_values(make_ptr<table_values>(m_table));
+    ptr<table_values> _attrs_table_values(make_ptr<table_values>(m_table));
 
     uint16_t _num_attrs = m_table->get_num_attrs();
     for (uint8_t _count_attrs = 0; _count_attrs < _num_attrs; ++_count_attrs) {
@@ -75,14 +80,13 @@ struct table_generator
       attributes_generators::iterator _ite =
         m_attrs_generators.find(_col->get_name());
       if (_ite != m_attrs_generators.end()) {
-        _attrs_values->add(_ite->second(_col, m_num_lines));
+        _attrs_table_values->add((*_ite->second)(_col, m_num_lines));
       }
     }
-    return _attrs_values;
+    return _attrs_table_values;
   }
 
-  generic::ptr<const entities::table_values> generate_pks(
-    generic::ptr<entities::tables_values> p_pks)
+  ptr<const table_values> generate_pks(ptr<tables_values> p_pks)
   {
     using namespace sql::entities;
     using namespace sql::generic;
@@ -97,7 +101,7 @@ struct table_generator
       ptr<primary_key_column> _col = _pk->get_pk_column(_count_pk_cols);
       pks_generators::iterator _ite = m_pks_generators.find(_col->get_name());
       if (_ite != m_pks_generators.end()) {
-        _pks_values->add(_ite->second(_col, m_num_lines));
+        _pks_values->add((*_ite->second)(_col, m_num_lines));
       }
     }
     p_pks->add(_pks_values);
@@ -114,7 +118,7 @@ struct table_generator
   /// generated yet
   ///
   std::pair<table_values_ptr, tables_names_ptr> generate_fks(
-    generic::ptr<const entities::tables_values> p_pks)
+    ptr<const tables_values> p_pks)
   {
 
     using namespace sql::entities;
@@ -134,7 +138,7 @@ struct table_generator
       ptr<foreign_key> _fk = m_table->get_fk(_count_fks);
       fks_generators::iterator _ite = m_fks_generators.find(_fk->get_name());
       if (_ite != m_fks_generators.end()) {
-        _ite->second(p_pks, _fks_values, _fk, m_num_lines);
+        (*_ite->second)(p_pks, _fks_values, _fk, m_num_lines);
       }
     }
 
@@ -142,13 +146,14 @@ struct table_generator
   }
 
 private:
-  typedef std::map<generic::name, attribute_column_generator>
+  typedef std::map<name, ptr<column_generator<attribute_column>>>
     attributes_generators;
-  typedef std::map<generic::name, primary_key_column_generator> pks_generators;
-  typedef std::map<generic::name, foreign_key_generator> fks_generators;
+  typedef std::map<name, ptr<column_generator<primary_key_column>>>
+    pks_generators;
+  typedef std::map<name, ptr<foreign_key_generator>> fks_generators;
 
 private:
-  generic::ptr<entities::table> m_table;
+  ptr<table> m_table;
   uint16_t m_num_lines;
 
   pks_generators m_pks_generators;

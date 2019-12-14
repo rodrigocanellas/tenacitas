@@ -16,6 +16,8 @@ include (../../../common.pri)
 HEADERS += \
     ../../../../../code/sql/entities/attribute_column.h \
     ../../../../../code/sql/entities/column.h \
+  ../../../../../code/sql/entities/column_type.h \
+  ../../../../../code/sql/entities/column_usage.h \
     ../../../../../code/sql/entities/column_values.h \
     ../../../../../code/sql/entities/database.h \
     ../../../../../code/sql/entities/foreign_key.h \
@@ -37,8 +39,9 @@ HEADERS += \
   ../../../../../code/sql/generic/collection.h
 
 SOURCES += \
+    ../../../../../code/sql/entities/internal/column_type.cpp \
     ../../../../../code/sql/entities/internal/attribute_column.cpp \
-    ../../../../../code/sql/entities/internal/column.cpp \
+    ../../../../../code/sql/entities/internal/column_usage.cpp \
     ../../../../../code/sql/entities/internal/database.cpp \
     ../../../../../code/sql/entities/internal/foreign_key.cpp \
     ../../../../../code/sql/entities/internal/foreign_key_column.cpp \

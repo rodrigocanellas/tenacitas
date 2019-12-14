@@ -6,12 +6,15 @@
 #include <utility>
 
 #include <sql/entities/column.h>
+#include <sql/entities/column_usage.h>
 #include <sql/entities/value.h>
 #include <sql/generic/ptr.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
+
+using namespace capemisa::sql::generic;
 
 struct column_values
 {
@@ -21,7 +24,7 @@ struct column_values
 
   column_values() = delete;
 
-  inline explicit column_values(generic::ptr<column> p_column)
+  inline explicit column_values(ptr<column> p_column)
     : m_column(p_column)
   {}
 
@@ -41,19 +44,19 @@ struct column_values
 
   inline const_iterator end() const { return m_list.end(); }
 
-  inline generic::ptr<column> get_column() const { return m_column; }
+  inline ptr<column> get_column() const { return m_column; }
 
   inline uint16_t get_size() const { return m_list.size(); }
 
-  const value& get_value(uint16_t p_counter) const
+  inline const value& get_value(uint16_t p_counter) const
   {
     return *(std::next(m_list.begin(), p_counter));
   }
 
-  const generic::name& get_name() const { return m_column->get_name(); }
+  inline const name& get_name() const { return m_column->get_name(); }
 
 private:
-  generic::ptr<column> m_column;
+  ptr<column> m_column;
   list m_list;
 };
 

@@ -13,6 +13,8 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+using namespace generic;
+
 struct server;
 
 struct database
@@ -28,7 +30,7 @@ struct database
   database& operator=(database&&) = delete;
   ~database() = default;
 
-  inline explicit database(const generic::name& p_name, const server* p_server)
+  inline explicit database(const name& p_name, const server* p_server)
     : m_name(p_name)
     , m_server(p_server)
   {}
@@ -38,19 +40,16 @@ struct database
     return m_tables.get_size<uint16_t>();
   }
 
-  inline generic::ptr<table> get_table(uint16_t p_index)
-  {
-    return m_tables[p_index];
-  }
+  inline ptr<table> get_table(uint16_t p_index) { return m_tables[p_index]; }
 
-  inline const generic::name& get_name() const { return m_name; }
+  inline const name& get_name() const { return m_name; }
 
-  inline generic::ptr<table> add_table(const generic::name& p_table_name)
+  inline ptr<table> add_table(const name& p_table_name)
   {
     return m_tables.add(p_table_name, this);
   }
 
-  inline generic::ptr<table> find(const generic::name& p_table_name)
+  inline ptr<table> find(const name& p_table_name)
   {
     return m_tables.find(p_table_name);
   }
@@ -58,10 +57,10 @@ struct database
   const server& get_server() const;
 
 private:
-  typedef generic::collection<table> tables;
+  typedef collection<table> tables;
 
 private:
-  generic::name m_name;
+  name m_name;
   const server* m_server;
 
   tables m_tables;

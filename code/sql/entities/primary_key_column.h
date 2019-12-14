@@ -4,16 +4,20 @@
 #include <iostream>
 
 #include <sql/entities/column.h>
-#include <sql/generic/name.h>
+#include <sql/entities/column_usage.h>
 #include <sql/entities/size.h>
+#include <sql/generic/name.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
 
+using namespace generic;
+
 struct primary_key;
 
 struct primary_key_column : public column
+
 {
 
   friend std::ostream& operator<<(std::ostream& p_out,
@@ -26,9 +30,9 @@ struct primary_key_column : public column
   primary_key_column& operator=(primary_key_column&&) = delete;
   ~primary_key_column() override = default;
 
-  primary_key_column(const generic::name& p_name,
+  primary_key_column(const name& p_name,
                      const primary_key* p_primary_key,
-                     column::type p_type,
+                     column_type p_type,
                      size p_size,
                      bool p_is_auto_increment,
                      bool p_is_unique)
@@ -38,9 +42,9 @@ struct primary_key_column : public column
     , m_primary_key(p_primary_key)
   {}
 
-  primary_key_column(const generic::name& p_name,
+  primary_key_column(const name& p_name,
                      const primary_key* p_primary_key,
-                     column::type p_type,
+                     column_type p_type,
                      bool p_is_auto_increment,
                      bool p_is_unique)
     : column(p_name, p_type)

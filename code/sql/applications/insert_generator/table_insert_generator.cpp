@@ -65,11 +65,11 @@ TableInsertGenerator::fill_pks_definitions()
     ptr<primary_key_column> _pk_col = _pk->get_pk_column(_i);
     if (!_pk_col->is_autoincrement()) {
       name _name = _pk_col->get_name();
-      std::string _type = column::type2str(_pk_col->get_type());
+      std::string _type = column_type2str(_pk_col->get_type());
       std::string _size = std::to_string(_pk_col->get_size());
       std::string _is_unique = (_pk_col->is_unique() ? "sim" : "não");
       ui->tblPks->insertRow(ui->tblPks->rowCount());
-      int _row = ui->tblPks->rowCount()-1;
+      int _row = ui->tblPks->rowCount() - 1;
       ui->tblPks->setItem(_row, 0, new QTableWidgetItem(_name.c_str()));
       ui->tblPks->setItem(_row, 1, new QTableWidgetItem(_type.c_str()));
       ui->tblPks->setItem(_row, 2, new QTableWidgetItem(_size.c_str()));
@@ -77,22 +77,22 @@ TableInsertGenerator::fill_pks_definitions()
       QComboBox* _generators = new QComboBox();
       _generators->addItem("---");
       switch (_pk_col->get_type()) {
-        case column::type::int_1:
-        case column::type::int_2:
-        case column::type::int_4:
-        case column::type::int_8:
-        case column::type::date:
-        case column::type::date_time:
-        case column::type::small_real:
-        case column::type::long_real:
+        case column_type::int_1:
+        case column_type::int_2:
+        case column_type::int_4:
+        case column_type::int_8:
+        case column_type::date:
+        case column_type::date_time:
+        case column_type::small_real:
+        case column_type::long_real:
           _generators->addItem(GERADOR_NUMEROS);
           break;
-        case column::type::var_size_text:
-        case column::type::fixed_size_text:
+        case column_type::var_size_text:
+        case column_type::fixed_size_text:
           _generators->addItem(GERADOR_TEXTO);
           break;
         default:
-          _generators->addItem("tipo sem há gerador");
+          _generators->addItem("tipo sem gerador");
       }
 
       ui->tblPks->setCellWidget(_row, 4, _generators);
@@ -101,8 +101,6 @@ TableInsertGenerator::fill_pks_definitions()
                        SIGNAL(currentIndexChanged(const QString&)),
                        this,
                        SLOT(on_currentIndexChanged(const QString&)));
-
-
     }
   }
 }
@@ -145,7 +143,7 @@ TableInsertGenerator::on_btnGenPks_clicked()
   }
 
   int _num_rows_def = ui->tblPks->rowCount();
-  for (int _row_def = 0; _row_def < _num_rows_def ; ++_row_def) {
+  for (int _row_def = 0; _row_def < _num_rows_def; ++_row_def) {
     QComboBox* _combo = (QComboBox*)(ui->tblPks->cellWidget(_row_def, 4));
     if (_combo->currentText() == GERADOR_NUMEROS) {
 
@@ -181,9 +179,9 @@ TableInsertGenerator::on_btnGenPks_clicked()
       new QTableWidgetItem(_values->get_column()->get_name().c_str()));
 
     for (int _row_count = 0; _row_count < _num_rows_values; ++_row_count) {
-      QString _value =
-          _values->get_value(static_cast<uint16_t>(_row_count)).
-          get_value().c_str();
+      QString _value = _values->get_value(static_cast<uint16_t>(_row_count))
+                         .get_value()
+                         .c_str();
       ui->tblValues->setItem(
         _row_count, _col_number, new QTableWidgetItem(_value));
     }

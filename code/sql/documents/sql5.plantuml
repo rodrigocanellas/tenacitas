@@ -1,0 +1,160 @@
+@startuml
+
+set namespaceSeparator ::
+
+hide empty members
+allow_mixing
+'left to right direction
+skinparam linetype ortho
+
+
+
+namespace  sql {
+
+' ============== META DATA =============
+
+namespace entities {
+class Size
+enum Type {
+	int_1
+	int_2
+	int_4
+	int_8
+	char
+	fix_size_char
+	var_size_char
+	blob
+	small_real
+	long_real
+	date
+	date_time
+}
+class Name
+
+class Column
+
+
+class PrimaryKeyColumn
+class ForeignKeyColumn
+class AttributeColumn
+
+class Table {
+	name : Name
+}
+
+enum Usage {
+	pk
+	fk
+	attr
+}
+
+class Database
+class Server
+class Host
+class Hosts
+
+class PrimaryKey
+class ForeignKey
+ {
+	canBeNull : bool
+}
+
+Hosts *-up- "*" Host
+Host *-right-o "*" Server
+Server *-right-o "*" Database
+Database *-right-o "*" Table
+
+PrimaryKey *--o "*" PrimaryKeyColumn
+ForeignKey "1" *--o "*" ForeignKeyColumn
+PrimaryKey o--o "*" ForeignKeyColumn
+
+Table "0..1" *--o  PrimaryKey
+Table  "*" *--o  ForeignKey
+Table *--o "*" AttributeColumn
+
+
+Column *-- Type
+Column +-- Type
+Column *-right- Size
+Column *-- Name
+Column  *-- Usage
+Column  +-- Usage
+
+Column <|-- PrimaryKeyColumn
+Column <|-- ForeignKeyColumn
+Column <|-- AttributeColumn
+
+
+ForeignKeyColumn o-- "0..1" PrimaryKeyColumn
+
+
+
+' ==============  DATA =============
+
+class Value {
+	isUserInput: bool
+	value : string
+}
+
+
+ColumnValues *-right- "*" Value
+ColumnValues o--Column
+
+TableValues *-- "*" ColumnValues
+
+TableValues o-- Table
+
+TablesValues *-left- "*" TableValues
+}
+
+' ============== GENERATOR ========
+namespace business {
+
+class TableGenerator
+
+class Generator {
+	name : sql::entities::Name
+	explanation : string
+}
+class Generators {
+	find(sql::entities::Type, sql::entities::Usage) : list<sql::entities::Name>
+}
+
+class AttributeGenerator
+class PrimaryKeyColumnGenerator
+class ForeignKeyGenerator
+
+Generators *-- "*" Generator
+
+Generator *-- "*" sql::entities::Type
+Generator *-- "*" sql::entities::Usage
+Generator <|- AttributeGenerator
+Generator <|- PrimaryKeyColumnGenerator
+Generator <|- ForeignKeyGenerator
+
+TableGenerator *-up-- "*" AttributeGenerator
+TableGenerator *-up- "*" PrimaryKeyColumnGenerator
+TableGenerator *-up- "*" ForeignKeyGenerator
+TableGenerator o-- "attr" sql::entities::TableValues
+TableGenerator o-- "pk" sql::entities::TableValues
+TableGenerator o-- "fk" sql::entities::TableValues
+TableGenerator o-- sql::entities::Table
+TableGenerator ..>  "all_pks" sql::entities::TablesValues
+
+SqlGenerator  o-- "attr" sql::entities::TableValues
+SqlGenerator  o-- "pk" sql::entities::TableValues
+SqlGenerator  o-- "fk" sql::entities::TableValues
+
+
+}
+
+sql::business::PrimaryKeyColumnGenerator -[hidden]> sql::business::ForeignKeyGenerator
+sql::business::ForeignKeyGenerator -[hidden]> sql::business::AttributeGenerator
+sql::entities::Database -[hidden]> sql::entities::ColumnValues
+sql::business::SqlGenerator -[hidden]> sql::business::TableGenerator
+sql::business::Generator -[hidden]-> sql::business::ForeignKeyGenerator
+sql::business::Generator  -[hidden]->  sql::business::PrimaryKeyColumnGenerator
+sql::business::Generator -[hidden]->   sql::business::AttributeGenerator
+}
+
+@enduml

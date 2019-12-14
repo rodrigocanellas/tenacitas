@@ -4,6 +4,8 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+using namespace generic;
+
 std::ostream&
 operator<<(std::ostream& p_out, const host& p_host)
 {
@@ -15,12 +17,12 @@ operator<<(std::ostream& p_out, const host& p_host)
   return p_out;
 }
 
-generic::ptr<server>
-host::add_server(const generic::name& p_server_name)
+ptr<server>
+host::add_server(const name& p_server_name)
 {
   return m_servers.add(p_server_name, this);
   //  if (_server == nullptr) {
-  //    _server = generic::make_ptr<server>(this, p_server_name);
+  //    _server = make_ptr<server>(this, p_server_name);
   //    m_servers.add(_server);
   //  }
 }

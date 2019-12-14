@@ -1,0 +1,171 @@
+@startuml
+
+set namespaceSeparator ::
+
+hide empty members
+allow_mixing
+'left to right direction
+skinparam linetype ortho
+
+namespace  sql {
+
+' ============== META DATA =============
+
+namespace entities {
+class Size
+enum ColumnType {
+	int_1
+	int_2
+	int_4
+	int_8
+	char
+	fix_size_char
+	var_size_char
+	blob
+	small_real
+	long_real
+	date
+	date_time
+}
+
+enum ColumnUsage {
+	primaryKey
+	foreignKey
+	attribute
+}
+class Name
+
+class Column<ColumnUsage>
+
+class PrimaryKeyColumn<ColumnUsage::primaryKey>
+class ForeignKeyColumn<ColumnUsage::foreignKey>
+class AttributeColumn<ColumnUsage::attribute>
+
+class Table {
+	name : Name
+}
+
+
+
+class Database
+class Server
+class Host
+class Hosts
+
+class PrimaryKey
+class ForeignKey
+ {
+	canBeNull : bool
+}
+
+Hosts *-left- "*" Host
+Host *-right-o "*" Server
+Server *-right-o "*" Database
+Database *--o "*" Table
+
+PrimaryKey *--o "*" PrimaryKeyColumn
+ForeignKey "1" *--o "*" ForeignKeyColumn
+PrimaryKey o--o "*" ForeignKeyColumn
+
+Table "0..1" *--o  PrimaryKey
+Table  "*" *--o  ForeignKey
+Table *--o "*" AttributeColumn
+
+
+Column *-- ColumnType
+Column *-right- Size
+Column *-right- Name
+Column *-- ColumnUsage
+
+Column <|-- PrimaryKeyColumn
+Column <|-- ForeignKeyColumn
+Column <|-- AttributeColumn
+
+ForeignKeyColumn o-- "0..1" PrimaryKeyColumn
+
+' ==============  DATA =============
+
+class Value {
+	isUserInput: bool
+	value : string
+}
+
+class ColumnValues<ColumnUsage>
+class PrimaryKeyColumnValues<ColumnUsage::primaryKey>
+class ForeignKeyColumnValues<ColumnUsage::foreignKey>
+class AttributeColumnValues<ColumnUsage::attribute>
+
+PrimaryKeyColumnValues *-- "*" Value
+PrimaryKeyColumnValues o--PrimaryKeyColumn
+
+ForeignKeyColumnValues *-- "*" Value
+ForeignKeyColumnValues o--ForeignKeyColumn
+
+AttributeColumnValues *-- "*" Value
+AttributeColumnValues o--AttributeColumn
+
+TableValues *-- "*" PrimaryKeyColumnValues
+TableValues *-- "*" ForeignKeyColumnValues
+TableValues *-- "*" AttributeColumnValues
+
+TableValues o-- Table
+
+TablesValues *-- "*" TableValues
+
+}
+
+' ============== GENERATOR ========
+namespace business {
+
+class TableGenerator
+
+class Generator<sql::entities::ColumnUsage> {
+	name : sql::entities::Name
+	explanation : string
+}
+
+class AttributeGenerators <<S, static>>
+class PrimaryKeyColumnGenerators<<S, static>>
+class ForeignKeyGenerators <<S, static>>
+
+class AttributeGenerator<sql::entities::ColumnUsage::primaryKey>
+class PrimaryKeyColumnGenerator<sql::entities::ColumnUsage::foreignKey>
+class ForeignKeyGenerator<sql::entities::ColumnUsage::attribute>
+
+Generator *-- "*" sql::entities::ColumnType
+
+Generator <|-- ForeignKeyGenerator
+Generator <|-- PrimaryKeyColumnGenerator
+Generator <|-- AttributeGenerator
+
+ForeignKeyGenerators *-down- "*" ForeignKeyGenerator
+PrimaryKeyColumnGenerators *-down- "*" PrimaryKeyColumnGenerator
+AttributeGenerators *-down- "*" AttributeGenerator
+
+TableGenerator *--- "*" AttributeGenerator
+TableGenerator *-- "*" PrimaryKeyColumnGenerator
+TableGenerator *-- "*" ForeignKeyGenerator
+TableGenerator o-- "attr" sql::entities::TableValues
+TableGenerator o-- "pk" sql::entities::TableValues
+TableGenerator o-- "fk" sql::entities::TableValues
+TableGenerator o-- sql::entities::Table
+TableGenerator ..>  "all_pks" sql::entities::TablesValues
+
+SqlGenerator  o-- "attr" sql::entities::TableValues
+SqlGenerator  o-- "pk" sql::entities::TableValues
+SqlGenerator  o-- "fk" sql::entities::TableValues
+
+}
+sql::entities::Value -[hidden]-> sql::entities::ColumnValues
+sql::business::TableGenerator -[hidden]->  sql::business::SqlGenerator 
+sql::business::AttributeGenerator -[hidden]-> sql::business::TableGenerator
+sql::business::ForeignKeyGenerator -[hidden]> sql::business::AttributeGenerator
+sql::business::PrimaryKeyColumnGenerator -[hidden]> sql::business::ForeignKeyGenerator
+sql::business::Generator  -[hidden]-> sql::business::ForeignKeyGenerator
+sql::business::Generator  -[hidden]-> sql::business::PrimaryKeyColumnGenerator
+sql::business::Generator  -[hidden]-> sql::business::AttributeGenerator
+sql::business::SqlGenerator -[hidden]-> sql::entities::TablesValues
+sql::entities::AttributeColumnValues -[hidden]>  sql::entities::PrimaryKeyColumnValues
+}
+
+@enduml

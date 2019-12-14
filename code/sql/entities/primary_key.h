@@ -6,12 +6,14 @@
 #include <memory>
 
 #include <sql/entities/foreign_key_column.h>
-#include <sql/generic/collection.h>
 #include <sql/entities/primary_key_column.h>
+#include <sql/generic/collection.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
+
+using namespace generic;
 
 struct table;
 
@@ -36,13 +38,13 @@ struct primary_key
     return m_pks_columns.get_size<uint16_t>();
   }
 
-  inline generic::ptr<primary_key_column> get_pk_column(uint16_t p_index)
+  inline ptr<primary_key_column> get_pk_column(uint16_t p_index)
   {
     return m_pks_columns[p_index];
   }
 
-  inline generic::ptr<primary_key_column> add_pk_column(const generic::name& p_name,
-                                               column::type p_type,
+  inline ptr<primary_key_column> add_pk_column(const name& p_name,
+                                               column_type p_type,
                                                size p_size,
                                                bool p_is_auto_increment,
                                                bool p_is_unique)
@@ -51,8 +53,8 @@ struct primary_key
       p_name, this, p_type, p_size, p_is_auto_increment, p_is_unique);
   }
 
-  inline generic::ptr<primary_key_column> add_pk_column(const generic::name& p_name,
-                                               column::type p_type,
+  inline ptr<primary_key_column> add_pk_column(const name& p_name,
+                                               column_type p_type,
                                                bool p_is_auto_increment,
                                                bool p_is_unique)
   {
@@ -60,7 +62,7 @@ struct primary_key
       p_name, this, p_type, p_is_auto_increment, p_is_unique);
   }
 
-  inline generic::ptr<primary_key_column> find_pk_column(const generic::name& p_pk_col_name) const
+  inline ptr<primary_key_column> find_pk_column(const name& p_pk_col_name) const
   {
     return m_pks_columns.find(p_pk_col_name);
   }
@@ -70,17 +72,17 @@ struct primary_key
     return m_fks_columns.get_size<uint16_t>();
   }
 
-  inline generic::ptr<foreign_key_column> get_fk_column(uint16_t p_index)
+  inline ptr<foreign_key_column> get_fk_column(uint16_t p_index)
   {
     return m_fks_columns[p_index];
   }
 
-  inline void add_fk_column(generic::ptr<foreign_key_column> p_fk_column)
+  inline void add_fk_column(ptr<foreign_key_column> p_fk_column)
   {
     m_fks_columns.add(p_fk_column);
   }
 
-  inline generic::ptr<foreign_key_column> find_fk_column(const generic::name& p_fk_col_name) const
+  inline ptr<foreign_key_column> find_fk_column(const name& p_fk_col_name) const
   {
     return m_fks_columns.find(p_fk_col_name);
   }
@@ -88,8 +90,8 @@ struct primary_key
   const table& get_table() const;
 
 private:
-  typedef generic::collection<primary_key_column> pks_columns;
-  typedef generic::collection<foreign_key_column> fks_columns;
+  typedef collection<primary_key_column> pks_columns;
+  typedef collection<foreign_key_column> fks_columns;
 
 private:
   const table* m_table;

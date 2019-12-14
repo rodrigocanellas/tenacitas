@@ -17,6 +17,8 @@ namespace capemisa {
 namespace sql {
 namespace entities {
 
+using namespace generic;
+
 struct database;
 
 struct table
@@ -32,54 +34,47 @@ struct table
   table& operator=(table&&) = delete;
   ~table() = default;
 
-  explicit inline table(const generic::name& p_name, const database* p_database)
+  explicit inline table(const name& p_name, const database* p_database)
     : m_name(p_name)
     , m_database(p_database)
-    , m_primary_key(generic::make_ptr<primary_key>(this))
+    , m_primary_key(make_ptr<primary_key>(this))
   {}
 
   const database& get_database() const;
 
-  inline const generic::name& get_name() const { return m_name; }
+  inline const name& get_name() const { return m_name; }
 
-  inline generic::ptr<primary_key> get_primary_key() const
-  {
-    return m_primary_key;
-  }
+  inline ptr<primary_key> get_primary_key() const { return m_primary_key; }
 
-  inline generic::ptr<attribute_column> add_attribute(
-    const generic::name& p_name,
-    column::type p_type,
-    size p_size,
-    bool p_is_null,
-    bool p_is_unique)
+  inline ptr<attribute_column> add_attribute(const name& p_name,
+                                             column_type p_type,
+                                             size p_size,
+                                             bool p_is_null,
+                                             bool p_is_unique)
   {
     return m_attributes.add(
       p_name, this, p_type, p_size, p_is_null, p_is_unique);
   }
 
-  inline generic::ptr<attribute_column> add_attribute(
-    const generic::name& p_name,
-    column::type p_type,
-    bool p_is_null,
-    bool p_is_unique)
+  inline ptr<attribute_column> add_attribute(const name& p_name,
+                                             column_type p_type,
+                                             bool p_is_null,
+                                             bool p_is_unique)
   {
     return m_attributes.add(p_name, this, p_type, p_is_null, p_is_unique);
   }
 
-  inline generic::ptr<attribute_column> find_attribute(
-    const generic::name& p_attr_name) const
+  inline ptr<attribute_column> find_attribute(const name& p_attr_name) const
   {
     return m_attributes.find(p_attr_name);
   }
 
-  inline generic::ptr<foreign_key> add_fk(const generic::name& p_fk_name,
-                                          bool p_is_null = false)
+  inline ptr<foreign_key> add_fk(const name& p_fk_name, bool p_is_null = false)
   {
     return m_foreigners_keys.add(p_fk_name, this, p_is_null);
   }
 
-  inline generic::ptr<foreign_key> find_fk(const generic::name& p_fk_name) const
+  inline ptr<foreign_key> find_fk(const name& p_fk_name) const
   {
     return m_foreigners_keys.find(p_fk_name);
   }
@@ -89,7 +84,7 @@ struct table
     return m_attributes.get_size<uint16_t>();
   }
 
-  generic::ptr<attribute_column> get_attr(uint16_t p_attr_index) const
+  ptr<attribute_column> get_attr(uint16_t p_attr_index) const
   {
     return m_attributes[p_attr_index];
   }
@@ -99,20 +94,20 @@ struct table
     return m_foreigners_keys.get_size<uint16_t>();
   }
 
-  generic::ptr<foreign_key> get_fk(uint16_t p_attr_index) const
+  ptr<foreign_key> get_fk(uint16_t p_attr_index) const
   {
     return m_foreigners_keys[p_attr_index];
   }
 
 private:
-  typedef generic::collection<attribute_column> attributes;
-  typedef generic::collection<foreign_key> foreigners_keys;
+  typedef collection<attribute_column> attributes;
+  typedef collection<foreign_key> foreigners_keys;
 
 private:
-  generic::name m_name;
+  name m_name;
   const database* m_database;
 
-  generic::ptr<primary_key> m_primary_key;
+  ptr<primary_key> m_primary_key;
   attributes m_attributes;
   foreigners_keys m_foreigners_keys;
 };

@@ -23,7 +23,7 @@ table::get_database() const
 }
 
 // generic::ptr<column>
-// table::add_column(const generic::name& p_column_name, column::type p_type, size
+// table::add_column(const generic::name& p_column_name, column_type p_type, size
 // p_size)
 //{
 
@@ -40,7 +40,7 @@ table::get_database() const
 //}
 
 // generic::ptr<column>
-// table::add_column(const generic::name& p_column_name, column::type p_type)
+// table::add_column(const generic::name& p_column_name, column_type p_type)
 //{
 
 //  generic::ptr<column> _col =

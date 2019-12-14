@@ -4,12 +4,16 @@
 #include <iostream>
 
 #include <sql/entities/column.h>
+#include <sql/entities/column_type.h>
+#include <sql/entities/column_usage.h>
 #include <sql/entities/size.h>
 #include <sql/generic/name.h>
 
 namespace capemisa {
 namespace sql {
 namespace entities {
+
+using namespace generic;
 
 struct table;
 
@@ -24,11 +28,11 @@ struct attribute_column : public column
   attribute_column(attribute_column&&) = delete;
   attribute_column& operator=(const attribute_column&) = delete;
   attribute_column& operator=(attribute_column&&) = delete;
-  ~attribute_column() override = default;
+  virtual ~attribute_column() override = default;
 
-  attribute_column(const generic::name& p_name,
+  attribute_column(const name& p_name,
                    const table* p_table,
-                   column::type p_type,
+                   column_type p_type,
                    size p_size,
                    bool p_is_null,
                    bool p_is_unique)
@@ -38,9 +42,9 @@ struct attribute_column : public column
     , m_table(p_table)
   {}
 
-  attribute_column(const generic::name& p_name,
+  attribute_column(const name& p_name,
                    const table* p_table,
-                   column::type p_type,
+                   column_type p_type,
                    bool p_is_null,
                    bool p_is_unique)
     : column(p_name, p_type)

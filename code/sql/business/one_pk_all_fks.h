@@ -3,6 +3,7 @@
 
 #include <cstdint>
 
+#include <sql/business/foreign_key_generator.h>
 #include <sql/entities/primary_key.h>
 #include <sql/entities/primary_key_column.h>
 #include <sql/entities/table.h>
@@ -15,23 +16,27 @@ namespace capemisa {
 namespace sql {
 namespace business {
 
-struct one_pk_all_fks
+using namespace capemisa::sql::entities;
+using namespace capemisa::sql::generic;
+
+struct one_pk_all_fks : public foreign_key_generator
 {
 
-  typedef generic::ptr<entities::table_values> table_values_ptr;
-  typedef generic::ptr<const entities::tables_values> tables_values_const_ptr;
-  typedef generic::ptr<entities::foreign_key> foreign_key_ptr;
+  typedef ptr<table_values> table_values_ptr;
+  typedef ptr<const tables_values> tables_values_const_ptr;
+  typedef ptr<foreign_key> foreign_key_ptr;
 
   ///
   /// \brief foreign_key_generator
   ///
   /// \param p_pks are the values of the all the PK columns of all tables
-  /// \param foreign_key_column_ptr FK to which colums values will be generated
+  /// \param foreign_key_column_ptr FK to which colums values will be
+  ///  generated
   /// \param uint16_t is the amount of lines
 
-  void operator()(tables_values_const_ptr p_pks,
-                  table_values_ptr p_fk_values,
-                  foreign_key_ptr p_fk,
+  void operator()(ptr<const tables_values> p_all_pks,
+                  ptr<table_values> p_fks_columns_values,
+                  ptr<foreign_key> p_fk,
                   uint16_t p_num_lines)
   {
     using namespace sql::entities;
@@ -45,20 +50,22 @@ struct one_pk_all_fks
       const primary_key& _pk = _pk_col->get_primary_key();
       const name& _table_name = _pk.get_table().get_name();
 
-      ptr<table_values> _pk_table_values = p_pks->find(_table_name);
+      ptr<table_values> _pk_table_values = p_all_pks->find(_table_name);
       if (_pk_table_values != nullptr) {
 
-        ptr<column_values> _pk_col_values = _pk_table_values->find(_pk_col_name);
+        ptr<column_values> _pk_col_values =
+          _pk_table_values->find_column_values(_pk_col_name);
 
         const value& _pk_col_value = _pk_col_values->get_value(0);
 
         ptr<column_values> _fk_col_values(make_ptr<column_values>(_fk_col));
 
-        for (uint16_t _count_line = 0; _count_line < p_num_lines; ++_count_line) {
+        for (uint16_t _count_line = 0; _count_line < p_num_lines;
+             ++_count_line) {
           _fk_col_values->add(_pk_col_value);
         }
 
-        p_fk_values->add(_fk_col_values);
+        p_fks_columns_values->add(_fk_col_values);
       }
     }
   }

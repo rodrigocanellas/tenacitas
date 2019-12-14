@@ -45,10 +45,12 @@ attribute_sequential()
 
   time_t _now = time(nullptr);
 
-  number_value_generator<time_t> _asvg(
-    _now, _now + 30 * day_in_secs, 2 * day_in_secs);
+  typedef number_value_generator<time_t, attribute_column> birthday_generator;
 
-  ptr<column_values> _values = _asvg(_birthday, 8);
+  ptr<birthday_generator> _asvg(make_ptr<birthday_generator>(
+    _now, _now + 30 * day_in_secs, 2 * day_in_secs));
+
+  ptr<column_values> _values = (*_asvg)(_birthday, 8);
 
   std::cout << "ATTRIBUTE SEQUENTIAL for " << _values->get_column()->get_name()
             << std::endl;
@@ -77,9 +79,11 @@ pk_sequential()
   ptr<primary_key_column> _id =
     _employee->get_primary_key()->find_pk_column("id");
 
-  number_value_generator<int32_t> _pkcsvg(100, 200, 5);
+  typedef number_value_generator<int32_t, primary_key_column> id_generator;
 
-  ptr<column_values> _values = _pkcsvg(_id, 8);
+  ptr<id_generator> _pkcsvg(make_ptr<id_generator>(100, 200, 5));
+
+  ptr<column_values> _values = (*_pkcsvg)(_id, 8);
 
   std::cout << "PK SEQUENTIAL for " << _values->get_column()->get_name()
             << std::endl;
@@ -110,17 +114,20 @@ fk_one_pk()
 
   ptr<tables_values> _all_pks(make_ptr<tables_values>());
 
-  {
-    table_generator _employee_gen(_db->find("employee"), 8);
-    _employee_gen.add_pk_generator(
-      "id", number_value_generator<uint32_t>(100, -20, -5));
+  typedef number_value_generator<int32_t, primary_key_column> id_generator;
+  typedef text_value_generator<attribute_column> name_generator;
+  typedef number_value_generator<time_t, attribute_column> birthday_generator;
 
-    _employee_gen.add_attr_generator("name",
-                                     text_value_generator("employee", 30, 90));
+  {
+
+    table_generator _employee_gen(_db->find("employee"), 8);
+    _employee_gen.add_pk_generator("id", make_ptr<id_generator>(100, -20, -5));
 
     _employee_gen.add_attr_generator(
-      "birthday",
-      number_value_generator<uint32_t>(time(nullptr), 2 * day_in_secs));
+      "name", make_ptr<name_generator>("employee", 30, 90));
+
+    _employee_gen.add_attr_generator(
+      "birthday", make_ptr<birthday_generator>(time(nullptr), 2 * day_in_secs));
 
     ptr<const table_values> _employee_pk_values =
       _employee_gen.generate_pks(_all_pks);
@@ -135,18 +142,17 @@ fk_one_pk()
   }
   {
     table_generator _dependent_gen(_db->find("dependent"), 5);
-    _dependent_gen.add_pk_generator("id",
-                                    number_value_generator<uint16_t>(4, 50, 2));
+    _dependent_gen.add_pk_generator("id", make_ptr<id_generator>(4, 50, 2));
     _dependent_gen.add_attr_generator("name",
-                                      text_value_generator("dep", 15, 14));
+                                      make_ptr<name_generator>("dep", 15, 14));
 
     time_t _now = time(nullptr);
     _dependent_gen.add_attr_generator(
       "birthday",
-      number_value_generator<uint32_t>(
+      make_ptr<birthday_generator>(
         _now, _now + 25 * day_in_secs, 5 * day_in_secs));
 
-    _dependent_gen.add_fk_generator("employee_fk", one_pk_all_fks());
+    _dependent_gen.add_fk_generator("employee_fk", make_ptr<one_pk_all_fks>());
 
     ptr<const table_values> _dependent_pk_values =
       _dependent_gen.generate_pks(_all_pks);
@@ -188,19 +194,22 @@ not_all_tables_generated_1()
 
   ptr<tables_values> _all_pks(make_ptr<tables_values>());
 
+  typedef number_value_generator<int32_t, primary_key_column> id_generator;
+  typedef text_value_generator<attribute_column> name_generator;
+  typedef number_value_generator<time_t, attribute_column> birthday_generator;
+
   table_generator _dependent_gen(_db->find("dependent"), 5);
-  _dependent_gen.add_pk_generator("id",
-                                  number_value_generator<uint16_t>(4, 50, 2));
+  _dependent_gen.add_pk_generator("id", make_ptr<id_generator>(4, 50, 2));
   _dependent_gen.add_attr_generator("name",
-                                    text_value_generator("dep", 15, 14));
+                                    make_ptr<name_generator>("dep", 15, 14));
 
   time_t _now = time(nullptr);
   _dependent_gen.add_attr_generator(
     "birthday",
-    number_value_generator<time_t>(
+    make_ptr<birthday_generator>(
       _now, _now + 25 * day_in_secs, 5 * day_in_secs));
 
-  _dependent_gen.add_fk_generator("employee_fk", one_pk_all_fks());
+  _dependent_gen.add_fk_generator("employee_fk", make_ptr<one_pk_all_fks>());
 
   ptr<const table_values> _dependent_pk_values =
     _dependent_gen.generate_pks(_all_pks);
@@ -214,7 +223,7 @@ not_all_tables_generated_1()
     std::cout << _sql_gen(
       _dependent_pk_values, _dependent_attrs_values, _result.first);
   } else {
-    std::cout << "Dados para seguintes tabelas devem ser gerados primeiro: \n";
+    std::cout << "Dados para seguintes tabelas devem ser gerados primeiro:\n ";
     for (const name& _name : *_result.second) {
       std::cout << _name << std::endl;
     }
@@ -239,7 +248,7 @@ text_generator()
 
   std::cout << std::endl << "TEXT VALUE GENERATOR" << std::endl;
 
-  text_value_generator _tvg("dep", 15, 14);
+  text_value_generator<attribute_column> _tvg("dep", 15, 14);
   ptr<column_values> _values = _tvg(_name, 6);
   uint16_t _counter = 0;
   for (const value& _value : *_values) {
@@ -274,9 +283,14 @@ abstract_1()
 
   table_generator _tb(_a, 5);
 
-  _tb.add_pk_generator("id", number_value_generator<uint16_t>(4, 50, 2));
+  _tb.add_pk_generator(
+    "id",
+    make_ptr<number_value_generator<uint16_t, primary_key_column>>(4, 50, 2));
+
   _tb.add_attr_generator(
-    "a1", number_value_generator<uint16_t>(1000.00, 1600.00, 250.00));
+    "a1",
+    make_ptr<number_value_generator<uint16_t, attribute_column>>(
+      1000.00, 1600.00, 250.00));
 
   generic::ptr<entities::tables_values> _all_pks(
     make_ptr<entities::tables_values>());
