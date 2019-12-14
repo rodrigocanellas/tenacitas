@@ -1,12 +1,16 @@
 #include "table_insert_generator.h"
 #include "ui_table_insert_generator.h"
 
+#include <set>
+
 #include <QComboBox>
 #include <QDebug>
 #include <QListWidget>
 #include <QStringList>
 
 #include <sql/business/number_value_generator.h>
+
+#include <sql/business/primary_keys_columns_generator_factory.h>
 
 #define GERADOR_NUMEROS "gerador de números"
 #define GERADOR_TEXTO "gerador de texto"
@@ -65,7 +69,7 @@ TableInsertGenerator::fill_pks_definitions()
     ptr<primary_key_column> _pk_col = _pk->get_pk_column(_i);
     if (!_pk_col->is_autoincrement()) {
       name _name = _pk_col->get_name();
-      std::string _type = column_type2str(_pk_col->get_type());
+      std::string _type = _pk_col->get_type().to_str();
       std::string _size = std::to_string(_pk_col->get_size());
       std::string _is_unique = (_pk_col->is_unique() ? "sim" : "não");
       ui->tblPks->insertRow(ui->tblPks->rowCount());
@@ -76,23 +80,12 @@ TableInsertGenerator::fill_pks_definitions()
       ui->tblPks->setItem(_row, 3, new QTableWidgetItem(_is_unique.c_str()));
       QComboBox* _generators = new QComboBox();
       _generators->addItem("---");
-      switch (_pk_col->get_type()) {
-        case column_type::int_1:
-        case column_type::int_2:
-        case column_type::int_4:
-        case column_type::int_8:
-        case column_type::date:
-        case column_type::date_time:
-        case column_type::small_real:
-        case column_type::long_real:
-          _generators->addItem(GERADOR_NUMEROS);
-          break;
-        case column_type::var_size_text:
-        case column_type::fixed_size_text:
-          _generators->addItem(GERADOR_TEXTO);
-          break;
-        default:
-          _generators->addItem("tipo sem gerador");
+
+      std::set<name> _genarators_name =
+        primary_keys_columns_generators_factory::list(_pk_col->get_type());
+
+      for (const name& _name : _genarators_name) {
+        _generators->addItem(_name.c_str());
       }
 
       ui->tblPks->setCellWidget(_row, 4, _generators);
@@ -106,16 +99,16 @@ TableInsertGenerator::fill_pks_definitions()
 }
 
 void
-TableInsertGenerator::on_currentIndexChanged(const QString& text)
+TableInsertGenerator::on_currentIndexChanged(const QString& /*text*/)
 {
-  if (text == GERADOR_NUMEROS) {
-    if (m_number_value_generator_definition == nullptr) {
-      m_number_value_generator_definition =
-        new NumberValueGeneratorDefinition(this, this);
-    }
-    m_number_value_generator_definition->show();
-    m_number_value_generator_definition->raise();
+  //  if (text == GERADOR_NUMEROS) {
+  if (m_number_value_generator_definition == nullptr) {
+    m_number_value_generator_definition =
+      new NumberValueGeneratorDefinition(this, this);
   }
+  m_number_value_generator_definition->show();
+  m_number_value_generator_definition->raise();
+  //  }
 }
 
 void
@@ -144,21 +137,20 @@ TableInsertGenerator::on_btnGenPks_clicked()
 
   int _num_rows_def = ui->tblPks->rowCount();
   for (int _row_def = 0; _row_def < _num_rows_def; ++_row_def) {
+
+    QString _col_name = ui->tblPks->item(_row_def, 0)->text();
+    ptr<primary_key_column> _col =
+      m_table->get_primary_key()->find_pk_column(_col_name.toStdString());
+
     QComboBox* _combo = (QComboBox*)(ui->tblPks->cellWidget(_row_def, 4));
-    if (_combo->currentText() == GERADOR_NUMEROS) {
 
-      QStringList _params = ui->tblPks->item(_row_def, 5)->text().split(";");
-      int _base = _params[0].toInt();
-      int _limit = _params[1].toInt();
-      int _increment = _params[2].toInt();
-      number_value_generator<int> _nvg(_base, _limit, _increment);
-
-      QString _col_name = ui->tblPks->item(_row_def, 0)->text();
-      ptr<primary_key_column> _col =
-        m_table->get_primary_key()->find_pk_column(_col_name.toStdString());
-
-      m_table_generator->add_pk_generator(_col_name.toStdString(),
-                                          std::move(_nvg));
+    ptr<column_generator<primary_key_column>> _generator =
+      primary_keys_columns_generators_factory::create(
+        _col,
+        _combo->currentText().toStdString(),
+        ui->tblPks->item(_row_def, 5)->text().toStdString());
+    if (_generator) {
+      m_table_generator->add_pk_generator(_col_name.toStdString(), _generator);
     }
   }
 

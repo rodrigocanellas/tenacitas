@@ -15,12 +15,14 @@ include (../../../common.pri)
 
 HEADERS += \
   ../../../../../code/sql/business/attribute_column_generator.h \
+  ../../../../../code/sql/business/attribute_columns_generators_factory.h \
   ../../../../../code/sql/business/column_generator.h \
   ../../../../../code/sql/business/foreign_key_generator.h \
   ../../../../../code/sql/business/internal/tables_not_populated.h \
   ../../../../../code/sql/business/number_value_generator.h \
   ../../../../../code/sql/business/one_pk_all_fks.h \
   ../../../../../code/sql/business/primary_key_column_generator.h \
+  ../../../../../code/sql/business/primary_keys_columns_generator_factory.h \
   ../../../../../code/sql/business/sql_generator.h \
   ../../../../../code/sql/business/table_generator.h \
   ../../../../../code/sql/business/text_value_generator.h \

@@ -42,13 +42,6 @@ struct table_generator
     , m_num_lines(p_num_lines)
   {}
 
-  //  void operator()(const table& p_table, uint16_t p_num_lines)
-  //  {
-  //    generate_pks(p_table, p_num_lines);
-  //    generate_attrs(p_table, p_num_lines);
-  //    generate_fks(p_table, p_num_lines);
-  //  }
-
   void add_attr_generator(
     const name& p_col_name,
     ptr<column_generator<attribute_column>> p_attr_col_gen)
@@ -124,7 +117,7 @@ struct table_generator
     using namespace sql::entities;
     using namespace sql::generic;
 
-    tables_names_ptr _tables_names(_tables_not_populated(m_table, p_pks));
+    tables_names_ptr _tables_names(m_tables_not_populated(m_table, p_pks));
 
     if ((_tables_names != nullptr) && (!_tables_names->empty())) {
 
@@ -159,7 +152,7 @@ private:
   pks_generators m_pks_generators;
   attributes_generators m_attrs_generators;
   fks_generators m_fks_generators;
-  tables_not_populated _tables_not_populated;
+  tables_not_populated m_tables_not_populated;
 };
 
 } // namespace business

@@ -22,20 +22,25 @@ struct column_generator
 
   virtual ~column_generator() = default;
 
-  inline column_generator(column_type p_types)
-    : m_types(p_types)
-  {}
-
   ptr<column_values> operator()(ptr<column> p_column, uint16_t p_num_lines)
   {
     check_type_compatibility(p_column);
     return generate(p_column, p_num_lines);
   }
 
+  inline bool is_type_compatible(column_type p_type) const
+  {
+    return (m_types_accepted & p_type);
+  }
+
 protected:
+  inline column_generator(column_type p_types_accepted)
+    : m_types_accepted(p_types_accepted)
+  {}
+
   inline void check_type_compatibility(ptr<column> p_col) const
   {
-    if (m_types & p_col->get_type()) {
+    if (m_types_accepted & p_col->get_type()) {
       return;
     }
     throw std::runtime_error("Tipo " + p_col->get_type().to_str() +
@@ -47,7 +52,7 @@ protected:
                                       uint16_t p_num_lines) = 0;
 
 private:
-  column_type m_types;
+  column_type m_types_accepted;
 };
 
 } // namespace business

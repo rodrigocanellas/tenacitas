@@ -198,6 +198,8 @@ MainWindow::on_btnGenerate_clicked()
   if (_ite == m_tables_windows.end()) {
     _tig = new TableInsertGenerator(m_table, this);
     m_tables_windows.emplace(m_table->get_name(), _tig);
+  } else {
+    _tig = (TableInsertGenerator*)(_ite->second);
   }
 
   _tig->show();

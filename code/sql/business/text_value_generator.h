@@ -28,12 +28,18 @@ struct text_value_generator : public column_generator<t_column>
                               uint16_t p_size,
                               uint16_t p_base)
 
-    : column_generator<t_column>(column_type::fixed_size_text |
-                                 column_type::var_size_text)
+    : column_generator<t_column>(text_value_generator::compatibles())
     , m_str(p_str)
     , m_size(p_size)
     , m_base(p_base)
   {}
+
+  static const name id;
+
+  static column_type compatibles()
+  {
+    return (column_type::fixed_size_text | column_type::var_size_text);
+  }
 
 protected:
   column_values_ptr generate(ptr<t_column> p_column, uint16_t p_num_values)
@@ -74,6 +80,9 @@ private:
   uint16_t m_size;
   uint16_t m_base;
 };
+
+template<typename t_column>
+const name text_value_generator<t_column>::id("gerador de textos");
 
 } // namespace business
 } // namespace sql
