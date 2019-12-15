@@ -7,12 +7,14 @@
 #include <vector>
 
 #include <sql/business/column_generator.h>
+#include <sql/business/columns_generators_factory.h>
 #include <sql/business/number_value_generator.h>
 #include <sql/business/text_value_generator.h>
 #include <sql/entities/attribute_column.h>
 #include <sql/generic/collection.h>
 #include <sql/generic/name.h>
 #include <sql/generic/ptr.h>
+#include <sql/generic/string_split.h>
 
 namespace capemisa {
 namespace sql {
@@ -29,56 +31,20 @@ struct attribute_columns_generators_factory
                               const name& p_generator_name,
                               const std::string& p_params)
   {
-    if (p_generator_name ==
-        number_value_generator<int8_t, attribute_column>::id) {
-      if (number_value_generator<int8_t, attribute_column>::compatibles() &
-          p_col->get_type()) {
 
-        std::vector<int32_t> _params(3);
-        std::vector<int32_t>::size_type _counter = 0;
-        std::string::size_type last = 0;
-        std::string::size_type next = 0;
-
-        while ((next = p_params.find(';', last)) != std::string::npos) {
-          _params[_counter++] = std::stol(p_params.substr(last, next - last));
-          last = next + 1;
-        }
-        _params[_counter] = std::stol(p_params.substr(last));
-        return make_ptr<number_value_generator<int32_t, attribute_column>>(
-          _params[0], _params[1], _params[2]);
-      }
-    } else if (p_generator_name == text_value_generator<attribute_column>::id) {
-      if (text_value_generator<attribute_column>::compatibles() &
-          p_col->get_type()) {
-
-        std::vector<std::string> _params(3);
-        std::vector<std::string>::size_type _counter = 0;
-        std::string::size_type last = 0;
-        std::string::size_type next = 0;
-
-        while ((next = p_params.find(';', last)) != std::string::npos) {
-          _params[_counter++] = p_params.substr(last, next - last);
-          last = next + 1;
-        }
-        _params[_counter] = p_params.substr(last);
-
-        return make_ptr<text_value_generator<attribute_column>>(
-          _params[0], std::stoi(_params[1]), std::stoi(_params[2]));
-      }
+    generator_ptr _ret = columns_generators_factory_t<attribute_column>::create(
+      p_col, p_generator_name, p_params);
+    if (_ret) {
+      return _ret;
     }
+
     return generator_ptr();
   }
 
   static std::set<name> list(column_type p_type)
   {
-    std::set<name> _set;
-    if (number_value_generator<int8_t, attribute_column>::compatibles() &
-        p_type) {
-      _set.insert(number_value_generator<int8_t, attribute_column>::id);
-    }
-    if (text_value_generator<attribute_column>::compatibles() & p_type) {
-      _set.insert(text_value_generator<attribute_column>::id);
-    }
+    std::set<name> _set(
+      columns_generators_factory_t<attribute_column>::list(p_type));
     return _set;
   }
 };

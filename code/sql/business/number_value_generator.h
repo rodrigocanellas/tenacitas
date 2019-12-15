@@ -71,10 +71,10 @@ private:
 
 template<typename t_num_type, typename t_column>
 const name number_value_generator<t_num_type, t_column>::id(
-  "gerador de números!!!");
+  "gerador de números ");
 
 } // namespace business
 } // namespace sql
 } // namespace capemisa
 
-#endif // SEQUENTIAL_VALUE_GENETATOR_H
+#endif // NUMBER_VALUE_GENETATOR_H

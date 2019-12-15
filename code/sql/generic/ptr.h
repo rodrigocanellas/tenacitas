@@ -1,5 +1,5 @@
-#ifndef CAPEMISA_SQL_ENTITIES_PTR_H
-#define CAPEMISA_SQL_ENTITIES_PTR_H
+#ifndef CAPEMISA_SQL_GENERIC_PTR_H
+#define CAPEMISA_SQL_GENERIC_PTR_H
 
 #include <memory>
 
@@ -21,4 +21,4 @@ make_ptr(t_params... p_params)
 } // namespace sql
 } // namespace capemisa
 
-#endif // TYPES_H
+#endif // PTR_H

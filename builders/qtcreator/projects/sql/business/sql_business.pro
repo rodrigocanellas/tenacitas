@@ -17,6 +17,7 @@ HEADERS += \
   ../../../../../code/sql/business/attribute_column_generator.h \
   ../../../../../code/sql/business/attribute_columns_generators_factory.h \
   ../../../../../code/sql/business/column_generator.h \
+  ../../../../../code/sql/business/columns_generators_factory.h \
   ../../../../../code/sql/business/foreign_key_generator.h \
   ../../../../../code/sql/business/internal/tables_not_populated.h \
   ../../../../../code/sql/business/number_value_generator.h \
@@ -28,7 +29,8 @@ HEADERS += \
   ../../../../../code/sql/business/text_value_generator.h \
   ../../../../../code/sql/generic/ptr.h \
   ../../../../../code/sql/generic/collection.h \
-    ../../../../../code/sql/generic/name.h \
+    ../../../../../code/sql/generic/name.h \ \
+  ../../../../../code/sql/generic/string_split.h
 
 SOURCES += \
   ../../../../../code/sql/business/internal/sql_generator.cpp \

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 
+#include <sql/applications/insert_generator/generator_definition_window_factory.h>
 #include <sql/applications/insert_generator/number_value_generator_definition.h>
 #include <sql/applications/insert_generator/show_sql.h>
 #include <sql/business/sql_generator.h>
@@ -26,16 +27,14 @@ public:
                                 QWidget* parent = nullptr);
   ~TableInsertGenerator();
 
-  void set_number_value_generator_params(const QString& p_base,
-                                         const QString& p_limit,
-                                         const QString& p_increment);
+  void set_generator_params(const QString& p_params);
 
 private:
   void header_pks_definitions();
   void fill_pks_definitions();
 
 private slots:
-  void on_currentIndexChanged(const QString& text);
+  void on_currentPrimaryKeyIndexChanged(const QString& text);
 
   void on_btnGenPks_clicked();
 
@@ -46,9 +45,11 @@ private:
   generic::ptr<entities::table> m_table;
   generic::ptr<business::table_generator> m_table_generator;
   generic::ptr<entities::tables_values> m_all_pks;
-  NumberValueGeneratorDefinition* m_number_value_generator_definition = nullptr;
+  //  NumberValueGeneratorDefinition* m_number_value_generator_definition =
+  //  nullptr;
   generic::ptr<const entities::table_values> m_pks_values;
   ShowSql* m_show_sql = nullptr;
+  generator_definition_window_factory m_generator_definition_window_factory;
 
   static const QString m_title;
 };

@@ -8,7 +8,7 @@
 #include <QListWidget>
 #include <QStringList>
 
-#include <sql/business/number_value_generator.h>
+//#include <sql/business/number_value_generator.h>
 
 #include <sql/business/primary_keys_columns_generator_factory.h>
 
@@ -40,15 +40,10 @@ TableInsertGenerator::~TableInsertGenerator()
 }
 
 void
-TableInsertGenerator::set_number_value_generator_params(
-  const QString& p_base,
-  const QString& p_limit,
-  const QString& p_increment)
+TableInsertGenerator::set_generator_params(const QString& p_params)
 {
   ui->tblPks->setItem(
-    ui->tblPks->currentRow(),
-    5,
-    new QTableWidgetItem(p_base + ";" + p_limit + ";" + p_increment));
+    ui->tblPks->currentRow(), 5, new QTableWidgetItem(p_params));
 }
 
 void
@@ -93,22 +88,20 @@ TableInsertGenerator::fill_pks_definitions()
       QObject::connect(_generators,
                        SIGNAL(currentIndexChanged(const QString&)),
                        this,
-                       SLOT(on_currentIndexChanged(const QString&)));
+                       SLOT(on_currentPrimaryKeyIndexChanged(const QString&)));
     }
   }
 }
 
 void
-TableInsertGenerator::on_currentIndexChanged(const QString& /*text*/)
+TableInsertGenerator::on_currentPrimaryKeyIndexChanged(const QString& text)
 {
-  //  if (text == GERADOR_NUMEROS) {
-  if (m_number_value_generator_definition == nullptr) {
-    m_number_value_generator_definition =
-      new NumberValueGeneratorDefinition(this, this);
+  QDialog* _generator_definition =
+    m_generator_definition_window_factory.create<primary_key_column>(
+      text.toStdString(), this);
+  if (_generator_definition) {
+    _generator_definition->show();
   }
-  m_number_value_generator_definition->show();
-  m_number_value_generator_definition->raise();
-  //  }
 }
 
 void

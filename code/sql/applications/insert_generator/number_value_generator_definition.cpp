@@ -21,8 +21,10 @@ NumberValueGeneratorDefinition::~NumberValueGeneratorDefinition()
 void
 NumberValueGeneratorDefinition::on_btnOk_clicked()
 {
-  m_table_insert_generator->set_number_value_generator_params(
-    ui->txtBase->text(), ui->txtLimit->text(), ui->txtIncrement->text());
+  m_table_insert_generator->set_generator_params(ui->txtBase->text() + ";" +
+                                                 ui->txtLimit->text() + ";" +
+                                                 ui->txtIncrement->text());
+
   close();
 }
 

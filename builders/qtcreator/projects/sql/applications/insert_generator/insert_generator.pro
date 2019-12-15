@@ -24,6 +24,7 @@ FORMS += \
   ../../../../../../code/sql/applications/insert_generator/table_insert_generator.ui
 
 HEADERS += \
+  ../../../../../../code/sql/applications/insert_generator/generator_definition_window_factory.h \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.h \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.h \
   ../../../../../../code/sql/applications/insert_generator/show_sql.h \
