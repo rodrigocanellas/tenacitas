@@ -4,19 +4,19 @@ namespace capemisa {
 namespace sql {
 namespace business {
 
+using namespace sql::entities;
+using namespace sql::generic;
+using namespace std;
+
 tables_not_populated::tables_names_ptr
-tables_not_populated::operator()(
-  generic::ptr<const entities::table> p_table,
-  generic::ptr<const entities::tables_values> p_pks)
+tables_not_populated::operator()(ptr<const entities::table> p_table,
+                                 ptr<const entities::tables_values> p_pks)
 {
-  using namespace sql::entities;
-  using namespace sql::generic;
-  using namespace std;
 
   tables_names_ptr _tables_names_not_created(make_ptr<tables_names>());
   tables_names _tables_names_created;
 
-  const generic::name _this_table_name(p_table->get_name());
+  const name _this_table_name(p_table->get_name());
 
   m_queue.push(p_table.get());
   while (!m_queue.empty()) {
@@ -24,7 +24,7 @@ tables_not_populated::operator()(
     m_queue.pop();
 
     // inspect table
-    generic::name _table_name(_table->get_name());
+    name _table_name(_table->get_name());
     if (_table_name != _this_table_name) {
       ptr<table_values> _pk_table_values = p_pks->find(_table_name);
       if (_pk_table_values != nullptr) {

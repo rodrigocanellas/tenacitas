@@ -40,22 +40,33 @@ sql_generator::operator()(generic::ptr<const entities::table_values> p_pks,
           _stream << ", ";
         }
       }
+      if ((p_attrs) || (p_fks)) {
+        _stream << ", ";
+      }
     }
 
     if ((p_attrs != nullptr) && (p_attrs->get_num_cols() > 0)) {
-      _stream << ", ";
       uint16_t _num_cols = p_attrs->get_num_cols();
+      if (p_pks == nullptr) {
+        _stream << "insert into " << _name << " (";
+      }
       for (uint16_t _col_count = 0; _col_count < _num_cols; ++_col_count) {
         _stream << p_attrs->get_column_values(_col_count)->get_name();
         if (_col_count != (_num_cols - 1)) {
           _stream << ", ";
         }
       }
+      if (p_fks) {
+        _stream << ", ";
+      }
     }
 
     if ((p_fks != nullptr) && (p_fks->get_num_cols() > 0)) {
-      _stream << ", ";
       uint16_t _num_cols = p_fks->get_num_cols();
+      if ((p_pks == nullptr) && (p_attrs == nullptr)) {
+        _stream << "insert into " << _name << " (";
+      }
+
       for (uint16_t _col_count = 0; _col_count < _num_cols; ++_col_count) {
         _stream << p_fks->get_column_values(_col_count)->get_name();
         if (_col_count != (_num_cols - 1)) {
@@ -76,6 +87,9 @@ sql_generator::operator()(generic::ptr<const entities::table_values> p_pks,
           _stream << ", ";
         }
       }
+      if ((p_attrs) || (p_fks)) {
+        _stream << ", ";
+      }
     }
 
     if ((p_attrs != nullptr) && (p_attrs->get_num_cols() > 0)) {
@@ -89,10 +103,12 @@ sql_generator::operator()(generic::ptr<const entities::table_values> p_pks,
           _stream << ", ";
         }
       }
+      if (p_fks) {
+        _stream << ", ";
+      }
     }
 
     if ((p_fks != nullptr) && (p_fks->get_num_cols() > 0)) {
-      _stream << ", ";
       uint16_t _num_cols = p_fks->get_num_cols();
       for (uint16_t _col_count = 0; _col_count < _num_cols; ++_col_count) {
         _stream << p_fks->get_column_values(_col_count)

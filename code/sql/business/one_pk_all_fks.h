@@ -26,6 +26,8 @@ struct one_pk_all_fks : public foreign_key_generator
   typedef ptr<const tables_values> tables_values_const_ptr;
   typedef ptr<foreign_key> foreign_key_ptr;
 
+  static const name id;
+
   ///
   /// \brief foreign_key_generator
   ///
@@ -33,6 +35,7 @@ struct one_pk_all_fks : public foreign_key_generator
   /// \param foreign_key_column_ptr FK to which colums values will be
   ///  generated
   /// \param uint16_t is the amount of lines
+  ///
 
   void operator()(ptr<const tables_values> p_all_pks,
                   ptr<table_values> p_fks_columns_values,

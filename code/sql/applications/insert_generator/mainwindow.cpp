@@ -2,11 +2,12 @@
 
 #include <cstdint>
 
+#include <QCheckBox>
 #include <QMessageBox>
 #include <QString>
 
 #include <sql/applications/insert_generator/mainwindow.h>
-#include <sql/applications/insert_generator/table_insert_generator.h>
+
 #include <sql/entities/attribute_column.h>
 #include <sql/entities/foreign_key.h>
 #include <sql/entities/foreign_key_column.h>
@@ -15,6 +16,12 @@
 #include <sql/entities/primary_key_column.h>
 #include <sql/entities/server.h>
 #include <sql/entities/table.h>
+#include <sql/generic/ptr.h>
+
+#define TBL_NAME_IDX 0
+#define TBL_PK_IDX 1
+#define TBL_FK_IDX 2
+#define TBL_ATTR_IDX 3
 
 using namespace capemisa::sql::entities;
 using namespace capemisa::sql::generic;
@@ -22,10 +29,12 @@ using namespace capemisa::sql::generic;
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , ui(new Ui::MainWindow)
+  , m_all_pks(make_ptr<tables_values>())
 {
   ui->setupUi(this);
   load_hosts();
   display_hosts();
+  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
 }
 
 MainWindow::~MainWindow()
@@ -58,8 +67,8 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
 
     _pk->add_pk_column("id", column_type::int_4, false, true);
 
-    _employee->add_attribute(
-      "name", column_type::var_size_text, 100, false, false);
+    //    _employee->add_attribute(
+    //      "name", column_type::var_size_text, 100, false, false);
     _employee->add_attribute("birthday", column_type::date, false, false);
 
     generic::ptr<foreign_key> _employee_boss_fk =
@@ -169,13 +178,58 @@ MainWindow::on_lstServers_itemClicked(QListWidgetItem* item)
 void
 MainWindow::on_lstDbs_itemClicked(QListWidgetItem* item)
 {
-  ui->lstTables->clear();
+  ui->tblTables->clear();
+
+  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
+
   name _db_name = item->text().toStdString();
   m_db = m_server->find(_db_name);
 
   uint16_t _num_tables = m_db->get_num_tables();
   for (uint16_t _count_table = 0; _count_table < _num_tables; ++_count_table) {
-    ui->lstTables->addItem(m_db->get_table(_count_table)->get_name().c_str());
+    //    ui->lstTables->addItem(m_db->get_table(_count_table)->get_name().c_str());
+    ui->tblTables->insertRow(ui->tblTables->rowCount());
+    int _row = ui->tblTables->rowCount() - 1;
+    ptr<table> _table = m_db->get_table(_count_table);
+    ui->tblTables->setItem(
+      _row, TBL_NAME_IDX, new QTableWidgetItem(_table->get_name().c_str()));
+
+    if (_table->get_primary_key() == nullptr) {
+      ui->tblTables->setItem(
+        _count_table, TBL_PK_IDX, new QTableWidgetItem("N/A"));
+    } else {
+      QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setEnabled(false);
+      ui->tblTables->setCellWidget(_row, TBL_PK_IDX, _cb);
+    }
+
+    if (_table->get_num_fks() == 0) {
+      ui->tblTables->setItem(
+        _count_table, TBL_FK_IDX, new QTableWidgetItem("N/A"));
+
+    } else {
+      QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setEnabled(false);
+      ui->tblTables->setCellWidget(_row, TBL_FK_IDX, _cb);
+    }
+
+    if (_table->get_num_attrs() == 0) {
+      ui->tblTables->setItem(
+        _count_table, TBL_ATTR_IDX, new QTableWidgetItem("N/A"));
+    } else {
+      QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setEnabled(false);
+      ui->tblTables->setCellWidget(_row, TBL_ATTR_IDX, _cb);
+    }
+
+    //  ui->tblTables->setColumnWidth(TBL_NAME_IDX,
+    //                                ui->tblTables->columnWidth(TBL_NAME_IDX));
+    //  ui->tblTables->setColumnWidth(TBL_PK_IDX,
+    //                                ui->tblTables->columnWidth(TBL_PK_IDX));
+    //  ui->tblTables->setColumnWidth(TBL_FK_IDX,
+    //                                ui->tblTables->columnWidth(TBL_FK_IDX));
+    //  ui->tblTables->setColumnWidth(TBL_ATTR_IDX,
+    //                                ui->tblTables->columnWidth(TBL_ATTR_IDX));
   }
 }
 
@@ -196,7 +250,16 @@ MainWindow::on_btnGenerate_clicked()
   TableInsertGenerator* _tig = nullptr;
   tables_windows::iterator _ite = m_tables_windows.find(m_table->get_name());
   if (_ite == m_tables_windows.end()) {
-    _tig = new TableInsertGenerator(m_table, this);
+    _tig = new TableInsertGenerator(m_table, m_all_pks, this);
+    QObject::connect(_tig,
+                     SIGNAL(pks_generated(const std::string&)),
+                     this,
+                     SLOT(on_pks_generated(const std::string&)));
+    QObject::connect(_tig,
+                     SIGNAL(fks_generated(const std::string&)),
+                     this,
+                     SLOT(on_fks_generated(const std::string&)));
+
     m_tables_windows.emplace(m_table->get_name(), _tig);
   } else {
     _tig = (TableInsertGenerator*)(_ite->second);
@@ -204,4 +267,48 @@ MainWindow::on_btnGenerate_clicked()
 
   _tig->show();
   _tig->raise();
+}
+
+void
+MainWindow::on_pks_generated(std::string p_table_name)
+{
+  QString _table_name(p_table_name.c_str());
+  int _num_tables = ui->tblTables->rowCount();
+  for (int _count_table = 0; _count_table < _num_tables; ++_count_table) {
+    if (ui->tblTables->item(_count_table, TBL_NAME_IDX)->text() ==
+        _table_name) {
+      QCheckBox* _cb =
+        (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_PK_IDX));
+      _cb->setCheckState(Qt::CheckState::Checked);
+
+      tables_windows::iterator _end = m_tables_windows.end();
+      for (tables_windows::iterator _ite = m_tables_windows.begin();
+           _ite != _end;
+           ++_ite) {
+        _ite->second->on_pk_generated(p_table_name);
+      }
+    }
+  }
+}
+
+void
+MainWindow::on_fks_generated(std::string p_table_name)
+{
+  QString _table_name(p_table_name.c_str());
+  int _num_tables = ui->tblTables->rowCount();
+  for (int _count_table = 0; _count_table < _num_tables; ++_count_table) {
+    if (ui->tblTables->item(_count_table, TBL_NAME_IDX)->text() ==
+        _table_name) {
+      QCheckBox* _cb =
+        (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_FK_IDX));
+      _cb->setCheckState(Qt::CheckState::Checked);
+    }
+  }
+}
+
+void
+MainWindow::on_tblTables_cellClicked(int row, int /*column*/)
+{
+  name _table_name = ui->tblTables->item(row, 0)->text().toStdString();
+  m_table = m_db->find(_table_name);
 }

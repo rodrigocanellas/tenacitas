@@ -1,8 +1,12 @@
 #ifndef TABLE_INSERT_GENERATOR_H
 #define TABLE_INSERT_GENERATOR_H
 
+#include <utility>
+
 #include <QMainWindow>
 #include <QString>
+#include <QTableWidget>
+#include <QTableWidgetItem>
 
 #include <sql/applications/insert_generator/generator_definition_window_factory.h>
 #include <sql/applications/insert_generator/number_value_generator_definition.h>
@@ -13,6 +17,9 @@
 #include <sql/generic/ptr.h>
 
 using namespace capemisa::sql;
+using namespace capemisa::sql::generic;
+using namespace capemisa::sql::business;
+using namespace capemisa::sql::entities;
 
 namespace Ui {
 class TableInsertGenerator;
@@ -23,7 +30,8 @@ class TableInsertGenerator : public QMainWindow
   Q_OBJECT
 
 public:
-  explicit TableInsertGenerator(generic::ptr<entities::table> p_table,
+  explicit TableInsertGenerator(ptr<table> p_table,
+                                ptr<tables_values> p_all_pks,
                                 QWidget* parent = nullptr);
   ~TableInsertGenerator();
 
@@ -33,23 +41,53 @@ private:
   void header_pks_definitions();
   void fill_pks_definitions();
 
+  void header_fks_definitions();
+  void fill_fks_definitions();
+
+  void header_attrs_definitions();
+  void fill_attrs_definitions();
+
+  void setup_table_values();
+
+  void add_to_table_values(ptr<column_values> p_column_values);
+
+public slots:
+  void on_pk_generated(std::string p_table_name);
+
 private slots:
   void on_currentPrimaryKeyIndexChanged(const QString& text);
+
+  void on_currentForeignKeyIndexChanged(const QString& text);
+
+  void on_currentAttributeIndexChanged(const QString& text);
 
   void on_btnGenPks_clicked();
 
   void on_btnGenSql_clicked();
 
+  void on_btnGenFks_clicked();
+
+  void on_btnMain_clicked();
+
+  void on_btnGenAttrs_clicked();
+
+signals:
+  void pks_generated(std::string);   // table name
+  void fks_generated(std::string);   // table name
+  void attrs_generated(std::string); // table name
+
 private:
   Ui::TableInsertGenerator* ui;
-  generic::ptr<entities::table> m_table;
-  generic::ptr<business::table_generator> m_table_generator;
-  generic::ptr<entities::tables_values> m_all_pks;
-  //  NumberValueGeneratorDefinition* m_number_value_generator_definition =
-  //  nullptr;
-  generic::ptr<const entities::table_values> m_pks_values;
+  ptr<table> m_table;
+  ptr<tables_values> m_all_pks;
+  ptr<table_generator> m_table_generator;
+  ptr<const table_values> m_pks_values;
+  ptr<const table_values> m_fks_values;
+  ptr<const table_values> m_attrs_values;
   ShowSql* m_show_sql = nullptr;
   generator_definition_window_factory m_generator_definition_window_factory;
+
+  std::pair<QTableWidget*, int> m_current_params_cell;
 
   static const QString m_title;
 };

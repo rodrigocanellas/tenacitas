@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
+    <width>861</width>
     <height>695</height>
    </rect>
   </property>
@@ -326,7 +326,7 @@
          </spacer>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="5,10,65,2,5,3">
+         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="5,10,75,2,5,3">
           <item>
            <spacer name="verticalSpacer_7">
             <property name="orientation">
@@ -365,7 +365,21 @@
            </layout>
           </item>
           <item>
-           <widget class="QListWidget" name="lstTables"/>
+           <widget class="QTableWidget" name="tblTables">
+            <property name="columnCount">
+             <number>4</number>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>60</number>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column/>
+            <column/>
+            <column/>
+            <column/>
+           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_9">
