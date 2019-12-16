@@ -39,13 +39,14 @@ tables_not_populated::operator()(ptr<const entities::table> p_table,
     // visit related tables
     uint16_t _num_fks = _table->get_num_fks();
     for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
-      ptr<foreign_key> _fk = _table->get_fk(_count_fks);
+      ptr<foreign_key> _fk = _table->get_foreign_key(_count_fks);
       ptr<foreign_key_column> _fk_col = _fk->get_fk_col(0);
       ptr<primary_key_column> _pk_col = _fk_col->get_pk_column();
       const primary_key& _pk = _pk_col->get_primary_key();
       const table& _pk_table = _pk.get_table();
       const name& _pk_table_name = _pk_table.get_name();
-      if ((!find(*_tables_names_not_created, _pk_table_name)) &&
+      if ((_pk_table_name != _this_table_name) &&
+          (!find(*_tables_names_not_created, _pk_table_name)) &&
           (!find(_tables_names_created, _pk_table_name))) {
         m_queue.push(&_pk_table);
       }

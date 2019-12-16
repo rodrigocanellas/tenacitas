@@ -38,7 +38,11 @@ struct columns_generators_factory_t
         std::vector<int32_t> _params;
         string_split _string_split;
         _string_split(p_params, [&_params](std::string&& p_split) -> void {
-          _params.push_back(std::stol(p_split));
+          if (p_split.empty()) {
+            _params.push_back(0);
+          } else {
+            _params.push_back(std::stol(p_split));
+          }
         });
 
         return make_ptr<number_value_generator<int32_t, t_column>>(
@@ -55,7 +59,9 @@ struct columns_generators_factory_t
         });
 
         return make_ptr<text_value_generator<t_column>>(
-          _params[0], std::stoi(_params[1]), std::stoi(_params[2]));
+          _params[0],
+          p_col->get_size(),
+          (_params[1].empty() ? 1 : std::stoi(_params[1])));
       }
     }
     return generator_ptr();

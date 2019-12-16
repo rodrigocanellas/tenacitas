@@ -5,6 +5,7 @@
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QString>
+#include <QTableWidgetItem>
 
 #include <sql/applications/insert_generator/mainwindow.h>
 
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   load_hosts();
   display_hosts();
   ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
+  //  ui->tblTables->seCol
 }
 
 MainWindow::~MainWindow()
@@ -67,8 +69,8 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
 
     _pk->add_pk_column("id", column_type::int_4, false, true);
 
-    //    _employee->add_attribute(
-    //      "name", column_type::var_size_text, 100, false, false);
+    _employee->add_attribute(
+      "name", column_type::var_size_text, 100, false, false);
     _employee->add_attribute("birthday", column_type::date, false, false);
 
     generic::ptr<foreign_key> _employee_boss_fk =
@@ -98,7 +100,7 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
   {
     generic::ptr<table> _project = _db->add_table("project");
     _project->get_primary_key()->add_pk_column(
-      "id", column_type::int_4, true, true);
+      "id", column_type::int_4, false, true);
     _project->add_attribute(
       "name", column_type::var_size_text, 100, false, false);
 
@@ -121,14 +123,14 @@ MainWindow::load_db001(generic::ptr<entities::server> p_server)
     _project_fk->add_column("project_id",
                             _project->get_primary_key()->find_pk_column("id"));
 
-    generic::ptr<primary_key> _employees_projects_pk =
-      _employees_projects->get_primary_key();
+    //    generic::ptr<primary_key> _employees_projects_pk =
+    //      _employees_projects->get_primary_key();
 
-    _employees_projects_pk->add_fk_column(
-      _employee_fk->find_column("employee_id"));
+    //    _employees_projects_pk->add_fk_column(
+    //      _employee_fk->find_column("employee_id"));
 
-    _employees_projects_pk->add_fk_column(
-      _project_fk->find_column("project_id"));
+    //    _employees_projects_pk->add_fk_column(
+    //      _project_fk->find_column("project_id"));
   }
 }
 
@@ -145,6 +147,15 @@ MainWindow::display_hosts()
   for (uint16_t _count_host = 0; _count_host < _num_hosts; ++_count_host) {
     ui->lstHosts->addItem((*m_hosts)[_count_host]->get_name().c_str());
   }
+}
+
+void
+MainWindow::adjust_tables_grid()
+{
+  ui->tblTables->setColumnWidth(0, ui->tblTables->width() * 0.4);
+  ui->tblTables->setColumnWidth(1, ui->tblTables->width() * 0.2);
+  ui->tblTables->setColumnWidth(2, ui->tblTables->width() * 0.2);
+  ui->tblTables->setColumnWidth(3, ui->tblTables->width() * 0.2);
 }
 
 void
@@ -178,7 +189,7 @@ MainWindow::on_lstServers_itemClicked(QListWidgetItem* item)
 void
 MainWindow::on_lstDbs_itemClicked(QListWidgetItem* item)
 {
-  ui->tblTables->clear();
+  ui->tblTables->setRowCount(0);
 
   ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
 
@@ -187,49 +198,46 @@ MainWindow::on_lstDbs_itemClicked(QListWidgetItem* item)
 
   uint16_t _num_tables = m_db->get_num_tables();
   for (uint16_t _count_table = 0; _count_table < _num_tables; ++_count_table) {
-    //    ui->lstTables->addItem(m_db->get_table(_count_table)->get_name().c_str());
     ui->tblTables->insertRow(ui->tblTables->rowCount());
     int _row = ui->tblTables->rowCount() - 1;
     ptr<table> _table = m_db->get_table(_count_table);
     ui->tblTables->setItem(
       _row, TBL_NAME_IDX, new QTableWidgetItem(_table->get_name().c_str()));
 
-    if (_table->get_primary_key() == nullptr) {
-      ui->tblTables->setItem(
-        _count_table, TBL_PK_IDX, new QTableWidgetItem("N/A"));
+    if (_table->get_primary_key()->get_num_pks_cols() == 0) {
+      QLabel* _label = new QLabel("N/A");
+      _label->setStyleSheet("margin-left:20%; margin-right:0%;");
+      ui->tblTables->setCellWidget(_row, TBL_PK_IDX, _label);
     } else {
       QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setStyleSheet("margin-left:25%; margin-right:25%;");
       _cb->setEnabled(false);
       ui->tblTables->setCellWidget(_row, TBL_PK_IDX, _cb);
     }
 
     if (_table->get_num_fks() == 0) {
-      ui->tblTables->setItem(
-        _count_table, TBL_FK_IDX, new QTableWidgetItem("N/A"));
-
+      QLabel* _label = new QLabel("N/A");
+      _label->setStyleSheet("margin-left:20%; margin-right:0%;");
+      ui->tblTables->setCellWidget(_row, TBL_FK_IDX, _label);
     } else {
       QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setStyleSheet("margin-left:25%; margin-right:25%;");
       _cb->setEnabled(false);
       ui->tblTables->setCellWidget(_row, TBL_FK_IDX, _cb);
     }
 
     if (_table->get_num_attrs() == 0) {
-      ui->tblTables->setItem(
-        _count_table, TBL_ATTR_IDX, new QTableWidgetItem("N/A"));
+      QLabel* _label = new QLabel("N/A");
+      _label->setStyleSheet("margin-left:20%; margin-right:0%;");
+      ui->tblTables->setCellWidget(_row, TBL_ATTR_IDX, _label);
     } else {
       QCheckBox* _cb = new QCheckBox(ui->tblTables);
+      _cb->setStyleSheet("margin-left:25%; margin-right:25%;");
       _cb->setEnabled(false);
       ui->tblTables->setCellWidget(_row, TBL_ATTR_IDX, _cb);
     }
 
-    //  ui->tblTables->setColumnWidth(TBL_NAME_IDX,
-    //                                ui->tblTables->columnWidth(TBL_NAME_IDX));
-    //  ui->tblTables->setColumnWidth(TBL_PK_IDX,
-    //                                ui->tblTables->columnWidth(TBL_PK_IDX));
-    //  ui->tblTables->setColumnWidth(TBL_FK_IDX,
-    //                                ui->tblTables->columnWidth(TBL_FK_IDX));
-    //  ui->tblTables->setColumnWidth(TBL_ATTR_IDX,
-    //                                ui->tblTables->columnWidth(TBL_ATTR_IDX));
+    adjust_tables_grid();
   }
 }
 
@@ -259,6 +267,10 @@ MainWindow::on_btnGenerate_clicked()
                      SIGNAL(fks_generated(const std::string&)),
                      this,
                      SLOT(on_fks_generated(const std::string&)));
+    QObject::connect(_tig,
+                     SIGNAL(attrs_generated(const std::string&)),
+                     this,
+                     SLOT(on_attrs_generated(const std::string&)));
 
     m_tables_windows.emplace(m_table->get_name(), _tig);
   } else {
@@ -307,8 +319,37 @@ MainWindow::on_fks_generated(std::string p_table_name)
 }
 
 void
+MainWindow::on_attrs_generated(std::string p_table_name)
+{
+  QString _table_name(p_table_name.c_str());
+  int _num_tables = ui->tblTables->rowCount();
+  for (int _count_table = 0; _count_table < _num_tables; ++_count_table) {
+    if (ui->tblTables->item(_count_table, TBL_NAME_IDX)->text() ==
+        _table_name) {
+      QCheckBox* _cb =
+        (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_ATTR_IDX));
+      _cb->setCheckState(Qt::CheckState::Checked);
+    }
+  }
+}
+
+void
 MainWindow::on_tblTables_cellClicked(int row, int /*column*/)
 {
   name _table_name = ui->tblTables->item(row, 0)->text().toStdString();
   m_table = m_db->find(_table_name);
+}
+
+void
+MainWindow::resizeEvent(QResizeEvent* event)
+{
+  adjust_tables_grid();
+  QMainWindow::resizeEvent(event);
+}
+
+void
+MainWindow::showEvent(QShowEvent* event)
+{
+  adjust_tables_grid();
+  QMainWindow::showEvent(event);
 }

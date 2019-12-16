@@ -128,7 +128,7 @@ struct table_generator
 
     uint16_t _num_fks = m_table->get_num_fks();
     for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
-      ptr<foreign_key> _fk = m_table->get_fk(_count_fks);
+      ptr<foreign_key> _fk = m_table->get_foreign_key(_count_fks);
       fks_generators::iterator _ite = m_fks_generators.find(_fk->get_name());
       if (_ite != m_fks_generators.end()) {
         (*_ite->second)(p_pks, _fks_values, _fk, m_num_lines);

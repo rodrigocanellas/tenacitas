@@ -94,9 +94,19 @@ struct table
     return m_foreigners_keys.get_size<uint16_t>();
   }
 
-  ptr<foreign_key> get_fk(uint16_t p_attr_index) const
+  inline ptr<foreign_key> get_foreign_key(uint16_t p_attr_index) const
   {
     return m_foreigners_keys[p_attr_index];
+  }
+
+  inline uint16_t get_num_all_fks_cols() const
+  {
+    uint16_t _res = 0;
+    uint16_t _num_fks = get_num_fks();
+    for (uint16_t _count_fks = 0; _count_fks < _num_fks; ++_count_fks) {
+      _res += get_foreign_key(_count_fks)->get_num_cols();
+    }
+    return _res;
   }
 
 private:

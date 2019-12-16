@@ -212,7 +212,7 @@
                <number>6</number>
               </property>
               <attribute name="horizontalHeaderVisible">
-               <bool>false</bool>
+               <bool>true</bool>
               </attribute>
               <attribute name="verticalHeaderVisible">
                <bool>false</bool>
@@ -325,6 +325,9 @@
               <property name="columnCount">
                <number>3</number>
               </property>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
               <column/>
               <column/>
               <column/>
@@ -427,6 +430,9 @@
               <property name="columnCount">
                <number>6</number>
               </property>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
               <column/>
               <column/>
               <column/>

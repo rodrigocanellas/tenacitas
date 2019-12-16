@@ -88,6 +88,12 @@ column_type::to_str() const
   if (m_value == column_type::single_char.m_value) {
     return "single_char";
   }
+  if (m_value == column_type::fixed_size_text.m_value) {
+    return "fixed_size_text";
+  }
+  if (m_value == column_type::var_size_text.m_value) {
+    return "var_size_text";
+  }
   return "undefined";
 }
 } // namespace entities

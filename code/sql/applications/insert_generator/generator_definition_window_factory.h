@@ -8,8 +8,10 @@
 
 #include <sql/applications/insert_generator/number_value_generator_definition.h>
 #include <sql/applications/insert_generator/table_insert_generator.h>
+#include <sql/applications/insert_generator/text_value_generator_definition.h>
 
 #include <sql/business/number_value_generator.h>
+#include <sql/business/text_value_generator.h>
 #include <sql/generic/name.h>
 
 using namespace capemisa::sql::business;
@@ -30,6 +32,13 @@ struct generator_definition_window_factory
       }
       return m_NumberValueGeneratorDefinition;
     }
+    if (p_name == text_value_generator<t_column>::id) {
+      if (m_TextValueGeneratorDefinition == nullptr) {
+        m_TextValueGeneratorDefinition = new TextValueGeneratorDefinition(
+          p_TableInsertGenerator, (QWidget*)p_TableInsertGenerator);
+      }
+      return m_TextValueGeneratorDefinition;
+    }
     return nullptr;
   }
 
@@ -42,6 +51,7 @@ struct generator_definition_window_factory
 
 private:
   NumberValueGeneratorDefinition* m_NumberValueGeneratorDefinition = nullptr;
+  TextValueGeneratorDefinition* m_TextValueGeneratorDefinition = nullptr;
 };
 
 #endif // GENERATOR_DEFINITION_WINDOW_FACTORY_H

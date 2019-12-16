@@ -6,6 +6,8 @@
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMainWindow>
+#include <QResizeEvent>
+#include <QShowEvent>
 
 #include <sql/applications/insert_generator/table_insert_generator.h>
 #include <sql/entities/hosts.h>
@@ -43,8 +45,12 @@ private slots:
 
   void on_pks_generated(std::string p_table_name);
   void on_fks_generated(std::string p_table_name);
+  void on_attrs_generated(std::string p_table_name);
 
   void on_tblTables_cellClicked(int row, int column);
+
+  void resizeEvent(QResizeEvent*) override;
+  void showEvent(QShowEvent*) override;
 
 private:
   void load_hosts();
@@ -52,6 +58,8 @@ private:
   void load_db002(ptr<server> p_server);
 
   void display_hosts();
+
+  void adjust_tables_grid();
 
 private:
   typedef std::map<name, TableInsertGenerator*> tables_windows;

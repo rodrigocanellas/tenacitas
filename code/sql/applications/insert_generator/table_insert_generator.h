@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <QMainWindow>
+#include <QShowEvent>
 #include <QString>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -51,6 +52,10 @@ private:
 
   void add_to_table_values(ptr<column_values> p_column_values);
 
+  bool already_generated(const QString& p_col_name) const;
+
+  void adjust_grids();
+
 public slots:
   void on_pk_generated(std::string p_table_name);
 
@@ -70,6 +75,9 @@ private slots:
   void on_btnMain_clicked();
 
   void on_btnGenAttrs_clicked();
+
+  void resizeEvent(QResizeEvent*) override;
+  void showEvent(QShowEvent*) override;
 
 signals:
   void pks_generated(std::string);   // table name

@@ -21,21 +21,24 @@ FORMS += \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.ui \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.ui \
   ../../../../../../code/sql/applications/insert_generator/show_sql.ui \
-  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.ui
+  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.ui \
+  ../../../../../../code/sql/applications/insert_generator/text_value_generator_definition.ui
 
 HEADERS += \
   ../../../../../../code/sql/applications/insert_generator/generator_definition_window_factory.h \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.h \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.h \
   ../../../../../../code/sql/applications/insert_generator/show_sql.h \
-  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.h
+  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.h \
+  ../../../../../../code/sql/applications/insert_generator/text_value_generator_definition.h
 
 SOURCES += \
   ../../../../../../code/sql/applications/insert_generator/main.cpp \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.cpp \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.cpp \
   ../../../../../../code/sql/applications/insert_generator/show_sql.cpp \
-  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.cpp
+  ../../../../../../code/sql/applications/insert_generator/table_insert_generator.cpp \
+  ../../../../../../code/sql/applications/insert_generator/text_value_generator_definition.cpp
 
 TRANSLATIONS += \
     insert_generator_pt_BR.ts
