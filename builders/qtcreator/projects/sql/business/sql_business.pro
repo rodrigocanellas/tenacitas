@@ -26,6 +26,7 @@ HEADERS += \
   ../../../../../code/sql/business/one_pk_all_fks.h \
   ../../../../../code/sql/business/primary_key_column_generator.h \
   ../../../../../code/sql/business/primary_keys_columns_generator_factory.h \
+  ../../../../../code/sql/business/rotate_pks_in_fks.h \
   ../../../../../code/sql/business/sql_generator.h \
   ../../../../../code/sql/business/table_generator.h \
   ../../../../../code/sql/business/text_value_generator.h \
@@ -37,6 +38,7 @@ HEADERS += \
 SOURCES += \
   ../../../../../code/sql/business/internal/fixed_value_generator.cpp \
   ../../../../../code/sql/business/internal/one_pk_all_fks.cpp \
+  ../../../../../code/sql/business/internal/rotate_pks_in_fks.cpp \
   ../../../../../code/sql/business/internal/sql_generator.cpp \
   ../../../../../code/sql/business/internal/tables_not_populated.cpp \
   ../../../../../code/sql/business/internal/text_value_generator.cpp

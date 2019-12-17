@@ -6,6 +6,7 @@
 
 #include <sql/business/foreign_key_generator.h>
 #include <sql/business/one_pk_all_fks.h>
+#include <sql/business/rotate_pks_in_fks.h>
 #include <sql/generic/name.h>
 #include <sql/generic/ptr.h>
 #include <sql/generic/string_split.h>
@@ -27,6 +28,9 @@ struct foreign_keys_columns_generator_factory
     if (p_generator_name == one_pk_all_fks::id) {
       return make_ptr<one_pk_all_fks>();
     }
+    if (p_generator_name == rotate_pks_in_fks::id) {
+      return make_ptr<rotate_pks_in_fks>();
+    }
 
     return generator_ptr();
   }
@@ -35,6 +39,7 @@ struct foreign_keys_columns_generator_factory
   {
     std::set<name> _set;
     _set.insert(one_pk_all_fks::id);
+    _set.insert(rotate_pks_in_fks::id);
     return _set;
   }
 };
