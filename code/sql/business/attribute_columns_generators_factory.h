@@ -8,6 +8,7 @@
 
 #include <sql/business/column_generator.h>
 #include <sql/business/columns_generators_factory.h>
+#include <sql/business/fixed_value_generator.h>
 #include <sql/business/number_value_generator.h>
 #include <sql/business/text_value_generator.h>
 #include <sql/entities/attribute_column.h>
@@ -32,6 +33,10 @@ struct attribute_columns_generators_factory
                               const std::string& p_params)
   {
 
+    if (p_generator_name == fixed_value_generator::id) {
+      return make_ptr<fixed_value_generator>(p_params);
+    }
+
     generator_ptr _ret = columns_generators_factory_t<attribute_column>::create(
       p_col, p_generator_name, p_params);
     if (_ret) {
@@ -45,6 +50,11 @@ struct attribute_columns_generators_factory
   {
     std::set<name> _set(
       columns_generators_factory_t<attribute_column>::list(p_type));
+
+    if (fixed_value_generator::compatibles() & p_type) {
+      _set.insert(fixed_value_generator::id);
+    }
+
     return _set;
   }
 };

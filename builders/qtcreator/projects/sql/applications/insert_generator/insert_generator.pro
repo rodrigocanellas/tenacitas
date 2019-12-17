@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 FORMS += \
+  ../../../../../../code/sql/applications/insert_generator/fixed_value_generator.ui \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.ui \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.ui \
   ../../../../../../code/sql/applications/insert_generator/show_sql.ui \
@@ -25,6 +26,7 @@ FORMS += \
   ../../../../../../code/sql/applications/insert_generator/text_value_generator_definition.ui
 
 HEADERS += \
+  ../../../../../../code/sql/applications/insert_generator/fixed_value_generator.h \
   ../../../../../../code/sql/applications/insert_generator/generator_definition_window_factory.h \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.h \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.h \
@@ -33,6 +35,7 @@ HEADERS += \
   ../../../../../../code/sql/applications/insert_generator/text_value_generator_definition.h
 
 SOURCES += \
+  ../../../../../../code/sql/applications/insert_generator/fixed_value_generator.cpp \
   ../../../../../../code/sql/applications/insert_generator/main.cpp \
   ../../../../../../code/sql/applications/insert_generator/mainwindow.cpp \
   ../../../../../../code/sql/applications/insert_generator/number_value_generator_definition.cpp \

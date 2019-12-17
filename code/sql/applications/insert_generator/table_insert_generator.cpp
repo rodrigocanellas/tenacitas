@@ -175,7 +175,7 @@ TableInsertGenerator::fill_attrs_definitions()
     _generators->addItem("---");
 
     std::set<name> _genarators_name =
-      primary_keys_columns_generators_factory::list(_attr_col->get_type());
+      attribute_columns_generators_factory::list(_attr_col->get_type());
 
     for (const name& _name : _genarators_name) {
       _generators->addItem(_name.c_str());

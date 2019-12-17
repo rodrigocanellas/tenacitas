@@ -34,7 +34,6 @@ struct column_type
   static const column_type var_size_text;
   static const column_type date;
   static const column_type date_time;
-  static const column_type blob;
   static const column_type small_real;
   static const column_type long_real;
 

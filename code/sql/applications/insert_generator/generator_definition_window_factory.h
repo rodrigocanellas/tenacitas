@@ -6,10 +6,11 @@
 #include <QMainWindow>
 #include <QWidget>
 
+#include <sql/applications/insert_generator/fixed_value_generator.h>
 #include <sql/applications/insert_generator/number_value_generator_definition.h>
 #include <sql/applications/insert_generator/table_insert_generator.h>
 #include <sql/applications/insert_generator/text_value_generator_definition.h>
-
+#include <sql/business/fixed_value_generator.h>
 #include <sql/business/number_value_generator.h>
 #include <sql/business/text_value_generator.h>
 #include <sql/generic/name.h>
@@ -39,6 +40,13 @@ struct generator_definition_window_factory
       }
       return m_TextValueGeneratorDefinition;
     }
+    if (p_name == fixed_value_generator::id) {
+      if (m_FixedValueGenerator == nullptr) {
+        m_FixedValueGenerator = new FixedValueGenerator(
+          p_TableInsertGenerator, (QWidget*)p_TableInsertGenerator);
+      }
+      return m_FixedValueGenerator;
+    }
     return nullptr;
   }
 
@@ -52,6 +60,7 @@ struct generator_definition_window_factory
 private:
   NumberValueGeneratorDefinition* m_NumberValueGeneratorDefinition = nullptr;
   TextValueGeneratorDefinition* m_TextValueGeneratorDefinition = nullptr;
+  FixedValueGenerator* m_FixedValueGenerator = nullptr;
 };
 
 #endif // GENERATOR_DEFINITION_WINDOW_FACTORY_H

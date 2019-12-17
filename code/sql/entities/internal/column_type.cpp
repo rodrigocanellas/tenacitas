@@ -14,9 +14,8 @@ const column_type column_type::fixed_size_text(32);
 const column_type column_type::var_size_text(64);
 const column_type column_type::date(128);
 const column_type column_type::date_time(256);
-const column_type column_type::blob(512);
-const column_type column_type::small_real(1024);
-const column_type column_type::long_real(2048);
+const column_type column_type::small_real(512);
+const column_type column_type::long_real(1024);
 
 std::ostream&
 operator<<(std::ostream& p_out, const column_type& p_column_type)

@@ -161,13 +161,13 @@
              <number>9</number>
             </property>
             <property name="leftMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="topMargin">
              <number>6</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="bottomMargin">
              <number>6</number>
@@ -278,13 +278,13 @@
              <number>9</number>
             </property>
             <property name="leftMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="topMargin">
              <number>6</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>6</number>
             </property>
             <property name="bottomMargin">
              <number>6</number>
@@ -550,26 +550,6 @@
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btnClear">
-              <property name="text">
-               <string>&amp;Limpar</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_7">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

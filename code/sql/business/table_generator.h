@@ -6,10 +6,8 @@
 #include <map>
 #include <utility>
 
-#include <sql/business/attribute_column_generator.h>
 #include <sql/business/foreign_key_generator.h>
 #include <sql/business/internal/tables_not_populated.h>
-#include <sql/business/primary_key_column_generator.h>
 #include <sql/entities/attribute_column.h>
 #include <sql/entities/column_usage.h>
 #include <sql/entities/column_values.h>
