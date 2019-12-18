@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include <sql/entities/database.h>
-#include <sql/entities/host.h>
 #include <sql/generic/collection.h>
 #include <sql/generic/name.h>
 

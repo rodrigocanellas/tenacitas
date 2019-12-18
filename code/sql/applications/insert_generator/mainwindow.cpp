@@ -2,13 +2,13 @@
 
 #include <cstdint>
 
+#include <QDebug>
 #include <QCheckBox>
 #include <QMessageBox>
 #include <QString>
 #include <QTableWidgetItem>
 
 #include <sql/applications/insert_generator/mainwindow.h>
-
 #include <sql/entities/attribute_column.h>
 #include <sql/entities/foreign_key.h>
 #include <sql/entities/foreign_key_column.h>
@@ -18,6 +18,7 @@
 #include <sql/entities/server.h>
 #include <sql/entities/table.h>
 #include <sql/generic/ptr.h>
+#include <sql/business/traverse_tables.h>
 
 #define TBL_NAME_IDX 0
 #define TBL_PK_IDX 1
@@ -27,6 +28,7 @@
 
 using namespace capemisa::sql::entities;
 using namespace capemisa::sql::generic;
+using namespace capemisa::sql::business;
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
@@ -36,7 +38,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->setupUi(this);
   load_hosts();
   display_hosts();
-  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
+//  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
   //  ui->tblTables->seCol
 }
 
@@ -193,7 +195,7 @@ MainWindow::on_lstDbs_itemClicked(QListWidgetItem* item)
 {
   ui->tblTables->setRowCount(0);
 
-  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
+  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
 
   name _db_name = item->text().toStdString();
   m_db = m_server->find(_db_name);
@@ -280,10 +282,20 @@ MainWindow::on_btnGenerate_clicked()
     _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
     if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
       QMessageBox::warning(this, "Atributos não preenchidos",
-                           "É preciso gerar as chave estrangeiras para " +
+                           "É preciso gerar as chaves estrangeiras para " +
                            _tables->item(_row, TBL_NAME_IDX)->text());
       return;
     }
+  }
+
+  traverse_tables _traverse;
+  const name _table_name = _tables->item(0, TBL_NAME_IDX)->text().toStdString();
+  ptr<table> _table = m_db->find(_table_name);
+  if (_table) {
+    _traverse(_table.get(),
+              [](const table * const p_table) -> void {
+      qDebug() << p_table->get_name().c_str();
+    });
   }
 
 }

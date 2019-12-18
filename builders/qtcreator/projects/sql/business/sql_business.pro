@@ -30,6 +30,7 @@ HEADERS += \
   ../../../../../code/sql/business/sql_generator.h \
   ../../../../../code/sql/business/table_generator.h \
   ../../../../../code/sql/business/text_value_generator.h \
+    ../../../../../code/sql/business/traverse_tables.h \
   ../../../../../code/sql/generic/ptr.h \
   ../../../../../code/sql/generic/collection.h \
     ../../../../../code/sql/generic/name.h \ \
@@ -40,7 +41,8 @@ SOURCES += \
   ../../../../../code/sql/business/internal/one_pk_all_fks.cpp \
   ../../../../../code/sql/business/internal/rotate_pks_in_fks.cpp \
   ../../../../../code/sql/business/internal/sql_generator.cpp \
-  ../../../../../code/sql/business/internal/tables_not_populated.cpp
+  ../../../../../code/sql/business/internal/tables_not_populated.cpp \
+  ../../../../../code/sql/business/internal/traverse_tables.cpp
 
 LIBS += $$libs_dir/libcapemisa.sql.entities.a
 
