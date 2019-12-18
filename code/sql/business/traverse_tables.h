@@ -22,7 +22,7 @@ struct traverse_tables {
   void operator()(const table * const p_table,
                   std::function<void(const table * const)> p_handle_visited);
 private:
-  std::queue<const table * > m_queue;
+  std::queue<const table *> m_queue;
 };
 
 } // namespace business

@@ -2,6 +2,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+TARGET=capemisa.sql.insert_generator
+
 CONFIG += c++11
 
 include (../../../../common.pri)

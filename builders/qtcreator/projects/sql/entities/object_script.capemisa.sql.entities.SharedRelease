@@ -1,5 +1,6 @@
+shared-release/column_type.o
 shared-release/attribute_column.o
-shared-release/column.o
+shared-release/column_usage.o
 shared-release/database.o
 shared-release/foreign_key.o
 shared-release/foreign_key_column.o

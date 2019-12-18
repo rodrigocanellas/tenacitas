@@ -57,7 +57,7 @@ OUT_PWD = $${tmp_dir}
 MOC_DIR += $${tmp_dir}/moc
 UI_DIR  += $${tmp_dir}/ui
 #UI_DIR  += $$_PRO_FILE_PWD_/../..
-OBJECTS_DIR += $${tmp_dir}/obj
+#OBJECTS_DIR += $${tmp_dir}/obj
 RCC_DIR += $${tmp_dir}/rsc
 
 QMAKE_CXXFLAGS += -std=c++11 -Werror

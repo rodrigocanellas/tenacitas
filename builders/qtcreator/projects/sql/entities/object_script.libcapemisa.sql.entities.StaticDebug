@@ -1,6 +1,7 @@
-CREATE d:\lixo\z\libcapemisa.sql.entities.a
+CREATE C:\Users\tc000210\Documents\tenacitas\products\binary\libcapemisa.sql.entities.a
+ADDMOD static-debug\column_type.o
 ADDMOD static-debug\attribute_column.o
-ADDMOD static-debug\column.o
+ADDMOD static-debug\column_usage.o
 ADDMOD static-debug\database.o
 ADDMOD static-debug\foreign_key.o
 ADDMOD static-debug\foreign_key_column.o

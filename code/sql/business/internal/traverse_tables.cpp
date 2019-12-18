@@ -21,9 +21,11 @@ traverse_tables::operator()(const table * const p_table,
 
     const name & _table_name = _table->get_name();
 
-    if  (_table_name != _this_table_name) {
-      p_handle_visited(_table);
-    }
+    //    if  (_table_name != _this_table_name) {
+    _visited.emplace(_table_name);
+    p_handle_visited(_table);
+
+    //    }
 
     // visit related tables
     uint16_t _num_fks = _table->get_num_fks();

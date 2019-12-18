@@ -263,30 +263,30 @@ MainWindow::on_btnGenerate_clicked()
 {
 
   QTableWidget * _tables = ui->tblTables;
-  int _row_count = ui->tblTables->rowCount();
-  for (int _row = 0; _row < _row_count; ++_row) {
-    QCheckBox* _cb = (QCheckBox*)(_tables->cellWidget(_row, TBL_ATTR_IDX));
-    if ((!_cb) || _cb->checkState() == Qt::CheckState::Unchecked) {
-      QMessageBox::warning(this, "Atributos não preenchidos",
-                           "É preciso gerar os atributos para " +
-                           _tables->item(_row, TBL_NAME_IDX)->text());
-      return;
-    }
-    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_PK_IDX));
-    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
-      QMessageBox::warning(this, "Atributos não preenchidos",
-                           "É preciso gerar a chave primária para " +
-                           _tables->item(_row, TBL_NAME_IDX)->text());
-      return;
-    }
-    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
-    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
-      QMessageBox::warning(this, "Atributos não preenchidos",
-                           "É preciso gerar as chaves estrangeiras para " +
-                           _tables->item(_row, TBL_NAME_IDX)->text());
-      return;
-    }
-  }
+//  int _row_count = ui->tblTables->rowCount();
+//  for (int _row = 0; _row < _row_count; ++_row) {
+//    QCheckBox* _cb = (QCheckBox*)(_tables->cellWidget(_row, TBL_ATTR_IDX));
+//    if ((!_cb) || _cb->checkState() == Qt::CheckState::Unchecked) {
+//      QMessageBox::warning(this, "Atributos não preenchidos",
+//                           "É preciso gerar os atributos para " +
+//                           _tables->item(_row, TBL_NAME_IDX)->text());
+//      return;
+//    }
+//    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_PK_IDX));
+//    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+//      QMessageBox::warning(this, "Atributos não preenchidos",
+//                           "É preciso gerar a chave primária para " +
+//                           _tables->item(_row, TBL_NAME_IDX)->text());
+//      return;
+//    }
+//    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
+//    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+//      QMessageBox::warning(this, "Atributos não preenchidos",
+//                           "É preciso gerar as chaves estrangeiras para " +
+//                           _tables->item(_row, TBL_NAME_IDX)->text());
+//      return;
+//    }
+//  }
 
   traverse_tables _traverse;
   const name _table_name = _tables->item(0, TBL_NAME_IDX)->text().toStdString();

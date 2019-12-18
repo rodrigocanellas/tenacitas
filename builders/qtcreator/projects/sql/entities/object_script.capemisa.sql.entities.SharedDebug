@@ -1,5 +1,6 @@
+shared-debug/column_type.o
 shared-debug/attribute_column.o
-shared-debug/column.o
+shared-debug/column_usage.o
 shared-debug/database.o
 shared-debug/foreign_key.o
 shared-debug/foreign_key_column.o
