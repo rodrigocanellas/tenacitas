@@ -40,8 +40,7 @@ SOURCES += \
   ../../../../../code/sql/business/internal/one_pk_all_fks.cpp \
   ../../../../../code/sql/business/internal/rotate_pks_in_fks.cpp \
   ../../../../../code/sql/business/internal/sql_generator.cpp \
-  ../../../../../code/sql/business/internal/tables_not_populated.cpp \
-  ../../../../../code/sql/business/internal/text_value_generator.cpp
+  ../../../../../code/sql/business/internal/tables_not_populated.cpp
 
 LIBS += $$libs_dir/libcapemisa.sql.entities.a
 

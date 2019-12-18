@@ -3,6 +3,7 @@
 
 #include <map>
 
+
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QMainWindow>
@@ -42,15 +43,21 @@ private slots:
   void on_lstTables_itemClicked(QListWidgetItem* item);
 
   void on_btnGenerate_clicked();
+  void on_btnGenerateTable_clicked();
 
   void on_pks_generated(std::string p_table_name);
   void on_fks_generated(std::string p_table_name);
   void on_attrs_generated(std::string p_table_name);
+  void on_closing(std::string p_table_name);
 
   void on_tblTables_cellClicked(int row, int column);
 
+
   void resizeEvent(QResizeEvent*) override;
   void showEvent(QShowEvent*) override;
+
+  void on_TableInsertGenerator_destroy();
+
 
 private:
   void load_hosts();

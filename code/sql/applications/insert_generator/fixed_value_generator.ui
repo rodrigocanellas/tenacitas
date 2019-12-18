@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Parâmetros para Gerador de Valor Fixo</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/capemisa.qrc">
+    <normaloff>:/capemisa_pequeno.png</normaloff>:/capemisa_pequeno.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -106,6 +110,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/capemisa.qrc"/>
+ </resources>
  <connections/>
 </ui>

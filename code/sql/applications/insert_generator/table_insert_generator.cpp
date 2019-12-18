@@ -77,6 +77,7 @@ TableInsertGenerator::set_generator_params(const QString& p_params)
                 new QTableWidgetItem(p_params));
 }
 
+
 void
 TableInsertGenerator::header_pks_definitions()
 {
@@ -394,8 +395,7 @@ TableInsertGenerator::on_btnGenPks_clicked()
 void
 TableInsertGenerator::on_btnGenSql_clicked()
 {
-  sql_generator _sql_gen;
-  std::string _sql = _sql_gen(m_pks_values, m_attrs_values, m_fks_values);
+  std::string _sql = get_sql();
   if (m_show_sql == nullptr) {
     m_show_sql = new ShowSql(this);
   }
@@ -404,6 +404,14 @@ TableInsertGenerator::on_btnGenSql_clicked()
   m_show_sql->show();
   m_show_sql->raise();
 }
+
+std::string TableInsertGenerator::get_sql()
+{
+  sql_generator _sql_gen;
+  return _sql_gen(m_pks_values, m_attrs_values, m_fks_values);
+
+}
+
 
 void
 TableInsertGenerator::on_btnGenFks_clicked()
@@ -468,8 +476,10 @@ TableInsertGenerator::on_btnGenFks_clicked()
 void
 TableInsertGenerator::on_btnMain_clicked()
 {
+  this->hide();
   parentWidget()->show();
   parentWidget()->raise();
+  parentWidget()->setFocus();
 }
 
 void
@@ -554,4 +564,10 @@ TableInsertGenerator::showEvent(QShowEvent* event)
 {
   adjust_grids();
   QMainWindow::showEvent(event);
+}
+
+void TableInsertGenerator::closeEvent(QCloseEvent *event)
+{
+  emit closing(m_table->get_name());
+  QMainWindow::closeEvent(event);
 }

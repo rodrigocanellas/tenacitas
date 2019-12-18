@@ -3,6 +3,7 @@
 
 #include <utility>
 
+#include <QCloseEvent>
 #include <QMainWindow>
 #include <QShowEvent>
 #include <QString>
@@ -37,6 +38,8 @@ public:
   ~TableInsertGenerator();
 
   void set_generator_params(const QString& p_params);
+
+  std::string get_sql();
 
 private:
   void header_pks_definitions();
@@ -79,10 +82,13 @@ private slots:
   void resizeEvent(QResizeEvent*) override;
   void showEvent(QShowEvent*) override;
 
+  void closeEvent(QCloseEvent *event) override;
+
 signals:
   void pks_generated(std::string);   // table name
   void fks_generated(std::string);   // table name
   void attrs_generated(std::string); // table name
+  void closing(std::string);
 
 private:
   Ui::TableInsertGenerator* ui;

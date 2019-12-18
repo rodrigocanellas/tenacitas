@@ -23,6 +23,7 @@
 #define TBL_PK_IDX 1
 #define TBL_FK_IDX 2
 #define TBL_ATTR_IDX 3
+#define TBL_GEN_IDX 4
 
 using namespace capemisa::sql::entities;
 using namespace capemisa::sql::generic;
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->setupUi(this);
   load_hosts();
   display_hosts();
-  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib" });
+  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
   //  ui->tblTables->seCol
 }
 
@@ -152,10 +153,11 @@ MainWindow::display_hosts()
 void
 MainWindow::adjust_tables_grid()
 {
-  ui->tblTables->setColumnWidth(0, ui->tblTables->width() * 0.4);
+  ui->tblTables->setColumnWidth(0, ui->tblTables->width() * 0.2);
   ui->tblTables->setColumnWidth(1, ui->tblTables->width() * 0.2);
   ui->tblTables->setColumnWidth(2, ui->tblTables->width() * 0.2);
   ui->tblTables->setColumnWidth(3, ui->tblTables->width() * 0.2);
+  ui->tblTables->setColumnWidth(4, ui->tblTables->width() * 0.2);
 }
 
 void
@@ -237,6 +239,12 @@ MainWindow::on_lstDbs_itemClicked(QListWidgetItem* item)
       ui->tblTables->setCellWidget(_row, TBL_ATTR_IDX, _cb);
     }
 
+    QPushButton * _pb = new QPushButton(ui->tblTables);
+    _pb->setText("&Gerar");
+    QObject::connect(_pb, SIGNAL(clicked()), this, SLOT(on_btnGenerateTable_clicked()));
+    ui->tblTables->setCellWidget(_row, TBL_GEN_IDX, _pb);
+
+
     adjust_tables_grid();
   }
 }
@@ -251,10 +259,40 @@ MainWindow::on_lstTables_itemClicked(QListWidgetItem* item)
 void
 MainWindow::on_btnGenerate_clicked()
 {
-  if (m_table == nullptr) {
-    QMessageBox::warning(this, "Atenção", "É preciso escolher uma tabela");
-    return;
+
+  QTableWidget * _tables = ui->tblTables;
+  int _row_count = ui->tblTables->rowCount();
+  for (int _row = 0; _row < _row_count; ++_row) {
+    QCheckBox* _cb = (QCheckBox*)(_tables->cellWidget(_row, TBL_ATTR_IDX));
+    if ((!_cb) || _cb->checkState() == Qt::CheckState::Unchecked) {
+      QMessageBox::warning(this, "Atributos não preenchidos",
+                           "É preciso gerar os atributos para " +
+                           _tables->item(_row, TBL_NAME_IDX)->text());
+      return;
+    }
+    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_PK_IDX));
+    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+      QMessageBox::warning(this, "Atributos não preenchidos",
+                           "É preciso gerar a chave primária para " +
+                           _tables->item(_row, TBL_NAME_IDX)->text());
+      return;
+    }
+    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
+    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+      QMessageBox::warning(this, "Atributos não preenchidos",
+                           "É preciso gerar as chave estrangeiras para " +
+                           _tables->item(_row, TBL_NAME_IDX)->text());
+      return;
+    }
   }
+
+}
+
+void MainWindow::on_btnGenerateTable_clicked()
+{
+  name _table_name = ui->tblTables->item(ui->tblTables->currentRow(), 0)->text().toStdString();
+  m_table = m_db->find(_table_name);
+
   TableInsertGenerator* _tig = nullptr;
   tables_windows::iterator _ite = m_tables_windows.find(m_table->get_name());
   if (_ite == m_tables_windows.end()) {
@@ -271,6 +309,11 @@ MainWindow::on_btnGenerate_clicked()
                      SIGNAL(attrs_generated(const std::string&)),
                      this,
                      SLOT(on_attrs_generated(const std::string&)));
+    QObject::connect(_tig,
+                     SIGNAL(closing(const std::string&)),
+                     this,
+                     SLOT(on_closing(const std::string&)));
+
 
     m_tables_windows.emplace(m_table->get_name(), _tig);
   } else {
@@ -279,6 +322,7 @@ MainWindow::on_btnGenerate_clicked()
 
   _tig->show();
   _tig->raise();
+
 }
 
 void
@@ -333,6 +377,25 @@ MainWindow::on_attrs_generated(std::string p_table_name)
   }
 }
 
+void MainWindow::on_closing(std::string p_table_name)
+{
+  QString _table_name(p_table_name.c_str());
+  int _num_tables = ui->tblTables->rowCount();
+  for (int _count_table = 0; _count_table < _num_tables; ++_count_table) {
+    if (ui->tblTables->item(_count_table, TBL_NAME_IDX)->text() ==
+        _table_name) {
+      QCheckBox* _cb =
+        (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_ATTR_IDX));
+      _cb->setCheckState(Qt::CheckState::Unchecked);
+      _cb = (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_PK_IDX));
+      _cb->setCheckState(Qt::CheckState::Unchecked);
+      _cb = (QCheckBox*)(ui->tblTables->cellWidget(_count_table, TBL_FK_IDX));
+      _cb->setCheckState(Qt::CheckState::Unchecked);
+    }
+  }
+
+}
+
 void
 MainWindow::on_tblTables_cellClicked(int row, int /*column*/)
 {
@@ -352,4 +415,9 @@ MainWindow::showEvent(QShowEvent* event)
 {
   adjust_tables_grid();
   QMainWindow::showEvent(event);
+}
+
+void MainWindow::on_TableInsertGenerator_destroy()
+{
+
 }
