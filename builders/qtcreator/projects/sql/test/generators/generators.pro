@@ -22,7 +22,7 @@ SOURCES += \
   ../../../../../../code/sql/test/generators/main.cpp
 
 HEADERS += \
-  ../../../../../../code/sql/test/create_abstract_model.h \
+  ../../../../../../code/sql/test/create_abstract_model_1.h \
   ../../../../../../code/sql/test/create_hosts.h
 
 

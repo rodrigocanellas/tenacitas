@@ -10,6 +10,7 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 
+#include <sql/applications/insert_generator/show_sql.h>
 #include <sql/applications/insert_generator/table_insert_generator.h>
 #include <sql/entities/hosts.h>
 #include <sql/entities/server.h>
@@ -79,6 +80,7 @@ private:
   ptr<server> m_server;
   ptr<database> m_db;
   ptr<table> m_table;
+  ShowSql * m_ShowSql = nullptr;
 
   tables_windows m_tables_windows;
 };

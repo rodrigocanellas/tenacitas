@@ -35,11 +35,13 @@ public:
   explicit TableInsertGenerator(ptr<table> p_table,
                                 ptr<tables_values> p_all_pks,
                                 QWidget* parent = nullptr);
-  ~TableInsertGenerator();
+  ~TableInsertGenerator() override;
 
   void set_generator_params(const QString& p_params);
 
-  std::string get_sql();
+  const std::string & gen_sql() ;
+
+
 
 private:
   void header_pks_definitions();
@@ -90,6 +92,7 @@ signals:
   void attrs_generated(std::string); // table name
   void closing(std::string);
 
+
 private:
   Ui::TableInsertGenerator* ui;
   ptr<table> m_table;
@@ -104,6 +107,8 @@ private:
   std::pair<QTableWidget*, int> m_current_params_cell;
 
   static const QString m_title;
+
+  std::string m_sql;
 };
 
 #endif // TABLE_INSERT_GENERATOR_H

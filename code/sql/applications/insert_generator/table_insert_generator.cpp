@@ -77,6 +77,12 @@ TableInsertGenerator::set_generator_params(const QString& p_params)
                 new QTableWidgetItem(p_params));
 }
 
+const std::string &TableInsertGenerator::gen_sql()
+{
+  m_sql = sql_generator()(m_pks_values, m_attrs_values, m_fks_values);
+  return m_sql;
+}
+
 
 void
 TableInsertGenerator::header_pks_definitions()
@@ -395,21 +401,14 @@ TableInsertGenerator::on_btnGenPks_clicked()
 void
 TableInsertGenerator::on_btnGenSql_clicked()
 {
-  std::string _sql = get_sql();
+  gen_sql();
   if (m_show_sql == nullptr) {
     m_show_sql = new ShowSql(this);
   }
 
-  m_show_sql->setSql(_sql);
+  m_show_sql->setSql(m_sql);
   m_show_sql->show();
   m_show_sql->raise();
-}
-
-std::string TableInsertGenerator::get_sql()
-{
-  sql_generator _sql_gen;
-  return _sql_gen(m_pks_values, m_attrs_values, m_fks_values);
-
 }
 
 

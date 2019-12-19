@@ -11,7 +11,7 @@ namespace test {
 using namespace capemisa::sql::entities;
 using namespace capemisa::sql::generic;
 
-struct create_abstract_model
+struct create_abstract_model_1
 {
   ptr<hosts> operator()()
   {

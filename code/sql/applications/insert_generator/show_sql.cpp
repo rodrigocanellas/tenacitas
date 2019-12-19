@@ -1,6 +1,8 @@
 #include "show_sql.h"
 #include "ui_show_sql.h"
 
+#include <sql/applications/insert_generator/table_insert_generator.h>
+
 ShowSql::ShowSql(QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::ShowSql)

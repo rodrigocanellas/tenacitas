@@ -1,6 +1,7 @@
 #include "ui_mainwindow.h"
 
 #include <cstdint>
+#include <sstream>
 
 #include <QDebug>
 #include <QCheckBox>
@@ -8,6 +9,7 @@
 #include <QString>
 #include <QTableWidgetItem>
 
+#include <sql/business/insert_generation_order.h>
 #include <sql/applications/insert_generator/mainwindow.h>
 #include <sql/entities/attribute_column.h>
 #include <sql/entities/foreign_key.h>
@@ -38,8 +40,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui->setupUi(this);
   load_hosts();
   display_hosts();
-//  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
-  //  ui->tblTables->seCol
+  ui->tblTables->setHorizontalHeaderLabels({ "nome", "PK", "FK", "Atrib", "" });
 }
 
 MainWindow::~MainWindow()
@@ -263,40 +264,71 @@ MainWindow::on_btnGenerate_clicked()
 {
 
   QTableWidget * _tables = ui->tblTables;
-//  int _row_count = ui->tblTables->rowCount();
-//  for (int _row = 0; _row < _row_count; ++_row) {
-//    QCheckBox* _cb = (QCheckBox*)(_tables->cellWidget(_row, TBL_ATTR_IDX));
-//    if ((!_cb) || _cb->checkState() == Qt::CheckState::Unchecked) {
-//      QMessageBox::warning(this, "Atributos não preenchidos",
-//                           "É preciso gerar os atributos para " +
-//                           _tables->item(_row, TBL_NAME_IDX)->text());
-//      return;
-//    }
-//    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_PK_IDX));
-//    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
-//      QMessageBox::warning(this, "Atributos não preenchidos",
-//                           "É preciso gerar a chave primária para " +
-//                           _tables->item(_row, TBL_NAME_IDX)->text());
-//      return;
-//    }
-//    _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
-//    if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
-//      QMessageBox::warning(this, "Atributos não preenchidos",
-//                           "É preciso gerar as chaves estrangeiras para " +
-//                           _tables->item(_row, TBL_NAME_IDX)->text());
-//      return;
-//    }
-//  }
+  {
+    int _row_count = ui->tblTables->rowCount();
+    for (int _row = 0; _row < _row_count; ++_row) {
+      QCheckBox* _cb = nullptr;
+      name _table_name = _tables->item(_row, TBL_NAME_IDX)->text().toStdString();
+      ptr<table> _table = m_db->find(_table_name);
+      if (_table->get_num_attrs() > 0) {
+        _cb = (QCheckBox*)(_tables->cellWidget(_row, TBL_ATTR_IDX));
+        if ((!_cb) || _cb->checkState() == Qt::CheckState::Unchecked) {
+          QMessageBox::warning(this, "Atributos não preenchidos",
+                               "É preciso gerar os atributos para " +
+                               _tables->item(_row, TBL_NAME_IDX)->text());
+          return;
+        }
+      }
 
-  traverse_tables _traverse;
-  const name _table_name = _tables->item(0, TBL_NAME_IDX)->text().toStdString();
-  ptr<table> _table = m_db->find(_table_name);
-  if (_table) {
-    _traverse(_table.get(),
-              [](const table * const p_table) -> void {
-      qDebug() << p_table->get_name().c_str();
-    });
+
+      if (_table->get_primary_key()->get_num_pks_cols()>0) {
+        _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_PK_IDX));
+        if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+          QMessageBox::warning(this, "Atributos não preenchidos",
+                               "É preciso gerar a chave primária para " +
+                               _tables->item(_row, TBL_NAME_IDX)->text());
+          return;
+        }
+      }
+
+      if (_table->get_num_fks() > 0) {
+        _cb = (QCheckBox*)(ui->tblTables->cellWidget(_row, TBL_FK_IDX));
+        if ((!_cb) ||_cb->checkState() == Qt::CheckState::Unchecked) {
+          QMessageBox::warning(this, "Atributos não preenchidos",
+                               "É preciso gerar as chaves estrangeiras para " +
+                               _tables->item(_row, TBL_NAME_IDX)->text());
+          return;
+        }
+      }
+    }
   }
+
+  std::list<name> _names = insert_generation_order()(m_db);
+
+
+  std::stringstream _stream;
+  for (const name & _name : _names) {
+    int _row_count = _tables->rowCount();
+    for (int _row = 0; _row < _row_count; ++_row) {
+      QString _current_name(_tables->item(_row, TBL_NAME_IDX)->text());
+      if ( _current_name.toStdString() == _name) {
+        tables_windows::iterator _ite = m_tables_windows.find(_name);
+        if (_ite == m_tables_windows.end()) {
+          throw std::runtime_error("Janela de definição de 'insert' para a tabela " +
+                                   _name + " não encontrada");
+        }
+        std::string _sql = _ite->second->gen_sql();
+        _stream << _sql << std::endl;
+      }
+    }
+  }
+  if (m_ShowSql == nullptr) {
+    m_ShowSql = new ShowSql(this);
+  }
+  m_ShowSql->setSql(_stream.str());
+  m_ShowSql->show();
+  m_ShowSql->raise();
+
 
 }
 

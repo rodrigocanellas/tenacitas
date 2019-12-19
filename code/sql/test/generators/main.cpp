@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -7,6 +8,7 @@
 #include <iostream>
 #include <utility>
 
+#include <sql/business/insert_generation_order.h>
 #include <sql/business/traverse_tables.h>
 #include <sql/business/number_value_generator.h>
 #include <sql/business/one_pk_all_fks.h>
@@ -21,7 +23,7 @@
 #include <sql/entities/table.h>
 #include <sql/entities/value.h>
 #include <sql/generic/ptr.h>
-#include <sql/test/create_abstract_model.h>
+#include <sql/test/create_abstract_model_1.h>
 #include <sql/test/create_hosts.h>
 
 #define day_in_secs 24 * 60 * 60
@@ -269,7 +271,7 @@ abstract_1()
 
   cout << "\nABSTRACT 1" << endl;
 
-  create_abstract_model _cam;
+  create_abstract_model_1 _cam;
 
   ptr<hosts> _hosts = _cam();
   ptr<host> _host = (*_hosts)[0];
@@ -314,7 +316,7 @@ abstract_1()
 }
 
 void
-abstract_2()
+traverse_1()
 {
   using namespace capemisa::sql::entities;
   using namespace capemisa::sql::generic;
@@ -322,26 +324,40 @@ abstract_2()
   using namespace capemisa::sql::test;
   using namespace std;
 
-  cout << "\nABSTRACT 2" << endl;
+  cout << "\nTRAVERSE 1" << endl;
 
-  create_abstract_model _cam;
+  create_abstract_model_1 _cam;
 
   ptr<hosts> _hosts = _cam();
   ptr<host> _host = (*_hosts)[0];
   ptr<server> _server = _host->get_server(0);
   ptr<database> _db = _server->get_database(0);
 
-  ptr<table> _table = _db->find("E");
+  std::list<name> _names = insert_generation_order()(_db);
 
-  if (_table == nullptr) {
-    throw std::runtime_error("não foi possível achar a tabela 'E'");
+  for (const name & _name : _names) {
+    std::cout << _name << std::endl;
   }
+}
 
-  std::list<name> _names;
-  traverse_tables _tt;
-  _tt(_table.get(), [&_names](const table * const p_table) -> void {
-    _names.push_front(p_table->get_name());
-  });
+void
+traverse_2()
+{
+  using namespace capemisa::sql::entities;
+  using namespace capemisa::sql::generic;
+  using namespace capemisa::sql::business;
+  using namespace capemisa::sql::test;
+  using namespace std;
+
+  cout << "\nTRAVERSE 2" << endl;
+
+  create_hosts _create_hosts;
+  hosts _hosts(_create_hosts());
+  ptr<host> _host = _hosts[0];
+  ptr<server> _server = _host->get_server(0);
+  ptr<database> _db = _server->get_database(0);
+
+  std::list<name> _names(insert_generation_order()(_db));
 
   for (const name & _name : _names) {
     std::cout << _name << std::endl;
@@ -357,5 +373,6 @@ main()
   text_generator();
   not_all_tables_generated_1();
   abstract_1();
-  abstract_2();
+  traverse_1();
+  traverse_2();
 }
