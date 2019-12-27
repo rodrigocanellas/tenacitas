@@ -93,7 +93,6 @@ sql_generator::operator()(generic::ptr<const entities::table_values> p_pks,
     }
 
     if ((p_attrs != nullptr) && (p_attrs->get_num_cols() > 0)) {
-      _stream << ", ";
       uint16_t _num_cols = p_attrs->get_num_cols();
       for (uint16_t _col_count = 0; _col_count < _num_cols; ++_col_count) {
         _stream << p_attrs->get_column_values(_col_count)
