@@ -111,15 +111,13 @@ struct month
 
   inline operator amount<month>() const { return amount<month>(m_value); }
 
-  static inline amount<day> days(const month& p_month, const year& p_year);
+  static amount<day> days(const month& p_month, const year& p_year);
 
-  static inline amount<hour> hours(const month& p_month, const year& p_year);
+  static amount<hour> hours(const month& p_month, const year& p_year);
 
-  static inline amount<minute> minutes(const month& p_month,
-                                       const year& p_year);
+  static amount<minute> minutes(const month& p_month, const year& p_year);
 
-  static inline amount<second> seconds(const month& p_month,
-                                       const year& p_year);
+  static amount<second> seconds(const month& p_month, const year& p_year);
 
 private:
   inline explicit month(uint8_t p_value)

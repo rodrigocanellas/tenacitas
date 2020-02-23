@@ -259,9 +259,9 @@ private:
     if (m_level == level::no_log) {
       return false;
     }
-    if (p_level == level::test) {
-      return true;
-    }
+    //    if (p_level == level::test) {
+    //      return true;
+    //    }
     if ((p_level == level::error) || (p_level == level::fatal)) {
       return true;
     }
