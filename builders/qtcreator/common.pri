@@ -1,6 +1,3 @@
-;; This buffer is for text that is not saved, and for Lisp evaluation.
-;; To create a file, visit it with C-x C-f and enter text in its buffer.
-
 #CONFIG(debug, debug|release) {
 #    build_type=debug
 #    message("This is debug mode or debug_and_release")
@@ -9,7 +6,7 @@
 #    message("This is release mode or debug_and_release")
 #}
 
-CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
 
 
 
@@ -70,9 +67,9 @@ equals(TEMPLATE,app) {
 
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
-    CONFIG += shared_and_static
-#    CONFIG += staticlib
-#build_all
+    ! contains(CONFIG,staticlib) {
+      CONFIG += shared_and_static
+    }
 }
 
 
