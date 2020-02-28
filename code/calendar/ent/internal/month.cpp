@@ -1,18 +1,18 @@
-#include <calendar/entities/month.h>
-#include <calendar/entities/year.h>
+#include <calendar/ent/month.h>
+#include <calendar/ent/year.h>
 
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/entities/amount.h>
-#include <calendar/entities/day.h>
-#include <calendar/entities/hour.h>
-#include <calendar/entities/minute.h>
-#include <calendar/entities/second.h>
+#include <calendar/ent/amount.h>
+#include <calendar/ent/day.h>
+#include <calendar/ent/hour.h>
+#include <calendar/ent/minute.h>
+#include <calendar/ent/second.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 const month month::jan(0);
 const month month::feb(1);
@@ -94,6 +94,6 @@ month::seconds(const month& p_month, const year& p_year)
   return minute::seconds() * minutes(p_month, p_year);
 }
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas

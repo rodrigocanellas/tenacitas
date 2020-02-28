@@ -5,19 +5,19 @@
 #include <ctime>
 #include <iostream>
 
-#include <calendar/entities/amount.h>
-#include <calendar/entities/day.h>
-#include <calendar/entities/hour.h>
-#include <calendar/entities/minute.h>
-#include <calendar/entities/month.h>
-#include <calendar/entities/second.h>
-#include <calendar/entities/timestamp.h>
-#include <calendar/entities/weekday.h>
-#include <calendar/entities/year.h>
+#include <calendar/ent/amount.h>
+#include <calendar/ent/day.h>
+#include <calendar/ent/hour.h>
+#include <calendar/ent/minute.h>
+#include <calendar/ent/month.h>
+#include <calendar/ent/second.h>
+#include <calendar/ent/timestamp.h>
+#include <calendar/ent/weekday.h>
+#include <calendar/ent/year.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 template<>
 struct timestamp<second>
@@ -316,7 +316,7 @@ private:
   struct tm m_tm;
 };
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

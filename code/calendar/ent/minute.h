@@ -4,12 +4,12 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/entities/amount.h>
-#include <calendar/entities/second.h>
+#include <calendar/ent/amount.h>
+#include <calendar/ent/second.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 /**
  * @brief The minute struct
  */
@@ -258,7 +258,7 @@ private:
   uint8_t m_value;
 };
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

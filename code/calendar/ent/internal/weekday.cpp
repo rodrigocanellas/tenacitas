@@ -1,8 +1,8 @@
-#include <calendar/entities/weekday.h>
+#include <calendar/ent/weekday.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 const weekday weekday::sun(0);
 const weekday weekday::mon(1);
@@ -12,6 +12,6 @@ const weekday weekday::thu(4);
 const weekday weekday::fri(5);
 const weekday weekday::sat(6);
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas

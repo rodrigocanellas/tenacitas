@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  entities \
-  test
+  ent \
+  tst

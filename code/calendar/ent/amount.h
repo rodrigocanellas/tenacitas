@@ -6,7 +6,7 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 /**
  * amount
@@ -126,7 +126,7 @@ private:
   int64_t m_value;
 };
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

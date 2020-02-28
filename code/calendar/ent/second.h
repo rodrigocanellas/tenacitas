@@ -4,11 +4,11 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/entities/amount.h>
+#include <calendar/ent/amount.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 /**
  * @brief The second struct
@@ -255,7 +255,7 @@ private:
   uint8_t m_value;
 };
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

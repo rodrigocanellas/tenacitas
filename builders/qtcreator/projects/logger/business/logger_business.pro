@@ -10,7 +10,6 @@ VERSION = 0.0.1
 
 TARGET = tenacitas.logger.business
 
-
 HEADERS += \
     ../../../../../code/logger/business/log.h \
     ../../../../../code/logger/business/cerr.h \

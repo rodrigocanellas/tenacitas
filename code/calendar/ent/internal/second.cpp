@@ -1,8 +1,8 @@
-#include <calendar/entities/second.h>
+#include <calendar/ent/second.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 const second second::s00(0);
 const second second::s01(1);
@@ -65,6 +65,6 @@ const second second::s57(57);
 const second second::s58(58);
 const second second::s59(59);
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas

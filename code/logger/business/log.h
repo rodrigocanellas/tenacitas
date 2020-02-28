@@ -11,7 +11,7 @@
 #include <string>
 #include <thread>
 
-#include <calendar/business/epoch.h>
+#include <calendar/bus/epoch.h>
 #include <logger/business/internal/level.h>
 #include <type/business/enum.h>
 
@@ -235,7 +235,7 @@ private:
       std::ostringstream _stream;
       //            _stream << type::business::e2t(p_level) << m_separator
       _stream << "" << level2str(p_level) << m_separator
-              << tenacitas::calendar::business::epoch::millisecs()
+              << tenacitas::calendar::bus::epoch::millisecs()
               << m_separator << std::this_thread::get_id() << m_separator
               << p_class << m_separator << p_line;
       format(_stream, m_separator, p_params...);

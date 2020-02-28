@@ -5,18 +5,18 @@ CONFIG -= qt
 CONFIG+=test
 
 SOURCES += \
-  ../../../../../../code/calendar/test/entities/main.cpp
+  ../../../../../../code/calendar/tst/ent/main.cpp
 
 
 
 QMAKE_CXXFLAGS += -std=c++11
 
 
-TARGET = tenacitas.calendar.test.entities
+TARGET = tenacitas.calendar.tst.ent
 
 
 include (../../../../common.pri)
 
 LIBS += -ltenacitas.tester.business
 LIBS += -ltenacitas.logger.business
-LIBS += -ltenacitas.calendar.entities
+LIBS += $$libs_dir/libtenacitas.calendar.ent.$$static_lib_ext

@@ -8,12 +8,12 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 template<typename t_time_precision>
 struct timestamp;
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

@@ -110,7 +110,7 @@ message("bins_dir = "$$bins_dir)
 message("QMAKE_CXXFLAGS = "$$QMAKE_CXXFLAGS)
 message("CONFIG = "$$CONFIG)
 message("QMAKESPEC = "$$QMAKESPEC)
-
+message("static_lib_ext = "$$static_lib_ext)
 
 
 

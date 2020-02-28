@@ -5,7 +5,7 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace business {
+namespace bus {
 
 inline int64_t
 sec2mil(int64_t p_secs)

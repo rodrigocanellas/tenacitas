@@ -4,10 +4,10 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
-#include <calendar/entities/timestamp_second.h>
+#include <calendar/ent/timestamp_second.h>
 
 using namespace tenacitas::logger::business;
-using namespace tenacitas::calendar::entities;
+using namespace tenacitas::calendar::ent;
 
 struct test000
 {
@@ -33,7 +33,7 @@ struct test000
        amount<minute>(_ts.get_minute()).get<decltype(_tm->tm_min)>()) &&
       (_tm->tm_sec ==
        amount<second>(_ts.get_second()).get<decltype(_tm->tm_sec)>()));
-  };
+  }
 };
 
 struct test001
@@ -41,7 +41,7 @@ struct test001
   bool operator()()
   {
     return (weekday::wed - weekday::mon).get<uint8_t>() == 2;
-  };
+  }
 };
 
 struct test002
@@ -49,7 +49,7 @@ struct test002
   bool operator()()
   {
     return (weekday::mon - weekday::wed).get<uint8_t>() == 5;
-  };
+  }
 };
 
 struct test003
@@ -63,7 +63,7 @@ struct test003
             _ts2.get_day() == day::d01 && _ts2.get_hour() == hour::h00 &&
             _ts2.get_minute() == minute::m00 &&
             _ts2.get_second() == second::s00);
-  };
+  }
 };
 
 int

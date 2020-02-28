@@ -12,8 +12,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <calendar/business/conversions.h>
-#include <calendar/business/epoch.h>
+#include <calendar/bus/conversions.h>
+#include <calendar/bus/epoch.h>
 #include <concurrent/business/sleeping_loop.h>
 #include <logger/business/log.h>
 #include <string/business/max_str_length.h>
@@ -58,7 +58,7 @@ struct file_controller
     const std::string& p_base_name = "log",
     uint32_t p_max_file_size = 10 * 1024 * 1024,
     std::chrono::minutes p_retention =
-      std::chrono::minutes(calendar::business::day2min(2)),
+      std::chrono::minutes(calendar::bus::day2min(2)),
     const std::string& p_closed_extension = "closed")
     : m_path(std::move(p_path))
     , m_base_name(std::move(p_base_name))
@@ -70,14 +70,14 @@ struct file_controller
         m_path,
         m_base_name,
         m_closed_extension,
-        std::chrono::seconds(calendar::business::min2sec(p_retention.count())))
+        std::chrono::seconds(calendar::bus::min2sec(p_retention.count())))
     , m_sleeping_loop(
         std::chrono::milliseconds(
-          calendar::business::min2mil(p_retention.count())),
+          calendar::bus::min2mil(p_retention.count())),
         [this]() -> concurrent::business::work_status {
           return this->m_deleter();
         },
-        std::chrono::milliseconds(calendar::business::min2mil(20)))
+        std::chrono::milliseconds(calendar::bus::min2mil(20)))
   {}
 
   file_controller() = delete;
@@ -211,7 +211,7 @@ private:
   ///
   void update_last()
   {
-    uint64_t _id = calendar::business::epoch::microsecs();
+    uint64_t _id = calendar::bus::epoch::microsecs();
     if (_id == m_last) {
       m_last = _id + 1;
     } else {

@@ -1,8 +1,8 @@
-#include <calendar/entities/hour.h>
+#include <calendar/ent/hour.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 const hour hour::h00(0);
 const hour hour::h01(1);
 const hour hour::h02(2);
@@ -28,6 +28,6 @@ const hour hour::h21(21);
 const hour hour::h22(22);
 const hour hour::h23(23);
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas

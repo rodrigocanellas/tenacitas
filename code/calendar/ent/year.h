@@ -4,16 +4,16 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/entities/amount.h>
-#include <calendar/entities/day.h>
-#include <calendar/entities/hour.h>
-#include <calendar/entities/minute.h>
-#include <calendar/entities/month.h>
-#include <calendar/entities/second.h>
+#include <calendar/ent/amount.h>
+#include <calendar/ent/day.h>
+#include <calendar/ent/hour.h>
+#include <calendar/ent/minute.h>
+#include <calendar/ent/month.h>
+#include <calendar/ent/second.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 /**
  * @brief The year struct
@@ -139,7 +139,7 @@ private:
   uint16_t m_value;
 };
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 

@@ -1,8 +1,8 @@
-#include <calendar/entities/day.h>
+#include <calendar/ent/day.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace entities {
+namespace ent {
 
 const day day::d01(1);
 const day day::d02(2);
@@ -36,6 +36,6 @@ const day day::d29(29);
 const day day::d30(30);
 const day day::d31(31);
 
-} // namespace entities
+} // namespace ent
 } // namespace calendar
 } // namespace tenacitas
