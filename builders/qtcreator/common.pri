@@ -6,7 +6,7 @@
 #    message("This is release mode or debug_and_release")
 #}
 
-CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++11
 
 
 
@@ -67,9 +67,9 @@ equals(TEMPLATE,app) {
 
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
-    CONFIG += shared_and_static
-#    CONFIG += staticlib
-#build_all
+    ! contains(CONFIG,staticlib) {
+      CONFIG += shared_and_static
+    }
 }
 
 

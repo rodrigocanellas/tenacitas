@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <dirent.h>
 #include <iomanip>
 #include <sstream>
@@ -73,7 +74,9 @@ struct file_controller
     , m_sleeping_loop(
         std::chrono::milliseconds(
           calendar::business::min2mil(p_retention.count())),
-        [this]() -> concurrent::business::work_status { return this->m_deleter(); },
+        [this]() -> concurrent::business::work_status {
+          return this->m_deleter();
+        },
         std::chrono::milliseconds(calendar::business::min2mil(20)))
   {}
 
@@ -89,10 +92,11 @@ struct file_controller
     , m_pid(p_controller.m_pid)
     , m_max_file_size(p_controller.m_max_file_size)
     , m_deleter(std::move(p_controller.m_deleter))
-    , m_sleeping_loop(
-        p_controller.m_sleeping_loop.get_interval(),
-        [this]() -> concurrent::business::work_status { return this->m_deleter(); },
-        p_controller.m_sleeping_loop.get_timeout())
+    , m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
+                      [this]() -> concurrent::business::work_status {
+                        return this->m_deleter();
+                      },
+                      p_controller.m_sleeping_loop.get_timeout())
   {}
 
   ~file_controller() { m_sleeping_loop.stop(); }
@@ -137,8 +141,7 @@ private:
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
   ///
-  typedef concurrent::business::sleeping_loop_t<void, log>
-    sleeping_loop;
+  typedef concurrent::business::sleeping_loop_t<void, log> sleeping_loop;
 
   struct deleter
   {
