@@ -8,9 +8,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * amount
- */
+/// amount represents an amount of some type of time
+///
+/// @tparam t_time_precision defines a type of time, like 'day', 'month'
 template<typename t_time_precision>
 struct amount
 {
@@ -116,10 +116,13 @@ struct amount
     return amount(m_value % p_amount.template get<decltype(m_value)>());
   }
 
-  template<typename t_int>
-  inline t_int get() const
+  /// explicit cast to some type of number
+  ///
+  /// @tparam t_int is a type of number
+  template<typename t_number>
+  inline t_number get() const
   {
-    return static_cast<t_int>(m_value);
+    return static_cast<t_number>(m_value);
   }
 
 private:

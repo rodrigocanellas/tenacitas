@@ -10,9 +10,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * @brief The second struct
- */
+///
+/// \brief The second struct represents a valid second value
+///
 struct second
 {
   friend struct amount<second>;

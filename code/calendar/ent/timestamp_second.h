@@ -19,10 +19,17 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
+///
+/// \brief specialization of \p timestamp template class, with precision up to
+/// \p second
+///
 template<>
 struct timestamp<second>
 {
-  timestamp()
+  ///
+  /// \brief timestamp default constructor creates a timestamp for now
+  ///
+  inline timestamp()
     : m_time(time(nullptr))
     , m_tm()
   {
@@ -30,61 +37,60 @@ struct timestamp<second>
     memcpy(&m_tm, _tm, sizeof(struct tm));
   }
 
+  ///
+  /// \brief timestamp creates a timestamp by informing day, month, year, hour,
+  /// minute and second \param p_year \param p_month \param p_day \param p_hour
+  /// \param p_minute
+  /// \param p_second
+  ///
   timestamp(year p_year,
             month p_month,
             day p_day,
             hour p_hour = hour::h00,
             minute p_minute = minute::m00,
-            second p_second = second::s00)
-  {
-    m_tm.tm_year =
-      (amount<year>(p_year) - amount<year>(1900)).get<decltype(m_tm.tm_year)>();
-
-    m_tm.tm_mon = amount<month>(p_month).get<decltype(m_tm.tm_mon)>();
-    m_tm.tm_mday = amount<day>(p_day).get<decltype(m_tm.tm_mday)>();
-    m_tm.tm_hour = amount<hour>(p_hour).get<decltype(m_tm.tm_hour)>();
-    m_tm.tm_min = amount<minute>(p_minute).get<decltype(m_tm.tm_min)>();
-    m_tm.tm_sec = amount<second>(p_second).get<decltype(m_tm.tm_sec)>();
-    m_time = mktime(&m_tm);
-    if (m_time == -1) {
-      throw std::runtime_error(
-        std::to_string(m_tm.tm_mday) + "/" + std::to_string(m_tm.tm_mon + 1) +
-        "/" + std::to_string(m_tm.tm_year) + " is not a valid date");
-    }
-  }
-
-  timestamp(const timestamp& p_timestamp)
+            second p_second = second::s00);
+  ///
+  /// \brief timestamp copy constructor
+  /// \param p_timestamp timestamp to be copied
+  ///
+  inline timestamp(const timestamp& p_timestamp)
     : m_time(p_timestamp.m_time)
     , m_tm()
   {
     memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
   }
 
-  timestamp(timestamp&& p_timestamp)
+  ///
+  /// \brief timestamp move constructor
+  /// \param p_timestamp timestamp to be moved
+  ///
+  inline timestamp(timestamp&& p_timestamp)
     : m_time(std::move(p_timestamp.m_time))
     , m_tm()
   {
     memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
   }
 
-  timestamp& operator=(const timestamp& p_timestamp)
-  {
-    if (this != &p_timestamp) {
-      m_time = p_timestamp.m_time;
-      memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
-    }
-    return *this;
-  }
+  ///
+  /// \brief operator = copy assignment
+  /// \param p_timestamp
+  /// \return
+  ///
+  timestamp& operator=(const timestamp& p_timestamp);
 
-  timestamp& operator=(timestamp&& p_timestamp)
-  {
-    if (this != &p_timestamp) {
-      m_time = std::move(p_timestamp.m_time);
-      memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
-    }
-    return *this;
-  }
+  ///
+  /// \brief operator = move assignment
+  /// \param p_timestamp
+  /// \return
+  ///
+  timestamp& operator=(timestamp&& p_timestamp);
 
+  ///
+  /// \brief operator <<
+  /// \param p_out
+  /// \param p_ts
+  /// \return
+  ///
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const timestamp& p_ts)
   {
@@ -95,221 +101,275 @@ struct timestamp<second>
     return p_out;
   }
 
+  ///
+  /// \brief get_second
+  /// \return
+  ///
   inline second get_second() const { return second::create(m_tm.tm_sec); }
+
+  ///
+  /// \brief get_minute
+  /// \return
+  ///
   inline minute get_minute() const { return minute::create(m_tm.tm_min); }
+
+  ///
+  /// \brief get_hour
+  /// \return
+  ///
   inline hour get_hour() const { return hour::create(m_tm.tm_hour); }
+
+  ///
+  /// \brief get_day
+  /// \return
+  ///
   inline day get_day() const { return day::create(m_tm.tm_mday); }
+
+  ///
+  /// \brief get_weekday
+  /// \return
+  ///
   inline weekday get_weekday() const { return weekday::create(m_tm.tm_wday); }
+
+  ///
+  /// \brief get_month
+  /// \return
+  ///
   inline month get_month() const { return month::create(m_tm.tm_mon); }
+
+  ///
+  /// \brief get_year
+  /// \return
+  ///
   inline year get_year() const { return year(m_tm.tm_year + 1900); }
 
+  ///
+  /// \brief operator ==
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator==(const timestamp& p_ts) const
   {
     return m_time == p_ts.m_time;
   }
 
+  ///
+  /// \brief operator !=
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator!=(const timestamp& p_ts) const
   {
     return m_time != p_ts.m_time;
   }
 
+  ///
+  /// \brief operator >
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator>(const timestamp& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
 
+  ///
+  /// \brief operator <
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator<(const timestamp& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
 
+  ///
+  /// \brief operator >=
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator>=(const timestamp& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
 
+  ///
+  /// \brief operator <=
+  /// \param p_ts
+  /// \return
+  ///
   inline bool operator<=(const timestamp& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
 
-  timestamp& operator+=(amount<second> p_seconds)
-  {
-    m_time += p_seconds.get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp& operator+=(amount<second> p_seconds);
 
-  timestamp operator+(amount<second> p_seconds)
-  {
-    timestamp _new(*this);
-    _new += p_seconds;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp operator+(amount<second> p_seconds);
 
-  timestamp& operator-=(amount<second> p_seconds)
-  {
-    m_time -= p_seconds.get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp& operator-=(amount<second> p_seconds);
 
-  timestamp operator-(amount<second> p_seconds)
-  {
-    timestamp _new(*this);
-    _new -= p_seconds;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp operator-(amount<second> p_seconds);
 
-  timestamp& operator+=(amount<minute> p_minutes)
-  {
-    m_time += (minute::seconds() * p_minutes).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp& operator+=(amount<minute> p_minutes);
 
-  timestamp operator+(amount<minute> p_minutes)
-  {
-    timestamp _new(*this);
-    _new += p_minutes;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp operator+(amount<minute> p_minutes);
 
-  timestamp& operator-=(amount<minute> p_minutes)
-  {
-    m_time -= (minute::seconds() * p_minutes).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp& operator-=(amount<minute> p_minutes);
 
-  timestamp operator-(amount<minute> p_minutes)
-  {
-    timestamp _new(*this);
-    _new -= p_minutes;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp operator-(amount<minute> p_minutes);
 
-  timestamp& operator+=(amount<day> p_days)
-  {
-    m_time += (day::seconds() * p_days).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_days
+  /// \return
+  ///
+  timestamp& operator+=(amount<day> p_days);
 
-  timestamp operator+(amount<day> p_days)
-  {
-    timestamp _new(*this);
-    _new += p_days;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_days
+  /// \return
+  ///
+  timestamp operator+(amount<day> p_days);
 
-  timestamp& operator-=(amount<day> p_days)
-  {
-    m_time -= (day::seconds() * p_days).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_days
+  /// \return
+  ///
+  timestamp& operator-=(amount<day> p_days);
 
-  timestamp operator-(amount<day> p_days)
-  {
-    timestamp _new(*this);
-    _new -= p_days;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_days
+  /// \return
+  ///
+  timestamp operator-(amount<day> p_days);
 
-  timestamp& operator+=(amount<weekday> p_weeks)
-  {
-    m_time += (weekday::seconds() * p_weeks).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp& operator+=(amount<weekday> p_weeks);
 
-  timestamp operator+(amount<weekday> p_weeks)
-  {
-    timestamp _new(*this);
-    _new += p_weeks;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp operator+(amount<weekday> p_weeks);
 
-  timestamp& operator-=(amount<weekday> p_weeks)
-  {
-    m_time -= (weekday::seconds() * p_weeks).get<decltype(m_time)>();
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp& operator-=(amount<weekday> p_weeks);
 
-  timestamp operator-(amount<weekday> p_weeks)
-  {
-    timestamp _new(*this);
-    _new -= p_weeks;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp operator-(amount<weekday> p_weeks);
 
-  timestamp& operator+=(amount<month> p_months)
-  {
-    m_tm.tm_mon += p_months.get<decltype(m_tm.tm_mon)>() % 12;
-    m_tm.tm_year += p_months.get<decltype(m_tm.tm_year)>() / 12;
-    m_time = mktime(&m_tm);
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_months
+  /// \return
+  ///
+  timestamp& operator+=(amount<month> p_months);
 
-  timestamp operator+(amount<month> p_months)
-  {
-    timestamp _new(*this);
-    _new += p_months;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_months
+  /// \return
+  ///
+  timestamp operator+(amount<month> p_months);
 
-  timestamp& operator-=(amount<month> p_months)
-  {
-    m_tm.tm_mon -= p_months.get<decltype(m_tm.tm_mon)>() % 12;
-    m_tm.tm_year -= p_months.get<decltype(m_tm.tm_year)>() / 12;
-    m_time = mktime(&m_tm);
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_months
+  /// \return
+  ///
+  timestamp& operator-=(amount<month> p_months);
 
-  timestamp operator-(amount<month> p_months)
-  {
-    timestamp _new(*this);
-    _new -= p_months;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_months
+  /// \return
+  ///
+  timestamp operator-(amount<month> p_months);
 
-  timestamp operator+=(amount<year> p_years)
-  {
-    m_tm.tm_year += p_years.get<decltype(m_tm.tm_year)>();
-    m_time = mktime(&m_tm);
-    return *this;
-  }
+  ///
+  /// \brief operator +=
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator+=(amount<year> p_years);
 
-  timestamp operator+(amount<year> p_years)
-  {
-    timestamp _new(*this);
-    _new += p_years;
-    return _new;
-  }
+  ///
+  /// \brief operator +
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator+(amount<year> p_years);
 
-  timestamp operator-=(amount<year> p_years)
-  {
-    m_tm.tm_year -= p_years.get<decltype(m_tm.tm_year)>();
-    m_time = mktime(&m_tm);
-    return *this;
-  }
+  ///
+  /// \brief operator -=
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator-=(amount<year> p_years);
 
-  timestamp operator-(amount<year> p_years)
-  {
-    timestamp _new(*this);
-    _new -= p_years;
-    return _new;
-  }
+  ///
+  /// \brief operator -
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator-(amount<year> p_years);
 
 private:
   time_t m_time = -1;

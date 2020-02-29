@@ -16,9 +16,9 @@ namespace ent {
 
 struct year;
 
-/**
- * @brief The month struct
- */
+///
+/// \brief The month struct represents a valid month value
+///
 struct month
 {
   friend struct amount<month>;

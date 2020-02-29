@@ -13,9 +13,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * @brief The day struct
- */
+///
+/// \brief The day struct represents a valid day value
+///
 struct day
 {
   friend struct amount<day>;

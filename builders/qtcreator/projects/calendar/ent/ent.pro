@@ -28,6 +28,7 @@ SOURCES += \
   ../../../../../code/calendar/ent/internal/minute.cpp \
   ../../../../../code/calendar/ent/internal/month.cpp \
   ../../../../../code/calendar/ent/internal/second.cpp \
+  ../../../../../code/calendar/ent/internal/timestamp_second.cpp \
   ../../../../../code/calendar/ent/internal/weekday.cpp
 
 

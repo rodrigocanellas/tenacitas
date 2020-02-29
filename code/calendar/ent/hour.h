@@ -12,9 +12,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * @brief The hour struct
- */
+///
+/// \brief The hour struct represents a valid hour value
+///
 struct hour
 {
   friend struct amount<hour>;

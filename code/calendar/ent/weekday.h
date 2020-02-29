@@ -14,9 +14,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * @brief The weekday struct
- */
+///
+/// \brief The weekday struct represents valid a weekday value
+///
 struct weekday
 {
   friend struct amount<weekday>;

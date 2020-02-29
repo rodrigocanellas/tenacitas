@@ -10,9 +10,10 @@
 namespace tenacitas {
 namespace calendar {
 namespace ent {
-/**
- * @brief The minute struct
- */
+
+///
+/// \brief The minute struct represents a valid minute value
+///
 struct minute
 {
 

@@ -10,6 +10,10 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
+///
+/// \brief base classe for timestamp definition, dependent on a time precision
+///
+/// \tparam t_time_precision is the type of time, like 'day' or 'month'
 template<typename t_time_precision>
 struct timestamp;
 

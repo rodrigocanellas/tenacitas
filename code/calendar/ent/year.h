@@ -15,9 +15,9 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-/**
- * @brief The year struct
- */
+///
+/// \brief The year struct represents a year
+///
 struct year
 {
 
