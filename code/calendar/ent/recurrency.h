@@ -1,15 +1,15 @@
-#ifndef TENACITAS_PERIODICITY_ENTITIES_RECURRENCY_H
-#define TENACITAS_PERIODICITY_ENTITIES_RECURRENCY_H
+#ifndef TENACITAS_CALENDAR_ENT_RECURRENCY_H
+#define TENACITAS_CALENDAR_ENT_RECURRENCY_H
 
-#include <periodicity/entities/types_of_ending.h>
-#include <periodicity/entities/types_of_repetition.h>
+
+#include <calendar/ent/types_of_repetition.h>
 
 namespace tenacitas {
-namespace periodicity {
-namespace entities {
+namespace calendar {
+namespace ent {
 
 template<types_of_repetition t_type_of_repetition,
-         types_of_ending t_type_of_ending>
+         ending_types t_type_of_ending>
 struct recurrency_t;
 
 } // namespace entities

@@ -14,7 +14,7 @@ struct test000
   bool operator()()
   {
 
-    timestamp<second> _ts;
+    timestamp_t<second> _ts;
 
     time_t _time = time(nullptr);
 
@@ -36,36 +36,6 @@ struct test000
   }
 };
 
-struct test001
-{
-  bool operator()()
-  {
-    return (weekday::wed - weekday::mon).get<uint8_t>() == 2;
-  }
-};
-
-struct test002
-{
-  bool operator()()
-  {
-    return (weekday::mon - weekday::wed).get<uint8_t>() == 5;
-  }
-};
-
-struct test003
-{
-  bool operator()()
-  {
-    timestamp<second> _ts1(year(2020), month::mar, day::d01);
-    timestamp<second> _ts2 = _ts1 + amount<month>(6);
-
-    return (_ts2.get_year() == year(2020) && _ts2.get_month() == month::sep &&
-            _ts2.get_day() == day::d01 && _ts2.get_hour() == hour::h00 &&
-            _ts2.get_minute() == minute::m00 &&
-            _ts2.get_second() == second::s00);
-  }
-};
-
 int
 main(int argc, char** argv)
 {
@@ -75,7 +45,4 @@ main(int argc, char** argv)
     argc,
     argv,
     "Compares \"now\" timestamp create with 'timestamp' and with 'time'.");
-  run_test(test001, argc, argv, "'wed' - 'mon' should be 2");
-  run_test(test002, argc, argv, "'mon' - 'wed' should be 5");
-  run_test(test003, argc, argv, "01/mar/2020 + 6 months should be 01/sep/2020");
 }

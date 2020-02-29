@@ -1,11 +1,11 @@
-#ifndef TENACITAS_PERIODICITY_ENTITIES_NUMBER_OF_DAYS_H
-#define TENACITAS_PERIODICITY_ENTITIES_NUMBER_OF_DAYS_H
+#ifndef TENACITAS_CALENDAR_ENT_NUMBER_OF_DAYS_H
+#define TENACITAS_CALENDAR_ENT_NUMBER_OF_DAYS_H
 
 #include <cstdint>
 
 namespace tenacitas {
-namespace periodicity {
-namespace entities {
+namespace calendar {
+namespace ent {
 
 typedef uint8_t number_of_days;
 

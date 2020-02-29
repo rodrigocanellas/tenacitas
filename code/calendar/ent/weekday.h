@@ -34,7 +34,13 @@ struct weekday
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const weekday& p_weekday)
   {
-    p_out << static_cast<uint32_t>(p_weekday.m_value + 1);
+    if (p_weekday == weekday::sun) {
+      p_out << 'D';
+    } else if (p_weekday == weekday::sat) {
+      p_out << 'S';
+    } else {
+      p_out << static_cast<uint32_t>(p_weekday.m_value + 1);
+    }
     return p_out;
   }
 

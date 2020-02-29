@@ -1,11 +1,11 @@
-#ifndef TENACITAS_PERIODICITY_ENTITIES_REPETITION_H
-#define TENACITAS_PERIODICITY_ENTITIES_REPETITION_H
+#ifndef TENACITAS_CALENDAR_ENT_REPETITION_H
+#define TENACITAS_CALENDAR_ENT_REPETITION_H
 
 #include <cstdint>
 
 namespace tenacitas {
-namespace periodicity {
-namespace entities {
+namespace calendar {
+namespace ent {
 
 enum class types_of_repetition : uint8_t
 {

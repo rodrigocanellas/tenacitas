@@ -1,16 +1,16 @@
-#ifndef TENACITAS_PERIODICITY_ENTITIES_RECURRENCY_DAY_H
-#define TENACITAS_PERIODICITY_ENTITIES_RECURRENCY_DAY_H
+#ifndef TENACITAS_CALENDAR_ENT_RECURRENCY_DAY_H
+#define TENACITAS_CALENDAR_ENT_RECURRENCY_DAY_H
 
-#include <periodicity/entities/number_of_days.h>
-#include <periodicity/entities/recurrency.h>
-#include <periodicity/entities/types_of_repetition.h>
+#include <calendar/ent/number_of_days.h>
+#include <calendar/ent/recurrency.h>
+#include <calendar/ent/types_of_repetition.h>
 
 namespace tenacitas {
-namespace periodicity {
-namespace entities {
+namespace calendar {
+namespace ent {
 
 template<>
-struct recurrency_t<types_of_repetition::day, types_of_ending::never>
+struct recurrency_t<types_of_repetition::day, ending_types::never>
 {
 
   inline recurrency_t(number_of_days p_number_of_days)

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
 
 #include <calendar/ent/amount.h>
@@ -20,16 +21,16 @@ namespace calendar {
 namespace ent {
 
 ///
-/// \brief specialization of \p timestamp template class, with precision up to
+/// \brief specialization of \p timestamp_t template class, with precision up to
 /// \p second
 ///
 template<>
-struct timestamp<second>
+struct timestamp_t<second>
 {
   ///
-  /// \brief timestamp default constructor creates a timestamp for now
+  /// \brief timestamp_t default constructor creates a timestamp for now
   ///
-  inline timestamp()
+  inline timestamp_t()
     : m_time(time(nullptr))
     , m_tm()
   {
@@ -38,52 +39,51 @@ struct timestamp<second>
   }
 
   ///
-  /// \brief timestamp creates a timestamp by informing day, month, year, hour,
-  /// minute and second \param p_year \param p_month \param p_day \param p_hour
-  /// \param p_minute
-  /// \param p_second
+  /// \brief timestamp creates a timestamp_t by informing day, month, year,
+  /// hour, minute and second \param p_year \param p_month \param p_day \param
+  /// p_hour \param p_minute \param p_second
   ///
-  timestamp(year p_year,
-            month p_month,
-            day p_day,
-            hour p_hour = hour::h00,
-            minute p_minute = minute::m00,
-            second p_second = second::s00);
+  timestamp_t(year p_year,
+              month p_month,
+              day p_day,
+              hour p_hour = hour::h00,
+              minute p_minute = minute::m00,
+              second p_second = second::s00);
   ///
-  /// \brief timestamp copy constructor
-  /// \param p_timestamp timestamp to be copied
+  /// \brief timestamp_t copy constructor
+  /// \param p_timestamp_t timestamp_t to be copied
   ///
-  inline timestamp(const timestamp& p_timestamp)
-    : m_time(p_timestamp.m_time)
+  inline timestamp_t(const timestamp_t& p_timestamp_t)
+    : m_time(p_timestamp_t.m_time)
     , m_tm()
   {
-    memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
+    memcpy(&m_tm, &p_timestamp_t.m_tm, sizeof(struct tm));
   }
 
   ///
-  /// \brief timestamp move constructor
-  /// \param p_timestamp timestamp to be moved
+  /// \brief timestamp_t move constructor
+  /// \param p_timestamp_t timestamp_t to be moved
   ///
-  inline timestamp(timestamp&& p_timestamp)
-    : m_time(std::move(p_timestamp.m_time))
+  inline timestamp_t(timestamp_t&& p_timestamp_t)
+    : m_time(std::move(p_timestamp_t.m_time))
     , m_tm()
   {
-    memcpy(&m_tm, &p_timestamp.m_tm, sizeof(struct tm));
+    memcpy(&m_tm, &p_timestamp_t.m_tm, sizeof(struct tm));
   }
 
   ///
   /// \brief operator = copy assignment
-  /// \param p_timestamp
+  /// \param p_timestamp_t
   /// \return
   ///
-  timestamp& operator=(const timestamp& p_timestamp);
+  timestamp_t& operator=(const timestamp_t& p_timestamp_t);
 
   ///
   /// \brief operator = move assignment
-  /// \param p_timestamp
+  /// \param p_timestamp_t
   /// \return
   ///
-  timestamp& operator=(timestamp&& p_timestamp);
+  timestamp_t& operator=(timestamp_t&& p_timestamp_t);
 
   ///
   /// \brief operator <<
@@ -92,11 +92,14 @@ struct timestamp<second>
   /// \return
   ///
   inline friend std::ostream& operator<<(std::ostream& p_out,
-                                         const timestamp& p_ts)
+                                         const timestamp_t& p_ts)
   {
-    p_out << "[" << p_ts.get_day() << "/" << p_ts.get_month() << "/"
-          << p_ts.get_year() << "," << p_ts.get_weekday() << ","
-          << p_ts.get_hour() << ":" << p_ts.get_minute() << ":"
+    p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+          << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
+          << std::setw(4) << std::setfill('0') << p_ts.get_year() << ","
+          << p_ts.get_weekday() << "," << std::setw(2) << std::setfill('0')
+          << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
+          << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
           << p_ts.get_second() << "]";
     return p_out;
   }
@@ -148,7 +151,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator==(const timestamp& p_ts) const
+  inline bool operator==(const timestamp_t& p_ts) const
   {
     return m_time == p_ts.m_time;
   }
@@ -158,7 +161,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator!=(const timestamp& p_ts) const
+  inline bool operator!=(const timestamp_t& p_ts) const
   {
     return m_time != p_ts.m_time;
   }
@@ -168,7 +171,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>(const timestamp& p_ts) const
+  inline bool operator>(const timestamp_t& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
@@ -178,7 +181,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator<(const timestamp& p_ts) const
+  inline bool operator<(const timestamp_t& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
@@ -188,7 +191,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>=(const timestamp& p_ts) const
+  inline bool operator>=(const timestamp_t& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
@@ -198,7 +201,7 @@ struct timestamp<second>
   /// \param p_ts
   /// \return
   ///
-  inline bool operator<=(const timestamp& p_ts) const
+  inline bool operator<=(const timestamp_t& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
@@ -208,168 +211,168 @@ struct timestamp<second>
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator+=(amount<second> p_seconds);
+  timestamp_t& operator+=(amount<second> p_seconds);
 
   ///
   /// \brief operator +
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator+(amount<second> p_seconds);
+  timestamp_t operator+(amount<second> p_seconds);
 
   ///
   /// \brief operator -=
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator-=(amount<second> p_seconds);
+  timestamp_t& operator-=(amount<second> p_seconds);
 
   ///
   /// \brief operator -
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator-(amount<second> p_seconds);
+  timestamp_t operator-(amount<second> p_seconds);
 
   ///
   /// \brief operator +=
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator+=(amount<minute> p_minutes);
+  timestamp_t& operator+=(amount<minute> p_minutes);
 
   ///
   /// \brief operator +
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator+(amount<minute> p_minutes);
+  timestamp_t operator+(amount<minute> p_minutes);
 
   ///
   /// \brief operator -=
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator-=(amount<minute> p_minutes);
+  timestamp_t& operator-=(amount<minute> p_minutes);
 
   ///
   /// \brief operator -
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator-(amount<minute> p_minutes);
+  timestamp_t operator-(amount<minute> p_minutes);
 
   ///
   /// \brief operator +=
   /// \param p_days
   /// \return
   ///
-  timestamp& operator+=(amount<day> p_days);
+  timestamp_t& operator+=(amount<day> p_days);
 
   ///
   /// \brief operator +
   /// \param p_days
   /// \return
   ///
-  timestamp operator+(amount<day> p_days);
+  timestamp_t operator+(amount<day> p_days);
 
   ///
   /// \brief operator -=
   /// \param p_days
   /// \return
   ///
-  timestamp& operator-=(amount<day> p_days);
+  timestamp_t& operator-=(amount<day> p_days);
 
   ///
   /// \brief operator -
   /// \param p_days
   /// \return
   ///
-  timestamp operator-(amount<day> p_days);
+  timestamp_t operator-(amount<day> p_days);
 
   ///
   /// \brief operator +=
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator+=(amount<weekday> p_weeks);
+  timestamp_t& operator+=(amount<weekday> p_weeks);
 
   ///
   /// \brief operator +
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator+(amount<weekday> p_weeks);
+  timestamp_t operator+(amount<weekday> p_weeks);
 
   ///
   /// \brief operator -=
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator-=(amount<weekday> p_weeks);
+  timestamp_t& operator-=(amount<weekday> p_weeks);
 
   ///
   /// \brief operator -
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator-(amount<weekday> p_weeks);
+  timestamp_t operator-(amount<weekday> p_weeks);
 
   ///
   /// \brief operator +=
   /// \param p_months
   /// \return
   ///
-  timestamp& operator+=(amount<month> p_months);
+  timestamp_t& operator+=(amount<month> p_months);
 
   ///
   /// \brief operator +
   /// \param p_months
   /// \return
   ///
-  timestamp operator+(amount<month> p_months);
+  timestamp_t operator+(amount<month> p_months);
 
   ///
   /// \brief operator -=
   /// \param p_months
   /// \return
   ///
-  timestamp& operator-=(amount<month> p_months);
+  timestamp_t& operator-=(amount<month> p_months);
 
   ///
   /// \brief operator -
   /// \param p_months
   /// \return
   ///
-  timestamp operator-(amount<month> p_months);
+  timestamp_t operator-(amount<month> p_months);
 
   ///
   /// \brief operator +=
   /// \param p_years
   /// \return
   ///
-  timestamp operator+=(amount<year> p_years);
+  timestamp_t operator+=(amount<year> p_years);
 
   ///
   /// \brief operator +
   /// \param p_years
   /// \return
   ///
-  timestamp operator+(amount<year> p_years);
+  timestamp_t operator+(amount<year> p_years);
 
   ///
   /// \brief operator -=
   /// \param p_years
   /// \return
   ///
-  timestamp operator-=(amount<year> p_years);
+  timestamp_t operator-=(amount<year> p_years);
 
   ///
   /// \brief operator -
   /// \param p_years
   /// \return
   ///
-  timestamp operator-(amount<year> p_years);
+  timestamp_t operator-(amount<year> p_years);
 
 private:
   time_t m_time = -1;

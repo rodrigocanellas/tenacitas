@@ -15,7 +15,7 @@ namespace ent {
 ///
 /// \tparam t_time_precision is the type of time, like 'day' or 'month'
 template<typename t_time_precision>
-struct timestamp;
+struct timestamp_t;
 
 } // namespace ent
 } // namespace calendar

@@ -5,14 +5,14 @@ CONFIG -= qt
 CONFIG+=test
 
 SOURCES += \
-  ../../../../../../code/calendar/tst/ent/main.cpp
+  ../../../../../../code/calendar/tst/ent000/main.cpp
 
 
 
 QMAKE_CXXFLAGS += -std=c++11
 
 
-TARGET = tenacitas.calendar.tst.ent
+TARGET = tenacitas.calendar.tst.ent000
 
 
 include (../../../../common.pri)
