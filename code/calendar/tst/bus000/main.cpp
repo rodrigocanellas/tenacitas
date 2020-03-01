@@ -1,10 +1,12 @@
 
 #include <cstdint>
-#include <ctime>
 #include <iostream>
 #include <vector>
 
 //
+#include <calendar/bus/create_sequence.h>
+#include <calendar/bus/daily_repetition.h>
+#include <calendar/bus/weekly_repetition.h>
 #include <calendar/ent/ending_after.h>
 #include <calendar/ent/ending_never.h>
 #include <calendar/ent/ending_on.h>
@@ -12,6 +14,7 @@
 #include <calendar/ent/timestamp_second.h>
 
 using namespace tenacitas::calendar::ent;
+using namespace tenacitas::calendar::bus;
 
 // enum class weekday : uint8_t
 //{
@@ -57,115 +60,6 @@ using namespace tenacitas::calendar::ent;
 // static const uint32_t week_in_seconds = 7 * day_in_seconds;
 
 //                     repetition
-
-template<typename t_time_precision>
-struct daily_repetition
-{
-  typedef timestamp_t<t_time_precision> timestamp;
-
-  daily_repetition(uint16_t p_at_each = 1)
-    : m_at_each(p_at_each)
-  {}
-
-  timestamp prev(timestamp p_time) { return p_time - m_at_each; }
-
-  timestamp next(timestamp p_time, bool p_first = false)
-  {
-    return (p_first ? p_time : p_time + m_at_each);
-  }
-
-private:
-  amount<day> m_at_each;
-};
-
-// struct weekly_repetition
-//{
-
-//  weekly_repetition(std::vector<weekday>&& p_weekdays, uint16_t p_at_each = 1)
-//    : m_weekdays(std::move(p_weekdays))
-//    , m_at_each(p_at_each)
-//  {}
-
-//  times next(time_t p_time, bool p_first = false)
-//  {
-//    times _sequence;
-//    if (p_first) {
-//      first(p_time, _sequence);
-//      return _sequence;
-//    }
-
-//    time_t _time = begin_week(p_time);
-//    //
-//    rest(m_weekdays.begin(), _time, _sequence);
-//    return _sequence;
-//  }
-
-// private:
-//  time_t begin_week(time_t p_time)
-//  {
-//    time_t _time = p_time + (m_at_each * week_in_seconds);
-//    struct tm* _tm = localtime(&p_time);
-//    _time -= static_cast<uint16_t>(_tm->tm_wday) * day_in_seconds;
-//    return _time;
-//  }
-
-//  time_t next_timestamp_in_weekday_from_timestamp(time_t p_time,
-//                                                  weekday p_weekday)
-//  {
-//    struct tm* _tm = localtime(&p_time);
-//    weekday _weekday = static_cast<weekday>(_tm->tm_wday);
-
-//    time_t _time = p_time;
-
-//    if (_weekday == p_weekday) {
-//      return _time;
-//    }
-
-//    if (_weekday < p_weekday) {
-//      uint16_t _diff =
-//        static_cast<uint16_t>(p_weekday) - static_cast<uint16_t>(_weekday);
-//      _time += _diff * day_in_seconds;
-//    } else {
-//      _time += (static_cast<uint16_t>(weekday::sat) -
-//                static_cast<uint16_t>(_weekday)) *
-//               day_in_seconds;
-//      _time += day_in_seconds;
-//      _time += (static_cast<uint16_t>(p_weekday) -
-//                static_cast<uint16_t>(weekday::sun)) *
-//               day_in_seconds;
-//    }
-//    return _time;
-//  }
-
-//  void rest(std::vector<weekday>::const_iterator p_weekday,
-//            time_t p_time,
-//            times& p_sequence)
-//  {
-//    time_t _time = p_time;
-//    for (std::vector<weekday>::const_iterator _ite = p_weekday;
-//         _ite != m_weekdays.end();
-//         ++_ite) {
-//      struct tm* _tm = localtime(&_time);
-//      weekday _weekday = static_cast<weekday>(_tm->tm_wday);
-//      _time +=
-//        (static_cast<uint16_t>(*_ite) - static_cast<uint16_t>(_weekday)) *
-//        day_in_seconds;
-//      p_sequence.push_back(_time);
-//    }
-//  }
-
-//  void first(time_t p_time, times& p_sequence)
-//  {
-//    time_t _time =
-//      next_timestamp_in_weekday_from_timestamp(p_time, m_weekdays[0]);
-//    p_sequence.push_back(_time);
-//    rest(++m_weekdays.begin(), _time, p_sequence);
-//  }
-
-// private:
-//  std::vector<weekday> m_weekdays;
-//  uint16_t m_at_each;
-//};
 
 //// incomplete
 // struct monthly_repetition_by_week
@@ -321,46 +215,13 @@ private:
 //  uint16_t m_at_each;
 //};
 
-template<typename t_time_precision,
-         typename t_repetition,
-         typename t_ending_type>
-std::vector<timestamp_t<t_time_precision>>
-create_sequence(timestamp_t<t_time_precision> p_start,
-                t_repetition&& p_repetition,
-                t_ending_type&& p_end)
-{
-  std::vector<timestamp_t<t_time_precision>> _sequence;
-
-  timestamp_t<t_time_precision> _time = p_repetition.next(p_start, true);
-  while (!p_end.stop(_time)) {
-    _sequence.push_back(_time);
-    _time = p_repetition.next(_time);
-  }
-  return _sequence;
-}
-
-// template<typename t_time_precision, typename t_ending_type>
-// std::vector<timestamp<t_time_precision>>
-// create_sequence(timestamp<t_time_precision> p_start,
-//                weekly_repetition&& p_repetition,
-//                t_ending_type&& p_end)
-//{
-//  times _sequence;
-
-//  times _times = p_repetition.next(p_start, true);
-//  while (!p_end.stop(_times.back())) {
-//    _sequence.insert(_sequence.end(), _times.begin(), _times.end());
-//    _times = p_repetition.next(_times.back() + day_in_seconds);
-//  }
-//  return _sequence;
-//}
-
 int
 main()
 {
 
   typedef timestamp_t<second> timestamp;
   typedef std::vector<timestamp> timestamps;
+
   {
     std::cout << "\ndaily_repetition - end_never" << std::endl;
     timestamps _sequence = create_sequence(
@@ -369,6 +230,7 @@ main()
       std::cout << _timestamp << std::endl;
     }
   }
+
   {
     std::cout << "\ndaily_repetition at 3 days - end_never" << std::endl;
     timestamps _sequence = create_sequence(
@@ -377,6 +239,7 @@ main()
       std::cout << _timestamp << std::endl;
     }
   }
+
   {
     std::cout << "\ndaily_repetition - end_after 12 " << std::endl;
     timestamps _sequence = create_sequence(
@@ -385,6 +248,7 @@ main()
       std::cout << _timestamp << std::endl;
     }
   }
+
   {
     timestamp _when;
     _when += amount<tenacitas::calendar::ent::day>(4);
@@ -395,74 +259,81 @@ main()
       std::cout << _timestamp << std::endl;
     }
   }
-  //  {
-  //    std::cout << "\nweekly_repetition on mon and wed - end_never" <<
-  //    std::endl; times _sequence =
-  //      create_sequence(timestamp<second>(),
-  //                      weekly_repetition({ weekday::mon, weekday::wed }),
-  //                      end_never<second>());
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
-  //  {
-  //    std::cout << "\nweekly_repetition on mon and wed, at 2 weeks - "
-  //                 "end_never"
-  //              << std::endl;
-  //    times _sequence =
-  //      create_sequence(timestamp<second>(),
-  //                      weekly_repetition({ weekday::mon, weekday::wed }, 2),
-  //                      end_never<second>());
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
 
-  //  {
-  //    std::cout << "\nweekly_repetition - end_never, with "
-  //                 "first weekday of the "
-  //                 "first timestamp in the weekdays of the repetition"
-  //              << std::endl;
-  //    time_t _time = time(nullptr);
-  //    struct tm* _tm = localtime(&_time);
-  //    weekday _weekday_one = static_cast<weekday>(_tm->tm_wday);
-  //    weekday _weekday_two = weekday::sat;
-  //    if (_weekday_one == _weekday_two) {
-  //      _weekday_two = weekday::wed;
-  //    }
-  //    times _sequence =
-  //      create_sequence(time(nullptr),
-  //                      weekly_repetition({ _weekday_one, _weekday_two }),
-  //                      end_never());
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
+  {
+    std::cout << "\nweekly_repetition on mon and wed - end_never" << std::endl;
 
-  //  {
-  //    std::cout << "\nweekly_repetition on mon and wed - end_after 12"
-  //              << std::endl;
-  //    times _sequence =
-  //      create_sequence(time(nullptr),
-  //                      weekly_repetition({ weekday::mon, weekday::wed }),
-  //                      end_after(12));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
-  //  {
-  //    time_t _when = time(nullptr) + 25 * day_in_seconds;
-  //    std::cout << "\nweekly_repetition on mon and wed - end_on " << _when <<
-  //    ": "
-  //              << ctime(&_when);
-  //    times _sequence =
-  //      create_sequence(time(nullptr),
-  //                      weekly_repetition({ weekday::mon, weekday::wed }),
-  //                      end_on(_when));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
+    timestamps _sequence =
+      create_sequence(timestamp(),
+                      weekly_repetition<second>({ weekday::mon, weekday::wed }),
+                      end_never<second>());
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
+  {
+    std::cout << "\nweekly_repetition on mon and wed, at 2 weeks - "
+                 "end_never"
+              << std::endl;
+    timestamps _sequence = create_sequence(
+      timestamp(),
+      weekly_repetition<second>({ weekday::mon, weekday::wed }, 2),
+      end_never<second>());
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
+  {
+    std::cout << "\nweekly_repetition - end_never, with two weekdays"
+              << std::endl
+              << "If the weekday of today is *not* saturday, then the first "
+                 "weekday is the weekday of today, and the second is saturday."
+              << std::endl
+              << "If the weekday of today is saturday, then the first weekday "
+                 "is saturday, and the second one is wednesday."
+              << std::endl;
+    timestamp _timestamp;
+    weekday _weekday_one = _timestamp.get_weekday();
+    weekday _weekday_two = weekday::sat;
+    if (_weekday_one == _weekday_two) {
+      _weekday_two = weekday::wed;
+    }
+    timestamps _sequence =
+      create_sequence(_timestamp,
+                      weekly_repetition<second>({ _weekday_one, _weekday_two }),
+                      end_never<second>());
+    for (timestamp _aux : _sequence) {
+      std::cout << _aux << std::endl;
+    }
+  }
+
+  {
+    std::cout << "\nweekly_repetition on mon and wed - end_after 12"
+              << std::endl;
+    timestamps _sequence =
+      create_sequence(timestamp(),
+                      weekly_repetition<second>({ weekday::mon, weekday::wed }),
+                      end_after<second>(12));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
+  {
+    timestamp _when = timestamp() + amount<day>(25);
+    std::cout << "\nweekly_repetition on mon and wed - end_on " << _when
+              << std::endl;
+    timestamps _sequence =
+      create_sequence(timestamp(),
+                      weekly_repetition<second>({ weekday::mon, weekday::wed }),
+                      end_on<second>(_when));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
   //  {
   //    std::cout << "\nmonthly_repetition_by_day - end_never" << std::endl;
   //    times _sequence = create_sequence(

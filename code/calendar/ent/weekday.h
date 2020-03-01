@@ -34,13 +34,29 @@ struct weekday
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const weekday& p_weekday)
   {
+    //    if (p_weekday == weekday::sun) {
+    //      p_out << 'D';
+    //    } else if (p_weekday == weekday::sat) {
+    //      p_out << 'S';
+    //    } else {
+    //      p_out << static_cast<uint32_t>(p_weekday.m_value + 1);
+    //    }
     if (p_weekday == weekday::sun) {
-      p_out << 'D';
-    } else if (p_weekday == weekday::sat) {
-      p_out << 'S';
+      p_out << "sun";
+    } else if (p_weekday == weekday::mon) {
+      p_out << "mon";
+    } else if (p_weekday == weekday::tue) {
+      p_out << "tue";
+    } else if (p_weekday == weekday::wed) {
+      p_out << "wed";
+    } else if (p_weekday == weekday::thu) {
+      p_out << "thu";
+    } else if (p_weekday == weekday::fri) {
+      p_out << "fri";
     } else {
-      p_out << static_cast<uint32_t>(p_weekday.m_value + 1);
+      p_out << "sat";
     }
+
     return p_out;
   }
 
@@ -123,6 +139,10 @@ struct weekday
     return amount<day>((sat.m_value - p_weekday.m_value) +
                        (m_value - sun.m_value + 1));
   }
+
+  inline amount<day> from_sunday() { return (*this - weekday::sun); }
+
+  inline amount<day> until_saturday() { return (weekday::sat - *this); }
 
 private:
   inline weekday(uint8_t p_value)

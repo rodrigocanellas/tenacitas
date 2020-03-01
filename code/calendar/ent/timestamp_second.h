@@ -94,13 +94,38 @@ struct timestamp_t<second>
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const timestamp_t& p_ts)
   {
-    p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+    p_out << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
           << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
           << std::setw(4) << std::setfill('0') << p_ts.get_year() << ","
           << p_ts.get_weekday() << "," << std::setw(2) << std::setfill('0')
           << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
           << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
-          << p_ts.get_second() << "]";
+          << p_ts.get_second();
+
+    //    p_out << "{ "
+
+    //          << "\"day\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_day() << "\", "
+
+    //          << "\"month\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_month() << "\", "
+
+    //          << "\"year\" : \"" << std::setw(4) << std::setfill('0')
+    //          << p_ts.get_year() << "\", "
+
+    //          << "\"weekday\" : \"" << p_ts.get_weekday() << "\", "
+
+    //          << "\"hour\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_hour() << "\", "
+
+    //          << "\"minute\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_minute() << "\", "
+
+    //          << "\"second\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_second() << "\" "
+
+    //          << " }";
+
     return p_out;
   }
 
