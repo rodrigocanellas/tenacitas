@@ -94,13 +94,13 @@ struct timestamp_t<second>
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const timestamp_t& p_ts)
   {
-    p_out << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+    p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
           << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
           << std::setw(4) << std::setfill('0') << p_ts.get_year() << ","
           << p_ts.get_weekday() << "," << std::setw(2) << std::setfill('0')
           << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
           << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
-          << p_ts.get_second();
+          << p_ts.get_second() << "]";
 
     //    p_out << "{ "
 
@@ -127,6 +127,19 @@ struct timestamp_t<second>
     //          << " }";
 
     return p_out;
+  }
+
+  ///
+  /// \brief set_day
+  /// \param p_day
+  /// \throw if the resulting \p timestamp_t is invalid
+  ///
+  inline void set_day(day p_day)
+  {
+    struct tm* _tm = localtime(&m_time);
+    _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
+    m_time = mktime(_tm);
+    memcpy(&m_tm, _tm, sizeof(struct tm));
   }
 
   ///

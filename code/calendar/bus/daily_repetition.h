@@ -34,10 +34,10 @@ struct daily_repetition
   /// \param p_time timestamp from each the previous timestamp should be
   /// calculated
   ///
-  /// \param p_first if @p true, the timestamp returned is @p p_time
+  /// \param p_first if \p true, the timestamp returned is \p p_time
   /// itself; otherwise, it actually calculates the previous timstamp
   ///
-  /// \return the previous timestamp to @p p_time, or @p p_time, if @p p_first
+  /// \return the previous timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
   inline timestamp prev(timestamp p_time, bool p_first = false)
@@ -51,10 +51,10 @@ struct daily_repetition
   /// \param p_time timestamp from each the next timestamp should be
   /// calculated
   ///
-  /// \param p_first if @p true, the timestamp returned is @p p_time
+  /// \param p_first if \p true, the timestamp returned is \p p_time
   /// itself; otherwise, it actually calculates the next timestamp
   ///
-  /// \return the next timestamp to @p p_time, or @p p_time, if @p p_first
+  /// \return the next timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
   inline timestamp next(timestamp p_time, bool p_first = false)

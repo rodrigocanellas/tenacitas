@@ -16,108 +16,71 @@
 using namespace tenacitas::calendar::ent;
 using namespace tenacitas::calendar::bus;
 
-// enum class weekday : uint8_t
-//{
-//  sun = 0,
-//  mon = 1,
-//  tue = 2,
-//  wed = 3,
-//  thu = 4,
-//  fri = 5,
-//  sat = 6
-//};
+// incomplete
+template<typename t_time_precision>
+struct monthly_repetition_by_week
+{
 
-// typedef uint8_t day;
+  typedef timestamp_t<t_time_precision> timestamp;
 
-// typedef uint16_t year;
+  monthly_repetition_by_week(uint8_t p_order,
+                             weekday p_weekday,
+                             uint16_t p_at_each = 1)
+    : m_order(p_order)
+    , m_weekday(p_weekday)
+    , m_at_each(p_at_each)
+  {}
 
-// enum class month : uint8_t
-//{
-//  jan = 0,
-//  feb = 1,
-//  mar = 2,
-//  apr = 3,
-//  may = 4,
-//  jun = 5,
-//  jul = 6,
-//  ago = 7,
-//  sep = 8,
-//  oct = 9,
-//  nov = 10,
-//  dec = 11
-//};
+  //  timestamp next(timestamp p_time, bool p_first = false)
+  //  {
 
-// typedef std::vector<time_t> times;
+  //    timestamp _timestamp = p_time;
 
-// static const uint8_t days_in_month[static_cast<uint8_t>(month::dec) + 1] = {
-//  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-//};
+  //    if (!p_first) {
+  //      _timestamp += m_at_each;
+  //    }
 
-// static const uint8_t seconds = 1;
-// static const uint16_t minute_in_seconds = 60 * seconds;
-// static const uint16_t hour_in_seconds = 60 * minute_in_seconds;
-// static const uint32_t day_in_seconds = 24 * hour_in_seconds;
-// static const uint32_t week_in_seconds = 7 * day_in_seconds;
+  //    timestamp _first_day_of_month(_timestamp);
+  //    _first_day_of_month.set_day(day::d01);
 
-//                     repetition
+  //    weekday _weekday_first_day = _timestamp.get_weekday();
 
-//// incomplete
-// struct monthly_repetition_by_week
-//{
+  //    amount<day> _diff = m_weekday - _weekday_first_day;
 
-//  monthly_repetition_by_week(uint8_t p_order,
-//                             weekday p_weekday,
-//                             uint16_t p_at_each = 1)
-//    : m_order(p_order)
-//    , m_weekday(p_weekday)
-//    , m_at_each(p_at_each)
-//  {}
+  //    timestamp _first_day_with_weekday_same_as_target =
+  //      _first_day_of_month + _diff;
 
-//  time_t next(time_t p_time, bool p_first = false)
-//  {
+  //    timestamp _target =
+  //      _first_day_with_weekday_same_as_target + amount<weekday>(m_order - 1);
 
-//    struct tm* _tm = localtime(&p_time);
+  //    return _target;
+  //  }
 
-//    if (!p_first) {
-//      _tm->tm_year += m_at_each / 12;
-//      _tm->tm_mon += m_at_each % 12;
-//      time_t _aux = mktime(_tm);
-//      _tm = localtime(&_aux);
-//    }
+  timestamp next(timestamp p_time, bool p_first = false)
+  {
+    timestamp _timestamp = p_time;
+    if (!p_first) {
+      _timestamp += m_at_each;
+    }
 
-//    _tm->tm_mday = 1;
-//    time_t _first_day_of_month = mktime(_tm);
-//    _tm = localtime(&_first_day_of_month);
+    timestamp _day_one(_timestamp);
+    _day_one.set_day(day::d01);
 
-//    int _weekday_first_day = _tm->tm_wday;
-//    int _weekday_target = static_cast<int>(m_weekday);
-//    int _diff = -1;
-//    if (_weekday_target == _weekday_first_day) {
-//      _diff = 0;
-//    } else if (_weekday_target > _weekday_first_day) {
-//      _diff = _weekday_target - _weekday_first_day;
-//    } else {
-//      _diff = static_cast<int>(weekday::sat) - _weekday_first_day +
-//              _weekday_target + 1;
-//    }
+    timestamp _first_target_weekday(_day_one);
+    _first_target_weekday += amount<day>(m_weekday - _day_one.get_weekday());
 
-//    time_t _first_day_with_weekday_same_as_target =
-//      _first_day_of_month +
-//      (static_cast<decltype(_first_day_of_month)>(_diff) * day_in_seconds);
-//    _tm = localtime(&_first_day_with_weekday_same_as_target);
+    timestamp _target(_first_target_weekday);
 
-//    time_t _target =
-//      _first_day_with_weekday_same_as_target + (m_order - 1) *
-//      week_in_seconds;
+    _target += amount<weekday>(m_order - 1);
 
-//    return _target;
-//  }
+    return _target;
+  }
 
-// private:
-//  uint8_t m_order;
-//  weekday m_weekday;
-//  uint16_t m_at_each;
-//};
+private:
+  uint8_t m_order;
+  weekday m_weekday;
+  amount<month> m_at_each;
+};
 
 // struct monthly_repetition_by_day
 //{
@@ -352,6 +315,7 @@ main()
   //      std::cout << ctime(&_time);
   //    }
   //  }
+
   //  {
   //    std::cout << "\nmonthly_repetition_by_day, at each 24 - "
   //                 "end_after 25"
@@ -373,19 +337,20 @@ main()
   //    }
   //  }
 
-  //  {
-  //    std::cout
-  //      << "\nmonthly_repetition_by_week, calcuate weekday two days ahead "
-  //         "now, third of the month - end_after 4"
-  //      << std::endl;
-  //    times _sequence =
-  //      create_sequence(time(nullptr) + 2 * day_in_seconds,
-  //                      monthly_repetition_by_week(3, weekday::thu),
-  //                      end_after(4));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
+  {
+    std::cout
+      << "\nmonthly_repetition_by_week, calcuate weekday two days ahead "
+         "now, third of the month - end_after 4"
+      << std::endl;
+    timestamps _sequence =
+      create_sequence(timestamp() + amount<day>(2),
+                      monthly_repetition_by_week<second>(3, weekday::thu),
+                      end_after<second>(4));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
   //  {
   //    std::cout
   //      << "\nmonthly_repetition_by_week, calcuate weekday two days ahead "

@@ -12,6 +12,21 @@ namespace tenacitas {
 namespace calendar {
 namespace bus {
 
+///
+/// \brief creates a sequence o \p timestamp objects based on a initial \p
+/// timestamp, on a repetition pattern, an on an ending condition
+///
+/// \tparam t_time_precision defines the precision of the timestamp. Currently
+/// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
+/// year
+///
+/// \tparam t_repetition defines the repetition pattern. The class must define
+/// \code timestamp_t<t_time_precision> next(timestamp_t<t_time_precision>
+/// p_time, bool p_first = false) \endcode
+///
+/// \tparam t_ending_type defines when the sequence creation must stop. It must
+/// implement \code bool stop(timestamp_t<t_time_precision> p_time) \endcode.
+///
 template<typename t_time_precision,
          typename t_repetition,
          typename t_ending_type>
@@ -30,15 +45,17 @@ create_sequence(ent::timestamp_t<t_time_precision> p_start,
   return _sequence;
 }
 
-// template<typename t_time_precision, typename t_ending_type>
-// std::vector<timestamp_t<t_time_precision>>
-// create_sequence
-//  (timestamp_<t_time_precision> p_start,
-
-//   weekly_repetition<t_time_precision>&& p_repetition,
-
-//   t_ending_type&& p_end)
-
+///
+/// \brief creates a sequence o \p timestamp objects based on a initial \p
+/// timestamp, on a \p weekly_repetition pattern, an on an ending condition
+///
+/// \tparam t_time_precision defines the precision of the timestamp. Currently
+/// it can be \p second, \p minute, p weekday, \p hour,\p day, \p month and \p
+/// year
+///
+/// \tparam t_ending_type defines when the sequence creation must stop. It must
+/// implement \code bool stop(timestamp_t<t_time_precision> p_time) \endcode.
+///
 template<typename t_time_precision, typename t_ending_type>
 std::vector<ent::timestamp_t<t_time_precision>>
 create_sequence(ent::timestamp_t<t_time_precision> p_start,
