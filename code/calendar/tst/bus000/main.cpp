@@ -6,6 +6,7 @@
 //
 #include <calendar/bus/create_sequence.h>
 #include <calendar/bus/daily_repetition.h>
+#include <calendar/bus/monthly_repetition.h>
 #include <calendar/bus/weekly_repetition.h>
 #include <calendar/ent/ending_after.h>
 #include <calendar/ent/ending_never.h>
@@ -15,72 +16,6 @@
 
 using namespace tenacitas::calendar::ent;
 using namespace tenacitas::calendar::bus;
-
-// incomplete
-template<typename t_time_precision>
-struct monthly_repetition_by_week
-{
-
-  typedef timestamp_t<t_time_precision> timestamp;
-
-  monthly_repetition_by_week(uint8_t p_order,
-                             weekday p_weekday,
-                             uint16_t p_at_each = 1)
-    : m_order(p_order)
-    , m_weekday(p_weekday)
-    , m_at_each(p_at_each)
-  {}
-
-  //  timestamp next(timestamp p_time, bool p_first = false)
-  //  {
-
-  //    timestamp _timestamp = p_time;
-
-  //    if (!p_first) {
-  //      _timestamp += m_at_each;
-  //    }
-
-  //    timestamp _first_day_of_month(_timestamp);
-  //    _first_day_of_month.set_day(day::d01);
-
-  //    weekday _weekday_first_day = _timestamp.get_weekday();
-
-  //    amount<day> _diff = m_weekday - _weekday_first_day;
-
-  //    timestamp _first_day_with_weekday_same_as_target =
-  //      _first_day_of_month + _diff;
-
-  //    timestamp _target =
-  //      _first_day_with_weekday_same_as_target + amount<weekday>(m_order - 1);
-
-  //    return _target;
-  //  }
-
-  timestamp next(timestamp p_time, bool p_first = false)
-  {
-    timestamp _timestamp = p_time;
-    if (!p_first) {
-      _timestamp += m_at_each;
-    }
-
-    timestamp _day_one(_timestamp);
-    _day_one.set_day(day::d01);
-
-    timestamp _first_target_weekday(_day_one);
-    _first_target_weekday += amount<day>(m_weekday - _day_one.get_weekday());
-
-    timestamp _target(_first_target_weekday);
-
-    _target += amount<weekday>(m_order - 1);
-
-    return _target;
-  }
-
-private:
-  uint8_t m_order;
-  weekday m_weekday;
-  amount<month> m_at_each;
-};
 
 // struct monthly_repetition_by_day
 //{
@@ -351,19 +286,19 @@ main()
     }
   }
 
-  //  {
-  //    std::cout
-  //      << "\nmonthly_repetition_by_week, calcuate weekday two days ahead "
-  //         "now, third of the month, at each 3 - end_after 4"
-  //      << std::endl;
-  //    times _sequence =
-  //      create_sequence(time(nullptr) + 2 * day_in_seconds,
-  //                      monthly_repetition_by_week(3, weekday::thu, 4),
-  //                      end_after(4));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
+  {
+    std::cout
+      << "\nmonthly_repetition_by_week, calcuate weekday two days ahead "
+         "now, third of the month, at each 3 - end_after 4"
+      << std::endl;
+    timestamps _sequence =
+      create_sequence(timestamp() + amount<day>(2),
+                      monthly_repetition_by_week<second>(3, weekday::thu, 4),
+                      end_after<second>(4));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
 
   //  {
   //    std::cout << "\nyearly_repetition, current month, two days ahead, "

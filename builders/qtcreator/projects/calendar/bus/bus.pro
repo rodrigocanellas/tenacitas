@@ -15,4 +15,5 @@ include (../../../common.pri)
 HEADERS += \
   ../../../../../code/calendar/bus/create_sequence.h \
   ../../../../../code/calendar/bus/daily_repetition.h \
+  ../../../../../code/calendar/bus/monthly_repetition.h \
   ../../../../../code/calendar/bus/weekly_repetition.h
