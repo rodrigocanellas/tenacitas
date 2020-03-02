@@ -5,12 +5,10 @@ CONFIG -= qt
 
 CONFIG+=test
 
-SOURCES += \
-  ../../../../../../code/calendar/tst/bus000/main.cpp
 
 
 
-TARGET = tenacitas.calendar.tst.bus000
+TARGET = tenacitas.calendar.tst.bus001
 
 
 include (../../../../common.pri)

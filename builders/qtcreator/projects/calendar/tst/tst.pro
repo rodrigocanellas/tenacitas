@@ -6,7 +6,6 @@ SUBDIRS += \
   ent001 \
   ent002 \
   ent003 \
-  bus000 \
-  bus001
+  bus000
 
 CONFIG += ordered

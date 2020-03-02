@@ -116,6 +116,26 @@ struct amount
     return amount(m_value % p_amount.template get<decltype(m_value)>());
   }
 
+  template<typename t_amount>
+  inline bool operator > (const t_amount & p_amount) const {
+    return (m_value > p_amount.template get<decltype (m_value)>());
+  }
+
+  template<typename t_amount>
+  inline bool operator < (const t_amount & p_amount) const {
+    return (m_value < p_amount.template get<decltype (m_value)>());
+  }
+
+  template<typename t_amount>
+  inline bool operator >= (const t_amount & p_amount) const {
+    return (m_value >= p_amount.template get<decltype (m_value)>());
+  }
+
+  template<typename t_amount>
+  inline bool operator <= (const t_amount & p_amount) const {
+    return (m_value <= p_amount.template get<decltype (m_value)>());
+  }
+
   /// explicit cast to some type of number
   ///
   /// @tparam t_int is a type of number

@@ -12,58 +12,48 @@
 #include <calendar/ent/ending_never.h>
 #include <calendar/ent/ending_on.h>
 #include <calendar/ent/second.h>
+#include <calendar/ent/month.h>
 #include <calendar/ent/timestamp_second.h>
 
 using namespace tenacitas::calendar::ent;
 using namespace tenacitas::calendar::bus;
 
-// struct monthly_repetition_by_day
-//{
-//  monthly_repetition_by_day(day p_day, uint16_t p_at_each = 1)
-//    : m_day(p_day)
-//    , m_at_each(p_at_each)
-//  {
-//    if (m_day > 31) {
-//      throw new std::runtime_error(std::to_string(m_day) +
-//                                   " is not a valid day");
-//    }
-//  }
+template <typename t_time_precision>
+ struct monthly_repetition_by_day
+{
+   typedef timestamp_t<t_time_precision> timestamp;
 
-//  time_t next(time_t p_time, bool p_first = false)
-//  {
+  monthly_repetition_by_day(day p_day, uint16_t p_at_each = 1)
+    : m_day(p_day)
+    , m_at_each(p_at_each)
+  {
+  }
 
-//    time_t _time = p_time;
-//    struct tm* _tm = localtime(&_time);
+  timestamp next(timestamp p_time, bool p_first = false)
+  {
 
-//    day _day = m_day;
-//    if ((_tm->tm_mon != 1)) {
-//      if (_day > days_in_month[_tm->tm_mon]) {
-//        _day = days_in_month[_tm->tm_mon];
-//      }
-//    } else {
-//      // february
-//      if ((_tm->tm_year % 4) == 0) {
-//        if (_day > 29) {
-//          _day = 29;
-//        } else if (_day > 28) {
-//          _day = 28;
-//        }
-//      }
-//    }
+    timestamp _time = p_time;
 
-//    _tm->tm_mday = _day;
+    day _day(m_day);
 
-//    if (!p_first) {
-//      _tm->tm_year += m_at_each / 12;
-//      _tm->tm_mon += m_at_each % 12;
-//    }
-//    return mktime(_tm);
-//  }
+    amount<day> _days (month::days(_time.get_month(), _time.get_year()));
 
-// private:
-//  day m_day;
-//  uint16_t m_at_each;
-//};
+    if (amount<day>(_day) > _days) {
+      _day = day::create(_days);
+    }
+
+    _time.set_day(_day);
+
+    if (!p_first) {
+      _time += amount<month>(m_at_each);
+    }
+    return _time;
+  }
+
+ private:
+  day m_day;
+  amount<month> m_at_each;
+};
 
 // struct yearly_repetition
 //{
