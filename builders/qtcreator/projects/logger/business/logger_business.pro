@@ -6,7 +6,7 @@ QT -= gui
 
 TEMPLATE = lib
 
-VERSION = 0.0.1
+#VERSION = 0.0.1
 
 TARGET = tenacitas.logger.business
 
