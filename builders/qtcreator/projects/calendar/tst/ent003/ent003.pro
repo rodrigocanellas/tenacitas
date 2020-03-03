@@ -1,15 +1,11 @@
 TEMPLATE = app
-CONFIG += console c++11
+CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG+=test
 
 SOURCES += \
   ../../../../../../code/calendar/tst/ent003/main.cpp
-
-
-
-QMAKE_CXXFLAGS += -std=c++11
 
 
 TARGET = tenacitas.calendar.tst.ent003

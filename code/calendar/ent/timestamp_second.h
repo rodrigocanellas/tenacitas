@@ -32,10 +32,7 @@ struct timestamp_t<second>
   ///
   inline timestamp_t()
     : m_time(time(nullptr))
-    , m_tm()
   {
-    struct tm* _tm = localtime(&m_time);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
   }
 
   ///
@@ -55,9 +52,7 @@ struct timestamp_t<second>
   ///
   inline timestamp_t(const timestamp_t& p_timestamp_t)
     : m_time(p_timestamp_t.m_time)
-    , m_tm()
   {
-    memcpy(&m_tm, &p_timestamp_t.m_tm, sizeof(struct tm));
   }
 
   ///
@@ -66,9 +61,7 @@ struct timestamp_t<second>
   ///
   inline timestamp_t(timestamp_t&& p_timestamp_t)
     : m_time(std::move(p_timestamp_t.m_time))
-    , m_tm()
   {
-    memcpy(&m_tm, &p_timestamp_t.m_tm, sizeof(struct tm));
   }
 
   ///
@@ -139,50 +132,70 @@ struct timestamp_t<second>
     struct tm* _tm = localtime(&m_time);
     _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
     m_time = mktime(_tm);
-    memcpy(&m_tm, _tm, sizeof(struct tm));
   }
 
   ///
   /// \brief get_second
   /// \return
   ///
-  inline second get_second() const { return second::create(m_tm.tm_sec); }
+  inline second get_second() const {
+    struct tm* _tm = localtime(&m_time);
+    return second::create(_tm->tm_sec);
+  }
 
   ///
   /// \brief get_minute
   /// \return
   ///
-  inline minute get_minute() const { return minute::create(m_tm.tm_min); }
+  inline minute get_minute() const {
+        struct tm* _tm = localtime(&m_time);
+    return minute::create(_tm->tm_min);
+  }
 
   ///
   /// \brief get_hour
   /// \return
   ///
-  inline hour get_hour() const { return hour::create(m_tm.tm_hour); }
+  inline hour get_hour() const {
+        struct tm* _tm = localtime(&m_time);
+    return hour::create(_tm->tm_hour);
+  }
 
   ///
   /// \brief get_day
   /// \return
   ///
-  inline day get_day() const { return day::create(m_tm.tm_mday); }
+  inline day get_day() const {
+        struct tm* _tm = localtime(&m_time);
+    return day::create(_tm->tm_mday);
+  }
 
   ///
   /// \brief get_weekday
   /// \return
   ///
-  inline weekday get_weekday() const { return weekday::create(m_tm.tm_wday); }
+  inline weekday get_weekday() const {
+        struct tm* _tm = localtime(&m_time);
+    return weekday::create(_tm->tm_wday);
+  }
 
   ///
   /// \brief get_month
   /// \return
   ///
-  inline month get_month() const { return month::create(m_tm.tm_mon); }
+  inline month get_month() const {
+        struct tm* _tm = localtime(&m_time);
+    return month::create(_tm->tm_mon);
+  }
 
   ///
   /// \brief get_year
   /// \return
   ///
-  inline year get_year() const { return year(m_tm.tm_year + 1900); }
+  inline year get_year() const {
+        struct tm* _tm = localtime(&m_time);
+    return year(_tm->tm_year + 1900);
+  }
 
   ///
   /// \brief operator ==
@@ -413,8 +426,9 @@ struct timestamp_t<second>
   timestamp_t operator-(amount<year> p_years);
 
 private:
+//  struct timespec m_timespec;
   time_t m_time = -1;
-  struct tm m_tm;
+//  struct tm m_tm;
 };
 
 } // namespace ent

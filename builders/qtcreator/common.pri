@@ -6,10 +6,6 @@
 #    message("This is release mode or debug_and_release")
 #}
 
-QMAKE_CXXFLAGS += -std=c++11
-
-
-
 #spec = $$basename(QMAKESPEC)
 
 #equals(spec,"") {
@@ -47,7 +43,7 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 RCC_DIR += $${tmp_dir}/rsc
 
-QMAKE_CXXFLAGS += -std=c++11 -Werror
+QMAKE_CXXFLAGS += -std=c++17 -Werror
 QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 
