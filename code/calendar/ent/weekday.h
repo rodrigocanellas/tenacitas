@@ -118,13 +118,13 @@ struct weekday
 
   static inline amount<day> days() { return amount<day>(7); }
 
-  static inline amount<hour> hours() { return day::hours() * days(); }
+  static inline amount<hour> hours() { return day::hours() * days().get<amount<hour>>(); }
 
-  static inline amount<minute> minutes() { return hour::minutes() * hours(); }
+  static inline amount<minute> minutes() { return hour::minutes() * hours().get<amount<minute>>(); }
 
   static inline amount<second> seconds()
   {
-    return minute::seconds() * minutes();
+    return minute::seconds() * minutes().get<amount<second>>();
   }
 
   amount<day> operator-(const weekday& p_weekday) const

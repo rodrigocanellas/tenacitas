@@ -79,19 +79,19 @@ month::days(const month& p_month, const year& p_year)
 amount<hour>
 month::hours(const month& p_month, const year& p_year)
 {
-  return day::hours() * days(p_month, p_year);
+  return day::hours() * days(p_month, p_year).get<amount<hour>>();
 }
 
 amount<minute>
 month::minutes(const month& p_month, const year& p_year)
 {
-  return hour::minutes() * hours(p_month, p_year);
+  return hour::minutes() * hours(p_month, p_year).get<amount<minute>>();
 }
 
 amount<second>
 month::seconds(const month& p_month, const year& p_year)
 {
-  return minute::seconds() * minutes(p_month, p_year);
+  return minute::seconds() * minutes(p_month, p_year).get<amount<second>>();
 }
 
 } // namespace ent

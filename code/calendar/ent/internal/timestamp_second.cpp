@@ -84,7 +84,7 @@ timestamp_t<second>::operator-(amount<second> p_seconds)
 timestamp_t<second>&
 timestamp_t<second>::operator+=(amount<minute> p_minutes)
 {
-  m_time += (minute::seconds() * p_minutes).get<decltype(m_time)>();
+  m_time += (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;
@@ -101,7 +101,7 @@ timestamp_t<second>::operator+(amount<minute> p_minutes)
 timestamp_t<second>&
 timestamp_t<second>::operator-=(amount<minute> p_minutes)
 {
-  m_time -= (minute::seconds() * p_minutes).get<decltype(m_time)>();
+  m_time -= (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;
@@ -118,7 +118,7 @@ timestamp_t<second>::operator-(amount<minute> p_minutes)
 timestamp_t<second>&
 timestamp_t<second>::operator+=(amount<day> p_days)
 {
-  m_time += (day::seconds() * p_days).get<decltype(m_time)>();
+  m_time += (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;
@@ -135,7 +135,7 @@ timestamp_t<second>::operator+(amount<day> p_days)
 timestamp_t<second>&
 timestamp_t<second>::operator-=(amount<day> p_days)
 {
-  m_time -= (day::seconds() * p_days).get<decltype(m_time)>();
+  m_time -= (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;
@@ -152,7 +152,7 @@ timestamp_t<second>::operator-(amount<day> p_days)
 timestamp_t<second>&
 timestamp_t<second>::operator+=(amount<weekday> p_weeks)
 {
-  m_time += (weekday::seconds() * p_weeks).get<decltype(m_time)>();
+  m_time += (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;
@@ -169,7 +169,7 @@ timestamp_t<second>::operator+(amount<weekday> p_weeks)
 timestamp_t<second>&
 timestamp_t<second>::operator-=(amount<weekday> p_weeks)
 {
-  m_time -= (weekday::seconds() * p_weeks).get<decltype(m_time)>();
+  m_time -= (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
   struct tm* _tm = localtime(&m_time);
   memcpy(&m_tm, _tm, sizeof(struct tm));
   return *this;

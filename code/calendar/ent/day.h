@@ -161,11 +161,11 @@ struct day
 
   static inline amount<hour> hours() { return amount<hour>(24); }
 
-  static inline amount<minute> minutes() { return hour::minutes() * hours(); }
+  static inline amount<minute> minutes() { return hour::minutes() * hours().get<amount<minute>>(); }
 
   static inline amount<second> seconds()
   {
-    return minute::seconds() * minutes();
+    return minute::seconds() * minutes().get<amount<second>>();
   }
 
 private:

@@ -34,31 +34,6 @@ struct amount
     return p_out;
   }
 
-  template<typename t_amount>
-  inline amount operator+(t_amount p_amount)
-  {
-    return amount(m_value + p_amount.template get<decltype(m_value)>());
-  }
-
-  template<typename t_amount>
-  inline amount operator-(t_amount p_amount)
-  {
-    return amount(m_value - p_amount.template get<decltype(m_value)>());
-  }
-
-  template<typename t_amount>
-  inline amount& operator+=(t_amount p_amount)
-  {
-    m_value += p_amount.template get<decltype(m_value)>();
-    return *this;
-  }
-
-  template<typename t_amount>
-  inline amount& operator-=(t_amount p_amount)
-  {
-    m_value -= p_amount.template get<decltype(m_value)>();
-    return *this;
-  }
 
   inline amount& operator++()
   {
@@ -84,57 +59,153 @@ struct amount
     return *this;
   }
 
-  template<typename t_amount>
-  inline amount operator*(t_amount p_amount) const
+
+  inline amount operator+(amount p_amount)
   {
-    return amount(m_value * p_amount.template get<decltype(m_value)>());
+    return amount(m_value + p_amount.m_value);
   }
 
-  template<typename t_amount>
-  inline amount& operator*=(t_amount p_amount)
+  inline amount operator-(amount p_amount)
   {
-    m_value *= p_amount.template get<decltype(m_value)>();
+    return amount(m_value - p_amount.m_value);
+  }
+
+  inline amount& operator+=(amount p_amount)
+  {
+    m_value += p_amount.m_value;
     return *this;
   }
 
-  template<typename t_amount>
-  inline amount operator/(t_amount p_amount) const
+  inline amount& operator-=(amount p_amount)
   {
-    return amount(m_value / p_amount.template get<decltype(m_value)>());
-  }
-
-  template<typename t_amount>
-  inline amount& operator/=(t_amount p_amount)
-  {
-    m_value /= p_amount.template get<decltype(m_value)>();
+    m_value -= p_amount.m_value;
     return *this;
   }
 
-  template<typename t_amount>
-  inline amount operator%(t_amount p_amount) const
+  inline amount operator*(amount p_amount) const
   {
-    return amount(m_value % p_amount.template get<decltype(m_value)>());
+    return amount(m_value * p_amount.m_value);
   }
 
-  template<typename t_amount>
-  inline bool operator > (const t_amount & p_amount) const {
+  inline amount& operator*=(amount p_amount)
+  {
+    m_value *= p_amount.m_value;
+    return *this;
+  }
+
+  inline amount operator/(amount p_amount) const
+  {
+    return amount(m_value / p_amount.m_value);
+  }
+
+  inline amount& operator/=(amount p_amount)
+  {
+    m_value /= p_amount.m_value;
+    return *this;
+  }
+
+  inline amount operator%(amount p_amount) const
+  {
+    return amount(m_value % p_amount.m_value);
+  }
+
+  inline bool operator > (const amount & p_amount) const {
     return (m_value > p_amount.template get<decltype (m_value)>());
   }
 
-  template<typename t_amount>
-  inline bool operator < (const t_amount & p_amount) const {
+  inline bool operator < (const amount & p_amount) const {
     return (m_value < p_amount.template get<decltype (m_value)>());
   }
 
-  template<typename t_amount>
-  inline bool operator >= (const t_amount & p_amount) const {
+  inline bool operator >= (const amount & p_amount) const {
     return (m_value >= p_amount.template get<decltype (m_value)>());
   }
 
-  template<typename t_amount>
-  inline bool operator <= (const t_amount & p_amount) const {
+  inline bool operator <= (const amount & p_amount) const {
     return (m_value <= p_amount.template get<decltype (m_value)>());
   }
+
+
+  // **************************************
+
+
+  //  template<typename t_amount>
+  //  inline amount operator+(t_amount p_amount)
+  //  {
+  //    return amount(m_value + p_amount.template get<decltype(m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount operator-(t_amount p_amount)
+  //  {
+  //    return amount(m_value - p_amount.template get<decltype(m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount& operator+=(t_amount p_amount)
+  //  {
+  //    m_value += p_amount.template get<decltype(m_value)>();
+  //    return *this;
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount& operator-=(t_amount p_amount)
+  //  {
+  //    m_value -= p_amount.template get<decltype(m_value)>();
+  //    return *this;
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount operator*(t_amount p_amount) const
+  //  {
+  //    return amount(m_value * p_amount.template get<decltype(m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount& operator*=(t_amount p_amount)
+  //  {
+  //    m_value *= p_amount.template get<decltype(m_value)>();
+  //    return *this;
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount operator/(t_amount p_amount) const
+  //  {
+  //    return amount(m_value / p_amount.template get<decltype(m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount& operator/=(t_amount p_amount)
+  //  {
+  //    m_value /= p_amount.template get<decltype(m_value)>();
+  //    return *this;
+  //  }
+
+  //  template<typename t_amount>
+  //  inline amount operator%(t_amount p_amount) const
+  //  {
+  //    return amount(m_value % p_amount.template get<decltype(m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline bool operator > (const t_amount & p_amount) const {
+  //    return (m_value > p_amount.template get<decltype (m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline bool operator < (const t_amount & p_amount) const {
+  //    return (m_value < p_amount.template get<decltype (m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline bool operator >= (const t_amount & p_amount) const {
+  //    return (m_value >= p_amount.template get<decltype (m_value)>());
+  //  }
+
+  //  template<typename t_amount>
+  //  inline bool operator <= (const t_amount & p_amount) const {
+  //    return (m_value <= p_amount.template get<decltype (m_value)>());
+  //  }
 
   /// explicit cast to some type of number
   ///

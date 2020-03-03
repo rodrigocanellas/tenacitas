@@ -144,7 +144,7 @@ struct hour
 
   static inline amount<second> seconds()
   {
-    return minute::seconds() * minutes();
+    return minute::seconds() * minutes().get<amount<second>>();
   }
 
 private:

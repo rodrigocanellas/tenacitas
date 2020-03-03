@@ -85,6 +85,46 @@ private:
   ent::amount<ent::month> m_at_each;
 };
 
+///
+///
+///
+template <typename t_time_precision>
+struct monthly_repetition_by_day
+{
+  typedef ent::timestamp_t<t_time_precision> timestamp;
+
+  monthly_repetition_by_day(ent::day p_day, uint16_t p_at_each = 1)
+    : m_day(p_day)
+    , m_at_each(p_at_each)
+  {
+  }
+
+  timestamp next(timestamp p_time, bool p_first = false)
+  {
+
+    timestamp _time = p_time;
+
+    ent::day _day(m_day);
+
+    ent::amount<ent::day> _days (ent::month::days(_time.get_month(), _time.get_year()));
+
+    if (ent::amount<ent::day>(_day) > _days) {
+      _day = ent::day::create(_days.get<uint8_t>());
+    }
+
+    _time.set_day(_day);
+
+    if (!p_first) {
+      _time += ent::amount<ent::month>(m_at_each);
+    }
+    return _time;
+  }
+
+private:
+  ent::day m_day;
+  ent::amount<ent::month> m_at_each;
+};
+
 } // namespace bus
 } // namespace calendar
 } // namespace tenacitas
