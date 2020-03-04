@@ -8,77 +8,29 @@
 #include <calendar/bus/daily_repetition.h>
 #include <calendar/bus/monthly_repetition.h>
 #include <calendar/bus/weekly_repetition.h>
+#include <calendar/bus/yearly_repetition.h>
 #include <calendar/ent/ending_after.h>
 #include <calendar/ent/ending_never.h>
 #include <calendar/ent/ending_on.h>
 #include <calendar/ent/second.h>
 #include <calendar/ent/month.h>
-#include <calendar/ent/timestamp_second.h>
+#include <calendar/ent/timestamp.h>
 
 using namespace tenacitas::calendar::ent;
 using namespace tenacitas::calendar::bus;
 
 
-
-// struct yearly_repetition
-//{
-//  yearly_repetition(day p_day, month p_month, uint16_t p_at_each = 1)
-//    : m_day(p_day)
-//    , m_month(p_month)
-//    , m_at_each(p_at_each)
-//  {}
-
-//  time_t next(time_t p_time, bool p_first = false)
-//  {
-//    struct tm* _tm = localtime(&p_time);
-//    decltype(_tm->tm_mon) _month =
-//    static_cast<decltype(_tm->tm_mon)>(m_month); decltype(_tm->tm_mday) _day =
-//    static_cast<decltype(_tm->tm_mday)>(m_day); if (_month > _tm->tm_mon) {
-//      _tm->tm_mon = _month;
-//      _tm->tm_mday = _day;
-//    } else if (_month == _tm->tm_mon) {
-//      if (_day > _tm->tm_mday) {
-//        _tm->tm_mday = _day;
-//      } else if (_day <= _tm->tm_mday) {
-//        // _day < _tm->tm_mday
-//        ++_tm->tm_mon;
-//        if (_tm->tm_mon > 11) {
-//          _tm->tm_mon = 0;
-//          //          ++_tm->tm_year;
-//        }
-//        _tm->tm_mday = _day;
-//      }
-//    } else {
-//      // _month < _tm->tm_mon
-//      //      ++_tm->tm_year;
-//      _tm->tm_mon = _month;
-//      _tm->tm_mday = _day;
-//    }
-
-//    if (!p_first) {
-//      _tm->tm_year += m_at_each;
-//      //      _tm->tm_mon += m_at_each % 12;
-//    }
-//    return mktime(_tm);
-//  }
-
-// private:
-//  day m_day;
-//  month m_month;
-//  uint16_t m_at_each;
-//};
-
 int
 main()
 {
 
-  typedef timestamp_t<second> timestamp;
+  typedef timestamp timestamp;
   typedef std::vector<timestamp> timestamps;
 
   {
     std::cout << "\ndaily_repetition - end_never" << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), daily_repetition<second>(), end_never<second>());
+          timestamp(), daily_repetition(), end_never());
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -87,7 +39,7 @@ main()
   {
     std::cout << "\ndaily_repetition at 3 days - end_never" << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), daily_repetition<second>(3), end_never<second>());
+          timestamp(), daily_repetition(3), end_never());
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -96,7 +48,7 @@ main()
   {
     std::cout << "\ndaily_repetition - end_after 12 " << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), daily_repetition<second>(), end_after<second>(12));
+          timestamp(), daily_repetition(), end_after(12));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -107,7 +59,7 @@ main()
     _when += amount<tenacitas::calendar::ent::day>(4);
     std::cout << "\ndaily_repetition - end_on " << _when << ": " << _when;
     timestamps _sequence = create_sequence(
-          timestamp(), daily_repetition<second>(), end_on<second>(_when));
+          timestamp(), daily_repetition(), end_on(_when));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -118,8 +70,8 @@ main()
 
     timestamps _sequence =
         create_sequence(timestamp(),
-                        weekly_repetition<second>({ weekday::mon, weekday::wed }),
-                        end_never<second>());
+                        weekly_repetition({ weekday::mon, weekday::wed }),
+                        end_never());
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -131,8 +83,8 @@ main()
               << std::endl;
     timestamps _sequence = create_sequence(
           timestamp(),
-          weekly_repetition<second>({ weekday::mon, weekday::wed }, 2),
-          end_never<second>());
+          weekly_repetition({ weekday::mon, weekday::wed }, 2),
+          end_never());
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -155,8 +107,8 @@ main()
     }
     timestamps _sequence =
         create_sequence(_timestamp,
-                        weekly_repetition<second>({ _weekday_one, _weekday_two }),
-                        end_never<second>());
+                        weekly_repetition({ _weekday_one, _weekday_two }),
+                        end_never());
     for (timestamp _aux : _sequence) {
       std::cout << _aux << std::endl;
     }
@@ -167,8 +119,8 @@ main()
               << std::endl;
     timestamps _sequence =
         create_sequence(timestamp(),
-                        weekly_repetition<second>({ weekday::mon, weekday::wed }),
-                        end_after<second>(12));
+                        weekly_repetition({ weekday::mon, weekday::wed }),
+                        end_after(12));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -180,8 +132,8 @@ main()
               << std::endl;
     timestamps _sequence =
         create_sequence(timestamp(),
-                        weekly_repetition<second>({ weekday::mon, weekday::wed }),
-                        end_on<second>(_when));
+                        weekly_repetition({ weekday::mon, weekday::wed }),
+                        end_on(_when));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -190,7 +142,7 @@ main()
   {
     std::cout << "\nmonthly_repetition_by_day - end_never" << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), monthly_repetition_by_day<second>(day::d25), end_never<second>());
+          timestamp(), monthly_repetition_by_day(day::d25), end_never());
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -201,7 +153,7 @@ main()
                  "end_after 25"
               << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), monthly_repetition_by_day<second>(day::d25, 4), end_after<second>(25));
+          timestamp(), monthly_repetition_by_day(day::d25, 4), end_after(25));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -212,7 +164,7 @@ main()
                  "end_after 25"
               << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), monthly_repetition_by_day<second>(day::d25, 24), end_after<second>(25));
+          timestamp(), monthly_repetition_by_day(day::d25, 24), end_after(25));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -223,7 +175,7 @@ main()
                  "end_after 25"
               << std::endl;
     timestamps _sequence = create_sequence(
-          timestamp(), monthly_repetition_by_day<second>(day::d25, 21), end_after<second>(25));
+          timestamp(), monthly_repetition_by_day(day::d25, 21), end_after(25));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -236,8 +188,8 @@ main()
         << std::endl;
     timestamps _sequence =
         create_sequence(timestamp() + amount<day>(2),
-                        monthly_repetition_by_week<second>(3, weekday::thu),
-                        end_after<second>(4));
+                        monthly_repetition_by_week(3, weekday::thu),
+                        end_after(4));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
@@ -250,46 +202,41 @@ main()
         << std::endl;
     timestamps _sequence =
         create_sequence(timestamp() + amount<day>(2),
-                        monthly_repetition_by_week<second>(3, weekday::thu, 4),
-                        end_after<second>(4));
+                        monthly_repetition_by_week(3, weekday::thu, 4),
+                        end_after(4));
     for (timestamp _timestamp : _sequence) {
       std::cout << _timestamp << std::endl;
     }
   }
 
-  //  {
-  //    std::cout << "\nyearly_repetition, current month, two days ahead, "
-  //                 "end_after 4"
-  //              << std::endl;
-  //    time_t _now = time(nullptr);
-  //    _now += 2 * day_in_seconds;
-  //    struct tm* _tm = localtime(&_now);
-  //    times _sequence =
-  //      create_sequence(time(nullptr),
-  //                      yearly_repetition(static_cast<day>(_tm->tm_mday),
-  //                                        static_cast<month>(_tm->tm_mon)),
-  //                      end_after(4));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
-  //  {
-  //    std::cout << "\nyearly_repetition, current month, two days ahead, at
-  //    each "
-  //                 "5 - end_after 4"
-  //              << std::endl;
-  //    time_t _now = time(nullptr);
-  //    _now += 2 * day_in_seconds;
-  //    struct tm* _tm = localtime(&_now);
-  //    times _sequence = create_sequence(
-  //      time(nullptr),
-  //      yearly_repetition(
-  //        static_cast<day>(_tm->tm_mday), static_cast<month>(_tm->tm_mon), 5),
-  //      end_after(4));
-  //    for (time_t _time : _sequence) {
-  //      std::cout << ctime(&_time);
-  //    }
-  //  }
+  {
+    std::cout << "\nyearly_repetition, current month, two days ahead, "
+                 "end_after 4"
+              << std::endl;
+    timestamp _now;
+    _now += amount<day>(2);
+    timestamps _sequence =
+        create_sequence(timestamp(),
+                        yearly_repetition(_now.get_day(), _now.get_month()),
+                        end_after(4));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
+
+  {
+    std::cout << "\nyearly_repetition, current month, two days ahead, at each 5 - end_after 4"
+              << std::endl;
+    timestamp _now;
+    _now += amount<day>(2);
+    timestamps _sequence =
+        create_sequence(timestamp(),
+                        yearly_repetition(_now.get_day(), _now.get_month(), 5),
+                        end_after(4));
+    for (timestamp _timestamp : _sequence) {
+      std::cout << _timestamp << std::endl;
+    }
+  }
 
   return 0;
 }

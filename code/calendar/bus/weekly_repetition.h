@@ -15,16 +15,13 @@ namespace bus {
 /// \brief Calculates the next group of timestamps, given a set of \p weekday,
 /// and the interval between the weeks
 ///
-/// \tparam t_time_precision defines the precision of the timestamp. Currently
+/// \tparam t_time_precision defines the precision of the ent::timestamp. Currently
 /// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
 /// year
 ///
-template<typename t_time_precision>
 struct weekly_repetition
 {
-  typedef ent::timestamp_t<t_time_precision> timestamp;
-
-  typedef std::vector<timestamp> timestamps;
+  typedef std::vector<ent::timestamp> timestamps;
 
   typedef std::vector<ent::weekday> weekdays;
 
@@ -44,7 +41,7 @@ struct weekly_repetition
   /// \param p_first
   /// \return
   ///
-  timestamps next(timestamp p_time, bool p_first = false)
+  timestamps next(ent::timestamp p_time, bool p_first = false)
   {
     timestamps _sequence;
     if (p_first) {
@@ -52,7 +49,7 @@ struct weekly_repetition
       return _sequence;
     }
 
-    timestamp _time = begin_week(p_time);
+    ent::timestamp _time = begin_week(p_time);
     //
     rest(m_weekdays.begin(), _time, _sequence);
     return _sequence;
@@ -64,9 +61,9 @@ private:
   /// \param p_time
   /// \return
   ///
-  timestamp begin_week(timestamp p_time)
+  ent::timestamp begin_week(ent::timestamp p_time)
   {
-    timestamp _time = p_time + m_at_each;
+    ent::timestamp _time = p_time + m_at_each;
 
     _time -= _time.get_weekday().from_sunday();
 
@@ -79,12 +76,12 @@ private:
   /// \param p_weekday
   /// \return
   ///
-  timestamp next_timestamp_in_weekday_from_timestamp(timestamp p_time,
+  ent::timestamp next_timestamp_in_weekday_from_timestamp(ent::timestamp p_time,
                                                      ent::weekday p_weekday)
   {
     ent::weekday _weekday = p_time.get_weekday();
 
-    timestamp _time = p_time;
+    ent::timestamp _time = p_time;
 
     if (_weekday == p_weekday) {
       return _time;
@@ -108,10 +105,10 @@ private:
   /// \param p_sequence
   ///
   void rest(std::vector<ent::weekday>::const_iterator p_weekday,
-            timestamp p_time,
+            ent::timestamp p_time,
             timestamps& p_sequence)
   {
-    timestamp _time = p_time;
+    ent::timestamp _time = p_time;
     for (weekdays::const_iterator _ite = p_weekday; _ite != m_weekdays.end();
          ++_ite) {
 
@@ -126,9 +123,9 @@ private:
   /// \param p_time
   /// \param p_sequence
   ///
-  void first(timestamp p_time, timestamps& p_sequence)
+  void first(ent::timestamp p_time, timestamps& p_sequence)
   {
-    timestamp _time =
+    ent::timestamp _time =
       next_timestamp_in_weekday_from_timestamp(p_time, m_weekdays[0]);
     p_sequence.push_back(_time);
     rest(++m_weekdays.begin(), _time, p_sequence);

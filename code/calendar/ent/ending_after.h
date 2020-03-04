@@ -10,14 +10,13 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-template<typename t_time_precision>
 struct end_after
 {
   end_after(uint16_t p_number)
     : m_number(p_number)
   {}
 
-  bool stop(timestamp_t<t_time_precision>)
+  bool stop(const ent::timestamp &)
   {
     return (++m_counter > m_number ? true : false);
   }

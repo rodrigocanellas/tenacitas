@@ -10,14 +10,13 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-template<typename t_time_precision>
 struct end_never
 {
   end_never(uint32_t p_max_events = 40)
     : m_max_events(p_max_events)
   {}
 
-  bool stop(timestamp_t<t_time_precision>)
+  bool stop(const ent::timestamp&)
   {
     if (m_num == m_max_events) {
       return true;

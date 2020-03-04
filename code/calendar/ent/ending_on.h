@@ -9,19 +9,19 @@ namespace tenacitas {
 namespace calendar {
 namespace ent {
 
-template<typename t_time_precision>
+
 struct end_on
 {
-  end_on(timestamp_t<t_time_precision> p_when)
+  end_on(ent::timestamp p_when)
     : m_when(p_when)
   {}
 
-  bool stop(timestamp_t<t_time_precision> p_time)
+  bool stop(const ent::timestamp & p_time)
   {
     return (p_time > m_when ? true : false);
   }
 
-  timestamp_t<t_time_precision> m_when;
+  ent::timestamp m_when;
 };
 
 } // namespace entities

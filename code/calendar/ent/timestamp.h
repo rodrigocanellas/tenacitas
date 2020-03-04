@@ -1,164 +1,444 @@
-﻿#ifndef TENACITAS_CALENDAR_ENTITIES_TIMESTAMP_H
+#ifndef TENACITAS_CALENDAR_ENTITIES_TIMESTAMP_H
 #define TENACITAS_CALENDAR_ENTITIES_TIMESTAMP_H
 
 #include <cstdint>
-#include <cstring>
 #include <ctime>
+#include <iomanip>
 #include <iostream>
+
+#include <calendar/ent/amount.h>
+#include <calendar/ent/day.h>
+#include <calendar/ent/hour.h>
+#include <calendar/ent/minute.h>
+#include <calendar/ent/month.h>
+#include <calendar/ent/second.h>
+#include <calendar/ent/weekday.h>
+#include <calendar/ent/year.h>
 
 namespace tenacitas {
 namespace calendar {
 namespace ent {
 
 ///
-/// \brief base classe for timestamp definition, dependent on a time precision
+/// \brief specialization of \p timestamp template class, with precision up to
+/// \p second
 ///
-/// \tparam t_time_precision is the type of time, like 'day' or 'month'
-template<typename t_time_precision>
-struct timestamp_t;
+struct timestamp
+{
+  ///
+  /// \brief timestamp default constructor creates a timestamp for now
+  ///
+  inline timestamp()
+    : m_time(time(nullptr))
+  {
+  }
+
+  ///
+  /// \brief timestamp creates a timestamp by informing day, month, year,
+  /// hour, minute and second \param p_year \param p_month \param p_day \param
+  /// p_hour \param p_minute \param p_second
+  ///
+  timestamp(year p_year,
+            month p_month,
+            day p_day,
+            hour p_hour = hour::h00,
+            minute p_minute = minute::m00,
+            second p_second = second::s00);
+  ///
+  /// \brief timestamp copy constructor
+  /// \param p_timestamp_t timestamp to be copied
+  ///
+  inline timestamp(const timestamp& p_timestamp_t)
+    : m_time(p_timestamp_t.m_time)
+  {
+  }
+
+  ///
+  /// \brief timestamp move constructor
+  /// \param p_timestamp_t timestamp to be moved
+  ///
+  inline timestamp(timestamp&& p_timestamp_t)
+    : m_time(std::move(p_timestamp_t.m_time))
+  {
+  }
+
+  ///
+  /// \brief operator = copy assignment
+  /// \param p_timestamp_t
+  /// \return
+  ///
+  timestamp& operator=(const timestamp& p_timestamp_t);
+
+  ///
+  /// \brief operator = move assignment
+  /// \param p_timestamp_t
+  /// \return
+  ///
+  timestamp& operator=(timestamp&& p_timestamp_t);
+
+  ///
+  /// \brief operator <<
+  /// \param p_out
+  /// \param p_ts
+  /// \return
+  ///
+  inline friend std::ostream& operator<<(std::ostream& p_out,
+                                         const timestamp& p_ts)
+  {
+    p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+          << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
+          << std::setw(4) << std::setfill('0') << p_ts.get_year() << ","
+          << p_ts.get_weekday() << "," << std::setw(2) << std::setfill('0')
+          << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
+          << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
+          << p_ts.get_second() << "]";
+
+    //    p_out << "{ "
+
+    //          << "\"day\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_day() << "\", "
+
+    //          << "\"month\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_month() << "\", "
+
+    //          << "\"year\" : \"" << std::setw(4) << std::setfill('0')
+    //          << p_ts.get_year() << "\", "
+
+    //          << "\"weekday\" : \"" << p_ts.get_weekday() << "\", "
+
+    //          << "\"hour\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_hour() << "\", "
+
+    //          << "\"minute\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_minute() << "\", "
+
+    //          << "\"second\" : \"" << std::setw(2) << std::setfill('0')
+    //          << p_ts.get_second() << "\" "
+
+    //          << " }";
+
+    return p_out;
+  }
+
+  ///
+  /// \brief set_day
+  /// \param p_day
+  /// \throw if the resulting \p timestamp is invalid
+  ///
+  inline void set_day(day p_day)
+  {
+    struct tm* _tm = localtime(&m_time);
+    _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
+    m_time = mktime(_tm);
+  }
+
+  inline void set_day_month(day p_day, month p_month) {
+    struct tm* _tm = localtime(&m_time);
+    _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
+    _tm->tm_mday = amount<month>(p_month).get<decltype(_tm->tm_mon)>();
+    m_time = mktime(_tm);
+
+  }
+
+  ///
+  /// \brief get_second
+  /// \return
+  ///
+  inline second get_second() const {
+    struct tm* _tm = localtime(&m_time);
+    return second::create(_tm->tm_sec);
+  }
+
+  ///
+  /// \brief get_minute
+  /// \return
+  ///
+  inline minute get_minute() const {
+    struct tm* _tm = localtime(&m_time);
+    return minute::create(_tm->tm_min);
+  }
+
+  ///
+  /// \brief get_hour
+  /// \return
+  ///
+  inline hour get_hour() const {
+    struct tm* _tm = localtime(&m_time);
+    return hour::create(_tm->tm_hour);
+  }
+
+  ///
+  /// \brief get_day
+  /// \return
+  ///
+  inline day get_day() const {
+    struct tm* _tm = localtime(&m_time);
+    return day::create(_tm->tm_mday);
+  }
+
+  ///
+  /// \brief get_weekday
+  /// \return
+  ///
+  inline weekday get_weekday() const {
+    struct tm* _tm = localtime(&m_time);
+    return weekday::create(_tm->tm_wday);
+  }
+
+  ///
+  /// \brief get_month
+  /// \return
+  ///
+  inline month get_month() const {
+    struct tm* _tm = localtime(&m_time);
+    return month::create(_tm->tm_mon);
+  }
+
+  ///
+  /// \brief get_year
+  /// \return
+  ///
+  inline year get_year() const {
+    struct tm* _tm = localtime(&m_time);
+    return year(_tm->tm_year + 1900);
+  }
+
+  ///
+  /// \brief operator ==
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator==(const timestamp& p_ts) const
+  {
+    return m_time == p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator !=
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator!=(const timestamp& p_ts) const
+  {
+    return m_time != p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator >
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator>(const timestamp& p_ts) const
+  {
+    return m_time > p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator <
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator<(const timestamp& p_ts) const
+  {
+    return m_time < p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator >=
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator>=(const timestamp& p_ts) const
+  {
+    return m_time > p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator <=
+  /// \param p_ts
+  /// \return
+  ///
+  inline bool operator<=(const timestamp& p_ts) const
+  {
+    return m_time < p_ts.m_time;
+  }
+
+  ///
+  /// \brief operator +=
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp& operator+=(amount<second> p_seconds);
+
+  ///
+  /// \brief operator +
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp operator+(amount<second> p_seconds);
+
+  ///
+  /// \brief operator -=
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp& operator-=(amount<second> p_seconds);
+
+  ///
+  /// \brief operator -
+  /// \param p_seconds
+  /// \return
+  ///
+  timestamp operator-(amount<second> p_seconds);
+
+  ///
+  /// \brief operator +=
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp& operator+=(amount<minute> p_minutes);
+
+  ///
+  /// \brief operator +
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp operator+(amount<minute> p_minutes);
+
+  ///
+  /// \brief operator -=
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp& operator-=(amount<minute> p_minutes);
+
+  ///
+  /// \brief operator -
+  /// \param p_minutes
+  /// \return
+  ///
+  timestamp operator-(amount<minute> p_minutes);
+
+  ///
+  /// \brief operator +=
+  /// \param p_days
+  /// \return
+  ///
+  timestamp& operator+=(amount<day> p_days);
+
+  ///
+  /// \brief operator +
+  /// \param p_days
+  /// \return
+  ///
+  timestamp operator+(amount<day> p_days);
+
+  ///
+  /// \brief operator -=
+  /// \param p_days
+  /// \return
+  ///
+  timestamp& operator-=(amount<day> p_days);
+
+  ///
+  /// \brief operator -
+  /// \param p_days
+  /// \return
+  ///
+  timestamp operator-(amount<day> p_days);
+
+  ///
+  /// \brief operator +=
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp& operator+=(amount<weekday> p_weeks);
+
+  ///
+  /// \brief operator +
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp operator+(amount<weekday> p_weeks);
+
+  ///
+  /// \brief operator -=
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp& operator-=(amount<weekday> p_weeks);
+
+  ///
+  /// \brief operator -
+  /// \param p_weeks
+  /// \return
+  ///
+  timestamp operator-(amount<weekday> p_weeks);
+
+  ///
+  /// \brief operator +=
+  /// \param p_months
+  /// \return
+  ///
+  timestamp& operator+=(amount<month> p_months);
+
+  ///
+  /// \brief operator +
+  /// \param p_months
+  /// \return
+  ///
+  timestamp operator+(amount<month> p_months);
+
+  ///
+  /// \brief operator -=
+  /// \param p_months
+  /// \return
+  ///
+  timestamp& operator-=(amount<month> p_months);
+
+  ///
+  /// \brief operator -
+  /// \param p_months
+  /// \return
+  ///
+  timestamp operator-(amount<month> p_months);
+
+  ///
+  /// \brief operator +=
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator+=(amount<year> p_years);
+
+  ///
+  /// \brief operator +
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator+(amount<year> p_years);
+
+  ///
+  /// \brief operator -=
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator-=(amount<year> p_years);
+
+  ///
+  /// \brief operator -
+  /// \param p_years
+  /// \return
+  ///
+  timestamp operator-(amount<year> p_years);
+
+private:
+  //  struct timespec m_timespec;
+  time_t m_time = -1;
+  //  struct tm m_tm;
+};
 
 } // namespace ent
 } // namespace calendar
 } // namespace tenacitas
 
-#endif
-
-// void
-// amount_tests()
-//{
-
-//  {
-//    amount<day> _n00;
-//    std::cout << "n00 = " << _n00 << std::endl;
-//  }
-//  {
-//    amount<day> _n01(300);
-//    ++_n01;
-//    std::cout << "n01 = " << _n01 << std::endl;
-//  }
-//  {
-//    amount<day> _n02(300);
-//    _n02++;
-//    std::cout << "n02 = " << _n02 << std::endl;
-//  }
-//  {
-//    amount<day> _n03(300);
-//    _n03 += amount<day>(120);
-//    std::cout << "n03 = " << _n03 << std::endl;
-//  }
-//  {
-//    amount<day> _n04(300);
-//    _n04 += amount<day>(120);
-//    std::cout << "n04 = " << _n04 << std::endl;
-//  }
-//  {
-//    amount<day> _n05(300);
-//    amount<day> _n06 = _n05 + amount<day>(120);
-//    std::cout << "n06 = " << _n06 << std::endl;
-//  }
-//}
-
-// int
-// main()
-//{
-//  {
-//    std::cout << "wed - mon = " << weekday::wed - weekday::mon << std::endl;
-//    std::cout << "mon - wed = " << weekday::mon - weekday::wed << std::endl;
-//  }
-//  {
-//    std::cout << "minute::seconds() = " << minute::seconds() << std::endl;
-//  }
-//  {
-//    std::cout << "hour::minutes() = " << hour::minutes() << std::endl;
-//    std::cout << "hour::seconds() = " << hour::seconds() << std::endl;
-//  }
-//  {
-//    std::cout << "day::hours() = " << day::hours() << std::endl;
-//    std::cout << "day::minutes() = " << day::minutes() << std::endl;
-//    std::cout << "day::seconds() = " << day::seconds() << std::endl;
-//  }
-//  {
-//    std::cout << "weekday::days() = " << weekday::days() << std::endl;
-//    std::cout << "weekday::hours() = " << weekday::hours() << std::endl;
-//    std::cout << "weekday::minutes() = " << weekday::minutes() << std::endl;
-//    std::cout << "weekday::seconds() = " << weekday::seconds() << std::endl;
-//  }
-//  {
-//    std::cout << "month::days(month::feb, year(2020)) = "
-//              << month::days(month::feb, year(2020)) << std::endl;
-//    std::cout << "month::days(month::feb, year(2019)) = "
-//              << month::days(month::feb, year(2019)) << std::endl;
-//    std::cout << "month::hours(month::feb, year(2020)) = "
-//              << month::hours(month::feb, year(2020)) << std::endl;
-//    std::cout << "month::hours(month::feb, year(2019)) = "
-//              << month::hours(month::feb, year(2019)) << std::endl;
-//    std::cout << "month::minutes(month::feb, year(2020)) = "
-//              << month::minutes(month::feb, year(2020)) << std::endl;
-//    std::cout << "month::minutes(month::feb, year(2019)) = "
-//              << month::minutes(month::feb, year(2019)) << std::endl;
-//    std::cout << "month::seconds(month::feb, year(2020)) = "
-//              << month::seconds(month::feb, year(2020)) << std::endl;
-//    std::cout << "month::seconds(month::feb, year(2019)) = "
-//              << month::seconds(month::feb, year(2019)) << std::endl;
-//  }
-//  {
-//    std::cout << "year::days(year::feb, year(2020)) = "
-//              << year::days(year(2020)) << std::endl;
-//    std::cout << "year::days(year(2019)) = " << year::days(year(2019))
-//              << std::endl;
-//    std::cout << "year::hours(year(2020)) = " << year::hours(year(2020))
-//              << std::endl;
-//    std::cout << "year::hours(year(2019)) = " << year::hours(year(2019))
-//              << std::endl;
-//    std::cout << "year::minutes(year(2020)) = " << year::minutes(year(2020))
-//              << std::endl;
-//    std::cout << "year::minutes(year(2019)) = " << year::minutes(year(2019))
-//              << std::endl;
-//    std::cout << "year::seconds(year(2020)) = " << year::seconds(year(2020))
-//              << std::endl;
-//    std::cout << "year::seconds(year(2019)) = " << year::seconds(year(2019))
-//              << std::endl;
-//  }
-
-//  {
-//    std::cout << "*************** month" << std::endl;
-//    timestamp<second> _now;
-//    std::cout << "now = " << _now << " + 6 months = " << _now +
-//    amount<month>(6)
-//              << std::endl;
-
-//    std::cout << "now = " << _now
-//              << " + 12 months = " << _now + amount<month>(12) << std::endl;
-
-//    std::cout << "now = " << _now
-//              << " + 17 months = " << _now + amount<month>(17) << std::endl;
-
-//    std::cout << "now = " << _now << " - 6 months = " << _now -
-//    amount<month>(6)
-//              << std::endl;
-
-//    std::cout << "now = " << _now
-//              << " - 12 months = " << _now - amount<month>(12) << std::endl;
-
-//    std::cout << "now = " << _now
-//              << " - 17 months = " << _now - amount<month>(17) << std::endl;
-//  }
-
-//  {
-//    std::cout << "*************** year" << std::endl;
-//    timestamp<second> _now;
-
-//    std::cout << "now = " << _now << " + 1 year = " << _now + amount<year>(1)
-//              << std::endl;
-//    std::cout << "now = " << _now << " - 1 year = " << _now - amount<year>(1)
-//              << std::endl;
-
-//    _now += amount<year>(2);
-//    std::cout << "now + 2 years = " << _now << std::endl;
-
-//    _now -= amount<year>(4);
-//    std::cout << "now - 4 years = " << _now << std::endl;
-//  }
-
-//  return 0;
-//}
+#endif // TIMESTAMP_SECOND_H

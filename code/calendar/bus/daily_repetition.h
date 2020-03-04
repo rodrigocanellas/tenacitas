@@ -14,11 +14,8 @@ namespace bus {
 ///
 /// \brief Calculates the next and previous timestamp, given an amount of days
 ///
-template<typename t_time_precision>
 struct daily_repetition
 {
-  typedef ent::timestamp_t<t_time_precision> timestamp;
-
   ///
   /// \brief daily_repetition
   /// \param p_at_each the amount of days between a timestamp and the next, or
@@ -40,7 +37,7 @@ struct daily_repetition
   /// \return the previous timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
-  inline timestamp prev(timestamp p_time, bool p_first = false)
+  inline ent::timestamp prev(ent::timestamp p_time, bool p_first = false)
   {
     return (p_first ? p_time : p_time - m_at_each);
   }
@@ -57,7 +54,7 @@ struct daily_repetition
   /// \return the next timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
-  inline timestamp next(timestamp p_time, bool p_first = false)
+  inline ent::timestamp next(ent::timestamp p_time, bool p_first = false)
   {
     return (p_first ? p_time : p_time + m_at_each);
   }

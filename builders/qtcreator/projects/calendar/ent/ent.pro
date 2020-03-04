@@ -18,13 +18,8 @@ HEADERS += \
   ../../../../../code/calendar/ent/hour.h \
   ../../../../../code/calendar/ent/minute.h \
   ../../../../../code/calendar/ent/month.h \
-  ../../../../../code/calendar/ent/number_of_days.h \
-  ../../../../../code/calendar/ent/recurrency.h \
-  ../../../../../code/calendar/ent/recurrency_day.h \
   ../../../../../code/calendar/ent/second.h \
   ../../../../../code/calendar/ent/timestamp.h \
-  ../../../../../code/calendar/ent/timestamp_second.h \
-  ../../../../../code/calendar/ent/types_of_repetition.h \
   ../../../../../code/calendar/ent/weekday.h \
   ../../../../../code/calendar/ent/year.h
 
@@ -35,7 +30,7 @@ SOURCES += \
   ../../../../../code/calendar/ent/internal/minute.cpp \
   ../../../../../code/calendar/ent/internal/month.cpp \
   ../../../../../code/calendar/ent/internal/second.cpp \
-  ../../../../../code/calendar/ent/internal/timestamp_second.cpp \
+  ../../../../../code/calendar/ent/internal/timestamp.cpp \
   ../../../../../code/calendar/ent/internal/weekday.cpp
 
 

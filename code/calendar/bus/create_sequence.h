@@ -21,23 +21,23 @@ namespace bus {
 /// year
 ///
 /// \tparam t_repetition defines the repetition pattern. The class must define
-/// \code timestamp_t<t_time_precision> next(timestamp_t<t_time_precision>
+/// \code timestamp next(timestamp
 /// p_time, bool p_first = false) \endcode
 ///
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
-/// implement \code bool stop(timestamp_t<t_time_precision> p_time) \endcode.
+/// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_time_precision,
+template<
          typename t_repetition,
          typename t_ending_type>
-std::vector<ent::timestamp_t<t_time_precision>>
-create_sequence(ent::timestamp_t<t_time_precision> p_start,
+std::vector<ent::timestamp>
+create_sequence(ent::timestamp p_start,
                 t_repetition&& p_repetition,
                 t_ending_type&& p_end)
 {
-  std::vector<ent::timestamp_t<t_time_precision>> _sequence;
+  std::vector<ent::timestamp> _sequence;
 
-  ent::timestamp_t<t_time_precision> _time = p_repetition.next(p_start, true);
+  ent::timestamp _time = p_repetition.next(p_start, true);
   while (!p_end.stop(_time)) {
     _sequence.push_back(_time);
     _time = p_repetition.next(_time);
@@ -54,16 +54,16 @@ create_sequence(ent::timestamp_t<t_time_precision> p_start,
 /// year
 ///
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
-/// implement \code bool stop(timestamp_t<t_time_precision> p_time) \endcode.
+/// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_time_precision, typename t_ending_type>
-std::vector<ent::timestamp_t<t_time_precision>>
-create_sequence(ent::timestamp_t<t_time_precision> p_start,
-                weekly_repetition<t_time_precision>&& p_repetition,
+template<typename t_ending_type>
+std::vector<ent::timestamp>
+create_sequence(ent::timestamp p_start,
+                weekly_repetition&& p_repetition,
                 t_ending_type&& p_end)
 
 {
-  typedef ent::timestamp_t<t_time_precision> timestamp;
+  typedef ent::timestamp timestamp;
   typedef std::vector<timestamp> timestamps;
 
   timestamps _sequence;

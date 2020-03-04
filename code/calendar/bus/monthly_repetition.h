@@ -14,18 +14,15 @@ namespace calendar {
 namespace bus {
 
 ///
-/// \brief Calculates the next timestamp, given a weekday, the order of the
+/// \brief Calculates the next ent::timestamp, given a weekday, the order of the
 /// weekday in a month, and the interval between the months
 ///
-/// \tparam t_time_precision defines the precision of the timestamp. Currently
+/// \tparam t_time_precision defines the precision of the ent::timestamp. Currently
 /// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
 /// year
 ///
-template<typename t_time_precision>
 struct monthly_repetition_by_week
 {
-
-  typedef ent::timestamp_t<t_time_precision> timestamp;
 
   ///
   /// \brief monthly_repetition_by_week
@@ -47,21 +44,21 @@ struct monthly_repetition_by_week
   /// \param p_first
   /// \return
   ///
-  timestamp next(timestamp p_time, bool p_first = false)
+  ent::timestamp next(ent::timestamp p_time, bool p_first = false)
   {
-    timestamp _timestamp = p_time;
+    ent::timestamp _timestamp = p_time;
     if (!p_first) {
       _timestamp += m_at_each;
     }
 
-    timestamp _day_one(_timestamp);
+    ent::timestamp _day_one(_timestamp);
     _day_one.set_day(ent::day::d01);
 
-    timestamp _first_target_weekday(_day_one);
+    ent::timestamp _first_target_weekday(_day_one);
     _first_target_weekday +=
       ent::amount<ent::day>(m_weekday - _day_one.get_weekday());
 
-    timestamp _target(_first_target_weekday);
+    ent::timestamp _target(_first_target_weekday);
 
     _target += ent::amount<ent::weekday>(m_order - 1);
 
@@ -88,21 +85,18 @@ private:
 ///
 ///
 ///
-template <typename t_time_precision>
 struct monthly_repetition_by_day
 {
-  typedef ent::timestamp_t<t_time_precision> timestamp;
-
   monthly_repetition_by_day(ent::day p_day, uint16_t p_at_each = 1)
     : m_day(p_day)
     , m_at_each(p_at_each)
   {
   }
 
-  timestamp next(timestamp p_time, bool p_first = false)
+  ent::timestamp next(ent::timestamp p_time, bool p_first = false)
   {
 
-    timestamp _time = p_time;
+    ent::timestamp _time = p_time;
 
     ent::day _day(m_day);
 
