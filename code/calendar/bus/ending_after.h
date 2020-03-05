@@ -1,22 +1,23 @@
-#ifndef TENACITAS_CALENDAR_ENT_ENDING_AFTER_H
-#define TENACITAS_CALENDAR_ENT_ENDING_AFTER_H
+#ifndef TENACITAS_CALENDAR_BUS_ENDING_AFTER_H
+#define TENACITAS_CALENDAR_BUS_ENDING_AFTER_H
 
 #include <cstdint>
 #include <ctime>
 
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace ent {
+namespace bus {
 
-struct end_after
+template<typename t_timestamp>
+struct end_after_t
 {
-  end_after(uint16_t p_number)
+  end_after_t(uint16_t p_number)
     : m_number(p_number)
   {}
 
-  bool stop(const ent::timestamp &)
+  bool stop(const t_timestamp &)
   {
     return (++m_counter > m_number ? true : false);
   }
@@ -25,7 +26,7 @@ struct end_after
   uint16_t m_counter = 0;
 };
 
-} // namespace entities
+} // namespace bus
 } // namespace periodicity
 } // namespace tenacitas
 #endif // ENDING_AFTER_H

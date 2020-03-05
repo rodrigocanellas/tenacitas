@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CALENDAR_ENTITIES_DAY_H
-#define TENACITAS_CALENDAR_ENTITIES_DAY_H
+#ifndef TENACITAS_CALENDAR_ENT_DAY_H
+#define TENACITAS_CALENDAR_ENT_DAY_H
 
 #include <cstdint>
 #include <iostream>

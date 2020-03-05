@@ -1,22 +1,23 @@
-#ifndef TENACITAS_CALENDAR_ENT_ENDING_NEVER_H
-#define TENACITAS_CALENDAR_ENT_ENDING_NEVER_H
+#ifndef TENACITAS_CALENDAR_BUS_ENDING_NEVER_H
+#define TENACITAS_CALENDAR_BUS_ENDING_NEVER_H
 
 #include <cstdint>
 #include <ctime>
 
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace ent {
+namespace bus {
 
-struct end_never
+template<typename t_timestamp>
+struct end_never_t
 {
-  end_never(uint32_t p_max_events = 40)
+  end_never_t(uint32_t p_max_events = 40)
     : m_max_events(p_max_events)
   {}
 
-  bool stop(const ent::timestamp&)
+  bool stop(const t_timestamp&)
   {
     if (m_num == m_max_events) {
       return true;
@@ -30,7 +31,7 @@ private:
   uint32_t m_max_events;
 };
 
-} // namespace entities
+} // namespace bus
 } // namespace periodicity
 } // namespace tenacitas
 #endif // ENDING_NEVER_H

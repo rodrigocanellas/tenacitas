@@ -6,7 +6,7 @@
 #include <calendar/bus/weekly_repetition.h>
 #include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -27,17 +27,17 @@ namespace bus {
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
 /// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<
+template<typename t_timestamp,
          typename t_repetition,
          typename t_ending_type>
-std::vector<ent::timestamp>
-create_sequence(ent::timestamp p_start,
+std::vector<t_timestamp>
+create_sequence(t_timestamp p_start,
                 t_repetition&& p_repetition,
                 t_ending_type&& p_end)
 {
-  std::vector<ent::timestamp> _sequence;
+  std::vector<t_timestamp> _sequence;
 
-  ent::timestamp _time = p_repetition.next(p_start, true);
+  t_timestamp _time = p_repetition.next(p_start, true);
   while (!p_end.stop(_time)) {
     _sequence.push_back(_time);
     _time = p_repetition.next(_time);
@@ -56,14 +56,14 @@ create_sequence(ent::timestamp p_start,
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
 /// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_ending_type>
-std::vector<ent::timestamp>
-create_sequence(ent::timestamp p_start,
-                weekly_repetition&& p_repetition,
+template<typename t_timestamp,typename t_ending_type>
+std::vector<t_timestamp>
+create_sequence(t_timestamp p_start,
+                weekly_repetition_t<t_timestamp>&& p_repetition,
                 t_ending_type&& p_end)
 
 {
-  typedef ent::timestamp timestamp;
+  typedef t_timestamp timestamp;
   typedef std::vector<timestamp> timestamps;
 
   timestamps _sequence;

@@ -1,10 +1,10 @@
-#ifndef TENACITAS_CALENDAR_BUS_YEARLY_REPETITION_H
-#define TENACITAS_CALENDAR_BUS_YEARLY_REPETITION_H
+#ifndef TENACITAS_CALENDAR_BUS_YEARLY_REPETITION_T_H
+#define TENACITAS_CALENDAR_BUS_YEARLY_REPETITION_T_H
 
 #include <calendar/ent/day.h>
 #include <calendar/ent/month.h>
 #include <calendar/ent/year.h>
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 #include <calendar/ent/amount.h>
 
 namespace tenacitas {
@@ -12,18 +12,18 @@ namespace calendar {
 namespace bus {
 
 
-
-struct yearly_repetition
+template<typename t_timestamp>
+struct yearly_repetition_t
 {
-  yearly_repetition(ent::day p_day, ent::month p_month, uint16_t p_at_each = 1)
+  yearly_repetition_t(ent::day p_day, ent::month p_month, uint16_t p_at_each = 1)
     : m_day(p_day)
     , m_month(p_month)
     , m_at_each(p_at_each)
   {}
 
-  ent::timestamp next(const ent::timestamp &p_time, bool p_first = false)
+  t_timestamp next(const t_timestamp &p_time, bool p_first = false)
   {
-    ent::timestamp _time (p_time);
+    t_timestamp _time (p_time);
     if (m_month > _time.get_month()) {
       _time.set_day_month(m_day, m_month);
     } else if (m_month == _time.get_month()) {
@@ -53,4 +53,4 @@ private:
 } // namespace calendar
 } // namespace tenacitas
 
-#endif // YEARLY_REPETITION_H
+#endif // yearly_repetition_t_H

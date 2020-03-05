@@ -6,7 +6,7 @@
 #include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
 #include <calendar/ent/month.h>
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 #include <calendar/ent/weekday.h>
 
 namespace tenacitas {
@@ -14,23 +14,24 @@ namespace calendar {
 namespace bus {
 
 ///
-/// \brief Calculates the next ent::timestamp, given a weekday, the order of the
+/// \brief Calculates the next t_timestamp, given a weekday, the order of the
 /// weekday in a month, and the interval between the months
 ///
-/// \tparam t_time_precision defines the precision of the ent::timestamp. Currently
+/// \tparam t_time_precision defines the precision of the t_timestamp. Currently
 /// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
 /// year
 ///
-struct monthly_repetition_by_week
+template<typename t_timestamp>
+struct monthly_repetition_by_week_t
 {
 
   ///
-  /// \brief monthly_repetition_by_week
+  /// \brief monthly_repetition_by_week_t
   /// \param p_order
   /// \param p_weekday
   /// \param p_at_each
   ///
-  monthly_repetition_by_week(uint8_t p_order,
+  monthly_repetition_by_week_t(uint8_t p_order,
                              ent::weekday p_weekday,
                              uint16_t p_at_each = 1)
     : m_order(p_order)
@@ -44,21 +45,21 @@ struct monthly_repetition_by_week
   /// \param p_first
   /// \return
   ///
-  ent::timestamp next(ent::timestamp p_time, bool p_first = false)
+  t_timestamp next(t_timestamp p_time, bool p_first = false)
   {
-    ent::timestamp _timestamp = p_time;
+    t_timestamp _timestamp = p_time;
     if (!p_first) {
       _timestamp += m_at_each;
     }
 
-    ent::timestamp _day_one(_timestamp);
+    t_timestamp _day_one(_timestamp);
     _day_one.set_day(ent::day::d01);
 
-    ent::timestamp _first_target_weekday(_day_one);
+    t_timestamp _first_target_weekday(_day_one);
     _first_target_weekday +=
       ent::amount<ent::day>(m_weekday - _day_one.get_weekday());
 
-    ent::timestamp _target(_first_target_weekday);
+    t_timestamp _target(_first_target_weekday);
 
     _target += ent::amount<ent::weekday>(m_order - 1);
 
@@ -85,18 +86,19 @@ private:
 ///
 ///
 ///
-struct monthly_repetition_by_day
+template<typename t_timestamp>
+struct monthly_repetition_by_day_t
 {
-  monthly_repetition_by_day(ent::day p_day, uint16_t p_at_each = 1)
+  monthly_repetition_by_day_t(ent::day p_day, uint16_t p_at_each = 1)
     : m_day(p_day)
     , m_at_each(p_at_each)
   {
   }
 
-  ent::timestamp next(ent::timestamp p_time, bool p_first = false)
+  t_timestamp next(t_timestamp p_time, bool p_first = false)
   {
 
-    ent::timestamp _time = p_time;
+    t_timestamp _time = p_time;
 
     ent::day _day(m_day);
 

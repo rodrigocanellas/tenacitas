@@ -1,11 +1,11 @@
-#ifndef TENACITAS_CALENDAR_BUS_DAILY_REPETITION_H
-#define TENACITAS_CALENDAR_BUS_DAILY_REPETITION_H
+#ifndef TENACITAS_CALENDAR_BUS_DAILY_REPETITION_T_H
+#define TENACITAS_CALENDAR_BUS_DAILY_REPETITION_T_H
 
 #include <cstdint>
 
 #include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -14,14 +14,15 @@ namespace bus {
 ///
 /// \brief Calculates the next and previous timestamp, given an amount of days
 ///
-struct daily_repetition
+template <typename t_timestamp>
+struct daily_repetition_t
 {
   ///
-  /// \brief daily_repetition
+  /// \brief daily_repetition_t
   /// \param p_at_each the amount of days between a timestamp and the next, or
   /// previous
   ///
-  inline daily_repetition(uint16_t p_at_each = 1)
+  inline daily_repetition_t(uint16_t p_at_each = 1)
     : m_at_each(p_at_each)
   {}
 
@@ -37,7 +38,7 @@ struct daily_repetition
   /// \return the previous timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
-  inline ent::timestamp prev(ent::timestamp p_time, bool p_first = false)
+  inline t_timestamp prev(t_timestamp p_time, bool p_first = false)
   {
     return (p_first ? p_time : p_time - m_at_each);
   }
@@ -54,7 +55,7 @@ struct daily_repetition
   /// \return the next timestamp to \p p_time, or \p p_time, if \p p_first
   /// is true
   ///
-  inline ent::timestamp next(ent::timestamp p_time, bool p_first = false)
+  inline t_timestamp next(t_timestamp p_time, bool p_first = false)
   {
     return (p_first ? p_time : p_time + m_at_each);
   }
@@ -70,4 +71,4 @@ private:
 } // namespace calendar
 } // namespace tenacitas
 
-#endif // DAILY_REPETITION_H
+#endif // daily_repetition_t_H

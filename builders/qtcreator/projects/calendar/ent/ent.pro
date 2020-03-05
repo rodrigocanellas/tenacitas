@@ -12,14 +12,11 @@ TARGET = tenacitas.calendar.ent
 HEADERS += \
   ../../../../../code/calendar/ent/amount.h \
   ../../../../../code/calendar/ent/day.h \
-  ../../../../../code/calendar/ent/ending_after.h \
-  ../../../../../code/calendar/ent/ending_never.h \
-  ../../../../../code/calendar/ent/ending_on.h \
   ../../../../../code/calendar/ent/hour.h \
   ../../../../../code/calendar/ent/minute.h \
   ../../../../../code/calendar/ent/month.h \
   ../../../../../code/calendar/ent/second.h \
-  ../../../../../code/calendar/ent/timestamp.h \
+  ../../../../../code/calendar/ent/unix.h \
   ../../../../../code/calendar/ent/weekday.h \
   ../../../../../code/calendar/ent/year.h
 
@@ -30,7 +27,7 @@ SOURCES += \
   ../../../../../code/calendar/ent/internal/minute.cpp \
   ../../../../../code/calendar/ent/internal/month.cpp \
   ../../../../../code/calendar/ent/internal/second.cpp \
-  ../../../../../code/calendar/ent/internal/timestamp.cpp \
+  ../../../../../code/calendar/ent/internal/unix.cpp \
   ../../../../../code/calendar/ent/internal/weekday.cpp
 
 

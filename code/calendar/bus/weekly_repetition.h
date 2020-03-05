@@ -1,10 +1,10 @@
-#ifndef TENACITAS_CALENDAR_BUS_WEEKLY_REPETITION_H
-#define TENACITAS_CALENDAR_BUS_WEEKLY_REPETITION_H
+#ifndef TENACITAS_CALENDAR_BUS_WEEKLY_REPETITION_T_H
+#define TENACITAS_CALENDAR_BUS_WEEKLY_REPETITION_T_H
 
 #include <vector>
 
 #include <calendar/ent/amount.h>
-#include <calendar/ent/timestamp.h>
+#include <calendar/ent/unix.h>
 #include <calendar/ent/weekday.h>
 
 namespace tenacitas {
@@ -15,22 +15,24 @@ namespace bus {
 /// \brief Calculates the next group of timestamps, given a set of \p weekday,
 /// and the interval between the weeks
 ///
-/// \tparam t_time_precision defines the precision of the ent::timestamp. Currently
+/// \tparam t_time_precision defines the precision of the t_timestamp. Currently
 /// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
 /// year
 ///
-struct weekly_repetition
+
+template<typename t_timestamp>
+struct weekly_repetition_t
 {
-  typedef std::vector<ent::timestamp> timestamps;
+  typedef std::vector<t_timestamp> timestamps;
 
   typedef std::vector<ent::weekday> weekdays;
 
   ///
-  /// \brief weekly_repetition
+  /// \brief weekly_repetition_t
   /// \param p_weekdays
   /// \param p_at_each
   ///
-  weekly_repetition(weekdays&& p_weekdays, uint16_t p_at_each = 1)
+  weekly_repetition_t(weekdays&& p_weekdays, uint16_t p_at_each = 1)
     : m_weekdays(std::move(p_weekdays))
     , m_at_each(p_at_each)
   {}
@@ -41,7 +43,7 @@ struct weekly_repetition
   /// \param p_first
   /// \return
   ///
-  timestamps next(ent::timestamp p_time, bool p_first = false)
+  timestamps next(t_timestamp p_time, bool p_first = false)
   {
     timestamps _sequence;
     if (p_first) {
@@ -49,7 +51,7 @@ struct weekly_repetition
       return _sequence;
     }
 
-    ent::timestamp _time = begin_week(p_time);
+    t_timestamp _time = begin_week(p_time);
     //
     rest(m_weekdays.begin(), _time, _sequence);
     return _sequence;
@@ -61,9 +63,9 @@ private:
   /// \param p_time
   /// \return
   ///
-  ent::timestamp begin_week(ent::timestamp p_time)
+  t_timestamp begin_week(t_timestamp p_time)
   {
-    ent::timestamp _time = p_time + m_at_each;
+    t_timestamp _time = p_time + m_at_each;
 
     _time -= _time.get_weekday().from_sunday();
 
@@ -76,12 +78,12 @@ private:
   /// \param p_weekday
   /// \return
   ///
-  ent::timestamp next_timestamp_in_weekday_from_timestamp(ent::timestamp p_time,
+  t_timestamp next_timestamp_in_weekday_from_timestamp(t_timestamp p_time,
                                                      ent::weekday p_weekday)
   {
     ent::weekday _weekday = p_time.get_weekday();
 
-    ent::timestamp _time = p_time;
+    t_timestamp _time = p_time;
 
     if (_weekday == p_weekday) {
       return _time;
@@ -105,10 +107,10 @@ private:
   /// \param p_sequence
   ///
   void rest(std::vector<ent::weekday>::const_iterator p_weekday,
-            ent::timestamp p_time,
+            t_timestamp p_time,
             timestamps& p_sequence)
   {
-    ent::timestamp _time = p_time;
+    t_timestamp _time = p_time;
     for (weekdays::const_iterator _ite = p_weekday; _ite != m_weekdays.end();
          ++_ite) {
 
@@ -123,9 +125,9 @@ private:
   /// \param p_time
   /// \param p_sequence
   ///
-  void first(ent::timestamp p_time, timestamps& p_sequence)
+  void first(t_timestamp p_time, timestamps& p_sequence)
   {
-    ent::timestamp _time =
+    t_timestamp _time =
       next_timestamp_in_weekday_from_timestamp(p_time, m_weekdays[0]);
     p_sequence.push_back(_time);
     rest(++m_weekdays.begin(), _time, p_sequence);
@@ -147,4 +149,4 @@ private:
 } // namespace calendar
 } // namespace tenacitas
 
-#endif // WEEKLY_REPETITION_H
+#endif // weekly_repetition_t_H

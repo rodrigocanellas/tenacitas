@@ -17,4 +17,7 @@ HEADERS += \
   ../../../../../code/calendar/bus/daily_repetition.h \
   ../../../../../code/calendar/bus/monthly_repetition.h \
   ../../../../../code/calendar/bus/weekly_repetition.h \
-  ../../../../../code/calendar/bus/yearly_repetition.h
+  ../../../../../code/calendar/bus/yearly_repetition.h \
+  ../../../../../code/calendar/bus/ending_after.h \
+  ../../../../../code/calendar/bus/ending_never.h \
+  ../../../../../code/calendar/bus/ending_on.h \
