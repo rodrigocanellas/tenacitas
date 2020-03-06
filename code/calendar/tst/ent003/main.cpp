@@ -4,17 +4,18 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
-#include <calendar/ent/unix.h>
+#include <calendar/unix/timestamp.h>
 
 using namespace tenacitas::logger::business;
 using namespace tenacitas::calendar::ent;
+using namespace tenacitas::calendar::unix;
 
 struct test003
 {
   bool operator()()
   {
-    unix _ts1(year(2020), month::mar, day::d01);
-    unix _ts2 = _ts1 + amount<month>(6);
+    timestamp _ts1(year(2020), month::mar, day::d01);
+    timestamp _ts2 = _ts1 + amount<month>(6);
 
     return (_ts2.get_year() == year(2020) && _ts2.get_month() == month::sep &&
             _ts2.get_day() == day::d01 && _ts2.get_hour() == hour::h00 &&

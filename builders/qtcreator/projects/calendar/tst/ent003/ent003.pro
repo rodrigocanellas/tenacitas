@@ -14,7 +14,9 @@ TARGET = tenacitas.calendar.tst.ent003
 include (../../../../common.pri)
 
 LIBS += -ltenacitas.tester.business
-LIBS += -ltenacitas.logger.business
-#LIBS += $$libs_dir/libtenacitas.calendar.ent.$$static_lib_ext
-LIBS += $$libs_dir/libtenacitas.calendar.ent.a
+LIBS += $$libs_dir/libtenacitas.logger.business.a
+#LIBS += $$libs_dir/libtenacitas.calendar.ent.a
+#LIBS += -ltenacitas.calendar.unix
+LIBS += $$libs_dir/libtenacitas.calendar.unix.a
+
 

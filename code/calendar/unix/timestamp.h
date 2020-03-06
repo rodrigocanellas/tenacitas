@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CALENDAR_ENT_unix_H
-#define TENACITAS_CALENDAR_ENT_unix_H
+#ifndef TENACITAS_CALENDAR_UNIX_TIMESTAMP_H
+#define TENACITAS_CALENDAR_UNIX_TIMESTAMP_H
 
 #include <cstdint>
 #include <ctime>
@@ -17,64 +17,66 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace ent {
+namespace unix {
+
+using namespace tenacitas::calendar::ent;
 
 ///
-/// \brief specialization of \p unix template class, with precision up to
+/// \brief specialization of \p timestamp template class, with precision up to
 /// \p second
 ///
-struct unix
+struct timestamp
 {
   ///
-  /// \brief unix default constructor creates a unix for now
+  /// \brief timestamp default constructor creates a timestamp for now
   ///
-  inline unix()
+  inline timestamp()
     : m_time(time(nullptr))
   {
   }
 
   ///
-  /// \brief unix creates a unix by informing day, month, year,
+  /// \brief timestamp creates a timestamp by informing day, month, year,
   /// hour, minute and second \param p_year \param p_month \param p_day \param
   /// p_hour \param p_minute \param p_second
   ///
-  unix(year p_year,
+  timestamp(year p_year,
             month p_month,
             day p_day,
             hour p_hour = hour::h00,
             minute p_minute = minute::m00,
             second p_second = second::s00);
   ///
-  /// \brief unix copy constructor
-  /// \param p_unix_t unix to be copied
+  /// \brief timestamp copy constructor
+  /// \param p_timestamp timestamp to be copied
   ///
-  inline unix(const unix& p_unix_t)
-    : m_time(p_unix_t.m_time)
+  inline timestamp(const timestamp& p_timestamp)
+    : m_time(p_timestamp.m_time)
   {
   }
 
   ///
-  /// \brief unix move constructor
-  /// \param p_unix_t unix to be moved
+  /// \brief timestamp move constructor
+  /// \param p_timestamp timestamp to be moved
   ///
-  inline unix(unix&& p_unix_t)
-    : m_time(std::move(p_unix_t.m_time))
+  inline timestamp(timestamp&& p_timestamp)
+    : m_time(std::move(p_timestamp.m_time))
   {
   }
 
   ///
   /// \brief operator = copy assignment
-  /// \param p_unix_t
+  /// \param p_timestamp
   /// \return
   ///
-  unix& operator=(const unix& p_unix_t);
+  timestamp& operator=(const timestamp& p_timestamp);
 
   ///
   /// \brief operator = move assignment
-  /// \param p_unix_t
+  /// \param p_timestamp
   /// \return
   ///
-  unix& operator=(unix&& p_unix_t);
+  timestamp& operator=(timestamp&& p_timestamp);
 
   ///
   /// \brief operator <<
@@ -83,7 +85,7 @@ struct unix
   /// \return
   ///
   inline friend std::ostream& operator<<(std::ostream& p_out,
-                                         const unix& p_ts)
+                                         const timestamp& p_ts)
   {
     p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
           << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
@@ -123,7 +125,7 @@ struct unix
   ///
   /// \brief set_day
   /// \param p_day
-  /// \throw if the resulting \p unix is invalid
+  /// \throw if the resulting \p timestamp is invalid
   ///
   inline void set_day(day p_day)
   {
@@ -208,7 +210,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator==(const unix& p_ts) const
+  inline bool operator==(const timestamp& p_ts) const
   {
     return m_time == p_ts.m_time;
   }
@@ -218,7 +220,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator!=(const unix& p_ts) const
+  inline bool operator!=(const timestamp& p_ts) const
   {
     return m_time != p_ts.m_time;
   }
@@ -228,7 +230,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>(const unix& p_ts) const
+  inline bool operator>(const timestamp& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
@@ -238,7 +240,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator<(const unix& p_ts) const
+  inline bool operator<(const timestamp& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
@@ -248,7 +250,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>=(const unix& p_ts) const
+  inline bool operator>=(const timestamp& p_ts) const
   {
     return m_time > p_ts.m_time;
   }
@@ -258,7 +260,7 @@ struct unix
   /// \param p_ts
   /// \return
   ///
-  inline bool operator<=(const unix& p_ts) const
+  inline bool operator<=(const timestamp& p_ts) const
   {
     return m_time < p_ts.m_time;
   }
@@ -268,168 +270,168 @@ struct unix
   /// \param p_seconds
   /// \return
   ///
-  unix& operator+=(amount<second> p_seconds);
+  timestamp& operator+=(amount<second> p_seconds);
 
   ///
   /// \brief operator +
   /// \param p_seconds
   /// \return
   ///
-  unix operator+(amount<second> p_seconds);
+  timestamp operator+(amount<second> p_seconds);
 
   ///
   /// \brief operator -=
   /// \param p_seconds
   /// \return
   ///
-  unix& operator-=(amount<second> p_seconds);
+  timestamp& operator-=(amount<second> p_seconds);
 
   ///
   /// \brief operator -
   /// \param p_seconds
   /// \return
   ///
-  unix operator-(amount<second> p_seconds);
+  timestamp operator-(amount<second> p_seconds);
 
   ///
   /// \brief operator +=
   /// \param p_minutes
   /// \return
   ///
-  unix& operator+=(amount<minute> p_minutes);
+  timestamp& operator+=(amount<minute> p_minutes);
 
   ///
   /// \brief operator +
   /// \param p_minutes
   /// \return
   ///
-  unix operator+(amount<minute> p_minutes);
+  timestamp operator+(amount<minute> p_minutes);
 
   ///
   /// \brief operator -=
   /// \param p_minutes
   /// \return
   ///
-  unix& operator-=(amount<minute> p_minutes);
+  timestamp& operator-=(amount<minute> p_minutes);
 
   ///
   /// \brief operator -
   /// \param p_minutes
   /// \return
   ///
-  unix operator-(amount<minute> p_minutes);
+  timestamp operator-(amount<minute> p_minutes);
 
   ///
   /// \brief operator +=
   /// \param p_days
   /// \return
   ///
-  unix& operator+=(amount<day> p_days);
+  timestamp& operator+=(amount<day> p_days);
 
   ///
   /// \brief operator +
   /// \param p_days
   /// \return
   ///
-  unix operator+(amount<day> p_days);
+  timestamp operator+(amount<day> p_days);
 
   ///
   /// \brief operator -=
   /// \param p_days
   /// \return
   ///
-  unix& operator-=(amount<day> p_days);
+  timestamp& operator-=(amount<day> p_days);
 
   ///
   /// \brief operator -
   /// \param p_days
   /// \return
   ///
-  unix operator-(amount<day> p_days);
+  timestamp operator-(amount<day> p_days);
 
   ///
   /// \brief operator +=
   /// \param p_weeks
   /// \return
   ///
-  unix& operator+=(amount<weekday> p_weeks);
+  timestamp& operator+=(amount<weekday> p_weeks);
 
   ///
   /// \brief operator +
   /// \param p_weeks
   /// \return
   ///
-  unix operator+(amount<weekday> p_weeks);
+  timestamp operator+(amount<weekday> p_weeks);
 
   ///
   /// \brief operator -=
   /// \param p_weeks
   /// \return
   ///
-  unix& operator-=(amount<weekday> p_weeks);
+  timestamp& operator-=(amount<weekday> p_weeks);
 
   ///
   /// \brief operator -
   /// \param p_weeks
   /// \return
   ///
-  unix operator-(amount<weekday> p_weeks);
+  timestamp operator-(amount<weekday> p_weeks);
 
   ///
   /// \brief operator +=
   /// \param p_months
   /// \return
   ///
-  unix& operator+=(amount<month> p_months);
+  timestamp& operator+=(amount<month> p_months);
 
   ///
   /// \brief operator +
   /// \param p_months
   /// \return
   ///
-  unix operator+(amount<month> p_months);
+  timestamp operator+(amount<month> p_months);
 
   ///
   /// \brief operator -=
   /// \param p_months
   /// \return
   ///
-  unix& operator-=(amount<month> p_months);
+  timestamp& operator-=(amount<month> p_months);
 
   ///
   /// \brief operator -
   /// \param p_months
   /// \return
   ///
-  unix operator-(amount<month> p_months);
+  timestamp operator-(amount<month> p_months);
 
   ///
   /// \brief operator +=
   /// \param p_years
   /// \return
   ///
-  unix operator+=(amount<year> p_years);
+  timestamp operator+=(amount<year> p_years);
 
   ///
   /// \brief operator +
   /// \param p_years
   /// \return
   ///
-  unix operator+(amount<year> p_years);
+  timestamp operator+(amount<year> p_years);
 
   ///
   /// \brief operator -=
   /// \param p_years
   /// \return
   ///
-  unix operator-=(amount<year> p_years);
+  timestamp operator-=(amount<year> p_years);
 
   ///
   /// \brief operator -
   /// \param p_years
   /// \return
   ///
-  unix operator-(amount<year> p_years);
+  timestamp operator-(amount<year> p_years);
 
 private:
   //  struct timespec m_timespec;
@@ -441,4 +443,4 @@ private:
 } // namespace calendar
 } // namespace tenacitas
 
-#endif // unix_SECOND_H
+#endif // timestamp_SECOND_H

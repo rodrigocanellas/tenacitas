@@ -3,8 +3,6 @@
 
 #include <ctime>
 
-#include <calendar/ent/unix.h>
-
 namespace tenacitas {
 namespace calendar {
 namespace bus {

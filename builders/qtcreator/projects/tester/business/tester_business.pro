@@ -18,4 +18,4 @@ HEADERS += \
 include (../../../common.pri)
 
 
-LIBS += -ltenacitas.logger.business
+LIBS += $$libs_dir/libtenacitas.logger.business.a

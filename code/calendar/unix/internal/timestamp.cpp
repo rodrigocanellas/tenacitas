@@ -1,15 +1,17 @@
-#include <calendar/ent/unix.h>
+#include <calendar/unix/timestamp.h>
 
 namespace tenacitas {
 namespace calendar {
-namespace ent {
+namespace unix {
 
-unix::unix(year p_year,
-                                 month p_month,
-                                 day p_day,
-                                 hour p_hour,
-                                 minute p_minute,
-                                 second p_second)
+using namespace tenacitas::calendar::ent;
+
+timestamp::timestamp(year p_year,
+           month p_month,
+           day p_day,
+           hour p_hour,
+           minute p_minute,
+           second p_second)
 {
   struct tm* _tm = localtime(&m_time);
 
@@ -29,146 +31,146 @@ unix::unix(year p_year,
   }
 }
 
-unix&
-unix::operator=(const unix& p_unix_t)
+timestamp&
+timestamp::operator=(const timestamp& p_timestamp)
 {
-  if (this != &p_unix_t) {
-    m_time = p_unix_t.m_time;
+  if (this != &p_timestamp) {
+    m_time = p_timestamp.m_time;
   }
   return *this;
 }
 
-unix&
-unix::operator=(unix&& p_unix_t)
+timestamp&
+timestamp::operator=(timestamp&& p_timestamp)
 {
-  if (this != &p_unix_t) {
-    m_time = std::move(p_unix_t.m_time);
+  if (this != &p_timestamp) {
+    m_time = std::move(p_timestamp.m_time);
   }
   return *this;
 }
 
-unix&
-unix::operator+=(amount<second> p_seconds)
+timestamp&
+timestamp::operator+=(amount<second> p_seconds)
 {
   m_time += p_seconds.get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator+(amount<second> p_seconds)
+timestamp
+timestamp::operator+(amount<second> p_seconds)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_seconds;
   return _new;
 }
 
-unix&
-unix::operator-=(amount<second> p_seconds)
+timestamp&
+timestamp::operator-=(amount<second> p_seconds)
 {
   m_time -= p_seconds.get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator-(amount<second> p_seconds)
+timestamp
+timestamp::operator-(amount<second> p_seconds)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_seconds;
   return _new;
 }
 
-unix&
-unix::operator+=(amount<minute> p_minutes)
+timestamp&
+timestamp::operator+=(amount<minute> p_minutes)
 {
   m_time += (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator+(amount<minute> p_minutes)
+timestamp
+timestamp::operator+(amount<minute> p_minutes)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_minutes;
   return _new;
 }
 
-unix&
-unix::operator-=(amount<minute> p_minutes)
+timestamp&
+timestamp::operator-=(amount<minute> p_minutes)
 {
   m_time -= (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator-(amount<minute> p_minutes)
+timestamp
+timestamp::operator-(amount<minute> p_minutes)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_minutes;
   return _new;
 }
 
-unix&
-unix::operator+=(amount<day> p_days)
+timestamp&
+timestamp::operator+=(amount<day> p_days)
 {
   m_time += (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator+(amount<day> p_days)
+timestamp
+timestamp::operator+(amount<day> p_days)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_days;
   return _new;
 }
 
-unix&
-unix::operator-=(amount<day> p_days)
+timestamp&
+timestamp::operator-=(amount<day> p_days)
 {
   m_time -= (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator-(amount<day> p_days)
+timestamp
+timestamp::operator-(amount<day> p_days)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_days;
   return _new;
 }
 
-unix&
-unix::operator+=(amount<weekday> p_weeks)
+timestamp&
+timestamp::operator+=(amount<weekday> p_weeks)
 {
   m_time += (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator+(amount<weekday> p_weeks)
+timestamp
+timestamp::operator+(amount<weekday> p_weeks)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_weeks;
   return _new;
 }
 
-unix&
-unix::operator-=(amount<weekday> p_weeks)
+timestamp&
+timestamp::operator-=(amount<weekday> p_weeks)
 {
   m_time -= (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
   return *this;
 }
 
-unix
-unix::operator-(amount<weekday> p_weeks)
+timestamp
+timestamp::operator-(amount<weekday> p_weeks)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_weeks;
   return _new;
 }
 
-unix&
-unix::operator+=(amount<month> p_months)
+timestamp&
+timestamp::operator+=(amount<month> p_months)
 {
   struct tm* _tm = localtime(&m_time);
 
@@ -178,16 +180,16 @@ unix::operator+=(amount<month> p_months)
   return *this;
 }
 
-unix
-unix::operator+(amount<month> p_months)
+timestamp
+timestamp::operator+(amount<month> p_months)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_months;
   return _new;
 }
 
-unix&
-unix::operator-=(amount<month> p_months)
+timestamp&
+timestamp::operator-=(amount<month> p_months)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_mon -= p_months.get<decltype(_tm->tm_mon)>() % 12;
@@ -196,16 +198,16 @@ unix::operator-=(amount<month> p_months)
   return *this;
 }
 
-unix
-unix::operator-(amount<month> p_months)
+timestamp
+timestamp::operator-(amount<month> p_months)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_months;
   return _new;
 }
 
-unix
-unix::operator+=(amount<year> p_years)
+timestamp
+timestamp::operator+=(amount<year> p_years)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_year += p_years.get<decltype(_tm->tm_year)>();
@@ -213,16 +215,16 @@ unix::operator+=(amount<year> p_years)
   return *this;
 }
 
-unix
-unix::operator+(amount<year> p_years)
+timestamp
+timestamp::operator+(amount<year> p_years)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new += p_years;
   return _new;
 }
 
-unix
-unix::operator-=(amount<year> p_years)
+timestamp
+timestamp::operator-=(amount<year> p_years)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_year -= p_years.get<decltype(_tm->tm_year)>();
@@ -230,10 +232,10 @@ unix::operator-=(amount<year> p_years)
   return *this;
 }
 
-unix
-unix::operator-(amount<year> p_years)
+timestamp
+timestamp::operator-(amount<year> p_years)
 {
-  unix _new(*this);
+  timestamp _new(*this);
   _new -= p_years;
   return _new;
 }

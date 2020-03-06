@@ -5,7 +5,6 @@
 
 #include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
-#include <calendar/ent/unix.h>
 
 namespace tenacitas {
 namespace calendar {

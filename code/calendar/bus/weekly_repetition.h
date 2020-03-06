@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <calendar/ent/amount.h>
-#include <calendar/ent/unix.h>
 #include <calendar/ent/weekday.h>
 
 namespace tenacitas {

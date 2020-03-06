@@ -4,17 +4,17 @@
 #include <logger/business/log.h>
 #include <tester/business/run.h>
 
-#include <calendar/ent/unix.h>
+#include <calendar/unix/timestamp.h>
 
 using namespace tenacitas::logger::business;
-using namespace tenacitas::calendar::ent;
+using namespace tenacitas::calendar::unix;
 
 struct test000
 {
   bool operator()()
   {
 
-    unix _ts;
+    timestamp _ts;
 
     time_t _time = time(nullptr);
 
