@@ -5,6 +5,7 @@ QT -= network
 QT -= gui
 
 TEMPLATE = lib
+CONFIG += static
 
 #VERSION = 0.0.1
 

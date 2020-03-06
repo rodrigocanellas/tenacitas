@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include <calendar/ent/amount.h>
 #include <calendar/ent/weekday.h>
+#include <calendar/ent/weekdays.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -92,7 +92,7 @@ private:
       _time += (p_weekday - _weekday);
     } else {
       //      _time += _weekday.until_saturday();
-      //      _time += amount<day>(1);
+      //      _time += day::amount(1);
       //      _time += p_weekday.from_sunday();
       _time += (_weekday - p_weekday);
     }
@@ -141,7 +141,7 @@ private:
   ///
   /// \brief m_at_each
   ///
-  ent::amount<ent::weekday> m_at_each;
+  ent::weekdays m_at_each;
 };
 
 } // namespace bus

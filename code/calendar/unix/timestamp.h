@@ -6,20 +6,12 @@
 #include <iomanip>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
-#include <calendar/ent/day.h>
-#include <calendar/ent/hour.h>
-#include <calendar/ent/minute.h>
-#include <calendar/ent/month.h>
-#include <calendar/ent/second.h>
-#include <calendar/ent/weekday.h>
-#include <calendar/ent/year.h>
+#include <calendar/unix/amounts.h>
+#include <calendar/unix/times.h>
 
 namespace tenacitas {
 namespace calendar {
 namespace unix {
-
-using namespace tenacitas::calendar::ent;
 
 ///
 /// \brief specialization of \p timestamp template class, with precision up to
@@ -130,14 +122,14 @@ struct timestamp
   inline void set_day(day p_day)
   {
     struct tm* _tm = localtime(&m_time);
-    _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
+    _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
     m_time = mktime(_tm);
   }
 
   inline void set_day_month(day p_day, month p_month) {
     struct tm* _tm = localtime(&m_time);
-    _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
-    _tm->tm_mday = amount<month>(p_month).get<decltype(_tm->tm_mon)>();
+    _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
+    _tm->tm_mday = months(p_month).get<decltype(_tm->tm_mon)>();
     m_time = mktime(_tm);
 
   }
@@ -270,168 +262,168 @@ struct timestamp
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator+=(amount<second> p_seconds);
+  timestamp& operator+=(seconds p_seconds);
 
   ///
   /// \brief operator +
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator+(amount<second> p_seconds);
+  timestamp operator+(seconds p_seconds);
 
   ///
   /// \brief operator -=
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator-=(amount<second> p_seconds);
+  timestamp& operator-=(seconds p_seconds);
 
   ///
   /// \brief operator -
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator-(amount<second> p_seconds);
+  timestamp operator-(seconds p_seconds);
 
   ///
   /// \brief operator +=
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator+=(amount<minute> p_minutes);
+  timestamp& operator+=(minutes p_minutes);
 
   ///
   /// \brief operator +
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator+(amount<minute> p_minutes);
+  timestamp operator+(minutes p_minutes);
 
   ///
   /// \brief operator -=
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator-=(amount<minute> p_minutes);
+  timestamp& operator-=(minutes p_minutes);
 
   ///
   /// \brief operator -
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator-(amount<minute> p_minutes);
+  timestamp operator-(minutes p_minutes);
 
   ///
   /// \brief operator +=
   /// \param p_days
   /// \return
   ///
-  timestamp& operator+=(amount<day> p_days);
+  timestamp& operator+=(days p_days);
 
   ///
   /// \brief operator +
   /// \param p_days
   /// \return
   ///
-  timestamp operator+(amount<day> p_days);
+  timestamp operator+(days p_days);
 
   ///
   /// \brief operator -=
   /// \param p_days
   /// \return
   ///
-  timestamp& operator-=(amount<day> p_days);
+  timestamp& operator-=(days p_days);
 
   ///
   /// \brief operator -
   /// \param p_days
   /// \return
   ///
-  timestamp operator-(amount<day> p_days);
+  timestamp operator-(days p_days);
 
   ///
   /// \brief operator +=
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator+=(amount<weekday> p_weeks);
+  timestamp& operator+=(weekdays p_weeks);
 
   ///
   /// \brief operator +
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator+(amount<weekday> p_weeks);
+  timestamp operator+(weekdays p_weeks);
 
   ///
   /// \brief operator -=
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator-=(amount<weekday> p_weeks);
+  timestamp& operator-=(weekdays p_weeks);
 
   ///
   /// \brief operator -
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator-(amount<weekday> p_weeks);
+  timestamp operator-(weekdays p_weeks);
 
   ///
   /// \brief operator +=
   /// \param p_months
   /// \return
   ///
-  timestamp& operator+=(amount<month> p_months);
+  timestamp& operator+=(months p_months);
 
   ///
   /// \brief operator +
   /// \param p_months
   /// \return
   ///
-  timestamp operator+(amount<month> p_months);
+  timestamp operator+(months p_months);
 
   ///
   /// \brief operator -=
   /// \param p_months
   /// \return
   ///
-  timestamp& operator-=(amount<month> p_months);
+  timestamp& operator-=(months p_months);
 
   ///
   /// \brief operator -
   /// \param p_months
   /// \return
   ///
-  timestamp operator-(amount<month> p_months);
+  timestamp operator-(months p_months);
 
   ///
   /// \brief operator +=
   /// \param p_years
   /// \return
   ///
-  timestamp operator+=(amount<year> p_years);
+  timestamp operator+=(years p_years);
 
   ///
   /// \brief operator +
   /// \param p_years
   /// \return
   ///
-  timestamp operator+(amount<year> p_years);
+  timestamp operator+(years p_years);
 
   ///
   /// \brief operator -=
   /// \param p_years
   /// \return
   ///
-  timestamp operator-=(amount<year> p_years);
+  timestamp operator-=(years p_years);
 
   ///
   /// \brief operator -
   /// \param p_years
   /// \return
   ///
-  timestamp operator-(amount<year> p_years);
+  timestamp operator-(years p_years);
 
 private:
   //  struct timespec m_timespec;
@@ -439,7 +431,7 @@ private:
   //  struct tm m_tm;
 };
 
-} // namespace ent
+} // namespace unix
 } // namespace calendar
 } // namespace tenacitas
 

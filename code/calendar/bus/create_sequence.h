@@ -4,8 +4,8 @@
 #include <vector>
 
 #include <calendar/bus/weekly_repetition.h>
-#include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
+#include <calendar/ent/days.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -70,7 +70,8 @@ create_sequence(t_timestamp p_start,
   timestamps _times = p_repetition.next(p_start, true);
   while (!p_end.stop(_times.back())) {
     _sequence.insert(_sequence.end(), _times.begin(), _times.end());
-    _times = p_repetition.next(_times.back() + ent::amount<ent::day>(1));
+    timestamp _next = _times.back() + ent::days(1);
+    _times = p_repetition.next(_next);
   }
   return _sequence;
 }

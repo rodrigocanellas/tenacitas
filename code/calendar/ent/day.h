@@ -4,10 +4,12 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
 #include <calendar/ent/hour.h>
+#include <calendar/ent/hours.h>
 #include <calendar/ent/minute.h>
+#include <calendar/ent/minutes.h>
 #include <calendar/ent/second.h>
+#include <calendar/ent/seconds.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -18,7 +20,9 @@ namespace ent {
 ///
 struct day
 {
-  friend struct amount<day>;
+  friend struct amount_t<day>;
+
+//  typedef  amount_t<day> amount;
 
   inline friend std::ostream& operator<<(std::ostream& p_out, const day& p_day)
   {
@@ -157,18 +161,19 @@ struct day
     return m_value != p_day.m_value;
   }
 
-  inline operator amount<day>() const { return amount<day>(m_value); }
+  static inline hours get_hours() { return hours(24); }
 
-  static inline amount<hour> hours() { return amount<hour>(24); }
+  static inline minutes get_minutes() { return hour::get_minutes() * get_hours().get<minutes>(); }
 
-  static inline amount<minute> minutes() { return hour::minutes() * hours().get<amount<minute>>(); }
-
-  static inline amount<second> seconds()
+  static inline seconds get_seconds()
   {
-    return minute::seconds() * minutes().get<amount<second>>();
+    return minute::get_seconds() * get_minutes().get<seconds>();
   }
 
 private:
+
+  inline uint8_t value() const {return m_value;}
+
   inline explicit day(uint8_t p_value)
     : m_value(p_value)
   {}

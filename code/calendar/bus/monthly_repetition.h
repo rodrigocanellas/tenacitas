@@ -3,10 +3,12 @@
 
 #include <cstdint>
 
-#include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
+#include <calendar/ent/days.h>
 #include <calendar/ent/month.h>
+#include <calendar/ent/months.h>
 #include <calendar/ent/weekday.h>
+#include <calendar/ent/weekdays.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -56,11 +58,11 @@ struct monthly_repetition_by_week_t
 
     t_timestamp _first_target_weekday(_day_one);
     _first_target_weekday +=
-      ent::amount<ent::day>(m_weekday - _day_one.get_weekday());
+      ent::days(m_weekday - _day_one.get_weekday());
 
     t_timestamp _target(_first_target_weekday);
 
-    _target += ent::amount<ent::weekday>(m_order - 1);
+    _target += ent::weekdays(m_order - 1);
 
     return _target;
   }
@@ -79,7 +81,7 @@ private:
   ///
   /// \brief m_at_each
   ///
-  ent::amount<ent::month> m_at_each;
+  ent::months m_at_each;
 };
 
 ///
@@ -101,23 +103,23 @@ struct monthly_repetition_by_day_t
 
     ent::day _day(m_day);
 
-    ent::amount<ent::day> _days (ent::month::days(_time.get_month(), _time.get_year()));
+    ent::days _days (ent::month::get_days(_time.get_month(), _time.get_year()));
 
-    if (ent::amount<ent::day>(_day) > _days) {
+    if (ent::days(_day) > _days) {
       _day = ent::day::create(_days.get<uint8_t>());
     }
 
     _time.set_day(_day);
 
     if (!p_first) {
-      _time += ent::amount<ent::month>(m_at_each);
+      _time += ent::months(m_at_each);
     }
     return _time;
   }
 
 private:
   ent::day m_day;
-  ent::amount<ent::month> m_at_each;
+  ent::months m_at_each;
 };
 
 } // namespace bus

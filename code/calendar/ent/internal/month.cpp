@@ -1,10 +1,9 @@
-#include <calendar/ent/month.h>
-#include <calendar/ent/year.h>
 
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
+#include <calendar/ent/month.h>
+#include <calendar/ent/year.h>
 #include <calendar/ent/day.h>
 #include <calendar/ent/hour.h>
 #include <calendar/ent/minute.h>
@@ -27,71 +26,72 @@ const month month::oct(9);
 const month month::nov(10);
 const month month::dec(11);
 
-amount<day>
-month::days(const month& p_month, const year& p_year)
+days
+month::get_days(const month& p_month, const year& p_year)
 {
   if (p_month == month::jan) {
-    return amount<day>(31);
+    return days(31);
   }
 
   if (p_month == month::feb) {
-    return (p_year.is_leap() ? amount<day>(29) : amount<day>(28));
+    return (p_year.is_leap() ? days(29) : days(28));
   }
 
   if (p_month == month::mar) {
-    return amount<day>(31);
+    return days(31);
   }
 
   if (p_month == month::apr) {
-    return amount<day>(30);
+    return days(30);
   }
 
   if (p_month == month::may) {
-    return amount<day>(31);
+    return days(31);
   }
   if (p_month == month::jun) {
-    return amount<day>(30);
+    return days(30);
   }
 
   if (p_month == month::jul) {
-    return amount<day>(31);
+    return days(31);
   }
 
   if (p_month == month::ago) {
-    return amount<day>(31);
+    return days(31);
   }
 
   if (p_month == month::sep) {
-    return amount<day>(30);
+    return days(30);
   }
 
   if (p_month == month::oct) {
-    return amount<day>(31);
+    return days(31);
   }
 
   if (p_month == month::nov) {
-    return amount<day>(30);
+    return days(30);
   }
 
-  return amount<day>(31);
+  return days(31);
 }
 
-amount<hour>
-month::hours(const month& p_month, const year& p_year)
+hours
+month::get_hours(const month& p_month, const year& p_year)
 {
-  return day::hours() * days(p_month, p_year).get<amount<hour>>();
+
+  return day::get_hours() * get_days(p_month, p_year).get<hours>();
 }
 
-amount<minute>
-month::minutes(const month& p_month, const year& p_year)
+minutes
+month::get_minutes(const month& p_month, const year& p_year)
 {
-  return hour::minutes() * hours(p_month, p_year).get<amount<minute>>();
+  return hour::get_minutes() * get_hours(p_month, p_year).get<minutes>();
 }
 
-amount<second>
-month::seconds(const month& p_month, const year& p_year)
+seconds
+month::get_seconds(const month& p_month, const year& p_year)
 {
-  return minute::seconds() * minutes(p_month, p_year).get<amount<second>>();
+  return minute::get_seconds() * get_minutes(p_month, p_year).get<seconds>();
 }
 
 } // namespace ent

@@ -25,6 +25,11 @@ HEADERS += \
     ../../../../../code/calendar/ent/second.h \
     ../../../../../code/calendar/ent/weekday.h \
     ../../../../../code/calendar/ent/year.h \
+    ../../../../../code/calendar/unix/amounts.h \
+    ../../../../../code/calendar/unix/create_sequence.h \
+    ../../../../../code/calendar/unix/endings.h \
+    ../../../../../code/calendar/unix/repetitions.h \
+    ../../../../../code/calendar/unix/times.h \
     ../../../../../code/calendar/unix/timestamp.h
 
 SOURCES += \

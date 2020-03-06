@@ -13,21 +13,21 @@ timestamp::timestamp(year p_year,
            minute p_minute,
            second p_second)
 {
-  struct tm* _tm = localtime(&m_time);
+  struct tm _tm;
 
-  _tm->tm_year =
-      (amount<year>(p_year) - amount<year>(1900)).get<decltype(_tm->tm_year)>();
+  _tm.tm_year =
+      (years(p_year) - years(1900)).get<decltype(_tm.tm_year)>();
 
-  _tm->tm_mon = amount<month>(p_month).get<decltype(_tm->tm_mon)>();
-  _tm->tm_mday = amount<day>(p_day).get<decltype(_tm->tm_mday)>();
-  _tm->tm_hour = amount<hour>(p_hour).get<decltype(_tm->tm_hour)>();
-  _tm->tm_min = amount<minute>(p_minute).get<decltype(_tm->tm_min)>();
-  _tm->tm_sec = amount<second>(p_second).get<decltype(_tm->tm_sec)>();
-  m_time = mktime(_tm);
+  _tm.tm_mon = months(p_month).get<decltype(_tm.tm_mon)>();
+  _tm.tm_mday = days(p_day).get<decltype(_tm.tm_mday)>();
+  _tm.tm_hour = hours(p_hour).get<decltype(_tm.tm_hour)>();
+  _tm.tm_min = minutes(p_minute).get<decltype(_tm.tm_min)>();
+  _tm.tm_sec = seconds(p_second).get<decltype(_tm.tm_sec)>();
+  m_time = mktime(&_tm);
   if (m_time == -1) {
     throw std::runtime_error(
-          std::to_string(_tm->tm_mday) + "/" + std::to_string(_tm->tm_mon + 1) +
-          "/" + std::to_string(_tm->tm_year) + " is not a valid date");
+          std::to_string(_tm.tm_mday) + "/" + std::to_string(_tm.tm_mon + 1) +
+          "/" + std::to_string(_tm.tm_year) + " is not a valid date");
   }
 }
 
@@ -50,14 +50,14 @@ timestamp::operator=(timestamp&& p_timestamp)
 }
 
 timestamp&
-timestamp::operator+=(amount<second> p_seconds)
+timestamp::operator+=(seconds p_seconds)
 {
   m_time += p_seconds.get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator+(amount<second> p_seconds)
+timestamp::operator+(seconds p_seconds)
 {
   timestamp _new(*this);
   _new += p_seconds;
@@ -65,14 +65,14 @@ timestamp::operator+(amount<second> p_seconds)
 }
 
 timestamp&
-timestamp::operator-=(amount<second> p_seconds)
+timestamp::operator-=(seconds p_seconds)
 {
   m_time -= p_seconds.get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator-(amount<second> p_seconds)
+timestamp::operator-(seconds p_seconds)
 {
   timestamp _new(*this);
   _new -= p_seconds;
@@ -80,14 +80,14 @@ timestamp::operator-(amount<second> p_seconds)
 }
 
 timestamp&
-timestamp::operator+=(amount<minute> p_minutes)
+timestamp::operator+=(minutes p_minutes)
 {
-  m_time += (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
+  m_time += (minute::get_seconds() * p_minutes.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator+(amount<minute> p_minutes)
+timestamp::operator+(minutes p_minutes)
 {
   timestamp _new(*this);
   _new += p_minutes;
@@ -95,14 +95,14 @@ timestamp::operator+(amount<minute> p_minutes)
 }
 
 timestamp&
-timestamp::operator-=(amount<minute> p_minutes)
+timestamp::operator-=(minutes p_minutes)
 {
-  m_time -= (minute::seconds() * p_minutes.get<amount<second>>()).get<decltype(m_time)>();
+  m_time -= (minute::get_seconds() * p_minutes.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator-(amount<minute> p_minutes)
+timestamp::operator-(minutes p_minutes)
 {
   timestamp _new(*this);
   _new -= p_minutes;
@@ -110,14 +110,14 @@ timestamp::operator-(amount<minute> p_minutes)
 }
 
 timestamp&
-timestamp::operator+=(amount<day> p_days)
+timestamp::operator+=(days p_days)
 {
-  m_time += (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
+  m_time += (day::get_seconds() * p_days.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator+(amount<day> p_days)
+timestamp::operator+(days p_days)
 {
   timestamp _new(*this);
   _new += p_days;
@@ -125,14 +125,14 @@ timestamp::operator+(amount<day> p_days)
 }
 
 timestamp&
-timestamp::operator-=(amount<day> p_days)
+timestamp::operator-=(days p_days)
 {
-  m_time -= (day::seconds() * p_days.get<amount<second>>()).get<decltype(m_time)>();
+  m_time -= (day::get_seconds() * p_days.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator-(amount<day> p_days)
+timestamp::operator-(days p_days)
 {
   timestamp _new(*this);
   _new -= p_days;
@@ -140,14 +140,14 @@ timestamp::operator-(amount<day> p_days)
 }
 
 timestamp&
-timestamp::operator+=(amount<weekday> p_weeks)
+timestamp::operator+=(weekdays p_weeks)
 {
-  m_time += (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
+  m_time += (weekday::get_seconds() * p_weeks.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator+(amount<weekday> p_weeks)
+timestamp::operator+(weekdays p_weeks)
 {
   timestamp _new(*this);
   _new += p_weeks;
@@ -155,14 +155,14 @@ timestamp::operator+(amount<weekday> p_weeks)
 }
 
 timestamp&
-timestamp::operator-=(amount<weekday> p_weeks)
+timestamp::operator-=(weekdays p_weeks)
 {
-  m_time -= (weekday::seconds() * p_weeks.get<amount<second>>()).get<decltype(m_time)>();
+  m_time -= (weekday::get_seconds() * p_weeks.get<seconds>()).get<decltype(m_time)>();
   return *this;
 }
 
 timestamp
-timestamp::operator-(amount<weekday> p_weeks)
+timestamp::operator-(weekdays p_weeks)
 {
   timestamp _new(*this);
   _new -= p_weeks;
@@ -170,7 +170,7 @@ timestamp::operator-(amount<weekday> p_weeks)
 }
 
 timestamp&
-timestamp::operator+=(amount<month> p_months)
+timestamp::operator+=(months p_months)
 {
   struct tm* _tm = localtime(&m_time);
 
@@ -181,7 +181,7 @@ timestamp::operator+=(amount<month> p_months)
 }
 
 timestamp
-timestamp::operator+(amount<month> p_months)
+timestamp::operator+(months p_months)
 {
   timestamp _new(*this);
   _new += p_months;
@@ -189,7 +189,7 @@ timestamp::operator+(amount<month> p_months)
 }
 
 timestamp&
-timestamp::operator-=(amount<month> p_months)
+timestamp::operator-=(months p_months)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_mon -= p_months.get<decltype(_tm->tm_mon)>() % 12;
@@ -199,7 +199,7 @@ timestamp::operator-=(amount<month> p_months)
 }
 
 timestamp
-timestamp::operator-(amount<month> p_months)
+timestamp::operator-(months p_months)
 {
   timestamp _new(*this);
   _new -= p_months;
@@ -207,7 +207,7 @@ timestamp::operator-(amount<month> p_months)
 }
 
 timestamp
-timestamp::operator+=(amount<year> p_years)
+timestamp::operator+=(years p_years)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_year += p_years.get<decltype(_tm->tm_year)>();
@@ -216,7 +216,7 @@ timestamp::operator+=(amount<year> p_years)
 }
 
 timestamp
-timestamp::operator+(amount<year> p_years)
+timestamp::operator+(years p_years)
 {
   timestamp _new(*this);
   _new += p_years;
@@ -224,7 +224,7 @@ timestamp::operator+(amount<year> p_years)
 }
 
 timestamp
-timestamp::operator-=(amount<year> p_years)
+timestamp::operator-=(years p_years)
 {
   struct tm* _tm = localtime(&m_time);
   _tm->tm_year -= p_years.get<decltype(_tm->tm_year)>();
@@ -233,7 +233,7 @@ timestamp::operator-=(amount<year> p_years)
 }
 
 timestamp
-timestamp::operator-(amount<year> p_years)
+timestamp::operator-(years p_years)
 {
   timestamp _new(*this);
   _new -= p_years;

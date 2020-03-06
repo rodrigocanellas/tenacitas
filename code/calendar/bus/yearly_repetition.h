@@ -4,7 +4,7 @@
 #include <calendar/ent/day.h>
 #include <calendar/ent/month.h>
 #include <calendar/ent/year.h>
-#include <calendar/ent/amount.h>
+#include <calendar/ent/years.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -45,7 +45,7 @@ struct yearly_repetition_t
 private:
   ent::day m_day;
   ent::month m_month;
-  ent::amount<ent::year> m_at_each;
+  ent::years m_at_each;
 };
 
 } // namespace bus

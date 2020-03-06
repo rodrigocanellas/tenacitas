@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-#include <calendar/ent/amount.h>
 #include <calendar/ent/day.h>
+#include <calendar/ent/days.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -63,7 +63,7 @@ private:
   ///
   /// \brief m_at_each amount of days for the next, or previous, timestamp
   ///
-  ent::amount<ent::day> m_at_each;
+  ent::days m_at_each;
 };
 
 } // namespace bus

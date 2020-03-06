@@ -4,8 +4,9 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
+
 #include <calendar/ent/day.h>
+#include <calendar/ent/days.h>
 #include <calendar/ent/hour.h>
 #include <calendar/ent/minute.h>
 #include <calendar/ent/second.h>
@@ -19,7 +20,9 @@ namespace ent {
 ///
 struct weekday
 {
-  friend struct amount<weekday>;
+  friend struct amount_t<weekday>;
+
+//  typedef amount_t<weekday> amount;
 
   weekday() = delete;
 
@@ -114,37 +117,39 @@ struct weekday
     return m_value != p_weekday.m_value;
   }
 
-  inline operator amount<weekday>() { return amount<weekday>(m_value); }
+  static inline days get_days() { return days(7); }
 
-  static inline amount<day> days() { return amount<day>(7); }
+  static inline hours get_hours() { return day::get_hours() * days().get<hours>(); }
 
-  static inline amount<hour> hours() { return day::hours() * days().get<amount<hour>>(); }
+  static inline minutes get_minutes() { return hour::get_minutes() * hours().get<minutes>(); }
 
-  static inline amount<minute> minutes() { return hour::minutes() * hours().get<amount<minute>>(); }
-
-  static inline amount<second> seconds()
+  static inline seconds get_seconds()
   {
-    return minute::seconds() * minutes().get<amount<second>>();
+    return minute::get_seconds() * minutes().get<seconds>();
   }
 
-  amount<day> operator-(const weekday& p_weekday) const
+  days operator-(const weekday& p_weekday) const
   {
     if (m_value > p_weekday.m_value) {
-      return amount<day>(m_value - p_weekday.m_value);
+      return days(m_value - p_weekday.m_value);
     }
     if (m_value == p_weekday.m_value) {
-      return amount<day>(0);
+      return days(0);
     }
 
-    return amount<day>((sat.m_value - p_weekday.m_value) +
+    return days((sat.m_value - p_weekday.m_value) +
                        (m_value - sun.m_value + 1));
   }
 
-  inline amount<day> from_sunday() { return (*this - weekday::sun); }
+  inline days from_sunday() { return (*this - weekday::sun); }
 
-  inline amount<day> until_saturday() { return (weekday::sat - *this); }
+  inline days until_saturday() { return (weekday::sat - *this); }
 
 private:
+
+
+  inline uint8_t value()const { return m_value; }
+
   inline weekday(uint8_t p_value)
     : m_value(p_value)
   {}

@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
 #include <calendar/ent/second.h>
+#include <calendar/ent/seconds.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -17,7 +17,9 @@ namespace ent {
 struct minute
 {
 
-  friend struct amount<minute>;
+  friend struct amount_t<minute>;
+
+//  typedef amount_t<minute> amount;
 
   minute() = delete;
 
@@ -246,11 +248,12 @@ struct minute
     return m_value != p_minute.m_value;
   }
 
-  inline operator amount<minute>() const { return amount<minute>(m_value); }
-
-  static inline amount<second> seconds() { return amount<second>(60); }
+  static inline seconds get_seconds() { return seconds(60); }
 
 private:
+
+  inline uint8_t value() const { return m_value; }
+
   inline explicit minute(uint8_t p_value)
     : m_value(p_value)
   {}

@@ -5,8 +5,7 @@ QT -= gui
 
 
 TEMPLATE = lib
-
-CONFIG += lib
+CONFIG += static
 
 TARGET = tenacitas.concurrent.business
 

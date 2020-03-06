@@ -22,17 +22,17 @@ struct test000
 
     return (
       (_tm->tm_year ==
-       amount<year>(_ts.get_year()).get<decltype(_tm->tm_year)>() - 1900) &&
+       years(_ts.get_year()).get<decltype(_tm->tm_year)>() - 1900) &&
       (_tm->tm_mon ==
-       amount<month>(_ts.get_month()).get<decltype(_tm->tm_mon)>()) &&
+       months(_ts.get_month()).get<decltype(_tm->tm_mon)>()) &&
       (_tm->tm_mday ==
-       amount<day>(_ts.get_day()).get<decltype(_tm->tm_mday)>()) &&
+       days(_ts.get_day()).get<decltype(_tm->tm_mday)>()) &&
       (_tm->tm_hour ==
-       amount<hour>(_ts.get_hour()).get<decltype(_tm->tm_hour)>()) &&
+       hours(_ts.get_hour()).get<decltype(_tm->tm_hour)>()) &&
       (_tm->tm_min ==
-       amount<minute>(_ts.get_minute()).get<decltype(_tm->tm_min)>()) &&
+       minutes(_ts.get_minute()).get<decltype(_tm->tm_min)>()) &&
       (_tm->tm_sec ==
-       amount<second>(_ts.get_second()).get<decltype(_tm->tm_sec)>()));
+       seconds(_ts.get_second()).get<decltype(_tm->tm_sec)>()));
   }
 };
 

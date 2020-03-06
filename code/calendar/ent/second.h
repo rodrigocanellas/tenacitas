@@ -4,18 +4,21 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/amount.h>
+#include <calendar/ent/internal/amount.h>
 
 namespace tenacitas {
 namespace calendar {
 namespace ent {
+
+
 
 ///
 /// \brief The second struct represents a valid second value
 ///
 struct second
 {
-  friend struct amount<second>;
+
+  friend struct amount_t<second>;
 
   second() = delete;
 
@@ -244,9 +247,13 @@ struct second
     return m_value != p_second.m_value;
   }
 
-  inline operator amount<second>() const { return amount<second>(m_value); }
+
 
 private:
+
+
+  inline uint8_t value() const { return m_value; }
+
   inline explicit second(uint8_t p_value)
     : m_value(p_value)
   {}
@@ -254,6 +261,7 @@ private:
 private:
   uint8_t m_value;
 };
+
 
 } // namespace ent
 } // namespace calendar
