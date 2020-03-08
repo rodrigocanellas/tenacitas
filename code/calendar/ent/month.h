@@ -4,16 +4,14 @@
 #include <cstdint>
 #include <iostream>
 
-
 #include <calendar/ent/day.h>
-#include <calendar/ent/hour.h>
-#include <calendar/ent/minute.h>
-#include <calendar/ent/second.h>
 #include <calendar/ent/days.h>
+#include <calendar/ent/hour.h>
 #include <calendar/ent/hours.h>
+#include <calendar/ent/minute.h>
 #include <calendar/ent/minutes.h>
+#include <calendar/ent/second.h>
 #include <calendar/ent/seconds.h>
-
 
 namespace tenacitas {
 namespace calendar {
@@ -28,7 +26,7 @@ struct month
 {
   friend struct amount_t<month>;
 
-//  typedef  amount_t<month> amount;
+  //  typedef  amount_t<month> amount;
 
   month() = delete;
 
@@ -116,8 +114,6 @@ struct month
     return m_value != p_month.m_value;
   }
 
-
-
   static days get_days(const month& p_month, const year& p_year);
 
   static hours get_hours(const month& p_month, const year& p_year);
@@ -136,7 +132,6 @@ private:
 private:
   uint8_t m_value;
 };
-
 
 } // namespace ent
 } // namespace calendar

@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <iostream>
 
-
 #include <calendar/ent/day.h>
 #include <calendar/ent/days.h>
 #include <calendar/ent/hour.h>
@@ -22,7 +21,7 @@ struct weekday
 {
   friend struct amount_t<weekday>;
 
-//  typedef amount_t<weekday> amount;
+  //  typedef amount_t<weekday> amount;
 
   weekday() = delete;
 
@@ -119,13 +118,16 @@ struct weekday
 
   static inline days get_days() { return days(7); }
 
-  static inline hours get_hours() { return day::get_hours() * days().get<hours>(); }
+  static inline hours get_hours() { return day::get_hours() * get_days(); }
 
-  static inline minutes get_minutes() { return hour::get_minutes() * hours().get<minutes>(); }
+  static inline minutes get_minutes()
+  {
+    return hour::get_minutes() * get_hours();
+  }
 
   static inline seconds get_seconds()
   {
-    return minute::get_seconds() * minutes().get<seconds>();
+    return minute::get_seconds() * get_minutes();
   }
 
   days operator-(const weekday& p_weekday) const
@@ -138,7 +140,7 @@ struct weekday
     }
 
     return days((sat.m_value - p_weekday.m_value) +
-                       (m_value - sun.m_value + 1));
+                (m_value - sun.m_value + 1));
   }
 
   inline days from_sunday() { return (*this - weekday::sun); }
@@ -146,9 +148,7 @@ struct weekday
   inline days until_saturday() { return (weekday::sat - *this); }
 
 private:
-
-
-  inline uint8_t value()const { return m_value; }
+  inline uint8_t value() const { return m_value; }
 
   inline weekday(uint8_t p_value)
     : m_value(p_value)

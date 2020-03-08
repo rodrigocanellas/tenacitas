@@ -20,7 +20,7 @@ struct hour
 {
   friend struct amount_t<hour>;
 
-//  typedef amount_t<hour> amount;
+  //  typedef amount_t<hour> amount;
 
   hour() = delete;
 
@@ -145,11 +145,10 @@ struct hour
 
   static inline seconds get_seconds()
   {
-    return minute::get_seconds() * get_minutes().get<seconds>();
+    return minute::get_seconds() * get_minutes();
   }
 
 private:
-
   inline uint8_t value() const { return m_value; }
 
   inline explicit hour(uint8_t p_value)

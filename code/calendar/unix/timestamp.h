@@ -23,9 +23,8 @@ struct timestamp
   /// \brief timestamp default constructor creates a timestamp for now
   ///
   inline timestamp()
-    : m_time(time(nullptr))
-  {
-  }
+    : m_value(time(nullptr))
+  {}
 
   ///
   /// \brief timestamp creates a timestamp by informing day, month, year,
@@ -43,18 +42,16 @@ struct timestamp
   /// \param p_timestamp timestamp to be copied
   ///
   inline timestamp(const timestamp& p_timestamp)
-    : m_time(p_timestamp.m_time)
-  {
-  }
+    : m_value(p_timestamp.m_value)
+  {}
 
   ///
   /// \brief timestamp move constructor
   /// \param p_timestamp timestamp to be moved
   ///
   inline timestamp(timestamp&& p_timestamp)
-    : m_time(std::move(p_timestamp.m_time))
-  {
-  }
+    : m_value(std::move(p_timestamp.m_value))
+  {}
 
   ///
   /// \brief operator = copy assignment
@@ -121,25 +118,26 @@ struct timestamp
   ///
   inline void set_day(day p_day)
   {
-    struct tm* _tm = localtime(&m_time);
+    struct tm* _tm = localtime(&m_value);
     _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
-    m_time = mktime(_tm);
+    m_value = mktime(_tm);
   }
 
-  inline void set_day_month(day p_day, month p_month) {
-    struct tm* _tm = localtime(&m_time);
+  inline void set_day_month(day p_day, month p_month)
+  {
+    struct tm* _tm = localtime(&m_value);
     _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
     _tm->tm_mday = months(p_month).get<decltype(_tm->tm_mon)>();
-    m_time = mktime(_tm);
-
+    m_value = mktime(_tm);
   }
 
   ///
   /// \brief get_second
   /// \return
   ///
-  inline second get_second() const {
-    struct tm* _tm = localtime(&m_time);
+  inline second get_second() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return second::create(_tm->tm_sec);
   }
 
@@ -147,8 +145,9 @@ struct timestamp
   /// \brief get_minute
   /// \return
   ///
-  inline minute get_minute() const {
-    struct tm* _tm = localtime(&m_time);
+  inline minute get_minute() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return minute::create(_tm->tm_min);
   }
 
@@ -156,8 +155,9 @@ struct timestamp
   /// \brief get_hour
   /// \return
   ///
-  inline hour get_hour() const {
-    struct tm* _tm = localtime(&m_time);
+  inline hour get_hour() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return hour::create(_tm->tm_hour);
   }
 
@@ -165,8 +165,9 @@ struct timestamp
   /// \brief get_day
   /// \return
   ///
-  inline day get_day() const {
-    struct tm* _tm = localtime(&m_time);
+  inline day get_day() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return day::create(_tm->tm_mday);
   }
 
@@ -174,8 +175,9 @@ struct timestamp
   /// \brief get_weekday
   /// \return
   ///
-  inline weekday get_weekday() const {
-    struct tm* _tm = localtime(&m_time);
+  inline weekday get_weekday() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return weekday::create(_tm->tm_wday);
   }
 
@@ -183,8 +185,9 @@ struct timestamp
   /// \brief get_month
   /// \return
   ///
-  inline month get_month() const {
-    struct tm* _tm = localtime(&m_time);
+  inline month get_month() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return month::create(_tm->tm_mon);
   }
 
@@ -192,8 +195,9 @@ struct timestamp
   /// \brief get_year
   /// \return
   ///
-  inline year get_year() const {
-    struct tm* _tm = localtime(&m_time);
+  inline year get_year() const
+  {
+    struct tm* _tm = localtime(&m_value);
     return year(_tm->tm_year + 1900);
   }
 
@@ -204,7 +208,7 @@ struct timestamp
   ///
   inline bool operator==(const timestamp& p_ts) const
   {
-    return m_time == p_ts.m_time;
+    return m_value == p_ts.m_value;
   }
 
   ///
@@ -214,7 +218,7 @@ struct timestamp
   ///
   inline bool operator!=(const timestamp& p_ts) const
   {
-    return m_time != p_ts.m_time;
+    return m_value != p_ts.m_value;
   }
 
   ///
@@ -224,7 +228,7 @@ struct timestamp
   ///
   inline bool operator>(const timestamp& p_ts) const
   {
-    return m_time > p_ts.m_time;
+    return m_value > p_ts.m_value;
   }
 
   ///
@@ -234,7 +238,7 @@ struct timestamp
   ///
   inline bool operator<(const timestamp& p_ts) const
   {
-    return m_time < p_ts.m_time;
+    return m_value < p_ts.m_value;
   }
 
   ///
@@ -244,7 +248,7 @@ struct timestamp
   ///
   inline bool operator>=(const timestamp& p_ts) const
   {
-    return m_time > p_ts.m_time;
+    return m_value > p_ts.m_value;
   }
 
   ///
@@ -254,7 +258,7 @@ struct timestamp
   ///
   inline bool operator<=(const timestamp& p_ts) const
   {
-    return m_time < p_ts.m_time;
+    return m_value < p_ts.m_value;
   }
 
   ///
@@ -262,7 +266,11 @@ struct timestamp
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator+=(seconds p_seconds);
+  inline timestamp& operator+=(seconds p_seconds)
+  {
+    m_value += p_seconds.get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator +
@@ -276,7 +284,11 @@ struct timestamp
   /// \param p_seconds
   /// \return
   ///
-  timestamp& operator-=(seconds p_seconds);
+  timestamp& operator-=(seconds p_seconds)
+  {
+    m_value -= p_seconds.get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator -
@@ -290,7 +302,11 @@ struct timestamp
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator+=(minutes p_minutes);
+  inline timestamp& operator+=(minutes p_minutes)
+  {
+    m_value += (minute::get_seconds() * p_minutes).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator +
@@ -304,7 +320,11 @@ struct timestamp
   /// \param p_minutes
   /// \return
   ///
-  timestamp& operator-=(minutes p_minutes);
+  inline timestamp& operator-=(minutes p_minutes)
+  {
+    m_value -= (minute::get_seconds() * p_minutes).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator -
@@ -318,7 +338,11 @@ struct timestamp
   /// \param p_days
   /// \return
   ///
-  timestamp& operator+=(days p_days);
+  inline timestamp& operator+=(days p_days)
+  {
+    m_value += (day::get_seconds() * p_days).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator +
@@ -332,7 +356,11 @@ struct timestamp
   /// \param p_days
   /// \return
   ///
-  timestamp& operator-=(days p_days);
+  inline timestamp& operator-=(days p_days)
+  {
+    m_value -= (day::get_seconds() * p_days).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator -
@@ -346,7 +374,11 @@ struct timestamp
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator+=(weekdays p_weeks);
+  inline timestamp& operator+=(weekdays p_weeks)
+  {
+    m_value += (weekday::get_seconds() * p_weeks).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator +
@@ -360,7 +392,11 @@ struct timestamp
   /// \param p_weeks
   /// \return
   ///
-  timestamp& operator-=(weekdays p_weeks);
+  timestamp& operator-=(weekdays p_weeks)
+  {
+    m_value -= (weekday::get_seconds() * p_weeks).get<decltype(m_value)>();
+    return *this;
+  }
 
   ///
   /// \brief operator -
@@ -427,7 +463,7 @@ struct timestamp
 
 private:
   //  struct timespec m_timespec;
-  time_t m_time = -1;
+  time_t m_value = -1;
   //  struct tm m_tm;
 };
 

@@ -26,9 +26,7 @@ namespace bus {
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
 /// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_timestamp,
-         typename t_repetition,
-         typename t_ending_type>
+template<typename t_timestamp, typename t_repetition, typename t_ending_type>
 std::vector<t_timestamp>
 create_sequence(t_timestamp p_start,
                 t_repetition&& p_repetition,
@@ -55,7 +53,7 @@ create_sequence(t_timestamp p_start,
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
 /// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_timestamp,typename t_ending_type>
+template<typename t_timestamp, typename t_ending_type>
 std::vector<t_timestamp>
 create_sequence(t_timestamp p_start,
                 weekly_repetition_t<t_timestamp>&& p_repetition,
@@ -70,7 +68,7 @@ create_sequence(t_timestamp p_start,
   timestamps _times = p_repetition.next(p_start, true);
   while (!p_end.stop(_times.back())) {
     _sequence.insert(_sequence.end(), _times.begin(), _times.end());
-    timestamp _next = _times.back() + ent::days(1);
+    timestamp _next = _times.back() /*+ ent::days(1)*/;
     _times = p_repetition.next(_next);
   }
   return _sequence;

@@ -2,12 +2,12 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/ent/month.h>
-#include <calendar/ent/year.h>
 #include <calendar/ent/day.h>
 #include <calendar/ent/hour.h>
 #include <calendar/ent/minute.h>
+#include <calendar/ent/month.h>
 #include <calendar/ent/second.h>
+#include <calendar/ent/year.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -78,20 +78,19 @@ month::get_days(const month& p_month, const year& p_year)
 hours
 month::get_hours(const month& p_month, const year& p_year)
 {
-
-  return day::get_hours() * get_days(p_month, p_year).get<hours>();
+  return day::get_hours() * get_days(p_month, p_year);
 }
 
 minutes
 month::get_minutes(const month& p_month, const year& p_year)
 {
-  return hour::get_minutes() * get_hours(p_month, p_year).get<minutes>();
+  return hour::get_minutes() * get_hours(p_month, p_year);
 }
 
 seconds
 month::get_seconds(const month& p_month, const year& p_year)
 {
-  return minute::get_seconds() * get_minutes(p_month, p_year).get<seconds>();
+  return minute::get_seconds() * get_minutes(p_month, p_year);
 }
 
 } // namespace ent

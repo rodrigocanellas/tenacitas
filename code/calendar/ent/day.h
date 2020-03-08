@@ -22,7 +22,7 @@ struct day
 {
   friend struct amount_t<day>;
 
-//  typedef  amount_t<day> amount;
+  //  typedef  amount_t<day> amount;
 
   inline friend std::ostream& operator<<(std::ostream& p_out, const day& p_day)
   {
@@ -163,16 +163,18 @@ struct day
 
   static inline hours get_hours() { return hours(24); }
 
-  static inline minutes get_minutes() { return hour::get_minutes() * get_hours().get<minutes>(); }
+  static inline minutes get_minutes()
+  {
+    return hour::get_minutes() * get_hours();
+  }
 
   static inline seconds get_seconds()
   {
-    return minute::get_seconds() * get_minutes().get<seconds>();
+    return minute::get_seconds() * get_minutes();
   }
 
 private:
-
-  inline uint8_t value() const {return m_value;}
+  inline uint8_t value() const { return m_value; }
 
   inline explicit day(uint8_t p_value)
     : m_value(p_value)
