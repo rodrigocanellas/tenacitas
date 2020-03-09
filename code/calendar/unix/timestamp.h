@@ -24,7 +24,9 @@ struct timestamp
   ///
   inline timestamp()
     : m_value(time(nullptr))
-  {}
+  {
+    std::timespec_get(&m_value1, TIME_UTC);
+  }
 
   ///
   /// \brief timestamp creates a timestamp by informing day, month, year,
@@ -462,7 +464,7 @@ struct timestamp
   timestamp operator-(years p_years);
 
 private:
-  //  struct timespec m_timespec;
+  struct timespec m_value1;
   time_t m_value = -1;
   //  struct tm m_tm;
 };
