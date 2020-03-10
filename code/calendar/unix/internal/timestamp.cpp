@@ -22,19 +22,22 @@ timestamp::timestamp(year p_year,
   _tm.tm_hour = hours(p_hour).get<decltype(_tm.tm_hour)>();
   _tm.tm_min = minutes(p_minute).get<decltype(_tm.tm_min)>();
   _tm.tm_sec = seconds(p_second).get<decltype(_tm.tm_sec)>();
-  m_value = mktime(&_tm);
-  if (m_value == -1) {
+  time_t _time = mktime(&_tm);
+  if (_time == -1) {
     throw std::runtime_error(
       std::to_string(_tm.tm_mday) + "/" + std::to_string(_tm.tm_mon + 1) + "/" +
       std::to_string(_tm.tm_year) + " is not a valid date");
   }
+  m_value.tv_sec = _time;
+  m_value.tv_nsec = 0;
 }
 
 timestamp&
 timestamp::operator=(const timestamp& p_timestamp)
 {
   if (this != &p_timestamp) {
-    m_value = p_timestamp.m_value;
+    m_value.tv_sec = p_timestamp.m_value.tv_sec;
+    m_value.tv_nsec = p_timestamp.m_value.tv_nsec;
   }
   return *this;
 }
@@ -43,7 +46,8 @@ timestamp&
 timestamp::operator=(timestamp&& p_timestamp)
 {
   if (this != &p_timestamp) {
-    m_value = std::move(p_timestamp.m_value);
+    m_value.tv_sec = std::move(p_timestamp.m_value.tv_sec);
+    m_value.tv_nsec = std::move(p_timestamp.m_value.tv_nsec);
   }
   return *this;
 }
@@ -115,11 +119,11 @@ timestamp::operator-(weekdays p_weeks)
 timestamp&
 timestamp::operator+=(months p_months)
 {
-  struct tm* _tm = localtime(&m_value);
+  struct tm* _tm = gmtime(&(m_value.tv_sec));
 
   _tm->tm_mon += p_months.get<decltype(_tm->tm_mon)>() % 12;
   _tm->tm_year += p_months.get<decltype(_tm->tm_year)>() / 12;
-  m_value = mktime(_tm);
+  m_value.tv_sec = mktime(_tm);
   return *this;
 }
 
@@ -134,10 +138,10 @@ timestamp::operator+(months p_months)
 timestamp&
 timestamp::operator-=(months p_months)
 {
-  struct tm* _tm = localtime(&m_value);
+  struct tm* _tm = gmtime(&(m_value.tv_sec));
   _tm->tm_mon -= p_months.get<decltype(_tm->tm_mon)>() % 12;
   _tm->tm_year -= p_months.get<decltype(_tm->tm_year)>() / 12;
-  m_value = mktime(_tm);
+  m_value.tv_sec = mktime(_tm);
   return *this;
 }
 
@@ -152,9 +156,9 @@ timestamp::operator-(months p_months)
 timestamp
 timestamp::operator+=(years p_years)
 {
-  struct tm* _tm = localtime(&m_value);
+  struct tm* _tm = gmtime(&(m_value.tv_sec));
   _tm->tm_year += p_years.get<decltype(_tm->tm_year)>();
-  m_value = mktime(_tm);
+  m_value.tv_sec = mktime(_tm);
   return *this;
 }
 
@@ -169,9 +173,9 @@ timestamp::operator+(years p_years)
 timestamp
 timestamp::operator-=(years p_years)
 {
-  struct tm* _tm = localtime(&m_value);
+  struct tm* _tm = gmtime(&(m_value.tv_sec));
   _tm->tm_year -= p_years.get<decltype(_tm->tm_year)>();
-  m_value = mktime(_tm);
+  m_value.tv_sec = mktime(_tm);
   return *this;
 }
 

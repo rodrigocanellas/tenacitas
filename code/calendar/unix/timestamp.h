@@ -1,6 +1,7 @@
 #ifndef TENACITAS_CALENDAR_UNIX_TIMESTAMP_H
 #define TENACITAS_CALENDAR_UNIX_TIMESTAMP_H
 
+#include <cstring>
 #include <cstdint>
 #include <ctime>
 #include <iomanip>
@@ -23,9 +24,13 @@ struct timestamp
   /// \brief timestamp default constructor creates a timestamp for now
   ///
   inline timestamp()
-    : m_value(time(nullptr))
   {
-    std::timespec_get(&m_value1, TIME_UTC);
+//    std::timespec_get(&m_value, TIME_UTC);
+     if (clock_gettime(CLOCK_REALTIME, &m_value) == -1) {
+       throw std::runtime_error("error getting time: " +
+                                std::string(std::strerror(errno)));
+     }
+     std::cout << "TIME = " << std::asctime(gmtime(&(m_value.tv_sec))) << std::endl;
   }
 
   ///
@@ -78,13 +83,23 @@ struct timestamp
   inline friend std::ostream& operator<<(std::ostream& p_out,
                                          const timestamp& p_ts)
   {
-    p_out << "[" << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+    p_out << "["
+
+          << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
+
           << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
+
           << std::setw(4) << std::setfill('0') << p_ts.get_year() << ","
-          << p_ts.get_weekday() << "," << std::setw(2) << std::setfill('0')
-          << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
-          << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
-          << p_ts.get_second() << "]";
+
+          << p_ts.get_weekday() << ","
+
+          << std::setw(2) << std::setfill('0') << p_ts.get_hour() << ":"
+
+          << std::setw(2) << std::setfill('0') << p_ts.get_minute() << ":"
+
+          << std::setw(2) << std::setfill('0') << p_ts.get_second()
+
+          << "]";
 
     //    p_out << "{ "
 
@@ -111,7 +126,7 @@ struct timestamp
     //          << " }";
 
     return p_out;
-  }
+  }    
 
   ///
   /// \brief set_day
@@ -120,18 +135,19 @@ struct timestamp
   ///
   inline void set_day(day p_day)
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
-    m_value = mktime(_tm);
+    m_value.tv_sec = mktime(_tm);
   }
 
   inline void set_day_month(day p_day, month p_month)
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     _tm->tm_mday = days(p_day).get<decltype(_tm->tm_mday)>();
     _tm->tm_mday = months(p_month).get<decltype(_tm->tm_mon)>();
-    m_value = mktime(_tm);
+    m_value.tv_sec = mktime(_tm);
   }
+
 
   ///
   /// \brief get_second
@@ -139,7 +155,7 @@ struct timestamp
   ///
   inline second get_second() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return second::create(_tm->tm_sec);
   }
 
@@ -149,7 +165,7 @@ struct timestamp
   ///
   inline minute get_minute() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return minute::create(_tm->tm_min);
   }
 
@@ -159,7 +175,7 @@ struct timestamp
   ///
   inline hour get_hour() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return hour::create(_tm->tm_hour);
   }
 
@@ -169,7 +185,7 @@ struct timestamp
   ///
   inline day get_day() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return day::create(_tm->tm_mday);
   }
 
@@ -179,7 +195,7 @@ struct timestamp
   ///
   inline weekday get_weekday() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return weekday::create(_tm->tm_wday);
   }
 
@@ -189,7 +205,7 @@ struct timestamp
   ///
   inline month get_month() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return month::create(_tm->tm_mon);
   }
 
@@ -199,7 +215,7 @@ struct timestamp
   ///
   inline year get_year() const
   {
-    struct tm* _tm = localtime(&m_value);
+    struct tm* _tm = gmtime(&(m_value.tv_sec));
     return year(_tm->tm_year + 1900);
   }
 
@@ -210,7 +226,8 @@ struct timestamp
   ///
   inline bool operator==(const timestamp& p_ts) const
   {
-    return m_value == p_ts.m_value;
+    return ( (m_value.tv_sec == p_ts.m_value.tv_sec) &&
+             (m_value.tv_nsec == p_ts.m_value.tv_nsec) );
   }
 
   ///
@@ -218,9 +235,15 @@ struct timestamp
   /// \param p_ts
   /// \return
   ///
-  inline bool operator!=(const timestamp& p_ts) const
+  bool operator!=(const timestamp& p_ts) const
   {
-    return m_value != p_ts.m_value;
+    if (m_value.tv_sec != p_ts.m_value.tv_sec) {
+      return true;
+    }
+    if (m_value.tv_nsec != p_ts.m_value.tv_nsec) {
+      return true;
+    }
+    return false;
   }
 
   ///
@@ -228,9 +251,18 @@ struct timestamp
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>(const timestamp& p_ts) const
+  bool operator>(const timestamp& p_ts) const
   {
-    return m_value > p_ts.m_value;
+    if (m_value.tv_sec > p_ts.m_value.tv_sec) {
+      return true;
+    }
+    if (m_value.tv_sec < p_ts.m_value.tv_sec) {
+      return false;
+    }
+    if (m_value.tv_nsec > p_ts.m_value.tv_nsec) {
+      return true;
+    }
+    return false;
   }
 
   ///
@@ -238,9 +270,18 @@ struct timestamp
   /// \param p_ts
   /// \return
   ///
-  inline bool operator<(const timestamp& p_ts) const
+  bool operator<(const timestamp& p_ts) const
   {
-    return m_value < p_ts.m_value;
+    if (m_value.tv_sec < p_ts.m_value.tv_sec) {
+      return true;
+    }
+    if (m_value.tv_sec > p_ts.m_value.tv_sec) {
+      return false;
+    }
+    if (m_value.tv_nsec < p_ts.m_value.tv_nsec) {
+      return true;
+    }
+    return false;
   }
 
   ///
@@ -248,9 +289,18 @@ struct timestamp
   /// \param p_ts
   /// \return
   ///
-  inline bool operator>=(const timestamp& p_ts) const
+  bool operator>=(const timestamp& p_ts) const
   {
-    return m_value > p_ts.m_value;
+    if (m_value.tv_sec < p_ts.m_value.tv_sec) {
+      return false;
+    }
+    if (m_value.tv_sec > p_ts.m_value.tv_sec) {
+      return true;
+    }
+    if (m_value.tv_nsec < p_ts.m_value.tv_nsec) {
+      return false;
+    }
+    return true;
   }
 
   ///
@@ -260,7 +310,16 @@ struct timestamp
   ///
   inline bool operator<=(const timestamp& p_ts) const
   {
-    return m_value < p_ts.m_value;
+    if (m_value.tv_sec > p_ts.m_value.tv_sec) {
+      return false;
+    }
+    if (m_value.tv_sec < p_ts.m_value.tv_sec) {
+      return true;
+    }
+    if (m_value.tv_nsec > p_ts.m_value.tv_nsec) {
+      return false;
+    }
+    return true;
   }
 
   ///
@@ -270,7 +329,7 @@ struct timestamp
   ///
   inline timestamp& operator+=(seconds p_seconds)
   {
-    m_value += p_seconds.get<decltype(m_value)>();
+    m_value.tv_sec += p_seconds.get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -288,7 +347,7 @@ struct timestamp
   ///
   timestamp& operator-=(seconds p_seconds)
   {
-    m_value -= p_seconds.get<decltype(m_value)>();
+    m_value.tv_sec -= p_seconds.get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -306,7 +365,7 @@ struct timestamp
   ///
   inline timestamp& operator+=(minutes p_minutes)
   {
-    m_value += (minute::get_seconds() * p_minutes).get<decltype(m_value)>();
+    m_value.tv_sec += (minute::get_seconds() * p_minutes).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -324,7 +383,7 @@ struct timestamp
   ///
   inline timestamp& operator-=(minutes p_minutes)
   {
-    m_value -= (minute::get_seconds() * p_minutes).get<decltype(m_value)>();
+    m_value.tv_sec -= (minute::get_seconds() * p_minutes).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -342,7 +401,7 @@ struct timestamp
   ///
   inline timestamp& operator+=(days p_days)
   {
-    m_value += (day::get_seconds() * p_days).get<decltype(m_value)>();
+    m_value.tv_sec += (day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -360,7 +419,7 @@ struct timestamp
   ///
   inline timestamp& operator-=(days p_days)
   {
-    m_value -= (day::get_seconds() * p_days).get<decltype(m_value)>();
+    m_value.tv_sec -= (day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -378,7 +437,7 @@ struct timestamp
   ///
   inline timestamp& operator+=(weekdays p_weeks)
   {
-    m_value += (weekday::get_seconds() * p_weeks).get<decltype(m_value)>();
+    m_value.tv_sec += (weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -396,7 +455,7 @@ struct timestamp
   ///
   timestamp& operator-=(weekdays p_weeks)
   {
-    m_value -= (weekday::get_seconds() * p_weeks).get<decltype(m_value)>();
+    m_value.tv_sec -= (weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -464,9 +523,8 @@ struct timestamp
   timestamp operator-(years p_years);
 
 private:
-  struct timespec m_value1;
-  time_t m_value = -1;
-  //  struct tm m_tm;
+  struct timespec m_value;
+//  time_t m_value = -1;
 };
 
 } // namespace unix

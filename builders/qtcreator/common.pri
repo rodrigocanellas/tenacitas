@@ -43,7 +43,9 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 RCC_DIR += $${tmp_dir}/rsc
 
-QMAKE_CXXFLAGS += -std=c++17 -Werror
+CONFIG += c++17
+QMAKE_CXXFLAGS += -std=c++17
+QMAKE_CXXFLAGS += -Werror
 QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 
