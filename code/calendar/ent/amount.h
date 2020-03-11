@@ -127,8 +127,6 @@ struct amount_t
     return (m_value <= p_amount_t.template get<decltype(m_value)>());
   }
 
-  // **************************************
-
   template<typename t_amount>
   inline amount_t operator+(t_amount p_amount)
   {

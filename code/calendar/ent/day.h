@@ -184,6 +184,7 @@ private:
   uint8_t m_value;
 };
 
+
 } // namespace ent
 } // namespace calendar
 } // namespace tenacitas

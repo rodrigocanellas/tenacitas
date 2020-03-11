@@ -2,7 +2,7 @@
 #define TENACITAS_CALENDAR_ENT_SECONDS_H
 
 #include <calendar/ent/second.h>
-#include <calendar/ent/internal/amount.h>
+#include <calendar/ent/amount.h>
 
 namespace tenacitas {
 namespace calendar {
