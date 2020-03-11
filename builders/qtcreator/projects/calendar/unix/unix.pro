@@ -18,6 +18,7 @@ HEADERS += \
     ../../../../../code/calendar/bus/weekly_repetition.h \
     ../../../../../code/calendar/bus/yearly_repetition.h \
     ../../../../../code/calendar/ent/amount.h \
+    ../../../../../code/calendar/ent/timestamp_unix.h \
     ../../../../../code/calendar/ent/day.h \
     ../../../../../code/calendar/ent/hour.h \
     ../../../../../code/calendar/ent/minute.h \
@@ -39,7 +40,9 @@ SOURCES += \
     ../../../../../code/calendar/ent/internal/month.cpp \
     ../../../../../code/calendar/ent/internal/second.cpp \
     ../../../../../code/calendar/ent/internal/weekday.cpp \
-    ../../../../../code/calendar/unix/internal/timestamp.cpp
+    ../../../../../code/calendar/ent/internal/timestamp_unix.cpp
+# \
+#    ../../../../../code/calendar/unix/internal/timestamp.cpp
 
 include (../../../common.pri)
 
