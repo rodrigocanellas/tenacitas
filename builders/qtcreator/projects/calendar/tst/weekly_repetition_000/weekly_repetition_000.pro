@@ -1,0 +1,24 @@
+TEMPLATE = app
+CONFIG -= qt
+CONFIG+=test
+
+TARGET = tenacitas.calendar.tst.weekly_repetiotion_000
+
+
+include (../../../../common.pri)
+
+
+LIBS += -ltenacitas.tester.business
+LIBS += $$libs_dir/libtenacitas.logger.business.a
+
+SOURCES += \
+    ../../../../../../code/calendar/ent/day.cpp \
+    ../../../../../../code/calendar/ent/hour.cpp \
+    ../../../../../../code/calendar/ent/minute.cpp \
+    ../../../../../../code/calendar/ent/month.cpp \
+    ../../../../../../code/calendar/ent/second.cpp \
+    ../../../../../../code/calendar/ent/timestamp_unix.cpp \
+    ../../../../../../code/calendar/ent/weekday.cpp \
+    ../../../../../../code/calendar/tst/weekly_repetition_000/main.cpp
+
+
