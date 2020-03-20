@@ -1,44 +1,17 @@
-#CONFIG(debug, debug|release) {
-#    build_type=debug
-#    message("This is debug mode or debug_and_release")
-#} else {
-#    build_type=release
-#    message("This is release mode or debug_and_release")
-#}
 
-QMAKE_CXXFLAGS += -std=c++11
-
-
-
-#spec = $$basename(QMAKESPEC)
-
-#equals(spec,"") {
-#    spec="spec_undefined"
-#}
-
-
-#base_dir=$$PWD/../..
-#code_dir=$$base_dir/code
-#builder_dir=$$base_dir/builders/qtcreator
-#products_dir=$$base_dir/products
-#third_dir=$$base_dir/3rd
-#tmp_dir=$$products_dir/tmp/qtcreator/$$spec/$$build_type/$$TARGET
-#libs_dir=$$products_dir/$$spec/$$build_type/library
-#bins_dir=$$products_dir/$$spec/$$build_type/binary
-#test_dir=$$products_dir/$$spec/$$build_type/test
-#example_dir=$$products_dir/$$spec/$$build_type/example
+QMAKE_CXXFLAGS += -std=c++17 -Werror
+QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 base_dir=$$PWD/../..
-code_dir=$$base_dir/code
+code_dir=$$base_dir
 builder_dir=$$base_dir/builders/qtcreator
 products_dir=$$base_dir/products
 third_dir=$$base_dir/3rd
 tmp_dir=$$products_dir/tmp/qtcreator/$$TARGET
-libs_dir=$$products_dir/library
-bins_dir=$$products_dir/binary
-test_dir=$$products_dir/test
+libs_dir=$$products_dir/lib
+bins_dir=$$products_dir/bin
+test_dir=$$products_dir/tst
 example_dir=$$products_dir/example
-
 
 OUT_PWD = $${tmp_dir}
 MOC_DIR += $${tmp_dir}/moc
@@ -47,9 +20,9 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 RCC_DIR += $${tmp_dir}/rsc
 
-QMAKE_CXXFLAGS += -std=c++11 -Werror
-QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
-
+exists($$incs_dir) {
+    message ("INC EXISTS")
+}
 
 equals(TEMPLATE,app) {
     DESTDIR = $$bins_dir
@@ -61,17 +34,12 @@ equals(TEMPLATE,app) {
     }
 }
 
-#equals(TEMPLATE,dll) {
-#    DESTDIR = $$libs_dir
-#}
-
 equals(TEMPLATE,lib) {
     DESTDIR = $$libs_dir
     ! contains(CONFIG,staticlib) {
       CONFIG += shared_and_static
     }
 }
-
 
 LIBS += -L$$libs_dir -L$${third_dir}/lib
 LIBS += -lpthread
