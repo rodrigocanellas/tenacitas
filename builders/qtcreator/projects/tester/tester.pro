@@ -1,10 +1,12 @@
-SUBDIRS = \
-  dependencies \
-  business\tester_business.pro
+CONFIG -= qt
+
+TEMPLATE = lib
+CONFIG += staticlib
+
+TARGET = tenacitas.tester
+
+HEADERS += \
+  ../../../../code/tester/test.h \
 
 
-TEMPLATE = subdirs
-
-# build the project sequentially as listed in SUBDIRS !
-CONFIG += ordered
-
+include (../../common.pri)
