@@ -3,11 +3,11 @@ QMAKE_CXXFLAGS += -std=c++17 -Werror
 QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 base_dir=$$PWD/../..
-code_dir=$$base_dir
+code_dir=$$base_dir/code
 builder_dir=$$base_dir/builders/qtcreator
 products_dir=$$base_dir/products
 third_dir=$$base_dir/3rd
-tmp_dir=$$products_dir/tmp/qtcreator/$$TARGET
+tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
 test_dir=$$products_dir/tst
