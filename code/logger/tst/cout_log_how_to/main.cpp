@@ -6,15 +6,15 @@ struct cout_how_to {
   bool operator()() {
     try {
 
-      logger::cout::set_debug();
+      logger::cout::log::set_debug();
 
-      logger::cout::debug("cout_how_to", __LINE__, "hello! ", 309);
-      logger::cout::debug("cout_how_to", __LINE__, "how are you doing? ", 3.14);
-      logger::cout::info("cout_how_to", __LINE__, "fine!! ", 'W');
-      logger::cout::info("cout_how_to", __LINE__, "and you?");
-      logger::cout::warn("cout_how_to", __LINE__, "great! got a new job!! ",
+      logger::cout::log::debug("cout_how_to", __LINE__, "hello! ", 309);
+      logger::cout::log::debug("cout_how_to", __LINE__, "how are you doing? ", 3.14);
+      logger::cout::log::info("cout_how_to", __LINE__, "fine!! ", 'W');
+      logger::cout::log::info("cout_how_to", __LINE__, "and you?");
+      logger::cout::log::warn("cout_how_to", __LINE__, "great! got a new job!! ",
                          6987.58f);
-      logger::cout::warn("cout_how_to", __LINE__, "nice!! ", 10);
+      logger::cout::log::warn("cout_how_to", __LINE__, "nice!! ", 10);
       return true;
     } catch (std::exception &_ex) {
       std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"

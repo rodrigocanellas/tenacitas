@@ -8,17 +8,22 @@ struct clog_how_to {
   bool operator()() {
     try {
       using namespace tenacitas;
-      logger::clog::set_debug();
-      logger::clog::debug("clog_how_to", __LINE__, "teste de clog para debug ",
-                          -345, ' ', 19023, ' ', 'W', 3.1415);
-      logger::clog::info("clog_how_to", __LINE__, "teste de clog para debug ",
-                         -345, ' ', 19023, ' ', 'W', 3.1415);
-      logger::clog::warn("clog_how_to", __LINE__, "teste de clog para debug ",
-                         -345, ' ', 19023, ' ', 'W', 3.1415);
-      logger::clog::error("clog_how_to", __LINE__, "teste de clog para debug ",
-                          -345, ' ', 19023, ' ', 'W', 3.1415);
-      logger::clog::fatal("clog_how_to", __LINE__, "teste de clog para debug ",
-                          -345, ' ', 19023, ' ', 'W', 3.1415);
+      logger::clog::log::set_debug();
+      logger::clog::log::debug("clog_how_to", __LINE__,
+                               "teste de clog para debug ", -345, ' ', 19023,
+                               ' ', 'W', 3.1415);
+      logger::clog::log::info("clog_how_to", __LINE__,
+                              "teste de clog para debug ", -345, ' ', 19023,
+                              ' ', 'W', 3.1415);
+      logger::clog::log::warn("clog_how_to", __LINE__,
+                              "teste de clog para debug ", -345, ' ', 19023,
+                              ' ', 'W', 3.1415);
+      logger::clog::log::error("clog_how_to", __LINE__,
+                               "teste de clog para debug ", -345, ' ', 19023,
+                               ' ', 'W', 3.1415);
+      logger::clog::log::fatal("clog_how_to", __LINE__,
+                               "teste de clog para debug ", -345, ' ', 19023,
+                               ' ', 'W', 3.1415);
 
       return true;
 

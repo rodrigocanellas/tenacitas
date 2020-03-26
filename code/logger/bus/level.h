@@ -29,15 +29,15 @@
 //   yellow = 43, blue = 44, magenta = 45, cyan = 46, and white=47, are the
 //   commonly used color codes.
 
-// \brief namespace of the organization
+/// \brief namespace of the organization
 namespace tenacitas {
-// \brief namespace of the project
+/// \brief namespace of the project
 namespace logger {
-// \brief namespace of the group of classes
+/// \brief namespace of the group of classes
 namespace bus {
 
 //
-// \brief The level enum defines the possible logger::log levels
+/// \brief The level enum defines the possible logger::log levels
 //
 enum class level : char {
   debug = 'D',

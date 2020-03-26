@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    ../../tester/tester.pro \
+    dep \
     clog_log_how_to \
     cout_log_how_to \
     cout_log_creation \

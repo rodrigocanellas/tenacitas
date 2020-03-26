@@ -12,7 +12,7 @@ struct cout_log_creation {
 
     try {
 
-      logger::cout::set_debug();
+      logger::cout::log::set_debug();
 
       return true;
     } catch (std::exception &_ex) {

@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string>
 
-#include <logger/cerr/cerr.h>
+#include <logger/cerr/log.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
@@ -14,7 +14,7 @@ public:
     using namespace tenacitas;
     try {
 
-      logger::cerr::set_debug();
+      logger::cerr::log::log::set_debug();
 
       return true;
     } catch (std::exception &_ex) {

@@ -11,37 +11,39 @@
 #include <iostream>
 #include <thread>
 
-#include <logger/bus/log.h>
+#include <logger/bus/t_log.h>
 
-// \brief namespace of the organization
+/// \brief namespace of the organization
 namespace tenacitas {
-// \brief namespace of the project
+/// \brief namespace of the project
 namespace logger {
 
-struct clog {
+namespace clog {
+
+struct log {
 
   //
-  // \brief set_debug defines the log level to 'debug'
+  /// \brief set_debug defines the log level to 'debug'
   //
   inline static void set_debug() { m_log.set_debug(); }
 
   //
-  // \brief set_info defines the log level to 'info'
+  /// \brief set_info defines the log level to 'info'
   //
   inline static void set_info() { m_log.set_info(); }
 
   //
-  // \brief set_warn defines the log level to 'warn'
+  /// \brief set_warn defines the log level to 'warn'
   //
   inline static void set_warn() { m_log.set_warn(); }
 
   //
-  // \brief set_error defines the log level to 'error'
+  /// \brief set_error defines the log level to 'error'
   //
   inline static void set_error() { m_log.set_error(); }
 
   //
-  // \brief set_separator defines the separator to be used in the log
+  /// \brief set_separator defines the separator to be used in the log
   // messages
   //
   // \param p_separator the value of the separator
@@ -51,7 +53,7 @@ struct clog {
   }
 
   //
-  // \brief logs message with \p debug severity
+  /// \brief logs message with \p debug severity
   //
   // \tparam t_params are the types of the values to be logged
   //
@@ -69,7 +71,7 @@ struct clog {
   }
 
   //
-  // \brief logs message with \p info severity
+  /// \brief logs message with \p info severity
   //
   // \tparam t_params are the types of the values to be logged
   //
@@ -87,7 +89,7 @@ struct clog {
   }
 
   //
-  // \brief logs message with \p warn severity
+  /// \brief logs message with \p warn severity
   //
   // \tparam t_params are the types of the values to be logged
   //
@@ -105,7 +107,7 @@ struct clog {
   }
 
   //
-  // \brief logs message with \p error severity
+  /// \brief logs message with \p error severity
   //
   // \tparam t_params are the types of the values to be logged
   //
@@ -122,7 +124,7 @@ struct clog {
   }
 
   //
-  // \brief logs message with \p fatal severity
+  /// \brief logs message with \p fatal severity
   //
   // \tparam t_params are the types of the values to be logged
   //
@@ -139,12 +141,10 @@ struct clog {
   }
 
 private:
-  typedef bus::log_t<clog> log;
-
-private:
-  static log m_log;
+  static bus::t_log<log> m_log;
 };
 
+} // namespace clog
 } // namespace logger
 } // namespace tenacitas
 

@@ -9,7 +9,7 @@ namespace tenacitas {
 namespace tester {
 
 //
-// \brief The test struct executes tests implemented in classes
+/// \brief The test struct executes tests implemented in classes
 //
 struct test {
 
