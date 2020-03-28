@@ -24,7 +24,7 @@ struct work1
   {
     using namespace tenacitas;
     ++counter;
-    concurrent_log( counter);
+    concurrent_log_debug( counter);
     return concurrent::bus::work_status::dont_stop;
   }
   uint64_t counter = 0;
@@ -48,7 +48,7 @@ struct sleeping_loop_008
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop_1.stop();
 
-    concurrent_log( "data = ", _work.counter);
+    concurrent_log_debug( "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -60,7 +60,7 @@ struct sleeping_loop_008
     std::this_thread::sleep_for(std::chrono::seconds(5));
     _loop_2.stop();
 
-    concurrent_log( "data = ", _work.counter);
+    concurrent_log_debug( "data = ", _work.counter);
     if (_work.counter != 15) {
       return false;
     }

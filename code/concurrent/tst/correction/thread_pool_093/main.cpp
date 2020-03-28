@@ -25,7 +25,7 @@ struct work
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     m_msg = p_msg;
-    concurrent_log( "handling msg ", m_msg);
+    concurrent_log_debug( "handling msg ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -43,34 +43,34 @@ struct thread_pool_093
 
     for (uint16_t _i = 0; _i < 200; ++_i) {
       msg _msg(_i);
-      concurrent_log( "adding msg ", _msg);
+      concurrent_log_debug( "adding msg ", _msg);
       _pool_1.handle(_msg);
     }
 
-    concurrent_log( "starting pool");
+    concurrent_log_debug( "starting pool");
     _pool_1.run();
 
-    concurrent_log( "sleeping for 2 s");
+    concurrent_log_debug( "sleeping for 2 s");
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    concurrent_log( "waking up");
+    concurrent_log_debug( "waking up");
 
-    concurrent_log( "stopping pool");
+    concurrent_log_debug( "stopping pool");
     _pool_1.stop();
 
-    concurrent_log( "moving pool");
+    concurrent_log_debug( "moving pool");
     thread_pool _pool_2(std::move(_pool_1));
 
-    concurrent_log( "sleeping for 3 s");
+    concurrent_log_debug( "sleeping for 3 s");
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    concurrent_log( "starting new pool");
+    concurrent_log_debug( "starting new pool");
     _pool_2.run();
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log( "consumed = ", _work.m_msg.counter());
+    concurrent_log_debug( "consumed = ", _work.m_msg.counter());
     if (_work.m_msg.counter() != 199) {
-      concurrent_log_error(logger::cerr::log,
+      concurrent_log_debug_error(logger::cerr::log,
                            "Data value consumed should be equal to 199");
       return false;
     }

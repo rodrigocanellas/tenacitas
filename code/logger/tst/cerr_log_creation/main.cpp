@@ -3,7 +3,7 @@
 #include <string>
 
 #include <logger/cerr/log.h>
-#include <tester/test.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 
@@ -33,5 +33,5 @@ private:
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<cerr_log_creation>(argc, argv);
+  tester::bus::test::run<cerr_log_creation>(argc, argv);
 }

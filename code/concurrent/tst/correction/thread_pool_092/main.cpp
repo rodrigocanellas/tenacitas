@@ -23,7 +23,7 @@ struct work
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = p_msg;
-    concurrent_log( "handling msg ", m_msg);
+    concurrent_log_debug( "handling msg ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -42,7 +42,7 @@ struct thread_pool_092
 
     for (uint16_t _i = 0; _i < 20; ++_i) {
       msg _msg(_i);
-      concurrent_log( "adding msg ", _msg);
+      concurrent_log_debug( "adding msg ", _msg);
       _pool_1.handle(_msg);
     }
 
@@ -52,9 +52,9 @@ struct thread_pool_092
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    concurrent_log( "consumed = ", _work.m_msg.counter());
+    concurrent_log_debug( "consumed = ", _work.m_msg.counter());
     if (_work.m_msg.counter() != 19) {
-      concurrent_log_error(logger::cerr::log,
+      concurrent_log_debug_error(logger::cerr::log,
                            "Data value consumed should be equal to 19");
       return false;
     }

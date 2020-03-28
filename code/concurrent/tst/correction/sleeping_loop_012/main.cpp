@@ -112,7 +112,7 @@ struct work_1
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
-    concurrent_log( "1: ", m_msg);
+    concurrent_log_debug( "1: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -123,7 +123,7 @@ struct work_2
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
-    concurrent_log( "2: ", m_msg);
+    concurrent_log_debug( "2: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -134,7 +134,7 @@ struct work_3
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = std::move(p_msg);
-    concurrent_log( "3: ", m_msg);
+    concurrent_log_debug( "3: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -176,23 +176,23 @@ struct sleeping_loop_012
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log( "stopping");
+    concurrent_log_debug( "stopping");
     _loop_1.stop();
     _loop_2.stop();
     _loop_3.stop();
 
-    concurrent_log( "data 1 = ", _work_1.m_msg);
+    concurrent_log_debug( "data 1 = ", _work_1.m_msg);
     if ((_work_1.m_msg.m_i != 10) && (_work_1.m_msg.m_f != 1024.0)) {
       return false;
     }
 
-    concurrent_log( "data 2 = ", _work_2.m_msg);
+    concurrent_log_debug( "data 2 = ", _work_2.m_msg);
     if ((_work_2.m_msg.m_i != 2000) &&
         (_work_2.m_msg.m_f != 3486784401.0)) {
       return false;
     }
 
-    concurrent_log( "data 3 = ", _work_3.m_msg);
+    concurrent_log_debug( "data 3 = ", _work_3.m_msg);
     if ((_work_3.m_msg.m_i != 5000) && (_work_3.m_msg.m_f != 1024.0)) {
       return false;
     }

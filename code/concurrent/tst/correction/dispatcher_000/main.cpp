@@ -70,7 +70,7 @@ public:
   {
     using namespace tenacitas;
     msg_a _msg(++i);
-    concurrent_log( "P 1", _msg);
+    concurrent_log_debug( "P 1", _msg);
 
     concurrent::bus::dispatcher_t<msg_a, logger::cerr::log>::publish(++i);
     return concurrent::bus::work_status::dont_stop;
@@ -86,12 +86,12 @@ public:
     using namespace tenacitas;
     i += 10;
     msg_a _msg_a(i);
-    concurrent_log( "P 2", _msg_a);
+    concurrent_log_debug( "P 2", _msg_a);
     concurrent::bus::dispatcher_t<msg_a, logger::cerr::log>::publish(_msg_a);
 
     d *= 2.5;
     msg_c _msg_c(d);
-    concurrent_log( "P 2", _msg_c);
+    concurrent_log_debug( "P 2", _msg_c);
     concurrent::bus::dispatcher_t<msg_c, logger::cerr::log>::publish(_msg_c);
 
     return concurrent::bus::work_status::dont_stop;
@@ -109,7 +109,7 @@ public:
     i += 300;
     msg_b _msg_b(i);
 
-    concurrent_log( "P 3", _msg_b);
+    concurrent_log_debug( "P 3", _msg_b);
     concurrent::bus::dispatcher_t<msg_b, logger::cerr::log>::publish(_msg_b);
 
     return concurrent::bus::work_status::dont_stop;
@@ -124,7 +124,7 @@ struct subscriber_1
   concurrent::bus::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 1", p_msg);
+    concurrent_log_debug( "S 1", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 };
@@ -134,14 +134,14 @@ struct subscriber_2
   concurrent::bus::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 2", p_msg);
+    concurrent_log_debug( "S 2", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 
   concurrent::bus::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 2", p_msg);
+    concurrent_log_debug( "S 2", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 };
@@ -151,7 +151,7 @@ struct subscriber_3
   concurrent::bus::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 3", p_msg);
+    concurrent_log_debug( "S 3", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 };
@@ -161,21 +161,21 @@ struct subscriber_4
   concurrent::bus::work_status operator()(msg_a&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 4", p_msg);
+    concurrent_log_debug( "S 4", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 
   concurrent::bus::work_status operator()(msg_b&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 4", p_msg);
+    concurrent_log_debug( "S 4", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 
   concurrent::bus::work_status operator()(msg_c&& p_msg)
   {
     using namespace tenacitas;
-    concurrent_log( "S 4", p_msg);
+    concurrent_log_debug( "S 4", p_msg);
     return concurrent::bus::work_status::dont_stop;
   }
 };
@@ -220,9 +220,9 @@ struct dispatcher_000
     _sl2.run();
     _sl3.run();
 
-    concurrent_log( "------> starting to sleep");
+    concurrent_log_debug( "------> starting to sleep");
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_log( "------> waking up");
+    concurrent_log_debug( "------> waking up");
     return _rc;
   }
 

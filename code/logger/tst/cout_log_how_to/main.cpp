@@ -1,5 +1,5 @@
 #include <logger/cout/cout.h>
-#include <tester/test.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 struct cout_how_to {
@@ -27,4 +27,4 @@ struct cout_how_to {
   static std::string name() { return "cout_how_to"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<cout_how_to>(argc, argv); }
+int main(int argc, char **argv) { tester::bus::test::run<cout_how_to>(argc, argv); }

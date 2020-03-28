@@ -46,7 +46,7 @@ struct sync
 {
   ns_con::work_status operator()()
   {
-    concurrent_log_test(ns_log::log, "sync");
+    concurrent_log_debug_test(ns_log::log, "sync");
     return ns_con::work_status::dont_stop;
   }
 };
@@ -56,7 +56,7 @@ struct rx
 {
   ns_con::work_status operator()()
   {
-    concurrent_log_test(ns_log::log, "rx");
+    concurrent_log_debug_test(ns_log::log, "rx");
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
@@ -85,11 +85,11 @@ struct tx
   ns_con::work_status operator()(msg_tpdo&& p_msg)
   {
     //    if (p_msg.counter > 20) {
-    //      concurrent_log_test(
+    //      concurrent_log_debug_test(
     //        ns_log::log, "stoping because counter = ", p_msg.counter);
     //      return ns_con::work_status::stop;
     //    }
-    concurrent_log( m_id, "|", p_msg);
+    concurrent_log_debug( m_id, "|", p_msg);
 
     return ns_con::work_status::dont_stop;
   }

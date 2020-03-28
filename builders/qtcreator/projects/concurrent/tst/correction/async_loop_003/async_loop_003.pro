@@ -19,3 +19,4 @@ include (../../../../../common.pri)
 
 LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
+LIBS += $$libs_dir/libtenacitas.concurrent.lib.$$static_lib_ext

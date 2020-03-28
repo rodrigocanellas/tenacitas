@@ -1,5 +1,5 @@
 #include <logger/cerr/log.h>
-#include <tester/test.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 struct cerr_log_how_to {
@@ -30,5 +30,5 @@ struct cerr_log_how_to {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<cerr_log_how_to>(argc, argv);
+  tester::bus::test::run<cerr_log_how_to>(argc, argv);
 }

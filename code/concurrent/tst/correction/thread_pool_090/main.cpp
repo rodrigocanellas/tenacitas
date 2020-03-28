@@ -22,7 +22,7 @@ struct work
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = p_msg;
-    concurrent_log( "handling msg ", m_msg);
+    concurrent_log_debug( "handling msg ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -41,7 +41,7 @@ struct thread_pool_090
     sleeping_loop _loop(std::chrono::milliseconds(500),
                         [&_pool, &_value]() {
                           msg _msg(++_value);
-                          concurrent_log( "adding msg ", _msg);
+                          concurrent_log_debug( "adding msg ", _msg);
                           _pool.handle(std::move(_msg));
                           return concurrent::bus::work_status::dont_stop;
                         },
@@ -53,31 +53,31 @@ struct thread_pool_090
     _pool.run();
     _loop.run();
 
-    concurrent_log( "sleeping for 10 secs");
+    concurrent_log_debug( "sleeping for 10 secs");
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_log( "waking up after 10 secs");
+    concurrent_log_debug( "waking up after 10 secs");
 
-    concurrent_log( "stopping the pool");
+    concurrent_log_debug( "stopping the pool");
     _pool.stop();
 
-    concurrent_log( "sleeping for 5 secs");
+    concurrent_log_debug( "sleeping for 5 secs");
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    concurrent_log( "waking up after 5 secs");
+    concurrent_log_debug( "waking up after 5 secs");
 
-    concurrent_log( "runnig the pool");
+    concurrent_log_debug( "runnig the pool");
     _pool.run();
 
-    concurrent_log( "sleeping for 4 secs");
+    concurrent_log_debug( "sleeping for 4 secs");
     std::this_thread::sleep_for(std::chrono::seconds(4));
-    concurrent_log( "waking up after 4 secs");
+    concurrent_log_debug( "waking up after 4 secs");
 
-    concurrent_log(
+    concurrent_log_debug(
                         "consumed = ",
                         _work.m_msg.counter(),
                         ", provided = ",
                         _value);
     if (_work.m_msg.counter() != _value) {
-      concurrent_log_error(logger::cerr::log,
+      concurrent_log_debug_error(logger::cerr::log,
                            "Data value consumed should be equal to provided");
       return false;
     }

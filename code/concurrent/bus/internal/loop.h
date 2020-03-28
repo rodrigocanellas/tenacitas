@@ -47,9 +47,7 @@ namespace bus {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-template<typename t_data, typename t_log>
-struct loop_t
-{
+template <typename t_data, typename t_log> struct loop_t {
 
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -94,16 +92,10 @@ struct loop_t
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  inline loop_t(worker p_work,
-                std::chrono::milliseconds p_timeout,
-                breaker p_break,
-                provider p_provide)
-    : m_work(p_work)
-    , m_timeout(p_timeout)
-    , m_break(p_break)
-    , m_provide(p_provide)
-    , m_stopped(true)
-  {}
+  inline loop_t(worker p_work, std::chrono::milliseconds p_timeout,
+                breaker p_break, provider p_provide)
+      : m_work(p_work), m_timeout(p_timeout), m_break(p_break),
+        m_provide(p_provide), m_stopped(true) {}
 
   /// \brief loop decault constuctor not allowed
   loop_t() = delete;
@@ -112,26 +104,23 @@ struct loop_t
   ~loop_t() = default;
 
   /// \brief copy constructor not allowed
-  loop_t(const loop_t&) = delete;
+  loop_t(const loop_t &) = delete;
 
   ///
   /// \brief loop move constructor
   /// \param p_loop an instance o \p loop to be moved
   ///
-  loop_t(loop_t&& p_loop) noexcept
-    : m_work(std::move(p_loop.m_work))
-    , m_timeout(std::move(p_loop.m_timeout))
-    , m_break(std::move(p_loop.m_break))
-    , m_provide(std::move(p_loop.m_provide))
-    , m_stopped(true)
-  {}
+  loop_t(loop_t &&p_loop) noexcept
+      : m_work(std::move(p_loop.m_work)),
+        m_timeout(std::move(p_loop.m_timeout)),
+        m_break(std::move(p_loop.m_break)),
+        m_provide(std::move(p_loop.m_provide)), m_stopped(true) {}
 
   /// \brief copy assignment not allowed
-  loop_t& operator=(const loop_t&) = delete;
+  loop_t &operator=(const loop_t &) = delete;
 
   /// \brief move assignment
-  loop_t& operator=(loop_t&& p_loop) noexcept
-  {
+  loop_t &operator=(loop_t &&p_loop) noexcept {
     if (this != &p_loop) {
       m_work = std::move(p_loop.m_work);
       m_timeout = std::move(p_loop.m_timeout);
@@ -185,11 +174,10 @@ struct loop_t
   ///
   /// If the loop was already initiated, it does not start a new loop
   ///
-  void start()
-  {
+  void start() {
     if (!m_stopped) {
-      concurrent_log_debug(
-        log, this, " not starting because it was not stopped");
+      concurrent_log_debug(log, this,
+                           " not starting because it was not stopped");
       return;
     }
 
@@ -203,7 +191,7 @@ struct loop_t
       }
 
       concurrent_log_debug(log, this, " waiting for data");
-      std::pair<bool, t_data> _provide = m_provide();
+      std::pair<bool, t_data> _provide(m_provide());
       if (!_provide.first) {
         concurrent_log_debug(log, this, " breaking because there is no data");
         break;
@@ -211,15 +199,18 @@ struct loop_t
 
       concurrent_log_debug(log, this, " data received ", _provide.second);
 
-      std::future<work_status> _future =
-        std::async(std::launch::async, m_work, std::move(_provide.second));
+      std::future<work_status> _future = std::async(
+          std::launch::async,
+          [this](t_data &&p_data) { return this->m_work(std::move(p_data)); },
+          std::move(_provide.second));
       if (_future.wait_for(m_timeout) == std::future_status::ready) {
         if (_future.get() == work_status::stop) {
           concurrent_log_debug(log, this, " worker returned 'result::stop'");
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(log, this, " worker returned 'work_status::dont_stop'");
+        concurrent_log_debug(log, this,
+                             " worker returned 'work_status::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout for data ", _provide.second);
       }
@@ -293,9 +284,7 @@ private:
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-template<typename t_log>
-struct loop_t<void, t_log>
-{
+template <typename t_log> struct loop_t<void, t_log> {
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
@@ -342,16 +331,12 @@ struct loop_t<void, t_log>
   /// specialization of \p loop, or the other one where the \p provide_t
   /// actually provides data
   ///
-  inline loop_t(worker p_work,
-                std::chrono::milliseconds p_timeout,
-                breaker p_break,
-                provider p_provide)
-    : m_work(p_work)
-    , m_timeout(p_timeout)
-    , m_break(p_break)
-    , m_provide(p_provide)
-    , m_stopped(true)
-  {}
+  inline loop_t(worker p_work, std::chrono::milliseconds p_timeout,
+                breaker p_break, provider p_provide)
+      : m_work(p_work), m_timeout(p_timeout), m_break(p_break),
+        m_provide(p_provide), m_stopped(true) {
+    concurrent_log_debug(t_log, "m_work = ", &m_work);
+  }
 
   /// \brief loop decault constuctor not allowed
   loop_t() = delete;
@@ -360,16 +345,16 @@ struct loop_t<void, t_log>
   ~loop_t() = default;
 
   /// \brief copy constructor not allowed
-  loop_t(const loop_t&) = delete;
+  loop_t(const loop_t &) = delete;
 
   /// \brief loop move constructor not allowed
-  loop_t(loop_t&& p_loop) noexcept = delete;
+  loop_t(loop_t &&p_loop) noexcept = delete;
 
   /// \brief copy assignment not allowed
-  loop_t& operator=(const loop_t&) = delete;
+  loop_t &operator=(const loop_t &) = delete;
 
   /// \brief move assignment not allowed
-  loop_t& operator=(loop_t&& p_loop) noexcept = delete;
+  loop_t &operator=(loop_t &&p_loop) noexcept = delete;
 
   ///
   /// \brief is_stopped
@@ -414,11 +399,10 @@ struct loop_t<void, t_log>
   ///
   /// If the loop was already initiated, it does not start a new loop
   ///
-  void start()
-  {
+  void start() {
     if (m_stopped == false) {
-      concurrent_log_debug(
-        log, this, " not starting beacause it was not stopped");
+      concurrent_log_debug(log, this,
+                           " not starting beacause it was not stopped");
       return;
     }
 
@@ -434,14 +418,16 @@ struct loop_t<void, t_log>
       }
 
       concurrent_log_debug(log, this, " calling work");
-      std::future<work_status> _future = std::async(std::launch::async, m_work);
+      std::future<work_status> _future =
+          std::async(std::launch::async, [this]() { return this->m_work(); });
       if (_future.wait_for(m_timeout) == std::future_status::ready) {
         if (_future.get() == work_status::stop) {
           concurrent_log_debug(log, this, " worker returned 'result::stop'");
           m_stopped = true;
           break;
         }
-        concurrent_log_debug(log, this, "worker returned 'work_status::dont_stop'");
+        concurrent_log_debug(log, this,
+                             " worker returned 'work_status::dont_stop'");
       } else {
         concurrent_log_warn(log, this, " timeout");
       }

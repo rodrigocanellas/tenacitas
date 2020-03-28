@@ -1,9 +1,4 @@
 QT -= core
-QT -= widgets
-QT -= network
-QT -= gui
-
-
 
 TEMPLATE = app
 
@@ -19,6 +14,5 @@ include (../../../../../common.pri)
 
 LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
+LIBS += $$libs_dir/libtenacitas.concurrent.lib.$$static_lib_ext
 
-HEADERS += \
-  ../../../../../../../code/concurrent/tst/concurrent_log.h

@@ -23,7 +23,7 @@ struct work
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
     m_msg = p_msg;
-    concurrent_log( "handling msg ", m_msg);
+    concurrent_log_debug( "handling msg ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
@@ -43,15 +43,15 @@ struct thread_pool_095
     std::chrono::milliseconds(200));
 
     msg _msg(18);
-    concurrent_log( "adding msg ", _msg);
+    concurrent_log_debug( "adding msg ", _msg);
     _pool.handle(_msg);
 
-    concurrent_log( "start pool");
+    concurrent_log_debug( "start pool");
     _pool.run();
 
-    concurrent_log( "sleeping for 1 s");
+    concurrent_log_debug( "sleeping for 1 s");
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    concurrent_log( "waking up");
+    concurrent_log_debug( "waking up");
 
     return true;
   }

@@ -53,9 +53,7 @@ namespace bus {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-template<typename t_data, typename t_log>
-struct async_loop_t
-{
+template <typename t_data, typename t_log> struct async_loop_t {
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
@@ -104,13 +102,9 @@ struct async_loop_t
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  inline async_loop_t(worker p_work,
-                      std::chrono::milliseconds p_timeout,
-                      breaker p_break,
-                      provider p_provide)
-    : m_loop(p_work, p_timeout, p_break, p_provide)
-    , m_thread()
-  {}
+  inline async_loop_t(worker p_work, std::chrono::milliseconds p_timeout,
+                      breaker p_break, provider p_provide)
+      : m_loop(p_work, p_timeout, p_break, p_provide), m_thread() {}
 
   ///
   /// \brief async_loop constructor
@@ -124,33 +118,28 @@ struct async_loop_t
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
   ///
-  inline async_loop_t(worker p_work,
-                      std::chrono::milliseconds p_timeout,
+  inline async_loop_t(worker p_work, std::chrono::milliseconds p_timeout,
                       breaker p_break)
-    : m_loop(p_work, p_timeout, p_break, []() -> void {})
-    , m_thread()
-  {}
+      : m_loop(p_work, p_timeout, p_break, []() -> void {}), m_thread() {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
 
   /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t&) = delete;
+  async_loop_t(const async_loop_t &) = delete;
 
   /// \brief async_loop move constructor not allowed
-  async_loop_t(async_loop_t&& p_async) noexcept
-    : m_loop(std::move(p_async.m_loop))
-  {}
+  async_loop_t(async_loop_t &&p_async) noexcept
+      : m_loop(std::move(p_async.m_loop)) {}
 
   /// \brief copy assignment not allowed
-  async_loop_t& operator=(const async_loop_t&) = delete;
+  async_loop_t &operator=(const async_loop_t &) = delete;
 
   /// \brief move assignment not allowed
-  async_loop_t& operator=(async_loop_t&&) noexcept = default;
+  async_loop_t &operator=(async_loop_t &&) noexcept = default;
 
   /// \brief destructor stops the loop
-  inline ~async_loop_t()
-  {
+  inline ~async_loop_t() {
     concurrent_log_debug(log, this, " destructor");
     stop();
   }
@@ -186,20 +175,18 @@ struct async_loop_t
   /// \return the amount of time that the loop will wait for the work function
   /// to finish
   ///
-  inline std::chrono::milliseconds get_timeout() const
-  {
+  inline std::chrono::milliseconds get_timeout() const {
     return m_loop.get_timeout();
   }
 
   ///
   /// \brief run starts the loop
   ///
-  void run()
-  {
+  void run() {
 
     if (!m_loop.is_stopped()) {
       concurrent_log_debug(
-        log, this, " not starting the loop because it is already running");
+          log, this, " not starting the loop because it is already running");
       return;
     }
     concurrent_log_debug(log, this, " starting the loop");
@@ -209,11 +196,10 @@ struct async_loop_t
   ///
   /// \brief stop stops the loop
   ///
-  void stop()
-  {
+  void stop() {
     if (m_loop.is_stopped()) {
-      concurrent_log_debug(
-        log, this, " not stopping the loop because it was not running");
+      concurrent_log_debug(log, this,
+                           " not stopping the loop because it was not running");
       return;
     }
 
@@ -232,8 +218,7 @@ private:
 
 private:
   /// \brief common method to start the loop
-  void run_core()
-  {
+  void run_core() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_thread = thread([this]() -> void { m_loop.start(); });
   }

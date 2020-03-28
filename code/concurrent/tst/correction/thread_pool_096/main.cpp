@@ -23,7 +23,7 @@ struct work
   concurrent::bus::work_status operator()(msg&& p_msg)
   {
 
-    concurrent_log( "handling msg ", p_msg);
+    concurrent_log_debug( "handling msg ", p_msg);
     if ((p_msg.counter() % 2) == 0) {
       std::this_thread::sleep_for(std::chrono::milliseconds(500));
       ++m_timeout;
@@ -48,20 +48,20 @@ struct thread_pool_096
 
     for (uint16_t _i = 0; _i < 20; ++_i) {
       msg _msg(_i);
-      concurrent_log( "adding msg ", _msg);
+      concurrent_log_debug( "adding msg ", _msg);
       _pool.handle(_msg);
     }
 
-    concurrent_log( "start pool");
+    concurrent_log_debug( "start pool");
     _pool.run();
 
-    concurrent_log( "sleeping for 1 s");
+    concurrent_log_debug( "sleeping for 1 s");
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_log( "waking up");
+    concurrent_log_debug( "waking up");
 
-    concurrent_log( "timeout = ", _work.m_timeout);
+    concurrent_log_debug( "timeout = ", _work.m_timeout);
     if (_work.m_timeout != 10) {
-      concurrent_log_error(logger::cerr::log, "# of timeout should be equal to 10");
+      concurrent_log_debug_error(logger::cerr::log, "# of timeout should be equal to 10");
       return false;
     }
 

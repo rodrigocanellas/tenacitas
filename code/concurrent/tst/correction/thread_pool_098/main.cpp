@@ -30,7 +30,7 @@ struct work_1
 
   concurrent::bus::work_status operator()(int32_t&& p_value){
     std::this_thread::sleep_for(std::chrono::milliseconds(170));
-    concurrent_log( "work 1 handling msg ", p_value);
+    concurrent_log_debug( "work 1 handling msg ", p_value);
     if (p_value > 200) {
       m_notifier->stop("work1");
       return concurrent::bus::work_status::stop;
@@ -72,7 +72,7 @@ struct thread_pool_098
       if (m_cond_stop.wait_for(_lock,
                                std::chrono::milliseconds(50),
                                [this]() -> bool { return m_stop; })) {
-        concurrent_log( "notified");
+        concurrent_log_debug( "notified");
         m_pool.stop();
         break;
       }
@@ -82,15 +82,15 @@ struct thread_pool_098
       //      }
       m_pool.handle(++_value);
     }
-    concurrent_log( "sleeping");
+    concurrent_log_debug( "sleeping");
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    concurrent_log( "woke up");
+    concurrent_log_debug( "woke up");
     return true;
   }
 
   void stop(const std::string& p_str)
   {
-    concurrent_log( "stop called with ", p_str);
+    concurrent_log_debug( "stop called with ", p_str);
     m_stop = true;
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     m_cond_stop.notify_all();

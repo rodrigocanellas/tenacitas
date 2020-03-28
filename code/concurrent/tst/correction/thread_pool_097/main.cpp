@@ -26,7 +26,7 @@ struct work_1
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     ++counter;
-    concurrent_log( "work 1 handling msg ", p_value);
+    concurrent_log_debug( "work 1 handling msg ", p_value);
     return concurrent::bus::work_status::dont_stop;
   }
   int16_t counter = 0;
@@ -38,7 +38,7 @@ struct work_2
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(60));
     ++counter;
-    concurrent_log( "work 2 handling msg ", p_value);
+    concurrent_log_debug( "work 2 handling msg ", p_value);
     return concurrent::bus::work_status::dont_stop;
   }
   int16_t counter = 0;
@@ -81,12 +81,12 @@ struct thread_pool_097
 
       _loop.stop();
 
-      concurrent_log( "counter = ", _counter);
+      concurrent_log_debug( "counter = ", _counter);
 
       _pool.run();
     }
-    concurrent_log( "work 1 counter = ", _work_1.counter);
-    concurrent_log( "work 2 counter = ", _work_2.counter);
+    concurrent_log_debug( "work 1 counter = ", _work_1.counter);
+    concurrent_log_debug( "work 2 counter = ", _work_2.counter);
     return ((_work_1.counter + _work_2.counter) == 60);
   }
 };

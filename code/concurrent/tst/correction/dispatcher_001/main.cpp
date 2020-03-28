@@ -64,9 +64,9 @@ struct requester
     using namespace tenacitas;
     using namespace tenacitas;
     typedef concurrent::bus::dispatcher_t<request, logger::cerr::log> dispatcher;
-    concurrent_log( "reply ", p_reply);
+    concurrent_log_debug( "reply ", p_reply);
     if (m_counter++ > 100) {
-      concurrent_log_info(logger::cerr::log, "counter = ", m_counter, ", stopping");
+      concurrent_log_debug_info(logger::cerr::log, "counter = ", m_counter, ", stopping");
       dispatcher::publish(request(0));
       return concurrent::bus::work_status::stop;
     }
@@ -89,9 +89,9 @@ struct replier
     using namespace tenacitas;
     using namespace tenacitas;
     typedef concurrent::bus::dispatcher_t<reply, logger::cerr::log> dispatcher;
-    concurrent_log( "request ", p_request);
+    concurrent_log_debug( "request ", p_request);
     if (p_request.i == 0) {
-      concurrent_log_info(logger::cerr::log, "stopping");
+      concurrent_log_debug_info(logger::cerr::log, "stopping");
       return concurrent::bus::work_status::stop;
     }
     if ((p_request.i % 2) == 0) {
@@ -119,9 +119,9 @@ struct dispatcher_001
 
     requester().start();
 
-    concurrent_log( "------> starting to sleep");
+    concurrent_log_debug( "------> starting to sleep");
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_log( "------> waking up");
+    concurrent_log_debug( "------> waking up");
 
     return true;
   }

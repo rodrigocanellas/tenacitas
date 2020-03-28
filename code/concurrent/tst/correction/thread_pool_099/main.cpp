@@ -18,9 +18,9 @@ struct work_1
   concurrent::bus::work_status operator()(int32_t&& p_value)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(170));
-    concurrent_log( "work 1 handling msg ", p_value);
+    concurrent_log_debug( "work 1 handling msg ", p_value);
     if (p_value > 200) {
-      concurrent_log( "stopping this worker");
+      concurrent_log_debug( "stopping this worker");
       return concurrent::bus::work_status::stop;
     }
     return concurrent::bus::work_status::dont_stop;
@@ -48,9 +48,9 @@ struct thread_pool_099
 
     m_pool.handle(_value);
 
-    concurrent_log( "sleeping");
+    concurrent_log_debug( "sleeping");
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    concurrent_log( "woke up");
+    concurrent_log_debug( "woke up");
     return true;
   }
 

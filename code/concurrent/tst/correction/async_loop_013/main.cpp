@@ -30,26 +30,25 @@ struct work1 {
 
 typedef concurrent::bus::async_loop_t<void, logger::cerr::log> async_loop;
 
-struct async_loop_001 {
+struct async_loop_013 {
   bool operator()() {
     using namespace tenacitas;
     using namespace tenacitas;
     try {
       work1 _work;
-      async_loop _async_loop(
-          [&_work]() -> concurrent::bus::work_status { return _work(); },
-          std::chrono::milliseconds(1000),
-          []() -> concurrent::bus::work_status {
-            return concurrent::bus::work_status::dont_stop;
-          });
+      async_loop _async_loop(_work, std::chrono::milliseconds(1000),
+                             []() -> concurrent::bus::work_status {
+                               return concurrent::bus::work_status::dont_stop;
+                             });
       _async_loop.run();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
       concurrent_log_debug(logger::cerr::log, "counter = ", _work.counter);
-      if (_work.counter != 4) {
+      if (_work.counter != 0) {
         concurrent_log_debug(logger::cerr::log,
-                             "wrong value for data, it should be 4");
+                             "wrong value for data, it should be 0, but it is ",
+                             _work.counter);
         return false;
       }
     } catch (std::exception &_ex) {
@@ -64,13 +63,14 @@ struct async_loop_001 {
     return "\nWork in 'async_loop' will increment an internal counter "
            "indefinetly, at each 200 ms."
            "\nMain thread will stop for 1 sec."
-           "\nCounter should be 4.";
+           "\nThe work functor will not have its internal counter modified, as "
+           "it was passed by copy to 'async_loop'";
   }
 
-  static std::string name() { return "async_loop_001"; }
+  static std::string name() { return "async_loop_013"; }
 };
 
 int main(int argc, char **argv) {
   logger::cerr::log::set_debug();
-  tester::bus::test::run<async_loop_001>(argc, argv);
+  tester::bus::test::run<async_loop_013>(argc, argv);
 }

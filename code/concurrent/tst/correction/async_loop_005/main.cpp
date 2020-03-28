@@ -5,31 +5,26 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/bus/traits.h>
 #include <concurrent/bus/internal/async_loop.h>
 #include <concurrent/bus/internal/log.h>
 #include <concurrent/bus/thread.h>
+#include <concurrent/bus/traits.h>
 #include <logger/cerr/log.h>
-
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
-using namespace tenacitas;
 
-struct work1
-{
-  concurrent::bus::work_status operator()(uint32_t&& p_data)
-  {
+struct work1 {
+  concurrent::bus::work_status operator()(uint32_t &&p_data) {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    concurrent_log( p_data);
+    concurrent_log_debug(logger::cerr::log, p_data);
     return concurrent::bus::work_status::dont_stop;
   }
 };
 
-struct provide
-{
-  std::pair<bool, uint32_t> operator()()
-  {
+struct provide {
+  std::pair<bool, uint32_t> operator()() {
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     if (++m_data > 830) {
@@ -40,20 +35,15 @@ struct provide
   uint32_t m_data = 0;
 };
 
-typedef concurrent::bus::
-async_loop_t<uint32_t, logger::cerr::log>
-async_loop;
+typedef concurrent::bus::async_loop_t<uint32_t, logger::cerr::log> async_loop;
 
-struct async_loop_005
-{
-  bool operator()()
-  {
+struct async_loop_005 {
+  bool operator()() {
     using namespace tenacitas;
     try {
-      async_loop sl1(work1(),
-                     std::chrono::milliseconds(1000),
+      async_loop sl1(work1(), std::chrono::milliseconds(1000),
                      []() { return concurrent::bus::work_status::dont_stop; },
-      provide());
+                     provide());
 
       // uncomment the line below for a compiler error "error:
       // ‘tenacitas::concurrent::bus::bus::async_loop<t_timeout,
@@ -146,24 +136,23 @@ struct async_loop_005
       //                             std::make_shared<provide>(provide()));
       //            sl5 = std::move(sl1);
 
-    } catch (std::exception& _ex) {
+    } catch (std::exception &_ex) {
       concurrent_log_error(logger::cerr::log, _ex.what());
       return false;
     }
 
     return true;
   }
+
+  static std::string name() { return "async_loop_005"; }
+  static std::string desc() {
+    return "Testing compile failing for private constructor, default "
+           "constructor, copy constructor, move constructor, copy assignment "
+           "and move assignment of 'async_loop'";
+  }
 };
 
-int
-main(int argc, char** argv)
-{
-  logger::bus::configure_cerr_log();
-  run_test(
-        async_loop_005,
-        argc,
-        argv,
-        "Testing compile failing for private constructor, default constructor, "
-        "copy constructor, move constructor, copy assignment and move assignment "
-        "of 'async_loop'")
+int main(int argc, char **argv) {
+  logger::cerr::log::set_debug();
+  tester::bus::test::run<async_loop_005>(argc, argv);
 }

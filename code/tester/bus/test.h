@@ -7,6 +7,7 @@
 
 namespace tenacitas {
 namespace tester {
+namespace bus {
 
 //
 /// \brief The test struct executes tests implemented in classes
@@ -50,12 +51,13 @@ struct test {
                   << std::endl;
         result = false;
       }
-      std::clog << _name << (result ? " SUCCESS" : " FAIL") << std::endl;
+      std::cout << _name << (result ? " SUCCESS" : " FAIL") << std::endl;
       std::cout << _name << " - " << __LINE__ << " ############" << std::endl;
     }
   }
 };
 
+} // namespace bus
 } // namespace tester
 } // namespace tenacitas
 

@@ -3,7 +3,7 @@
 #include <string>
 
 #include <logger/cout/cout.h>
-#include <tester/test.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 
@@ -27,5 +27,5 @@ struct cout_log_creation {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<cout_log_creation>(argc, argv);
+  tester::bus::test::run<cout_log_creation>(argc, argv);
 }

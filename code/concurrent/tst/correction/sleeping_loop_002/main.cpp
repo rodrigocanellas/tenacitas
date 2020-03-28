@@ -29,7 +29,7 @@ struct work1
   {
 
     ++counter;
-    concurrent_log( counter);
+    concurrent_log_debug( counter);
     return concurrent::bus::work_status::dont_stop;
   }
   uint64_t counter = 0;
@@ -50,7 +50,7 @@ struct sleeping_loop_002
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop.stop();
 
-    concurrent_log( "data = ", _work.counter);
+    concurrent_log_debug( "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }

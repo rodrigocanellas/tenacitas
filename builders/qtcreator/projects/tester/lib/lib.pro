@@ -9,6 +9,6 @@ TARGET = tenacitas.tester.lib
 include (../../../common.pri)
 
 HEADERS += \
-  ../../../../../code/tester/test.h
+  ../../../../../code/tester/bus/test.h
 
 

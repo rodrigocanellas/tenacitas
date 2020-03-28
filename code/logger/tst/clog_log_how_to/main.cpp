@@ -1,5 +1,5 @@
 #include <logger/clog/clog.h>
-#include <tester/test.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 
@@ -38,4 +38,4 @@ struct clog_how_to {
   static std::string name() { return "clog_how_to"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<clog_how_to>(argc, argv); }
+int main(int argc, char **argv) { tester::bus::test::run<clog_how_to>(argc, argv); }

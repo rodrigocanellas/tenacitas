@@ -24,7 +24,7 @@ struct work1
   concurrent::bus::work_status operator()()
   {
     ++counter;
-    concurrent_log( counter);
+    concurrent_log_debug( counter);
     return concurrent::bus::work_status::dont_stop;
   }
   uint64_t counter = 0;
@@ -35,7 +35,7 @@ struct work2
   concurrent::bus::work_status operator()()
   {
     counter += 100;
-    concurrent_log( counter);
+    concurrent_log_debug( counter);
     return concurrent::bus::work_status::dont_stop;
   }
   uint64_t counter = 0;
@@ -46,7 +46,7 @@ struct work3
   concurrent::bus::work_status operator()()
   {
     counter += 1000;
-    concurrent_log( counter);
+    concurrent_log_debug( counter);
     return concurrent::bus::work_status::dont_stop;
   }
   uint64_t counter = 0;
@@ -78,22 +78,22 @@ struct sleeping_loop_011
 
     std::this_thread::sleep_for(std::chrono::seconds(12));
 
-    concurrent_log( "stopping");
+    concurrent_log_debug( "stopping");
     _loop_1.stop();
     _loop_2.stop();
     _loop_3.stop();
 
-    concurrent_log( "data 1 = ", _work_1.counter);
+    concurrent_log_debug( "data 1 = ", _work_1.counter);
     if (_work_1.counter != 12) {
       return false;
     }
 
-    concurrent_log( "data 2 = ", _work_2.counter);
+    concurrent_log_debug( "data 2 = ", _work_2.counter);
     if (_work_2.counter != 1200) {
       return false;
     }
 
-    concurrent_log( "data 3 = ", _work_3.counter);
+    concurrent_log_debug( "data 3 = ", _work_3.counter);
     if (_work_3.counter != 12000) {
       return false;
     }
