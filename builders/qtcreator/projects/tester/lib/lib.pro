@@ -6,9 +6,9 @@ CONFIG += staticlib
 TARGET = tenacitas.tester.lib
 
 
-include (../../../common.pri)
+include (../../../../../common.pri)
 
 HEADERS += \
-  ../../../../../code/tester/bus/test.h
+  ../../../../../../../code/tester/bus/test.h
 
 

@@ -7,11 +7,11 @@
 #include <sstream>
 #include <string>
 
-#include <string/business/max_str_length.h>
+#include <string/bus/max_str_length.h>
 
 namespace tenacitas {
 namespace string {
-namespace business {
+namespace bus {
 
 template<typename t_num_type>
 std::string
@@ -26,4 +26,4 @@ format_number(t_num_type p_num) {
 } // namespace string
 } // namespace tenacitas
 
-#endif 
+#endif

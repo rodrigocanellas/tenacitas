@@ -17,7 +17,7 @@ function create_test() {
         return
     fi
 
-    mkdir -p "$code_dir/$test_name" 2> /dev/null
+    mkdir -p "$code_dir/$test_name"
     if [ $? -ne 0 ]; then
         echo "Error creating $test_name"
         return
@@ -27,28 +27,26 @@ function create_test() {
 
     touch "$main"
 
-    echo "#include <concurrent/thread_pool.h>"  > $main
-    echo "#include <concurrent/test/thread_pool_tester.h>" >> $main
-    echo "#include <logger/cerr.h>" >> $main
-    echo "#include <tester/run.h>" >> $main
+    echo "#include <concurrent/bus/thread_pool.h>" > $main
+    echo "#include <concurrent/tst/performance/thread_pool_tester.h" >> $main
+    echo "#include <logger/cerr/log.h>"  >> $main
+    echo "#include <tester/bus/test.h>"  >> $main
+    echo "" >> $main
+    echo "struct $test_name {"  >> $main
+    echo "  bool operator()() {"  >> $main
+    echo "    thread_pool_tester<$consumers, $messages, $sleep>()();"  >> $main
+    echo "    return true;"  >> $main
+    echo "  }"  >> $main
     echo ""  >> $main
-    echo "struct $test_name" >> $main
-    echo "{"  >> $main
-    echo "    bool operator()()" >> $main
-    echo "    {" >> $main
-    echo "        thread_pool_tester<$consumers, $messages, $sleep>()();" >> $main
-    echo "        return true;" >> $main
-    echo "    }" >> $main
-    echo "};" >> $main
-    echo ""
-    echo "int" >> $main
-    echo "main(int argc, char** argv)" >> $main
-    echo "{" >> $main
-    echo "    run_test($test_name," >> $main
-    echo "             argc," >> $main
-    echo "             argv," >> $main
-    echo "             \"$consumers consumers, $messages msgs, $sleep work sleep\");" >> $main
-    echo "}" >> $main
+    echo " static std::string desc() { return \"$consumers consumers, $messages, $sleep work sleep\"; }"  >> $main
+    echo ""  >> $main
+    echo "  static std::string name() { return "$test_name"; }"  >> $main
+    echo "};"  >> $main
+    echo ""  >> $main
+    echo "int main(int argc, char **argv) {"  >> $main
+    echo "  logger::cerr::log::set_debug();"  >> $main
+    echo "  tester::bus::test::run<$test_name>(argc, argv);" >> $main
+    echo "}"  >> $main
 
     # build
 
@@ -57,42 +55,46 @@ function create_test() {
         return
     fi
 
-    mkdir -p "$build_dir/$test_name" 2> /dev/null
+    mkdir -p "$build_dir/$test_name"
 
     if [ $? -ne 0 ]; then
         echo "Error creating $build_dir/$test_name"
         return
     fi
 
+    performance_pro="$build_dir/performance.pro"
+    rm $performance_pro 
+    echo "SUBDIRS = \"" > $performance_pro
+    
     pro="$build_dir/$test_name/$test_name.pro"
 
     echo "QT -= core" > $pro
-    echo "QT -= widgets" >> $pro
-    echo "QT -= network" >> $pro
-    echo "QT -= gui" >> $pro
-
+    echo ""  >> $pro
     echo "QMAKE_CXXFLAGS += -std=c++11" >> $pro
-
+    echo ""  >> $pro
     echo "TEMPLATE = app" >> $pro
-
+    echo ""  >> $pro
     echo "TARGET = tenacitas.concurrent.test.$test_name"  >> $pro
-
+    echo ""  >> $pro
     echo "CONFIG+=test" >> $pro
-
+    echo ""  >> $pro
     echo "SOURCES += \ "  >> $pro
     echo "    ../../../../../code/concurrent/test/$test_name/main.cpp \ "  >> $pro
     echo "    ../../../../../code/concurrent/test/msa_a.cpp "  >> $pro
-
+    echo ""  >> $pro
     echo "include (../../../common.pri)"  >> $pro
-
-    echo "LIBS+=-ltenacitas.logger"  >> $pro
-
+    echo ""  >> $pro
+    echo "LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext"   >> $pro
+    echo "LIBS += $$libs_dir/libtenacitas.concurrent.lib.$$static_lib_ext"   >> $pro
+    echo "LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext"   >> $pro
+    echo ""  >> $pro
     echo "HEADERS += \ " >> $pro
     echo "    ../../../../../code/concurrent/test/msg_a.h \ "  >> $pro
     echo "    ../../../../../code/concurrent/test/thread_pool_tester.h " >> $pro
 
-    cat concurrent_test.pro | sed -e "s/###/   $test_name \\\ \n ### /g" > x
-    mv x concurrent_test.pro
+#    cat performance.pro | sed -e "s/###/   $test_name \\\ \n ### /g" > x
+    #    mv x pepro
+    echo "$test_name" >> $performance_pro
 
     echo "SUCCESS!"
 }
@@ -101,19 +103,23 @@ function create_test() {
 base_dir="$1"
 
 ## code
-code_dir="$base_dir/tenacitas/code/concurrent/test"
+code_dir="$base_dir/tenacitas/code/concurrent/tst/performance"
 
 if [ ! -d "$code_dir" ]; then
-    echo "$code_dir does not exist"
-    exit 15
+    #    echo "$code_dir does not exist"
+    #    exit 15
+    mkdir -p $code_dir
 fi
 
 ## build
-build_dir="$base_dir/tenacitas/builders/qtcreator/concurrent/test"
+build_dir="$base_dir/tenacitas/builders/qtcreator/projects/concurrent/tst/performance"
+
+
 
 if [ ! -d "$build_dir" ]; then
-    echo "$build_dir does not exist"
-    exit 50
+    #    echo "$build_dir does not exist"
+    #    exit 50
+    mkdir -p $build_dir
 fi
 
 

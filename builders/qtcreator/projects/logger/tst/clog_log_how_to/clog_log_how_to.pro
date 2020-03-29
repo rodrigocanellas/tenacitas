@@ -5,13 +5,13 @@ CONFIG+=test
 TARGET = tenacitas.logger.tst.clog_log_how_to
 
 
-include (../../../../common.pri)
+include (../../../../../common.pri)
 
-LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
-LIBS += $$libs_dir/libtenacitas.logger.clog.$$static_lib_ext
+LIBS += $$$libs_dir/libtenacitas.tester.lib.$$$static_lib_ext
+LIBS += $$$libs_dir/libtenacitas.logger.clog.$$$static_lib_ext
 
 SOURCES += \
-  ../../../../../../code/logger/tst/clog_log_how_to/main.cpp
+  ../../../../../../../../code/logger/tst/clog_log_how_to/main.cpp
 
 
 

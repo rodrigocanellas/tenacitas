@@ -97,7 +97,7 @@ struct async_loop_004 {
 
            "\nData in work should be 199";
   }
-  static std::string name() { return "async_loop_003"; }
+  static std::string name() { return "async_loop_004"; }
 };
 
 int main(int argc, char **argv) {

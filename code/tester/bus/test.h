@@ -44,7 +44,7 @@ struct test {
       t_class _obj;
       bool result = false;
       try {
-        std::cout << "############ " << __LINE__ << " - " << _name << std::endl;
+        std::cout << "############ -> " << _name << std::endl;
         result = _obj();
       } catch (std::exception &_ex) {
         std::cout << "ERROR " << _name << ": '" << _ex.what() << "'"
@@ -52,7 +52,7 @@ struct test {
         result = false;
       }
       std::cout << _name << (result ? " SUCCESS" : " FAIL") << std::endl;
-      std::cout << _name << " - " << __LINE__ << " ############" << std::endl;
+      std::cout << _name << " <- ############" << std::endl;
     }
   }
 };

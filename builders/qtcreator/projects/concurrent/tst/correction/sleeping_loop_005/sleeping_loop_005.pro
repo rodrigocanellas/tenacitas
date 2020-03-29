@@ -7,17 +7,18 @@ QT -= gui
 
 TEMPLATE = app
 
-TARGET = tenacitas.concurrent.test.correction.sleeping_loop_005
+TARGET = tenacitas.concurrent.tst.correction.sleeping_loop_005
 
 CONFIG+=test
 
 HEADERS +=
 
 SOURCES += \
-    ../../../../../../../code/concurrent/tst/correction/sleeping_loop_005/main.cpp
+    ../../../../../../../../../code/concurrent/tst/correction/sleeping_loop_005/main.cpp
 
 include (../../../../../common.pri)
 
 
-LIBS +=-ltenacitas.concurrent.bus -ltenacitas.logger.bus
-LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
+LIBS += $$$libs_dir/libtenacitas.concurrent.lib.$$$static_lib_ext
+LIBS += $$$libs_dir/libtenacitas.logger.cerr.$$$static_lib_ext
+LIBS += $$$libs_dir/libtenacitas.tester.lib.$$$static_lib_ext

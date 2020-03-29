@@ -6,7 +6,7 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace business {
+namespace bus {
 struct epoch
 {
     inline static uint64_t microsecs()

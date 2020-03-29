@@ -5,18 +5,16 @@
 #include <sstream>
 #include <string>
 
-#include <calendar/bus/epoch.h>
 #include <concurrent/bus/dispatcher.h>
 #include <concurrent/bus/internal/log.h>
 #include <concurrent/bus/sleeping_loop.h>
 #include <concurrent/bus/traits.h>
 #include <logger/cerr/log.h>
-
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 namespace ns_con = tenacitas::concurrent::bus;
-namespace ns_log = tenacitas::logger::bus;
-namespace ns_cal = tenacitas::calendar::bus;
+namespace ns_log = tenacitas::logger::cerr;
 
 // ############################## loops
 typedef ns_con::sleeping_loop_t<void, ns_log::log> sync_loop;
@@ -24,17 +22,17 @@ typedef ns_con::sleeping_loop_t<void, ns_log::log> rx_loop;
 
 // ############################## messages
 
-struct end
-{};
+struct end {};
 
-struct msg_tpdo
-{
+struct msg_tpdo {
   msg_tpdo() { ++counter; }
 
-  friend std::ostream& operator<<(std::ostream& p_out,
-                                  const msg_tpdo& /*p_msg*/)
-  {
-    p_out << ns_cal::epoch::microsecs();
+  friend std::ostream &operator<<(std::ostream &p_out,
+                                  const msg_tpdo & /*p_msg*/) {
+    p_out << static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch())
+            .count());
     return p_out;
   }
   static uint16_t counter;
@@ -42,21 +40,17 @@ struct msg_tpdo
 uint16_t msg_tpdo::counter = 0;
 ;
 
-struct sync
-{
-  ns_con::work_status operator()()
-  {
-    concurrent_log_debug_test(ns_log::log, "sync");
+struct sync {
+  ns_con::work_status operator()() {
+    concurrent_log_debug(ns_log::log, "sync");
     return ns_con::work_status::dont_stop;
   }
 };
 
 // ############################## publishers
-struct rx
-{
-  ns_con::work_status operator()()
-  {
-    concurrent_log_debug_test(ns_log::log, "rx");
+struct rx {
+  ns_con::work_status operator()() {
+    concurrent_log_debug(ns_log::log, "rx");
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
@@ -76,20 +70,16 @@ struct rx
 };
 
 // ############################## handler
-struct tx
-{
-  tx()
-    : m_id(++m_counter)
-  {}
+struct tx {
+  tx() : m_id(++m_counter) {}
 
-  ns_con::work_status operator()(msg_tpdo&& p_msg)
-  {
+  ns_con::work_status operator()(msg_tpdo &&p_msg) {
     //    if (p_msg.counter > 20) {
-    //      concurrent_log_debug_test(
+    //      concurrent_log_debug(
     //        ns_log::log, "stoping because counter = ", p_msg.counter);
     //      return ns_con::work_status::stop;
     //    }
-    concurrent_log_debug( m_id, "|", p_msg);
+    concurrent_log_debug(ns_log::log, m_id, "|", p_msg);
 
     return ns_con::work_status::dont_stop;
   }
@@ -101,22 +91,20 @@ private:
 uint16_t tx::m_counter = 0;
 
 // ############################## main
-struct dispatcher_003
-{
+struct dispatcher_003 {
 
   dispatcher_003() {}
 
-  bool operator()()
-  {
+  bool operator()() {
     //    sync_loop _sync(
     //      std::chrono::milliseconds(100), sync(),
     //      std::chrono::milliseconds(2));
 
-    rx_loop _rx(
-      std::chrono::milliseconds(40), rx(), std::chrono::milliseconds(15));
+    rx_loop _rx(std::chrono::milliseconds(40), rx(),
+                std::chrono::milliseconds(15));
 
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::subscribe(
-      "tx", tx(), std::chrono::milliseconds(10));
+        "tx", tx(), std::chrono::milliseconds(10));
 
     //    _sync.run();
     _rx.run();
@@ -125,14 +113,15 @@ struct dispatcher_003
 
     return true;
   }
+
+  static const std::string desc() {
+    return "\nTest inspired in a case brought by Fabio Costa";
+  }
+
+  static const std::string name() { return "dispatcher_003"; }
 };
 
-int
-main(int argc, char** argv)
-{
-  logger::bus::configure_cerr_log();
-  run_test(dispatcher_003,
-           argc,
-           argv,
-           "\nTest inspired in a case brought by Fabio Costa")
+int main(int argc, char **argv) {
+  logger::cerr::log::set_debug();
+  tester::bus::test::run<dispatcher_003>(argc, argv);
 }

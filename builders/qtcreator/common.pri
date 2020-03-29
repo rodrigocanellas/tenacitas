@@ -1,6 +1,6 @@
 
 QMAKE_CXXFLAGS += -std=c++17 -Werror
-QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
+QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$$libs_dir
 
 base_dir=$$PWD/../..
 code_dir=$$base_dir/code
@@ -35,13 +35,13 @@ equals(TEMPLATE,app) {
 }
 
 equals(TEMPLATE,lib) {
-    DESTDIR = $$libs_dir
+    DESTDIR = $$$libs_dir
     ! contains(CONFIG,staticlib) {
       CONFIG += shared_and_static
     }
 }
 
-LIBS += -L$$libs_dir -L$${third_dir}/lib
+LIBS += -L$$$libs_dir -L$${third_dir}/lib
 LIBS += -lpthread
 
 unix {
@@ -73,7 +73,7 @@ message("HEADERS= "$$HEADERS)
 message("UI_DIR  = "$$UI_DIR)
 message("MOC_DIR = "$$MOC_DIR)
 message("OUT_PWD = "$$OUT_PWD)
-message("libs_dir = "$$libs_dir)
+message("libs_dir = "$$$libs_dir)
 message("bins_dir = "$$bins_dir)
 message("QMAKE_CXXFLAGS = "$$QMAKE_CXXFLAGS)
 message("CONFIG = "$$CONFIG)

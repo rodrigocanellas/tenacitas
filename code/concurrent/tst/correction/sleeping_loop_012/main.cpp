@@ -8,34 +8,27 @@
 #include <sstream>
 #include <thread>
 
-#include <concurrent/bus/traits.h>
-#include <calendar/bus/epoch.h>
 #include <concurrent/bus/internal/log.h>
 #include <concurrent/bus/sleeping_loop.h>
 #include <concurrent/bus/traits.h>
 #include <logger/cerr/log.h>
-
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 using namespace tenacitas;
 
-struct msg
-{
+struct msg {
 
-  friend std::ostream& operator<<(std::ostream&, const msg&);
+  friend std::ostream &operator<<(std::ostream &, const msg &);
 
   msg() = default;
 
-  msg(int32_t p_i, double p_f)
-    : m_i(p_i)
-    , m_f(p_f)
-  {}
+  msg(int32_t p_i, double p_f) : m_i(p_i), m_f(p_f) {}
 
-  msg(msg&&) noexcept = default;
-  msg(const msg&) = default;
+  msg(msg &&) noexcept = default;
+  msg(const msg &) = default;
 
-  msg& operator=(msg&& p_msg) noexcept
-  {
+  msg &operator=(msg &&p_msg) noexcept {
     if (this != &p_msg) {
       m_i = std::move(p_msg.m_i);
       m_f = std::move(p_msg.m_f);
@@ -43,7 +36,7 @@ struct msg
     return *this;
   }
 
-  msg& operator=(const msg&) = delete;
+  msg &operator=(const msg &) = delete;
 
   ~msg() = default;
 
@@ -51,21 +44,15 @@ struct msg
   double m_f = 0.0;
 };
 
-std::ostream&
-operator<<(std::ostream& p_out, const msg& p_msg)
-{
+std::ostream &operator<<(std::ostream &p_out, const msg &p_msg) {
   p_out << p_msg.m_i << "-" << p_msg.m_f << "'";
   return p_out;
 }
 
-typedef concurrent::bus::
-sleeping_loop_t<msg, logger::cerr::log>
-loop;
+typedef concurrent::bus::sleeping_loop_t<msg, logger::cerr::log> loop;
 
-struct provide_1
-{
-  std::pair<bool, msg> operator()()
-  {
+struct provide_1 {
+  std::pair<bool, msg> operator()() {
     ++m_i;
     m_f *= 2;
     std::pair<bool, msg> result(true, msg(m_i, m_f));
@@ -77,10 +64,8 @@ private:
   double m_f = 1.0;
 };
 
-struct provide_2
-{
-  std::pair<bool, msg> operator()()
-  {
+struct provide_2 {
+  std::pair<bool, msg> operator()() {
     m_i += 100;
     m_f *= 3;
     std::pair<bool, msg> result(true, msg(m_i, m_f));
@@ -92,10 +77,8 @@ private:
   double m_f = 1.0;
 };
 
-struct provide_3
-{
-  std::pair<bool, msg> operator()()
-  {
+struct provide_3 {
+  std::pair<bool, msg> operator()() {
     m_i += 1000;
     m_f *= 4;
     std::pair<bool, msg> result(true, msg(m_i, m_f));
@@ -107,44 +90,36 @@ private:
   double m_f = 1.0;
 };
 
-struct work_1
-{
-  concurrent::bus::work_status operator()(msg&& p_msg)
-  {
+struct work_1 {
+  concurrent::bus::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
-    concurrent_log_debug( "1: ", m_msg);
+    concurrent_log_debug(logger::cerr::log, "1: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
 };
 
-struct work_2
-{
-  concurrent::bus::work_status operator()(msg&& p_msg)
-  {
+struct work_2 {
+  concurrent::bus::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
-    concurrent_log_debug( "2: ", m_msg);
+    concurrent_log_debug(logger::cerr::log, "2: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
 };
 
-struct work_3
-{
-  concurrent::bus::work_status operator()(msg&& p_msg)
-  {
+struct work_3 {
+  concurrent::bus::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
-    concurrent_log_debug( "3: ", m_msg);
+    concurrent_log_debug(logger::cerr::log, "3: ", m_msg);
     return concurrent::bus::work_status::dont_stop;
   }
   msg m_msg;
 };
 
-struct sleeping_loop_012
-{
+struct sleeping_loop_012 {
 
-  bool operator()()
-  {
+  bool operator()() {
     provide_1 _provide_1;
     provide_2 _provide_2;
     provide_3 _provide_3;
@@ -153,21 +128,27 @@ struct sleeping_loop_012
     work_3 _work_3;
 
     loop _loop_1(
-          std::chrono::milliseconds(1000),
-          [&_work_1](msg&& p_msg) -> concurrent::bus::work_status { return _work_1(std::move(p_msg)); },
-    std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000),
+        [&_work_1](msg &&p_msg) -> concurrent::bus::work_status {
+          return _work_1(std::move(p_msg));
+        },
+        std::chrono::milliseconds(100),
         [&_provide_1]() -> std::pair<bool, msg> { return _provide_1(); });
 
     loop _loop_2(
-          std::chrono::milliseconds(500),
-          [&_work_2](msg&& p_msg) -> concurrent::bus::work_status { return _work_2(std::move(p_msg)); },
-    std::chrono::milliseconds(100),
+        std::chrono::milliseconds(500),
+        [&_work_2](msg &&p_msg) -> concurrent::bus::work_status {
+          return _work_2(std::move(p_msg));
+        },
+        std::chrono::milliseconds(100),
         [&_provide_2]() -> std::pair<bool, msg> { return _provide_2(); });
 
     loop _loop_3(
-          std::chrono::milliseconds(2000),
-          [&_work_3](msg&& p_msg) -> concurrent::bus::work_status { return _work_3(std::move(p_msg)); },
-    std::chrono::milliseconds(100),
+        std::chrono::milliseconds(2000),
+        [&_work_3](msg &&p_msg) -> concurrent::bus::work_status {
+          return _work_3(std::move(p_msg));
+        },
+        std::chrono::milliseconds(100),
         [&_provide_3]() -> std::pair<bool, msg> { return _provide_3(); });
 
     _loop_1.run();
@@ -176,45 +157,49 @@ struct sleeping_loop_012
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log_debug( "stopping");
+    concurrent_log_debug(logger::cerr::log, "stopping");
     _loop_1.stop();
     _loop_2.stop();
     _loop_3.stop();
 
-    concurrent_log_debug( "data 1 = ", _work_1.m_msg);
+    concurrent_log_debug(logger::cerr::log, "data 1 = ", _work_1.m_msg);
     if ((_work_1.m_msg.m_i != 10) && (_work_1.m_msg.m_f != 1024.0)) {
       return false;
     }
 
-    concurrent_log_debug( "data 2 = ", _work_2.m_msg);
-    if ((_work_2.m_msg.m_i != 2000) &&
-        (_work_2.m_msg.m_f != 3486784401.0)) {
+    concurrent_log_debug(logger::cerr::log, "data 2 = ", _work_2.m_msg);
+    if ((_work_2.m_msg.m_i != 2000) && (_work_2.m_msg.m_f != 3486784401.0)) {
       return false;
     }
 
-    concurrent_log_debug( "data 3 = ", _work_3.m_msg);
+    concurrent_log_debug(logger::cerr::log, "data 3 = ", _work_3.m_msg);
     if ((_work_3.m_msg.m_i != 5000) && (_work_3.m_msg.m_f != 1024.0)) {
       return false;
     }
 
     return true;
   }
+
+  static const std::string desc() {
+    return "3 'sleeping_loops':\n'1' with 1000 ms of interval, work time out "
+           "of 50 "
+           "ms, and work function too simple to cause time out.\n'2' with "
+           "interval "
+           "of 500 ms, work time out of 100 ms, and work won't cause time "
+           "out.\n'3' "
+           "with interval of 2000 ms, work time out of 75 ms, and work also "
+           "too "
+           "simple.\nAll 3 use the same provider. \nAll will be started, the "
+           "main "
+           "thread will sleep for 12 secs, all the loops will be stopped by "
+           "calling "
+           "'stop', the main thread will "
+           "sleep for 3 secs.";
+  }
+  static const std::string name() { return "sleeping_loop_012"; }
 };
 
-int
-main(int argc, char** argv)
-{
-  logger::bus::configure_cerr_log();
-  run_test(
-        sleeping_loop_012,
-        argc,
-        argv,
-        "3 'sleeping_loops':\n'1' with 1000 ms of interval, work time out of 50 "
-        "ms, and work function too simple to cause time out.\n'2' with interval "
-        "of 500 ms, work time out of 100 ms, and work won't cause time out.\n'3' "
-        "with interval of 2000 ms, work time out of 75 ms, and work also too "
-        "simple.\nAll 3 use the same provider. \nAll will be started, the main "
-        "thread will sleep for 12 secs, all the loops will be stopped by calling "
-        "'stop', the main thread will "
-        "sleep for 3 secs.");
+int main(int argc, char **argv) {
+  logger::cerr::log::set_debug();
+  tester::bus::test::run<sleeping_loop_012>(argc, argv);
 }

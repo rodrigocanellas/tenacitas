@@ -10,7 +10,7 @@
 
 namespace tenacitas {
 namespace string {
-namespace business {
+namespace bus {
 
 
 template<typename t_num_type>
@@ -30,4 +30,4 @@ max_str_length()
 } // namespace string
 } // namespace tenacitas
 
-#endif 
+#endif

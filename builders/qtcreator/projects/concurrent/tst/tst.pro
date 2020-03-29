@@ -1,8 +1,7 @@
 SUBDIRS = \
     dep \
-    correction
-# \
-#    performance
+    correction \
+    performance
 
 TEMPLATE = subdirs
 

@@ -5,7 +5,7 @@
 
 namespace tenacitas {
 namespace string {
-namespace business {
+namespace bus {
 
 const char*
 file_name_from_path(const char* p_path)
