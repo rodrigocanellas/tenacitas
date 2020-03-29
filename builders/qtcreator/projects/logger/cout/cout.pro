@@ -9,12 +9,12 @@ TARGET = tenacitas.logger.cout
 
 
 
-include (../../../../../common.pri)
+include (../../../common.pri)
 
 HEADERS += \
-  ../../../../../../../code/logger/bus/level.h \
-  ../../../../../../../code/logger/bus/t_log.h \
-  ../../../../../../../code/logger/cout/cout.h
+  ../../../../../code/logger/bus/level.h \
+  ../../../../../code/logger/bus/t_log.h \
+  ../../../../../code/logger/cout/cout.h
 
 SOURCES += \
-  ../../../../../../../code/logger/cout/internal/cout.cpp
+  ../../../../../code/logger/cout/internal/cout.cpp

@@ -7,10 +7,10 @@ TEMPLATE = app
 TARGET = tenacitas.concurrent.tst.correction.thread_pool_095
 CONFIG+=test
 SOURCES += \
-    ../../../../../../../../../code/concurrent/tst/correction/thread_pool_095/main.cpp \
-    ../../../../../../../../../code/concurrent/tst/msa_a.cpp
+    ../../../../../../../code/concurrent/tst/correction/thread_pool_095/main.cpp \
+    ../../../../../../../code/concurrent/tst/msa_a.cpp
 include (../../../../../common.pri)
 
-LIBS += $$$libs_dir/libtenacitas.concurrent.lib.$$$static_lib_ext
-LIBS += $$$libs_dir/libtenacitas.logger.cerr.$$$static_lib_ext
-LIBS += $$$libs_dir/libtenacitas.tester.lib.$$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.concurrent.lib.$$static_lib_ext
+LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext

@@ -1,5 +1,5 @@
 SUBDIRS = \
-    ../../../logger \
+    ../../../logger/cerr \
     ../../../tester
 
 TEMPLATE = subdirs

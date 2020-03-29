@@ -1,6 +1,8 @@
 SUBDIRS = \
-  lib \
+  headers \
   tst
+
+#  lib \#  lib \
 
 TEMPLATE = subdirs
 

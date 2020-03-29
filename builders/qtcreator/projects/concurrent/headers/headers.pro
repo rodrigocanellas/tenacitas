@@ -1,9 +1,10 @@
-CONFIG -= qt
 
-TEMPLATE = lib
-CONFIG += staticlib
 
-TARGET = tenacitas.concurrent.lib
+#CONFIG -= qt
+
+TEMPLATE = subdirs
+
+#TARGET = tenacitas.concurrent.headers
 
 HEADERS += \  \
     ../../../../../../../code/concurrent/bus/dispatcher.h \
@@ -15,6 +16,6 @@ HEADERS += \  \
     ../../../../../../../code/concurrent/bus/thread_pool.h \
     ../../../../../../../code/concurrent/bus/traits.h
 
-include (../../../common.pri)
+#include (../../../common.pri)
 
 

@@ -12,11 +12,11 @@ TARGET = tenacitas.concurrent.tst.correction.async_loop_003
 CONFIG+=test
 
 SOURCES += \
-    ../../../../../../../../../code/concurrent/tst/correction/async_loop_003/main.cpp
+    ../../../../../../../code/concurrent/tst/correction/async_loop_003/main.cpp
 
 include (../../../../../common.pri)
 
 
-LIBS += $$$libs_dir/libtenacitas.logger.cerr.$$$static_lib_ext
-LIBS += $$$libs_dir/libtenacitas.tester.lib.$$$static_lib_ext
-LIBS += $$$libs_dir/libtenacitas.concurrent.lib.$$$static_lib_ext
+LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.concurrent.lib.$$static_lib_ext

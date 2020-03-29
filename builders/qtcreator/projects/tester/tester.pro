@@ -1,5 +1,7 @@
 SUBDIRS = \
-  lib
+  headers
+#  lib \
+
 
 TEMPLATE = subdirs
 

@@ -5,13 +5,13 @@ CONFIG+=test
 TARGET = tenacitas.logger.tst.cout_log_how_to
 
 SOURCES += \
-  ../../../../../../../../code/logger/tst/cout_log_how_to/main.cpp
+  ../../../../../../code/logger/tst/cout_log_how_to/main.cpp
 
-include (../../../../../common.pri)
+include (../../../../common.pri)
 
-LIBS += $$$libs_dir/libtenacitas.tester.lib.$$$static_lib_ext
-LIBS += $$$libs_dir/libtenacitas.logger.cout.$$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
+LIBS += $$libs_dir/libtenacitas.logger.cout.$$static_lib_ext
 
-#LIBS+=$$$libs_dir/libtenacitas.logger.cerr.a
+#LIBS+=$$libs_dir/libtenacitas.logger.cerr.a
 
 
