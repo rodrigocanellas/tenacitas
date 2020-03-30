@@ -348,13 +348,27 @@ template <typename t_log> struct loop_t<void, t_log> {
   loop_t(const loop_t &) = delete;
 
   /// \brief loop move constructor not allowed
-  loop_t(loop_t &&p_loop) noexcept = delete;
+  loop_t(loop_t &&p_loop) noexcept
+    : m_work(std::move(p_loop.m_work)),
+    m_timeout(std::move(p_loop.m_timeout)),
+    m_break(std::move(p_loop.m_break)),
+    m_provide(std::move(p_loop.m_provide)), m_stopped(true) {}
+
 
   /// \brief copy assignment not allowed
   loop_t &operator=(const loop_t &) = delete;
 
   /// \brief move assignment not allowed
-  loop_t &operator=(loop_t &&p_loop) noexcept = delete;
+  loop_t &operator=(loop_t &&p_loop) noexcept {
+    if (this != &p_loop) {
+      m_work = std::move(p_loop.m_work);
+      m_timeout = std::move(p_loop.m_timeout);
+      m_break = std::move(p_loop.m_break);
+      m_provide = std::move(p_loop.m_provide);
+      m_stopped = true;
+    }
+    return *this;
+  }
 
   ///
   /// \brief is_stopped

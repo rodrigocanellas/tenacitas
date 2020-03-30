@@ -1,26 +1,97 @@
-#ifndef TENACITAS_LOGGER_CERR_CERR_H
-#define TENACITAS_LOGGER_CERR_CERR_H
+#ifndef TENACITAS_LOGGER_FILE_FILE_H
+#define TENACITAS_LOGGER_FILE_FILE_H
 
-// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
-// at the root of \p tenacitas directory
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
 
-// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
+/// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <chrono>
-#include <cstddef>
-#include <iostream>
-#include <thread>
+#include <cstdint>
+#include <memory>
+#include <string>
 
-#include <logger/bus/t_log.h>
+#include <logger/bus/log_t.h>
+#include <logger/file/internal/file_controller.h>
+#include <logger/file/internal/file_writer.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
-
-namespace clog {
+/// \brief namespace of the class group
+namespace file {
 
 struct log {
+
+  ///
+  /// \brief configure configures logging in file
+  ///
+  /// \param p_path path is where the log files will be generated
+  ///
+  /// \param p_base_name first string in the log file name; one can use, for
+  /// example, the name of the program
+  ///
+  /// \param p_max_file_size maximum size of the file, in bytes
+  ///
+  /// \param p_retention amount of time that the file will exist, before being
+  /// deleted, in minutes
+  ///
+  /// \param p_closed_extension is a string that will be appended to the file
+  /// name, showing that it was closed, because it has reached its maximum size,
+  /// or the program has finished.
+  ///
+  /// \details Using the default values, log files will be created at
+  /// the current path; the name of the files will begin with 'log';
+  /// when it reaches 10MB a new log file will be created; each
+  /// log file will last up to 2 days
+  ///
+  /// A log file name is the combination of 'p_base_name' concatenated with the
+  /// process id (PID), and with the amount of milliseconds of when the file was
+  /// created, like: 'log_0000008165_1545843474201246.log'.
+  ///
+  /// When this files reaches (almost) 10MB, it will be renamed to
+  /// 'log_0000008165_1545843474201246.log.closed'.
+  ///
+  /// When it is more that 2 days old, it will be deleted.
+  ///
+  /// \details There are 5 log levels, from the lowest: 'debug', 'info', 'warn',
+  /// 'error' and 'fatal'. The log level starts in 'error', so only 'error' and
+  /// 'fatal' messages will be logged.
+  ///
+  /// If one wants to change the log level, the 'file_set_test',
+  /// 'file_set_debug', 'file_set_info' or 'file_set_warn' must be called
+  ///
+  /// A log line has this format:
+  /// log-level|timestamp-millisecs|thread-id|file|line|user-contents
+  ///
+  /// For example
+  /// T|1552098707355|140299908863808|thread_pool_tester.h|59|adding
+  /// (0000000005,012345678901234567890123456789,1552098707355)
+  ///
+  static void configure(
+      const std::string &p_path = ".", const std::string &p_base_name = "log",
+      uint32_t p_max_file_size = 10 * 1024 * 1024,
+      std::chrono::minutes p_retention = std::chrono::minutes(2 * 24 * 60),
+      const std::string &p_closed_extension = "closed") {
+
+    file_controller _file_controller(p_path, p_base_name, p_max_file_size,
+                                     p_retention, p_closed_extension);
+
+    typedef file_writer_t<file_controller> file_writer;
+    typedef std::shared_ptr<file_writer> file_writer_ptr;
+
+    file_writer_ptr _file_writer_ptr(
+        std::make_shared<file_writer>(std::move(_file_controller)));
+
+    //    logger::log::configure(std::move(_file_writer));
+    m_log.set_writer([_file_writer_ptr](std::string &&p_str) -> void {
+      (*_file_writer_ptr)(std::move(p_str));
+    });
+
+    //    file_writer _file_writer(std::move(_file_controller));
+    //    m_log.set_writer(std::move(_file_writer));
+  }
 
   //
   /// \brief set_debug defines the log level to 'debug'
@@ -141,11 +212,11 @@ struct log {
   }
 
 private:
-  static bus::t_log<log> m_log;
+  static bus::log_t<log> m_log;
 };
 
-} // namespace clog
+} // namespace file
 } // namespace logger
 } // namespace tenacitas
 
-#endif
+#endif // FILE_H

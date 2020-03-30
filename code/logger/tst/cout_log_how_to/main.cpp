@@ -1,4 +1,4 @@
-#include <logger/cout/cout.h>
+#include <logger/cout/log.h>
 #include <tester/bus/test.h>
 
 using namespace tenacitas;

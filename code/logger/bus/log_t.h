@@ -25,7 +25,7 @@ namespace bus {
 /// \brief log is a class that guarantees thread safe writing to the log writer
 //
 
-template <typename t_specific_logger> class t_log {
+template <typename t_specific_logger> class log_t {
 public:
   typedef t_specific_logger specific_logger;
 
@@ -36,12 +36,12 @@ public:
   typedef std::function<void(std::string &&)> writer;
 
 public:
-  t_log() = delete;
-  t_log(const t_log &) = delete;
-  t_log(t_log &&) noexcept = delete;
-  t_log &operator=(const t_log &) = delete;
-  t_log &operator=(t_log &&) noexcept = delete;
-  ~t_log() = default;
+  log_t() = default;
+  log_t(const log_t &) = delete;
+  log_t(log_t &&) noexcept = delete;
+  log_t &operator=(const log_t &) = delete;
+  log_t &operator=(log_t &&) noexcept = delete;
+  ~log_t() = default;
 
 private:
   //
@@ -50,7 +50,7 @@ private:
   // documentation above to be aware of the methods \p t_writer should
   // implement
   //
-  inline t_log(writer &&p_writer) { m_writer = std::move(p_writer); }
+  inline log_t(writer &&p_writer) { m_writer = std::move(p_writer); }
 
   //
   /// \brief set_debug defines the log level to 'debug'
@@ -86,6 +86,8 @@ private:
   // \return the value of the separator
   //
   inline char get_separator() { return m_separator; }
+
+  inline void set_writer(writer &&p_writer) { m_writer = std::move(p_writer); }
 
   //
   /// \brief logs message with \p debug severity
@@ -278,18 +280,18 @@ private:
 };
 
 // template <typename t_specific_logger>
-// typename t_log<t_specific_logger>::writer t_log<t_specific_logger>::m_writer
+// typename log_t<t_specific_logger>::writer log_t<t_specific_logger>::m_writer
 // =
 //    [](std::string &&) {};
 
 // template <typename t_specific_logger>
-// level t_log<t_specific_logger>::m_level = {level::error};
+// level log_t<t_specific_logger>::m_level = {level::error};
 
 // template <typename t_specific_logger>
-// char t_log<t_specific_logger>::m_separator = {'|'};
+// char log_t<t_specific_logger>::m_separator = {'|'};
 
 // template <typename t_specific_logger>
-// std::mutex t_log<t_specific_logger>::m_mutex;
+// std::mutex log_t<t_specific_logger>::m_mutex;
 
 } // namespace bus
 } // namespace logger

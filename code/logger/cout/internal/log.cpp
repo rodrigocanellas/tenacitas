@@ -1,14 +1,13 @@
-#include <logger/clog/clog.h>
+#include <logger/cout/log.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
+namespace cout {
 
-namespace clog {
+bus::log_t<log> log::m_log([](std::string &&p_str) { std::cout << p_str; });
 
-bus::t_log<log> log::m_log([](std::string &&p_str) { std::clog << p_str; });
-
-} // namespace clog
+} // namespace cout
 } // namespace logger
 } // namespace tenacitas

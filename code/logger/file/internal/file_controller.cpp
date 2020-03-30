@@ -9,14 +9,11 @@ namespace logger {
 namespace file {
 
 // ----------------------------------------------------------------------------
-std::string
-file_controller::name()
-{
+std::string file_controller::name() {
   std::stringstream _stream;
   update_last();
 
-  static const uint16_t _max_str_length =
-    string::file::max_str_length<pid_t>();
+  static const uint16_t _max_str_length = string::bus::max_str_length<pid_t>();
   _stream << m_path << "/" << m_base_name << "_" << std::right
           << std::setfill('0') << std::setw(_max_str_length) << m_pid << "_"
           << m_last << ".log";
@@ -59,11 +56,9 @@ file_controller::name()
 //}
 
 // ----------------------------------------------------------------------------
-concurrent::bus::work_status
-file_controller::deleter::operator()()
-{
-  DIR* _dir = nullptr;
-  struct dirent* _ent = nullptr;
+concurrent::bus::work_status file_controller::deleter::operator()() {
+  DIR *_dir = nullptr;
+  struct dirent *_ent = nullptr;
   _dir = opendir(m_path.c_str());
   if (_dir != nullptr) {
     _ent = readdir(_dir);
@@ -89,6 +84,6 @@ file_controller::deleter::operator()()
   return concurrent::bus::work_status::dont_stop;
 }
 
-} // namespace logger
 } // namespace file
+} // namespace logger
 } // namespace tenacitas

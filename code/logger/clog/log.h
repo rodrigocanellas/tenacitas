@@ -17,7 +17,8 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
-namespace cerr {
+
+namespace clog {
 
 struct log {
 
@@ -143,7 +144,7 @@ private:
   static bus::log_t<log> m_log;
 };
 
-} // namespace cerr
+} // namespace clog
 } // namespace logger
 } // namespace tenacitas
 

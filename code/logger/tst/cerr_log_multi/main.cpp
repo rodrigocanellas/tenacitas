@@ -1,12 +1,12 @@
 
 #include <iostream>
 
-#include <concurrent/business/sleeping_loop.h>
-#include <logger/business/cerr.h>
-#include <logger/business/cout.h>
+#include <concurrent/bus/sleeping_loop.h>
+#include <logger/cerr/cerr.h>
+#include <logger/cout/log.h>
 #include <logger/business/log.h>
-#include <tester/business/run.h>
-#include <concurrent/business/traits.h>
+#include <tester/bus/test.h>
+#include <concurrent/bus/traits.h>
 
 using namespace tenacitas::logger::business;
 using namespace tenacitas::concurrent::business;

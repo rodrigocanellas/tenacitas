@@ -136,7 +136,12 @@ template <typename t_data, typename t_log> struct async_loop_t {
   async_loop_t &operator=(const async_loop_t &) = delete;
 
   /// \brief move assignment not allowed
-  async_loop_t &operator=(async_loop_t &&) noexcept = default;
+  async_loop_t &operator=(async_loop_t &&p_async) noexcept {
+    if (this != &p_async) {
+      m_loop = std::move(p_async.m_loop);
+    }
+    return *this;
+  }
 
   /// \brief destructor stops the loop
   inline ~async_loop_t() {

@@ -4,6 +4,7 @@ SUBDIRS += \
   cout \
   clog \
   cerr \
+  file \
   tst
 
 

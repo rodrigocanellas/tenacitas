@@ -1,10 +1,10 @@
 /// \example
 #include <iostream>
 
-#include <concurrent/business/sleeping_loop.h>
-#include <concurrent/business/traits.h>
-#include <logger/business/cerr.h>
-#include <tester/business/run.h>
+#include <concurrent/bus/sleeping_loop.h>
+#include <concurrent/bus/traits.h>
+#include <logger/cerr/cerr.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas::logger::business;
 using namespace tenacitas::concurrent::business;

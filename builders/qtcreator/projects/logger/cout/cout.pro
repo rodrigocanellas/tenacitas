@@ -13,8 +13,8 @@ include (../../../common.pri)
 
 HEADERS += \
   ../../../../../code/logger/bus/level.h \
-  ../../../../../code/logger/bus/t_log.h \
-  ../../../../../code/logger/cout/cout.h
+  ../../../../../code/logger/bus/log_t.h \
+  ../../../../../code/logger/cout/log.h
 
 SOURCES += \
-  ../../../../../code/logger/cout/internal/cout.cpp
+  ../../../../../code/logger/cout/internal/log.cpp

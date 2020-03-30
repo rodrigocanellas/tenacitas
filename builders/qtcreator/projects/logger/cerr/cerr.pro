@@ -9,7 +9,7 @@ TARGET = tenacitas.logger.cerr
 
 HEADERS += \
     ../../../../../code/logger/bus/level.h \
-    ../../../../../code/logger/bus/t_log.h \
+    ../../../../../code/logger/bus/log_t.h \
     ../../../../../code/logger/cerr/log.h
 
 SOURCES += \

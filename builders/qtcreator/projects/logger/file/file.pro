@@ -5,14 +5,15 @@ CONFIG += staticlib
 
 TARGET = tenacitas.logger.file
 
-include (../../../../builders/qtcreator/common.pri)
+include (../../../common.pri)
 
 HEADERS += \
-    ../../../file/file.h \
-    ../../../file/internal/file_controller.h \
-    ../../../file/internal/file_writer.h
+    ../../../../../code/logger/file/internal/file_controller.h \
+    ../../../../../code/logger/file/internal/file_writer.h \
+    ../../../../../code/logger/file/log.h
 
 SOURCES += \
-    ../../../file/internal/file_controller.cpp
+    ../../../../../code/logger/file/internal/file_controller.cpp \
+    ../../../../../code/logger/file/internal/log.cpp
 
 
