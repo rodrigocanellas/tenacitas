@@ -1,11 +1,16 @@
-SUBDIRS = \
-    dependencies/dependencies.pro \
-    business/logger_business.pro \
-    test/logger_test.pro
-
 TEMPLATE = subdirs
 
-# build the project sequentially as listed in SUBDIRS !
+SUBDIRS += \
+  dep \
+  cout/logger_cout.pro \
+  clog/logger_clog.pro \
+  cerr/logger_cerr.pro \
+  file/logger_file.pro \
+  tst
+
+
+
+
+#  file \
+
 CONFIG += ordered
-
-

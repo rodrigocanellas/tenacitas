@@ -1,10 +1,24 @@
 SUBDIRS = \
-  dependencies \
-  business/tester_business.pro
+  headers/tester_headers.pro
 
 
 TEMPLATE = subdirs
 
 # build the project sequentially as listed in SUBDIRS !
 CONFIG += ordered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

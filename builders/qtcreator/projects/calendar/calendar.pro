@@ -1,8 +1,12 @@
 TEMPLATE = subdirs
 
-SUBDIRS += \
+  SUBDIRS += \
+    headers/calendar_headers.pro \
   unix \
   tst
+
+
+
 
 
 

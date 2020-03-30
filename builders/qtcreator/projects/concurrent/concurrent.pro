@@ -1,6 +1,8 @@
 SUBDIRS = \
-  business/concurrent_business.pro \
-  test/concurrent_test.pro
+  headers/concurrent_headers.pro \
+  tst
+
+#  lib \#  lib \
 
 TEMPLATE = subdirs
 
