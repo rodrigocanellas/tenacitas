@@ -9,7 +9,7 @@ SOURCES += \
 
 include (../../../../common.pri)
 
-LIBS += $$libs_dir/libtenacitas.tester.$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
 LIBS += $$libs_dir/libtenacitas.logger.cout.$$static_lib_ext
 
 #LIBS+=$$libs_dir/libtenacitas.logger.cerr.a

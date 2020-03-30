@@ -2,11 +2,15 @@ TEMPLATE = app
 CONFIG -= qt
 CONFIG+=test
 
-TARGET = tenacitas.COMPONEN.tst.TEST_NAME
+TARGET = tenacitas.logger.tst.cout_log_multi
 
 
 include (../../../../common.pri)
 
-LIBS += 
+LIBS += $$libs_dir/libtenacitas.logger.cout.$$static_lib_ext
+
+SOURCES += \
+  ../../../../../../code/logger/tst/cout_log_multi/main.cpp
+
 
 

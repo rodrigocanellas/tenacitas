@@ -1,62 +1,64 @@
 
 #include <iostream>
 
-#include <concurrent/business/traits.h>
-#include <concurrent/business/sleeping_loop.h>
-#include <logger/business/cout.h>
-#include <tester/business/run.h>
+#include <concurrent/bus/sleeping_loop.h>
+#include <concurrent/bus/traits.h>
+#include <logger/cout/log.h>
+#include <tester/bus/test.h>
 
-using namespace tenacitas::logger::business;
-using namespace tenacitas::concurrent::business;
+using namespace tenacitas;
 
-typedef sleeping_loop_t<void, log> sleeping_loop;
+typedef concurrent::bus::sleeping_loop_t<void, logger::cout::log> sleeping_loop;
 
-struct cout_log_single
-{
+struct cout_log_single {
 
-    bool operator()()
-    {
-        try {
+  bool operator()() {
+    try {
 
-            configure_cout_log();
+      sleeping_loop _loop1(
+          std::chrono::milliseconds(1000),
+          []() {
+            logger::cout::log::debug("cout_log_single", __LINE__,
+                                     "================= work! ", time(nullptr));
+            for (uint32_t _i = 0; _i < 5; ++_i) {
+              logger::cout::log::debug("cout_log_single", __LINE__, "ola! ",
+                                       _i);
+              logger::cout::log::debug("cout_log_single", __LINE__,
+                                       "como vai? ", _i);
+              logger::cout::log::info("cout_log_single", __LINE__, "vou bem!! ",
+                                      _i);
+              logger::cout::log::info("cout_log_single", __LINE__, "e vc? ",
+                                      _i);
+              logger::cout::log::warn("cout_log_single", __LINE__,
+                                      "ótimo! novo emprego! ", _i);
+              logger::cout::log::warn("cout_log_single", __LINE__, "que bom! ",
+                                      _i);
+            }
+            return concurrent::bus::work_status::dont_stop;
+          },
+          std::chrono::milliseconds(1000));
 
-            sleeping_loop _loop1(
-              std::chrono::milliseconds(10000),
-              []() {
-                  log::debug(
-                    "cout_log_single", __LINE__, "work! ", time(nullptr));
-                  for (uint32_t _i = 0; _i < 100; ++_i) {
-                      log::debug("cout_log_single", __LINE__, "ola! ", _i);
-                      log::debug("cout_log_single", __LINE__, "como vai? ", _i);
-                      log::info("cout_log_single", __LINE__, "vou bem!! ", _i);
-                      log::info("cout_log_single", __LINE__, "e vc? ", _i);
-                      log::warn("cout_log_single",
-                                __LINE__,
-                                "ótimo! novo emprego! ",
-                                _i);
-                      log::warn("cout_log_single", __LINE__, "que bom! ", _i);
-                  }
-                  return work_status::dont_stop;
-              },
-              std::chrono::milliseconds(1000));
+      _loop1.run();
 
-            _loop1.run();
+      logger::cout::log::debug("cout_log_single", __LINE__, "---- sleeping");
+      std::this_thread::sleep_for(std::chrono::minutes(1));
+      logger::cout::log::debug("cout_log_single", __LINE__, "---- waking up");
 
-            log::debug("cout_log_single", __LINE__, "---- sleeping");
-            std::this_thread::sleep_for(std::chrono::minutes(4));
-            log::debug("cout_log_single", __LINE__, "---- waking up");
-
-            return true;
-        } catch (std::exception& _ex) {
-            std::cerr << "ERRO log::log_single: '" << _ex.what() << "'"
-                      << std::endl;
-        }
-        return false;
+      return true;
+    } catch (std::exception &_ex) {
+      std::cerr << "ERRO logger::cout::log::logger::cout::log_single: '"
+                << _ex.what() << "'" << std::endl;
     }
+    return false;
+  }
+
+  static std::string desc() {
+    return "Single thread logger::cout::logging to 'cout'";
+  }
+  static std::string name() { return "cout_log_single"; }
 };
 
-int
-main(int argc, char** argv)
-{
-    run_test(cout_log_single, argc, argv, "Single thread logging to 'cout'");
+int main(int argc, char **argv) {
+  logger::cout::log::set_debug();
+  tester::bus::test::run<cout_log_single>(argc, argv);
 }

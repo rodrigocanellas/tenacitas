@@ -1,71 +1,69 @@
 /// \example
 #include <iostream>
 
-#include <concurrent/business/sleeping_loop.h>
-#include <logger/business/file.h>
-#include <tester/business/run.h>
-#include <concurrent/business/traits.h>
+#include <concurrent/bus/sleeping_loop.h>
+#include <concurrent/bus/traits.h>
+#include <logger/file/log.h>
+#include <tester/bus/test.h>
 
-using namespace tenacitas::logger::business;
-using namespace tenacitas::concurrent::business;
+using namespace tenacitas;
 
-typedef sleeping_loop_t<void, tenacitas::logger::business::log> sleeping_loop;
+typedef concurrent::bus::sleeping_loop_t<void, tenacitas::logger::file::log>
+    sleeping_loop;
 
-class file_log_single
-{
+class file_log_single {
 
-  public:
-    bool operator()()
-    {
-        try {
-            using namespace tenacitas;
+public:
+  bool operator()() {
+    try {
+      using namespace tenacitas;
 
-            tenacitas::logger::business::configure_file_log(
-              ".", "file_log_single", 10 * 1024, std::chrono::minutes(1));
-            log::set_debug();
+      logger::file::log::configure(".", "file_log_single", 10 * 1024,
+                                   std::chrono::minutes(5));
+      logger::file::log::set_debug();
+      sleeping_loop _loop1(
+          std::chrono::milliseconds(1000),
+          []() {
+            logger::file::log::debug("file_log_single", __LINE__,
+                                     "================= work! ", time(nullptr));
+            for (uint32_t _i = 0; _i < 5; ++_i) {
+              logger::file::log::debug("file_log_single", __LINE__, "ola! ",
+                                       _i);
+              logger::file::log::debug("file_log_single", __LINE__,
+                                       "como vai? ", _i);
+              logger::file::log::info("file_log_single", __LINE__, "vou bem!! ",
+                                      _i);
+              logger::file::log::info("file_log_single", __LINE__, "e vc? ",
+                                      _i);
+              logger::file::log::warn("file_log_single", __LINE__,
+                                      "ótimo! novo emprego! ", _i);
+              logger::file::log::warn("file_log_single", __LINE__, "que bom! ",
+                                      _i);
+            }
+            return concurrent::bus::work_status::dont_stop;
+          },
+          std::chrono::milliseconds(1000));
 
-            sleeping_loop _loop1(
-              std::chrono::milliseconds(500),
-              []() {
-                  log::test("file_log_single", __LINE__, "work!");
-                  log::test("file_log_single", __LINE__, std::string(10, 't'));
-                  log::debug(
-                    "file_log_single", __LINE__, std::string(511, 'd'));
-                  log::info("file_log_single", __LINE__, std::string(511, 'i'));
-                  log::warn("file_log_single", __LINE__, std::string(511, 'w'));
-                  log::error(
-                    "file_log_single", __LINE__, std::string(511, 'e'));
-                  log::test("file_log_single", __LINE__, std::string(511, 'T'));
-                  log::debug(
-                    "file_log_single", __LINE__, std::string(511, 'D'));
-                  log::info("file_log_single", __LINE__, std::string(511, 'I'));
-                  log::warn("file_log_single", __LINE__, std::string(511, 'W'));
-                  log::error(
-                    "file_log_single", __LINE__, std::string(511, 'E'));
-                  return work_status::dont_stop;
-              },
-              std::chrono::seconds(5));
+      _loop1.run();
 
-            _loop1.run();
+      logger::file::log::debug("file_log_single", __LINE__,
+                               "---- sleeping 3 minutes");
+      std::this_thread::sleep_for(std::chrono::minutes(3));
+      logger::file::log::debug("file_log_single", __LINE__, "---- waking up");
 
-            log::test("file_log_single", __LINE__, "---- sleeping 3 minutes");
-            std::this_thread::sleep_for(std::chrono::minutes(3));
-            log::test("file_log_single", __LINE__, "---- waking up");
-
-            return true;
-        } catch (std::exception& _ex) {
-            log::fatal("file_log_single",
-                       __LINE__,
-                       "ERRO log::log_single: '",
-                       _ex.what(),
-                       "'");
-        }
-        return false;
+      return true;
+    } catch (std::exception &_ex) {
+      logger::file::log::fatal("file_log_single", __LINE__,
+                               "ERRO log::log_single: '", _ex.what(), "'");
     }
+    return false;
+  }
+
+  static std::string desc() { return "Single thread logging to 'file'"; }
+  static std::string name() { return "file_log_single"; }
 };
 
-int
-main(int argc, char** argv)
-{
-    run_test(file_log_single, argc, argv, "Single thread logging to 'file'");
+int main(int argc, char **argv) {
+  logger::file::log::set_debug();
+  tester::bus::test::run<file_log_single>(argc, argv);
 }

@@ -20,9 +20,10 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 RCC_DIR += $${tmp_dir}/rsc
 
-exists($$incs_dir) {
-    message ("INC EXISTS")
-}
+#equals(TEMPLATE,headers) {
+#    TEMPLATE=lib
+#    CONFIG+=staticlib
+#}
 
 equals(TEMPLATE,app) {
     DESTDIR = $$bins_dir

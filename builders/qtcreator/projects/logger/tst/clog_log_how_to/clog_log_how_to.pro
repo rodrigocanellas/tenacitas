@@ -7,7 +7,7 @@ TARGET = tenacitas.logger.tst.clog_log_how_to
 
 include (../../../../common.pri)
 
-LIBS += $$libs_dir/libtenacitas.tester.$$static_lib_ext
+# LIBS += $$libs_dir/libtenacitas.tester.lib.$$static_lib_ext
 LIBS += $$libs_dir/libtenacitas.logger.clog.$$static_lib_ext
 
 SOURCES += \

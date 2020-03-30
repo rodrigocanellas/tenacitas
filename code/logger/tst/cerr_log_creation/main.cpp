@@ -2,8 +2,8 @@
 #include <sstream>
 #include <string>
 
-#include <logger/cerr/cerr.h>
-#include <tester/test.h>
+#include <logger/cerr/log.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 
@@ -14,7 +14,7 @@ public:
     using namespace tenacitas;
     try {
 
-      logger::cerr::set_debug();
+      logger::cerr::log::log::set_debug();
 
       return true;
     } catch (std::exception &_ex) {
@@ -33,5 +33,5 @@ private:
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<cerr_log_creation>(argc, argv);
+  tester::bus::test::run<cerr_log_creation>(argc, argv);
 }

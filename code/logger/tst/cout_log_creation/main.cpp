@@ -2,8 +2,8 @@
 #include <sstream>
 #include <string>
 
-#include <logger/cout/cout.h>
-#include <tester/test.h>
+#include <logger/cout/log.h>
+#include <tester/bus/test.h>
 
 using namespace tenacitas;
 
@@ -12,7 +12,7 @@ struct cout_log_creation {
 
     try {
 
-      logger::cout::set_debug();
+      logger::cout::log::set_debug();
 
       return true;
     } catch (std::exception &_ex) {
@@ -27,5 +27,5 @@ struct cout_log_creation {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<cout_log_creation>(argc, argv);
+  tester::bus::test::run<cout_log_creation>(argc, argv);
 }

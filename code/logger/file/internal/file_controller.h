@@ -12,11 +12,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <calendar/file/conversions.h>
-#include <calendar/file/epoch.h>
-#include <concurrent/file/sleeping_loop.h>
-#include <logger/file/log.h>
-#include <string/file/max_str_length.h>
+#include <calendar/bus/conversions.h>
+#include <calendar/bus/epoch.h>
+#include <concurrent/bus/sleeping_loop.h>
+#include <formater/bus/max_str_length.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -27,22 +26,20 @@ namespace file {
 
 ///
 /// \brief The file_controller struct controls the creation, nomination,
-/// closing and cleaning of logger::log files
+/// closing and cleaning of log files
 ///
 /// \details A file name has this format:
-/// 'base-name'_'pid'_'epoch-millisecs'.logger::log, like
-/// test008_0000004621_1546023437240600.logger::log
+/// 'base-name'_'pid'_'epoch-millisecs'.log, like
+/// test008_0000004621_1546023437240600.log
 ///
 /// When it is closed, possibly because it reached a user defined maximum size,
-/// it becomes
-/// 'base-name'_'pid'_'epoch-millisecs'.logger::log.'closed-extension', like
-/// test008_0000004621_1546023437240600.logger::log.closed
+/// it becomes 'base-name'_'pid'_'epoch-millisecs'.log.'closed-extension', like
+/// test008_0000004621_1546023437240600.log.closed
 ///
 /// After a user defined amount of time, the files that are closed will be
 /// deleted
 ///
-struct file_controller
-{
+struct file_controller {
   ///
   /// \brief file_controller constructor
   /// \param p_path determines where the logger::log files will be created
@@ -54,55 +51,63 @@ struct file_controller
   /// closed, possibly because it reached \p p_max_file_size size
   ///
   inline explicit file_controller(
-    const std::string& p_path = ".",
-    const std::string& p_base_name = "log",
-    uint32_t p_max_file_size = 10 * 1024 * 1024,
-    std::chrono::minutes p_retention =
-      std::chrono::minutes(calendar::file::day2min(2)),
-    const std::string& p_closed_extension = "closed")
-    : m_path(std::move(p_path))
-    , m_base_name(std::move(p_base_name))
-    , m_closed_extension(p_closed_extension)
-    , m_last(0)
-    , m_pid(getpid())
-    , m_max_file_size(p_max_file_size)
-    , m_deleter(
-        m_path,
-        m_base_name,
-        m_closed_extension,
-        std::chrono::seconds(calendar::file::min2sec(p_retention.count())))
-    , m_sleeping_loop(
-        std::chrono::milliseconds(
-          calendar::file::min2mil(p_retention.count())),
-        [this]() -> concurrent::bus::work_status {
-          return this->m_deleter();
-        },
-        std::chrono::milliseconds(calendar::file::min2mil(20)))
-  {}
+      const std::string &p_path = ".", const std::string &p_base_name = "log",
+      uint32_t p_max_file_size = 10 * 1024 * 1024,
+      std::chrono::minutes p_retention =
+          std::chrono::minutes(calendar::bus::day2min(2)),
+      const std::string &p_closed_extension = "closed")
+      : m_path(std::move(p_path)), m_base_name(std::move(p_base_name)),
+        m_closed_extension(p_closed_extension), m_last(0), m_pid(getpid()),
+        m_max_file_size(p_max_file_size),
+        m_deleter(
+            m_path, m_base_name, m_closed_extension,
+            std::chrono::seconds(calendar::bus::min2sec(p_retention.count()))),
+        m_sleeping_loop(std::chrono::milliseconds(
+                            calendar::bus::min2mil(p_retention.count())),
+                        [this]() -> concurrent::bus::work_status {
+                          return this->m_deleter();
+                        },
+                        std::chrono::milliseconds(calendar::bus::min2mil(20))) {
+  }
 
   file_controller() = delete;
 
-  file_controller(const file_controller&) = delete;
+  file_controller(const file_controller &) = delete;
 
-  file_controller(file_controller&& p_controller) noexcept
-    : m_path(std::move(p_controller.m_path))
-    , m_base_name(std::move(p_controller.m_base_name))
-    , m_closed_extension(std::move(p_controller.m_closed_extension))
-    , m_last(p_controller.m_last)
-    , m_pid(p_controller.m_pid)
-    , m_max_file_size(p_controller.m_max_file_size)
-    , m_deleter(std::move(p_controller.m_deleter))
-    , m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
-                      [this]() -> concurrent::bus::work_status {
-                        return this->m_deleter();
-                      },
-                      p_controller.m_sleeping_loop.get_timeout())
-  {}
+  file_controller(file_controller &&p_controller) noexcept
+      : m_path(std::move(p_controller.m_path)),
+        m_base_name(std::move(p_controller.m_base_name)),
+        m_closed_extension(std::move(p_controller.m_closed_extension)),
+        m_last(p_controller.m_last), m_pid(p_controller.m_pid),
+        m_max_file_size(p_controller.m_max_file_size),
+        m_deleter(std::move(p_controller.m_deleter)),
+        m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
+                        [this]() -> concurrent::bus::work_status {
+                          return this->m_deleter();
+                        },
+                        p_controller.m_sleeping_loop.get_timeout()) {}
 
   ~file_controller() { m_sleeping_loop.stop(); }
 
-  file_controller& operator=(const file_controller&) = delete;
-  file_controller& operator=(file_controller&& p_ctrl) noexcept = delete;
+  file_controller &operator=(const file_controller &) = delete;
+  file_controller &operator=(file_controller &&p_controller) noexcept {
+    if (this != &p_controller) {
+      m_path = std::move(p_controller.m_path);
+      m_base_name = std::move(p_controller.m_base_name);
+      m_closed_extension = std::move(p_controller.m_closed_extension);
+      m_last = p_controller.m_last;
+      m_pid = p_controller.m_pid;
+      m_max_file_size = p_controller.m_max_file_size;
+      m_deleter = std::move(p_controller.m_deleter);
+      m_sleeping_loop =
+          sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
+                        [this]() -> concurrent::bus::work_status {
+                          return this->m_deleter();
+                        },
+                        p_controller.m_sleeping_loop.get_timeout());
+    }
+    return *this;
+  }
 
   ///
   /// \brief name retrieves the name of the logger::log file
@@ -114,8 +119,7 @@ struct file_controller
   /// \brief rename renames the logger::log file, apppending the user defined
   /// closed extension \param p_file_name the original file name
   ///
-  inline void rename(const std::string& p_file_name) const
-  {
+  inline void rename(const std::string &p_file_name) const {
     std::rename(p_file_name.c_str(),
                 std::string(p_file_name + "." + m_closed_extension).c_str());
   }
@@ -126,8 +130,7 @@ struct file_controller
   /// \param p_file_size the current file size, in bytes
   /// \return \p true if it needs to be renewed, \p false otherwise
   ///
-  inline bool renew(uint32_t p_file_size) const
-  {
+  inline bool renew(uint32_t p_file_size) const {
     return (p_file_size >= static_cast<uint32_t>(0.95 * m_max_file_size));
   }
 
@@ -138,32 +141,47 @@ struct file_controller
   inline void remove() { m_sleeping_loop.run(); }
 
 private:
+  struct no_log {
+    template <typename... t_params>
+    inline static void debug(const std::string & /*p_file*/, int /*p_line*/,
+                             const t_params &... /*p_params*/) {}
+    template <typename... t_params>
+    inline static void info(const std::string & /*p_file*/, int /*p_line*/,
+                            const t_params &...
+                            /*p_params*/) {}
+    template <typename... t_params>
+    inline static void warn(const std::string & /*p_file*/, int /*p_line*/,
+                            const t_params &...
+                            /*p_params*/) {}
+    template <typename... t_params>
+    inline static void error(const std::string & /*p_file*/, int /*p_line*/,
+                             const t_params &... /*p_params*/) {}
+    template <typename... t_params>
+    inline static void fatal(const std::string & /*p_file*/, int /*p_line*/,
+                             const t_params &... /*p_params*/) {}
+  };
+
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
   ///
-  typedef concurrent::bus::sleeping_loop_t<void, log> sleeping_loop;
+  typedef concurrent::bus::sleeping_loop_t<void, no_log> sleeping_loop;
 
-  struct deleter
-  {
+  struct deleter {
     deleter() = delete;
 
-    deleter(const deleter&) = default;
-    deleter(deleter&&) noexcept = default;
+    deleter(const deleter &) = default;
+    deleter(deleter &&) noexcept = default;
 
-    deleter& operator=(const deleter&) = default;
-    deleter& operator=(deleter&&) /*noexcept*/ = default;
+    deleter &operator=(const deleter &) = default;
+    deleter &operator=(deleter &&) /*noexcept*/ = default;
 
     ~deleter() = default;
 
-    deleter(const std::string& p_path,
-            const std::string& p_base_name,
-            const std::string& p_closed_extension,
+    deleter(const std::string &p_path, const std::string &p_base_name,
+            const std::string &p_closed_extension,
             std::chrono::seconds p_retention)
-      : m_path(p_path)
-      , m_base_name(p_base_name)
-      , m_closed_extension(p_closed_extension)
-      , m_retention(p_retention)
-    {}
+        : m_path(p_path), m_base_name(p_base_name),
+          m_closed_extension(p_closed_extension), m_retention(p_retention) {}
 
     concurrent::bus::work_status operator()();
 
@@ -174,8 +192,7 @@ private:
     /// \param p_file_name the name of the file to be verified
     /// \return \p true if matchs, \p false otherwise
     ///
-    inline bool match(const std::string& p_file_name)
-    {
+    inline bool match(const std::string &p_file_name) {
       return ((p_file_name.find(m_base_name) != std::string::npos) &&
               (p_file_name.find(m_closed_extension) != std::string::npos));
     }
@@ -209,9 +226,8 @@ private:
   /// \brief update_last tries to prevent two file with the same name, by
   /// changing the epoch part of the name
   ///
-  void update_last()
-  {
-    uint64_t _id = calendar::file::epoch::microsecs();
+  void update_last() {
+    uint64_t _id = calendar::bus::epoch::microsecs();
     if (_id == m_last) {
       m_last = _id + 1;
     } else {
@@ -225,8 +241,7 @@ private:
   /// \param p_file_name the name of the file to be verified
   /// \return \p true if matchs, \p false otherwise
   ///
-  inline bool match(const std::string& p_file_name)
-  {
+  inline bool match(const std::string &p_file_name) {
     return ((p_file_name.find(m_base_name) != std::string::npos) &&
             (p_file_name.find(m_closed_extension) != std::string::npos));
   }
@@ -273,8 +288,8 @@ private:
   sleeping_loop m_sleeping_loop;
 };
 
-} // namespace logger
 } // namespace file
+} // namespace logger
 } // namespace tenacitas
 
 #endif // default_controller_H

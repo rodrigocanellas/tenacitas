@@ -1,12 +1,25 @@
-CONFIG -= qt
-
-TEMPLATE = lib
-CONFIG += staticlib
-
-TARGET = tenacitas.tester
-
-HEADERS += \
-  ../../../../code/tester/test.h \
+SUBDIRS = \
+  headers/tester_headers.pro
+#  lib \
 
 
-include (../../common.pri)
+TEMPLATE = subdirs
+
+# build the project sequentially as listed in SUBDIRS !
+CONFIG += ordered
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

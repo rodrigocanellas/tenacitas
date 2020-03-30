@@ -2,14 +2,14 @@ TEMPLATE = app
 CONFIG -= qt
 CONFIG+=test
 
-TARGET = tenacitas.COMPONEN.tst.TEST_NAME
+TARGET = tenacitas.logger.tst.cerr_log_single
 
 
 include (../../../../common.pri)
 
-LIBS += 
+LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 
 SOURCES += \
-  ../../../../tst/cerr_log_single/main.cpp
+  ../../../../../../code/logger/tst/cerr_log_single/main.cpp
 
 
