@@ -7,7 +7,7 @@
 #include <sstream>
 
 #include <calendar/bus/epoch.h>
-#include <string/bus/format_number.h>
+#include <formater/bus/format_number.h>
 
 namespace tenacitas {
 namespace concurrent {

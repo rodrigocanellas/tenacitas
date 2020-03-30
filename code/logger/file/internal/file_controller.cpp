@@ -13,7 +13,7 @@ std::string file_controller::name() {
   std::stringstream _stream;
   update_last();
 
-  static const uint16_t _max_str_length = string::bus::max_str_length<pid_t>();
+  static const uint16_t _max_str_length = formater::bus::max_str_length<pid_t>();
   _stream << m_path << "/" << m_base_name << "_" << std::right
           << std::setfill('0') << std::setw(_max_str_length) << m_pid << "_"
           << m_last << ".log";

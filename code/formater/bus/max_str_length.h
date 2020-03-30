@@ -9,7 +9,7 @@
 
 
 namespace tenacitas {
-namespace string {
+namespace formater {
 namespace bus {
 
 

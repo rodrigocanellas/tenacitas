@@ -11,15 +11,10 @@ SUBDIRS += \
     cerr_log_single \
     file_log_single \
     file_log_how_to \
-    file_log_creation
-#\
+    file_log_creation \
+    cout_log_multi \
+    cerr_log_multi \
+    file_log_multi
 
-#    file_log_multi \
-
-
-#    cout_log_multi \
-
-
-#    cerr_log_multi \
 
 CONFIG += ordered

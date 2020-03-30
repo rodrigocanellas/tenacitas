@@ -1,5 +1,5 @@
 SUBDIRS = \
-  headers
+  headers/tester_headers.pro
 #  lib \
 
 

@@ -1,10 +1,11 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  cout \
-  clog \
-  cerr \
-  file \
+  dep \
+  cout/logger_cout.pro \
+  clog/logger_clog.pro \
+  cerr/logger_cerr.pro \
+  file/logger_file.pro \
   tst
 
 

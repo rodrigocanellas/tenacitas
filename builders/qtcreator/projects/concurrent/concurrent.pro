@@ -1,5 +1,5 @@
 SUBDIRS = \
-  headers \
+  headers/concurrent_headers.pro \
   tst
 
 #  lib \#  lib \

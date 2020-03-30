@@ -15,7 +15,7 @@
 #include <calendar/bus/conversions.h>
 #include <calendar/bus/epoch.h>
 #include <concurrent/bus/sleeping_loop.h>
-#include <string/bus/max_str_length.h>
+#include <formater/bus/max_str_length.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {

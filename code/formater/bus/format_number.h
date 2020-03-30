@@ -7,10 +7,10 @@
 #include <sstream>
 #include <string>
 
-#include <string/bus/max_str_length.h>
+#include <formater/bus/max_str_length.h>
 
 namespace tenacitas {
-namespace string {
+namespace formater {
 namespace bus {
 
 template<typename t_num_type>

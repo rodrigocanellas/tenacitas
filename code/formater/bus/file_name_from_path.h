@@ -4,7 +4,7 @@
 #include <cstring>
 
 namespace tenacitas {
-namespace string {
+namespace formater {
 namespace bus {
 
 const char*
