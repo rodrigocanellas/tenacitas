@@ -1,9 +1,9 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    ../../../concurrent/business/concurrent_business.pro \
-    ../../../logger/business/logger_business.pro \
-    ../../../tester/business/tester_business.pro \
+    ../../../concurrent/headers/concurrent_headers.pro \
+    ../../../logger/cerr/logger_cerr.pro \
+    ../../../tester/headers/tester_headers.pro \
 
 
 

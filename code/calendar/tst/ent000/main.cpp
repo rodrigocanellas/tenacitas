@@ -1,48 +1,44 @@
 #include <ctime>
 
-#include <logger/business/cerr.h>
-#include <logger/business/log.h>
-#include <tester/business/run.h>
-
 #include <calendar/unix/timestamp.h>
+#include <logger/cerr/log.h>
+#include <tester/bus/test.h>
 
-using namespace tenacitas::logger::business;
-using namespace tenacitas::calendar::unix;
+using namespace tenacitas;
 
-struct test000
-{
-  bool operator()()
-  {
+struct test000 {
+  bool operator()() {
 
-    timestamp _ts;
+    calendar::unix::timestamp _ts;
 
     time_t _time = time(nullptr);
 
-    struct tm* _tm = localtime(&_time);
+    struct tm *_tm = localtime(&_time);
 
     return (
-      (_tm->tm_year ==
-       years(_ts.get_year()).get<decltype(_tm->tm_year)>() - 1900) &&
-      (_tm->tm_mon ==
-       months(_ts.get_month()).get<decltype(_tm->tm_mon)>()) &&
-      (_tm->tm_mday ==
-       days(_ts.get_day()).get<decltype(_tm->tm_mday)>()) &&
-      (_tm->tm_hour ==
-       hours(_ts.get_hour()).get<decltype(_tm->tm_hour)>()) &&
-      (_tm->tm_min ==
-       minutes(_ts.get_minute()).get<decltype(_tm->tm_min)>()) &&
-      (_tm->tm_sec ==
-       seconds(_ts.get_second()).get<decltype(_tm->tm_sec)>()));
+        (_tm->tm_year ==
+         calendar::ent::years(_ts.get_year()).get<decltype(_tm->tm_year)>() -
+             1900) &&
+        (_tm->tm_mon ==
+         calendar::ent::months(_ts.get_month()).get<decltype(_tm->tm_mon)>()) &&
+        (_tm->tm_mday ==
+         calendar::ent::days(_ts.get_day()).get<decltype(_tm->tm_mday)>()) &&
+        (_tm->tm_hour ==
+         calendar::ent::hours(_ts.get_hour()).get<decltype(_tm->tm_hour)>()) &&
+        (_tm->tm_min == calendar::ent::minutes(_ts.get_minute())
+                            .get<decltype(_tm->tm_min)>()) &&
+        (_tm->tm_sec == calendar::ent::seconds(_ts.get_second())
+                            .get<decltype(_tm->tm_sec)>()));
   }
+
+  static std::string desc() {
+    return "Compares \"now\" timestamp create with 'timestamp' and with "
+           "'time'.";
+  }
+  static std::string name() { return "test000"; }
 };
 
-int
-main(int argc, char** argv)
-{
-  configure_cerr_log();
-  run_test(
-    test000,
-    argc,
-    argv,
-    "Compares \"now\" timestamp create with 'timestamp' and with 'time'.");
+int main(int argc, char **argv) {
+  logger::cerr::log::set_debug();
+  tester::bus::test::run<test000>(argc, argv);
 }

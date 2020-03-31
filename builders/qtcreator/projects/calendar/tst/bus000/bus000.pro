@@ -11,11 +11,7 @@ TARGET = tenacitas.calendar.tst.bus000
 
 include (../../../../common.pri)
 
-LIBS += -ltenacitas.tester.business
-LIBS += $$libs_dir/libtenacitas.logger.business.a
-#LIBS += $$libs_dir/libtenacitas.calendar.ent.a
-#LIBS += -ltenacitas.calendar.unix
-#LIBS += $$libs_dir/libtenacitas.calendar.unix.a
+LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 
 HEADERS += \
     ../../../../../../code/calendar/bus/conversions.h \

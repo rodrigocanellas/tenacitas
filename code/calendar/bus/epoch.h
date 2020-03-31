@@ -7,50 +7,44 @@
 namespace tenacitas {
 namespace calendar {
 namespace bus {
-struct epoch
-{
-    inline static uint64_t microsecs()
-    {
-        return static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::microseconds>(
+struct epoch {
+  inline static uint64_t microsecs() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
-    }
+  }
 
-    inline static uint64_t millisecs()
-    {
-        return static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::milliseconds>(
+  inline static uint64_t millisecs() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
-    }
+  }
 
-    inline static uint64_t secs()
-    {
-        return static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::seconds>(
+  inline static uint64_t secs() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
-    }
+  }
 
-    inline static uint64_t minutes()
-    {
-        return static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::minutes>(
+  inline static uint64_t minutes() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::minutes>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
-    }
+  }
 
-    inline static uint64_t hours()
-    {
-        return static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::hours>(
+  inline static uint64_t hours() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::hours>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
-    }
+  }
 };
 
-} // namespace business
+} // namespace bus
 } // namespace calendar
 } // namespace tenacitas
 

@@ -8,10 +8,6 @@ CONFIG += static
 
 TARGET = tenacitas.calendar.unix
 
-
-# \
-#    ../../../../code/calendar/unix/internal/timestamp.cpp
-
 include (../../../common.pri)
 
 #LIBS += $$libs_dir/libtenacitas.calendar.ent.a

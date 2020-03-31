@@ -1,24 +1,22 @@
 #include <ctime>
 
-#include <logger/business/cerr.h>
-#include <logger/business/log.h>
-#include <tester/business/run.h>
-
 #include <calendar/unix/timestamp.h>
+#include <logger/cerr/log.h>
+#include <tester/bus/test.h>
 
-using namespace tenacitas::logger::business;
-using namespace tenacitas::calendar::ent;
+using namespace tenacitas;
 
-struct test001
-{
-  bool operator()()
-  {
-    return (weekday::wed - weekday::mon).get<uint8_t>() == 2;
+struct test001 {
+  bool operator()() {
+    return (calendar::unix::weekday::wed - calendar::unix::weekday::mon)
+               .get<uint8_t>() == 2;
   }
+
+  static std::string desc() { return "'wed' - 'mon' should be 2"; }
+  static std::string name() { return "test001"; }
 };
 
-int
-main(int argc, char** argv)
-{
-  run_test(test001, argc, argv, "'wed' - 'mon' should be 2");
+int main(int argc, char **argv) {
+  logger::cerr::log::set_debug();
+  tester::bus::test::run<test001>(argc, argv);
 }
