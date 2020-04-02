@@ -1,6 +1,6 @@
 SUBDIRS = \
-  headers/concurrent_headers.pro \
-  tst
+  concurrent.headers \
+  concurrent.tst
 
 #  lib \#  lib \
 

@@ -6,6 +6,11 @@ hide circle
 
 skinparam groupInheritance 3
 
+class site <<directory, namespace>>
+class project <<directory, namespace, build_file>>
+class product <<directory, build_file>>
+class layer <<directory, namespace>>
+
 site *-- "*" project
 project *-- "*" layer
 layer <|--- bus

@@ -8,7 +8,7 @@ using namespace tenacitas;
 
 struct test002 {
   bool operator()() {
-    return (calendar::unix::weekday::mon - calendar::unix::weekday::wed)
+    return (calendar::ent::weekday::mon - calendar::ent::weekday::wed)
                .get<uint8_t>() == 5;
   }
   static std::string desc() { return "'mon' - 'wed' should be 5"; }

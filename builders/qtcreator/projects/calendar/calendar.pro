@@ -1,13 +1,9 @@
 TEMPLATE = subdirs
 
   SUBDIRS += \
-    headers/calendar_headers.pro \
-    unix \
-    tst
-
-
-
-
+    calendar.headers \
+    calendar.unix \
+    calendar.tst
 
 
 CONFIG += ordered

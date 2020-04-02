@@ -1,5 +1,5 @@
 SUBDIRS = \
-  headers/tester_headers.pro
+  tester.headers
 
 
 TEMPLATE = subdirs

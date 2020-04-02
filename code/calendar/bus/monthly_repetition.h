@@ -18,13 +18,9 @@ namespace bus {
 /// \brief Calculates the next t_timestamp, given a weekday, the order of the
 /// weekday in a month, and the interval between the months
 ///
-/// \tparam t_time_precision defines the precision of the t_timestamp. Currently
-/// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
-/// year
+/// \tparam needs to be copy constructable
 ///
-template<typename t_timestamp>
-struct monthly_repetition_by_week_t
-{
+template <typename t_timestamp> struct monthly_repetition_by_week_t {
 
   ///
   /// \brief monthly_repetition_by_week_t
@@ -32,13 +28,9 @@ struct monthly_repetition_by_week_t
   /// \param p_weekday
   /// \param p_at_each
   ///
-  monthly_repetition_by_week_t(uint8_t p_order,
-                             ent::weekday p_weekday,
-                             uint16_t p_at_each = 1)
-    : m_order(p_order)
-    , m_weekday(p_weekday)
-    , m_at_each(p_at_each)
-  {}
+  monthly_repetition_by_week_t(uint8_t p_order, ent::weekday p_weekday,
+                               uint16_t p_at_each = 1)
+      : m_order(p_order), m_weekday(p_weekday), m_at_each(p_at_each) {}
 
   ///
   /// \brief next
@@ -46,8 +38,7 @@ struct monthly_repetition_by_week_t
   /// \param p_first
   /// \return
   ///
-  t_timestamp next(t_timestamp p_time, bool p_first = false)
-  {
+  t_timestamp next(t_timestamp p_time, bool p_first = false) {
     t_timestamp _timestamp = p_time;
     if (!p_first) {
       _timestamp += m_at_each;
@@ -57,8 +48,7 @@ struct monthly_repetition_by_week_t
     _day_one.set_day(ent::day::d01);
 
     t_timestamp _first_target_weekday(_day_one);
-    _first_target_weekday +=
-      ent::days(m_weekday - _day_one.get_weekday());
+    _first_target_weekday += ent::days(m_weekday - _day_one.get_weekday());
 
     t_timestamp _target(_first_target_weekday);
 
@@ -87,23 +77,17 @@ private:
 ///
 ///
 ///
-template<typename t_timestamp>
-struct monthly_repetition_by_day_t
-{
+template <typename t_timestamp> struct monthly_repetition_by_day_t {
   monthly_repetition_by_day_t(ent::day p_day, uint16_t p_at_each = 1)
-    : m_day(p_day)
-    , m_at_each(p_at_each)
-  {
-  }
+      : m_day(p_day), m_at_each(p_at_each) {}
 
-  t_timestamp next(t_timestamp p_time, bool p_first = false)
-  {
+  t_timestamp next(t_timestamp p_time, bool p_first = false) {
 
-    t_timestamp _time = p_time;
+    t_timestamp _time(p_time);
 
     ent::day _day(m_day);
 
-    ent::days _days (ent::month::get_days(_time.get_month(), _time.get_year()));
+    ent::days _days(ent::month::get_days(_time.get_month(), _time.get_year()));
 
     if (ent::days(_day) > _days) {
       _day = ent::day::create(_days.get<uint8_t>());

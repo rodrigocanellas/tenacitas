@@ -1,5 +1,6 @@
 #include <ctime>
 
+#include <calendar/ent/weekday.h>
 #include <calendar/unix/timestamp.h>
 #include <logger/cerr/log.h>
 #include <tester/bus/test.h>
@@ -8,7 +9,7 @@ using namespace tenacitas;
 
 struct test001 {
   bool operator()() {
-    return (calendar::unix::weekday::wed - calendar::unix::weekday::mon)
+    return (calendar::ent::weekday::wed - calendar::ent::weekday::mon)
                .get<uint8_t>() == 2;
   }
 
