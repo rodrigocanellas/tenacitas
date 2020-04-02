@@ -10,7 +10,7 @@ fi
 base_dir="$1"
 prj_name="$2"
 
-# check if base_dir exists
+# check if base dir exists
 if [ ! -d "$base_dir" ]; then
     echo "'$base_dir' does not exist"
     return 20
