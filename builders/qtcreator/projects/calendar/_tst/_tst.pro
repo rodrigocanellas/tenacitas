@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+  day_sequence_000 \
   dep \
   ent000 \
   ent001 \

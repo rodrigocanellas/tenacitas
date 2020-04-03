@@ -13,6 +13,7 @@ include (../../../common.pri)
 #LIBS += $$libs_dir/libtenacitas.calendar._ent.a
 
 HEADERS += \
+    ../../../../../code/calendar/_bus/add.h \
     ../../../../../code/calendar/_bus/conversions.h \
     ../../../../../code/calendar/_bus/create_sequence.h \
     ../../../../../code/calendar/_bus/daily_repetition.h \

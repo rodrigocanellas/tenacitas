@@ -35,13 +35,17 @@ struct timestamp {
   /// \brief timestamp default constructor creates a timestamp for now
   ///
   inline timestamp() {
-    //    std::timespec_get(&m_value, TIME_UTC);
+    //    if (std::timespec_get(&m_value, TIME_UTC) != 0) {
+    //            throw std::runtime_error("error getting time: " +
+    //                                     std::string(std::strerror(errno)));
+
+    //    }
     if (clock_gettime(CLOCK_REALTIME, &m_value) == -1) {
       throw std::runtime_error("error getting time: " +
                                std::string(std::strerror(errno)));
     }
-    std::cout << "TIME = " << std::asctime(gmtime(&(m_value.tv_sec)))
-              << std::endl;
+    //    std::cout << "TIME = " << std::asctime(gmtime(&(m_value.tv_sec)))
+    //              << std::endl;
   }
 
   ///
@@ -66,6 +70,16 @@ struct timestamp {
   ///
   inline timestamp(timestamp &&p_timestamp)
       : m_value(std::move(p_timestamp.m_value)) {}
+
+  explicit timestamp(_ent::days p_days) : timestamp() {
+    m_value.tv_sec = p_days.get<decltype(m_value.tv_sec)>() *
+                     _ent::day::get_seconds().get<decltype(m_value.tv_sec)>();
+  }
+
+  operator _ent::days() const {
+    return _ent::days(m_value.tv_sec /
+                      _ent::day::get_seconds().get<decltype(m_value.tv_sec)>());
+  }
 
   ///
   /// \brief operator = copy assignment
@@ -424,8 +438,8 @@ struct timestamp {
   /// \return
   ///
   inline timestamp &operator+=(_ent::weekdays p_weeks) {
-    m_value.tv_sec +=
-        (_ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
+    m_value.tv_sec += (_ent::weekday::get_seconds() * p_weeks)
+                          .get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -442,8 +456,8 @@ struct timestamp {
   /// \return
   ///
   timestamp &operator-=(_ent::weekdays p_weeks) {
-    m_value.tv_sec -=
-        (_ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
+    m_value.tv_sec -= (_ent::weekday::get_seconds() * p_weeks)
+                          .get<decltype(m_value.tv_sec)>();
     return *this;
   }
 

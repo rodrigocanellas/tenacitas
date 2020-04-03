@@ -15,23 +15,21 @@ namespace _bus {
 /// \brief creates a sequence o \p timestamp objects based on a initial \p
 /// timestamp, on a repetition pattern, an on an ending condition
 ///
-/// \tparam t_time_precision defines the precision of the timestamp. Currently
-/// it can be \p second, \p minute, \p weekday, \p hour,\p day, \p month and \p
-/// year
+/// \tparam t_timestamp
 ///
 /// \tparam t_repetition defines the repetition pattern. The class must define
-/// \code timestamp next(timestamp
-/// p_time, bool p_first = false) \endcode
+///
+/// \code timestamp next(timestamp p_time, bool p_first = false) \endcode
 ///
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
-/// implement \code bool stop(timestamp p_time) \endcode.
+/// implement
 ///
-template<typename t_timestamp, typename t_repetition, typename t_ending_type>
-std::vector<t_timestamp>
-create_sequence(t_timestamp p_start,
-                t_repetition&& p_repetition,
-                t_ending_type&& p_end)
-{
+/// \code bool stop(timestamp p_time) \endcode.
+///
+template <typename t_timestamp, typename t_repetition, typename t_ending_type>
+std::vector<t_timestamp> create_sequence(t_timestamp p_start,
+                                         t_repetition &&p_repetition,
+                                         t_ending_type &&p_end) {
   std::vector<t_timestamp> _sequence;
 
   t_timestamp _time = p_repetition.next(p_start, true);
@@ -46,18 +44,16 @@ create_sequence(t_timestamp p_start,
 /// \brief creates a sequence o \p timestamp objects based on a initial \p
 /// timestamp, on a \p weekly_repetition pattern, an on an ending condition
 ///
-/// \tparam t_time_precision defines the precision of the timestamp. Currently
-/// it can be \p second, \p minute, p weekday, \p hour,\p day, \p month and \p
-/// year
+/// \tparam t_timestamp
 ///
 /// \tparam t_ending_type defines when the sequence creation must stop. It must
 /// implement \code bool stop(timestamp p_time) \endcode.
 ///
-template<typename t_timestamp, typename t_ending_type>
+template <typename t_timestamp, typename t_ending_type>
 std::vector<t_timestamp>
 create_sequence(t_timestamp p_start,
-                weekly_repetition_t<t_timestamp>&& p_repetition,
-                t_ending_type&& p_end)
+                weekly_repetition_t<t_timestamp> &&p_repetition,
+                t_ending_type &&p_end)
 
 {
   typedef t_timestamp timestamp;

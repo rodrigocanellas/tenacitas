@@ -80,14 +80,14 @@ echo "CONFIG -= qt"                                                     >> "$tst
 echo ""                                                                 >> "$tst_file"
 echo "CONFIG += test"                                                   >> "$tst_file"
 echo ""                                                                 >> "$tst_file"
-echo "TARGET = tenacitas.$prj_name.tst.$tst_name"                       >> "$tst_file"
+echo "TARGET = tenacitas.$prj_name._tst.$tst_name"                      >> "$tst_file"
 echo ""                                                                 >> "$tst_file"
 echo "SOURCES += \\"                                                    >> "$tst_file"
 echo "  ../../../../../../code/$prj_name/_tst/$tst_name/main.cpp"       >> "$tst_file"
 echo ""                                                                 >> "$tst_file"
-echo "LIBS += \$\$libs_dir/libtenacitas.logger.cerr.\$\$static_lib_ext" >> "$tst_file"
-echo ""                                                                 >> "$tst_file"
 echo "include (../../../../common.pri)"                                 >> "$tst_file"
+echo ""                                                                 >> "$tst_file"
+echo "LIBS += \$\$libs_dir/libtenacitas.logger.cerr.\$\$static_lib_ext" >> "$tst_file"
 
 
 

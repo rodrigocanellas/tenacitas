@@ -10,7 +10,7 @@ third_dir=$$base_dir/3rd
 tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
-test_dir=$$products_dir/_tst
+test_dir=$$products_dir/tst
 example_dir=$$products_dir/example
 
 OUT_PWD = $${tmp_dir}
