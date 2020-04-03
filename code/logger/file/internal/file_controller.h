@@ -12,10 +12,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <calendar/bus/conversions.h>
-#include <calendar/bus/epoch.h>
-#include <concurrent/bus/sleeping_loop.h>
-#include <formater/bus/max_str_length.h>
+#include <calendar/_bus/conversions.h>
+#include <calendar/_bus/epoch.h>
+#include <concurrent/_bus/sleeping_loop.h>
+#include <formater/_bus/max_str_length.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -54,20 +54,20 @@ struct file_controller {
       const std::string &p_path = ".", const std::string &p_base_name = "log",
       uint32_t p_max_file_size = 10 * 1024 * 1024,
       std::chrono::minutes p_retention =
-          std::chrono::minutes(calendar::bus::day2min(2)),
+          std::chrono::minutes(calendar::_bus::day2min(2)),
       const std::string &p_closed_extension = "closed")
       : m_path(std::move(p_path)), m_base_name(std::move(p_base_name)),
         m_closed_extension(p_closed_extension), m_last(0), m_pid(getpid()),
         m_max_file_size(p_max_file_size),
         m_deleter(
             m_path, m_base_name, m_closed_extension,
-            std::chrono::seconds(calendar::bus::min2sec(p_retention.count()))),
+            std::chrono::seconds(calendar::_bus::min2sec(p_retention.count()))),
         m_sleeping_loop(std::chrono::milliseconds(
-                            calendar::bus::min2mil(p_retention.count())),
-                        [this]() -> concurrent::bus::work_status {
+                            calendar::_bus::min2mil(p_retention.count())),
+                        [this]() -> concurrent::_bus::work_status {
                           return this->m_deleter();
                         },
-                        std::chrono::milliseconds(calendar::bus::min2mil(20))) {
+                        std::chrono::milliseconds(calendar::_bus::min2mil(20))) {
   }
 
   file_controller() = delete;
@@ -82,7 +82,7 @@ struct file_controller {
         m_max_file_size(p_controller.m_max_file_size),
         m_deleter(std::move(p_controller.m_deleter)),
         m_sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
-                        [this]() -> concurrent::bus::work_status {
+                        [this]() -> concurrent::_bus::work_status {
                           return this->m_deleter();
                         },
                         p_controller.m_sleeping_loop.get_timeout()) {}
@@ -101,7 +101,7 @@ struct file_controller {
       m_deleter = std::move(p_controller.m_deleter);
       m_sleeping_loop =
           sleeping_loop(p_controller.m_sleeping_loop.get_interval(),
-                        [this]() -> concurrent::bus::work_status {
+                        [this]() -> concurrent::_bus::work_status {
                           return this->m_deleter();
                         },
                         p_controller.m_sleeping_loop.get_timeout());
@@ -164,7 +164,7 @@ private:
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
   ///
-  typedef concurrent::bus::sleeping_loop_t<void, no_log> sleeping_loop;
+  typedef concurrent::_bus::sleeping_loop_t<void, no_log> sleeping_loop;
 
   struct deleter {
     deleter() = delete;
@@ -183,7 +183,7 @@ private:
         : m_path(p_path), m_base_name(p_base_name),
           m_closed_extension(p_closed_extension), m_retention(p_retention) {}
 
-    concurrent::bus::work_status operator()();
+    concurrent::_bus::work_status operator()();
 
   private:
     ///
@@ -227,7 +227,7 @@ private:
   /// changing the epoch part of the name
   ///
   void update_last() {
-    uint64_t _id = calendar::bus::epoch::microsecs();
+    uint64_t _id = calendar::_bus::epoch::microsecs();
     if (_id == m_last) {
       m_last = _id + 1;
     } else {

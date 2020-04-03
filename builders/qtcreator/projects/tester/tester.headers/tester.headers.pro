@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 HEADERS += \
-  ../../../../../code/tester/bus/test.h
+  ../../../../../code/tester/_bus/test.h
 
 

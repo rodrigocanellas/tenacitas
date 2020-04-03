@@ -6,7 +6,7 @@ namespace tenacitas {
 namespace logger {
 namespace cout {
 
-bus::log_t<log> log::m_log([](std::string &&p_str) { std::cout << p_str; });
+_bus::log_t<log> log::m_log([](std::string &&p_str) { std::cout << p_str; });
 
 } // namespace cout
 } // namespace logger

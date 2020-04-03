@@ -7,7 +7,7 @@ namespace logger {
 /// \brief namespace of the class group
 namespace file {
 
-bus::log_t<log> log::m_log;
+_bus::log_t<log> log::m_log;
 
 } // namespace file
 } // namespace logger

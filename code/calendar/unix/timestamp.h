@@ -7,20 +7,20 @@
 #include <iomanip>
 #include <iostream>
 
-#include <calendar/ent/day.h>
-#include <calendar/ent/days.h>
-#include <calendar/ent/hour.h>
-#include <calendar/ent/hours.h>
-#include <calendar/ent/minute.h>
-#include <calendar/ent/minutes.h>
-#include <calendar/ent/month.h>
-#include <calendar/ent/months.h>
-#include <calendar/ent/second.h>
-#include <calendar/ent/seconds.h>
-#include <calendar/ent/weekday.h>
-#include <calendar/ent/weekdays.h>
-#include <calendar/ent/year.h>
-#include <calendar/ent/years.h>
+#include <calendar/_ent/day.h>
+#include <calendar/_ent/days.h>
+#include <calendar/_ent/hour.h>
+#include <calendar/_ent/hours.h>
+#include <calendar/_ent/minute.h>
+#include <calendar/_ent/minutes.h>
+#include <calendar/_ent/month.h>
+#include <calendar/_ent/months.h>
+#include <calendar/_ent/second.h>
+#include <calendar/_ent/seconds.h>
+#include <calendar/_ent/weekday.h>
+#include <calendar/_ent/weekdays.h>
+#include <calendar/_ent/year.h>
+#include <calendar/_ent/years.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -49,10 +49,10 @@ struct timestamp {
   /// hour, minute and second \param p_year \param p_month \param p_day \param
   /// p_hour \param p_minute \param p_second
   ///
-  timestamp(ent::year p_year, ent::month p_month, ent::day p_day,
-            ent::hour p_hour = ent::hour::h00,
-            ent::minute p_minute = ent::minute::m00,
-            ent::second p_second = ent::second::s00);
+  timestamp(_ent::year p_year, _ent::month p_month, _ent::day p_day,
+            _ent::hour p_hour = _ent::hour::h00,
+            _ent::minute p_minute = _ent::minute::m00,
+            _ent::second p_second = _ent::second::s00);
   ///
   /// \brief timestamp copy constructor
   /// \param p_timestamp timestamp to be copied
@@ -139,16 +139,16 @@ struct timestamp {
   /// \param p_day
   /// \throw if the resulting \p timestamp is invalid
   ///
-  inline void set_day(ent::day p_day) {
+  inline void set_day(_ent::day p_day) {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    _tm->tm_mday = ent::days(p_day).get<decltype(_tm->tm_mday)>();
+    _tm->tm_mday = _ent::days(p_day).get<decltype(_tm->tm_mday)>();
     m_value.tv_sec = mktime(_tm);
   }
 
-  inline void set_day_month(ent::day p_day, ent::month p_month) {
+  inline void set_day_month(_ent::day p_day, _ent::month p_month) {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    _tm->tm_mday = ent::days(p_day).get<decltype(_tm->tm_mday)>();
-    _tm->tm_mday = ent::months(p_month).get<decltype(_tm->tm_mon)>();
+    _tm->tm_mday = _ent::days(p_day).get<decltype(_tm->tm_mday)>();
+    _tm->tm_mday = _ent::months(p_month).get<decltype(_tm->tm_mon)>();
     m_value.tv_sec = mktime(_tm);
   }
 
@@ -156,63 +156,63 @@ struct timestamp {
   /// \brief get_second
   /// \return
   ///
-  inline ent::second get_second() const {
+  inline _ent::second get_second() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::second::create(_tm->tm_sec);
+    return _ent::second::create(_tm->tm_sec);
   }
 
   ///
   /// \brief get_minute
   /// \return
   ///
-  inline ent::minute get_minute() const {
+  inline _ent::minute get_minute() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::minute::create(_tm->tm_min);
+    return _ent::minute::create(_tm->tm_min);
   }
 
   ///
   /// \brief get_hour
   /// \return
   ///
-  inline ent::hour get_hour() const {
+  inline _ent::hour get_hour() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::hour::create(_tm->tm_hour);
+    return _ent::hour::create(_tm->tm_hour);
   }
 
   ///
   /// \brief get_day
   /// \return
   ///
-  inline ent::day get_day() const {
+  inline _ent::day get_day() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::day::create(_tm->tm_mday);
+    return _ent::day::create(_tm->tm_mday);
   }
 
   ///
   /// \brief get_weekday
   /// \return
   ///
-  inline ent::weekday get_weekday() const {
+  inline _ent::weekday get_weekday() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::weekday::create(_tm->tm_wday);
+    return _ent::weekday::create(_tm->tm_wday);
   }
 
   ///
   /// \brief get_month
   /// \return
   ///
-  inline ent::month get_month() const {
+  inline _ent::month get_month() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::month::create(_tm->tm_mon);
+    return _ent::month::create(_tm->tm_mon);
   }
 
   ///
   /// \brief get_year
   /// \return
   ///
-  inline ent::year get_year() const {
+  inline _ent::year get_year() const {
     struct tm *_tm = gmtime(&(m_value.tv_sec));
-    return ent::year(_tm->tm_year + 1900);
+    return _ent::year(_tm->tm_year + 1900);
   }
 
   ///
@@ -317,7 +317,7 @@ struct timestamp {
   /// \param p_seconds
   /// \return
   ///
-  inline timestamp &operator+=(ent::seconds p_seconds) {
+  inline timestamp &operator+=(_ent::seconds p_seconds) {
     m_value.tv_sec += p_seconds.get<decltype(m_value.tv_sec)>();
     return *this;
   }
@@ -327,14 +327,14 @@ struct timestamp {
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator+(ent::seconds p_seconds);
+  timestamp operator+(_ent::seconds p_seconds);
 
   ///
   /// \brief operator -=
   /// \param p_seconds
   /// \return
   ///
-  timestamp &operator-=(ent::seconds p_seconds) {
+  timestamp &operator-=(_ent::seconds p_seconds) {
     m_value.tv_sec -= p_seconds.get<decltype(m_value.tv_sec)>();
     return *this;
   }
@@ -344,15 +344,15 @@ struct timestamp {
   /// \param p_seconds
   /// \return
   ///
-  timestamp operator-(ent::seconds p_seconds);
+  timestamp operator-(_ent::seconds p_seconds);
 
   ///
   /// \brief operator +=
   /// \param p_minutes
   /// \return
   ///
-  inline timestamp &operator+=(ent::minutes p_minutes) {
-    m_value.tv_sec += (ent::minute::get_seconds() * p_minutes)
+  inline timestamp &operator+=(_ent::minutes p_minutes) {
+    m_value.tv_sec += (_ent::minute::get_seconds() * p_minutes)
                           .get<decltype(m_value.tv_sec)>();
     return *this;
   }
@@ -362,15 +362,15 @@ struct timestamp {
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator+(ent::minutes p_minutes);
+  timestamp operator+(_ent::minutes p_minutes);
 
   ///
   /// \brief operator -=
   /// \param p_minutes
   /// \return
   ///
-  inline timestamp &operator-=(ent::minutes p_minutes) {
-    m_value.tv_sec -= (ent::minute::get_seconds() * p_minutes)
+  inline timestamp &operator-=(_ent::minutes p_minutes) {
+    m_value.tv_sec -= (_ent::minute::get_seconds() * p_minutes)
                           .get<decltype(m_value.tv_sec)>();
     return *this;
   }
@@ -380,16 +380,16 @@ struct timestamp {
   /// \param p_minutes
   /// \return
   ///
-  timestamp operator-(ent::minutes p_minutes);
+  timestamp operator-(_ent::minutes p_minutes);
 
   ///
   /// \brief operator +=
   /// \param p_days
   /// \return
   ///
-  inline timestamp &operator+=(ent::days p_days) {
+  inline timestamp &operator+=(_ent::days p_days) {
     m_value.tv_sec +=
-        (ent::day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
+        (_ent::day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -398,16 +398,16 @@ struct timestamp {
   /// \param p_days
   /// \return
   ///
-  timestamp operator+(ent::days p_days);
+  timestamp operator+(_ent::days p_days);
 
   ///
   /// \brief operator -=
   /// \param p_days
   /// \return
   ///
-  inline timestamp &operator-=(ent::days p_days) {
+  inline timestamp &operator-=(_ent::days p_days) {
     m_value.tv_sec -=
-        (ent::day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
+        (_ent::day::get_seconds() * p_days).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -416,16 +416,16 @@ struct timestamp {
   /// \param p_days
   /// \return
   ///
-  timestamp operator-(ent::days p_days);
+  timestamp operator-(_ent::days p_days);
 
   ///
   /// \brief operator +=
   /// \param p_weeks
   /// \return
   ///
-  inline timestamp &operator+=(ent::weekdays p_weeks) {
+  inline timestamp &operator+=(_ent::weekdays p_weeks) {
     m_value.tv_sec +=
-        (ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
+        (_ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -434,16 +434,16 @@ struct timestamp {
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator+(ent::weekdays p_weeks);
+  timestamp operator+(_ent::weekdays p_weeks);
 
   ///
   /// \brief operator -=
   /// \param p_weeks
   /// \return
   ///
-  timestamp &operator-=(ent::weekdays p_weeks) {
+  timestamp &operator-=(_ent::weekdays p_weeks) {
     m_value.tv_sec -=
-        (ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
+        (_ent::weekday::get_seconds() * p_weeks).get<decltype(m_value.tv_sec)>();
     return *this;
   }
 
@@ -452,63 +452,63 @@ struct timestamp {
   /// \param p_weeks
   /// \return
   ///
-  timestamp operator-(ent::weekdays p_weeks);
+  timestamp operator-(_ent::weekdays p_weeks);
 
   ///
   /// \brief operator +=
   /// \param p_months
   /// \return
   ///
-  timestamp &operator+=(ent::months p_months);
+  timestamp &operator+=(_ent::months p_months);
 
   ///
   /// \brief operator +
   /// \param p_months
   /// \return
   ///
-  timestamp operator+(ent::months p_months);
+  timestamp operator+(_ent::months p_months);
 
   ///
   /// \brief operator -=
   /// \param p_months
   /// \return
   ///
-  timestamp &operator-=(ent::months p_months);
+  timestamp &operator-=(_ent::months p_months);
 
   ///
   /// \brief operator -
   /// \param p_months
   /// \return
   ///
-  timestamp operator-(ent::months p_months);
+  timestamp operator-(_ent::months p_months);
 
   ///
   /// \brief operator +=
   /// \param p_years
   /// \return
   ///
-  timestamp operator+=(ent::years p_years);
+  timestamp operator+=(_ent::years p_years);
 
   ///
   /// \brief operator +
   /// \param p_years
   /// \return
   ///
-  timestamp operator+(ent::years p_years);
+  timestamp operator+(_ent::years p_years);
 
   ///
   /// \brief operator -=
   /// \param p_years
   /// \return
   ///
-  timestamp operator-=(ent::years p_years);
+  timestamp operator-=(_ent::years p_years);
 
   ///
   /// \brief operator -
   /// \param p_years
   /// \return
   ///
-  timestamp operator-(ent::years p_years);
+  timestamp operator-(_ent::years p_years);
 
 private:
   struct timespec m_value;

@@ -23,6 +23,11 @@ if [ ! -d "$qt_dir" ]; then
     return 30
 fi
 
+# create code dir
+mkdir -p "$base_dir/code/$prj_name" 2> /dev/null
+mkdir -p "$base_dir/code/$prj_name/_tst" 2> /dev/null
+mkdir -p "$base_dir/code/$prj_name/doc" 2> /dev/null
+
 # check if prj dir exists
 prj_dir="$qt_dir/$prj_name"
 if [ -d "$prj_dir" ]; then
@@ -38,7 +43,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # create tst dir
-tst_name="$prj_name.tst"
+tst_name="_tst"
 tst_dir="$prj_dir/$tst_name"
 mkdir -p "$tst_dir" 2> /dev/null
 if [ $? -ne 0 ]; then
@@ -48,7 +53,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # create dep dir for tst
-dep_name="$tst_name.dep"
+dep_name="dep"
 dep_dir="$tst_dir/$dep_name"
 mkdir -p "$dep_dir" 2> /dev/null
 if [ $? -ne 0 ]; then
@@ -63,7 +68,7 @@ touch "$prj_file"
 echo "TEMPLATE = subdirs" >> "$prj_file"
 echo ""                   >> "$prj_file"
 echo "SUBDIRS += \\"      >> "$prj_file"
-echo "  $prj_name.tst"    >> "$prj_file"
+echo "  $tst_name    "    >> "$prj_file"
 echo ""                   >> "$prj_file" 
 echo "CONFIG += ordered"  >> "$prj_file"
 
@@ -83,7 +88,7 @@ touch "$dep_file"
 echo "TEMPLATE = subdirs"                            >> "$dep_file"
 echo ""                                              >> "$dep_file"
 echo "SUBDIRS += \\"                                 >> "$dep_file"
-echo "  ../../../tester/headers/tester_headers.pro"  >> "$dep_file"
+echo "  ../../../tester/tester.headers"  >> "$dep_file"
 
 
 

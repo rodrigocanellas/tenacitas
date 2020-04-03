@@ -10,7 +10,7 @@
 #include <iostream>
 #include <thread>
 
-#include <logger/bus/log_t.h>
+#include <logger/_bus/log_t.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -139,7 +139,7 @@ struct log {
   }
 
 private:
-  static bus::log_t<log> m_log;
+  static _bus::log_t<log> m_log;
 };
 
 } // namespace cout

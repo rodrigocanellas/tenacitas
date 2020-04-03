@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  headers/formater_headers.pro
+  formater.headers
 
 
 CONFIG += ordered

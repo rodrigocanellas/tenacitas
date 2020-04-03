@@ -11,7 +11,7 @@
 #include <memory>
 #include <string>
 
-#include <logger/bus/log_t.h>
+#include <logger/_bus/log_t.h>
 #include <logger/file/internal/file_controller.h>
 #include <logger/file/internal/file_writer.h>
 
@@ -212,7 +212,7 @@ struct log {
   }
 
 private:
-  static bus::log_t<log> m_log;
+  static _bus::log_t<log> m_log;
 };
 
 } // namespace file
