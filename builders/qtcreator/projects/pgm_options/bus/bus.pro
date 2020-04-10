@@ -12,9 +12,9 @@ TARGET = tenacitas.options.bus
 include (../../../common.pri)
 
 HEADERS += \
-  ../../../../../code/pgm_options/bus/pgm_options.h
+  $$code_src_dir/pgm_options/bus/pgm_options.h
 
 SOURCES += \
-  ../../../../../code/pgm_options/bus/internal/pgm_options.cpp
+  $$code_src_dir/pgm_options/bus/internal/pgm_options.cpp
 
 

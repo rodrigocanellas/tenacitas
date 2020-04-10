@@ -12,4 +12,4 @@ LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 LIBS += $$libs_dir/libtenacitas.calendar.unix.$$static_lib_ext
 
 SOURCES += \
-  ../../../../../../code/calendar/_tst/bus001/main.cpp
+  $$code_src_dir/calendar/_tst/bus001/main.cpp

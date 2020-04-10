@@ -10,6 +10,7 @@ fi
 base_dir="$1"
 prj_name="$2"
 
+
 # check if base dir exists
 if [ ! -d "$base_dir" ]; then
     echo "'$base_dir' does not exist"
@@ -23,72 +24,81 @@ if [ ! -d "$qt_dir" ]; then
     return 30
 fi
 
-# create code dir
-mkdir -p "$base_dir/code/$prj_name" 2> /dev/null
-mkdir -p "$base_dir/code/$prj_name/_tst" 2> /dev/null
-mkdir -p "$base_dir/code/$prj_name/doc" 2> /dev/null
-
-# check if prj dir exists
-prj_dir="$qt_dir/$prj_name"
-if [ -d "$prj_dir" ]; then
-    echo "'$prj_name' already exists"
+# create dirs
+src_code_dir="$base_dir/src/$prj_name"
+mkdir -p "$src_code_dir" 2> /dev/null
+if [ $? -ne 0 ]; then
+    echo "error creating '$src_code_dir'"
     return 40
 fi
 
-# create prj dir
-mkdir -p "$prj_dir" 2> /dev/null
+tst_code_dir="$base_dir/tst/$prj_name"
+mkdir -p "$tst_code_dir" 2> /dev/null
 if [ $? -ne 0 ]; then
-    echo "error creating '$prj_name'"
+    echo "error creating '$tst_code_dir'"
     return 50
 fi
 
-# create tst dir
-tst_name="_tst"
-tst_dir="$prj_dir/$tst_name"
-mkdir -p "$tst_dir" 2> /dev/null
+doc_dir="$base_dir/doc/$prj_name"
+mkdir -p "$doc_dir" 2> /dev/null
 if [ $? -ne 0 ]; then
-    echo "error creating '$tst_dir'"
-    rm -rf "$prj_dir" 2> /dev/null
+    echo "error creating '$doc_dir'"
     return 60
 fi
 
-# create dep dir for tst
-dep_name="dep"
-dep_dir="$tst_dir/$dep_name"
-mkdir -p "$dep_dir" 2> /dev/null
+src_build_dir="$base_dir/builders/qtcreator/projects/$prj_name"
+mkdir -p "$src_build_dir" 2> /dev/null
 if [ $? -ne 0 ]; then
-    echo "error creating '$dep_dir'"
-    rm -rf "$prj_dir" 2> /dev/null
+    echo "error creating '$src_build_dir'"
     return 70
 fi
 
+tst_build_dir="$base_dir/builders/qtcreator/projects/$prj_name/tst"
+mkdir -p "$tst_build_dir" 2> /dev/null
+if [ $? -ne 0 ]; then
+    echo "error creating '$tst_code_dir'"
+    return 80
+fi
+
+
+# create dep dir for tst
+dep_name="dep"
+dep_build_dir="$tst_build_dir/$dep_name"
+mkdir -p "$dep_build_dir" 2> /dev/null
+if [ $? -ne 0 ]; then
+    echo "error creating '$dep_build_dir'"
+    return 90
+fi
+
 # create prj .pro file
-prj_file="$prj_dir/$prj_name".pro
-touch "$prj_file"
-echo "TEMPLATE = subdirs" >> "$prj_file"
-echo ""                   >> "$prj_file"
-echo "SUBDIRS += \\"      >> "$prj_file"
-echo "  $tst_name    "    >> "$prj_file"
-echo ""                   >> "$prj_file" 
-echo "CONFIG += ordered"  >> "$prj_file"
+src_build_file="$src_build_dir/$prj_name".pro
+touch "$src_build_file"
+echo "TEMPLATE = subdirs" >> "$src_build_file"
+echo ""                   >> "$src_build_file"
+echo "SUBDIRS += \\"      >> "$src_build_file"
+echo "  tst"              >> "$src_build_file"
+echo ""                   >> "$src_build_file" 
+echo "CONFIG += ordered"  >> "$src_build_file"
 
 # create tst .pro file
-tst_file="$tst_dir/$tst_name.pro"
-touch "$tst_file"
-echo "TEMPLATE = subdirs" >> "$tst_file"
-echo ""                   >> "$tst_file"
-echo "SUBDIRS += \\"      >> "$tst_file"
-echo ""  "$dep_name"      >> "$tst_file"
-echo ""                   >> "$tst_file"
-echo "CONFIG += ordered"  >> "$tst_file"
+tst_build_file="$tst_build_dir/tst.pro"
+touch "$tst_build_file"
+echo "TEMPLATE = subdirs" >> "$tst_build_file"
+echo ""                   >> "$tst_build_file"
+echo "SUBDIRS += \\"      >> "$tst_build_file"
+echo ""  "$dep_name"      >> "$tst_build_file"
+echo ""                   >> "$tst_build_file"
+echo "CONFIG += ordered"  >> "$tst_build_file"
 
 # create dep .pro file
-dep_file="$dep_dir/$dep_name.pro"
-touch "$dep_file"
-echo "TEMPLATE = subdirs"                            >> "$dep_file"
-echo ""                                              >> "$dep_file"
-echo "SUBDIRS += \\"                                 >> "$dep_file"
-echo "  ../../../tester/tester.headers"  >> "$dep_file"
+dep_build_file="$dep_build_dir/$dep_name.pro"
+touch "$dep_build_file"
+echo "TEMPLATE = subdirs"                      >> "$dep_build_file"
+echo ""                                        >> "$dep_build_file"
+echo "include(../../../../common.pri)"         >> "$dep_build_file"
+echo ""                                        >> "$dep_build_file"
+echo "SUBDIRS += \\"                           >> "$dep_build_file"
+echo "  \$\$builder_dir/tester/tester.headers" >> "$dep_build_file"
 
 
-
+return 0

@@ -3,15 +3,24 @@ QMAKE_CXXFLAGS += -std=c++17 -Werror
 QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
 
 base_dir=$$PWD/../..
-code_dir=$$base_dir/code
-builder_dir=$$base_dir/builders/qtcreator
-products_dir=$$base_dir/products
+code_src_dir=$$base_dir/src
+test_src_dir=$$base_dir/tst
+builder_dir=$$base_dir/builders/qtcreator/projects
+products_dir=$$base_dir/prd
 third_dir=$$base_dir/3rd
-tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
+
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
 test_dir=$$products_dir/tst
 example_dir=$$products_dir/example
+
+unix {
+    tmp_dir=~/tenacitas_tmp/qtcreator/$$TARGET
+}
+
+win32 {
+    tmp_dir=$$TMP/tenacitas_tmp/qtcreator/$$TARGET
+}
 
 OUT_PWD = $${tmp_dir}
 MOC_DIR += $${tmp_dir}/moc
@@ -54,7 +63,8 @@ win32 {
     static_lib_ext=lib
 }
 
-INCLUDEPATH += $$code_dir
+INCLUDEPATH += $$code_src_dir
+INCLUDEPATH += $$test_src_dir
 INCLUDEPATH += $$UI_DIR
 INCLUDEPATH += $${third_dir}/include
 #INCLUDEPATH += $$_PRO_FILE_PWD_/../../mhi
@@ -62,7 +72,7 @@ INCLUDEPATH += $${third_dir}/include
 message("_PRO_FILE_PWD_ = "$$_PRO_FILE_PWD_)
 message("build_type ="$$build_type)
 message("base_dir= "$$base_dir)
-message("code_dir= "$$code_dir)
+message("code_src_dir= "$$code_src_dir)
 message("products_dir = "$$products_dir)
 message("TARGET = "$$TARGET)
 message("SPEC = "$$spec)

@@ -7,7 +7,7 @@ TARGET = tenacitas.options.test.options000
 
 
 SOURCES += \
-  ../../../../../../code/pgm_options/tst/options000/main.cpp
+  $$code_src_dir/pgm_options/tst/options000/main.cpp
 
 include (../../../../common.pri)
 

@@ -1,20 +1,18 @@
 CONFIG -= qt
-
 TEMPLATE = lib
 CONFIG += staticlib
-
 TARGET = tenacitas.logger.cerr
-
+include (../../../common.pri)
 
 
 HEADERS += \
-    ../../../../../code/logger/_bus/level.h \
-    ../../../../../code/logger/_bus/log_t.h \
-    ../../../../../code/logger/cerr/log.h
+    $$code_src_dir/logger/_bus/level.h \
+    $$code_src_dir/logger/_bus/log_t.h \
+    $$code_src_dir/logger/cerr/log.h
 
 SOURCES += \
-  ../../../../../code/logger/cerr/internal/log.cpp
+  $$code_src_dir/logger/cerr/internal/log.cpp
 
-include (../../../common.pri)
+
 
 

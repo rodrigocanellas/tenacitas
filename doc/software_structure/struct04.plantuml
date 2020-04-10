@@ -1,0 +1,30 @@
+@startuml
+
+hide empty members
+allow_mixing
+hide circle
+skinparam groupInheritance 3
+
+namespace src {
+aspect <|-- ent
+aspect <|-- bus
+aspect <|-- per
+aspect <|-- com
+aspect <|-- ser
+aspect <|-- mhi
+
+solution  "1 super" --> "sub *" solution
+
+solution --> "*" aspect
+
+
+}
+
+namespace file {
+
+}
+
+
+
+
+@enduml

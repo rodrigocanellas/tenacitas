@@ -1,0 +1,56 @@
+@startuml
+
+hide empty members
+allow_mixing
+hide circle
+
+skinparam groupInheritance 3
+
+class site <<directory, namespace>>
+class theme <<directory, namespace, build_file>>
+class product <<directory, build_file>>
+class layer <<directory, namespace>>
+
+site *-- "*" theme
+theme *-- "*" theme_level
+layer <|--- bus  : type
+layer <|-- ent : type
+layer <|-- per  : type
+layer <|-- com  : type
+layer <|--- uif   : type  
+layer <|-- ser  : type
+layer <|-- product_level : level
+layer <|-- theme_level : level
+
+theme *-- "*" product
+product <|- lib
+product <|-- pgm
+product <|-- header
+
+product *-- "*" product_level
+
+class code <<directory>>
+class build <<directory>>
+
+theme ..> code
+theme ..> build
+code ..> layer
+build .right.> product
+
+uif -right-> bus
+uif --> ent
+bus --> ent
+bus -right-> per
+bus --> com
+per --> ent
+com --> ent
+per --> com
+com -right-> ser
+ser --> ent
+
+pgm --> pgm
+pgm -> lib
+lib --> lib
+pgm -> header
+lib --> header
+@enduml

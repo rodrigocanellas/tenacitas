@@ -1,9 +1,11 @@
+include (../../../common.pri)
+
 TEMPLATE = subdirs
 
 HEADERS += \
-    ../../../../../code/calendar/_bus/conversions.h  \
-    ../../../../../code/calendar/_bus/epoch.h
+    $$code_src_dir/calendar/_bus/conversions.h  \
+    $$code_src_dir/calendar/_bus/epoch.h
 
-include (../../../common.pri)
+
 
 

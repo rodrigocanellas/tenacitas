@@ -1,9 +1,11 @@
+include (../../../../common.pri)
+
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    ../../../concurrent/concurrent.headers \
-    ../../../logger/logger.cerr \
-    ../../../tester/tester.headers \
+    $$builder_dir/concurrent/concurrent.headers \
+    $$builder_dir/logger/logger.cerr \
+    $$builder_dir/tester/tester.headers \
 
 
 

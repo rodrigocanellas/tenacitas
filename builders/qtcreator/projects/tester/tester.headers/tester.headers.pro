@@ -1,6 +1,8 @@
+include (../../../common.pri)
+
 TEMPLATE = subdirs
 
 HEADERS += \
-  ../../../../../code/tester/_bus/test.h
+  $$code_src_dir/tester/test.h
 
 
