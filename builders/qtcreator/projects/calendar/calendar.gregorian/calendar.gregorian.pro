@@ -10,27 +10,44 @@ TARGET = tenacitas.calendar.gregorian
 include (../../../common.pri)
 
 HEADERS += \
-  $$code_src_dir/calendar/_ent/amount.h \
-  $$code_src_dir/calendar/_ent/day.h \
-  $$code_src_dir/calendar/_ent/days.h \
-  $$code_src_dir/calendar/_ent/hour.h \
-  $$code_src_dir/calendar/_ent/hours.h \
-  $$code_src_dir/calendar/_ent/minute.h \
-  $$code_src_dir/calendar/_ent/minutes.h \
-  $$code_src_dir/calendar/_ent/month.h \
-  $$code_src_dir/calendar/_ent/months.h \
-  $$code_src_dir/calendar/_ent/second.h \
-  $$code_src_dir/calendar/_ent/seconds.h \
-  $$code_src_dir/calendar/_ent/weekday.h \
-  $$code_src_dir/calendar/_ent/weekdays.h \
-  $$code_src_dir/calendar/_ent/year.h \
-  $$code_src_dir/calendar/_ent/years.h \
-  $$code_src_dir/calendar/gregorian/timestamp.h
+  $$code_src_dir/calendar/gregorian/second.h  \
+  $$code_src_dir/calendar/gregorian/minute.h \
+  $$code_src_dir/calendar/gregorian/hour.h \
+  $$code_src_dir/calendar/gregorian/day.h \
+  $$code_src_dir/calendar/gregorian/weekday.h
+
+#\
+#  $$code_src_dir/calendar/gregorian/month.h \
+#  $$code_src_dir/calendar/gregorian/year.h
+
+#\
+#  $$code_src_dir/calendar/gregorian/amount.h \
+#  $$code_src_dir/calendar/gregorian/seconds.h \
+#  $$code_src_dir/calendar/gregorian/days.h \
+#  $$code_src_dir/calendar/gregorian/hours.h \
+#  $$code_src_dir/calendar/gregorian/minutes.h \
+#  $$code_src_dir/calendar/gregorian/months.h \
+#  $$code_src_dir/calendar/gregorian/weekdays.h \
+#  $$code_src_dir/calendar/gregorian/years.h  \
+#  $$code_src_dir/calendar/gregorian/create_sequence.h \
+#  $$code_src_dir/calendar/gregorian/daily_repetition.h \
+#  $$code_src_dir/calendar/gregorian/ending_after.h \
+#  $$code_src_dir/calendar/gregorian/ending_never.h \
+#  $$code_src_dir/calendar/gregorian/ending_on.h \
+#  $$code_src_dir/calendar/gregorian/monthly_repetition.h \
+#  $$code_src_dir/calendar/gregorian/weekly_repetition.h \
+#  $$code_src_dir/calendar/gregorian/yearly_repetition.h \
+#  $$code_src_dir/calendar/gregorian/timestamp.h \
+#  $$code_src_dir/calendar/gregorian/add.h \
 
 SOURCES += \
-  $$code_src_dir/calendar/_ent/day.cpp \
-  $$code_src_dir/calendar/_ent/hour.cpp \
-  $$code_src_dir/calendar/_ent/minute.cpp \
-  $$code_src_dir/calendar/_ent/month.cpp \
-  $$code_src_dir/calendar/_ent/second.cpp \
-  $$code_src_dir/calendar/_ent/weekday.cpp
+  $$code_src_dir/calendar/gregorian/second.cpp \
+  $$code_src_dir/calendar/gregorian/minute.cpp \
+  $$code_src_dir/calendar/gregorian/hour.cpp \
+  $$code_src_dir/calendar/gregorian/day.cpp \
+  $$code_src_dir/calendar/gregorian/weekday.cpp
+#  \
+#  \
+#  $$code_src_dir/calendar/gregorian/month.cpp \
+#  $$code_src_dir/calendar/gregorian/timestamp.cpp
+

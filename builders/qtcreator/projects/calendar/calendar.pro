@@ -2,8 +2,9 @@ TEMPLATE = subdirs
 
   SUBDIRS += \
     calendar.headers \
-    calendar.unix \
-    _tst
+    calendar.gregorian \
+    tst
 
+#    calendar.unix \
 
 CONFIG += ordered

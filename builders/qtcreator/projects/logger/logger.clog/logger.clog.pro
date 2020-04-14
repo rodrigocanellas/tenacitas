@@ -2,11 +2,11 @@ CONFIG -= qt
 TEMPLATE = lib
 CONFIG += staticlib
 TARGET = tenacitas.logger.clog
-include (../../../common.pri)
+include (../../../_common.pri)
 
 HEADERS += \
-  $$code_src_dir/logger/_bus/level.h \
-  $$code_src_dir/logger/_bus/log_t.h \
+  $$code_src_dir/logger/_common/level.h \
+  $$code_src_dir/logger/_common/log_t.h \
   $$code_src_dir/logger/clog/log.h
 
 SOURCES += \

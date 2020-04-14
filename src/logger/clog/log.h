@@ -11,7 +11,7 @@
 #include <iostream>
 #include <thread>
 
-#include <logger/_bus/log_t.h>
+#include <logger/_common/log_t.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {

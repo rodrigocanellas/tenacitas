@@ -62,7 +62,8 @@ struct test {
                   << std::endl;
         result = false;
       }
-      std::cout << _name << (result ? " SUCCESS" : " FAIL") << std::endl;
+      std::cout << "'" << _name << "'" << (result ? " SUCCESS" : " FAIL")
+                << std::endl;
       std::cerr << _name << " <- ############" << std::endl;
     }
   }
