@@ -16,17 +16,25 @@ namespace gregorian {
 ///
 template <typename t_value, typename t_time> struct amount_t {
 
-  constexpr inline explicit amount_t(t_value p_value) : m_value(p_value) {}
+  typedef t_time time;
 
-  constexpr inline explicit amount_t(t_time p_time) : m_value(p_time.value) {}
+  constexpr inline explicit amount_t(t_value p_value = 0) : m_value(p_value) {}
 
-  constexpr inline amount_t() : m_value(0) {}
+  constexpr amount_t(const amount_t &) = default;
+
+  constexpr amount_t(amount_t &&) = default;
+
+  constexpr amount_t &operator=(const amount_t &) = default;
+
+  constexpr amount_t &operator=(amount_t &&) = default;
 
   inline friend std::ostream &operator<<(std::ostream &p_out,
                                          const amount_t &p_amount) {
     p_out << p_amount.m_value;
     return p_out;
   }
+
+  constexpr inline operator t_value() const { return m_value; }
 
   constexpr inline amount_t &operator++() {
     ++m_value;
@@ -48,52 +56,51 @@ template <typename t_value, typename t_time> struct amount_t {
     return *this;
   }
 
-  constexpr inline bool operator==(amount_t p_amount) const {
+  constexpr inline bool operator==(const amount_t &p_amount) const {
     return m_value == p_amount.m_value;
   }
 
-  constexpr inline bool operator!=(amount_t p_amount) const {
+  constexpr inline bool operator!=(const amount_t &p_amount) const {
     return m_value != p_amount.m_value;
   }
 
-
-  constexpr inline amount_t operator+(amount_t p_amount) {
+  constexpr inline amount_t operator+(const amount_t &p_amount) const {
     return amount_t(m_value + p_amount.m_value);
   }
 
-  constexpr inline amount_t operator-(amount_t p_amount) {
+  constexpr inline amount_t operator-(const amount_t &p_amount) const {
     return amount_t(m_value - p_amount.m_value);
   }
 
-  constexpr inline amount_t &operator+=(amount_t p_amount) {
+  constexpr inline amount_t &operator+=(const amount_t &p_amount) {
     m_value += p_amount.m_value;
     return *this;
   }
 
-  constexpr inline amount_t &operator-=(amount_t p_amount) {
+  constexpr inline amount_t &operator-=(const amount_t &p_amount) {
     m_value -= p_amount.m_value;
     return *this;
   }
 
-  constexpr inline amount_t operator*(amount_t p_amount) const {
+  constexpr inline amount_t operator*(const amount_t &p_amount) const {
     return amount_t(m_value * p_amount.m_value);
   }
 
-  constexpr inline amount_t &operator*=(amount_t p_amount) {
+  constexpr inline amount_t &operator*=(const amount_t &p_amount) {
     m_value *= p_amount.m_value;
     return *this;
   }
 
-  constexpr inline amount_t operator/(amount_t p_amount) const {
+  constexpr inline amount_t operator/(const amount_t &p_amount) const {
     return amount_t(m_value / p_amount.m_value);
   }
 
-  constexpr inline amount_t &operator/=(amount_t p_amount) {
+  constexpr inline amount_t &operator/=(const amount_t &p_amount) {
     m_value /= p_amount.m_value;
     return *this;
   }
 
-  constexpr inline amount_t operator%(amount_t p_amount) const {
+  constexpr inline amount_t operator%(const amount_t &p_amount) const {
     return amount_t(m_value % p_amount.m_value);
   }
 

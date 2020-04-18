@@ -5,7 +5,7 @@
 
 namespace tenacitas {
 namespace calendar {
-namespace greogorian {
+namespace gregorian {
 
 template <typename t_timestamp>
 t_timestamp add_days(t_timestamp p_timestamp, days p_days) {
@@ -14,7 +14,7 @@ t_timestamp add_days(t_timestamp p_timestamp, days p_days) {
   return t_timestamp(_days);
 };
 
-} // namespace greogorian
+} // namespace gregorian
 } // namespace calendar
 } // namespace tenacitas
 
