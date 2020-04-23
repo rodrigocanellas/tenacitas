@@ -1,9 +1,9 @@
 TEMPLATE = subdirs
 
-  SUBDIRS += \
-    calendar.headers \
-    calendar.gregorian \
-    tst
+SUBDIRS += \
+  calendar.headers \
+  calendar.gregorian \
+  tst
 
 #    calendar.unix \
 
