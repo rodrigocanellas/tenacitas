@@ -3,7 +3,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
  dep \
  second_test \
- minute_test
+ minute_test \
+ hour_test
 
 #\
 # weekday_test

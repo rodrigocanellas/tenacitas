@@ -3,19 +3,19 @@
 #include <iostream>
 #include <string>
 
-#include <calendar/gregorian/minute.h>
+#include <calendar/gregorian/hour.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
-struct minute_test {
+struct hour_test {
   bool operator()() {
     using namespace tenacitas::calendar::gregorian;
 
     {
       std::stringstream _stream;
-      _stream << minute::_03;
-      std::cerr << "minutes = " << _stream.str() << std::endl;
+      _stream << hour::_03;
+      std::cerr << "hours = " << _stream.str() << std::endl;
       if (_stream.str() != "3") {
         return false;
       }
@@ -23,36 +23,36 @@ struct minute_test {
 
     {
       std::stringstream _stream;
-      minute _minute = 18_min;
-      _stream << _minute;
-      std::cerr << "minutes = " << _stream.str() << std::endl;
+      hour _hour = 18_hr;
+      _stream << _hour;
+      std::cerr << "hours = " << _stream.str() << std::endl;
       if (_stream.str() != "18") {
         return false;
       }
     }
 
     {
-      if (minute::_01 >= minute::_02) {
+      if (hour::_01 >= hour::_02) {
         return false;
       }
     }
 
     {
-      if (minute::_01 == minute::_02) {
+      if (hour::_01 == hour::_02) {
         return false;
       }
     }
 
     {
-      if (10_min <= 6_min) {
+      if (10_hr <= 6_hr) {
         return false;
       }
     }
 
     {
       try {
-        minute _minute = 62_min;
-        std::cerr << "62 minutes? " << _minute << std::endl;
+        hour _hour = 24_hr;
+        std::cerr << "24 hours? " << _hour << std::endl;
         return false;
       } catch (const std::exception &_ex) {
         std::cerr << _ex.what() << std::endl;
@@ -61,21 +61,21 @@ struct minute_test {
 
     {
       uint16_t _value = 21;
-      minute _minute(_value);
-      if (_minute != 21_min) {
+      hour _hour(_value);
+      if (_hour != 21_hr) {
         return false;
       }
-      if (_minute != minute::_21) {
+      if (_hour != hour::_21) {
         return false;
       }
-      std::cerr << "second from variable = " << _minute << std::endl;
+      std::cerr << "hour from variable = " << _hour << std::endl;
     }
 
     {
       try {
         uint16_t _value = 93;
-        minute _min(_value);
-        std::cerr << "93 minutes from variable? = " << _min << std::endl;
+        hour _min(_value);
+        std::cerr << "93 hours from variable? = " << _min << std::endl;
         return false;
       } catch (const std::exception &_ex) {
         std::cerr << _ex.what() << std::endl;
@@ -85,9 +85,9 @@ struct minute_test {
     return true;
   }
 
-  static std::string desc() { return "Basic test for 'minute' class"; }
+  static std::string desc() { return "Basic test for 'hour' class"; }
 
-  static std::string name() { return "minute_test"; }
+  static std::string name() { return "hour_test"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<minute_test>(argc, argv); }
+int main(int argc, char **argv) { tester::test::run<hour_test>(argc, argv); }

@@ -3,31 +3,32 @@
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
-const hour hour::h00(0);
-const hour hour::h01(1);
-const hour hour::h02(2);
-const hour hour::h03(3);
-const hour hour::h04(4);
-const hour hour::h05(5);
-const hour hour::h06(6);
-const hour hour::h07(7);
-const hour hour::h08(8);
-const hour hour::h09(9);
-const hour hour::h10(10);
-const hour hour::h11(11);
-const hour hour::h12(12);
-const hour hour::h13(13);
-const hour hour::h14(14);
-const hour hour::h15(15);
-const hour hour::h16(16);
-const hour hour::h17(17);
-const hour hour::h18(18);
-const hour hour::h19(19);
-const hour hour::h20(20);
-const hour hour::h21(21);
-const hour hour::h22(22);
-const hour hour::h23(23);
 
-} // namespace greogorian
+const hour hour::_00(0);
+const hour hour::_01(1);
+const hour hour::_02(2);
+const hour hour::_03(3);
+const hour hour::_04(4);
+const hour hour::_05(5);
+const hour hour::_06(6);
+const hour hour::_07(7);
+const hour hour::_08(8);
+const hour hour::_09(9);
+const hour hour::_10(10);
+const hour hour::_11(11);
+const hour hour::_12(12);
+const hour hour::_13(13);
+const hour hour::_14(14);
+const hour hour::_15(15);
+const hour hour::_16(16);
+const hour hour::_17(17);
+const hour hour::_18(18);
+const hour hour::_19(19);
+const hour hour::_20(20);
+const hour hour::_21(21);
+const hour hour::_22(22);
+const hour hour::_23(23);
+
+} // namespace gregorian
 } // namespace calendar
 } // namespace tenacitas

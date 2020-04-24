@@ -11,7 +11,14 @@ include (../../../common.pri)
 
 HEADERS += \
   $$code_src_dir/calendar/gregorian/second.h \
-  $$code_src_dir/calendar/gregorian/minute.h
+  $$code_src_dir/calendar/gregorian/minute.h \
+  $$code_src_dir/calendar/gregorian/hour.h \
+  $$code_src_dir/calendar/gregorian/day.h \
+  $$code_src_dir/calendar/gregorian/year.h \
+  $$code_src_dir/calendar/gregorian/month.h
+
+
+#\
 
 #\
 
@@ -21,11 +28,11 @@ HEADERS += \
 #\
 
 
-#  $$code_src_dir/calendar/gregorian/hour.h \
-#  $$code_src_dir/calendar/gregorian/day.h \
+
+
 #  $$code_src_dir/calendar/gregorian/weekday.h \
-#  $$code_src_dir/calendar/gregorian/month.h \
-#  $$code_src_dir/calendar/gregorian/year.h
+
+
 
 #\
 
@@ -64,14 +71,17 @@ HEADERS += \
 
 SOURCES += \
   $$code_src_dir/calendar/gregorian/second.cpp \
-  $$code_src_dir/calendar/gregorian/minute.cpp
+  $$code_src_dir/calendar/gregorian/minute.cpp \
+  $$code_src_dir/calendar/gregorian/hour.cpp \
+  $$code_src_dir/calendar/gregorian/day.cpp \
+  $$code_src_dir/calendar/gregorian/month.cpp
 
 #\
-#  $$code_src_dir/calendar/gregorian/hour.cpp \
-#  $$code_src_dir/calendar/gregorian/day.cpp \
+
+
 #  $$code_src_dir/calendar/gregorian/weekday.cpp
 #  \
 #  \
-#  $$code_src_dir/calendar/gregorian/month.cpp \
+
 #  $$code_src_dir/calendar/gregorian/timestamp.cpp
 
