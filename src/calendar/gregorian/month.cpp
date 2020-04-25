@@ -13,18 +13,18 @@ namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-const month month::jan(0);
-const month month::feb(1);
-const month month::mar(2);
-const month month::apr(3);
-const month month::may(4);
-const month month::jun(5);
-const month month::jul(6);
-const month month::ago(7);
-const month month::sep(8);
-const month month::oct(9);
-const month month::nov(10);
-const month month::dec(11);
+const month month::jan(1);
+const month month::feb(2);
+const month month::mar(3);
+const month month::apr(4);
+const month month::may(5);
+const month month::jun(6);
+const month month::jul(7);
+const month month::ago(8);
+const month month::sep(9);
+const month month::oct(10);
+const month month::nov(11);
+const month month::dec(12);
 
 // days
 // month::get_days(const month& p_month, const year& p_year)

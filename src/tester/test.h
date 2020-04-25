@@ -62,7 +62,7 @@ struct test {
                   << std::endl;
         result = false;
       }
-      std::cout << "'" << _name << "'" << (result ? " SUCCESS" : " FAIL")
+      std::cout << (result ? "SUCCESS" : "FAIL") << " for " << _name
                 << std::endl;
       std::cerr << _name << " <- ############" << std::endl;
     }

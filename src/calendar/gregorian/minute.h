@@ -26,18 +26,18 @@ struct minute {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid day value");
     }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    m_value = static_cast<decltype(m_value)>(std::move(p_value));
   }
 
   ///
   /// \brief operator <<
   /// \param p_out
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
   inline friend std::ostream &operator<<(std::ostream &p_out,
-                                         const minute &p_inute) {
-    p_out << static_cast<uint32_t>(p_inute.m_value);
+                                         const minute &p_minute) {
+    p_out << static_cast<uint32_t>(p_minute.m_value);
     return p_out;
   }
 
@@ -106,56 +106,56 @@ struct minute {
 
   ///
   /// \brief operator >
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator>(const minute &p_inute) const {
-    return m_value > p_inute.m_value;
+  constexpr inline bool operator>(const minute &p_minute) const {
+    return m_value > p_minute.m_value;
   }
 
   ///
   /// \brief operator <
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator<(const minute &p_inute) const {
-    return m_value < p_inute.m_value;
+  constexpr inline bool operator<(const minute &p_minute) const {
+    return m_value < p_minute.m_value;
   }
 
   ///
   /// \brief operator >=
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator>=(const minute &p_inute) const {
-    return m_value >= p_inute.m_value;
+  constexpr inline bool operator>=(const minute &p_minute) const {
+    return m_value >= p_minute.m_value;
   }
 
   ///
   /// \brief operator <=
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator<=(const minute &p_inute) const {
-    return m_value <= p_inute.m_value;
+  constexpr inline bool operator<=(const minute &p_minute) const {
+    return m_value <= p_minute.m_value;
   }
 
   ///
   /// \brief operator ==
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator==(const minute &p_inute) const {
-    return m_value == p_inute.m_value;
+  constexpr inline bool operator==(const minute &p_minute) const {
+    return m_value == p_minute.m_value;
   }
 
   ///
   /// \brief operator !=
-  /// \param p_inute
+  /// \param p_minute
   /// \return
   ///
-  constexpr inline bool operator!=(const minute &p_inute) const {
-    return m_value != p_inute.m_value;
+  constexpr inline bool operator!=(const minute &p_minute) const {
+    return m_value != p_minute.m_value;
   }
 
 private:

@@ -4,13 +4,20 @@
 #include <cstdint>
 
 #include <calendar/gregorian/amount.h>
+#include <calendar/gregorian/convert.h>
 #include <calendar/gregorian/minute.h>
+#include <calendar/gregorian/seconds.h>
 
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-typedef amount_t<int16_t, minute> minutes;
+typedef amount_t<minute> minutes;
+
+template <>
+constexpr inline seconds convert<minutes, seconds>(const minutes &p_minutes) {
+  return seconds(p_minutes * 60);
+}
 
 } // namespace gregorian
 } // namespace calendar

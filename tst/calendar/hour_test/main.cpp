@@ -74,8 +74,8 @@ struct hour_test {
     {
       try {
         uint16_t _value = 93;
-        hour _min(_value);
-        std::cerr << "93 hours from variable? = " << _min << std::endl;
+        hour _hour(_value);
+        std::cerr << "93 hours from variable? = " << _hour << std::endl;
         return false;
       } catch (const std::exception &_ex) {
         std::cerr << _ex.what() << std::endl;

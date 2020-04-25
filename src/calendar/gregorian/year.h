@@ -4,17 +4,6 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/gregorian/day.h>
-#include <calendar/gregorian/days.h>
-#include <calendar/gregorian/hour.h>
-#include <calendar/gregorian/hours.h>
-#include <calendar/gregorian/minute.h>
-#include <calendar/gregorian/minutes.h>
-#include <calendar/gregorian/month.h>
-#include <calendar/gregorian/months.h>
-#include <calendar/gregorian/second.h>
-#include <calendar/gregorian/seconds.h>
-
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -24,7 +13,7 @@ namespace gregorian {
 ///
 struct year {
 
-  /// \brief constructor creates a valid \p year if possible
+  /// \brief constructor creates a valid \p year
   ///
   /// \tparam type of number used to create a \p year object
   ///
@@ -35,38 +24,78 @@ struct year {
   ///
   template <typename t_int>
   inline explicit constexpr year(t_int p_value)
-      : m_value(static_cast<decltype(m_value)>(p_value)) {}
+      : m_value(static_cast<decltype(m_value)>(std::move(p_value))) {}
 
+  ///
+  /// \brief operator <<
+  /// \param p_out
+  /// \param p_year
+  /// \return
+  ///
   inline friend std::ostream &operator<<(std::ostream &p_out,
                                          const year &p_year) {
     p_out << static_cast<uint16_t>(p_year.m_value);
     return p_out;
   }
 
+  ///
+  /// \brief is_leap
+  /// \return
+  ///
   inline constexpr bool is_leap() const {
     return m_value % 4 == 0 && (m_value % 100 != 0 || m_value % 400 == 0);
   }
 
+  ///
+  /// \brief operator >
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator>(const year &p_year) const {
     return m_value > p_year.m_value;
   }
 
+  ///
+  /// \brief operator <
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator<(const year &p_year) const {
     return m_value < p_year.m_value;
   }
 
+  ///
+  /// \brief operator >=
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator>=(const year &p_year) const {
     return m_value >= p_year.m_value;
   }
 
+  ///
+  /// \brief operator <=
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator<=(const year &p_year) const {
     return m_value <= p_year.m_value;
   }
 
+  ///
+  /// \brief operator ==
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator==(const year &p_year) const {
     return m_value == p_year.m_value;
   }
 
+  ///
+  /// \brief operator !=
+  /// \param p_year
+  /// \return
+  ///
   inline constexpr bool operator!=(const year &p_year) const {
     return m_value != p_year.m_value;
   }
@@ -137,7 +166,7 @@ private:
   ///
   /// \brief m_value
   ///
-  uint16_t m_value;
+  int32_t m_value;
 };
 
 ///

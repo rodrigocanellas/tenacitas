@@ -10,7 +10,7 @@ namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-typedef amount_t<int32_t, second> seconds;
+typedef amount_t<second> seconds;
 
 } // namespace gregorian
 } // namespace calendar

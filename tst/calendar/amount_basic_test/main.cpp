@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include <calendar/gregorian/convert.h>
+#include <calendar/gregorian/days.h>
 #include <calendar/gregorian/weeks.h>
 #include <tester/test.h>
 
@@ -32,6 +34,29 @@ struct amount_basic_test {
       if (_weeks != weeks(13)) {
         return false;
       }
+    }
+
+    {
+      weeks _weeks(9);
+      _weeks -= weeks(2);
+      if (_weeks != weeks(7)) {
+        return false;
+      }
+    }
+
+    {
+      weeks _weeks = weeks(9) + weeks(3);
+      if (_weeks != weeks(12)) {
+        return false;
+      }
+    }
+
+    {
+      days _days = days(3) + weeks(2);
+      if (_days != days(17)) {
+        return false;
+      }
+      std::cerr << "3 days + 2 weeks = " << _days << " days" << std::endl;
     }
 
     return true;

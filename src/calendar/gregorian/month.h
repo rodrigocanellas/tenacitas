@@ -4,20 +4,9 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/gregorian/day.h>
-#include <calendar/gregorian/days.h>
-#include <calendar/gregorian/hour.h>
-#include <calendar/gregorian/hours.h>
-#include <calendar/gregorian/minute.h>
-#include <calendar/gregorian/minutes.h>
-#include <calendar/gregorian/second.h>
-#include <calendar/gregorian/seconds.h>
-
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
-
-struct year;
 
 ///
 /// \brief The month struct represents a valid month value
@@ -34,11 +23,11 @@ struct month {
   /// a \p month object
   ///
   template <typename t_int> inline explicit month(t_int p_value) {
-    if ((p_value > 12) || (p_value < 0)) {
+    if ((p_value > 12) || (p_value <= 0)) {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid month value");
     }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    m_value = static_cast<decltype(m_value)>(std::move(p_value));
   }
 
   ///
@@ -49,7 +38,32 @@ struct month {
   ///
   inline friend std::ostream &operator<<(std::ostream &p_out,
                                          const month &p_month) {
-    p_out << static_cast<uint16_t>(p_month.m_value + 1);
+
+    if (p_month == month::jan) {
+      p_out << "jan";
+    } else if (p_month == month::feb) {
+      p_out << "feb";
+    } else if (p_month == month::mar) {
+      p_out << "mar";
+    } else if (p_month == month::apr) {
+      p_out << "apr";
+    } else if (p_month == month::may) {
+      p_out << "may";
+    } else if (p_month == month::jun) {
+      p_out << "jun";
+    } else if (p_month == month::jul) {
+      p_out << "jul";
+    } else if (p_month == month::ago) {
+      p_out << "ago";
+    } else if (p_month == month::sep) {
+      p_out << "sep";
+    } else if (p_month == month::oct) {
+      p_out << "oct";
+    } else if (p_month == month::nov) {
+      p_out << "nov";
+    } else if (p_month == month::dec) {
+      p_out << "dec";
+    }
     return p_out;
   }
 

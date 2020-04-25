@@ -10,7 +10,7 @@ namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-typedef amount_t<int16_t, year> years;
+typedef amount_t<year> years;
 
 } // namespace gregorian
 } // namespace calendar
