@@ -3,23 +3,22 @@
 
 #include <cstdint>
 #include <cstring>
+#include <initializer_list>
 #include <iostream>
 #include <map>
-#include <set>
+#include <optional>
 #include <sstream>
 #include <string>
 
 namespace tenacitas {
-namespace pgm_options {
-namespace bus {
+namespace program {
 
 ///
 /// \brief Class to parse program options
 ///
-struct pgm_options
-{
+struct options {
 
-  typedef std::string option;
+  typedef std::string name;
   typedef std::string value;
 
   ///
@@ -41,7 +40,16 @@ struct pgm_options
   /// \endcode
   ///
   /// \throws std::runtime_error
-  void parse(int p_argc, const char** p_argv, std::set<option>&& p_mandatory);
+  void parse(int p_argc, char **p_argv,
+             std::initializer_list<name> &&p_mandatory = {});
+
+  ///
+  /// \brief get_value gives access to the value of an option
+  /// \param p_option name of the option
+  /// \return value associated to the option, or std::nullopt if the option  was
+  /// not found
+  ///
+  std::optional<value> operator[](const name &p_name) const;
 
   ///
   /// \brief operator <<
@@ -49,28 +57,11 @@ struct pgm_options
   /// \param p_options
   /// \return
   ///
-  friend std::ostream& operator<<(std::ostream& p_out,
-                                  const pgm_options& p_options);
-
-  ///
-  /// \brief get_value gives access to the value of an option
-  /// \param p_option name of the option
-  /// \return value associated to the option, or "" if the option  was not found
-  ///
-  /// \details if p_option is an option that does not have a associated value,
-  /// it returns "1" if the option was found
-  const value& get_value(const option& p_option) const;
-
-  ///
-  /// \brief is_defined informs if a option is defined
-  /// \param p_option name of the option
-  /// \return @p true if it was defined, @p false otherwise
-  ///
-  bool is_defined(const option& p_option) const;
+  friend std::ostream &operator<<(std::ostream &p_out,
+                                  const options &p_options);
 
 private:
-  inline bool is_option(const char* p_str)
-  {
+  inline bool is_option(const char *p_str) {
     return ((p_str[0] == '-') && (p_str[1] == '-'));
   }
 
@@ -78,7 +69,7 @@ private:
   ///
   /// \brief map type for the options and theirs values
   ///
-  typedef std::map<option, value> map;
+  typedef std::map<name, value> map;
 
 private:
   ///
@@ -87,8 +78,7 @@ private:
   map m_map;
 };
 
-} // namespace bus
-} // namespace pgm_options
+} // namespace program
 } // namespace tenacitas
 
 #endif // OPTIONS_H

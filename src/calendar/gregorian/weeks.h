@@ -25,12 +25,14 @@ template <> constexpr inline hours convert<weeks, hours>(const weeks &p_weeks) {
   return convert<days, hours>(convert<weeks, days>(p_weeks));
 }
 
-template <> constexpr inline minutes convert(const weeks &p_weeks) {
+template <>
+constexpr inline minutes convert<weeks, minutes>(const weeks &p_weeks) {
   return convert<hours, minutes>(
       convert<days, hours>(convert<weeks, days>(p_weeks)));
 }
 
-template <> constexpr inline seconds convert(const weeks &p_weeks) {
+template <>
+constexpr inline seconds convert<weeks, seconds>(const weeks &p_weeks) {
   return convert<minutes, seconds>(convert<hours, minutes>(
       convert<days, hours>(convert<weeks, days>(p_weeks))));
 }

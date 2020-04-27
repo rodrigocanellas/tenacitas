@@ -85,9 +85,11 @@ struct minute_test {
     return true;
   }
 
-  static std::string desc() { return "Basic test for 'minute' class"; }
-
   static std::string name() { return "minute_test"; }
+  static std::string desc() { return "Basic test for 'minute' class"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<minute_test>(argc, argv); }
+int main(int argc, char **argv) {
+  tester::test _test(argc, argv);
+  _test.run<minute_test>();
+}

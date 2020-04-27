@@ -5,14 +5,41 @@
 
 #include <calendar/gregorian/convert.h>
 #include <calendar/gregorian/days.h>
+#include <calendar/gregorian/seconds.h>
 #include <calendar/gregorian/weeks.h>
 #include <tester/test.h>
 
-using namespace tenacitas;
+using namespace tenacitas::calendar::gregorian;
+
+struct mins2secs {
+  bool operator()() {
+
+    {
+      seconds _secs = convert<minutes, seconds>();
+      if (_secs != seconds(60)) {
+        return false;
+      }
+    }
+
+    {
+      seconds _secs = convert<minutes, seconds>(minutes(5));
+      if (_secs != seconds(300)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Tests conversions from 'minutes' to 'seconds'";
+  }
+
+  static std::string name() { return "mins2secs"; }
+};
 
 struct amount_basic_test {
   bool operator()() {
-    using namespace tenacitas::calendar::gregorian;
 
     {
       weeks _weeks;
@@ -70,5 +97,7 @@ struct amount_basic_test {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<amount_basic_test>(argc, argv);
+  tenacitas::tester::test _test(argc, argv);
+  _test.run<amount_basic_test>();
+  _test.run<mins2secs>();
 }

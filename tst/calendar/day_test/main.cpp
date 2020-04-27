@@ -83,10 +83,11 @@ struct day_test {
     }
     return true;
   }
-
-  static std::string desc() { return "Basic test for 'day' class"; }
-
   static std::string name() { return "day_test"; }
+  static std::string desc() { return "Basic test for 'day' class"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<day_test>(argc, argv); }
+int main(int argc, char **argv) {
+  tester::test _test(argc, argv);
+  _test.run<day_test>();
+}

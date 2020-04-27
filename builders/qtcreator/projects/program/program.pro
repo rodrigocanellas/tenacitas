@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  dep \
-  options000
+  program.lib \
+  tst

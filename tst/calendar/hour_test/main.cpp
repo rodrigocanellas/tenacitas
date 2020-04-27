@@ -85,9 +85,11 @@ struct hour_test {
     return true;
   }
 
-  static std::string desc() { return "Basic test for 'hour' class"; }
-
   static std::string name() { return "hour_test"; }
+  static std::string desc() { return "Basic test for 'hour' class"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<hour_test>(argc, argv); }
+int main(int argc, char **argv) {
+  tester::test _test(argc, argv);
+  _test.run<hour_test>();
+}

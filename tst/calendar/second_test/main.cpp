@@ -87,9 +87,12 @@ struct second_test {
     return true;
   }
 
-  static std::string desc() { return "Basic test for 'second' class"; }
-
   static std::string name() { return "second_test"; }
+  static std::string desc() { return "Basic test for 'second' class"; };
 };
 
-int main(int argc, char **argv) { tester::test::run<second_test>(argc, argv); }
+int main(int argc, char **argv) {
+  tester::test _test(argc, argv);
+
+  _test.run<second_test>();
+}

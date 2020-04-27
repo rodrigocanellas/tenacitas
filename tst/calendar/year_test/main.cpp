@@ -45,10 +45,11 @@ struct year_test {
 
     return true;
   }
-
-  static std::string desc() { return "Basic test for 'year' class"; }
-
   static std::string name() { return "year_test"; }
+  static std::string desc() { return "Basic test for 'year' class"; }
 };
 
-int main(int argc, char **argv) { tester::test::run<year_test>(argc, argv); }
+int main(int argc, char **argv) {
+  tester::test _test(argc, argv);
+  _test.run<year_test>();
+}
