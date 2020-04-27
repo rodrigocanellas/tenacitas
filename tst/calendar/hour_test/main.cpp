@@ -85,8 +85,8 @@ struct hour_test {
     return true;
   }
 
-  static std::string name() { return "hour_test"; }
-  static std::string desc() { return "Basic test for 'hour' class"; }
+  static constexpr const char *name() { return "hour_test"; }
+  static constexpr const char * desc() { return "Basic test for 'hour' class"; }
 };
 
 int main(int argc, char **argv) {

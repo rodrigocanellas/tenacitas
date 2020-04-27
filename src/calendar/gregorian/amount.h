@@ -20,7 +20,7 @@ template <typename t_time> struct amount_t {
 
   typedef t_time time;
 
-  constexpr inline explicit amount_t(int64_t p_value = 0) : m_value(p_value) {}
+  constexpr inline explicit amount_t(double p_value = 0) : m_value(p_value) {}
 
   constexpr amount_t(const amount_t &) = default;
 
@@ -36,7 +36,7 @@ template <typename t_time> struct amount_t {
     return p_out;
   }
 
-  constexpr inline operator int64_t() const { return m_value; }
+  constexpr inline operator double() const { return m_value; }
 
   constexpr inline amount_t &operator++() {
     ++m_value;
@@ -117,7 +117,8 @@ template <typename t_time> struct amount_t {
   }
 
   constexpr inline amount_t operator%(const amount_t &p_amount) const {
-    return amount_t(m_value % p_amount.m_value);
+    return amount_t(static_cast<int64_t>(m_value) %
+                    static_cast<int64_t>(p_amount.m_value));
   }
 
   constexpr inline bool operator>(const amount_t &p_amount) const {
@@ -137,7 +138,7 @@ template <typename t_time> struct amount_t {
   }
 
 private:
-  int64_t m_value;
+  double m_value;
 };
 
 } // namespace gregorian

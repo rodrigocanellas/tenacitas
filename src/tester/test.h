@@ -164,7 +164,7 @@ private:
   int m_argc = {-1};
 
   /// \brief parameters passed to the \p test object
-  char **m_argv;
+  char **m_argv = {nullptr};
 
   bool m_options_parsed = {false};
 };

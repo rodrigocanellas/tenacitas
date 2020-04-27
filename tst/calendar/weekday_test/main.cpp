@@ -126,8 +126,8 @@ struct weekday_test {
     return true;
   }
 
-  static std::string name() { return "weekday_test"; }
-  static std::string desc() { return "Basic test for 'weekday' class"; }
+  static constexpr const char *name() { return "weekday_test"; }
+  static constexpr const char * desc() { return "Basic test for 'weekday' class"; }
 };
 
 int main(int argc, char **argv) {

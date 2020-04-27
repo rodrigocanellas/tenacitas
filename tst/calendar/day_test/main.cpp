@@ -83,8 +83,8 @@ struct day_test {
     }
     return true;
   }
-  static std::string name() { return "day_test"; }
-  static std::string desc() { return "Basic test for 'day' class"; }
+  static constexpr const char *name() { return "day_test"; }
+  static constexpr const char * desc() { return "Basic test for 'day' class"; }
 };
 
 int main(int argc, char **argv) {
