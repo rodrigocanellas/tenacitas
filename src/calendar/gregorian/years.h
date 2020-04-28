@@ -39,14 +39,12 @@ template <> constexpr inline hours convert<years, hours>(const years &p_years) {
 
 template <>
 constexpr inline minutes convert<years, minutes>(const years &p_years) {
-  return convert<hours, minutes>(convert<days, hours>(
-      convert<months, days>(convert<years, months>(p_years))));
+  return convert<hours, minutes>(convert<years, hours>(p_years));
 }
 
 template <>
 constexpr inline seconds convert<years, seconds>(const years &p_years) {
-  return convert<minutes, seconds>(convert<hours, minutes>(convert<days, hours>(
-      convert<months, days>(convert<years, months>(p_years)))));
+  return convert<minutes, seconds>(convert<years, minutes>((p_years)));
 }
 
 } // namespace gregorian

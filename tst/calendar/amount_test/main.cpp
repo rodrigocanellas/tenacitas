@@ -606,34 +606,34 @@ struct years_test {
       }
     }
 
-    //    {
-    //      seconds _seconds = convert<years, seconds>();
-    //      if (_seconds != seconds(2592000)) {
-    //        return false;
-    //      }
-    //    }
+    {
+      seconds _seconds = convert<years, seconds>();
+      if (_seconds != seconds(31536000)) {
+        return false;
+      }
+    }
 
-    //    {
-    //      seconds _seconds = convert<years, seconds>(years(4));
-    //      if (_seconds != seconds(10368000)) {
-    //        return false;
-    //      }
-    //    }
+    {
+      seconds _seconds = convert<years, seconds>(years(4));
+      if (_seconds != seconds(126144000)) {
+        return false;
+      }
+    }
 
-    //    {
-    //      seconds _seconds = convert<years, seconds>(years(1.5));
-    //      std::cerr << "How many seconds in 1.5 years? " << _seconds <<
-    //      std::endl; if (_seconds != seconds(3888000)) {
-    //        return false;
-    //      }
-    //    }
+    {
+      seconds _seconds = convert<years, seconds>(years(1.5));
+      std::cerr << "How many seconds in 1.5 years? " << _seconds << std::endl;
+      if (_seconds != seconds(47304000)) {
+        return false;
+      }
+    }
 
-    //    {
-    //      seconds _seconds = convert<years, seconds>(years(-3));
-    //      if (_seconds != seconds(-7776000)) {
-    //        return false;
-    //      }
-    //    }
+    {
+      seconds _seconds = convert<years, seconds>(years(-3));
+      if (_seconds != seconds(-94608000)) {
+        return false;
+      }
+    }
 
     return true;
   }
@@ -645,67 +645,8 @@ struct years_test {
   static constexpr const char *name() { return "years_test"; }
 };
 
-struct amount_test {
-  bool operator()() {
-
-    {
-      weeks _weeks;
-      if (_weeks != weeks(0)) {
-        return false;
-      }
-    }
-
-    {
-      weeks _weeks(8);
-      if (_weeks != weeks(8)) {
-        return false;
-      }
-    }
-
-    {
-      weeks _weeks(5);
-      _weeks += weeks(8);
-      if (_weeks != weeks(13)) {
-        return false;
-      }
-    }
-
-    {
-      weeks _weeks(9);
-      _weeks -= weeks(2);
-      if (_weeks != weeks(7)) {
-        return false;
-      }
-    }
-
-    {
-      weeks _weeks = weeks(9) + weeks(3);
-      if (_weeks != weeks(12)) {
-        return false;
-      }
-    }
-
-    {
-      days _days = days(3) + weeks(2);
-      if (_days != days(17)) {
-        return false;
-      }
-      std::cerr << "3 days + 2 weeks = " << _days << " days" << std::endl;
-    }
-
-    return true;
-  }
-
-  static constexpr const char *desc() {
-    return "Executes basic tests on 'weeks', a type of 'amount'";
-  }
-
-  static constexpr const char *name() { return "amount_test"; }
-};
-
 int main(int argc, char **argv) {
   tenacitas::tester::test _test(argc, argv);
-  _test.run<amount_test>();
   _test.run<minutes_test>();
   _test.run<hours_test>();
   _test.run<days_test>();
