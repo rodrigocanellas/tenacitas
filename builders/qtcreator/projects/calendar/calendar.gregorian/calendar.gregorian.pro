@@ -19,59 +19,13 @@ HEADERS += \
   $$code_src_dir/calendar/gregorian/weekday.h \
   $$code_src_dir/calendar/gregorian/week.h \
   $$code_src_dir/calendar/gregorian/amount.h \
-  $$code_src_dir/calendar/gregorian/seconds.h \
-  $$code_src_dir/calendar/gregorian/days.h \
-  $$code_src_dir/calendar/gregorian/hours.h \
-  $$code_src_dir/calendar/gregorian/minutes.h \
-  $$code_src_dir/calendar/gregorian/months.h \
-  $$code_src_dir/calendar/gregorian/weeks.h \
-  $$code_src_dir/calendar/gregorian/years.h \
-  $$code_src_dir/calendar/gregorian/convert.h
+  $$code_src_dir/calendar/gregorian/convert.h \
+  $$code_src_dir/calendar/gregorian/amounts.h
 
-#\
-
-
-
-
-
-
-#\
-
-#\
-
-#\
-
-
-
-
-
-
-
-
-#\
-
-#  $$code_src_dir/calendar/gregorian/seconds.h \
-#  $$code_src_dir/calendar/gregorian/days.h \
-#  $$code_src_dir/calendar/gregorian/hours.h \
-#  $$code_src_dir/calendar/gregorian/minutes.h \
-#  $$code_src_dir/calendar/gregorian/months.h \
-#  $$code_src_dir/calendar/gregorian/weekdays.h \
-#  $$code_src_dir/calendar/gregorian/years.h \
-
-
+#  $$code_src_dir/calendar/gregorian/timestamp.h \
 
 
 #  $$code_src_dir/calendar/gregorian/add.h \
-
-#\
-#  $$code_src_dir/calendar/gregorian/amount.h \
-#  $$code_src_dir/calendar/gregorian/seconds.h \
-#  $$code_src_dir/calendar/gregorian/days.h \
-#  $$code_src_dir/calendar/gregorian/hours.h \
-#  $$code_src_dir/calendar/gregorian/minutes.h \
-#  $$code_src_dir/calendar/gregorian/months.h \
-#  $$code_src_dir/calendar/gregorian/weekdays.h \
-#  $$code_src_dir/calendar/gregorian/years.h  \
 #  $$code_src_dir/calendar/gregorian/create_sequence.h \
 #  $$code_src_dir/calendar/gregorian/daily_repetition.h \
 #  $$code_src_dir/calendar/gregorian/ending_after.h \
@@ -80,7 +34,7 @@ HEADERS += \
 #  $$code_src_dir/calendar/gregorian/monthly_repetition.h \
 #  $$code_src_dir/calendar/gregorian/weekly_repetition.h \
 #  $$code_src_dir/calendar/gregorian/yearly_repetition.h \
-#  $$code_src_dir/calendar/gregorian/timestamp.h \
+
 
 
 SOURCES += \
@@ -91,13 +45,6 @@ SOURCES += \
   $$code_src_dir/calendar/gregorian/month.cpp \
   $$code_src_dir/calendar/gregorian/weekday.cpp
 
-
 #\
-
-
-
-#  \
-#  \
-
 #  $$code_src_dir/calendar/gregorian/timestamp.cpp
 

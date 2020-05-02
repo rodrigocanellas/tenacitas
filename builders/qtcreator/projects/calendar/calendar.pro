@@ -8,3 +8,4 @@ SUBDIRS += \
 #    calendar.unix \
 
 CONFIG += ordered
+
