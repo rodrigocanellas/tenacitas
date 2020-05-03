@@ -26,7 +26,7 @@ struct second {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid second value");
     }
-    m_value = static_cast<decltype(m_value)>(std::move(p_value));
+    m_value = static_cast<decltype(m_value)>(p_value);
   }
 
   ///
@@ -158,11 +158,13 @@ struct second {
     return m_value != p_second.m_value;
   }
 
+  constexpr auto value() const { return m_value; }
+
 private:
   ///
   /// \brief m_value
   ///
-  uint8_t m_value;
+  uint16_t m_value;
 };
 
 ///

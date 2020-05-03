@@ -5,6 +5,7 @@
 #include <string>
 
 #include <calendar/gregorian/amounts.h>
+#include <calendar/gregorian/day.h>
 #include <calendar/gregorian/month.h>
 #include <calendar/gregorian/year.h>
 #include <tester/test.h>
@@ -426,6 +427,14 @@ struct days_test {
         return false;
       }
       cerr << "-7 days = " << _seconds << " seconds" << endl;
+    }
+
+    {
+      days _days(day(18));
+      if (_days != days(18)) {
+        cerr << "days should be 18, but it is " << _days << " days";
+        return false;
+      }
     }
 
     return true;

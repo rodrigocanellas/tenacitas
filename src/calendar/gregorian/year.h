@@ -24,7 +24,7 @@ struct year {
   ///
   template <typename t_int>
   inline explicit constexpr year(t_int p_value)
-      : m_value(static_cast<decltype(m_value)>(std::move(p_value))) {}
+      : m_value(static_cast<decltype(m_value)>(p_value)) {}
 
   ///
   /// \brief operator <<
@@ -161,6 +161,8 @@ struct year {
   //           month::nov.get_seconds(month::nov, p_year) +
   //           month::dec.get_seconds(month::dec, p_year);
   //  }
+
+  constexpr uint8_t value() const { return m_value; }
 
 private:
   ///

@@ -16,34 +16,28 @@
 #include <iostream>
 #include <tuple>
 
+#include <calendar/gregorian/amounts.h>
 #include <calendar/gregorian/day.h>
-#include <calendar/gregorian/days.h>
 #include <calendar/gregorian/hour.h>
-#include <calendar/gregorian/hours.h>
 #include <calendar/gregorian/minute.h>
-#include <calendar/gregorian/minutes.h>
 #include <calendar/gregorian/month.h>
-#include <calendar/gregorian/months.h>
 #include <calendar/gregorian/second.h>
-#include <calendar/gregorian/seconds.h>
 #include <calendar/gregorian/weekday.h>
-#include <calendar/gregorian/weeks.h>
 #include <calendar/gregorian/year.h>
-#include <calendar/gregorian/years.h>
 
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
 ///
-/// \brief specialization of \p timestamp template class, with precision up to
-/// \p second
+/// \brief The timestamp struct represents a certain moment in time, with
+/// seconds precision
 ///
 struct timestamp {
   ///
   /// \brief timestamp default constructor creates a timestamp for now
   ///
-  explicit timestamp();
+  timestamp();
 
   //  ///
   //  /// \brief timestamp creates a timestamp by informing day, month, year,
@@ -86,52 +80,7 @@ struct timestamp {
   /// \param p_ts
   /// \return
   ///
-  friend std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts) {
-    p_out << "["
-
-          << std::setw(2) << std::setfill('0') << p_ts.get_day() << "/"
-
-          << std::setw(2) << std::setfill('0') << p_ts.get_month() << "/"
-
-          << std::setw(4) << std::setfill('0') << p_ts.get_year()
-          << ","
-
-          //          << p_ts.get_weekday() << ","
-
-          << std::setw(2) << std::setfill('0') << p_ts.get_hour() << ":"
-
-          << std::setw(2) << std::setfill('0') << p_ts.get_minute() << ":"
-
-          << std::setw(2) << std::setfill('0') << p_ts.get_second()
-
-          << "]";
-
-    //    p_out << "{ "
-
-    //          << "\"day\" : \"" << std::setw(2) << std::setfill('0')
-    //          << p_ts.get_day() << "\", "
-
-    //          << "\"month\" : \"" << std::setw(2) << std::setfill('0')
-    //          << p_ts.get_month() << "\", "
-
-    //          << "\"year\" : \"" << std::setw(4) << std::setfill('0')
-    //          << p_ts.get_year() << "\", "
-
-    //          << "\"weekday\" : \"" << p_ts.get_weekday() << "\", "
-
-    //          << "\"hour\" : \"" << std::setw(2) << std::setfill('0')
-    //          << p_ts.get_hour() << "\", "
-
-    //          << "\"minute\" : \"" << std::setw(2) << std::setfill('0')
-    //          << p_ts.get_minute() << "\", "
-
-    //          << "\"second\" : \"" << std::setw(2) << std::setfill('0')
-    //          << p_ts.get_second() << "\" "
-
-    //          << " }";
-
-    return p_out;
-  }
+  friend std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts);
 
   //  ///
   //  /// \brief set_day
@@ -398,14 +347,10 @@ struct timestamp {
   //  timestamp operator-(years p_years);
 
 private:
+  constexpr void dmy2days(year p_year, month p_month, day p_day);
+
   //  template <class Int>
-  //  constexpr Int days_from_civil(Int y, unsigned m, unsigned d) noexcept {
-  //    static_assert(
-  //        std::numeric_limits<unsigned>::digits >= 18,
-  //        "This algorithm has not been ported to a 16 bit unsigned integer");
-  //    static_assert(
-  //        std::numeric_limits<Int>::digits >= 20,
-  //        "This algorithm has not been ported to a 16 bit signed integer");
+  //  constexpr Int days_from_civil1(Int y, unsigned m, unsigned d) noexcept {
   //    y -= m <= 2;
   //    const Int era = (y >= 0 ? y : y - 399) / 400;
   //    const unsigned yoe = static_cast<unsigned>(y - era * 400); // [0, 399]
@@ -414,17 +359,6 @@ private:
   //    const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0,
   //    146096] return era * 146097 + static_cast<Int>(doe) - 719468;
   //  }
-
-  template <class Int>
-  constexpr Int days_from_civil(Int y, unsigned m, unsigned d) noexcept {
-    y -= m <= 2;
-    const Int era = (y >= 0 ? y : y - 399) / 400;
-    const unsigned yoe = static_cast<unsigned>(y - era * 400); // [0, 399]
-    const unsigned doy =
-        (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;         // [0, 365]
-    const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0, 146096]
-    return era * 146097 + static_cast<Int>(doe) - 719468;
-  }
 
   //  template <class Int>
   //  constexpr std::tuple<Int, unsigned, unsigned>
@@ -448,34 +382,16 @@ private:
   //    [1, 12] return std::tuple<Int, unsigned, unsigned>(y + (m <= 2), m, d);
   //  }
 
-  //  constexpr void ymd2n(days p_days) noexcept {
-  //    static_assert(
-  //        std::numeric_limits<unsigned>::digits >= 18,
-  //        "This algorithm has not been ported to a 16 bit unsigned integer");
-  //    static_assert(
-  //        std::numeric_limits<uint64_t>::digits >= 20,
-  //        "This algorithm has not been ported to a 16 bit signed integer");
-  //    p_days += days(719468);
-  //    const int64_t x = p_days.get<int64_t>();
-  //    const uint64_t era = (x >= 0 ? x : x - 146096) / 146097;
-  //    const unsigned doe = static_cast<unsigned>(x - era * 146097); // [0,
-  //    146096] const unsigned yoe =
-  //        (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365; // [0, 399]
-  //    const uint64_t y = static_cast<uint64_t>(yoe) + era * 400;
-  //    const unsigned doy = doe - (365 * yoe + yoe / 4 - yoe / 100); // [0,
-  //    365] const unsigned mp = (5 * doy + 2) / 153;                      //
-  //    [0, 11] const unsigned d = doy - (153 * mp + 2) / 5 + 1;              //
-  //    [1, 31] const unsigned m = mp + (mp < 10 ? 3 : -9);                   //
-  //    [1, 12] m_year = year(y + (m <= 2)); m_month = month::create(m); m_day =
-  //    day::create(d);
-  //  }
+  constexpr void days2mdy();
+
+  constexpr void secs2hms();
 
 private:
   /// \brief amount of days since epoch
   days m_days = days(0);
 
   /// \brief amount of seconds in the day
-  uint32_t m_secs = 0;
+  seconds m_secs = 0;
 
   year m_year = year(1970);
   month m_month = month::jan;

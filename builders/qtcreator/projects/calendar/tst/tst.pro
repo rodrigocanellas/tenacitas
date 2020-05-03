@@ -9,7 +9,8 @@ SUBDIRS += \
  month_test \
  year_test \
  weekday_test \
- amount_test
+ amount_test \
+ timestamp_test
 
 #\
 # amounts_conversions

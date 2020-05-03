@@ -20,9 +20,8 @@ HEADERS += \
   $$code_src_dir/calendar/gregorian/week.h \
   $$code_src_dir/calendar/gregorian/amount.h \
   $$code_src_dir/calendar/gregorian/convert.h \
-  $$code_src_dir/calendar/gregorian/amounts.h
-
-#  $$code_src_dir/calendar/gregorian/timestamp.h \
+  $$code_src_dir/calendar/gregorian/amounts.h  \
+  $$code_src_dir/calendar/gregorian/timestamp.h
 
 
 #  $$code_src_dir/calendar/gregorian/add.h \
@@ -43,8 +42,6 @@ SOURCES += \
   $$code_src_dir/calendar/gregorian/hour.cpp \
   $$code_src_dir/calendar/gregorian/day.cpp \
   $$code_src_dir/calendar/gregorian/month.cpp \
-  $$code_src_dir/calendar/gregorian/weekday.cpp
-
-#\
-#  $$code_src_dir/calendar/gregorian/timestamp.cpp
+  $$code_src_dir/calendar/gregorian/weekday.cpp \
+  $$code_src_dir/calendar/gregorian/timestamp.cpp
 

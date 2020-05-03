@@ -26,72 +26,35 @@ const month month::oct(10);
 const month month::nov(11);
 const month month::dec(12);
 
-// days
-// month::get_days(const month& p_month, const year& p_year)
-//{
-//  if (p_month == month::jan) {
-//    return days(31);
-//  }
+std::ostream &operator<<(std::ostream &p_out, const month &p_month) {
 
-//  if (p_month == month::feb) {
-//    return (p_year.is_leap() ? days(29) : days(28));
-//  }
-
-//  if (p_month == month::mar) {
-//    return days(31);
-//  }
-
-//  if (p_month == month::apr) {
-//    return days(30);
-//  }
-
-//  if (p_month == month::may) {
-//    return days(31);
-//  }
-//  if (p_month == month::jun) {
-//    return days(30);
-//  }
-
-//  if (p_month == month::jul) {
-//    return days(31);
-//  }
-
-//  if (p_month == month::ago) {
-//    return days(31);
-//  }
-
-//  if (p_month == month::sep) {
-//    return days(30);
-//  }
-
-//  if (p_month == month::oct) {
-//    return days(31);
-//  }
-
-//  if (p_month == month::nov) {
-//    return days(30);
-//  }
-
-//  return days(31);
-//}
-
-// hours
-// month::get_hours(const month& p_month, const year& p_year)
-//{
-//  return day::get_hours() * get_days(p_month, p_year);
-//}
-
-// minutes
-// month::get_minutes(const month& p_month, const year& p_year)
-//{
-//  return hour::get_minutes() * get_hours(p_month, p_year);
-//}
-
-// seconds
-// month::get_seconds(const month& p_month, const year& p_year)
-//{
-//  return minute::get_seconds() * get_minutes(p_month, p_year);
-//}
+  if (p_month == month::jan) {
+    p_out << "jan";
+  } else if (p_month == month::feb) {
+    p_out << "feb";
+  } else if (p_month == month::mar) {
+    p_out << "mar";
+  } else if (p_month == month::apr) {
+    p_out << "apr";
+  } else if (p_month == month::may) {
+    p_out << "may";
+  } else if (p_month == month::jun) {
+    p_out << "jun";
+  } else if (p_month == month::jul) {
+    p_out << "jul";
+  } else if (p_month == month::ago) {
+    p_out << "ago";
+  } else if (p_month == month::sep) {
+    p_out << "sep";
+  } else if (p_month == month::oct) {
+    p_out << "oct";
+  } else if (p_month == month::nov) {
+    p_out << "nov";
+  } else if (p_month == month::dec) {
+    p_out << "dec";
+  }
+  return p_out;
+}
 
 } // namespace gregorian
 } // namespace calendar

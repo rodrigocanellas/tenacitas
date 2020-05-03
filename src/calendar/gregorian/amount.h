@@ -52,6 +52,8 @@ template <typename t_unit> struct amount_t {
   inline constexpr amount_t(t_other_amount p_amount)
       : amount_t(convert<t_other_amount, amount_t>(p_amount)) {}
 
+  inline constexpr amount_t(t_unit p_unit) : m_value(p_unit.value()) {}
+
   friend std::ostream &operator<<(std::ostream &p_out, const amount_t &p_mm) {
     p_out << p_mm.m_value;
     return p_out;

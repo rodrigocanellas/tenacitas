@@ -22,12 +22,12 @@ struct month {
   /// \exception std::runtime_error if \p p_value is not a valid value to create
   /// a \p month object
   ///
-  template <typename t_int> inline explicit month(t_int p_value) {
+  template <typename t_int> inline explicit constexpr month(t_int p_value) {
     if ((p_value > 12) || (p_value <= 0)) {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid month value");
     }
-    m_value = static_cast<decltype(m_value)>(std::move(p_value));
+    m_value = static_cast<decltype(m_value)>(p_value);
   }
 
   ///
@@ -36,36 +36,7 @@ struct month {
   /// \param p_month
   /// \return
   ///
-  inline friend std::ostream &operator<<(std::ostream &p_out,
-                                         const month &p_month) {
-
-    if (p_month == month::jan) {
-      p_out << "jan";
-    } else if (p_month == month::feb) {
-      p_out << "feb";
-    } else if (p_month == month::mar) {
-      p_out << "mar";
-    } else if (p_month == month::apr) {
-      p_out << "apr";
-    } else if (p_month == month::may) {
-      p_out << "may";
-    } else if (p_month == month::jun) {
-      p_out << "jun";
-    } else if (p_month == month::jul) {
-      p_out << "jul";
-    } else if (p_month == month::ago) {
-      p_out << "ago";
-    } else if (p_month == month::sep) {
-      p_out << "sep";
-    } else if (p_month == month::oct) {
-      p_out << "oct";
-    } else if (p_month == month::nov) {
-      p_out << "nov";
-    } else if (p_month == month::dec) {
-      p_out << "dec";
-    }
-    return p_out;
-  }
+  friend std::ostream &operator<<(std::ostream &p_out, const month &p_month);
 
   /// \brief valid month values
 
@@ -135,6 +106,8 @@ struct month {
   inline constexpr bool operator!=(const month &p_month) const {
     return m_value != p_month.m_value;
   }
+
+  constexpr uint8_t value() const { return m_value; }
 
 private:
   ///

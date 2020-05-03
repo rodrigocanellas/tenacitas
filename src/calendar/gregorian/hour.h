@@ -123,6 +123,8 @@ struct hour {
     return m_value != p_hour.m_value;
   }
 
+  constexpr uint8_t value() const { return m_value; }
+
 private:
   ///
   /// \brief m_value

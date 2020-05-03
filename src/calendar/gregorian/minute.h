@@ -26,7 +26,7 @@ struct minute {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid day value");
     }
-    m_value = static_cast<decltype(m_value)>(std::move(p_value));
+    m_value = static_cast<decltype(m_value)>(p_value);
   }
 
   ///
@@ -157,6 +157,8 @@ struct minute {
   constexpr inline bool operator!=(const minute &p_minute) const {
     return m_value != p_minute.m_value;
   }
+
+  constexpr uint8_t value() const { return m_value; }
 
 private:
   ///
