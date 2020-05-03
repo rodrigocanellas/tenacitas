@@ -52,9 +52,8 @@ struct seconds_test {
       weeks _weeks(seconds(1));
 
       if (_weeks != weeks(1 / static_cast<double>(60 * 60 * 24 * 7))) {
-        cerr << setprecision(20) << "weeks should be "
-             << 1 / static_cast<double>(60 * 60 * 24 * 7) << ", but it is "
-             << _weeks << endl;
+        cerr << "weeks should be " << 1 / static_cast<double>(60 * 60 * 24 * 7)
+             << ", but it is " << _weeks << endl;
         return false;
       }
       cerr << "1 sec = " << _weeks << " weeks" << endl;
@@ -64,7 +63,7 @@ struct seconds_test {
       months _months(seconds(1));
 
       if (_months != months(1 / static_cast<double>(60 * 60 * 24 * 365 / 12))) {
-        cerr << setprecision(20) << "months should be "
+        cerr << "months should be "
              << 1 / static_cast<double>(60 * 60 * 24 * 365 / 12)
              << ", but it is " << _months << endl;
         return false;
@@ -76,7 +75,7 @@ struct seconds_test {
       years _years(seconds(1));
 
       if (_years != years(1 / static_cast<double>(60 * 60 * 24 * 365))) {
-        cerr << setprecision(20) << "years should be "
+        cerr << "years should be "
              << 1 / static_cast<double>(60 * 60 * 24 * 365) << ", but it is "
              << _years << endl;
         return false;
@@ -150,7 +149,7 @@ struct minutes_test {
         return false;
       }
 
-      cerr << " 1min = " << _years << " years" << endl;
+      cerr << "1min = " << _years << " years" << endl;
     }
 
     {
@@ -312,557 +311,443 @@ struct hours_test {
   static constexpr const char *name() { return "hours_test"; }
 };
 
-// struct days_test {
-//  bool operator()() {
-
-//    {
-//      hours _hours = convert<days, hours>();
-//      if (_hours != hours(24)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<days, hours>(days(4));
-//      if (_hours != hours(96)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<days, hours>(days(1.5));
-//      if (_hours != hours(36)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<days, hours>(days(-3));
-//      if (_hours != hours(-72)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<days, minutes>();
-//      if (_minutes != minutes(1440)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<days, minutes>(days(4));
-//      if (_minutes != minutes(5760)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<days, minutes>(days(1.5));
-//      if (_minutes != minutes(2160)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<days, minutes>(days(-3));
-//      if (_minutes != minutes(-4320)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<days, seconds>();
-//      if (_seconds != seconds(86400)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<days, seconds>(days(4));
-//      if (_seconds != seconds(345600)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<days, seconds>(days(1.5));
-//      if (_seconds != seconds(129600)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<days, seconds>(days(-3));
-//      if (_seconds != seconds(-259200)) {
-//        return false;
-//      }
-//    }
-
-//    return true;
-//  }
-
-//  static constexpr const char *desc() {
-//    return "Tests conversions from 'days'";
-//  }
-
-//  static constexpr const char *name() { return "days_test"; }
-//};
-
-// struct weeks_test {
-//  bool operator()() {
-
-//    {
-//      days _days = convert<weeks, days>();
-//      if (_days != days(7)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<weeks, days>(weeks(4));
-//      if (_days != days(28)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<weeks, days>(weeks(1.5));
-//      std::cerr << "How many days in 1.5 weeks? " << _days << std::endl;
-//      if (_days != days(10.5)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<weeks, days>(weeks(-3));
-//      if (_days != days(-21)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<weeks, hours>();
-//      if (_hours != hours(168)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<weeks, hours>(weeks(4));
-//      if (_hours != hours(672)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<weeks, hours>(weeks(1.5));
-//      std::cerr << "How many hours in 1.5 weeks? " << _hours << std::endl;
-//      if (_hours != hours(252)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<weeks, hours>(weeks(-3));
-//      if (_hours != hours(-504)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<weeks, minutes>();
-//      if (_minutes != minutes(10080)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<weeks, minutes>(weeks(4));
-//      if (_minutes != minutes(40320)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<weeks, minutes>(weeks(1.5));
-//      std::cerr << "How many minutes in 1.5 weeks? " << _minutes << std::endl;
-//      if (_minutes != minutes(15120)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<weeks, minutes>(weeks(-3));
-//      if (_minutes != minutes(-30240)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<weeks, seconds>();
-//      if (_seconds != seconds(604800)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<weeks, seconds>(weeks(4));
-//      if (_seconds != seconds(2419200)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<weeks, seconds>(weeks(1.5));
-//      std::cerr << "How many seconds in 1.5 weeks? " << _seconds << std::endl;
-//      if (_seconds != seconds(907200)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<weeks, seconds>(weeks(-3));
-//      if (_seconds != seconds(-1814400)) {
-//        return false;
-//      }
-//    }
-
-//    return true;
-//  }
-
-//  static constexpr const char *desc() {
-//    return "Tests conversions from 'weeks'";
-//  }
-
-//  static constexpr const char *name() { return "weeks_test"; }
-//};
-
-// struct months_test {
-
-//  bool operator()() {
-
-//    {
-//      days _days = convert<months, days>();
-//      if (_days != days(30)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<months, days>(months(4));
-//      if (_days != days(120)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<months, days>(months(1.5));
-//      std::cerr << "How many days in 1.5 months? " << _days << std::endl;
-//      if (_days != days(45)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<months, days>(months(-3));
-//      if (_days != days(-90)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<months, hours>();
-//      if (_hours != hours(720)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<months, hours>(months(4));
-//      if (_hours != hours(2880)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<months, hours>(months(1.5));
-//      std::cerr << "How many hours in 1.5 months? " << _hours << std::endl;
-//      if (_hours != hours(1080)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<months, hours>(months(-3));
-//      if (_hours != hours(-2160)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<months, minutes>();
-//      if (_minutes != minutes(43200)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<months, minutes>(months(4));
-//      if (_minutes != minutes(172800)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<months, minutes>(months(1.5));
-//      std::cerr << "How many minutes in 1.5 months? " << _minutes <<
-//      std::endl; if (_minutes != minutes(64800)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<months, minutes>(months(-3));
-//      if (_minutes != minutes(-129600)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<months, seconds>();
-//      if (_seconds != seconds(2592000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<months, seconds>(months(4));
-//      if (_seconds != seconds(10368000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<months, seconds>(months(1.5));
-//      std::cerr << "How many seconds in 1.5 months? " << _seconds <<
-//      std::endl; if (_seconds != seconds(3888000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<months, seconds>(months(-3));
-//      if (_seconds != seconds(-7776000)) {
-//        return false;
-//      }
-//    }
-
-//    return true;
-//  }
-
-//  static constexpr const char *desc() {
-//    return "Tests conversions from 'months'";
-//  }
-
-//  static constexpr const char *name() { return "months_test"; }
-//};
-
-// struct years_test {
-
-//  bool operator()() {
-
-//    {
-//      months _months = convert<years, months>();
-//      if (_months != months(12)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      months _months = convert<years, months>(years(4));
-//      if (_months != months(48)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      months _months = convert<years, months>(years(1.5));
-//      std::cerr << "How many months in 1.5 years? " << _months << std::endl;
-//      if (_months != months(18)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      months _months = convert<years, months>(years(-3));
-//      if (_months != months(-36)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      weeks _weeks = convert<years, weeks>();
-//      if (_weeks != weeks(52)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      weeks _weeks = convert<years, weeks>(years(4));
-//      if (_weeks != weeks(208)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      weeks _weeks = convert<years, weeks>(years(1.5));
-//      std::cerr << "How many weeks in 1.5 years? " << _weeks << std::endl;
-//      if (_weeks != weeks(78)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      weeks _weeks = convert<years, weeks>(years(-3));
-//      if (_weeks != weeks(-156)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<years, days>();
-//      if (_days != days(365)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<years, days>(years(4));
-//      if (_days != days(1460)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<years, days>(years(1.5));
-//      std::cerr << "How many days in 1.5 years? " << _days << std::endl;
-//      if (_days != days(547.5)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      days _days = convert<years, days>(years(-3));
-//      if (_days != days(-1095)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<years, hours>();
-//      if (_hours != hours(8760)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<years, hours>(years(4));
-//      if (_hours != hours(35040)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<years, hours>(years(1.5));
-//      std::cerr << "How many hours in 1.5 years? " << _hours << std::endl;
-//      if (_hours != hours(13140)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      hours _hours = convert<years, hours>(years(-3));
-//      if (_hours != hours(-26280)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<years, minutes>();
-//      if (_minutes != minutes(525600)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<years, minutes>(years(4));
-//      if (_minutes != minutes(2102400)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<years, minutes>(years(1.5));
-//      std::cerr << "How many minutes in 1.5 years? " << _minutes << std::endl;
-//      if (_minutes != minutes(788400)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      minutes _minutes = convert<years, minutes>(years(-3));
-//      if (_minutes != minutes(-1576800)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<years, seconds>();
-//      if (_seconds != seconds(31536000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<years, seconds>(years(4));
-//      if (_seconds != seconds(126144000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<years, seconds>(years(1.5));
-//      std::cerr << "How many seconds in 1.5 years? " << _seconds << std::endl;
-//      if (_seconds != seconds(47304000)) {
-//        return false;
-//      }
-//    }
-
-//    {
-//      seconds _seconds = convert<years, seconds>(years(-3));
-//      if (_seconds != seconds(-94608000)) {
-//        return false;
-//      }
-//    }
-
-//    return true;
-//  }
-
-//  static constexpr const char *desc() {
-//    return "Tests conversions from 'years'";
-//  }
-
-//  static constexpr const char *name() { return "years_test"; }
-//};
+struct days_test {
+  bool operator()() {
+
+    {
+      weeks _weeks(days(1));
+      if (_weeks != weeks(1 / static_cast<double>(7))) {
+        cerr << "weeks should be " << 1 / static_cast<double>(7)
+             << ",  but it is " << _weeks << endl;
+        return false;
+      }
+      cerr << "1 day = " << _weeks << " weeks" << endl;
+    }
+
+    {
+
+      months _months(days(1));
+      if (_months != months(1 / (365 / static_cast<double>(12)))) {
+        cerr << "months should be " << 1 / (365 / static_cast<double>(12))
+             << ",  but it is " << _months << endl;
+        return false;
+      }
+      cerr << "1 day = " << _months << " months" << endl;
+    }
+
+    {
+
+      years _years(days(1));
+      if (_years != years(1 / static_cast<double>(365))) {
+        cerr << "years should be " << 1 / static_cast<double>(365)
+             << ",  but it is " << _years << endl;
+        return false;
+      }
+      cerr << "1 day = " << _years << " years" << endl;
+    }
+
+    {
+      minutes _minutes(days(1));
+      if (_minutes != minutes(24 * 60)) {
+        cerr << "minutes should be " << 24 * 60 << ", but it is " << _minutes
+             << endl;
+
+        return false;
+      }
+      cerr << "1 day = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      minutes _minutes = days(4);
+      if (_minutes != minutes(4 * 24 * 60)) {
+        cerr << "minutes should be " << 4 * 24 * 60 << ", but it is "
+             << _minutes << endl;
+        return false;
+      }
+      cerr << "4 days = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      minutes _minutes = days(1.5);
+      if (_minutes != minutes(1.5 * static_cast<double>(24 * 60))) {
+        cerr << "minutes should be " << 1.5 * 24 * 60 << ", but it is "
+             << _minutes << endl;
+        return false;
+      }
+      cerr << "1.5 days = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      minutes _minutes = days(-7);
+      if (_minutes != minutes(-7 * 24 * 60)) {
+        cerr << "minutes should be " << -7 * 24 * 60 << ", but it is "
+             << _minutes << endl;
+        return false;
+      }
+      cerr << "-7 days = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      seconds _seconds(days(1));
+      if (_seconds != seconds(24 * 60 * 60)) {
+        cerr << "seconds should be " << 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+
+        return false;
+      }
+      cerr << "1 day = " << _seconds << " seconds" << endl;
+    }
+
+    {
+      seconds _seconds = days(4);
+      if (_seconds != seconds(4 * 24 * 60 * 60)) {
+        cerr << "seconds should be " << 4 * 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+        return false;
+      }
+      cerr << "4 days = " << _seconds << " seconds" << endl;
+    }
+
+    {
+      seconds _seconds = days(1.5);
+      if (_seconds != seconds(1.5 * static_cast<double>(24 * 60 * 60))) {
+        cerr << "seconds should be " << 1.5 * 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+        return false;
+      }
+      cerr << "1.5 days = " << _seconds << " seconds" << endl;
+    }
+
+    {
+      seconds _seconds = days(-7);
+      if (_seconds != seconds(-7 * 24 * 60 * 60)) {
+        cerr << "seconds should be " << -7 * 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+        return false;
+      }
+      cerr << "-7 days = " << _seconds << " seconds" << endl;
+    }
+
+    return true;
+  }
+
+  static constexpr const char *desc() {
+    return "Tests conversions from 'days'";
+  }
+
+  static constexpr const char *name() { return "days_test"; }
+};
+
+struct weeks_test {
+  bool operator()() {
+
+    {
+      months _months(weeks(1));
+      if (_months != months(1 / ((365 / static_cast<double>(12)) / 7))) {
+        cerr << "months should be "
+             << (1 / ((365 / static_cast<double>(12)) / 7)) << ", but it is "
+             << _months << endl;
+      }
+      cerr << "1 weeks = " << _months << " months " << endl;
+    }
+
+    {
+      years _years(weeks(1));
+      if (_years != years(1 / (365 / static_cast<double>(7)))) {
+        cerr << "years should be " << (1 / (365 / static_cast<double>(7)))
+             << ", but it is " << _years << endl;
+      }
+      cerr << "1 weeks = " << _years << " years " << endl;
+    }
+
+    {
+      days _days(weeks(1));
+      if (_days != days(7)) {
+        cerr << "days should be " << 7 << ", but it is " << _days << endl;
+
+        return false;
+      }
+      cerr << "1 week = " << _days << " days" << endl;
+    }
+
+    {
+      days _days = weeks(4);
+      if (_days != days(4 * 7)) {
+        cerr << "days should be " << 4 * 7 << ", but it is " << _days << endl;
+        return false;
+      }
+      cerr << "4 weeks  = " << _days << " days" << endl;
+    }
+
+    {
+      days _days = weeks(1.5);
+      if (_days != days(1.5 * static_cast<double>(7))) {
+        cerr << "days should be " << 1.5 * static_cast<double>(7)
+             << ", but it is " << _days << endl;
+        return false;
+      }
+      cerr << "1.5 weeks  = " << _days << " days" << endl;
+    }
+
+    {
+      days _days = weeks(-7);
+      if (_days != days(-7 * 7)) {
+        cerr << "days should be " << -7 * 7 << ", but it is " << _days << endl;
+        return false;
+      }
+      cerr << "-7 weeks = " << _days << " days" << endl;
+    }
+
+    {
+      hours _hours(weeks(1));
+      if (_hours != hours(7 * 24)) {
+        cerr << "hours should be " << 7 * 24 << ", but it is " << _hours
+             << endl;
+
+        return false;
+      }
+      cerr << "1 week = " << _hours << " hours" << endl;
+    }
+
+    {
+      hours _hours = weeks(4);
+      if (_hours != hours(4 * 7 * 24)) {
+        cerr << "hours should be " << 4 * 7 * 24 << ", but it is " << _hours
+             << endl;
+        return false;
+      }
+      cerr << "4 weeks  = " << _hours << " hours" << endl;
+    }
+
+    {
+      hours _hours = weeks(1.5);
+      if (_hours != hours(1.5 * static_cast<double>(7) * 24)) {
+        cerr << "hours should be " << 1.5 * static_cast<double>(7) * 24
+             << ", but it is " << _hours << endl;
+        return false;
+      }
+      cerr << "1.5 weeks  = " << _hours << " hours" << endl;
+    }
+
+    {
+      hours _hours = weeks(-7);
+      if (_hours != hours(static_cast<double>(7) * 24 * -7)) {
+        cerr << "hours should be " << -7 * static_cast<double>(7) * 24
+             << ", but it is " << _hours << endl;
+        return false;
+      }
+      cerr << "-7 weeks = " << _hours << " hours" << endl;
+    }
+
+    {
+      minutes _minutes(weeks(1));
+      if (_minutes != minutes(7 * 24 * 60)) {
+        cerr << "minutes should be " << 7 * 24 * 60 << ", but it is "
+             << _minutes << endl;
+
+        return false;
+      }
+      cerr << "1 week = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      seconds _seconds(weeks(1));
+      if (_seconds != seconds(7 * 24 * 60 * 60)) {
+        cerr << "seconds should be " << 7 * 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+
+        return false;
+      }
+      cerr << "1 week = " << _seconds << " seconds" << endl;
+    }
+
+    return true;
+  }
+
+  static constexpr const char *desc() {
+    return "Tests conversions from 'weeks'";
+  }
+
+  static constexpr const char *name() { return "weeks_test"; }
+};
+
+struct months_test {
+
+  bool operator()() {
+
+    {
+      years _years(months(1));
+      if (_years != years(1 / static_cast<double>(12))) {
+        cerr << "years should be " << 1 / static_cast<double>(12)
+             << ", but it is " << _years << endl;
+        return false;
+      }
+      cerr << "1 month = " << _years << " years" << endl;
+    }
+
+    {
+      weeks _weeks(months(1));
+      if (_weeks != weeks(1 * (365 / static_cast<double>(12)) / 7)) {
+        cerr << "weeks should be " << (1 * (365 / static_cast<double>(12)) / 7)
+             << ", but it is " << _weeks << endl;
+        return false;
+      }
+      cerr << "1 month = " << _weeks << " weeks" << endl;
+    }
+
+    {
+      days _days(months(1));
+      if (_days != days(1 * (365 / static_cast<double>(12)))) {
+        cerr << "days should be " << (1 * (365 / static_cast<double>(12)))
+             << ", but it is " << _days << endl;
+        return false;
+      }
+      cerr << "1 month = " << _days << " days" << endl;
+    }
+
+    {
+      hours _hours(months(1));
+      if (_hours != hours(1 * (365 / static_cast<double>(12)) * 24)) {
+        cerr << "hours should be " << (1 * (365 / static_cast<double>(12)) * 24)
+             << ", but it is " << _hours << endl;
+        return false;
+      }
+      cerr << "1 month = " << _hours << " hours" << endl;
+    }
+
+    {
+      hours _hours(months(22));
+      if (_hours != hours(16060)) {
+        cerr << "hours should be " << 16060 << ", but it is " << _hours << endl;
+        return false;
+      }
+      cerr << "1 month = " << _hours << " hours" << endl;
+    }
+
+    {
+      minutes _minutes(months(1));
+      if (_minutes != minutes(60 * 24 * (365 / static_cast<double>(12)))) {
+        cerr << "minutes should be "
+             << (60 * 24 * (365 / static_cast<double>(12))) << ", but it is "
+             << _minutes << endl;
+        return false;
+      }
+      cerr << "1 month = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      seconds _seconds(months(1));
+      if (_seconds != seconds(60 * 60 * 24 * (365 / static_cast<double>(12)))) {
+        cerr << "seconds should be "
+             << (60 * 60 * 24 * (365 / static_cast<double>(12)))
+             << ", but it is " << _seconds << endl;
+        return false;
+      }
+      cerr << "1 month = " << _seconds << " seconds" << endl;
+    }
+
+    {
+      minutes _minutes(months(2.5));
+      if (_minutes !=
+          minutes(2.5 * 60 * 24 * (365 / static_cast<double>(12)))) {
+        cerr << "minutes should be "
+             << (2.5 * 60 * 24 * (365 / static_cast<double>(12)))
+             << ", but it is " << _minutes << endl;
+        return false;
+      }
+      cerr << "2.5 months = " << _minutes << " minutes" << endl;
+    }
+
+    return true;
+  }
+
+  static constexpr const char *desc() {
+    return "Tests conversions from 'months'";
+  }
+
+  static constexpr const char *name() { return "months_test"; }
+};
+
+struct years_test {
+
+  bool operator()() {
+
+    {
+      months _months(years(1));
+      if (_months != months(12)) {
+        cerr << "months should be 12, but it is " << _months << endl;
+        return false;
+      }
+      cerr << "1 year = " << _months << " months" << endl;
+    }
+
+    {
+      weeks _weeks(years(1));
+      if (_weeks != weeks((365 / static_cast<double>(7)))) {
+        cerr << "weeks should be " << (365 / static_cast<double>(7))
+             << ", but it is " << _weeks << endl;
+        return false;
+      }
+      cerr << "1 year = " << _weeks << " weeks" << endl;
+    }
+
+    {
+      days _days(years(1));
+      if (_days != days(365)) {
+        cerr << "days should be " << 365 << ", but it is " << _days << endl;
+        return false;
+      }
+      cerr << "1 year = " << _days << " days" << endl;
+    }
+
+    {
+      hours _hours(years(1));
+      if (_hours != hours(365 * 24)) {
+        cerr << "hours should be " << 365 * 24 << ", but it is " << _hours
+             << endl;
+        return false;
+      }
+      cerr << "1 year = " << _hours << " hours" << endl;
+    }
+
+    {
+      minutes _minutes(years(1));
+      if (_minutes != minutes(365 * 24 * 60)) {
+        cerr << "minutes should be " << 365 * 24 * 60 << ", but it is "
+             << _minutes << endl;
+        return false;
+      }
+      cerr << "1 year = " << _minutes << " minutes" << endl;
+    }
+
+    {
+      seconds _seconds(years(1));
+      if (_seconds != seconds(365 * 24 * 60 * 60)) {
+        cerr << "seconds should be " << 365 * 24 * 60 * 60 << ", but it is "
+             << _seconds << endl;
+        return false;
+      }
+      cerr << "1 year = " << _seconds << " seconds" << endl;
+    }
+
+    return true;
+  }
+
+  static constexpr const char *desc() {
+    return "Tests conversions from 'years'";
+  }
+
+  static constexpr const char *name() { return "years_test"; }
+};
 
 int main(int argc, char **argv) {
+  cerr.precision(20);
   tenacitas::tester::test _test(argc, argv);
   _test.run<seconds_test>();
   _test.run<minutes_test>();
   _test.run<hours_test>();
-  //  _test.run<days_test>();
-  //  _test.run<weeks_test>();
-  //  _test.run<months_test>();
-  //  _test.run<years_test>();
+  _test.run<days_test>();
+  _test.run<weeks_test>();
+  _test.run<months_test>();
+  _test.run<years_test>();
 }
