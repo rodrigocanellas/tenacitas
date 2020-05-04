@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <calendar/gregorian/amount.h>
+
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -27,6 +29,13 @@ struct year {
       : m_value(static_cast<decltype(m_value)>(p_value)) {}
 
   ///
+  /// \brief year constructor from a \p amount_t<year>, i.e., \p years
+  /// \param p_amount amount of years used to create a \p year
+  ///
+  constexpr explicit inline year(amount_t<year> p_amount)
+      : year(p_amount.value()) {}
+
+  ///
   /// \brief operator <<
   /// \param p_out
   /// \param p_year
@@ -44,6 +53,15 @@ struct year {
   ///
   inline constexpr bool is_leap() const {
     return m_value % 4 == 0 && (m_value % 100 != 0 || m_value % 400 == 0);
+  }
+
+  ///
+  /// \brief year assignment from a \p amount_t<year>, i.e., \p years
+  /// \param p_amount amount of years used to create a \p year
+  ///
+  constexpr inline year &operator=(amount_t<year> p_amount) {
+    m_value = p_amount.value();
+    return *this;
   }
 
   ///
@@ -162,7 +180,7 @@ struct year {
   //           month::dec.get_seconds(month::dec, p_year);
   //  }
 
-  constexpr uint8_t value() const { return m_value; }
+  constexpr auto value() const { return m_value; }
 
 private:
   ///

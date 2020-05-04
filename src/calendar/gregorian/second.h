@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <calendar/gregorian/amount.h>
+
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -22,12 +24,15 @@ struct second {
   /// a \p second object
   ///
   template <typename t_int> constexpr explicit second(t_int p_value) {
-    if ((p_value > 59) || (p_value < 0)) {
-      throw std::runtime_error(std::to_string(p_value) +
-                               " is not a valid second value");
-    }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    assign(p_value);
   }
+
+  ///
+  /// \brief second constructor from a \p amount_t<second>, i.e., \p seconds
+  /// \param p_amount amount of seconds used to create a \p second
+  ///
+  constexpr explicit inline second(amount_t<second> p_amount)
+      : second(p_amount.value()) {}
 
   ///
   /// \brief operator <<
@@ -105,6 +110,15 @@ struct second {
   static const second _59;
 
   ///
+  /// \brief second assignment from a \p amount_t<second>, i.e., \p seconds
+  /// \param p_amount amount of seconds used to create a \p second
+  ///
+  constexpr inline second &operator=(amount_t<second> p_amount) {
+    assign(p_amount.value());
+    return *this;
+  }
+
+  ///
   /// \brief operator >
   /// \param p_second
   /// \return
@@ -159,6 +173,15 @@ struct second {
   }
 
   constexpr auto value() const { return m_value; }
+
+private:
+  template <typename t_int> constexpr void assign(t_int p_value) {
+    if ((p_value > 59) || (p_value < 0)) {
+      throw std::runtime_error(std::to_string(p_value) +
+                               " is not a valid second value");
+    }
+    m_value = static_cast<decltype(m_value)>(p_value);
+  }
 
 private:
   ///

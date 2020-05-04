@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <calendar/gregorian/amount.h>
+
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -22,12 +24,15 @@ struct minute {
   /// a \p minute object
   ///
   template <typename t_int> constexpr explicit minute(t_int p_value) {
-    if ((p_value > 59) || (p_value < 0)) {
-      throw std::runtime_error(std::to_string(p_value) +
-                               " is not a valid day value");
-    }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    assign(p_value);
   }
+
+  ///
+  /// \brief minute constructor from a \p amount_t<minute>, i.e., \p minutes
+  /// \param p_amount amount of minutes used to create a \p minute
+  ///
+  constexpr explicit inline minute(amount_t<minute> p_amount)
+      : minute(p_amount.value()) {}
 
   ///
   /// \brief operator <<
@@ -105,6 +110,15 @@ struct minute {
   static const minute _59;
 
   ///
+  /// \brief minute assignment from a \p amount_t<minute>, i.e., \p minutes
+  /// \param p_amount amount of minutes used to create a \p minute
+  ///
+  constexpr inline minute &operator=(amount_t<minute> p_amount) {
+    assign(p_amount.value());
+    return *this;
+  }
+
+  ///
   /// \brief operator >
   /// \param p_minute
   /// \return
@@ -158,13 +172,22 @@ struct minute {
     return m_value != p_minute.m_value;
   }
 
-  constexpr uint8_t value() const { return m_value; }
+  constexpr auto value() const { return m_value; }
+
+private:
+  template <typename t_int> constexpr void assign(t_int p_value) {
+    if ((p_value > 59) || (p_value < 0)) {
+      throw std::runtime_error(std::to_string(p_value) +
+                               " is not a valid day value");
+    }
+    m_value = static_cast<decltype(m_value)>(p_value);
+  }
 
 private:
   ///
   /// \brief m_value
   ///
-  uint8_t m_value;
+  uint16_t m_value;
 };
 
 ///

@@ -20,11 +20,25 @@ timestamp::timestamp() {
   secs2hms();
 }
 
+// constexpr void timestamp::dmy2days(year p_year, month p_month, day p_day) {
+
+//  int32_t _years = p_year.value();
+//  int32_t _months = p_month.value();
+//  int32_t _days = p_day.value();
+//  _years -= _months <= 2;
+//  const int64_t era = (_years >= 0 ? _years : _years - 399) / 400;
+//  const unsigned yoe = static_cast<unsigned>(_years - era * 400); // [0, 399]
+//  const unsigned doy = (153 * (_months + (_months > 2 ? -3 : 9)) + 2) / 5 +
+//                       _days - 1;                             // [0, 365]
+//  const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0, 146096]
+//  m_days = days(era * 146097 + static_cast<decltype(_years)>(doe) - 719468);
+//}
+
 constexpr void timestamp::dmy2days(year p_year, month p_month, day p_day) {
 
   int32_t _years = p_year.value();
-  int32_t _months = p_month.value();
-  int32_t _days = p_day.value();
+  const int32_t _months = p_month.value();
+  const int32_t _days = p_day.value();
   _years -= _months <= 2;
   const int64_t era = (_years >= 0 ? _years : _years - 399) / 400;
   const unsigned yoe = static_cast<unsigned>(_years - era * 400); // [0, 399]
@@ -50,18 +64,12 @@ constexpr void timestamp::days2mdy() {
   m_year = year(y + (m <= 2));
   m_month = month(m);
   m_day = day(d);
-  //    return std::tuple<Int, unsigned, unsigned>(y + (m <= 2), m, d);
 }
 
 constexpr void timestamp::secs2hms() {
-  hours _hours(m_secs);
-  m_hour = hour(_hours.value());
-
-  hours _aux0(m_hour);
-  seconds _aux1(_aux0);
-  minutes _aux2(m_secs - _aux1);
-  m_minute = minute(_aux2.value());
-  m_second = second(seconds(m_secs % 60).value());
+  m_hour = hours(m_secs);
+  m_minute = minutes(m_secs - seconds((hours(m_hour))));
+  m_second = seconds(m_secs % 60);
 }
 
 std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts) {

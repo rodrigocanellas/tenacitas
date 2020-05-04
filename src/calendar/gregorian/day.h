@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <calendar/gregorian/amount.h>
+
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -23,12 +25,19 @@ struct day {
   /// a \p day object
   ///
   template <typename t_int> constexpr explicit day(t_int p_value) {
-    if ((p_value > 31) || (p_value < 0)) {
-      throw std::runtime_error(std::to_string(p_value) +
-                               " is not a valid day value");
-    }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    assign(p_value);
   }
+
+  ///
+  /// \brief day constructor from a \p amount_t<day>, i.e., \p days
+  /// \param p_amount amount of days used to create a \p day
+  ///
+  constexpr explicit inline day(amount_t<day> p_amount)
+      : day(p_amount.value()) {}
+
+  day(const day &) = default;
+  day(day &&) = default;
+  ~day() = default;
 
   ///
   /// \brief operator <<
@@ -75,6 +84,18 @@ struct day {
   static const day _29;
   static const day _30;
   static const day _31;
+
+  day &operator=(const day &) = default;
+  day &operator=(day &&) = default;
+
+  ///
+  /// \brief day assignment from a \p amount_t<day>, i.e., \p days
+  /// \param p_amount amount of days used to create a \p day
+  ///
+  constexpr inline day &operator=(amount_t<day> p_amount) {
+    assign(p_amount.value());
+    return *this;
+  }
 
   ///
   /// \brief operator >
@@ -130,13 +151,22 @@ struct day {
     return m_value != p_day.m_value;
   }
 
-  constexpr uint8_t value() const { return m_value; }
+  constexpr auto value() const { return m_value; }
+
+private:
+  template <typename t_int> constexpr void assign(t_int p_value) {
+    if ((p_value > 31) || (p_value < 0)) {
+      throw std::runtime_error(std::to_string(p_value) +
+                               " is not a valid day value");
+    }
+    m_value = static_cast<decltype(m_value)>(p_value);
+  }
 
 private:
   ///
   /// \brief m_value
   ///
-  uint8_t m_value;
+  uint16_t m_value;
 };
 
 ///

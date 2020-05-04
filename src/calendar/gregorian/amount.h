@@ -103,8 +103,9 @@ template <typename t_unit> struct amount_t {
     return *this;
   }
 
-  inline constexpr double operator%(double p_value) const {
-    return std::remainder(m_value, p_value);
+  inline constexpr auto operator%(double p_value) const {
+    //    return std::remainder(m_value, p_value);
+    return static_cast<int64_t>(m_value) % static_cast<int64_t>(p_value);
   }
 
   inline constexpr bool operator==(const amount_t &p_amount) const {

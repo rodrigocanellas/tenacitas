@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <calendar/gregorian/amount.h>
+
 namespace tenacitas {
 namespace calendar {
 namespace gregorian {
@@ -23,12 +25,15 @@ struct month {
   /// a \p month object
   ///
   template <typename t_int> inline explicit constexpr month(t_int p_value) {
-    if ((p_value > 12) || (p_value <= 0)) {
-      throw std::runtime_error(std::to_string(p_value) +
-                               " is not a valid month value");
-    }
-    m_value = static_cast<decltype(m_value)>(p_value);
+    assign(p_value);
   }
+
+  ///
+  /// \brief month constructor from a \p amount_t<month>, i.e., \p months
+  /// \param p_amount amount of months used to create a \p month
+  ///
+  constexpr explicit inline month(amount_t<month> p_amount)
+      : month(p_amount.value()) {}
 
   ///
   /// \brief operator <<
@@ -52,6 +57,15 @@ struct month {
   static const month oct;
   static const month nov;
   static const month dec;
+
+  ///
+  /// \brief month assignment from a \p amount_t<month>, i.e., \p months
+  /// \param p_amount amount of months used to create a \p month
+  ///
+  constexpr inline month &operator=(amount_t<month> p_amount) {
+    assign(p_amount.value());
+    return *this;
+  }
 
   ///
   /// \brief operator >
@@ -107,13 +121,22 @@ struct month {
     return m_value != p_month.m_value;
   }
 
-  constexpr uint8_t value() const { return m_value; }
+  constexpr auto value() const { return m_value; }
+
+private:
+  template <typename t_int> constexpr void assign(t_int p_value) {
+    if ((p_value > 12) || (p_value <= 0)) {
+      throw std::runtime_error(std::to_string(p_value) +
+                               " is not a valid month value");
+    }
+    m_value = static_cast<decltype(m_value)>(p_value);
+  }
 
 private:
   ///
   /// \brief m_value
   ///
-  uint8_t m_value;
+  uint16_t m_value;
 };
 
 } // namespace gregorian
