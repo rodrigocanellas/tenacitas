@@ -45,6 +45,7 @@ struct month {
 
   /// \brief valid month values
 
+  //  static const month jan;
   static const month jan;
   static const month feb;
   static const month mar;

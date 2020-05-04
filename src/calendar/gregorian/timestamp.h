@@ -39,14 +39,17 @@ struct timestamp {
   ///
   timestamp();
 
-  //  ///
-  //  /// \brief timestamp creates a timestamp by informing day, month, year,
-  //  /// hour, minute and second \param p_year \param p_month \param p_day
-  //  \param
-  //  /// p_hour \param p_minute \param p_second
-  //  ///
-  //  timestamp(year p_year, month p_month, day p_day, hour p_hour = hour::h00,
-  //            minute p_minute = minute::m00, second p_second = second::s00);
+  ///
+  /// \brief timestamp
+  /// \param p_year
+  /// \param p_month
+  /// \param p_day
+  /// \param p_hour
+  /// \param p_minute
+  /// \param p_second
+  ///
+  timestamp(year p_year, month p_month, day p_day, hour p_hour = hour::_00,
+            minute p_minute = minute::_00, second p_second = second::_00);
   //  ///
   //  /// \brief timestamp copy constructor
   //  /// \param p_timestamp timestamp to be copied
@@ -58,8 +61,6 @@ struct timestamp {
   //  /// \param p_timestamp timestamp to be moved
   //  ///
   //  timestamp(timestamp &&p_timestamp);
-
-  //  explicit timestamp(days p_days);
 
   //  /// \brief operator = copy assignment
   //  /// \param p_timestamp
@@ -100,43 +101,43 @@ struct timestamp {
   /// \brief get_second
   /// \return
   ///
-  second get_second() const { return m_second; }
+  inline constexpr second get_second() const { return m_second; }
 
   ///
   /// \brief get_minute
   /// \return
   ///
-  minute get_minute() const { return m_minute; }
+  inline constexpr minute get_minute() const { return m_minute; }
 
   ///
   /// \brief get_hour
   /// \return
   ///
-  hour get_hour() const { return m_hour; }
+  inline constexpr hour get_hour() const { return m_hour; }
 
   ///
   /// \brief get_day
   /// \return
   ///
-  day get_day() const { return m_day; }
+  inline constexpr day get_day() const { return m_day; }
 
-  //  ///
-  //  /// \brief get_weekday
-  //  /// \return
-  //  ///
-  //  weekday get_weekday() const;
+  ///
+  /// \brief get_weekday
+  /// \return
+  ///
+  inline constexpr weekday get_weekday() const { return m_weekday; }
 
   ///
   /// \brief get_month
   /// \return
   ///
-  month get_month() const { return m_month; }
+  inline constexpr month get_month() const { return m_month; }
 
   ///
   /// \brief get_year
   /// \return
   ///
-  year get_year() const { return m_year; }
+  inline constexpr year get_year() const { return m_year; }
 
   //  ///
   //  /// \brief operator ==
@@ -347,44 +348,13 @@ struct timestamp {
   //  timestamp operator-(years p_years);
 
 private:
-  constexpr void dmy2days(year p_year, month p_month, day p_day);
+  constexpr void dMyhms2days_secs(year p_year, month p_month, day p_day,
+                                  hour p_hour, minute p_minute,
+                                  second p_second);
 
-  //  template <class Int>
-  //  constexpr Int days_from_civil1(Int y, unsigned m, unsigned d) noexcept {
-  //    y -= m <= 2;
-  //    const Int era = (y >= 0 ? y : y - 399) / 400;
-  //    const unsigned yoe = static_cast<unsigned>(y - era * 400); // [0, 399]
-  //    const unsigned doy =
-  //        (153 * (m + (m > 2 ? -3 : 9)) + 2) / 5 + d - 1;         // [0, 365]
-  //    const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0,
-  //    146096] return era * 146097 + static_cast<Int>(doe) - 719468;
-  //  }
+  constexpr void days_secs2dMywhms();
 
-  //  template <class Int>
-  //  constexpr std::tuple<Int, unsigned, unsigned>
-  //  civil_from_days(Int z) noexcept {
-  //    static_assert(
-  //        std::numeric_limits<unsigned>::digits >= 18,
-  //        "This algorithm has not been ported to a 16 bit unsigned integer");
-  //    static_assert(
-  //        std::numeric_limits<Int>::digits >= 20,
-  //        "This algorithm has not been ported to a 16 bit signed integer");
-  //    z += 719468;
-  //    const Int era = (z >= 0 ? z : z - 146096) / 146097;
-  //    const unsigned doe = static_cast<unsigned>(z - era * 146097); // [0,
-  //    146096] const unsigned yoe =
-  //        (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365; // [0, 399]
-  //    const Int y = static_cast<Int>(yoe) + era * 400;
-  //    const unsigned doy = doe - (365 * yoe + yoe / 4 - yoe / 100); // [0,
-  //    365] const unsigned mp = (5 * doy + 2) / 153;                      //
-  //    [0, 11] const unsigned d = doy - (153 * mp + 2) / 5 + 1;              //
-  //    [1, 31] const unsigned m = mp + (mp < 10 ? 3 : -9);                   //
-  //    [1, 12] return std::tuple<Int, unsigned, unsigned>(y + (m <= 2), m, d);
-  //  }
-
-  constexpr void days2mdy();
-
-  constexpr void secs2hms();
+  void now();
 
 private:
   /// \brief amount of days since epoch
@@ -399,6 +369,7 @@ private:
   hour m_hour = hour::_00;
   minute m_minute = minute::_00;
   second m_second = second::_00;
+  weekday m_weekday = weekday::thu;
 };
 
 } // namespace gregorian
