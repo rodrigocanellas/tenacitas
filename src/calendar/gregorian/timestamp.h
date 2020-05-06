@@ -37,7 +37,7 @@ struct timestamp {
   ///
   /// \brief timestamp default constructor creates a timestamp for now
   ///
-  timestamp();
+  timestamp() = default;
 
   ///
   /// \brief timestamp
@@ -50,38 +50,33 @@ struct timestamp {
   ///
   timestamp(year p_year, month p_month, day p_day, hour p_hour = hour::_00,
             minute p_minute = minute::_00, second p_second = second::_00);
-  //  ///
-  //  /// \brief timestamp copy constructor
-  //  /// \param p_timestamp timestamp to be copied
-  //  ///
-  //  timestamp(const timestamp &p_timestamp);
-
-  //  ///
-  //  /// \brief timestamp move constructor
-  //  /// \param p_timestamp timestamp to be moved
-  //  ///
-  //  timestamp(timestamp &&p_timestamp);
-
-  //  /// \brief operator = copy assignment
-  //  /// \param p_timestamp
-  //  /// \return
-  //  ///
-  //  timestamp &operator=(const timestamp &p_timestamp);
-
-  //  ///
-  //  /// \brief operator = move assignment
-  //  /// \param p_timestamp
-  //  /// \return
-  //  ///
-  //  timestamp &operator=(timestamp &&p_timestamp);
+  ///
+  /// \brief timestamp copy constructor
+  /// \param p_timestamp timestamp to be copied
+  ///
+  inline timestamp(const timestamp &p_timestamp)
+      : m_days(p_timestamp.m_days), m_secs(p_timestamp.m_secs) {}
 
   ///
-  /// \brief operator <<
-  /// \param p_out
-  /// \param p_ts
+  /// \brief timestamp move constructor
+  /// \param p_timestamp timestamp to be moved
+  ///
+  timestamp(timestamp &&p_timestamp)
+      : m_days(std::move(p_timestamp.m_days)),
+        m_secs(std::move(p_timestamp.m_secs)) {}
+
+  /// \brief operator = copy assignment
+  /// \param p_timestamp
   /// \return
   ///
-  friend std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts);
+  timestamp &operator=(const timestamp &p_timestamp);
+
+  ///
+  /// \brief operator = move assignment
+  /// \param p_timestamp
+  /// \return
+  ///
+  timestamp &operator=(timestamp &&p_timestamp);
 
   //  ///
   //  /// \brief set_day
@@ -101,84 +96,102 @@ struct timestamp {
   /// \brief get_second
   /// \return
   ///
-  inline constexpr second get_second() const { return m_second; }
+  second get_second();
 
   ///
   /// \brief get_minute
   /// \return
   ///
-  inline constexpr minute get_minute() const { return m_minute; }
+  minute get_minute();
 
   ///
   /// \brief get_hour
   /// \return
   ///
-  inline constexpr hour get_hour() const { return m_hour; }
+  hour get_hour();
 
   ///
   /// \brief get_day
   /// \return
   ///
-  inline constexpr day get_day() const { return m_day; }
+  day get_day();
 
   ///
   /// \brief get_weekday
   /// \return
   ///
-  inline constexpr weekday get_weekday() const { return m_weekday; }
+  weekday get_weekday();
 
   ///
   /// \brief get_month
   /// \return
   ///
-  inline constexpr month get_month() const { return m_month; }
+  month get_month();
 
   ///
   /// \brief get_year
   /// \return
   ///
-  inline constexpr year get_year() const { return m_year; }
+  year get_year();
 
-  //  ///
-  //  /// \brief operator ==
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator==(const timestamp &p_ts) const;
-  //  ///
-  //  /// \brief operator !=
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator!=(const timestamp &p_ts) const;
+  ///
+  /// \brief now
+  /// \return
+  ///
+  static timestamp now();
 
-  //  ///
-  //  /// \brief operator >
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator>(const timestamp &p_ts) const;
+  ///
+  /// \brief operator <<
+  /// \param p_out
+  /// \param p_ts
+  /// \return
+  ///
+  friend std::ostream &operator<<(std::ostream &p_out, timestamp &p_ts);
 
-  //  ///
-  //  /// \brief operator <
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator<(const timestamp &p_ts) const;
+  ///
+  /// \brief operator ==
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator==(const timestamp &p_ts) const {
+    return ((m_days == p_ts.m_days) && (m_secs == p_ts.m_secs));
+  }
+  ///
+  /// \brief operator !=
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator!=(const timestamp &p_ts) const {
+    return ((m_days != p_ts.m_days) || (m_secs != p_ts.m_secs));
+  }
 
-  //  ///
-  //  /// \brief operator >=
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator>=(const timestamp &p_ts) const;
+  ///
+  /// \brief operator >
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator>(const timestamp &p_ts) const;
 
-  //  ///
-  //  /// \brief operator <=
-  //  /// \param p_ts
-  //  /// \return
-  //  ///
-  //  bool operator<=(const timestamp &p_ts) const;
+  ///
+  /// \brief operator <
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator<(const timestamp &p_ts) const;
+
+  ///
+  /// \brief operator >=
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator>=(const timestamp &p_ts) const;
+
+  ///
+  /// \brief operator <=
+  /// \param p_ts
+  /// \return
+  ///
+  bool operator<=(const timestamp &p_ts) const;
 
   //  ///
   //  /// \brief operator +=
@@ -187,12 +200,26 @@ struct timestamp {
   //  ///
   //  timestamp &operator+=(seconds p_seconds);
 
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_seconds
-  //  /// \return
-  //  ///
-  //  timestamp operator+(seconds p_seconds);
+  ///
+  /// \brief operator +
+  /// \param p_seconds
+  /// \return
+  ///
+  template <typename t_amount> timestamp operator+(t_amount p_amount) {
+
+    days _from(p_amount);
+
+    auto _value = _from.value();
+    auto _int = static_cast<int64_t>(_value);
+    auto _fra = _value - _int;
+    days _days = days(_int);
+    seconds _seconds = seconds(_fra);
+
+    timestamp _timestamp(*this);
+    _timestamp.m_days += _days;
+    _timestamp.m_secs += static_cast<int64_t>(_seconds.value());
+    return _timestamp;
+  }
 
   //  ///
   //  /// \brief operator -=
@@ -354,14 +381,16 @@ private:
 
   constexpr void days_secs2dMywhms();
 
-  void now();
-
 private:
   /// \brief amount of days since epoch
-  days m_days = days(0);
+  days m_days = {0};
 
   /// \brief amount of seconds in the day
-  seconds m_secs = 0;
+  seconds m_secs = {0};
+
+  /// \brief indicates that the parts of the timestamp - m_year, m_month, m_day,
+  /// m_hour, m_minute, m_second, m_weekday - need to be updated
+  bool m_needs_update = {true};
 
   year m_year = year(1970);
   month m_month = month::jan;

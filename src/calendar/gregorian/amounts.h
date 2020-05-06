@@ -2,6 +2,7 @@
 #define TENACITAS_CALENDAR_GREGORIAN_AMOUNTS_H
 
 #include <cstdint>
+#include <tuple>
 
 #include <calendar/gregorian/amount.h>
 #include <calendar/gregorian/convert.h>
@@ -219,6 +220,13 @@ template <> constexpr inline minutes convert<years, minutes>(years p_years) {
 template <> constexpr inline seconds convert<years, seconds>(years p_years) {
   return seconds(p_years.value() * 365 * 24 * 60 * static_cast<double>(60));
 }
+
+//// partition
+// template <typename t_amount>
+// std::tuple<years, months, weeks, days, hours, minutes, seconds>
+// partition(t_amount p_amount) {
+
+//}
 
 // template <typename t_to>
 // constexpr inline t_to convert(const year &p_year, const month &p_month);

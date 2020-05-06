@@ -4,20 +4,20 @@ namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-timestamp::timestamp() { now(); }
-
-void timestamp::now() {
+timestamp timestamp::now() {
   typedef std::chrono::duration<
       int, std::ratio_multiply<std::chrono::hours::period, std::ratio<24>>>
       days_t;
   auto _now = std::chrono::system_clock::now().time_since_epoch();
   auto _today = std::chrono::duration_cast<days_t>(_now);
-  m_days = days(_today.count());
+  timestamp _timestamp;
+  _timestamp.m_days = days(_today.count());
   _now -= _today;
-  m_secs =
+  _timestamp.m_secs =
       seconds(std::chrono::duration_cast<std::chrono::seconds>(_now).count());
 
-  days_secs2dMywhms();
+  return _timestamp;
+  //  days_secs2dMywhms();
 }
 
 timestamp::timestamp(year p_year, month p_month, day p_day, hour p_hour,
@@ -62,9 +62,84 @@ constexpr void timestamp::days_secs2dMywhms() {
   m_hour = hours(m_secs);
   m_minute = minutes(m_secs - seconds((hours(m_hour))));
   m_second = seconds(m_secs % 60);
+  m_needs_update = false;
 }
 
-std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts) {
+second timestamp::get_second() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_second;
+}
+
+///
+/// \brief timestamp::get_minute
+/// \return
+///
+minute timestamp::get_minute() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_minute;
+}
+
+///
+/// \brief timestamp::get_hour
+/// \return
+///
+hour timestamp::get_hour() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_hour;
+}
+
+///
+/// \brief timestamp::get_day
+/// \return
+///
+day timestamp::get_day() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_day;
+}
+
+///
+/// \brief timestamp::get_weekday
+/// \return
+///
+weekday timestamp::get_weekday() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_weekday;
+}
+
+///
+/// \brief timestamp::get_month
+/// \return
+///
+month timestamp::get_month() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_month;
+}
+
+///
+/// \brief timestamp::get_year
+/// \return
+///
+year timestamp::get_year() {
+  if (m_needs_update) {
+    days_secs2dMywhms();
+  }
+  return m_year;
+}
+
+std::ostream &operator<<(std::ostream &p_out, timestamp &p_ts) {
+
   p_out << std::setw(4) << std::setfill('0') << p_ts.get_year() << "-"
 
         << std::setw(2) << std::setfill('0') << p_ts.get_month().value() << "-"
@@ -82,6 +157,90 @@ std::ostream &operator<<(std::ostream &p_out, const timestamp &p_ts) {
       ;
 
   return p_out;
+}
+
+timestamp &timestamp::operator=(const timestamp &p_timestamp) {
+  if (this != &p_timestamp) {
+    m_days = p_timestamp.m_days;
+    m_secs = p_timestamp.m_secs;
+  }
+  return *this;
+}
+
+timestamp &timestamp::operator=(timestamp &&p_timestamp) {
+  if (this != &p_timestamp) {
+    m_days = std::move(p_timestamp.m_days);
+    m_secs = std::move(p_timestamp.m_secs);
+  }
+  return *this;
+}
+
+bool timestamp::operator>(const timestamp &p_ts) const {
+  if (m_days > p_ts.m_days) {
+    return true;
+  }
+  if (m_days < p_ts.m_days) {
+    return false;
+  }
+
+  if (m_secs > p_ts.m_secs) {
+    return true;
+  }
+
+  return false;
+}
+
+bool timestamp::operator<(const timestamp &p_ts) const {
+  if (m_days < p_ts.m_days) {
+    return true;
+  }
+  if (m_days > p_ts.m_days) {
+    return false;
+  }
+
+  if (m_secs < p_ts.m_secs) {
+    return true;
+  }
+
+  return false;
+}
+
+bool timestamp::operator>=(const timestamp &p_ts) const {
+  if (m_days > p_ts.m_days) {
+    return true;
+  }
+  if (m_days < p_ts.m_days) {
+    return false;
+  }
+
+  if (m_secs > p_ts.m_secs) {
+    return true;
+  }
+
+  if (m_secs < p_ts.m_secs) {
+    return false;
+  }
+
+  return true;
+}
+
+bool timestamp::operator<=(const timestamp &p_ts) const {
+  if (m_days < p_ts.m_days) {
+    return true;
+  }
+  if (m_days > p_ts.m_days) {
+    return false;
+  }
+
+  if (m_secs < p_ts.m_secs) {
+    return true;
+  }
+
+  if (m_secs > p_ts.m_secs) {
+    return false;
+  }
+
+  return true;
 }
 
 } // namespace gregorian

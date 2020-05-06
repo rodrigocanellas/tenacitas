@@ -135,6 +135,14 @@ template <typename t_unit> struct amount_t {
   /// \return the raw value of the amount
   inline constexpr double value() const { return m_value; }
 
+  inline constexpr int64_t integer() const {
+    return static_cast<int64_t>(m_value);
+  }
+
+  inline constexpr int64_t decimal() const {
+    return m_value - static_cast<int64_t>(m_value);
+  }
+
 private:
   /// \brief the raw value of the amount
   double m_value = {0.0};

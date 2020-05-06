@@ -5,6 +5,7 @@
 #include <string>
 
 #include <calendar/gregorian/amounts.h>
+#include <calendar/gregorian/convert.h>
 #include <calendar/gregorian/day.h>
 #include <calendar/gregorian/month.h>
 #include <calendar/gregorian/year.h>
@@ -749,6 +750,36 @@ struct years_test {
   static constexpr const char *name() { return "years_test"; }
 };
 
+struct amount_partitions {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    //    months _months(3.45);
+    //    days _days1(_months);
+    //    seconds _seconds(_months);
+    //    days _days2(_seconds);
+
+    //    cerr << "months = " << _months << ", days 1 = " << _days1
+    //         << ", days 2 = " << _days2 << ", seconds = " << _seconds
+    //         << ", seconds(minutes(0.935)) = " << seconds(minutes(0.935))
+
+    //         << endl;
+
+    //    days _days(328.74);
+    //    days _part1(1);
+    //    seconds _part2(1);
+
+    //    partition<days, days, seconds>(_days, _part1, _part2);
+
+    //    cerr << "part 1 = " << _part1 << ", part 2 = " << _part2 << endl;
+
+    return true;
+  }
+  static constexpr const char *desc() { return "Partioning an amount"; }
+
+  static constexpr const char *name() { return "amount_partitions"; }
+};
+
 int main(int argc, char **argv) {
   cerr.precision(20);
   tenacitas::tester::test _test(argc, argv);
@@ -759,4 +790,5 @@ int main(int argc, char **argv) {
   _test.run<weeks_test>();
   _test.run<months_test>();
   _test.run<years_test>();
+  _test.run<amount_partitions>();
 }
