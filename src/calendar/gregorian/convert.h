@@ -7,8 +7,7 @@ namespace tenacitas {
 namespace calendar {
 namespace gregorian {
 
-template <typename t_from, typename t_to>
-constexpr t_to convert(t_from p_from = t_from(1));
+template <typename t_from, typename t_to> constexpr t_to convert(t_from p_from);
 
 // template <typename t_from, typename... t_parts>
 // constexpr void partition(t_from p_from, t_parts &... p_parts) {

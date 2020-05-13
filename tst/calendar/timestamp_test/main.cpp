@@ -441,70 +441,192 @@ struct timestamp_lte {
   }
 };
 
-struct timestamp_add {
+struct timestamp_add_one_day {
   bool operator()() {
 
     using namespace tenacitas::calendar::gregorian;
 
-    {
+    timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
+                   second::_23);
+    timestamp _ts2 = _ts1 + days(1);
 
-      timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
-                     second::_23);
-      timestamp _ts2 = _ts1 + days(1);
+    timestamp _target(year(2020), month::may, day::_05, hour::_12, minute::_19,
+                      second::_23);
 
-      timestamp _target(year(2020), month::may, day::_05, hour::_12,
-                        minute::_19, second::_23);
-
-      if (_ts2 != _target) {
-        cerr << "timestamp should be " << _target << ", but is " << _ts2
-             << endl;
-        return false;
-      }
-
-      cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
+    if (_ts2 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts2 << endl;
+      return false;
     }
 
-    {
+    cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
 
-      timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
-                     second::_23);
-      timestamp _ts2 = _ts1 + weeks(1);
+    return true;
+  }
+  static std::string name() { return "timestamp_add_one_day"; }
+  static std::string desc() { return "Adds one day to 2020-05-04 12:19:23"; }
+};
 
-      timestamp _target(year(2020), month::may, day::_11, hour::_12,
-                        minute::_19, second::_23);
+struct timestamp_add_one_week {
+  bool operator()() {
 
-      if (_ts2 != _target) {
-        cerr << "timestamp should be " << _target << ", but is " << _ts2
-             << endl;
-        return false;
-      }
+    using namespace tenacitas::calendar::gregorian;
 
-      cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
+    timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
+                   second::_23);
+    timestamp _ts2 = _ts1 + weeks(1);
+
+    timestamp _target(year(2020), month::may, day::_11, hour::_12, minute::_19,
+                      second::_23);
+
+    if (_ts2 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts2 << endl;
+      return false;
     }
 
-    {
+    cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
 
-      timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
-                     second::_23);
-      timestamp _ts2 = _ts1 + weeks(1.5);
+    return true;
+  }
+  static std::string name() { return "timestamp_add_one_week"; }
+  static std::string desc() { return "Adds one week to 2020-05-04 12:19:23"; }
+};
 
-      timestamp _target(year(2020), month::may, day::_14, hour::_12,
-                        minute::_19, second::_23);
+struct timestamp_add_one_and_a_half_week {
+  bool operator()() {
 
-      if (_ts2 != _target) {
-        cerr << "timestamp should be " << _target << ", but is " << _ts2
-             << endl;
-        return false;
-      }
+    using namespace tenacitas::calendar::gregorian;
 
-      cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
+    timestamp _ts1(year(2020), month::may, day::_04, hour::_12, minute::_19,
+                   second::_23);
+    timestamp _ts2 = _ts1 + weeks(1.5);
+
+    timestamp _target(year(2020), month::may, day::_15, hour::_00, minute::_19,
+                      second::_23);
+
+    if (_ts2 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts2 << endl;
+      return false;
     }
+
+    cerr << "ts1 =  " << _ts1 << ", ts2 = " << _ts2 << endl;
 
     return true;
   }
 
-  static std::string name() { return "timestamp_add"; }
-  static std::string desc() { return "Tests timestamp add operator"; }
+  static std::string name() { return "timestamp_add_one_and_a_half_week"; }
+  static std::string desc() {
+    return "Adds one week and a half week to 2020-05-04 12:19:23";
+  }
+};
+
+struct timestamp_add_overflow_day_000 {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    timestamp _ts0(year(2020), month::may, day::_06, hour::_23, minute::_50,
+                   second::_25);
+
+    timestamp _target(year(2020), month::may, day::_08, hour::_22, minute::_38,
+                      second::_25);
+
+    timestamp _ts1 = _ts0 + days(1.95);
+
+    if (_ts1 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts1 << endl;
+      return false;
+    }
+
+    cerr << "ts 0 = " << _ts0 << ", ts 1 = " << _ts1 << endl;
+
+    return true;
+  }
+
+  static std::string name() { return "timestamp_add_overflow_day_000"; }
+  static std::string desc() { return "Adds 1.95 days to 2020-05-06 23:50:25"; }
+};
+
+struct timestamp_add_overflow_day_001 {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    timestamp _ts0(year(2020), month::may, day::_06, hour::_23, minute::_50,
+                   second::_25);
+
+    timestamp _target(year(2020), month::may, day::_07, hour::_00, minute::_03,
+                      second::_25);
+
+    timestamp _ts1 = _ts0 + minutes(13);
+
+    if (_ts1 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts1 << endl;
+      return false;
+    }
+
+    cerr << "ts 0 = " << _ts0 << ", ts 1 = " << _ts1 << endl;
+
+    return true;
+  }
+
+  static std::string name() { return "timestamp_add_overflow_day_001"; }
+  static std::string desc() { return "Adds 13 minutes to 2020-05-06 23:50:25"; }
+};
+
+struct timestamp_add_overflow_day_002 {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    timestamp _ts0(year(2020), month::may, day::_06, hour::_23, minute::_50,
+                   second::_25);
+
+    timestamp _target(year(2020), month::may, day::_07, hour::_00, minute::_06,
+                      second::_23);
+
+    timestamp _ts1 = _ts0 + seconds(958);
+
+    if (_ts1 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts1 << endl;
+      return false;
+    }
+
+    cerr << "ts 0 = " << _ts0 << ", ts 1 = " << _ts1 << endl;
+
+    return true;
+  }
+
+  static std::string name() { return "timestamp_add_overflow_day_002"; }
+  static std::string desc() {
+    return "Adds 958 seconds to 2020-05-06 23:50:25";
+  }
+};
+
+struct timestamp_add_underflow_day_000 {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    timestamp _ts0(year(2020), month::may, day::_13, hour::_00, minute::_01,
+                   second::_15);
+
+    timestamp _target(year(2020), month::may, day::_12, hour::_23, minute::_56,
+                      second::_15);
+
+    timestamp _ts1 = _ts0 - seconds(300);
+
+    // target 1 = days -> 18394 secs -> 86175
+
+    if (_ts1 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts1 << endl;
+      return false;
+    }
+
+    cerr << "ts 0 = " << _ts0 << ", ts 1 = " << _ts1 << endl;
+
+    return true;
+  }
+
+  static std::string name() { return "timestamp_add_underflow_day_000"; }
+  static std::string desc() {
+    return "Substracts 300 seconds from 2020-05-13 00:01:15";
+  }
 };
 
 int main(int argc, char **argv) {
@@ -522,5 +644,11 @@ int main(int argc, char **argv) {
   _test.run<timestamp_lt>();
   _test.run<timestamp_gte>();
   _test.run<timestamp_lte>();
-  _test.run<timestamp_add>();
+  _test.run<timestamp_add_one_day>();
+  _test.run<timestamp_add_one_week>();
+  _test.run<timestamp_add_one_and_a_half_week>();
+  _test.run<timestamp_add_overflow_day_000>();
+  _test.run<timestamp_add_overflow_day_001>();
+  _test.run<timestamp_add_overflow_day_002>();
+  _test.run<timestamp_add_underflow_day_000>();
 }

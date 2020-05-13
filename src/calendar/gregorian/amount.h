@@ -16,7 +16,7 @@ namespace gregorian {
 ///
 /// \tparam t_unit is the  measurement unit
 ///
-template <typename t_unit> struct amount_t {
+template <typename t_unit, typename t_value = double> struct amount_t {
   inline constexpr amount_t(int8_t &&p_value) : m_value(std::move(p_value)) {}
   inline constexpr amount_t(const int8_t &p_value) : m_value(p_value) {}
   inline constexpr amount_t(uint8_t &&p_value) : m_value(std::move(p_value)) {}
@@ -72,7 +72,7 @@ template <typename t_unit> struct amount_t {
     return amount_t(m_value - p_amount.value());
   }
 
-  inline amount_t &operator-=(const amount_t &p_amount) const {
+  inline amount_t &operator-=(const amount_t &p_amount) {
     m_value -= p_amount.value();
     return *this;
   }
@@ -139,13 +139,13 @@ template <typename t_unit> struct amount_t {
     return static_cast<int64_t>(m_value);
   }
 
-  inline constexpr int64_t decimal() const {
+  inline constexpr double decimal() const {
     return m_value - static_cast<int64_t>(m_value);
   }
 
 private:
   /// \brief the raw value of the amount
-  double m_value = {0.0};
+  t_value m_value = {0};
 };
 
 } // namespace gregorian

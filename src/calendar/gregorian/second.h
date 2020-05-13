@@ -176,7 +176,7 @@ struct second {
 
 private:
   template <typename t_int> constexpr void assign(t_int p_value) {
-    if ((p_value > 59) || (p_value < 0)) {
+    if ((static_cast<decltype(m_value)>(p_value) > 59) || (p_value < 0)) {
       throw std::runtime_error(std::to_string(p_value) +
                                " is not a valid second value");
     }

@@ -41,6 +41,7 @@ constexpr void timestamp::dMyhms2days_secs(year p_year, month p_month,
   const unsigned doe = yoe * 365 + yoe / 4 - yoe / 100 + doy; // [0, 146096]
   m_days = days(era * 146097 + static_cast<decltype(_years)>(doe) - 719468);
   m_secs = seconds(hours(p_hour)) + seconds(minutes(p_minute)) + p_second;
+  //  m_secs = seconds(static_cast<int64_t>(m_secs.value()));
 }
 
 constexpr void timestamp::days_secs2dMywhms() {
@@ -141,20 +142,12 @@ year timestamp::get_year() {
 std::ostream &operator<<(std::ostream &p_out, timestamp &p_ts) {
 
   p_out << std::setw(4) << std::setfill('0') << p_ts.get_year() << "-"
-
         << std::setw(2) << std::setfill('0') << p_ts.get_month().value() << "-"
-
         << std::setw(2) << std::setfill('0') << p_ts.get_day() << " "
-
-        << p_ts.get_weekday() << " "
-
-        << std::setw(2) << std::setfill('0') << p_ts.get_hour() << ":"
-
-        << std::setw(2) << std::setfill('0') << p_ts.get_minute() << ":"
-
-        << std::setw(2) << std::setfill('0') << p_ts.get_second()
-
-      ;
+        << p_ts.get_weekday() << " " << std::setw(2) << std::setfill('0')
+        << p_ts.get_hour() << ":" << std::setw(2) << std::setfill('0')
+        << p_ts.get_minute() << ":" << std::setw(2) << std::setfill('0')
+        << p_ts.get_second();
 
   return p_out;
 }

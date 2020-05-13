@@ -206,18 +206,23 @@ struct timestamp {
   /// \return
   ///
   template <typename t_amount> timestamp operator+(t_amount p_amount) {
-
-    days _from(p_amount);
-
-    auto _value = _from.value();
-    auto _int = static_cast<int64_t>(_value);
-    auto _fra = _value - _int;
-    days _days = days(_int);
-    seconds _seconds = seconds(_fra);
-
     timestamp _timestamp(*this);
-    _timestamp.m_days += _days;
-    _timestamp.m_secs += static_cast<int64_t>(_seconds.value());
+
+    days _days_1(p_amount);
+    auto _int = _days_1.integer();
+    auto _dec = _days_1.decimal();
+
+    seconds _secs_in_day((days(_dec)));
+
+    seconds _secs(_timestamp.m_secs + _secs_in_day);
+
+    if (days(_secs) > days(1)) {
+      _timestamp.m_days += days(_int + 1);
+      _timestamp.m_secs = _secs - seconds(days(1));
+    } else {
+      _timestamp.m_days += days(_int);
+      _timestamp.m_secs += _secs_in_day.integer();
+    }
     return _timestamp;
   }
 
@@ -228,12 +233,32 @@ struct timestamp {
   //  ///
   //  timestamp &operator-=(seconds p_seconds);
 
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_seconds
-  //  /// \return
-  //  ///
-  //  timestamp operator-(seconds p_seconds);
+  ///
+  /// \brief operator -
+  /// \param p_amount
+  /// \return
+  ///
+  template <typename t_amount> timestamp operator-(t_amount p_amount) {
+    timestamp _timestamp(*this);
+
+    days _days_1(p_amount);
+    auto _int = _days_1.integer();
+    auto _dec = _days_1.decimal();
+
+    seconds _secs_in_day((days(_dec)));
+
+    seconds _secs(_timestamp.m_secs - _secs_in_day);
+
+    if (days(_secs) < 0) {
+      _timestamp.m_days -= days(_int + 1);
+      _timestamp.m_secs = seconds(days(1)) + _secs;
+    } else {
+      _timestamp.m_days -= days(_int);
+      _timestamp.m_secs += _secs_in_day.integer();
+    }
+
+    return _timestamp;
+  }
 
   //  ///
   //  /// \brief operator +=
