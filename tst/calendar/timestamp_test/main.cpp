@@ -629,6 +629,34 @@ struct timestamp_add_underflow_day_000 {
   }
 };
 
+struct timestamp_add_underflow_day_001 {
+  bool operator()() {
+    using namespace tenacitas::calendar::gregorian;
+
+    timestamp _ts0(year(2020), month::may, day::_13, hour::_00, minute::_01,
+                   second::_15);
+
+    timestamp _target(year(2020), month::may, day::_12, hour::_14, minute::_25,
+                      second::_15);
+
+    timestamp _ts1 = _ts0 - days(0.40);
+
+    if (_ts1 != _target) {
+      cerr << "timestamp should be " << _target << ", but is " << _ts1 << endl;
+      return false;
+    }
+
+    cerr << "ts 0 = " << _ts0 << ", ts 1 = " << _ts1 << endl;
+
+    return true;
+  }
+
+  static std::string name() { return "timestamp_add_underflow_day_001"; }
+  static std::string desc() {
+    return "Substracts 0.4 says from 2020-05-13 00:01:15";
+  }
+};
+
 int main(int argc, char **argv) {
   tenacitas::tester::test _test(argc, argv);
   _test.run<timestamp_now>();
@@ -651,4 +679,5 @@ int main(int argc, char **argv) {
   _test.run<timestamp_add_overflow_day_001>();
   _test.run<timestamp_add_overflow_day_002>();
   _test.run<timestamp_add_underflow_day_000>();
+  _test.run<timestamp_add_underflow_day_001>();
 }

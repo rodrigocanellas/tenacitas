@@ -193,213 +193,102 @@ struct timestamp {
   ///
   bool operator<=(const timestamp &p_ts) const;
 
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_seconds
-  //  /// \return
-  //  ///
-  //  timestamp &operator+=(seconds p_seconds);
+  /// \brief adds an amount of time to the current timestamp
+  ///
+  /// \tparam t_amount is the type amount of time to be added to this timestamp
+  ///
+  /// \param p_amount  is the value of the amount of time to be added to this
+  /// timestamp
+  ///
+  /// \return this timestamp modified
+  template <typename t_amount> timestamp &operator+=(t_amount p_amount) {
+    add(this, p_amount);
+    return *this;
+  }
 
+  /// \brief adds an amount of time to the current timestamp, creating a new
+  /// timestamp
   ///
-  /// \brief operator +
-  /// \param p_seconds
-  /// \return
+  /// \tparam t_amount is the type amount of time to be added to this timestamp
   ///
+  /// \param p_amount  is the value of the amount of time to be added to this
+  /// timestamp
+  ///
+  /// \return the new timestamp
   template <typename t_amount> timestamp operator+(t_amount p_amount) {
     timestamp _timestamp(*this);
-
-    days _days_1(p_amount);
-    auto _int = _days_1.integer();
-    auto _dec = _days_1.decimal();
-
-    seconds _secs_in_day((days(_dec)));
-
-    seconds _secs(_timestamp.m_secs + _secs_in_day);
-
-    if (days(_secs) > days(1)) {
-      _timestamp.m_days += days(_int + 1);
-      _timestamp.m_secs = _secs - seconds(days(1));
-    } else {
-      _timestamp.m_days += days(_int);
-      _timestamp.m_secs += _secs_in_day.integer();
-    }
+    add(&_timestamp, p_amount);
     return _timestamp;
   }
 
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_seconds
-  //  /// \return
-  //  ///
-  //  timestamp &operator-=(seconds p_seconds);
+  /// \brief substractys an amount of time to the current timestamp
+  ///
+  /// \tparam t_amount is the type amount of time to be substracted to this
+  /// timestamp
+  ///
+  /// \param p_amount  is the value of the amount of time to be substracted to
+  /// this timestamp
+  ///
+  /// \return this timestamp modified
+  template <typename t_amount> timestamp &operator-=(t_amount p_amount) {
+    substract(this, p_amount);
+    return *this;
+  }
 
+  /// \brief subtracts an amount of time to the current timestamp, creating a
+  /// new timestamp
   ///
-  /// \brief operator -
-  /// \param p_amount
-  /// \return
+  /// \tparam t_amount is the type amount of time to be substracted to this
+  /// timestamp
   ///
+  /// \param p_amount  is the value of the amount of time to be substracted to
+  /// this timestamp
+  ///
+  /// \return the new timestamp
   template <typename t_amount> timestamp operator-(t_amount p_amount) {
     timestamp _timestamp(*this);
+    substract(&_timestamp, p_amount);
+    return _timestamp;
+  }
 
+private:
+  template <typename t_amount> void add(timestamp *p_ts, t_amount p_amount) {
     days _days_1(p_amount);
     auto _int = _days_1.integer();
     auto _dec = _days_1.decimal();
 
     seconds _secs_in_day((days(_dec)));
 
-    seconds _secs(_timestamp.m_secs - _secs_in_day);
+    seconds _secs(p_ts->m_secs + _secs_in_day);
 
-    if (days(_secs) < 0) {
-      _timestamp.m_days -= days(_int + 1);
-      _timestamp.m_secs = seconds(days(1)) + _secs;
+    if (days(_secs) > days(1)) {
+      p_ts->m_days += days(_int + 1);
+      p_ts->m_secs = _secs - seconds(days(1));
     } else {
-      _timestamp.m_days -= days(_int);
-      _timestamp.m_secs += _secs_in_day.integer();
+      p_ts->m_days += days(_int);
+      p_ts->m_secs += _secs_in_day.integer();
     }
-
-    return _timestamp;
   }
 
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_minutes
-  //  /// \return
-  //  ///
-  //  timestamp &operator+=(minutes p_minutes);
+  template <typename t_amount>
+  void substract(timestamp *p_ts, t_amount p_amount) {
+    days _days_1(p_amount);
+    auto _int = _days_1.integer();
+    auto _dec = _days_1.decimal();
 
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_minutes
-  //  /// \return
-  //  ///
-  //  timestamp operator+(minutes p_minutes);
+    seconds _secs_in_day((days(_dec)));
 
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_minutes
-  //  /// \return
-  //  ///
-  //  timestamp &operator-=(minutes p_minutes);
+    seconds _secs(p_ts->m_secs - _secs_in_day);
 
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_minutes
-  //  /// \return
-  //  ///
-  //  timestamp operator-(minutes p_minutes);
+    if (days(_secs) < 0) {
+      p_ts->m_days -= days(_int + 1);
+      p_ts->m_secs = seconds(days(1)) + _secs;
+    } else {
+      p_ts->m_days -= days(_int);
+      p_ts->m_secs += _secs_in_day.integer();
+    }
+  }
 
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_days
-  //  /// \return
-  //  ///
-  //  timestamp &operator+=(days p_days);
-
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_days
-  //  /// \return
-  //  ///
-  //  timestamp operator+(days p_days);
-
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_days
-  //  /// \return
-  //  ///
-  //  timestamp &operator-=(days p_days);
-
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_days
-  //  /// \return
-  //  ///
-  //  timestamp operator-(days p_days);
-
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_weeks
-  //  /// \return
-  //  ///
-  //  timestamp &operator+=(weekdays p_weeks);
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_weeks
-  //  /// \return
-  //  ///
-  //  timestamp operator+(weekdays p_weeks);
-
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_weeks
-  //  /// \return
-  //  ///
-  //  timestamp &operator-=(weekdays p_weeks);
-
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_weeks
-  //  /// \return
-  //  ///
-  //  timestamp operator-(weekdays p_weeks);
-
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_months
-  //  /// \return
-  //  ///
-  //  timestamp &operator+=(months p_months);
-
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_months
-  //  /// \return
-  //  ///
-  //  timestamp operator+(months p_months);
-
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_months
-  //  /// \return
-  //  ///
-  //  timestamp &operator-=(months p_months);
-
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_months
-  //  /// \return
-  //  ///
-  //  timestamp operator-(months p_months);
-
-  //  ///
-  //  /// \brief operator +=
-  //  /// \param p_years
-  //  /// \return
-  //  ///
-  //  timestamp operator+=(years p_years);
-
-  //  ///
-  //  /// \brief operator +
-  //  /// \param p_years
-  //  /// \return
-  //  ///
-  //  timestamp operator+(years p_years);
-
-  //  ///
-  //  /// \brief operator -=
-  //  /// \param p_years
-  //  /// \return
-  //  ///
-  //  timestamp operator-=(years p_years);
-
-  //  ///
-  //  /// \brief operator -
-  //  /// \param p_years
-  //  /// \return
-  //  ///
-  //  timestamp operator-(years p_years);
-
-private:
   constexpr void dMyhms2days_secs(year p_year, month p_month, day p_day,
                                   hour p_hour, minute p_minute,
                                   second p_second);
