@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <iostream>
 
-#include <calendar/gregorian/amount.h>
+#include <calendar/gregorian/internal/amount.h>
 
 namespace tenacitas {
 namespace calendar {

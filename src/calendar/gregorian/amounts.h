@@ -4,10 +4,10 @@
 #include <cstdint>
 #include <tuple>
 
-#include <calendar/gregorian/amount.h>
-#include <calendar/gregorian/convert.h>
 #include <calendar/gregorian/day.h>
 #include <calendar/gregorian/hour.h>
+#include <calendar/gregorian/internal/amount.h>
+#include <calendar/gregorian/internal/convert.h>
 #include <calendar/gregorian/minute.h>
 #include <calendar/gregorian/month.h>
 #include <calendar/gregorian/second.h>

@@ -18,8 +18,8 @@ HEADERS += \
   $$code_src_dir/calendar/gregorian/year.h \
   $$code_src_dir/calendar/gregorian/weekday.h \
   $$code_src_dir/calendar/gregorian/week.h \
-  $$code_src_dir/calendar/gregorian/amount.h \
-  $$code_src_dir/calendar/gregorian/convert.h \
+  $$code_src_dir/calendar/gregorian/internal/amount.h \
+  $$code_src_dir/calendar/gregorian/internal/convert.h \
   $$code_src_dir/calendar/gregorian/amounts.h  \
   $$code_src_dir/calendar/gregorian/timestamp.h
 
@@ -37,11 +37,11 @@ HEADERS += \
 
 
 SOURCES += \
-  $$code_src_dir/calendar/gregorian/second.cpp \
-  $$code_src_dir/calendar/gregorian/minute.cpp \
-  $$code_src_dir/calendar/gregorian/hour.cpp \
-  $$code_src_dir/calendar/gregorian/day.cpp \
-  $$code_src_dir/calendar/gregorian/month.cpp \
-  $$code_src_dir/calendar/gregorian/weekday.cpp \
-  $$code_src_dir/calendar/gregorian/timestamp.cpp
+  $$code_src_dir/calendar/gregorian/internal/second.cpp \
+  $$code_src_dir/calendar/gregorian/internal/minute.cpp \
+  $$code_src_dir/calendar/gregorian/internal/hour.cpp \
+  $$code_src_dir/calendar/gregorian/internal/day.cpp \
+  $$code_src_dir/calendar/gregorian/internal/month.cpp \
+  $$code_src_dir/calendar/gregorian/internal/weekday.cpp \
+  $$code_src_dir/calendar/gregorian/internal/timestamp.cpp
 

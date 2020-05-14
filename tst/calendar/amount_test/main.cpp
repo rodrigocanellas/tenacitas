@@ -5,7 +5,7 @@
 #include <string>
 
 #include <calendar/gregorian/amounts.h>
-#include <calendar/gregorian/convert.h>
+#include <calendar/gregorian/internal/convert.h>
 #include <calendar/gregorian/day.h>
 #include <calendar/gregorian/month.h>
 #include <calendar/gregorian/year.h>
