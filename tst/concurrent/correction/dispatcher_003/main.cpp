@@ -65,7 +65,7 @@ struct rx {
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
     ns_con::dispatcher_t<msg_tpdo, ns_log::log>::publish(msg_tpdo());
 
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
 };
 

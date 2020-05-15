@@ -20,12 +20,12 @@ struct sleeping_loop_000 {
 
   bool operator()() {
 
-    typedef concurrent::_bus::sleeping_loop_t<void, logger::cerr::log> loop;
+    typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
     loop _loop(std::chrono::milliseconds(100),
                [] {
                  concurrent_log_debug(logger::cerr::log, "loop1");
-                 return concurrent::_bus::work_status::dont_stop;
+                 return concurrent::work_status::dont_stop;
                },
                std::chrono::milliseconds(100));
 

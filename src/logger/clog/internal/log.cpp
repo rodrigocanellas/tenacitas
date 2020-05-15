@@ -7,7 +7,7 @@ namespace logger {
 
 namespace clog {
 
-_bus::log_t<log> log::m_log([](std::string &&p_str) { std::clog << p_str; });
+log_t<log> log::m_log([](std::string &&p_str) { std::clog << p_str; });
 
 } // namespace clog
 } // namespace logger

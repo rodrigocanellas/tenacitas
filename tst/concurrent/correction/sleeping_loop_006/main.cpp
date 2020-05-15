@@ -18,16 +18,16 @@ using namespace tenacitas;
 using namespace tenacitas;
 
 struct work1 {
-  concurrent::_bus::work_status operator()() {
+  concurrent::work_status operator()() {
 
     ++counter;
     concurrent_log_debug(logger::cerr::log, counter);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   uint64_t counter = 0;
 };
 
-typedef concurrent::_bus::sleeping_loop_t<void, logger::cerr::log> loop;
+typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
 struct sleeping_loop_006 {
 

@@ -10,8 +10,8 @@
 
 using namespace tenacitas;
 
-typedef concurrent::_bus::thread_pool_t<int32_t, logger::cerr::log> thread_pool;
-typedef concurrent::_bus::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
+typedef concurrent::thread_pool_t<int32_t, logger::cerr::log> thread_pool;
+typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
 using namespace tenacitas;
 using namespace tenacitas;
@@ -19,14 +19,14 @@ using namespace tenacitas;
 template <typename t_notifier> struct work_1 {
   work_1(t_notifier *p_notifier) : m_notifier(p_notifier) {}
 
-  concurrent::_bus::work_status operator()(int32_t &&p_value) {
+  concurrent::work_status operator()(int32_t &&p_value) {
     std::this_thread::sleep_for(std::chrono::milliseconds(170));
     concurrent_log_debug(logger::cerr::log, "work 1 handling msg ", p_value);
     if (p_value > 200) {
       m_notifier->stop("work1");
-      return concurrent::_bus::work_status::stop;
+      return concurrent::work_status::stop;
     }
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
 
 private:

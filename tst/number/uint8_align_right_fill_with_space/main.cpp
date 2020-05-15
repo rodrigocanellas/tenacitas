@@ -27,5 +27,7 @@ struct uint8_align_rigth_fill_with_space {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<uint8_align_rigth_fill_with_space>(argc, argv);
+  tester::test _test(argc, argv);
+
+  _test.run<uint8_align_rigth_fill_with_space>();
 }

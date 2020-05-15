@@ -4,7 +4,7 @@
 CONFIG -= qt
 TEMPLATE = app
 CONFIG += test
-TARGET = tenacitas.program.test.options000
+TARGET = tenacitas.program.tst.options000
 
 include (../../../../common.pri)
 

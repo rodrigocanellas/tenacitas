@@ -49,7 +49,7 @@ std::ostream &operator<<(std::ostream &p_out, const msg &p_msg) {
   return p_out;
 }
 
-typedef concurrent::_bus::sleeping_loop_t<msg, logger::cerr::log> loop;
+typedef concurrent::sleeping_loop_t<msg, logger::cerr::log> loop;
 
 struct provide_1 {
   std::pair<bool, msg> operator()() {
@@ -91,28 +91,28 @@ private:
 };
 
 struct work_1 {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
     concurrent_log_debug(logger::cerr::log, "1: ", m_msg);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   msg m_msg;
 };
 
 struct work_2 {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
     concurrent_log_debug(logger::cerr::log, "2: ", m_msg);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   msg m_msg;
 };
 
 struct work_3 {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
     m_msg = std::move(p_msg);
     concurrent_log_debug(logger::cerr::log, "3: ", m_msg);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   msg m_msg;
 };
@@ -129,7 +129,7 @@ struct sleeping_loop_012 {
 
     loop _loop_1(
         std::chrono::milliseconds(1000),
-        [&_work_1](msg &&p_msg) -> concurrent::_bus::work_status {
+        [&_work_1](msg &&p_msg) -> concurrent::work_status {
           return _work_1(std::move(p_msg));
         },
         std::chrono::milliseconds(100),
@@ -137,7 +137,7 @@ struct sleeping_loop_012 {
 
     loop _loop_2(
         std::chrono::milliseconds(500),
-        [&_work_2](msg &&p_msg) -> concurrent::_bus::work_status {
+        [&_work_2](msg &&p_msg) -> concurrent::work_status {
           return _work_2(std::move(p_msg));
         },
         std::chrono::milliseconds(100),
@@ -145,7 +145,7 @@ struct sleeping_loop_012 {
 
     loop _loop_3(
         std::chrono::milliseconds(2000),
-        [&_work_3](msg &&p_msg) -> concurrent::_bus::work_status {
+        [&_work_3](msg &&p_msg) -> concurrent::work_status {
           return _work_3(std::move(p_msg));
         },
         std::chrono::milliseconds(100),

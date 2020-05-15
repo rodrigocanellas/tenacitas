@@ -10,27 +10,27 @@
 
 using namespace tenacitas;
 
-typedef concurrent::_bus::thread_pool_t<int32_t, logger::cerr::log> thread_pool;
-typedef concurrent::_bus::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
+typedef concurrent::thread_pool_t<int32_t, logger::cerr::log> thread_pool;
+typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
 using namespace tenacitas;
 
 struct work_1 {
-  concurrent::_bus::work_status operator()(int32_t &&p_value) {
+  concurrent::work_status operator()(int32_t &&p_value) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     ++counter;
     concurrent_log_debug(logger::cerr::log, "work 1 handling msg ", p_value);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   int16_t counter = 0;
 };
 
 struct work_2 {
-  concurrent::_bus::work_status operator()(int32_t &&p_value) {
+  concurrent::work_status operator()(int32_t &&p_value) {
     std::this_thread::sleep_for(std::chrono::milliseconds(60));
     ++counter;
     concurrent_log_debug(logger::cerr::log, "work 2 handling msg ", p_value);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   int16_t counter = 0;
 };
@@ -46,21 +46,21 @@ struct thread_pool_097 {
       int16_t _counter = 0;
       sleeping_loop _loop(
           std::chrono::milliseconds(100),
-          [&_pool, &_value, &_counter]() -> concurrent::_bus::work_status {
+          [&_pool, &_value, &_counter]() -> concurrent::work_status {
             ++_value;
             ++_counter;
             _pool.handle(_value);
-            return concurrent::_bus::work_status::dont_stop;
+            return concurrent::work_status::dont_stop;
           },
           std::chrono::milliseconds(300));
 
       _pool.add_work(
-          [&_work_1](int32_t &&p_val) -> concurrent::_bus::work_status {
+          [&_work_1](int32_t &&p_val) -> concurrent::work_status {
             return _work_1(std::move(p_val));
           },
           std::chrono::milliseconds(200));
       _pool.add_work(
-          [&_work_2](int32_t &&p_val) -> concurrent::_bus::work_status {
+          [&_work_2](int32_t &&p_val) -> concurrent::work_status {
             return _work_2(std::move(p_val));
           },
           std::chrono::milliseconds(200));

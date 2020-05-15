@@ -44,10 +44,10 @@ struct requester {
   requester(std::condition_variable *p_cond, std::mutex *p_mutex)
       : m_cond(p_cond), m_mutex(p_mutex) {}
 
-  concurrent::_bus::work_status operator()(reply &&p_reply) {
+  concurrent::work_status operator()(reply &&p_reply) {
     using namespace tenacitas;
     using namespace tenacitas;
-    typedef concurrent::_bus::dispatcher_t<request, logger::cerr::log>
+    typedef concurrent::dispatcher_t<request, logger::cerr::log>
         dispatcher;
     concurrent_log_info(logger::cerr::log, "reply ", p_reply);
     if (m_counter++ > 100) {
@@ -59,14 +59,14 @@ struct requester {
       concurrent_log_info(logger::cerr::log, "woke up!");
       std::unique_lock<std::mutex> _lock(*m_mutex);
       m_cond->notify_all();
-      return concurrent::_bus::work_status::stop;
+      return concurrent::work_status::stop;
     }
     if ((p_reply.i % 2) == 0) {
       dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
     }
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
 
 private:
@@ -76,21 +76,21 @@ private:
 };
 
 struct replier {
-  concurrent::_bus::work_status operator()(request &&p_request) {
+  concurrent::work_status operator()(request &&p_request) {
     using namespace tenacitas;
     using namespace tenacitas;
-    typedef concurrent::_bus::dispatcher_t<reply, logger::cerr::log> dispatcher;
+    typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
     concurrent_log_info(logger::cerr::log, "request ", p_request);
     if (p_request.i == 0) {
       concurrent_log_info(logger::cerr::log, "stopping");
-      return concurrent::_bus::work_status::stop;
+      return concurrent::work_status::stop;
     }
     if ((p_request.i % 2) == 0) {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     } else {
       dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
     }
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
 };
 
@@ -99,9 +99,9 @@ struct dispatcher_002 {
   bool operator()() {
     using namespace tenacitas;
     using namespace tenacitas;
-    typedef concurrent::_bus::dispatcher_t<reply, logger::cerr::log>
+    typedef concurrent::dispatcher_t<reply, logger::cerr::log>
         dispatcher_reply;
-    typedef concurrent::_bus::dispatcher_t<request, logger::cerr::log>
+    typedef concurrent::dispatcher_t<request, logger::cerr::log>
         dispatcher_request;
     std::chrono::milliseconds _work_timeout(15000);
     dispatcher_reply::subscribe("req", requester(&m_cond, &m_mutex),
@@ -129,7 +129,7 @@ private:
   bool start() {
     using namespace tenacitas;
     using namespace tenacitas;
-    typedef concurrent::_bus::dispatcher_t<request, logger::cerr::log>
+    typedef concurrent::dispatcher_t<request, logger::cerr::log>
         dispatcher;
     dispatcher::publish(request(static_cast<uint32_t>(time(nullptr))));
     return true;

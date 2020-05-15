@@ -1,7 +1,9 @@
 SUBDIRS = \
     dep \
-    correction \
-    performance
+    async_loop \
+    correction
+#    \
+#    performance
 
 TEMPLATE = subdirs
 

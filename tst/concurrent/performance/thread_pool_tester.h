@@ -33,15 +33,15 @@ struct thread_pool_tester {
 
 private:
   typedef concurrent::_tst::msg_a msg;
-  typedef concurrent::_bus::thread_pool_t<msg, logger::cerr::log> thread_pool;
-  typedef concurrent::_bus::thread thread;
+  typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
+  typedef concurrent::thread thread;
 
   struct work {
-    concurrent::_bus::work_status operator()(msg &&p_msg) {
+    concurrent::work_status operator()(msg &&p_msg) {
       concurrent_log_debug(logger::cerr::log, "consuming ", p_msg);
       std::this_thread::sleep_for(std::chrono::milliseconds(work_sleep_ms));
 
-      return concurrent::_bus::work_status::dont_stop;
+      return concurrent::work_status::dont_stop;
     }
   };
 

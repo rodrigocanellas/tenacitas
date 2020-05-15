@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_BUS_THREAD_POOL_H
-#define TENACITAS_CONCURRENT_BUS_THREAD_POOL_H
+#ifndef TENACITAS_CONCURRENT_THREAD_POOL_H
+#define TENACITAS_CONCURRENT_THREAD_POOL_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -26,8 +26,8 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
-/// \brief namespace of the class group
-namespace _bus {
+
+
 
 ///
 /// \brief thread_pool implements a thread pool, which allows to use the
@@ -413,7 +413,7 @@ private:
   bool m_destroying = false;
 };
 
-} // namespace _bus
+
 } // namespace concurrent
 } // namespace tenacitas
 

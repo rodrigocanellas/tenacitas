@@ -11,12 +11,12 @@
 using namespace tenacitas;
 
 typedef tenacitas::concurrent::_tst::msg_a msg;
-typedef concurrent::_bus::thread_pool_t<msg, logger::cerr::log> thread_pool;
+typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
 using namespace tenacitas;
 
 struct work {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
 
     concurrent_log_debug(logger::cerr::log, "handling msg ", p_msg);
     if ((p_msg.counter() % 2) == 0) {
@@ -25,7 +25,7 @@ struct work {
     } else {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   uint16_t m_timeout = 0;
 };

@@ -11,14 +11,14 @@ using namespace tenacitas;
 using namespace tenacitas;
 
 typedef tenacitas::concurrent::_tst::msg_a msg;
-typedef concurrent::_bus::thread_pool_t<msg, logger::cerr::log> thread_pool;
+typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
 using namespace tenacitas;
 struct work {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
     m_msg = p_msg;
     concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   msg m_msg;
 };
@@ -28,7 +28,7 @@ struct thread_pool_091 {
     work _work;
     thread_pool _pool;
     _pool.add_work(
-        [&_work](msg &&p_msg) -> concurrent::_bus::work_status {
+        [&_work](msg &&p_msg) -> concurrent::work_status {
           return _work(std::move(p_msg));
         },
         std::chrono::milliseconds(500));

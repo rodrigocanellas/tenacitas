@@ -1,10 +1,13 @@
-SUBDIRS = \
-    ../../../logger/logger.cerr \
-    ../../../tester/tester.headers \
-    ../../../formater/formater.headers \
-    ../../../calendar/calendar.headers
-
+include (../../../../common.pri)
 
 TEMPLATE = subdirs
+
+SUBDIRS = \
+    $$builder_dir/logger/logger.cerr \
+    $$builder_dir/tester/tester.lib \
+    $$builder_dir/number/number.headers \
+    $$builder_dir/calendar/calendar.headers
+
+
 
 

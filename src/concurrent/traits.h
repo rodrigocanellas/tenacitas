@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_BUS_TRAITS_H
-#define TENACITAS_CONCURRENT_BUS_TRAITS_H
+#ifndef TENACITAS_CONCURRENT_TRAITS_H
+#define TENACITAS_CONCURRENT_TRAITS_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -14,8 +14,8 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
-/// \brief namespace of the class group
-namespace _bus {
+
+
 
 enum class work_status : uint8_t
 {
@@ -95,8 +95,8 @@ struct traits_t<void>
   typedef std::function<work_status()> breaker;
 };
 
-} // namespace _bus
+
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // TENACITAS_CONCURRENT_BUS_TRAITS_H
+#endif // TENACITAS_CONCURRENT_TRAITS_H

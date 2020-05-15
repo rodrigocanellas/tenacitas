@@ -27,5 +27,7 @@ struct uint32_align_left_filled_with_a {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<uint32_align_left_filled_with_a>(argc, argv);
+  tester::test _test(argc, argv);
+
+  _test.run<uint32_align_left_filled_with_a>();
 }

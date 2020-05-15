@@ -11,15 +11,15 @@
 using namespace tenacitas;
 
 typedef tenacitas::concurrent::_tst::msg_a msg;
-typedef concurrent::_bus::thread_pool_t<msg, logger::cerr::log> thread_pool;
-typedef concurrent::_bus::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
+typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
+typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
 struct work {
-  concurrent::_bus::work_status operator()(msg &&p_msg) {
+  concurrent::work_status operator()(msg &&p_msg) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     m_msg = p_msg;
     concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-    return concurrent::_bus::work_status::dont_stop;
+    return concurrent::work_status::dont_stop;
   }
   msg m_msg;
 };

@@ -26,5 +26,7 @@ struct int16_align_left_fill_with_zero {
 };
 
 int main(int argc, char **argv) {
-  tester::test::run<int16_align_left_fill_with_zero>(argc, argv);
+  tester::test _test(argc, argv);
+
+  _test.run<int16_align_left_fill_with_zero>();
 }

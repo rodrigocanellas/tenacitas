@@ -1,10 +1,42 @@
 
+#include <iostream>
+
 #include <tester/test.h>
 
 namespace tenacitas {
 namespace tester {
 
-test::test(int argc, char **argv) : m_argc(argc), m_argv(argv) {}
+test::test(int argc, char **argv) : m_argc(argc), m_argv(argv) {
+  m_pgm_name = m_argv[0];
+
+  try {
+
+    program::options _options;
+
+    _options.parse(m_argc, m_argv);
+    if (_options.get_bool_param("exec")) {
+      m_execute_tests = true;
+    } else if (_options.get_bool_param("desc")) {
+      m_print_desc = true;
+    } else {
+
+      std::optional<std::list<program::options::value>> _tests_to_exec =
+          _options.get_set_param("exec");
+      if (_tests_to_exec) {
+        m_execute_tests = true;
+        m_tests_to_exec.insert(_tests_to_exec.value().begin(),
+                               _tests_to_exec.value().end());
+      }
+    }
+
+    if ((!m_execute_tests) && (!m_print_desc)) {
+      print_mini_howto();
+    }
+  } catch (std::exception &_ex) {
+    std::cout << "EXCEPTION '" << _ex.what() << "'" << std::endl;
+    return;
+  }
+}
 
 void test::print_mini_howto() {
   using namespace std;
@@ -12,11 +44,14 @@ void test::print_mini_howto() {
       << "Syntax:\n"
       << "\t'" << m_pgm_name
       << " --desc' will display a description of the test\n"
-      << "\t'" << m_pgm_name << " --exec' will execute the tests\n"
+      << "\t'" << m_pgm_name << " --exec' will execute the all the tests\n"
+      << "\t'" << m_pgm_name
+      << " --exec { <test-name-1> <test-name-2> ...}' will execute tests "
+         "defined between '{' and '}'\n"
       << "\t'" << m_pgm_name << "' displays this message\n\n"
-      << "Attention: \n"
-      << "\tProgrammers should use 'std::cerr' to print messages\n"
-      << "\tIf do not want your 'std::cerr' messages to be displayed, use\n"
+      << "For the programmers: \n"
+      << "\t1 - Programmers should use 'std::cerr' to print messages\n"
+      << "\t2 - If do not want your 'std::cerr' messages to be displayed, use\n"
       << "\t'" << m_pgm_name << " --exec 2> /dev/null' to execute the tests\n\n"
       << "Output:\n"
       << "\tIf the test passes, the message \"SUCCESS for <name>\" will be "

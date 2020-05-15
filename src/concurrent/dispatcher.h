@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_BUS_DISPATCHER_H
-#define TENACITAS_CONCURRENT_BUS_DISPATCHER_H
+#ifndef TENACITAS_CONCURRENT_DISPATCHER_H
+#define TENACITAS_CONCURRENT_DISPATCHER_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -23,8 +23,8 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
-/// \brief namespace of the class group
-namespace _bus {
+
+
 
 ///
 /// \brief dispatcher implements a publisher/subscriber pattern
@@ -205,7 +205,7 @@ template <typename t_msg, typename t_log>
 typename dispatcher_t<t_msg, t_log>::thread_pool_list
     dispatcher_t<t_msg, t_log>::m_thread_pool_list;
 
-} // namespace _bus
+
 } // namespace concurrent
 } // namespace tenacitas
 

@@ -1,5 +1,5 @@
 
-#include <cstdint>
+
 #include <iostream>
 #include <string>
 
@@ -9,25 +9,34 @@ using namespace tenacitas;
 
 struct test_ok {
   bool operator()() { return true; }
+
+  static std::string desc() { return "an ok test"; }
 };
 
 struct test_fail {
   bool operator()() { return true; }
+  static std::string desc() { return "a fail test"; }
 };
 
 struct test_error {
   bool operator()() {
-    throw std::runtime_error("test function raised an exception");
+    try {
+      throw std::runtime_error("test function raised an exception");
+      return false;
+    } catch (const std::exception &_ex) {
+      std::cerr << "'test_error' raised '" << _ex.what() << "'" << std::endl;
+      return true;
+    }
   }
+  static std::string desc() { return "an eror test"; }
 };
 
 int main(int argc, char **argv) {
   try {
     tester::test _test(argc, argv);
-
-    _test(test_ok(), "test_ok", "runs a correct test");
-    _test(test_fail(), "test_fail", "runs a fail test");
-    _test(test_error(), "test_error", "runs a error test");
+    run_test(_test, test_ok);
+    run_test(_test, test_fail);
+    run_test(_test, test_error);
 
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;

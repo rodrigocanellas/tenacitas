@@ -11,3 +11,4 @@ include (../../../../common.pri)
 SOURCES += \
   $$test_src_dir/number/uint32_align_left_filled_with_a/main.cpp
 
+LIBS += $$libs_dir/libtenacitas.tester.$$static_lib_ext

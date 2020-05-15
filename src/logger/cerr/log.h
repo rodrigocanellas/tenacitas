@@ -11,7 +11,7 @@
 #include <iostream>
 #include <thread>
 
-#include <logger/_common/log_t.h>
+#include <logger/internal/log_t.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -140,7 +140,7 @@ struct log {
   }
 
 private:
-  static _bus::log_t<log> m_log;
+  static log_t<log> m_log;
 };
 
 } // namespace cerr

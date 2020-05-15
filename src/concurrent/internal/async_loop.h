@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_BUS_ASYNC_LOOP_H
-#define TENACITAS_CONCURRENT_BUS_ASYNC_LOOP_H
+#ifndef TENACITAS_CONCURRENT_ASYNC_LOOP_H
+#define TENACITAS_CONCURRENT_ASYNC_LOOP_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -31,8 +31,8 @@
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
-/// \brief namespace of the class group
-namespace _bus {
+
+
 
 ///
 /// \brief allows to execute a loop asyncronously
@@ -239,7 +239,7 @@ private:
   std::mutex m_mutex;
 };
 
-} // namespace _bus
+
 } // namespace concurrent
 } // namespace tenacitas
 
