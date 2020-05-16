@@ -1,0 +1,63 @@
+@startuml
+
+hide empty members
+allow_mixing
+hide circle
+skinparam groupInheritance 3
+
+namespace code {
+
+solution "super 1" --- "sub *" solution
+
+solution --> "*" aspect
+
+solution --> "*" tst
+
+
+aspect <|-- bus  
+aspect <|-- ent 
+aspect <|-- per  
+aspect <|-- com  
+aspect <|-- uif     
+aspect <|-- ser  
+
+aspect *-- structure
+}
+
+namespace file_system {
+class solution <<directory>>
+' class aspect <<directory>>
+class source <<file>>
+class tst <<directory>>
+
+solution "super 1" -left-- "sub *" solution
+
+' solution --> "*" aspect
+solution --> "*" tst
+solution --> source
+
+' aspect <|-- bus  
+' aspect <|-- ent 
+' aspect <|-- per  
+' aspect <|-- com  
+' aspect <|-- uif     
+' aspect <|-- ser  
+
+' aspect *-- source
+
+solution ..> code.solution
+' aspect ..> code.aspect
+source  ..> "*" code.structure
+}
+
+namespace build {
+solution "super 1" -- "sub *" solution
+solution ..> code.solution
+solution <|-- pgm
+solution <|-- lib
+solution <|-- template
+
+solution --> "*" tst
+}
+
+@enduml

@@ -1,6 +1,9 @@
 SUBDIRS = \
     dep \
-    correction \
+    async_loop \
+    sleeping_loop \
+    thread_pool \
+    dispatcher  \
     performance
 
 TEMPLATE = subdirs

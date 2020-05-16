@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  layer \
-  tst
+  <PRJ>.<PROD> \
+  <PRJ>.tst
 
 
 CONFIG += ordered

@@ -1,5 +1,8 @@
+include (../../../common.pri)
+
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  ../../concurrent/headers/concurrent_headers.pro \
-  ../../calendar/headers/calendar_headers.pro
+  $$builder_dir/concurrent/concurrent.headers
+
+

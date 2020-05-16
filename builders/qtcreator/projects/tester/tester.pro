@@ -1,6 +1,7 @@
 SUBDIRS = \
-  headers/tester_headers.pro
-#  lib \
+  dep \
+  tester.lib \
+  tst
 
 
 TEMPLATE = subdirs
