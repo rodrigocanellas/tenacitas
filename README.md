@@ -22,6 +22,7 @@
     tester - Simple class to help creating uint tests.
 
 
-# Full documentaion can be found at **doc/projects/html/index.html** #
+# Full documentaion
+Can be found at **doc/projects/html/index.html**
 
 
