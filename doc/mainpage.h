@@ -107,5 +107,4 @@
  *        │   └── Makefile<br>
  *        ├── Makefile<br>
  *
- * \endverbatin
  */
