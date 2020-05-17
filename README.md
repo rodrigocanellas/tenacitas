@@ -13,7 +13,7 @@
     concurrent - Sleeping loop, thread pool and publisher/subscriber are implemented in this project.
 
     logger - Thread-safe logs for std::cout, std::cerr, std::clog. 
-         Also class to log in files, which allows definition of retention.
+             Also class to log in files, which allows definition of retention.
 		 
     number - Classes with a variety of number manipulations, such as formating.
 
