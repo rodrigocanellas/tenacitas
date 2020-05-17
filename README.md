@@ -3,7 +3,7 @@
 
 ![tenacitas](doc/tenacitas_logo.png)
 
-**tenacitas** is a latin word which means teanacity.
+**tenacitas** is a latin word which means tenacity.
 
 # Projects #
 
