@@ -7,6 +7,6 @@
 
 # Projects #
 
-**tenacitas** repository that hosts C++ ![projects](doc/projects/html/index.html)
+**tenacitas** repository hosts C++ ![projects](doc/projects/html/index.html)
 
 
