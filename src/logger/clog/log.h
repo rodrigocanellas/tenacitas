@@ -1,5 +1,5 @@
 #ifndef TENACITAS_LOGGER_CLOG_CLOG_H
-#define TENACITAS_LOGGER_CLOG_LOG_H
+#define TENACITAS_LOGGER_CLOG_CLOG_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory

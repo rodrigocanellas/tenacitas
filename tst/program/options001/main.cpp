@@ -1,15 +1,16 @@
-#include <algorithm>
-#include <array>
-#include <cstdint>
-#include <cstring>
-#include <ctime>
-#include <fstream>
 /// \example
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
+
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <cstring>
+#include <ctime>
+#include <fstream>
 
 #include <iomanip>
 #include <iostream>

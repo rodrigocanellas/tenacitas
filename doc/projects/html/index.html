@@ -27,10 +27,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="tenacitas_logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
    </div>
-   <div id="projectbrief">C++ code</div>
+   <div id="projectbrief">C++ projects</div>
   </td>
  </tr>
  </tbody>
@@ -84,7 +85,85 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="title">tenacitas Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><h1><a class="anchor" id="projects"></a>
+Projects</h1>
+<p><a href="../../calendar/html/index.html">calendar</a></p>
+<p><a href="../../concurrent/html/index.html">concurrent</a></p>
+<p><a href="../../logger/html/index.html">logger</a></p>
+<p><a href="../../number/html/index.html">number</a></p>
+<p><a href="../../program/html/index.html">program</a></p>
+<p><a href="../../tester/html/index.html">tester</a></p>
+<h1><a class="anchor" id="build_structure"></a>
+Build Structure</h1>
+<p>The build system files are separeted from the source files, so that one can use the build system that is used to.</p>
+<p>From the top directory we have:</p>
+<pre class="fragment">drwxrwxr-x  3 rodrigo rodrigo  4096 dez  9 09:59 builders
+drwxrwxr-x 11 rodrigo rodrigo  4096 mai 17 15:13 doc
+-rw-rw-r--  1 rodrigo rodrigo 35149 ago 31  2019 LICENSE
+-rw-rw-r--  1 rodrigo rodrigo   204 mai 17 11:19 README.md
+drwxrwxr-x  8 rodrigo rodrigo  4096 mai 17 12:10 src
+drwxrwxr-x  8 rodrigo rodrigo  4096 mai 17 11:18 tst
+</pre><p>In the <b>doc</b> directory tree are the documentation files of the projects.</p>
+<p>In the <b>src</b> directory tree are the source files of the projects.</p>
+<p>In the <b>tst</b> directory tree are the source files of the tests of the projects.</p>
+<p>In the <b>builders</b> directory tree are the build systems used to build the projects.</p>
+<p>Currently, <b>tenacitas</b> projects use QtCreator(tm), so below <b>builders</b> we have: </p><pre class="fragment">drwxrwxr-x 6 rodrigo rodrigo 4096 mai 16 18:56 qtcreator/
+</pre><p>In this directory we have, among other directories: </p><pre class="fragment">drwxrwxr-x 8 rodrigo rodrigo  4096 mai 16 18:56 projects/
+</pre><p>And inside it:</p>
+<pre class="fragment">drwxrwxr-x 5 rodrigo rodrigo 4096 mai 17 10:02 calendar/
+drwxrwxr-x 4 rodrigo rodrigo 4096 mai 17 10:02 concurrent/
+drwxrwxr-x 8 rodrigo rodrigo 4096 mai 17 10:02 logger/
+drwxrwxr-x 4 rodrigo rodrigo 4096 mai 17 11:57 number/
+drwxrwxr-x 4 rodrigo rodrigo 4096 mai 17 10:58 program/
+drwxrwxr-x 6 rodrigo rodrigo 4096 mai 17 10:02 tester/
+</pre><p>Which are the directories with the files necessary to build the projects using QtCreator(tm).</p>
+<p>For example, in the <b>logger</b> directory tree we have:</p>
+<p>├── dep<br />
+ │ └── dep.pro <br />
+ ├── logger.cerr<br />
+ │ ├── logger.cerr.pro<br />
+ │ ├── Makefile<br />
+ │ └── Makefile.logger_cerr<br />
+ ├── logger.clog<br />
+ │ ├── logger.clog.pro<br />
+ │ └── Makefile<br />
+ ├── logger.cout<br />
+ │ ├── logger.cout.pro<br />
+ │ └── Makefile<br />
+ ├── logger.file<br />
+ │ ├── logger.file.pro<br />
+ │ └── Makefile<br />
+ ├── logger.pro<br />
+ ├── logger.pro.user<br />
+ ├── Makefile<br />
+ └── tst<br />
+ ├── cerr_log<br />
+ │ ├── cerr_log.pro<br />
+ │ └── Makefile<br />
+ ├── clog_log<br />
+ │ ├── clog_log.pro<br />
+ │ └── Makefile<br />
+ ├── cout_log<br />
+ │ ├── cout_log.pro<br />
+ │ └── Makefile<br />
+ ├── dep<br />
+ │ ├── dep.pro<br />
+ │ └── Makefile<br />
+ ├── file_log<br />
+ │ ├── file_log.pro<br />
+ │ └── Makefile<br />
+ ├── file_log_how_to<br />
+ │ ├── file_log_how_to.pro<br />
+ │ └── Makefile<br />
+ ├── file_log_multi<br />
+ │ ├── file_log_multi.pro<br />
+ │ └── Makefile<br />
+ ├── file_log_single<br />
+ │ ├── file_log_single.pro<br />
+ │ └── Makefile<br />
+ ├── Makefile<br />
+</p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

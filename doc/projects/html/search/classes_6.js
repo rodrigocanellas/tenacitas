@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['publisher_5f1',['publisher_1',['../structpublisher__1.html',1,'']]],
-  ['publisher_5f2',['publisher_2',['../structpublisher__2.html',1,'']]],
-  ['publisher_5f3',['publisher_3',['../structpublisher__3.html',1,'']]]
+  ['int16_5falign_5fleft_5ffill_5fwith_5fzero',['int16_align_left_fill_with_zero',['../structint16__align__left__fill__with__zero.html',1,'']]]
 ];

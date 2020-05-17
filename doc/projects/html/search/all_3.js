@@ -1,11 +1,12 @@
 var searchData=
 [
-  ['d',['d',['../structmsg__c.html#acfcb3919399731ad31919e73fd649138',1,'msg_c::d()'],['../structpublisher__2.html#ab46b8c200f4aa6b4a3fc99eaac7dbe3d',1,'publisher_2::d()']]],
-  ['day2hr',['day2hr',['../namespacetenacitas_1_1calendar_1_1business.html#a598ef99d576fc00cf170585e60f17d86',1,'tenacitas::calendar::business']]],
-  ['day2mil',['day2mil',['../namespacetenacitas_1_1calendar_1_1business.html#af32089cfb30c676497dace4b1449f569',1,'tenacitas::calendar::business']]],
-  ['day2min',['day2min',['../namespacetenacitas_1_1calendar_1_1business.html#a5d9f6a37c3a7b4c6332420773d735c56',1,'tenacitas::calendar::business']]],
-  ['day2sec',['day2sec',['../namespacetenacitas_1_1calendar_1_1business.html#a7207150077f223473004a93aa9286895',1,'tenacitas::calendar::business']]],
-  ['dispatcher',['dispatcher',['../classtenacitas_1_1concurrent_1_1business_1_1dispatcher.html',1,'tenacitas::concurrent::business::dispatcher&lt; t_msg &gt;'],['../classtenacitas_1_1concurrent_1_1business_1_1dispatcher.html#a1d23fd5bb418b4636d3185b28e92f3e2',1,'tenacitas::concurrent::business::dispatcher::dispatcher()=delete'],['../classtenacitas_1_1concurrent_1_1business_1_1dispatcher.html#a4753dc0669e5087fa20601cdf42b9c39',1,'tenacitas::concurrent::business::dispatcher::dispatcher(const dispatcher &amp;)=delete'],['../classtenacitas_1_1concurrent_1_1business_1_1dispatcher.html#a84c871227564b0ed03a386f668fc0a98',1,'tenacitas::concurrent::business::dispatcher::dispatcher(dispatcher &amp;&amp;) noexcept=delete']]],
-  ['dispatcher_2eh',['dispatcher.h',['../dispatcher_8h.html',1,'']]],
-  ['dispatcher_5f000',['dispatcher_000',['../structdispatcher__000.html',1,'']]]
+  ['cerr_5flog_5fcreation',['cerr_log_creation',['../classcerr__log__creation.html',1,'']]],
+  ['cerr_5flog_5fhow_5fto',['cerr_log_how_to',['../structcerr__log__how__to.html',1,'']]],
+  ['cerr_5flog_5fmulti',['cerr_log_multi',['../classcerr__log__multi.html',1,'']]],
+  ['cerr_5flog_5fsingle',['cerr_log_single',['../structcerr__log__single.html',1,'']]],
+  ['clog_5fhow_5fto',['clog_how_to',['../structclog__how__to.html',1,'']]],
+  ['cout_5flog_5fcreation',['cout_log_creation',['../structcout__log__creation.html',1,'']]],
+  ['cout_5flog_5fhow_5fto',['cout_log_how_to',['../structcout__log__how__to.html',1,'']]],
+  ['cout_5flog_5fmulti',['cout_log_multi',['../classcout__log__multi.html',1,'']]],
+  ['cout_5flog_5fsingle',['cout_log_single',['../structcout__log__single.html',1,'']]]
 ];

@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['cerr_5flog_5fmulti',['cerr_log_multi',['../classcerr__log__multi.html#a2b3b65825a7fb20f39b0a2ca3a4529b2',1,'cerr_log_multi']]],
-  ['configure_5fcerr_5flog',['configure_cerr_log',['../namespacetenacitas_1_1logger_1_1business.html#afb9a599f11a683f48e7872afde2c729b',1,'tenacitas::logger::business']]],
-  ['configure_5fcout_5flog',['configure_cout_log',['../namespacetenacitas_1_1logger_1_1business.html#a34148e355e03ccea37daefb9ecff675c',1,'tenacitas::logger::business']]],
-  ['configure_5ffile_5flog',['configure_file_log',['../namespacetenacitas_1_1logger_1_1business.html#af33dd88181b0b5edf85eedd18baa474c',1,'tenacitas::logger::business']]]
+  ['daily_5frepetition_5ft',['daily_repetition_t',['../structtenacitas_1_1calendar_1_1greogorian_1_1daily__repetition__t.html#a58efda03ef53b5f19bfeaf3ee4dfffcc',1,'tenacitas::calendar::greogorian::daily_repetition_t']]],
+  ['day',['day',['../structtenacitas_1_1calendar_1_1gregorian_1_1day.html#aa82376f911af60c4e358a8dca1908815',1,'tenacitas::calendar::gregorian::day::day(t_int p_value)'],['../structtenacitas_1_1calendar_1_1gregorian_1_1day.html#a0dc77f292a061ebf011622344b5c81e2',1,'tenacitas::calendar::gregorian::day::day(amount_t&lt; day &gt; p_amount)']]],
+  ['dispatcher_5ft',['dispatcher_t',['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a77e201d63811ae6798262f6ac1b98d3a',1,'tenacitas::concurrent::dispatcher_t::dispatcher_t()=delete'],['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a06f6541836182cbc151ed09cda82fc55',1,'tenacitas::concurrent::dispatcher_t::dispatcher_t(const dispatcher_t &amp;)=delete'],['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a5c911ab9771ca12a77f444c1bc7091a3',1,'tenacitas::concurrent::dispatcher_t::dispatcher_t(dispatcher_t &amp;&amp;)=delete']]]
 ];

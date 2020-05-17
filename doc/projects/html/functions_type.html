@@ -27,10 +27,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  <td id="projectlogo"><img alt="Logo" src="tenacitas_logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
    </div>
-   <div id="projectbrief">C++ code</div>
+   <div id="projectbrief">C++ projects</div>
   </td>
  </tr>
  </tbody>
@@ -81,21 +82,44 @@ $(document).ready(function(){initNavTree('functions_type.html','');});
 
 <div class="contents">
 &#160;<ul>
-<li>break_t
-: <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits.html#a8dbfcd2220102fc6fda587eea68545f2">tenacitas::concurrent::business::loop_traits&lt; t_data &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits_3_01void_01_4.html#a569ec0b1402fa9cfe9eba2fc87f3093b">tenacitas::concurrent::business::loop_traits&lt; void &gt;</a>
+<li>breaker
+: <a class="el" href="structtenacitas_1_1concurrent_1_1async__loop__t.html#af91be485e95cbfab088eec3ce860cf4b">tenacitas::concurrent::async_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t.html#abfe51855ad094f970697118d9fc423a8">tenacitas::concurrent::loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#a64a28059179d0eda6ea5b2c15ed5cdb0">tenacitas::concurrent::loop_t&lt; void, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t.html#aee515890c84d91a3215dc899ace49cf7">tenacitas::concurrent::traits_t&lt; t_data &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#a681c28fe7009aa174e052f868cf18796">tenacitas::concurrent::traits_t&lt; void &gt;</a>
 </li>
-<li>provide_t
-: <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits.html#a683c32e833f72f79b6dca74d5def0367">tenacitas::concurrent::business::loop_traits&lt; t_data &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits_3_01void_01_4.html#a919adefd6e377c35ccf83598cdd884ba">tenacitas::concurrent::business::loop_traits&lt; void &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#a57c54a646f370350aee1149f688ac4d5">tenacitas::concurrent::business::sleeping_loop&lt; t_data &gt;</a>
+<li>log
+: <a class="el" href="structtenacitas_1_1concurrent_1_1async__loop__t.html#a6eca651dd5f1b171fa9cbce1bfb24e98">tenacitas::concurrent::async_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="classtenacitas_1_1concurrent_1_1dispatcher__t.html#ad9fd7d72724ba38cc8a7a0619a401f27">tenacitas::concurrent::dispatcher_t&lt; t_msg, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t.html#a296ec952f6364b9eaeb124b83545c445">tenacitas::concurrent::loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#a8eee1943212e61b169a661c6ea2b1fef">tenacitas::concurrent::loop_t&lt; void, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#aaece1e64c0af0906be8dd58532790e61">tenacitas::concurrent::sleeping_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="classtenacitas_1_1concurrent_1_1thread__pool__t.html#a27a847d4ce5c287eed97f4654a16ad6d">tenacitas::concurrent::thread_pool_t&lt; t_data, t_log &gt;</a>
 </li>
-<li>work_t
-: <a class="el" href="classtenacitas_1_1concurrent_1_1business_1_1dispatcher.html#afd880fe4fd8dd20e72e4d181ad379c7e">tenacitas::concurrent::business::dispatcher&lt; t_msg &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits.html#ad779f63b3b298daf88d5d21932cdfc49">tenacitas::concurrent::business::loop_traits&lt; t_data &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1loop__traits_3_01void_01_4.html#a94a510e6f79f6e852e5a890ba2b6e626">tenacitas::concurrent::business::loop_traits&lt; void &gt;</a>
-, <a class="el" href="structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#a307df20901a1ea4a569a617d7728ce67">tenacitas::concurrent::business::sleeping_loop&lt; t_data &gt;</a>
-, <a class="el" href="classtenacitas_1_1concurrent_1_1business_1_1thread__pool.html#a62e661a1c4fe28999882edad8fa7b631">tenacitas::concurrent::business::thread_pool&lt; t_data &gt;</a>
+<li>provider
+: <a class="el" href="structtenacitas_1_1concurrent_1_1async__loop__t.html#a5159210813527b6d8829c48141bcd199">tenacitas::concurrent::async_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t.html#a9063cb5c67e0d1eb3d653787d67184d3">tenacitas::concurrent::loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#af04e5647f0218bf7cb713590ea292fe0">tenacitas::concurrent::loop_t&lt; void, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#add6df0382167d0d43dc9d9a6883b8318">tenacitas::concurrent::sleeping_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t.html#a0e0d3f80482b7079663a67af145158ee">tenacitas::concurrent::traits_t&lt; t_data &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#ababc09cdc1f909678cb6e301f5fdb7dd">tenacitas::concurrent::traits_t&lt; void &gt;</a>
+</li>
+<li>queue
+: <a class="el" href="classtenacitas_1_1concurrent_1_1dispatcher__t.html#a9ee3f6033771ad81df7669e1fa4b55e6">tenacitas::concurrent::dispatcher_t&lt; t_msg, t_log &gt;</a>
+</li>
+<li>worker
+: <a class="el" href="structtenacitas_1_1concurrent_1_1async__loop__t.html#a710de804e022822f408791927e90aba4">tenacitas::concurrent::async_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="classtenacitas_1_1concurrent_1_1dispatcher__t.html#a18c93b8916fdb7e337e021019c93ac10">tenacitas::concurrent::dispatcher_t&lt; t_msg, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t.html#a2bca6bf78bac4a969a85ce5dee4254d2">tenacitas::concurrent::loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#a53c7a0c824b9349ce2e9b5e0f36c36f8">tenacitas::concurrent::loop_t&lt; void, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#adfa64e88a55a800f68e4ff982e8ecab4">tenacitas::concurrent::sleeping_loop_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="classtenacitas_1_1concurrent_1_1thread__pool__t.html#a5b4e7bdf4aeb76eafb3c2fd649cbb7fc">tenacitas::concurrent::thread_pool_t&lt; t_data, t_log &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t.html#a83b50715955e51eefb49129c0b3029db">tenacitas::concurrent::traits_t&lt; t_data &gt;</a>
+, <a class="el" href="structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#ac1cdaa9744212643e328acf2d577b841">tenacitas::concurrent::traits_t&lt; void &gt;</a>
+</li>
+<li>writer
+: <a class="el" href="classtenacitas_1_1logger_1_1log__t.html#a91186a03ed2a16e026613a68f6a2ba50">tenacitas::logger::log_t&lt; t_specific_logger &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

@@ -3,6 +3,10 @@
 
 ![tenacitas](doc/tenacitas_logo.png)
 
-A place to study C++.
+**tenacitas** is a latin word which means teanacity.
 
-Documentation being updated...
+# Projects #
+
+**tenacitas** repository that hosts C++ ![projects](doc/projects/html/index.html)
+
+

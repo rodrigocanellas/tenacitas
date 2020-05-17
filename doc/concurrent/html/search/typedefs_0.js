@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['breaker',['breaker',['../structtenacitas_1_1concurrent_1_1async__loop__t.html#af91be485e95cbfab088eec3ce860cf4b',1,'tenacitas::concurrent::async_loop_t::breaker()'],['../structtenacitas_1_1concurrent_1_1loop__t.html#abfe51855ad094f970697118d9fc423a8',1,'tenacitas::concurrent::loop_t::breaker()'],['../structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#a64a28059179d0eda6ea5b2c15ed5cdb0',1,'tenacitas::concurrent::loop_t&lt; void, t_log &gt;::breaker()'],['../structtenacitas_1_1concurrent_1_1traits__t.html#aee515890c84d91a3215dc899ace49cf7',1,'tenacitas::concurrent::traits_t::breaker()'],['../structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#a681c28fe7009aa174e052f868cf18796',1,'tenacitas::concurrent::traits_t&lt; void &gt;::breaker()']]]
+];

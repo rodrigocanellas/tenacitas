@@ -1,8 +1,0 @@
-<map id="/home/rodrigo/tenacitas/code/tester/business/run.h" name="/home/rodrigo/tenacitas/code/tester/business/run.h">
-<area shape="rect" id="node2" href="$concurrent_2test_2correction_2sleeping__loop__002_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/concurrent/test\l/correction/sleeping_loop\l_002/main.cpp" alt="" coords="5,95,172,165"/>
-<area shape="rect" id="node3" href="$concurrent_2test_2correction_2dispatcher__000_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/concurrent/test\l/correction/dispatcher\l_000/main.cpp" alt="" coords="196,95,355,165"/>
-<area shape="rect" id="node4" href="$concurrent_2test_2correction_2thread__pool__097_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/concurrent/test\l/correction/thread_pool\l_097/main.cpp" alt="" coords="379,95,537,165"/>
-<area shape="rect" id="node5" href="$logger_2test_2correction_2cerr__log__single_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/logger/test/correction\l/cerr_log_single/main.cpp" alt="" coords="561,102,741,158"/>
-<area shape="rect" id="node6" href="$logger_2test_2correction_2file__log__single_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/logger/test/correction\l/file_log_single/main.cpp" alt="" coords="765,102,945,158"/>
-<area shape="rect" id="node7" href="$logger_2test_2correction_2cout__log__multi_2main_8cpp.html" title="/home/rodrigo/tenacitas\l/code/logger/test/correction\l/cout_log_multi/main.cpp" alt="" coords="969,102,1149,158"/>
-</map>

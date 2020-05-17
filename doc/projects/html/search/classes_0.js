@@ -1,7 +1,18 @@
 var searchData=
 [
-  ['call_5fusing_5ftuple',['call_using_tuple',['../structtenacitas_1_1type_1_1business_1_1call__using__tuple.html',1,'tenacitas::type::business']]],
-  ['call_5fusing_5ftuple_3c_200_2c_20t_5fresult_20_3e',['call_using_tuple&lt; 0, t_result &gt;',['../structtenacitas_1_1type_1_1business_1_1call__using__tuple_3_010_00_01t__result_01_4.html',1,'tenacitas::type::business']]],
-  ['cerr_5flog_5fmulti',['cerr_log_multi',['../classcerr__log__multi.html',1,'']]],
-  ['cerr_5flog_5fsingle',['cerr_log_single',['../structcerr__log__single.html',1,'']]]
+  ['amount_5ft',['amount_t',['../structtenacitas_1_1calendar_1_1gregorian_1_1amount__t.html',1,'tenacitas::calendar::gregorian']]],
+  ['amount_5ft_3c_20day_20_3e',['amount_t&lt; day &gt;',['../structtenacitas_1_1calendar_1_1gregorian_1_1amount__t.html',1,'tenacitas::calendar::gregorian']]],
+  ['amount_5ft_3c_20second_20_3e',['amount_t&lt; second &gt;',['../structtenacitas_1_1calendar_1_1gregorian_1_1amount__t.html',1,'tenacitas::calendar::gregorian']]],
+  ['async_5floop_5f000',['async_loop_000',['../structasync__loop__000.html',1,'']]],
+  ['async_5floop_5f001',['async_loop_001',['../structasync__loop__001.html',1,'']]],
+  ['async_5floop_5f002',['async_loop_002',['../structasync__loop__002.html',1,'']]],
+  ['async_5floop_5f003',['async_loop_003',['../structasync__loop__003.html',1,'']]],
+  ['async_5floop_5f004',['async_loop_004',['../structasync__loop__004.html',1,'']]],
+  ['async_5floop_5f005',['async_loop_005',['../structasync__loop__005.html',1,'']]],
+  ['async_5floop_5f006',['async_loop_006',['../structasync__loop__006.html',1,'']]],
+  ['async_5floop_5f007',['async_loop_007',['../structasync__loop__007.html',1,'']]],
+  ['async_5floop_5f008',['async_loop_008',['../structasync__loop__008.html',1,'']]],
+  ['async_5floop_5f009',['async_loop_009',['../structasync__loop__009.html',1,'']]],
+  ['async_5floop_5ft',['async_loop_t',['../structtenacitas_1_1concurrent_1_1async__loop__t.html',1,'tenacitas::concurrent']]],
+  ['async_5floop_5ft_3c_20void_2c_20no_5flog_20_3e',['async_loop_t&lt; void, no_log &gt;',['../structtenacitas_1_1concurrent_1_1async__loop__t.html',1,'tenacitas::concurrent']]]
 ];

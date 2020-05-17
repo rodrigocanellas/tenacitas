@@ -1,4 +1,0 @@
-var dir_ec78f2b332f7b5b8116e8092cc022777 =
-[
-    [ "correction", "dir_15e111bf1ac33599149e58e4725544a8.html", "dir_15e111bf1ac33599149e58e4725544a8" ]
-];

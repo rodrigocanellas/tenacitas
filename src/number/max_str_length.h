@@ -21,8 +21,6 @@ namespace number {
 ///
 /// \tparam t_num_type is the type of number
 ///
-/// \example
-
 template <typename t_num_type> inline uint16_t max_str_length() {
   return (
       static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +

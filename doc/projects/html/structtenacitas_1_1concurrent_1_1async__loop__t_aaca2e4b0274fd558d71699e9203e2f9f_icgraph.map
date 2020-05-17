@@ -1,0 +1,5 @@
+<map id="tenacitas::concurrent::async_loop_t::is_stopped" name="tenacitas::concurrent::async_loop_t::is_stopped">
+<area shape="rect" id="node2" href="$structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#acb45cc354a9cea0e3b565bf16fb87438" title="is_stopped " alt="" coords="232,5,392,61"/>
+<area shape="rect" id="node3" href="$structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#ab0b61dcfb48a000a5b1427bd7d198f64" title="run starts the loop " alt="" coords="232,85,392,141"/>
+<area shape="rect" id="node4" href="$structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#a60b93c82bf58e34e5417334cd217bc7b" title="stop stops the loop " alt="" coords="232,165,392,221"/>
+</map>

@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['get_5finterval',['get_interval',['../structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#aa82a128129da9317ba7fc40ecbad2832',1,'tenacitas::concurrent::business::sleeping_loop']]],
-  ['get_5fprovide',['get_provide',['../structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#aed9337944fdfb1bd167646f9256da01f',1,'tenacitas::concurrent::business::sleeping_loop']]],
-  ['get_5ftimeout',['get_timeout',['../structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#a76495635c985a519486d94aae85112bf',1,'tenacitas::concurrent::business::sleeping_loop']]],
-  ['get_5fwork',['get_work',['../structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html#afde5a7bec412d79e9cce5726d95effcd',1,'tenacitas::concurrent::business::sleeping_loop']]]
+  ['file_5fcontroller',['file_controller',['../structtenacitas_1_1logger_1_1file_1_1file__controller.html',1,'tenacitas::logger::file::file_controller'],['../structtenacitas_1_1logger_1_1file_1_1file__controller.html#a294537d202a831f9555352691180df80',1,'tenacitas::logger::file::file_controller::file_controller()']]],
+  ['file_5flog_5fcreation',['file_log_creation',['../classfile__log__creation.html',1,'']]],
+  ['file_5flog_5fhow_5fto',['file_log_how_to',['../structfile__log__how__to.html',1,'']]],
+  ['file_5flog_5fmulti',['file_log_multi',['../classfile__log__multi.html',1,'']]],
+  ['file_5flog_5fsingle',['file_log_single',['../classfile__log__single.html',1,'']]],
+  ['file_5fwriter_5ft',['file_writer_t',['../structtenacitas_1_1logger_1_1file_1_1file__writer__t.html',1,'tenacitas::logger::file::file_writer_t&lt; t_controller &gt;'],['../structtenacitas_1_1logger_1_1file_1_1file__writer__t.html#a8b57809c5ef1e2b7b17178c11b398d41',1,'tenacitas::logger::file::file_writer_t::file_writer_t(t_controller &amp;&amp;p_controller)'],['../structtenacitas_1_1logger_1_1file_1_1file__writer__t.html#a99f1b0f72c165f49f1c7b61515f4ac29',1,'tenacitas::logger::file::file_writer_t::file_writer_t(file_writer_t &amp;&amp;p_file_media) noexcept']]]
 ];

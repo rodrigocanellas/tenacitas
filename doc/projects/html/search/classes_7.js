@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['sleeping_5floop',['sleeping_loop',['../structtenacitas_1_1concurrent_1_1business_1_1sleeping__loop.html',1,'tenacitas::concurrent::business']]],
-  ['sleeping_5floop_5f002',['sleeping_loop_002',['../structsleeping__loop__002.html',1,'']]],
-  ['subscriber_5f1',['subscriber_1',['../structsubscriber__1.html',1,'']]],
-  ['subscriber_5f2',['subscriber_2',['../structsubscriber__2.html',1,'']]],
-  ['subscriber_5f3',['subscriber_3',['../structsubscriber__3.html',1,'']]],
-  ['subscriber_5f4',['subscriber_4',['../structsubscriber__4.html',1,'']]]
+  ['log_5ft',['log_t',['../classtenacitas_1_1logger_1_1log__t.html',1,'tenacitas::logger']]],
+  ['loop_5ft',['loop_t',['../structtenacitas_1_1concurrent_1_1loop__t.html',1,'tenacitas::concurrent']]],
+  ['loop_5ft_3c_20void_2c_20no_5flog_20_3e',['loop_t&lt; void, no_log &gt;',['../structtenacitas_1_1concurrent_1_1loop__t.html',1,'tenacitas::concurrent']]],
+  ['loop_5ft_3c_20void_2c_20t_5flog_20_3e',['loop_t&lt; void, t_log &gt;',['../structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html',1,'tenacitas::concurrent']]]
 ];

@@ -1,0 +1,11 @@
+<map id="tenacitas::calendar::gregorian::timestamp::timestamp" name="tenacitas::calendar::gregorian::timestamp::timestamp">
+<area shape="rect" id="node2" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a8351f66ccb483423787e917ee1d68f9a" title="operator = copy assignment " alt="" coords="221,5,373,61"/>
+<area shape="rect" id="node3" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a085f58b98f4023a2f96c7ba4fc35a1c0" title="get_second " alt="" coords="221,85,373,141"/>
+<area shape="rect" id="node4" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a8607cde46b19206f04f94420898c8f29" title="get_minute " alt="" coords="221,165,373,221"/>
+<area shape="rect" id="node5" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#ac7cfc9ad802e82fdc8255d1063400ade" title="get_hour " alt="" coords="221,245,373,301"/>
+<area shape="rect" id="node6" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a3d90753dd38bc1d16468aac784b38846" title="get_day " alt="" coords="221,325,373,381"/>
+<area shape="rect" id="node7" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a651dc144c94238af515159991dd3d753" title="get_weekday " alt="" coords="221,405,373,461"/>
+<area shape="rect" id="node8" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#afe0df3da4331dbd2ec801f8e84373de6" title="get_month " alt="" coords="221,485,373,541"/>
+<area shape="rect" id="node9" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#afcfeb465072c37675418d0beffce01af" title="get_year " alt="" coords="221,565,373,621"/>
+<area shape="rect" id="node10" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a499fff6208ceeec211ef0cc27a480eb6" title="now " alt="" coords="205,646,389,687"/>
+</map>
