@@ -1,18 +1,25 @@
 var NAVTREE =
 [
-  [ "program", "index.html", [
-    [ "tester", "index.html", [
-      [ "Dependencies", "index.html#dependencies", null ]
+  [ "tester", "index.html", [
+    [ "Dependencies", "index.html#dependencies", null ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
+      [ "Class Index", "classes.html", null ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Functions", "functions_func.html", null ]
+      ] ]
     ] ],
     [ "Files", null, [
       [ "File List", "files.html", "files" ]
-    ] ]
+    ] ],
+    [ "Examples", "examples.html", "examples" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"files.html"
+".html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
