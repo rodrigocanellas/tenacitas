@@ -1,7 +1,19 @@
 var NAVTREE =
 [
-  [ "program", "index.html", [
-    [ "calendar", "index.html", null ],
+  [ "calendar", "index.html", [
+    [ "Namespaces", null, [
+      [ "Namespace List", "namespaces.html", "namespaces" ]
+    ] ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
+      [ "Class Index", "classes.html", null ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
+      ] ]
+    ] ],
     [ "Files", null, [
       [ "File List", "files.html", "files" ]
     ] ]
@@ -10,7 +22,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"files.html"
+".html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
