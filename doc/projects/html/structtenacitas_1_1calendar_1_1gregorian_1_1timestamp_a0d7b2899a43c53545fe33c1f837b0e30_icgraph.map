@@ -1,4 +1,0 @@
-<map id="tenacitas::calendar::gregorian::timestamp::timestamp" name="tenacitas::calendar::gregorian::timestamp::timestamp">
-<area shape="rect" id="node2" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a4f5e6db7bcb478e431ff21d166bd1a7e" title="adds an amount of time to the current timestamp, creating a new timestamp " alt="" coords="205,5,357,61"/>
-<area shape="rect" id="node3" href="$structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a00135499acb9113e15c5d6dca7e9f8e9" title="subtracts an amount of time to the current timestamp, creating a new timestamp " alt="" coords="205,85,357,141"/>
-</map>

@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['is_5fleap',['is_leap',['../structtenacitas_1_1calendar_1_1gregorian_1_1year.html#a344b3fa7e3c06f210db3df95997866ab',1,'tenacitas::calendar::gregorian::year']]],
-  ['is_5fstopped',['is_stopped',['../structtenacitas_1_1concurrent_1_1async__loop__t.html#aaca2e4b0274fd558d71699e9203e2f9f',1,'tenacitas::concurrent::async_loop_t::is_stopped()'],['../structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#acb45cc354a9cea0e3b565bf16fb87438',1,'tenacitas::concurrent::sleeping_loop_t::is_stopped()'],['../classtenacitas_1_1concurrent_1_1thread__pool__t.html#a2b6a8a9a9741e658b1d04862a9ba5502',1,'tenacitas::concurrent::thread_pool_t::is_stopped()'],['../structtenacitas_1_1concurrent_1_1loop__t.html#af3a4202c669090d425370c6039d4bb89',1,'tenacitas::concurrent::loop_t::is_stopped()'],['../structtenacitas_1_1concurrent_1_1loop__t_3_01void_00_01t__log_01_4.html#a31af40972fef185f2184f9a3ebba2361',1,'tenacitas::concurrent::loop_t&lt; void, t_log &gt;::is_stopped()']]]
-];
