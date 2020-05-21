@@ -1,6 +1,6 @@
 /*! \mainpage tester
  * 
- * Simple class to help creating uint tests<br><br>
+ * Simple class to help creating unit tests<br><br>
  *
  * \section dependencies Dependencies
  * <a href="../../program/html/index.html">program</a>
