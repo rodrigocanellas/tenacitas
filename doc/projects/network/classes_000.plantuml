@@ -6,7 +6,7 @@ allow_mixing
 namespace remote {
   
   class caller
-  class  called
+  class  handler
   class device
   class call
   class receive
@@ -16,6 +16,8 @@ namespace remote {
   class communication
   class conversation
   class notification
+  class switchboard
+  class address
 
   communication <|-left- conversation
   communication <|-- notification
@@ -24,14 +26,20 @@ namespace remote {
   device <|-- receive
 
   caller -up-> "uses" call
-  called --> "uses" receive
+  caller --> "defines" communication
+  caller --> "has" address
+
+  handler --> "uses" receive
+  handler --> "understands" communication
    
   device -up-> "establishes" connection
   device -up->  "chooses" channel
   device -right-> "sends" message
-
-  caller --> "defines" communication
-  called --> "understands" communication
+  
+  switchboard --> "has" address
+  switchboard --> "provides" handler
+  
+  
   
 
 }
