@@ -10,7 +10,9 @@
 #include <cstdint>
 #include <functional>
 #include <future>
+#include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <thread>
 #include <type_traits>
@@ -45,35 +47,47 @@ enum class status : uint16_t {
   error_unspecified = 1,
   error_connecting = 2,
   error_sending = 3,
-  error_receiving = 4
+  error_posting = 4,
+  error_notifying = 5,
+  error_creating_security = 6
 };
 
 inline std::underlying_type<status>::type s2v(status p_status) {
   return static_cast<std::underlying_type<status>::type>(p_status);
 }
 
-template <typename t_logger, typename t_connector> struct caller_device_t {
+template <typename t_logger, typename t_endpoint, typename t_connector,
+          typename t_security>
+struct client_t {
   typedef t_logger logger;
+  typedef t_endpoint endpoint;
   typedef t_connector connector;
-  typedef typename connector::endpoint endpoint;
   typedef typename connector::connection connection;
+  typedef t_security security;
 
-  status connect(const endpoint &p_endpoint) {
+  typedef std::pair<status, buffer> result;
+
+  status connect(std::function<std::pair<status, connection>(const endpoint &)>
+                     p_connector,
+                 const endpoint &p_endpoint) noexcept {
     try {
-      connector _connector;
-      std::pair<status, connection> _status =
-          _connection(_connector(p_endpoint));
-      if (_status.first != status::ok) {
-        comm_log_error(logger, "error ", s2v(_status.first),
-                       " while connecting");
-        return _status.first;
+      std::pair<status, connection> _res(p_connector(p_endpoint));
+      if (_res.first != status::ok) {
+        comm_log_error(logger, "error ", s2v(_res.first), " while connecting");
+        return _res.first;
       }
-      std::lock_guard<std::mutex> _lock(m_mutex);
-      m_connection = std::move(_status.second);
 
-    } catch (...) {
-      comm_log_error(logger, "error unspecified while connecting");
-      return status::error_unspecified;
+      std::lock_guard<std::mutex> _lock(m_mutex);
+      m_security = std::make_unique<security>(_res.second);
+      if (!m_security) {
+        comm_log_error(logger, "error crating security");
+        return status::error_creating_security;
+      }
+
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '" + std::string(_ex.what()) +
+                                 "' while connecting");
+      return status::error_connecting;
     }
   }
 
@@ -86,24 +100,18 @@ template <typename t_logger, typename t_connector> struct caller_device_t {
   ///
   /// \return
   ///
-  std::pair<status, buffer> send(const buffer &p_buffer) {
+  result send(const buffer &p_buffer) noexcept {
     try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-      std::pair<status, buffer> _res = m_connection.send(p_buffer);
-      if (_res.first != status::ok) {
-        comm_log_error(logger, "error ", s2v(_res.first),
-                       " while sending and receiving");
-        return _res;
-      }
-      return _res;
-    } catch (...) {
-      comm_log_error(logger, "error unspecified while connecting");
-      return {status::error_unspecified, buffer()};
+      return m_security->send(p_buffer);
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger,
+                     "error '" + std::string(_ex.what()) + "' while sending");
+      return {status::error_sending, buffer()};
     }
   }
 
   ///
-  /// \brief send
+  /// \brief post
   ///
   /// \param p_buffer
   ///
@@ -111,25 +119,48 @@ template <typename t_logger, typename t_connector> struct caller_device_t {
   ///
   /// \return
   ///
-  std::pair<status, buffer> post(const buffer &p_buffer) {
+  std::future<result> post(const buffer &p_buffer) {
     try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-      std::future<std::pair<status, buffer>> _future =
-          m_connection.send(p_buffer);
-      std::pair<status, buffer> _res = _future.get();
-      if (_res.first != status::ok) {
-        comm_log_error(logger, "error ", s2v(_res.first),
-                       " while sending and receiving");
+      return std::async(std::launch::async, m_security->send(p_buffer));
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger,
+                     "error '" + std::string(_ex.what()) + "' while posting");
+      return std::future<result>();
+    }
+  }
+
+  ///
+  /// \brief notify
+  ///
+  /// \param p_buffer
+  ///
+  /// \param p_handler handles the reply
+  ///
+  /// \details asynchronous
+  ///
+  status notify(const buffer &p_buffer,
+                std::function<void(const buffer &)> p_handler) noexcept {
+    try {
+      std::future<result> _future = post(p_buffer);
+      result _result = _future.get();
+      if (_result.first == status::ok) {
+        std::async(std::launch::deferred, p_handler, _result.second);
+        return _result.first;
       }
-      return _res;
-    } catch (...) {
-      comm_log_error(logger, "error unspecified while connecting");
-      return {status::error_unspecified, buffer()};
+      comm_log_error(logger, "error ", s2v(_result.first), " while notifying");
+
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger,
+                     "error '" + std::string(_ex.what()) + "' while notifying");
+      return status::error_notifying;
     }
   }
 
 private:
-  connection m_connection;
+  typedef std::unique_ptr<security> security_ptr;
+
+private:
+  security_ptr m_security;
   std::mutex m_mutex;
 };
 
