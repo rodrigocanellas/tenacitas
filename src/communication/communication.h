@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <functional>
 #include <future>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -40,7 +41,7 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace communication {
 
-typedef std::vector<char> buffer;
+typedef std::string message;
 
 enum class status : uint16_t {
   ok = 0,
@@ -49,27 +50,30 @@ enum class status : uint16_t {
   error_sending = 3,
   error_posting = 4,
   error_notifying = 5,
-  error_creating_security = 6
+  error_creating_security = 6,
+  error_receiving = 7
 };
 
 inline std::underlying_type<status>::type s2v(status p_status) {
   return static_cast<std::underlying_type<status>::type>(p_status);
 }
 
-template <typename t_logger, typename t_endpoint, typename t_connector,
-          typename t_security>
-struct client_t {
+template <typename t_logger, typename t_connector> struct client_t {
   typedef t_logger logger;
-  typedef t_endpoint endpoint;
   typedef t_connector connector;
-  typedef typename connector::connection connection;
-  typedef t_security security;
+  typedef typename t_connector::connection connection;
 
-  typedef std::pair<status, buffer> result;
+  typedef std::pair<status, message> result;
 
-  status connect(std::function<std::pair<status, connection>(const endpoint &)>
-                     p_connector,
-                 const endpoint &p_endpoint) noexcept {
+  client_t() = delete;
+
+  client_t(connector &&p_connector) : m_connector(std::move(p_connector)) {}
+
+  template <typename t_endpoint>
+  status
+  connect(std::function<std::pair<connection, std::string>(const t_endpoint &)>
+              p_connector,
+          const t_endpoint &p_endpoint) noexcept {
     try {
       std::pair<status, connection> _res(p_connector(p_endpoint));
       if (_res.first != status::ok) {
@@ -78,89 +82,109 @@ struct client_t {
       }
 
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_security = std::make_unique<security>(_res.second);
-      if (!m_security) {
-        comm_log_error(logger, "error crating security");
-        return status::error_creating_security;
-      }
+      m_connection = std::move(_res.second);
+      m_io_size = m_connection.get_io_size();
 
     } catch (const std::exception &_ex) {
-      comm_log_error(logger, "error '" + std::string(_ex.what()) +
-                                 "' while connecting");
+      comm_log_error(logger, "error '", _ex.what(), "' while connecting");
       return status::error_connecting;
     }
   }
 
-  ///
   /// \brief send
   ///
-  /// \param p_buffer
+  /// \param p_message
   ///
   /// \details blocking
   ///
   /// \return
-  ///
-  result send(const buffer &p_buffer) noexcept {
+  status send(const message &p_message) noexcept {
     try {
-      return m_security->send(p_buffer);
+      std::string::size_type _size = p_message.size();
+      if (_size <= m_io_size) {
+        status _status = m_connection.send(p_message.begin(), p_message.end());
+        if (_status == status::ok) {
+          return _status;
+        }
+        comm_log_error(logger, "error '", s2v(_status), "' while sending");
+        return _status;
+      }
+
+      std::string::size_type _sent = 0;
+      std::string::const_iterator _ite = p_message.begin();
+      while (_sent != _size) {
+        std::string::size_type _to_sent = _size - _sent;
+        if (_to_sent > m_io_size) {
+          _to_sent = m_io_size;
+        }
+
+        status _status = m_connection.send(_ite, std::next(_ite, _to_sent));
+        if (_status != status::ok) {
+          comm_log_error(logger, "error '", s2v(_status), "' while sending");
+          return _status;
+        }
+        _sent += _to_sent;
+        std::advance(_ite, _sent);
+      }
+
     } catch (const std::exception &_ex) {
-      comm_log_error(logger,
-                     "error '" + std::string(_ex.what()) + "' while sending");
-      return {status::error_sending, buffer()};
+      comm_log_error(logger, "error '", _ex.what(), "' while sending");
+      return status::error_sending;
     }
   }
 
+  /// \brief receive
   ///
+  /// \details blocking
+  ///
+  /// \return
+  result receive() {
+    try {
+      return m_connection.receive();
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
+      return {status::error_receiving, message()};
+    }
+  }
+
   /// \brief post
   ///
-  /// \param p_buffer
+  /// \param p_message
   ///
   /// \details non-blocking
   ///
   /// \return
-  ///
-  std::future<result> post(const buffer &p_buffer) {
+  std::future<status> post(const message &p_message) {
     try {
-      return std::async(std::launch::async, m_security->send(p_buffer));
+      return std::async(std::launch::async, m_connection.send(p_message));
     } catch (const std::exception &_ex) {
       comm_log_error(logger,
                      "error '" + std::string(_ex.what()) + "' while posting");
+      return std::future<status>();
+    }
+  }
+
+  /// \brief collect
+  ///
+  /// \details non-blocking
+  ///
+  /// \return
+  std::future<result> collect() {
+    try {
+      return std::async(std::launch::async, m_connection.receive());
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
       return std::future<result>();
     }
   }
 
-  ///
-  /// \brief notify
-  ///
-  /// \param p_buffer
-  ///
-  /// \param p_handler handles the reply
-  ///
-  /// \details asynchronous
-  ///
-  status notify(const buffer &p_buffer,
-                std::function<void(const buffer &)> p_handler) noexcept {
-    try {
-      std::future<result> _future = post(p_buffer);
-      result _result = _future.get();
-      if (_result.first == status::ok) {
-        std::async(std::launch::deferred, p_handler, _result.second);
-        return _result.first;
-      }
-      comm_log_error(logger, "error ", s2v(_result.first), " while notifying");
-
-    } catch (const std::exception &_ex) {
-      comm_log_error(logger,
-                     "error '" + std::string(_ex.what()) + "' while notifying");
-      return status::error_notifying;
-    }
-  }
+private:
+  typedef typename std::unique_ptr<connection> connection_ptr;
 
 private:
-  typedef std::unique_ptr<security> security_ptr;
-
-private:
-  security_ptr m_security;
+  connector m_connector;
+  connection_ptr m_connection;
+  uint16_t m_io_size;
   std::mutex m_mutex;
 };
 
