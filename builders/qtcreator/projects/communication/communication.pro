@@ -1,7 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  communication.headers
+  communication.lib \
+  tst
 
 CONFIG += ordered
 
