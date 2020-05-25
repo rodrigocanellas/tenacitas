@@ -13,6 +13,7 @@ const status status::error_notifying(5);
 const status status::error_creating_security(6);
 const status status::error_receiving(7);
 const status status::error_timeout(8);
+const status status::end_of_message(9);
 
 } // namespace communication
 } // namespace tenacitas
