@@ -18,14 +18,13 @@ struct send_msg_smaller_than_io_buffer {
 
   bool operator()() {
     typedef logger::cerr::log logger;
-    typedef communication::tst::file_connector connector;
+    typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connector> client;
+    typedef communication::client_t<logger, connection> client;
 
-    connector::ptr _connector(connector::create());
-    client _client(_connector);
+    client _client;
 
-    const std::string _file_name("./send_msg_smaller_than_io_buffer.txt");
+    const std::string _file_name("send_msg_smaller_than_io_buffer.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
@@ -51,12 +50,11 @@ struct post_without_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
-    typedef communication::tst::file_connector connector;
+    typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connector> client;
+    typedef communication::client_t<logger, connection> client;
 
-    connector::ptr _connector(connector::create());
-    client _client(_connector);
+    client _client;
 
     const std::string _file_name("./post_without_timeout.txt");
     status _status = _client.connect(_file_name);
@@ -91,12 +89,11 @@ struct post_with_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
-    typedef communication::tst::file_connector connector;
+    typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connector> client;
+    typedef communication::client_t<logger, connection> client;
 
-    connector::ptr _connector(connector::create());
-    client _client(_connector);
+    client _client;
 
     const std::string _file_name("./post_with_timeout.txt");
     status _status = _client.connect(_file_name);
@@ -130,12 +127,11 @@ struct post_msg_greater_than_io_buffer {
 
   bool operator()() {
     typedef logger::cerr::log logger;
-    typedef communication::tst::file_connector connector;
+    typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connector> client;
+    typedef communication::client_t<logger, connection> client;
 
-    connector::ptr _connector(connector::create());
-    client _client(_connector);
+    client _client;
 
     const std::string _file_name("./post_msg_greater_than_io_buffer.txt");
     status _status = _client.connect(_file_name);
@@ -173,39 +169,49 @@ struct read_all {
   bool operator()() {
 
     typedef logger::cerr::log logger;
-    typedef communication::tst::file_connector connector;
+    typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connector> client;
-
-    connector::ptr _connector(connector::create());
-    client _client(_connector);
-
-    const std::string _file_name("./read_all.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+    typedef communication::client_t<logger, connection> client;
 
     const std::string _msg("01234567890123456789");
-    _status = _client.send(_msg);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+    {
+      client _client;
 
-    std::pair<status, std::string> _res = _client.receive<std::string>();
-    if (_res.first != status::ok) {
-      comm_log_error(logger, "erro ", _res.first, " receiveing");
-      return false;
-    }
+      const std::string _file_name("./read_all.txt");
+      status _status = _client.connect(_file_name);
+      if (_status != status::ok) {
+        comm_log_error(logger, "erro ", _status);
+        return false;
+      }
 
-    if (_res.second != _msg) {
-      comm_log_error(logger, "msg received '", _res.second,
-                     "' is not equal to the one sent '", _msg, "'");
-      return false;
+      _status = _client.send(_msg);
+      if (_status != status::ok) {
+        comm_log_error(logger, "erro ", _status);
+        return false;
+      }
     }
+    {
+      client _client;
 
+      const std::string _file_name("./read_all.txt");
+      status _status = _client.connect(_file_name);
+      if (_status != status::ok) {
+        comm_log_error(logger, "erro ", _status);
+        return false;
+      }
+
+      std::pair<status, std::string> _res = _client.receive<std::string>();
+      if (_res.first != status::ok) {
+        comm_log_error(logger, "erro ", _res.first, " receiveing");
+        return false;
+      }
+
+      if (_res.second != _msg) {
+        comm_log_error(logger, "msg received '", _res.second,
+                       "' is not equal to the one sent '", _msg, "'");
+        return false;
+      }
+    }
     return true;
   }
 

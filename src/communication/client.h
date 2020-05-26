@@ -27,15 +27,28 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace communication {
 
-template <typename t_logger, typename t_connector> struct client_t {
-  typedef t_logger logger;
-  typedef t_connector connector;
-  typedef typename connector::ptr connector_ptr;
-  typedef typename t_connector::connection connection;
+template <typename t_logger, typename t_connection,
+          typename t_io_size = uint16_t>
+struct client_t {
 
-  /// \brief client_t constructor
-  /// \param p_connector
-  client_t(connector_ptr p_connector) : m_connector(p_connector) {}
+  typedef t_logger logger;
+  typedef t_connection connection;
+  typedef t_io_size io_size;
+
+  client_t(io_size p_send_size = 8 * 1024, io_size p_receive_size = 8 * 1024,
+           connection &&p_connection = connection())
+      : m_send_size(p_send_size), m_receive_size(p_receive_size),
+        m_connection(std::move(p_connection)) {}
+
+  void set_io_send_size(io_size p_send_size) { m_send_size = p_send_size; }
+
+  void set_io_receive_size(io_size p_receive_size) {
+    m_receive_size = p_receive_size;
+  }
+
+  io_size set_io_send_size() const { return m_send_size; }
+
+  io_size set_io_receive_size() const { return m_receive_size; }
 
   /// \brief connect
   ///
@@ -47,14 +60,28 @@ template <typename t_logger, typename t_connector> struct client_t {
   template <typename t_endpoint>
   status connect(const t_endpoint &p_endpoint) noexcept {
     try {
-      std::pair<status, connection> _res(m_connector->connect(p_endpoint));
-      if (_res.first != status::ok) {
-        comm_log_error(logger, "error ", _res.first, " while connecting");
-        return _res.first;
+      status _status(m_connection.open(p_endpoint));
+      if (_status != status::ok) {
+        comm_log_error(logger, "error ", _status, " while connecting");
+        return _status;
       }
 
-      std::lock_guard<std::mutex> _lock(m_mutex);
-      m_connection = std::move(_res.second);
+      return status::ok;
+
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while connecting");
+      return status::error_connecting;
+    }
+  }
+
+  template <typename t_endpoint>
+  status connect(t_endpoint &&p_endpoint) noexcept {
+    try {
+      status _status(m_connection.open(p_endpoint));
+      if (_status != status::ok) {
+        comm_log_error(logger, "error ", _status, " while connecting");
+        return _status;
+      }
 
       return status::ok;
 
@@ -91,12 +118,12 @@ template <typename t_logger, typename t_connector> struct client_t {
   template <typename t_iterator>
   status send(t_iterator p_begin, t_iterator p_end) noexcept {
     try {
-      auto _max_send_size = m_connection.get_send_size();
-      typedef decltype(_max_send_size) size;
+
+      typedef decltype(m_send_size) size;
       size _msg_size = static_cast<size>(std::distance(p_begin, p_end));
-      comm_log_debug(logger, "io size = ", _max_send_size,
+      comm_log_debug(logger, "io size = ", m_send_size,
                      ", msg size = ", _msg_size);
-      if (_msg_size <= _max_send_size) {
+      if (_msg_size <= m_send_size) {
 
         status _status = m_connection.send(p_begin, p_end);
         if (_status == status::ok) {
@@ -110,8 +137,8 @@ template <typename t_logger, typename t_connector> struct client_t {
       t_iterator _ite = p_begin;
       while (_sent != _msg_size) {
         size _to_send = _msg_size - _sent;
-        if (_to_send > _max_send_size) {
-          _to_send = _max_send_size;
+        if (_to_send > m_send_size) {
+          _to_send = m_send_size;
         }
         comm_log_debug(logger, "sending ", _to_send, " bytes");
 
@@ -131,7 +158,9 @@ template <typename t_logger, typename t_connector> struct client_t {
     return status::ok;
   }
 
-  /// \brief receive
+  /// \brief receive receives all the message, which final size is unknown
+  ///
+  /// \tparam t_message is the type of the message
   ///
   /// \details blocking
   ///
@@ -139,27 +168,30 @@ template <typename t_logger, typename t_connector> struct client_t {
   template <typename t_message> std::pair<status, t_message> receive() {
     try {
       t_message _all;
-      auto _max_receive_size = m_connection.get_receive_size();
-      t_message _some(_max_receive_size, typename t_message::value_type());
-      std::pair<status, typename t_message::const_iterator> _res =
-          m_connection.receive(_some.begin(), _some.end());
+      typedef typename t_message::iterator iterator;
+      t_message _some(m_send_size, typename t_message::value_type());
+
+      iterator _end = _some.end();
+
+      status _status = m_connection.receive(_some.begin(), _end);
       while (true) {
-        if (_res.first == status::end_of_message) {
-          typename t_message::const_iterator _begin = _some.begin();
-          typename t_message::const_iterator _end = _res.second();
-          t_message _aux(_begin, _end);
+        if (_status == status::ok) {
+          comm_log_debug(logger, "more ", std::distance(_some.begin(), _end),
+                         " bytes read");
+          _all += t_message(_some.begin(), _end);
+          _status = m_connection.receive(_some.begin(), _end);
+        }
+
+        if (_status == status::end_of_message) {
+          comm_log_info(logger, "end of message");
+          t_message _aux(_some.begin(), _end);
           _all += _aux;
           return {status::ok, _all};
         }
 
-        if (_res.first == status::ok) {
-          _all += t_message(_some.begin(), _res.second);
-          _res = m_connection.receive(_some.begin(), _some.end());
-        }
-
-        if (_res.first != status::ok) {
-          comm_log_error(logger, "error ", _res.first, " while receiving");
-          return {_res.first, t_message()};
+        if (_status != status::ok) {
+          comm_log_error(logger, "error ", _status, " while receiving");
+          return {_status, t_message()};
         }
       }
 
@@ -169,7 +201,7 @@ template <typename t_logger, typename t_connector> struct client_t {
     }
   }
 
-  /// \brief send
+  /// \brief post
   ///
   /// \tparam t_iterator
   ///
@@ -283,7 +315,8 @@ private:
   }
 
 private:
-  connector_ptr m_connector;
+  io_size m_send_size = 8 * 1024;
+  io_size m_receive_size = 8 * 1024;
   connection m_connection;
   std::mutex m_mutex;
 };

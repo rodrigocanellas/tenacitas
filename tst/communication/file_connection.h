@@ -31,8 +31,24 @@ namespace tst {
 struct file_connection_takes_2_secs {
   typedef tenacitas::logger::cerr::log logger;
   file_connection_takes_2_secs() = default;
-  explicit inline file_connection_takes_2_secs(std::fstream &&p_file)
-      : m_file(std::move(p_file)) {}
+
+
+  status open (const std::string & p_file_name) {
+    m_file.open(p_file_name, std::ios::in | std::ios::out);
+
+    if(!m_file.is_open())
+    {
+      m_file.clear();
+      m_file.open(p_file_name, std::ios::out); //Create file.
+      m_file.close();
+      m_file.open(p_file_name);
+    }
+
+    if ( (m_file.bad() || (!m_file.is_open())) ) {
+      return status::error_connecting;
+    }
+    return status::ok;
+  }
 
   status send(std::string::const_iterator p_begin,
               std::string::const_iterator p_end) {
@@ -46,46 +62,37 @@ struct file_connection_takes_2_secs {
     return status::ok;
   }
 
-  std::pair<status, std::string::const_iterator> receive(std::string::iterator p_begin, std::string::iterator p_end) {
-    auto _buffer_size = std::distance(p_begin, p_end);
-    typedef decltype (_buffer_size)  size;
-    size _amount_read = static_cast<size>(m_file.readsome(&(*p_begin), _buffer_size));
-    if (_amount_read == 0) {
-      return {status::end_of_message, p_begin};
+  void reset() {
+    m_file.seekg(0);
+  }
+
+  status receive(std::string::iterator p_begin,
+                 std::string::iterator &p_end) {
+    auto _size = std::distance(p_begin, p_end);
+    decltype (_size) _read = m_file.readsome(&(*p_begin), _size);
+    if (m_file.bad()) {
+      return status::error_sending;
     }
-    if (_amount_read == _buffer_size) {
-      return {status::ok, p_end};
+
+    if (_read != _size) {
+      p_end = std::next(p_begin, _read);
     }
-    std::string::const_iterator _end = std::next(p_begin,_amount_read);
-    return {status::ok, _end};
+    if ( (_read == 0) || (m_file.eof())) {
+      return status::end_of_message;
+    }
+    return status::ok;
 
   }
 
-  inline uint16_t get_send_size() const {return 50;}
-  inline uint16_t get_receive_size() const {return 10;}
+  inline uint16_t get_send_size() const {return m_sent_size;}
+  inline uint16_t get_receive_size() const {return m_receive_size;}
 
 private:
   std::fstream m_file;
+  const uint16_t m_sent_size {50};
+  const uint16_t m_receive_size {10};
 };
 
-struct file_connector {
-
-  typedef std::shared_ptr<file_connector> ptr;
-  typedef file_connection_takes_2_secs connection;
-
-  static ptr create() {
-    return std::make_shared<file_connector>();
-  }
-
-  inline std::pair<status, connection> connect(const std::string &p_file_name) {
-    std::fstream _file(p_file_name, std::ios::trunc);
-    if (_file.bad()) {
-      return {status::error_connecting,connection()};
-    }
-    connection _connection(std::move(_file));
-    return {status::ok, std::move(_connection)};
-  }
-};
 
 } // namespace tst
 } // namespace communication
