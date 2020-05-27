@@ -189,6 +189,8 @@ struct read_all {
         comm_log_error(logger, "erro ", _status);
         return false;
       }
+
+      comm_log_debug(logger, "msg sent = '", _msg, "'");
     }
     {
       client _client;
@@ -200,17 +202,20 @@ struct read_all {
         return false;
       }
 
-      std::pair<status, std::string> _res = _client.receive<std::string>();
-      if (_res.first != status::ok) {
-        comm_log_error(logger, "erro ", _res.first, " receiveing");
+      std::string _all;
+      _status = _client.receive(_all);
+      if (_status != status::ok) {
+        comm_log_error(logger, "erro ", _status, " receiveing");
         return false;
       }
 
-      if (_res.second != _msg) {
-        comm_log_error(logger, "msg received '", _res.second,
+      if (_all != _msg) {
+        comm_log_error(logger, "msg received '", _all,
                        "' is not equal to the one sent '", _msg, "'");
         return false;
       }
+
+      comm_log_debug(logger, "msg received = '", _all, "'");
     }
     return true;
   }

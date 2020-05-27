@@ -66,31 +66,25 @@ struct file_connection_takes_2_secs {
     m_file.seekg(0);
   }
 
-  status receive(std::string::iterator p_begin,
-                 std::string::iterator &p_end) {
+  template<typename t_iterator>
+  std::pair<status,t_iterator> receive(t_iterator p_begin,
+                 t_iterator p_end) {
     auto _size = std::distance(p_begin, p_end);
-    decltype (_size) _read = m_file.readsome(&(*p_begin), _size);
+    decltype (_size) _read = static_cast<decltype (_size)>(m_file.readsome(&(*p_begin), _size));
+
     if (m_file.bad()) {
-      return status::error_sending;
+      return {status::error_sending, p_begin};
     }
 
-    if (_read != _size) {
-      p_end = std::next(p_begin, _read);
-    }
     if ( (_read == 0) || (m_file.eof())) {
-      return status::end_of_message;
+      return {status::end_of_message, p_begin};
     }
-    return status::ok;
 
+    return {status::ok, std::next(p_begin, _read)};
   }
-
-  inline uint16_t get_send_size() const {return m_sent_size;}
-  inline uint16_t get_receive_size() const {return m_receive_size;}
 
 private:
   std::fstream m_file;
-  const uint16_t m_sent_size {50};
-  const uint16_t m_receive_size {10};
 };
 
 

@@ -72,22 +72,26 @@ struct tcp_socket {
     return status::ok;
   }
 
-  status receive(std::string::iterator p_begin, std::string::iterator &p_end) {
+  template <typename t_iterator>
+  std::pair<status, t_iterator> receive(t_iterator p_begin, t_iterator p_end) {
     const auto _size = std::distance(p_begin, p_end);
-    const auto _read = ::read(m_sockfd, &(*p_begin), _size);
+
+    decltype(_size) _read =
+        static_cast<decltype(_size)>(::read(m_sockfd, &(*p_begin), _size));
+
     if (_read == -1) {
-      return status::error_receiving;
+      return {status::error_receiving, p_end};
     }
+
     if (_read == 0) {
-      p_end = p_begin;
-      return status::end_of_message;
+      return {status::end_of_message, p_begin};
     }
 
-    if (_read != _size) {
-      p_end = std::next(p_begin, _read);
+    if (_read < _size) {
+      return {status::ok, std::next(p_begin, _read)};
     }
 
-    return status::ok;
+    return {status::ok, p_end};
   }
 
 private:
@@ -235,7 +239,7 @@ private:
 } // namespace communication
 } // namespace tenacitas
 
-struct basic_tcp_socket_test {
+struct receive_all {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -249,33 +253,220 @@ struct basic_tcp_socket_test {
     //    status _status = _client.connect("http://time-a-g.nist.gov:13");
 
     if (_status != status::ok) {
-      comm_log_error(logger, "erro connecting: ", _status);
+      comm_log_error(logger, "error connecting: ", _status);
       return false;
     }
 
-    std::pair<status, std::string> _result = _client.receive<std::string>();
-    _status = _result.first;
+    std::string _all;
+    _status = _client.receive(_all);
     if (_status != status::ok) {
-      comm_log_error(logger, "erro receiving: ", _status);
+      comm_log_error(logger, "error receiving: ", _status);
       return false;
     }
 
-    if (_result.second.empty()) {
+    if (_all.empty()) {
       comm_log_info(logger, "no msg received");
     } else {
-      comm_log_info(logger, "received = ", _result.second);
+      comm_log_info(logger, "received = ", _all);
     }
 
     return true;
   }
 
   static std::string desc() {
-    return "Test connection to a site, and receive its home page";
+    return "Connects to a daytime server, and receives all its contents at "
+           "once";
+  }
+};
+
+struct receive_some {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    //    status _status = _client.connect("http://time-a-g.nist.gov:13");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    _status = _client.receive([](client::buffer_const_iterator p_begin,
+                                 client::buffer_const_iterator p_end) {
+      comm_log_debug(logger, "read ", std::string(p_begin, p_end));
+      return status::ok;
+    });
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives 5 bytes at a time";
+  }
+};
+
+struct collect_without_non_block {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    std::future<status> _future =
+        _client.collect([](client::buffer_const_iterator p_begin,
+                           client::buffer_const_iterator p_end) {
+          std::this_thread::sleep_for(std::chrono::seconds(1));
+          comm_log_debug(logger, "read ", std::string(p_begin, p_end));
+          return status::ok;
+        });
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::ok) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives 5 bytes at a time, non "
+           "blocking, and no timeout control";
+  }
+};
+
+struct collect_without_non_block_without_timeout {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    auto handler = [](client::buffer_const_iterator p_begin,
+                      client::buffer_const_iterator p_end) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      comm_log_debug(logger, "read ", std::string(p_begin, p_end));
+      return status::ok;
+    };
+
+    std::future<status> _future =
+        _client.collect(handler, std::chrono::seconds(15));
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::ok) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives 5 bytes at a time, non "
+           "blocking, with timeout control, but no timeout";
+  }
+};
+
+struct collect_without_non_block_with_timeout {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    auto handler = [](client::buffer_const_iterator p_begin,
+                      client::buffer_const_iterator p_end) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      comm_log_debug(logger, "read ", std::string(p_begin, p_end));
+      return status::ok;
+    };
+
+    std::future<status> _future =
+        _client.collect(handler, std::chrono::seconds(3));
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::error_timeout) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives 5 bytes at a time, non "
+           "blocking, with timeout control, but with timeout";
   }
 };
 
 int main(int argc, char **argv) {
   tenacitas::logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, basic_tcp_socket_test);
+  run_test(_test, receive_all);
+  run_test(_test, receive_some);
+  run_test(_test, collect_without_non_block);
+  run_test(_test, collect_without_non_block_without_timeout);
+  run_test(_test, collect_without_non_block_with_timeout);
 }

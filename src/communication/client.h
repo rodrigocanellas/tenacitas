@@ -6,6 +6,7 @@
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
+#include <array>
 #include <chrono>
 #include <cstdint>
 #include <functional>
@@ -28,27 +29,20 @@ namespace tenacitas {
 namespace communication {
 
 template <typename t_logger, typename t_connection,
-          typename t_io_size = uint16_t>
+          size_t t_buffer_size = 8 * 1024>
 struct client_t {
 
   typedef t_logger logger;
   typedef t_connection connection;
-  typedef t_io_size io_size;
+  typedef std::array<char, t_buffer_size> buffer;
+  typedef typename buffer::const_iterator buffer_const_iterator;
 
-  client_t(io_size p_send_size = 8 * 1024, io_size p_receive_size = 8 * 1024,
-           connection &&p_connection = connection())
-      : m_send_size(p_send_size), m_receive_size(p_receive_size),
-        m_connection(std::move(p_connection)) {}
+  client_t(connection &&p_connection = connection())
+      : m_connection(std::move(p_connection)) {}
 
-  void set_io_send_size(io_size p_send_size) { m_send_size = p_send_size; }
+  size_t get_io_send_size() const { return t_buffer_size; }
 
-  void set_io_receive_size(io_size p_receive_size) {
-    m_receive_size = p_receive_size;
-  }
-
-  io_size set_io_send_size() const { return m_send_size; }
-
-  io_size set_io_receive_size() const { return m_receive_size; }
+  size_t get_io_receive_size() const { return t_buffer_size; }
 
   /// \brief connect
   ///
@@ -119,11 +113,11 @@ struct client_t {
   status send(t_iterator p_begin, t_iterator p_end) noexcept {
     try {
 
-      typedef decltype(m_send_size) size;
+      typedef decltype(t_buffer_size) size;
       size _msg_size = static_cast<size>(std::distance(p_begin, p_end));
-      comm_log_debug(logger, "io size = ", m_send_size,
+      comm_log_debug(logger, "io size = ", t_buffer_size,
                      ", msg size = ", _msg_size);
-      if (_msg_size <= m_send_size) {
+      if (_msg_size <= t_buffer_size) {
 
         status _status = m_connection.send(p_begin, p_end);
         if (_status == status::ok) {
@@ -137,8 +131,8 @@ struct client_t {
       t_iterator _ite = p_begin;
       while (_sent != _msg_size) {
         size _to_send = _msg_size - _sent;
-        if (_to_send > m_send_size) {
-          _to_send = m_send_size;
+        if (_to_send > t_buffer_size) {
+          _to_send = t_buffer_size;
         }
         comm_log_debug(logger, "sending ", _to_send, " bytes");
 
@@ -161,44 +155,109 @@ struct client_t {
   /// \brief receive receives all the message, which final size is unknown
   ///
   /// \tparam t_message is the type of the message
+  /// <tt> std::back_inserter </tt> must be defined for \p p_message
   ///
   /// \details blocking
   ///
   /// \return
-  template <typename t_message> std::pair<status, t_message> receive() {
+  template <typename t_message> status receive(t_message &p_all) {
     try {
-      t_message _all;
-      typedef typename t_message::iterator iterator;
-      t_message _some(m_send_size, typename t_message::value_type());
 
+      buffer _some;
+
+      typedef typename buffer::iterator iterator;
+      iterator _begin = _some.begin();
       iterator _end = _some.end();
 
-      status _status = m_connection.receive(_some.begin(), _end);
+      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
       while (true) {
-        if (_status == status::ok) {
-          comm_log_debug(logger, "more ", std::distance(_some.begin(), _end),
+        if (_res.first == status::ok) {
+          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
                          " bytes read");
-          _all += t_message(_some.begin(), _end);
-          _status = m_connection.receive(_some.begin(), _end);
+          std::copy(_begin, _res.second, std::back_inserter(p_all));
+
+          _res = m_connection.receive(_begin, _end);
         }
 
-        if (_status == status::end_of_message) {
+        if (_res.first == status::end_of_message) {
           comm_log_info(logger, "end of message");
-          t_message _aux(_some.begin(), _end);
-          _all += _aux;
-          return {status::ok, _all};
+          std::copy(_begin, _res.second, std::back_inserter(p_all));
+          return status::ok;
         }
 
-        if (_status != status::ok) {
-          comm_log_error(logger, "error ", _status, " while receiving");
-          return {_status, t_message()};
+        if (_res.first != status::ok) {
+          comm_log_error(logger, "error ", _res.first, " while receiving");
+          return _res.first;
         }
       }
 
     } catch (const std::exception &_ex) {
       comm_log_error(logger, "error '", _ex.what(), "' while receiving");
-      return {status::error_receiving, t_message()};
+      return status::error_receiving;
     }
+  }
+
+  status
+  receive(std::function<status(buffer_const_iterator, buffer_const_iterator)>
+              p_handler) {
+    try {
+
+      buffer _some;
+
+      typedef typename buffer::iterator iterator;
+      iterator _begin = _some.begin();
+      iterator _end = _some.end();
+
+      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
+      while (true) {
+        if (_res.first == status::ok) {
+          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
+                         " bytes read");
+          p_handler(&(*_begin), &(*_res.second));
+
+          _res = m_connection.receive(_begin, _end);
+        }
+
+        if (_res.first == status::end_of_message) {
+          comm_log_info(logger, "end of message");
+          p_handler(&(*_begin), &(*_res.second));
+          return status::ok;
+        }
+
+        if (_res.first != status::ok) {
+          comm_log_error(logger, "error ", _res.first, " while receiving");
+          return _res.first;
+        }
+      }
+
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
+      return status::error_receiving;
+    }
+  }
+
+  std::future<status>
+  collect(std::function<status(buffer_const_iterator, buffer_const_iterator)>
+              p_handler) {
+    using namespace std;
+    try {
+      return async(launch::async,
+                   [this, p_handler]() { return receive(p_handler); });
+    } catch (const exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while collecting");
+      return future<status>();
+    }
+  }
+
+  template <typename t_timeout>
+  std::future<status>
+  collect(std::function<status(buffer_const_iterator, buffer_const_iterator)>
+              p_handler,
+          t_timeout p_timeout) {
+    using namespace std;
+    return async([this, p_handler, p_timeout]() {
+      return launch_collect(p_handler, p_timeout);
+    });
   }
 
   /// \brief post
@@ -314,9 +373,34 @@ private:
     }
   }
 
+  template <typename t_timeout>
+  status launch_collect(
+      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+          p_handler,
+      t_timeout p_timeout) {
+    using namespace std;
+    try {
+      future<status> _future = async(
+          launch::async, [this, p_handler]() { return receive(p_handler); });
+      while (true) {
+        future_status _future_status = _future.wait_for(p_timeout);
+        if (_future_status == future_status::ready) {
+          comm_log_debug(logger, "no timeout");
+          return _future.get();
+        }
+        if (_future_status == future_status::timeout) {
+          comm_log_debug(logger, "timeout!!!");
+          return status::error_timeout;
+        }
+      }
+
+    } catch (const exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while posting");
+      return status::error_posting;
+    }
+  }
+
 private:
-  io_size m_send_size = 8 * 1024;
-  io_size m_receive_size = 8 * 1024;
   connection m_connection;
   std::mutex m_mutex;
 };
