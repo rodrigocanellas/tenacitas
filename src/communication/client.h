@@ -40,10 +40,6 @@ struct client_t {
   client_t(connection &&p_connection = connection())
       : m_connection(std::move(p_connection)) {}
 
-  size_t get_io_send_size() const { return t_buffer_size; }
-
-  size_t get_io_receive_size() const { return t_buffer_size; }
-
   /// \brief connect
   ///
   /// \tparam t_endpoint
@@ -52,7 +48,7 @@ struct client_t {
   ///
   /// \return
   template <typename t_endpoint>
-  status connect(const t_endpoint &p_endpoint) noexcept {
+  status connect(t_endpoint p_endpoint) noexcept {
     try {
       status _status(m_connection.open(p_endpoint));
       if (_status != status::ok) {
@@ -68,24 +64,7 @@ struct client_t {
     }
   }
 
-  template <typename t_endpoint>
-  status connect(t_endpoint &&p_endpoint) noexcept {
-    try {
-      status _status(m_connection.open(p_endpoint));
-      if (_status != status::ok) {
-        comm_log_error(logger, "error ", _status, " while connecting");
-        return _status;
-      }
-
-      return status::ok;
-
-    } catch (const std::exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while connecting");
-      return status::error_connecting;
-    }
-  }
-
-  /// \brief send
+  /// \brief send_block
   ///
   /// \tparam t_message
   ///
@@ -94,11 +73,11 @@ struct client_t {
   /// \details blocking
   ///
   /// \return
-  template <typename t_message> inline status send(t_message p_message) {
-    return send(p_message.begin(), p_message.end());
+  template <typename t_message> inline status send_block(t_message p_message) {
+    return send_block(p_message.begin(), p_message.end());
   }
 
-  /// \brief send
+  /// \brief send_block
   ///
   /// \tparam t_iterator
   ///
@@ -110,7 +89,7 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator>
-  status send(t_iterator p_begin, t_iterator p_end) noexcept {
+  status send_block(t_iterator p_begin, t_iterator p_end) noexcept {
     try {
 
       typedef decltype(t_buffer_size) size;
@@ -152,115 +131,7 @@ struct client_t {
     return status::ok;
   }
 
-  /// \brief receive receives all the message, which final size is unknown
-  ///
-  /// \tparam t_message is the type of the message
-  /// <tt> std::back_inserter </tt> must be defined for \p p_message
-  ///
-  /// \details blocking
-  ///
-  /// \return
-  template <typename t_message> status receive(t_message &p_all) {
-    try {
-
-      buffer _some;
-
-      typedef typename buffer::iterator iterator;
-      iterator _begin = _some.begin();
-      iterator _end = _some.end();
-
-      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
-      while (true) {
-        if (_res.first == status::ok) {
-          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
-                         " bytes read");
-          std::copy(_begin, _res.second, std::back_inserter(p_all));
-
-          _res = m_connection.receive(_begin, _end);
-        }
-
-        if (_res.first == status::end_of_message) {
-          comm_log_info(logger, "end of message");
-          std::copy(_begin, _res.second, std::back_inserter(p_all));
-          return status::ok;
-        }
-
-        if (_res.first != status::ok) {
-          comm_log_error(logger, "error ", _res.first, " while receiving");
-          return _res.first;
-        }
-      }
-
-    } catch (const std::exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
-      return status::error_receiving;
-    }
-  }
-
-  status
-  receive(std::function<status(buffer_const_iterator, buffer_const_iterator)>
-              p_handler) {
-    try {
-
-      buffer _some;
-
-      typedef typename buffer::iterator iterator;
-      iterator _begin = _some.begin();
-      iterator _end = _some.end();
-
-      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
-      while (true) {
-        if (_res.first == status::ok) {
-          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
-                         " bytes read");
-          p_handler(&(*_begin), &(*_res.second));
-
-          _res = m_connection.receive(_begin, _end);
-        }
-
-        if (_res.first == status::end_of_message) {
-          comm_log_info(logger, "end of message");
-          p_handler(&(*_begin), &(*_res.second));
-          return status::ok;
-        }
-
-        if (_res.first != status::ok) {
-          comm_log_error(logger, "error ", _res.first, " while receiving");
-          return _res.first;
-        }
-      }
-
-    } catch (const std::exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
-      return status::error_receiving;
-    }
-  }
-
-  std::future<status>
-  collect(std::function<status(buffer_const_iterator, buffer_const_iterator)>
-              p_handler) {
-    using namespace std;
-    try {
-      return async(launch::async,
-                   [this, p_handler]() { return receive(p_handler); });
-    } catch (const exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while collecting");
-      return future<status>();
-    }
-  }
-
-  template <typename t_timeout>
-  std::future<status>
-  collect(std::function<status(buffer_const_iterator, buffer_const_iterator)>
-              p_handler,
-          t_timeout p_timeout) {
-    using namespace std;
-    return async([this, p_handler, p_timeout]() {
-      return launch_collect(p_handler, p_timeout);
-    });
-  }
-
-  /// \brief post
+  /// \brief send_non_block
   ///
   /// \tparam t_iterator
   ///
@@ -272,7 +143,7 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator>
-  std::future<status> post(t_iterator p_begin, t_iterator p_end) {
+  std::future<status> send_non_block(t_iterator p_begin, t_iterator p_end) {
     using namespace std;
     try {
       return async(launch::async,
@@ -283,7 +154,7 @@ struct client_t {
     }
   }
 
-  /// \brief send
+  /// \brief send_non_block
   ///
   /// \tparam t_iterator
   ///
@@ -299,16 +170,16 @@ struct client_t {
   ///
   /// \return
   template <typename t_message, typename t_timeout>
-  std::future<status> post(t_message p_message, t_timeout p_timeout) {
+  std::future<status> send_non_block(t_message p_message, t_timeout p_timeout) {
     using namespace std;
     typename t_message::const_iterator _begin = p_message.begin();
     typename t_message::const_iterator _end = p_message.end();
     return async([this, _begin, _end, p_timeout]() {
-      return launch_post(_begin, _end, p_timeout);
+      return launch_send(_begin, _end, p_timeout);
     });
   }
 
-  /// \brief send
+  /// \brief send_non_block
   ///
   /// \tparam t_iterator
   ///
@@ -324,64 +195,161 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator, typename t_timeout>
-  std::future<status> post(t_iterator p_begin, t_iterator p_end,
-                           t_timeout p_timeout) {
+  std::future<status> send_non_block(t_iterator p_begin, t_iterator p_end,
+                                     t_timeout p_timeout) {
     using namespace std;
     return async([this, p_begin, p_end, p_timeout]() {
-      return launch_post(p_begin, p_end, p_timeout);
+      return launch_send(p_begin, p_end, p_timeout);
     });
   }
 
-  //  /// \brief collect
-  //  ///
-  //  /// \details non-blocking
-  //  ///
-  //  /// \return
-  //  std::future<result> collect() {
-  //    try {
-  //      return std::async(std::launch::async, m_connection.receive());
-  //    } catch (const std::exception &_ex) {
-  //      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
-  //      return std::future<result>();
-  //    }
-  //  }
+  /// \brief receive_block receives all the message, which final size is unknown
+  ///
+  /// \tparam t_message is the type of the message
+  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  ///
+  /// \details blocking
+  ///
+  /// \return
+  template <typename t_message> status receive_all_block(t_message &p_all) {
+    return receive_block([&p_all](buffer_const_iterator p_begin,
+                                  buffer_const_iterator p_end) -> status {
+      std::copy(p_begin, p_end, std::back_inserter(p_all));
+      return status::ok;
+    });
+  }
 
-private:
-  template <typename t_iterator, typename t_timeout>
-  status launch_post(t_iterator p_begin, t_iterator p_end,
-                     t_timeout p_timeout) {
-    using namespace std;
+  /// \brief receive_block receives all the message, which final size is unknown
+  ///
+  /// \tparam t_message is the type of the message
+  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  ///
+  /// \details non blocking
+  ///
+  /// \return
+  template <typename t_message>
+  std::future<status> receive_all_non_block(t_message &p_all) {
+    return std::async(std::launch::async, [this, &p_all]() -> status {
+      return receive_all_block(p_all);
+    });
+  }
+
+  template <typename t_message, typename t_timeout>
+  std::future<status> receive_all_non_block(t_message &p_all,
+                                            t_timeout p_timeout) {
+    auto rall = [this, &p_all]() -> status { return receive_all_block(p_all); };
+
+    auto launch_receive = [this, rall, p_timeout]() -> status {
+      return launch(rall, p_timeout, status::error_timeout);
+    };
+    return std::async(std::launch::async, launch_receive);
+  }
+
+  /// \brief receive_block
+  ///
+  /// \param p_handler
+  ///
+  /// \details blocking
+  ///
+  /// \return
+  status receive_block(
+      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+          p_handler) {
     try {
-      future<status> _future = async(launch::async, [this, p_begin, p_end]() {
-        return send(p_begin, p_end);
-      });
+
+      buffer _some;
+
+      typedef typename buffer::iterator iterator;
+      iterator _begin = _some.begin();
+      iterator _end = _some.end();
+
+      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
       while (true) {
-        future_status _future_status = _future.wait_for(p_timeout);
-        if (_future_status == future_status::ready) {
-          comm_log_debug(logger, "no timeout");
-          return _future.get();
+        if (_res.first == status::ok) {
+          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
+                         " bytes read");
+          p_handler(&(*_begin), &(*_res.second));
+
+          _res = m_connection.receive(_begin, _end);
         }
-        if (_future_status == future_status::timeout) {
-          comm_log_debug(logger, "timeout!!!");
-          return status::error_timeout;
+
+        if (_res.first == status::end_of_message) {
+          comm_log_info(logger, "end of message");
+          p_handler(&(*_begin), &(*_res.second));
+          return status::ok;
+        }
+
+        if (_res.first != status::ok) {
+          comm_log_error(logger, "error ", _res.first, " while receiving");
+          return _res.first;
         }
       }
 
-    } catch (const exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while posting");
-      return status::error_posting;
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
+      return status::error_receiving;
     }
   }
 
+  /// \brief receive_non_block
+  ///
+  /// \param p_handler
+  ///
+  /// \details non blocking
+  ///
+  /// \return
+  std::future<status> receive_non_block(
+      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+          p_handler) {
+    using namespace std;
+    try {
+      return async(launch::async,
+                   [this, p_handler]() { return receive_block(p_handler); });
+    } catch (const exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while collecting");
+      return future<status>();
+    }
+  }
+
+  /// \brief receive_non_block
+  ///
+  /// \tparam t_timeout
+  ///
+  /// \param p_handler
+  ///
+  /// \param p_timeout
+  ///
+  /// \details non blocking
+  ///
+  /// \return
   template <typename t_timeout>
-  status launch_collect(
+  std::future<status> receive_non_block(
       std::function<status(buffer_const_iterator, buffer_const_iterator)>
           p_handler,
       t_timeout p_timeout) {
     using namespace std;
+    return async([this, p_handler, p_timeout]() {
+      return launch_receive(p_handler, p_timeout);
+    });
+  }
+
+private:
+  /// \brief launch generic method to launch a function with timeout control
+  ///
+  /// \tparam t_function
+  ///
+  /// \tparam t_timeout
+  ///
+  /// \param p_function
+  ///
+  /// \param p_timeout
+  ///
+  /// \param p_if_error
+  template <typename t_function, typename t_timeout>
+  status launch(t_function p_function, t_timeout p_timeout, status p_if_error) {
+    using namespace std;
     try {
-      future<status> _future = async(
-          launch::async, [this, p_handler]() { return receive(p_handler); });
+      future<status> _future = async(launch::async, p_function);
       while (true) {
         future_status _future_status = _future.wait_for(p_timeout);
         if (_future_status == future_status::ready) {
@@ -390,7 +358,7 @@ private:
         }
         if (_future_status == future_status::timeout) {
           comm_log_debug(logger, "timeout!!!");
-          return status::error_timeout;
+          return p_if_error;
         }
       }
 
@@ -400,9 +368,47 @@ private:
     }
   }
 
+  /// \brief launch_receive launchs a receive function with timeout control
+  ///
+  /// \tparam t_function
+  ///
+  /// \tparam t_timeout
+  ///
+  /// \param p_function
+  ///
+  /// \param p_timeout
+  ///
+  /// \param p_if_error
+  template <typename t_timeout>
+  status launch_receive(
+      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+          p_handler,
+      t_timeout p_timeout) {
+    return launch([this, p_handler]() { return receive_block(p_handler); },
+                  p_timeout, status::error_receiving);
+  }
+
+  /// \brief launch_receive launchs a send function with timeout control
+  ///
+  /// \tparam t_function
+  ///
+  /// \tparam t_timeout
+  ///
+  /// \param p_function
+  ///
+  /// \param p_timeout
+  ///
+  /// \param p_if_error
+  template <typename t_iterator, typename t_timeout>
+  status launch_send(t_iterator p_begin, t_iterator p_end,
+                     t_timeout p_timeout) {
+    return launch(
+        ([this, p_begin, p_end]() { return send_block(p_begin, p_end); }),
+        p_timeout, status::error_timeout);
+  }
+
 private:
   connection m_connection;
-  std::mutex m_mutex;
 };
 
 } // namespace communication

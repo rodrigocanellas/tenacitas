@@ -31,7 +31,7 @@ struct send_msg_smaller_than_io_buffer {
       return false;
     }
 
-    _status = _client.send(std::string("hello!!!"));
+    _status = _client.send_block(std::string("hello!!!"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -46,7 +46,7 @@ struct send_msg_smaller_than_io_buffer {
   }
 };
 
-struct post_without_timeout {
+struct send_without_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
@@ -56,14 +56,14 @@ struct post_without_timeout {
 
     client _client;
 
-    const std::string _file_name("./post_without_timeout.txt");
+    const std::string _file_name("./send_without_timeout.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future = _client.post(
+    std::future<status> _future = _client.send_non_block(
         std::string("how are you without timeout?"), std::chrono::seconds(3));
     if (!_future.valid()) {
       comm_log_error(logger, "invalid 'future'");
@@ -79,13 +79,13 @@ struct post_without_timeout {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using 'post' to write "
-           "a message smaller than write buffer to the file, without "
-           "timeout";
+    return "'client_t' with a connection to a text file, using "
+           "'send_non_block' to write a message smaller than write buffer to "
+           "the file, without timeout";
   }
 };
 
-struct post_with_timeout {
+struct send_with_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
@@ -95,14 +95,14 @@ struct post_with_timeout {
 
     client _client;
 
-    const std::string _file_name("./post_with_timeout.txt");
+    const std::string _file_name("./send_with_timeout.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future = _client.post(
+    std::future<status> _future = _client.send_non_block(
         std::string("how are you with timeout?"), std::chrono::seconds(1));
     if (!_future.valid()) {
       comm_log_error(logger, "invalid 'future'");
@@ -118,12 +118,13 @@ struct post_with_timeout {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using 'post' to write "
-           "a message smaller than write buffer to the file, with timeout";
+    return "'client_t' with a connection to a text file, using "
+           "'send_non_block' to write a message smaller than write buffer to "
+           "the file, with timeout";
   }
 };
 
-struct post_msg_greater_than_io_buffer {
+struct send_msg_greater_than_io_buffer {
 
   bool operator()() {
     typedef logger::cerr::log logger;
@@ -133,17 +134,17 @@ struct post_msg_greater_than_io_buffer {
 
     client _client;
 
-    const std::string _file_name("./post_msg_greater_than_io_buffer.txt");
+    const std::string _file_name("./send_msg_greater_than_io_buffer.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future =
-        _client.post(std::string("012345678901234567890123456789012345678901234"
-                                 "5678901234567890123456789"),
-                     std::chrono::seconds(6));
+    std::future<status> _future = _client.send_non_block(
+        std::string("012345678901234567890123456789012345678901234"
+                    "5678901234567890123456789"),
+        std::chrono::seconds(6));
     if (!_future.valid()) {
       comm_log_error(logger, "invalid 'future'");
       return false;
@@ -158,13 +159,14 @@ struct post_msg_greater_than_io_buffer {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using 'post' to write "
-           "a message greather than the 'connection' write buffer, without "
+    return "'client_t' with a connection to a text file, using "
+           "'send_non_block' to write a message greather than the 'connection' "
+           "write buffer, without "
            "timeout";
   }
 };
 
-struct read_all {
+struct receive_all {
 
   bool operator()() {
 
@@ -177,14 +179,14 @@ struct read_all {
     {
       client _client;
 
-      const std::string _file_name("./read_all.txt");
+      const std::string _file_name("./receive_all.txt");
       status _status = _client.connect(_file_name);
       if (_status != status::ok) {
         comm_log_error(logger, "erro ", _status);
         return false;
       }
 
-      _status = _client.send(_msg);
+      _status = _client.send_block(_msg);
       if (_status != status::ok) {
         comm_log_error(logger, "erro ", _status);
         return false;
@@ -195,7 +197,7 @@ struct read_all {
     {
       client _client;
 
-      const std::string _file_name("./read_all.txt");
+      const std::string _file_name("./receive_all.txt");
       status _status = _client.connect(_file_name);
       if (_status != status::ok) {
         comm_log_error(logger, "erro ", _status);
@@ -203,9 +205,9 @@ struct read_all {
       }
 
       std::string _all;
-      _status = _client.receive(_all);
+      _status = _client.receive_all_block(_all);
       if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status, " receiveing");
+        comm_log_error(logger, "erro ", _status, " receiving");
         return false;
       }
 
@@ -221,9 +223,9 @@ struct read_all {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using 'post' to write "
-           "a message smaller than write buffer to the file, but greater than "
-           "the read buffer, and trying to read all the message";
+    return "'client_t' with a connection to a text file, using 'send_block' to "
+           "write a message smaller than write buffer to the file, but greater "
+           "than the read buffer, and trying to read all the message";
   }
 };
 
@@ -231,8 +233,8 @@ int main(int argc, char **argv) {
   tenacitas::logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
   run_test(_test, send_msg_smaller_than_io_buffer);
-  run_test(_test, post_without_timeout);
-  run_test(_test, post_with_timeout);
-  run_test(_test, post_msg_greater_than_io_buffer);
-  run_test(_test, read_all);
+  run_test(_test, send_without_timeout);
+  run_test(_test, send_with_timeout);
+  run_test(_test, send_msg_greater_than_io_buffer);
+  run_test(_test, receive_all);
 }

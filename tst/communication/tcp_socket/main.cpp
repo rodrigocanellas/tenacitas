@@ -239,7 +239,7 @@ private:
 } // namespace communication
 } // namespace tenacitas
 
-struct receive_all {
+struct receive_block_all {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -258,7 +258,7 @@ struct receive_all {
     }
 
     std::string _all;
-    _status = _client.receive(_all);
+    _status = _client.receive_all_block(_all);
     if (_status != status::ok) {
       comm_log_error(logger, "error receiving: ", _status);
       return false;
@@ -279,7 +279,138 @@ struct receive_all {
   }
 };
 
-struct receive_some {
+struct receive_non_block_all {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+    std::string _all;
+    std::future<status> _future = _client.receive_all_non_block(_all);
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::ok) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    comm_log_debug(logger, "message = '", _all, "'");
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives all its contents at "
+           "once, non blocking, and no timeout control";
+  }
+};
+
+struct receive_non_block_without_timeout_all {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    std::string _all;
+    std::future<status> _future =
+        _client.receive_all_non_block(_all, std::chrono::seconds(15));
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::ok) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    comm_log_debug(logger, "message = '", _all, "'");
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives all its contents at "
+           "once, non blocking, with timeout control, but no timeout";
+  }
+};
+
+struct receive_non_block_with_timeout_all {
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::tcp_socket connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 10> client;
+
+    client _client;
+
+    status _status = _client.connect("129.6.15.28");
+
+    if (_status != status::ok) {
+      comm_log_error(logger, "error connecting: ", _status);
+      return false;
+    }
+
+    std::string _all;
+    std::future<status> _future =
+        _client.receive_all_non_block(_all, std::chrono::milliseconds(50));
+
+    comm_log_debug(logger, "sleeping for 7 seconds");
+    std::this_thread::sleep_for(std::chrono::seconds(7));
+    comm_log_debug(logger, "waking up");
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "impossible to collect!!");
+    }
+
+    _status = _future.get();
+    if (_status != status::error_timeout) {
+      comm_log_error(logger, "error receiving: ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "Connects to a daytime server, and receives all its contents at "
+           "once, non blocking, with timeout control, but no timeout";
+  }
+};
+
+struct receive_block_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -297,8 +428,8 @@ struct receive_some {
       return false;
     }
 
-    _status = _client.receive([](client::buffer_const_iterator p_begin,
-                                 client::buffer_const_iterator p_end) {
+    _status = _client.receive_block([](client::buffer_const_iterator p_begin,
+                                       client::buffer_const_iterator p_end) {
       comm_log_debug(logger, "read ", std::string(p_begin, p_end));
       return status::ok;
     });
@@ -316,7 +447,7 @@ struct receive_some {
   }
 };
 
-struct collect_without_non_block {
+struct receive_non_block_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -333,8 +464,8 @@ struct collect_without_non_block {
     }
 
     std::future<status> _future =
-        _client.collect([](client::buffer_const_iterator p_begin,
-                           client::buffer_const_iterator p_end) {
+        _client.receive_non_block([](client::buffer_const_iterator p_begin,
+                                     client::buffer_const_iterator p_end) {
           std::this_thread::sleep_for(std::chrono::seconds(1));
           comm_log_debug(logger, "read ", std::string(p_begin, p_end));
           return status::ok;
@@ -363,7 +494,7 @@ struct collect_without_non_block {
   }
 };
 
-struct collect_without_non_block_without_timeout {
+struct receive_non_block_without_timeout_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -387,7 +518,7 @@ struct collect_without_non_block_without_timeout {
     };
 
     std::future<status> _future =
-        _client.collect(handler, std::chrono::seconds(15));
+        _client.receive_non_block(handler, std::chrono::seconds(15));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -412,7 +543,7 @@ struct collect_without_non_block_without_timeout {
   }
 };
 
-struct collect_without_non_block_with_timeout {
+struct receive_non_block_with_timeout_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -436,7 +567,7 @@ struct collect_without_non_block_with_timeout {
     };
 
     std::future<status> _future =
-        _client.collect(handler, std::chrono::seconds(3));
+        _client.receive_non_block(handler, std::chrono::seconds(3));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -464,9 +595,12 @@ struct collect_without_non_block_with_timeout {
 int main(int argc, char **argv) {
   tenacitas::logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, receive_all);
-  run_test(_test, receive_some);
-  run_test(_test, collect_without_non_block);
-  run_test(_test, collect_without_non_block_without_timeout);
-  run_test(_test, collect_without_non_block_with_timeout);
+  run_test(_test, receive_block_all);
+  run_test(_test, receive_non_block_all);
+  run_test(_test, receive_non_block_without_timeout_all);
+  run_test(_test, receive_non_block_with_timeout_all);
+  run_test(_test, receive_block_some);
+  run_test(_test, receive_non_block_some);
+  run_test(_test, receive_non_block_without_timeout_some);
+  run_test(_test, receive_non_block_with_timeout_some);
 }

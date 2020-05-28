@@ -34,9 +34,48 @@ struct status {
   static const status error_timeout;
   static const status end_of_message;
 
-  inline friend std::ostringstream &operator<<(std::ostringstream &p_out,
-                                               const status &p_status) {
-    p_out << p_status.m_value;
+  friend std::ostringstream &operator<<(std::ostringstream &p_out,
+                                        const status &p_status) {
+    if (p_status == status::ok) {
+      p_out << "[" << p_status.m_value << ", ok]";
+    }
+
+    else if (p_status == status::error_unspecified) {
+      p_out << "[" << p_status.m_value << ", error unspecified]";
+    }
+
+    else if (p_status == status::error_connecting) {
+      p_out << "[" << p_status.m_value << ", error connecting]";
+    }
+
+    else if (p_status == status::error_sending) {
+      p_out << "[" << p_status.m_value << ", error sending]";
+    }
+
+    else if (p_status == status::error_posting) {
+      p_out << "[" << p_status.m_value << ", error posting]";
+    }
+
+    else if (p_status == status::error_notifying) {
+      p_out << "[" << p_status.m_value << ", error notifying]";
+    }
+
+    else if (p_status == status::error_creating_security) {
+      p_out << "[" << p_status.m_value << ", error creating security]";
+    }
+
+    else if (p_status == status::error_receiving) {
+      p_out << "[" << p_status.m_value << ", error receiving]";
+    }
+
+    else if (p_status == status::error_timeout) {
+      p_out << "[" << p_status.m_value << ", error timeout]";
+    }
+
+    else if (p_status == status::end_of_message) {
+      p_out << "[" << p_status.m_value << ", end of message]";
+    }
+
     return p_out;
   }
 
