@@ -50,8 +50,9 @@ struct file_connection_takes_2_secs {
     return status::ok;
   }
 
-  status send(std::string::const_iterator p_begin,
-              std::string::const_iterator p_end) {
+  template<typename t_char_iterator>
+  status send(t_char_iterator p_begin,
+              t_char_iterator p_end) {
     comm_log_debug(logger, "going to sleep");
     std::this_thread::sleep_for(std::chrono::seconds(2));
     comm_log_debug(logger, "waking up");
@@ -66,9 +67,9 @@ struct file_connection_takes_2_secs {
     m_file.seekg(0);
   }
 
-  template<typename t_iterator>
-  std::pair<status,t_iterator> receive(t_iterator p_begin,
-                 t_iterator p_end) {
+  template<typename t_char_iterator>
+  std::pair<status,t_char_iterator> receive(t_char_iterator p_begin,
+                 t_char_iterator p_end) {
     auto _size = std::distance(p_begin, p_end);
     decltype (_size) _read = static_cast<decltype (_size)>(m_file.readsome(&(*p_begin), _size));
 

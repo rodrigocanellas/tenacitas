@@ -1,6 +1,11 @@
 #ifndef TENACITAS_COMMUNICATION_LOG_H
 #define TENACITAS_COMMUNICATION_LOG_H
 
+#include <cstring>
+#include <string>
+
+#include <experimental/filesystem>
+
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project

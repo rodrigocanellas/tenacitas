@@ -54,8 +54,8 @@ struct tcp_socket {
     return _status;
   }
 
-  status send(std::string::const_iterator p_begin,
-              std::string::const_iterator p_end) {
+  template <typename t_char_iterator>
+  status send(t_char_iterator p_begin, t_char_iterator p_end) {
     auto _sent = ::write(m_sockfd, &(*p_begin), std::distance(p_begin, p_end));
 
     if (_sent == -1) {
@@ -72,8 +72,9 @@ struct tcp_socket {
     return status::ok;
   }
 
-  template <typename t_iterator>
-  std::pair<status, t_iterator> receive(t_iterator p_begin, t_iterator p_end) {
+  template <typename t_char_iterator>
+  std::pair<status, t_char_iterator> receive(t_char_iterator p_begin,
+                                             t_char_iterator p_end) {
     const auto _size = std::distance(p_begin, p_end);
 
     decltype(_size) _read =
@@ -279,7 +280,7 @@ struct receive_block_all {
   }
 };
 
-struct receive_non_block_all {
+struct receive_no_block_all {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -295,7 +296,7 @@ struct receive_non_block_all {
       return false;
     }
     std::string _all;
-    std::future<status> _future = _client.receive_all_non_block(_all);
+    std::future<status> _future = _client.receive_all_no_block(_all);
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -322,7 +323,7 @@ struct receive_non_block_all {
   }
 };
 
-struct receive_non_block_without_timeout_all {
+struct receive_no_block_without_timeout_all {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -340,7 +341,7 @@ struct receive_non_block_without_timeout_all {
 
     std::string _all;
     std::future<status> _future =
-        _client.receive_all_non_block(_all, std::chrono::seconds(15));
+        _client.receive_all_no_block(_all, std::chrono::seconds(15));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -367,7 +368,7 @@ struct receive_non_block_without_timeout_all {
   }
 };
 
-struct receive_non_block_with_timeout_all {
+struct receive_no_block_with_timeout_all {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -385,7 +386,7 @@ struct receive_non_block_with_timeout_all {
 
     std::string _all;
     std::future<status> _future =
-        _client.receive_all_non_block(_all, std::chrono::milliseconds(50));
+        _client.receive_all_no_block(_all, std::chrono::milliseconds(50));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -428,11 +429,12 @@ struct receive_block_some {
       return false;
     }
 
-    _status = _client.receive_block([](client::buffer_const_iterator p_begin,
-                                       client::buffer_const_iterator p_end) {
-      comm_log_debug(logger, "read ", std::string(p_begin, p_end));
-      return status::ok;
-    });
+    _status =
+        _client.receive_some_block([](client::buffer_const_iterator p_begin,
+                                      client::buffer_const_iterator p_end) {
+          comm_log_debug(logger, "read ", std::string(p_begin, p_end));
+          return status::ok;
+        });
 
     if (_status != status::ok) {
       comm_log_error(logger, "error receiving: ", _status);
@@ -447,7 +449,7 @@ struct receive_block_some {
   }
 };
 
-struct receive_non_block_some {
+struct receive_no_block_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -464,8 +466,8 @@ struct receive_non_block_some {
     }
 
     std::future<status> _future =
-        _client.receive_non_block([](client::buffer_const_iterator p_begin,
-                                     client::buffer_const_iterator p_end) {
+        _client.receive_some_no_block([](client::buffer_const_iterator p_begin,
+                                         client::buffer_const_iterator p_end) {
           std::this_thread::sleep_for(std::chrono::seconds(1));
           comm_log_debug(logger, "read ", std::string(p_begin, p_end));
           return status::ok;
@@ -494,7 +496,7 @@ struct receive_non_block_some {
   }
 };
 
-struct receive_non_block_without_timeout_some {
+struct receive_no_block_without_timeout_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -518,7 +520,7 @@ struct receive_non_block_without_timeout_some {
     };
 
     std::future<status> _future =
-        _client.receive_non_block(handler, std::chrono::seconds(15));
+        _client.receive_some_no_block(handler, std::chrono::seconds(15));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -543,7 +545,7 @@ struct receive_non_block_without_timeout_some {
   }
 };
 
-struct receive_non_block_with_timeout_some {
+struct receive_no_block_with_timeout_some {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::tcp_socket connection;
@@ -567,7 +569,7 @@ struct receive_non_block_with_timeout_some {
     };
 
     std::future<status> _future =
-        _client.receive_non_block(handler, std::chrono::seconds(3));
+        _client.receive_some_no_block(handler, std::chrono::seconds(3));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -596,11 +598,11 @@ int main(int argc, char **argv) {
   tenacitas::logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
   run_test(_test, receive_block_all);
-  run_test(_test, receive_non_block_all);
-  run_test(_test, receive_non_block_without_timeout_all);
-  run_test(_test, receive_non_block_with_timeout_all);
+  run_test(_test, receive_no_block_all);
+  run_test(_test, receive_no_block_without_timeout_all);
+  run_test(_test, receive_no_block_with_timeout_all);
   run_test(_test, receive_block_some);
-  run_test(_test, receive_non_block_some);
-  run_test(_test, receive_non_block_without_timeout_some);
-  run_test(_test, receive_non_block_with_timeout_some);
+  run_test(_test, receive_no_block_some);
+  run_test(_test, receive_no_block_without_timeout_some);
+  run_test(_test, receive_no_block_with_timeout_some);
 }

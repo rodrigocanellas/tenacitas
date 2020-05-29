@@ -31,7 +31,7 @@ struct send_msg_smaller_than_io_buffer {
       return false;
     }
 
-    _status = _client.send_block(std::string("hello!!!"));
+    _status = _client.send_all_block(std::string("hello!!!"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -63,7 +63,7 @@ struct send_without_timeout {
       return false;
     }
 
-    std::future<status> _future = _client.send_non_block(
+    std::future<status> _future = _client.send_all_no_block(
         std::string("how are you without timeout?"), std::chrono::seconds(3));
     if (!_future.valid()) {
       comm_log_error(logger, "invalid 'future'");
@@ -102,7 +102,7 @@ struct send_with_timeout {
       return false;
     }
 
-    std::future<status> _future = _client.send_non_block(
+    std::future<status> _future = _client.send_all_no_block(
         std::string("how are you with timeout?"), std::chrono::seconds(1));
     if (!_future.valid()) {
       comm_log_error(logger, "invalid 'future'");
@@ -141,7 +141,7 @@ struct send_msg_greater_than_io_buffer {
       return false;
     }
 
-    std::future<status> _future = _client.send_non_block(
+    std::future<status> _future = _client.send_all_no_block(
         std::string("012345678901234567890123456789012345678901234"
                     "5678901234567890123456789"),
         std::chrono::seconds(6));
@@ -186,7 +186,7 @@ struct receive_all {
         return false;
       }
 
-      _status = _client.send_block(_msg);
+      _status = _client.send_all_block(_msg);
       if (_status != status::ok) {
         comm_log_error(logger, "erro ", _status);
         return false;

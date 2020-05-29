@@ -28,15 +28,45 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace communication {
 
+/// \brief client_t is a client to remote communication
+///
+/// \tparam t_logger must provide
+/// \code
+///
+/// \endcode
+///
+/// \param t_connection must provide
+/// \code
+///
+/// status open(<some-type-of-endpoint>)
+///
+/// template<typename t_char_iterator>
+/// status send(t_char_iterator begin, t_char_iterator end)
+///
+/// template<typename t_char_iterator>
+/// std::pair<status, t_char_iterator> receive(t_char_iterator begin,
+/// t_char_iterator end) \endcode
+///
+/// \tparam t_buffer_size is the size of the buffer to send and receive messages
 template <typename t_logger, typename t_connection,
           size_t t_buffer_size = 8 * 1024>
 struct client_t {
 
+  /// \brief alias for the logger
   typedef t_logger logger;
+
+  /// \brief alias for the connection
   typedef t_connection connection;
+
+  /// \brief type for the i/o buffer
   typedef std::array<char, t_buffer_size> buffer;
+
+  /// \brief type for the buffer iterator
   typedef typename buffer::const_iterator buffer_const_iterator;
 
+  /// \brief constructor
+  ///
+  /// \param p_connection is the connection to the remote endpoint
   client_t(connection &&p_connection = connection())
       : m_connection(std::move(p_connection)) {}
 
@@ -64,20 +94,7 @@ struct client_t {
     }
   }
 
-  /// \brief send_block
-  ///
-  /// \tparam t_message
-  ///
-  /// \param p_message
-  ///
-  /// \details blocking
-  ///
-  /// \return
-  template <typename t_message> inline status send_block(t_message p_message) {
-    return send_block(p_message.begin(), p_message.end());
-  }
-
-  /// \brief send_block
+  /// \brief send_some_block
   ///
   /// \tparam t_iterator
   ///
@@ -89,7 +106,7 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator>
-  status send_block(t_iterator p_begin, t_iterator p_end) noexcept {
+  status send_some_block(t_iterator p_begin, t_iterator p_end) noexcept {
     try {
 
       typedef decltype(t_buffer_size) size;
@@ -131,7 +148,7 @@ struct client_t {
     return status::ok;
   }
 
-  /// \brief send_non_block
+  /// \brief send_some_no_block
   ///
   /// \tparam t_iterator
   ///
@@ -143,43 +160,13 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator>
-  std::future<status> send_non_block(t_iterator p_begin, t_iterator p_end) {
-    using namespace std;
-    try {
-      return async(launch::async,
-                   [this, p_begin, p_end]() { send(p_begin, p_end); });
-    } catch (const exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while posting");
-      return future<status>();
-    }
-  }
-
-  /// \brief send_non_block
-  ///
-  /// \tparam t_iterator
-  ///
-  /// \tparam t_iterator
-  ///
-  /// \param p_begin
-  ///
-  /// \param p_end
-  ///
-  /// \param p_timeout
-  ///
-  /// \details non blocking
-  ///
-  /// \return
-  template <typename t_message, typename t_timeout>
-  std::future<status> send_non_block(t_message p_message, t_timeout p_timeout) {
-    using namespace std;
-    typename t_message::const_iterator _begin = p_message.begin();
-    typename t_message::const_iterator _end = p_message.end();
-    return async([this, _begin, _end, p_timeout]() {
-      return launch_send(_begin, _end, p_timeout);
+  std::future<status> send_some_no_block(t_iterator p_begin, t_iterator p_end) {
+    return std::async(std::launch::async, [this, p_begin, p_end]() {
+      send_some_block(p_begin, p_end);
     });
   }
 
-  /// \brief send_non_block
+  /// \brief send_some_no_block
   ///
   /// \tparam t_iterator
   ///
@@ -195,64 +182,75 @@ struct client_t {
   ///
   /// \return
   template <typename t_iterator, typename t_timeout>
-  std::future<status> send_non_block(t_iterator p_begin, t_iterator p_end,
-                                     t_timeout p_timeout) {
-    using namespace std;
-    return async([this, p_begin, p_end, p_timeout]() {
-      return launch_send(p_begin, p_end, p_timeout);
-    });
+  std::future<status> send_some_no_block(t_iterator p_begin, t_iterator p_end,
+                                         t_timeout p_timeout) {
+
+    auto rsome = [this, p_begin, p_end]() -> status {
+      return send_some_block(p_begin, p_end);
+    };
+
+    auto launch_send = [this, rsome, p_timeout]() -> status {
+      return launch(rsome, p_timeout, status::error_timeout);
+    };
+    return std::async(std::launch::async, launch_send);
+
+    //    using namespace std;
+    //    return async([this, p_begin, p_end, p_timeout]() {
+    //      return launch_send(p_begin, p_end, p_timeout);
+    //    });
   }
 
-  /// \brief receive_block receives all the message, which final size is unknown
+  /// \brief send_all_block
   ///
-  /// \tparam t_message is the type of the message
-  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  /// \tparam t_message
+  ///
+  /// \param p_message
   ///
   /// \details blocking
   ///
   /// \return
-  template <typename t_message> status receive_all_block(t_message &p_all) {
-    return receive_block([&p_all](buffer_const_iterator p_begin,
-                                  buffer_const_iterator p_end) -> status {
-      std::copy(p_begin, p_end, std::back_inserter(p_all));
-      return status::ok;
-    });
+  template <typename t_message>
+  inline status send_all_block(t_message p_message) {
+    return send_some_block(p_message.begin(), p_message.end());
   }
 
-  /// \brief receive_block receives all the message, which final size is unknown
+  /// \brief send_all_no_block
   ///
-  /// \tparam t_message is the type of the message
-  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  /// \tparam t_message
+  ///
+  /// \param p_end
   ///
   /// \details non blocking
   ///
   /// \return
   template <typename t_message>
-  std::future<status> receive_all_non_block(t_message &p_all) {
-    return std::async(std::launch::async, [this, &p_all]() -> status {
-      return receive_all_block(p_all);
-    });
+  std::future<status> send_all_no_block(t_message p_message) {
+    return send_some_no_block(p_message.begin(), p_message.end());
   }
 
-  template <typename t_message, typename t_timeout>
-  std::future<status> receive_all_non_block(t_message &p_all,
-                                            t_timeout p_timeout) {
-    auto rall = [this, &p_all]() -> status { return receive_all_block(p_all); };
-
-    auto launch_receive = [this, rall, p_timeout]() -> status {
-      return launch(rall, p_timeout, status::error_timeout);
-    };
-    return std::async(std::launch::async, launch_receive);
-  }
-
-  /// \brief receive_block
+  /// \brief send_all_no_block
   ///
-  /// \param p_handler
+  /// \tparam t_message
+  ///
+  /// \param p_end
+  ///
+  /// \details non blocking
+  ///
+  /// \return
+  template <typename t_message, typename t_timeout>
+  std::future<status> send_all_no_block(t_message p_message,
+                                        t_timeout p_timeout) {
+    return send_some_no_block(p_message.begin(), p_message.end(), p_timeout);
+  }
+
+  /// \brief receive_some_block
+  ///
+  /// \param p_handler called to handle the buffer read
   ///
   /// \details blocking
   ///
   /// \return
-  status receive_block(
+  status receive_some_block(
       std::function<status(buffer_const_iterator, buffer_const_iterator)>
           p_handler) {
     try {
@@ -291,27 +289,22 @@ struct client_t {
     }
   }
 
-  /// \brief receive_non_block
+  /// \brief receive_some_non_block
   ///
   /// \param p_handler
   ///
   /// \details non blocking
   ///
   /// \return
-  std::future<status> receive_non_block(
+  std::future<status> receive_some_no_block(
       std::function<status(buffer_const_iterator, buffer_const_iterator)>
           p_handler) {
-    using namespace std;
-    try {
-      return async(launch::async,
-                   [this, p_handler]() { return receive_block(p_handler); });
-    } catch (const exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while collecting");
-      return future<status>();
-    }
+    return std::async(std::launch::async, [this, p_handler]() {
+      return receive_some_block(p_handler);
+    });
   }
 
-  /// \brief receive_non_block
+  /// \brief receive_some_non_block
   ///
   /// \tparam t_timeout
   ///
@@ -323,14 +316,65 @@ struct client_t {
   ///
   /// \return
   template <typename t_timeout>
-  std::future<status> receive_non_block(
+  std::future<status> receive_some_no_block(
       std::function<status(buffer_const_iterator, buffer_const_iterator)>
           p_handler,
       t_timeout p_timeout) {
-    using namespace std;
-    return async([this, p_handler, p_timeout]() {
-      return launch_receive(p_handler, p_timeout);
+
+    auto launch_receive = [this, p_handler, p_timeout]() -> status {
+      auto rsome = [this, p_handler]() -> status {
+        return receive_some_block(p_handler);
+      };
+
+      return launch(rsome, p_timeout, status::error_timeout);
+    };
+    return std::async(std::launch::async, launch_receive);
+  }
+
+  /// \brief receive_all_block receives all the message, which final size is
+  /// unknown
+  ///
+  /// \tparam t_message is the type of the message
+  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  ///
+  /// \details blocking
+  ///
+  /// \return
+  template <typename t_message> status receive_all_block(t_message &p_all) {
+    return receive_some_block([&p_all](buffer_const_iterator p_begin,
+                                       buffer_const_iterator p_end) -> status {
+      std::copy(p_begin, p_end, std::back_inserter(p_all));
+      return status::ok;
     });
+  }
+
+  /// \brief receive_all_non_block receives all the message, which final size is
+  /// unknown
+  ///
+  /// \tparam t_message is the type of the message
+  /// <tt> std::back_inserter </tt> must be defined for \p p_message
+  ///
+  /// \details non blocking
+  ///
+  /// \return
+  template <typename t_message>
+  std::future<status> receive_all_no_block(t_message &p_all) {
+    return std::async(std::launch::async, [this, &p_all]() -> status {
+      return receive_all_block(p_all);
+    });
+  }
+
+  template <typename t_message, typename t_timeout>
+  std::future<status> receive_all_no_block(t_message &p_all,
+                                           t_timeout p_timeout) {
+
+    auto launch_receive = [this, &p_all, p_timeout]() -> status {
+      auto rall = [this, &p_all]() -> status {
+        return receive_all_block(p_all);
+      };
+      return launch(rall, p_timeout, status::error_timeout);
+    };
+    return std::async(std::launch::async, launch_receive);
   }
 
 private:
@@ -379,16 +423,16 @@ private:
   /// \param p_timeout
   ///
   /// \param p_if_error
-  template <typename t_timeout>
-  status launch_receive(
-      std::function<status(buffer_const_iterator, buffer_const_iterator)>
-          p_handler,
-      t_timeout p_timeout) {
-    return launch([this, p_handler]() { return receive_block(p_handler); },
-                  p_timeout, status::error_receiving);
-  }
+  //  template <typename t_timeout>
+  //  status launch_receive(
+  //      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+  //          p_handler,
+  //      t_timeout p_timeout) {
+  //    return launch([this, p_handler]() { return receive_block(p_handler); },
+  //                  p_timeout, status::error_receiving);
+  //  }
 
-  /// \brief launch_receive launchs a send function with timeout control
+  /// \brief launch_send launchs a send function with timeout control
   ///
   /// \tparam t_function
   ///
@@ -399,13 +443,13 @@ private:
   /// \param p_timeout
   ///
   /// \param p_if_error
-  template <typename t_iterator, typename t_timeout>
-  status launch_send(t_iterator p_begin, t_iterator p_end,
-                     t_timeout p_timeout) {
-    return launch(
-        ([this, p_begin, p_end]() { return send_block(p_begin, p_end); }),
-        p_timeout, status::error_timeout);
-  }
+  //  template <typename t_iterator, typename t_timeout>
+  //  status launch_send(t_iterator p_begin, t_iterator p_end,
+  //                     t_timeout p_timeout) {
+  //    return launch(
+  //        ([this, p_begin, p_end]() { return send_block(p_begin, p_end); }),
+  //        p_timeout, status::error_timeout);
+  //  }
 
 private:
   connection m_connection;

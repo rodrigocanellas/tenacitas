@@ -6,6 +6,11 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <string>
+#include <algorithm>
+
+
+
 #define concurrent_log_debug(log, p_params...)                                 \
   log::debug(__FILE__, __LINE__, p_params)
 
