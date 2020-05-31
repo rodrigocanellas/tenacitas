@@ -134,7 +134,7 @@ struct test {
     using namespace std;
 
     if (m_print_desc) {
-      cout << p_test_name << ": " << t_test_class::desc() << endl;
+      cout << p_test_name << ": " << t_test_class::desc() << "\n" << endl;
       return;
     }
 

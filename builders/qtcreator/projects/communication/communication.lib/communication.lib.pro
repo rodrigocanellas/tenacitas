@@ -14,6 +14,7 @@ HEADERS += \
     $$code_src_dir/communication/client.h \
     $$code_src_dir/communication/internal/log.h \
     ../../../../../doc/projects/communication/todo.h \
+    ../../../../../src/communication/internal/timeout.h \
     ../../../../../src/communication/status.h
 
 SOURCES += \

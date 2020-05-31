@@ -56,6 +56,7 @@ struct file_connection_takes_2_secs {
     comm_log_debug(logger, "going to sleep");
     std::this_thread::sleep_for(std::chrono::seconds(2));
     comm_log_debug(logger, "waking up");
+    comm_log_debug(logger, "writing '", std::string(p_begin, p_end), "'");
     m_file.write(&(*p_begin), std::distance(p_begin, p_end));
     m_file.flush();
     if (m_file.bad()) {

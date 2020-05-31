@@ -14,24 +14,25 @@
 
 using namespace tenacitas;
 
-struct send_msg_smaller_than_io_buffer {
+struct blocking__greater_io__no_timeout_control {
 
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connection> client;
+    typedef communication::client_t<logger, connection, 10> client;
 
     client _client;
 
-    const std::string _file_name("send_msg_smaller_than_io_buffer.txt");
+    const std::string _file_name(
+        "blocking__greater_io__no_timeout_control.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    _status = _client.send_all_block(std::string("hello!!!"));
+    _status = _client.send_all(std::string("0123456789-0123456789-"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -41,35 +42,30 @@ struct send_msg_smaller_than_io_buffer {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using 'send' to write "
-           "a message smaller than write buffer to the file";
+    return "blocking, msg greather than io buffer, no timeout control";
   }
 };
 
-struct send_without_timeout {
+struct blocking__greater_io__timeout_control__no_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connection> client;
+    typedef communication::client_t<logger, connection, 10> client;
 
     client _client;
 
-    const std::string _file_name("./send_without_timeout.txt");
+    const std::string _file_name(
+        "blocking__greater_io__timeout_control__no_timeout.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future = _client.send_all_no_block(
-        std::string("how are you without timeout?"), std::chrono::seconds(3));
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid 'future'");
-      return false;
-    }
-    _status = _future.get();
+    _status = _client.send_all(std::string("0123456789-0123456789-"),
+                               std::chrono::seconds(50));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -79,36 +75,31 @@ struct send_without_timeout {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_non_block' to write a message smaller than write buffer to "
-           "the file, without timeout";
+    return "blocking, msg greather than io buffer, with timeout control and "
+           "no timeout";
   }
 };
 
-struct send_with_timeout {
+struct blocking__greater_io__timeout_control__with_timeout {
 
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connection> client;
+    typedef communication::client_t<logger, connection, 5> client;
 
     client _client;
 
-    const std::string _file_name("./send_with_timeout.txt");
+    const std::string _file_name(
+        "blocking__greater_io__timeout_control__with_timeout.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future = _client.send_all_no_block(
-        std::string("how are you with timeout?"), std::chrono::seconds(1));
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid 'future'");
-      return false;
-    }
-    _status = _future.get();
+    _status = _client.send_all(std::string("0123456789-0123456789-"),
+                               std::chrono::seconds(5));
     if (_status != status::error_timeout) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -118,39 +109,30 @@ struct send_with_timeout {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_non_block' to write a message smaller than write buffer to "
-           "the file, with timeout";
+    return "blocking, msg greather than io buffer, with timeout control and "
+           "with timeout";
   }
 };
 
-struct send_msg_greater_than_io_buffer_no_block {
+struct blocking__smaller_io__no_timeout_control {
 
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connection, 15> client;
+    typedef communication::client_t<logger, connection, 200> client;
 
     client _client;
 
     const std::string _file_name(
-        "./send_msg_greater_than_io_buffer_no_block.txt");
+        "blocking__smaller_io__no_timeout_control.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    std::future<status> _future = _client.send_all_no_block(
-        std::string("012345678901234567890123456789012345678901234"
-                    "5678901234567890123456789"),
-        std::chrono::seconds(30));
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid 'future'");
-      return false;
-    }
-    _status = _future.get();
+    _status = _client.send_all(std::string("0123456789-0123456789-"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -160,190 +142,93 @@ struct send_msg_greater_than_io_buffer_no_block {
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_non_block' to write a message greather than the 'connection' "
-           "write buffer, without "
+    return "blocking, msg smaller than io buffer, no timeout control";
+  }
+};
+
+struct blocking__smaller_io__timeout_control__no_timeout {
+
+  bool operator()() {
+    typedef logger::cerr::log logger;
+    typedef communication::tst::file_connection_takes_2_secs connection;
+    typedef communication::status status;
+    typedef communication::client_t<logger, connection, 200> client;
+
+    client _client;
+
+    const std::string _file_name(
+        "blocking__smaller_io__timeout_control__no_timeout.txt");
+    status _status = _client.connect(_file_name);
+    if (_status != status::ok) {
+      comm_log_error(logger, "erro ", _status);
+      return false;
+    }
+
+    _status = _client.send_all(std::string("0123456789-0123456789-"),
+                               std::chrono::seconds(5));
+    if (_status != status::ok) {
+      comm_log_error(logger, "erro ", _status);
+      return false;
+    }
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "blocking, msg smaller than io buffer, with timeout control, but no "
            "timeout";
   }
 };
 
-struct send_msg_greater_than_io_buffer_block {
-
+struct non_blocking__greater_io__no_timeout_control {
   bool operator()() {
     typedef logger::cerr::log logger;
     typedef communication::tst::file_connection_takes_2_secs connection;
     typedef communication::status status;
-    typedef communication::client_t<logger, connection, 15> client;
+    typedef communication::client_t<logger, connection, 10> client;
 
     client _client;
 
-    const std::string _file_name("./send_msg_greater_than_io_buffer_block.txt");
+    const std::string _file_name(
+        "non_blocking__greater_io__no_timeout_control.txt");
     status _status = _client.connect(_file_name);
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
 
-    _status = _client.send_all_block(
-        std::string("012345678901234567890123456789012345678901234"
-                    "5678901234567890123456789"));
+    //    std::string _msg("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-");
+    //    std::future<status> _future = _client.post_all(_msg);
+
+    std::future<status> _future =
+        _client.post_all(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
+
+    if (!_future.valid()) {
+      comm_log_error(logger, "invalid future");
+      return false;
+    }
+
+    _status = _future.get();
 
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
     }
-
     return true;
   }
 
   static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_all_block' to write a message greather than the 'connection' "
-           "write buffer";
-  }
-};
-
-struct receive_all {
-
-  bool operator()() {
-
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection> client;
-
-    const std::string _msg("01234567890123456789");
-    {
-      client _client;
-
-      const std::string _file_name("./receive_all.txt");
-      status _status = _client.connect(_file_name);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status);
-        return false;
-      }
-
-      _status = _client.send_all_block(_msg);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status);
-        return false;
-      }
-
-      comm_log_debug(logger, "msg sent = '", _msg, "'");
-    }
-    {
-      client _client;
-
-      const std::string _file_name("./receive_all.txt");
-      status _status = _client.connect(_file_name);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status);
-        return false;
-      }
-
-      std::string _all;
-      _status = _client.receive_all_block(_all);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status, " receiving");
-        return false;
-      }
-
-      if (_all != _msg) {
-        comm_log_error(logger, "msg received '", _all,
-                       "' is not equal to the one sent '", _msg, "'");
-        return false;
-      }
-
-      comm_log_debug(logger, "msg received = '", _all, "'");
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_some_block' to write a message smaller than write buffer to "
-           "the file, but greater than the read buffer, and trying to read all "
-           "the message";
-  }
-};
-
-struct send_some_async {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-
-    comm_log_debug(logger, "starting 'send_some_async'");
-
-    const std::string _file_name{"send_some_async.txt"};
-
-    const std::string _msg(
-        "0123456789-0123456789-0123456789-0123456789-0123456789-0123456789");
-    {
-
-      typedef communication::client_t<logger, connection, 22> client;
-      client _client;
-
-      status _status = _client.connect(_file_name);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status);
-        return false;
-      }
-
-      _client.send_some_async(_msg.begin(), _msg.end());
-
-      comm_log_debug(logger, "msg sent = '", _msg, "'");
-    }
-
-    comm_log_debug(logger, "sleeping...");
-    std::this_thread::sleep_for(std::chrono::seconds(4));
-    comm_log_debug(logger, "woke up...");
-
-    {
-      typedef communication::client_t<logger, connection> client;
-      client _client;
-
-      status _status = _client.connect(_file_name);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status);
-        return false;
-      }
-
-      std::string _all;
-      _status = _client.receive_all_block(_all);
-      if (_status != status::ok) {
-        comm_log_error(logger, "erro ", _status, " receiving");
-        return false;
-      }
-
-      if (_all != _msg) {
-        comm_log_error(logger, "msg received '", _all,
-                       "' is not equal to the one sent '", _msg, "'");
-        return false;
-      }
-
-      comm_log_debug(logger, "msg received = '", _all, "'");
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "'client_t' with a connection to a text file, using "
-           "'send_block_async' to write a message. Main thread will sleep for "
-           "2 seconds, and another 'client_t' will be created to receive the "
-           "data from the file.";
+    return "no blocking, msg greater than io buffer, no timeout control";
   }
 };
 
 int main(int argc, char **argv) {
   tenacitas::logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, send_msg_smaller_than_io_buffer);
-  run_test(_test, send_without_timeout);
-  run_test(_test, send_with_timeout);
-  run_test(_test, send_msg_greater_than_io_buffer_no_block);
-  run_test(_test, receive_all);
-  run_test(_test, send_some_async);
-  run_test(_test, send_msg_greater_than_io_buffer_block);
+  run_test(_test, blocking__greater_io__no_timeout_control);
+  run_test(_test, blocking__greater_io__timeout_control__no_timeout);
+  run_test(_test, blocking__greater_io__timeout_control__with_timeout);
+  run_test(_test, blocking__smaller_io__no_timeout_control);
+  run_test(_test, blocking__smaller_io__timeout_control__no_timeout);
+  run_test(_test, non_blocking__greater_io__no_timeout_control);
 }
