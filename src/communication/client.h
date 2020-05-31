@@ -33,6 +33,21 @@ namespace communication {
 /// \tparam t_logger must provide
 /// \code
 ///
+/// template <typename ...p_params>
+/// static void debug(const char *, int, params...)
+///
+/// template <typename ...p_params>
+/// static void info(const char *, int, params...)
+///
+/// template <typename ...p_params>
+/// static void warn(const char *, int, params...)
+///
+/// template <typename ...p_params>
+/// static void error(const char *, int, params...)
+///
+/// template <typename ...p_params>
+/// static void fatal(const char *, int, params...)
+///
 /// \endcode
 ///
 /// \param t_connection must provide
@@ -45,7 +60,9 @@ namespace communication {
 ///
 /// template<typename t_char_iterator>
 /// std::pair<status, t_char_iterator> receive(t_char_iterator begin,
-/// t_char_iterator end) \endcode
+/// t_char_iterator end)
+///
+/// \endcode
 ///
 /// \tparam t_buffer_size is the size of the buffer to send and receive messages
 template <typename t_logger, typename t_connection,
@@ -138,7 +155,7 @@ struct client_t {
           return _status;
         }
         _sent += _to_send;
-        std::advance(_ite, _sent);
+        std::advance(_ite, _to_send);
       }
 
     } catch (const std::exception &_ex) {
@@ -193,11 +210,29 @@ struct client_t {
       return launch(rsome, p_timeout, status::error_timeout);
     };
     return std::async(std::launch::async, launch_send);
+  }
 
-    //    using namespace std;
-    //    return async([this, p_begin, p_end, p_timeout]() {
-    //      return launch_send(p_begin, p_end, p_timeout);
-    //    });
+  /// \brief send_some_async sends some data through the connection,
+  /// asynchronously, i.e., the caller function will not have any results of the
+  /// sending
+  ///
+  /// \tparam t_iterator
+  ///
+  /// \param p_begin
+  ///
+  /// \param p_end
+  ///
+  /// \details
+  template <typename t_iterator>
+  void send_some_async(t_iterator p_begin, t_iterator p_end) {
+    comm_log_debug(logger, "inside 'send_some_sync'");
+    auto _rsome = [this, p_begin, p_end]() -> void {
+      comm_log_debug(logger, "inside '_rsome'");
+      send_some_block(p_begin, p_end);
+    };
+
+    auto _launch = [this, _rsome]() -> void { launch(_rsome); };
+    std::async(std::launch::async, _launch);
   }
 
   /// \brief send_all_block
@@ -407,49 +442,25 @@ private:
       }
 
     } catch (const exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while posting");
+      comm_log_error(logger, "error '", _ex.what());
       return status::error_posting;
     }
   }
 
-  /// \brief launch_receive launchs a receive function with timeout control
+  /// \brief launch generic method to launch a function with timeout control
   ///
   /// \tparam t_function
   ///
-  /// \tparam t_timeout
-  ///
   /// \param p_function
-  ///
-  /// \param p_timeout
-  ///
-  /// \param p_if_error
-  //  template <typename t_timeout>
-  //  status launch_receive(
-  //      std::function<status(buffer_const_iterator, buffer_const_iterator)>
-  //          p_handler,
-  //      t_timeout p_timeout) {
-  //    return launch([this, p_handler]() { return receive_block(p_handler); },
-  //                  p_timeout, status::error_receiving);
-  //  }
+  template <typename t_function> void launch(t_function p_function) {
+    comm_log_debug(logger, "inside 'launch'");
+    try {
+      std::async(std::launch::async, p_function);
 
-  /// \brief launch_send launchs a send function with timeout control
-  ///
-  /// \tparam t_function
-  ///
-  /// \tparam t_timeout
-  ///
-  /// \param p_function
-  ///
-  /// \param p_timeout
-  ///
-  /// \param p_if_error
-  //  template <typename t_iterator, typename t_timeout>
-  //  status launch_send(t_iterator p_begin, t_iterator p_end,
-  //                     t_timeout p_timeout) {
-  //    return launch(
-  //        ([this, p_begin, p_end]() { return send_block(p_begin, p_end); }),
-  //        p_timeout, status::error_timeout);
-  //  }
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what());
+    }
+  }
 
 private:
   connection m_connection;

@@ -17,4 +17,5 @@ HEADERS += \
     ../../../../../src/communication/status.h
 
 SOURCES += \
+  ../../../../../src/communication/internal/log.cpp \
   ../../../../../src/communication/internal/status.cpp

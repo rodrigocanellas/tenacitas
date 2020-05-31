@@ -57,14 +57,11 @@ struct file_connection_takes_2_secs {
     std::this_thread::sleep_for(std::chrono::seconds(2));
     comm_log_debug(logger, "waking up");
     m_file.write(&(*p_begin), std::distance(p_begin, p_end));
+    m_file.flush();
     if (m_file.bad()) {
       return status::error_sending;
     }
     return status::ok;
-  }
-
-  void reset() {
-    m_file.seekg(0);
   }
 
   template<typename t_char_iterator>
