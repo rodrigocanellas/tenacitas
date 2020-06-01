@@ -29,7 +29,7 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace communication {
 
-/// \brief client_t is a client to remote communication
+/// \brief client_t is a client for remote communication
 ///
 /// \tparam t_logger must provide
 /// \code
@@ -278,40 +278,7 @@ struct client_t {
   status receive_some_block(
       std::function<status(buffer_const_iterator, buffer_const_iterator)>
           p_handler) {
-    try {
-
-      buffer _some;
-
-      typedef typename buffer::iterator iterator;
-      iterator _begin = _some.begin();
-      iterator _end = _some.end();
-
-      std::pair<status, iterator> _res = m_connection.receive(_begin, _end);
-      while (true) {
-        if (_res.first == status::ok) {
-          comm_log_debug(logger, "more ", std::distance(_begin, _res.second),
-                         " bytes read");
-          p_handler(&(*_begin), &(*_res.second));
-
-          _res = m_connection.receive(_begin, _end);
-        }
-
-        if (_res.first == status::end_of_message) {
-          comm_log_info(logger, "end of message");
-          p_handler(&(*_begin), &(*_res.second));
-          return status::ok;
-        }
-
-        if (_res.first != status::ok) {
-          comm_log_error(logger, "error ", _res.first, " while receiving");
-          return _res.first;
-        }
-      }
-
-    } catch (const std::exception &_ex) {
-      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
-      return status::error_receiving;
-    }
+    return internal_receive(p_handler, false);
   }
 
   /// \brief receive_some_non_block
@@ -456,6 +423,48 @@ private:
       return status::error_sending;
     }
     return status::ok;
+  }
+
+  template <typename t_timeout>
+  status internal_receive(
+      std::function<status(buffer_const_iterator, buffer_const_iterator)>
+          p_handler,
+      t_timeout p_timeout) {
+    try {
+
+      buffer _buffer;
+
+      typename buffer::iterator _begin = _buffer.begin();
+
+      timeout _timeout(p_timeout);
+      std::pair<status, decltype(t_buffer_size)> _res =
+          m_connection.receive(_begin, t_buffer_size);
+      while (true) {
+        if (_timeout()) {
+          comm_log_error(logger, "timeout");
+          return status::error_timeout;
+        }
+
+        if (_res.first == status::end_of_message) {
+          comm_log_info(logger, "end of message");
+          p_handler(&(*_begin), std::next(_begin, _res.second));
+          return status::ok;
+        }
+
+        if (_res.first != status::ok) {
+          comm_log_error(logger, "error ", _res.first, " while receiving");
+          return _res.first;
+        }
+
+        comm_log_debug(logger, "more ", _res.second, " bytes read");
+        p_handler(&(*_begin), std::next(_begin, _res.second));
+        _res = m_connection.receive(_begin, t_buffer_size);
+      }
+
+    } catch (const std::exception &_ex) {
+      comm_log_error(logger, "error '", _ex.what(), "' while receiving");
+      return status::error_receiving;
+    }
   }
 
   /// \brief launch generic method to launch a function with timeout control

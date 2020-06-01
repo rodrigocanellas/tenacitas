@@ -72,27 +72,25 @@ struct tcp_socket {
     return status::ok;
   }
 
-  template <typename t_char_iterator>
-  std::pair<status, t_char_iterator> receive(t_char_iterator p_begin,
-                                             t_char_iterator p_end) {
-    const auto _size = std::distance(p_begin, p_end);
+  template <typename t_size>
+  std::pair<status, size_t> receive(char *p_begin, t_size p_size) {
 
-    decltype(_size) _read =
-        static_cast<decltype(_size)>(::read(m_sockfd, &(*p_begin), _size));
+    //    char *_begin = static_cast<char *>(p_begin);
+    auto _read = ::read(m_sockfd, static_cast<void *>(p_begin), p_size);
 
-    if (_read == -1) {
-      return {status::error_receiving, p_end};
+    if (_read < 0) {
+      return {status::error_receiving, _read};
     }
 
     if (_read == 0) {
-      return {status::end_of_message, p_begin};
+      return {status::end_of_message, _read};
     }
 
-    if (_read < _size) {
-      return {status::ok, std::next(p_begin, _read)};
+    if (static_cast<t_size>(_read) < p_size) {
+      return {status::ok, _read};
     }
 
-    return {status::ok, p_end};
+    return {status::ok, _read};
   }
 
 private:

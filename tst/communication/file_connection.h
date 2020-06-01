@@ -65,18 +65,17 @@ struct file_connection_takes_2_secs {
     return status::ok;
   }
 
-  template<typename t_char_iterator>
-  std::pair<status,t_char_iterator> receive(t_char_iterator p_begin,
-                 t_char_iterator p_end) {
-    auto _size = std::distance(p_begin, p_end);
-    decltype (_size) _read = static_cast<decltype (_size)>(m_file.readsome(&(*p_begin), _size));
+  template<typename t_size>
+  std::pair<status,t_size> receive(char * p_begin,
+                 t_size p_size) {
+    auto _read = static_cast<t_size>(m_file.readsome(p_begin, p_size));
 
     if (m_file.bad()) {
-      return {status::error_sending, p_begin};
+      return {status::error_sending, -1};
     }
 
     if ( (_read == 0) || (m_file.eof())) {
-      return {status::end_of_message, p_begin};
+      return {status::end_of_message, _read};
     }
 
     return {status::ok, std::next(p_begin, _read)};
