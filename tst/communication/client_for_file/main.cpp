@@ -32,7 +32,7 @@ struct blocking__greater_io__no_timeout_control {
       return false;
     }
 
-    _status = _client.send_all(std::string("0123456789-0123456789-"));
+    _status = _client.send_block(std::string("0123456789-0123456789-"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -64,8 +64,8 @@ struct blocking__greater_io__timeout_control__no_timeout {
       return false;
     }
 
-    _status = _client.send_all(std::string("0123456789-0123456789-"),
-                               std::chrono::seconds(50));
+    _status = _client.send_block(std::string("0123456789-0123456789-"),
+                                 std::chrono::seconds(50));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -98,8 +98,8 @@ struct blocking__greater_io__timeout_control__with_timeout {
       return false;
     }
 
-    _status = _client.send_all(std::string("0123456789-0123456789-"),
-                               std::chrono::seconds(5));
+    _status = _client.send_block(std::string("0123456789-0123456789-"),
+                                 std::chrono::seconds(5));
     if (_status != status::error_timeout) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -132,7 +132,7 @@ struct blocking__smaller_io__no_timeout_control {
       return false;
     }
 
-    _status = _client.send_all(std::string("0123456789-0123456789-"));
+    _status = _client.send_block(std::string("0123456789-0123456789-"));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -164,8 +164,8 @@ struct blocking__smaller_io__timeout_control__no_timeout {
       return false;
     }
 
-    _status = _client.send_all(std::string("0123456789-0123456789-"),
-                               std::chrono::seconds(5));
+    _status = _client.send_block(std::string("0123456789-0123456789-"),
+                                 std::chrono::seconds(5));
     if (_status != status::ok) {
       comm_log_error(logger, "erro ", _status);
       return false;
@@ -201,7 +201,7 @@ struct non_blocking__greater_io__no_timeout_control {
     //    std::future<status> _future = _client.post_all(_msg);
 
     std::future<status> _future =
-        _client.post_all(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
+        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
 
     if (!_future.valid()) {
       comm_log_error(logger, "invalid future");
@@ -243,8 +243,8 @@ struct non_blocking__greater_io__timeout_control__no_timeout {
     //    std::future<status> _future = _client.post_all(_msg);
 
     std::future<status> _future =
-        _client.post_all(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"),
-                         std::chrono::seconds(25));
+        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"),
+                               std::chrono::seconds(25));
 
     if (!_future.valid()) {
       comm_log_error(logger, "invalid future");
@@ -286,7 +286,7 @@ struct non_blocking__greater_io__timeout_control__with_timeout {
     //    std::string _msg("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-");
     //    std::future<status> _future = _client.post_all(_msg);
 
-    std::future<status> _future = _client.post_all(
+    std::future<status> _future = _client.send_non_block(
         std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"), std::chrono::seconds(4));
 
     if (!_future.valid()) {
@@ -327,7 +327,7 @@ struct non_blocking__smaller_io__no_timeout_control {
     }
 
     std::future<status> _future =
-        _client.post_all(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
+        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
 
     if (!_future.valid()) {
       comm_log_error(logger, "invalid future");
@@ -365,7 +365,7 @@ struct non_blocking__smaller_io__timeout_control__no_timeout {
       return false;
     }
 
-    std::future<status> _future = _client.post_all(
+    std::future<status> _future = _client.send_non_block(
         std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"), std::chrono::seconds(1));
 
     if (!_future.valid()) {
