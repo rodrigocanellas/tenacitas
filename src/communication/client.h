@@ -65,9 +65,11 @@ namespace communication {
 ///
 /// \endcode
 ///
-/// \tparam t_buffer_size is the size of the buffer to send and receive messages
+/// \tparam t_receive_buffer_size is the size of the buffer to send and receive
+/// messages
 template <typename t_logger, typename t_connection,
-          size_t t_buffer_size = 8 * 1024>
+          size_t t_receive_buffer_size = 8 * 1024,
+          size_t t_send_buffer_size = 16 * 1024>
 struct client_t {
 
   /// \brief alias for the logger
@@ -77,7 +79,7 @@ struct client_t {
   typedef t_connection connection;
 
   /// \brief type for the i/o buffer
-  typedef std::array<char, t_buffer_size> buffer;
+  typedef std::array<char, t_receive_buffer_size> buffer;
 
   /// \brief constructor
   ///
@@ -124,7 +126,7 @@ struct client_t {
 
   /// \brief send blocking, with timeout control
   ///
-  /// \tparam const char *
+  /// \tparam t_iterator
   ///
   /// \param p_begin
   ///
@@ -146,7 +148,8 @@ struct client_t {
   /// \details blocking
   ///
   /// \return
-  template <typename t_message> inline status send_block(t_message p_message) {
+  template <typename t_message>
+  inline status send_block_all(t_message p_message) noexcept {
     return send_block(p_message.begin(), p_message.end());
   }
 
@@ -160,7 +163,8 @@ struct client_t {
   ///
   /// \return
   template <typename t_message, typename t_timeout>
-  inline status send_block(t_message p_message, t_timeout p_timeout) {
+  inline status send_block_all(t_message p_message,
+                               t_timeout p_timeout) noexcept {
     return send_block(p_message.begin(), p_message.end(), p_timeout);
   }
 
@@ -216,9 +220,9 @@ struct client_t {
   ///
   /// \return
   template <typename t_message>
-  inline std::future<status> send_non_block(t_message p_message) {
+  inline std::future<status> send_non_block_all(t_message p_message) noexcept {
     return std::async(std::launch::async, [this, p_message]() -> status {
-      return send_block(p_message);
+      return send_block_all(p_message);
     });
   }
 
@@ -232,11 +236,11 @@ struct client_t {
   ///
   /// \return
   template <typename t_message, typename t_timeout>
-  inline std::future<status> send_non_block(t_message p_message,
-                                            t_timeout p_timeout) {
+  inline std::future<status> send_non_block_all(t_message p_message,
+                                                t_timeout p_timeout) noexcept {
     return std::async(std::launch::async,
                       [this, p_message, p_timeout]() -> status {
-                        return send_block(p_message, p_timeout);
+                        return send_block_all(p_message, p_timeout);
                       });
   }
 
@@ -252,7 +256,7 @@ struct client_t {
   ///
   /// \details
   template <typename t_iterator>
-  void send_async(t_iterator p_begin, t_iterator p_end) {
+  void send_async(t_iterator p_begin, t_iterator p_end) noexcept {
     comm_log_debug(logger, "inside 'send_some_sync'");
 
     std::async(std::launch::async, [this, p_begin, p_end]() -> void {
@@ -261,22 +265,24 @@ struct client_t {
   }
 
   template <typename t_iterator, typename t_timeout>
-  void send_async(t_iterator p_begin, t_iterator p_end, t_timeout p_timeout) {
+  void send_async(t_iterator p_begin, t_iterator p_end,
+                  t_timeout p_timeout) noexcept {
     comm_log_debug(logger, "inside 'send_some_sync'");
     std::async(std::launch::async, [this, p_begin, p_end, p_timeout]() -> void {
       send_block(p_begin, p_end, p_timeout);
     });
   }
 
-  template <typename t_message> void send_async(t_message p_message) {
+  template <typename t_message>
+  void send_async_all(t_message p_message) noexcept {
     std::async(std::launch::async,
-               [this, p_message]() -> void { send_block(p_message); });
+               [this, p_message]() -> void { send_block_all(p_message); });
   }
 
   template <typename t_message, typename t_timeout>
-  void send_async(t_message p_message, t_timeout p_timeout) {
+  void send_async_all(t_message p_message, t_timeout p_timeout) noexcept {
     std::async(std::launch::async, [this, p_message, p_timeout]() -> void {
-      send_block(p_message, p_timeout);
+      send_block_all(p_message, p_timeout);
     });
   }
 
@@ -318,7 +324,8 @@ struct client_t {
   /// \details blocking
   ///
   /// \return
-  template <typename t_message> status receive_block(t_message &p_all) {
+  template <typename t_message>
+  status receive_block_all(t_message &p_all) noexcept {
     return receive_block(
         [&p_all](const char *p_begin, const char *p_end) -> status {
           std::copy(p_begin, p_end, std::back_inserter(p_all));
@@ -327,7 +334,7 @@ struct client_t {
   }
 
   template <typename t_message, typename t_timeout>
-  status receive_block(t_message &p_all, t_timeout p_timeout) {
+  status receive_block_all(t_message &p_all, t_timeout p_timeout) noexcept {
     return receive_block(
         [&p_all](const char *p_begin, const char *p_end) -> status {
           std::copy(p_begin, p_end, std::back_inserter(p_all));
@@ -362,7 +369,7 @@ struct client_t {
   template <typename t_timeout>
   std::future<status>
   receive_non_block(std::function<status(const char *, const char *)> p_handler,
-                    t_timeout p_timeout) {
+                    t_timeout p_timeout) noexcept {
 
     return std::async(std::launch::async,
                       [this, p_handler, p_timeout]() -> status {
@@ -380,48 +387,48 @@ struct client_t {
   ///
   /// \return
   template <typename t_message>
-  std::future<status> receive_non_block(t_message &p_all) {
+  std::future<status> receive_non_block_all(t_message &p_all) noexcept {
     return std::async(std::launch::async, [this, &p_all]() -> status {
-      return receive_block(p_all);
+      return receive_block_all(p_all);
     });
   }
 
   template <typename t_message, typename t_timeout>
-  std::future<status> receive_non_block(t_message &p_all, t_timeout p_timeout) {
+  std::future<status> receive_non_block_all(t_message &p_all,
+                                            t_timeout p_timeout) noexcept {
     return std::async(std::launch::async,
                       [this, &p_all, p_timeout]() -> status {
-                        return receive_block(p_all, p_timeout);
+                        return receive_block_all(p_all, p_timeout);
                       });
   }
 
-  //  void receive_async(
-  //      std::function<status(const char *, const char *)> p_handler) noexcept
-  //      {
-  //    std::async(std::launch::async,
-  //               [this, p_handler]() -> void { receive_block(p_handler); });
-  //  }
+  void receive_async(
+      std::function<status(const char *, const char *)> p_handler) noexcept {
+    std::async(std::launch::async,
+               [this, p_handler]() -> void { receive_block(p_handler); });
+  }
 
-  //  template <typename t_timeout>
-  //  void
-  //  receive_async(std::function<status(const char *, const char *)> p_handler,
-  //                t_timeout p_timeout) {
+  template <typename t_timeout>
+  void
+  receive_async(std::function<status(const char *, const char *)> p_handler,
+                t_timeout p_timeout) {
 
-  //    std::async(std::launch::async, [this, p_handler, p_timeout]() -> void {
-  //      receive_block(p_handler, p_timeout);
-  //    });
-  //  }
+    std::async(std::launch::async, [this, p_handler, p_timeout]() -> void {
+      receive_block(p_handler, p_timeout);
+    });
+  }
 
-  //  template <typename t_message> void receive_async(t_message &p_all) {
-  //    std::async(std::launch::async,
-  //               [this, &p_all]() -> void { receive_block(p_all); });
-  //  }
+  template <typename t_message> void receive_async_all(t_message &p_all) {
+    std::async(std::launch::async,
+               [this, &p_all]() -> void { receive_block_all(p_all); });
+  }
 
-  //  template <typename t_message, typename t_timeout>
-  //  void receive_async(t_message &p_all, t_timeout p_timeout) {
-  //    std::async(std::launch::async, [this, &p_all, p_timeout]() -> void {
-  //      receive_block(p_all, p_timeout);
-  //    });
-  //  }
+  template <typename t_message, typename t_timeout>
+  void receive_async(t_message &p_all, t_timeout p_timeout) {
+    std::async(std::launch::async, [this, &p_all, p_timeout]() -> void {
+      receive_block_all(p_all, p_timeout);
+    });
+  }
 
 private:
   template <typename t_iterator, typename t_timeout>
@@ -429,12 +436,12 @@ private:
                        t_timeout p_timeout) noexcept {
     try {
 
-      typedef decltype(t_buffer_size) size;
+      typedef decltype(t_send_buffer_size) size;
       size _msg_size = static_cast<size>(std::distance(p_begin, p_end));
-      comm_log_debug(logger, "io size = ", t_buffer_size,
+      comm_log_debug(logger, "io size = ", t_send_buffer_size,
                      ", msg size = ", _msg_size, " sending '",
                      std::string(p_begin, p_end), "'");
-      if (_msg_size <= t_buffer_size) {
+      if (_msg_size <= t_send_buffer_size) {
 
         status _status = m_connection.send(p_begin, p_end);
         if (_status == status::ok) {
@@ -458,8 +465,8 @@ private:
         std::advance(_ite, _to_send);
 
         _to_send = _msg_size - _sent;
-        if (_to_send > t_buffer_size) {
-          _to_send = t_buffer_size;
+        if (_to_send > t_send_buffer_size) {
+          _to_send = t_send_buffer_size;
         }
         comm_log_debug(logger, "sending ", _to_send, " bytes");
 
@@ -490,8 +497,8 @@ private:
       typename buffer::iterator _begin = _buffer.begin();
 
       timeout _timeout(p_timeout);
-      std::pair<status, decltype(t_buffer_size)> _res =
-          m_connection.receive(_begin, t_buffer_size);
+      std::pair<status, decltype(t_receive_buffer_size)> _res =
+          m_connection.receive(_begin, t_receive_buffer_size);
       while (true) {
         if (_timeout()) {
           comm_log_error(logger, "timeout");
@@ -511,7 +518,7 @@ private:
 
         comm_log_debug(logger, "more ", _res.second, " bytes read");
         p_handler(&(*_begin), std::next(_begin, _res.second));
-        _res = m_connection.receive(_begin, t_buffer_size);
+        _res = m_connection.receive(_begin, t_receive_buffer_size);
       }
 
     } catch (const std::exception &_ex) {

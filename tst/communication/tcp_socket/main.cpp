@@ -257,7 +257,7 @@ struct receive_block_all {
     }
 
     std::string _all;
-    _status = _client.receive_block(_all);
+    _status = _client.receive_block_all(_all);
     if (_status != status::ok) {
       comm_log_error(logger, "error receiving: ", _status);
       return false;
@@ -294,7 +294,7 @@ struct receive_no_block_all {
       return false;
     }
     std::string _all;
-    std::future<status> _future = _client.receive_non_block(_all);
+    std::future<status> _future = _client.receive_non_block_all(_all);
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -339,7 +339,7 @@ struct receive_no_block_without_timeout_all {
 
     std::string _all;
     std::future<status> _future =
-        _client.receive_non_block(_all, std::chrono::seconds(15));
+        _client.receive_non_block_all(_all, std::chrono::seconds(15));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));
@@ -384,7 +384,7 @@ struct receive_no_block_with_timeout_all {
 
     std::string _all;
     std::future<status> _future =
-        _client.receive_non_block(_all, std::chrono::milliseconds(50));
+        _client.receive_non_block_all(_all, std::chrono::milliseconds(50));
 
     comm_log_debug(logger, "sleeping for 7 seconds");
     std::this_thread::sleep_for(std::chrono::seconds(7));

@@ -16,4 +16,5 @@ LIBS+=$$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 LIBS+=$$libs_dir/libtenacitas.communication.$$static_lib_ext
 
 HEADERS += \
-  $$test_src_dir/communication/communication/file_connection.h
+  $$test_src_dir/communication/communication/file_connection.h \
+  ../../../../../../tst/communication/client_test.h

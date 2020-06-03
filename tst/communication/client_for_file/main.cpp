@@ -6,390 +6,296 @@
 #include <string>
 
 #include <communication/client.h>
+#include <communication/client_test.h>
 #include <communication/file_connection.h>
 #include <communication/internal/log.h>
 #include <communication/status.h>
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
+#define REC_BUF_SIZE 8192
+#define SND_BUF_SIZE 8192
+
 using namespace tenacitas;
+/// \brief namespace of the organization
+namespace tenacitas {
+/// \brief namespace of the project
+namespace communication {
+/// \brief namespace for test
+namespace tst {
 
-struct blocking__greater_io__no_timeout_control {
-
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 10> client;
-
-    client _client;
-
-    const std::string _file_name(
-        "blocking__greater_io__no_timeout_control.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    _status = _client.send_block(std::string("0123456789-0123456789-"));
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "blocking, msg greather than io buffer, no timeout control";
-  }
+struct blocking__greater_io__no_timeout_control_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 10;
+  static const std::string endpoint;
+  static const std::string msg;
+  static const std::string desc;
 };
 
-struct blocking__greater_io__timeout_control__no_timeout {
+const std::string blocking__greater_io__no_timeout_control_test::msg =
+    "0123456789-0123456789-";
 
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 10> client;
+const std::string blocking__greater_io__no_timeout_control_test::endpoint =
+    "blocking__greater_io__no_timeout_control.txt";
 
-    client _client;
+const std::string blocking__greater_io__no_timeout_control_test::desc =
+    "blocking, msg greather than io buffer, no timeout control";
 
-    const std::string _file_name(
-        "blocking__greater_io__timeout_control__no_timeout.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+typedef blocking__no_timeout_control_t<
+    blocking__greater_io__no_timeout_control_test>
+    blocking__greater_io__no_timeout_control;
 
-    _status = _client.send_block(std::string("0123456789-0123456789-"),
-                                 std::chrono::seconds(50));
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "blocking, msg greather than io buffer, with timeout control and "
-           "no timeout";
-  }
+// *****************************************************************************
+struct blocking__greater_io__timeout_control__no_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 10;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(50);
+  static const bool is_timeout = false;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct blocking__greater_io__timeout_control__with_timeout {
+const std::string blocking__greater_io__timeout_control__no_timeout_test::msg =
+    "0123456789-0123456789-";
 
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 5> client;
+const std::string
+    blocking__greater_io__timeout_control__no_timeout_test::endpoint =
+        "blocking__greater_io__timeout_control__no_timeout";
 
-    client _client;
+const std::string blocking__greater_io__timeout_control__no_timeout_test::desc =
+    "blocking, msg greather than io buffer, with timeout control and "
+    "with timeout";
 
-    const std::string _file_name(
-        "blocking__greater_io__timeout_control__with_timeout.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+typedef blocking__timeout_control_t<
+    blocking__greater_io__timeout_control__no_timeout_test>
+    blocking__greater_io__timeout_control__no_timeout;
 
-    _status = _client.send_block(std::string("0123456789-0123456789-"),
-                                 std::chrono::seconds(5));
-    if (_status != status::error_timeout) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "blocking, msg greather than io buffer, with timeout control and "
-           "with timeout";
-  }
+// *****************************************************************************
+struct blocking__greater_io__timeout_control__with_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 5;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(5);
+  static const bool is_timeout = true;
+  static const std::string endpoint;
+  static const std::string desc;
+  static const std::string msg;
 };
 
-struct blocking__smaller_io__no_timeout_control {
+const std::string
+    blocking__greater_io__timeout_control__with_timeout_test::msg =
+        "0123456789-0123456789-";
 
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 200> client;
+const std::string
+    blocking__greater_io__timeout_control__with_timeout_test::endpoint =
+        "blocking__greater_io__timeout_control__with_timeout.txt";
 
-    client _client;
+const std::string
+    blocking__greater_io__timeout_control__with_timeout_test::desc =
+        "blocking, msg greather than io buffer, with timeout control and "
+        "with timeout";
 
-    const std::string _file_name(
-        "blocking__smaller_io__no_timeout_control.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+typedef blocking__timeout_control_t<
+    blocking__greater_io__timeout_control__with_timeout_test>
+    blocking__greater_io__timeout_control__with_timeout;
 
-    _status = _client.send_block(std::string("0123456789-0123456789-"));
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "blocking, msg smaller than io buffer, no timeout control";
-  }
+// *****************************************************************************
+struct blocking__smaller_io__no_timeout_control_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 200;
+  static const std::string endpoint;
+  static const std::string desc;
+  static const std::string msg;
 };
 
-struct blocking__smaller_io__timeout_control__no_timeout {
+const std::string blocking__smaller_io__no_timeout_control_test::msg =
+    "0123456789-0123456789-";
 
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 200> client;
+const std::string blocking__smaller_io__no_timeout_control_test::endpoint =
+    "blocking__smaller_io__no_timeout_control.txt";
 
-    client _client;
+const std::string blocking__smaller_io__no_timeout_control_test::desc =
+    "blocking, msg smaller than io buffer, no timeout control";
 
-    const std::string _file_name(
-        "blocking__smaller_io__timeout_control__no_timeout.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+typedef blocking__no_timeout_control_t<
+    blocking__smaller_io__no_timeout_control_test>
+    blocking__smaller_io__no_timeout_control;
 
-    _status = _client.send_block(std::string("0123456789-0123456789-"),
-                                 std::chrono::seconds(5));
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "blocking, msg smaller than io buffer, with timeout control, but no "
-           "timeout";
-  }
+// *****************************************************************************
+struct blocking__smaller_io__timeout_control__no_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 200;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(5);
+  static const bool is_timeout = false;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct non_blocking__greater_io__no_timeout_control {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 10> client;
+const std::string blocking__smaller_io__timeout_control__no_timeout_test ::msg =
+    "0123456789-0123456789-";
 
-    client _client;
+const std::string
+    blocking__smaller_io__timeout_control__no_timeout_test ::endpoint =
+        "blocking__smaller_io__timeout_control__no_timeout.txt";
 
-    const std::string _file_name(
-        "non_blocking__greater_io__no_timeout_control.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+const std::string
+    blocking__smaller_io__timeout_control__no_timeout_test ::desc =
+        "blocking, msg smaller than io buffer, with timeout control, but no "
+        "timeout";
 
-    //    std::string _msg("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-");
-    //    std::future<status> _future = _client.post_all(_msg);
+typedef blocking__timeout_control_t<
+    blocking__smaller_io__timeout_control__no_timeout_test>
+    blocking__smaller_io__timeout_control__no_timeout;
 
-    std::future<status> _future =
-        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
-
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid future");
-      return false;
-    }
-
-    _status = _future.get();
-
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "no blocking, msg greater than io buffer, no timeout control";
-  }
+// *****************************************************************************
+struct non_blocking__greater_io__no_timeout_control_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 10;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct non_blocking__greater_io__timeout_control__no_timeout {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 10> client;
+const std::string non_blocking__greater_io__no_timeout_control_test::msg =
+    "0123456789-0123456789-";
 
-    client _client;
+const std::string non_blocking__greater_io__no_timeout_control_test::endpoint =
+    "non_blocking__greater_io__no_timeout_control.txt";
 
-    const std::string _file_name(
-        "non_blocking__greater_io__timeout_control__no_timeout.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+const std::string non_blocking__greater_io__no_timeout_control_test::desc =
+    "no blocking, msg greater than io buffer, no timeout control";
 
-    //    std::string _msg("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-");
-    //    std::future<status> _future = _client.post_all(_msg);
+typedef non_blocking__no_timeout_control_t<
+    non_blocking__greater_io__no_timeout_control_test>
+    non_blocking__greater_io__no_timeout_control;
 
-    std::future<status> _future =
-        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"),
-                               std::chrono::seconds(25));
-
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid future");
-      return false;
-    }
-
-    _status = _future.get();
-
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "no blocking, msg greater than io buffer, with timeout control, but "
-           "no timeout";
-  }
+// *****************************************************************************
+struct non_blocking__greater_io__timeout_control__no_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 10;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(25);
+  static const bool is_timeout = false;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct non_blocking__greater_io__timeout_control__with_timeout {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 10> client;
+const std::string
+    non_blocking__greater_io__timeout_control__no_timeout_test::msg =
+        "0123456789-0123456789-";
 
-    client _client;
+const std::string
+    non_blocking__greater_io__timeout_control__no_timeout_test::endpoint =
+        "non_blocking__greater_io__timeout_control__no_timeout.txt";
 
-    const std::string _file_name(
-        "non_blocking__greater_io__timeout_control__no_timeout.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+const std::string
+    non_blocking__greater_io__timeout_control__no_timeout_test::desc =
+        "no blocking, msg greater than io buffer, with timeout control, but no "
+        "timeout";
 
-    //    std::string _msg("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-");
-    //    std::future<status> _future = _client.post_all(_msg);
+typedef non_blocking__timeout_control_t<
+    non_blocking__greater_io__timeout_control__no_timeout_test>
+    non_blocking__greater_io__timeout_control__no_timeout;
 
-    std::future<status> _future = _client.send_non_block(
-        std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"), std::chrono::seconds(4));
-
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid future");
-      return false;
-    }
-
-    _status = _future.get();
-
-    if (_status != status::error_timeout) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "no blocking, msg greater than io buffer, with timeout control, but "
-           "no timeout";
-  }
+// *****************************************************************************
+struct non_blocking__greater_io__timeout_control__with_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 10;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(4);
+  static const bool is_timeout = true;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct non_blocking__smaller_io__no_timeout_control {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 100> client;
+const std::string
+    non_blocking__greater_io__timeout_control__with_timeout_test::msg =
+        "0123456789-0123456789-";
 
-    client _client;
+const std::string
+    non_blocking__greater_io__timeout_control__with_timeout_test::endpoint =
+        "non_blocking__greater_io__timeout_control__with_timeout.txt";
 
-    const std::string _file_name(
-        "non_blocking__smaller_io__no_timeout_control.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+const std::string
+    non_blocking__greater_io__timeout_control__with_timeout_test::desc =
+        "no blocking, msg greater than io buffer, with timeout control, but no "
+        "timeout";
 
-    std::future<status> _future =
-        _client.send_non_block(std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"));
+typedef non_blocking__timeout_control_t<
+    non_blocking__greater_io__timeout_control__with_timeout_test>
+    non_blocking__greater_io__timeout_control__with_timeout;
 
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid future");
-      return false;
-    }
-
-    _status = _future.get();
-
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "no blocking, msg smaller than io buffer, without timeout control";
-  }
+// *****************************************************************************
+struct non_blocking__smaller_io__no_timeout_control_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 100;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
 
-struct non_blocking__smaller_io__timeout_control__no_timeout {
-  bool operator()() {
-    typedef logger::cerr::log logger;
-    typedef communication::tst::file_connection_takes_2_secs connection;
-    typedef communication::status status;
-    typedef communication::client_t<logger, connection, 100> client;
+const std::string non_blocking__smaller_io__no_timeout_control_test::msg =
+    "0123456789-0123456789-";
 
-    client _client;
+const std::string non_blocking__smaller_io__no_timeout_control_test::endpoint =
+    "non_blocking__smaller_io__no_timeout_control.txt";
 
-    const std::string _file_name(
-        "non_blocking__smaller_io__no_timeout_control.txt");
-    status _status = _client.connect(_file_name);
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
+const std::string non_blocking__smaller_io__no_timeout_control_test::desc =
+    "no blocking, msg smaller than io buffer, without timeout control";
 
-    std::future<status> _future = _client.send_non_block(
-        std::string("ABCDE-ABCDE-ABCDE-ABCDE-ABCDE-"), std::chrono::seconds(1));
+typedef non_blocking__no_timeout_control_t<
+    non_blocking__smaller_io__no_timeout_control_test>
+    non_blocking__smaller_io__no_timeout_control;
 
-    if (!_future.valid()) {
-      comm_log_error(logger, "invalid future");
-      return false;
-    }
-
-    _status = _future.get();
-
-    if (_status != status::ok) {
-      comm_log_error(logger, "erro ", _status);
-      return false;
-    }
-    return true;
-  }
-
-  static std::string desc() {
-    return "no blocking, msg smaller than io buffer, with timeout control, but "
-           "no timeout";
-  }
+// *****************************************************************************
+struct non_blocking__smaller_io__timeout_control__no_timeout_test {
+  typedef communication::tst::file_connection_takes_2_secs connection;
+  static const int16_t rec_buf_size = 8192;
+  static const int16_t snd_buf_size = 100;
+  static constexpr std::chrono::seconds timeout = std::chrono::seconds(1);
+  static const bool is_timeout = false;
+  static const std::string desc;
+  static const std::string endpoint;
+  static const std::string msg;
 };
+
+const std::string
+    non_blocking__smaller_io__timeout_control__no_timeout_test::msg =
+        "0123456789-0123456789-";
+
+const std::string
+    non_blocking__smaller_io__timeout_control__no_timeout_test::endpoint =
+        "non_blocking__smaller_io__timeout_control__no_timeout.txt";
+
+const std::string
+    non_blocking__smaller_io__timeout_control__no_timeout_test::desc =
+        "no blocking, msg smaller than io buffer, with timeout control, but no "
+        "timeout";
+
+typedef non_blocking__timeout_control_t<
+    non_blocking__smaller_io__timeout_control__no_timeout_test>
+    non_blocking__smaller_io__timeout_control__no_timeout;
+
+} // namespace tst
+} // namespace communication
+} // namespace tenacitas
 
 int main(int argc, char **argv) {
+
+  using namespace tenacitas::communication::tst;
+
   tenacitas::logger::cerr::log::set_debug();
+
   tester::test _test(argc, argv);
   run_test(_test, blocking__greater_io__no_timeout_control);
   run_test(_test, blocking__greater_io__timeout_control__no_timeout);
