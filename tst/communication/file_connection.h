@@ -78,7 +78,7 @@ struct file_connection_takes_2_secs {
       return {status::end_of_message, _read};
     }
 
-    return {status::ok, std::next(p_begin, _read)};
+    return {status::ok, _read};
   }
 
 private:
