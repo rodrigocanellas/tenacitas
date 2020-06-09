@@ -12,7 +12,7 @@
 #include <mutex>
 #include <thread>
 
-#include <concurrent/internal/async_loop.h>
+#include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/traits.h>
 

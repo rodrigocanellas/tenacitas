@@ -1,8 +1,10 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  communication.lib \
-  tst
+  dep \
+  communication.lib
+#  \
+#  tst
 
 CONFIG += ordered
 

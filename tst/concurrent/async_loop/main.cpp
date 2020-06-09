@@ -12,7 +12,7 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/internal/async_loop.h>
+#include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
