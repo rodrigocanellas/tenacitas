@@ -43,6 +43,6 @@ target_wrapper.*
 CMakeLists.txt.user*
 
 # tenacitas directories
-products/
+prd/
 tmp/
 *~
