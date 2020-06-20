@@ -63,20 +63,20 @@ struct dispatcher_000 {
   // ############################## publishers
   struct publisher_1 {
   public:
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
       using namespace tenacitas;
       msg_a _msg(++i);
       concurrent_log_debug(logger::cerr::log, "P 1", _msg);
 
       concurrent::dispatcher_t<msg_a, logger::cerr::log>::publish(++i);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     int16_t i = {10};
   };
 
   struct publisher_2 {
   public:
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
       using namespace tenacitas;
       i += 10;
       msg_a _msg_a(i);
@@ -88,7 +88,7 @@ struct dispatcher_000 {
       concurrent_log_debug(logger::cerr::log, "P 2", _msg_c);
       concurrent::dispatcher_t<msg_c, logger::cerr::log>::publish(_msg_c);
 
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     int16_t i = {-100};
     double d = {1.0};
@@ -96,7 +96,7 @@ struct dispatcher_000 {
 
   struct publisher_3 {
   public:
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
       using namespace tenacitas;
       i += 300;
       msg_b _msg_b(i);
@@ -104,7 +104,7 @@ struct dispatcher_000 {
       concurrent_log_debug(logger::cerr::log, "P 3", _msg_b);
       concurrent::dispatcher_t<msg_b, logger::cerr::log>::publish(_msg_b);
 
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     int32_t i = {5000};
@@ -112,52 +112,52 @@ struct dispatcher_000 {
 
   // ############################## subscribers
   struct subscriber_1 {
-    concurrent::work_status operator()(msg_a &&p_msg) {
+    concurrent::status operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 1", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
   struct subscriber_2 {
-    concurrent::work_status operator()(msg_a &&p_msg) {
+    concurrent::status operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 2", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
-    concurrent::work_status operator()(msg_b &&p_msg) {
+    concurrent::status operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 2", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
   struct subscriber_3 {
-    concurrent::work_status operator()(msg_b &&p_msg) {
+    concurrent::status operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 3", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
   struct subscriber_4 {
-    concurrent::work_status operator()(msg_a &&p_msg) {
+    concurrent::status operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 4", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
-    concurrent::work_status operator()(msg_b &&p_msg) {
+    concurrent::status operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 4", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
-    concurrent::work_status operator()(msg_c &&p_msg) {
+    concurrent::status operator()(msg_c &&p_msg) {
       using namespace tenacitas;
       concurrent_log_debug(logger::cerr::log, "S 4", p_msg);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -262,15 +262,15 @@ struct dispatcher_001 {
 
   // ############################## processors
   struct requester {
-    concurrent::work_status start() {
+    concurrent::status start() {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
       dispatcher::publish(request(time(nullptr)));
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
-    concurrent::work_status operator()(reply &&p_reply) {
+    concurrent::status operator()(reply &&p_reply) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
@@ -279,14 +279,14 @@ struct dispatcher_001 {
         concurrent_log_info(logger::cerr::log, "counter = ", m_counter,
                             ", stopping");
         dispatcher::publish(request(0));
-        return concurrent::work_status::stop;
+        return concurrent::status::stop;
       }
       if ((p_reply.i % 2) == 0) {
         dispatcher::publish(request(5 * time(nullptr)));
       } else {
         dispatcher::publish(request(3 * time(nullptr)));
       }
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
   private:
@@ -294,21 +294,21 @@ struct dispatcher_001 {
   };
 
   struct replier {
-    concurrent::work_status operator()(request &&p_request) {
+    concurrent::status operator()(request &&p_request) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
       concurrent_log_debug(logger::cerr::log, "request ", p_request);
       if (p_request.i == 0) {
         concurrent_log_info(logger::cerr::log, "stopping");
-        return concurrent::work_status::stop;
+        return concurrent::status::stop;
       }
       if ((p_request.i % 2) == 0) {
         dispatcher::publish(reply(4 * time(nullptr)));
       } else {
         dispatcher::publish(reply(4 * time(nullptr)));
       }
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -369,7 +369,7 @@ struct dispatcher_002 {
     requester(std::condition_variable *p_cond, std::mutex *p_mutex)
         : m_cond(p_cond), m_mutex(p_mutex) {}
 
-    concurrent::work_status operator()(reply &&p_reply) {
+    concurrent::status operator()(reply &&p_reply) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
@@ -383,14 +383,14 @@ struct dispatcher_002 {
         concurrent_log_info(logger::cerr::log, "woke up!");
         std::unique_lock<std::mutex> _lock(*m_mutex);
         m_cond->notify_all();
-        return concurrent::work_status::stop;
+        return concurrent::status::stop;
       }
       if ((p_reply.i % 2) == 0) {
         dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
       } else {
         dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
       }
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
   private:
@@ -400,21 +400,21 @@ struct dispatcher_002 {
   };
 
   struct replier {
-    concurrent::work_status operator()(request &&p_request) {
+    concurrent::status operator()(request &&p_request) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
       concurrent_log_info(logger::cerr::log, "request ", p_request);
       if (p_request.i == 0) {
         concurrent_log_info(logger::cerr::log, "stopping");
-        return concurrent::work_status::stop;
+        return concurrent::status::stop;
       }
       if ((p_request.i % 2) == 0) {
         dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
       } else {
         dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
       }
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -486,15 +486,15 @@ struct dispatcher_003 {
   };
 
   struct sync {
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
       concurrent_log_debug(logger::cerr::log, "sync");
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
   // ############################## publishers
   struct rx {
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
       concurrent_log_debug(logger::cerr::log, "rx");
       concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
           msg_tpdo());
@@ -523,7 +523,7 @@ struct dispatcher_003 {
       concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
           msg_tpdo());
 
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -531,15 +531,15 @@ struct dispatcher_003 {
   struct tx {
     tx() : m_id(++m_counter) {}
 
-    concurrent::work_status operator()(msg_tpdo &&p_msg) {
+    concurrent::status operator()(msg_tpdo &&p_msg) {
       //    if (p_msg.counter > 20) {
       //      concurrent_log_debug(
       //        logger::cerr::log, "stoping because counter = ", p_msg.counter);
-      //      return concurrent::work_status::stop;
+      //      return concurrent::status::stop;
       //    }
       concurrent_log_debug(logger::cerr::log, m_id, "|", p_msg);
 
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
   private:

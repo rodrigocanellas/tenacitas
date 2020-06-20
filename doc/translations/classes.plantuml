@@ -1,0 +1,21 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+
+class owner
+class term
+class dictionary <<static>>
+class language
+class text
+
+owner *-- "*" term
+term --> code
+term --> text
+
+dictionary --> language
+dictionary *-- "*" owners
+owners *-- "*" owner
+
+@enduml

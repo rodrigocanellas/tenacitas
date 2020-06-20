@@ -27,9 +27,6 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-
-
-///
 /// \brief thread_pool implements a thread pool, which allows to use the
 /// producer/consumer pattern
 ///
@@ -61,12 +58,10 @@ public:
   /// \param t_data is an instance of the data to be handled
   ///
   /// \return result::stop if the loop where this function is being
-  /// called should stop, or work_status::dont_stop if it should continue
+  /// called should stop, or status::dont_stop if it should continue
   typedef typename traits_t<t_data>::worker worker;
 
-  ///
   /// \brief log alias for @p t_log
-  ///
   typedef t_log log;
 
   /// \brief thread_pool constructor
@@ -89,7 +84,7 @@ public:
     for (async_loop &_loop_right : p_pool.m_loops) {
       async_loop _loop(
           std::move(_loop_right.get_work()), _loop_right.get_timeout(),
-          [this]() -> work_status { return this->stop_condition(); },
+          [this]() -> status { return this->stop_condition(); },
           [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
@@ -110,10 +105,8 @@ public:
   /// \brief copy constructor not allowed
   thread_pool_t(const thread_pool_t &) = delete;
 
-  ///
   /// \brief if 'stop ' was not called, empties the pool, waiting for all the
   /// data to be processed
-  ///
   ~thread_pool_t() {
     m_destroying = true;
     concurrent_log_debug(log, this, " m_values.size() = ", m_values.size());
@@ -175,74 +168,58 @@ public:
   /// \brief copy assignment not allowed
   thread_pool_t &operator=(const thread_pool_t &) = delete;
 
-  ///
   /// \brief is_stopped
   /// \return \p true if the loop is not running; \p false othewise
-  ///
   bool is_stopped() const { return m_stopped; }
 
-  ///
   /// \brief add_work adds a bunch of \p work_t functions
   /// \param p_num_works the number of \p work_t functions to be added
   /// \param p_work_factory a function that creates \p work_t functions
   /// \param p_work_timeout timeout for the \p work_t functions
-  ///
   void add_work(uint16_t p_num_works, std::function<worker()> p_work_factory,
                 std::chrono::milliseconds p_work_timeout) {
     for (uint16_t _i = 0; _i < p_num_works; ++_i) {
       async_loop _loop(
           p_work_factory(), p_work_timeout,
-          [this]() -> work_status { return this->stop_condition(); },
+          [this]() -> status { return this->stop_condition(); },
           [this]() -> std::pair<bool, t_data> { return this->data(); });
 
       add_work(std::move(_loop));
     }
   }
 
-  ///
   /// \brief add_work adds one \p work_t function
   /// \param p_work the \p work_t fuction to be added
   /// \param p_work_timeout timeout of this \p work_t function
-  ///
   void add_work(worker p_work, std::chrono::milliseconds p_work_timeout) {
     async_loop _loop(
         p_work, p_work_timeout,
-        [this]() -> work_status { return this->stop_condition(); },
+        [this]() -> status { return this->stop_condition(); },
         [this]() -> std::pair<bool, t_data> { return this->data(); });
 
     add_work(std::move(_loop));
   }
 
-  ///
   /// \brief handle sends an instance of \p t_data to be handled
   /// \param p_value the value to be handled
-  ///
   inline void handle(const t_data &p_value) { add_data(p_value); }
 
-  ///
-  /// \brief operator ()
-  ///
-
-  ///
   /// \brief run starts the thread_pool
   ///
   /// From this call on, the \p work_t functions will to "fight" among each
   /// other, in order to process any instance of \p t_data that was inserted,
   /// using the \p handle method, into the pool
-  ///
   inline void run() {
     if (m_stopped) {
       run_common();
     }
   }
 
-  ///
   /// \brief interrupt stops the \p thread_pool
   ///
   /// From this call on, the \p work_t functions will stop "fighting" among
   /// each other, in order to process any instance of \p t_data that was
   /// inserted, using the \p handle method, into the pool
-  ///
   inline void stop() {
 
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
@@ -259,14 +236,12 @@ public:
   }
 
 private:
-  ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution
   ///
   /// \return a pair, where if \p first is \p true, the \p second has a
   /// meaningful data; if \p first is \p false, then \p second has a default
   /// value of \p t_data
-  ///
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief the collection of values
@@ -300,33 +275,27 @@ private:
     concurrent_log_debug(log, this, " started ");
   }
 
-  ///
   /// \brief add_work common function called to add a \p work_t function
   /// \param p_loop the new \p work_t function to be added
-  ///
   void add_work(async_loop &&p_loop) {
     std::lock_guard<std::mutex> _lock(m_add_work);
     m_loops.push_back(std::move(p_loop));
   }
 
-  ///
   /// \brief stop_condition
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
-  ///
-  work_status stop_condition() {
+  status stop_condition() {
 
     concurrent_log_debug(log, this, " stopped = ", m_stopped);
-    return (m_stopped ? work_status::stop : work_status::dont_stop);
+    return (m_stopped ? status::stop : status::dont_stop);
   }
 
-  ///
   /// \brief data is the \p provide_t function, which returns data, if
   /// available, to a \p work_t function \return
   ///
   /// \return (true, a filled \p t_data object), if there is any instance of
   /// \p data available; of (false, t_data()) otherwise
-  ///
   std::pair<bool, t_data> data() {
 
     using namespace std;
@@ -362,10 +331,8 @@ private:
     return _return;
   }
 
-  ///
   /// \brief add_data adds a instance of \p t_data to the pool
   /// \param p_value is an instance of \p t_data to be added
-  ///
   void add_data(const t_data &p_value) {
     concurrent_log_debug(log, this, " adding ", p_value);
     {
@@ -412,7 +379,6 @@ private:
   /// \brief m_destroying indicates that the \p thread_pool should stop
   bool m_destroying = false;
 };
-
 
 } // namespace concurrent
 } // namespace tenacitas

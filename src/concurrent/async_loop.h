@@ -1,4 +1,4 @@
-#ifndef TENACITAS_CONCURRENT_ASYNC_LOOP_H
+﻿#ifndef TENACITAS_CONCURRENT_ASYNC_LOOP_H
 #define TENACITAS_CONCURRENT_ASYNC_LOOP_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
@@ -24,6 +24,7 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
+#include <concurrent/status.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
@@ -32,7 +33,6 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-///
 /// \brief allows to execute a loop asyncronously
 ///
 /// \param t_data is the type of the data to be handled. If it is not \p void,
@@ -52,73 +52,69 @@ namespace concurrent {
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
 template <typename t_data, typename t_log> struct async_loop_t {
+
   /// \brief work_t is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or work_status::dont_stop if it should continue
+  /// \return \p status::ok if the loop where this function is being called
+  /// should continue, or any other value if it should stop
   typedef typename traits_t<t_data>::worker worker;
 
-  typedef typename traits_t<t_data>::worker_ptr worker_ptr;
-
-  ///
   /// \brief provide_t is the type of function that provides data to the work
   /// function during the loop execution
   ///
-  /// \return a pair, where if \p first is \p true, the \p second has a
-  /// meaningful data; if \p first is \p false, then \p second has a default
-  /// value of \p t_data
+  /// \return a pair, where:
+  /// if \p first is \p status::ok, the \p second has a meaningful data;
   ///
+  /// if \p first is \p status::stopped_by_provider, then there is no more data
+  /// to provide, and the \p second has a default value of \p t_data;
+  ///
+  /// if \p first is anything else, it means there was an error in the provider
+  /// function, and \p second has a default value of \p t_data
   typedef typename traits_t<t_data>::provider provider;
 
-  ///
   /// \brief break_t is the type of function that indicates if the loop should
   /// stop
   ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or work_status::dont_stop if it should continue
-  typedef std::function<work_status()> breaker;
+  /// \return \p true if the loop where this function is being called should
+  /// stop, or \p false it should continue
+  typedef typename traits_t<t_data>::breaker breaker;
 
-  ///
   /// \brief log alias for @p t_log
-  ///
   typedef t_log log;
 
-  ///
   /// \brief async_loop constructor
   ///
   /// This constructor should be used when \p t_data is not \p void
   ///
   /// \param p_work instance of the function that will execute the defined
   /// work
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
+  ///
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
+  ///
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  inline async_loop_t(worker p_work, std::chrono::milliseconds p_timeout,
-                      breaker p_break, provider p_provide)
-      : m_loop(p_work, p_timeout, p_break, p_provide), m_thread() {}
+  inline async_loop_t(worker p_work, breaker p_break, provider p_provide)
+      : m_loop(p_work, p_break, p_provide), m_thread() {}
 
-  ///
   /// \brief async_loop constructor
   ///
   /// This constructor should be used when \p t_data is \p void
   ///
   /// \param p_work instance of the function that will execute the defined
   /// work
+  ///
   /// \param p_timeout amount of time that the loop will wait for \p p_work to
   /// execute
+  ///
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
-  ///
-  inline async_loop_t(worker p_work, std::chrono::milliseconds p_timeout,
-                      breaker p_break)
-      : m_loop(p_work, p_timeout, p_break, []() -> void {}), m_thread() {}
+  inline async_loop_t(worker p_work, breaker p_break)
+      : m_loop(p_work, p_break), m_thread() {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
@@ -147,58 +143,51 @@ template <typename t_data, typename t_log> struct async_loop_t {
     stop();
   }
 
-  ///
   /// \brief is_stopped
   /// \return \p true if the loop is not running; \p false othewise
-  ///
   inline bool is_stopped() const { return m_loop.is_stopped(); }
 
-  ///
   /// \brief get_work
   /// \return a copy of the function that executes a defined work in each
   /// round of the loop
-  ///
   inline worker get_work() const { return m_loop.get_worker(); }
 
-  ///
   /// \brief get_break
   /// \return a copy of the function that can make the loop stop
-  ///
   inline breaker get_break() const { return m_loop.get_breaker(); }
 
-  ///
   /// \brief get_provide
   /// \return a copy of the function that provides an instance of \p t_data,
   /// if available, to the work function
-  ///
   inline provider get_provide() const { return m_loop.get_provider(); }
 
-  ///
-  /// \brief get_timeout
-  /// \return the amount of time that the loop will wait for the work function
-  /// to finish
-  ///
-  inline std::chrono::milliseconds get_timeout() const {
-    return m_loop.get_timeout();
-  }
-
-  ///
   /// \brief run starts the loop
   ///
-  void run() {
+  /// \tparam t_timeout is the type of timeout, it should be one of
+  /// std::chrono::* time types
+  ///
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  ///
+  /// \return status::ok if the loop finished with no error, or any other value,
+  /// otherwise
+  template <typename t_timeout> status::code run(t_timeout p_timeout) {
 
     if (!m_loop.is_stopped()) {
       concurrent_log_debug(
           log, this, " not starting the loop because it is already running");
-      return;
+      return status::already_running;
     }
     concurrent_log_debug(log, this, " starting the loop");
-    run_core();
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_thread = thread([this, p_timeout]() -> status::code {
+      return m_loop.start(p_timeout);
+    });
+
+    return status::ok;
   }
 
-  ///
   /// \brief stop stops the loop
-  ///
   void stop() {
     if (m_loop.is_stopped()) {
       concurrent_log_debug(log, this,
@@ -221,9 +210,9 @@ private:
 
 private:
   /// \brief common method to start the loop
-  void run_core() {
+  template <typename t_timeout> void run_core(t_timeout p_timeout) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = thread([this]() -> void { m_loop.start(); });
+    m_thread = thread([this, p_timeout]() -> void { m_loop.start(p_timeout); });
   }
 
 private:

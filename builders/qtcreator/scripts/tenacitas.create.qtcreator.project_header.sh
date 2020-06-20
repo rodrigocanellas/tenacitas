@@ -1,16 +1,15 @@
 #!/bin/sh
 
 # check params
-if [ ! $# -eq 4 ]; then
-    echo "Syntax: `basename $0` <base-dir> <project-name> <layer-name> <header-name>"
+if [ ! $# -eq 3 ]; then
+    echo "Syntax: `basename $0` <base-dir> <project-name> <header-name>"
     return 10
 fi
 
 # set vars
 base_dir="$1"
 prj_name="$2"
-layer_name="$3"
-header_name="$4"
+header_name="$3"
 
 # check if base_dir exists
 if [ ! -d "$base_dir" ]; then
@@ -36,35 +35,39 @@ if [ ! -d "$prj_dir" ]; then
     fi
 fi
 
-
+src_dir=$base_dir/src/$prj_name
 
 # create header
-header_file="$code_layer_dir/$header_name.h"
+header_file="$src_dir/$header_name.h"
 if [ -f "$header_file" ]; then
    echo "$header_file already exists"
    return 60
 fi
-echo "header_file = $header_file"
-PRJ_NAME=`echo "$prj_name" | tr a-z A-Z`
-LAYER_NAME=`echo "$layer_name" | tr a-z A-Z` 
-HEADER_NAME=`echo "$header_name" | tr a-z A-Z`
-line=TENACITAS_"$PRJ_NAME"_"$LAYER_NAME"_"$HEADER_NAME"_H
-echo "#ifndef $line"                                               >> "$header_file"
-echo "#define $line"                                               >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo "/// \\\author Rodrigo Canellas - rodrigo.canellas@gmail.com" >> "$header_file"
-echo "/// \\date `date +\"%m/%Y\"`"                                >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo "namespace tenacitas {"                                       >> "$header_file"
-echo "namespace $prj_name {"                                       >> "$header_file"
-echo "namespace $layer_name {"                                     >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo "} // namespace $layer_name"                                  >> "$header_file"
-echo "} // namespace $prj_name"                                    >> "$header_file"
-echo "} // namespace tenacitas"                                    >> "$header_file"
-echo ""                                                            >> "$header_file"
-echo "#endif"                                                      >> "$header_file"
 
+PRJ_NAME=`echo "$prj_name" | tr a-z A-Z`
+HEADER_NAME=`echo "$header_name" | tr a-z A-Z`
+line=TENACITAS_"$PRJ_NAME"_"$HEADER_NAME"_H
+echo "#ifndef $line"                                                                      >> "$header_file"
+echo "#define $line"                                                                      >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo "/// \\\copyright This file is under GPL 3 license. Please read the \p LICENSE file" >> "$header_file"
+echo "/// at the root of \p tenacitas directory"                                          >> "$header_file"   
+echo ""                                                                                   >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo "/// \\\author Rodrigo Canellas - rodrigo.canellas@gmail.com"                        >> "$header_file"
+echo "/// \\date `date +\"%m/%Y\"`"                                                       >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo "/// \\\brief namespace of the organization"                                         >> "$header_file"
+echo "namespace tenacitas {"                                                              >> "$header_file"
+echo "/// \\\brief namespace of the project"                                              >> "$header_file"
+echo "namespace $prj_name {"                                                              >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo "} // namespace $prj_name"                                                           >> "$header_file"
+echo "} // namespace tenacitas"                                                           >> "$header_file"
+echo ""                                                                                   >> "$header_file"
+echo "#endif"                                                                             >> "$header_file"
+
+return 0

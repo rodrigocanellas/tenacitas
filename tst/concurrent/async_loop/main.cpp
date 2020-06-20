@@ -25,16 +25,16 @@ struct async_loop_000 {
   typedef concurrent::async_loop_t<void, logger::cerr::log> async_loop;
 
   struct work {
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
 
       if (counter > 100) {
-        return concurrent::work_status::stop;
+        return concurrent::status::stop;
       }
 
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
 
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     uint16_t counter = 0;
@@ -49,8 +49,8 @@ struct async_loop_000 {
       concurrent_log_debug(logger::cerr::log, "work = ", this);
       async_loop _async_loop([&_work]() { return _work(); },
                              std::chrono::milliseconds(100),
-                             []() -> concurrent::work_status {
-                               return concurrent::work_status::dont_stop;
+                             []() -> concurrent::status {
+                               return concurrent::status::dont_stop;
                              });
 
       _async_loop.run();
@@ -82,13 +82,13 @@ struct async_loop_001 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     uint64_t counter = 0;
@@ -100,10 +100,10 @@ struct async_loop_001 {
     try {
       work1 _work;
       async_loop _async_loop(
-          [&_work]() -> concurrent::work_status { return _work(); },
+          [&_work]() -> concurrent::status { return _work(); },
           std::chrono::milliseconds(1000),
-          []() -> concurrent::work_status {
-            return concurrent::work_status::dont_stop;
+          []() -> concurrent::status {
+            return concurrent::status::dont_stop;
           });
       _async_loop.run();
 
@@ -136,12 +136,12 @@ struct async_loop_002 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, counter);
       ++counter;
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     uint64_t counter = 0;
@@ -152,10 +152,10 @@ struct async_loop_002 {
     try {
       work1 _work;
       async_loop _async_loop(
-          [&_work]() -> concurrent::work_status { return _work(); },
+          [&_work]() -> concurrent::status { return _work(); },
           std::chrono::milliseconds(1000),
-          []() -> concurrent::work_status {
-            return concurrent::work_status::dont_stop;
+          []() -> concurrent::status {
+            return concurrent::status::dont_stop;
           });
 
       _async_loop.run();
@@ -211,11 +211,11 @@ struct async_loop_003 {
 
   struct work1 {
 
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     uint32_t data = 0;
@@ -239,11 +239,11 @@ struct async_loop_003 {
     try {
       work1 _work;
       async_loop _async_loop(
-          [&_work](uint32_t &&p_data) -> concurrent::work_status {
+          [&_work](uint32_t &&p_data) -> concurrent::status {
             return _work(std::move(p_data));
           },
           std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
+          []() { return concurrent::status::dont_stop; }, provide());
 
       _async_loop.run();
 
@@ -291,11 +291,11 @@ struct async_loop_004 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
 
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     uint32_t data = 0;
   };
@@ -320,7 +320,7 @@ struct async_loop_004 {
       async_loop _async_loop(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
           std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
+          []() { return concurrent::status::dont_stop; }, provide());
 
       _async_loop.run();
 
@@ -375,11 +375,11 @@ struct async_loop_004 {
 struct async_loop_005 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -399,7 +399,7 @@ struct async_loop_005 {
     using namespace tenacitas;
     try {
       async_loop sl1(work1(), std::chrono::milliseconds(1000),
-                     []() { return concurrent::work_status::dont_stop; },
+                     []() { return concurrent::status::dont_stop; },
                      provide());
 
       // uncomment the line below for a compiler error "error:
@@ -514,11 +514,11 @@ struct async_loop_006 {
 
   struct work1 {
 
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(1001));
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
   };
 
@@ -540,7 +540,7 @@ struct async_loop_006 {
 
       async_loop _async_loop(
           work1(), std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
+          []() { return concurrent::status::dont_stop; }, provide());
 
       _async_loop.run();
 
@@ -570,11 +570,11 @@ struct async_loop_007 {
 
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     uint32_t data = 0;
   };
@@ -602,7 +602,7 @@ struct async_loop_007 {
       async_loop _async_loop_1(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
           std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
+          []() { return concurrent::status::dont_stop; },
           [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
 
       _async_loop_1.run();
@@ -681,20 +681,20 @@ struct async_loop_007 {
 struct async_loop_008 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
       data += p_data;
       concurrent_log_debug(logger::cerr::log, "1 -> ", data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     uint32_t data = 0;
   };
 
   struct work2 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    concurrent::status operator()(uint32_t &&p_data) {
       using namespace tenacitas;
       data = p_data;
       concurrent_log_debug(logger::cerr::log, "2 -> ", data);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
     uint32_t data = 0;
   };
@@ -722,13 +722,13 @@ struct async_loop_008 {
       async_loop _al_1(
           [&_work_1](uint32_t &&p_data) { return _work_1(std::move(p_data)); },
           std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
+          []() { return concurrent::status::dont_stop; },
           [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
 
       async_loop _al_2(
           [&_work_2](uint32_t &&p_data) { return _work_2(std::move(p_data)); },
           std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
+          []() { return concurrent::status::dont_stop; },
           [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
 
       _al_1.run();
@@ -768,13 +768,13 @@ struct async_loop_009 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    concurrent::status operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
-      return concurrent::work_status::dont_stop;
+      return concurrent::status::dont_stop;
     }
 
     uint64_t counter = 0;
@@ -786,8 +786,8 @@ struct async_loop_009 {
     try {
       work1 _work;
       async_loop _async_loop(_work, std::chrono::milliseconds(1000),
-                             []() -> concurrent::work_status {
-                               return concurrent::work_status::dont_stop;
+                             []() -> concurrent::status {
+                               return concurrent::status::dont_stop;
                              });
       _async_loop.run();
 
