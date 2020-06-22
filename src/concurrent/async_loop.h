@@ -24,7 +24,7 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
-#include <concurrent/status.h>
+#include <concurrent/result.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
@@ -51,35 +51,21 @@ namespace concurrent {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-template <typename t_data, typename t_log> struct async_loop_t {
+template <typename t_data, typename t_log,
+          typename t_time = std::chrono::milliseconds>
+struct async_loop_t {
 
-  /// \brief work_t is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return \p status::ok if the loop where this function is being called
-  /// should continue, or any other value if it should stop
+  /// \brief worker type
+  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
 
-  /// \brief provide_t is the type of function that provides data to the work
-  /// function during the loop execution
-  ///
-  /// \return a pair, where:
-  /// if \p first is \p status::ok, the \p second has a meaningful data;
-  ///
-  /// if \p first is \p status::stopped_by_provider, then there is no more data
-  /// to provide, and the \p second has a default value of \p t_data;
-  ///
-  /// if \p first is anything else, it means there was an error in the provider
-  /// function, and \p second has a default value of \p t_data
+  /// \brief provider type
+  /// \sa traits_t<t_data>::provider in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief break_t is the type of function that indicates if the loop should
-  /// stop
-  ///
-  /// \return \p true if the loop where this function is being called should
-  /// stop, or \p false it should continue
+  /// \brief breaker type
+  /// \sa traits_t<t_data>::breaker in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::breaker breaker;
 
   /// \brief log alias for @p t_log
@@ -98,8 +84,10 @@ template <typename t_data, typename t_log> struct async_loop_t {
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
-  inline async_loop_t(worker p_work, breaker p_break, provider p_provide)
-      : m_loop(p_work, p_break, p_provide), m_thread() {}
+  inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout,
+                      provider p_provide)
+      : m_loop(p_work, p_break, p_timeout, p_provide), m_timeout(p_timeout),
+        m_thread() {}
 
   /// \brief async_loop constructor
   ///
@@ -113,8 +101,8 @@ template <typename t_data, typename t_log> struct async_loop_t {
   ///
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
-  inline async_loop_t(worker p_work, breaker p_break)
-      : m_loop(p_work, p_break), m_thread() {}
+  inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout)
+      : m_loop(p_work, p_break, p_timeout), m_timeout(p_timeout), m_thread() {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
@@ -122,14 +110,14 @@ template <typename t_data, typename t_log> struct async_loop_t {
   /// \brief copy constructor not allowed
   async_loop_t(const async_loop_t &) = delete;
 
-  /// \brief async_loop move constructor not allowed
+  /// \brief async_loop move constructor
   async_loop_t(async_loop_t &&p_async) noexcept
       : m_loop(std::move(p_async.m_loop)) {}
 
   /// \brief copy assignment not allowed
   async_loop_t &operator=(const async_loop_t &) = delete;
 
-  /// \brief move assignment not allowed
+  /// \brief move assignment
   async_loop_t &operator=(async_loop_t &&p_async) noexcept {
     if (this != &p_async) {
       m_loop = std::move(p_async.m_loop);
@@ -138,72 +126,87 @@ template <typename t_data, typename t_log> struct async_loop_t {
   }
 
   /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_log_debug(log, this, " destructor");
-    stop();
-  }
+  inline ~async_loop_t() { stop(); }
 
   /// \brief is_stopped
+  ///
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_loop.is_stopped(); }
 
-  /// \brief get_work
+  /// \brief get_worker
+  ///
   /// \return a copy of the function that executes a defined work in each
   /// round of the loop
-  inline worker get_work() const { return m_loop.get_worker(); }
+  inline worker get_worker() const { return m_loop.get_worker(); }
 
-  /// \brief get_break
+  /// \brief get_breaker
+  ///
   /// \return a copy of the function that can make the loop stop
-  inline breaker get_break() const { return m_loop.get_breaker(); }
+  inline breaker get_breaker() const { return m_loop.get_breaker(); }
 
-  /// \brief get_provide
+  /// \brief get_provider
+  ///
   /// \return a copy of the function that provides an instance of \p t_data,
   /// if available, to the work function
-  inline provider get_provide() const { return m_loop.get_provider(); }
+  inline provider get_provideer() const { return m_loop.get_provider(); }
 
-  /// \brief run starts the loop
+  /// \brief retrieves the timeout for the Work function
   ///
-  /// \tparam t_timeout is the type of timeout, it should be one of
-  /// std::chrono::* time types
+  /// \return the timeout
+  inline t_time get_timeout() const { return m_loop.get_timeout(); }
+
+  /// \brief redefines the value of the timeout
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  /// \brief Stops the loop, and starts it again
+  ///
+  /// \return \p status::ok if could restart, or any other \p status::result
+  /// otherwise
+  inline status::result restart() {
+    stop();
+    return start();
+  }
+
+  /// \brief run starts the loop asynchronously
   ///
   /// \param p_timeout amount of time that the loop will wait for \p p_work to
   /// execute
   ///
-  /// \return status::ok if the loop finished with no error, or any other value,
-  /// otherwise
-  template <typename t_timeout> status::code run(t_timeout p_timeout) {
+  /// \return status::ok if the loop finished with no error; otherwise, it
+  /// returns any other value
+  status::result start() {
 
     if (!m_loop.is_stopped()) {
       concurrent_log_debug(
-          log, this, " not starting the loop because it is already running");
-      return status::already_running;
+          log, this, "not starting the loop because it is already running");
+      return concurrent::already_running;
     }
-    concurrent_log_debug(log, this, " starting the loop");
+    concurrent_log_debug(log, "starting the loop");
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = thread([this, p_timeout]() -> status::code {
-      return m_loop.start(p_timeout);
-    });
+    m_thread = thread([this]() -> status::result { return m_loop.start(); });
 
     return status::ok;
   }
 
-  /// \brief stop stops the loop
+  /// \brief stops the loop
   void stop() {
     if (m_loop.is_stopped()) {
-      concurrent_log_debug(log, this,
-                           " not stopping the loop because it was not running");
+      concurrent_log_warn(log,
+                          " not stopping the loop because it was not running");
       return;
     }
 
     std::lock_guard<std::mutex> _lock(m_mutex);
-    concurrent_log_debug(log, this, " marking to stop");
+    concurrent_log_debug(log, "marking to stop");
     m_loop.stop();
-    concurrent_log_debug(log, this, " joining");
+    concurrent_log_debug(log, "joining");
   }
 
 private:
   /// \brief loop_t is an easier name for the loop
-  typedef loop_t<t_data, t_log> loop;
+  typedef loop_t<t_data, t_log, t_time> loop;
 
   /// \brief thread_t is an easier name for our wrapper to std::thread
   typedef thread thread_t;
@@ -218,6 +221,8 @@ private:
 private:
   /// \brief m_loop is the \p loop to be executed asyncronously
   loop m_loop;
+
+  t_time m_timeout;
 
   /// \brief m_thread is the thread where the \p loop will run
   thread_t m_thread;

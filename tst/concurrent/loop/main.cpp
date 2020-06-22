@@ -149,10 +149,9 @@ struct loop_003 {
 
   struct xpto {
 
-    status::result provider(int16_t &p_data) {
+    std::pair<status::result, int16_t> provider() {
       m_counter += 4;
-      p_data = m_counter;
-      return status::ok;
+      return {status::ok, m_counter};
     }
 
     status::result breaker() {
@@ -169,17 +168,19 @@ struct loop_003 {
   };
 
   bool operator()() {
+
     xpto _xpto;
+
     loop _loop(
-        [&_xpto](int16_t &&p_value) -> status::result {
+        [&_xpto](uint16_t p_value) -> status::result {
           return _xpto.worker(std::move(p_value));
         },
 
         [&_xpto]() -> status::result { return _xpto.breaker(); },
         std::chrono::milliseconds(100),
 
-        [&_xpto](int16_t &p_data) -> status::result {
-          return _xpto.provider(p_data);
+        [&_xpto]() -> std::pair<status::result, int16_t> {
+          return _xpto.provider();
         });
 
     status::result _result = _loop.start();

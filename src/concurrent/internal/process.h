@@ -8,6 +8,7 @@
 
 #include <utility>
 
+#include <concurrent/internal/log.h>
 #include <concurrent/result.h>
 #include <concurrent/traits.h>
 
@@ -16,45 +17,54 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-template <typename t_data, typename t_timeout> struct process {
+/// \brief process struct executes the core process for a \p loop object which
+/// Work function receives data
+///
+/// \tparam t_data is the type of data that the Work function receives
+///
+/// \tparam t_timeout is the type of time to control the timeout for the Work
+/// function execution
+///
+template <typename t_data, typename t_timeout, typename t_log> struct process {
 
-  status::result operator()(typename traits_t<t_data>::worker p_work,
-                            typename traits_t<t_data>::provider p_provide,
-                            t_timeout p_timeout, bool &p_stopped) {
+  status::result operator()(typename traits_t<t_data>::worker &p_work,
+                            typename traits_t<t_data>::provider &p_provide,
+                            t_timeout p_timeout) {
     status::result _result = status::ok;
-    t_data _data;
-    _result = p_provide(_data);
+    std::pair<status::result, t_data> _provided = p_provide();
 
-    if (_result != status::ok) {
-      if (_result == concurrent::stopped_by_provider) {
-        _result = status::ok;
-      }
+    if (_provided.first != status::ok) {
+      _result = _provided.first;
     } else {
       std::future<status::result> _future = std::async(
           std::launch::async,
           [&p_work](t_data &&p_data) { return p_work(std::move(p_data)); },
-          std::move(_data));
+          std::move(_provided.second));
       std::future_status _future_status = _future.wait_for(p_timeout);
       if (_future_status == std::future_status::timeout) {
         _result = concurrent::stopped_by_timeout;
-        p_stopped = true;
       } else {
         if (_future_status == std::future_status::ready) {
           _result = _future.get();
-          if (_result != status::ok) {
-            p_stopped = true;
-          }
         }
       }
     }
+
     return _result;
   }
 };
 
-template <typename t_timeout> struct process<void, t_timeout> {
-  status::result operator()(typename traits_t<void>::worker p_work,
+/// \brief process struct executes the core process for a \p loop object which
+/// Work function does not receive data
+///
+/// \tparam t_timeout is the type of time to control the timeout for the Work
+/// function execution
+///
+template <typename t_timeout, typename t_log>
+struct process<void, t_timeout, t_log> {
+  status::result operator()(typename traits_t<void>::worker &p_work,
                             typename traits_t<void>::provider /*p_provide*/,
-                            t_timeout p_timeout, bool &p_stopped) {
+                            t_timeout p_timeout) {
     status::result _result = status::ok;
     std::future<status::result> _future =
         std::async(std::launch::async, [&p_work]() { return p_work(); });
@@ -62,12 +72,8 @@ template <typename t_timeout> struct process<void, t_timeout> {
     std::future_status _future_status = _future.wait_for(p_timeout);
     if (_future_status == std::future_status::timeout) {
       _result = concurrent::stopped_by_timeout;
-      p_stopped = true;
     } else if (_future_status == std::future_status::ready) {
       _result = _future.get();
-      if (_result != status::ok) {
-        p_stopped = true;
-      }
     }
 
     return _result;
