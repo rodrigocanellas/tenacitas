@@ -1,10 +1,9 @@
 SUBDIRS = \
     dep \
     loop \
-    async_loop
-
-    #\
-#    sleeping_loop \
+    async_loop \
+    sleeping_loop
+#    \
 #    thread_pool \
 #    dispatcher  \
 #    performance

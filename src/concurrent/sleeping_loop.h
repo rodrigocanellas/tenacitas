@@ -14,6 +14,7 @@
 
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/result.h>
 #include <concurrent/traits.h>
 
 /// \brief namespace of the organization
@@ -41,31 +42,24 @@ namespace concurrent {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
+///
+/// \tparam t_interval is the type of time that will be used to define the
+/// period of time that the \p p_worker function will be exececuted
+///
+/// \tparam t_timeout is the type of time used to define how long the \p
+/// p_worker function should take
+///
 template <typename t_data, typename t_log,
           typename t_interval = std::chrono::milliseconds,
           typename t_timeout = std::chrono::milliseconds>
 struct sleeping_loop_t {
 
-  /// \brief work_t is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return \p status::ok if the loop where this function is being called
-  /// should continue, or any other value if it should stop
+  /// \brief worker type
+  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
 
-  /// \brief provide_t is the type of function that provides data to the work
-  /// function during the loop execution
-  ///
-  /// \return a pair, where:
-  /// if \p first is \p status::ok, the \p second has a meaningful data;
-  ///
-  /// if \p first is \p status::stopped_by_provider, then there is no more data
-  /// to provide, and the \p second has a default value of \p t_data;
-  ///
-  /// if \p first is anything else, it means there was an error in the provider
-  /// function, and \p second has a default value of \p t_data
+  /// \brief provider type
+  /// \sa traits_t<t_data>::provider in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief log alias for @p t_log
@@ -77,14 +71,15 @@ struct sleeping_loop_t {
   /// \param p_interval the amount of time that the loop will sleep between
   /// executions
   ///
-  /// \param p_work function that will be executed each time the loop wakes up
+  /// \param p_worker function that will be executed each time the loop wakes up
   ///
   /// \param p_provide function that will provide data to the work function,
   /// each time the loop wakes up
-  sleeping_loop_t(t_interval p_interval, worker &&p_work, provider &&p_provide)
-      : m_async(std::move(p_work),
-                [this]() -> status { return this->break_loop(); },
-                std::move(p_provide)),
+  sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout,
+                  provider p_provider)
+      : m_async(p_worker,
+                [this]() -> status::result { return this->break_loop(); },
+                p_timeout, p_provider),
         m_interval(p_interval) {}
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
@@ -94,9 +89,10 @@ struct sleeping_loop_t {
   /// executions
   ///
   /// \param p_work function that will be executed each time the loop wakes up
-  sleeping_loop_t(t_interval p_interval, worker p_work)
-      : m_async(p_work, [this]() -> status { return this->break_loop(); },
-                []() -> void {}),
+  sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout)
+      : m_async(p_worker,
+                [this]() -> status::result { return this->break_loop(); },
+                p_timeout),
         m_interval(p_interval) {}
 
   /// \brief default constructor not allowed
@@ -128,19 +124,36 @@ struct sleeping_loop_t {
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_async.is_stopped(); }
 
-  /// \brief get_work
+  /// \brief get_worker
   /// \return a copy of the function that executes a defined work in each
   /// round of the loop
-  inline worker get_work() const { return m_async.get_work(); }
+  inline worker get_worker() const { return m_async.get_worker(); }
 
-  /// \brief get_provide
+  /// \brief get_provider
   /// \return a copy of the function that provides an instance of \p t_data,
   /// if available, to the work function
-  inline provider get_provide() const { return m_async.get_provide(); }
+  inline provider get_provider() const { return m_async.get_provider(); }
 
   /// \brief get_interval
   /// \return the interval of loop execution
-  inline std::chrono::milliseconds get_interval() const { return m_interval; }
+  inline t_interval get_interval() const { return m_interval; }
+
+  /// \brief redefines the value of the execution interval
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_interval(t_interval p_interval) { m_interval = p_interval; }
+
+  /// \brief retrieves the timeout for the Work function
+  ///
+  /// \return the timeout
+  inline t_timeout get_timeout() const { return m_async.get_timeout(); }
+
+  /// \brief redefines the value of the timeout
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_timeout(t_timeout p_timeout) {
+    m_async.set_timeout(p_timeout);
+  }
 
   /// \brief run starts the loop
   /// \tparam t_timeout is the type of timeout, it should be one of
@@ -151,34 +164,42 @@ struct sleeping_loop_t {
   ///
   /// \return status::ok if the loop finished with no error, or any other value,
   /// otherwise
-  status::code run(t_timeout p_timeout) {
+  status::result start() {
     if (!m_async.is_stopped()) {
-      concurrent_log_debug(
-          log, this, " not running async loop because it was not stopped");
-      return status::already_running;
+      concurrent_log_debug(log,
+                           "not running async loop because it was not stopped");
+      return concurrent::already_running;
     }
-    concurrent_log_debug(log, this, " running async loop");
-    m_timeout = p_timeout;
-    return m_async.run(m_timeout);
+    concurrent_log_debug(log, "running async loop");
+    return m_async.start();
   }
 
   /// \brief stop stops the loop
   void stop() {
     if (m_async.is_stopped()) {
       concurrent_log_debug(
-          log, this, " not stopping async loop because it was not running");
+          log, "not stopping async loop because it was not running");
       return;
     }
-    concurrent_log_debug(log, this, " stop");
+    concurrent_log_debug(log, "stop");
     m_cond_var.notify_all();
 
-    concurrent_log_debug(log, this, " all notified, and m_async = ", &m_async);
+    concurrent_log_debug(log, "all notified, and m_async = ", &m_async);
     m_async.stop();
+  }
+
+  /// \brief Stops the loop, and starts it again
+  ///
+  /// \return \p status::ok if could restart, or any other \p status::result
+  /// otherwise
+  void restart() {
+    stop();
+    return start();
   }
 
 private:
   /// \brief a simpler name
-  typedef async_loop_t<t_data, t_log> async_loop;
+  typedef async_loop_t<t_data, t_log, t_timeout> async_loop;
 
 private:
   /// \brief move a \p sleeping_loop to this
@@ -194,29 +215,30 @@ private:
     m_interval = std::move(p_sleep.m_interval);
 
     // move the async_loop, reseting the break loop
-    m_async = async_loop(std::move(p_sleep.get_work()),
-                         [this]() -> status { return this->break_loop(); },
-                         std::move(p_sleep.get_provide()));
+    m_async =
+        async_loop(std::move(p_sleep.get_work()),
+                   [this]() -> status::result { return this->break_loop(); },
+                   std::move(p_sleep.get_provide()));
 
     // if the right side was not stopped
     if (!_stopped) {
       // run this sleeping_loop
-      run(m_timeout);
+      start();
     }
   }
 
   /// \brief break_loop function that defines if the loop should stop
   /// \return \p true if the loop should break; \p false othewise
-  bool break_loop() {
+  status::result break_loop() {
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
       // timeout, so do not stop
-      concurrent_log_debug(log, this, " must not stop");
-      return false;
+      concurrent_log_debug(log, "must not stop");
+      return status::ok;
     }
     // no timeout, so do stop
-    concurrent_log_debug(log, this, " must stop");
-    return true;
+    concurrent_log_debug(log, "must stop");
+    return concurrent::stopped_by_breaker;
   }
 
 private:
@@ -225,9 +247,6 @@ private:
 
   /// \brief m_interval
   t_interval m_interval;
-
-  /// \brief timeout
-  t_timeout m_timeout;
 
   /// \brief m_mutex
   std::mutex m_mutex;

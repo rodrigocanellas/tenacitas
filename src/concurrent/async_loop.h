@@ -93,16 +93,17 @@ struct async_loop_t {
   ///
   /// This constructor should be used when \p t_data is \p void
   ///
-  /// \param p_work instance of the function that will execute the defined
+  /// \param p_worker instance of the function that will execute the defined
   /// work
   ///
   /// \param p_timeout amount of time that the loop will wait for \p p_work to
   /// execute
   ///
-  /// \param p_break instance of the function that will indicate when the loop
+  /// \param p_breaker instance of the function that will indicate when the loop
   /// must stop
-  inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout)
-      : m_loop(p_work, p_break, p_timeout), m_timeout(p_timeout), m_thread() {}
+  inline async_loop_t(worker p_worker, breaker p_breaker, t_time p_timeout)
+      : m_loop(p_worker, p_breaker, p_timeout), m_timeout(p_timeout),
+        m_thread() {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
