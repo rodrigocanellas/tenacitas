@@ -20,7 +20,6 @@ namespace logger {
 /// \brief namespace for the group
 namespace cerr {
 
-///
 /// \brief The log struct logs message to \p std::cerr
 ///
 struct log {

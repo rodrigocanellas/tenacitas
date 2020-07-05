@@ -98,7 +98,7 @@ echo ""                                        >> "$dep_build_file"
 echo "include(../../../../common.pri)"         >> "$dep_build_file"
 echo ""                                        >> "$dep_build_file"
 echo "SUBDIRS += \\"                           >> "$dep_build_file"
-echo "  \$\$builder_dir/tester/tester.headers" >> "$dep_build_file"
+echo "  \$\$builder_dir/tester/tester.lib"     >> "$dep_build_file"
 
 
 return 0

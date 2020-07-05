@@ -1,5 +1,6 @@
 SUBDIRS = \
   concurrent.headers \
+  dep \
   tst
 
 TEMPLATE = subdirs

@@ -12,11 +12,13 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/internal/async_loop.h>
+#include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/result.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 #include <logger/cerr/log.h>
+#include <status/result.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
@@ -25,16 +27,16 @@ struct async_loop_000 {
   typedef concurrent::async_loop_t<void, logger::cerr::log> async_loop;
 
   struct work {
-    concurrent::work_status operator()() {
+    status::result operator()() {
 
       if (counter > 100) {
-        return concurrent::work_status::stop;
+        return concurrent::stopped_by_worker;
       }
 
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
 
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
 
     uint16_t counter = 0;
@@ -45,15 +47,15 @@ struct async_loop_000 {
     bool _result = true;
     try {
 
+      concurrent::traits_t<void>::breaker _breaker = []() -> status::result {
+        return status::ok;
+      };
       work _work;
       concurrent_log_debug(logger::cerr::log, "work = ", this);
-      async_loop _async_loop([&_work]() { return _work(); },
-                             std::chrono::milliseconds(100),
-                             []() -> concurrent::work_status {
-                               return concurrent::work_status::dont_stop;
-                             });
+      async_loop _async_loop([&_work]() { return _work(); }, _breaker,
+                             std::chrono::milliseconds(100));
 
-      _async_loop.run();
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -70,7 +72,7 @@ struct async_loop_000 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will stop when a internal counter reaches "
+    return "Work in 'async_loop' will stop when a internal counter reaches "
            "100."
            "\nMain thread will sleep for 4 secs."
            "\nCounter should be 101.";
@@ -82,13 +84,13 @@ struct async_loop_001 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    status::result operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
 
     uint64_t counter = 0;
@@ -98,14 +100,14 @@ struct async_loop_001 {
     using namespace tenacitas;
     using namespace tenacitas;
     try {
+      concurrent::traits_t<void>::breaker _breaker = []() -> status::result {
+        return status::ok;
+      };
+
       work1 _work;
-      async_loop _async_loop(
-          [&_work]() -> concurrent::work_status { return _work(); },
-          std::chrono::milliseconds(1000),
-          []() -> concurrent::work_status {
-            return concurrent::work_status::dont_stop;
-          });
-      _async_loop.run();
+      async_loop _async_loop([&_work]() -> status::result { return _work(); },
+                             _breaker, std::chrono::milliseconds(1000));
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -124,7 +126,7 @@ struct async_loop_001 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will increment an internal counter "
+    return "Work in 'async_loop' will increment an internal counter "
            "indefinetly, at each 200 ms."
            "\nMain thread will stop for 1 sec."
            "\nCounter should be 4.";
@@ -136,12 +138,12 @@ struct async_loop_002 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    status::result operator()() {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, counter);
       ++counter;
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
 
     uint64_t counter = 0;
@@ -150,15 +152,15 @@ struct async_loop_002 {
   bool operator()() {
     using namespace tenacitas;
     try {
-      work1 _work;
-      async_loop _async_loop(
-          [&_work]() -> concurrent::work_status { return _work(); },
-          std::chrono::milliseconds(1000),
-          []() -> concurrent::work_status {
-            return concurrent::work_status::dont_stop;
-          });
+      concurrent::traits_t<void>::breaker _breaker = []() -> status::result {
+        return status::ok;
+      };
 
-      _async_loop.run();
+      work1 _work;
+      async_loop _async_loop([&_work]() -> status::result { return _work(); },
+                             _breaker, std::chrono::milliseconds(1000));
+
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -173,7 +175,7 @@ struct async_loop_002 {
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
-      _async_loop.run();
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
@@ -193,7 +195,7 @@ struct async_loop_002 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will increment an internal counter "
+    return "Work in 'async_loop' will increment an internal counter "
            "indefinetly, "
            "with a 200ms sleep."
 
@@ -211,22 +213,21 @@ struct async_loop_003 {
 
   struct work1 {
 
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
 
       data = p_data;
+      std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
 
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
-      if (m_data > 1000) {
-        return {false, 0};
-      }
-      return {true, m_data++};
+    std::pair<status::result, uint32_t> operator()() {
+
+      return {status::ok, m_data++};
     }
 
   private:
@@ -237,30 +238,44 @@ struct async_loop_003 {
     using namespace tenacitas;
 
     try {
+      concurrent::traits_t<uint32_t>::breaker _breaker =
+          []() -> status::result { return status::ok; };
+
       work1 _work;
-      async_loop _async_loop(
-          [&_work](uint32_t &&p_data) -> concurrent::work_status {
-            return _work(std::move(p_data));
-          },
-          std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
 
-      _async_loop.run();
+      concurrent::traits_t<uint32_t>::worker _worker =
+          [&_work](uint32_t &&p_data) -> status::result {
+        return _work(std::move(p_data));
+      };
 
-      std::this_thread::sleep_for(std::chrono::seconds(2));
+      async_loop _async_loop(_worker, _breaker, std::chrono::milliseconds(1000),
+                             provide());
 
+      concurrent_log_debug(logger::cerr::log, "starting");
+      _async_loop.start();
+
+      concurrent_log_debug(logger::cerr::log, "sleeping");
+      std::this_thread::sleep_for(std::chrono::seconds(4));
+      concurrent_log_debug(logger::cerr::log, "waking");
+
+      concurrent_log_debug(logger::cerr::log, "stoping");
       _async_loop.stop();
 
-      std::this_thread::sleep_for(std::chrono::seconds(1));
-
-      _async_loop.run();
-
+      concurrent_log_debug(logger::cerr::log, "sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(2));
+      concurrent_log_debug(logger::cerr::log, "waking");
+
+      concurrent_log_debug(logger::cerr::log, "starting");
+      _async_loop.start();
+
+      concurrent_log_debug(logger::cerr::log, "sleeping");
+      std::this_thread::sleep_for(std::chrono::seconds(3));
+      concurrent_log_debug(logger::cerr::log, "waking");
 
       concurrent_log_debug(logger::cerr::log, "data = ", _work.data);
-      if (_work.data != 1000) {
+      if (_work.data != 34) {
         concurrent_log_error(logger::cerr::log,
-                             "wrong value for data, it should be 1000");
+                             "wrong value for data, it should be 34");
         return false;
       }
 
@@ -273,16 +288,17 @@ struct async_loop_003 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will print a provided uint32_t value at "
+    return "Work in 'async_loop' will print a provided uint32_t value at "
            "each 200 ms."
 
-           "\nProvider will provide uint32_t values, until 1000."
+           "\nProvider will provide uint32_t values, starting in 0, "
+           "incremented by 1."
 
-           "\nMain thread will stop for 2 secs; 'async_loop' will stop; main "
-           "thread will sleep for 1 sec; 'async_loop' will run again; main "
-           "thread will sleep for 2 secs."
+           "\nMain thread will stop for 4 secs; 'async_loop' will stop; main "
+           "thread will sleep for 2 sec; 'async_loop' will run again; main "
+           "thread will sleep for 3 secs."
 
-           "\nData in work should be 1000";
+           "\nData in work should be 34";
   }
 };
 
@@ -291,22 +307,22 @@ struct async_loop_004 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
 
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::pair<status::result, uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       if (m_data > 1000) {
-        return std::make_pair(false, 0);
+        return {concurrent::stopped_by_provider, 0};
       }
-      return std::make_pair(true, ++m_data);
+      return {status::ok, ++m_data};
     }
 
   private:
@@ -319,10 +335,10 @@ struct async_loop_004 {
       work1 _work;
       async_loop _async_loop(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
-          std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
+          []() { return status::ok; }, std::chrono::milliseconds(1000),
+          provide());
 
-      _async_loop.run();
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(20));
 
@@ -337,7 +353,7 @@ struct async_loop_004 {
 
       std::this_thread::sleep_for(std::chrono::seconds(4));
 
-      _async_loop.run();
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(20));
 
@@ -359,7 +375,7 @@ struct async_loop_004 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will print a provided uint32_t value."
+    return "Work in 'async_loop' will print a provided uint32_t value."
 
            "\nProvider will provide uint32_t values, until 1000, with a 200 ms "
            "sleep."
@@ -375,22 +391,22 @@ struct async_loop_004 {
 struct async_loop_005 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::pair<status::result, uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
       if (++m_data > 830) {
-        return std::make_pair(false, 0);
+        return std::make_pair(concurrent::stopped_by_provider, 0);
       }
-      return std::make_pair(true, m_data);
+      return {status::ok, m_data};
     }
     uint32_t m_data = 0;
   };
@@ -398,9 +414,8 @@ struct async_loop_005 {
   bool operator()() {
     using namespace tenacitas;
     try {
-      async_loop sl1(work1(), std::chrono::milliseconds(1000),
-                     []() { return concurrent::work_status::dont_stop; },
-                     provide());
+      async_loop sl1(work1(), []() { return status::ok; },
+                     std::chrono::milliseconds(1000), provide());
 
       // uncomment the line below for a compiler error "error:
       // ‘tenacitas::concurrent::async_loop<t_timeout,
@@ -514,22 +529,22 @@ struct async_loop_006 {
 
   struct work1 {
 
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(1001));
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::pair<status::result, uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
       if (m_data > 200) {
-        return std::make_pair(false, 0);
+        return {concurrent::stopped_by_provider, 0};
       }
-      return std::make_pair(true, m_data++);
+      return {status::ok, ++m_data};
     }
     uint32_t m_data = 0;
   };
@@ -538,11 +553,10 @@ struct async_loop_006 {
     using namespace tenacitas;
     try {
 
-      async_loop _async_loop(
-          work1(), std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; }, provide());
+      async_loop _async_loop(work1(), []() { return status::ok; },
+                             std::chrono::milliseconds(1000), provide());
 
-      _async_loop.run();
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(4));
 
@@ -557,7 +571,7 @@ struct async_loop_006 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will print a provided uint32_t value, with "
+    return "Work in 'async_loop' will print a provided uint32_t value, with "
            "a 1001 ms sleep, which will cause a timeout. "
            "\nProvider will provide uint32_t values, until 1000, with a 200 ms "
            "sleep. "
@@ -570,22 +584,22 @@ struct async_loop_007 {
 
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_log_debug(logger::cerr::log, p_data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::pair<status::result, uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       if (m_data > 1000) {
-        return std::make_pair(false, 0);
+        return {concurrent::stopped_by_provider, 0};
       }
-      return std::make_pair(true, m_data++);
+      return {status::ok, m_data++};
     }
 
     uint32_t get_data() const { return m_data; }
@@ -601,11 +615,13 @@ struct async_loop_007 {
       provide _provide;
       async_loop _async_loop_1(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
-          std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          []() { return status::ok; }, std::chrono::milliseconds(1000),
 
-      _async_loop_1.run();
+          [&_provide]() -> std::pair<status::result, uint32_t> {
+            return _provide();
+          });
+
+      _async_loop_1.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(4));
 
@@ -625,8 +641,10 @@ struct async_loop_007 {
 
       async_loop _async_loop_2(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
-          _async_loop_1.get_timeout(), _async_loop_1.get_break(),
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          _async_loop_1.get_breaker(), _async_loop_1.get_timeout(),
+          [&_provide]() -> std::pair<status::result, uint32_t> {
+            return _provide();
+          });
 
       concurrent_log_debug(logger::cerr::log, "work data = ", _work.data,
                            ", provider data = ", _provide.get_data());
@@ -636,7 +654,7 @@ struct async_loop_007 {
       concurrent_log_debug(logger::cerr::log, "work data = ", _work.data,
                            ", provider data = ", _provide.get_data());
 
-      _async_loop_2.run();
+      _async_loop_2.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -660,7 +678,7 @@ struct async_loop_007 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will print a provided uint32_t value."
+    return "Work in 'async_loop' will print a provided uint32_t value."
 
            "\nProvider will provide uint32_t values, until 1000, with a 200 ms "
            "sleep."
@@ -681,31 +699,31 @@ struct async_loop_007 {
 struct async_loop_008 {
   typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
   struct work1 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
       data += p_data;
       concurrent_log_debug(logger::cerr::log, "1 -> ", data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
     uint32_t data = 0;
   };
 
   struct work2 {
-    concurrent::work_status operator()(uint32_t &&p_data) {
+    status::result operator()(uint32_t &&p_data) {
       using namespace tenacitas;
       data = p_data;
       concurrent_log_debug(logger::cerr::log, "2 -> ", data);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::pair<status::result, uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       if (m_data > 1000) {
-        return std::make_pair(false, 0);
+        return {concurrent::stopped_by_provider, 0};
       }
-      return std::make_pair(true, m_data++);
+      return {status::ok, ++m_data};
     }
 
   private:
@@ -721,18 +739,20 @@ struct async_loop_008 {
 
       async_loop _al_1(
           [&_work_1](uint32_t &&p_data) { return _work_1(std::move(p_data)); },
-          std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          []() { return status::ok; }, std::chrono::milliseconds(1000),
+          [&_provide]() -> std::pair<status::result, uint32_t> {
+            return _provide();
+          });
 
       async_loop _al_2(
           [&_work_2](uint32_t &&p_data) { return _work_2(std::move(p_data)); },
-          std::chrono::milliseconds(1000),
-          []() { return concurrent::work_status::dont_stop; },
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          []() { return status::ok; }, std::chrono::milliseconds(1000),
+          [&_provide]() -> std::pair<status::result, uint32_t> {
+            return _provide();
+          });
 
-      _al_1.run();
-      _al_2.run();
+      _al_1.start();
+      _al_2.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(10));
 
@@ -751,7 +771,7 @@ struct async_loop_008 {
   }
 
   static std::string desc() {
-    return "\nWork 1 in 'async_loop' will print a provided uint32_t value, as "
+    return "Work 1 in 'async_loop' will print a provided uint32_t value, as "
            "well as Work 2."
 
            "\nProvider will provide incremente uint32_t values, to a Work 1 "
@@ -768,13 +788,13 @@ struct async_loop_009 {
 
   struct work1 {
 
-    concurrent::work_status operator()() {
+    status::result operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_log_debug(logger::cerr::log, "work = ", this,
                            ", counter = ", counter++);
-      return concurrent::work_status::dont_stop;
+      return status::ok;
     }
 
     uint64_t counter = 0;
@@ -785,11 +805,11 @@ struct async_loop_009 {
     using namespace tenacitas;
     try {
       work1 _work;
-      async_loop _async_loop(_work, std::chrono::milliseconds(1000),
-                             []() -> concurrent::work_status {
-                               return concurrent::work_status::dont_stop;
-                             });
-      _async_loop.run();
+      async_loop _async_loop(_work,
+                             []() -> status::result { return status::ok; },
+                             std::chrono::milliseconds(1000));
+
+      _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -809,7 +829,7 @@ struct async_loop_009 {
   }
 
   static std::string desc() {
-    return "\nWork in 'async_loop' will increment an internal counter "
+    return "Work in 'async_loop' will increment an internal counter "
            "indefinetly, at each 200 ms."
            "\nMain thread will stop for 1 sec."
            "\nThe work functor will not have its internal counter modified, as "

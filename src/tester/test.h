@@ -134,7 +134,7 @@ struct test {
     using namespace std;
 
     if (m_print_desc) {
-      cout << p_test_name << ": " << t_test_class::desc() << endl;
+      cout << p_test_name << ": " << t_test_class::desc() << "\n" << endl;
       return;
     }
 
@@ -155,7 +155,8 @@ private:
     using namespace std;
     bool result = false;
     try {
-      cerr << "\n############ -> " << p_test_name << endl;
+      cerr << "\n############ -> " << p_test_name << " - "
+           << t_test_class::desc() << endl;
       result = t_test_class()();
       cout << (result ? "SUCCESS" : "FAIL") << " for " << p_test_name << endl;
     } catch (exception &_ex) {

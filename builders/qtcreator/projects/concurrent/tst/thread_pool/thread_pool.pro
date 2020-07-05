@@ -8,6 +8,8 @@ SOURCES += \
   $$test_src_dir/concurrent/thread_pool/main.cpp \
   $$test_src_dir/concurrent/msa_a.cpp
 
+HEADERS += \
+  $$test_src_dir/concurrent/msa_a.h
 
 
 LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext

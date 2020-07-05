@@ -14,3 +14,4 @@ SOURCES += \
     $$code_src_dir/logger/file/internal/log.cpp
 
 
+LIBS+=$$libs_dir/libconcurrent.lib.$$static_lib_ext
