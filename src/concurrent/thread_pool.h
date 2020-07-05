@@ -20,7 +20,9 @@
 
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/result.h>
 #include <concurrent/traits.h>
+#include <status/result.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -31,7 +33,7 @@ namespace concurrent {
 /// producer/consumer pattern
 ///
 /// \tparam t_data is the type of data inserted into the pool, so that
-/// registered work functions can "fight" among each other to get the data to
+/// registered work functions can "fight"among each other to get the data to
 /// process it.
 ///
 /// \param t_data is the type of the data to be handled. If it is not \p void,
@@ -50,15 +52,15 @@ namespace concurrent {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
-template <typename t_data, typename t_log> class thread_pool_t {
+///
+/// \tparam t_time is the type of time used for timeout control
+///
+template <typename t_data, typename t_log,
+          typename t_time = std::chrono::milliseconds>
+class thread_pool_t {
 public:
-  /// \brief work_t is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return result::stop if the loop where this function is being
-  /// called should stop, or status::dont_stop if it should continue
+  /// \brief worker type
+  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
 
   /// \brief log alias for @p t_log
@@ -83,9 +85,12 @@ public:
     // right side, and reseting the provide and break function
     for (async_loop &_loop_right : p_pool.m_loops) {
       async_loop _loop(
-          std::move(_loop_right.get_work()), _loop_right.get_timeout(),
-          [this]() -> status { return this->stop_condition(); },
-          [this]() -> std::pair<bool, t_data> { return this->data(); });
+          std::move(_loop_right.get_worker()),
+          [this]() -> status::result { return this->stop_condition(); },
+          _loop_right.get_timeout(),
+          [this]() -> std::pair<status::result, t_data> {
+            return this->data();
+          });
 
       add_work(std::move(_loop));
     }
@@ -98,33 +103,37 @@ public:
     // if the right side was not stopped
     if (!_stopped) {
       // run this thread pool
-      run();
+      start();
     }
   }
 
   /// \brief copy constructor not allowed
   thread_pool_t(const thread_pool_t &) = delete;
 
-  /// \brief if 'stop ' was not called, empties the pool, waiting for all the
-  /// data to be processed
+  /// \brief destuctor
+  ///
+  /// If 'stop ' was not called, empties the pool, waiting for all the data to
+  /// be processed
   ~thread_pool_t() {
     m_destroying = true;
-    concurrent_log_debug(log, this, " m_values.size() = ", m_values.size());
+    concurrent_log_debug(log, "m_values.size() = ", m_values.size());
 
-    if (!m_stopped) {
-      while (!m_values.empty()) {
-        concurrent_log_debug(log, this, " m_values.size() = ", m_values.size());
-        m_cv_data.notify_all();
-        concurrent_log_debug(log, this, " waiting for poping, ", this);
-        std::unique_lock<std::mutex> _lock(m_mutex_poped);
-        m_cv_poped.wait(_lock, [this] {
-          concurrent_log_debug(log, this, " poping signal arrived, ", this);
-          return true;
-        });
-        concurrent_log_debug(log, this, " lock free");
+    if (!all_loops_stopped()) {
+      if (!m_stopped) {
+        while (!m_values.empty()) {
+          concurrent_log_debug(log, "m_values.size() = ", m_values.size());
+          m_cv_data.notify_all();
+          concurrent_log_debug(log, "waiting for poping");
+          std::unique_lock<std::mutex> _lock(m_mutex_poped);
+          m_cv_poped.wait(_lock, [this] {
+            concurrent_log_debug(log, "poping signal arrived");
+            return true;
+          });
+          concurrent_log_debug(log, "lock free");
+        }
+        concurrent_log_debug(log, "m_values.size() = ", m_values.size());
+        stop();
       }
-      concurrent_log_debug(log, "this, m_values.size() = ", m_values.size());
-      stop();
     }
   }
 
@@ -143,10 +152,12 @@ public:
       // build the work function collection, moving the work function from
       // the right side, and reseting the provide and break function
       for (async_loop &_loop_right : p_pool.m_loops) {
-        async_loop _loop(
-            std::move(_loop_right.get_work()), _loop_right.get_timeout(),
-            [this]() -> bool { return this->stop_condition(); },
-            [this]() -> std::pair<bool, t_data> { return this->data(); });
+        async_loop _loop(std::move(_loop_right.get_work()),
+                         _loop_right.get_timeout(),
+                         [this]() -> bool { return this->stop_condition(); },
+                         [this]() -> std::pair<status::result, t_data> {
+                           return this->data();
+                         });
 
         add_work(std::move(_loop));
       }
@@ -159,7 +170,7 @@ public:
       // if the right side was not stopped
       if (!_stopped) {
         // run this thread pool
-        run();
+        start();
       }
     }
     return *this;
@@ -170,32 +181,35 @@ public:
 
   /// \brief is_stopped
   /// \return \p true if the loop is not running; \p false othewise
-  bool is_stopped() const { return m_stopped; }
+  inline bool is_stopped() const { return m_stopped; }
 
-  /// \brief add_work adds a bunch of \p work_t functions
-  /// \param p_num_works the number of \p work_t functions to be added
-  /// \param p_work_factory a function that creates \p work_t functions
-  /// \param p_work_timeout timeout for the \p work_t functions
+  /// \brief add_work adds a bunch of \p worker functions
+  /// \param p_num_works the number of \p worker functions to be added
+  /// \param p_work_factory a function that creates \p worker functions
+  /// \param p_worker_timeout timeout for the \p worker functions
   void add_work(uint16_t p_num_works, std::function<worker()> p_work_factory,
-                std::chrono::milliseconds p_work_timeout) {
+                t_time p_worker_timeout) {
     for (uint16_t _i = 0; _i < p_num_works; ++_i) {
       async_loop _loop(
-          p_work_factory(), p_work_timeout,
-          [this]() -> status { return this->stop_condition(); },
-          [this]() -> std::pair<bool, t_data> { return this->data(); });
+          p_work_factory(),
+          [this]() -> status::result { return this->stop_condition(); },
+          p_worker_timeout,
+          [this]() -> std::pair<status::result, t_data> {
+            return this->data();
+          });
 
       add_work(std::move(_loop));
     }
   }
 
-  /// \brief add_work adds one \p work_t function
-  /// \param p_work the \p work_t fuction to be added
-  /// \param p_work_timeout timeout of this \p work_t function
-  void add_work(worker p_work, std::chrono::milliseconds p_work_timeout) {
+  /// \brief add_work adds one \p worker function
+  /// \param p_work the \p worker fuction to be added
+  /// \param p_worker_timeout timeout of this \p worker function
+  void add_work(worker p_work, t_time p_worker_timeout) {
     async_loop _loop(
-        p_work, p_work_timeout,
-        [this]() -> status { return this->stop_condition(); },
-        [this]() -> std::pair<bool, t_data> { return this->data(); });
+        p_work, [this]() -> status::result { return this->stop_condition(); },
+        p_worker_timeout,
+        [this]() -> std::pair<status::result, t_data> { return this->data(); });
 
     add_work(std::move(_loop));
   }
@@ -204,12 +218,16 @@ public:
   /// \param p_value the value to be handled
   inline void handle(const t_data &p_value) { add_data(p_value); }
 
+  /// \brief handle sends an instance of \p t_data to be handled
+  /// \param p_value the value to be handled
+  inline void handle(t_data &&p_value) { add_data(p_value); }
+
   /// \brief run starts the thread_pool
   ///
-  /// From this call on, the \p work_t functions will to "fight" among each
+  /// From this call on, the \p worker functions will to "fight"among each
   /// other, in order to process any instance of \p t_data that was inserted,
   /// using the \p handle method, into the pool
-  inline void run() {
+  inline void start() {
     if (m_stopped) {
       run_common();
     }
@@ -217,9 +235,9 @@ public:
 
   /// \brief interrupt stops the \p thread_pool
   ///
-  /// From this call on, the \p work_t functions will stop "fighting" among
+  /// From this call on, the \p worker functions will stop "fighting"among
   /// each other, in order to process any instance of \p t_data that was
-  /// inserted, using the \p handle method, into the pool
+  /// inserted into the pool
   inline void stop() {
 
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
@@ -236,20 +254,16 @@ public:
   }
 
 private:
-  /// \brief provide_t is the type of function that provides data to the work
-  /// function during the loop execution
-  ///
-  /// \return a pair, where if \p first is \p true, the \p second has a
-  /// meaningful data; if \p first is \p false, then \p second has a default
-  /// value of \p t_data
+  /// \brief provider type
+  /// \sa traits_t<t_data>::provider in tenacitas/concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief the collection of values
-  typedef std::list<t_data> values_t;
+  typedef std::list<t_data> values;
 
-  /// \brief async_loop_t is an simples for the \p async_loop where a \p
-  /// work_t function will be running
-  typedef async_loop_t<t_data, t_log> async_loop;
+  /// \brief async_loop_t is a \p async_loop where a \p worker function will be
+  /// running
+  typedef async_loop_t<t_data, t_log, t_time> async_loop;
 
   /// \brief async_loops_t is the collection of \p async_loop
   typedef std::vector<async_loop> async_loops_t;
@@ -259,24 +273,24 @@ private:
   /// \p thread_pool
   void run_common() {
 
-    concurrent_log_debug(log, this, " running ", this);
+    concurrent_log_debug(log, "running ", this);
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
-      concurrent_log_debug(log, this, " cant run because it is empty");
+      concurrent_log_debug(log, "can't run because it is empty");
       return;
     }
     m_stopped = false;
-    concurrent_log_debug(log, this, " m_stopped = ", m_stopped);
+    concurrent_log_debug(log, "m_stopped = ", m_stopped);
 
     for (async_loop &_loop : m_loops) {
-      concurrent_log_debug(log, this, " starting loop ", &_loop);
-      _loop.run();
+      concurrent_log_debug(log, "starting loop ", &_loop);
+      _loop.start();
     }
-    concurrent_log_debug(log, this, " started ");
+    concurrent_log_debug(log, "started ");
   }
 
-  /// \brief add_work common function called to add a \p work_t function
-  /// \param p_loop the new \p work_t function to be added
+  /// \brief add_work common function called to add a \p worker function
+  /// \param p_loop the new \p worker function to be added
   void add_work(async_loop &&p_loop) {
     std::lock_guard<std::mutex> _lock(m_add_work);
     m_loops.push_back(std::move(p_loop));
@@ -285,46 +299,45 @@ private:
   /// \brief stop_condition
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
-  status stop_condition() {
-
-    concurrent_log_debug(log, this, " stopped = ", m_stopped);
-    return (m_stopped ? status::stop : status::dont_stop);
+  status::result stop_condition() {
+    concurrent_log_debug(log, "stopped = ", m_stopped);
+    return (m_stopped ? concurrent::stopped_by_breaker : status::ok);
   }
 
   /// \brief data is the \p provide_t function, which returns data, if
-  /// available, to a \p work_t function \return
+  /// available, to a \p worker function \return
   ///
   /// \return (true, a filled \p t_data object), if there is any instance of
   /// \p data available; of (false, t_data()) otherwise
-  std::pair<bool, t_data> data() {
+  std::pair<status::result, t_data> data() {
 
     using namespace std;
 
     if (m_stopped) {
-      concurrent_log_debug(log, this,
-                           " not waiting for more data because it is stopped ");
+      concurrent_log_debug(log,
+                           "not waiting for more data because it is stopped ");
 
-      return std::make_pair(false, t_data());
+      return std::make_pair(concurrent::stopped_by_provider, t_data());
     }
 
     unique_lock<std::mutex> _lock(m_mutex_data);
     m_cv_data.wait(_lock, [this] {
-      concurrent_log_debug(log, this, " waiting");
+      concurrent_log_debug(log, "waiting");
       return (!m_values.empty() || m_stopped);
     });
 
     if (m_stopped) {
-      concurrent_log_debug(log, this, " m_stopped, returning 'false'");
-      return std::make_pair(false, t_data());
+      concurrent_log_debug(log, "m_stopped, returning 'false'");
+      return std::make_pair(concurrent::stopped_by_provider, t_data());
     }
 
-    std::pair<bool, t_data> _return =
-        std::make_pair(true, std::move(m_values.front()));
-    concurrent_log_debug(log, this, " data to be handled ", _return.second);
+    std::pair<status::result, t_data> _return =
+        std::make_pair(status::ok, std::move(m_values.front()));
+    concurrent_log_debug(log, "data to be handled ", _return.second);
     m_values.pop_front();
 
     if (m_destroying && !m_values.empty()) {
-      concurrent_log_debug(log, this, " signaling poped");
+      concurrent_log_debug(log, "signaling poped");
       m_cv_poped.notify_all();
     }
 
@@ -334,13 +347,35 @@ private:
   /// \brief add_data adds a instance of \p t_data to the pool
   /// \param p_value is an instance of \p t_data to be added
   void add_data(const t_data &p_value) {
-    concurrent_log_debug(log, this, " adding ", p_value);
+    concurrent_log_debug(log, "adding ", p_value);
     {
       std::lock_guard<std::mutex> _lock(m_mutex_data);
       m_values.push_back(p_value);
     }
-    concurrent_log_debug(log, this, " added and notifying ");
+    concurrent_log_debug(log, "added and notifying ");
     m_cv_data.notify_all();
+  }
+
+  /// \brief add_data adds a instance of \p t_data to the pool
+  /// \param p_value is an instance of \p t_data to be added
+  void add_data(t_data &&p_value) {
+    concurrent_log_debug(log, "adding ", p_value);
+    {
+      std::lock_guard<std::mutex> _lock(m_mutex_data);
+      m_values.push_back(std::move(p_value));
+    }
+    concurrent_log_debug(log, "added and notifying ");
+    m_cv_data.notify_all();
+  }
+
+  /// \brief informs if all the \p async_loops are stopped
+  bool all_loops_stopped() const {
+    for (const async_loop &_async_loop : m_loops) {
+      if (!_async_loop.is_stopped()) {
+        return false;
+      }
+    }
+    return true;
   }
 
 private:
@@ -348,7 +383,7 @@ private:
   async_loops_t m_loops;
 
   /// \brief m_values is the collection of instances of \p t_data
-  values_t m_values;
+  values m_values;
 
   /// \brief m_stopped indicates if the \p thread_pool should stop
   bool m_stopped = true;

@@ -1,12 +1,11 @@
 SUBDIRS = \
     dep \
-    loop \
+    loop    \
     async_loop \
-    sleeping_loop
-#    \
-#    thread_pool \
-#    dispatcher  \
-#    performance
+    sleeping_loop \
+    thread_pool \
+    dispatcher \
+    performance
 
 TEMPLATE = subdirs
 

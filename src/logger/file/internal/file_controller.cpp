@@ -58,7 +58,7 @@ std::string file_controller::name() {
 //}
 
 // ----------------------------------------------------------------------------
-concurrent::work_status file_controller::deleter::operator()() {
+status::result file_controller::deleter::operator()() {
   DIR *_dir = nullptr;
   struct dirent *_ent = nullptr;
   _dir = opendir(m_path.c_str());
@@ -83,7 +83,7 @@ concurrent::work_status file_controller::deleter::operator()() {
     closedir(_dir);
   }
 
-  return concurrent::work_status::dont_stop;
+  return status::ok;
 }
 
 } // namespace file

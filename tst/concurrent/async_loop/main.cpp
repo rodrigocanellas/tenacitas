@@ -30,7 +30,7 @@ struct async_loop_000 {
     status::result operator()() {
 
       if (counter > 100) {
-        return concurrent::stopped_by_work;
+        return concurrent::stopped_by_worker;
       }
 
       concurrent_log_debug(logger::cerr::log, "work = ", this,

@@ -25,10 +25,10 @@ struct thread_pool_090 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -46,15 +46,15 @@ struct thread_pool_090 {
                           concurrent_log_debug(logger::cerr::log, "adding msg ",
                                                _msg);
                           _pool.handle(std::move(_msg));
-                          return concurrent::status::dont_stop;
+                          return status::ok;
                         },
                         std::chrono::milliseconds(300));
 
     _pool.add_work([&_work](msg &&p_msg) { return _work(std::move(p_msg)); },
                    std::chrono::milliseconds(100));
 
-    _pool.run();
-    _loop.run();
+    _pool.start();
+    _loop.start();
 
     concurrent_log_debug(logger::cerr::log, "sleeping for 10 secs");
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -68,7 +68,7 @@ struct thread_pool_090 {
     concurrent_log_debug(logger::cerr::log, "waking up after 5 secs");
 
     concurrent_log_debug(logger::cerr::log, "runnig the pool");
-    _pool.run();
+    _pool.start();
 
     concurrent_log_debug(logger::cerr::log, "sleeping for 4 secs");
     std::this_thread::sleep_for(std::chrono::seconds(4));
@@ -107,10 +107,10 @@ struct thread_pool_091 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -119,7 +119,7 @@ struct thread_pool_091 {
     work _work;
     thread_pool _pool;
     _pool.add_work(
-        [&_work](msg &&p_msg) -> concurrent::status {
+        [&_work](msg &&p_msg) -> status::result {
           return _work(std::move(p_msg));
         },
         std::chrono::milliseconds(500));
@@ -130,7 +130,7 @@ struct thread_pool_091 {
       _pool.handle(_msg);
     }
 
-    _pool.run();
+    _pool.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -157,10 +157,10 @@ struct thread_pool_092 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -180,7 +180,7 @@ struct thread_pool_092 {
 
     thread_pool _pool_2(std::move(_pool_1));
 
-    _pool_2.run();
+    _pool_2.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -208,11 +208,11 @@ struct thread_pool_093 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -230,7 +230,7 @@ struct thread_pool_093 {
     }
 
     concurrent_log_debug(logger::cerr::log, "starting pool");
-    _pool_1.run();
+    _pool_1.start();
 
     concurrent_log_debug(logger::cerr::log, "sleeping for 2 s");
     std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -246,7 +246,7 @@ struct thread_pool_093 {
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     concurrent_log_debug(logger::cerr::log, "starting new pool");
-    _pool_2.run();
+    _pool_2.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
@@ -277,10 +277,10 @@ struct thread_pool_094 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -299,14 +299,14 @@ struct thread_pool_094 {
     }
 
     concurrent_log_debug(logger::cerr::log, "first start");
-    _pool.run();
+    _pool.start();
 
     concurrent_log_debug(logger::cerr::log, "sleeping for 2 s");
     std::this_thread::sleep_for(std::chrono::seconds(2));
     concurrent_log_debug(logger::cerr::log, "waking up");
 
     concurrent_log_debug(logger::cerr::log, "second start");
-    _pool.run();
+    _pool.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
@@ -330,10 +330,10 @@ struct thread_pool_095 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_log_debug(logger::cerr::log, "handling msg ", m_msg);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     msg m_msg;
   };
@@ -351,7 +351,7 @@ struct thread_pool_095 {
     _pool.handle(_msg);
 
     concurrent_log_debug(logger::cerr::log, "start pool");
-    _pool.run();
+    _pool.start();
 
     concurrent_log_debug(logger::cerr::log, "sleeping for 1 s");
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -369,7 +369,7 @@ struct thread_pool_096 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    concurrent::status operator()(msg &&p_msg) {
+    status::result operator()(msg &&p_msg) {
 
       concurrent_log_debug(logger::cerr::log, "handling msg ", p_msg);
       if ((p_msg.counter() % 2) == 0) {
@@ -378,7 +378,7 @@ struct thread_pool_096 {
       } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     uint16_t m_timeout = 0;
   };
@@ -397,9 +397,9 @@ struct thread_pool_096 {
     }
 
     concurrent_log_debug(logger::cerr::log, "start pool");
-    _pool.run();
+    _pool.start();
 
-    concurrent_log_debug(logger::cerr::log, "sleeping for 1 s");
+    concurrent_log_debug(logger::cerr::log, "sleeping for 10 s");
     std::this_thread::sleep_for(std::chrono::seconds(10));
     concurrent_log_debug(logger::cerr::log, "waking up");
 
@@ -426,21 +426,21 @@ struct thread_pool_097 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work_1 {
-    concurrent::status operator()(int32_t &&p_value) {
+    status::result operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       ++counter;
       concurrent_log_debug(logger::cerr::log, "work 1 handling msg ", p_value);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     int16_t counter = 0;
   };
 
   struct work_2 {
-    concurrent::status operator()(int32_t &&p_value) {
+    status::result operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(60));
       ++counter;
       concurrent_log_debug(logger::cerr::log, "work 2 handling msg ", p_value);
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
     int16_t counter = 0;
   };
@@ -453,28 +453,27 @@ struct thread_pool_097 {
       thread_pool _pool;
       int32_t _value = 0;
       int16_t _counter = 0;
-      sleeping_loop _loop(
-          std::chrono::milliseconds(100),
-          [&_pool, &_value, &_counter]() -> concurrent::status {
-            ++_value;
-            ++_counter;
-            _pool.handle(_value);
-            return concurrent::status::dont_stop;
-          },
-          std::chrono::milliseconds(300));
+      sleeping_loop _loop(std::chrono::milliseconds(100),
+                          [&_pool, &_value, &_counter]() -> status::result {
+                            ++_value;
+                            ++_counter;
+                            _pool.handle(_value);
+                            return status::ok;
+                          },
+                          std::chrono::milliseconds(300));
 
       _pool.add_work(
-          [&_work_1](int32_t &&p_val) -> concurrent::status {
+          [&_work_1](int32_t &&p_val) -> status::result {
             return _work_1(std::move(p_val));
           },
           std::chrono::milliseconds(200));
       _pool.add_work(
-          [&_work_2](int32_t &&p_val) -> concurrent::status {
+          [&_work_2](int32_t &&p_val) -> status::result {
             return _work_2(std::move(p_val));
           },
           std::chrono::milliseconds(200));
 
-      _loop.run();
+      _loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(6));
 
@@ -482,7 +481,7 @@ struct thread_pool_097 {
 
       concurrent_log_debug(logger::cerr::log, "counter = ", _counter);
 
-      _pool.run();
+      _pool.start();
     }
     concurrent_log_debug(logger::cerr::log,
                          "work 1 counter = ", _work_1.counter);
@@ -513,14 +512,14 @@ struct thread_pool_098 {
   template <typename t_notifier> struct work_1 {
     work_1(t_notifier *p_notifier) : m_notifier(p_notifier) {}
 
-    concurrent::status operator()(int32_t &&p_value) {
+    status::result operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(170));
       concurrent_log_debug(logger::cerr::log, "work 1 handling msg ", p_value);
       if (p_value > 200) {
         m_notifier->stop("work1");
-        return concurrent::status::stop;
+        return concurrent::stopped_by_worker;
       }
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
 
   private:
@@ -545,7 +544,7 @@ struct thread_pool_098 {
 
     int32_t _value = 0;
 
-    m_pool.run();
+    m_pool.start();
 
     m_pool.handle(_value);
     while (true) {
@@ -590,21 +589,21 @@ struct thread_pool_099 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work_1 {
-    concurrent::status operator()(int32_t &&p_value) {
+    status::result operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(170));
       concurrent_log_debug(logger::cerr::log, "work 1 handling msg ", p_value);
       if (p_value > 200) {
         concurrent_log_debug(logger::cerr::log, "stopping this worker");
-        return concurrent::status::stop;
+        return concurrent::stopped_by_worker;
       }
-      return concurrent::status::dont_stop;
+      return status::ok;
     }
   };
 
   thread_pool_099() {
     m_pool.add_work(1, []() { return work_1(); },
                     std::chrono::milliseconds(200));
-    m_pool.run();
+    m_pool.start();
   }
 
   bool operator()() {

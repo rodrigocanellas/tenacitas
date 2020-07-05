@@ -28,9 +28,9 @@ static const status::result stopped_by_breaker{project, 4};
 
 static const status::result stopped_by_provider{project, 5};
 
-static const status::result stopped_by_work{project, 6};
+static const status::result stopped_by_worker{project, 6};
 
-static const status::result stopped_by_user{project, 8};
+static const status::result stopped_by_user{project, 7};
 
 } // namespace concurrent
 } // namespace tenacitas

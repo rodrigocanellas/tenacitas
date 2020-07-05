@@ -1,5 +1,5 @@
 SUBDIRS = \
-  concurrent.lib \
+  concurrent.headers \
   dep \
   tst
 

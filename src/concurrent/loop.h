@@ -197,16 +197,15 @@ struct loop_t {
         break;
       }
 
-      _result =
+      status::result _worker_result =
           process<t_data, t_time, t_log>()(m_worker, m_provider, m_timeout);
-      if (_result != status::ok) {
-        concurrent_log_warn(log, "loop stopped: ", _result);
-        if ((_result == concurrent::stopped_by_work) ||
-            (_result == concurrent::stopped_by_provider)) {
-          _result = status::ok;
-          concurrent_log_warn(log, "changing result to ", _result);
+      if (_worker_result != status::ok) {
+        concurrent_log_warn(log, "worker returned ", _worker_result);
+        if ((_worker_result == concurrent::stopped_by_worker) ||
+            (_worker_result == concurrent::stopped_by_provider)) {
+          _result = _worker_result;
+          break;
         }
-        break;
       }
 
       if (m_stopped_by_user) {

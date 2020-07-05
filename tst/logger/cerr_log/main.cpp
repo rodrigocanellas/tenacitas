@@ -82,11 +82,11 @@ struct cerr_log_single {
               logger::cerr::log::warn("cerr_log_single", __LINE__, "que bom! ",
                                       _i);
             }
-            return concurrent::work_status::dont_stop;
+            return status::ok;
           },
           std::chrono::milliseconds(1000));
 
-      _loop1.run();
+      _loop1.start();
 
       logger::cerr::log::debug("cerr_log_single", __LINE__, "---- sleeping");
       std::this_thread::sleep_for(std::chrono::minutes(1));
@@ -126,7 +126,7 @@ public:
               logger::cerr::log::warn("cerr_log_multi", __LINE__, "que bom! ",
                                       _i);
             }
-            return concurrent::work_status::dont_stop;
+            return status::ok;
           },
           std::chrono::milliseconds(1000));
 
@@ -141,7 +141,7 @@ public:
               logger::cerr::log::warn("cerr_log_multi", __LINE__, "eee! ", _i);
               logger::cerr::log::warn("cerr_log_multi", __LINE__, "fff! ", _i);
             }
-            return concurrent::work_status::dont_stop;
+            return status::ok;
           },
           std::chrono::milliseconds(1000));
 
@@ -162,13 +162,13 @@ public:
               logger::cerr::log::warn("cerr_log_multi", __LINE__,
                                       "abcdefghijklmnopqrstivwxyz! ", _i);
             }
-            return concurrent::work_status::dont_stop;
+            return status::ok;
           },
           std::chrono::milliseconds(1000));
 
-      _loop1.run();
-      _loop2.run();
-      _loop3.run();
+      _loop1.start();
+      _loop2.start();
+      _loop3.start();
 
       logger::cerr::log::debug("cerr_log_multi", __LINE__, "---- sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(50));

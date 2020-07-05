@@ -216,9 +216,9 @@ private:
 
     // move the async_loop, reseting the break loop
     m_async =
-        async_loop(std::move(p_sleep.get_work()),
+        async_loop(std::move(p_sleep.get_worker()),
                    [this]() -> status::result { return this->break_loop(); },
-                   std::move(p_sleep.get_provide()));
+                   p_sleep.get_timeout(), std::move(p_sleep.get_provider()));
 
     // if the right side was not stopped
     if (!_stopped) {

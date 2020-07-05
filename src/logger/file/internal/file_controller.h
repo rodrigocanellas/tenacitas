@@ -71,7 +71,7 @@ struct file_controller {
 
         m_sleeping_loop(
             std::chrono::milliseconds(p_retention.count() * 60 * 1000),
-            [this]() -> concurrent::work_status { return this->m_deleter(); },
+            [this]() -> status::result { return this->m_deleter(); },
             std::chrono::milliseconds(20 * 60 * 1000)) {}
 
   file_controller() = delete;
@@ -87,7 +87,7 @@ struct file_controller {
         m_deleter(std::move(p_controller.m_deleter)),
         m_sleeping_loop(
             p_controller.m_sleeping_loop.get_interval(),
-            [this]() -> concurrent::work_status { return this->m_deleter(); },
+            [this]() -> status::result { return this->m_deleter(); },
             p_controller.m_sleeping_loop.get_timeout()) {}
 
   ~file_controller() { m_sleeping_loop.stop(); }
@@ -104,7 +104,7 @@ struct file_controller {
       m_deleter = std::move(p_controller.m_deleter);
       m_sleeping_loop = sleeping_loop(
           p_controller.m_sleeping_loop.get_interval(),
-          [this]() -> concurrent::work_status { return this->m_deleter(); },
+          [this]() -> status::result { return this->m_deleter(); },
           p_controller.m_sleeping_loop.get_timeout());
     }
     return *this;
@@ -139,7 +139,7 @@ struct file_controller {
   /// \brief remove initiates a asynchronous loop, time controlled, that will
   /// check which files can be deleted
   ///
-  inline void remove() { m_sleeping_loop.run(); }
+  inline void remove() { m_sleeping_loop.start(); }
 
 private:
   struct no_log {
@@ -184,7 +184,7 @@ private:
         : m_path(p_path), m_base_name(p_base_name),
           m_closed_extension(p_closed_extension), m_retention(p_retention) {}
 
-    concurrent::work_status operator()();
+    status::result operator()();
 
   private:
     ///

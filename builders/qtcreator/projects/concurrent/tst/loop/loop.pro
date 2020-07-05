@@ -13,4 +13,4 @@ SOURCES += \
 
 LIBS+=$$libs_dir/libtenacitas.tester.$$static_lib_ext
 LIBS+=$$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
-LIBS+=$$libs_dir/libtenacitas.concurrent.$$static_lib_ext
+

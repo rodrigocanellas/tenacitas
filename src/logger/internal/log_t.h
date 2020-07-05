@@ -12,21 +12,22 @@
 #include <string>
 #include <thread>
 
-#include <logger/internal/level.h>
-
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
 
-//
 /// \brief log is a class that guarantees thread safe writing to the log writer
-//
-
+///
+/// \tparam t_specific_logger is the class that will implement a concrete log
+///
 template <typename t_specific_logger> class log_t {
 public:
+  /// \brief specific_logger is a type for the template t_specific_logger
   typedef t_specific_logger specific_logger;
 
+  /// \brief specific_logger must be friend of \p log_t to access private
+  /// methods
   friend specific_logger;
 
   /// \brief function responsible for actually writing the log message to a
@@ -172,6 +173,19 @@ private:
 
 private:
   //
+  /// \brief The level enum defines the possible logger::log levels
+  //
+  enum class level : char {
+    debug = 'D',
+    info = 'I',
+    warn = 'W',
+    error = 'E',
+    fatal = 'F',
+    no_log = 'N'
+  };
+
+private:
+  //
   /// \brief write will actually write the message
   //
   // \tparam t_params are the types of the values to be logged, and each
@@ -187,7 +201,7 @@ private:
              const t_params &... p_params) {
     if (can_log(p_level)) {
       std::ostringstream _stream;
-      _stream << level2str(p_level) << m_separator << milliseconds()
+      _stream << level2str(p_level) << m_separator << microseconds()
               << m_separator << std::this_thread::get_id() << m_separator
               << p_class << m_separator << p_line;
       format(_stream, m_separator, p_params...);
@@ -246,11 +260,35 @@ private:
              << p_t;
   }
 
-  uint64_t milliseconds() {
+  uint64_t microseconds() {
     return static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
+  }
+
+  inline const std::string &level2str(level p_level) const {
+    static const std::string _debug("DEB");
+    static const std::string _info("INF");
+    static const std::string _warn("WAR");
+    static const std::string _error("ERR");
+    static const std::string _fatal("FAT");
+    static const std::string _no_log("NO LOG");
+
+    switch (p_level) {
+    case level::debug:
+      return _debug;
+    case level::info:
+      return _info;
+    case level::warn:
+      return _warn;
+    case level::error:
+      return _error;
+    case level::fatal:
+      return _fatal;
+    default:
+      return _no_log;
+    }
   }
 
 private:

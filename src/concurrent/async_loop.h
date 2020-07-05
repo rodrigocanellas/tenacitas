@@ -51,6 +51,9 @@ namespace concurrent {
 /// t_params&... p_params)
 /// static void fatal(const std::string & p_file, int p_line, const
 /// t_params&... p_params)
+///
+/// \tparam t_time is the type of time used for timeout control
+///
 template <typename t_data, typename t_log,
           typename t_time = std::chrono::milliseconds>
 struct async_loop_t {
@@ -149,7 +152,7 @@ struct async_loop_t {
   ///
   /// \return a copy of the function that provides an instance of \p t_data,
   /// if available, to the work function
-  inline provider get_provideer() const { return m_loop.get_provider(); }
+  inline provider get_provider() const { return m_loop.get_provider(); }
 
   /// \brief retrieves the timeout for the Work function
   ///
