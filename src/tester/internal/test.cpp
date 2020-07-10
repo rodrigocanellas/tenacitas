@@ -14,18 +14,18 @@ test::test(int argc, char **argv) : m_argc(argc), m_argv(argv) {
     program::options _options;
 
     _options.parse(m_argc, m_argv);
-    if (_options.get_bool_param("exec")) {
+    if (_options.get_bool_param("exec").first) {
       m_execute_tests = true;
-    } else if (_options.get_bool_param("desc")) {
+    } else if (_options.get_bool_param("desc").first) {
       m_print_desc = true;
     } else {
 
-      std::optional<std::list<program::options::value>> _tests_to_exec =
+      std::pair<bool, std::list<program::options::value>> _tests_to_exec =
           _options.get_set_param("exec");
-      if (_tests_to_exec) {
+      if (_tests_to_exec.first) {
         m_execute_tests = true;
-        m_tests_to_exec.insert(_tests_to_exec.value().begin(),
-                               _tests_to_exec.value().end());
+        m_tests_to_exec.insert(_tests_to_exec.second.begin(),
+                               _tests_to_exec.second.end());
       }
     }
 

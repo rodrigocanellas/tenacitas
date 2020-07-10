@@ -70,8 +70,8 @@ void options::parse(int p_argc, char **p_argv,
   }
 
   for (const name &_name : p_mandatory) {
-    if ((!get_bool_param(_name)) && (!get_single_param(_name)) &&
-        (!get_set_param(_name))) {
+    if ((!get_bool_param(_name).first) && (!get_single_param(_name).first) &&
+        (!get_set_param(_name).first)) {
       throw std::runtime_error("parameter '" + _name +
                                "' should have been defined, but it was not");
     }
@@ -122,16 +122,16 @@ int options::parse_set(name &&p_name, int p_last, char **p_argv, int p_index) {
   return p_index;
 } // namespace program
 
-std::optional<bool> options::get_bool_param(const name &p_name) const {
+std::pair<bool, bool> options::get_bool_param(const name &p_name) const {
   booleans::const_iterator _ite =
       std::find(m_booleans.begin(), m_booleans.end(), p_name);
   if (_ite == m_booleans.end()) {
-    return {};
+    return {false, false};
   }
-  return true;
+  return {true, true};
 }
 
-std::optional<options::value>
+std::pair<bool, options::value>
 options::get_single_param(const name &p_name) const {
   singles::const_iterator _ite =
       std::find_if(m_singles.begin(), m_singles.end(),
@@ -139,12 +139,12 @@ options::get_single_param(const name &p_name) const {
                      return p_single.first == p_name;
                    });
   if (_ite == m_singles.end()) {
-    return {};
+    return {false, value()};
   }
-  return _ite->second;
+  return {true, _ite->second};
 }
 
-std::optional<std::list<options::value>>
+std::pair<bool, std::list<options::value>>
 options::get_set_param(const name &p_name) const {
   sets::const_iterator _ite =
       std::find_if(m_sets.begin(), m_sets.end(),
@@ -152,9 +152,9 @@ options::get_set_param(const name &p_name) const {
                      return p_set.first == p_name;
                    });
   if (_ite == m_sets.end()) {
-    return {};
+    return {false, std::list<options::value>()};
   }
-  return _ite->second;
+  return {true, _ite->second};
 }
 
 std::ostream &operator<<(std::ostream &p_out, const options &p_options) {

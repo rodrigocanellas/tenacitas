@@ -125,11 +125,11 @@ struct options {
   void parse(int p_argc, char **p_argv,
              std::initializer_list<name> &&p_mandatory = {});
 
-  std::optional<bool> get_bool_param(const name &p_name) const;
+  std::pair<bool, bool> get_bool_param(const name &p_name) const;
 
-  std::optional<value> get_single_param(const name &p_name) const;
+  std::pair<bool, value> get_single_param(const name &p_name) const;
 
-  std::optional<std::list<value>> get_set_param(const name &p_name) const;
+  std::pair<bool, std::list<value>> get_set_param(const name &p_name) const;
 
   ///
   /// \brief operator <<
