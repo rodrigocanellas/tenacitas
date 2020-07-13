@@ -1,6 +1,6 @@
 var structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4 =
 [
-    [ "breaker", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#a681c28fe7009aa174e052f868cf18796", null ],
-    [ "provider", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#ababc09cdc1f909678cb6e301f5fdb7dd", null ],
-    [ "worker", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#ac1cdaa9744212643e328acf2d577b841", null ]
+    [ "breaker", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#a59aa23f787e4b486dd141b79f58ab434", null ],
+    [ "provider", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#a5826b520b92ef1d690de4d8e5d77cae8", null ],
+    [ "worker", "structtenacitas_1_1concurrent_1_1traits__t_3_01void_01_4.html#aab404b9d7b873f2f8f0065b304871507", null ]
 ];

@@ -10,39 +10,40 @@ TARGET = tenacitas.calendar.gregorian
 include (../../../common.pri)
 
 HEADERS += \
-  $$code_src_dir/calendar/gregorian/second.h \
-  $$code_src_dir/calendar/gregorian/minute.h \
-  $$code_src_dir/calendar/gregorian/hour.h \
-  $$code_src_dir/calendar/gregorian/day.h \
-  $$code_src_dir/calendar/gregorian/month.h \
-  $$code_src_dir/calendar/gregorian/year.h \
-  $$code_src_dir/calendar/gregorian/weekday.h \
-  $$code_src_dir/calendar/gregorian/week.h \
-  $$code_src_dir/calendar/gregorian/internal/amount.h \
-  $$code_src_dir/calendar/gregorian/internal/convert.h \
-  $$code_src_dir/calendar/gregorian/amounts.h  \
-  $$code_src_dir/calendar/gregorian/timestamp.h \
-  $$code_src_dir/calendar/gregorian/millisecond.h
+  $$code_src_dir/measures/time/second.h \
+  $$code_src_dir/measures/time/minute.h \
+  $$code_src_dir/measures/time/hour.h \
+  $$code_src_dir/measures/time/day.h \
+  $$code_src_dir/measures/time/month.h \
+  $$code_src_dir/measures/time/year.h \
+  $$code_src_dir/measures/time/weekday.h \
+  $$code_src_dir/measures/time/week.h \
+  $$code_src_dir/measures/time/internal/amount.h \
+  $$code_src_dir/measures/time/internal/convert.h \
+  $$code_src_dir/measures/time/time_amounts.h  \
+  $$code_src_dir/calendar/timestamp.h \
+  $$code_src_dir/measures/time/millisecond.h
 
 
-#  $$code_src_dir/calendar/gregorian/add.h \
-#  $$code_src_dir/calendar/gregorian/create_sequence.h \
-#  $$code_src_dir/calendar/gregorian/daily_repetition.h \
-#  $$code_src_dir/calendar/gregorian/ending_after.h \
-#  $$code_src_dir/calendar/gregorian/ending_never.h \
-#  $$code_src_dir/calendar/gregorian/ending_on.h \
-#  $$code_src_dir/calendar/gregorian/monthly_repetition.h \
-#  $$code_src_dir/calendar/gregorian/weekly_repetition.h \
-#  $$code_src_dir/calendar/gregorian/yearly_repetition.h \
+#  $$code_src_dir/measures/time/add.h \
+#  $$code_src_dir/measures/time/create_sequence.h \
+#  $$code_src_dir/measures/time/daily_repetition.h \
+#  $$code_src_dir/measures/time/ending_after.h \
+#  $$code_src_dir/measures/time/ending_never.h \
+#  $$code_src_dir/measures/time/ending_on.h \
+#  $$code_src_dir/measures/time/monthly_repetition.h \
+#  $$code_src_dir/measures/time/weekly_repetition.h \
+#  $$code_src_dir/measures/time/yearly_repetition.h \
 
 
 
 SOURCES += \
-  $$code_src_dir/calendar/gregorian/internal/second.cpp \
-  $$code_src_dir/calendar/gregorian/internal/minute.cpp \
-  $$code_src_dir/calendar/gregorian/internal/hour.cpp \
-  $$code_src_dir/calendar/gregorian/internal/day.cpp \
-  $$code_src_dir/calendar/gregorian/internal/month.cpp \
-  $$code_src_dir/calendar/gregorian/internal/weekday.cpp \
-  $$code_src_dir/calendar/gregorian/internal/timestamp.cpp
+  $$code_src_dir/measures/time/internal/second.cpp \
+  $$code_src_dir/measures/time/internal/minute.cpp \
+  $$code_src_dir/measures/time/internal/hour.cpp \
+  $$code_src_dir/measures/time/internal/day.cpp \
+  $$code_src_dir/measures/time/internal/month.cpp \
+  $$code_src_dir/measures/time/internal/weekday.cpp \
+  $$code_src_dir/measures/time/internal/timestamp.cpp
 
+LIBS += $$libs_dir/libtenacitas.measures.time.$$static_lib_ext

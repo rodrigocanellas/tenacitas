@@ -1,12 +1,11 @@
 var indexSectionsWithContent =
 {
-  0: "_acdghijmnostvy",
-  1: "adhmsty",
+  0: "cgnot",
+  1: "t",
   2: "t",
-  3: "adghimnostvy",
-  4: "_j",
-  5: "o",
-  6: "c"
+  3: "gnot",
+  4: "o",
+  5: "c"
 };
 
 var indexSectionNames =
@@ -15,9 +14,8 @@ var indexSectionNames =
   1: "classes",
   2: "namespaces",
   3: "functions",
-  4: "variables",
-  5: "related",
-  6: "pages"
+  4: "related",
+  5: "pages"
 };
 
 var indexSectionLabels =
@@ -26,8 +24,7 @@ var indexSectionLabels =
   1: "Classes",
   2: "Namespaces",
   3: "Functions",
-  4: "Variables",
-  5: "Friends",
-  6: "Pages"
+  4: "Friends",
+  5: "Pages"
 };
 

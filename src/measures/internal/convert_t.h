@@ -6,7 +6,9 @@
 namespace tenacitas {
 namespace measures {
 
+
 template <typename t_from, typename t_to> t_to convert(t_from p_from);
+
 
 } // namespace measures
 } // namespace tenacitas

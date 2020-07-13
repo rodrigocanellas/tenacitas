@@ -5,14 +5,14 @@
 #include <stdexcept>
 #include <string>
 
-#include <measures/second.h>
+#include <measures/time/second.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
 struct second_test {
   bool operator()() {
-    using namespace tenacitas::measures;
+    using namespace tenacitas::measures::time;
 
     {
       std::stringstream _stream;

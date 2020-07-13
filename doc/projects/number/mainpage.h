@@ -9,5 +9,5 @@
  * <br>
  * <br>
  * <br>
- * <a href="../../SUMMARY/html/index.html">main page</a>
+ * <a href="../../html/index.html">main page</a>
  */

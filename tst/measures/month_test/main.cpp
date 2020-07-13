@@ -4,14 +4,14 @@
 #include <sstream>
 #include <string>
 
-#include <measures/month.h>
+#include <measures/time/month.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
 struct month_test {
   bool operator()() {
-    using namespace tenacitas::measures;
+    using namespace tenacitas::measures::time;
 
     {
       std::stringstream _stream;

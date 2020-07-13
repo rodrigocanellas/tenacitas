@@ -1,7 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  calendar.headers \
+  dep \
   calendar.gregorian \
   tst
 

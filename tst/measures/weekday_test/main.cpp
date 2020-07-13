@@ -3,15 +3,15 @@
 #include <sstream>
 #include <string>
 
-//#include <measures/days.h>
-#include <measures/weekday.h>
+//#include <measures/time/days.h>
+#include <measures/time/weekday.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
 struct weekday_test {
   bool operator()() {
-    using namespace tenacitas::measures;
+    using namespace tenacitas::measures::time;
     {
       weekday _w = {weekday::fri};
       std::stringstream _stream;

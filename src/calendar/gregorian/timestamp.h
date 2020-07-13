@@ -16,14 +16,14 @@
 #include <iostream>
 #include <tuple>
 
-#include <calendar/gregorian/amounts.h>
-#include <calendar/gregorian/day.h>
-#include <calendar/gregorian/hour.h>
-#include <calendar/gregorian/minute.h>
-#include <calendar/gregorian/month.h>
-#include <calendar/gregorian/second.h>
-#include <calendar/gregorian/weekday.h>
-#include <calendar/gregorian/year.h>
+#include <measures/time/amounts.h>
+#include <measures/time/day.h>
+#include <measures/time/hour.h>
+#include <measures/time/minute.h>
+#include <measures/time/month.h>
+#include <measures/time/second.h>
+#include <measures/time/weekday.h>
+#include <measures/time/year.h>
 
 namespace tenacitas {
 namespace calendar {
@@ -48,8 +48,8 @@ struct timestamp {
   /// \param p_minute
   /// \param p_second
   ///
-  timestamp(year p_year, month p_month, day p_day, hour p_hour = hour::_00,
-            minute p_minute = minute::_00, second p_second = second::_00);
+  timestamp(measures::time::year p_year, measures::time::month p_month, measures::time::day p_day, measures::time::hour p_hour = measures::time::hour::_00,
+            measures::time::minute p_minute = measures::time::minute::_00, measures::time::second p_second = measures::time::second::_00);
   ///
   /// \brief timestamp copy constructor
   /// \param p_timestamp timestamp to be copied
@@ -96,43 +96,43 @@ struct timestamp {
   /// \brief get_second
   /// \return
   ///
-  second get_second();
+  measures::time::second get_second();
 
   ///
   /// \brief get_minute
   /// \return
   ///
-  minute get_minute();
+  measures::time::minute get_minute();
 
   ///
   /// \brief get_hour
   /// \return
   ///
-  hour get_hour();
+  measures::time::hour get_hour();
 
   ///
   /// \brief get_day
   /// \return
   ///
-  day get_day();
+  measures::time::day get_day();
 
   ///
   /// \brief get_weekday
   /// \return
   ///
-  weekday get_weekday();
+  measures::time::weekday get_weekday();
 
   ///
   /// \brief get_month
   /// \return
   ///
-  month get_month();
+  measures::time::month get_month();
 
   ///
   /// \brief get_year
   /// \return
   ///
-  year get_year();
+  measures::time::year get_year();
 
   ///
   /// \brief now
@@ -253,66 +253,66 @@ struct timestamp {
 
 private:
   template <typename t_amount> void add(timestamp *p_ts, t_amount p_amount) {
-    days _days_1(p_amount);
+    measures::time::days _days_1(p_amount);
     auto _int = _days_1.integer();
     auto _dec = _days_1.decimal();
 
-    seconds _secs_in_day((days(_dec)));
+    measures::time::seconds _secs_in_day((measures::time::days(_dec)));
 
-    seconds _secs(p_ts->m_secs + _secs_in_day);
+    measures::time::seconds _secs(p_ts->m_secs + _secs_in_day);
 
-    if (days(_secs) > days(1)) {
-      p_ts->m_days += days(_int + 1);
-      p_ts->m_secs = _secs - seconds(days(1));
+    if (measures::time::days(_secs) > measures::time::days(1)) {
+      p_ts->m_days += measures::time::days(_int + 1);
+      p_ts->m_secs = _secs - measures::time::seconds(measures::time::days(1));
     } else {
-      p_ts->m_days += days(_int);
+      p_ts->m_days += measures::time::days(_int);
       p_ts->m_secs += _secs_in_day.integer();
     }
   }
 
   template <typename t_amount>
   void substract(timestamp *p_ts, t_amount p_amount) {
-    days _days_1(p_amount);
+    measures::time::days _days_1(p_amount);
     auto _int = _days_1.integer();
     auto _dec = _days_1.decimal();
 
-    seconds _secs_in_day((days(_dec)));
+    measures::time::seconds _secs_in_day((measures::time::days(_dec)));
 
-    seconds _secs(p_ts->m_secs - _secs_in_day);
+    measures::time::seconds _secs(p_ts->m_secs - _secs_in_day);
 
-    if (days(_secs) < 0) {
-      p_ts->m_days -= days(_int + 1);
-      p_ts->m_secs = seconds(days(1)) + _secs;
+    if ( measures::time::days(_secs) < measures::time::days(0)) {
+      p_ts->m_days -= measures::time::days(_int + 1);
+      p_ts->m_secs = measures::time::seconds(measures::time::days(1)) + _secs;
     } else {
-      p_ts->m_days -= days(_int);
-      p_ts->m_secs += _secs_in_day.integer();
+      p_ts->m_days -= measures::time::days(_int);
+      p_ts->m_secs -= _secs_in_day.integer();
     }
   }
 
-  constexpr void dMyhms2days_secs(year p_year, month p_month, day p_day,
-                                  hour p_hour, minute p_minute,
-                                  second p_second);
+   void dMyhms2days_secs(measures::time::year p_year, measures::time::month p_month, measures::time::day p_day,
+                                  measures::time::hour p_hour, measures::time::minute p_minute,
+                                  measures::time::second p_second);
 
-  constexpr void days_secs2dMywhms();
+   void days_secs2dMywhms();
 
 private:
   /// \brief amount of days since epoch
-  days m_days = {0};
+  measures::time::days m_days = {0};
 
   /// \brief amount of seconds in the day
-  seconds m_secs = {0};
+  measures::time::seconds m_secs = {0};
 
   /// \brief indicates that the parts of the timestamp - m_year, m_month, m_day,
   /// m_hour, m_minute, m_second, m_weekday - need to be updated
   bool m_needs_update = {true};
 
-  year m_year = year(1970);
-  month m_month = month::jan;
-  day m_day = day::_01;
-  hour m_hour = hour::_00;
-  minute m_minute = minute::_00;
-  second m_second = second::_00;
-  weekday m_weekday = weekday::thu;
+  measures::time::year m_year = measures::time::year(1970);
+  measures::time::month m_month = measures::time::month::jan;
+  measures::time::day m_day = measures::time::day::_01;
+  measures::time::hour m_hour = measures::time::hour::_00;
+  measures::time::minute m_minute = measures::time::minute::_00;
+  measures::time::second m_second = measures::time::second::_00;
+  measures::time::weekday m_weekday = measures::time::weekday::thu;
 };
 
 } // namespace gregorian

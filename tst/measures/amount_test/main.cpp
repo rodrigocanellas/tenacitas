@@ -4,14 +4,14 @@
 #include <iostream>
 #include <string>
 
-#include <measures/day.h>
+#include <measures/time/day.h>
 #include <measures/internal/convert_t.h>
-#include <measures/month.h>
-#include <measures/time_amounts.h>
-#include <measures/year.h>
+#include <measures/time/month.h>
+#include <measures/time/amounts.h>
+#include <measures/time/year.h>
 #include <tester/test.h>
 
-using namespace tenacitas::measures;
+using namespace tenacitas::measures::time;
 using namespace std;
 
 struct seconds_test {

@@ -15,11 +15,11 @@ test_dir=$$products_dir/tst
 example_dir=$$products_dir/example
 
 unix {
-    tmp_dir=~/tenacitas_tmp/qtcreator/$$TARGET
+    tmp_dir=~/tenacitas/tmp/qtcreator/$$TARGET
 }
 
 win32 {
-    tmp_dir=$$TMP/tenacitas_tmp/qtcreator/$$TARGET
+    tmp_dir=$$TMP/tenacitas/tmp/qtcreator/$$TARGET
 }
 
 OUT_PWD = $${tmp_dir}
@@ -60,7 +60,15 @@ unix {
 }
 
 win32 {
-    static_lib_ext=lib
+    equals(QMAKE_CXX,mingw) {
+        static_lib_ext=a
+    }
+    equals(QMAKE_CXX,g++) {
+        static_lib_ext=a
+    }
+    equals(QMAKE_CXX,msvc) {
+        static_lib_ext=lib
+    }
 }
 
 INCLUDEPATH += $$code_src_dir

@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['writer',['writer',['../classtenacitas_1_1logger_1_1log__t.html#a91186a03ed2a16e026613a68f6a2ba50',1,'tenacitas::logger::log_t']]]
+  ['file_11',['file',['../namespacetenacitas_1_1logger_1_1file.html',1,'tenacitas::logger']]],
+  ['logger_12',['logger',['../namespacetenacitas_1_1logger.html',1,'tenacitas']]],
+  ['tenacitas_13',['tenacitas',['../namespacetenacitas.html',1,'']]]
 ];

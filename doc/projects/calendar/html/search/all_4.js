@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['get_5fday',['get_day',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a3d90753dd38bc1d16468aac784b38846',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fhour',['get_hour',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#ac7cfc9ad802e82fdc8255d1063400ade',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fminute',['get_minute',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a8607cde46b19206f04f94420898c8f29',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fmonth',['get_month',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#afe0df3da4331dbd2ec801f8e84373de6',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fsecond',['get_second',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a085f58b98f4023a2f96c7ba4fc35a1c0',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fweekday',['get_weekday',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a651dc144c94238af515159991dd3d753',1,'tenacitas::calendar::gregorian::timestamp']]],
-  ['get_5fyear',['get_year',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#afcfeb465072c37675418d0beffce01af',1,'tenacitas::calendar::gregorian::timestamp']]]
+  ['tenacitas_21',['tenacitas',['../namespacetenacitas.html',1,'']]],
+  ['timestamp_22',['timestamp',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html',1,'tenacitas::calendar::gregorian::timestamp'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a141538f8213fd7c2ef01b2ec09b9864a',1,'tenacitas::calendar::gregorian::timestamp::timestamp()=default'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a1162f3890ff7dc6d7aa8b58de42a7fce',1,'tenacitas::calendar::gregorian::timestamp::timestamp(measures::time::year p_year, measures::time::month p_month, measures::time::day p_day, measures::time::hour p_hour=measures::time::hour::_00, measures::time::minute p_minute=measures::time::minute::_00, measures::time::second p_second=measures::time::second::_00)'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a0d7b2899a43c53545fe33c1f837b0e30',1,'tenacitas::calendar::gregorian::timestamp::timestamp(const timestamp &amp;p_timestamp)'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a25262dc93906df9c0b224f4dbd24f08c',1,'tenacitas::calendar::gregorian::timestamp::timestamp(timestamp &amp;&amp;p_timestamp)']]]
 ];

@@ -1,0 +1,10 @@
+digraph "tenacitas::concurrent::loop_t::get_timeout"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="tenacitas::concurrent\l::loop_t::get_timeout",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="retrieves the timeout for the Work function"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="tenacitas::concurrent\l::async_loop_t\< t_data,\l t_log, std::chrono::milliseconds\l \>::get_timeout",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1concurrent_1_1async__loop__t.html#a12867730ce3bbdd5b3b4a420c244d174",tooltip="retrieves the timeout for the Work function"];
+}

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['publish',['publish',['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#aee9aa0f5706fb3b75c72bb34438ea911',1,'tenacitas::concurrent::dispatcher_t::publish(const t_msg &amp;p_msg)'],['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a4a70527b6937813e5c0f9ab78dfd6217',1,'tenacitas::concurrent::dispatcher_t::publish(t_params... p_params)']]]
+  ['publish_76',['publish',['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a2b6bfb0dbd51cfe40d2edafc8a5546f3',1,'tenacitas::concurrent::dispatcher_t::publish(const t_msg &amp;p_msg)'],['../classtenacitas_1_1concurrent_1_1dispatcher__t.html#a4e0c1d721679a41d105cbcacf840158d',1,'tenacitas::concurrent::dispatcher_t::publish(t_params... p_params)']]]
 ];

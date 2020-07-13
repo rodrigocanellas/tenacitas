@@ -1,20 +1,21 @@
 /*! \mainpage 
  *
  * \section projects Projects
+ *
+ * <a href="../../projects/measures/html/index.html">measures</a> 
  *  
- * <a href="../../calendar/html/index.html">calendar</a>
+ * <a href="../../projects/calendar/html/index.html">calendar</a>
  * 
- * <a href="../../concurrent/html/index.html">concurrent</a>
+ * <a href="../../projects/concurrent/html/index.html">concurrent</a>
  *
- * <a href="../../logger/html/index.html">logger</a>
+ * <a href="../../projects/logger/html/index.html">logger</a>
  *
- * <a href="../../number/html/index.html">number</a>
+ * <a href="../../projects/number/html/index.html">number</a>
  * 
- * <a href="../../program/html/index.html">program</a>
+ * <a href="../../projects/program/html/index.html">program</a>
  *
- * <a href="../../tester/html/index.html">tester</a>
+ * <a href="../../projects/tester/html/index.html">tester</a>
  *
- * <a href="../../network/html/index.html">network</a>
  *
  *
  * \section build_structure Build Structure

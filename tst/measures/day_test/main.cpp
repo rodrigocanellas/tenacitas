@@ -3,14 +3,14 @@
 #include <iostream>
 #include <string>
 
-#include <measures/day.h>
+#include <measures/time/day.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
 struct day_test {
   bool operator()() {
-    using namespace tenacitas::measures;
+    using namespace tenacitas::measures::time;
 
     {
       std::stringstream _stream;
@@ -68,7 +68,7 @@ struct day_test {
       if (_day != day::_21) {
         return false;
       }
-      std::cerr << "day from variable = " << _day << std::endl;
+      std::cerr << "day from number " << _value << " = " << _day << std::endl;
     }
 
     {

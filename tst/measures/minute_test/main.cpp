@@ -3,14 +3,14 @@
 #include <iostream>
 #include <string>
 
-#include <measures/minute.h>
+#include <measures/time/minute.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
 struct minute_test {
   bool operator()() {
-    using namespace tenacitas::measures;
+    using namespace tenacitas::measures::time;
 
     {
       std::stringstream _stream;

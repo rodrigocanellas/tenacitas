@@ -1,0 +1,24 @@
+digraph "tenacitas::measures::amount_t::value"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="tenacitas::measures\l::amount_t::value",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="tenacitas::measures\l::time::day::day",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1day.html#ab87cfe9ad0390655e8ab83b512e0f45a",tooltip="day constructor from a amount_t<day>, i.e., days"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="tenacitas::measures\l::time::millisecond\l::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1millisecond.html#a02fb8a0e11b8510a73915fe36808d4d7",tooltip="millisecond assignment from a amount_t<millisecond>, i.e., milliseconds"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="tenacitas::measures\l::time::year::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1year.html#ac4bd40268eb5e073ab6e7504e061da4f",tooltip="year assignment from a amount_t<year>, i.e., years"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="tenacitas::measures\l::time::month::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1month.html#a765e38c53170ee895657bea7608edc72",tooltip="month assignment from a amount_t<month>, i.e., months"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="tenacitas::measures\l::time::hour::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1hour.html#a606ae7b9e018ac233cda0a774a7cc9a1",tooltip="hour assignment from a amount_t<hour>, i.e., hours"];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="tenacitas::measures\l::time::day::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1day.html#a19a75c2dc34ad536079e2bcfaf801cea",tooltip="day assignment from a amount_t<day>, i.e., days"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="tenacitas::measures\l::time::minute::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1minute.html#a8a8d2491ab9b30bbc223d68baa798533",tooltip="minute assignment from a amount_t<minute>, i.e., minutes"];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="tenacitas::measures\l::time::second::operator=",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structtenacitas_1_1measures_1_1time_1_1second.html#ad88db6a2ba1f3f79627e3b6b2095f240",tooltip="second assignment from a amount_t<second>, i.e., seconds"];
+}

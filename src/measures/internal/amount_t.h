@@ -10,7 +10,6 @@
 namespace tenacitas {
 namespace measures {
 
-///
 /// \brief Amount of a certain measurement unit, line <tt>amount_t<days></tt>
 ///
 /// \tparam t_unit is the  measurement unit
@@ -36,6 +35,7 @@ template <typename t_unit, typename t_value = double> struct amount_t {
   inline amount_t(const float &p_value) : m_value(p_value) {}
   inline amount_t(double &&p_value) : m_value(std::move(p_value)) {}
   inline amount_t(const double &p_value) : m_value(p_value) {}
+
   amount_t(const amount_t &) = default;
   amount_t(amount_t &&) = default;
   amount_t &operator=(const amount_t &) = default;
@@ -51,7 +51,7 @@ template <typename t_unit, typename t_value = double> struct amount_t {
   inline amount_t(t_other_amount p_amount)
       : amount_t(convert<t_other_amount, amount_t>(p_amount)) {}
 
-  inline amount_t(t_unit p_unit) : m_value(p_unit.value()) {}
+  inline amount_t(t_unit p_unit) : m_value(p_unit.template value<decltype (m_value)>()) {}
 
   friend std::ostream &operator<<(std::ostream &p_out, const amount_t &p_mm) {
     p_out << p_mm.m_value;
@@ -128,7 +128,7 @@ template <typename t_unit, typename t_value = double> struct amount_t {
   }
 
   /// \return the raw value of the amount
-  inline double value() const { return m_value; }
+  t_value value() const { return m_value; }
 
   inline int64_t integer() const { return static_cast<int64_t>(m_value); }
 
@@ -136,10 +136,13 @@ template <typename t_unit, typename t_value = double> struct amount_t {
     return m_value - static_cast<int64_t>(m_value);
   }
 
+
+
 private:
   /// \brief the raw value of the amount
   t_value m_value = {0};
 };
+
 
 } // namespace measures
 } // namespace tenacitas

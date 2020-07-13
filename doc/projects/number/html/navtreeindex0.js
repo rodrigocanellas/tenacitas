@@ -1,8 +1,8 @@
 var NAVTREEINDEX0 =
 {
-"_2home_2rodrigo_2github_2tenacitas_2tst_2number_2int16_align_right_fill_with_zero_2main_8cpp-example.html":[2,0],
-"_2home_2rodrigo_2github_2tenacitas_2tst_2number_2uint32_align_left_filled_with_a_2main_8cpp-example.html":[2,1],
-"_2home_2rodrigo_2github_2tenacitas_2tst_2number_2uint8_align_right_fill_with_space_2main_8cpp-example.html":[2,2],
+"_d_1_2tenacitas_2tst_2number_2int16_align_right_fill_with_zero_2main_8cpp-example.html":[2,0],
+"_d_1_2tenacitas_2tst_2number_2uint32_align_left_filled_with_a_2main_8cpp-example.html":[2,1],
+"_d_1_2tenacitas_2tst_2number_2uint8_align_right_fill_with_space_2main_8cpp-example.html":[2,2],
 "dir_0cf7a7526f61e801786eac8c481340c3.html":[1,0,1,0,1],
 "dir_214e05fbd1d8364f4ac25951d3e638ce.html":[1,0,1,0,0],
 "dir_3c8865be51df0c7b8252ff62073306b5.html":[1,0,1,0],
