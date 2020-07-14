@@ -5,7 +5,8 @@ SUBDIRS = \
     sleeping_loop \
     thread_pool \
     dispatcher \
-    performance
+    performance \
+    writer
 
 TEMPLATE = subdirs
 

@@ -1,0 +1,47 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+namespace remote {
+  
+  class caller
+  class  handler
+  class device
+  class call
+  class receive
+  class connection
+  class message
+  class channel
+  class communication
+  class conversation
+  class notification
+  class switchboard
+  class address
+
+  communication <|-left- conversation
+  communication <|-- notification
+
+  device <|-- call
+  device <|-- receive
+
+  caller -up-> "uses" call
+  caller --> "defines" communication
+  caller --> "has" address
+
+  handler --> "uses" receive
+  handler --> "understands" communication
+   
+  device -up-> "establishes" connection
+  device -up->  "chooses" channel
+  device -right-> "sends" message
+  
+  switchboard --> "has" address
+  switchboard --> "provides" handler
+  
+  
+  
+
+}
+
+@enduml

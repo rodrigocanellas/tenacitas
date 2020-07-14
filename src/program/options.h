@@ -36,7 +36,8 @@ struct options {
   /// \param p_argv vector of strings with the options
   /// \param p_mandatory set of options that are mandatory
   ///
-  /// \details an option must be preceded with '--', like '--file-name abc.txt'.
+  /// \details an option must be preceded with '--', like '--file-name
+  ///  abc.txt'.
   /// There are 3 types of parameter:
   /// \p boolean, where the parameter has no value, like '--print-log'
   ///

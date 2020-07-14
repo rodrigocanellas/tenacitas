@@ -5,86 +5,88 @@
 #include <string>
 
 #include <calendar/gregorian/timestamp.h>
-#include <tester/test.h>
 #include <measures/time/amounts.h>
-#include <measures/time/millisecond.h>
-#include <measures/time/second.h>
-#include <measures/time/minute.h>
-#include <measures/time/hour.h>
 #include <measures/time/day.h>
-#include <measures/time/week.h>
+#include <measures/time/hour.h>
+#include <measures/time/millisecond.h>
+#include <measures/time/minute.h>
 #include <measures/time/month.h>
+#include <measures/time/second.h>
+#include <measures/time/week.h>
 #include <measures/time/year.h>
-
+#include <tester/test.h>
 
 using namespace std;
 
 struct timestamp_now {
-    bool operator()() {
-        using namespace tenacitas::calendar::gregorian;
-        using namespace tenacitas::measures::time;
+  bool operator()()
+  {
+    using namespace tenacitas::calendar::gregorian;
+    using namespace tenacitas::measures::time;
 
+    time_t _time = time(nullptr);
+    timestamp _timestamp = timestamp::now();
+    struct tm* _tm = gmtime(&_time);
 
-        time_t _time = time(nullptr);
-        timestamp _timestamp = timestamp::now();
-        struct tm *_tm = gmtime(&_time);
+    if ((_tm->tm_year + 1900) !=
+        (_timestamp.get_year().value<decltype(_tm->tm_year)>())) {
+      cerr << "year should be " << _tm->tm_year + 1900 << ", but it is "
+           << _timestamp.get_year() << endl;
+      return false;
 
-        if ((_tm->tm_year + 1900) != (_timestamp.get_year().value<decltype (_tm->tm_year)>())) {
-            cerr << "year should be " << _tm->tm_year + 1900 << ", but it is "
-                 << _timestamp.get_year() << endl;
-            return false;
-
-            cerr << "timestamp = " << _timestamp << endl;
-        }
-        cerr << "year = " << _timestamp.get_year() << endl;
-
-        if ((_tm->tm_mon + 1) != (_timestamp.get_month().value<decltype (_tm->tm_mon)>())) {
-            cerr << "month should be " << (_tm->tm_mon + 1) << ", but it is "
-                 << _timestamp.get_month() << endl;
-            return false;
-        }
-        cerr << "month = " << _timestamp.get_month() << endl;
-
-        if (_tm->tm_mday != _timestamp.get_day().value<decltype (_tm->tm_mday)>()) {
-            cerr << "day should be " << _tm->tm_mday << ", but it is "
-                 << _timestamp.get_day() << endl;
-            return false;
-        }
-        cerr << "day = " << _timestamp.get_day() << endl;
-
-        if (_tm->tm_hour != _timestamp.get_hour().value<decltype (_tm->tm_hour)>()) {
-            cerr << "hour should be " << _tm->tm_hour << ", but it is"
-                 << _timestamp.get_hour() << endl;
-            return false;
-        }
-        cerr << "hour = " << _timestamp.get_hour() << endl;
-
-        if (_tm->tm_min != _timestamp.get_minute().value<decltype (_tm->tm_min)>()) {
-            cerr << "minute should be " << _tm->tm_min << ", but it is "
-                 << _timestamp.get_minute() << endl;
-            return false;
-        }
-        cerr << "minute = " << _timestamp.get_minute() << endl;
-
-        if (_tm->tm_sec != _timestamp.get_second().value<decltype (_tm->tm_sec)>()) {
-            cerr << "second should be " << _tm->tm_sec << ", but it is "
-                 << _timestamp.get_second() << endl;
-            return false;
-        }
-        cerr << "second = " << _timestamp.get_second() << endl;
-
-        if ((_tm->tm_wday + 1) != _timestamp.get_weekday().value<decltype (_tm->tm_wday)>()) {
-            cerr << "weekday should be " << (_tm->tm_wday + 1) << ", but it is "
-                 << _timestamp.get_weekday() << endl;
-            return false;
-        }
-
-        cerr << "weekday = " << _timestamp.get_weekday() << endl;
-
-        cerr << "timestamp = " << _timestamp << endl;
-
-        return true;
+      cerr << "timestamp = " << _timestamp << endl;
     }
+    cerr << "year = " << _timestamp.get_year() << endl;
+
+    if ((_tm->tm_mon + 1) !=
+        (_timestamp.get_month().value<decltype(_tm->tm_mon)>())) {
+      cerr << "month should be " << (_tm->tm_mon + 1) << ", but it is "
+           << _timestamp.get_month() << endl;
+      return false;
+    }
+    cerr << "month = " << _timestamp.get_month() << endl;
+
+    if (_tm->tm_mday != _timestamp.get_day().value<decltype(_tm->tm_mday)>()) {
+      cerr << "day should be " << _tm->tm_mday << ", but it is "
+           << _timestamp.get_day() << endl;
+      return false;
+    }
+    cerr << "day = " << _timestamp.get_day() << endl;
+
+    if (_tm->tm_hour != _timestamp.get_hour().value<decltype(_tm->tm_hour)>()) {
+      cerr << "hour should be " << _tm->tm_hour << ", but it is"
+           << _timestamp.get_hour() << endl;
+      return false;
+    }
+    cerr << "hour = " << _timestamp.get_hour() << endl;
+
+    if (_tm->tm_min != _timestamp.get_minute().value<decltype(_tm->tm_min)>()) {
+      cerr << "minute should be " << _tm->tm_min << ", but it is "
+           << _timestamp.get_minute() << endl;
+      return false;
+    }
+    cerr << "minute = " << _timestamp.get_minute() << endl;
+
+    if (_tm->tm_sec != _timestamp.get_second().value<decltype(_tm->tm_sec)>()) {
+      cerr << "second should be " << _tm->tm_sec << ", but it is "
+           << _timestamp.get_second() << endl;
+      return false;
+    }
+    cerr << "second = " << _timestamp.get_second() << endl;
+
+    if ((_tm->tm_wday + 1) !=
+        _timestamp.get_weekday().value<decltype(_tm->tm_wday)>()) {
+      cerr << "weekday should be " << (_tm->tm_wday + 1) << ", but it is "
+           << _timestamp.get_weekday() << endl;
+      return false;
+    }
+
+    cerr << "weekday = " << _timestamp.get_weekday() << endl;
+
+    cerr << "timestamp = " << _timestamp << endl;
+
+    return true;
+  }
 
     static std::string desc() { return "Creates a 'timestamp' for now"; }
 };

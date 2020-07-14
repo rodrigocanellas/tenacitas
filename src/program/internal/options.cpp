@@ -162,15 +162,17 @@ std::ostream &operator<<(std::ostream &p_out, const options &p_options) {
     p_out << "[" << _boolean << "] ";
   }
 
-  for (const std::pair<options::name, options::value> &_single :
-       p_options.m_singles) {
-    p_out << "[" << _single.first << "," << _single.second << "] ";
+  for (options::singles ::const_iterator _ite = p_options.m_singles.begin();
+       _ite != p_options.m_singles.end();
+       ++_ite) {
+    p_out << "[" << _ite->first << "," << _ite->second << "] ";
   }
 
-  for (const std::pair<options::name, options::values> &_set :
-       p_options.m_sets) {
-    p_out << "[" << _set.first << " { ";
-    for (const options::value &_value : _set.second) {
+  for (options::sets::const_iterator _ite = p_options.m_sets.begin();
+       _ite != p_options.m_sets.end();
+       ++_ite) {
+    p_out << "[" << _ite->first << " { ";
+    for (const options::value& _value : _ite->second) {
       p_out << _value << " ";
     }
     p_out << "} ]";
