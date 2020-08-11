@@ -22,7 +22,7 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief client_t is a client for remote communication
+/// \brief reader_t reads from a communication stream
 ///
 /// \tparam t_logger must provide
 /// \code
@@ -44,7 +44,7 @@ namespace concurrent {
 ///
 /// \endcode
 ///
-/// \tparam t_buffer_size is the size of the buffer to send and receive
+/// \tparam t_buffer_size is the size of the buffer to read messages
 /// messages
 template<typename t_logger, std::size_t t_buffer_size = 8 * 1024>
 struct reader

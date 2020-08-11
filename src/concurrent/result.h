@@ -32,7 +32,9 @@ static const status::result stopped_by_worker{project, 6};
 
 static const status::result stopped_by_user{project, 7};
 
-static const status::result error_writing{ project, 8 };
+static const status::result error_writing{project, 8};
+
+static const status::result error_reading{project, 9};
 
 } // namespace concurrent
 } // namespace tenacitas

@@ -39,9 +39,7 @@ namespace concurrent {
 /// static void fatal(const char *, int, params...)
 ///
 /// \endcode
-template<typename t_logger>
-struct writer_t
-{
+template <typename t_logger> struct writer_t {
 
   /// \brief alias for \p logger_t
   typedef t_logger logger;
@@ -61,15 +59,13 @@ struct writer_t
   /// \param p_size is the size of the buffer to be written
   ///
   /// \return status::ok on success, any other value on failure
-  template<typename t_stream>
-  status::result write_block(t_stream p_stream,
-                             const char* p_data,
-                             size_t p_size) noexcept
-  {
+  template <typename t_stream>
+  status::result write_block(t_stream &p_stream, const char *p_data,
+                             size_t p_size) noexcept {
     try {
       return p_stream(p_data, p_size);
-    } catch (const std::exception& _ex) {
-      concurrent_log_error(logger, "error '", _ex.what(), "' while sending");
+    } catch (const std::exception &_ex) {
+      concurrent_log_error(logger, "error '", _ex.what(), "' while writing");
       return concurrent::error_writing;
     }
   }
