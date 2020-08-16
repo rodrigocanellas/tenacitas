@@ -51,7 +51,7 @@ template <typename t_msg, typename t_log,
 class dispatcher_t {
 public:
   /// \brief worker type
-  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::worker in concurrent/traits.h
   typedef typename traits_t<t_msg>::worker worker;
 
   /// \brief queue name of a queue of messages

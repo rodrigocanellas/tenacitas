@@ -6,7 +6,8 @@ SUBDIRS = \
     thread_pool \
     dispatcher \
     performance \
-    writer
+    writer \
+    queue
 
 TEMPLATE = subdirs
 

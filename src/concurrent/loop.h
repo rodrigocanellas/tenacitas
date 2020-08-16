@@ -54,15 +54,15 @@ template <typename t_data, typename t_log,
 struct loop_t {
 
   /// \brief worker type
-  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::worker in concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
 
   /// \brief provider type
-  /// \sa traits_t<t_data>::provider in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::provider in concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief breaker type
-  /// \sa traits_t<t_data>::breaker in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::breaker in concurrent/traits.h
   typedef typename traits_t<t_data>::breaker breaker;
 
   /// \brief log alias for @p t_log

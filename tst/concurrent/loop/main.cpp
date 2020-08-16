@@ -18,7 +18,7 @@ typedef tenacitas::logger::cerr::log log;
 typedef tenacitas::concurrent::loop_t<void, log> loop;
 typedef tenacitas::status::result result;
 
-struct loop_000 {
+struct queue_000 {
 
   struct xpto {
 
@@ -199,7 +199,7 @@ struct loop_003 {
 int main(int argc, char **argv) {
   log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, loop_000);
+  run_test(_test, queue_000);
   run_test(_test, loop_001);
   run_test(_test, loop_002);
   run_test(_test, loop_003);

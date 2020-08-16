@@ -33,7 +33,7 @@ namespace concurrent {
 /// producer/consumer pattern
 ///
 /// \tparam t_data is the type of data inserted into the pool, so that
-/// registered work functions can "fight"among each other to get the data to
+/// registered work functions can "fight" among each other to get the data to
 /// process it.
 ///
 /// \param t_data is the type of the data to be handled. If it is not \p void,
@@ -60,7 +60,7 @@ template <typename t_data, typename t_log,
 class thread_pool_t {
 public:
   /// \brief worker type
-  /// \sa traits_t<t_data>::worker in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::worker in concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
 
   /// \brief log alias for @p t_log
@@ -152,12 +152,12 @@ public:
       // build the work function collection, moving the work function from
       // the right side, and reseting the provide and break function
       for (async_loop &_loop_right : p_pool.m_loops) {
-        async_loop _loop(std::move(_loop_right.get_work()),
-                         _loop_right.get_timeout(),
-                         [this]() -> bool { return this->stop_condition(); },
-                         [this]() -> std::pair<status::result, t_data> {
-                           return this->data();
-                         });
+        async_loop _loop(
+            std::move(_loop_right.get_work()), _loop_right.get_timeout(),
+            [this]() -> bool { return this->stop_condition(); },
+            [this]() -> std::pair<status::result, t_data> {
+              return this->data();
+            });
 
         add_work(std::move(_loop));
       }
@@ -255,7 +255,7 @@ public:
 
 private:
   /// \brief provider type
-  /// \sa traits_t<t_data>::provider in tenacitas/concurrent/traits.h
+  /// \sa traits_t<t_data>::provider in concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
   /// \brief the collection of values
