@@ -18,8 +18,53 @@ typedef tenacitas::logger::cerr::log log;
 
 void printer(const int16_t &p_i) { std::cout << p_i << " "; }
 
+typedef concurrent::queue_t<int16_t, 5, log> queue;
+
+struct producer {
+  producer(queue *p_queue) : m_queue(p_queue) {}
+
+  void operator()() {
+    concurrent_log_debug(log, "starting producer");
+    while (true) {
+      if (m_stop) {
+        break;
+      }
+      m_queue->add(m_i++);
+      std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    }
+  }
+
+  void stop() { m_stop = true; }
+
+private:
+  queue *m_queue = nullptr;
+  int16_t m_i = 100;
+  bool m_stop = false;
+};
+
+struct consumer {
+  consumer(queue *p_queue) : m_queue(p_queue) {}
+
+  void operator()() {
+    concurrent_log_debug(log, "starting consumer");
+    while (true) {
+      if (m_stop) {
+        break;
+      }
+      concurrent_log_debug(log, "got ", m_queue->get());
+      std::this_thread::sleep_for(std::chrono::milliseconds(950));
+    }
+  }
+
+  void stop() { m_stop = true; }
+
+private:
+  queue *m_queue = nullptr;
+  bool m_stop = false;
+};
+
 struct queue_000 {
-  typedef concurrent::queue<int16_t, 5, log> queue;
+
   bool operator()() {
     queue _queue;
     _queue.add(9);
@@ -44,7 +89,7 @@ struct queue_000 {
 };
 
 struct queue_001 {
-  typedef concurrent::queue<int16_t, 5, log> queue;
+  typedef concurrent::queue_t<int16_t, 5, log> queue;
 
   bool operator()() {
 
@@ -52,12 +97,15 @@ struct queue_001 {
     producer _producer(&_queue);
     consumer _consumer(&_queue);
 
-    std::thread _t1(_producer);
-    std::thread _t2(_consumer);
+    std::thread _t1([&_producer]() { _producer(); });
+    std::thread _t2([&_consumer]() { _consumer(); });
 
     concurrent_log_debug(log, "Going to sleep");
     std::this_thread::sleep_for(std::chrono::seconds(5));
     concurrent_log_debug(log, "Waking up");
+
+    _producer.stop();
+    _consumer.stop();
 
     _t1.join();
     _t2.join();
@@ -66,38 +114,41 @@ struct queue_001 {
   }
 
   static std::string desc() { return "1 Consumer e 1 producer"; }
+};
 
-private:
-  struct producer {
-    producer(queue *p_queue) : m_queue(p_queue) {}
+struct queue_002 {
+  typedef concurrent::queue_t<int16_t, 5, log> queue;
 
-    void operator()() {
-      concurrent_log_debug(log, "starting producer");
-      while (true) {
-        m_queue->add(m_i++);
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-      }
-    }
+  bool operator()() {
 
-  private:
-    queue *m_queue = nullptr;
-    int16_t m_i = 100;
-  };
+    queue _queue;
+    producer _producer(&_queue);
+    consumer _consumer(&_queue);
 
-  struct consumer {
-    consumer(queue *p_queue) : m_queue(p_queue) {}
+    std::thread _t1([&_producer]() { _producer(); });
 
-    void operator()() {
-      concurrent_log_debug(log, "starting consumer");
-      while (true) {
-        std::cerr << "got " << m_queue->get() << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(950));
-      }
-    }
+    concurrent_log_debug(log, "Going to sleep 1");
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    concurrent_log_debug(log, "Waking up 1");
 
-  private:
-    queue *m_queue = nullptr;
-  };
+    std::thread _t2([&_consumer]() { _consumer(); });
+
+    concurrent_log_debug(log, "Going to sleep 2");
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    concurrent_log_debug(log, "Waking up 2");
+
+    _producer.stop();
+    _consumer.stop();
+
+    _t1.join();
+    _t2.join();
+
+    return true;
+  }
+
+  static std::string desc() {
+    return "1 Consumer e 1 producer, consumer started 5 seconds after producer";
+  }
 };
 
 int main(int argc, char **argv) {
@@ -105,4 +156,5 @@ int main(int argc, char **argv) {
   tester::test _test(argc, argv);
   run_test(_test, queue_000);
   run_test(_test, queue_001);
+  run_test(_test, queue_002);
 }
