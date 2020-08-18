@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-#include <concurrent/circular_queue.h>
+#include <concurrent/fixed_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
 #include <concurrent/producer_consumer.h>
@@ -19,9 +19,8 @@ typedef tenacitas::logger::cerr::log log;
 
 void printer(const int16_t &p_i) { std::cout << p_i << " "; }
 
-typedef concurrent::circular_queue_t<int16_t, 5> queue;
-typedef concurrent::producer_consumer_t<queue::data, queue, log>
-    producer_consumer;
+typedef concurrent::fixed_size_queue_t<int16_t> queue;
+typedef concurrent::producer_consumer_t<queue, log> producer_consumer;
 
 struct work {
   status::result operator()(int16_t &&p_value) {
@@ -32,7 +31,7 @@ struct work {
 
 struct producer_consumer_000 {
   bool operator()() {
-    producer_consumer _pc;
+    producer_consumer _pc({queue(10)});
     _pc.add(work(), std::chrono::milliseconds(500));
     _pc.start();
     _pc.add(-8);
