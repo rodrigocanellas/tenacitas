@@ -7,7 +7,9 @@ SUBDIRS = \
     dispatcher \
     performance \
     writer \
-    queue
+    producer_consumer
+
+#    queue \
 
 TEMPLATE = subdirs
 

@@ -5,9 +5,9 @@
 #include <iostream>
 #include <string>
 
+#include <concurrent/circular_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
-#include <concurrent/queue.h>
 #include <concurrent/result.h>
 #include <logger/cerr/log.h>
 #include <status/result.h>
@@ -18,7 +18,7 @@ typedef tenacitas::logger::cerr::log log;
 
 void printer(const int16_t &p_i) { std::cout << p_i << " "; }
 
-typedef concurrent::queue_t<int16_t, 5, log> queue;
+typedef concurrent::circular_queue_t<int16_t, 5, log> queue;
 
 struct producer {
   producer(queue *p_queue) : m_queue(p_queue) {}
@@ -63,7 +63,7 @@ private:
   bool m_stop = false;
 };
 
-struct queue_000 {
+struct producer_consumer_000 {
 
   bool operator()() {
     queue _queue;
@@ -89,7 +89,7 @@ struct queue_000 {
 };
 
 struct queue_001 {
-  typedef concurrent::queue_t<int16_t, 5, log> queue;
+  typedef concurrent::circular_queue_t<int16_t, 5, log> queue;
 
   bool operator()() {
 
@@ -117,7 +117,7 @@ struct queue_001 {
 };
 
 struct queue_002 {
-  typedef concurrent::queue_t<int16_t, 5, log> queue;
+  typedef concurrent::circular_queue_t<int16_t, 5, log> queue;
 
   bool operator()() {
 
@@ -154,7 +154,7 @@ struct queue_002 {
 int main(int argc, char **argv) {
   log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, queue_000);
+  run_test(_test, producer_consumer_000);
   run_test(_test, queue_001);
   run_test(_test, queue_002);
 }

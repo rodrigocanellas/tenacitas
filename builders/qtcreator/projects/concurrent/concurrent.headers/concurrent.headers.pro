@@ -14,7 +14,8 @@ HEADERS += \
     $$code_src_dir/concurrent/dispatcher.h \
     $$code_src_dir/concurrent/reader.h \
     $$code_src_dir/concurrent/writer.h \
-    $$code_src_dir/concurrent/queue.h
+    $$code_src_dir/concurrent/circular_queue.h \
+    $$code_src_dir/concurrent/producer_consumer.h
 
 
 
