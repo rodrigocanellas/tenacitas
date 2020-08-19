@@ -77,9 +77,9 @@ struct sleeping_loop_t {
   /// each time the loop wakes up
   sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout,
                   provider p_provider)
-      : m_async(p_worker,
-                [this]() -> status::result { return this->break_loop(); },
-                p_timeout, p_provider),
+      : m_async(
+            p_worker, [this]() -> status::result { return this->break_loop(); },
+            p_timeout, p_provider),
         m_interval(p_interval) {}
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
@@ -90,9 +90,9 @@ struct sleeping_loop_t {
   ///
   /// \param p_work function that will be executed each time the loop wakes up
   sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout)
-      : m_async(p_worker,
-                [this]() -> status::result { return this->break_loop(); },
-                p_timeout),
+      : m_async(
+            p_worker, [this]() -> status::result { return this->break_loop(); },
+            p_timeout),
         m_interval(p_interval) {}
 
   /// \brief default constructor not allowed
@@ -184,7 +184,7 @@ struct sleeping_loop_t {
     concurrent_log_debug(log, "stop");
     m_cond_var.notify_all();
 
-    concurrent_log_debug(log, "all notified, and m_async = ", &m_async);
+    concurrent_log_debug(log, "all notified");
     m_async.stop();
   }
 
@@ -215,10 +215,10 @@ private:
     m_interval = std::move(p_sleep.m_interval);
 
     // move the async_loop, reseting the break loop
-    m_async =
-        async_loop(std::move(p_sleep.get_worker()),
-                   [this]() -> status::result { return this->break_loop(); },
-                   p_sleep.get_timeout(), std::move(p_sleep.get_provider()));
+    m_async = async_loop(
+        std::move(p_sleep.get_worker()),
+        [this]() -> status::result { return this->break_loop(); },
+        p_sleep.get_timeout(), std::move(p_sleep.get_provider()));
 
     // if the right side was not stopped
     if (!_stopped) {

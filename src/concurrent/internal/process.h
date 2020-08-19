@@ -36,10 +36,20 @@ template <typename t_data, typename t_timeout, typename t_log> struct process {
     if (_provided.first != status::ok) {
       _result = _provided.first;
     } else {
-      std::future<status::result> _future = std::async(
-          std::launch::async,
-          [&p_work](t_data &&p_data) { return p_work(std::move(p_data)); },
-          std::move(_provided.second));
+      concurrent_log_debug(t_log,
+                           "_provided.second = ",
+                           _provided.second,
+                           " ",
+                           &(_provided.second));
+
+      auto _f = [&p_work](t_data&& p_data) {
+        concurrent_log_debug(t_log, "p_data = ", p_data, " ", &p_data);
+        return p_work(std::move(p_data));
+      };
+
+      std::future<status::result> _future =
+        std::async(std::launch::async, _f, std::move(_provided.second));
+
       std::future_status _future_status = _future.wait_for(p_timeout);
       if (_future_status == std::future_status::timeout) {
         _result = concurrent::stopped_by_timeout;

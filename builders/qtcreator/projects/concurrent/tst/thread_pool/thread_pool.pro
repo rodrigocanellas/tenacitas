@@ -5,8 +5,7 @@ CONFIG+=test
 include (../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/concurrent/thread_pool/main.cpp \
-  $$test_src_dir/concurrent/msa_a.cpp
+  $$test_src_dir/concurrent/thread_pool/main.cpp
 
 HEADERS += \
   $$test_src_dir/concurrent/msa_a.h

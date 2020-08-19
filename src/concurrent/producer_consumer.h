@@ -1,6 +1,11 @@
 #ifndef TENACITAS_CONCURRENT_PRODUCER_CONSUMER_H
 #define TENACITAS_CONCURRENT_PRODUCER_CONSUMER_H
 
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas rodrigo.canellas@gmail.com
+
 #include <array>
 #include <chrono>
 #include <condition_variable>
@@ -90,14 +95,16 @@ public:
   /// be processed
   ~producer_consumer_t() {
     concurrent_log_debug(log, "destructor");
+    //    m_destroying = true;
     if (!all_loops_stopped()) {
       if (!m_stopped) {
         while (!m_container.empty()) {
           m_data_produced.notify_all();
-          concurrent_log_debug(log, "waiting for poping");
+          //          concurrent_log_debug(log, "waiting for poping");
           std::unique_lock<std::mutex> _lock(m_mutex_data);
           m_data_consumed.wait(_lock, [this] {
-            concurrent_log_debug(log, "data consumed signal arrived");
+            //            concurrent_log_debug(log, "data consumed signal
+            //            arrived");
             return true;
           });
         }
@@ -117,13 +124,15 @@ public:
     concurrent_log_debug(t_log, "there is room");
 
     if (m_stopped) {
-      return;
+      concurrent_log_debug(log, "stopped");
+    } else {
+      m_container.add(p_data);
+      concurrent_log_debug(t_log, "adding ", p_data);
     }
 
-    m_container.add(p_data);
-    concurrent_log_debug(t_log, "adding ", p_data);
-
     // notifyng that new data is available
+
+    concurrent_log_debug(log, "notifying");
     m_data_produced.notify_all();
   }
 
@@ -135,16 +144,19 @@ public:
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
         _lock, [this]() { return (!m_container.full() || m_stopped); });
-    concurrent_log_debug(t_log, "there is room");
 
     if (m_stopped) {
-      return;
+      concurrent_log_debug(log, "stopped");
+    } else {
+
+      concurrent_log_debug(t_log, "there is room");
+
+      m_container.add(std::move(p_data));
+      concurrent_log_debug(t_log, "adding ", p_data);
     }
 
-    m_container.add(std::move(p_data));
-    concurrent_log_debug(t_log, "adding ", p_data);
-
     // notifyng that new data is available
+    concurrent_log_debug(log, "notifying");
     m_data_produced.notify_all();
   }
 
@@ -155,7 +167,9 @@ public:
     async_loop _loop(
         p_work, [this]() -> status::result { return this->breaker(); },
         p_timeout,
-        [this]() -> std::pair<status::result, data> { return this->get(); });
+        [this]() -> std::pair<status::result, data> {
+          return this->provider();
+        });
 
     add(std::move(_loop));
   }
@@ -171,7 +185,9 @@ public:
           p_work_factory(),
           [this]() -> status::result { return this->breaker(); },
           p_worker_timeout,
-          [this]() -> std::pair<status::result, data> { return this->get(); });
+          [this]() -> std::pair<status::result, data> {
+            return this->provider();
+          });
 
       add(std::move(_loop));
     }
@@ -202,12 +218,12 @@ public:
     for (async_loop &_loop : m_loops) {
       _loop.start();
     }
-    concurrent_log_debug(log, "started ");
+    concurrent_log_debug(log, "started");
   }
 
   /// \brief interrupt stops the \p producer_consumer
   ///
-  /// From this call on, the \p worker functions will stop "fighting"among
+  /// From this call on, the \p worker functions will stop "fighting" among
   /// each other, in order to process any instance of \p data that was
   /// inserted into the pool
   inline void stop() {
@@ -224,6 +240,9 @@ public:
       _loop.stop();
     }
   }
+
+  inline size_t capacity() const { return m_container.capacity(); }
+  inline size_t occupied() const { return m_container.occupied(); }
 
 private:
   /// \brief async_loop_t is a \p async_loop where a \p worker function will be
@@ -248,12 +267,12 @@ private:
     m_loops.push_back(std::move(p_loop));
   }
 
-  /// \brief get is the \p provide_t function, which returns data, if
+  /// \brief provider is the \p provide_t function, which provides data, if
   /// available, to a \p worker function
   ///
   /// \return (true, a filled \p data object), if there is any instance of
   /// \p data available; of (false, data()) otherwise
-  std::pair<status::result, data> get() {
+  std::pair<status::result, data> provider() {
     using namespace std;
 
     if (m_stopped) {
@@ -264,22 +283,32 @@ private:
     concurrent_log_debug(t_log, "waiting for data...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_produced.wait(_lock, [this]() -> bool {
-      return (!m_container.empty() || m_stopped);
+      //      return (!m_container.empty() || m_stopped);
+      if (m_stopped) {
+        concurrent_log_debug(log, "stopped");
+        return true;
+      }
+      if (!m_container.empty()) {
+        concurrent_log_debug(log, "not empty");
+        return true;
+      }
+      concurrent_log_debug(log, "leaving with false");
+
+      return false;
     });
 
     if (m_stopped) {
-      concurrent_log_debug(log, "stopped");
+      concurrent_log_debug(log, "stopped and notifying");
+      m_data_consumed.notify_all();
       return {concurrent::stopped_by_provider, data()};
     }
 
-    concurrent_log_debug(t_log, "data arrived...");
-
     data _data = m_container.get();
 
-    concurrent_log_debug(t_log, "getting ", _data);
+    concurrent_log_debug(t_log, "getting ", _data, " and notifying");
 
     // notifying that new data can be added
-    //    if (m_destroying && (m_length>0)) {
+    //    if (m_destroying && (!m_container.empty())) {
     //      m_data_consumed.notify_all();
     //    }
     m_data_consumed.notify_all();
@@ -316,7 +345,7 @@ private:
 
   bool m_stopped = true;
   /// \brief m_destroying indicates that the \p produce_consumer should stop
-  //  bool m_destroying = false;
+  bool m_destroying = false;
 };
 
 } // namespace concurrent

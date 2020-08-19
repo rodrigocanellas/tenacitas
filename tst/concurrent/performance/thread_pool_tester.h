@@ -22,8 +22,8 @@ struct thread_pool_tester {
 
     logger::cerr::log::set_debug();
 
-    m_pool.add_work(num_consumers, [] { return work(); },
-                    std::chrono::milliseconds(15000));
+    m_pool.add_work(
+        num_consumers, [] { return work(); }, std::chrono::milliseconds(15000));
   }
 
   void operator()() {
@@ -32,7 +32,7 @@ struct thread_pool_tester {
   }
 
 private:
-  typedef concurrent::msg_a msg;
+  typedef concurrent::msg_a<int32_t> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
   typedef concurrent::thread thread;
 

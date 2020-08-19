@@ -18,9 +18,9 @@
 
 using namespace tenacitas;
 
-struct thread_pool_090 {
+struct thread_pool_001 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<int32_t> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
@@ -38,17 +38,17 @@ struct thread_pool_090 {
     work _work;
 
     thread_pool _pool;
-    uint32_t _value = 0;
+    msg::data _value = 0;
 
-    sleeping_loop _loop(std::chrono::milliseconds(500),
-                        [&_pool, &_value]() {
-                          msg _msg(++_value);
-                          concurrent_log_debug(logger::cerr::log, "adding msg ",
-                                               _msg);
-                          _pool.handle(std::move(_msg));
-                          return status::ok;
-                        },
-                        std::chrono::milliseconds(300));
+    sleeping_loop _loop(
+        std::chrono::milliseconds(500),
+        [&_pool, &_value]() {
+          msg _msg(++_value);
+          concurrent_log_debug(logger::cerr::log, "adding msg ", _msg);
+          _pool.handle(std::move(_msg));
+          return status::ok;
+        },
+        std::chrono::milliseconds(300));
 
     _pool.add_work([&_work](msg &&p_msg) { return _work(std::move(p_msg)); },
                    std::chrono::milliseconds(100));
@@ -103,7 +103,7 @@ struct thread_pool_090 {
 
 struct thread_pool_091 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
@@ -153,7 +153,7 @@ struct thread_pool_091 {
 
 struct thread_pool_092 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
@@ -203,7 +203,7 @@ struct thread_pool_092 {
 
 struct thread_pool_093 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
@@ -272,7 +272,7 @@ struct thread_pool_093 {
 };
 
 struct thread_pool_094 {
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
@@ -326,7 +326,7 @@ struct thread_pool_094 {
 
 struct thread_pool_095 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
@@ -365,7 +365,7 @@ struct thread_pool_095 {
 
 struct thread_pool_096 {
 
-  typedef tenacitas::concurrent::msg_a msg;
+  typedef tenacitas::concurrent::msg_a<> msg;
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
@@ -453,14 +453,15 @@ struct thread_pool_097 {
       thread_pool _pool;
       int32_t _value = 0;
       int16_t _counter = 0;
-      sleeping_loop _loop(std::chrono::milliseconds(100),
-                          [&_pool, &_value, &_counter]() -> status::result {
-                            ++_value;
-                            ++_counter;
-                            _pool.handle(_value);
-                            return status::ok;
-                          },
-                          std::chrono::milliseconds(300));
+      sleeping_loop _loop(
+          std::chrono::milliseconds(100),
+          [&_pool, &_value, &_counter]() -> status::result {
+            ++_value;
+            ++_counter;
+            _pool.handle(_value);
+            return status::ok;
+          },
+          std::chrono::milliseconds(300));
 
       _pool.add_work(
           [&_work_1](int32_t &&p_val) -> status::result {
@@ -533,8 +534,9 @@ struct thread_pool_098 {
     //    m_pool.add_work(work_1(this), std::chrono::milliseconds(200));
     //    m_pool.add_work(work_1(this), std::chrono::milliseconds(200));
 
-    m_pool.add_work(4, [this]() { return work_1<thread_pool_098>(this); },
-                    std::chrono::milliseconds(200));
+    m_pool.add_work(
+        4, [this]() { return work_1<thread_pool_098>(this); },
+        std::chrono::milliseconds(200));
   }
 
   bool operator()() {
@@ -601,8 +603,8 @@ struct thread_pool_099 {
   };
 
   thread_pool_099() {
-    m_pool.add_work(1, []() { return work_1(); },
-                    std::chrono::milliseconds(200));
+    m_pool.add_work(
+        1, []() { return work_1(); }, std::chrono::milliseconds(200));
     m_pool.start();
   }
 
@@ -636,7 +638,7 @@ int main(int argc, char **argv) {
 
   tester::test _tester(argc, argv);
 
-  run_test(_tester, thread_pool_090);
+  run_test(_tester, thread_pool_001);
   run_test(_tester, thread_pool_091);
   run_test(_tester, thread_pool_092);
   run_test(_tester, thread_pool_093);

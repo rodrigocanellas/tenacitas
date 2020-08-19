@@ -2,6 +2,7 @@
 #define TENACITAS_LOGGER_BUS_LOG_H
 
 #include <chrono>
+#include <cstring>
 #include <functional>
 #include <iomanip>
 #include <limits>
@@ -196,19 +197,35 @@ private:
   //
   // \param p_params are the values to be logged
   //
-  template <typename t_str, typename t_int, typename... t_params>
-  void write(level p_level, t_str p_class, t_int p_line,
+  template <typename t_int, typename... t_params>
+  void write(level p_level, const char *p_file_path, t_int p_line,
              const t_params &... p_params) {
+    char _file_name[_MAX_PATH] = "/0";
+
     if (can_log(p_level)) {
       std::ostringstream _stream;
-      _stream << level2str(p_level) << m_separator << microseconds()
+      _stream << level2str(p_level) << m_separator << milliseconds()
               << m_separator << std::this_thread::get_id() << m_separator
-              << p_class << m_separator << p_line;
+              << file_name(p_file_path, _file_name) << m_separator << p_line;
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_writer(_stream.str());
     }
+  }
+
+  const char *file_name(const char *p_file_path, char *p_file_name) {
+    int16_t _len = static_cast<int16_t>(std::strlen(p_file_path));
+    for (int16_t _i = _len - 1; _i > -1; --_i) {
+      if ((p_file_path[_i] == '/') || (p_file_path[_i] == '\\')) {
+        if (_i > _MAX_PATH) {
+          return p_file_path;
+        }
+        std::memcpy(p_file_name, p_file_path + _i + 1, _len - _i);
+        return p_file_name;
+      }
+    }
+    return p_file_path;
   }
 
   //
@@ -260,9 +277,9 @@ private:
              << p_t;
   }
 
-  uint64_t microseconds() {
+  uint64_t milliseconds() {
     return static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
   }
