@@ -82,12 +82,12 @@ struct loop_t {
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available. If \p t_data is \p void, this parameter
   /// assumes a default value of a \p void returning function
-  inline loop_t(worker p_work, breaker p_break, t_time p_timeout,
-                provider p_provide = []() -> status::result {
-                  return status::ok;
-                })
+  inline loop_t(
+      worker p_work, breaker p_break, t_time p_timeout,
+      provider p_provide = []() -> status::result { return status::ok; })
       : m_worker(p_work), m_breaker(p_break), m_timeout(p_timeout),
-        m_provider(p_provide), m_stopped_by_user(true) {}
+        m_provider(p_provide), m_stopped_by_user(true),
+        m_processor(m_worker, m_provider, m_timeout) {}
 
   /// \brief loop decault constuctor not allowed
   loop_t() = delete;
@@ -104,7 +104,8 @@ struct loop_t {
       : m_worker(std::move(p_loop.m_worker)),
         m_breaker(std::move(p_loop.m_breaker)),
         m_timeout(std::move(p_loop.m_timeout)),
-        m_provider(std::move(p_loop.m_provider)), m_stopped_by_user(true) {}
+        m_provider(std::move(p_loop.m_provider)), m_stopped_by_user(true),
+        m_processor(std::move(p_loop.m_processor)) {}
 
   /// \brief copy assignment not allowed
   loop_t &operator=(const loop_t &) = delete;
@@ -116,6 +117,7 @@ struct loop_t {
       m_breaker = std::move(p_loop.m_breaker);
       m_timeout = std::move(p_loop.m_timeout);
       m_provider = std::move(p_loop.m_provider);
+      m_processor = std::move(p_loop.m_processor);
       m_stopped_by_user = true;
     }
     return *this;
@@ -163,7 +165,10 @@ struct loop_t {
   }
 
   /// \brief stop forces the loop to stop
-  inline void stop() { m_stopped_by_user = true; }
+  inline void stop() {
+    m_stopped_by_user = true;
+    m_processor.stop();
+  }
 
   /// \brief start initates the loop
   ///
@@ -185,6 +190,7 @@ struct loop_t {
     while (true) {
 
       if (m_stopped_by_user) {
+
         _result = concurrent::stopped_by_user;
         concurrent_log_warn(log, _result);
         break;
@@ -197,8 +203,8 @@ struct loop_t {
         break;
       }
 
-      status::result _worker_result =
-          process<t_data, t_time, t_log>()(m_worker, m_provider, m_timeout);
+      status::result _worker_result = m_processor();
+
       if (_worker_result != status::ok) {
         concurrent_log_warn(log, "worker returned ", _worker_result);
         if ((_worker_result == concurrent::stopped_by_worker) ||
@@ -237,6 +243,9 @@ struct loop_t {
   }
 
 private:
+  typedef processor_t<t_data, t_time, t_log> processor;
+
+private:
   /// \brief m_worker instance of the function that will execute the defined
   /// work
   worker m_worker;
@@ -258,6 +267,8 @@ private:
   bool m_stopped_by_destructor{false};
 
   bool m_running{false};
+
+  processor m_processor;
 };
 
 } // namespace concurrent

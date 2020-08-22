@@ -33,13 +33,10 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   typedef t_log log;
 
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
-      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    concurrent_log_debug(t_log, "contructor");
-  }
+      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {}
 
   processor_t(const processor_t &) = delete;
   processor_t(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move contructor");
     m_worker = std::move(p_proc.m_worker);
     m_provider = std::move(p_proc.m_provider);
     m_timeout = std::move(p_proc.m_timeout);
@@ -53,7 +50,6 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
 
   processor_t &operator()(const processor_t &) = delete;
   processor_t &operator()(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move =");
     if (this != &p_proc) {
 
       m_worker = std::move(p_proc.m_worker);
@@ -76,7 +72,6 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   status::result operator()() {
 
     if (!is_running()) {
-      concurrent_log_debug(t_log, "starting thread, as it was not running");
       m_thread = std::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
@@ -88,9 +83,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
       return m_result;
     }
 
-    concurrent_log_debug(t_log, "waiting for data");
     m_data = std::move(_provided.second);
-    concurrent_log_debug(t_log, "data ", m_data, " arrived");
 
     concurrent_log_debug(t_log, "sending notification");
     m_cond_exec.notify_one();
@@ -177,12 +170,9 @@ struct processor_t<void, t_time, t_log> {
   typedef t_log log;
 
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
-      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    concurrent_log_debug(t_log, "contructor");
-  }
+      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {}
 
   processor_t(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move contructor");
     m_worker = std::move(p_proc.m_worker);
     m_provider = std::move(p_proc.m_provider);
     m_timeout = std::move(p_proc.m_timeout);
@@ -196,7 +186,6 @@ struct processor_t<void, t_time, t_log> {
 
   processor_t &operator()(const processor_t &) = delete;
   processor_t &operator()(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move =");
     if (this != &p_proc) {
 
       m_worker = std::move(p_proc.m_worker);
@@ -219,7 +208,6 @@ struct processor_t<void, t_time, t_log> {
   status::result operator()() {
 
     if (!is_running()) {
-      concurrent_log_debug(t_log, "starting thread, as it was not running");
       m_thread = std::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }

@@ -65,7 +65,7 @@ struct producer_consumer_001 {
 
   bool operator()() {
 
-    const uint16_t _num_msgs = 200;
+    const uint16_t _num_msgs = 50;
 
     producer_consumer _pc({queue(10)});
 
