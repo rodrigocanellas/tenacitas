@@ -65,6 +65,8 @@ struct producer_consumer_001 {
 
   bool operator()() {
 
+    const uint16_t _num_msgs = 200;
+
     producer_consumer _pc({queue(10)});
 
     concurrent_log_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
@@ -73,6 +75,9 @@ struct producer_consumer_001 {
     sleeping_loop _loop(
         std::chrono::milliseconds(500),
         [&_pc, this]() {
+          if (m_value > _num_msgs) {
+            return concurrent::stopped_by_breaker;
+          }
           msg _msg(++m_value);
           concurrent_log_debug(log, "going to add ", _msg);
 
@@ -83,62 +88,43 @@ struct producer_consumer_001 {
 
           return status::ok;
         },
-        std::chrono::milliseconds(300));
+        std::chrono::seconds(1));
 
     _pc.add(
         [this](msg &&p_msg) -> status::result {
           return m_work(std::move(p_msg));
         },
-        std::chrono::minutes(1));
+        std::chrono::seconds(2));
 
     _pc.start();
     _loop.start();
 
-    concurrent_log_debug(logger::cerr::log, "sleeping for 20 secs");
-    std::this_thread::sleep_for(std::chrono::seconds(20));
-    concurrent_log_debug(logger::cerr::log, "waking up after 20 secs");
+    concurrent_log_debug(logger::cerr::log, "sleeping for ", _num_msgs,
+                         " secs");
+    std::this_thread::sleep_for(std::chrono::seconds(_num_msgs + 1));
+    concurrent_log_debug(logger::cerr::log, "waking up after ", _num_msgs,
+                         "secs");
 
-    _loop.stop();
-
-    //    concurrent_log_debug(logger::cerr::log, "stopping the pool");
-    //    _pc.stop();
-
-    //    concurrent_log_debug(logger::cerr::log, "sleeping for 5 secs");
-    //    std::this_thread::sleep_for(std::chrono::seconds(5));
-    //    concurrent_log_debug(logger::cerr::log, "waking up after 5 secs");
-
-    //    concurrent_log_debug(logger::cerr::log, "runnig the pool");
-    //    _pc.start();
-
-    //    concurrent_log_debug(logger::cerr::log, "sleeping for 4 secs");
-    //    std::this_thread::sleep_for(std::chrono::seconds(4));
-    //    concurrent_log_debug(logger::cerr::log, "waking up after 4 secs");
-
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-
-    return true;
-  }
-
-  ~producer_consumer_001() {
-    concurrent_log_debug(logger::cerr::log, "provided = ", m_value,
+    concurrent_log_debug(logger::cerr::log, "produced = ", m_value,
                          ", consumed = ", m_work.m_msg.counter());
     if (m_work.m_msg.counter() != m_value) {
       concurrent_log_error(logger::cerr::log,
                            "Data value consumed should be equal to provided");
+      return false;
     }
+
+    return true;
   }
+
+  ~producer_consumer_001() {}
 
   static std::string desc() {
     return "\nA 'sleeping_loop' sending a message at each 500 ms, to a "
-           "'producer_consumer', with one consumer, and using a "
-           "'fixed_size_queue', with size 10"
+           "'producer_consumer', with one consumer, that sleeps for 1 second, "
+           "and using a 'fixed_size_queue', with size 10"
 
-           "\nThe main thread will sleep for 10 secs, the 'procuder_consumer' "
-           "will stop; main thread will sleep for 5 secs; 'producer_consumer' "
-           "will run again; main thread will sleep for 4 secs."
-
-           "\nThe messages added while the 'producer_consumer' was stopped are "
-           "handled when it runs again."
+           "\nThe main thread will sleep for 10 secs, the 'sleeping_loop' "
+           "stops, and the main thread sleeps for 30 seconds"
 
            "\nThe amount of data consumed must be equal to the provided";
   }

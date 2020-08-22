@@ -204,8 +204,8 @@ private:
 
     if (can_log(p_level)) {
       std::ostringstream _stream;
-      _stream << level2str(p_level) << m_separator << milliseconds()
-              << m_separator << std::this_thread::get_id() << m_separator
+      _stream << level2str(p_level) << m_separator << now() << m_separator
+              << std::this_thread::get_id() << m_separator
               << file_name(p_file_path, _file_name) << m_separator << p_line;
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
@@ -277,11 +277,42 @@ private:
              << p_t;
   }
 
-  uint64_t milliseconds() {
+  inline uint64_t milliseconds() {
     return static_cast<uint64_t>(
         std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
+  }
+
+  std::string now() {
+    //    using namespace std;
+    //    using namespace chrono;
+
+    //    const auto _value = milliseconds();
+
+    //    const time_t _secs = _value / 100;
+    //    const auto _milles = _value % _secs;
+
+    //    std::stringstream _stream;
+
+    //    _stream << put_time(std::localtime(&_secs), "%y.%m.%d.%H.%M.%S.")
+    //            << _milles;
+
+    //    return _stream.str();
+
+    using namespace std;
+    using namespace chrono;
+
+    const auto _millis = milliseconds();
+    const auto _duration = std::chrono::milliseconds(_millis);
+    const time_point<system_clock> _time_point(_duration);
+    const time_t _time_t = system_clock::to_time_t(_time_point);
+
+    const auto _remainder = _millis % 1000;
+    stringstream _stream;
+    _stream << put_time(std::localtime(&_time_t), "%Y.%m.%d.%H.%M.%S.")
+            << _remainder;
+    return _stream.str();
   }
 
   inline const std::string &level2str(level p_level) const {
