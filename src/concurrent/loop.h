@@ -10,7 +10,7 @@
 #include <future>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/internal/process.h>
+#include <concurrent/process.h>
 #include <concurrent/result.h>
 #include <concurrent/traits.h>
 

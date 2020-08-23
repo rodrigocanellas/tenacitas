@@ -4,7 +4,7 @@ TEMPLATE = subdirs
 
 HEADERS += \
     $$code_src_dir/concurrent/internal/log.h \
-    $$code_src_dir/concurrent/internal/process.h \
+    $$code_src_dir/concurrent/process.h \
     $$code_src_dir/concurrent/loop.h \
     $$code_src_dir/concurrent/traits.h \
     $$code_src_dir/concurrent/result.h \
