@@ -24,31 +24,17 @@ namespace concurrent {
 
 /// \brief reader_t reads from a communication stream
 ///
-/// \tparam t_logger must provide
-/// \code
-///
-/// template <typename ...p_params>
-/// static void debug(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void info(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void warn(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void error(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void fatal(const char *, int, params...)
-///
-/// \endcode
+/// \tparam t_log provides log funcionality:
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_buffer_size is the size of the buffer to read messages
 /// messages
-template<typename t_logger, std::size_t t_buffer_size = 8 * 1024>
-struct reader
-{
+template <typename t_log, std::size_t t_buffer_size = 8 * 1024> struct reader {
   typedef std::array<char, t_buffer_size> buffer;
 
   /// \brief reads data from a stream, blocking the caller until the read
@@ -64,32 +50,32 @@ struct reader
   ///
   /// \return {false, {}} if no data was read; {true, buffer} if some data was
   /// read
-  template<typename t_stream>
-  std::pair<status::result, buffer> read_block(t_stream& p_stream);
+  template <typename t_stream>
+  std::pair<status::result, buffer> read_block(t_stream &p_stream);
 
-  template<typename t_stream, typename t_time = std::chrono::milliseconds>
-  std::pair<status::result, buffer> read_block(t_stream& p_stream,
+  template <typename t_stream, typename t_time = std::chrono::milliseconds>
+  std::pair<status::result, buffer> read_block(t_stream &p_stream,
                                                t_time p_timeout);
 
-  template<typename t_stream>
-  std::pair<status::result, std::string> read_all_block(t_stream& p_stream);
+  template <typename t_stream>
+  std::pair<status::result, std::string> read_all_block(t_stream &p_stream);
 
-  template<typename t_stream, typename t_time = std::chrono::milliseconds>
-  std::pair<status::result, std::string> read_all_block(t_stream& p_stream,
+  template <typename t_stream, typename t_time = std::chrono::milliseconds>
+  std::pair<status::result, std::string> read_all_block(t_stream &p_stream,
                                                         t_time p_timeout);
 
-  template<typename t_stream>
-  std::pair<status::result, buffer> read_unblock(t_stream& p_stream);
+  template <typename t_stream>
+  std::pair<status::result, buffer> read_unblock(t_stream &p_stream);
 
-  template<typename t_stream, typename t_time = std::chrono::milliseconds>
-  std::pair<status::result, buffer> read_unblock(t_stream& p_stream,
+  template <typename t_stream, typename t_time = std::chrono::milliseconds>
+  std::pair<status::result, buffer> read_unblock(t_stream &p_stream,
                                                  t_time p_timeout);
 
-  template<typename t_stream>
-  std::pair<status::result, std::string> read_all_unblock(t_stream& p_stream);
+  template <typename t_stream>
+  std::pair<status::result, std::string> read_all_unblock(t_stream &p_stream);
 
-  template<typename t_stream, typename t_time = std::chrono::milliseconds>
-  std::pair<status::result, std::string> read_all_unblock(t_stream& p_stream,
+  template <typename t_stream, typename t_time = std::chrono::milliseconds>
+  std::pair<status::result, std::string> read_all_unblock(t_stream &p_stream,
                                                           t_time p_timeout);
 
   /// \brief
@@ -102,8 +88,8 @@ struct reader
   /// \param p_stream
   ///
   /// \param p_handler
-  template<typename t_stream, typename t_handler>
-  void read_async(t_stream& p_stream, t_handler p_handler);
+  template <typename t_stream, typename t_handler>
+  void read_async(t_stream &p_stream, t_handler p_handler);
 
   /// \brief
   ///
@@ -115,8 +101,11 @@ struct reader
   /// \param p_stream
   ///
   /// \param p_handler
-  template<typename t_stream, typename t_handler>
-  void read_all_async(t_stream& p_stream, t_handler p_handler);
+  template <typename t_stream, typename t_handler>
+  void read_all_async(t_stream &p_stream, t_handler p_handler);
+
+private:
+  t_log m_log{"reader.h"};
 };
 
 } // namespace concurrent

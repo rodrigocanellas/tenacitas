@@ -31,12 +31,12 @@ struct producer_consumer_000 {
     producer_consumer _pc({queue(10)});
     _pc.add(worker(), std::chrono::milliseconds(500));
 
-    concurrent_log_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
+    concurrent_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
                          ", occupied = ", _pc.occupied());
     _pc.start();
     _pc.add(-8);
 
-    concurrent_log_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
+    concurrent_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
                          ", occupied = ", _pc.occupied());
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -52,7 +52,7 @@ struct producer_consumer_000 {
 private:
   struct worker {
     status::result operator()(data &&p_value) {
-      concurrent_log_info(log, "value = ", p_value);
+      concurrent_info(log, "value = ", p_value);
       return status::ok;
     }
   };
@@ -69,7 +69,7 @@ struct producer_consumer_001 {
 
     producer_consumer _pc({queue(10)});
 
-    concurrent_log_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
+    concurrent_debug(logger::cerr::log, "capacity = ", _pc.capacity(),
                          ", occupied = ", _pc.occupied());
 
     sleeping_loop _loop(
@@ -79,10 +79,10 @@ struct producer_consumer_001 {
             return concurrent::stopped_by_breaker;
           }
           msg _msg(++m_value);
-          concurrent_log_debug(log, "going to add ", _msg);
+          concurrent_debug(log, "going to add ", _msg);
 
           _pc.add(std::move(_msg));
-          concurrent_log_debug(logger::cerr::log, "added msg ", _msg,
+          concurrent_debug(logger::cerr::log, "added msg ", _msg,
                                "; capacity = ", _pc.capacity(),
                                ", occupied = ", _pc.occupied());
 
@@ -99,16 +99,16 @@ struct producer_consumer_001 {
     _pc.start();
     _loop.start();
 
-    concurrent_log_debug(logger::cerr::log, "sleeping for ", _num_msgs,
+    concurrent_debug(logger::cerr::log, "sleeping for ", _num_msgs,
                          " secs");
     std::this_thread::sleep_for(std::chrono::seconds(_num_msgs + 1));
-    concurrent_log_debug(logger::cerr::log, "waking up after ", _num_msgs,
+    concurrent_debug(logger::cerr::log, "waking up after ", _num_msgs,
                          "secs");
 
-    concurrent_log_debug(logger::cerr::log, "produced = ", m_value,
+    concurrent_debug(logger::cerr::log, "produced = ", m_value,
                          ", consumed = ", m_work.m_msg.counter());
     if (m_work.m_msg.counter() != m_value) {
-      concurrent_log_error(logger::cerr::log,
+      concurrent_error(logger::cerr::log,
                            "Data value consumed should be equal to provided");
       return false;
     }
@@ -132,16 +132,16 @@ struct producer_consumer_001 {
 private:
   struct worker {
     status::result operator()(msg &&p_msg) {
-      concurrent_log_debug(logger::cerr::log, "handling msg ", p_msg, " ",
+      concurrent_debug(logger::cerr::log, "handling msg ", p_msg, " ",
                            &p_msg);
       m_msg = std::move(p_msg);
 
-      concurrent_log_debug(logger::cerr::log, "handling msg ", p_msg, " ",
+      concurrent_debug(logger::cerr::log, "handling msg ", p_msg, " ",
                            &p_msg);
 
-      concurrent_log_debug(log, "worker is going to sleep");
+      concurrent_debug(log, "worker is going to sleep");
       std::this_thread::sleep_for(std::chrono::seconds(1));
-      concurrent_log_debug(log, "worker is waking up");
+      concurrent_debug(log, "worker is waking up");
       return status::ok;
     }
     msg m_msg;

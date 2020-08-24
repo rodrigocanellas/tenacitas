@@ -42,16 +42,12 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
@@ -62,9 +58,6 @@ public:
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
   typedef typename traits_t<t_data>::worker worker;
-
-  /// \brief log alias for @p t_log
-  typedef t_log log;
 
   /// \brief thread_pool constructor
   thread_pool_t()
@@ -116,22 +109,22 @@ public:
   /// be processed
   ~thread_pool_t() {
     m_destroying = true;
-    concurrent_log_debug(log, "m_values.size() = ", m_values.size());
+    concurrent_debug(m_log, "m_values.size() = ", m_values.size());
 
     if (!all_loops_stopped()) {
       if (!m_stopped) {
         while (!m_values.empty()) {
-          concurrent_log_debug(log, "m_values.size() = ", m_values.size());
+          concurrent_debug(m_log, "m_values.size() = ", m_values.size());
           m_cv_data.notify_all();
-          concurrent_log_debug(log, "waiting for poping");
+          concurrent_debug(m_log, "waiting for poping");
           std::unique_lock<std::mutex> _lock(m_mutex_poped);
           m_cv_poped.wait(_lock, [this] {
-            concurrent_log_debug(log, "poping signal arrived");
+            concurrent_debug(m_log, "poping signal arrived");
             return true;
           });
-          concurrent_log_debug(log, "lock free");
+          concurrent_debug(m_log, "lock free");
         }
-        concurrent_log_debug(log, "m_values.size() = ", m_values.size());
+        concurrent_debug(m_log, "m_values.size() = ", m_values.size());
         stop();
       }
     }
@@ -248,7 +241,7 @@ public:
 
     m_cv_data.notify_all();
     for (async_loop &_loop : m_loops) {
-      concurrent_log_debug(log, "stopping loop ", &_loop);
+      concurrent_debug(m_log, "stopping loop ", &_loop);
       _loop.stop();
     }
   }
@@ -273,20 +266,20 @@ private:
   /// \p thread_pool
   void run_common() {
 
-    concurrent_log_debug(log, "running ", this);
+    concurrent_debug(m_log, "running ", this);
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
-      concurrent_log_debug(log, "can't run because it is empty");
+      concurrent_debug(m_log, "can't run because it is empty");
       return;
     }
     m_stopped = false;
-    concurrent_log_debug(log, "m_stopped = ", m_stopped);
+    concurrent_debug(m_log, "m_stopped = ", m_stopped);
 
     for (async_loop &_loop : m_loops) {
-      concurrent_log_debug(log, "starting loop ", &_loop);
+      concurrent_debug(m_log, "starting loop ", &_loop);
       _loop.start();
     }
-    concurrent_log_debug(log, "started ");
+    concurrent_debug(m_log, "started ");
   }
 
   /// \brief add_work common function called to add a \p worker function
@@ -300,7 +293,7 @@ private:
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
   status::result stop_condition() {
-    concurrent_log_debug(log, "stopped = ", m_stopped);
+    concurrent_debug(m_log, "stopped = ", m_stopped);
     return (m_stopped ? concurrent::stopped_by_breaker : status::ok);
   }
 
@@ -314,30 +307,29 @@ private:
     using namespace std;
 
     if (m_stopped) {
-      concurrent_log_debug(log,
-                           "not waiting for more data because it is stopped ");
+      concurrent_debug(m_log, "not waiting for more data because it is stopped ");
 
       return std::make_pair(concurrent::stopped_by_provider, t_data());
     }
 
     unique_lock<std::mutex> _lock(m_mutex_data);
     m_cv_data.wait(_lock, [this] {
-      concurrent_log_debug(log, "waiting");
+      concurrent_debug(m_log, "waiting");
       return (!m_values.empty() || m_stopped);
     });
 
     if (m_stopped) {
-      concurrent_log_debug(log, "m_stopped, returning 'false'");
+      concurrent_debug(m_log, "m_stopped, returning 'false'");
       return std::make_pair(concurrent::stopped_by_provider, t_data());
     }
 
     std::pair<status::result, t_data> _return =
         std::make_pair(status::ok, std::move(m_values.front()));
-    concurrent_log_debug(log, "data to be handled ", _return.second);
+    concurrent_debug(m_log, "data to be handled ", _return.second);
     m_values.pop_front();
 
     if (m_destroying && !m_values.empty()) {
-      concurrent_log_debug(log, "signaling poped");
+      concurrent_debug(m_log, "signaling poped");
       m_cv_poped.notify_all();
     }
 
@@ -347,24 +339,24 @@ private:
   /// \brief add_data adds a instance of \p t_data to the pool
   /// \param p_value is an instance of \p t_data to be added
   void add_data(const t_data &p_value) {
-    concurrent_log_debug(log, "adding ", p_value);
+    concurrent_debug(m_log, "adding ", p_value);
     {
       std::lock_guard<std::mutex> _lock(m_mutex_data);
       m_values.push_back(p_value);
     }
-    concurrent_log_debug(log, "added and notifying ");
+    concurrent_debug(m_log, "added and notifying ");
     m_cv_data.notify_all();
   }
 
   /// \brief add_data adds a instance of \p t_data to the pool
   /// \param p_value is an instance of \p t_data to be added
   void add_data(t_data &&p_value) {
-    concurrent_log_debug(log, "adding ", p_value);
+    concurrent_debug(m_log, "adding ", p_value);
     {
       std::lock_guard<std::mutex> _lock(m_mutex_data);
       m_values.push_back(std::move(p_value));
     }
-    concurrent_log_debug(log, "added and notifying ");
+    concurrent_debug(m_log, "added and notifying ");
     m_cv_data.notify_all();
   }
 
@@ -413,6 +405,8 @@ private:
 
   /// \brief m_destroying indicates that the \p thread_pool should stop
   bool m_destroying = false;
+
+  t_log m_log{"thread_pool.h"};
 };
 
 } // namespace concurrent

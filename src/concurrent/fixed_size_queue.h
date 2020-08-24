@@ -18,6 +18,16 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+///
+///
+/// \tparam t_log provides log funcionality:
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
+///
 template <class t_data, typename t_log> class fixed_size_queue_t {
 public:
   typedef t_data data;
@@ -103,19 +113,19 @@ public:
 
   inline bool full() const { return m_length == m_size; }
   inline bool empty() const {
-    //    concurrent_log_debug(t_log, "m_length = ", m_length);
+    //    debug(t_log, "m_length = ", m_length);
     return m_length == 0;
   }
   inline size capacity() const {
-    //    concurrent_log_debug(t_log, "m_length = ", m_length);
+    //    debug(t_log, "m_length = ", m_length);
     return m_size;
   }
   inline size occupied() const { return m_length; }
 
 private:
   void report(const char *p_str, const data &p_data) {
-    concurrent_log_debug(t_log, p_str, ": data = ", p_data, ", read = ", m_read,
-                         ", write = ", m_write, ", length = ", m_length);
+    concurrent_debug(m_log, p_str, ": data = ", p_data, ", read = ", m_read,
+          ", write = ", m_write, ", length = ", m_length);
   }
 
 private:
@@ -125,6 +135,7 @@ private:
   size m_length = 0;
   values m_values;
   std::mutex m_mutex;
+  t_log m_log{"fixed_size_queue.h"};
 };
 
 } // namespace concurrent

@@ -6,24 +6,17 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <string>
 #include <algorithm>
+#include <string>
 
+#define concurrent_debug(log, p_params...) log.debug(__LINE__, p_params)
 
+#define concurrent_info(log, p_params...) log.info(__LINE__, p_params)
 
-#define concurrent_log_debug(log, p_params...)                                 \
-  log::debug(__FILE__, __LINE__, p_params)
+#define concurent_warn(log, p_params...) log.warn(__LINE__, p_params)
 
-#define concurrent_log_info(log, p_params...)                                  \
-  log::info(__FILE__, __LINE__, p_params)
+#define concurrent_error(log, p_params...) log.error(__LINE__, p_params)
 
-#define concurrent_log_warn(log, p_params...)                                  \
-  log::warn(__FILE__, __LINE__, p_params)
-
-#define concurrent_log_error(log, p_params...)                                 \
-  log::error(__FILE__, __LINE__, p_params)
-
-#define concurrent_log_fatal(log, p_params...)                                 \
-  log::fatal(__FILE__, __LINE__, p_params)
+#define concurrent_fatal(log, p_params...) log.fatal(__LINE__, p_params)
 
 #endif // concurrent_log_debug_H

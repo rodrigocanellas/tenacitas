@@ -47,18 +47,12 @@ namespace concurrent {
 ///    - default constructible
 ///    - move constructible
 ///
-/// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-///
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)///
 /// \tparam t_time is the type of time used for timeout control
 ///
 template <typename t_container, typename t_log,
@@ -70,9 +64,6 @@ public:
 
   /// \brief type produced data to be consumed
   typedef typename container::data data;
-
-  /// \brief log alias for \p t_log
-  typedef t_log log;
 
   /// \brief type of time used for timeout control
   typedef t_time time;
@@ -95,16 +86,16 @@ public:
   /// If 'stop ' was not called, empties the pool, waiting for all the data to
   /// be processed
   ~producer_consumer_t() {
-    concurrent_log_debug(log, "destructor");
+    concurrent_debug(m_log, "destructor");
     //    m_destroying = true;
     if (!all_loops_stopped()) {
       if (!m_stopped) {
         while (!m_container.empty()) {
           m_data_produced.notify_all();
-          //          concurrent_log_debug(log, "waiting for poping");
+          //          debug(m_log, "waiting for poping");
           std::unique_lock<std::mutex> _lock(m_mutex_data);
           m_data_consumed.wait(_lock, [this] {
-            //            concurrent_log_debug(log, "data consumed signal
+            //            debug(m_log, "data consumed signal
             //            arrived");
             return true;
           });
@@ -118,22 +109,22 @@ public:
   ///
   /// \param p_data is the data produced
   void add(const data &p_data) {
-    concurrent_log_debug(t_log, "waiting for room ...");
+    concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
         _lock, [this]() { return (!m_container.full() || m_stopped); });
-    concurrent_log_debug(t_log, "there is room");
+    concurrent_debug(m_log, "there is room");
 
     if (m_stopped) {
-      concurrent_log_debug(log, "stopped");
+      concurrent_debug(m_log, "stopped");
     } else {
       m_container.add(p_data);
-      concurrent_log_debug(t_log, "adding ", p_data);
+      concurrent_debug(m_log, "adding ", p_data);
     }
 
     // notifyng that new data is available
 
-    concurrent_log_debug(log, "notifying");
+    concurrent_debug(m_log, "notifying");
     m_data_produced.notify_all();
   }
 
@@ -141,23 +132,23 @@ public:
   ///
   /// \param p_data is the data produced
   void add(data &&p_data) {
-    concurrent_log_debug(t_log, "waiting for room ...");
+    concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
         _lock, [this]() { return (!m_container.full() || m_stopped); });
 
     if (m_stopped) {
-      concurrent_log_debug(log, "stopped");
+      concurrent_debug(m_log, "stopped");
     } else {
 
-      concurrent_log_debug(t_log, "there is room");
+      concurrent_debug(m_log, "there is room");
 
       m_container.add(std::move(p_data));
-      concurrent_log_debug(t_log, "adding ", p_data);
+      concurrent_debug(m_log, "adding ", p_data);
     }
 
     // notifyng that new data is available
-    concurrent_log_debug(log, "notifying");
+    concurrent_debug(m_log, "notifying");
     m_data_produced.notify_all();
   }
 
@@ -211,15 +202,15 @@ public:
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
 
-      concurrent_log_warn(log, "can't run because there are no workers");
+      concurent_warn(m_log, "can't run because there are no workers");
       return;
     }
-    concurrent_log_debug(log, "starting");
+    concurrent_debug(m_log, "starting");
     m_stopped = false;
     for (async_loop &_loop : m_loops) {
       _loop.start();
     }
-    concurrent_log_debug(log, "started");
+    concurrent_debug(m_log, "started");
   }
 
   /// \brief interrupt stops the \p producer_consumer
@@ -237,7 +228,7 @@ public:
 
     m_data_produced.notify_all();
     for (async_loop &_loop : m_loops) {
-      concurrent_log_debug(log, "stopping loop");
+      concurrent_debug(m_log, "stopping loop");
       _loop.stop();
     }
   }
@@ -277,36 +268,36 @@ private:
     using namespace std;
 
     if (m_stopped) {
-      concurrent_log_debug(log, "stopped");
+      concurrent_debug(m_log, "stopped");
       return {concurrent::stopped_by_provider, data()};
     }
 
-    concurrent_log_debug(t_log, "waiting for data...");
+    concurrent_debug(m_log, "waiting for data...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_produced.wait(_lock, [this]() -> bool {
       //      return (!m_container.empty() || m_stopped);
       if (m_stopped) {
-        concurrent_log_debug(log, "stopped");
+        concurrent_debug(m_log, "stopped");
         return true;
       }
       if (!m_container.empty()) {
-        concurrent_log_debug(log, "not empty");
+        concurrent_debug(m_log, "not empty");
         return true;
       }
-      concurrent_log_debug(log, "leaving with false");
+      concurrent_debug(m_log, "leaving with false");
 
       return false;
     });
 
     if (m_stopped) {
-      concurrent_log_debug(log, "stopped and notifying");
+      concurrent_debug(m_log, "stopped and notifying");
       m_data_consumed.notify_all();
       return {concurrent::stopped_by_provider, data()};
     }
 
     data _data = m_container.get();
 
-    concurrent_log_debug(t_log, "getting ", _data, " and notifying");
+    concurrent_debug(m_log, "getting ", _data, " and notifying");
 
     // notifying that new data can be added
     //    if (m_destroying && (!m_container.empty())) {
@@ -345,8 +336,11 @@ private:
   asyncs_loops m_loops;
 
   bool m_stopped = true;
+
   /// \brief m_destroying indicates that the \p produce_consumer should stop
   bool m_destroying = false;
+
+  t_log m_log{"producer_consumer.h"};
 };
 
 } // namespace concurrent

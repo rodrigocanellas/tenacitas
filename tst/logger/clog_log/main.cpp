@@ -8,22 +8,17 @@ struct clog_how_to {
   bool operator()() {
     try {
       using namespace tenacitas;
-      logger::clog::log::set_debug();
-      logger::clog::log::debug("clog_how_to", __LINE__,
-                               "teste de clog para debug ", -345, ' ', 19023,
-                               ' ', 'W', 3.1415);
-      logger::clog::log::info("clog_how_to", __LINE__,
-                              "teste de clog para debug ", -345, ' ', 19023,
-                              ' ', 'W', 3.1415);
-      logger::clog::log::warn("clog_how_to", __LINE__,
-                              "teste de clog para debug ", -345, ' ', 19023,
-                              ' ', 'W', 3.1415);
-      logger::clog::log::error("clog_how_to", __LINE__,
-                               "teste de clog para debug ", -345, ' ', 19023,
-                               ' ', 'W', 3.1415);
-      logger::clog::log::fatal("clog_how_to", __LINE__,
-                               "teste de clog para debug ", -345, ' ', 19023,
-                               ' ', 'W', 3.1415);
+      m_log.set_debug();
+      m_log.debug(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
+                  'W', 3.1415);
+      m_log.info(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
+                 'W', 3.1415);
+      m_log.warn(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
+                 'W', 3.1415);
+      m_log.error(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
+                  'W', 3.1415);
+      m_log.fatal(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
+                  'W', 3.1415);
 
       return true;
 
@@ -35,6 +30,9 @@ struct clog_how_to {
   }
 
   static std::string desc() { return "Simple 'clog' log usage"; }
+
+private:
+  logger::clog::log m_log{"clog_how_to"};
 };
 
 int main(int argc, char **argv) {

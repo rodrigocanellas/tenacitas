@@ -20,29 +20,16 @@ namespace concurrent {
 
 /// \brief writer_t writes to a stream
 ///
-/// \tparam t_logger must provide
-/// \code
-///
-/// template <typename ...p_params>
-/// static void debug(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void info(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void warn(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void error(const char *, int, params...)
-///
-/// template <typename ...p_params>
-/// static void fatal(const char *, int, params...)
+/// \tparam t_log provides log funcionality:
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \endcode
-template <typename t_logger> struct writer_t {
-
-  /// \brief alias for \p logger_t
-  typedef t_logger logger;
+template <typename t_log> struct writer_t {
 
   /// \brief writes a block to a stream, blocking the caller
   ///
@@ -65,10 +52,13 @@ template <typename t_logger> struct writer_t {
     try {
       return p_stream(p_data, p_size);
     } catch (const std::exception &_ex) {
-      concurrent_log_error(logger, "error '", _ex.what(), "' while writing");
+      concurrent_error(m_log, _ex.what());
       return concurrent::error_writing;
     }
   }
+
+private:
+  t_log m_log{"writer.h"};
 };
 
 } // namespace concurrent

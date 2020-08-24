@@ -10,7 +10,7 @@
 #include <future>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/process.h>
+#include <concurrent/processor.h>
 #include <concurrent/result.h>
 #include <concurrent/traits.h>
 
@@ -36,16 +36,12 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
@@ -64,9 +60,6 @@ struct loop_t {
   /// \brief breaker type
   /// \sa traits_t<t_data>::breaker in concurrent/traits.h
   typedef typename traits_t<t_data>::breaker breaker;
-
-  /// \brief log alias for @p t_log
-  typedef t_log log;
 
   /// \brief loop constructor
   ///
@@ -179,7 +172,7 @@ struct loop_t {
   ///         or any other value, therwise
   status::result start() {
     if (m_running == true) {
-      concurrent_log_debug(log, "not starting beacause it is running");
+      concurrent_debug(m_log, "not starting beacause it is running");
       return concurrent::already_running;
     }
 
@@ -192,13 +185,12 @@ struct loop_t {
       if (m_stopped_by_user) {
 
         _result = concurrent::stopped_by_user;
-        concurrent_log_warn(log, _result);
+        concurent_warn(m_log, _result);
         break;
       }
 
       if (m_stopped_by_destructor) {
-        concurrent_log_warn(log,
-                            "loop stopped: ", concurrent::stop_by_destructor);
+        concurent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }
@@ -206,7 +198,7 @@ struct loop_t {
       status::result _worker_result = m_processor();
 
       if (_worker_result != status::ok) {
-        concurrent_log_warn(log, "worker returned ", _worker_result);
+        concurent_warn(m_log, "worker returned ", _worker_result);
         if ((_worker_result == concurrent::stopped_by_worker) ||
             (_worker_result == concurrent::stopped_by_provider)) {
           _result = _worker_result;
@@ -216,13 +208,12 @@ struct loop_t {
 
       if (m_stopped_by_user) {
         _result = concurrent::stopped_by_user;
-        concurrent_log_warn(log, "loop stopped: ", _result);
+        concurent_warn(m_log, "loop stopped: ", _result);
         break;
       }
 
       if (m_stopped_by_destructor) {
-        concurrent_log_warn(log,
-                            "loop stopped: ", concurrent::stop_by_destructor);
+        concurent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }
@@ -230,10 +221,10 @@ struct loop_t {
       _result = m_breaker();
       if (_result != status::ok) {
         if (_result == concurrent::stopped_by_breaker) {
-          concurrent_log_warn(log, "loop stopped: ", _result);
+          concurent_warn(m_log, "loop stopped: ", _result);
           _result = status::ok;
         } else {
-          concurrent_log_error(log, _result);
+          concurrent_error(m_log, _result);
         }
         break;
       }
@@ -269,6 +260,8 @@ private:
   bool m_running{false};
 
   processor m_processor;
+
+  t_log m_log{"loop.h"};
 };
 
 } // namespace concurrent

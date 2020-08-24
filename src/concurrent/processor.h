@@ -20,6 +20,15 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+///
+///
+/// \tparam t_log provides log funcionality:
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 template <typename t_data, typename t_time, typename t_log> struct processor_t {
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
@@ -29,17 +38,14 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
 
-  /// \brief log alias for @p t_log
-  typedef t_log log;
-
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
       : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    concurrent_log_debug(t_log, "contructor");
+    concurrent_debug(m_log, "contructor");
   }
 
   processor_t(const processor_t &) = delete;
   processor_t(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move contructor");
+    concurrent_debug(m_log, "move contructor");
     m_worker = std::move(p_proc.m_worker);
     m_provider = std::move(p_proc.m_provider);
     m_timeout = std::move(p_proc.m_timeout);
@@ -51,9 +57,9 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
     }
   }
 
-  processor_t &operator()(const processor_t &) = delete;
-  processor_t &operator()(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move =");
+  processor_t &operator=(const processor_t &) = delete;
+  processor_t &operator=(processor_t &&p_proc) noexcept {
+    concurrent_debug(m_log, "move =");
     if (this != &p_proc) {
 
       m_worker = std::move(p_proc.m_worker);
@@ -76,7 +82,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   status::result operator()() {
 
     if (!is_running()) {
-      concurrent_log_debug(t_log, "starting thread, as it was not running");
+      concurrent_debug(m_log, "starting thread, as it was not running");
       m_thread = std::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
@@ -88,36 +94,36 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
       return m_result;
     }
 
-    concurrent_log_debug(t_log, "waiting for data");
+    concurrent_debug(m_log, "waiting for data");
     m_data = std::move(_provided.second);
-    concurrent_log_debug(t_log, "data ", m_data, " arrived");
+    concurrent_debug(m_log, "data ", m_data, " arrived");
 
-    concurrent_log_debug(t_log, "sending notification");
+    concurrent_debug(m_log, "sending notification");
     m_cond_exec.notify_one();
-    concurrent_log_debug(t_log, "notification sent");
+    concurrent_debug(m_log, "notification sent");
     std::unique_lock<std::mutex> _lock(m_mutex_time);
-    concurrent_log_debug(t_log, "waiting for worker to finish");
+    concurrent_debug(m_log, "waiting for worker to finish");
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_log_warn(log, "worker timeout");
+      concurrenm_log_warn(m_log, "worker timeout");
       return concurrent::stopped_by_timeout;
     }
-    concurrent_log_debug(t_log, "worker finished on time");
+    concurrent_debug(m_log, "worker finished on time");
     return m_result;
   }
 
   void stop() {
     if (is_running()) {
-      concurrent_log_debug(t_log, "marking to stop, and sending notification");
+      concurrent_debug(m_log, "marking to stop, and sending notification");
       m_cond_exec.notify_one();
       m_stop = true;
       m_thread.join();
     } else {
-      concurrent_log_debug(t_log, "thread not running");
+      concurrent_debug(m_log, "thread not running");
     }
   }
 
   ~processor_t() {
-    concurrent_log_debug(t_log, "destructor");
+    concurrent_debug(m_log, "destructor");
     stop();
   }
 
@@ -125,27 +131,27 @@ private:
   void loop() {
     using namespace std;
     while (true) {
-      concurrent_log_debug(t_log, "waiting for permission to work");
+      concurrent_debug(m_log, "waiting for permission to work");
       unique_lock<mutex> _lock(m_mutex_exec);
       m_cond_exec.wait(_lock);
-      concurrent_log_debug(t_log, "permission arrived");
+      concurrent_debug(m_log, "permission arrived");
 
       if (m_stop) {
-        concurrent_log_debug(t_log, "ordered to stop");
+        concurrent_debug(m_log, "ordered to stop");
         break;
       }
 
-      concurrent_log_debug(t_log, "provided ", m_data);
-      concurrent_log_debug(log, "calling worker");
+      concurrent_debug(m_log, "provided ", m_data);
+      concurrent_debug(m_log, "calling worker");
       m_result = m_worker(std::move(m_data));
-      concurrent_log_debug(log, "worker returned ", m_result);
+      concurrent_debug(m_log, "worker returned ", m_result);
       if (m_stop) {
-        concurrent_log_debug(t_log, "ordered to stop");
+        concurrent_debug(m_log, "ordered to stop");
         break;
       }
-      concurrent_log_debug(t_log, "sending notification of work done");
+      concurrent_debug(m_log, "sending notification of work done");
       m_cond_time.notify_one();
-      concurrent_log_debug(t_log, "notification of work done is sent");
+      concurrent_debug(m_log, "notification of work done is sent");
     }
   }
 
@@ -161,6 +167,7 @@ private:
   std::condition_variable m_cond_exec;
   std::condition_variable m_cond_time;
   t_data m_data;
+  t_log m_log{"processor.h"};
 };
 
 template <typename t_time, typename t_log>
@@ -178,11 +185,11 @@ struct processor_t<void, t_time, t_log> {
 
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
       : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    concurrent_log_debug(t_log, "contructor");
+    concurrent_debug(m_log, "contructor");
   }
 
   processor_t(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move contructor");
+    concurrent_debug(m_log, "move contructor");
     m_worker = std::move(p_proc.m_worker);
     m_provider = std::move(p_proc.m_provider);
     m_timeout = std::move(p_proc.m_timeout);
@@ -194,9 +201,9 @@ struct processor_t<void, t_time, t_log> {
     }
   }
 
-  processor_t &operator()(const processor_t &) = delete;
-  processor_t &operator()(processor_t &&p_proc) noexcept {
-    concurrent_log_debug(t_log, "move =");
+  processor_t &operator=(const processor_t &) = delete;
+  processor_t &operator=(processor_t &&p_proc) noexcept {
+    concurrent_debug(m_log, "move =");
     if (this != &p_proc) {
 
       m_worker = std::move(p_proc.m_worker);
@@ -219,37 +226,37 @@ struct processor_t<void, t_time, t_log> {
   status::result operator()() {
 
     if (!is_running()) {
-      concurrent_log_debug(t_log, "starting thread, as it was not running");
+      concurrent_debug(m_log, "starting thread, as it was not running");
       m_thread = std::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
-    concurrent_log_debug(t_log, "sending notification");
+    concurrent_debug(m_log, "sending notification");
     m_cond_exec.notify_one();
-    concurrent_log_debug(t_log, "notification sent");
+    concurrent_debug(m_log, "notification sent");
     std::unique_lock<std::mutex> _lock(m_mutex_time);
-    concurrent_log_debug(t_log, "waiting for worker to finish");
+    concurrent_debug(m_log, "waiting for worker to finish");
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_log_warn(log, "worker timeout");
+      concurent_warn(m_log, "worker timeout");
       return concurrent::stopped_by_timeout;
     }
-    concurrent_log_debug(t_log, "worker finished on time");
+    concurrent_debug(m_log, "worker finished on time");
     return m_result;
   }
 
   void stop() {
     if (is_running()) {
-      concurrent_log_debug(t_log, "marking to stop, and sending notification");
+      concurrent_debug(m_log, "marking to stop, and sending notification");
       m_cond_exec.notify_one();
       m_stop = true;
       m_thread.join();
     } else {
-      concurrent_log_debug(t_log, "thread not running");
+      concurrent_debug(m_log, "thread not running");
     }
   }
 
   ~processor_t() {
-    concurrent_log_debug(t_log, "destructor");
+    concurrent_debug(m_log, "destructor");
     stop();
   }
 
@@ -257,25 +264,25 @@ private:
   void loop() {
     using namespace std;
     while (true) {
-      concurrent_log_debug(t_log, "waiting for permission to work");
+      concurrent_debug(m_log, "waiting for permission to work");
       unique_lock<mutex> _lock(m_mutex_exec);
       m_cond_exec.wait(_lock);
-      concurrent_log_debug(t_log, "permission arrived");
+      concurrent_debug(m_log, "permission arrived");
 
       if (m_stop) {
-        concurrent_log_debug(t_log, "ordered to stop");
+        concurrent_debug(m_log, "ordered to stop");
         break;
       }
 
       m_result = m_worker();
-      concurrent_log_debug(log, "worker returned ", m_result);
+      concurrent_debug(m_log, "worker returned ", m_result);
       if (m_stop) {
-        concurrent_log_debug(t_log, "ordered to stop");
+        concurrent_debug(m_log, "ordered to stop");
         break;
       }
-      concurrent_log_debug(t_log, "sending notification of work done");
+      concurrent_debug(m_log, "sending notification of work done");
       m_cond_time.notify_one();
-      concurrent_log_debug(t_log, "notification of work done is sent");
+      concurrent_debug(m_log, "notification of work done is sent");
     }
   }
 
@@ -290,6 +297,7 @@ private:
   std::mutex m_mutex_time;
   std::condition_variable m_cond_exec;
   std::condition_variable m_cond_time;
+  t_log m_log{"process.h"};
 };
 ///// \brief process struct executes the core process for a \p loop object which
 ///// Work function receives data
@@ -311,12 +319,12 @@ private:
 //    if (_provided.first != status::ok) {
 //      _result = _provided.first;
 //    } else {
-//      concurrent_log_debug(t_log, "_provided.second = ", _provided.second, "
+//      debug(m_log, "_provided.second = ", _provided.second, "
 //      ",
 //                           &(_provided.second));
 
 //      auto _f = [&p_work](t_data &&p_data) {
-//        concurrent_log_debug(t_log, "p_data = ", p_data, " ", &p_data);
+//        debug(m_log, "p_data = ", p_data, " ", &p_data);
 //        return p_work(std::move(p_data));
 //      };
 

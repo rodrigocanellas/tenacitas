@@ -1,6 +1,8 @@
 
 #include <logger/file/internal/file_controller.h>
 
+#include <iomanip>
+
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
@@ -13,12 +15,23 @@ std::string file_controller::name() {
   std::stringstream _stream;
   update_last();
 
+  using namespace std::chrono;
+
+  const auto _duration = std::chrono::milliseconds(m_last);
+  const time_point<system_clock> _time_point(_duration);
+  const time_t _time_t = system_clock::to_time_t(_time_point);
+
+  const auto _remainder = m_last % 1000;
+
   //  static const uint16_t _max_str_length = formater::max_str_length<pid_t>();
   //  _stream << m_path << "/" << m_base_name << "_" << std::right
   //          << std::setfill('0') << std::setw(_max_str_length) << m_pid << "_"
   //          << m_last << ".log";
-  _stream << m_path << "/" << m_base_name << "_" << number::format_000(m_pid)
-          << "_" << m_last << ".log";
+  _stream << m_path << "/" << m_base_name << "-" << number::format_000(m_pid)
+          << "-"
+          << std::put_time(std::localtime(&_time_t), "%Y-%m-%d-%H-%M-%S-")
+          << std::setw(3) << std::setfill('0') << std::left << _remainder
+          << ".log";
   return _stream.str();
 }
 

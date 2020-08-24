@@ -28,7 +28,7 @@ struct producer_consumer_000 {
 
     status::result worker() {
       ++m_counter;
-      concurrent_log_debug(log, "counter = ", m_counter);
+      concurrent_debug(log, "counter = ", m_counter);
       return status::ok;
     }
 
@@ -44,7 +44,7 @@ struct producer_consumer_000 {
 
     status::result _result = _loop.start();
 
-    concurrent_log_debug(log, "result = ", _result);
+    concurrent_debug(log, "result = ", _result);
 
     return (_result == status::ok);
   }
@@ -66,7 +66,7 @@ struct loop_001 {
     status::result worker() {
       ++m_counter;
       std::this_thread::sleep_for(std::chrono::seconds(1 * m_counter));
-      concurrent_log_debug(log, "counter = ", m_counter);
+      concurrent_debug(log, "counter = ", m_counter);
       return status::ok;
     }
 
@@ -84,7 +84,7 @@ struct loop_001 {
 
     status::result _result = _loop.start();
 
-    concurrent_log_debug(log, "result = ", _result,
+    concurrent_debug(log, "result = ", _result,
                          ", counter = ", _xpto.counter());
 
     return ((_result == concurrent::stopped_by_timeout) &&
@@ -110,7 +110,7 @@ struct loop_002 {
 
     status::result worker() {
       ++m_counter;
-      concurrent_log_debug(log, "counter = ", m_counter);
+      concurrent_debug(log, "counter = ", m_counter);
       if (m_counter == 22) {
         return stop_because_so;
       }
@@ -129,7 +129,7 @@ struct loop_002 {
 
     status::result _result = _loop.start();
 
-    concurrent_log_debug(log, "result = ", _result);
+    concurrent_debug(log, "result = ", _result);
 
     return (_result == stop_because_so);
   }
@@ -159,7 +159,7 @@ struct loop_003 {
     }
 
     status::result worker(int16_t &&p_value) {
-      concurrent_log_debug(log, "counter = ", p_value);
+      concurrent_debug(log, "counter = ", p_value);
       return status::ok;
     }
 
@@ -185,7 +185,7 @@ struct loop_003 {
 
     status::result _result = _loop.start();
 
-    concurrent_log_debug(log, "result = ", _result);
+    concurrent_debug(log, "result = ", _result);
 
     return (_result == status::ok);
   }

@@ -12,9 +12,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#if defined(_WIN32)
+#include <direct.h> // _mkdir
+#endif
+
 //#include <calendar/epoch.h>
 #include <concurrent/sleeping_loop.h>
 #include <number/format_000.h>
+
+#include <logger/cerr/log.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -66,13 +72,24 @@ struct file_controller {
 
         m_max_file_size(p_max_file_size),
 
-        m_deleter(m_path, m_base_name, m_closed_extension,
+        m_closed_dir(m_path + "/closed"),
+
+        m_deleter(m_closed_dir, m_base_name, m_closed_extension,
                   std::chrono::seconds(60 * p_retention.count())),
 
         m_sleeping_loop(
             std::chrono::milliseconds(p_retention.count() * 60 * 1000),
             [this]() -> status::result { return this->m_deleter(); },
-            std::chrono::milliseconds(20 * 60 * 1000)) {}
+            std::chrono::milliseconds(2 * 60 * 1000)) {
+    m_log.set_debug();
+    m_log.debug(__LINE__, "closed dir = ", m_closed_dir);
+#if defined(_WIN32)
+    _mkdir(m_closed_dir.c_str());
+#else
+    mode_t mode = 0755;
+    int ret = mkdir(m_close_dir.c_str(), mode);
+#endif
+  }
 
   file_controller() = delete;
 
@@ -84,13 +101,17 @@ struct file_controller {
         m_closed_extension(std::move(p_controller.m_closed_extension)),
         m_last(p_controller.m_last), m_pid(p_controller.m_pid),
         m_max_file_size(p_controller.m_max_file_size),
+        m_closed_dir(std::move(p_controller.m_closed_dir)),
         m_deleter(std::move(p_controller.m_deleter)),
         m_sleeping_loop(
             p_controller.m_sleeping_loop.get_interval(),
             [this]() -> status::result { return this->m_deleter(); },
             p_controller.m_sleeping_loop.get_timeout()) {}
 
-  ~file_controller() { m_sleeping_loop.stop(); }
+  ~file_controller() {
+    m_log.debug(__LINE__, "destructor");
+    m_sleeping_loop.stop();
+  }
 
   file_controller &operator=(const file_controller &) = delete;
   file_controller &operator=(file_controller &&p_controller) noexcept {
@@ -101,6 +122,7 @@ struct file_controller {
       m_last = p_controller.m_last;
       m_pid = p_controller.m_pid;
       m_max_file_size = p_controller.m_max_file_size;
+      m_closed_dir = std::move(p_controller.m_closed_dir);
       m_deleter = std::move(p_controller.m_deleter);
       m_sleeping_loop = sleeping_loop(
           p_controller.m_sleeping_loop.get_interval(),
@@ -120,9 +142,16 @@ struct file_controller {
   /// \brief rename renames the logger::log file, apppending the user defined
   /// closed extension \param p_file_name the original file name
   ///
-  inline void rename(const std::string &p_file_name) const {
-    std::rename(p_file_name.c_str(),
-                std::string(p_file_name + "." + m_closed_extension).c_str());
+  inline void rename(const std::string &p_file_name) {
+
+    std::string _to(m_closed_dir + "/" + p_file_name + "." +
+                    m_closed_extension);
+    m_log.debug(__LINE__, "from = ", p_file_name, ", to = ", _to);
+    int _res = std::rename(p_file_name.c_str(), _to.c_str());
+
+    if (_res) {
+      m_log.error(__LINE__, "could not rename ", p_file_name);
+    }
   }
 
   ///
@@ -143,29 +172,26 @@ struct file_controller {
 
 private:
   struct no_log {
+    inline no_log() {}
+    inline no_log(const char *) {}
+    no_log(std::string &&) {}
     template <typename... t_params>
-    inline static void debug(const std::string & /*p_file*/, int /*p_line*/,
-                             const t_params &... /*p_params*/) {}
+    inline void debug(uint32_t, const t_params &...) {}
     template <typename... t_params>
-    inline static void info(const std::string & /*p_file*/, int /*p_line*/,
-                            const t_params &...
-                            /*p_params*/) {}
+    inline void info(uint32_t, const t_params &...) {}
     template <typename... t_params>
-    inline static void warn(const std::string & /*p_file*/, int /*p_line*/,
-                            const t_params &...
-                            /*p_params*/) {}
+    inline void warn(uint32_t, const t_params &...) {}
     template <typename... t_params>
-    inline static void error(const std::string & /*p_file*/, int /*p_line*/,
-                             const t_params &... /*p_params*/) {}
+    inline void error(uint32_t, const t_params &...) {}
     template <typename... t_params>
-    inline static void fatal(const std::string & /*p_file*/, int /*p_line*/,
-                             const t_params &... /*p_params*/) {}
+    inline void fatal(uint32_t, const t_params &...) {}
   };
 
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
   ///
-  typedef concurrent::sleeping_loop_t<void, no_log> sleeping_loop;
+  typedef concurrent::sleeping_loop_t<void, tenacitas::logger::cerr::log>
+      sleeping_loop;
 
   struct deleter {
     deleter() = delete;
@@ -229,7 +255,7 @@ private:
   ///
   void update_last() {
     uint64_t _id = static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
     if (_id == m_last) {
@@ -245,10 +271,10 @@ private:
   /// \param p_file_name the name of the file to be verified
   /// \return \p true if matchs, \p false otherwise
   ///
-  inline bool match(const std::string &p_file_name) {
-    return ((p_file_name.find(m_base_name) != std::string::npos) &&
-            (p_file_name.find(m_closed_extension) != std::string::npos));
-  }
+  //  inline bool match(const std::string &p_file_name) {
+  //    return ((p_file_name.find(m_base_name) != std::string::npos) &&
+  //            (p_file_name.find(m_closed_extension) != std::string::npos));
+  //  }
 
 private:
   ///
@@ -283,6 +309,8 @@ private:
   ///
   uint32_t m_max_file_size;
 
+  std::string m_closed_dir;
+
   deleter m_deleter;
 
   ///
@@ -290,6 +318,8 @@ private:
   /// if files should be removed
   ///
   sleeping_loop m_sleeping_loop;
+
+  tenacitas::logger::cerr::log m_log{"file_controler.h"};
 };
 
 } // namespace file

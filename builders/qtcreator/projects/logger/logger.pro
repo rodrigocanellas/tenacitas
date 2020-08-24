@@ -2,9 +2,9 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
   dep \
+  logger.cerr \
   logger.cout \
   logger.clog \
-  logger.cerr \
   logger.file \
   tst
 

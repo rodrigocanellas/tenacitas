@@ -41,16 +41,12 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
@@ -70,9 +66,6 @@ struct async_loop_t {
   /// \brief breaker type
   /// \sa traits_t<t_data>::breaker in concurrent/traits.h
   typedef typename traits_t<t_data>::breaker breaker;
-
-  /// \brief log alias for @p t_log
-  typedef t_log log;
 
   /// \brief async_loop constructor
   ///
@@ -123,6 +116,7 @@ struct async_loop_t {
 
   /// \brief move assignment
   async_loop_t &operator=(async_loop_t &&p_async) noexcept {
+    concurrent_debug(m_log, "destructor");
     if (this != &p_async) {
       m_loop = std::move(p_async.m_loop);
     }
@@ -130,7 +124,10 @@ struct async_loop_t {
   }
 
   /// \brief destructor stops the loop
-  inline ~async_loop_t() { stop(); }
+  inline ~async_loop_t() {
+    concurrent_debug(m_log, "destructor");
+    stop();
+  }
 
   /// \brief is_stopped
   ///
@@ -169,6 +166,7 @@ struct async_loop_t {
   /// \return \p status::ok if could restart, or any other \p status::result
   /// otherwise
   inline status::result restart() {
+    concurrent_debug(m_log, "restart");
     stop();
     return start();
   }
@@ -183,11 +181,11 @@ struct async_loop_t {
   status::result start() {
 
     if (!m_loop.is_stopped()) {
-      concurrent_log_debug(
-          log, this, "not starting the loop because it is already running");
+      concurrent_debug(m_log, this,
+                       "not starting the loop because it is already running");
       return concurrent::already_running;
     }
-    concurrent_log_debug(log, "starting the loop");
+    concurrent_debug(m_log, "starting the loop");
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_thread = thread([this]() -> status::result { return m_loop.start(); });
 
@@ -197,15 +195,15 @@ struct async_loop_t {
   /// \brief stops the loop
   void stop() {
     if (m_loop.is_stopped()) {
-      concurrent_log_warn(log,
-                          " not stopping the loop because it was not running");
+      concurent_warn(m_log,
+                     " not stopping the loop because it was not running");
       return;
     }
 
     std::lock_guard<std::mutex> _lock(m_mutex);
-    concurrent_log_debug(log, "marking to stop");
+    concurrent_debug(m_log, "marking to stop");
     m_loop.stop();
-    concurrent_log_debug(log, "joining");
+    concurrent_debug(m_log, "joining");
   }
 
 private:
@@ -233,6 +231,8 @@ private:
 
   /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
   std::mutex m_mutex;
+
+  t_log m_log{"async_loop.h"};
 };
 
 } // namespace concurrent

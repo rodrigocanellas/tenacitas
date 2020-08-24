@@ -9,54 +9,56 @@
 
 using namespace tenacitas;
 
-class file_log_creation {
-
-public:
-  explicit file_log_creation() = default;
-
-  bool operator()() {
-
-    try {
-      logger::file::log::configure(".", "file_log_creation", 100,
-                                   std::chrono::minutes(10));
-
-      logger::file::log::set_debug();
-
-      return true;
-    } catch (std::exception &_ex) {
-      logger::file::log::fatal("file_log_creation", __LINE__,
-                               "ERRO file_log_creation: '", _ex.what(), "'");
-    }
-    return false;
-  }
-  static std::string desc() { return "'file_log' creation"; }
-};
-
 struct file_log_how_to {
   bool operator()() {
 
     try {
-      logger::file::log::configure(".", "how_to", 10 * 1024,
+      logger::file::log::configure(".", "FileLogHowTo", 10 * 1024,
                                    std::chrono::minutes(15));
 
-      logger::file::log::set_debug();
+      m_log.set_debug();
 
-      logger::file::log::debug("file_log_how_to", __LINE__, "hello! ", 309);
-      logger::file::log::debug("file_log_how_to", __LINE__,
-                               "how are you doing? ", 3.14);
-      logger::file::log::info("file_log_how_to", __LINE__, "fine!! ", 'W');
-      logger::file::log::info("file_log_how_to", __LINE__, "and you?");
-      logger::file::log::warn("file_log_how_to", __LINE__,
-                              "great! got a new job!! ", 6987.58f);
-      logger::file::log::warn("file_log_how_to", __LINE__, "nice!! ", 10);
+      m_log.debug(__LINE__, "hello! ", 309);
+      m_log.debug(__LINE__, "how are you doing? ", 3.14);
+      m_log.info(__LINE__, "fine!! ", 'W');
+      m_log.info(__LINE__, "and you?");
+      m_log.warn(__LINE__, "great! got a new job!! ", 6987.58f);
+      m_log.warn(__LINE__, "nice!! ", 10);
+      std::this_thread::sleep_for(std::chrono::microseconds(982248));
+      m_log.warn(__LINE__, "a few microsecs later");
       return true;
     } catch (std::exception &_ex) {
-      std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
-                << std::endl;
+      std::cerr << "ERROR: '" << _ex.what() << "'" << std::endl;
     }
     return false;
   }
   static std::string desc() { return "Simple 'file_log' usage"; }
+
+private:
+  logger::file::log m_log{"file_log_how_to"};
+};
+
+class file_log_creation {
+
+public:
+  bool operator()() {
+
+    try {
+      logger::file::log::configure(".", "FileLogCreation", 100,
+                                   std::chrono::minutes(10));
+
+      m_log.set_debug();
+
+      return true;
+    } catch (std::exception &_ex) {
+      m_log.fatal(__LINE__, "ERROR: '", _ex.what(), "'");
+    }
+    return false;
+  }
+  static std::string desc() { return "'file_log' creation"; }
+
+private:
+  logger::file::log m_log{"file_log_creation"};
 };
 
 class file_log_single {
@@ -69,27 +71,20 @@ public:
     try {
       using namespace tenacitas;
 
-      logger::file::log::configure(".", "file_log_single", 10 * 1024,
+      logger::file::log::configure(".", "FileLogSingle", 10 * 1024,
                                    std::chrono::minutes(5));
-      logger::file::log::set_debug();
+      m_log.set_debug();
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
-          []() {
-            logger::file::log::debug("file_log_single", __LINE__,
-                                     "================= work! ", time(nullptr));
+          [this]() {
+            m_log.debug(__LINE__, "================= work! ", time(nullptr));
             for (uint32_t _i = 0; _i < 5; ++_i) {
-              logger::file::log::debug("file_log_single", __LINE__, "ola! ",
-                                       _i);
-              logger::file::log::debug("file_log_single", __LINE__,
-                                       "como vai? ", _i);
-              logger::file::log::info("file_log_single", __LINE__, "vou bem!! ",
-                                      _i);
-              logger::file::log::info("file_log_single", __LINE__, "e vc? ",
-                                      _i);
-              logger::file::log::warn("file_log_single", __LINE__,
-                                      "ótimo! novo emprego! ", _i);
-              logger::file::log::warn("file_log_single", __LINE__, "que bom! ",
-                                      _i);
+              m_log.debug(__LINE__, "ola! ", _i);
+              m_log.debug(__LINE__, "como vai? ", _i);
+              m_log.info(__LINE__, "vou bem!! ", _i);
+              m_log.info(__LINE__, "e vc? ", _i);
+              m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
+              m_log.warn(__LINE__, "que bom! ", _i);
             }
             return status::ok;
           },
@@ -97,49 +92,45 @@ public:
 
       _loop1.start();
 
-      logger::file::log::debug("file_log_single", __LINE__,
-                               "---- sleeping 3 minutes");
+      m_log.debug(__LINE__, "---- sleeping 3 minutes");
       std::this_thread::sleep_for(std::chrono::minutes(3));
-      logger::file::log::debug("file_log_single", __LINE__, "---- waking up");
+      m_log.debug(__LINE__, "---- waking up");
 
       return true;
     } catch (std::exception &_ex) {
-      logger::file::log::fatal("file_log_single", __LINE__,
-                               "ERRO log::log_single: '", _ex.what(), "'");
+      m_log.fatal(__LINE__, "ERROR: '", _ex.what(), "'");
     }
     return false;
   }
 
   static std::string desc() { return "Single thread logging to 'file'"; }
   static std::string name() { return "file_log_single"; }
+
+private:
+  logger::file::log m_log{"file_log_single"};
 };
 
 class file_log_multi {
 
 public:
   typedef concurrent::sleeping_loop_t<void, logger::file::log> sleeping_loop;
-  file_log_multi() = default;
 
   bool operator()() {
     try {
-      logger::file::log::configure("./", "file_log_multi", 1 * 1024 * 1024,
+      logger::file::log::configure("./", "FileLogMulti", 1 * 1024 * 1024,
                                    std::chrono::minutes(3));
-      logger::file::log::set_debug();
+      m_log.set_debug();
 
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
-          []() {
+          [this]() {
             for (uint32_t _i = 0; _i < 1000; ++_i) {
-              logger::file::log::debug("file_log_multi", __LINE__, "ola! ", 33);
-              logger::file::log::debug("file_log_multi", __LINE__, "como vai? ",
-                                       _i);
-              logger::file::log::info("file_log_multi", __LINE__, "vou bem!! ",
-                                      _i);
-              logger::file::log::info("file_log_multi", __LINE__, "e vc? ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__,
-                                      "ótimo! novo emprego! ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__, "que bom! ",
-                                      _i);
+              m_log.debug(__LINE__, "ola! ", 33);
+              m_log.debug(__LINE__, "como vai? ", _i);
+              m_log.info(__LINE__, "vou bem!! ", _i);
+              m_log.info(__LINE__, "e vc? ", _i);
+              m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
+              m_log.warn(__LINE__, "que bom! ", _i);
             }
             return status::ok;
           },
@@ -147,14 +138,14 @@ public:
 
       sleeping_loop _loop2(
           std::chrono::milliseconds(500),
-          []() {
+          [this]() {
             for (uint32_t _i = 0; _i < 1500; ++_i) {
-              logger::file::log::debug("file_log_multi", __LINE__, "aaa! ", 33);
-              logger::file::log::debug("file_log_multi", __LINE__, "bbb? ", _i);
-              logger::file::log::info("file_log_multi", __LINE__, "ccc!! ", _i);
-              logger::file::log::info("file_log_multi", __LINE__, "ddd ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__, "eee! ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__, "fff! ", _i);
+              m_log.debug(__LINE__, "aaa! ", 33);
+              m_log.debug(__LINE__, "bbb? ", _i);
+              m_log.info(__LINE__, "ccc!! ", _i);
+              m_log.info(__LINE__, "ddd ", _i);
+              m_log.warn(__LINE__, "eee! ", _i);
+              m_log.warn(__LINE__, "fff! ", _i);
             }
             return status::ok;
           },
@@ -162,20 +153,14 @@ public:
 
       sleeping_loop _loop3(
           std::chrono::milliseconds(100),
-          []() {
+          [this]() {
             for (uint32_t _i = 0; _i < 3000; ++_i) {
-              logger::file::log::debug("file_log_multi", __LINE__,
-                                       "abcdefghijklmnopqrstivwxyz! ", 33);
-              logger::file::log::debug("file_log_multi", __LINE__,
-                                       "abcdefghijklmnopqrstivwxyz? ", _i);
-              logger::file::log::info("file_log_multi", __LINE__,
-                                      "abcdefghijklmnopqrstivwxyz!! ", _i);
-              logger::file::log::info("file_log_multi", __LINE__,
-                                      "abcdefghijklmnopqrstivwxyz ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__,
-                                      "abcdefghijklmnopqrstivwxyz! ", _i);
-              logger::file::log::warn("file_log_multi", __LINE__,
-                                      "abcdefghijklmnopqrstivwxyz! ", _i);
+              m_log.debug(__LINE__, "abcdefghijklmnopqrstivwxyz! ", 33);
+              m_log.debug(__LINE__, "abcdefghijklmnopqrstivwxyz? ", _i);
+              m_log.info(__LINE__, "abcdefghijklmnopqrstivwxyz!! ", _i);
+              m_log.info(__LINE__, "abcdefghijklmnopqrstivwxyz ", _i);
+              m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
+              m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
             }
             return status::ok;
           },
@@ -185,23 +170,25 @@ public:
       _loop2.start();
       _loop3.start();
 
-      logger::file::log::debug("file_log_multi", __LINE__, "---- sleeping");
+      m_log.debug(__LINE__, "---- sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(50));
-      logger::file::log::debug("file_log_multi", __LINE__, "---- waking up");
+      m_log.debug(__LINE__, "---- waking up");
 
       return true;
     } catch (std::exception &_ex) {
-      logger::file::log::fatal("file_log_multi", __LINE__,
-                               "ERRO file_log_multi: '", _ex.what(), "'");
+      m_log.fatal(__LINE__, "ERROR: '", _ex.what(), "'");
     }
     return false;
   }
   static std::string desc() { return "Multiple threads logging to 'file'"; }
   static std::string name() { return "file_log_multi"; }
+
+private:
+  logger::file::log m_log{"file_log_multi"};
 };
 
 int main(int argc, char **argv) {
-  logger::file::log::set_debug();
+
   tester::test _tester(argc, argv);
   run_test(_tester, file_log_how_to);
   run_test(_tester, file_log_creation);

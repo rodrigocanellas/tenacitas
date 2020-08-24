@@ -27,7 +27,7 @@ struct writer_000 {
 
     result _result = _writer.write_block(_stream, _data, std::strlen(_data));
 
-    concurrent_log_debug(log, _result);
+    concurrent_debug(log, _result);
 
     return (_result == ok ? true : false);
   }

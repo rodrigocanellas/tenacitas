@@ -19,10 +19,8 @@ namespace logger {
 /// \brief namespace of the group of classes
 namespace file {
 
-///
-/// \brief The file_media struct implements a \p t_media type to be used in a
-/// logger::log class, allowing logger::log messages to be written
-/// to a file
+/// \brief The file_writer_t struct implements a \p t_writer type to be used in
+/// a logger::log class, allowing log messages to be written to a file
 ///
 /// \tparam t_controller is a class that will help controlling how the messages
 /// will be written, how the files will be created, among other things. It must

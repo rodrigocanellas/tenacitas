@@ -38,7 +38,7 @@ private:
 
   struct work {
     status::result operator()(msg &&p_msg) {
-      concurrent_log_debug(logger::cerr::log, "consuming ", p_msg);
+      concurrent_debug(logger::cerr::log, "consuming ", p_msg);
       std::this_thread::sleep_for(std::chrono::milliseconds(work_sleep_ms));
 
       return status::ok;
@@ -48,7 +48,7 @@ private:
   void produce() {
     for (uint32_t _count_msg = 0; _count_msg < num_msgs; ++_count_msg) {
       msg _msg(_count_msg);
-      concurrent_log_debug(logger::cerr::log, "adding ", _msg);
+      concurrent_debug(logger::cerr::log, "adding ", _msg);
       m_pool.handle(_msg);
     }
   }

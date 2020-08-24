@@ -33,16 +33,11 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
@@ -56,9 +51,6 @@ public:
 
   /// \brief queue name of a queue of messages
   typedef std::string queue;
-
-  /// \brief log alias for @p t_log
-  typedef t_log log;
 
   /// \brief dispatcher default constructor not allowed
   dispatcher_t() = delete;
@@ -79,7 +71,7 @@ public:
   ///
   /// Stops all the \p thread_pool
   ~dispatcher_t() {
-    concurrent_log_debug(log, "leaving");
+    concurrent_debug(m_log, "leaving");
     typename thread_pool_list::iterator _end = m_thread_pool_list.end();
     for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
          _ite != _end; ++_ite) {
@@ -146,9 +138,9 @@ public:
   /// \param p_msg an instance of \p t_msg
   static void publish(const t_msg &p_msg) {
     if (m_thread_pool_list.empty()) {
-      concurrent_log_warn(log, "there are no subscribers for ", p_msg);
+      concurent_warn(m_log, "there are no subscribers for ", p_msg);
     }
-    concurrent_log_debug(log, "# of pools: ", m_thread_pool_list.size());
+    concurrent_debug(m_log, "# of pools: ", m_thread_pool_list.size());
 
     typename thread_pool_list::iterator _end = m_thread_pool_list.end();
     for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
@@ -188,6 +180,8 @@ private:
 private:
   /// \brief m_thread_pool_list the single list of pools object
   static thread_pool_list m_thread_pool_list;
+
+  t_log m_log{"dispatcher.h"};
 };
 
 ///

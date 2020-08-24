@@ -32,16 +32,12 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// \tparam t_log provides log funcionality:
-/// static void debug(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void info(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void warn(const std::string & p_file, int p_line, const t_params&...
-/// p_params)
-/// static void error(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
-/// static void fatal(const std::string & p_file, int p_line, const
-/// t_params&... p_params)
+/// t_log(const char *p_id)
+/// void debug(int p_line, const t_params&... p_params)
+/// void info(int p_line, const t_params&... p_params)
+/// void warn(int p_line, const t_params&... p_params)
+/// void error(int p_line, const t_params&... p_params)
+/// void fatal(int p_line, const t_params&... p_params)
 ///
 /// \tparam t_interval is the type of time that will be used to define the
 /// period of time that the \p p_worker function will be exececuted
@@ -61,9 +57,6 @@ struct sleeping_loop_t {
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
   typedef typename traits_t<t_data>::provider provider;
-
-  /// \brief log alias for @p t_log
-  typedef t_log log;
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
   /// != void</tt>, and a \p provider is necessary
@@ -107,7 +100,10 @@ struct sleeping_loop_t {
   }
 
   /// \brief destructor interrupts the loop
-  inline ~sleeping_loop_t() { stop(); }
+  inline ~sleeping_loop_t() {
+    concurrent_debug(m_log, "destructor");
+    stop();
+  }
 
   /// \brief copy assignment not allowed
   sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
@@ -166,25 +162,25 @@ struct sleeping_loop_t {
   /// otherwise
   status::result start() {
     if (!m_async.is_stopped()) {
-      concurrent_log_debug(log,
-                           "not running async loop because it was not stopped");
+      concurrent_debug(m_log,
+                       "not running async loop because it was not stopped");
       return concurrent::already_running;
     }
-    concurrent_log_debug(log, "running async loop");
+    concurrent_debug(m_log, "running async loop");
     return m_async.start();
   }
 
   /// \brief stop stops the loop
   void stop() {
     if (m_async.is_stopped()) {
-      concurrent_log_debug(
-          log, "not stopping async loop because it was not running");
+      concurrent_debug(m_log,
+                       "not stopping async loop because it was not running");
       return;
     }
-    concurrent_log_debug(log, "stop");
+    concurrent_debug(m_log, "stop");
     m_cond_var.notify_all();
 
-    concurrent_log_debug(log, "all notified");
+    concurrent_debug(m_log, "all notified");
     m_async.stop();
   }
 
@@ -193,6 +189,7 @@ struct sleeping_loop_t {
   /// \return \p status::ok if could restart, or any other \p status::result
   /// otherwise
   void restart() {
+    concurrent_debug(m_log, "restart");
     stop();
     return start();
   }
@@ -233,11 +230,11 @@ private:
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
       // timeout, so do not stop
-      concurrent_log_debug(log, "must not stop");
+      concurrent_debug(m_log, "must not stop");
       return status::ok;
     }
     // no timeout, so do stop
-    concurrent_log_debug(log, "must stop");
+    concurrent_debug(m_log, "must stop");
     return concurrent::stopped_by_breaker;
   }
 
@@ -253,6 +250,8 @@ private:
 
   /// \brief m_cond_var
   std::condition_variable m_cond_var;
+
+  t_log m_log{"sleeping_loop.h"};
 };
 
 } // namespace concurrent

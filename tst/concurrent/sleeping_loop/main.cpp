@@ -32,7 +32,7 @@ struct sleeping_loop_000 {
         loop;
 
     concurrent::traits_t<void>::worker _worker = []() -> status::result {
-      concurrent_log_debug(logger::cerr::log, "loop1");
+      concurrent_debug(logger::cerr::log, "loop1");
       return status::ok;
     };
 
@@ -55,7 +55,7 @@ struct sleeping_loop_001 {
     status::result operator()() {
 
       ++counter;
-      concurrent_log_debug(logger::cerr::log, "this = ", this,
+      concurrent_debug(logger::cerr::log, "this = ", this,
                            ", counter = ", counter);
       return status::ok;
     }
@@ -66,14 +66,14 @@ struct sleeping_loop_001 {
   bool operator()() {
 
     work1 _work;
-    concurrent_log_debug(logger::cerr::log, "work = ", this);
+    concurrent_debug(logger::cerr::log, "work = ", this);
     loop _loop(std::chrono::milliseconds(1000), [&_work]() { return _work(); },
                std::chrono::milliseconds(500));
 
     _loop.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -102,7 +102,7 @@ struct sleeping_loop_002 {
     status::result operator()() {
 
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -118,7 +118,7 @@ struct sleeping_loop_002 {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -146,7 +146,7 @@ struct sleeping_loop_003 {
     status::result operator()() {
 
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -162,7 +162,7 @@ struct sleeping_loop_003 {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -172,7 +172,7 @@ struct sleeping_loop_003 {
     _loop.start();
     std::this_thread::sleep_for(std::chrono::seconds(8));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 18) {
       return false;
     }
@@ -207,7 +207,7 @@ struct sleeping_loop_004 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -223,7 +223,7 @@ struct sleeping_loop_004 {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -234,7 +234,7 @@ struct sleeping_loop_004 {
     std::this_thread::sleep_for(std::chrono::seconds(8));
     _loop.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 18) {
       return false;
     }
@@ -268,7 +268,7 @@ struct sleeping_loop_005 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -284,7 +284,7 @@ struct sleeping_loop_005 {
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -297,7 +297,7 @@ struct sleeping_loop_005 {
     _loop_2.start();
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 13) {
       return false;
     }
@@ -329,7 +329,7 @@ struct sleeping_loop_006 {
     status::result operator()() {
 
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -345,7 +345,7 @@ struct sleeping_loop_006 {
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -361,7 +361,7 @@ struct sleeping_loop_006 {
 
     _loop_2.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 13) {
       return false;
     }
@@ -394,7 +394,7 @@ struct sleeping_loop_007 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -410,7 +410,7 @@ struct sleeping_loop_007 {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop_1.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -425,7 +425,7 @@ struct sleeping_loop_007 {
     _loop_2.start();
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 15) {
       return false;
     }
@@ -460,7 +460,7 @@ struct sleeping_loop_008 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -476,10 +476,10 @@ struct sleeping_loop_008 {
     _loop_1.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_log_debug(logger::cerr::log, "stoping loop 1");
+    concurrent_debug(logger::cerr::log, "stoping loop 1");
     _loop_1.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     if (_work.counter != 10) {
       return false;
     }
@@ -492,11 +492,11 @@ struct sleeping_loop_008 {
     _loop_2.stop();
 
     if (_work.counter != 15) {
-      concurrent_log_error(logger::cerr::log, "data is ", _work.counter,
+      concurrent_error(logger::cerr::log, "data is ", _work.counter,
                            ", but it should be 15");
       return false;
     }
-    concurrent_log_debug(logger::cerr::log, "data = ", _work.counter);
+    concurrent_debug(logger::cerr::log, "data = ", _work.counter);
     return true;
   }
 
@@ -527,7 +527,7 @@ struct sleeping_loop_009 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -537,7 +537,7 @@ struct sleeping_loop_009 {
     status::result operator()() {
 
       counter += 100;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -547,7 +547,7 @@ struct sleeping_loop_009 {
     status::result operator()() {
       using namespace tenacitas;
       counter += 1000;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -576,17 +576,17 @@ struct sleeping_loop_009 {
 
     std::this_thread::sleep_for(std::chrono::seconds(6));
 
-    concurrent_log_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
+    concurrent_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
     if (_work_1.counter != 6) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
+    concurrent_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
     if (_work_2.counter != 600) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
+    concurrent_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
     if (_work_3.counter != 6000) {
       return false;
     }
@@ -621,7 +621,7 @@ struct sleeping_loop_010 {
     status::result operator()() {
       using namespace tenacitas;
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -630,7 +630,7 @@ struct sleeping_loop_010 {
   struct work2 {
     status::result operator()() {
       counter += 100;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -640,7 +640,7 @@ struct sleeping_loop_010 {
     status::result operator()() {
       using namespace tenacitas;
       counter += 1000;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -669,22 +669,22 @@ struct sleeping_loop_010 {
 
     std::this_thread::sleep_for(std::chrono::seconds(6));
 
-    concurrent_log_debug(logger::cerr::log, "stopping 2");
+    concurrent_debug(logger::cerr::log, "stopping 2");
     _loop_2.stop();
 
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    concurrent_log_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
+    concurrent_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
     if (_work_1.counter != 9) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
+    concurrent_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
     if (_work_2.counter != 600) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
+    concurrent_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
     if (_work_3.counter != 9000) {
       return false;
     }
@@ -719,7 +719,7 @@ struct sleeping_loop_011 {
   struct work1 {
     status::result operator()() {
       ++counter;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -728,7 +728,7 @@ struct sleeping_loop_011 {
   struct work2 {
     status::result operator()() {
       counter += 100;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -737,7 +737,7 @@ struct sleeping_loop_011 {
   struct work3 {
     status::result operator()() {
       counter += 1000;
-      concurrent_log_debug(logger::cerr::log, counter);
+      concurrent_debug(logger::cerr::log, counter);
       return status::ok;
     }
     uint64_t counter = 0;
@@ -765,22 +765,22 @@ struct sleeping_loop_011 {
 
     std::this_thread::sleep_for(std::chrono::seconds(12));
 
-    concurrent_log_debug(logger::cerr::log, "stopping");
+    concurrent_debug(logger::cerr::log, "stopping");
     _loop_1.stop();
     _loop_2.stop();
     _loop_3.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
+    concurrent_debug(logger::cerr::log, "data 1 = ", _work_1.counter);
     if (_work_1.counter != 12) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
+    concurrent_debug(logger::cerr::log, "data 2 = ", _work_2.counter);
     if (_work_2.counter != 1200) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
+    concurrent_debug(logger::cerr::log, "data 3 = ", _work_3.counter);
     if (_work_3.counter != 12000) {
       return false;
     }
@@ -882,7 +882,7 @@ struct sleeping_loop_012 {
   struct work_1 {
     status::result operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
-      concurrent_log_debug(logger::cerr::log, "1: ", m_msg);
+      concurrent_debug(logger::cerr::log, "1: ", m_msg);
       return status::ok;
     }
     msg m_msg;
@@ -891,7 +891,7 @@ struct sleeping_loop_012 {
   struct work_2 {
     status::result operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
-      concurrent_log_debug(logger::cerr::log, "2: ", m_msg);
+      concurrent_debug(logger::cerr::log, "2: ", m_msg);
       return status::ok;
     }
     msg m_msg;
@@ -900,7 +900,7 @@ struct sleeping_loop_012 {
   struct work_3 {
     status::result operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
-      concurrent_log_debug(logger::cerr::log, "3: ", m_msg);
+      concurrent_debug(logger::cerr::log, "3: ", m_msg);
       return status::ok;
     }
     msg m_msg;
@@ -947,22 +947,22 @@ struct sleeping_loop_012 {
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    concurrent_log_debug(logger::cerr::log, "stopping");
+    concurrent_debug(logger::cerr::log, "stopping");
     _loop_1.stop();
     _loop_2.stop();
     _loop_3.stop();
 
-    concurrent_log_debug(logger::cerr::log, "data 1 = ", _work_1.m_msg);
+    concurrent_debug(logger::cerr::log, "data 1 = ", _work_1.m_msg);
     if ((_work_1.m_msg.m_i != 10) && (_work_1.m_msg.m_f != 1024.0)) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 2 = ", _work_2.m_msg);
+    concurrent_debug(logger::cerr::log, "data 2 = ", _work_2.m_msg);
     if ((_work_2.m_msg.m_i != 2000) && (_work_2.m_msg.m_f != 3486784401.0)) {
       return false;
     }
 
-    concurrent_log_debug(logger::cerr::log, "data 3 = ", _work_3.m_msg);
+    concurrent_debug(logger::cerr::log, "data 3 = ", _work_3.m_msg);
     if ((_work_3.m_msg.m_i != 5000) && (_work_3.m_msg.m_f != 1024.0)) {
       return false;
     }
