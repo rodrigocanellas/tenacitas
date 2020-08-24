@@ -10,7 +10,7 @@ HEADERS += \
     $$code_src_dir/logger/cerr/log.h
 
 SOURCES += \
-  $$code_src_dir/logger/cerr/internal/log.cpp
+  $$code_src_dir/logger/cerr/internal/cerr_log.cpp
 
 
 

@@ -9,4 +9,4 @@ HEADERS += \
   $$code_src_dir/logger/cout/log.h
 
 SOURCES += \
-  $$code_src_dir/logger/cout/internal/log.cpp
+  $$code_src_dir/logger/cout/internal/cout_log.cpp

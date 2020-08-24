@@ -8,7 +8,6 @@ struct clog_how_to {
   bool operator()() {
     try {
       using namespace tenacitas;
-      m_log.set_debug();
       m_log.debug(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
                   'W', 3.1415);
       m_log.info(__LINE__, "teste de clog para debug ", -345, ' ', 19023, ' ',
@@ -36,6 +35,7 @@ private:
 };
 
 int main(int argc, char **argv) {
+  logger::clog::log::set_debug();
   tester::test _tester(argc, argv);
   run_test(_tester, clog_how_to);
 }

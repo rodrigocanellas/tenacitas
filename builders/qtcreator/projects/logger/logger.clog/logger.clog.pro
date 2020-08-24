@@ -9,6 +9,6 @@ HEADERS += \
   $$code_src_dir/logger/clog/log.h
 
 SOURCES += \
-  $$code_src_dir/logger/clog/internal/log.cpp
+  $$code_src_dir/logger/clog/internal/clog_log.cpp
 
 

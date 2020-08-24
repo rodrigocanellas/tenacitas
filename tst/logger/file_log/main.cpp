@@ -16,8 +16,6 @@ struct file_log_how_to {
       logger::file::log::configure(".", "FileLogHowTo", 10 * 1024,
                                    std::chrono::minutes(15));
 
-      m_log.set_debug();
-
       m_log.debug(__LINE__, "hello! ", 309);
       m_log.debug(__LINE__, "how are you doing? ", 3.14);
       m_log.info(__LINE__, "fine!! ", 'W');
@@ -47,8 +45,6 @@ public:
       logger::file::log::configure(".", "FileLogCreation", 100,
                                    std::chrono::minutes(10));
 
-      m_log.set_debug();
-
       return true;
     } catch (std::exception &_ex) {
       m_log.fatal(__LINE__, "ERROR: '", _ex.what(), "'");
@@ -73,7 +69,7 @@ public:
 
       logger::file::log::configure(".", "FileLogSingle", 10 * 1024,
                                    std::chrono::minutes(5));
-      m_log.set_debug();
+
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
           [this]() {
@@ -93,7 +89,7 @@ public:
       _loop1.start();
 
       m_log.debug(__LINE__, "---- sleeping 3 minutes");
-      std::this_thread::sleep_for(std::chrono::minutes(3));
+      std::this_thread::sleep_for(std::chrono::minutes(5));
       m_log.debug(__LINE__, "---- waking up");
 
       return true;
@@ -119,7 +115,6 @@ public:
     try {
       logger::file::log::configure("./", "FileLogMulti", 1 * 1024 * 1024,
                                    std::chrono::minutes(3));
-      m_log.set_debug();
 
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
@@ -188,7 +183,8 @@ private:
 };
 
 int main(int argc, char **argv) {
-
+  logger::file::log::set_debug();
+  logger::cerr::log::set_debug();
   tester::test _tester(argc, argv);
   run_test(_tester, file_log_how_to);
   run_test(_tester, file_log_creation);

@@ -15,8 +15,6 @@ public:
     using namespace tenacitas;
     try {
 
-      m_log.set_debug();
-
       return true;
     } catch (std::exception &_ex) {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
@@ -35,8 +33,6 @@ struct cerr_log_how_to {
   bool operator()() {
 
     try {
-
-      m_log.set_debug();
 
       m_log.debug(__LINE__, "hello! ", 309);
       m_log.debug(__LINE__, "how are you doing? ", 3.14);
@@ -105,8 +101,6 @@ public:
   bool operator()() {
     typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
     try {
-      m_log.set_debug();
-
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
           [this]() {
@@ -174,7 +168,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-
+  logger::cerr::log::set_debug();
   tester::test _tester(argc, argv);
   run_test(_tester, cerr_log_how_to);
   run_test(_tester, cerr_log_creation);

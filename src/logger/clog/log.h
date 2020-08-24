@@ -36,22 +36,22 @@ struct log {
   ~log() = default;
 
   /// \brief set_debug defines the log level to 'debug'
-  inline void set_debug() { m_log.set_debug(); }
+  inline static void set_debug() { m_log.set_debug(); }
 
   ///
   /// \brief set_info defines the log level to 'info'
   ///
-  inline void set_info() { m_log.set_info(); }
+  inline static void set_info() { m_log.set_info(); }
 
   ///
   /// \brief set_warn defines the log level to 'warn'
   ///
-  inline void set_warn() { m_log.set_warn(); }
+  inline static void set_warn() { m_log.set_warn(); }
 
   ///
   /// \brief set_error defines the log level to 'error'
   ///
-  inline void set_error() { m_log.set_error(); }
+  inline static void set_error() { m_log.set_error(); }
 
   ///
   /// \brief set_separator defines the separator to be used in the log
@@ -59,7 +59,7 @@ struct log {
   ///
   /// \param p_separator the value of the separator
   ///
-  inline void set_separator(char p_separator) {
+  inline static void set_separator(char p_separator) {
     m_log.set_separator(p_separator);
   }
 

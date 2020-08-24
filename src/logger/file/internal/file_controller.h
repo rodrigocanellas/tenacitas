@@ -10,10 +10,16 @@
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <tuple>
 #include <unistd.h>
 
-#if defined(_WIN32)
-#include <direct.h> // _mkdir
+#ifdef WIN32
+//#include <direct.h> // _mkdir
+//#include <fileapi.h>
+
+//#include <strsafe.h>
+//#include <tchar.h>
+#include <windows.h>
 #endif
 
 //#include <calendar/epoch.h>
@@ -50,10 +56,11 @@ struct file_controller {
   /// \param p_path determines where the logger::log files will be created
   /// \param p_base_name is used in the begining of the file name
   /// \param p_max_file_size maximum allowed size, in bytes, that the
-  /// logger::log file can reach, before another is created \param p_retention
-  /// amount of time that a closed file will exist before deletion \param
-  /// p_closed_extension the extension added to the logger::log file when it was
-  /// closed, possibly because it reached \p p_max_file_size size
+  /// logger::log file can reach, before another is created
+  /// \param p_retention amount of time that a closed file will exist before
+  /// deletion
+  /// \param p_closed_extension the extension added to the logger::log file when
+  /// it was closed, possibly because it reached \p p_max_file_size size
   ///
   inline explicit file_controller(
       const std::string &p_path = ".", const std::string &p_base_name = "log",
@@ -81,10 +88,10 @@ struct file_controller {
             std::chrono::milliseconds(p_retention.count() * 60 * 1000),
             [this]() -> status::result { return this->m_deleter(); },
             std::chrono::milliseconds(2 * 60 * 1000)) {
-    m_log.set_debug();
     m_log.debug(__LINE__, "closed dir = ", m_closed_dir);
 #if defined(_WIN32)
-    _mkdir(m_closed_dir.c_str());
+    //    _mkdir(m_closed_dir.c_str());
+    CreateDirectoryA(m_closed_dir.c_str(), 0);
 #else
     mode_t mode = 0755;
     int ret = mkdir(m_close_dir.c_str(), mode);
@@ -142,16 +149,16 @@ struct file_controller {
   /// \brief rename renames the logger::log file, apppending the user defined
   /// closed extension \param p_file_name the original file name
   ///
-  inline void rename(const std::string &p_file_name) {
+  void rename(const std::string &p_file_name) {
 
     std::string _to(m_closed_dir + "/" + p_file_name + "." +
                     m_closed_extension);
-    m_log.debug(__LINE__, "from = ", p_file_name, ", to = ", _to);
     int _res = std::rename(p_file_name.c_str(), _to.c_str());
 
     if (_res) {
       m_log.error(__LINE__, "could not rename ", p_file_name);
     }
+    m_log.info(__LINE__, p_file_name, " -> ", _to);
   }
 
   ///
@@ -171,21 +178,21 @@ struct file_controller {
   inline void remove() { m_sleeping_loop.start(); }
 
 private:
-  struct no_log {
-    inline no_log() {}
-    inline no_log(const char *) {}
-    no_log(std::string &&) {}
-    template <typename... t_params>
-    inline void debug(uint32_t, const t_params &...) {}
-    template <typename... t_params>
-    inline void info(uint32_t, const t_params &...) {}
-    template <typename... t_params>
-    inline void warn(uint32_t, const t_params &...) {}
-    template <typename... t_params>
-    inline void error(uint32_t, const t_params &...) {}
-    template <typename... t_params>
-    inline void fatal(uint32_t, const t_params &...) {}
-  };
+  //  struct no_log {
+  //    inline no_log() {}
+  //    inline no_log(const char *) {}
+  //    no_log(std::string &&) {}
+  //    template <typename... t_params>
+  //    inline void debug(uint32_t, const t_params &...) {}
+  //    template <typename... t_params>
+  //    inline void info(uint32_t, const t_params &...) {}
+  //    template <typename... t_params>
+  //    inline void warn(uint32_t, const t_params &...) {}
+  //    template <typename... t_params>
+  //    inline void error(uint32_t, const t_params &...) {}
+  //    template <typename... t_params>
+  //    inline void fatal(uint32_t, const t_params &...) {}
+  //  };
 
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
@@ -196,11 +203,23 @@ private:
   struct deleter {
     deleter() = delete;
 
-    deleter(const deleter &) = default;
-    deleter(deleter &&) noexcept = default;
+    deleter(const deleter &) = delete;
+    deleter(deleter &&p_deleter) noexcept
+        : m_path(std::move(p_deleter.m_path)),
+          m_base_name(std::move(p_deleter.m_base_name)),
+          m_closed_extension(std::move(p_deleter.m_closed_extension)),
+          m_retention(std::move(p_deleter.m_retention)) {}
 
-    deleter &operator=(const deleter &) = default;
-    deleter &operator=(deleter &&) /*noexcept*/ = default;
+    deleter &operator=(const deleter &) = delete;
+    deleter &operator=(deleter &&p_deleter) noexcept {
+      if (this != &p_deleter) {
+        m_path = std::move(p_deleter.m_path);
+        m_base_name = std::move(p_deleter.m_base_name);
+        m_closed_extension = std::move(p_deleter.m_closed_extension);
+        m_retention = std::move(p_deleter.m_retention);
+      }
+      return *this;
+    }
 
     ~deleter() = default;
 
@@ -220,8 +239,14 @@ private:
     /// \return \p true if matchs, \p false otherwise
     ///
     inline bool match(const std::string &p_file_name) {
-      return ((p_file_name.find(m_base_name) != std::string::npos) &&
-              (p_file_name.find(m_closed_extension) != std::string::npos));
+
+      bool _res = ((p_file_name.find(m_base_name) != std::string::npos) &&
+                   (p_file_name.find(m_closed_extension) != std::string::npos));
+
+      m_log.debug(__LINE__, "p_file_name = ", p_file_name,
+                  ", m_base_name = ", m_base_name, " match? ", _res);
+
+      return _res;
     }
 
   private:
@@ -246,6 +271,9 @@ private:
     /// deleted
     ///
     std::chrono::seconds m_retention = std::chrono::seconds(15 * 60);
+
+    tenacitas::logger::cerr::log m_log{
+        "logger::file::file_controller::deleter"};
   };
 
 private:
@@ -255,7 +283,7 @@ private:
   ///
   void update_last() {
     uint64_t _id = static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::high_resolution_clock::now().time_since_epoch())
             .count());
     if (_id == m_last) {
@@ -319,7 +347,7 @@ private:
   ///
   sleeping_loop m_sleeping_loop;
 
-  tenacitas::logger::cerr::log m_log{"file_controler.h"};
+  tenacitas::logger::cerr::log m_log{"logger::file::file_controler"};
 };
 
 } // namespace file

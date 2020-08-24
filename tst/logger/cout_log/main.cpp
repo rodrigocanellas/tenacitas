@@ -13,8 +13,6 @@ struct cout_log_creation {
 
     try {
 
-      m_log.set_debug();
-
       return true;
     } catch (std::exception &_ex) {
       std::cerr << "ERRO cout_log_creation: '" << _ex.what() << "'"
@@ -32,8 +30,6 @@ private:
 struct cout_log_how_to {
   bool operator()() {
     try {
-
-      m_log.set_debug();
 
       m_log.debug(__LINE__, "how are you doing? ", 3.14);
       m_log.info(__LINE__, "fine!! ", 'W');
@@ -109,8 +105,6 @@ public:
       typedef concurrent::sleeping_loop_t<void, logger::cout::log>
           sleeping_loop;
 
-      m_log.set_debug();
-
       sleeping_loop _loop1(
           std::chrono::milliseconds(1000),
           [this]() {
@@ -178,6 +172,7 @@ private:
 };
 
 int main(int argc, char **argv) {
+  logger::cout::log::set_debug();
   tester::test _tester(argc, argv);
   run_test(_tester, cout_log_creation);
   run_test(_tester, cout_log_how_to);
