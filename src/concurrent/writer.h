@@ -58,7 +58,7 @@ template <typename t_log> struct writer_t {
   }
 
 private:
-  t_log m_log{"writer.h"};
+  t_log m_log{"concurrent::writer"};
 };
 
 } // namespace concurrent

@@ -195,8 +195,8 @@ struct async_loop_t {
   /// \brief stops the loop
   void stop() {
     if (m_loop.is_stopped()) {
-      concurent_warn(m_log,
-                     " not stopping the loop because it was not running");
+      concurrent_warn(m_log,
+                      " not stopping the loop because it was not running");
       return;
     }
 
@@ -232,7 +232,7 @@ private:
   /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
   std::mutex m_mutex;
 
-  t_log m_log{"async_loop.h"};
+  t_log m_log{"concurrent::async_loop"};
 };
 
 } // namespace concurrent

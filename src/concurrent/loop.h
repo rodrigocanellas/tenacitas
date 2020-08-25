@@ -185,12 +185,12 @@ struct loop_t {
       if (m_stopped_by_user) {
 
         _result = concurrent::stopped_by_user;
-        concurent_warn(m_log, _result);
+        concurrent_warn(m_log, _result);
         break;
       }
 
       if (m_stopped_by_destructor) {
-        concurent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
+        concurrent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }
@@ -198,7 +198,7 @@ struct loop_t {
       status::result _worker_result = m_processor();
 
       if (_worker_result != status::ok) {
-        concurent_warn(m_log, "worker returned ", _worker_result);
+        concurrent_warn(m_log, "worker returned ", _worker_result);
         if ((_worker_result == concurrent::stopped_by_worker) ||
             (_worker_result == concurrent::stopped_by_provider)) {
           _result = _worker_result;
@@ -208,12 +208,12 @@ struct loop_t {
 
       if (m_stopped_by_user) {
         _result = concurrent::stopped_by_user;
-        concurent_warn(m_log, "loop stopped: ", _result);
+        concurrent_warn(m_log, "loop stopped: ", _result);
         break;
       }
 
       if (m_stopped_by_destructor) {
-        concurent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
+        concurrent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }
@@ -221,7 +221,7 @@ struct loop_t {
       _result = m_breaker();
       if (_result != status::ok) {
         if (_result == concurrent::stopped_by_breaker) {
-          concurent_warn(m_log, "loop stopped: ", _result);
+          concurrent_warn(m_log, "loop stopped: ", _result);
           _result = status::ok;
         } else {
           concurrent_error(m_log, _result);
@@ -261,7 +261,7 @@ private:
 
   processor m_processor;
 
-  t_log m_log{"loop.h"};
+  t_log m_log{"concurrent::loop"};
 };
 
 } // namespace concurrent

@@ -125,7 +125,7 @@ public:
 private:
   void report(const char *p_str, const data &p_data) {
     concurrent_debug(m_log, p_str, ": data = ", p_data, ", read = ", m_read,
-          ", write = ", m_write, ", length = ", m_length);
+                     ", write = ", m_write, ", length = ", m_length);
   }
 
 private:
@@ -135,7 +135,7 @@ private:
   size m_length = 0;
   values m_values;
   std::mutex m_mutex;
-  t_log m_log{"fixed_size_queue.h"};
+  t_log m_log{"concurrent::fixed_size_queue.h"};
 };
 
 } // namespace concurrent

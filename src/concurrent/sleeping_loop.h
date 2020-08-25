@@ -251,7 +251,7 @@ private:
   /// \brief m_cond_var
   std::condition_variable m_cond_var;
 
-  t_log m_log{"sleeping_loop.h"};
+  t_log m_log{"concurrent::sleeping_loop"};
 };
 
 } // namespace concurrent

@@ -27,7 +27,7 @@ struct writer_000 {
 
     result _result = _writer.write_block(_stream, _data, std::strlen(_data));
 
-    concurrent_debug(log, _result);
+    concurrent_debug(m_log, _result);
 
     return (_result == ok ? true : false);
   }
@@ -35,9 +35,13 @@ struct writer_000 {
   static std::string desc() {
     return "Simple writer_t::write_block test to a file";
   }
+
+private:
+  logger::cerr::log m_log{"writer_000"};
 };
 
 int main(int argc, char **argv) {
+  log::set_debug();
   tester::test _test(argc, argv);
   run_test(_test, writer_000);
 }

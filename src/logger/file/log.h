@@ -108,10 +108,25 @@ struct log {
   }
 
   log() = delete;
-  log(const log &) = delete;
-  log(log &&) = delete;
-  log &operator=(const log &) = delete;
-  log &operator=(log &&) = delete;
+
+  log(const log &p_log) : m_class(p_log.m_class) {}
+
+  log(log &&p_log) : m_class(std::move(p_log.m_class)) {}
+
+  log &operator=(const log &p_log) {
+    if (this != &p_log) {
+      m_class = p_log.m_class;
+    }
+    return *this;
+  }
+
+  log &operator=(log &&p_log) {
+    if (this != &p_log) {
+      m_class = std::move(p_log.m_class);
+    }
+    return *this;
+  }
+
   ~log() = default;
 
   ///

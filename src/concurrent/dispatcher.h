@@ -137,10 +137,10 @@ public:
   ///
   /// \param p_msg an instance of \p t_msg
   static void publish(const t_msg &p_msg) {
-    if (m_thread_pool_list.empty()) {
-      concurent_warn(m_log, "there are no subscribers for ", p_msg);
-    }
-    concurrent_debug(m_log, "# of pools: ", m_thread_pool_list.size());
+    //    if (m_thread_pool_list.empty()) {
+    //      concurrent_warn(m_log, "there are no subscribers for ", p_msg);
+    //    }
+    //    concurrent_debug(m_log, "# of pools: ", m_thread_pool_list.size());
 
     typename thread_pool_list::iterator _end = m_thread_pool_list.end();
     for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
@@ -181,7 +181,7 @@ private:
   /// \brief m_thread_pool_list the single list of pools object
   static thread_pool_list m_thread_pool_list;
 
-  t_log m_log{"dispatcher.h"};
+  t_log m_log{"reader::dispatcher"};
 };
 
 ///

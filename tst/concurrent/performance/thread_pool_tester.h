@@ -38,23 +38,25 @@ private:
 
   struct work {
     status::result operator()(msg &&p_msg) {
-      concurrent_debug(logger::cerr::log, "consuming ", p_msg);
+      concurrent_debug(m_log, "consuming ", p_msg);
       std::this_thread::sleep_for(std::chrono::milliseconds(work_sleep_ms));
 
       return status::ok;
     }
+    logger::cerr::log m_log{"thread_pool_tester::work"};
   };
 
   void produce() {
     for (uint32_t _count_msg = 0; _count_msg < num_msgs; ++_count_msg) {
       msg _msg(_count_msg);
-      concurrent_debug(logger::cerr::log, "adding ", _msg);
+      concurrent_debug(m_log, "adding ", _msg);
       m_pool.handle(_msg);
     }
   }
 
 private:
   thread_pool m_pool;
+  logger::cerr::log m_log{"thread_pool_tester"};
 };
 
 #endif

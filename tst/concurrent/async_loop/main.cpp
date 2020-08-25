@@ -33,12 +33,12 @@ struct async_loop_000 {
         return concurrent::stopped_by_worker;
       }
 
-      concurrent_debug(logger::cerr::log, "work = ", this,
-                           ", counter = ", counter++);
+      concurrent_debug(m_log, "work = ", this, ", counter = ", counter++);
 
       return status::ok;
     }
 
+    logger::cerr::log m_log{"async_loop_000::work"};
     uint16_t counter = 0;
   };
 
@@ -51,7 +51,7 @@ struct async_loop_000 {
         return status::ok;
       };
       work _work;
-      concurrent_debug(logger::cerr::log, "work = ", this);
+      concurrent_debug(m_log, "work = ", this);
       async_loop _async_loop([&_work]() { return _work(); }, _breaker,
                              std::chrono::milliseconds(100));
 
@@ -59,13 +59,11 @@ struct async_loop_000 {
 
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      concurrent_debug(logger::cerr::log,
-                           "final counter = ", _work.counter);
+      concurrent_debug(m_log, "final counter = ", _work.counter);
       _result = (_work.counter == 101);
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, "ERROR async_loop_000: '",
-                           _ex.what(), "'");
+      concurrent_error(m_log, "ERROR async_loop_000: '", _ex.what(), "'");
       return false;
     }
     return _result;
@@ -77,6 +75,7 @@ struct async_loop_000 {
            "\nMain thread will sleep for 4 secs."
            "\nCounter should be 101.";
   }
+  logger::cerr::log m_log{"async_loop_000"};
 };
 
 struct async_loop_001 {
@@ -88,16 +87,14 @@ struct async_loop_001 {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      concurrent_debug(logger::cerr::log, "work = ", this,
-                           ", counter = ", counter++);
+      concurrent_debug(m_log, "work = ", this, ", counter = ", counter++);
       return status::ok;
     }
-
+    logger::cerr::log m_log{"async_loop_001::work1"};
     uint64_t counter = 0;
   };
 
   bool operator()() {
-    using namespace tenacitas;
     using namespace tenacitas;
     try {
       concurrent::traits_t<void>::breaker _breaker = []() -> status::result {
@@ -111,14 +108,13 @@ struct async_loop_001 {
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
-      concurrent_debug(logger::cerr::log, "counter = ", _work.counter);
+      concurrent_debug(m_log, "counter = ", _work.counter);
       if (_work.counter != 4) {
-        concurrent_debug(logger::cerr::log,
-                             "wrong value for data, it should be 4");
+        concurrent_debug(m_log, "wrong value for data, it should be 4");
         return false;
       }
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -131,6 +127,7 @@ struct async_loop_001 {
            "\nMain thread will stop for 1 sec."
            "\nCounter should be 4.";
   }
+  logger::cerr::log m_log{"async_loop_001"};
 };
 
 struct async_loop_002 {
@@ -141,11 +138,11 @@ struct async_loop_002 {
     status::result operator()() {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      concurrent_debug(logger::cerr::log, counter);
+      concurrent_debug(m_log, counter);
       ++counter;
       return status::ok;
     }
-
+    logger::cerr::log m_log{"async_loop_002::work1"};
     uint64_t counter = 0;
   };
 
@@ -164,10 +161,9 @@ struct async_loop_002 {
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
-      concurrent_debug(logger::cerr::log, "counter = ", _work.counter);
+      concurrent_debug(m_log, "counter = ", _work.counter);
       if (_work.counter != 4) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 4");
+        concurrent_error(m_log, "wrong value for data, it should be 4");
         return false;
       }
 
@@ -179,15 +175,14 @@ struct async_loop_002 {
 
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      concurrent_debug(logger::cerr::log, "counter = ", _work.counter);
+      concurrent_debug(m_log, "counter = ", _work.counter);
       if (_work.counter != 14) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 14");
+        concurrent_error(m_log, "wrong value for data, it should be 14");
         return false;
       }
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -205,6 +200,7 @@ struct async_loop_002 {
            "run "
            "again; counter should be 14";
   }
+  logger::cerr::log m_log{"async_loop_002"};
 };
 
 struct async_loop_003 {
@@ -217,10 +213,10 @@ struct async_loop_003 {
 
       data = p_data;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      concurrent_debug(logger::cerr::log, p_data);
+      concurrent_debug(m_log, p_data);
       return status::ok;
     }
-
+    logger::cerr::log m_log{"async_loop_003::work1"};
     uint32_t data = 0;
   };
 
@@ -251,36 +247,35 @@ struct async_loop_003 {
       async_loop _async_loop(_worker, _breaker, std::chrono::milliseconds(1000),
                              provide());
 
-      concurrent_debug(logger::cerr::log, "starting");
+      concurrent_debug(m_log, "starting");
       _async_loop.start();
 
-      concurrent_debug(logger::cerr::log, "sleeping");
+      concurrent_debug(m_log, "sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(4));
-      concurrent_debug(logger::cerr::log, "waking");
+      concurrent_debug(m_log, "waking");
 
-      concurrent_debug(logger::cerr::log, "stoping");
+      concurrent_debug(m_log, "stoping");
       _async_loop.stop();
 
-      concurrent_debug(logger::cerr::log, "sleeping");
+      concurrent_debug(m_log, "sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(2));
-      concurrent_debug(logger::cerr::log, "waking");
+      concurrent_debug(m_log, "waking");
 
-      concurrent_debug(logger::cerr::log, "starting");
+      concurrent_debug(m_log, "starting");
       _async_loop.start();
 
-      concurrent_debug(logger::cerr::log, "sleeping");
+      concurrent_debug(m_log, "sleeping");
       std::this_thread::sleep_for(std::chrono::seconds(3));
-      concurrent_debug(logger::cerr::log, "waking");
+      concurrent_debug(m_log, "waking");
 
-      concurrent_debug(logger::cerr::log, "data = ", _work.data);
+      concurrent_debug(m_log, "data = ", _work.data);
       if (_work.data != 34) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 34");
+        concurrent_error(m_log, "wrong value for data, it should be 34");
         return false;
       }
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -300,6 +295,8 @@ struct async_loop_003 {
 
            "\nData in work should be 34";
   }
+
+  logger::cerr::log m_log{"async_loop_003"};
 };
 
 struct async_loop_004 {
@@ -310,9 +307,10 @@ struct async_loop_004 {
     status::result operator()(uint32_t &&p_data) {
 
       data = p_data;
-      concurrent_debug(logger::cerr::log, p_data);
+      concurrent_debug(m_log, p_data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_004::work1"};
     uint32_t data = 0;
   };
 
@@ -344,10 +342,9 @@ struct async_loop_004 {
 
       _async_loop.stop();
 
-      concurrent_debug(logger::cerr::log, "data 1 ", _work.data);
+      concurrent_debug(m_log, "data 1 ", _work.data);
       if (_work.data != 99) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 99");
+        concurrent_error(m_log, "wrong value for data, it should be 99");
         return false;
       }
 
@@ -359,15 +356,14 @@ struct async_loop_004 {
 
       _async_loop.stop();
 
-      concurrent_debug(logger::cerr::log, "data 2 ", _work.data);
+      concurrent_debug(m_log, "data 2 ", _work.data);
       if (_work.data != 199) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 199");
+        concurrent_error(m_log, "wrong value for data, it should be 199");
         return false;
       }
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -386,6 +382,7 @@ struct async_loop_004 {
 
            "\nData in work should be 199";
   }
+  logger::cerr::log m_log{"async_loop_004"};
 };
 
 struct async_loop_005 {
@@ -394,9 +391,10 @@ struct async_loop_005 {
     status::result operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
-      concurrent_debug(logger::cerr::log, p_data);
+      concurrent_debug(m_log, p_data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_005::work1"};
   };
 
   struct provide {
@@ -414,8 +412,9 @@ struct async_loop_005 {
   bool operator()() {
     using namespace tenacitas;
     try {
-      async_loop sl1(work1(), []() { return status::ok; },
-                     std::chrono::milliseconds(1000), provide());
+      async_loop sl1(
+          work1(), []() { return status::ok; }, std::chrono::milliseconds(1000),
+          provide());
 
       // uncomment the line below for a compiler error "error:
       // ‘tenacitas::concurrent::async_loop<t_timeout,
@@ -509,7 +508,7 @@ struct async_loop_005 {
       //            sl5 = std::move(sl1);
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -521,6 +520,7 @@ struct async_loop_005 {
            "constructor, copy constructor, move constructor, copy assignment "
            "and move assignment of 'async_loop'";
   }
+  logger::cerr::log m_log{"async_loop_005"};
 };
 
 struct async_loop_006 {
@@ -532,9 +532,10 @@ struct async_loop_006 {
     status::result operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(1001));
-      concurrent_debug(logger::cerr::log, p_data);
+      concurrent_debug(m_log, p_data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_006::work1"};
   };
 
   struct provide {
@@ -553,8 +554,9 @@ struct async_loop_006 {
     using namespace tenacitas;
     try {
 
-      async_loop _async_loop(work1(), []() { return status::ok; },
-                             std::chrono::milliseconds(1000), provide());
+      async_loop _async_loop(
+          work1(), []() { return status::ok; }, std::chrono::milliseconds(1000),
+          provide());
 
       _async_loop.start();
 
@@ -563,7 +565,7 @@ struct async_loop_006 {
       _async_loop.stop();
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -578,6 +580,7 @@ struct async_loop_006 {
            "\nMain thread will stop for 4 secs; 'async_loop' stops.\n4 "
            "timeouts warnings will be printed";
   }
+  logger::cerr::log m_log{"async_loop_006"};
 };
 
 struct async_loop_007 {
@@ -587,9 +590,10 @@ struct async_loop_007 {
     status::result operator()(uint32_t &&p_data) {
 
       data = p_data;
-      concurrent_debug(logger::cerr::log, p_data);
+      concurrent_debug(m_log, p_data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_007::work1"};
     uint32_t data = 0;
   };
 
@@ -627,17 +631,16 @@ struct async_loop_007 {
 
       _async_loop_1.stop();
 
-      concurrent_debug(logger::cerr::log, "work data = ", _work.data,
-                           ", provider data = ", _provide.get_data());
+      concurrent_debug(m_log, "work data = ", _work.data,
+                       ", provider data = ", _provide.get_data());
 
       if (_work.data != 19) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 19");
+        concurrent_error(m_log, "wrong value for data, it should be 19");
         return false;
       }
 
-      concurrent_debug(logger::cerr::log, "work data = ", _work.data,
-                           ", provider data = ", _provide.get_data());
+      concurrent_debug(m_log, "work data = ", _work.data,
+                       ", provider data = ", _provide.get_data());
 
       async_loop _async_loop_2(
           [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
@@ -646,13 +649,13 @@ struct async_loop_007 {
             return _provide();
           });
 
-      concurrent_debug(logger::cerr::log, "work data = ", _work.data,
-                           ", provider data = ", _provide.get_data());
+      concurrent_debug(m_log, "work data = ", _work.data,
+                       ", provider data = ", _provide.get_data());
 
       std::this_thread::sleep_for(std::chrono::seconds(2));
 
-      concurrent_debug(logger::cerr::log, "work data = ", _work.data,
-                           ", provider data = ", _provide.get_data());
+      concurrent_debug(m_log, "work data = ", _work.data,
+                       ", provider data = ", _provide.get_data());
 
       _async_loop_2.start();
 
@@ -660,17 +663,16 @@ struct async_loop_007 {
 
       _async_loop_2.stop();
 
-      concurrent_debug(logger::cerr::log, "work data = ", _work.data,
-                           ", provider data = ", _provide.get_data());
+      concurrent_debug(m_log, "work data = ", _work.data,
+                       ", provider data = ", _provide.get_data());
 
       if (_work.data != 34) {
-        concurrent_error(logger::cerr::log,
-                             "wrong value for data, it should be 35");
+        concurrent_error(m_log, "wrong value for data, it should be 35");
         return false;
       }
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -694,6 +696,7 @@ struct async_loop_007 {
 
            "\nData in work should be 34.";
   }
+  logger::cerr::log m_log{"async_loop_007::work1"};
 };
 
 struct async_loop_008 {
@@ -701,9 +704,10 @@ struct async_loop_008 {
   struct work1 {
     status::result operator()(uint32_t &&p_data) {
       data += p_data;
-      concurrent_debug(logger::cerr::log, "1 -> ", data);
+      concurrent_debug(m_log, "1 -> ", data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_008::work1"};
     uint32_t data = 0;
   };
 
@@ -711,9 +715,10 @@ struct async_loop_008 {
     status::result operator()(uint32_t &&p_data) {
       using namespace tenacitas;
       data = p_data;
-      concurrent_debug(logger::cerr::log, "2 -> ", data);
+      concurrent_debug(m_log, "2 -> ", data);
       return status::ok;
     }
+    logger::cerr::log m_log{"async_loop_007::work2"};
     uint32_t data = 0;
   };
 
@@ -759,11 +764,11 @@ struct async_loop_008 {
       _al_1.stop();
       _al_2.stop();
 
-      concurrent_debug(logger::cerr::log, "work 1 data = ", _work_1.data);
-      concurrent_debug(logger::cerr::log, "work 2 data = ", _work_2.data);
+      concurrent_debug(m_log, "work 1 data = ", _work_1.data);
+      concurrent_debug(m_log, "work 2 data = ", _work_2.data);
 
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -781,6 +786,7 @@ struct async_loop_008 {
 
            "\nThe final data for Work 1 and Work 2 is unpredictable.";
   }
+  logger::cerr::log m_log{"async_loop_008"};
 };
 
 struct async_loop_009 {
@@ -792,11 +798,10 @@ struct async_loop_009 {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
-      concurrent_debug(logger::cerr::log, "work = ", this,
-                           ", counter = ", counter++);
+      concurrent_debug(m_log, "work = ", this, ", counter = ", counter++);
       return status::ok;
     }
-
+    logger::cerr::log m_log{"async_loop_009::work1"};
     uint64_t counter = 0;
   };
 
@@ -805,23 +810,23 @@ struct async_loop_009 {
     using namespace tenacitas;
     try {
       work1 _work;
-      async_loop _async_loop(_work,
-                             []() -> status::result { return status::ok; },
-                             std::chrono::milliseconds(1000));
+      async_loop _async_loop(
+          _work, []() -> status::result { return status::ok; },
+          std::chrono::milliseconds(1000));
 
       _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
 
-      concurrent_debug(logger::cerr::log, "counter = ", _work.counter);
+      concurrent_debug(m_log, "counter = ", _work.counter);
       if (_work.counter != 0) {
-        concurrent_debug(logger::cerr::log,
-                             "wrong value for data, it should be 0, but it is ",
-                             _work.counter);
+        concurrent_debug(m_log,
+                         "wrong value for data, it should be 0, but it is ",
+                         _work.counter);
         return false;
       }
     } catch (std::exception &_ex) {
-      concurrent_error(logger::cerr::log, _ex.what());
+      concurrent_error(m_log, _ex.what());
       return false;
     }
 
@@ -835,6 +840,7 @@ struct async_loop_009 {
            "\nThe work functor will not have its internal counter modified, as "
            "it was passed by copy to 'async_loop'";
   }
+  logger::cerr::log m_log{"async_loop_009"};
 };
 
 int main(int argc, char **argv) {

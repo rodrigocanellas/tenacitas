@@ -307,7 +307,8 @@ private:
     using namespace std;
 
     if (m_stopped) {
-      concurrent_debug(m_log, "not waiting for more data because it is stopped ");
+      concurrent_debug(m_log,
+                       "not waiting for more data because it is stopped ");
 
       return std::make_pair(concurrent::stopped_by_provider, t_data());
     }
@@ -406,7 +407,7 @@ private:
   /// \brief m_destroying indicates that the \p thread_pool should stop
   bool m_destroying = false;
 
-  t_log m_log{"thread_pool.h"};
+  t_log m_log{"concurrent::thread_pool"};
 };
 
 } // namespace concurrent

@@ -45,11 +45,13 @@ public:
   }
 
   /// \brief join waits for the thread to finish
-  void join() {
+  inline void join() {
     if (m_thread.joinable()) {
       m_thread.join();
     }
   }
+
+  inline std::thread::id get_id() const { return m_thread.get_id(); }
 
   /// \brief ~thread joins if the thread is still running
   inline ~thread() { join(); }

@@ -105,7 +105,7 @@ template <typename t_log, std::size_t t_buffer_size = 8 * 1024> struct reader {
   void read_all_async(t_stream &p_stream, t_handler p_handler);
 
 private:
-  t_log m_log{"reader.h"};
+  t_log m_log{"concurrent::reader"};
 };
 
 } // namespace concurrent

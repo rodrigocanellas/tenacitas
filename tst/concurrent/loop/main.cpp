@@ -18,7 +18,7 @@ typedef tenacitas::logger::cerr::log log;
 typedef tenacitas::concurrent::loop_t<void, log> loop;
 typedef tenacitas::status::result result;
 
-struct producer_consumer_000 {
+struct loop_000 {
 
   struct xpto {
 
@@ -28,11 +28,12 @@ struct producer_consumer_000 {
 
     status::result worker() {
       ++m_counter;
-      concurrent_debug(log, "counter = ", m_counter);
+      concurrent_debug(m_log, "counter = ", m_counter);
       return status::ok;
     }
 
   private:
+    logger::cerr::log m_log{"loop_000::work1"};
     int16_t m_counter{0};
   };
 
@@ -44,7 +45,7 @@ struct producer_consumer_000 {
 
     status::result _result = _loop.start();
 
-    concurrent_debug(log, "result = ", _result);
+    concurrent_debug(m_log, "result = ", _result);
 
     return (_result == status::ok);
   }
@@ -53,6 +54,7 @@ struct producer_consumer_000 {
     return "Loop with work function taking no parameter. Break function stops "
            "when a counter reaches 100. No timeout.";
   }
+  logger::cerr::log m_log{"loop_000"};
 };
 
 struct loop_001 {
@@ -66,7 +68,7 @@ struct loop_001 {
     status::result worker() {
       ++m_counter;
       std::this_thread::sleep_for(std::chrono::seconds(1 * m_counter));
-      concurrent_debug(log, "counter = ", m_counter);
+      concurrent_debug(m_log, "counter = ", m_counter);
       return status::ok;
     }
 
@@ -74,6 +76,7 @@ struct loop_001 {
 
   private:
     int16_t m_counter{0};
+    logger::cerr::log m_log{"loop_001::xpto"};
   };
 
   bool operator()() {
@@ -84,8 +87,8 @@ struct loop_001 {
 
     status::result _result = _loop.start();
 
-    concurrent_debug(log, "result = ", _result,
-                         ", counter = ", _xpto.counter());
+    concurrent_debug(m_log, "result = ", _result,
+                     ", counter = ", _xpto.counter());
 
     return ((_result == concurrent::stopped_by_timeout) &&
             (_xpto.counter() == 8));
@@ -96,6 +99,7 @@ struct loop_001 {
            "when a counter reaches 20, but a timeout will occurr when the "
            "counter reaches 8.";
   }
+  logger::cerr::log m_log{"loop_001"};
 };
 
 struct loop_002 {
@@ -110,7 +114,7 @@ struct loop_002 {
 
     status::result worker() {
       ++m_counter;
-      concurrent_debug(log, "counter = ", m_counter);
+      concurrent_debug(m_log, "counter = ", m_counter);
       if (m_counter == 22) {
         return stop_because_so;
       }
@@ -118,6 +122,7 @@ struct loop_002 {
     }
 
   private:
+    logger::cerr::log m_log{"loop_002::xpto"};
     int16_t m_counter{0};
   };
 
@@ -129,7 +134,7 @@ struct loop_002 {
 
     status::result _result = _loop.start();
 
-    concurrent_debug(log, "result = ", _result);
+    concurrent_debug(m_log, "result = ", _result);
 
     return (_result == stop_because_so);
   }
@@ -140,6 +145,7 @@ struct loop_002 {
            "returns. Loop should stop with the result the Work function "
            "created.";
   }
+  logger::cerr::log m_log{"loop_002"};
 };
 
 const result loop_002::stop_because_so{100, 1};
@@ -159,11 +165,12 @@ struct loop_003 {
     }
 
     status::result worker(int16_t &&p_value) {
-      concurrent_debug(log, "counter = ", p_value);
+      concurrent_debug(m_log, "counter = ", p_value);
       return status::ok;
     }
 
   private:
+    logger::cerr::log m_log{"loop_003::xpto"};
     int16_t m_counter{0};
   };
 
@@ -185,7 +192,7 @@ struct loop_003 {
 
     status::result _result = _loop.start();
 
-    concurrent_debug(log, "result = ", _result);
+    concurrent_debug(m_log, "result = ", _result);
 
     return (_result == status::ok);
   }
@@ -194,12 +201,13 @@ struct loop_003 {
     return "Loop with work function taking a int16_t. Break function stops "
            "when a counter reaches 100. No timeout.";
   }
+  logger::cerr::log m_log{"loop_003"};
 };
 
 int main(int argc, char **argv) {
   log::set_debug();
   tester::test _test(argc, argv);
-  run_test(_test, producer_consumer_000);
+  run_test(_test, loop_000);
   run_test(_test, loop_001);
   run_test(_test, loop_002);
   run_test(_test, loop_003);

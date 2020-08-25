@@ -13,6 +13,7 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
+#include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
 /// \brief namespace of the organization
@@ -83,7 +84,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
 
     if (!is_running()) {
       concurrent_debug(m_log, "starting thread, as it was not running");
-      m_thread = std::thread([this]() -> void { loop(); });
+      m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
@@ -104,7 +105,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
     std::unique_lock<std::mutex> _lock(m_mutex_time);
     concurrent_debug(m_log, "waiting for worker to finish");
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrenm_log_warn(m_log, "worker timeout");
+      concurrent_warn(m_log, "worker timeout");
       return concurrent::stopped_by_timeout;
     }
     concurrent_debug(m_log, "worker finished on time");
@@ -161,13 +162,13 @@ private:
   t_time m_timeout;
   bool m_stop = false;
   status::result m_result = status::ok;
-  std::thread m_thread;
+  concurrent::thread m_thread;
   std::mutex m_mutex_exec;
   std::mutex m_mutex_time;
   std::condition_variable m_cond_exec;
   std::condition_variable m_cond_time;
   t_data m_data;
-  t_log m_log{"processor.h"};
+  t_log m_log{"concurrent::processor"};
 };
 
 template <typename t_time, typename t_log>
@@ -227,7 +228,7 @@ struct processor_t<void, t_time, t_log> {
 
     if (!is_running()) {
       concurrent_debug(m_log, "starting thread, as it was not running");
-      m_thread = std::thread([this]() -> void { loop(); });
+      m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 
@@ -237,7 +238,7 @@ struct processor_t<void, t_time, t_log> {
     std::unique_lock<std::mutex> _lock(m_mutex_time);
     concurrent_debug(m_log, "waiting for worker to finish");
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurent_warn(m_log, "worker timeout");
+      concurrent_warn(m_log, "worker timeout");
       return concurrent::stopped_by_timeout;
     }
     concurrent_debug(m_log, "worker finished on time");
@@ -292,12 +293,12 @@ private:
   t_time m_timeout;
   bool m_stop = false;
   status::result m_result = status::ok;
-  std::thread m_thread;
+  concurrent::thread m_thread;
   std::mutex m_mutex_exec;
   std::mutex m_mutex_time;
   std::condition_variable m_cond_exec;
   std::condition_variable m_cond_time;
-  t_log m_log{"process.h"};
+  t_log m_log{"concurrent::processor"};
 };
 ///// \brief process struct executes the core process for a \p loop object which
 ///// Work function receives data

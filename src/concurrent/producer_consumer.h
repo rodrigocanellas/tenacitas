@@ -202,7 +202,7 @@ public:
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
 
-      concurent_warn(m_log, "can't run because there are no workers");
+      concurrent_warn(m_log, "can't run because there are no workers");
       return;
     }
     concurrent_debug(m_log, "starting");
@@ -340,7 +340,7 @@ private:
   /// \brief m_destroying indicates that the \p produce_consumer should stop
   bool m_destroying = false;
 
-  t_log m_log{"producer_consumer.h"};
+  t_log m_log{"concurrent::producer_consumer"};
 };
 
 } // namespace concurrent
