@@ -109,6 +109,10 @@ public:
   ///
   /// \param p_data is the data produced
   void add(const data &p_data) {
+    if (m_stopped) {
+      concurrent_debug(m_log, "not trying to add because it is stopped");
+      return;
+    }
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
@@ -132,6 +136,10 @@ public:
   ///
   /// \param p_data is the data produced
   void add(data &&p_data) {
+    if (m_stopped) {
+      concurrent_debug(m_log, "not trying to add because it is stopped");
+      return;
+    }
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(

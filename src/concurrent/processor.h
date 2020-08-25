@@ -86,6 +86,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
       concurrent_debug(m_log, "starting thread, as it was not running");
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      m_stop = false;
     }
 
     std::pair<status::result, t_data> _provided = m_provider();
@@ -230,6 +231,7 @@ struct processor_t<void, t_time, t_log> {
       concurrent_debug(m_log, "starting thread, as it was not running");
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      m_stop = false;
     }
 
     concurrent_debug(m_log, "sending notification");

@@ -177,6 +177,23 @@ struct producer_consumer_002 {
     msg m_msg;
   };
 
+  struct producer {
+    producer(producer_consumer *p_pc, msg::data *p_data)
+        : m_pc(p_pc), m_data(p_data) {}
+
+    status::result operator()() {
+      msg _msg(++(*m_data));
+      concurrent_debug(m_log, "adding msg ", _msg);
+      m_pc->add(std::move(_msg));
+      return status::ok;
+    }
+
+  private:
+    logger::cerr::log m_log{"producer"};
+    producer_consumer *m_pc;
+    msg::data *m_data;
+  };
+
   bool operator()() {
 
     work _work;
@@ -185,14 +202,11 @@ struct producer_consumer_002 {
 
     msg::data _value = 0;
 
+    producer _producer(&_pc, &_value);
+
     sleeping_loop _loop(
         std::chrono::milliseconds(500),
-        [this, &_pc, &_value]() {
-          msg _msg(++_value);
-          concurrent_debug(m_log, "adding msg ", _msg);
-          _pc.add(std::move(_msg));
-          return status::ok;
-        },
+        [&_producer]() -> status::result { return _producer(); },
         std::chrono::milliseconds(300));
 
     _pc.add([&_work](msg &&p_msg) { return _work(std::move(p_msg)); },
