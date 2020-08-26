@@ -186,40 +186,12 @@ struct processor_t<void, t_time, t_log> {
   typedef t_log log;
 
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
-      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    concurrent_debug(m_log, "contructor");
-  }
+      : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {}
 
-  processor_t(processor_t &&p_proc) noexcept {
-    concurrent_debug(m_log, "move contructor");
-    m_worker = std::move(p_proc.m_worker);
-    m_provider = std::move(p_proc.m_provider);
-    m_timeout = std::move(p_proc.m_timeout);
-    m_stop = false;
-    m_result = status::ok;
-    if (p_proc.is_running()) {
-      p_proc.stop();
-      (*this)();
-    }
-  }
+  processor_t(processor_t &&p_proc) = delete;
 
   processor_t &operator=(const processor_t &) = delete;
-  processor_t &operator=(processor_t &&p_proc) noexcept {
-    concurrent_debug(m_log, "move =");
-    if (this != &p_proc) {
-
-      m_worker = std::move(p_proc.m_worker);
-      m_provider = std::move(p_proc.m_provider);
-      m_timeout = std::move(p_proc.m_timeout);
-      m_stop = false;
-      m_result = status::ok;
-      if (p_proc.is_running()) {
-        p_proc.stop();
-        (*this)();
-      }
-    }
-    return *this;
-  }
+  processor_t &operator=(processor_t &&p_proc) = delete;
 
   inline bool is_running() const {
     return ((m_thread.get_id() != std::thread::id()) && (!m_stop));

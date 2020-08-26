@@ -93,28 +93,13 @@ struct loop_t {
 
   /// \brief loop move constructor
   /// \param p_loop an instance o \p loop to be moved
-  loop_t(loop_t &&p_loop) noexcept
-      : m_worker(std::move(p_loop.m_worker)),
-        m_breaker(std::move(p_loop.m_breaker)),
-        m_timeout(std::move(p_loop.m_timeout)),
-        m_provider(std::move(p_loop.m_provider)), m_stopped_by_user(true),
-        m_processor(std::move(p_loop.m_processor)) {}
+  loop_t(loop_t &&p_loop) = delete;
 
   /// \brief copy assignment not allowed
   loop_t &operator=(const loop_t &) = delete;
 
   /// \brief move assignment
-  loop_t &operator=(loop_t &&p_loop) noexcept {
-    if (this != &p_loop) {
-      m_worker = std::move(p_loop.m_worker);
-      m_breaker = std::move(p_loop.m_breaker);
-      m_timeout = std::move(p_loop.m_timeout);
-      m_provider = std::move(p_loop.m_provider);
-      m_processor = std::move(p_loop.m_processor);
-      m_stopped_by_user = true;
-    }
-    return *this;
-  }
+  loop_t &operator=(loop_t &&p_loop) = delete;
 
   /// \brief is_stopped
   ///
@@ -190,7 +175,8 @@ struct loop_t {
       }
 
       if (m_stopped_by_destructor) {
-        concurrent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
+        concurrent_warn(m_log,
+                        "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }
@@ -213,7 +199,8 @@ struct loop_t {
       }
 
       if (m_stopped_by_destructor) {
-        concurrent_warn(m_log, "loop stopped: ", concurrent::stop_by_destructor);
+        concurrent_warn(m_log,
+                        "loop stopped: ", concurrent::stop_by_destructor);
         _result = status::ok;
         break;
       }

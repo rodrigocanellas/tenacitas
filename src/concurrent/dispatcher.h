@@ -72,10 +72,15 @@ public:
   /// Stops all the \p thread_pool
   ~dispatcher_t() {
     concurrent_debug(m_log, "leaving");
-    typename thread_pool_list::iterator _end = m_thread_pool_list.end();
-    for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
-         _ite != _end; ++_ite) {
-      _ite->second.stop;
+    //    typename thread_pool_list::iterator _end = m_thread_pool_list.end();
+    //    for (typename thread_pool_list::iterator _ite =
+    //    m_thread_pool_list.begin();
+    //         _ite != _end; ++_ite) {
+    //      _ite->second.stop;
+    //    }
+
+    for (thread_pool_ptr _thread_pool : m_thread_pool_list) {
+      _thread_pool->stop();
     }
   }
 
@@ -96,16 +101,16 @@ public:
                         uint16_t p_num_handlers, t_time p_work_timeout) {
 
     // creating a \p thread_pool
-    thread_pool _thread_pool;
+    thread_pool_ptr _thread_pool(std::make_shared<thread_pool>());
 
     // adding the \p work_t functions
-    _thread_pool.add_work(p_num_handlers, p_work_factory, p_work_timeout);
+    _thread_pool->add_work(p_num_handlers, p_work_factory, p_work_timeout);
 
     // running the \p thread_pool
-    _thread_pool.start();
+    _thread_pool->start();
 
     // adding the \p thread_pool to the list
-    m_thread_pool_list.insert({p_queue, std::move(_thread_pool)});
+    m_thread_pool_list.insert({p_queue, _thread_pool});
   }
 
   /// \brief subscribe adds a single \p work_t function to handle \p t_msg
@@ -121,16 +126,16 @@ public:
   static void subscribe(const queue &p_queue, worker p_work,
                         t_time p_work_timeout) {
     // creating a \p thread_pool
-    thread_pool _thread_pool;
+    thread_pool_ptr _thread_pool(std::make_shared<thread_pool>());
 
     // adding the \p work_t functions
-    _thread_pool.add_work(p_work, p_work_timeout);
+    _thread_pool->add_work(p_work, p_work_timeout);
 
     // running the \p thread_pool
-    _thread_pool.start();
+    _thread_pool->start();
 
     // adding the \p thread_pool to the list
-    m_thread_pool_list.insert({p_queue, std::move(_thread_pool)});
+    m_thread_pool_list.insert({p_queue, _thread_pool});
   }
 
   /// \brief handle sends a message to the \p work_t objects to be handled
@@ -145,8 +150,11 @@ public:
     typename thread_pool_list::iterator _end = m_thread_pool_list.end();
     for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
          _ite != _end; ++_ite) {
-      _ite->second.handle(p_msg);
+      _ite->second->handle(p_msg);
     }
+    //    for (thread_pool_ptr _thread_pool : m_thread_pool_list) {
+    //      _thread_pool->handle(p_msg);
+    //    }
   }
 
   /// \brief handle sends a message to the \p work_t objects to be handled
@@ -163,10 +171,16 @@ public:
   /// \brief stops the \p subscriber, which stops \p worker objects to handle
   /// new messages
   static void stop() {
+    //    typename thread_pool_list::iterator _end = m_thread_pool_list.end();
+    //    for (typename thread_pool_list::iterator _ite =
+    //    m_thread_pool_list.begin();
+    //         _ite != _end; ++_ite) {
+    //      _ite->second.stop();
+    //    }
     typename thread_pool_list::iterator _end = m_thread_pool_list.end();
     for (typename thread_pool_list::iterator _ite = m_thread_pool_list.begin();
          _ite != _end; ++_ite) {
-      _ite->second.stop();
+      _ite->second->stop();
     }
   }
 
@@ -174,8 +188,10 @@ private:
   /// \brief thread_pool_t alias for \p thread_pool of \p t_msg
   typedef thread_pool_t<t_msg, t_log, t_time> thread_pool;
 
+  typedef typename std::shared_ptr<thread_pool> thread_pool_ptr;
+
   /// \brief thread_pool_list_t alias for list of \p thread_pool_t
-  typedef std::map<queue, thread_pool> thread_pool_list;
+  typedef std::map<queue, thread_pool_ptr> thread_pool_list;
 
 private:
   /// \brief m_thread_pool_list the single list of pools object

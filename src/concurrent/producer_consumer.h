@@ -73,13 +73,18 @@ public:
   typedef typename traits_t<data>::worker worker;
 
 public:
-  producer_consumer_t(t_container &&p_container)
+  producer_consumer_t() = delete;
+
+  producer_consumer_t(container &&p_container)
       : m_container(std::move(p_container)) {}
-  producer_consumer_t() = default;
+
   producer_consumer_t(const producer_consumer_t &) = delete;
-  producer_consumer_t(producer_consumer_t &&) = delete;
+
+  producer_consumer_t(producer_consumer_t &&p_pc) = delete;
+
   producer_consumer_t &operator=(const producer_consumer_t &) = delete;
-  producer_consumer_t &operator=(producer_consumer_t &&) = delete;
+
+  producer_consumer_t &operator=(producer_consumer_t &&p_pc) = delete;
 
   /// \brief destuctor
   ///
@@ -113,6 +118,8 @@ public:
       concurrent_debug(m_log, "not trying to add because it is stopped");
       return;
     }
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
@@ -140,6 +147,9 @@ public:
       concurrent_debug(m_log, "not trying to add because it is stopped");
       return;
     }
+
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
@@ -164,14 +174,19 @@ public:
   /// \param p_work the \p worker fuction to be added
   /// \param p_worker_timeout timeout of this \p worker function
   void add(worker p_work, time p_timeout) {
-    async_loop _loop(
-        p_work, [this]() -> status::result { return this->breaker(); },
-        p_timeout,
-        [this]() -> std::pair<status::result, data> {
-          return this->provider();
-        });
 
-    add(std::move(_loop));
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
+    auto _breaker = [this]() -> status::result { return this->breaker(); };
+
+    auto _provider = [this]() -> std::pair<status::result, data> {
+      return this->provider();
+    };
+
+    async_loop_ptr _loop(
+        std::make_shared<async_loop>(p_work, _breaker, p_timeout, _provider));
+
+    add(_loop);
   }
 
   /// \brief add_work adds a bunch of \p worker functions
@@ -180,16 +195,20 @@ public:
   /// \param p_worker_timeout timeout for the \p worker functions
   void add(uint16_t p_num_works, std::function<worker()> p_work_factory,
            time p_worker_timeout) {
-    for (uint16_t _i = 0; _i < p_num_works; ++_i) {
-      async_loop _loop(
-          p_work_factory(),
-          [this]() -> status::result { return this->breaker(); },
-          p_worker_timeout,
-          [this]() -> std::pair<status::result, data> {
-            return this->provider();
-          });
 
-      add(std::move(_loop));
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
+    auto _breaker = [this]() -> status::result { return this->breaker(); };
+
+    auto _provider = [this]() -> std::pair<status::result, data> {
+      return this->provider();
+    };
+
+    for (uint16_t _i = 0; _i < p_num_works; ++_i) {
+      async_loop_ptr _loop(std::make_shared<async_loop>(
+          p_work_factory(), _breaker, p_worker_timeout, _provider));
+
+      add(_loop);
     }
   }
 
@@ -209,14 +228,13 @@ public:
 
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
-
       concurrent_warn(m_log, "can't run because there are no workers");
       return;
     }
     concurrent_debug(m_log, "starting");
     m_stopped = false;
-    for (async_loop &_loop : m_loops) {
-      _loop.start();
+    for (async_loop_ptr _loop : m_loops) {
+      _loop->start();
     }
     concurrent_debug(m_log, "started");
   }
@@ -235,9 +253,9 @@ public:
     }
 
     m_data_produced.notify_all();
-    for (async_loop &_loop : m_loops) {
+    for (async_loop_ptr _loop : m_loops) {
       concurrent_debug(m_log, "stopping loop");
-      _loop.stop();
+      _loop->stop();
     }
   }
 
@@ -249,8 +267,10 @@ private:
   /// running
   typedef async_loop_t<data, t_log, t_time> async_loop;
 
+  typedef typename std::shared_ptr<async_loop> async_loop_ptr;
+
   /// \brief async_loops_t is the collection of \p async_loop
-  typedef typename std::vector<async_loop> asyncs_loops;
+  typedef typename std::vector<async_loop_ptr> asyncs_loops;
 
 private:
   /// \brief breaker
@@ -262,9 +282,9 @@ private:
 
   /// \brief add_work common function called to add a \p worker function
   /// \param p_loop the new \p worker function to be added
-  void add(async_loop &&p_loop) {
+  void add(async_loop_ptr p_loop) {
     std::lock_guard<std::mutex> _lock(m_add_work);
-    m_loops.push_back(std::move(p_loop));
+    m_loops.push_back(p_loop);
   }
 
   /// \brief provider is the \p provide_t function, which provides data, if
@@ -317,8 +337,8 @@ private:
 
   /// \brief informs if all the \p async_loops are stopped
   bool all_loops_stopped() const {
-    for (const async_loop &_async_loop : m_loops) {
-      if (!_async_loop.is_stopped()) {
+    for (async_loop_ptr _async_loop : m_loops) {
+      if (!_async_loop->is_stopped()) {
         return false;
       }
     }
@@ -327,6 +347,7 @@ private:
 
 private:
   container m_container;
+
   /// \brief m_add_work controls access to the \p m_loops while inserting a
   /// new \p t_work function
   std::mutex m_add_work;

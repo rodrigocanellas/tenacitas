@@ -64,41 +64,7 @@ public:
       : m_loops(), m_values(), m_stopped(true), m_destroying(false) {}
 
   /// \brief move constructor
-  thread_pool_t(thread_pool_t &&p_pool) noexcept {
-    // save if the right side was stopped
-    bool _stopped = p_pool.is_stopped();
-
-    // stop the right side
-    p_pool.stop();
-
-    // move the \p t_data collection
-    m_values = std::move(p_pool.m_values);
-
-    // build the work function collection, moving the work function from the
-    // right side, and reseting the provide and break function
-    for (async_loop &_loop_right : p_pool.m_loops) {
-      async_loop _loop(
-          std::move(_loop_right.get_worker()),
-          [this]() -> status::result { return this->stop_condition(); },
-          _loop_right.get_timeout(),
-          [this]() -> std::pair<status::result, t_data> {
-            return this->data();
-          });
-
-      add_work(std::move(_loop));
-    }
-
-    // seting the flags
-    m_destroying = false;
-
-    m_stopped = true;
-
-    // if the right side was not stopped
-    if (!_stopped) {
-      // run this thread pool
-      start();
-    }
-  }
+  thread_pool_t(thread_pool_t &&p_pool) noexcept;
 
   /// \brief copy constructor not allowed
   thread_pool_t(const thread_pool_t &) = delete;
@@ -131,43 +97,7 @@ public:
   }
 
   /// \brief move assignment
-  thread_pool_t &operator=(thread_pool_t &&p_pool) noexcept {
-    if (this != &p_pool) {
-      // save if the right side was stopped
-      bool _stopped = p_pool.is_stopped();
-
-      // stop the right side
-      p_pool.stop();
-
-      // move the \p t_data collection
-      m_values = std::move(p_pool.m_values);
-
-      // build the work function collection, moving the work function from
-      // the right side, and reseting the provide and break function
-      for (async_loop &_loop_right : p_pool.m_loops) {
-        async_loop _loop(
-            std::move(_loop_right.get_work()), _loop_right.get_timeout(),
-            [this]() -> bool { return this->stop_condition(); },
-            [this]() -> std::pair<status::result, t_data> {
-              return this->data();
-            });
-
-        add_work(std::move(_loop));
-      }
-
-      // seting the flags
-      m_destroying = false;
-
-      m_stopped = true;
-
-      // if the right side was not stopped
-      if (!_stopped) {
-        // run this thread pool
-        start();
-      }
-    }
-    return *this;
-  }
+  thread_pool_t &operator=(thread_pool_t &&p_pool) = delete;
 
   /// \brief copy assignment not allowed
   thread_pool_t &operator=(const thread_pool_t &) = delete;
@@ -182,16 +112,19 @@ public:
   /// \param p_worker_timeout timeout for the \p worker functions
   void add_work(uint16_t p_num_works, std::function<worker()> p_work_factory,
                 t_time p_worker_timeout) {
-    for (uint16_t _i = 0; _i < p_num_works; ++_i) {
-      async_loop _loop(
-          p_work_factory(),
-          [this]() -> status::result { return this->stop_condition(); },
-          p_worker_timeout,
-          [this]() -> std::pair<status::result, t_data> {
-            return this->data();
-          });
+    auto _breaker = [this]() -> status::result {
+      return this->stop_condition();
+    };
 
-      add_work(std::move(_loop));
+    auto _provider = [this]() -> std::pair<status::result, t_data> {
+      return this->data();
+    };
+
+    for (uint16_t _i = 0; _i < p_num_works; ++_i) {
+      async_loop_ptr _loop(std::make_shared<async_loop>(
+          p_work_factory(), _breaker, p_worker_timeout, _provider));
+
+      add_work(_loop);
     }
   }
 
@@ -199,12 +132,18 @@ public:
   /// \param p_work the \p worker fuction to be added
   /// \param p_worker_timeout timeout of this \p worker function
   void add_work(worker p_work, t_time p_worker_timeout) {
-    async_loop _loop(
-        p_work, [this]() -> status::result { return this->stop_condition(); },
-        p_worker_timeout,
-        [this]() -> std::pair<status::result, t_data> { return this->data(); });
+    auto _breaker = [this]() -> status::result {
+      return this->stop_condition();
+    };
 
-    add_work(std::move(_loop));
+    auto _provider = [this]() -> std::pair<status::result, t_data> {
+      return this->data();
+    };
+
+    async_loop_ptr _loop(std::make_shared<async_loop>(
+        p_work, _breaker, p_worker_timeout, _provider));
+
+    add_work(_loop);
   }
 
   /// \brief handle sends an instance of \p t_data to be handled
@@ -240,9 +179,9 @@ public:
     }
 
     m_cv_data.notify_all();
-    for (async_loop &_loop : m_loops) {
+    for (async_loop_ptr _loop : m_loops) {
       concurrent_debug(m_log, "stopping loop ", &_loop);
-      _loop.stop();
+      _loop->stop();
     }
   }
 
@@ -258,8 +197,12 @@ private:
   /// running
   typedef async_loop_t<t_data, t_log, t_time> async_loop;
 
+  typedef typename std::shared_ptr<async_loop> async_loop_ptr;
+
+  //  typedef typename std::shared_ptr<const async_loop> async_loop_const_ptr;
+
   /// \brief async_loops_t is the collection of \p async_loop
-  typedef std::vector<async_loop> async_loops_t;
+  typedef std::vector<async_loop_ptr> async_loops;
 
 private:
   /// \brief run_common is called from other functions, in order to start the
@@ -275,18 +218,18 @@ private:
     m_stopped = false;
     concurrent_debug(m_log, "m_stopped = ", m_stopped);
 
-    for (async_loop &_loop : m_loops) {
+    for (async_loop_ptr _loop : m_loops) {
       concurrent_debug(m_log, "starting loop ", &_loop);
-      _loop.start();
+      _loop->start();
     }
     concurrent_debug(m_log, "started ");
   }
 
   /// \brief add_work common function called to add a \p worker function
   /// \param p_loop the new \p worker function to be added
-  void add_work(async_loop &&p_loop) {
+  void add_work(async_loop_ptr p_loop) {
     std::lock_guard<std::mutex> _lock(m_add_work);
-    m_loops.push_back(std::move(p_loop));
+    m_loops.push_back(p_loop);
   }
 
   /// \brief stop_condition
@@ -363,8 +306,8 @@ private:
 
   /// \brief informs if all the \p async_loops are stopped
   bool all_loops_stopped() const {
-    for (const async_loop &_async_loop : m_loops) {
-      if (!_async_loop.is_stopped()) {
+    for (async_loop_ptr _async_loop : m_loops) {
+      if (!_async_loop->is_stopped()) {
         return false;
       }
     }
@@ -373,7 +316,7 @@ private:
 
 private:
   /// \brief m_loops the pool of async_loops
-  async_loops_t m_loops;
+  async_loops m_loops;
 
   /// \brief m_values is the collection of instances of \p t_data
   values m_values;

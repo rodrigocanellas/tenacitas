@@ -108,20 +108,13 @@ struct async_loop_t {
   async_loop_t(const async_loop_t &) = delete;
 
   /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) noexcept
-      : m_loop(std::move(p_async.m_loop)) {}
+  async_loop_t(async_loop_t &&p_async) = delete;
 
   /// \brief copy assignment not allowed
   async_loop_t &operator=(const async_loop_t &) = delete;
 
   /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) noexcept {
-    concurrent_debug(m_log, "destructor");
-    if (this != &p_async) {
-      m_loop = std::move(p_async.m_loop);
-    }
-    return *this;
-  }
+  async_loop_t &operator=(async_loop_t &&p_async) = delete;
 
   /// \brief destructor stops the loop
   inline ~async_loop_t() {
@@ -196,7 +189,7 @@ struct async_loop_t {
   void stop() {
     if (m_loop.is_stopped()) {
       concurrent_warn(m_log,
-                      " not stopping the loop because it was not running");
+                      "not stopping the loop because it was not running");
       return;
     }
 
