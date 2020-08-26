@@ -86,7 +86,10 @@ struct loop_t {
   loop_t() = delete;
 
   /// \brief destructor
-  ~loop_t() { m_stopped_by_destructor = true; }
+  ~loop_t() {
+    m_stopped_by_destructor = true;
+    concurrent_info(m_log, "leaving destructor");
+  }
 
   /// \brief copy constructor not allowed
   loop_t(const loop_t &) = delete;
@@ -168,7 +171,6 @@ struct loop_t {
     while (true) {
 
       if (m_stopped_by_user) {
-
         _result = concurrent::stopped_by_user;
         concurrent_warn(m_log, _result);
         break;
@@ -182,6 +184,12 @@ struct loop_t {
       }
 
       status::result _worker_result = m_processor();
+
+      if (m_stopped_by_user) {
+        _result = concurrent::stopped_by_user;
+        concurrent_warn(m_log, "loop stopped: ", _result);
+        break;
+      }
 
       if (_worker_result != status::ok) {
         concurrent_warn(m_log, "worker returned ", _worker_result);

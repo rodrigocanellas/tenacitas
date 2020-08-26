@@ -95,9 +95,7 @@ struct sleeping_loop_t {
   sleeping_loop_t(const sleeping_loop_t &) = delete;
 
   /// \brief move constructor
-  sleeping_loop_t(sleeping_loop_t &&p_sleep) noexcept {
-    move(std::move(p_sleep));
-  }
+  sleeping_loop_t(sleeping_loop_t &&p_sleep) = delete;
 
   /// \brief destructor interrupts the loop
   inline ~sleeping_loop_t() {
@@ -109,12 +107,7 @@ struct sleeping_loop_t {
   sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
 
   /// \brief move assignment
-  sleeping_loop_t &operator=(sleeping_loop_t &&p_sleep) noexcept {
-    if (this != &p_sleep) {
-      move(std::move(p_sleep));
-    }
-    return *this;
-  }
+  sleeping_loop_t &operator=(sleeping_loop_t &&p_sleep) = delete;
 
   /// \brief is_stopped
   /// \return \p true if the loop is not running; \p false othewise
@@ -199,30 +192,30 @@ private:
   typedef async_loop_t<t_data, t_log, t_timeout> async_loop;
 
 private:
-  /// \brief move a \p sleeping_loop to this
-  ///
-  /// \param p_sleep the \p sleeping_loop to be moved
-  inline void move(sleeping_loop_t &&p_sleep) noexcept {
-    // save if the right side was running
-    bool _stopped = p_sleep.is_stopped();
-    // stop the right side
-    p_sleep.stop();
+  //  /// \brief move a \p sleeping_loop to this
+  //  ///
+  //  /// \param p_sleep the \p sleeping_loop to be moved
+  //  inline void move(sleeping_loop_t &&p_sleep) noexcept {
+  //    // save if the right side was running
+  //    bool _stopped = p_sleep.is_stopped();
+  //    // stop the right side
+  //    p_sleep.stop();
 
-    // move the interval
-    m_interval = std::move(p_sleep.m_interval);
+  //    // move the interval
+  //    m_interval = std::move(p_sleep.m_interval);
 
-    // move the async_loop, reseting the break loop
-    m_async = async_loop(
-        std::move(p_sleep.get_worker()),
-        [this]() -> status::result { return this->break_loop(); },
-        p_sleep.get_timeout(), std::move(p_sleep.get_provider()));
+  //    // move the async_loop, reseting the break loop
+  //    m_async = async_loop(
+  //        std::move(p_sleep.get_worker()),
+  //        [this]() -> status::result { return this->break_loop(); },
+  //        p_sleep.get_timeout(), std::move(p_sleep.get_provider()));
 
-    // if the right side was not stopped
-    if (!_stopped) {
-      // run this sleeping_loop
-      start();
-    }
-  }
+  //    // if the right side was not stopped
+  //    if (!_stopped) {
+  //      // run this sleeping_loop
+  //      start();
+  //    }
+  //  }
 
   /// \brief break_loop function that defines if the loop should stop
   /// \return \p true if the loop should break; \p false othewise

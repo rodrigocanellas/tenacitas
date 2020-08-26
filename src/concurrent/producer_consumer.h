@@ -108,6 +108,7 @@ public:
         stop();
       }
     }
+    concurrent_info(m_log, "leaving destructor");
   }
 
   /// \brief adds data to be consumed
@@ -124,17 +125,16 @@ public:
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(
         _lock, [this]() { return (!m_container.full() || m_stopped); });
-    concurrent_debug(m_log, "there is room");
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
       m_container.add(p_data);
-      concurrent_debug(m_log, "adding ", p_data);
+      ++m_queued_data;
+      concurrent_info(m_log, "adding ", p_data);
     }
 
     // notifyng that new data is available
-
     concurrent_debug(m_log, "notifying");
     m_data_produced.notify_all();
   }
@@ -158,10 +158,8 @@ public:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-
-      concurrent_debug(m_log, "there is room");
-
       m_container.add(std::move(p_data));
+      ++m_queued_data;
       concurrent_debug(m_log, "adding ", p_data);
     }
 
@@ -169,6 +167,9 @@ public:
     concurrent_debug(m_log, "notifying");
     m_data_produced.notify_all();
   }
+
+  /// \brief informs the amount of data added
+  inline uint64_t amount_added() const { return m_queued_data; }
 
   /// \brief add adds one \p worker function
   /// \param p_work the \p worker fuction to be added
@@ -223,6 +224,7 @@ public:
   /// using the \p handle method, into the pool
   inline void start() {
     if (!m_stopped) {
+      concurrent_debug(m_log, "not starting because it is already running");
       return;
     }
 
@@ -368,6 +370,8 @@ private:
 
   /// \brief m_destroying indicates that the \p produce_consumer should stop
   bool m_destroying = false;
+
+  uint64_t m_queued_data{0};
 
   t_log m_log{"concurrent::producer_consumer"};
 };

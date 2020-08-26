@@ -77,6 +77,9 @@ struct async_loop_t {
   /// \param p_break instance of the function that will indicate when the loop
   /// must stop
   ///
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  ///
   /// \param p_provide instance of the function that will provide an instance
   /// of \p t_data, if available
   ///
@@ -120,6 +123,7 @@ struct async_loop_t {
   inline ~async_loop_t() {
     concurrent_debug(m_log, "destructor");
     stop();
+    concurrent_info(m_log, "leaving destructor");
   }
 
   /// \brief is_stopped
