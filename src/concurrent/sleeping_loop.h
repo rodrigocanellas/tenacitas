@@ -71,7 +71,7 @@ struct sleeping_loop_t {
   sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout,
                   provider p_provider)
       : m_async(
-            p_worker, [this]() -> status::result { return this->break_loop(); },
+            p_worker, [this]() -> bool { return this->break_loop(); },
             p_timeout, p_provider),
         m_interval(p_interval) {}
 
@@ -84,7 +84,7 @@ struct sleeping_loop_t {
   /// \param p_work function that will be executed each time the loop wakes up
   sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout)
       : m_async(
-            p_worker, [this]() -> status::result { return this->break_loop(); },
+            p_worker, [this]() -> bool { return this->break_loop(); },
             p_timeout),
         m_interval(p_interval) {}
 
@@ -170,8 +170,8 @@ struct sleeping_loop_t {
                        "not stopping async loop because it was not running");
       return;
     }
-    concurrent_debug(m_log, "stop");
-    m_cond_var.notify_all();
+    //    concurrent_debug(m_log, "stop");
+    //    m_cond_var.notify_all();
 
     concurrent_debug(m_log, "all notified");
     m_async.stop();
@@ -219,16 +219,16 @@ private:
 
   /// \brief break_loop function that defines if the loop should stop
   /// \return \p true if the loop should break; \p false othewise
-  status::result break_loop() {
+  bool break_loop() {
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
       // timeout, so do not stop
       concurrent_debug(m_log, "must not stop");
-      return status::ok;
+      return false;
     }
     // no timeout, so do stop
     concurrent_debug(m_log, "must stop");
-    return concurrent::stopped_by_breaker;
+    return true;
   }
 
 private:

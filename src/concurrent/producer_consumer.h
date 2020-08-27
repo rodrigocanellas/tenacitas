@@ -178,9 +178,9 @@ public:
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    auto _breaker = [this]() -> status::result { return this->breaker(); };
+    auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::pair<status::result, data> {
+    auto _provider = [this]() -> std::pair<bool, data> {
       return this->provider();
     };
 
@@ -199,9 +199,9 @@ public:
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    auto _breaker = [this]() -> status::result { return this->breaker(); };
+    auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::pair<status::result, data> {
+    auto _provider = [this]() -> std::pair<bool, data> {
       return this->provider();
     };
 
@@ -278,9 +278,7 @@ private:
   /// \brief breaker
   /// \return \p true if the flag indicating that the \p producer_consumer
   /// should stop is \p true; \p false otherwise
-  inline status::result breaker() {
-    return (m_stopped ? concurrent::stopped_by_breaker : status::ok);
-  }
+  inline bool breaker() { return (m_stopped ? true : false); }
 
   /// \brief add_work common function called to add a \p worker function
   /// \param p_loop the new \p worker function to be added
@@ -294,12 +292,12 @@ private:
   ///
   /// \return (true, a filled \p data object), if there is any instance of
   /// \p data available; of (false, data()) otherwise
-  std::pair<status::result, data> provider() {
+  std::pair<bool, data> provider() {
     using namespace std;
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
-      return {concurrent::stopped_by_provider, data()};
+      return {false, data()};
     }
 
     concurrent_debug(m_log, "waiting for data...");
@@ -322,7 +320,7 @@ private:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped and notifying");
       m_data_consumed.notify_all();
-      return {concurrent::stopped_by_provider, data()};
+      return {false, data()};
     }
 
     data _data = m_container.get();
@@ -334,7 +332,7 @@ private:
     //      m_data_consumed.notify_all();
     //    }
     m_data_consumed.notify_all();
-    return {status::ok, _data};
+    return {true, _data};
   }
 
   /// \brief informs if all the \p async_loops are stopped

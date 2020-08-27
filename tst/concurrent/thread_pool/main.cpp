@@ -25,10 +25,10 @@ struct thread_pool_001 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_001::work"};
     msg m_msg;
@@ -43,11 +43,11 @@ struct thread_pool_001 {
 
     sleeping_loop _loop(
         std::chrono::milliseconds(500),
-        [this, &_pool, &_value]() {
+        [this, &_pool, &_value]() -> bool {
           msg _msg(++_value);
           concurrent_debug(m_log, "adding msg ", _msg);
           _pool.handle(std::move(_msg));
-          return status::ok;
+          return true;
         },
         std::chrono::milliseconds(300));
 
@@ -110,10 +110,10 @@ struct thread_pool_091 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_091::work"};
     msg m_msg;
@@ -123,9 +123,7 @@ struct thread_pool_091 {
     work _work;
     thread_pool _pool;
     _pool.add_work(
-        [&_work](msg &&p_msg) -> status::result {
-          return _work(std::move(p_msg));
-        },
+        [&_work](msg &&p_msg) -> bool { return _work(std::move(p_msg)); },
         std::chrono::milliseconds(500));
 
     for (uint16_t _i = 0; _i < 20; ++_i) {
@@ -162,10 +160,10 @@ private:
 //  typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
 //  struct work {
-//    status::result operator()(msg &&p_msg) {
+//    bool operator()(msg &&p_msg) {
 //      m_msg = p_msg;
 //      concurrent_debug(m_log, "handling msg ", m_msg);
-//      return status::ok;
+//      return true;
 //    }
 //    logger::cerr::log m_log{"thread_pool_092::work"};
 //    msg m_msg;
@@ -216,11 +214,11 @@ private:
 //  typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
 //  struct work {
-//    status::result operator()(msg &&p_msg) {
+//    bool operator()(msg &&p_msg) {
 //      std::this_thread::sleep_for(std::chrono::milliseconds(50));
 //      m_msg = p_msg;
 //      concurrent_debug(m_log, "handling msg ", m_msg);
-//      return status::ok;
+//      return true;
 //    }
 //    logger::cerr::log m_log{"thread_pool_093::work"};
 //    msg m_msg;
@@ -287,10 +285,10 @@ struct thread_pool_094 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_094::work"};
     msg m_msg;
@@ -342,10 +340,10 @@ struct thread_pool_095 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_095::work"};
     msg m_msg;
@@ -385,7 +383,7 @@ struct thread_pool_096 {
   typedef concurrent::thread_pool_t<msg, logger::cerr::log> thread_pool;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
 
       concurrent_debug(m_log, "handling msg ", p_msg);
       if ((p_msg.counter() % 2) == 0) {
@@ -394,7 +392,7 @@ struct thread_pool_096 {
       } else {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
       }
-      return status::ok;
+      return true;
     }
     uint16_t m_timeout = 0;
     logger::cerr::log m_log{"thread_pool_096::work"};
@@ -445,22 +443,22 @@ struct thread_pool_097 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work_1 {
-    status::result operator()(int32_t &&p_value) {
+    bool operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       ++counter;
       concurrent_debug(m_log, "work 1 handling msg ", p_value);
-      return status::ok;
+      return true;
     }
     int16_t counter = 0;
     logger::cerr::log m_log{"thread_pool_097::work_1"};
   };
 
   struct work_2 {
-    status::result operator()(int32_t &&p_value) {
+    bool operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(60));
       ++counter;
       concurrent_debug(m_log, "work 2 handling msg ", p_value);
-      return status::ok;
+      return true;
     }
     int16_t counter = 0;
     logger::cerr::log m_log{"thread_pool_097::work_2"};
@@ -476,21 +474,21 @@ struct thread_pool_097 {
       int16_t _counter = 0;
       sleeping_loop _loop(
           std::chrono::milliseconds(100),
-          [&_pool, &_value, &_counter]() -> status::result {
+          [&_pool, &_value, &_counter]() -> bool {
             ++_value;
             ++_counter;
             _pool.handle(_value);
-            return status::ok;
+            return true;
           },
           std::chrono::milliseconds(300));
 
       _pool.add_work(
-          [&_work_1](int32_t &&p_val) -> status::result {
+          [&_work_1](int32_t &&p_val) -> bool {
             return _work_1(std::move(p_val));
           },
           std::chrono::milliseconds(200));
       _pool.add_work(
-          [&_work_2](int32_t &&p_val) -> status::result {
+          [&_work_2](int32_t &&p_val) -> bool {
             return _work_2(std::move(p_val));
           },
           std::chrono::milliseconds(200));
@@ -535,14 +533,14 @@ struct thread_pool_098 {
   template <typename t_notifier> struct work_1 {
     work_1(t_notifier *p_notifier) : m_notifier(p_notifier) {}
 
-    status::result operator()(int32_t &&p_value) {
+    bool operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(170));
       concurrent_debug(m_log, "work 1 handling msg ", p_value);
       if (p_value > 200) {
         m_notifier->stop("work1");
-        return concurrent::stopped_by_worker;
+        return false;
       }
-      return status::ok;
+      return true;
     }
 
   private:
@@ -617,14 +615,14 @@ struct thread_pool_099 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
 
   struct work_1 {
-    status::result operator()(int32_t &&p_value) {
+    bool operator()(int32_t &&p_value) {
       std::this_thread::sleep_for(std::chrono::milliseconds(170));
       concurrent_debug(m_log, "work 1 handling msg ", p_value);
       if (p_value > 200) {
         concurrent_debug(m_log, "stopping this worker");
-        return concurrent::stopped_by_worker;
+        return false;
       }
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_099::work_1"};
   };

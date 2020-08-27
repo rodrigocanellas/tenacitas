@@ -53,8 +53,8 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   ///
   /// \param p_worker is the work function to be executed
   ///
-  /// \param p_provider is the function that will provide a \p t_data object for
-  /// \p p_work
+  /// \param p_provider is the function that will provide a \p t_data object
+  /// for \p p_work
   ///
   /// \param p_timeout is the amount of time that \p p_work has to execute.
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
@@ -93,7 +93,7 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
     }
 
     concurrent_debug(m_log, "waiting for data");
-    std::pair<status::result, t_data> _provided = m_provider();
+    std::pair<bool, t_data> _provided = m_provider();
 
     if (m_stop) {
       concurrent_info(m_log, "stopped by user code");
@@ -101,9 +101,9 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
       return concurrent::stopped_by_user;
     }
 
-    if (_provided.first != status::ok) {
+    if (!_provided.first) {
       concurrent_info(m_log, "provider says there is no more data");
-      m_result = _provided.first;
+      m_result = concurrent::stopped_by_provider;
       m_cond_exec.notify_one();
       return m_result;
     }
@@ -159,8 +159,8 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
 private:
   /// \brief loop of execution that controls the execution of the work function
   ///
-  /// It cooperates with operator()() to determine when the work function must
-  /// be started, and if a timeout occurred
+  /// It cooperates with operator()() to determine when the work function
+  /// must be started, and if a timeout occurred
   void loop() {
     using namespace std;
     while (true) {
@@ -171,13 +171,16 @@ private:
 
       if (m_stop) {
         m_result = concurrent::stopped_by_user;
-        concurrent_debug(m_log, "ordered to stop");
+        concurrent_info(m_log, "stopped by user code");
         m_cond_time.notify_one();
         break;
       }
 
       concurrent_debug(m_log, "provided ", m_data, " - calling worker");
-      m_result = m_worker(std::move(m_data));
+
+      m_result = (m_worker(std::move(m_data)) ? status::ok
+                                              : concurrent::stopped_by_worker);
+
       concurrent_debug(m_log, "worker returned ", m_result);
 
       if (m_stop) {
@@ -330,7 +333,7 @@ private:
         break;
       }
 
-      m_result = m_worker();
+      m_result = (m_worker() ? status::ok : concurrent::stopped_by_worker);
       concurrent_debug(m_log, "worker returned ", m_result);
 
       if (m_stop) {

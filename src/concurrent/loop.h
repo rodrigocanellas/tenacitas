@@ -77,7 +77,7 @@ struct loop_t {
   /// assumes a default value of a \p void returning function
   inline loop_t(
       worker p_work, breaker p_break, t_time p_timeout,
-      provider p_provide = []() -> status::result { return status::ok; })
+      provider p_provide = []() -> bool { return true; })
       : m_worker(p_work), m_breaker(p_break), m_timeout(p_timeout),
         m_provider(p_provide), m_stopped_by_user(true),
         m_processor(m_worker, m_provider, m_timeout) {}
@@ -213,14 +213,15 @@ struct loop_t {
         break;
       }
 
-      _result = m_breaker();
+      _result = (m_breaker() ? concurrent::stopped_by_breaker : status::ok);
       if (_result != status::ok) {
-        if (_result == concurrent::stopped_by_breaker) {
-          concurrent_warn(m_log, "loop stopped: ", _result);
-          _result = status::ok;
-        } else {
-          concurrent_error(m_log, _result);
-        }
+        concurrent_warn(m_log, "breaker ordered to stop");
+        //        if (_result == concurrent::stopped_by_breaker) {
+        //          concurrent_warn(m_log, "loop stopped: ", _result);
+        //          _result = status::ok;
+        //        } else {
+        //          concurrent_error(m_log, _result);
+        //        }
         break;
       }
     }

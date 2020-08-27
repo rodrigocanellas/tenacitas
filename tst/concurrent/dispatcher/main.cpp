@@ -64,13 +64,13 @@ struct dispatcher_000 {
   // ############################## publishers
   struct publisher_1 {
   public:
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       msg_a _msg(++i);
       concurrent_debug(m_log, "P 1", _msg);
 
       concurrent::dispatcher_t<msg_a, logger::cerr::log>::publish(++i);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_1"};
     int16_t i = {10};
@@ -78,7 +78,7 @@ struct dispatcher_000 {
 
   struct publisher_2 {
   public:
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       i += 10;
       msg_a _msg_a(i);
@@ -90,7 +90,7 @@ struct dispatcher_000 {
       concurrent_debug(m_log, "P 2", _msg_c);
       concurrent::dispatcher_t<msg_c, logger::cerr::log>::publish(_msg_c);
 
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_2"};
     int16_t i = {-100};
@@ -99,7 +99,7 @@ struct dispatcher_000 {
 
   struct publisher_3 {
   public:
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       i += 300;
       msg_b _msg_b(i);
@@ -107,7 +107,7 @@ struct dispatcher_000 {
       concurrent_debug(m_log, "P 3", _msg_b);
       concurrent::dispatcher_t<msg_b, logger::cerr::log>::publish(_msg_b);
 
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_3"};
     int32_t i = {5000};
@@ -115,55 +115,55 @@ struct dispatcher_000 {
 
   // ############################## subscribers
   struct subscriber_1 {
-    status::result operator()(msg_a &&p_msg) {
+    bool operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 1", p_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::subscriber_1"};
   };
 
   struct subscriber_2 {
-    status::result operator()(msg_a &&p_msg) {
+    bool operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 2", p_msg);
-      return status::ok;
+      return true;
     }
 
-    status::result operator()(msg_b &&p_msg) {
+    bool operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 2", p_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::subscriber_2"};
   };
 
   struct subscriber_3 {
-    status::result operator()(msg_b &&p_msg) {
+    bool operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 3", p_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::subscriber_3"};
   };
 
   struct subscriber_4 {
-    status::result operator()(msg_a &&p_msg) {
+    bool operator()(msg_a &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 4", p_msg);
-      return status::ok;
+      return true;
     }
 
-    status::result operator()(msg_b &&p_msg) {
+    bool operator()(msg_b &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 4", p_msg);
-      return status::ok;
+      return true;
     }
 
-    status::result operator()(msg_c &&p_msg) {
+    bool operator()(msg_c &&p_msg) {
       using namespace tenacitas;
       concurrent_debug(m_log, "S 4", p_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_000::subscriber_4"};
   };
@@ -269,15 +269,15 @@ struct dispatcher_001 {
 
   // ############################## processors
   struct requester {
-    status::result start() {
+    bool start() {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
       dispatcher::publish(request(time(nullptr)));
-      return status::ok;
+      return true;
     }
 
-    status::result operator()(reply &&p_reply) {
+    bool operator()(reply &&p_reply) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
@@ -285,14 +285,14 @@ struct dispatcher_001 {
       if (m_counter++ > 100) {
         concurrent_info(m_log, "counter = ", m_counter, ", stopping");
         dispatcher::publish(request(0));
-        return concurrent::stopped_by_worker;
+        return false;
       }
       if ((p_reply.i % 2) == 0) {
         dispatcher::publish(request(5 * time(nullptr)));
       } else {
         dispatcher::publish(request(3 * time(nullptr)));
       }
-      return status::ok;
+      return true;
     }
 
   private:
@@ -301,21 +301,21 @@ struct dispatcher_001 {
   };
 
   struct replier {
-    status::result operator()(request &&p_request) {
+    bool operator()(request &&p_request) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
       concurrent_debug(m_log, "request ", p_request);
       if (p_request.i == 0) {
         concurrent_info(m_log, "stopping");
-        return concurrent::stopped_by_worker;
+        return false;
       }
       if ((p_request.i % 2) == 0) {
         dispatcher::publish(reply(4 * time(nullptr)));
       } else {
         dispatcher::publish(reply(4 * time(nullptr)));
       }
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_001::replier"};
   };
@@ -378,7 +378,7 @@ struct dispatcher_002 {
     requester(std::condition_variable *p_cond, std::mutex *p_mutex)
         : m_cond(p_cond), m_mutex(p_mutex) {}
 
-    status::result operator()(reply &&p_reply) {
+    bool operator()(reply &&p_reply) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
@@ -391,14 +391,14 @@ struct dispatcher_002 {
         concurrent_info(m_log, "woke up!");
         std::unique_lock<std::mutex> _lock(*m_mutex);
         m_cond->notify_all();
-        return concurrent::stopped_by_worker;
+        return false;
       }
       if ((p_reply.i % 2) == 0) {
         dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
       } else {
         dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
       }
-      return status::ok;
+      return true;
     }
 
   private:
@@ -409,21 +409,21 @@ struct dispatcher_002 {
   };
 
   struct replier {
-    status::result operator()(request &&p_request) {
+    bool operator()(request &&p_request) {
       using namespace tenacitas;
       using namespace tenacitas;
       typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
       concurrent_info(m_log, "request ", p_request);
       if (p_request.i == 0) {
         concurrent_info(m_log, "stopping");
-        return concurrent::stopped_by_worker;
+        return false;
       }
       if ((p_request.i % 2) == 0) {
         dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
       } else {
         dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
       }
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_002::replier"};
   };
@@ -495,16 +495,16 @@ struct dispatcher_003 {
   };
 
   struct sync {
-    status::result operator()() {
+    bool operator()() {
       concurrent_debug(m_log, "sync");
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_003::sync"};
   };
 
   // ############################## publishers
   struct rx {
-    status::result operator()() {
+    bool operator()() {
       concurrent_debug(m_log, "rx");
       concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
           msg_tpdo());
@@ -533,7 +533,7 @@ struct dispatcher_003 {
       concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
           msg_tpdo());
 
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"dispatcher_003::rx"};
   };
@@ -542,15 +542,15 @@ struct dispatcher_003 {
   struct tx {
     tx() : m_id(++m_counter) {}
 
-    status::result operator()(msg_tpdo &&p_msg) {
+    bool operator()(msg_tpdo &&p_msg) {
       //    if (p_msg.counter > 20) {
       //      debug(
       //        m_log, "stoping because counter = ", p_msg.counter);
-      //      return status::result::stop;
+      //      return bool::stop;
       //    }
       concurrent_debug(m_log, m_id, "|", p_msg);
 
-      return status::ok;
+      return true;
     }
 
   private:

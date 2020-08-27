@@ -31,35 +31,23 @@ template <typename t_data> struct traits_t {
   ///
   /// \param t_data is an instance of the data to be handled
   ///
-  /// \return \p status::ok if the execution was ok;
-  ///         \p concurrent::stop_loop if \p worker wants the loop to
-  ///         stop in a expected way;
-  ///         or any other value, if the loop should stop for a unexpected
-  ///         reason
-  typedef std::function<status::result(t_data &&)> worker;
+  /// \return \p true if the execution was ok;
+  ///         \p false if the \p worker should not be called again
+  typedef std::function<bool(t_data &&)> worker;
 
   /// \brief provider is the type of function that provides data to the work
   /// function during the loop execution
   ///
-  /// \return \p status::ok, the parameter \p t_data has a meaningful data;
-  ///         \p status::stop_loop, then there is no more data to
-  ///         provide, and the parameter \p t_data has a default \p t_data
-  ///         value;
-  ///         anything else, it means there was an error in the provider
-  ///         function, and the parameter \p t_data has a default \p t_data
-  ///         value;
-  typedef std::function<std::pair<status::result, t_data>()> provider;
+  /// \return \p {true, a valid data} if data was provided
+  ///         \p {false, an default data} if no data was provided
+  typedef std::function<std::pair<bool, t_data>()> provider;
 
   /// \brief breaker is the type of function that indicates if the loop should
   /// stop
   ///
-  /// \return \p status::ok if the loop where this function is being called
-  ///         should continue;
-  ///         \p concurrent::stop_loop if \p breaker wants the loop to
-  ///         stop in a expected way;
-  ///         or any other value, if the loop should stop for a unexpected
-  ///         reason
-  typedef std::function<status::result()> breaker;
+  /// \return \p true, if the execution should stop
+  ///         \p false, if the execution shoud continue
+  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t<void> is a specialization that defines types when dealing
@@ -70,24 +58,17 @@ template <> struct traits_t<void> {
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  /// \return \p status::ok if the execution was ok
-  ///         \p concurrent::stop_loop if \p worker wants the loop to
-  ///         stop in a expected way;
-  ///         or any other value, if the loop should stop for a unexpected
-  ///         reason
-  typedef std::function<status::result()> worker;
+  /// \return \p true if the execution was ok;
+  ///         \p false if the \p worker should not be called again
+  typedef std::function<bool()> worker;
 
   /// \brief in this specialization there is no provider, as \p worker
   /// requires no data
-  typedef typename std::function<status::result(void)> provider;
+  typedef typename std::function<bool(void)> provider;
 
-  /// \return \p status::ok if the loop where this function is being called
-  ///         should continue;
-  ///         \p concurrent::stop_loop if \p breaker wants the loop to
-  ///         stop in a expected way;
-  ///         or any other value, if the loop should stop for a unexpected
-  ///         reason
-  typedef std::function<status::result()> breaker;
+  /// \return \p true, if the execution should stop
+  ///         \p false, if the execution shoud continue
+  typedef std::function<bool()> breaker;
 };
 
 } // namespace concurrent

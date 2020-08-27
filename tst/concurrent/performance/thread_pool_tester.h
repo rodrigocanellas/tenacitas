@@ -37,11 +37,11 @@ private:
   typedef concurrent::thread thread;
 
   struct work {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       concurrent_debug(m_log, "consuming ", p_msg);
       std::this_thread::sleep_for(std::chrono::milliseconds(work_sleep_ms));
 
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"thread_pool_tester::work"};
   };

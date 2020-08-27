@@ -20,7 +20,7 @@
 
 struct producer_consumer_000 {
   typedef tenacitas::logger::cerr::log log;
-  typedef tenacitas::status::result result;
+  typedef bool result;
   typedef int16_t data;
   typedef tenacitas::concurrent::msg_a<data> msg;
   typedef tenacitas::concurrent::sleeping_loop_t<void, log> sleeping_loop;
@@ -61,7 +61,7 @@ private:
   struct consumer {
     result operator()(data &&p_value) {
       concurrent_info(m_log, "value = ", p_value);
-      return tenacitas::status::ok;
+      return true;
     }
 
   private:
@@ -71,7 +71,7 @@ private:
 
 struct producer_consumer_001 {
   typedef tenacitas::logger::cerr::log log;
-  typedef tenacitas::status::result result;
+  typedef bool result;
   typedef int16_t data;
   typedef tenacitas::concurrent::msg_a<data> msg;
   typedef tenacitas::concurrent::sleeping_loop_t<void, log> sleeping_loop;
@@ -138,7 +138,7 @@ private:
 
     result operator()() {
       if (*(m_data) > m_num_msgs) {
-        return tenacitas::concurrent::stopped_by_worker;
+        return false;
       }
       msg _msg(++(*m_data));
       concurrent_debug(m_log, "going to add ", _msg);
@@ -148,7 +148,7 @@ private:
                        "; capacity = ", m_pc->capacity(),
                        ", occupied = ", m_pc->occupied());
 
-      return tenacitas::status::ok;
+      return true;
     }
     const uint16_t m_num_msgs = 50;
 
@@ -168,7 +168,7 @@ private:
       concurrent_debug(m_log, "worker is going to sleep");
       std::this_thread::sleep_for(std::chrono::seconds(1));
       concurrent_debug(m_log, "worker is waking up");
-      return tenacitas::status::ok;
+      return true;
     }
     msg m_msg;
 
@@ -179,7 +179,7 @@ private:
 
 struct producer_consumer_002 {
   typedef tenacitas::logger::cerr::log log;
-  typedef tenacitas::status::result result;
+  typedef bool result;
   typedef int16_t data;
   typedef tenacitas::concurrent::msg_a<data> msg;
   typedef tenacitas::concurrent::sleeping_loop_t<void, log> sleeping_loop;
@@ -257,7 +257,7 @@ struct producer_consumer_002 {
     result operator()(msg &&p_msg) {
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
-      return tenacitas::status::ok;
+      return true;
     }
     log m_log{"002::consumer"};
     msg m_msg;
@@ -271,7 +271,7 @@ struct producer_consumer_002 {
       msg _msg(++(*m_data));
       concurrent_debug(m_log, "adding msg ", _msg);
       m_pc->add(std::move(_msg));
-      return tenacitas::status::ok;
+      return true;
     }
 
   private:
@@ -283,7 +283,7 @@ struct producer_consumer_002 {
 
 struct producer_consumer_003 {
   typedef tenacitas::logger::cerr::log log;
-  typedef tenacitas::status::result result;
+  typedef bool result;
   typedef uint16_t data;
   typedef tenacitas::concurrent::msg_a<data> msg;
   typedef tenacitas::concurrent::sleeping_loop_t<void, log> sleeping_loop;
@@ -326,7 +326,7 @@ private:
       m_msg = p_msg;
       concurrent_debug(m_log, "handling msg ", m_msg);
       //      std::this_thread::sleep_for(std::chrono::milliseconds(150));
-      return tenacitas::status::ok;
+      return true;
     }
     log m_log{"003::work"};
     msg m_msg;

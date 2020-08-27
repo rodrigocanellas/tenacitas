@@ -31,9 +31,9 @@ struct sleeping_loop_000 {
                                         std::chrono::seconds>
         loop;
 
-    concurrent::traits_t<void>::worker _worker = [this]() -> status::result {
+    concurrent::traits_t<void>::worker _worker = [this]() -> bool {
       concurrent_debug(m_log, "loop1");
-      return status::ok;
+      return true;
     };
 
     std::chrono::milliseconds _interval(100);
@@ -55,11 +55,11 @@ struct sleeping_loop_001 {
 
   struct work1 {
 
-    status::result operator()() {
+    bool operator()() {
 
       ++counter;
       concurrent_debug(m_log, "this = ", this, ", counter = ", counter);
-      return status::ok;
+      return true;
     }
 
     uint64_t counter = 0;
@@ -106,11 +106,11 @@ struct sleeping_loop_002 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
 
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_002::work1"};
@@ -153,11 +153,11 @@ struct sleeping_loop_003 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
 
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_003::work1"};
@@ -217,11 +217,11 @@ struct sleeping_loop_004 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_004::work1"};
@@ -283,11 +283,11 @@ struct sleeping_loop_005 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_005::work1"};
@@ -346,11 +346,11 @@ struct sleeping_loop_006 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
 
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_006::work1"};
@@ -413,11 +413,11 @@ struct sleeping_loop_007 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_007::work1"};
@@ -481,11 +481,11 @@ struct sleeping_loop_008 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_008::work1"};
@@ -550,33 +550,33 @@ struct sleeping_loop_009 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_009::work1"};
   };
 
   struct work2 {
-    status::result operator()() {
+    bool operator()() {
 
       counter += 100;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_009::work2"};
   };
 
   struct work3 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       counter += 1000;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_009::work3"};
@@ -648,32 +648,32 @@ struct sleeping_loop_010 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_010::work1"};
   };
 
   struct work2 {
-    status::result operator()() {
+    bool operator()() {
       counter += 100;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_010::work2"};
   };
 
   struct work3 {
-    status::result operator()() {
+    bool operator()() {
       using namespace tenacitas;
       counter += 1000;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_010::work3"};
@@ -751,30 +751,30 @@ struct sleeping_loop_011 {
   typedef concurrent::sleeping_loop_t<void, logger::cerr::log> loop;
 
   struct work1 {
-    status::result operator()() {
+    bool operator()() {
       ++counter;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_011::work1"};
   };
 
   struct work2 {
-    status::result operator()() {
+    bool operator()() {
       counter += 100;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     uint64_t counter = 0;
     logger::cerr::log m_log{"sleeping_loop_011::work2"};
   };
 
   struct work3 {
-    status::result operator()() {
+    bool operator()() {
       counter += 1000;
       concurrent_debug(m_log, counter);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"sleeping_loop_011::work3"};
     uint64_t counter = 0;
@@ -882,10 +882,10 @@ struct sleeping_loop_012 {
   typedef concurrent::sleeping_loop_t<msg, logger::cerr::log> loop;
 
   struct provide_1 {
-    std::pair<status::result, msg> operator()() {
+    std::pair<bool, msg> operator()() {
       ++m_i;
       m_f *= 2;
-      return {status::ok, msg(m_i, m_f)};
+      return {true, msg(m_i, m_f)};
     }
 
   private:
@@ -894,10 +894,10 @@ struct sleeping_loop_012 {
   };
 
   struct provide_2 {
-    std::pair<status::result, msg> operator()() {
+    std::pair<bool, msg> operator()() {
       m_i += 100;
       m_f *= 3;
-      return {status::ok, msg(m_i, m_f)};
+      return {true, msg(m_i, m_f)};
     }
 
   private:
@@ -906,10 +906,10 @@ struct sleeping_loop_012 {
   };
 
   struct provide_3 {
-    std::pair<status::result, msg> operator()() {
+    std::pair<bool, msg> operator()() {
       m_i += 1000;
       m_f *= 4;
-      return {status::ok, msg(m_i, m_f)};
+      return {true, msg(m_i, m_f)};
     }
 
   private:
@@ -918,30 +918,30 @@ struct sleeping_loop_012 {
   };
 
   struct work_1 {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
       concurrent_debug(m_log, "1: ", m_msg);
-      return status::ok;
+      return true;
     }
     msg m_msg;
     logger::cerr::log m_log{"sleeping_loop_012::work1"};
   };
 
   struct work_2 {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
       concurrent_debug(m_log, "2: ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"sleeping_loop_012::work2"};
     msg m_msg;
   };
 
   struct work_3 {
-    status::result operator()(msg &&p_msg) {
+    bool operator()(msg &&p_msg) {
       m_msg = std::move(p_msg);
       concurrent_debug(m_log, "3: ", m_msg);
-      return status::ok;
+      return true;
     }
     logger::cerr::log m_log{"sleeping_loop_012::work3"};
     msg m_msg;
@@ -957,33 +957,21 @@ struct sleeping_loop_012 {
 
     loop _loop_1(
         std::chrono::milliseconds(1000),
-        [&_work_1](msg &&p_msg) -> status::result {
-          return _work_1(std::move(p_msg));
-        },
+        [&_work_1](msg &&p_msg) -> bool { return _work_1(std::move(p_msg)); },
         std::chrono::milliseconds(100),
-        [&_provide_1]() -> std::pair<status::result, msg> {
-          return _provide_1();
-        });
+        [&_provide_1]() -> std::pair<bool, msg> { return _provide_1(); });
 
     loop _loop_2(
         std::chrono::milliseconds(500),
-        [&_work_2](msg &&p_msg) -> status::result {
-          return _work_2(std::move(p_msg));
-        },
+        [&_work_2](msg &&p_msg) -> bool { return _work_2(std::move(p_msg)); },
         std::chrono::milliseconds(100),
-        [&_provide_2]() -> std::pair<status::result, msg> {
-          return _provide_2();
-        });
+        [&_provide_2]() -> std::pair<bool, msg> { return _provide_2(); });
 
     loop _loop_3(
         std::chrono::milliseconds(2000),
-        [&_work_3](msg &&p_msg) -> status::result {
-          return _work_3(std::move(p_msg));
-        },
+        [&_work_3](msg &&p_msg) -> bool { return _work_3(std::move(p_msg)); },
         std::chrono::milliseconds(100),
-        [&_provide_3]() -> std::pair<status::result, msg> {
-          return _provide_3();
-        });
+        [&_provide_3]() -> std::pair<bool, msg> { return _provide_3(); });
 
     _loop_1.start();
     _loop_2.start();

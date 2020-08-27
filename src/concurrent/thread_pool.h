@@ -112,11 +112,9 @@ public:
   /// \param p_worker_timeout timeout for the \p worker functions
   void add_work(uint16_t p_num_works, std::function<worker()> p_work_factory,
                 t_time p_worker_timeout) {
-    auto _breaker = [this]() -> status::result {
-      return this->stop_condition();
-    };
+    auto _breaker = [this]() -> bool { return this->stop_condition(); };
 
-    auto _provider = [this]() -> std::pair<status::result, t_data> {
+    auto _provider = [this]() -> std::pair<bool, t_data> {
       return this->data();
     };
 
@@ -132,11 +130,9 @@ public:
   /// \param p_work the \p worker fuction to be added
   /// \param p_worker_timeout timeout of this \p worker function
   void add_work(worker p_work, t_time p_worker_timeout) {
-    auto _breaker = [this]() -> status::result {
-      return this->stop_condition();
-    };
+    auto _breaker = [this]() -> bool { return this->stop_condition(); };
 
-    auto _provider = [this]() -> std::pair<status::result, t_data> {
+    auto _provider = [this]() -> std::pair<bool, t_data> {
       return this->data();
     };
 
@@ -235,9 +231,9 @@ private:
   /// \brief stop_condition
   /// \return \p true if the flag indicating that the \p thread_pool should
   /// stop is \p true; \p false otherwise
-  status::result stop_condition() {
+  bool stop_condition() {
     concurrent_debug(m_log, "stopped = ", m_stopped);
-    return (m_stopped ? concurrent::stopped_by_breaker : status::ok);
+    return (m_stopped ? true : false);
   }
 
   /// \brief data is the \p provide_t function, which returns data, if
@@ -245,7 +241,7 @@ private:
   ///
   /// \return (true, a filled \p t_data object), if there is any instance of
   /// \p data available; of (false, t_data()) otherwise
-  std::pair<status::result, t_data> data() {
+  std::pair<bool, t_data> data() {
 
     using namespace std;
 
@@ -253,7 +249,7 @@ private:
       concurrent_debug(m_log,
                        "not waiting for more data because it is stopped ");
 
-      return std::make_pair(concurrent::stopped_by_provider, t_data());
+      return std::make_pair(false, t_data());
     }
 
     unique_lock<std::mutex> _lock(m_mutex_data);
@@ -264,11 +260,10 @@ private:
 
     if (m_stopped) {
       concurrent_debug(m_log, "m_stopped, returning 'false'");
-      return std::make_pair(concurrent::stopped_by_provider, t_data());
+      return std::make_pair(false, t_data());
     }
 
-    std::pair<status::result, t_data> _return =
-        std::make_pair(status::ok, std::move(m_values.front()));
+    std::pair<bool, t_data> _return = {true, std::move(m_values.front())};
     concurrent_debug(m_log, "data to be handled ", _return.second);
     m_values.pop_front();
 
