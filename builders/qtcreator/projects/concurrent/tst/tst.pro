@@ -7,7 +7,8 @@ SUBDIRS = \
     dispatcher \
     performance \
     writer \
-    producer_consumer
+    producer_consumer \
+    executer
 
 #    queue \
 
