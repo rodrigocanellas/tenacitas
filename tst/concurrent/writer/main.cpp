@@ -7,7 +7,6 @@
 
 #include <concurrent/writer.h>
 #include <logger/cerr/log.h>
-#include <status/result.h>
 #include <tester/test.h>
 
 #include <concurrent/writer/file_stream.h>
@@ -25,11 +24,11 @@ struct writer_000 {
 
     const char *_data = "hello, world";
 
-    result _result = _writer.write_block(_stream, _data, std::strlen(_data));
+    bool _result = _writer.write_block(_stream, _data, std::strlen(_data));
 
     concurrent_debug(m_log, _result);
 
-    return (_result == ok ? true : false);
+    return (_result);
   }
 
   static std::string desc() {

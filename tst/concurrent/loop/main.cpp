@@ -7,9 +7,7 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
-#include <concurrent/result.h>
 #include <logger/cerr/log.h>
-#include <status/result.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
@@ -29,10 +27,10 @@ struct loop_000 {
       concurrent_debug(m_log, "counter = ", m_counter);
       return true;
     }
+    int16_t m_counter{0};
 
   private:
     log m_log{"loop_000::work1"};
-    int16_t m_counter{0};
   };
 
   bool operator()() {
@@ -41,11 +39,14 @@ struct loop_000 {
     auto _breaker = [&_xpto]() -> bool { return _xpto.breaker(); };
     loop _loop(_worker, _breaker, std::chrono::milliseconds(100));
 
-    status::result _result = _loop.start();
+    _loop.start();
 
-    concurrent_debug(m_log, "result = ", _result);
+    bool _result = (_xpto.m_counter == 100);
 
-    return (_result == status::ok);
+    concurrent_debug(m_log, "counter == ", _xpto.m_counter,
+                     ", result = ", _result);
+
+    return _result;
   }
 
   static std::string desc() {
@@ -161,10 +162,10 @@ struct loop_003 {
       concurrent_debug(m_log, "counter = ", p_value);
       return true;
     }
+    int16_t m_counter{0};
 
   private:
     logger::cerr::log m_log{"loop_003::xpto"};
-    int16_t m_counter{0};
   };
 
   bool operator()() {
@@ -181,11 +182,16 @@ struct loop_003 {
 
         [&_xpto]() -> std::pair<bool, int16_t> { return _xpto.provider(); });
 
-    status::result _result = _loop.start();
+    _loop.start();
+
+    bool _result = (_xpto.m_counter == 100);
+
+    concurrent_debug(m_log, "counter == ", _xpto.m_counter,
+                     ", result = ", _result);
 
     concurrent_debug(m_log, "result = ", _result);
 
-    return (_result == status::ok);
+    return _result;
   }
 
   static std::string desc() {

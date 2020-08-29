@@ -12,7 +12,6 @@
 #include <utility>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/result.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
@@ -60,8 +59,8 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
       : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
     concurrent_debug(m_log, "contructor");
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-    m_stop = false;
+    //    m_thread = concurrent::thread([this]() -> void { loop(); });
+    //    m_stopped = false;
   }
 
   processor_t(const processor_t &) = delete;
@@ -70,11 +69,12 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   processor_t &operator=(const processor_t &) = delete;
   processor_t &operator=(processor_t &&p_proc) = delete;
 
-  /// \brief informs if the processor is actually controlling the execution of
-  /// the work function
-  inline bool is_running() const {
-    return ((m_thread.get_id() != std::thread::id()) && (!m_stop));
-  }
+  inline t_time get_timeout() const { return m_timeout; }
+  inline void set_timeout(t_time p_timeout) const { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
+  inline provider get_provider() const { return m_provider; }
 
   /// \brief starts the execution of the processor
   ///
@@ -84,34 +84,35 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   ///         execute in the defined amount of time
   ///         concurrent::stopped_by_worker if the work function indicates that
   ///         the processor must stop
-  status::result operator()() {
+  bool operator()() {
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     concurrent_debug(m_log, "waiting for data");
     std::pair<bool, t_data> _provided = m_provider();
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     if (!_provided.first) {
-      concurrent_info(m_log, "provider says there is no more data");
-      m_result = concurrent::stopped_by_provider;
+      concurrent_info(m_log,
+                      "stopping because provider says there is no more data");
+      m_stopped = true;
       m_cond_exec.notify_one();
-      return m_result;
+      return false;
     }
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     m_data = std::move(_provided.second);
@@ -121,19 +122,23 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
     m_cond_exec.notify_one();
     concurrent_debug(m_log, "notification sent");
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     std::unique_lock<std::mutex> _lock(m_mutex_time);
     concurrent_debug(m_log, "waiting for worker to finish for data ", m_data);
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker timeout for data ", m_data);
-      return concurrent::stopped_by_timeout;
+      concurrent_warn(m_log, "worker did not finish to work on data", m_data,
+                      " in less than ", m_timeout.count());
+      // returning true because this 'processor' will not stop working because
+      // one execution of the worker did not finish on time
+      return true;
     }
     concurrent_debug(m_log, "worker finished on time");
+    // returned the result of the 'loop' method
     return m_result;
   }
 
@@ -141,11 +146,21 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   void stop() {
     if (is_running()) {
       concurrent_debug(m_log, "marking to stop, and sending notification");
-      m_stop = true;
+      m_stopped = true;
       m_cond_exec.notify_one();
       m_thread.join();
     } else {
       concurrent_debug(m_log, "thread not running");
+    }
+  }
+
+  void start() {
+    if (is_running()) {
+      concurrent_debug(m_log, "not starting because it is running");
+    } else {
+      m_stopped = false;
+      m_thread = concurrent::thread([this]() -> void { loop(); });
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
   }
 
@@ -157,35 +172,47 @@ template <typename t_data, typename t_time, typename t_log> struct processor_t {
   }
 
 private:
-  /// \brief loop of execution that controls the execution of the work function
+  /// \brief loop that controls the execution of the work function
   ///
   /// It cooperates with operator()() to determine when the work function
   /// must be started, and if a timeout occurred
   void loop() {
     using namespace std;
     while (true) {
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
+        m_cond_time.notify_one();
+        break;
+      }
+
       concurrent_debug(m_log, "waiting for the signal to work");
       unique_lock<mutex> _lock(m_mutex_exec);
       m_cond_exec.wait(_lock);
       concurrent_debug(m_log, "signal to work received");
 
-      if (m_stop) {
-        m_result = concurrent::stopped_by_user;
-        concurrent_info(m_log, "stopped by user code");
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
         m_cond_time.notify_one();
         break;
       }
 
       concurrent_debug(m_log, "provided ", m_data, " - calling worker");
 
-      m_result = (m_worker(std::move(m_data)) ? status::ok
-                                              : concurrent::stopped_by_worker);
+      m_result = m_worker(std::move(m_data));
+      if (!m_result) {
+        concurrent_debug(m_log, "worked said it will stop working");
+        m_stopped = true;
+        m_cond_time.notify_one();
+        break;
+      }
 
       concurrent_debug(m_log, "worker returned ", m_result);
 
-      if (m_stop) {
-        concurrent_debug(m_log, "ordered to stop");
-        m_result = concurrent::stopped_by_user;
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
         m_cond_time.notify_one();
         break;
       }
@@ -196,12 +223,18 @@ private:
     }
   }
 
+  /// \brief informs if the processor is actually controlling the execution of
+  /// the work function
+  inline bool is_running() const {
+    return ((m_thread.get_id() != std::thread::id()) && (!m_stopped));
+  }
+
 private:
   worker m_worker;
   provider m_provider;
   t_time m_timeout;
-  bool m_stop{true};
-  status::result m_result = status::ok;
+  bool m_stopped{true};
+  bool m_result{true};
   concurrent::thread m_thread;
   std::mutex m_mutex_exec;
   std::mutex m_mutex_time;
@@ -250,8 +283,8 @@ struct processor_t<void, t_time, t_log> {
   /// \param p_timeout is the amount of time that \p p_work has to execute.
   processor_t(worker p_worker, provider p_provider, t_time p_timeout)
       : m_worker(p_worker), m_provider(p_provider), m_timeout(p_timeout) {
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-    m_stop = false;
+    //    m_thread = concurrent::thread([this]() -> void { loop(); });
+    //    m_stopped = false;
   }
 
   processor_t(processor_t &&p_proc) = delete;
@@ -259,11 +292,12 @@ struct processor_t<void, t_time, t_log> {
   processor_t &operator=(const processor_t &) = delete;
   processor_t &operator=(processor_t &&p_proc) = delete;
 
-  /// \brief informs if the processor is actually controlling the execution of
-  /// the work function
-  inline bool is_running() const {
-    return ((m_thread.get_id() != std::thread::id()) && (!m_stop));
-  }
+  inline t_time get_timeout() const { return m_timeout; }
+  inline void set_timeout(t_time p_timeout) const { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
+  inline provider get_provider() const { return m_provider; }
 
   /// \brief starts the execution of the processor
   ///
@@ -273,42 +307,56 @@ struct processor_t<void, t_time, t_log> {
   ///         execute in the defined amount of time
   ///         concurrent::stopped_by_worker if the work function indicates that
   ///         the processor must stop
-  status::result operator()() {
+  bool operator()() {
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     concurrent_debug(m_log, "sending notification that excecution can start");
     m_cond_exec.notify_one();
     concurrent_debug(m_log, "notification sent");
 
-    if (m_stop) {
-      concurrent_info(m_log, "stopped by user code");
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
       m_cond_exec.notify_one();
-      return concurrent::stopped_by_user;
+      return false;
     }
 
     std::unique_lock<std::mutex> _lock(m_mutex_time);
     concurrent_debug(m_log, "waiting for worker to finish");
     if (m_cond_time.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker timeout");
-      return concurrent::stopped_by_timeout;
+      concurrent_warn(m_log, "worker did not finish to work in less than ",
+                      m_timeout.count());
+      // returning true because this 'processor' will not stop working because
+      // one execution of the worker did not finish on time
+      return true;
     }
     concurrent_debug(m_log, "worker finished on time");
+    // returned the result of the 'loop' method
     return m_result;
   }
 
   void stop() {
     if (is_running()) {
       concurrent_debug(m_log, "marking to stop, and sending notification");
+      m_stopped = true;
       m_cond_exec.notify_one();
-      m_stop = true;
       m_thread.join();
     } else {
       concurrent_debug(m_log, "thread not running");
+    }
+  }
+
+  void start() {
+    if (is_running()) {
+      concurrent_debug(m_log, "not starting because it is running");
+    } else {
+      m_stopped = false;
+      m_thread = concurrent::thread([this]() -> void { loop(); });
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
   }
 
@@ -321,24 +369,38 @@ private:
   void loop() {
     using namespace std;
     while (true) {
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
+        m_cond_time.notify_one();
+        break;
+      }
+
       concurrent_debug(m_log, "waiting for the signal to work");
       unique_lock<mutex> _lock(m_mutex_exec);
       m_cond_exec.wait(_lock);
       concurrent_debug(m_log, "signal to work received");
 
-      if (m_stop) {
-        concurrent_debug(m_log, "ordered to stop");
-        m_result = concurrent::stopped_by_user;
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
         m_cond_time.notify_one();
         break;
       }
 
-      m_result = (m_worker() ? status::ok : concurrent::stopped_by_worker);
+      m_result = m_worker();
+      if (!m_result) {
+        concurrent_debug(m_log, "worked said it will stop working");
+        m_stopped = true;
+        m_cond_time.notify_one();
+        break;
+      }
+
       concurrent_debug(m_log, "worker returned ", m_result);
 
-      if (m_stop) {
-        concurrent_debug(m_log, "ordered to stop");
-        m_result = concurrent::stopped_by_user;
+      if (m_stopped) {
+        m_result = false;
+        concurrent_debug(m_log, "stopped");
         m_cond_time.notify_one();
         break;
       }
@@ -349,12 +411,18 @@ private:
     }
   }
 
+  /// \brief informs if the processor is actually controlling the execution of
+  /// the work function
+  inline bool is_running() const {
+    return ((m_thread.get_id() != std::thread::id()) && (!m_stopped));
+  }
+
 private:
   worker m_worker;
   provider m_provider;
   t_time m_timeout;
-  bool m_stop{true};
-  status::result m_result = status::ok;
+  bool m_stopped{true};
+  bool m_result{true};
   concurrent::thread m_thread;
   std::mutex m_mutex_exec;
   std::mutex m_mutex_time;

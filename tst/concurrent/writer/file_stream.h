@@ -13,9 +13,9 @@ namespace tst {
 struct file {
   file(const std::string &p_name) : m_stream(p_name) {}
 
-  status::result operator()(const char *p_data, size_t p_size) {
+  bool operator()(const char *p_data, size_t p_size) {
     m_stream.write(p_data, p_size);
-    return (m_stream.good() ? status::ok : concurrent::error_writing);
+    return m_stream.good();
   }
 
 private:

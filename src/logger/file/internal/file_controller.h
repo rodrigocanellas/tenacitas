@@ -86,7 +86,7 @@ struct file_controller {
 
         m_sleeping_loop(
             std::chrono::milliseconds(p_retention.count() * 60 * 1000),
-            [this]() -> status::result { return this->m_deleter(); },
+            [this]() -> bool { return this->m_deleter(); },
             std::chrono::milliseconds(2 * 60 * 1000)) {
     m_log.debug(__LINE__, "closed dir = ", m_closed_dir);
 #if defined(_WIN32)
@@ -112,7 +112,7 @@ struct file_controller {
         m_deleter(std::move(p_controller.m_deleter)),
         m_sleeping_loop(
             p_controller.m_sleeping_loop.get_interval(),
-            [this]() -> status::result { return this->m_deleter(); },
+            [this]() -> bool { return this->m_deleter(); },
             p_controller.m_sleeping_loop.get_timeout()) {}
 
   ~file_controller() {
@@ -121,23 +121,25 @@ struct file_controller {
   }
 
   file_controller &operator=(const file_controller &) = delete;
-  file_controller &operator=(file_controller &&p_controller) noexcept {
-    if (this != &p_controller) {
-      m_path = std::move(p_controller.m_path);
-      m_base_name = std::move(p_controller.m_base_name);
-      m_closed_extension = std::move(p_controller.m_closed_extension);
-      m_last = p_controller.m_last;
-      m_pid = p_controller.m_pid;
-      m_max_file_size = p_controller.m_max_file_size;
-      m_closed_dir = std::move(p_controller.m_closed_dir);
-      m_deleter = std::move(p_controller.m_deleter);
-      m_sleeping_loop = sleeping_loop(
-          p_controller.m_sleeping_loop.get_interval(),
-          [this]() -> status::result { return this->m_deleter(); },
-          p_controller.m_sleeping_loop.get_timeout());
-    }
-    return *this;
-  }
+  file_controller &operator=(file_controller &&p_controller) = delete;
+  //  noexcept
+  //  {
+  //    if (this != &p_controller) {
+  //      m_path = std::move(p_controller.m_path);
+  //      m_base_name = std::move(p_controller.m_base_name);
+  //      m_closed_extension = std::move(p_controller.m_closed_extension);
+  //      m_last = p_controller.m_last;
+  //      m_pid = p_controller.m_pid;
+  //      m_max_file_size = p_controller.m_max_file_size;
+  //      m_closed_dir = std::move(p_controller.m_closed_dir);
+  //      m_deleter = std::move(p_controller.m_deleter);
+  //      m_sleeping_loop = sleeping_loop(
+  //          p_controller.m_sleeping_loop.get_interval(),
+  //          [this]() -> bool { return this->m_deleter(); },
+  //          p_controller.m_sleeping_loop.get_timeout());
+  //    }
+  //    return *this;
+  //  }
 
   ///
   /// \brief name retrieves the name of the logger::log file
@@ -229,7 +231,7 @@ private:
         : m_path(p_path), m_base_name(p_base_name),
           m_closed_extension(p_closed_extension), m_retention(p_retention) {}
 
-    status::result operator()();
+    bool operator()();
 
   private:
     ///

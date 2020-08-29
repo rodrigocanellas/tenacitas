@@ -10,7 +10,6 @@
 #include <cstdint>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/result.h>
 #include <status/result.h>
 
 /// \brief namespace of the organization
@@ -47,13 +46,13 @@ template <typename t_log> struct writer_t {
   ///
   /// \return status::ok on success, any other value on failure
   template <typename t_stream>
-  status::result write_block(t_stream &p_stream, const char *p_data,
-                             size_t p_size) noexcept {
+  bool write_block(t_stream &p_stream, const char *p_data,
+                   size_t p_size) noexcept {
     try {
       return p_stream(p_data, p_size);
     } catch (const std::exception &_ex) {
       concurrent_error(m_log, _ex.what());
-      return concurrent::error_writing;
+      return false;
     }
   }
 

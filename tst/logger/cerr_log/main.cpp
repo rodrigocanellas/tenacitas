@@ -72,7 +72,7 @@ struct cerr_log_single {
               m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
               m_log.warn(__LINE__, "que bom! ", _i);
             }
-            return status::ok;
+            return true;
           },
           std::chrono::milliseconds(1000));
 
@@ -112,7 +112,7 @@ public:
               m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
               m_log.warn(__LINE__, "que bom! ", _i);
             }
-            return status::ok;
+            return true;
           },
           std::chrono::milliseconds(1000));
 
@@ -127,7 +127,7 @@ public:
               m_log.warn(__LINE__, "eee! ", _i);
               m_log.warn(__LINE__, "fff! ", _i);
             }
-            return status::ok;
+            return true;
           },
           std::chrono::milliseconds(1000));
 
@@ -142,7 +142,7 @@ public:
               m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
               m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
             }
-            return status::ok;
+            return true;
           },
           std::chrono::milliseconds(1000));
 

@@ -63,7 +63,7 @@ std::string file_controller::name() {
 }
 
 // ----------------------------------------------------------------------------
-status::result file_controller::deleter::operator()() {
+bool file_controller::deleter::operator()() {
   m_log.debug(__LINE__, "STARTING CONTROLLER");
 #ifdef WIN32
   m_log.debug(__LINE__, "windows!");
@@ -79,7 +79,7 @@ status::result file_controller::deleter::operator()() {
 
   if (INVALID_HANDLE_VALUE == hFind) {
     m_log.error(__LINE__, "could not open ", _pattern);
-    return status::ok;
+    return true;
   }
 
   uint32_t _total = 0;
@@ -183,7 +183,7 @@ status::result file_controller::deleter::operator()() {
     m_log.debug(__LINE__, "_dir == null for ", m_path);
   }
 #endif
-  return status::ok;
+  return true;
 }
 
 } // namespace file

@@ -17,7 +17,6 @@
 #include <tuple>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/result.h>
 #include <concurrent/thread_pool.h>
 
 /// \brief namespace of the organization

@@ -10,10 +10,8 @@
 #include <concurrent/loop.h>
 #include <concurrent/msg_a.h>
 #include <concurrent/producer_consumer.h>
-#include <concurrent/result.h>
 #include <concurrent/sleeping_loop.h>
 #include <logger/cerr/log.h>
-#include <status/result.h>
 #include <tester/test.h>
 
 // using namespace tenacitas;

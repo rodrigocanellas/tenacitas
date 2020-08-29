@@ -24,7 +24,6 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/loop.h>
-#include <concurrent/result.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
@@ -85,8 +84,7 @@ struct async_loop_t {
   ///
   inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout,
                       provider p_provide)
-      : m_loop(p_work, p_break, p_timeout, p_provide), m_timeout(p_timeout),
-        m_thread() {}
+      : m_loop(p_work, p_break, p_timeout, p_provide), m_thread() {}
 
   /// \brief async_loop constructor
   ///
@@ -101,8 +99,7 @@ struct async_loop_t {
   /// \param p_breaker instance of the function that will indicate when the loop
   /// must stop
   inline async_loop_t(worker p_worker, breaker p_breaker, t_time p_timeout)
-      : m_loop(p_worker, p_breaker, p_timeout), m_timeout(p_timeout),
-        m_thread() {}
+      : m_loop(p_worker, p_breaker, p_timeout), m_thread() {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
@@ -131,23 +128,6 @@ struct async_loop_t {
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_loop.is_stopped(); }
 
-  /// \brief get_worker
-  ///
-  /// \return a copy of the function that executes a defined work in each
-  /// round of the loop
-  inline worker get_worker() const { return m_loop.get_worker(); }
-
-  /// \brief get_breaker
-  ///
-  /// \return a copy of the function that can make the loop stop
-  inline breaker get_breaker() const { return m_loop.get_breaker(); }
-
-  /// \brief get_provider
-  ///
-  /// \return a copy of the function that provides an instance of \p t_data,
-  /// if available, to the work function
-  inline provider get_provider() const { return m_loop.get_provider(); }
-
   /// \brief retrieves the timeout for the Work function
   ///
   /// \return the timeout
@@ -156,13 +136,18 @@ struct async_loop_t {
   /// \brief redefines the value of the timeout
   ///
   /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+  inline void set_timeout(t_time p_timeout) { m_loop.set_timeout(p_timeout); }
+
+  inline breaker get_breaker() const { return m_loop.get_breaker(); }
+
+  inline worker get_worker() const { return m_loop.get_worker(); }
+
+  inline provider get_provider() const { return m_loop.get_provider(); }
 
   /// \brief Stops the loop, and starts it again
   ///
-  /// \return \p status::ok if could restart, or any other \p status::result
-  /// otherwise
-  inline status::result restart() {
+  /// \return \p true if could restart, or any other \p false otherwise
+  inline bool restart() {
     concurrent_debug(m_log, "restart");
     stop();
     return start();
@@ -173,20 +158,16 @@ struct async_loop_t {
   /// \param p_timeout amount of time that the loop will wait for \p p_work to
   /// execute
   ///
-  /// \return status::ok if the loop finished with no error; otherwise, it
-  /// returns any other value
-  status::result start() {
+  void start() {
 
     if (!m_loop.is_stopped()) {
       concurrent_debug(m_log, this,
                        "not starting the loop because it is already running");
-      return concurrent::already_running;
+      return;
     }
     concurrent_debug(m_log, "starting the loop");
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = thread([this]() -> status::result { return m_loop.start(); });
-
-    return status::ok;
+    m_thread = thread([this]() -> void { m_loop.start(); });
   }
 
   /// \brief stops the loop
@@ -211,17 +192,8 @@ private:
   typedef thread thread_t;
 
 private:
-  /// \brief common method to start the loop
-  template <typename t_timeout> void run_core(t_timeout p_timeout) {
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = thread([this, p_timeout]() -> void { m_loop.start(p_timeout); });
-  }
-
-private:
   /// \brief m_loop is the \p loop to be executed asyncronously
   loop m_loop;
-
-  t_time m_timeout;
 
   /// \brief m_thread is the thread where the \p loop will run
   thread_t m_thread;

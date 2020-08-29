@@ -257,6 +257,10 @@ private:
              << p_t;
   }
 
+  inline void format(std::ostringstream &p_stream, const bool &p_t) {
+    p_stream << (p_t ? "true" : "false");
+  }
+
   inline uint64_t microseconds() {
     return static_cast<uint64_t>(
         std::chrono::duration_cast<std::chrono::microseconds>(

@@ -34,14 +34,21 @@ namespace concurrent {
 ///
 /// It must define:
 ///   \p data, which is the type of data it stores
-///   \code void add(const data &) \endcode and \code void add(data &&)
-///   \endcode, which stores data into the container
+///   \code void add(const data &) \endcode, which stores data into the
+///   container
+///
+///   \code void add(data &&) \endcode, which stores data into the container
 ///
 ///   \code data get() \endcode, which removes data from the container
 ///
 ///   \code bool empty() const \endcode, which informs if the container is empty
 ///
 ///   \code bool full() const \endcode, which informs if the container is full
+///
+///   \code size_t capacity() \endcode, which informs the the capacity
+///
+///   \code size_t occupied() \endcode, which informs the amount of slots
+///   occupied
 ///
 /// \tparam t_container::data must be:
 ///    - default constructible
@@ -52,7 +59,8 @@ namespace concurrent {
 /// void info(int p_line, const t_params&... p_params)
 /// void warn(int p_line, const t_params&... p_params)
 /// void error(int p_line, const t_params&... p_params)
-/// void fatal(int p_line, const t_params&... p_params)///
+/// void fatal(int p_line, const t_params&... p_params)
+///
 /// \tparam t_time is the type of time used for timeout control
 ///
 template <typename t_container, typename t_log,
@@ -86,9 +94,9 @@ public:
 
   producer_consumer_t &operator=(producer_consumer_t &&p_pc) = delete;
 
-  /// \brief destuctor
+  /// \brief destructor
   ///
-  /// If 'stop ' was not called, empties the pool, waiting for all the data to
+  /// If 'stop' was not called, empties the pool, waiting for all the data to
   /// be processed
   ~producer_consumer_t() {
     concurrent_debug(m_log, "destructor");
@@ -113,39 +121,55 @@ public:
 
   /// \brief adds data to be consumed
   ///
+  /// \p data will only be added if \p start() was called
+  ///
   /// \param p_data is the data produced
-  void add(const data &p_data) {
-    if (m_stopped) {
-      concurrent_debug(m_log, "not trying to add because it is stopped");
-      return;
-    }
-    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+  ///
+  /// \return \p true if it was added, \p false otherwise
+  bool add(const data &p_data) {
+    //    if (m_stopped) {
+    //      concurrent_error(m_log, "could not add data because
+    //      'producer_consumer' "
+    //                              "is not running; call 'start()' first");
+    //      return false;
+    //    }
+    //    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    concurrent_debug(m_log, "waiting for room ...");
-    std::unique_lock<std::mutex> _lock(m_mutex_data);
-    m_data_consumed.wait(
-        _lock, [this]() { return (!m_container.full() || m_stopped); });
+    //    concurrent_debug(m_log, "waiting for room ...");
+    //    std::unique_lock<std::mutex> _lock(m_mutex_data);
+    //    m_data_consumed.wait(
+    //        _lock, [this]() { return (!m_container.full() || m_stopped); });
 
-    if (m_stopped) {
-      concurrent_debug(m_log, "stopped");
-    } else {
-      m_container.add(p_data);
-      ++m_queued_data;
-      concurrent_info(m_log, "adding ", p_data);
-    }
+    //    if (m_stopped) {
+    //      concurrent_debug(m_log, "stopped");
+    //    } else {
+    //      m_container.add(p_data);
+    //      ++m_queued_data;
+    //      concurrent_info(m_log, "adding ", p_data);
+    //    }
 
-    // notifyng that new data is available
-    concurrent_debug(m_log, "notifying");
-    m_data_produced.notify_all();
+    //    // notifyng that new data is available
+    //    concurrent_debug(m_log, "notifying");
+    //    m_data_produced.notify_all();
+
+    //    return true;
+
+    // return add(std::move(data(p_data)));
+    return add(std::move(p_data));
   }
 
   /// \brief adds data to be consumed
   ///
+  /// \p data will only be added if \p start() was called
+  ///
   /// \param p_data is the data produced
-  void add(data &&p_data) {
+  ///
+  /// \return \p true if it was added, \p false otherwise
+  bool add(data &&p_data) {
     if (m_stopped) {
-      concurrent_debug(m_log, "not trying to add because it is stopped");
-      return;
+      concurrent_error(m_log, "could not add data because 'producer_consumer' "
+                              "is not running; call 'start()' first");
+      return false;
     }
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
@@ -160,20 +184,23 @@ public:
     } else {
       m_container.add(std::move(p_data));
       ++m_queued_data;
-      concurrent_debug(m_log, "adding ", p_data);
+      concurrent_debug(m_log, p_data, " added");
     }
 
     // notifyng that new data is available
     concurrent_debug(m_log, "notifying");
     m_data_produced.notify_all();
+    return true;
   }
 
   /// \brief informs the amount of data added
   inline uint64_t amount_added() const { return m_queued_data; }
 
   /// \brief add adds one \p worker function
+  ///
   /// \param p_work the \p worker fuction to be added
-  /// \param p_worker_timeout timeout of this \p worker function
+  ///
+  /// \param p_timeout timeout of this \p worker function
   void add(worker p_work, time p_timeout) {
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
@@ -191,8 +218,11 @@ public:
   }
 
   /// \brief add_work adds a bunch of \p worker functions
+  ///
   /// \param p_num_works the number of \p worker functions to be added
+  ///
   /// \param p_work_factory a function that creates \p worker functions
+  ///
   /// \param p_worker_timeout timeout for the \p worker functions
   void add(uint16_t p_num_works, std::function<worker()> p_work_factory,
            time p_worker_timeout) {
@@ -205,7 +235,7 @@ public:
       return this->provider();
     };
 
-    for (uint16_t _i = 0; _i < p_num_works; ++_i) {
+    for (auto _i = 0; _i < p_num_works; ++_i) {
       async_loop_ptr _loop(std::make_shared<async_loop>(
           p_work_factory(), _breaker, p_worker_timeout, _provider));
 
@@ -214,31 +244,37 @@ public:
   }
 
   /// \brief is_stopped
+  ///
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_stopped; }
 
   /// \brief run starts the producer_consumer
   ///
-  /// From this call on, the \p worker functions will to "fight"among each
-  /// other, in order to process any instance of \p data that was inserted,
-  /// using the \p handle method, into the pool
-  inline void start() {
+  /// From this call on, the \p worker functions will to "fight" among each
+  /// other, in order to process any instance of \p data that was inserted
+  /// into the pool
+  ///
+  /// \return \p true because no \p worker function was added
+  inline bool start() {
     if (!m_stopped) {
-      concurrent_debug(m_log, "not starting because it is already running");
-      return;
+      concurrent_error(m_log, "not starting because it is already running");
+      return true;
     }
 
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
       concurrent_warn(m_log, "can't run because there are no workers");
-      return;
+      return false;
     }
+
     concurrent_debug(m_log, "starting");
     m_stopped = false;
     for (async_loop_ptr _loop : m_loops) {
       _loop->start();
     }
+
     concurrent_debug(m_log, "started");
+    return true;
   }
 
   /// \brief interrupt stops the \p producer_consumer
@@ -261,7 +297,10 @@ public:
     }
   }
 
+  /// \brief the capacity if the \p t_container
   inline size_t capacity() const { return m_container.capacity(); }
+
+  /// \brief the amount of slots occupied in the \p t_container
   inline size_t occupied() const { return m_container.occupied(); }
 
 private:
@@ -276,22 +315,23 @@ private:
 
 private:
   /// \brief breaker
+  ///
   /// \return \p true if the flag indicating that the \p producer_consumer
   /// should stop is \p true; \p false otherwise
   inline bool breaker() { return (m_stopped ? true : false); }
 
   /// \brief add_work common function called to add a \p worker function
+  ///
   /// \param p_loop the new \p worker function to be added
   void add(async_loop_ptr p_loop) {
     std::lock_guard<std::mutex> _lock(m_add_work);
     m_loops.push_back(p_loop);
   }
 
-  /// \brief provider is the \p provide_t function, which provides data, if
-  /// available, to a \p worker function
+  /// \brief provider provides data, if available, to a \p worker function
   ///
-  /// \return (true, a filled \p data object), if there is any instance of
-  /// \p data available; of (false, data()) otherwise
+  /// \return {true, a filled \p data object}, if there is any instance of
+  /// \p data available; of {false, data()} otherwise
   std::pair<bool, data> provider() {
     using namespace std;
 
@@ -364,10 +404,10 @@ private:
 
   asyncs_loops m_loops;
 
-  bool m_stopped = true;
+  bool m_stopped{true};
 
   /// \brief m_destroying indicates that the \p produce_consumer should stop
-  bool m_destroying = false;
+  bool m_destroying{false};
 
   uint64_t m_queued_data{0};
 

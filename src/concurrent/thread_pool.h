@@ -20,7 +20,6 @@
 
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/result.h>
 #include <concurrent/traits.h>
 #include <status/result.h>
 

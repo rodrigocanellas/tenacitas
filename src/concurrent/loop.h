@@ -11,7 +11,6 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/processor.h>
-#include <concurrent/result.h>
 #include <concurrent/traits.h>
 
 /// \brief namespace of the organization
@@ -76,18 +75,18 @@ struct loop_t {
   /// of \p t_data, if available. If \p t_data is \p void, this parameter
   /// assumes a default value of a \p void returning function
   inline loop_t(
-      worker p_work, breaker p_break, t_time p_timeout,
-      provider p_provide = []() -> bool { return true; })
-      : m_worker(p_work), m_breaker(p_break), m_timeout(p_timeout),
-        m_provider(p_provide), m_stopped_by_user(true),
-        m_processor(m_worker, m_provider, m_timeout) {}
+      worker p_worker, breaker p_break, t_time p_timeout,
+      provider p_provider = []() -> bool { return true; })
+      : /* m_worker(p_work),*/ m_breaker(p_break), /*m_timeout(p_timeout),*/
+        /*m_provider(p_provide),*/ m_processor(p_worker, p_provider,
+                                               p_timeout) {}
 
   /// \brief loop decault constuctor not allowed
   loop_t() = delete;
 
   /// \brief destructor
   ~loop_t() {
-    m_stopped_by_destructor = true;
+    stop();
     concurrent_info(m_log, "leaving destructor");
   }
 
@@ -107,48 +106,41 @@ struct loop_t {
   /// \brief is_stopped
   ///
   /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return (m_running == false); }
+  inline bool is_stopped() const { return m_stopped; }
 
-  /// \brief get_worker
-  ///
-  /// \return a copy of the function that executes a defined work in each
-  /// round of the loop
-  inline worker get_worker() const { return m_worker; }
-
-  /// \brief get_breaker
-  ///
-  /// \return a copy of the function that can make the loop stop
   inline breaker get_breaker() const { return m_breaker; }
 
-  /// \brief get_provider
-  ///
-  /// \return a copy of the function that provides an instance of \p t_data,
-  /// if available, to the work function
-  inline provider get_provider() const { return m_provider; }
+  inline worker get_worker() const { return m_processor.get_worker(); }
 
-  /// \brief retrieves the timeout for the Work function
+  inline provider get_provider() const { return m_processor.get_provider(); }
+
+  /// \brief retrieves the timeout for the worker
   ///
   /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
+  inline t_time get_timeout() const { return m_processor.get_timeout(); }
 
   /// \brief redefines the value of the timeout
   ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+  /// \param p_timeout is the new value of the worker function
+  inline void set_timeout(t_time p_timeout) {
+    m_processor.set_timeout(p_timeout);
+  }
 
   /// \brief Stops the loop, and starts it again
   ///
   /// \return \p status::ok if could restart, or any other \p status::result
   /// otherwise
-  inline status::result restart() {
+  inline void restart() {
     stop();
-    return start();
+    start();
   }
 
   /// \brief stop forces the loop to stop
   inline void stop() {
-    m_stopped_by_user = true;
-    m_processor.stop();
+    if (!m_stopped) {
+      m_stopped = true;
+      m_processor.stop();
+    }
   }
 
   /// \brief start initates the loop
@@ -158,102 +150,58 @@ struct loop_t {
   /// \return \p status::ok if the loop finished with no error;
   ///         \p concurrent::already_running if the loop was already started
   ///         or any other value, therwise
-  status::result start() {
-    if (m_running == true) {
+  void start() {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
-      return concurrent::already_running;
+      return;
     }
 
-    status::result _result = status::ok;
-    m_stopped_by_user = false;
-    m_running = true;
+    m_stopped = false;
+    m_processor.start();
 
     while (true) {
 
-      if (m_stopped_by_user) {
-        _result = concurrent::stopped_by_user;
-        concurrent_warn(m_log, _result);
-        break;
+      if (m_stopped) {
+        concurrent_debug(m_log, "stopped");
+        return;
       }
 
-      if (m_stopped_by_destructor) {
-        concurrent_warn(m_log,
-                        "loop stopped: ", concurrent::stop_by_destructor);
-        _result = status::ok;
-        break;
+      bool _result = m_processor();
+
+      if (m_stopped) {
+        concurrent_debug(m_log, "stopped");
+        return;
       }
 
-      status::result _worker_result = m_processor();
-
-      if (m_stopped_by_user) {
-        _result = concurrent::stopped_by_user;
-        concurrent_warn(m_log, "loop stopped: ", _result);
-        break;
+      if (!_result) {
+        concurrent_warn(m_log, "worker returned ", _result);
+        stop();
+        return;
       }
 
-      if (_worker_result != status::ok) {
-        concurrent_warn(m_log, "worker returned ", _worker_result);
-        if ((_worker_result == concurrent::stopped_by_worker) ||
-            (_worker_result == concurrent::stopped_by_provider)) {
-          _result = _worker_result;
-          break;
-        }
+      if (m_stopped) {
+        concurrent_debug(m_log, "stopped");
+        return;
       }
 
-      if (m_stopped_by_user) {
-        _result = concurrent::stopped_by_user;
-        concurrent_warn(m_log, "loop stopped: ", _result);
-        break;
-      }
-
-      if (m_stopped_by_destructor) {
-        concurrent_warn(m_log,
-                        "loop stopped: ", concurrent::stop_by_destructor);
-        _result = status::ok;
-        break;
-      }
-
-      _result = (m_breaker() ? concurrent::stopped_by_breaker : status::ok);
-      if (_result != status::ok) {
+      _result = m_breaker();
+      if (_result) {
         concurrent_warn(m_log, "breaker ordered to stop");
-        //        if (_result == concurrent::stopped_by_breaker) {
-        //          concurrent_warn(m_log, "loop stopped: ", _result);
-        //          _result = status::ok;
-        //        } else {
-        //          concurrent_error(m_log, _result);
-        //        }
-        break;
+        stop();
+        return;
       }
     }
-    m_running = false;
-    return _result;
   }
 
 private:
   typedef processor_t<t_data, t_time, t_log> processor;
 
 private:
-  /// \brief m_worker instance of the function that will execute the defined
-  /// work
-  worker m_worker;
-
   /// \brief m_breaker instance of the function that will indicate when the loop
   /// must stop
   breaker m_breaker;
 
-  /// \brief defines the amount of time the work function has to execute
-  t_time m_timeout;
-
-  /// \brief m_provider instance of the function that will provide an instance
-  /// of \p t_data, if available
-  provider m_provider;
-
-  /// \brief m_stopped_by_user indicates if the loop is running or not
-  bool m_stopped_by_user;
-
-  bool m_stopped_by_destructor{false};
-
-  bool m_running{false};
+  bool m_stopped{true};
 
   processor m_processor;
 
