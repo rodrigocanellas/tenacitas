@@ -501,7 +501,7 @@ struct sleeping_loop_008 {
     _loop_1.start();
 
     std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_debug(m_log, "stoping loop 1");
+    concurrent_debug(m_log, "stopping loop 1");
     _loop_1.stop();
 
     concurrent_debug(m_log, "data = ", _work.counter);

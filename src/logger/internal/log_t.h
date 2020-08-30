@@ -268,6 +268,27 @@ private:
             .count());
   }
 
+  template <typename... t>
+  inline void format(std::ostringstream &p_stream,
+                     const std::tuple<t...> &p_t) {
+    p_stream << to_str(p_t);
+  }
+
+  /// \brief copies a tuple fields into a string
+  template <class TupType, size_t... I>
+  std::string to_str(const TupType &_tup, std::index_sequence<I...>) {
+    std::stringstream _stream;
+    _stream << "(";
+    (..., (_stream << (I == 0 ? "" : ", ") << std::get<I>(_tup)));
+    _stream << ")";
+    return _stream.str();
+  }
+
+  /// \brief copies one tuple field into a string
+  template <class... T> std::string to_str(const std::tuple<T...> &_tup) {
+    return to_str(_tup, std::make_index_sequence<sizeof...(T)>());
+  }
+
   std::string now() {
     //    using namespace std;
     //    using namespace chrono;

@@ -251,7 +251,7 @@ struct async_loop_001 {
 //      std::this_thread::sleep_for(std::chrono::seconds(4));
 //      concurrent_debug(m_log, "waking");
 
-//      concurrent_debug(m_log, "stoping");
+//      concurrent_debug(m_log, "stopping");
 //      _async_loop.stop();
 
 //      concurrent_debug(m_log, "sleeping");

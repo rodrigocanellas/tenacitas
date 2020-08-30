@@ -9,6 +9,7 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include <optional>
 #include <utility>
 
 #include <concurrent/result.h>
@@ -24,7 +25,7 @@ namespace concurrent {
 ///    - default constructible
 ///    - move constructible
 ///
-template <typename t_data> struct traits_t {
+template <typename... t_params> struct traits_t {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -33,14 +34,14 @@ template <typename t_data> struct traits_t {
   ///
   /// \return \p true if the execution was ok;
   ///         \p false if the \p worker should not be called again
-  typedef std::function<bool(t_data &&)> worker;
+  typedef std::function<bool(t_params &&...)> worker;
 
   /// \brief provider is the type of function that provides data to the work
   /// function during the loop execution
   ///
   /// \return \p {true, a valid data} if data was provided
   ///         \p {false, an default data} if no data was provided
-  typedef std::function<std::pair<bool, t_data>()> provider;
+  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief breaker is the type of function that indicates if the loop should
   /// stop

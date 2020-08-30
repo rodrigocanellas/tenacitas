@@ -545,7 +545,7 @@ struct dispatcher_003 {
     bool operator()(msg_tpdo &&p_msg) {
       //    if (p_msg.counter > 20) {
       //      debug(
-      //        m_log, "stoping because counter = ", p_msg.counter);
+      //        m_log, "stopping because counter = ", p_msg.counter);
       //      return bool::stop;
       //    }
       concurrent_debug(m_log, m_id, "|", p_msg);
