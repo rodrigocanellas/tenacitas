@@ -9,8 +9,8 @@
 #include <chrono>
 #include <future>
 
+#include <concurrent/executer.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/processor.h>
 #include <concurrent/traits.h>
 
 /// \brief namespace of the organization
@@ -24,6 +24,17 @@ namespace concurrent {
 /// round of the loop; a Timeout to execute; a Breaker function, that indicates
 /// when the loop should break; and a Provider function, that will provide data
 /// for the Work function, if available.
+///
+/// The Worker function can take any number and type of parameter, but the
+/// return type must \p bool, with \p true meaning that the Worker function will
+/// continue to work in the next loop; and \p false meaning that it will no work
+/// anymore, and the loop must stop.
+/// Resolving \p traits_t for a return of \p bool makes the Worker function
+/// <code>std::function<std::optional<t_result>(t_params &&...)></code>
+///
+/// The Provider function, therefore, must return the same number and type of
+/// objects that the Worker function needs, or nothing, if there is no more
+/// objects to be provided. In this case, the loop must stop.
 ///
 /// If the Worker function needs no data,\p t_data is \p void, so the Provider
 /// function does not need to be defined. In this situation, one does not need
@@ -44,21 +55,21 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_data, typename t_log,
-          typename t_time = std::chrono::milliseconds>
+template <typename t_log, typename t_time, typename t_result,
+          typename... t_params>
 struct loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<t_data>::worker worker;
+  typedef typename traits_t<t_result, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<t_data>::provider provider;
+  typedef typename traits_t<t_result, t_params...>::provider provider;
 
   /// \brief breaker type
   /// \sa traits_t<t_data>::breaker in concurrent/traits.h
-  typedef typename traits_t<t_data>::breaker breaker;
+  typedef typename traits_t<t_result, t_params...>::breaker breaker;
 
   /// \brief loop constructor
   ///
@@ -71,15 +82,15 @@ struct loop_t {
   /// \param p_timeout defines the amount of time the work function has to
   /// execute
   ///
-  /// \param p_provide instance of the function that will provide an instance
-  /// of \p t_data, if available. If \p t_data is \p void, this parameter
+  /// \param p_provide instance of the function that will provide \p
+  /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
-  inline loop_t(
-      worker p_worker, breaker p_break, t_time p_timeout,
-      provider p_provider = []() -> bool { return true; })
-      : /* m_worker(p_work),*/ m_breaker(p_break), /*m_timeout(p_timeout),*/
-        /*m_provider(p_provide),*/ m_processor(p_worker, p_provider,
-                                               p_timeout) {}
+  inline loop_t(worker p_worker, breaker p_break, t_time p_timeout,
+                provider p_provider)
+      : m_breaker(p_break), m_executer(p_worker, p_timeout, p_provider) {}
+
+  inline loop_t(worker p_worker, breaker p_break, t_time p_timeout)
+      : m_breaker(p_break), m_executer(p_worker, p_timeout) {}
 
   /// \brief loop decault constuctor not allowed
   loop_t() = delete;
@@ -110,20 +121,20 @@ struct loop_t {
 
   inline breaker get_breaker() const { return m_breaker; }
 
-  inline worker get_worker() const { return m_processor.get_worker(); }
+  inline worker get_worker() const { return m_executer.get_worker(); }
 
-  inline provider get_provider() const { return m_processor.get_provider(); }
+  inline provider get_provider() const { return m_executer.get_provider(); }
 
   /// \brief retrieves the timeout for the worker
   ///
   /// \return the timeout
-  inline t_time get_timeout() const { return m_processor.get_timeout(); }
+  inline t_time get_timeout() const { return m_executer.get_timeout(); }
 
   /// \brief redefines the value of the timeout
   ///
   /// \param p_timeout is the new value of the worker function
   inline void set_timeout(t_time p_timeout) {
-    m_processor.set_timeout(p_timeout);
+    m_executer.set_timeout(p_timeout);
   }
 
   /// \brief Stops the loop, and starts it again
@@ -139,7 +150,7 @@ struct loop_t {
   inline void stop() {
     if (!m_stopped) {
       m_stopped = true;
-      m_processor.stop();
+      m_executer.stop();
     }
   }
 
@@ -157,7 +168,7 @@ struct loop_t {
     }
 
     m_stopped = false;
-    m_processor.start();
+    m_executer.start();
 
     while (true) {
 
@@ -166,15 +177,15 @@ struct loop_t {
         return;
       }
 
-      bool _result = m_processor();
+      std::optional<t_result> _continue = m_executer();
 
       if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         return;
       }
 
-      if (!_result) {
-        concurrent_warn(m_log, "worker returned ", _result);
+      if (!_continue) {
+        concurrent_warn(m_log, "worker informed to stop the loop");
         stop();
         return;
       }
@@ -184,8 +195,7 @@ struct loop_t {
         return;
       }
 
-      _result = m_breaker();
-      if (_result) {
+      if (m_breaker()) {
         concurrent_warn(m_log, "breaker ordered to stop");
         stop();
         return;
@@ -194,7 +204,7 @@ struct loop_t {
   }
 
 private:
-  typedef processor_t<t_data, t_time, t_log> processor;
+  typedef executer_t<t_log, t_time, bool, t_params...> executer;
 
 private:
   /// \brief m_breaker instance of the function that will indicate when the loop
@@ -203,7 +213,7 @@ private:
 
   bool m_stopped{true};
 
-  processor m_processor;
+  executer m_executer;
 
   t_log m_log{"concurrent::loop"};
 };

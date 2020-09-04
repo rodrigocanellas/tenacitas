@@ -1,8 +1,8 @@
 SUBDIRS = \
     dep \
-    executer
+    executer    \
+    loop
 #    \
-#    loop \
 #    async_loop \
 #    sleeping_loop \
 #    thread_pool \

@@ -51,6 +51,39 @@ template <typename t_result, typename... t_params> struct traits_t {
   typedef std::function<bool()> breaker;
 };
 
+/// \brief traits_t defines types when dealing with loop with data
+///
+/// \param t_data is the type of the data to be handled; it must be:
+///    - default constructible
+///    - move constructible
+///
+template <typename t_result, typename t_param>
+struct traits_t<t_result, t_param> {
+
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \param t_data is an instance of the data to be handled
+  ///
+  /// \return \p true if the execution was ok;
+  ///         \p false if the \p worker should not be called again
+  typedef std::function<std::optional<t_result>(t_param &&)> worker;
+
+  /// \brief provider is the type of function that provides data to the work
+  /// function during the loop execution
+  ///
+  /// \return \p {true, a valid data} if data was provided
+  ///         \p {false, an default data} if no data was provided
+  typedef std::function<std::optional<t_param>()> provider;
+
+  /// \brief breaker is the type of function that indicates if the loop should
+  /// stop
+  ///
+  /// \return \p true, if the execution should stop
+  ///         \p false, if the execution shoud continue
+  typedef std::function<bool()> breaker;
+};
+
 /// \brief traits_t<void> is a specialization that defines types when dealing
 /// with a work function that does not receive any data
 ///

@@ -13,7 +13,9 @@
 using namespace tenacitas;
 
 typedef tenacitas::logger::cerr::log log;
-typedef tenacitas::concurrent::loop_t<void, log> loop;
+typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, bool,
+                                      void>
+    loop;
 typedef tenacitas::status::result result;
 
 struct loop_000 {
@@ -22,7 +24,7 @@ struct loop_000 {
 
     bool breaker() { return (m_counter == 100 ? true : false); };
 
-    bool worker() {
+    std::optional<bool> worker() {
       ++m_counter;
       concurrent_debug(m_log, "counter = ", m_counter);
       return true;
@@ -35,7 +37,7 @@ struct loop_000 {
 
   bool operator()() {
     xpto _xpto;
-    auto _worker = [&_xpto]() -> bool { return _xpto.worker(); };
+    auto _worker = [&_xpto]() -> std::optional<bool> { return _xpto.worker(); };
     auto _breaker = [&_xpto]() -> bool { return _xpto.breaker(); };
     loop _loop(_worker, _breaker, std::chrono::milliseconds(100));
 
@@ -147,18 +149,20 @@ struct loop_000 {
 // const result loop_002::stop_because_so{100, 1};
 
 struct loop_003 {
-  typedef tenacitas::concurrent::loop_t<int16_t, log> loop;
+  typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, bool,
+                                        int16_t>
+      loop;
 
   struct xpto {
 
-    std::pair<bool, int16_t> provider() {
+    std::optional<int16_t> provider() {
       m_counter += 4;
-      return {true, m_counter};
+      return {m_counter};
     }
 
     bool breaker() { return (m_counter == 100 ? true : false); }
 
-    bool worker(int16_t &&p_value) {
+    std::optional<bool> worker(int16_t &&p_value) {
       concurrent_debug(m_log, "counter = ", p_value);
       return true;
     }
@@ -172,15 +176,15 @@ struct loop_003 {
 
     xpto _xpto;
 
-    loop _loop(
-        [&_xpto](uint16_t p_value) -> bool {
-          return _xpto.worker(std::move(p_value));
-        },
+    auto _w = [&_xpto](uint16_t p_value) -> std::optional<bool> {
+      return _xpto.worker(std::move(p_value));
+    };
 
-        [&_xpto]() -> bool { return _xpto.breaker(); },
-        std::chrono::milliseconds(100),
+    auto _b = [&_xpto]() -> bool { return _xpto.breaker(); };
 
-        [&_xpto]() -> std::pair<bool, int16_t> { return _xpto.provider(); });
+    auto _p = [&_xpto]() -> std::optional<int16_t> { return _xpto.provider(); };
+
+    loop _loop(_w, _b, std::chrono::milliseconds(100), _p);
 
     _loop.start();
 
