@@ -1524,6 +1524,120 @@ private:
   logger::cerr::log m_log{"executer_031"};
 };
 
+struct executer_032 {
+  bool operator()() {
+    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
+                                   double, int16_t, double>
+        executer;
+
+    const uint16_t _timeout = 6000;
+
+    typename executer::worker _worker =
+        [this](int16_t p_int, double p_double) -> std::optional<double> {
+      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
+      concurrent_debug(m_log, "sleeping");
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
+      concurrent_debug(m_log, "waking");
+
+      return {p_int * p_double};
+    };
+
+    typename executer::provider _provider =
+        []() -> std::optional<std::tuple<int, double>> {
+      return {{0, 0}};
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+
+    double _d = 0.0;
+    bool _ok = true;
+
+    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
+      std::optional<double> _ret = _executer(-2, 3.14);
+      if (_ret) {
+        _d = _ret.value();
+        concurrent_debug(m_log, "calculated value = ", _d);
+      } else {
+        concurrent_debug(m_log, "error in execution");
+        _ok = false;
+      }
+    });
+
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
+
+    _thread.join();
+
+    if (!_ok) {
+      return false;
+    }
+
+    concurrent_debug(m_log, "value = ", _d);
+
+    return (_d == (-2 * 3.14));
+  }
+
+  static std::string desc() {
+    return "waiting_for_work --> working : work (004).\nCalling an executer "
+           "(with parameters and return), but receiving the parameters in the "
+           "'executer::operator()', instead of calling a provider";
+  }
+
+private:
+  logger::cerr::log m_log{"executer_032"};
+};
+
+struct executer_033 {
+  bool operator()() {
+    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
+                                   void, int16_t, double>
+        executer;
+
+    const uint16_t _timeout = 6000;
+
+    bool _ok = true;
+    typename executer::worker _worker = [this, &_ok](int16_t p_int,
+                                                     double p_double) -> void {
+      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
+      if ((p_int != -2) && (p_double != 3.14)) {
+        concurrent_error(m_log, "values should be -2 and 3,14");
+        _ok = false;
+      }
+      concurrent_debug(m_log, "sleeping");
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
+      concurrent_debug(m_log, "waking");
+      _ok = true;
+    };
+
+    typename executer::provider _provider =
+        []() -> std::optional<std::tuple<int, double>> {
+      return {{0, 0}};
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+
+    std::thread _thread([&_executer]() -> void { _executer(-2, 3.14); });
+
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
+
+    _thread.join();
+
+    return _ok;
+  }
+
+  static std::string desc() {
+    return "waiting_for_work --> working : work (004).\nCalling an executer "
+           "(with parameters and no return), but receiving the parameters in "
+           "the 'executer::operator()', instead of calling a provider";
+  }
+
+private:
+  logger::cerr::log m_log{"executer_033"};
+};
+
 int main(int argc, char **argv) {
   logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
@@ -1562,4 +1676,7 @@ int main(int argc, char **argv) {
   run_test(_test, executer_029);
   run_test(_test, executer_030);
   run_test(_test, executer_031);
+  // ###########################
+  run_test(_test, executer_032);
+  run_test(_test, executer_033);
 }

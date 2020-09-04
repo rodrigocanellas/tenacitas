@@ -125,7 +125,7 @@ struct executer_t {
     }
 
     m_params = std::make_tuple(p_params...);
-    concurrent_debug(m_log, "provider returned = ", m_params);
+    concurrent_debug(m_log, "parameters provided = ", m_params);
 
     concurrent_debug(m_log, "notifying there is work to be done ");
     m_cond_exec.notify_one();
@@ -462,7 +462,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     }
 
     m_params = std::make_tuple(p_params...);
-    concurrent_debug(m_log, "provider returned = ", m_params);
+    concurrent_debug(m_log, "parameters provided = ", m_params);
 
     concurrent_debug(m_log, "notifying there is work to be done ");
     m_cond_exec.notify_one();
