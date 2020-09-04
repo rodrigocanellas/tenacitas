@@ -115,6 +115,39 @@ struct executer_t {
 
   inline bool is_started() const { return !m_stopped; }
 
+  std::optional<t_result> operator()(t_params... p_params) {
+    std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
+    concurrent_debug(m_log, "operator()()");
+
+    if (m_stopped) {
+      concurrent_warn(m_log, "executer is stopped; call 'start()' first");
+      return {};
+    }
+
+    m_params = std::make_tuple(p_params...);
+    concurrent_debug(m_log, "provider returned = ", m_params);
+
+    concurrent_debug(m_log, "notifying there is work to be done ");
+    m_cond_exec.notify_one();
+
+    concurrent_debug(m_log, "waiting for work to be done");
+    std::unique_lock<std::mutex> _lock(m_mutex_wait);
+    if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
+      concurrent_warn(m_log, "worker did not finish in time");
+      return {};
+    }
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
+      return {};
+    }
+    if (m_worker_result) {
+      t_result _result(m_worker_result.value());
+      concurrent_debug(m_log, "worker finished on time: result = ", _result);
+      return {_result};
+    }
+    return {};
+  }
+
   std::optional<t_result> operator()() {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -418,6 +451,35 @@ struct executer_t<t_log, t_time, void, t_params...> {
   inline bool is_stopped() const { return m_stopped; }
 
   inline bool is_started() const { return !m_stopped; }
+
+  void operator()(t_params... p_params) {
+    std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
+    concurrent_debug(m_log, "operator()()");
+
+    if (m_stopped) {
+      concurrent_warn(m_log, "executer is stopped; call 'start()' first");
+      return;
+    }
+
+    m_params = std::make_tuple(p_params...);
+    concurrent_debug(m_log, "provider returned = ", m_params);
+
+    concurrent_debug(m_log, "notifying there is work to be done ");
+    m_cond_exec.notify_one();
+
+    concurrent_debug(m_log, "waiting for work to be done");
+    std::unique_lock<std::mutex> _lock(m_mutex_wait);
+    if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
+      concurrent_warn(m_log, "worker did not finish in time");
+      return;
+    }
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
+      return;
+    }
+
+    concurrent_debug(m_log, "worker finished on time");
+  }
 
   void operator()() {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
