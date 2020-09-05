@@ -19,43 +19,50 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief traits_t defines types when dealing with loop with data
+/// \brief traits_t defines types for the rest of the \p concurrent library
 ///
-/// \param t_data is the type of the data to be handled; it must be:
-///    - default constructible
-///    - move constructible
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// \tparam t_result is the return type of the \p worker function
+///
+/// \tparam t_params... are the types of the parameters the \p worker function
+/// receives
 ///
 template <typename t_result, typename... t_params> struct traits_t {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return \p true if the execution was ok;
-  ///         \p false if the \p worker should not be called again
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef std::function<std::optional<t_result>(t_params &&...)> worker;
 
   /// \brief provider is the type of function that provides data to the work
-  /// function during the loop execution
+  /// function
   ///
-  /// \return \p {true, a valid data} if data was provided
-  ///         \p {false, an default data} if no data was provided
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
-  /// \brief breaker is the type of function that indicates if the loop should
-  /// stop
+  /// \brief breaker is the type of function that indicates if the execution
+  /// context in which the \p worker function is being called must stop
   ///
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
   typedef std::function<bool()> breaker;
 };
 
-/// \brief traits_t defines types when dealing with loop with data
+/// \brief traits_t defines types for the rest of the \p concurrent library
 ///
-/// \param t_data is the type of the data to be handled; it must be:
-///    - default constructible
-///    - move constructible
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// This specialization defines \p worker function that takes one parameter
+///
+/// \tparam t_result is the return type of the \p worker function
+///
+/// \tparam t_param is the type of the parameter the \p worker function
+/// receives
 ///
 template <typename t_result, typename t_param>
 struct traits_t<t_result, t_param> {
@@ -63,17 +70,14 @@ struct traits_t<t_result, t_param> {
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return \p true if the execution was ok;
-  ///         \p false if the \p worker should not be called again
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef std::function<std::optional<t_result>(t_param &&)> worker;
 
   /// \brief provider is the type of function that provides data to the work
-  /// function during the loop execution
+  /// function
   ///
-  /// \return \p {true, a valid data} if data was provided
-  ///         \p {false, an default data} if no data was provided
+  /// \return \p an optional object needed by the \p worker
   typedef std::function<std::optional<t_param>()> provider;
 
   /// \brief breaker is the type of function that indicates if the loop should
@@ -84,20 +88,60 @@ struct traits_t<t_result, t_param> {
   typedef std::function<bool()> breaker;
 };
 
-/// \brief traits_t<void> is a specialization that defines types when dealing
-/// with a work function that does not receive any data
+/// \brief traits_t defines types for the rest of the \p concurrent library
+///
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// This specialization defines \p worker function that does not return and take
+/// one parameter
+///
+/// \tparam t_param is the type of the parameter the \p worker function
+/// receives
+///
+template <typename t_param> struct traits_t<void, t_param> {
+
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  typedef std::function<void(t_param &&)> worker;
+
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional object needed by the \p worker
+  typedef std::function<std::optional<t_param>()> provider;
+
+  /// \brief breaker is the type of function that indicates if the loop should
+  /// stop
+  ///
+  /// \return \p true, if the execution should stop
+  ///         \p false, if the execution shoud continue
+  typedef std::function<bool()> breaker;
+};
+
+/// \brief traits_t defines types for the rest of the \p concurrent library
+///
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// This specialization defines \p worker function that takes no one parameters
+///
+/// \tparam t_result is the return type of the \p worker function
 ///
 template <typename t_result> struct traits_t<t_result, void> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   ///
-  /// \return \p true if the execution was ok;
-  ///         \p false if the \p worker should not be called again
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef std::function<std::optional<t_result>()> worker;
 
-  /// \brief in this specialization there is no provider, as \p worker
-  /// requires no data
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// As the \p worker does not need parameter, this provider is not called
   typedef typename std::function<void(void)> provider;
 
   /// \return \p true, if the execution should stop
@@ -105,22 +149,26 @@ template <typename t_result> struct traits_t<t_result, void> {
   typedef std::function<bool()> breaker;
 };
 
+/// \brief traits_t defines types for the rest of the \p concurrent library
+///
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// This specialization defines \p worker function that does not return
+///
+/// \tparam t_params... are the types of the parameters the \p worker function
+/// receives
+///
 template <typename... t_params> struct traits_t<void, t_params...> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
-  ///
-  /// \param t_data is an instance of the data to be handled
-  ///
-  /// \return \p true if the execution was ok;
-  ///         \p false if the \p worker should not be called again
   typedef std::function<void(t_params &&...)> worker;
 
   /// \brief provider is the type of function that provides data to the work
-  /// function during the loop execution
+  /// function
   ///
-  /// \return \p {true, a valid data} if data was provided
-  ///         \p {false, an default data} if no data was provided
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief breaker is the type of function that indicates if the loop should
@@ -131,18 +179,25 @@ template <typename... t_params> struct traits_t<void, t_params...> {
   typedef std::function<bool()> breaker;
 };
 
+/// \brief traits_t defines types for the rest of the \p concurrent library
+///
+/// The types are a \p worker function, a \p provider function, and a \p breaker
+/// function
+///
+/// This specialization defines \p worker function that does not return, and
+/// takes no parameters
+///
 template <> struct traits_t<void, void> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
-  ///
-  /// \return \p true if the execution was ok;
-  ///         \p false if the \p worker should not be called again
   typedef std::function<void()> worker;
 
-  /// \brief in this specialization there is no provider, as \p worker
-  /// requires no data
-  typedef typename std::function<bool(void)> provider;
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// As the \p worker does not need parameter, this provider is not called
+  typedef typename std::function<void(void)> provider;
 
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue

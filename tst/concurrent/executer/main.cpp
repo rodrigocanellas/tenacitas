@@ -1524,6 +1524,8 @@ private:
   logger::cerr::log m_log{"executer_031"};
 };
 
+// #############################################################################
+
 struct executer_032 {
   bool operator()() {
     typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
@@ -1638,6 +1640,117 @@ private:
   logger::cerr::log m_log{"executer_033"};
 };
 
+// #############################################################################
+struct executer_034 {
+  bool operator()() {
+    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
+                                   double, int16_t>
+        executer;
+
+    const uint16_t _timeout = 6000;
+
+    typename executer::worker _worker =
+        [this](int16_t &&p_int) -> std::optional<double> {
+      concurrent_debug(m_log, "int = ", p_int);
+      concurrent_debug(m_log, "sleeping");
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
+      concurrent_debug(m_log, "waking");
+
+      return {p_int * 3.5};
+    };
+
+    typename executer::provider _provider = []() -> std::optional<int> {
+      return {-2};
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+
+    double _d = 0.0;
+    bool _ok = true;
+
+    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
+      std::optional<double> _ret = _executer();
+      if (_ret) {
+        _d = _ret.value();
+        concurrent_debug(m_log, "calculated value = ", _d);
+      } else {
+        concurrent_debug(m_log, "error in execution");
+        _ok = false;
+      }
+    });
+
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
+
+    _thread.join();
+
+    if (!_ok) {
+      return false;
+    }
+
+    concurrent_debug(m_log, "value = ", _d);
+
+    return (_d == (-2 * 3.5));
+  }
+
+  static std::string desc() {
+    return "waiting_for_work --> working : work (004).\nCalling an executer "
+           "(with one parameter and return)";
+  }
+
+private:
+  logger::cerr::log m_log{"executer_034"};
+};
+
+// #############################################################################
+struct executer_035 {
+  bool operator()() {
+    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
+                                   void, int16_t>
+        executer;
+
+    const uint16_t _timeout = 6000;
+
+    bool _ok = true;
+    typename executer::worker _worker = [this, &_ok](int16_t p_int) -> void {
+      concurrent_debug(m_log, "int = ", p_int);
+      if (p_int != -2) {
+        concurrent_error(m_log, "value should be -2");
+        _ok = false;
+      }
+      concurrent_debug(m_log, "sleeping");
+      std::this_thread::sleep_for(
+          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
+      concurrent_debug(m_log, "waking");
+      _ok = true;
+    };
+
+    typename executer::provider _provider = []() -> std::optional<int16_t> {
+      return {-2};
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+
+    std::thread _thread([&_executer]() -> void { _executer(); });
+
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
+
+    _thread.join();
+
+    return _ok;
+  }
+
+  static std::string desc() {
+    return "waiting_for_work --> working : work (004).\nCalling an executer "
+           "(with one parameter and no return)";
+  }
+
+private:
+  logger::cerr::log m_log{"executer_035"};
+};
+
 int main(int argc, char **argv) {
   logger::cerr::log::set_debug();
   tester::test _test(argc, argv);
@@ -1679,4 +1792,8 @@ int main(int argc, char **argv) {
   // ###########################
   run_test(_test, executer_032);
   run_test(_test, executer_033);
+  // ###########################
+  run_test(_test, executer_034);
+  // ###########################
+  run_test(_test, executer_035);
 }
