@@ -32,12 +32,55 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief allows to execute a loop asyncronously
+/// \brief async_loop implements a generic loop that is executed in a non
+/// blocking way
 ///
-/// \param t_data is the type of the data to be handled. If it is not \p void,
-/// it must be:
-///    - default constructible
-///    - move constructible
+/// A \p aync_loop needs a Worker function, that will execute a defined work at
+/// each round of the loop; a Timeout to execute; a Breaker function, that
+/// indicates when the loop should break; and a Provider function, that will
+/// provide data for the Work function, if the Worker function expects
+/// parameters.
+///
+/// \bWorker
+/// The Worker function can take any number and type of parameter, but the
+/// return type must \p std::conditional<bool>.
+///
+/// If the \p std::conditional<bool> does not return a value, the loop is
+/// stopped.
+///
+/// If the \p std::conditional<bool> returns a value and it is \p true, it means
+/// means that the Worker function will continue to work in the next loop. If it
+/// is \p false, it means that it will no work anymore, and the loop must stop.
+///
+/// The Worker has this signature:
+/// <code>std::function<std::optional<t_result>(t_params &&...)></code>.
+///
+/// If \p t_params... is \p void, the Worker has this signature
+/// <code>std::function<std::optional<t_result>(void)></code>.
+///
+/// \bTimeout
+/// If the Worker does not finish on time, \p std::conditional<bool> will not
+/// return a value, causing the loop to stop.
+///
+/// \bProvider
+/// The Provider function provides the \p t_params... parameters for the Worker
+/// function, in the case \p t_params... is not \p void
+///
+/// The Provider function has this signature:
+/// <code>std::function<std::optional<std::tuple<t_params...>>()></code>.
+///
+/// If \p std::conditional does not return a value, the Worker function will not
+/// return a \p bool value, making the loop to stop
+///
+/// If \p t_params... is \p void, the Provider is not used, and the constructor
+/// that does not take a Provider parameter must be used.
+///
+/// \pBreaker
+/// The Breaker function allows the loop to be stopped, caused by a other code
+/// than the Worker.
+///
+/// The Breaker function has this signature:
+/// <code>std::function<bool()></code>
 ///
 /// \tparam t_log provides log funcionality:
 /// t_log(const char *p_id)
@@ -47,57 +90,62 @@ namespace concurrent {
 /// void error(int p_line, const t_params&... p_params)
 /// void fatal(int p_line, const t_params&... p_params)
 ///
-/// \tparam t_time is the type of time used for timeout control
+/// \tparam t_time is the type of time used for timeout control of the Worker
+/// function
 ///
-template <typename t_data, typename t_log,
-          typename t_time = std::chrono::milliseconds>
+/// \tparam t_params..., if not \p void, are the types of the the parameters
+/// expected by the Worker function the loop; it must be:
+///    - default constructible
+///    - move constructible
+///
+template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<t_data>::worker worker;
+  typedef typename traits_t<bool, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<t_data>::provider provider;
+  typedef typename traits_t<bool, t_params...>::provider provider;
 
-  /// \brief break_t is the type of function that indicates if the loop should
   /// \brief breaker type
   /// \sa traits_t<t_data>::breaker in concurrent/traits.h
-  typedef typename traits_t<t_data>::breaker breaker;
+  typedef typename traits_t<bool, t_params...>::breaker breaker;
 
-  /// \brief async_loop constructor
-  ///
-  /// This constructor should be used when \p t_data is not \p void
-  ///
-  /// \param p_work instance of the function that will execute the defined
-  /// work
-  ///
-  /// \param p_break instance of the function that will indicate when the loop
-  /// must stop
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  /// \param p_provide instance of the function that will provide an instance
-  /// of \p t_data, if available
-  ///
-  inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout,
-                      provider p_provide)
-      : m_loop(p_work, p_break, p_timeout, p_provide), m_thread() {}
-
-  /// \brief async_loop constructor
-  ///
-  /// This constructor should be used when \p t_data is \p void
+  /// \brief constructor
+  /// This constructor must be used when \p t_params... is not \p void, and
+  /// therefore, a Provider function must be defined
   ///
   /// \param p_worker instance of the function that will execute the defined
   /// work
   ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// \param p_breaker instance of the function that will indicate when the loop
+  /// must stop
+  ///
+  /// \param p_timeout defines the amount of time the work function has to
   /// execute
+  ///
+  /// \param p_provider instance of the function that will provide \p
+  /// t_params..., if available. If \p t_params... is \p void, this parameter
+  /// assumes a default value of a \p void returning function
+  inline async_loop_t(worker p_work, breaker p_break, t_time p_timeout,
+                      provider p_provide)
+      : m_loop(p_work, p_break, p_timeout, p_provide), m_thread() {}
+
+  /// \brief loop constructor
+  ///
+  /// This constructor must be used when \p t_params... is \p void, and
+  /// therefore, no Provider function must be defined
+  ///
+  /// \param p_worker instance of the function that will execute the defined
+  /// work
   ///
   /// \param p_breaker instance of the function that will indicate when the loop
   /// must stop
+  ///
+  /// \param p_timeout defines the amount of time the work function has to
+  /// execute
   inline async_loop_t(worker p_worker, breaker p_breaker, t_time p_timeout)
       : m_loop(p_worker, p_breaker, p_timeout), m_thread() {}
 
@@ -138,19 +186,22 @@ struct async_loop_t {
   /// It does not restart the loop, it is necessary to call \p restart
   inline void set_timeout(t_time p_timeout) { m_loop.set_timeout(p_timeout); }
 
+  /// \brief returns the Breaker function
   inline breaker get_breaker() const { return m_loop.get_breaker(); }
 
+  /// \brief returns the Worker function
   inline worker get_worker() const { return m_loop.get_worker(); }
 
+  /// \brief returns the Provide function
   inline provider get_provider() const { return m_loop.get_provider(); }
 
   /// \brief Stops the loop, and starts it again
   ///
   /// \return \p true if could restart, or any other \p false otherwise
-  inline bool restart() {
+  inline void restart() {
     concurrent_debug(m_log, "restart");
     stop();
-    return start();
+    start();
   }
 
   /// \brief run starts the loop asynchronously
@@ -161,8 +212,8 @@ struct async_loop_t {
   void start() {
 
     if (!m_loop.is_stopped()) {
-      concurrent_debug(m_log, this,
-                       "not starting the loop because it is already running");
+      concurrent_info(m_log, this,
+                      "not starting the loop because it is already running");
       return;
     }
     concurrent_debug(m_log, "starting the loop");
@@ -181,12 +232,11 @@ struct async_loop_t {
     std::lock_guard<std::mutex> _lock(m_mutex);
     concurrent_debug(m_log, "marking to stop");
     m_loop.stop();
-    concurrent_debug(m_log, "joining");
   }
 
 private:
   /// \brief loop_t is an easier name for the loop
-  typedef loop_t<t_data, t_log, t_time> loop;
+  typedef loop_t<t_log, t_time, t_params...> loop;
 
   /// \brief thread_t is an easier name for our wrapper to std::thread
   typedef thread thread_t;

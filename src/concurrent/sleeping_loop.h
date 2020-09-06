@@ -22,14 +22,55 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-///
 /// \brief sleeping_loop allows a function (object) to be called in a loop that
 /// is executed asyncronously at a user defined period of time.
 ///
-/// \param t_data is the type of the data to be handled. If it is not \p void,
-/// it must be:
-///    - default constructible
-///    - move constructible
+/// A \p sleeping_loop needs a Worker function, that will execute a defined work
+/// at each round of the loop; a Timeout to execute; a Breaker function, that
+/// indicates when the loop should break; and a Provider function, that will
+/// provide data for the Work function, if the Worker function expects
+/// parameters.
+///
+/// \bWorker
+/// The Worker function can take any number and type of parameter, but the
+/// return type must \p std::conditional<bool>.
+///
+/// If the \p std::conditional<bool> does not return a value, the loop is
+/// stopped.
+///
+/// If the \p std::conditional<bool> returns a value and it is \p true, it means
+/// means that the Worker function will continue to work in the next loop. If it
+/// is \p false, it means that it will no work anymore, and the loop must stop.
+///
+/// The Worker has this signature:
+/// <code>std::function<std::optional<t_result>(t_params &&...)></code>.
+///
+/// If \p t_params... is \p void, the Worker has this signature
+/// <code>std::function<std::optional<t_result>(void)></code>.
+///
+/// \bTimeout
+/// If the Worker does not finish on time, \p std::conditional<bool> will not
+/// return a value, causing the loop to stop.
+///
+/// \bProvider
+/// The Provider function provides the \p t_params... parameters for the Worker
+/// function, in the case \p t_params... is not \p void
+///
+/// The Provider function has this signature:
+/// <code>std::function<std::optional<std::tuple<t_params...>>()></code>.
+///
+/// If \p std::conditional does not return a value, the Worker function will not
+/// return a \p bool value, making the loop to stop
+///
+/// If \p t_params... is \p void, the Provider is not used, and the constructor
+/// that does not take a Provider parameter must be used.
+///
+/// \pBreaker
+/// The Breaker function allows the loop to be stopped, caused by a other code
+/// than the Worker.
+///
+/// The Breaker function has this signature:
+/// <code>std::function<bool()></code>
 ///
 /// \tparam t_log provides log funcionality:
 /// t_log(const char *p_id)
@@ -39,24 +80,32 @@ namespace concurrent {
 /// void error(int p_line, const t_params&... p_params)
 /// void fatal(int p_line, const t_params&... p_params)
 ///
-/// \tparam t_interval is the type of time that will be used to define the
-/// period of time that the \p p_worker function will be exececuted
+/// \tparam t_timeout is the type of time used for timeout control of the Worker
+/// function
 ///
-/// \tparam t_timeout is the type of time used to define how long the \p
-/// p_worker function should take
+/// \tparam t_interval is the type of time used to control the interval that the
+/// loop will sleep
 ///
-template <typename t_data, typename t_log,
-          typename t_interval = std::chrono::milliseconds,
-          typename t_timeout = std::chrono::milliseconds>
+/// \tparam t_params..., if not \p void, are the types of the the parameters
+/// expected by the Worker function the loop; it must be:
+///    - default constructible
+///    - move constructible
+///
+template <typename t_log, typename t_timeout, typename t_interval,
+          typename... t_params>
 struct sleeping_loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<t_data>::worker worker;
+  typedef typename traits_t<bool, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<t_data>::provider provider;
+  typedef typename traits_t<bool, t_params...>::provider provider;
+
+  typedef t_timeout timeout;
+
+  typedef t_interval interval;
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
   /// != void</tt>, and a \p provider is necessary
@@ -68,7 +117,7 @@ struct sleeping_loop_t {
   ///
   /// \param p_provide function that will provide data to the work function,
   /// each time the loop wakes up
-  sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout,
+  sleeping_loop_t(worker p_worker, t_timeout p_timeout, t_interval p_interval,
                   provider p_provider)
       : m_async(
             p_worker, [this]() -> bool { return this->breaker(); }, p_timeout,
@@ -82,7 +131,7 @@ struct sleeping_loop_t {
   /// executions
   ///
   /// \param p_work function that will be executed each time the loop wakes up
-  sleeping_loop_t(t_interval p_interval, worker p_worker, t_timeout p_timeout)
+  sleeping_loop_t(worker p_worker, t_timeout p_timeout, t_interval p_interval)
       : m_async(
             p_worker, [this]() -> bool { return this->breaker(); }, p_timeout),
         m_interval(p_interval) {}
@@ -133,8 +182,6 @@ struct sleeping_loop_t {
     m_async.set_timeout(p_timeout);
   }
 
-  //  inline breaker get_breaker() const { return m_loop.get_breaker(); }
-
   inline worker get_worker() const { return m_async.get_worker(); }
 
   inline provider get_provider() const { return m_async.get_provider(); }
@@ -182,7 +229,7 @@ struct sleeping_loop_t {
 
 private:
   /// \brief a simpler name
-  typedef async_loop_t<t_data, t_log, t_timeout> async_loop;
+  typedef async_loop_t<t_log, t_timeout, t_params...> async_loop;
 
 private:
   /// \brief breaker defines if the loop should stop

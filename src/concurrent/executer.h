@@ -121,6 +121,12 @@ struct executer_t {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   std::optional<t_result> operator()(t_params... p_params) {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -139,7 +145,7 @@ struct executer_t {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return {};
     }
     if (m_stopped) {
@@ -179,7 +185,7 @@ struct executer_t {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return {};
     }
     if (m_stopped) {
@@ -315,6 +321,12 @@ struct executer_t<t_log, t_time, t_result, t_param> {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   std::optional<t_result> operator()(t_param &&p_param) {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -333,7 +345,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return {};
     }
     if (m_stopped) {
@@ -373,7 +385,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return {};
     }
     if (m_stopped) {
@@ -462,9 +474,13 @@ struct executer_t<t_log, t_time, t_result, void> {
   /// controlled
   typedef typename traits_t<t_result, void>::worker worker;
 
+  //  typedef typename traits_t<t_result, void>::provider provider;
+
   /// \brief constructor
-  executer_t(worker p_worker, t_time p_timeout)
+  executer_t(worker p_worker,
+             t_time p_timeout /*, provider p_provider = []() {}*/)
       : m_worker(p_worker), m_timeout(p_timeout) {
+    //    provider _provider = p_provider;
     start();
   }
 
@@ -505,6 +521,12 @@ struct executer_t<t_log, t_time, t_result, void> {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   std::optional<t_result> operator()() {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -520,7 +542,7 @@ struct executer_t<t_log, t_time, t_result, void> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return {};
     }
     if (m_stopped) {
@@ -652,6 +674,12 @@ struct executer_t<t_log, t_time, void, t_params...> {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   void operator()(t_params... p_params) {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -670,7 +698,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return;
     }
     if (m_stopped) {
@@ -706,7 +734,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return;
     }
     if (m_stopped) {
@@ -835,6 +863,12 @@ struct executer_t<t_log, t_time, void, t_param> {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   void operator()(t_param &&p_param) {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -853,7 +887,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return;
     }
     if (m_stopped) {
@@ -889,7 +923,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return;
     }
     if (m_stopped) {
@@ -971,9 +1005,13 @@ struct executer_t<t_log, t_time, void, void> {
   /// controlled
   typedef typename traits_t<void, void>::worker worker;
 
+  //  typedef typename traits_t<void, void>::provider provider;
+
   /// \brief constructor
-  executer_t(worker p_worker, t_time p_timeout)
+  executer_t(worker p_worker,
+             t_time p_timeout /*, provider p_provider = []() {}*/)
       : m_worker(p_worker), m_timeout(p_timeout) {
+    //    provider _provider = p_provider;
     start();
   }
 
@@ -1014,6 +1052,12 @@ struct executer_t<t_log, t_time, void, void> {
 
   inline bool is_started() const { return !m_stopped; }
 
+  inline t_time get_timeout() const { return m_timeout; }
+
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  inline worker get_worker() const { return m_worker; }
+
   void operator()() {
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
     concurrent_debug(m_log, "operator()()");
@@ -1029,7 +1073,7 @@ struct executer_t<t_log, t_time, void, void> {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "worker did not finish in time");
+      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
       return;
     }
     if (m_stopped) {

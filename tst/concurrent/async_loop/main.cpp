@@ -22,7 +22,9 @@
 using namespace tenacitas;
 
 struct async_loop_000 {
-  typedef concurrent::async_loop_t<void, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   void>
+      async_loop;
 
   struct work {
     bool operator()() {
@@ -77,16 +79,18 @@ struct async_loop_000 {
 };
 
 struct async_loop_001 {
-  typedef concurrent::async_loop_t<void, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   void>
+      async_loop;
 
   struct work1 {
 
-    bool operator()() {
+    std::optional<bool> operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_debug(m_log, "work = ", this, ", counter = ", counter++);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_001::work1"};
     uint64_t counter = 0;
@@ -95,13 +99,15 @@ struct async_loop_001 {
   bool operator()() {
     using namespace tenacitas;
     try {
-      concurrent::traits_t<void>::breaker _breaker = []() -> bool {
-        return false;
-      };
 
       work1 _work;
-      async_loop _async_loop([&_work]() -> bool { return _work(); }, _breaker,
-                             std::chrono::milliseconds(1000));
+      async_loop _async_loop(
+          [&_work]() -> std::optional<bool> { return _work(); },
+
+          []() -> bool { return false; },
+
+          std::chrono::milliseconds(1000));
+
       _async_loop.start();
 
       std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -382,25 +388,27 @@ struct async_loop_001 {
 //};
 
 struct async_loop_005 {
-  typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   uint32_t>
+      async_loop;
   struct work1 {
-    bool operator()(uint32_t &&p_data) {
+    std::optional<bool> operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
       concurrent_debug(m_log, p_data);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_005::work1"};
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::optional<uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
       if (++m_data > 830) {
-        return std::make_pair(false, 0);
+        return {};
       }
-      return {true, m_data};
+      return {m_data};
     }
     uint32_t m_data = 0;
   };
@@ -409,7 +417,12 @@ struct async_loop_005 {
     using namespace tenacitas;
     try {
       async_loop sl1(
-          work1(), []() { return false; }, std::chrono::milliseconds(1000),
+          work1(),
+
+          []() { return false; },
+
+          std::chrono::milliseconds(1000),
+
           provide());
 
       // uncomment the line below for a compiler error "error:
@@ -521,27 +534,29 @@ struct async_loop_005 {
 
 struct async_loop_006 {
 
-  typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   uint32_t>
+      async_loop;
 
   struct work1 {
 
-    bool operator()(uint32_t &&p_data) {
+    std::optional<bool> operator()(uint32_t &&p_data) {
 
       std::this_thread::sleep_for(std::chrono::milliseconds(1001));
       concurrent_debug(m_log, p_data);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_006::work1"};
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::optional<uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
       if (m_data > 200) {
-        return {false, 0};
+        return {};
       }
-      return {true, ++m_data};
+      return {++m_data};
     }
     uint32_t m_data = 0;
   };
@@ -581,25 +596,28 @@ struct async_loop_006 {
 
 struct async_loop_007 {
 
-  typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   uint32_t>
+      async_loop;
+
   struct work1 {
-    bool operator()(uint32_t &&p_data) {
+    std::optional<bool> operator()(uint32_t &&p_data) {
 
       data = p_data;
       concurrent_debug(m_log, p_data);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_007::work1"};
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::optional<uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       if (m_data > 1000) {
-        return {false, 0};
+        return {};
       }
-      return {true, m_data++};
+      return {m_data++};
     }
 
     uint32_t get_data() const { return m_data; }
@@ -614,10 +632,16 @@ struct async_loop_007 {
       work1 _work;
       provide _provide;
       async_loop _async_loop_1(
-          [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
-          []() { return false; }, std::chrono::milliseconds(1000),
 
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          [&_work](uint32_t &&p_data) -> std::optional<bool> {
+            return _work(std::move(p_data));
+          },
+
+          []() -> bool { return false; },
+
+          std::chrono::milliseconds(1000),
+
+          [&_provide]() -> std::optional<uint32_t> { return _provide(); });
 
       _async_loop_1.start();
 
@@ -637,9 +661,15 @@ struct async_loop_007 {
                        ", provider data = ", _provide.get_data());
 
       async_loop _async_loop_2(
-          [&_work](uint32_t &&p_data) { return _work(std::move(p_data)); },
-          _async_loop_1.get_breaker(), _async_loop_1.get_timeout(),
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          [&_work](uint32_t &&p_data) -> std::optional<bool> {
+            return _work(std::move(p_data));
+          },
+
+          _async_loop_1.get_breaker(),
+
+          _async_loop_1.get_timeout(),
+
+          [&_provide]() -> std::optional<uint32_t> { return _provide(); });
 
       concurrent_debug(m_log, "work data = ", _work.data,
                        ", provider data = ", _provide.get_data());
@@ -692,35 +722,38 @@ struct async_loop_007 {
 };
 
 struct async_loop_008 {
-  typedef concurrent::async_loop_t<uint32_t, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   uint32_t>
+      async_loop;
+
   struct work1 {
-    bool operator()(uint32_t &&p_data) {
+    std::optional<bool> operator()(uint32_t &&p_data) {
       data += p_data;
       concurrent_debug(m_log, "1 -> ", data);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_008::work1"};
     uint32_t data = 0;
   };
 
   struct work2 {
-    bool operator()(uint32_t &&p_data) {
+    std::optional<bool> operator()(uint32_t &&p_data) {
       using namespace tenacitas;
       data = p_data;
       concurrent_debug(m_log, "2 -> ", data);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_007::work2"};
     uint32_t data = 0;
   };
 
   struct provide {
-    std::pair<bool, uint32_t> operator()() {
+    std::optional<uint32_t> operator()() {
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       if (m_data > 1000) {
-        return {false, 0};
+        return {};
       }
-      return {true, ++m_data};
+      return {++m_data};
     }
 
   private:
@@ -735,14 +768,24 @@ struct async_loop_008 {
       work2 _work_2;
 
       async_loop _al_1(
-          [&_work_1](uint32_t &&p_data) { return _work_1(std::move(p_data)); },
-          []() { return false; }, std::chrono::milliseconds(1000),
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+          [&_work_1](uint32_t &&p_data) -> std::optional<bool> {
+            return _work_1(std::move(p_data));
+          },
+
+          []() { return false; },
+
+          std::chrono::milliseconds(1000),
+
+          [&_provide]() -> std::optional<uint32_t> { return _provide(); });
 
       async_loop _al_2(
           [&_work_2](uint32_t &&p_data) { return _work_2(std::move(p_data)); },
-          []() { return false; }, std::chrono::milliseconds(1000),
-          [&_provide]() -> std::pair<bool, uint32_t> { return _provide(); });
+
+          []() { return false; },
+
+          std::chrono::milliseconds(1000),
+
+          [&_provide]() -> std::optional<uint32_t> { return _provide(); });
 
       _al_1.start();
       _al_2.start();
@@ -778,16 +821,18 @@ struct async_loop_008 {
 };
 
 struct async_loop_009 {
-  typedef concurrent::async_loop_t<void, logger::cerr::log> async_loop;
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   void>
+      async_loop;
 
   struct work1 {
 
-    bool operator()() {
+    std::optional<bool> operator()() {
 
       using namespace tenacitas;
       std::this_thread::sleep_for(std::chrono::milliseconds(200));
       concurrent_debug(m_log, "work = ", this, ", counter = ", counter++);
-      return true;
+      return {true};
     }
     logger::cerr::log m_log{"async_loop_009::work1"};
     uint64_t counter = 0;
@@ -795,11 +840,13 @@ struct async_loop_009 {
 
   bool operator()() {
     using namespace tenacitas;
-    using namespace tenacitas;
     try {
       work1 _work;
       async_loop _async_loop(
-          _work, []() -> bool { return false; },
+          _work,
+
+          []() -> bool { return false; },
+
           std::chrono::milliseconds(1000));
 
       _async_loop.start();

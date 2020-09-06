@@ -13,8 +13,7 @@
 using namespace tenacitas;
 
 typedef tenacitas::logger::cerr::log log;
-typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, bool,
-                                      void>
+typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, void>
     loop;
 typedef tenacitas::status::result result;
 
@@ -149,8 +148,7 @@ struct loop_000 {
 // const result loop_002::stop_because_so{100, 1};
 
 struct loop_003 {
-  typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, bool,
-                                        int16_t>
+  typedef tenacitas::concurrent::loop_t<log, std::chrono::milliseconds, int16_t>
       loop;
 
   struct xpto {

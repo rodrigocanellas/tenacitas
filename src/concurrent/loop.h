@@ -18,32 +18,53 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief loop implements a generic loop
+/// \brief loop implements a generic loop that is executed in a blocking way
 ///
-/// A loop needs a Worker function, that will execute a defined work at each
+/// A \p loop needs a Worker function, that will execute a defined work at each
 /// round of the loop; a Timeout to execute; a Breaker function, that indicates
 /// when the loop should break; and a Provider function, that will provide data
-/// for the Work function, if available.
+/// for the Work function, if the Worker function expects parameters.
 ///
+/// \bWorker
 /// The Worker function can take any number and type of parameter, but the
-/// return type must \p bool, with \p true meaning that the Worker function will
-/// continue to work in the next loop; and \p false meaning that it will no work
-/// anymore, and the loop must stop.
-/// Resolving \p traits_t for a return of \p bool makes the Worker function
-/// <code>std::function<std::optional<t_result>(t_params &&...)></code>
+/// return type must \p std::conditional<bool>.
 ///
-/// The Provider function, therefore, must return the same number and type of
-/// objects that the Worker function needs, or nothing, if there is no more
-/// objects to be provided. In this case, the loop must stop.
+/// If the \p std::conditional<bool> does not return a value, the loop is
+/// stopped.
 ///
-/// If the Worker function needs no data,\p t_data is \p void, so the Provider
-/// function does not need to be defined. In this situation, one does not need
-/// to inform the \p p_provide parameter to the constructor.
+/// If the \p std::conditional<bool> returns a value and it is \p true, it means
+/// means that the Worker function will continue to work in the next loop. If it
+/// is \p false, it means that it will no work anymore, and the loop must stop.
 ///
-/// \tparam t_data, if not \p void, is the type of the data manipulated during
-/// the loop; it must be:
-///    - default constructible
-///    - move constructible
+/// The Worker has this signature:
+/// <code>std::function<std::optional<t_result>(t_params &&...)></code>.
+///
+/// If \p t_params... is \p void, the Worker has this signature
+/// <code>std::function<std::optional<t_result>(void)></code>.
+///
+/// \bTimeout
+/// If the Worker does not finish on time, \p std::conditional<bool> will not
+/// return a value, causing the loop to stop.
+///
+/// \bProvider
+/// The Provider function provides the \p t_params... parameters for the Worker
+/// function, in the case \p t_params... is not \p void
+///
+/// The Provider function has this signature:
+/// <code>std::function<std::optional<std::tuple<t_params...>>()></code>.
+///
+/// If \p std::conditional does not return a value, the Worker function will not
+/// return a \p bool value, making the loop to stop
+///
+/// If \p t_params... is \p void, the Provider is not used, and the constructor
+/// that does not take a Provider parameter must be used.
+///
+/// \pBreaker
+/// The Breaker function allows the loop to be stopped, caused by a other code
+/// than the Worker.
+///
+/// The Breaker function has this signature:
+/// <code>std::function<bool()></code>
 ///
 /// \tparam t_log provides log funcionality:
 /// t_log(const char *p_id)
@@ -53,65 +74,84 @@ namespace concurrent {
 /// void error(int p_line, const t_params&... p_params)
 /// void fatal(int p_line, const t_params&... p_params)
 ///
-/// \tparam t_time is the type of time used for timeout control
+/// \tparam t_time is the type of time used for timeout control of the Worker
+/// function
 ///
-template <typename t_log, typename t_time, typename t_result,
-          typename... t_params>
-struct loop_t {
+/// \tparam t_params..., if not \p void, are the types of the the parameters
+/// expected by the Worker function the loop; it must be:
+///    - default constructible
+///    - move constructible
+///
+template <typename t_log, typename t_time, typename... t_params> struct loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<t_result, t_params...>::worker worker;
+  typedef typename traits_t<bool, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<t_result, t_params...>::provider provider;
+  typedef typename traits_t<bool, t_params...>::provider provider;
 
   /// \brief breaker type
   /// \sa traits_t<t_data>::breaker in concurrent/traits.h
-  typedef typename traits_t<t_result, t_params...>::breaker breaker;
+  typedef typename traits_t<bool, t_params...>::breaker breaker;
 
   /// \brief loop constructor
   ///
-  /// \param p_work instance of the function that will execute the defined
+  /// This constructor must be used when \p t_params... is not \p void, and
+  /// therefore, a Provider function must be defined
+  ///
+  /// \param p_worker instance of the function that will execute the defined
   /// work
   ///
-  /// \param p_break instance of the function that will indicate when the loop
+  /// \param p_breaker instance of the function that will indicate when the loop
   /// must stop
   ///
   /// \param p_timeout defines the amount of time the work function has to
   /// execute
   ///
-  /// \param p_provide instance of the function that will provide \p
+  /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
   inline loop_t(worker p_worker, breaker p_break, t_time p_timeout,
                 provider p_provider)
       : m_breaker(p_break), m_executer(p_worker, p_timeout, p_provider) {}
 
+  /// \brief loop constructor
+  ///
+  /// This constructor must be used when \p t_params... is \p void, and
+  /// therefore, no Provider function must be defined
+  ///
+  /// \param p_worker instance of the function that will execute the defined
+  /// work
+  ///
+  /// \param p_breaker instance of the function that will indicate when the loop
+  /// must stop
+  ///
+  /// \param p_timeout defines the amount of time the work function has to
+  /// execute
   inline loop_t(worker p_worker, breaker p_break, t_time p_timeout)
       : m_breaker(p_break), m_executer(p_worker, p_timeout) {}
 
-  /// \brief loop decault constuctor not allowed
+  /// \brief loop default constuctor not allowed
   loop_t() = delete;
 
   /// \brief destructor
   ~loop_t() {
     stop();
-    concurrent_info(m_log, "leaving destructor");
+    concurrent_debug(m_log, "leaving destructor");
   }
 
   /// \brief copy constructor not allowed
   loop_t(const loop_t &) = delete;
 
-  /// \brief loop move constructor
-  /// \param p_loop an instance o \p loop to be moved
+  /// \brief loop move constructor not allowed
   loop_t(loop_t &&p_loop) = delete;
 
   /// \brief copy assignment not allowed
   loop_t &operator=(const loop_t &) = delete;
 
-  /// \brief move assignment
+  /// \brief move assignment not allowed
   loop_t &operator=(loop_t &&p_loop) = delete;
 
   /// \brief is_stopped
@@ -119,15 +159,16 @@ struct loop_t {
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_stopped; }
 
+  /// \brief returns the Breaker function
   inline breaker get_breaker() const { return m_breaker; }
 
+  /// \brief returns the Worker function
   inline worker get_worker() const { return m_executer.get_worker(); }
 
+  /// \brief returns the Provide function
   inline provider get_provider() const { return m_executer.get_provider(); }
 
   /// \brief retrieves the timeout for the worker
-  ///
-  /// \return the timeout
   inline t_time get_timeout() const { return m_executer.get_timeout(); }
 
   /// \brief redefines the value of the timeout
@@ -138,9 +179,6 @@ struct loop_t {
   }
 
   /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p status::ok if could restart, or any other \p status::result
-  /// otherwise
   inline void restart() {
     stop();
     start();
@@ -149,6 +187,7 @@ struct loop_t {
   /// \brief stop forces the loop to stop
   inline void stop() {
     if (!m_stopped) {
+      concurrent_warn(m_log, "stopping");
       m_stopped = true;
       m_executer.stop();
     }
@@ -157,15 +196,13 @@ struct loop_t {
   /// \brief start initates the loop
   ///
   /// If the loop was already initiated, it does not start a new loop
-  ///
-  /// \return \p status::ok if the loop finished with no error;
-  ///         \p concurrent::already_running if the loop was already started
-  ///         or any other value, therwise
   void start() {
     if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
+
+    concurrent_info(m_log, "starting");
 
     m_stopped = false;
     m_executer.start();
@@ -174,31 +211,37 @@ struct loop_t {
 
       if (m_stopped) {
         concurrent_debug(m_log, "stopped");
-        return;
+        break;
       }
 
-      std::optional<t_result> _continue = m_executer();
-
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
-        return;
-      }
-
-      if (!_continue) {
-        concurrent_warn(m_log, "worker informed to stop the loop");
+      std::optional<bool> _executer_result = m_executer();
+      if (!_executer_result) {
+        concurrent_warn(m_log,
+                        "stopping beacuse Worker did not return any results");
         stop();
-        return;
+        break;
       }
 
       if (m_stopped) {
         concurrent_debug(m_log, "stopped");
-        return;
+        break;
+      }
+
+      if (!_executer_result.value()) {
+        concurrent_warn(m_log, "stopping because Worker returned 'false'");
+        stop();
+        break;
+      }
+
+      if (m_stopped) {
+        concurrent_debug(m_log, "stopped");
+        break;
       }
 
       if (m_breaker()) {
         concurrent_warn(m_log, "breaker ordered to stop");
         stop();
-        return;
+        break;
       }
     }
   }
