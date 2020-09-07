@@ -268,6 +268,13 @@ private:
             .count());
   }
 
+  inline uint64_t milliseconds() {
+    return static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch())
+            .count());
+  }
+
   template <typename... t>
   inline void format(std::ostringstream &p_stream,
                      const std::tuple<t...> &p_t) {
@@ -315,18 +322,18 @@ private:
 
     const auto _remainder = _microsecs % 1000000;
     stringstream _stream;
-    _stream << put_time(std::localtime(&_time_t), "%Y.%m.%d.%H.%M.%S.")
+    _stream << put_time(std::localtime(&_time_t), "%Y-%m-%d %H:%M:%S,")
             << std::setw(6) << std::setfill('0') << std::left << _remainder;
     return _stream.str();
   }
 
-  inline const std::string &level2str(level p_level) const {
-    static const std::string _debug("DEB");
-    static const std::string _info("INF");
-    static const std::string _warn("WAR");
-    static const std::string _error("ERR");
-    static const std::string _fatal("FAT");
-    static const std::string _no_log("NO LOG");
+  inline const char *&level2str(level p_level) const {
+    static const char *_debug("DEB");
+    static const char *_info("INF");
+    static const char *_warn("WAR");
+    static const char *_error("ERR");
+    static const char *_fatal("FAT");
+    static const char *_no_log("NO LOG");
 
     switch (p_level) {
     case level::debug:
