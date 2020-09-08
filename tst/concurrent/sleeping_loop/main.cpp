@@ -833,7 +833,7 @@ struct sleeping_loop_011 {
   }
 
   static const std::string desc() {
-    return "\n'3 sleeping_loop' objects with interval of 1000 ms, time out of "
+    return "\n3 'sleeping_loop' objects with interval of 1000 ms, time out of "
            "500 ms."
 
            "\nThe first one increments a counter by 1; the second by 100, and "

@@ -3,7 +3,8 @@ SUBDIRS = \
     executer \
     loop  \
     async_loop   \
-    sleeping_loop
+    sleeping_loop \
+    queue
 #    \
 #    thread_pool \
 #    dispatcher \
@@ -12,7 +13,7 @@ SUBDIRS = \
 #    producer_consumer \
 
 
-#    queue \
+
 
 TEMPLATE = subdirs
 
