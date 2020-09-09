@@ -19,6 +19,15 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+template <typename t_result, typename... t_params> struct traits_t;
+
+template <typename t_result, typename t_param>
+struct traits_t<t_result, t_param>;
+
+template <typename t_param> struct traits_t<void, t_param>;
+
+template <> struct traits_t<void, void>;
+
 /// \brief traits_t defines types for the rest of the \p concurrent library
 ///
 /// The types are a \p worker function, a \p provider function, and a \p breaker
@@ -49,7 +58,7 @@ template <typename t_result, typename... t_params> struct traits_t {
   ///
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -85,7 +94,7 @@ struct traits_t<t_result, t_param> {
   ///
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -117,7 +126,7 @@ template <typename t_param> struct traits_t<void, t_param> {
   ///
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -146,7 +155,7 @@ template <typename t_result> struct traits_t<t_result, void> {
 
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -176,7 +185,7 @@ template <typename... t_params> struct traits_t<void, t_params...> {
   ///
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -201,7 +210,7 @@ template <> struct traits_t<void, void> {
 
   /// \return \p true, if the execution should stop
   ///         \p false, if the execution shoud continue
-  typedef std::function<bool()> breaker;
+  //  typedef std::function<bool()> breaker;
 };
 
 } // namespace concurrent

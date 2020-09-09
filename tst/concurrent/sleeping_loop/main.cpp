@@ -872,7 +872,7 @@ struct sleeping_loop_012 {
       return *this;
     }
 
-    msg &operator=(const msg &) = delete;
+    msg &operator=(const msg &) = default;
 
     ~msg() = default;
 

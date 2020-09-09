@@ -20,8 +20,7 @@
 #include <concurrent/result.h>
 #include <concurrent/traits.h>
 #include <status/result.h>
-// 1598108310
-// 1598107884296
+
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
@@ -63,22 +62,20 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_container, typename t_log,
-          typename t_time = std::chrono::milliseconds>
+template <typename t_log, typename t_time, typename t_container>
 class producer_consumer_t {
 public:
   /// \brief type of container that holds produced data to be consumed
   typedef t_container container;
 
-  /// \brief type produced data to be consumed
   typedef typename container::data data;
 
   /// \brief type of time used for timeout control
   typedef t_time time;
 
   /// \brief worker type is the type of function that will consume the data
-  /// produced \sa traits_t<data>::worker in concurrent/traits.h
-  typedef typename traits_t<data>::worker worker;
+  /// produced \sa traits_t<bool, t_params...>::worker in concurrent/traits.h
+  typedef typename traits_t<bool, data>::worker worker;
 
 public:
   producer_consumer_t() = delete;
@@ -127,35 +124,31 @@ public:
   ///
   /// \return \p true if it was added, \p false otherwise
   bool add(const data &p_data) {
-    //    if (m_stopped) {
-    //      concurrent_error(m_log, "could not add data because
-    //      'producer_consumer' "
-    //                              "is not running; call 'start()' first");
-    //      return false;
-    //    }
-    //    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+    if (m_stopped) {
+      concurrent_error(m_log, "could not add data because 'producer_consumer' "
+                              "is not running; call 'start()' first");
+      return false;
+    }
 
-    //    concurrent_debug(m_log, "waiting for room ...");
-    //    std::unique_lock<std::mutex> _lock(m_mutex_data);
-    //    m_data_consumed.wait(
-    //        _lock, [this]() { return (!m_container.full() || m_stopped); });
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    //    if (m_stopped) {
-    //      concurrent_debug(m_log, "stopped");
-    //    } else {
-    //      m_container.add(p_data);
-    //      ++m_queued_data;
-    //      concurrent_info(m_log, "adding ", p_data);
-    //    }
+    concurrent_debug(m_log, "waiting for room ...");
+    std::unique_lock<std::mutex> _lock(m_mutex_data);
+    m_data_consumed.wait(
+        _lock, [this]() { return (!m_container.full() || m_stopped); });
 
-    //    // notifyng that new data is available
-    //    concurrent_debug(m_log, "notifying");
-    //    m_data_produced.notify_all();
+    if (m_stopped) {
+      concurrent_debug(m_log, "stopped");
+    } else {
+      m_container.add(p_data);
+      ++m_queued_data;
+      concurrent_debug(m_log, p_data, " added");
+    }
 
-    //    return true;
-
-    // return add(std::move(data(p_data)));
-    return add(std::move(p_data));
+    // notifyng that new data is available
+    concurrent_debug(m_log, "notifying");
+    m_data_produced.notify_all();
+    return true;
   }
 
   /// \brief adds data to be consumed
@@ -207,7 +200,7 @@ public:
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::pair<bool, data> {
+    auto _provider = [this]() -> std::optional<data> {
       return this->provider();
     };
 
@@ -231,7 +224,7 @@ public:
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::pair<bool, data> {
+    auto _provider = [this]() -> std::optional<data> {
       return this->provider();
     };
 
@@ -306,7 +299,7 @@ public:
 private:
   /// \brief async_loop_t is a \p async_loop where a \p worker function will be
   /// running
-  typedef async_loop_t<data, t_log, t_time> async_loop;
+  typedef async_loop_t<t_log, t_time, data> async_loop;
 
   typedef typename std::shared_ptr<async_loop> async_loop_ptr;
 
@@ -332,12 +325,12 @@ private:
   ///
   /// \return {true, a filled \p data object}, if there is any instance of
   /// \p data available; of {false, data()} otherwise
-  std::pair<bool, data> provider() {
+  std::optional<data> provider() {
     using namespace std;
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
-      return {false, data()};
+      return {};
     }
 
     concurrent_debug(m_log, "waiting for data...");
@@ -352,27 +345,36 @@ private:
         concurrent_debug(m_log, "not empty");
         return true;
       }
-      concurrent_debug(m_log, "leaving with false");
+      concurrent_debug(m_log, "still waiting for data");
 
       return false;
     });
 
+    concurrent_debug(m_log, "either there is data, or it was stopped");
+
     if (m_stopped) {
       concurrent_debug(m_log, "stopped and notifying");
       m_data_consumed.notify_all();
-      return {false, data()};
+      return {};
     }
 
-    data _data = m_container.get();
+    concurrent_debug(m_log, "there is data");
 
-    concurrent_debug(m_log, "getting ", _data, " and notifying");
+    std::optional<data> _maybe = m_container.get();
+    if (_maybe) {
+      data _data = _maybe.value();
 
-    // notifying that new data can be added
-    //    if (m_destroying && (!m_container.empty())) {
-    //      m_data_consumed.notify_all();
-    //    }
-    m_data_consumed.notify_all();
-    return {true, _data};
+      concurrent_debug(m_log, "getting ", _data, " and notifying");
+
+      // notifying that new data can be added
+      //    if (m_destroying && (!m_container.empty())) {
+      //      m_data_consumed.notify_all();
+      //    }
+      m_data_consumed.notify_all();
+      return {_data};
+    }
+    concurrent_debug(m_log, "it was not possible to get data");
+    return {};
   }
 
   /// \brief informs if all the \p async_loops are stopped

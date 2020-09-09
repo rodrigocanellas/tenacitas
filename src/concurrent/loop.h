@@ -86,15 +86,11 @@ template <typename t_log, typename t_time, typename... t_params> struct loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<bool, t_params...>::worker worker;
+  typedef typename traits_t<void, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<bool, t_params...>::provider provider;
-
-  /// \brief breaker type
-  /// \sa traits_t<t_data>::breaker in concurrent/traits.h
-  typedef typename traits_t<bool, t_params...>::breaker breaker;
+  typedef typename traits_t<void, t_params...>::provider provider;
 
   /// \brief loop constructor
   ///
@@ -113,9 +109,8 @@ template <typename t_log, typename t_time, typename... t_params> struct loop_t {
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
-  inline loop_t(worker p_worker, breaker p_break, t_time p_timeout,
-                provider p_provider)
-      : m_breaker(p_break), m_executer(p_worker, p_timeout, p_provider) {}
+  inline loop_t(worker p_worker, t_time p_timeout, provider p_provider)
+      : m_executer(p_worker, p_timeout, p_provider) {}
 
   /// \brief loop constructor
   ///
@@ -130,8 +125,8 @@ template <typename t_log, typename t_time, typename... t_params> struct loop_t {
   ///
   /// \param p_timeout defines the amount of time the work function has to
   /// execute
-  inline loop_t(worker p_worker, breaker p_break, t_time p_timeout)
-      : m_breaker(p_break), m_executer(p_worker, p_timeout) {}
+  inline loop_t(worker p_worker, t_time p_timeout)
+      : m_executer(p_worker, p_timeout) {}
 
   /// \brief loop default constuctor not allowed
   loop_t() = delete;
@@ -158,9 +153,6 @@ template <typename t_log, typename t_time, typename... t_params> struct loop_t {
   ///
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief returns the Breaker function
-  inline breaker get_breaker() const { return m_breaker; }
 
   /// \brief returns the Worker function
   inline worker get_worker() const { return m_executer.get_worker(); }
@@ -214,35 +206,7 @@ template <typename t_log, typename t_time, typename... t_params> struct loop_t {
         break;
       }
 
-      std::optional<bool> _executer_result = m_executer();
-      if (!_executer_result) {
-        concurrent_warn(m_log,
-                        "stopping beacuse Worker did not return any results");
-        stop();
-        break;
-      }
-
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
-        break;
-      }
-
-      if (!_executer_result.value()) {
-        concurrent_warn(m_log, "stopping because Worker returned 'false'");
-        stop();
-        break;
-      }
-
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
-        break;
-      }
-
-      if (m_breaker()) {
-        concurrent_warn(m_log, "breaker ordered to stop");
-        stop();
-        break;
-      }
+      m_executer();
     }
   }
 
@@ -250,10 +214,6 @@ private:
   typedef executer_t<t_log, t_time, bool, t_params...> executer;
 
 private:
-  /// \brief m_breaker instance of the function that will indicate when the loop
-  /// must stop
-  breaker m_breaker;
-
   bool m_stopped{true};
 
   executer m_executer;

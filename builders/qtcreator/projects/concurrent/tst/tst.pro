@@ -1,16 +1,19 @@
 SUBDIRS = \
     dep \
-    executer \
-    loop  \
-    async_loop   \
-    sleeping_loop \
-    queue
+    executer
+#    \
+#    loop  \
+#    async_loop   \
+#    sleeping_loop \
+#    queue    \
+#    producer_consumer
+#    \
 #    \
 #    thread_pool \
 #    dispatcher \
 #    performance \
 #    writer \
-#    producer_consumer \
+
 
 
 
