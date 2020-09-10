@@ -80,7 +80,9 @@ struct executer_t {
 
   /// \brief constructor
   executer_t(worker p_worker, t_time p_timeout, provider p_provider)
-      : m_worker(p_worker), m_timeout(p_timeout), m_provider(p_provider) {
+      : m_worker(p_worker), m_timeout(p_timeout),
+        m_provider_executer(p_provider, std::chrono::seconds(1)) {
+    //    m_provider(p_provider) {
     start();
   }
 
@@ -170,7 +172,8 @@ struct executer_t {
     }
 
     concurrent_debug(m_log, "calling provider");
-    std::optional<std::tuple<t_params...>> _provider_result = m_provider();
+    std::optional<std::tuple<t_params...>> _provider_result =
+        m_provider_executer();
     if (!_provider_result) {
       concurrent_info(m_log, "provider did not return data");
       return {};
@@ -199,6 +202,10 @@ struct executer_t {
     }
     return {};
   }
+
+private:
+  typedef executer_t<t_log, std::chrono::seconds, std::tuple<t_params...>, void>
+      provider_executer;
 
 private:
   void loop() {
@@ -231,7 +238,7 @@ private:
 private:
   worker m_worker;
   t_time m_timeout;
-  provider m_provider;
+  provider_executer m_provider_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -241,7 +248,7 @@ private:
   std::mutex m_mutex_operation;
   std::optional<t_result> m_worker_result;
   std::tuple<t_params...> m_params;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<t_result, t_params...>"};
 };
 
 /// \brief executer_t allows timeout control of a work function without
@@ -280,7 +287,8 @@ struct executer_t<t_log, t_time, t_result, t_param> {
 
   /// \brief constructor
   executer_t(worker p_worker, t_time p_timeout, provider p_provider)
-      : m_worker(p_worker), m_timeout(p_timeout), m_provider(p_provider) {
+      : m_worker(p_worker), m_timeout(p_timeout),
+        m_provider_executer(p_provider, std::chrono::seconds(1)) {
     start();
   }
 
@@ -370,7 +378,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     }
 
     concurrent_debug(m_log, "calling provider");
-    std::optional<t_param> _provider_result = m_provider();
+    std::optional<t_param> _provider_result = m_provider_executer();
     if (!_provider_result) {
       concurrent_info(m_log, "provider did not return data");
       return {};
@@ -399,6 +407,10 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     }
     return {};
   }
+
+private:
+  typedef executer_t<t_log, std::chrono::seconds, t_param, void>
+      provider_executer;
 
 private:
   void loop() {
@@ -431,7 +443,7 @@ private:
 private:
   worker m_worker;
   t_time m_timeout;
-  provider m_provider;
+  provider_executer m_provider_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -441,7 +453,7 @@ private:
   std::mutex m_mutex_operation;
   std::optional<t_result> m_worker_result;
   t_param m_param;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<t_result, t_param>"};
 };
 
 /// \brief executer_t allows timeout control of a work function without
@@ -596,7 +608,7 @@ private:
   concurrent::thread m_thread;
   std::mutex m_mutex_operation;
   std::optional<t_result> m_worker_result;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<t_result, void>"};
 };
 
 /// \brief executer_t allows timeout control of a work function without
@@ -633,7 +645,8 @@ struct executer_t<t_log, t_time, void, t_params...> {
 
   /// \brief constructor
   executer_t(worker p_worker, t_time p_timeout, provider p_provider)
-      : m_worker(p_worker), m_timeout(p_timeout), m_provider(p_provider) {
+      : m_worker(p_worker), m_timeout(p_timeout),
+        m_provider_executer(p_provider, std::chrono::seconds(1)) {
     start();
   }
 
@@ -719,7 +732,8 @@ struct executer_t<t_log, t_time, void, t_params...> {
     }
 
     concurrent_debug(m_log, "calling provider");
-    std::optional<std::tuple<t_params...>> _provider_result = m_provider();
+    std::optional<std::tuple<t_params...>> _provider_result =
+        m_provider_executer();
     if (!_provider_result) {
       concurrent_info(m_log, "provider did not return data");
       return;
@@ -744,6 +758,10 @@ struct executer_t<t_log, t_time, void, t_params...> {
 
     concurrent_debug(m_log, "worker finished on time");
   }
+
+private:
+  typedef executer_t<t_log, std::chrono::seconds, std::tuple<t_params...>, void>
+      provider_executer;
 
 private:
   void loop() {
@@ -776,7 +794,7 @@ private:
 private:
   worker m_worker;
   t_time m_timeout;
-  provider m_provider;
+  provider_executer m_provider_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -785,7 +803,7 @@ private:
   concurrent::thread m_thread;
   std::mutex m_mutex_operation;
   std::tuple<t_params...> m_params;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<void, t_params>"};
 };
 
 /// \brief executer_t allows timeout control of a work function without
@@ -822,7 +840,8 @@ struct executer_t<t_log, t_time, void, t_param> {
 
   /// \brief constructor
   executer_t(worker p_worker, t_time p_timeout, provider p_provider)
-      : m_worker(p_worker), m_timeout(p_timeout), m_provider(p_provider) {
+      : m_worker(p_worker), m_timeout(p_timeout),
+        m_provider_executer(p_provider, std::chrono::seconds(1)) {
     start();
   }
 
@@ -908,7 +927,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     }
 
     concurrent_debug(m_log, "calling provider");
-    std::optional<t_param> _provider_result = m_provider();
+    std::optional<t_param> _provider_result = m_provider_executer();
     if (!_provider_result) {
       concurrent_info(m_log, "provider did not return data");
       return;
@@ -933,6 +952,10 @@ struct executer_t<t_log, t_time, void, t_param> {
 
     concurrent_debug(m_log, "worker finished on time");
   }
+
+private:
+  typedef executer_t<t_log, std::chrono::seconds, t_param, void>
+      provider_executer;
 
 private:
   void loop() {
@@ -965,7 +988,7 @@ private:
 private:
   worker m_worker;
   t_time m_timeout;
-  provider m_provider;
+  provider_executer m_provider_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -974,7 +997,7 @@ private:
   concurrent::thread m_thread;
   std::mutex m_mutex_operation;
   t_param m_param;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<void, t_param>"};
 };
 
 /// \brief executer_t allows timeout control of a work function without
@@ -1122,10 +1145,10 @@ private:
   std::mutex m_mutex_exec;
   concurrent::thread m_thread;
   std::mutex m_mutex_operation;
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"concurrent::executer<void, void>"};
 };
 
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // WORK_H
+#endif // TENACITAS_CONCURRENT_EXECUTER_H

@@ -26,6 +26,10 @@ struct traits_t<t_result, t_param>;
 
 template <typename t_param> struct traits_t<void, t_param>;
 
+template <typename t_result> struct traits_t<t_result, void>;
+
+template <typename... t_params> struct traits_t<void, t_params...>;
+
 template <> struct traits_t<void, void>;
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
