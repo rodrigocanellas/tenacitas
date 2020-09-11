@@ -78,6 +78,12 @@ struct log {
     m_log.set_separator(p_separator);
   }
 
+  /// \brief set_timestamp_as_number makes the timestamp to be printed as a
+  /// number, instead of a string
+  inline static void set_timestamp_as_number(bool p_value = true) {
+    m_log.set_timestamp_as_number(p_value);
+  }
+
   /// \brief logs message with \p debug severity
   ///
   /// \tparam t_params are the types of the values to be logged

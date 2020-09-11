@@ -64,6 +64,12 @@ private:
   /// \brief set_error defines the log level to 'error'
   inline void set_error() { m_level = level::error; }
 
+  /// \brief set_timestamp_as_number makes the timestamp to be printed as a
+  /// number, instead of a string
+  inline void set_timestamp_as_number(bool p_value = true) {
+    m_timestamp_as_number = p_value;
+  }
+
   /// \brief set_separator defines the separator to be used in the log
   /// messages
   ///
@@ -189,9 +195,11 @@ private:
 
     if (can_log(p_level)) {
       std::ostringstream _stream;
-      _stream << level2str(p_level) << m_separator << now() << m_separator
-              << std::this_thread::get_id() << m_separator << p_class
-              << m_separator << p_line;
+      _stream << level2str(p_level) << m_separator
+              << (m_timestamp_as_number ? std::to_string(microseconds())
+                                        : now())
+              << m_separator << std::this_thread::get_id() << m_separator
+              << p_class << m_separator << p_line;
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -370,6 +378,8 @@ private:
   char m_separator = {'|'};
 
   bool m_is_writer_set = false;
+
+  bool m_timestamp_as_number{false};
 };
 
 } // namespace logger

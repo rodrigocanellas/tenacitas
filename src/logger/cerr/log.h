@@ -49,34 +49,30 @@ struct log {
 
   ~log() = default;
 
-  ///
   /// \brief set_debug defines the log level to 'debug'
-  ///
   inline static void set_debug() { m_log.set_debug(); }
 
-  ///
   /// \brief set_info defines the log level to 'info'
-  ///
   inline static void set_info() { m_log.set_info(); }
 
-  ///
   /// \brief set_warn defines the log level to 'warn'
-  ///
   inline static void set_warn() { m_log.set_warn(); }
 
-  ///
   /// \brief set_error defines the log level to 'error'
-  ///
   inline static void set_error() { m_log.set_error(); }
 
-  ///
   /// \brief set_separator defines the separator to be used in the log
   /// messages
   ///
   /// \param p_separator the value of the separator
-  ///
   inline static void set_separator(char p_separator) {
     m_log.set_separator(p_separator);
+  }
+
+  /// \brief set_timestamp_as_number makes the timestamp to be printed as a
+  /// number, instead of a string
+  inline static void set_timestamp_as_number(bool p_value = true) {
+    m_log.set_timestamp_as_number(p_value);
   }
 
   /// \brief logs message with \p debug severity
@@ -97,7 +93,6 @@ struct log {
   ///
   /// \details the log message will only be printed if the current log level
   /// is \p level::debug
-  ///
   template <typename... t_params>
   inline void debug(uint32_t p_line, const t_params &... p_params) {
     m_log.debug(m_class, p_line, p_params...);
@@ -121,7 +116,6 @@ struct log {
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::info
-  ///
   template <typename... t_params>
   inline void info(uint32_t p_line, const t_params &... p_params) {
     m_log.info(m_class, p_line, p_params...);
@@ -145,7 +139,6 @@ struct log {
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::warn
-  ///
   template <typename... t_params>
   inline void warn(uint32_t p_line, const t_params &... p_params) {
     m_log.warn(m_class, p_line, p_params...);
@@ -169,7 +162,6 @@ struct log {
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  ///
   template <typename... t_params>
   inline void error(uint32_t p_line, const t_params &... p_params) {
     m_log.error(m_class, p_line, p_params...);
@@ -193,7 +185,6 @@ struct log {
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  ///
   template <typename... t_params>
   inline void fatal(uint32_t p_line, const t_params &... p_params) {
     m_log.fatal(m_class, p_line, p_params...);

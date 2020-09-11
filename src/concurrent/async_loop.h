@@ -103,11 +103,11 @@ struct async_loop_t {
 
   /// \brief worker type
   /// \sa traits_t<t_data>::worker in concurrent/traits.h
-  typedef typename traits_t<bool, t_params...>::worker worker;
+  typedef typename traits_t<void, t_params...>::worker worker;
 
   /// \brief provider type
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
-  typedef typename traits_t<bool, t_params...>::provider provider;
+  typedef typename traits_t<void, t_params...>::provider provider;
 
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
@@ -225,7 +225,7 @@ struct async_loop_t {
 
     std::lock_guard<std::mutex> _lock(m_mutex);
     concurrent_debug(m_log, "marking to stop");
-    stop();
+    m_stopped = true;
   }
 
 private:
