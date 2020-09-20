@@ -56,13 +56,6 @@ template <typename t_result, typename... t_params> struct traits_t {
   ///
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
-
-  /// \brief breaker is the type of function that indicates if the execution
-  /// context in which the \p worker function is being called must stop
-  ///
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -92,13 +85,6 @@ struct traits_t<t_result, t_param> {
   ///
   /// \return \p an optional object needed by the \p worker
   typedef std::function<std::optional<t_param>()> provider;
-
-  /// \brief breaker is the type of function that indicates if the loop should
-  /// stop
-  ///
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -124,13 +110,6 @@ template <typename t_param> struct traits_t<void, t_param> {
   ///
   /// \return \p an optional object needed by the \p worker
   typedef std::function<std::optional<t_param>()> provider;
-
-  /// \brief breaker is the type of function that indicates if the loop should
-  /// stop
-  ///
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -156,10 +135,6 @@ template <typename t_result> struct traits_t<t_result, void> {
   ///
   /// As the \p worker does not need parameter, this provider is not called
   typedef typename std::function<void(void)> provider;
-
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -183,13 +158,6 @@ template <typename... t_params> struct traits_t<void, t_params...> {
   ///
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
-
-  /// \brief breaker is the type of function that indicates if the loop should
-  /// stop
-  ///
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 /// \brief traits_t defines types for the rest of the \p concurrent library
@@ -211,10 +179,6 @@ template <> struct traits_t<void, void> {
   ///
   /// As the \p worker does not need parameter, this provider is not called
   typedef typename std::function<void(void)> provider;
-
-  /// \return \p true, if the execution should stop
-  ///         \p false, if the execution shoud continue
-  //  typedef std::function<bool()> breaker;
 };
 
 } // namespace concurrent

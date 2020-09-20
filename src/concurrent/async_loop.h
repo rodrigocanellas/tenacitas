@@ -101,13 +101,18 @@ namespace concurrent {
 template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t {
 
-  /// \brief worker type
-  /// \sa traits_t<t_data>::worker in concurrent/traits.h
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
   typedef typename traits_t<void, t_params...>::worker worker;
 
-  /// \brief provider type
-  /// \sa traits_t<t_data>::provider in concurrent/traits.h
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<void, t_params...>::provider provider;
+
+  /// \brief used to notify about timeout of \p worker
+  typedef std::function<void()> timeout_callback;
 
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
@@ -125,8 +130,9 @@ struct async_loop_t {
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
-  inline async_loop_t(worker p_worker, t_time p_timeout, provider p_provider)
-      : m_executer(p_worker, p_timeout, p_provider) {}
+  inline async_loop_t(worker p_worker, t_time p_timeout, provider p_provider,
+                      timeout_callback p_timeout_callback)
+      : m_executer(p_worker, p_timeout, p_provider, p_timeout_callback) {}
 
   /// \brief loop constructor
   ///
@@ -141,8 +147,9 @@ struct async_loop_t {
   ///
   /// \param p_timeout defines the amount of time the work function has to
   /// execute
-  inline async_loop_t(worker p_worker, t_time p_timeout)
-      : m_executer(p_worker, p_timeout) {}
+  inline async_loop_t(worker p_worker, t_time p_timeout,
+                      timeout_callback p_timeout_callback)
+      : m_executer(p_worker, p_timeout, p_timeout_callback) {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;

@@ -72,24 +72,30 @@ template <typename t_log, typename t_time, typename t_result,
           typename... t_params>
 struct executer_t {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<t_result, t_params...>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<t_result, t_params...>::provider provider;
 
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout, provider p_provider,
-      timeout_callback p_work_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
         m_provider_executer(p_provider, std::chrono::seconds(1)),
-        m_timeout_callback_executer(p_work_timeout_callback,
-                                    std::chrono ::seconds(1)) {
-    //    m_provider(p_provider) {
+        m_work_timeout_callback_executer(p_work_timeout_callback,
+                                         std::chrono ::seconds(1)) {
     start();
   }
 
@@ -114,7 +120,7 @@ struct executer_t {
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       m_provider_executer.start();
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
     }
   }
 
@@ -122,7 +128,7 @@ struct executer_t {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
       m_provider_executer.stop();
-      m_timeout_callback_executer.stop();
+      m_work_timeout_callback_executer.stop();
       m_stopped = true;
       m_cond_exec.notify_one();
       m_cond_wait.notify_one();
@@ -159,6 +165,7 @@ struct executer_t {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
+      m_work_timeout_callback_executer();
       return {};
     }
     if (m_stopped) {
@@ -200,7 +207,7 @@ struct executer_t {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
       return {};
     }
     if (m_stopped) {
@@ -220,7 +227,7 @@ private:
       provider_executer;
 
   typedef executer_t<t_log, std::chrono::seconds, void, void>
-      timeout_callback_executer;
+      work_timeout_callback_executer;
 
 private:
   void loop() {
@@ -254,7 +261,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   provider_executer m_provider_executer;
-  timeout_callback_executer m_timeout_callback_executer;
+  work_timeout_callback_executer m_work_timeout_callback_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -295,23 +302,30 @@ private:
 template <typename t_log, typename t_time, typename t_result, typename t_param>
 struct executer_t<t_log, t_time, t_result, t_param> {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<t_result, t_param>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<t_result, t_param>::provider provider;
 
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout, provider p_provider,
-      timeout_callback p_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
         m_provider_executer(p_provider, std::chrono::seconds(1)),
-        m_timeout_callback_executer(p_timeout_callback,
-                                    std::chrono::seconds(1)) {
+        m_work_timeout_callback_executer(p_work_timeout_callback,
+                                         std::chrono::seconds(1)) {
     start();
   }
 
@@ -336,7 +350,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       m_provider_executer.start();
-      m_timeout_callback_executer.start();
+      m_work_timeout_callback_executer.start();
     }
   }
 
@@ -344,7 +358,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
       m_provider_executer.stop();
-      m_timeout_callback_executer.stop();
+      m_work_timeout_callback_executer.stop();
       m_stopped = true;
       m_cond_exec.notify_one();
       m_cond_wait.notify_one();
@@ -382,6 +396,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
+      m_work_timeout_callback_executer();
       return {};
     }
     if (m_stopped) {
@@ -422,7 +437,7 @@ struct executer_t<t_log, t_time, t_result, t_param> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
       return {};
     }
     if (m_stopped) {
@@ -442,7 +457,7 @@ private:
       provider_executer;
 
   typedef executer_t<t_log, std::chrono::seconds, void, void>
-      timeout_callback_executer;
+      work_timeout_callback_executer;
 
 private:
   void loop() {
@@ -476,7 +491,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   provider_executer m_provider_executer;
-  timeout_callback_executer m_timeout_callback_executer;
+  work_timeout_callback_executer m_work_timeout_callback_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -515,21 +530,29 @@ private:
 template <typename t_log, typename t_time, typename t_result>
 struct executer_t<t_log, t_time, t_result, void> {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<t_result, void>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
+  typedef typename traits_t<t_result, void>::provider provider;
+
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout,
-      timeout_callback p_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
-        m_timeout_callback_executer(p_timeout_callback,
-                                    std::chrono::seconds(1)) {
-    //    provider _provider = p_provider;
+        m_work_timeout_callback_executer(p_work_timeout_callback,
+                                         std::chrono::seconds(1)) {
     start();
   }
 
@@ -553,14 +576,14 @@ struct executer_t<t_log, t_time, t_result, void> {
       m_stopped = false;
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
-      m_timeout_callback_executer.start();
+      m_work_timeout_callback_executer.start();
     }
   }
 
   void stop() {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
-      m_timeout_callback_executer.stop();
+      m_work_timeout_callback_executer.stop();
       m_stopped = true;
       m_cond_exec.notify_one();
       m_cond_wait.notify_one();
@@ -594,7 +617,7 @@ struct executer_t<t_log, t_time, t_result, void> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
       return {};
     }
     if (m_stopped) {
@@ -611,7 +634,7 @@ struct executer_t<t_log, t_time, t_result, void> {
 
 private:
   typedef executer_t<t_log, std::chrono::seconds, void, void>
-      timeout_callback_executer;
+      work_timeout_callback_executer;
 
 private:
   void loop() {
@@ -645,7 +668,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   bool m_stopped{true};
-  timeout_callback_executer m_timeout_callback_executer;
+  work_timeout_callback_executer m_work_timeout_callback_executer;
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
   std::condition_variable m_cond_exec;
@@ -682,23 +705,30 @@ private:
 template <typename t_log, typename t_time, typename... t_params>
 struct executer_t<t_log, t_time, void, t_params...> {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<void, t_params...>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<void, t_params...>::provider provider;
 
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout, provider p_provider,
-      timeout_callback p_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
         m_provider_executer(p_provider, std::chrono::seconds(1)),
-        m_timeout_callback_executer(p_timeout_callback,
-                                    std::chrono::seconds(1)) {
+        m_work_timeout_callback_executer(p_work_timeout_callback,
+                                         std::chrono::seconds(1)) {
     start();
   }
 
@@ -723,7 +753,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       m_provider_executer.start();
-      m_timeout_callback_executer.start();
+      m_work_timeout_callback_executer.start();
     }
   }
 
@@ -731,7 +761,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
       m_provider_executer.stop();
-      m_timeout_callback_executer.stop();
+      m_work_timeout_callback_executer.stop();
       m_stopped = true;
       m_cond_exec.notify_one();
       m_cond_wait.notify_one();
@@ -768,6 +798,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
+      m_work_timeout_callback_executer();
       return;
     }
     if (m_stopped) {
@@ -805,7 +836,7 @@ struct executer_t<t_log, t_time, void, t_params...> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
       return;
     }
     if (m_stopped) {
@@ -821,7 +852,7 @@ private:
       provider_executer;
 
   typedef executer_t<t_log, std::chrono::seconds, void, void>
-      timeout_callback_executer;
+      work_timeout_callback_executer;
 
 private:
   void loop() {
@@ -855,7 +886,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   provider_executer m_provider_executer;
-  timeout_callback_executer m_timeout_callback_executer;
+  work_timeout_callback_executer m_work_timeout_callback_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -893,23 +924,30 @@ private:
 template <typename t_log, typename t_time, typename t_param>
 struct executer_t<t_log, t_time, void, t_param> {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<void, t_param>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<void, t_param>::provider provider;
 
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout, provider p_provider,
-      timeout_callback p_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
         m_provider_executer(p_provider, std::chrono::seconds(1)),
-        m_timeout_callback_executer(p_timeout_callback,
-                                    std::chrono::seconds(1)) {
+        m_work_timeout_callback_executer(p_work_timeout_callback,
+                                         std::chrono::seconds(1)) {
     start();
   }
 
@@ -934,7 +972,7 @@ struct executer_t<t_log, t_time, void, t_param> {
       m_thread = concurrent::thread([this]() -> void { loop(); });
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
       m_provider_executer.start();
-      m_timeout_callback_executer.start();
+      m_work_timeout_callback_executer.start();
     }
   }
 
@@ -942,7 +980,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
       m_provider_executer.stop();
-      m_timeout_callback_executer.stop();
+      m_work_timeout_callback_executer.stop();
       m_stopped = true;
       m_cond_exec.notify_one();
       m_cond_wait.notify_one();
@@ -979,6 +1017,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
+      m_work_timeout_callback_executer();
       return;
     }
     if (m_stopped) {
@@ -1015,7 +1054,7 @@ struct executer_t<t_log, t_time, void, t_param> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_timeout_callback_executer();
+      m_work_timeout_callback_executer();
       return;
     }
     if (m_stopped) {
@@ -1031,7 +1070,7 @@ private:
       provider_executer;
 
   typedef executer_t<t_log, std::chrono::seconds, void, void>
-      timeout_callback_executer;
+      work_timeout_callback_executer;
 
 private:
   void loop() {
@@ -1065,7 +1104,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   provider_executer m_provider_executer;
-  timeout_callback_executer m_timeout_callback_executer;
+  work_timeout_callback_executer m_work_timeout_callback_executer;
   bool m_stopped{true};
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
@@ -1101,20 +1140,28 @@ private:
 template <typename t_log, typename t_time>
 struct executer_t<t_log, t_time, void, void> {
 
-  /// \brief work function that will be executed, and its time of execution
-  /// controlled
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<void, void>::worker worker;
 
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
+  typedef typename traits_t<void, void>::provider provider;
+
   /// \brief used to notify about timeout of \p worker
-  typedef std::function<void()> timeout_callback;
+  typedef std::function<void()> work_timeout_callback;
 
   /// \brief constructor
   executer_t(
       worker p_worker, t_time p_timeout,
-      timeout_callback p_timeout_callback = []() {})
+      work_timeout_callback p_work_timeout_callback = []() {})
       : m_worker(p_worker), m_timeout(p_timeout),
-        m_timeout_callback(p_timeout_callback) {
-    //    provider _provider = p_provider;
+        m_work_timeout_callback(p_work_timeout_callback) {
     start();
   }
 
@@ -1177,7 +1224,7 @@ struct executer_t<t_log, t_time, void, void> {
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      std::thread _thread([this]() { m_timeout_callback(); });
+      std::thread _thread([this]() { m_work_timeout_callback(); });
       _thread.detach();
       return;
     }
@@ -1221,7 +1268,7 @@ private:
   worker m_worker;
   t_time m_timeout;
   bool m_stopped{true};
-  timeout_callback m_timeout_callback;
+  work_timeout_callback m_work_timeout_callback;
   std::condition_variable m_cond_wait;
   std::mutex m_mutex_wait;
   std::condition_variable m_cond_exec;

@@ -15,7 +15,6 @@
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/thread.h>
-#include <concurrent/traits.h>
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
@@ -44,7 +43,9 @@ struct async_loop_000 {
 
       work _work;
       auto _worker = [&_work]() { return _work(); };
-      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep));
+      auto _timeout = [this]() { concurrent_warn(m_log, "timeout"); };
+      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
+                             _timeout);
 
       _async_loop.start();
 
@@ -106,11 +107,13 @@ struct async_loop_001 {
 
       work _work;
       auto _worker = [&_work]() { return _work(); };
+      auto _timeout_notifier = [this]() -> void {
+        concurrent_debug(m_log, "timeout notified");
+        m_timeout = true;
+      };
+
       async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
-                             [this]() -> void {
-                               concurrent_debug(m_log, "timeout notified");
-                               m_timeout = true;
-                             });
+                             _timeout_notifier);
 
       _async_loop.start();
 
@@ -139,12 +142,182 @@ struct async_loop_001 {
             << m_max << "."
             << "\nWhen the Work counter is more than half " << m_max
             << ", Work will sleep for " << m_sleep + 100
-            << "ms, causing timeout.";
+            << "ms, causing timeout.\n";
     return _stream.str();
   }
 
 private:
-  logger::cerr::log m_log{"async_loop_000"};
+  logger::cerr::log m_log{"async_loop_001"};
+  bool m_timeout{false};
+  static constexpr uint16_t m_sleep{1000};
+  static constexpr uint16_t m_max{50};
+};
+
+struct async_loop_002 {
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   uint16_t, std::string>
+      async_loop;
+
+  struct work {
+    void operator()(uint16_t p_int, std::string &&p_str) {
+      m_i = p_int;
+      m_str = std::move(p_str);
+      std::this_thread::sleep_for(std::chrono::milliseconds(m_sleep / 2));
+      concurrent_debug(m_log, "int = ", p_int, ", str = ", m_str);
+    }
+
+    uint16_t m_i{0};
+    std::string m_str;
+
+    logger::cerr::log m_log{"async_loop_000::work"};
+  };
+
+  struct provider {
+
+    std::optional<std::tuple<uint16_t, std::string>> operator()() {
+      if (m_i > m_max) {
+        return {};
+      }
+      ++m_i;
+      std::string _str("i + 4 = " + std::to_string(m_i + 4));
+      return {{m_i, _str}};
+    }
+    uint16_t m_i{0};
+    std::string m_str;
+  };
+
+  bool operator()() {
+
+    bool _result = true;
+    try {
+
+      work _work;
+
+      async_loop _async_loop(
+          [&_work](int16_t p_int, std::string &&p_str) {
+            _work(p_int, std::move(p_str));
+          },
+          std::chrono::milliseconds(m_sleep), provider(), []() {});
+
+      _async_loop.start();
+
+      while (_work.m_i < m_max) {
+        concurrent_debug(m_log, "int = ", _work.m_i, ", str = ", _work.m_str);
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_sleep));
+      }
+
+      concurrent_debug(m_log, "stopping with counter = ", _work.m_i);
+      _async_loop.stop();
+
+      _result = (_work.m_i == m_max + 1);
+
+    } catch (std::exception &_ex) {
+      concurrent_error(m_log, "ERROR async_loop_000: '", _ex.what(), "'");
+      return false;
+    }
+    return _result;
+  }
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "Work that waits for a uint16_t and a string\n"
+            << "The provider will increment an internal counter until "
+               "it reaches "
+            << m_max << "."
+            << "\nCounter should be " << m_max + 1 << ".";
+    return _stream.str();
+  }
+
+private:
+  logger::cerr::log m_log{"async_loop_002"};
+  static constexpr uint16_t m_sleep{1000};
+  static constexpr uint16_t m_max{5};
+};
+
+struct async_loop_003 {
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
+                                   int16_t, std::string>
+      async_loop;
+
+  struct work {
+    void operator()(int16_t p_int, std::string &&p_str) {
+      counter = p_int;
+      m_str = std::move(p_str);
+      if (counter > (m_max / 2)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_sleep + 100));
+      } else {
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_sleep / 2));
+      }
+      concurrent_debug(m_log, "counter = ", counter, ", str = ", m_str);
+      concurrent_debug(m_log, "counter = ", counter++);
+    }
+
+    logger::cerr::log m_log{"async_loop_001::work"};
+    uint16_t counter = 0;
+    std::string m_str;
+  };
+
+  struct provider {
+    std::optional<std::tuple<int16_t, std::string>> operator()() {
+      ++m_int;
+      std::string _str("i + 3 = " + std::to_string(m_int + 3));
+      return {{m_int, std::move(_str)}};
+    }
+
+    int16_t m_int{0};
+    std::string m_str;
+  };
+
+  bool operator()() {
+
+    bool _result = true;
+    try {
+
+      work _work;
+      auto _worker = [&_work](int16_t p_int, std::string &&p_str) {
+        return _work(p_int, std::move(p_str));
+      };
+      auto _timeout_notifier = [this]() -> void {
+        concurrent_debug(m_log, "timeout notified");
+        m_timeout = true;
+      };
+
+      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
+                             provider(), _timeout_notifier);
+
+      _async_loop.start();
+
+      while ((!m_timeout) && (_work.counter < m_max)) {
+        concurrent_debug(m_log, "counter = ", _work.counter);
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_sleep));
+      }
+      _async_loop.stop();
+
+      if (!m_timeout) {
+        concurrent_error(m_log, "should have stopped by timeout");
+        _result = false;
+      }
+
+    } catch (std::exception &_ex) {
+      concurrent_error(m_log, "ERROR async_loop_001: '", _ex.what(), "'");
+      return false;
+    }
+    return _result;
+  }
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "Work in 'async_loop' will increment an internal counter until "
+               "it reaches "
+            << m_max << "."
+            << "\nWhen the Work counter is more than half " << m_max
+            << ", Work will sleep for " << m_sleep + 100
+            << "ms, causing timeout.\n";
+    return _stream.str();
+  }
+
+private:
+  logger::cerr::log m_log{"async_loop_003"};
   bool m_timeout{false};
   static constexpr uint16_t m_sleep{1000};
   static constexpr uint16_t m_max{50};
@@ -966,6 +1139,8 @@ int main(int argc, char **argv) {
 
   run_test(_tester, async_loop_000);
   run_test(_tester, async_loop_001);
+  run_test(_tester, async_loop_002);
+  run_test(_tester, async_loop_003);
   //  run_test(_tester, async_loop_002);
   //  run_test(_tester, async_loop_003);
   //  run_test(_tester, async_loop_004);
