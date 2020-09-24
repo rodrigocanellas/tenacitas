@@ -103,6 +103,9 @@ struct sleeping_loop_t {
   /// \sa traits_t<t_data>::provider in concurrent/traits.h
   typedef typename traits_t<bool, t_params...>::provider provider;
 
+  /// \brief used to notify about timeout of \p worker
+  typedef std::function<void()> timeout_callback;
+
   typedef t_timeout timeout;
 
   typedef t_interval interval;
@@ -118,10 +121,10 @@ struct sleeping_loop_t {
   /// \param p_provide function that will provide data to the work function,
   /// each time the loop wakes up
   sleeping_loop_t(worker p_worker, t_timeout p_timeout, t_interval p_interval,
-                  provider p_provider)
-      : m_async(
-            p_worker, [this]() -> bool { return this->breaker(); }, p_timeout,
-            p_provider),
+                  provider p_provider, timeout_callback p_timeout_callback)
+      : m_async(p_worker, p_timeout, p_provider, p_timeout_callback,
+                [this]() -> bool { return this->breaker(); }),
+
         m_interval(p_interval) {}
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
@@ -131,9 +134,10 @@ struct sleeping_loop_t {
   /// executions
   ///
   /// \param p_work function that will be executed each time the loop wakes up
-  sleeping_loop_t(worker p_worker, t_timeout p_timeout, t_interval p_interval)
-      : m_async(
-            p_worker, [this]() -> bool { return this->breaker(); }, p_timeout),
+  sleeping_loop_t(worker p_worker, t_timeout p_timeout, t_interval p_interval,
+                  timeout_callback p_timeout_callback)
+      : m_async(p_worker, p_timeout, p_timeout_callback,
+                [this]() -> bool { return this->breaker(); }),
         m_interval(p_interval) {}
 
   /// \brief default constructor not allowed

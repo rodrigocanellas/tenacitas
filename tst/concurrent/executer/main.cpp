@@ -65,7 +65,13 @@ struct executer_000 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -107,7 +113,13 @@ struct executer_001 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -159,7 +171,13 @@ struct executer_002 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     if (!_executer.is_started()) {
       concurrent_error(m_log, "it should be running, but it is not");
@@ -172,7 +190,7 @@ struct executer_002 {
   }
 
   static std::string desc() {
-    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an "
+    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an"
            "executer (with parameters and return) that is started";
   }
 
@@ -205,7 +223,13 @@ struct executer_003 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -254,7 +278,13 @@ struct executer_004 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -318,16 +348,27 @@ struct executer_005 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    bool _is_timeout{false};
 
     double _d = 0.0;
     bool _ok = true;
 
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
+    typename executer::timeout_callback _timeout_callback =
+        [this, &_is_timeout](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+      _is_timeout = true;
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
+
+    std::thread _thread([this, &_executer, &_d, &_ok, &_is_timeout]() -> void {
       std::optional<double> _ret = _executer();
       if (_ret) {
         _d = _ret.value();
         concurrent_debug(m_log, "calculated value = ", _d);
+      } else if (_is_timeout) {
+        concurrent_warn(m_log, "timeout!!");
       } else {
         concurrent_debug(m_log, "error in execution");
         _ok = false;
@@ -343,7 +384,7 @@ struct executer_005 {
   }
 
   static std::string desc() {
-    return "working --> waiting_for_work : timeout (005).\nCalling an executer "
+    return "working --> waiting_for_work : timeout (005).\nCalling an executer"
            "(with parameters and return), but a timeout occurred";
   }
 
@@ -376,7 +417,13 @@ struct executer_006 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -436,7 +483,13 @@ struct executer_007 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -470,7 +523,7 @@ private:
   logger::cerr::log m_log{"executer_007"};
 };
 
-// #############################################################################
+// ###########################################################################
 
 struct executer_008 {
   bool operator()() {
@@ -490,7 +543,13 @@ struct executer_008 {
       return {true};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -525,7 +584,13 @@ struct executer_009 {
       return {true};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -568,7 +633,13 @@ struct executer_010 {
       return {true};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     if (!_executer.is_started()) {
       concurrent_error(m_log, "it should be running, but it is not");
@@ -607,7 +678,13 @@ struct executer_011 {
       return {true};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -649,7 +726,13 @@ struct executer_012 {
       return {3.14};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -706,7 +789,13 @@ struct executer_013 {
       return {3.14};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -757,7 +846,13 @@ struct executer_014 {
       return {3.14};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -810,7 +905,13 @@ struct executer_015 {
       return {3.14};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -844,7 +945,7 @@ private:
   logger::cerr::log m_log{"executer_015"};
 };
 
-// #############################################################################
+// ###########################################################################
 struct executer_016 {
   bool operator()() {
 
@@ -868,7 +969,13 @@ struct executer_016 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -908,7 +1015,13 @@ struct executer_017 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -956,7 +1069,13 @@ struct executer_018 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     if (!_executer.is_started()) {
       concurrent_error(m_log, "it should be running, but it is not");
@@ -1000,7 +1119,13 @@ struct executer_019 {
       return {{-9, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1053,7 +1178,13 @@ struct executer_020 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1096,7 +1227,13 @@ struct executer_021 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1144,7 +1281,13 @@ struct executer_022 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1193,7 +1336,13 @@ struct executer_023 {
       return {{-2, 3.14}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1216,7 +1365,7 @@ private:
   logger::cerr::log m_log{"executer_023"};
 };
 
-// #############################################################################
+// ###########################################################################
 
 struct executer_024 {
   bool operator()() {
@@ -1234,7 +1383,13 @@ struct executer_024 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -1267,7 +1422,13 @@ struct executer_025 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     concurrent_debug(m_log, "stopping");
     _executer.stop();
@@ -1285,7 +1446,7 @@ struct executer_025 {
   static std::string desc() {
     return "stopped --> stopped : stop (001). \nStopping an executer (with no "
            "parameters and no return) that was not called, and it was already "
-           "stopped";
+           " stopped ";
   }
 
 private:
@@ -1308,7 +1469,13 @@ struct executer_026 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     if (!_executer.is_started()) {
       concurrent_error(m_log, "it should be running, but it is not");
@@ -1345,7 +1512,13 @@ struct executer_027 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1385,7 +1558,13 @@ struct executer_028 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1423,7 +1602,13 @@ struct executer_029 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1461,7 +1646,13 @@ struct executer_030 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1501,7 +1692,13 @@ struct executer_031 {
       concurrent_debug(m_log, "waking");
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout));
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout),
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 
@@ -1524,7 +1721,7 @@ private:
   logger::cerr::log m_log{"executer_031"};
 };
 
-// #############################################################################
+// ###########################################################################
 
 struct executer_032 {
   bool operator()() {
@@ -1550,7 +1747,13 @@ struct executer_032 {
       return {{0, 0}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -1618,7 +1821,13 @@ struct executer_033 {
       return {{0, 0}};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(-2, 3.14); });
 
@@ -1640,7 +1849,7 @@ private:
   logger::cerr::log m_log{"executer_033"};
 };
 
-// #############################################################################
+// ###########################################################################
 struct executer_034 {
   bool operator()() {
     typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
@@ -1664,7 +1873,13 @@ struct executer_034 {
       return {-2};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     double _d = 0.0;
     bool _ok = true;
@@ -1703,7 +1918,8 @@ private:
   logger::cerr::log m_log{"executer_034"};
 };
 
-// #############################################################################
+// ###########################################################################
+
 struct executer_035 {
   bool operator()() {
     typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
@@ -1730,7 +1946,13 @@ struct executer_035 {
       return {-2};
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider);
+    typename executer::timeout_callback _timeout_callback =
+        [this](std::thread::id p_th_id) -> void {
+      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    };
+
+    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
+                       _timeout_callback);
 
     std::thread _thread([&_executer]() -> void { _executer(); });
 

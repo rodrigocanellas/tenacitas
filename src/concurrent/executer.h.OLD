@@ -251,10 +251,15 @@ struct executer_t {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
+  ///
+  /// \return a optional return, with the value calculated by the \p worker
+  /// function
   typedef typename traits_t<t_result, t_params...>::worker worker;
 
   /// \brief provider is the type of function that provides data to the work
   /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
   typedef typename traits_t<t_result, t_params...>::provider provider;
 
   /// \brief used to notify about timeout of \p worker

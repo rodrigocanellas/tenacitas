@@ -26,6 +26,14 @@
  * ;fi; done*/
 using namespace tenacitas;
 
+struct worker_timeout_callback {
+  worker_timeout_callback(logger::cerr::log &p_log) : m_log(p_log) {}
+  void operator()() { concurrent_warn(m_log, "TIMEOUT"); }
+
+private:
+  logger::cerr::log &m_log;
+};
+
 struct sleeping_loop_000 {
 
   bool operator()() {
@@ -46,7 +54,8 @@ struct sleeping_loop_000 {
     concurrent_debug(m_log, "timeout = ", _timeout.count(),
                      ", interval = ", _interval.count());
 
-    loop _loop(_worker, _timeout, _interval);
+    loop _loop(_worker, _timeout, _interval,
+               [this]() -> void { concurrent_warn(m_log, "TIMEOUT"); });
 
     return true;
   }
@@ -96,7 +105,8 @@ struct sleeping_loop_001 {
 
     work1 _work;
     loop _loop([&_work]() { return _work(); }, std::chrono::milliseconds(100),
-               std::chrono::milliseconds(m_interval_ms));
+               std::chrono::milliseconds(m_interval_ms),
+               worker_timeout_callback(m_log));
 
     _loop.start();
     std::this_thread::sleep_for(std::chrono::seconds(m_sleep_secs));
@@ -170,7 +180,7 @@ struct sleeping_loop_003 {
     using namespace tenacitas;
     work1 _work;
     loop _loop([&_work]() { return _work(); }, std::chrono::milliseconds(500),
-               std::chrono::milliseconds(1000));
+               std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     _loop.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -231,7 +241,7 @@ struct sleeping_loop_004 {
 
     work1 _work;
     loop _loop([&_work]() { return _work(); }, std::chrono::milliseconds(500),
-               std::chrono::milliseconds(1000));
+               std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     _loop.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -293,10 +303,9 @@ struct sleeping_loop_005 {
   bool operator()() {
 
     work1 _work;
-    loop _loop_1([&_work]() { return _work(); },
-
-                 std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1([&_work]() { return _work(); }, std::chrono::milliseconds(500),
+                 std::chrono::milliseconds(1000),
+                 worker_timeout_callback(m_log));
 
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -311,7 +320,8 @@ struct sleeping_loop_005 {
     _loop_1.stop();
 
     loop _loop_2([&_work]() { return _work(); }, std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000));
+                 std::chrono::milliseconds(1000),
+                 worker_timeout_callback(m_log));
 
     _loop_2.start();
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -362,7 +372,8 @@ struct sleeping_loop_006 {
     using namespace tenacitas;
     work1 _work;
     loop _loop_1([&_work]() { return _work(); }, std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000));
+                 std::chrono::milliseconds(1000),
+                 worker_timeout_callback(m_log));
 
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -377,7 +388,7 @@ struct sleeping_loop_006 {
     _loop_1.stop();
 
     loop _loop_2(_loop_1.get_worker(), _loop_1.get_timeout(),
-                 _loop_1.get_interval());
+                 _loop_1.get_interval(), worker_timeout_callback(m_log));
 
     _loop_2.start();
 
@@ -431,10 +442,9 @@ struct sleeping_loop_007 {
   bool operator()() {
 
     work1 _work;
-    loop _loop_1([&_work]() { return _work(); },
-
-                 std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1([&_work]() { return _work(); }, std::chrono::milliseconds(500),
+                 std::chrono::milliseconds(1000),
+                 worker_timeout_callback(m_log));
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
     _loop_1.stop();
@@ -447,7 +457,7 @@ struct sleeping_loop_007 {
     _loop_1.stop();
 
     loop _loop_2(_loop_1.get_worker(), _loop_1.get_timeout(),
-                 _loop_1.get_interval());
+                 _loop_1.get_interval(), worker_timeout_callback(m_log));
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -500,10 +510,9 @@ struct sleeping_loop_008 {
   bool operator()() {
 
     work1 _work;
-    loop _loop_1([&_work]() { return _work(); },
-
-                 std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1([&_work]() { return _work(); }, std::chrono::milliseconds(500),
+                 std::chrono::milliseconds(1000),
+                 worker_timeout_callback(m_log));
 
     _loop_1.start();
 
@@ -517,7 +526,7 @@ struct sleeping_loop_008 {
     }
 
     loop _loop_2(_loop_1.get_worker(), _loop_1.get_timeout(),
-                 _loop_1.get_interval());
+                 _loop_1.get_interval(), worker_timeout_callback(m_log));
 
     _loop_2.start();
     std::this_thread::sleep_for(std::chrono::seconds(5));
@@ -592,19 +601,19 @@ struct sleeping_loop_009 {
   bool operator()() {
     using namespace tenacitas;
     work1 _work_1;
-    loop _loop_1([&_work_1]() { return _work_1(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1(
+        [&_work_1]() { return _work_1(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work2 _work_2;
-    loop _loop_2([&_work_2]() { return _work_2(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_2(
+        [&_work_2]() { return _work_2(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work3 _work_3;
-    loop _loop_3([&_work_3]() { return _work_3(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_3(
+        [&_work_3]() { return _work_3(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     _loop_1.start();
     _loop_2.start();
@@ -688,19 +697,19 @@ struct sleeping_loop_010 {
   bool operator()() {
     using namespace tenacitas;
     work1 _work_1;
-    loop _loop_1([&_work_1]() { return _work_1(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1(
+        [&_work_1]() { return _work_1(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work2 _work_2;
-    loop _loop_2([&_work_2]() { return _work_2(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_2(
+        [&_work_2]() { return _work_2(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work3 _work_3;
-    loop _loop_3([&_work_3]() { return _work_3(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_3(
+        [&_work_3]() { return _work_3(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     _loop_1.start();
     _loop_2.start();
@@ -787,19 +796,19 @@ struct sleeping_loop_011 {
 
   bool operator()() {
     work1 _work_1;
-    loop _loop_1([&_work_1]() { return _work_1(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_1(
+        [&_work_1]() { return _work_1(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work2 _work_2;
-    loop _loop_2([&_work_2]() { return _work_2(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_2(
+        [&_work_2]() { return _work_2(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     work3 _work_3;
-    loop _loop_3([&_work_3]() { return _work_3(); },
-                 std::chrono::milliseconds(100),
-                 std::chrono::milliseconds(1000));
+    loop _loop_3(
+        [&_work_3]() { return _work_3(); }, std::chrono::milliseconds(100),
+        std::chrono::milliseconds(1000), worker_timeout_callback(m_log));
 
     _loop_1.start();
     _loop_2.start();
