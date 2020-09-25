@@ -12,7 +12,7 @@ struct runner_000 {
     using namespace tenacitas;
 
     typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds,
-                                 int16_t, worker>
+                                 int16_t>
         runner;
 
     runner _runner(std::chrono::seconds(1), worker());
@@ -53,7 +53,7 @@ struct runner_001 {
     using namespace tenacitas;
 
     typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds,
-                                 int16_t, worker, int16_t>
+                                 int16_t, int16_t>
         runner;
 
     runner _runner(std::chrono::seconds(1), worker());
@@ -91,7 +91,7 @@ struct runner_002 {
     using namespace tenacitas;
 
     typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds,
-                                 double, worker, int16_t, double>
+                                 double, int16_t, double>
         runner;
 
     runner _runner(std::chrono::seconds(1), worker());
@@ -128,8 +128,7 @@ struct runner_003 {
   bool operator()() {
     using namespace tenacitas;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds, void,
-                                 worker>
+    typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds, void>
         runner;
 
     runner _runner(std::chrono::seconds(1), worker());
@@ -163,16 +162,16 @@ struct runner_004 {
     using namespace tenacitas;
 
     typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds, void,
-                                 worker, std::string, uint32_t>
+                                 std::string, uint32_t>
         runner;
 
-    auto _provider = []() -> std::tuple<std::string, uint32_t> {
-      return {"hello!!!", 135790};
+    auto _provider = []() -> std::optional<std::tuple<std::string, uint32_t>> {
+      return {{"hello!!!", 135790}};
     };
 
     runner _runner(std::chrono::seconds(1), worker());
 
-    _runner(_provider);
+    std::apply(_runner, _provider().value());
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -204,18 +203,23 @@ struct runner_005 {
     using namespace tenacitas;
 
     typedef concurrent::runner_t<logger::cerr::log, std::chrono::seconds,
-                                 int16_t, worker>
+                                 int16_t>
         runner;
 
-    auto _provider = []() -> std::tuple<> { return {}; };
+    std::function<std::optional<std::tuple<>>()> _provider =
+        []() -> std::optional<std::tuple<>> { return {std::tuple<>()}; };
 
     runner _runner(std::chrono::seconds(1), worker());
 
-    _runner(_provider);
+    auto _maybe = _provider();
+    if (_maybe) {
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+      std::apply(_runner, _maybe.value());
+      std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    return true;
+      return true;
+    }
+    return false;
   }
 
   static std::string desc() {

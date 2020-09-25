@@ -1,12 +1,12 @@
 SUBDIRS = \
     dep \
-    executer \
-    runner
+    runner    \
+    async_loop
+
 #    \
-#    async_loop    \
 #    sleeping_loop
 #    \
-
+#    executer \
 #        \
 #    \
 #    loop  \

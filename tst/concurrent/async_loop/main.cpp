@@ -21,8 +21,7 @@
 using namespace tenacitas;
 
 struct async_loop_000 {
-  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void>
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds>
       async_loop;
 
   struct work {
@@ -43,9 +42,8 @@ struct async_loop_000 {
 
       work _work;
       auto _worker = [&_work]() { return _work(); };
-      auto _timeout = [this]() { concurrent_warn(m_log, "timeout"); };
-      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
-                             _timeout);
+
+      async_loop _async_loop(std::chrono::milliseconds(m_sleep), _worker);
 
       _async_loop.start();
 
@@ -82,8 +80,7 @@ private:
 };
 
 struct async_loop_001 {
-  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void>
+  typedef concurrent::async_loop_t<logger::cerr::log, std::chrono::milliseconds>
       async_loop;
 
   struct work {
@@ -106,13 +103,13 @@ struct async_loop_001 {
     try {
 
       work _work;
-      auto _worker = [&_work]() { return _work(); };
-      auto _timeout_notifier = [this]() -> void {
-        concurrent_debug(m_log, "timeout notified");
+      auto _worker = [&_work]() -> void { _work(); };
+      auto _timeout_notifier = [this](std::thread::id p_id) -> void {
+        concurrent_debug(m_log, "timeout notified for ", p_id);
         m_timeout = true;
       };
 
-      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
+      async_loop _async_loop(std::chrono::milliseconds(m_sleep), _worker,
                              _timeout_notifier);
 
       _async_loop.start();
@@ -172,7 +169,7 @@ struct async_loop_002 {
     logger::cerr::log m_log{"async_loop_000::work"};
   };
 
-  struct provider {
+  struct provide {
 
     std::optional<std::tuple<uint16_t, std::string>> operator()() {
       if (m_i > m_max) {
@@ -193,11 +190,18 @@ struct async_loop_002 {
 
       work _work;
 
-      async_loop _async_loop(
-          [&_work](int16_t p_int, std::string &&p_str) {
-            _work(p_int, std::move(p_str));
-          },
-          std::chrono::milliseconds(m_sleep), provider(), []() {});
+      auto _worker = [&_work](uint16_t p_int, std::string p_str) -> void {
+        _work(p_int, std::move(p_str));
+      };
+
+      provide _provide;
+      auto _provider =
+          [&_provide]() -> std::optional<std::tuple<uint16_t, std::string>> {
+        return _provide();
+      };
+
+      async_loop _async_loop(std::chrono::milliseconds(m_sleep), _worker,
+                             _provider);
 
       _async_loop.start();
 
@@ -257,7 +261,7 @@ struct async_loop_003 {
     std::string m_str;
   };
 
-  struct provider {
+  struct provide {
     std::optional<std::tuple<int16_t, std::string>> operator()() {
       ++m_int;
       std::string _str("i + 3 = " + std::to_string(m_int + 3));
@@ -277,13 +281,20 @@ struct async_loop_003 {
       auto _worker = [&_work](int16_t p_int, std::string &&p_str) {
         return _work(p_int, std::move(p_str));
       };
-      auto _timeout_notifier = [this]() -> void {
-        concurrent_debug(m_log, "timeout notified");
+
+      provide _provide;
+      auto _provider =
+          [&_provide]() -> std::optional<std::tuple<int16_t, std::string>> {
+        return _provide();
+      };
+
+      auto _timeout_notifier = [this](std::thread::id p_id) -> void {
+        concurrent_debug(m_log, "timeout notified for ", p_id);
         m_timeout = true;
       };
 
-      async_loop _async_loop(_worker, std::chrono::milliseconds(m_sleep),
-                             provider(), _timeout_notifier);
+      async_loop _async_loop(std::chrono::milliseconds(m_sleep), _worker,
+                             _timeout_notifier, _provider);
 
       _async_loop.start();
 

@@ -109,7 +109,8 @@ struct async_loop_t {
   /// function
   ///
   /// \return \p an optional tuple of objects needed by the \p worker
-  typedef std::function<std::tuple<t_params...>()> provider;
+  //  typedef std::function<std::optional<std::tuple<t_params...>()>> provider;
+  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   typedef std::function<bool()> breaker;
 
@@ -132,34 +133,71 @@ struct async_loop_t {
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
-  inline async_loop_t(
-      worker p_worker, t_time p_timeout, provider p_provider,
-      timeout_callback p_timeout_callback,
-      breaker p_breaker = []() -> bool { return false; })
+  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
+                      timeout_callback p_timeout_callback, provider p_provider)
       : m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::seconds(1), p_provider),
+        m_breaker_executer(std::chrono::milliseconds(300), p_breaker) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker)
+      : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
+        m_provider_executer(
+            std::chrono::seconds(1),
+            []() -> std::optional<std::tuple<t_params...>> {
+              return {std::tuple<t_params...>()};
+            }),
+        m_breaker_executer(std::chrono::seconds(1), p_breaker) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker,
+                      timeout_callback p_timeout_callback)
+      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(
+            std::chrono::seconds(1),
+            []() -> std::optional<std::tuple<t_params...>> {
+              return {std::tuple<t_params...>()};
+            }),
+        m_breaker_executer(std::chrono::milliseconds(300),
+                           []() -> bool { return false; }) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider)
+      : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
         m_provider_executer(std::chrono::seconds(1), p_provider,
                             [](std::thread::id) -> void {}),
-        m_breaker_executer(std::chrono::seconds(1), p_breaker,
-                           [](std::thread::id) -> void {}) {}
+        m_breaker_executer(std::chrono::milliseconds(300),
+                           []() -> bool { return false; }) {}
 
-  /// \brief loop constructor
-  ///
-  /// This constructor must be used when \p t_params... is \p void, and
-  /// therefore, no Provider function must be defined
-  ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
-  ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
-  ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
-  inline async_loop_t(
-      worker p_worker, t_time p_timeout, timeout_callback p_timeout_callback,
-      breaker p_breaker = []() -> bool { return false; })
-      : m_work_executer(p_worker, p_timeout, p_timeout_callback),
-        m_breaker_executer(p_breaker) {}
+  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
+                      timeout_callback p_timeout_callback)
+      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(
+            std::chrono::seconds(1),
+            []() -> std::optional<std::tuple<t_params...>> {
+              return {std::tuple<t_params...>()};
+            }),
+        m_breaker_executer(std::chrono::milliseconds(300), p_breaker) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
+                      provider p_provider)
+      : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
+        m_provider_executer(std::chrono::seconds(1), p_provider),
+        m_breaker_executer(std::chrono::milliseconds(300), p_breaker) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker,
+                      timeout_callback p_timeout_callback, provider p_provider)
+      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::seconds(1), p_provider),
+        m_breaker_executer(std::chrono::milliseconds(300),
+                           []() -> bool { return false; }) {}
+
+  inline async_loop_t(t_time p_timeout, worker p_worker)
+      : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
+        m_provider_executer(
+            std::chrono::seconds(1),
+            []() -> std::optional<std::tuple<t_params...>> {
+              return {std::tuple<t_params...>()};
+            }),
+        m_breaker_executer(std::chrono::milliseconds(300),
+                           []() -> bool { return false; }) {}
 
   /// \brief default constructor not allowed
   async_loop_t() = delete;
@@ -242,19 +280,19 @@ struct async_loop_t {
       return;
     }
 
-    std::lock_guard<std::mutex> _lock(m_mutex);
     concurrent_debug(m_log, "marking to stop");
+    std::lock_guard<std::mutex> _lock(m_mutex);
     m_stopped = true;
   }
 
 private:
   typedef runner_t<t_log, t_time, void, t_params...> work_executer;
 
-  typedef runner_t<t_log, std::chrono::seconds, std::tuple<t_params...>,
-                   provider>
+  typedef runner_t<t_log, std::chrono::seconds,
+                   std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef runner_t<t_log, std::chrono::seconds, bool, breaker> breaker_executer;
+  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
 
 private:
   /// \brief loop to be executed asyncronously
@@ -278,17 +316,33 @@ private:
         break;
       }
 
-      auto _maybe = m_provider_executer();
-      if (_maybe) {
-        m_work_executer(_maybe.value());
-      }
+      std::optional<std::optional<std::tuple<t_params...>>> _maybe_executed =
+          m_provider_executer();
 
       if (is_stopped()) {
         concurrent_debug(m_log, "stopped");
         break;
       }
 
-      if (m_breaker_executer()) {
+      if (_maybe_executed) {
+        concurrent_debug(m_log, "provider executed");
+        std::optional<std::tuple<t_params...>> _maybe_provided =
+            _maybe_executed.value();
+
+        if (_maybe_provided) {
+          auto _provided = _maybe_provided.value();
+          concurrent_debug(m_log, "provider provided: ", _provided);
+
+          std::apply(m_work_executer, _provided);
+          if (is_stopped()) {
+            concurrent_debug(m_log, "stopped");
+            break;
+          }
+        }
+      }
+
+      std::optional<bool> _maybe_break = m_breaker_executer();
+      if ((_maybe_break) && (_maybe_break.value())) {
         concurrent_debug(m_log, "stopped by breaker");
         m_stopped = true;
         break;
@@ -300,6 +354,8 @@ private:
   }
 
 private:
+  t_log m_log{"concurrent::async_loop"};
+
   work_executer m_work_executer;
 
   provider_executer m_provider_executer;
@@ -308,13 +364,16 @@ private:
 
   bool m_stopped{true};
 
-  t_log m_log{"concurrent::async_loop"};
-
   /// \brief m_thread is the thread where the \p loop will run
   concurrent::thread m_thread;
 
   /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
   std::mutex m_mutex;
+
+  //  provider m_default_provider = []() ->
+  //  std::optional<std::tuple<t_params...>> {
+  //    return {std::tuple<t_params...>()};
+  //  };
 };
 
 } // namespace concurrent
