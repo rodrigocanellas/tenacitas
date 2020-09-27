@@ -1,4 +1,4 @@
-/// \example Basic use of tenacitas::concurrent::loop_t
+/// \example
 
 #include <chrono>
 #include <cstdint>
@@ -7,7 +7,6 @@
 
 #include <concurrent/fixed_size_queue.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/loop.h>
 #include <concurrent/result.h>
 #include <logger/cerr/log.h>
 #include <status/result.h>

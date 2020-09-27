@@ -305,20 +305,6 @@ private:
   }
 
   std::string now() {
-    //    using namespace std;
-    //    using namespace chrono;
-
-    //    const auto _value = microseconds();
-
-    //    const time_t _secs = _value / 100;
-    //    const auto _milles = _value % _secs;
-
-    //    std::stringstream _stream;
-
-    //    _stream << put_time(std::localtime(&_secs), "%y.%m.%d.%H.%M.%S.")
-    //            << _milles;
-
-    //    return _stream.str();
 
     using namespace std;
     using namespace chrono;

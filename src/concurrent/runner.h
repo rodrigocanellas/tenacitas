@@ -11,12 +11,14 @@
 #include <mutex>
 #include <optional>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <thread>
 #include <tuple>
 #include <type_traits>
 #include <utility>
 
+#include <concurrent/internal/helper.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
@@ -28,16 +30,22 @@ namespace concurrent {
 
 template <typename t_log, typename t_time, typename t_result,
           typename... t_params>
+struct runner_t;
+
+template <typename t_log, typename t_time, typename t_result,
+          typename... t_params>
 struct runner_t {
 
   typedef std::function<void(std::thread::id)> timeout_callback;
 
   typedef std::function<t_result(t_params...)> worker;
 
+  //    runner_t() = default;
+
   runner_t(
       t_time p_timeout, worker p_worker,
       timeout_callback p_timeout_callback = [](std::thread::id) -> void {})
-      : m_timeout(p_timeout), m_worker(p_worker),
+      : m_timeout(p_timeout), m_work_wrapper(p_worker),
         m_timeout_callback(p_timeout_callback) {
     start();
   }
@@ -45,6 +53,7 @@ struct runner_t {
   ~runner_t() { stop(); }
 
   void start() {
+
     if (m_stopped) {
       concurrent_debug(m_log, "starting");
       m_stopped = false;
@@ -65,6 +74,10 @@ struct runner_t {
 
   inline t_time get_timeout() const { return m_timeout; }
 
+  //  inline worker get_worker() const { return m_worker; }
+
+  inline timeout_callback get_timeout_callback() { return m_timeout_callback; }
+
   auto operator()(t_params... p_params) {
 
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
@@ -72,11 +85,13 @@ struct runner_t {
 
     if (m_stopped) {
       concurrent_warn(m_log, "executer is stopped; call 'start()' first");
-      return not_worked::get_result();
+      return m_work_wrapper.get_result_not_ok();
     }
 
-    m_params = std::make_tuple(p_params...);
-    concurrent_debug(m_log, "parameters provided = ", m_params);
+    m_work_wrapper.set_params(p_params...);
+
+    //    m_params = std::make_tuple(p_params...);
+    //    concurrent_debug(m_log, "parameters provided = ", m_params);
 
     m_is_timeout = false;
 
@@ -86,103 +101,23 @@ struct runner_t {
     concurrent_debug(m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(m_mutex_wait);
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
+      concurrent_warn(m_log, "timeout: ", m_thread.get_id(),
+                      " did not finish in time");
       timeout_callback_thread();
       m_is_timeout = true;
-      return not_worked::get_result();
+      return m_work_wrapper.get_result_not_ok();
     }
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
-      return not_worked::get_result();
+      return m_work_wrapper.get_result_not_ok();
     }
 
     concurrent_debug(m_log, "worker finished on time");
-    return m_work_wrapper.get_result();
+    return m_work_wrapper.get_result_ok();
   }
 
-  //  auto operator()(std::function<std::tuple<t_params...>()> p_provider) {
-
-  //    std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
-  //    concurrent_debug(m_log, "operator()()");
-
-  //    typedef std::function<std::tuple<t_params...>()> provider;
-
-  //    typedef runner_t<t_log, std::chrono::seconds, std::tuple<t_params...>,
-  //                     provider>
-  //        provider_runner;
-
-  //    provider_runner _provider_runner(std::chrono::seconds(1), p_provider);
-
-  //    if (m_stopped) {
-  //      concurrent_warn(m_log, "executer is stopped; call 'start()' first");
-  //      return not_worked::get_result();
-  //    }
-
-  //    auto _maybe = _provider_runner();
-  //    if (!_maybe) {
-  //      return not_worked::get_result();
-  //    }
-  //    m_params = _maybe.value();
-  //    concurrent_debug(m_log, "parameters provided = ", m_params);
-
-  //    m_is_timeout = false;
-
-  //    concurrent_debug(m_log, "notifying there is work to be done ");
-  //    m_cond_exec.notify_one();
-
-  //    concurrent_debug(m_log, "waiting for work to be done");
-  //    std::unique_lock<std::mutex> _lock(m_mutex_wait);
-  //    if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-  //      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-  //      timeout_callback_thread();
-  //      m_is_timeout = true;
-  //      return not_worked::get_result();
-  //    }
-  //    if (m_stopped) {
-  //      concurrent_debug(m_log, "stopped");
-  //      return not_worked::get_result();
-  //    }
-
-  //    concurrent_debug(m_log, "worker finished on time");
-  //    return m_work_wrapper.get_result();
-  //  }
-
 private:
-  struct work_with_return {
-
-    inline void operator()(worker p_worker, std::tuple<t_params...> p_params) {
-      m_worker_result = std::apply(p_worker, std::move(p_params));
-    }
-
-    inline std::optional<t_result> get_result() { return m_worker_result; }
-
-    std::optional<t_result> m_worker_result;
-  };
-
-  struct work_with_no_return {
-
-    inline void operator()(worker p_worker, std::tuple<t_params...> p_params) {
-      std::apply(p_worker, std::move(p_params));
-    }
-
-    void get_result() {}
-  };
-
-  typedef typename std::conditional<std::is_void<t_result>::value,
-                                    work_with_no_return, work_with_return>::type
-      work_wrapper;
-
-  struct not_worked_void {
-    static void get_result() {}
-  };
-
-  struct not_worked_result {
-    static std::optional<t_result> get_result() { return {}; }
-  };
-
-  typedef
-      typename std::conditional<std::is_void<t_result>::value, not_worked_void,
-                                not_worked_result>::type not_worked;
+  typedef work_wrapper_t<t_result, t_params...> work_wrapper;
 
 private:
   void timeout_callback_thread() {
@@ -208,7 +143,7 @@ private:
       concurrent_debug(m_log, "work to do!");
       //      m_worker_result = std::apply(m_worker, std::move(m_params));
 
-      m_work_wrapper(m_worker, m_params);
+      m_work_wrapper();
 
       if (!m_is_timeout) {
 
@@ -229,23 +164,19 @@ private:
 
 private:
   t_time m_timeout;
-  worker m_worker;
-  t_log m_log{"runner_t"};
-  bool m_stopped{true};
+  work_wrapper m_work_wrapper;
   timeout_callback m_timeout_callback;
 
-  work_wrapper m_work_wrapper;
+  t_log m_log{"concurrent::runner"};
+  bool m_stopped{true};
+  bool m_is_timeout{false};
 
   std::mutex m_mutex_operation;
-  std::tuple<t_params...> m_params;
   std::condition_variable m_cond_exec;
   std::mutex m_mutex_wait;
   std::condition_variable m_cond_wait;
-  //  std::optional<t_result> m_worker_result;
-  //  worker_result m_worker_result;
   concurrent::thread m_thread;
   std::mutex m_mutex_exec;
-  bool m_is_timeout{false};
 };
 
 } // namespace concurrent

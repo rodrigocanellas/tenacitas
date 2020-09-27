@@ -294,7 +294,7 @@ struct async_loop_003 {
       };
 
       async_loop _async_loop(std::chrono::milliseconds(m_sleep), _worker,
-                             _timeout_notifier, _provider);
+                             _provider, _timeout_notifier);
 
       _async_loop.start();
 

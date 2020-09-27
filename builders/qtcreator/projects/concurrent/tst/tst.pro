@@ -1,10 +1,11 @@
 SUBDIRS = \
     dep \
-    runner    \
-    async_loop
-
+    runner
 #    \
+#    async_loop \
+#    queue    \
 #    sleeping_loop
+
 #    \
 #    executer \
 #        \
@@ -12,7 +13,7 @@ SUBDIRS = \
 #    loop  \
 
 
-#    queue    \
+
 #    producer_consumer
 #    \
 #    \

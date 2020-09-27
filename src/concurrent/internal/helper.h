@@ -1,152 +1,144 @@
 #ifndef TENACITAS_CONCURRENT_HELPER_H
 #define TENACITAS_CONCURRENT_HELPER_H
 
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas rodrigo.canellas@gmail.com
+
 #include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <optional>
 #include <thread>
-
-#include <concurrent/thread.h>
+#include <tuple>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-typedef std::function<void(std::thread::id)> timeout_callback;
+template <typename t_result, typename... t_params> struct work_wrapper_t {
 
-void timeout_callback_thread(timeout_callback p_timeout_callback,
-                             std::thread::id &p_id) {
-  std::thread _timeout_thread(
-      [p_timeout_callback, p_id]() -> void { p_timeout_callback(p_id); });
-  _timeout_thread.detach();
-}
+  typedef std::function<t_result(t_params...)> worker;
 
-template <typename t_log, typename t_worker, typename t_worker_result,
-          typename t_worker_timeout, typename t_provider_executer,
-          typename t_worker_params>
-struct helper_t {
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
-  ~helper_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
+  inline void operator()() {
+    m_result = std::apply(m_worker, std::move(m_params));
   }
 
-  void start() {
-    if (m_stopped) {
-      concurrent_debug(m_log, "starting");
-      m_stopped = false;
-      m_thread = concurrent::thread([this]() -> void { loop(); });
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
-      m_provider_executer.start();
-    }
+  inline void set_params(t_params... p_params) {
+    m_params = std::make_tuple(p_params...);
   }
 
-  void stop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "stopping");
-      m_provider_executer.stop();
-      m_stopped = true;
-      m_cond_exec.notify_one();
-      m_cond_wait.notify_one();
-      m_thread.join();
-    }
+  inline std::optional<t_result> get_result_ok() { return m_result; }
+
+  inline std::optional<t_result> get_result_not_ok() { return {}; }
+
+  std::optional<t_result> m_result;
+
+  std::tuple<t_params...> m_params;
+
+  worker m_worker;
+};
+
+template <typename... t_params> struct work_wrapper_t<void, t_params...> {
+
+  typedef std::function<void(t_params...)> worker;
+
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
+
+  inline void operator()() { std::apply(m_worker, std::move(m_params)); }
+
+  inline void set_params(t_params... p_params) {
+    m_params = std::make_tuple(p_params...);
   }
 
-  std::optional<t_worker_result> operator()() {
-    std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
-    concurrent_debug(m_log, "operator()()");
+  inline void get_result_ok() {}
 
-    if (m_stopped) {
-      concurrent_warn(m_log, "executer is stopped; call 'start()' first");
-      return {};
-    }
+  inline void get_result_not_ok() {}
 
-    concurrent_debug(m_log, "calling provider");
-    std::optional<t_worker_params> _provider_result = m_provider_executer();
-    if (!_provider_result) {
-      concurrent_info(m_log, "provider did not return data");
-      return {};
-    }
+  std::tuple<t_params...> m_params;
 
-    m_params = _provider_result.value();
-    concurrent_debug(m_log, "provider returned = ", m_params);
+  worker m_worker;
+};
 
-    m_is_timeout = false;
+template <typename t_result, typename t_param>
+struct work_wrapper_t<t_result, t_param> {
 
-    concurrent_debug(m_log, "notifying there is work to be done ");
-    m_cond_exec.notify_one();
+  typedef std::function<t_result(t_param)> worker;
 
-    concurrent_debug(m_log, "waiting for work to be done");
-    std::unique_lock<std::mutex> _lock(m_mutex_wait);
-    if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-      concurrent_warn(m_log, "TIMEOUT: worker did not finish in time");
-      m_is_timeout = true;
-      timeout_callback_thread(m_timeout_callback, m_thread.get_id());
-      return {};
-    }
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
-    if (m_stopped) {
-      concurrent_debug(m_log, "stopped");
-      return {};
-    }
+  inline void operator()() { m_result = m_worker(std::move(m_param)); }
 
-    if (m_worker_result) {
-      t_worker_result _result(m_worker_result.value());
-      concurrent_debug(m_log, "worker finished on time: result = ", _result);
-      return {_result};
-    }
+  inline void set_params(t_param p_param) { m_param = std::move(p_param); }
 
-    return {};
-  }
+  inline std::optional<t_result> get_result_ok() { return m_result; }
 
-private:
-  void loop() {
-    while (true) {
-      concurrent_debug(m_log, "waiting for work");
+  inline std::optional<t_result> get_result_not_ok() { return {}; }
 
-      std::unique_lock<std::mutex> _lock(m_mutex_exec);
-      m_cond_exec.wait(_lock);
+  std::optional<t_result> m_result;
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
-        m_cond_wait.notify_one();
-        break;
-      }
+  t_param m_param;
 
-      concurrent_debug(m_log, "work to do!");
-      m_worker_result = std::apply(m_worker, std::move(m_params));
+  worker m_worker;
+};
 
-      if (!m_is_timeout) {
+template <typename t_param> struct work_wrapper_t<void, t_param> {
 
-        if (m_stopped) {
-          concurrent_debug(m_log, "stopped while working");
-          m_cond_wait.notify_one();
-          break;
-        }
+  typedef std::function<void(t_param)> worker;
 
-        concurrent_debug(m_log, "notifying that work is done");
-        m_cond_wait.notify_one();
-      }
-    }
-  }
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
-private:
-  t_worker m_worker;
-  t_worker_timeout m_timeout;
-  t_provider_executer m_provider_executer;
-  timeout_callback m_timeout_callback;
-  bool m_stopped{true};
-  std::condition_variable m_cond_wait;
-  std::mutex m_mutex_wait;
-  std::condition_variable m_cond_exec;
-  std::mutex m_mutex_exec;
-  concurrent::thread m_thread;
-  std::mutex m_mutex_operation;
-  std::optional<t_worker_result> m_worker_result;
-  t_worker_params m_params;
-  bool m_is_timeout{false};
-  t_log m_log{"concurrent::executer<t_result, t_params...>"};
+  inline void operator()() { m_worker(std::move(m_param)); }
+
+  inline void set_params(t_param p_param) { m_param = std::move(p_param); }
+
+  inline void get_result_ok() {}
+
+  inline void get_result_not_ok() {}
+
+  t_param m_param;
+
+  worker m_worker;
+};
+
+template <typename t_result> struct work_wrapper_t<t_result> {
+
+  typedef std::function<t_result()> worker;
+
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
+
+  inline void operator()() { m_result = m_worker(); }
+
+  inline void set_params() {}
+
+  inline std::optional<t_result> get_result_ok() { return m_result; }
+
+  inline std::optional<t_result> get_result_not_ok() { return {}; }
+
+  std::optional<t_result> m_result;
+
+  worker m_worker;
+};
+
+template <> struct work_wrapper_t<void> {
+
+  typedef std::function<void()> worker;
+
+  inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
+
+  inline void operator()() { m_worker(); }
+
+  inline void set_params() {}
+
+  inline void get_result_ok() {}
+
+  inline void get_result_not_ok() {}
+
+  worker m_worker;
 };
 
 } // namespace concurrent
