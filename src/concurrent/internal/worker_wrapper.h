@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_HELPER_H
-#define TENACITAS_CONCURRENT_HELPER_H
+#ifndef TENACITAS_CONCURRENT_WORK_WRAPPER_H
+#define TENACITAS_CONCURRENT_WORK_WRAPPER_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -32,6 +32,8 @@ template <typename t_result, typename... t_params> struct work_wrapper_t {
     m_params = std::make_tuple(p_params...);
   }
 
+  inline operator bool() const noexcept { return (m_worker ? true : false); }
+
   inline std::optional<t_result> get_result_ok() { return m_result; }
 
   inline std::optional<t_result> get_result_not_ok() { return {}; }
@@ -55,6 +57,8 @@ template <typename... t_params> struct work_wrapper_t<void, t_params...> {
     m_params = std::make_tuple(p_params...);
   }
 
+  inline operator bool() const noexcept { return (m_worker ? true : false); }
+
   inline void get_result_ok() {}
 
   inline void get_result_not_ok() {}
@@ -75,6 +79,8 @@ struct work_wrapper_t<t_result, t_param> {
 
   inline void set_params(t_param p_param) { m_param = std::move(p_param); }
 
+  inline operator bool() const { return (m_worker ? true : false); }
+
   inline std::optional<t_result> get_result_ok() { return m_result; }
 
   inline std::optional<t_result> get_result_not_ok() { return {}; }
@@ -91,6 +97,8 @@ template <typename t_param> struct work_wrapper_t<void, t_param> {
   typedef std::function<void(t_param)> worker;
 
   inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
+
+  inline operator bool() const noexcept { return (m_worker ? true : false); }
 
   inline void operator()() { m_worker(std::move(m_param)); }
 
@@ -111,6 +119,8 @@ template <typename t_result> struct work_wrapper_t<t_result> {
 
   inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
+  inline operator bool() const noexcept { return (m_worker ? true : false); }
+
   inline void operator()() { m_result = m_worker(); }
 
   inline void set_params() {}
@@ -129,6 +139,8 @@ template <> struct work_wrapper_t<void> {
   typedef std::function<void()> worker;
 
   inline work_wrapper_t(worker p_worker) : m_worker(p_worker) {}
+
+  inline operator bool() const noexcept { return (m_worker ? true : false); }
 
   inline void operator()() { m_worker(); }
 

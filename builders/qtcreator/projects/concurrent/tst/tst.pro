@@ -1,8 +1,8 @@
 SUBDIRS = \
     dep \
-    runner
+    runner   \
+    async_loop
 #    \
-#    async_loop \
 #    queue    \
 #    sleeping_loop
 

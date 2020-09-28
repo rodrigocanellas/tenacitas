@@ -18,8 +18,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <concurrent/internal/helper.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
 #include <concurrent/traits.h>
 
@@ -30,17 +30,13 @@ namespace concurrent {
 
 template <typename t_log, typename t_time, typename t_result,
           typename... t_params>
-struct runner_t;
-
-template <typename t_log, typename t_time, typename t_result,
-          typename... t_params>
 struct runner_t {
 
   typedef std::function<void(std::thread::id)> timeout_callback;
 
   typedef std::function<t_result(t_params...)> worker;
 
-  //    runner_t() = default;
+  runner_t() = default;
 
   runner_t(
       t_time p_timeout, worker p_worker,
@@ -53,6 +49,9 @@ struct runner_t {
   ~runner_t() { stop(); }
 
   void start() {
+    if (!m_work_wrapper) {
+      throw std::runtime_error("work function not defined");
+    }
 
     if (m_stopped) {
       concurrent_debug(m_log, "starting");
