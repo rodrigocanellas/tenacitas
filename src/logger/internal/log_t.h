@@ -358,12 +358,12 @@ private:
   std::mutex m_mutex;
 
   /// \brief m_level is the current log level
-  level m_level = {level::info};
+  level m_level{level::info};
 
   /// \brief m_separator is used to separate parts of the log message
-  char m_separator = {'|'};
+  char m_separator{'|'};
 
-  bool m_is_writer_set = false;
+  bool m_is_writer_set{false};
 
   bool m_timestamp_as_number{false};
 };

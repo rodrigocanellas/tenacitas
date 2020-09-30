@@ -38,7 +38,13 @@ struct async_loop_000 {
       concurrent_debug(m_log, "counter = ", _counter);
     };
 
-    async_loop _async_loop(chrono::milliseconds(100), _worker, _breaker);
+    std::function<void(thread::id)> _timeout_callback =
+        [this](thread::id p_id) -> void {
+      concurrent_warn(m_log, "TIMEOUT for ", p_id);
+    };
+
+    async_loop _async_loop(chrono::milliseconds(100), _worker, _breaker,
+                           _timeout_callback);
 
     _async_loop.start();
 
@@ -175,7 +181,44 @@ private:
 };
 
 struct async_loop_003 {
-  bool operator()() { return true; }
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds>
+        async_loop;
+
+    uint16_t _counter{0};
+    bool _is_timeout{false};
+
+    std::function<void()> _worker = [this, &_counter, &_is_timeout]() -> void {
+      if (_counter == static_cast<uint16_t>(max / 2)) {
+        concurrent_debug(m_log, "worker going to sleep");
+        this_thread::sleep_for(chrono::milliseconds(2 * timeout));
+        concurrent_debug(m_log, "worker waking up");
+        _is_timeout = true;
+        return;
+      }
+      ++_counter;
+      concurrent_debug(m_log, "counter = ", _counter);
+    };
+
+    std::function<void(thread::id)> _timeout_callback =
+        [this](thread::id p_id) -> void {
+      concurrent_warn(m_log, "TIMEOUT for ", p_id);
+    };
+
+    async_loop _async_loop(chrono::milliseconds(timeout), _worker,
+                           _timeout_callback);
+
+    _async_loop.start();
+
+    this_thread::sleep_for(chrono::milliseconds(timeout * 4));
+
+    concurrent_debug(m_log, "timeout? ", (_is_timeout ? "yes" : "no"));
+
+    return _is_timeout;
+  }
 
   static std::string desc() {
     std::stringstream _stream;
@@ -185,6 +228,8 @@ struct async_loop_003 {
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_003"};
+  static constexpr uint16_t max{50};
+  static constexpr uint16_t timeout{200};
 };
 
 struct async_loop_004 {
@@ -341,4 +386,5 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_000);
   run_test(_tester, async_loop_001);
   run_test(_tester, async_loop_002);
+  run_test(_tester, async_loop_003);
 }
