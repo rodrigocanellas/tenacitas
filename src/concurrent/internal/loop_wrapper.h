@@ -20,33 +20,40 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-struct dummy_provider {
-  inline std::optional<std::tuple<>> operator()() { return {}; }
+struct loop_base {
+
+  inline void stop() { m_stopped = true; }
+
+  virtual ~loop_base() { stop(); }
+
+protected:
+  bool m_stopped{true};
 };
 
 // ################ A ########################################################
-template <typename t_log, typename... t_params> struct loop_with_breaker_t {
+template <typename t_log, typename... t_params>
+struct loop_with_breaker_t : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
+  void operator()(t_work_executer &p_work_executer,
                   t_provider_executer &p_provider_executer,
                   t_breaker_executer &p_breaker_executer) {
-    if (!p_stopped) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
     p_provider_executer.start();
     p_breaker_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -54,7 +61,7 @@ template <typename t_log, typename... t_params> struct loop_with_breaker_t {
       std::optional<std::optional<std::tuple<t_params...>>> _maybe_executed =
           p_provider_executer();
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -69,7 +76,7 @@ template <typename t_log, typename... t_params> struct loop_with_breaker_t {
           concurrent_debug(m_log, "provider provided: ", _provided);
 
           std::apply(p_work_executer, _provided);
-          if (p_stopped) {
+          if (m_stopped) {
             concurrent_debug(m_log, "stopped!!");
             break;
           }
@@ -80,7 +87,7 @@ template <typename t_log, typename... t_params> struct loop_with_breaker_t {
       std::optional<bool> _maybe_break = p_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
         concurrent_debug(m_log, "stopped by breaker");
-        p_stopped = true;
+        m_stopped = true;
         break;
       }
     }
@@ -90,30 +97,31 @@ template <typename t_log, typename... t_params> struct loop_with_breaker_t {
   }
 
 private:
-  t_log m_log{"concurrent::loop_with_breaker"};
+  t_log m_log{"loop_with_breaker"};
 };
 
-template <typename t_log, typename... t_params> struct loop_with_no_breaker_t {
+template <typename t_log, typename... t_params>
+struct loop_with_no_breaker_t : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
+  void operator()(t_work_executer &p_work_executer,
                   t_provider_executer &p_provider_executer,
                   t_breaker_executer &) {
-    if (!p_stopped) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
     p_provider_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -121,7 +129,7 @@ template <typename t_log, typename... t_params> struct loop_with_no_breaker_t {
       std::optional<std::optional<std::tuple<t_params...>>> _maybe_executed =
           p_provider_executer();
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -136,7 +144,7 @@ template <typename t_log, typename... t_params> struct loop_with_no_breaker_t {
           concurrent_debug(m_log, "provider provided: ", _provided);
 
           std::apply(p_work_executer, _provided);
-          if (p_stopped) {
+          if (m_stopped) {
             concurrent_debug(m_log, "stopped!!");
             break;
           }
@@ -153,28 +161,28 @@ private:
 
 // ################ B ########################################################
 template <typename t_log, typename t_param>
-struct loop_with_breaker_t<t_log, t_param> {
+struct loop_with_breaker_t<t_log, t_param> : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
+  void operator()(t_work_executer &p_work_executer,
                   t_provider_executer &p_provider_executer,
                   t_breaker_executer &p_breaker_executer) {
-    if (!p_stopped) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
     p_provider_executer.start();
     p_breaker_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -182,7 +190,7 @@ struct loop_with_breaker_t<t_log, t_param> {
       std::optional<std::optional<t_param>> _maybe_executed =
           p_provider_executer();
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -196,7 +204,7 @@ struct loop_with_breaker_t<t_log, t_param> {
           concurrent_debug(m_log, "provider provided: ", _provided);
 
           p_work_executer(_provided);
-          if (p_stopped) {
+          if (m_stopped) {
             concurrent_debug(m_log, "stopped!!");
             break;
           }
@@ -207,7 +215,7 @@ struct loop_with_breaker_t<t_log, t_param> {
       std::optional<bool> _maybe_break = p_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
         concurrent_debug(m_log, "stopped by breaker");
-        p_stopped = true;
+        m_stopped = true;
         break;
       }
     }
@@ -221,27 +229,27 @@ private:
 };
 
 template <typename t_log, typename t_param>
-struct loop_with_no_breaker_t<t_log, t_param> {
+struct loop_with_no_breaker_t<t_log, t_param> : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
+  void operator()(t_work_executer &p_work_executer,
                   t_provider_executer &p_provider_executer,
                   t_breaker_executer &) {
-    if (!p_stopped) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
     p_provider_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -249,7 +257,7 @@ struct loop_with_no_breaker_t<t_log, t_param> {
       std::optional<std::optional<t_param>> _maybe_executed =
           p_provider_executer();
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
@@ -263,7 +271,7 @@ struct loop_with_no_breaker_t<t_log, t_param> {
           concurrent_debug(m_log, "provider provided: ", _provided);
 
           p_work_executer(_provided);
-          if (p_stopped) {
+          if (m_stopped) {
             concurrent_debug(m_log, "stopped!!");
             break;
           }
@@ -279,34 +287,32 @@ private:
 };
 
 // ################ C ########################################################
-template <typename t_log> struct loop_with_breaker_t<t_log> {
+template <typename t_log> struct loop_with_breaker_t<t_log> : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
-                  t_provider_executer &,
+  void operator()(t_work_executer &p_work_executer, t_provider_executer &,
                   t_breaker_executer &p_breaker_executer) {
-    if (!p_stopped) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
-
     p_breaker_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
 
       p_work_executer();
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, " ---- stopped!!");
         break;
       }
@@ -315,7 +321,7 @@ template <typename t_log> struct loop_with_breaker_t<t_log> {
       std::optional<bool> _maybe_break = p_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
         concurrent_debug(m_log, "stopped by breaker");
-        p_stopped = true;
+        m_stopped = true;
         break;
       }
     }
@@ -327,31 +333,32 @@ private:
   t_log m_log{"concurrent::loop_with_breaker"};
 };
 
-template <typename t_log> struct loop_with_no_breaker_t<t_log> {
+template <typename t_log>
+struct loop_with_no_breaker_t<t_log> : public loop_base {
 
   template <typename t_work_executer, typename t_provider_executer,
             typename t_breaker_executer>
-  void operator()(bool &p_stopped, t_work_executer &p_work_executer,
-                  t_provider_executer &, t_breaker_executer &) {
-    if (!p_stopped) {
+  void operator()(t_work_executer &p_work_executer, t_provider_executer &,
+                  t_breaker_executer &) {
+    if (!m_stopped) {
       concurrent_debug(m_log, "not starting beacause it is running");
       return;
     }
 
     concurrent_info(m_log, "starting");
 
-    p_stopped = false;
+    m_stopped = false;
     p_work_executer.start();
 
     while (true) {
 
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped");
         break;
       }
 
       p_work_executer();
-      if (p_stopped) {
+      if (m_stopped) {
         concurrent_debug(m_log, "stopped!!");
         break;
       }
@@ -378,9 +385,16 @@ struct loop_wrapper_t {
   /// \return \p an optional tuple of objects needed by the \p worker
   //  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
+  struct dummy_provider {
+
+    inline std::optional<std::tuple<>> operator()() { return {}; }
+  };
+
+  static constexpr bool tuple_not_empty{
+      std::tuple_size<std::tuple<t_params...>>::value != 0};
+
   typedef typename std::conditional<
-      std::tuple_size<std::tuple<t_params...>>::value != 0,
-      std::function<std::optional<std::tuple<t_params...>>()>,
+      tuple_not_empty, std::function<std::optional<std::tuple<t_params...>>()>,
       dummy_provider>::type provider;
 
   typedef std::function<bool()> breaker;
@@ -412,7 +426,7 @@ struct loop_wrapper_t {
       : m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
                             p_provider),
-        m_has_breaker(true),
+        m_has_breaker(false),
         m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
                            []() -> bool { return false; }) {}
 
@@ -420,7 +434,7 @@ struct loop_wrapper_t {
       : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
         m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
                             p_provider),
-        m_has_breaker(true),
+        m_has_breaker(false),
         m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
                            []() -> bool { return false; }) {}
   // ****
@@ -444,14 +458,14 @@ struct loop_wrapper_t {
                         timeout_callback p_timeout_callback)
       : m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(1), dummy_provider()),
-        m_has_breaker(true),
+        m_has_breaker(false),
         m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
                            []() -> bool { return false; }) {}
 
   inline loop_wrapper_t(t_time p_timeout, worker p_worker)
       : m_work_executer(p_timeout, p_worker, [](std::thread::id) -> void {}),
         m_provider_executer(std::chrono::milliseconds(1), dummy_provider()),
-        m_has_breaker(true),
+        m_has_breaker(false),
         m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
                            []() -> bool { return false; }) {}
 
@@ -479,16 +493,17 @@ struct loop_wrapper_t {
     if (m_has_breaker) {
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_thread = thread([this]() -> void {
-        m_loop_with_breaker(m_stopped, m_work_executer, m_provider_executer,
+        m_loop_with_breaker(m_work_executer, m_provider_executer,
                             m_breaker_executer);
       });
     } else {
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_thread = thread([this]() -> void {
-        m_loop_with_breaker(m_stopped, m_work_executer, m_provider_executer,
-                            m_breaker_executer);
+        m_loop_with_no_breaker(m_work_executer, m_provider_executer,
+                               m_breaker_executer);
       });
     }
+    m_stopped = false;
   }
 
   void stop() {
@@ -500,17 +515,32 @@ struct loop_wrapper_t {
 
     concurrent_debug(m_log, "marking to stop");
     std::lock_guard<std::mutex> _lock(m_mutex);
+    m_loop_with_breaker.stop();
+    m_loop_with_no_breaker.stop();
+    m_thread.join();
     m_stopped = true;
   }
 
   inline bool is_stopped() const { return m_stopped; }
 
 private:
-  typedef runner_t<t_log, t_time, void, t_params...> work_executer;
+  struct provider_executer_tuple_empty {
+    provider_executer_tuple_empty(std::chrono::milliseconds, dummy_provider) {}
+
+    inline std::optional<std::optional<std::tuple<>>> operator()() {
+      return {std::make_tuple<>()};
+    }
+  };
 
   typedef runner_t<t_log, std::chrono::milliseconds,
                    std::optional<std::tuple<t_params...>>>
-      provider_executer;
+      provider_executer_tuple_not_empty;
+
+  typedef typename std::conditional<
+      tuple_not_empty, provider_executer_tuple_not_empty,
+      provider_executer_tuple_empty>::type provider_executer;
+
+  typedef runner_t<t_log, t_time, void, t_params...> work_executer;
 
   typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
 
@@ -537,7 +567,7 @@ private:
   loop_with_no_breaker_t<t_log, t_params...> m_loop_with_no_breaker;
 
   static constexpr std::chrono::milliseconds m_provider_timeout{300};
-  static constexpr std::chrono::milliseconds m_breaker_timeout{100};
+  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
 };
 
 } // namespace concurrent

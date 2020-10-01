@@ -122,7 +122,8 @@ private:
   void timeout_callback_thread() {
     std::thread _timeout_thread(
         [this]() -> void { m_timeout_callback(m_thread.get_id()); });
-    _timeout_thread.detach();
+    //    _timeout_thread.detach();
+    _timeout_thread.join();
   }
 
   void loop() {

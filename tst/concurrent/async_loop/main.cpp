@@ -58,13 +58,13 @@ struct async_loop_000 {
 
   static std::string desc() {
     std::stringstream _stream;
-    _stream << "parameter: no; breaker: yes; stop by breaker: yes";
+    _stream << "parameter: no; breaker: yes; stop by breaker: yes; timeout: no";
     return _stream.str();
   }
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_000"};
-  static constexpr uint16_t max{50};
+  static constexpr uint16_t max{20};
 };
 
 struct async_loop_001 {
@@ -76,9 +76,7 @@ struct async_loop_001 {
         async_loop;
 
     bool _is_timeout{false};
-    std::function<bool()> _breaker = [&_is_timeout]() -> bool {
-      return _is_timeout;
-    };
+    std::function<bool()> _breaker = []() -> bool { return false; };
 
     uint16_t _counter = 0;
     std::function<void()> _worker = [this, &_counter]() -> void {
@@ -103,7 +101,9 @@ struct async_loop_001 {
 
     _async_loop.start();
 
-    this_thread::sleep_for(chrono::milliseconds(3 * timeout));
+    concurrent_debug(m_log, "going to sleep");
+    this_thread::sleep_for(chrono::milliseconds((max + 1) * timeout));
+    concurrent_debug(m_log, "waking up");
 
     concurrent_debug(m_log, "timeout? ", (_is_timeout ? "yes" : "no"));
 
@@ -122,8 +122,8 @@ struct async_loop_001 {
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_001"};
-  static constexpr uint16_t max{50};
-  static constexpr uint16_t timeout{3000};
+  static constexpr uint16_t max{10};
+  static constexpr uint16_t timeout{500};
 };
 
 struct async_loop_002 {
@@ -135,9 +135,7 @@ struct async_loop_002 {
         async_loop;
 
     bool _is_timeout{false};
-    std::function<bool()> _breaker = [&_is_timeout]() -> bool {
-      return _is_timeout;
-    };
+    std::function<bool()> _breaker = []() -> bool { return false; };
 
     uint16_t _counter = 0;
     std::function<void()> _worker = [this, &_counter]() -> void {
@@ -157,7 +155,9 @@ struct async_loop_002 {
 
     _async_loop.start();
 
-    this_thread::sleep_for(chrono::milliseconds(3 * timeout));
+    concurrent_debug(m_log, "going to sleep");
+    this_thread::sleep_for(chrono::milliseconds((max + 1) * timeout));
+    concurrent_debug(m_log, "waking up");
 
     concurrent_debug(m_log, "timeout? ", (_is_timeout ? "yes" : "no"));
 
@@ -176,8 +176,8 @@ struct async_loop_002 {
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_002"};
-  static constexpr uint16_t max{50};
-  static constexpr uint16_t timeout{3000};
+  static constexpr uint16_t max{20};
+  static constexpr uint16_t timeout{500};
 };
 
 struct async_loop_003 {
@@ -191,12 +191,12 @@ struct async_loop_003 {
     uint16_t _counter{0};
     bool _is_timeout{false};
 
-    std::function<void()> _worker = [this, &_counter, &_is_timeout]() -> void {
+    std::function<void()> _worker = [this, &_counter]() -> void {
       if (_counter == static_cast<uint16_t>(max / 2)) {
         concurrent_debug(m_log, "worker going to sleep");
         this_thread::sleep_for(chrono::milliseconds(2 * timeout));
         concurrent_debug(m_log, "worker waking up");
-        _is_timeout = true;
+
         return;
       }
       ++_counter;
@@ -204,8 +204,9 @@ struct async_loop_003 {
     };
 
     std::function<void(thread::id)> _timeout_callback =
-        [this](thread::id p_id) -> void {
+        [this, &_is_timeout](thread::id p_id) -> void {
       concurrent_warn(m_log, "TIMEOUT for ", p_id);
+      _is_timeout = true;
     };
 
     async_loop _async_loop(chrono::milliseconds(timeout), _worker,
@@ -213,7 +214,9 @@ struct async_loop_003 {
 
     _async_loop.start();
 
-    this_thread::sleep_for(chrono::milliseconds(timeout * 4));
+    concurrent_debug(m_log, "going to sleep");
+    this_thread::sleep_for(chrono::milliseconds((max + 1) * timeout));
+    concurrent_debug(m_log, "waking up");
 
     concurrent_debug(m_log, "timeout? ", (_is_timeout ? "yes" : "no"));
 
@@ -228,8 +231,8 @@ struct async_loop_003 {
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_003"};
-  static constexpr uint16_t max{50};
-  static constexpr uint16_t timeout{200};
+  static constexpr uint16_t max{20};
+  static constexpr uint16_t timeout{500};
 };
 
 struct async_loop_004 {
