@@ -22,7 +22,9 @@ struct async_loop_000 {
   bool operator()() {
     using namespace tenacitas;
     using namespace std;
-    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds>
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true>
         async_loop;
 
     uint16_t _counter = 0;
@@ -72,7 +74,8 @@ struct async_loop_001 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds>
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true>
         async_loop;
 
     bool _is_timeout{false};
@@ -122,7 +125,7 @@ struct async_loop_001 {
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_001"};
-  static constexpr uint16_t max{10};
+  static constexpr uint16_t max{9};
   static constexpr uint16_t timeout{500};
 };
 
@@ -131,7 +134,8 @@ struct async_loop_002 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds>
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true>
         async_loop;
 
     bool _is_timeout{false};
@@ -185,7 +189,8 @@ struct async_loop_003 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds>
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     false>
         async_loop;
 
     uint16_t _counter{0};
