@@ -5,7 +5,7 @@ CONFIG+=test
 include (../../../../common.pri)
 
 SOURCES += \
-    $$test_src_dir/concurrent/async_loop/main.cpp
+    $$test_src_dir/concurrent/async_loop/async_loop_tests.cpp
 
 
 

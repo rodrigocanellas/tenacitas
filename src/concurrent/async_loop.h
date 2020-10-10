@@ -33,6 +33,124 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+template <typename t_log, typename t_time, bool use_breaker,
+          typename... t_params>
+struct async_loop_t;
+
+template <typename t_log, typename t_time, typename t_param>
+struct async_loop_t<t_log, t_time, true, t_param>;
+
+template <typename t_log, typename t_time>
+struct async_loop_t<t_log, t_time, true>;
+
+template <typename t_log, typename t_time, typename... t_params>
+struct async_loop_t<t_log, t_time, false, t_params...>;
+
+template <typename t_log, typename t_time, typename t_param>
+struct async_loop_t<t_log, t_time, false, t_param>;
+
+template <typename t_log, typename t_time>
+struct async_loop_t<t_log, t_time, false>;
+
+/// \brief
+typedef std::function<bool()> breaker;
+
+/// \brief used to notify about timeout of \p worker
+typedef std::function<void(std::thread::id)> timeout_callback;
+
+/// \brief
+template <typename t_log, typename t_time> struct async_loop_base_t {
+
+  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
+
+  async_loop_base_t() = delete;
+
+  /// \brief copy constructor not allowed
+  async_loop_base_t(const async_loop_base_t &) = delete;
+
+  /// \brief async_loop move constructor
+  async_loop_base_t(async_loop_base_t &&p_async) = delete;
+
+  /// \brief copy assignment not allowed
+  async_loop_base_t &operator=(const async_loop_base_t &) = delete;
+
+  /// \brief move assignment
+  async_loop_base_t &operator=(async_loop_base_t &&p_async) = delete;
+
+  inline virtual ~async_loop_base_t() {
+    concurrent_debug(m_log, "destructor");
+    stop();
+    concurrent_info(m_log, "leaving destructor");
+  }
+
+public:
+  /// \brief is_stopped
+  ///
+  /// \return \p true if the loop is not running; \p false othewise
+  inline bool is_stopped() const { return m_stopped; }
+
+  /// \brief retrieves the timeout for the Work function
+  ///
+  /// \return the timeout
+  inline t_time get_timeout() const { return m_timeout; }
+
+  /// \brief redefines the value of the timeout
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+
+  /// \brief run starts the loop asynchronously
+  ///
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  ///
+  void start() {
+    if (!m_stopped) {
+      concurrent_info(m_log, this,
+                      "not starting the loop because it is already running");
+      return;
+    }
+    concurrent_debug(m_log, "starting the loop");
+    std::lock_guard<std::mutex> _lock(m_mutex);
+
+    m_thread = concurrent::thread([this]() -> void { loop(); });
+  }
+
+  /// \brief stops the loop
+  void stop() {
+    if (m_stopped) {
+      concurrent_warn(m_log, "not stopping because it was not running");
+      return;
+    }
+
+    concurrent_debug(m_log, "marking to stop");
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_stopped = true;
+    m_thread.join();
+  }
+
+protected:
+  async_loop_base_t(t_time p_timeout) : m_timeout(p_timeout) {}
+
+  virtual void loop() = 0;
+
+protected:
+  t_time m_timeout;
+
+  /// \brief m_thread is the thread where the \p loop will run
+  concurrent::thread m_thread;
+
+  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
+  std::mutex m_mutex;
+
+  bool m_stopped{true};
+
+  t_log m_log{"concurrent::async_loop"};
+
+  static constexpr std::chrono::milliseconds m_provider_timeout{300};
+  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+};
+
 /// \brief async_loop implements a generic loop that is executed in a non
 /// blocking way
 ///
@@ -100,13 +218,10 @@ namespace concurrent {
 ///    - move constructible
 ///
 
-template <typename t_log, typename t_time, bool use_breaker,
-          typename... t_params>
-struct async_loop_t;
-
 // ############### 1 ########################################################
 template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, true, t_params...> {
+struct async_loop_t<t_log, t_time, true, t_params...>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -118,11 +233,6 @@ struct async_loop_t<t_log, t_time, true, t_params...> {
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
-  typedef std::function<bool()> breaker;
-
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
-
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
   /// therefore, a Provider function must be defined
@@ -141,89 +251,12 @@ struct async_loop_t<t_log, t_time, true, t_params...> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       provider p_provider, timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
-        m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
+        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-
-    m_stopped = false;
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_stopped = true;
-    m_thread.join();
-  }
 
 private:
   typedef runner_t<t_log, std::chrono::milliseconds,
@@ -232,59 +265,57 @@ private:
 
   typedef runner_t<t_log, t_time, void, t_params...> work_executer;
 
-  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
-
-private:
+protected:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting because it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
     m_breaker_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       std::optional<std::optional<std::tuple<t_params...>>> _maybe_executed =
           m_provider_executer();
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       if (_maybe_executed) {
-        concurrent_debug(m_log, "provider executed");
-        std::optional<std::tuple<t_params...>> _maybe_provided =
-            _maybe_executed.value();
+        concurrent_debug(this->m_log, "provider executed");
+        std::optional<std::tuple<t_params...>> _maybe_provided(
+            _maybe_executed.value());
 
         if (_maybe_provided) {
-          auto _provided = _maybe_provided.value();
-          concurrent_debug(m_log, "provider provided: ", _provided);
+          std::tuple<t_params...> _provided(_maybe_provided.value());
+          concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          std::apply(m_work_executer, _provided);
-          if (m_stopped) {
-            concurrent_debug(m_log, "stopped!!");
+          std::apply(m_work_executer, std::move(_provided));
+          if (this->m_stopped) {
+            concurrent_debug(this->m_log, "stopped!!");
             break;
           }
         }
       }
 
-      concurrent_debug(m_log, "about to call breaker");
+      concurrent_debug(this->m_log, "about to call breaker");
       std::optional<bool> _maybe_break = m_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
-        concurrent_debug(m_log, "stopped by breaker");
-        m_stopped = true;
+        concurrent_debug(this->m_log, "stopped by breaker");
+        this->m_stopped = true;
         break;
       }
     }
@@ -294,31 +325,18 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
 
   provider_executer m_provider_executer;
 
-  breaker_executer m_breaker_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
-  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+  typename async_loop_base_t<t_log, t_time>::breaker_executer
+      m_breaker_executer;
 };
 
 // ############### 2 ########################################################
 template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, true, t_param> {
+struct async_loop_t<t_log, t_time, true, t_param>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -330,11 +348,6 @@ struct async_loop_t<t_log, t_time, true, t_param> {
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<t_param>()> provider;
 
-  typedef std::function<bool()> breaker;
-
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
-
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
   /// therefore, a Provider function must be defined
@@ -353,90 +366,12 @@ struct async_loop_t<t_log, t_time, true, t_param> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       provider p_provider, timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
-        m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
+        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  inline void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-
-    m_stopped = false;
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_stopped = true;
-    m_thread.join();
-  }
 
 private:
   typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
@@ -444,59 +379,56 @@ private:
 
   typedef runner_t<t_log, t_time, void, t_param> work_executer;
 
-  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
-
 private:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting because it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
     m_breaker_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       std::optional<std::optional<t_param>> _maybe_executed =
           m_provider_executer();
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       if (_maybe_executed) {
-        concurrent_debug(m_log, "provider executed");
-        std::optional<std::tuple<t_param>> _maybe_provided =
-            _maybe_executed.value();
+        concurrent_debug(this->m_log, "provider executed");
+        std::optional<t_param> _maybe_provided = _maybe_executed.value();
 
         if (_maybe_provided) {
-          auto _provided = _maybe_provided.value();
-          concurrent_debug(m_log, "provider provided: ", _provided);
+          t_param _provided = _maybe_provided.value();
+          concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           m_work_executer(_provided);
-          if (m_stopped) {
-            concurrent_debug(m_log, "stopped!!");
+          if (this->m_stopped) {
+            concurrent_debug(this->m_log, "stopped!!");
             break;
           }
         }
       }
 
-      concurrent_debug(m_log, "about to call breaker");
+      concurrent_debug(this->m_log, "about to call breaker");
       std::optional<bool> _maybe_break = m_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
-        concurrent_debug(m_log, "stopped by breaker");
-        m_stopped = true;
+        concurrent_debug(this->m_log, "stopped by breaker");
+        this->m_stopped = true;
         break;
       }
     }
@@ -506,40 +438,26 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
 
   provider_executer m_provider_executer;
 
-  breaker_executer m_breaker_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
-  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+  typename async_loop_base_t<t_log, t_time>::breaker_executer
+      m_breaker_executer;
 };
 
 // ############### 3 ########################################################
+
+/// \brief
+///
+/// \example 25 async_loop_example
 template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, true> {
+struct async_loop_t<t_log, t_time, true>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   typedef std::function<void()> worker;
-
-  typedef std::function<bool()> breaker;
-
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
 
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
@@ -559,118 +477,41 @@ struct async_loop_t<t_log, t_time, true> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_breaker_executer(std::chrono::milliseconds(m_breaker_timeout),
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  inline void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_stopped = true;
-    m_thread.join();
-  }
 
 private:
   typedef runner_t<t_log, t_time, void> work_executer;
 
-  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
-
 private:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting because it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
     m_breaker_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       m_work_executer();
 
-      concurrent_debug(m_log, "about to call breaker");
+      concurrent_debug(this->m_log, "about to call breaker");
       std::optional<bool> _maybe_break = m_breaker_executer();
       if ((_maybe_break) && (_maybe_break.value())) {
-        concurrent_debug(m_log, "stopped by breaker");
-        m_stopped = true;
+        concurrent_debug(this->m_log, "stopped by breaker");
+        this->m_stopped = true;
         break;
       }
     }
@@ -679,28 +520,16 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
 
-  breaker_executer m_breaker_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+  typename async_loop_base_t<t_log, t_time>::breaker_executer
+      m_breaker_executer;
 };
 
 // ############### 4 ########################################################
 template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, false, t_params...> {
+struct async_loop_t<t_log, t_time, false, t_params...>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -712,9 +541,6 @@ struct async_loop_t<t_log, t_time, false, t_params...> {
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
-
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
   /// therefore, a Provider function must be defined
@@ -733,85 +559,10 @@ struct async_loop_t<t_log, t_time, false, t_params...> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
                       timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_stopped = true;
-    m_thread.join();
-  }
 
 private:
   typedef runner_t<t_log, std::chrono::milliseconds,
@@ -822,44 +573,44 @@ private:
 
 private:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting because it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       std::optional<std::optional<std::tuple<t_params...>>> _maybe_executed =
           m_provider_executer();
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       if (_maybe_executed) {
-        concurrent_debug(m_log, "provider executed");
+        concurrent_debug(this->m_log, "provider executed");
         std::optional<std::tuple<t_params...>> _maybe_provided =
             _maybe_executed.value();
 
         if (_maybe_provided) {
           auto _provided = _maybe_provided.value();
-          concurrent_debug(m_log, "provider provided: ", _provided);
+          concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           std::apply(m_work_executer, _provided);
-          if (m_stopped) {
-            concurrent_debug(m_log, "stopped!!");
+          if (this->m_stopped) {
+            concurrent_debug(this->m_log, "stopped!!");
             break;
           }
         }
@@ -870,28 +621,15 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
 
   provider_executer m_provider_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
 };
 
 // ############### 5 ########################################################
 template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, false, t_param> {
+struct async_loop_t<t_log, t_time, false, t_param>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -903,9 +641,6 @@ struct async_loop_t<t_log, t_time, false, t_param> {
   /// \return \p an optional tuple of objects needed by the \p worker
   typedef std::function<std::optional<t_param>()> provider;
 
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
-
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
   /// therefore, a Provider function must be defined
@@ -924,85 +659,10 @@ struct async_loop_t<t_log, t_time, false, t_param> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
                       timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_provider_executer(std::chrono::milliseconds(m_provider_timeout),
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = true;
-    m_thread.join();
-  }
 
 private:
   typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
@@ -1012,44 +672,44 @@ private:
 
 private:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting p it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       std::optional<std::optional<t_param>> _maybe_executed =
           m_provider_executer();
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
       if (_maybe_executed) {
-        concurrent_debug(m_log, "provider executed");
+        concurrent_debug(this->m_log, "provider executed");
         std::optional<std::tuple<t_param>> _maybe_provided =
             _maybe_executed.value();
 
         if (_maybe_provided) {
           auto _provided = _maybe_provided.value();
-          concurrent_debug(m_log, "provider provided: ", _provided);
+          concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           m_work_executer();
-          if (m_stopped) {
-            concurrent_debug(m_log, "stopped!!");
+          if (this->m_stopped) {
+            concurrent_debug(this->m_log, "stopped!!");
             break;
           }
         }
@@ -1060,35 +720,19 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
 
   provider_executer m_provider_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
 };
 
 // ############### 6 ########################################################
 template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, false> {
+struct async_loop_t<t_log, t_time, false>
+    : public async_loop_base_t<t_log, t_time> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
   typedef std::function<void()> worker;
-
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
 
   /// \brief constructor
   /// This constructor must be used when \p t_params... is not \p void, and
@@ -1108,104 +752,28 @@ struct async_loop_t<t_log, t_time, false> {
   /// assumes a default value of a \p void returning function
   inline async_loop_t(t_time p_timeout, worker p_worker,
                       timeout_callback p_timeout_callback)
-      : m_work_executer(p_timeout, p_worker, p_timeout_callback) {}
-
-  /// \brief default constructor not allowed
-  async_loop_t() = delete;
-
-  /// \brief copy constructor not allowed
-  async_loop_t(const async_loop_t &) = delete;
-
-  /// \brief async_loop move constructor
-  async_loop_t(async_loop_t &&p_async) = delete;
-
-  /// \brief copy assignment not allowed
-  async_loop_t &operator=(const async_loop_t &) = delete;
-
-  /// \brief move assignment
-  async_loop_t &operator=(async_loop_t &&p_async) = delete;
-
-  /// \brief destructor stops the loop
-  inline ~async_loop_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
-
-  /// \brief is_stopped
-  ///
-  /// \return \p true if the loop is not running; \p false othewise
-  inline bool is_stopped() const { return m_stopped; }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
-
-  /// \brief redefines the value of the timeout
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
-
-  /// \brief Stops the loop, and starts it again
-  ///
-  /// \return \p true if could restart, or any other \p false otherwise
-  inline void restart() {
-    concurrent_debug(m_log, "restart");
-    stop();
-    start();
-  }
-
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
-  void start() {
-    if (!m_stopped) {
-      concurrent_info(m_log, this,
-                      "not starting the loop because it is already running");
-      return;
-    }
-    concurrent_debug(m_log, "starting the loop");
-
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_thread = concurrent::thread([this]() -> void { loop(); });
-  }
-
-  /// \brief stops the loop
-  void stop() {
-    if (m_stopped) {
-      concurrent_warn(m_log,
-                      "not stopping the loop because it was not running");
-      return;
-    }
-
-    concurrent_debug(m_log, "marking to stop");
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_stopped = true;
-    m_thread.join();
-  }
+      : async_loop_base_t<t_log, t_time>(p_timeout),
+        m_work_executer(p_timeout, p_worker, p_timeout_callback) {}
 
 private:
   typedef runner_t<t_log, t_time, void> work_executer;
 
 private:
   void loop() {
-    if (!m_stopped) {
-      concurrent_debug(m_log, "not starting beacause it is running");
+    if (!this->m_stopped) {
+      concurrent_debug(this->m_log, "not starting because it is running");
       return;
     }
 
-    concurrent_info(m_log, "starting");
+    concurrent_info(this->m_log, "starting");
 
-    m_stopped = false;
+    this->m_stopped = false;
     m_work_executer.start();
 
     while (true) {
 
-      if (m_stopped) {
-        concurrent_debug(m_log, "stopped");
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
         break;
       }
 
@@ -1215,21 +783,7 @@ private:
   }
 
 private:
-  t_time m_timeout;
-
   work_executer m_work_executer;
-
-  /// \brief m_thread is the thread where the \p loop will run
-  concurrent::thread m_thread;
-
-  /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
-  std::mutex m_mutex;
-
-  bool m_stopped{true};
-
-  t_log m_log{"concurrent::async_loop"};
-
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
 };
 
 } // namespace concurrent
