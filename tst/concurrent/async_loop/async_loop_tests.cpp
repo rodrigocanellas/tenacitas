@@ -38,13 +38,14 @@ struct async_loop_000 {
                                      true>
         async_loop;
 
-    bool _stop{false};
+    bool _is_timeout{false};
     uint16_t _counter{0};
 
-    function<bool()> _breaker = [this, &_stop]() -> bool {
-      concurrent_debug(m_log, "breaker will return ", (_stop ? "t" : "f"));
+    function<bool()> _breaker = [this, &_is_timeout]() -> bool {
+      concurrent_debug(m_log, "breaker will return ",
+                       (_is_timeout ? "t" : "f"));
       m_cond.notify_one();
-      return _stop;
+      return _is_timeout;
     };
 
     function<void()> _worker = [this, &_counter]() -> void {
@@ -59,9 +60,9 @@ struct async_loop_000 {
     };
 
     function<void(thread::id)> _timeout_callback =
-        [this, &_stop](thread::id p_id) -> void {
+        [this, &_is_timeout](thread::id p_id) -> void {
       concurrent_warn(m_log, "timeout for ", p_id);
-      _stop = true;
+      _is_timeout = true;
     };
 
     async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
@@ -70,11 +71,11 @@ struct async_loop_000 {
     _async_loop.start();
 
     unique_lock<mutex> _lock(m_mutex);
-    m_cond.wait(_lock, [&_stop]() -> bool { return _stop; });
+    m_cond.wait(_lock, [&_is_timeout]() -> bool { return _is_timeout; });
 
     concurrent_debug(m_log, "notification that the loop stopped arrived");
 
-    return true;
+    return _is_timeout;
   }
 
 private:
@@ -103,7 +104,7 @@ struct async_loop_001 {
     using namespace tenacitas;
 
     typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
-                                     true, int32_t>
+                                     true>
         async_loop;
 
     uint16_t _counter{0};
@@ -112,6 +113,143 @@ struct async_loop_001 {
       if (_counter == m_max) {
         concurrent_debug(m_log, "counter = ", _counter,
                          ", which is equal to max (", m_max, ")");
+        m_cond.notify_one();
+        return true;
+      }
+      return false;
+    };
+
+    function<void()> _worker = [this, &_counter]() -> void {
+      this_thread::sleep_for(
+          chrono::milliseconds(static_cast<uint16_t>(0.5 * m_timeout)));
+
+      ++_counter;
+      concurrent_debug(m_log, "counter = ", _counter);
+    };
+
+    function<void(thread::id)> _timeout_callback =
+        [this](thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _timeout_callback);
+
+    _async_loop.start();
+
+    unique_lock<mutex> _lock(m_mutex);
+    m_cond.wait(_lock);
+
+    concurrent_debug(m_log, "notification that the loop stopped arrived");
+
+    return (_counter == m_max);
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"async_loop_001"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+
+  static constexpr uint16_t m_max{20};
+  static constexpr uint16_t m_timeout{1000};
+};
+
+struct async_loop_002 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "breaker, one param, timeout";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace std;
+    using namespace tenacitas;
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true, int32_t>
+        async_loop;
+
+    uint16_t _counter{0};
+    bool _is_timeout{false};
+
+    function<bool()> _breaker = [this, &_is_timeout]() -> bool {
+      if (_is_timeout) {
+        m_cond.notify_one();
+        return true;
+      }
+      return false;
+    };
+
+    function<void(int32_t)> _worker = [this,
+                                       &_counter](int32_t p_value) -> void {
+      if (_counter == static_cast<uint16_t>(m_max / 2)) {
+        concurrent_debug(m_log, "wroker will sleep enough for timeout");
+        this_thread::sleep_for(
+            chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
+        return;
+      }
+      ++_counter;
+      concurrent_debug(m_log, "counter = ", _counter, " value = ", p_value);
+    };
+
+    function<void(thread::id)> _timeout_callback =
+        [this, &_is_timeout](thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      _is_timeout = true;
+    };
+
+    int32_t _value{0};
+    function<optional<int32_t>()> _provider = [this,
+                                               &_value]() -> optional<int32_t> {
+      _value += 30;
+      concurrent_debug(m_log, "providing value ", _value);
+      return {_value};
+    };
+
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
+
+    _async_loop.start();
+
+    unique_lock<mutex> _lock(m_mutex);
+    m_cond.wait(_lock);
+
+    concurrent_debug(m_log, "notification that the loop stopped arrived");
+
+    return _is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"async_loop_002"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+
+  static constexpr uint16_t m_max{20};
+  static constexpr uint16_t m_timeout{1000};
+};
+
+struct async_loop_003 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "breaker, one param, no timeout";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace std;
+    using namespace tenacitas;
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true, int32_t>
+        async_loop;
+
+    uint16_t _counter{0};
+
+    function<bool()> _breaker = [this, &_counter]() -> bool {
+      if (_counter == m_max) {
+        concurrent_debug(m_log, "breaking becuase counter = ", _counter);
         m_cond.notify_one();
         return true;
       }
@@ -135,7 +273,7 @@ struct async_loop_001 {
     int32_t _value{0};
     function<optional<int32_t>()> _provider = [this,
                                                &_value]() -> optional<int32_t> {
-      _value += 20;
+      _value += 30;
       concurrent_debug(m_log, "providing value ", _value);
       return {_value};
     };
@@ -150,44 +288,16 @@ struct async_loop_001 {
 
     concurrent_debug(m_log, "notification that the loop stopped arrived");
 
-    return true;
+    return (_counter == m_max);
   }
 
 private:
-  tenacitas::logger::cerr::log m_log{"async_loop_001"};
+  tenacitas::logger::cerr::log m_log{"async_loop_003"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
 
   static constexpr uint16_t m_max{20};
   static constexpr uint16_t m_timeout{1000};
-};
-
-struct async_loop_002 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "breaker, one param, timeout";
-    return _stream.str();
-  }
-
-  bool operator()() { return true; }
-
-private:
-  tenacitas::logger::cerr::log m_log{"async_loop_002"};
-};
-
-struct async_loop_003 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "breaker, one param, no timeout";
-    return _stream.str();
-  }
-
-  bool operator()() { return true; }
-
-private:
-  tenacitas::logger::cerr::log m_log{"async_loop_003"};
 };
 
 struct async_loop_004 {
@@ -310,4 +420,6 @@ int main(int argc, char **argv) {
   tenacitas::tester::test _tester(argc, argv);
   run_test(_tester, async_loop_000);
   run_test(_tester, async_loop_001);
+  run_test(_tester, async_loop_002);
+  run_test(_tester, async_loop_003);
 }
