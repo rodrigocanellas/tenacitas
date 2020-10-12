@@ -12,6 +12,7 @@
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
@@ -249,7 +250,7 @@ struct async_loop_003 {
 
     function<bool()> _breaker = [this, &_counter]() -> bool {
       if (_counter == m_max) {
-        concurrent_debug(m_log, "breaking becuase counter = ", _counter);
+        concurrent_debug(m_log, "breaking because counter = ", _counter);
         m_cond.notify_one();
         return true;
       }
@@ -308,10 +309,81 @@ struct async_loop_004 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+    using namespace std;
+    using namespace tenacitas;
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true, int32_t, double, string>
+        async_loop;
+
+    uint16_t _counter{0};
+    bool _is_timeout{false};
+
+    function<bool()> _breaker = [this, &_is_timeout]() -> bool {
+      if (_is_timeout) {
+        m_cond.notify_one();
+        return true;
+      }
+      return false;
+    };
+
+    function<void(int32_t, double, string)> _worker =
+        [this, &_counter](int32_t p_int, double p_double,
+                          string p_str) -> void {
+      if (_counter == static_cast<uint16_t>(m_max / 2)) {
+        concurrent_debug(m_log, "wroker will sleep enough for timeout");
+        this_thread::sleep_for(
+            chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
+        return;
+      }
+      ++_counter;
+      concurrent_debug(m_log, "counter = ", _counter, " int = ", p_int,
+                       " double = ", p_double, ", string = ", p_str);
+    };
+
+    function<void(thread::id)> _timeout_callback =
+        [this, &_is_timeout](thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      _is_timeout = true;
+    };
+
+    int32_t _int{0};
+    double _double{3.14};
+
+    typedef tuple<int32_t, double, string> value;
+
+    function<optional<value>()> _provider =
+        [this, &_int, &_double]() -> optional<tuple<int32_t, double, string>> {
+      _int += 30;
+      _double += _int;
+      string _str{"int & double = " + to_string(_int) + " " +
+                  to_string(_double)};
+      value _value{_int, _double, _str};
+      concurrent_debug(m_log, "providing value ", _value);
+      return {_value};
+    };
+
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
+
+    _async_loop.start();
+
+    unique_lock<mutex> _lock(m_mutex);
+    m_cond.wait(_lock);
+
+    concurrent_debug(m_log, "notification that the loop stopped arrived");
+
+    return _is_timeout;
+  }
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_004"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+
+  static constexpr uint16_t m_max{20};
+  static constexpr uint16_t m_timeout{1000};
 };
 
 struct async_loop_005 {
@@ -322,10 +394,77 @@ struct async_loop_005 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+    using namespace std;
+    using namespace tenacitas;
+
+    typedef concurrent::async_loop_t<logger::cerr::log, chrono::milliseconds,
+                                     true, float, int16_t, double>
+        async_loop;
+
+    uint16_t _counter{0};
+
+    function<bool()> _breaker = [this, &_counter]() -> bool {
+      if (_counter == m_max) {
+        concurrent_debug(m_log, "breaking because counter = ", _counter);
+        m_cond.notify_one();
+        return true;
+      }
+      return false;
+    };
+
+    function<void(float, int16_t, double)> _worker =
+        [this, &_counter](float p_float, int16_t p_int,
+                          double p_double) -> void {
+      this_thread::sleep_for(
+          chrono::milliseconds(static_cast<uint16_t>(0.5 * m_timeout)));
+
+      ++_counter;
+      concurrent_debug(m_log, "counter = ", _counter, " float = ", p_float,
+                       ", int = ", p_int, ", double = ", p_double);
+    };
+
+    function<void(thread::id)> _timeout_callback =
+        [this](thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    float _float{-340.2};
+    int16_t _int{0};
+    double _double{3.14};
+
+    typedef tuple<float, int16_t, double> value;
+
+    function<optional<value>()> _provider = [this, &_float, &_int,
+                                             &_double]() -> optional<value> {
+      _int += 30;
+      _float += 2;
+      _double += _int;
+      value _value{_float, _int, _double};
+      concurrent_debug(m_log, "providing value ", _value);
+      return {_value};
+    };
+
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
+
+    _async_loop.start();
+
+    unique_lock<mutex> _lock(m_mutex);
+    m_cond.wait(_lock);
+
+    concurrent_debug(m_log, "notification that the loop stopped arrived");
+
+    return (_counter == m_max);
+  }
 
 private:
   tenacitas::logger::cerr::log m_log{"async_loop_005"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+
+  static constexpr uint16_t m_max{20};
+  static constexpr uint16_t m_timeout{1000};
 };
 
 // #######################################
@@ -422,4 +561,6 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_001);
   run_test(_tester, async_loop_002);
   run_test(_tester, async_loop_003);
+  run_test(_tester, async_loop_004);
+  run_test(_tester, async_loop_005);
 }
