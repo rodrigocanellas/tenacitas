@@ -690,8 +690,8 @@ private:
         break;
       }
 
-      std::optional<std::optional<t_param>> _maybe_executed =
-          m_provider_executer();
+      std::optional<std::optional<t_param>> _maybe_executed(
+          m_provider_executer());
 
       if (this->m_stopped) {
         concurrent_debug(this->m_log, "stopped");
@@ -700,14 +700,13 @@ private:
 
       if (_maybe_executed) {
         concurrent_debug(this->m_log, "provider executed");
-        std::optional<std::tuple<t_param>> _maybe_provided =
-            _maybe_executed.value();
+        std::optional<t_param> _maybe_provided(_maybe_executed.value());
 
         if (_maybe_provided) {
-          auto _provided = _maybe_provided.value();
+          t_param _provided(_maybe_provided.value());
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          m_work_executer();
+          m_work_executer(_provided);
           if (this->m_stopped) {
             concurrent_debug(this->m_log, "stopped!!");
             break;
