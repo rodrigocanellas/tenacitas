@@ -14,10 +14,15 @@
 
 using namespace tenacitas;
 
-void printer(const std::tuple<int16_t, double> &p_value) {
-  std::cout << "[" << std::get<0>(p_value) << "," << std::get<1>(p_value)
-            << "] ";
-}
+struct printer {
+
+  void operator()(const std::tuple<int16_t, double> &p_value) {
+    concurrent_debug(m_log, p_value);
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"printer"};
+};
 
 typedef concurrent::fixed_size_queue_t<logger::cerr::log, int16_t, double>
     queue;
@@ -80,7 +85,7 @@ struct queue_000 {
   bool operator()() {
     queue _queue(20);
     _queue.add(9, -4.32);
-    _queue.traverse(printer);
+    _queue.traverse(printer());
     std::optional<std::tuple<int16_t, double>> _maybe = _queue.get();
     if (_maybe) {
       std::tuple<int16_t, double> _value = _maybe.value();
