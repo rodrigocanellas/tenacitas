@@ -35,6 +35,8 @@ private:
 
 struct sleeping_loop_000 {
 
+  static const std::string desc() { return "'sleeping_loop' creation test"; }
+
   bool operator()() {
 
     typedef concurrent::sleeping_loop_t<
@@ -43,18 +45,19 @@ struct sleeping_loop_000 {
 
     auto _worker = [this]() -> void { concurrent_debug(m_log, "loop1"); };
 
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
     loop::interval _interval(1);
     loop::timeout _timeout(100);
 
     concurrent_debug(m_log, "timeout = ", _timeout.count(),
                      ", interval = ", _interval.count());
 
-    loop _loop(_timeout, _interval, _worker);
+    loop _loop(_timeout, _interval, _worker, _timeout_callback);
 
     return true;
   }
-
-  static const std::string desc() { return "'sleeping_loop' creation test"; }
 
 private:
   logger::cerr::log m_log{"sleeping_loop_000"};
@@ -67,18 +70,20 @@ struct sleeping_loop_001 {
 
   typedef uint16_t value;
 
-  struct work1 {
+  static const std::string desc() {
+    std::stringstream _stream;
+    _stream << "\n'sleeping_loop' with interval of " << m_interval_ms
+            << "ms, work timeout of 100ms, increments a counter, and just "
+               "prints using 'cerr_test', so there will be no timeout."
 
-    void operator()() {
-      ++counter;
-      concurrent_debug(m_log, "counter = ", counter);
-    }
+               "\nThe main function will sleep for "
+            << m_sleep_secs
+            << "secs, and the 'sleeping_loop' will stop in the destructor."
 
-    value counter = 0;
-
-  private:
-    logger::cerr::log m_log{"sleeping_loop_001::work1"};
-  };
+               "\nCounter should be "
+            << m_actual_amount;
+    return _stream.str();
+  }
 
   bool operator()() {
 
@@ -86,10 +91,14 @@ struct sleeping_loop_001 {
                      ", sleep = ", m_sleep_secs, ", amount = ", m_amount,
                      ", actual amount = ", m_actual_amount);
 
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
     work1 _work;
-    loop _loop(std::chrono::milliseconds(300),
-               std::chrono::milliseconds(m_interval_ms),
-               [&_work]() { return _work(); });
+    loop _loop(
+        std::chrono::milliseconds(300),
+        std::chrono::milliseconds(m_interval_ms),
+        [&_work]() { return _work(); }, _timeout_callback);
 
     _loop.start();
     concurrent_debug(m_log, "starting to sleep");
@@ -109,20 +118,19 @@ struct sleeping_loop_001 {
     return true;
   }
 
-  static const std::string desc() {
-    std::stringstream _stream;
-    _stream << "\n'sleeping_loop' with interval of " << m_interval_ms
-            << "ms, work time out of 100ms, increments a counter, and just "
-               "prints using 'cerr_test', so there will be no time out."
+private:
+  struct work1 {
 
-               "\nThe main function will sleep for "
-            << m_sleep_secs
-            << "secs, and the 'sleeping_loop' will stop in the destructor."
+    void operator()() {
+      ++counter;
+      concurrent_debug(m_log, "counter = ", counter);
+    }
 
-               "\nCounter should be "
-            << m_actual_amount;
-    return _stream.str();
-  }
+    value counter = 0;
+
+  private:
+    logger::cerr::log m_log{"sleeping_loop_001::work1"};
+  };
 
 private:
   logger::cerr::log m_log{"sleeping_loop_001"};
@@ -143,6 +151,55 @@ struct sleeping_loop_003 {
       logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
       loop;
 
+  static const std::string desc() {
+    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+           "increments a counter, and just prints using 'cerr_test', so there  "
+           "will be no timeout."
+
+           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10 "
+           "secs; the 'sleeping_loop' will stop by calling 'stop'; the main "
+           "thread will sleep for 5 secs;, the 'sleeping_loop' will be "
+           "restarted with 'start'; the main thread will sleep for 8 secs; the "
+           "'sleeping_loop' will stop in the destructor."
+
+           "\nCounter should be 18.";
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+
+    work1 _work;
+
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
+    loop _loop(
+        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        [&_work]() { return _work(); }, _timeout_callback);
+
+    _loop.start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    _loop.stop();
+
+    concurrent_debug(m_log, "data = ", _work.counter);
+    if (_work.counter != 10) {
+      return false;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    _loop.start();
+    std::this_thread::sleep_for(std::chrono::seconds(8));
+
+    concurrent_debug(m_log, "data = ", _work.counter);
+    if (_work.counter != 18) {
+      return false;
+    }
+
+    return true;
+  }
+
+private:
   struct work1 {
     void operator()() {
 
@@ -153,47 +210,7 @@ struct sleeping_loop_003 {
     logger::cerr::log m_log{"sleeping_loop_003::work1"};
   };
 
-  bool operator()() {
-    using namespace tenacitas;
-    work1 _work;
-    loop _loop(std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
-               [&_work]() { return _work(); });
-
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    _loop.stop();
-
-    concurrent_debug(m_log, "data = ", _work.counter);
-    if (_work.counter != 10) {
-      return false;
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(8));
-
-    concurrent_debug(m_log, "data = ", _work.counter);
-    if (_work.counter != 18) {
-      return false;
-    }
-
-    return true;
-  }
-
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there  "
-           "will be no time out."
-
-           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10 "
-           "secs; the 'sleeping_loop' will stop by calling 'stop'; the main "
-           "thread will sleep for 5 secs;, the 'sleeping_loop' will be "
-           "restarted with 'start'; the main thread will sleep for 8 secs; the "
-           "'sleeping_loop' will stop in the destructor."
-
-           "\nCounter should be 18.";
-  }
+private:
   logger::cerr::log m_log{"sleeping_loop_003"};
 };
 
@@ -202,48 +219,10 @@ struct sleeping_loop_004 {
       logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
       loop;
 
-  struct work1 {
-    void operator()() {
-      using namespace tenacitas;
-      ++counter;
-      concurrent_debug(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr::log m_log{"sleeping_loop_004::work1"};
-  };
-
-  bool operator()() {
-
-    work1 _work;
-    loop _loop(std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
-               [&_work]() { return _work(); });
-
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    _loop.stop();
-
-    concurrent_debug(m_log, "data = ", _work.counter);
-    if (_work.counter != 10) {
-      return false;
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(8));
-    _loop.stop();
-
-    concurrent_debug(m_log, "data = ", _work.counter);
-    if (_work.counter != 18) {
-      return false;
-    }
-    return true;
-  }
-
   static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms, "
+    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
            "increments a counter, and just prints using 'cerr_test', so there "
-           "will be no time out."
+           "will be no timeout."
 
            "\n'sleeping_loop' will call 'start'; main thread will sleep for 10 "
            "secs; the 'sleeping_loop' will stop by calling 'stop'; the main "
@@ -254,6 +233,50 @@ struct sleeping_loop_004 {
            "\nCounter should be 18.";
   }
 
+  bool operator()() {
+
+    work1 _work;
+
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
+    loop _loop(
+        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        [&_work]() { return _work(); }, _timeout_callback);
+
+    _loop.start();
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    _loop.stop();
+
+    concurrent_debug(m_log, "data = ", _work.counter);
+    if (_work.counter != 10) {
+      return false;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    _loop.start();
+    std::this_thread::sleep_for(std::chrono::seconds(8));
+    _loop.stop();
+
+    concurrent_debug(m_log, "data = ", _work.counter);
+    if (_work.counter != 18) {
+      return false;
+    }
+    return true;
+  }
+
+private:
+  struct work1 {
+    void operator()() {
+      using namespace tenacitas;
+      ++counter;
+      concurrent_debug(m_log, counter);
+    }
+    uint64_t counter = 0;
+    logger::cerr::log m_log{"sleeping_loop_004::work1"};
+  };
+
 private:
   logger::cerr::log m_log{"sleeping_loop_004"};
 };
@@ -263,22 +286,29 @@ struct sleeping_loop_005 {
       logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
       loop;
 
-  struct work1 {
-    void operator()() {
-      using namespace tenacitas;
-      ++counter;
-      concurrent_debug(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr::log m_log{"sleeping_loop_005::work1"};
-  };
+  static const std::string desc() {
+    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+           "increments a counter, and just prints using 'cerr_test', so there "
+           "will be no timeout."
+
+           "\nA 'sleeping_loop' will be started, the main thread will sleep "
+           "for 10 secs, 'sleeping_loop' will be created using the same "
+           "parameters as the first one, the main thread will sleep for 3 "
+           "secs, the new 'sleeping_loop' will stop by its destructor."
+
+           "\nCounter should be 13.";
+  }
 
   bool operator()() {
 
     work1 _work;
-    loop _loop_1(std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000),
-                 [&_work]() { return _work(); });
+
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
+    loop _loop_1(
+        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        [&_work]() { return _work(); }, _timeout_callback);
 
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -292,9 +322,9 @@ struct sleeping_loop_005 {
 
     _loop_1.stop();
 
-    loop _loop_2(std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000),
-                 [&_work]() { return _work(); });
+    loop _loop_2(
+        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        [&_work]() { return _work(); }, _timeout_callback);
 
     _loop_2.start();
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -308,18 +338,18 @@ struct sleeping_loop_005 {
     return true;
   }
 
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there "
-           "will be no time out."
+private:
+  struct work1 {
+    void operator()() {
+      using namespace tenacitas;
+      ++counter;
+      concurrent_debug(m_log, counter);
+    }
+    uint64_t counter = 0;
+    logger::cerr::log m_log{"sleeping_loop_005::work1"};
+  };
 
-           "\nA 'sleeping_loop' will be started, the main thread will sleep "
-           "for 10 secs, 'sleeping_loop' will be created using the same "
-           "parameters as the first one, the main thread will sleep for 3 "
-           "secs, the new 'sleeping_loop' will stop by its destructor."
-
-           "\nCounter should be 13.";
-  }
+private:
   logger::cerr::log m_log{"sleeping_loop_005"};
 };
 
@@ -329,22 +359,30 @@ struct sleeping_loop_006 {
       logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
       loop;
 
-  struct work1 {
-    void operator()() {
+  static const std::string desc() {
+    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+           "increments a counter, and just prints using 'cerr_test', so there "
+           "will be no timeout."
 
-      ++counter;
-      concurrent_debug(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr::log m_log{"sleeping_loop_006::work1"};
-  };
+           "\nA 'sleeping_loop' will be started, the main thread will sleep "
+           "for 10 secs, another 'sleeping_loop' will be created using the "
+           "same parameters as the first one, the main thread will sleep for 3 "
+           "secs, the new 'sleeping_loop' will stop by calling stop."
+
+           "\nCounter should be 13.";
+  }
 
   bool operator()() {
     using namespace tenacitas;
+
+    std::function<void(std::thread::id)> _timeout_callback =
+        [](std::thread::id) -> void {};
+
     work1 _work;
-    loop _loop_1(std::chrono::milliseconds(500),
-                 std::chrono::milliseconds(1000),
-                 [&_work]() { return _work(); });
+
+    loop _loop_1(
+        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        [&_work]() { return _work(); }, _timeout_callback);
 
     _loop_1.start();
     std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -359,7 +397,7 @@ struct sleeping_loop_006 {
     _loop_1.stop();
 
     loop _loop_2(_loop_1.get_timeout(), _loop_1.get_interval(),
-                 _loop_1.get_worker());
+                 _loop_1.get_worker(), _timeout_callback);
 
     _loop_2.start();
 
@@ -377,18 +415,18 @@ struct sleeping_loop_006 {
     return true;
   }
 
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there "
-           "will be no time out."
+private:
+  struct work1 {
+    void operator()() {
 
-           "\nA 'sleeping_loop' will be started, the main thread will sleep "
-           "for 10 secs, another 'sleeping_loop' will be created using the "
-           "same parameters as the first one, the main thread will sleep for 3 "
-           "secs, the new 'sleeping_loop' will stop by calling stop."
+      ++counter;
+      concurrent_debug(m_log, counter);
+    }
+    uint64_t counter = 0;
+    logger::cerr::log m_log{"sleeping_loop_006::work1"};
+  };
 
-           "\nCounter should be 13.";
-  }
+private:
   logger::cerr::log m_log{"sleeping_loop_006"};
 };
 
@@ -445,10 +483,10 @@ struct sleeping_loop_006 {
 //  }
 
 //  static const std::string desc() {
-//    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms,
+//    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms,
 //    "
 //           "increments a counter, and just prints using 'cerr_test', so
-//           there " "will be no time out."
+//           there " "will be no timeout."
 
 //           "\nA 'sleeping_loop' will be started, the main thread will sleep
 //           " "for 10 secs, the 'sleeping_loop' will be stopped, another "
@@ -516,10 +554,10 @@ struct sleeping_loop_006 {
 //  }
 
 //  static const std::string desc() {
-//    return "\n'sleeping_loop' with interval of 1000 ms, time out of 500 ms,
+//    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms,
 //    "
 //           "increments a counter, and just prints using 'cerr_test', so
-//           there " "will be no time out."
+//           there " "will be no timeout."
 
 //           "\nA 'sleeping_loop' will be started, the main thread will sleep
 //           " "for 10 secs, the 'sleeping_loop' will be stopped, another "
@@ -615,7 +653,7 @@ struct sleeping_loop_006 {
 //  }
 
 //  static const std::string desc() {
-//    return "\n'3 sleeping_loop' objects with interval of 1000 ms, time out
+//    return "\n'3 sleeping_loop' objects with interval of 1000 ms, timeout
 //    of
 //    "
 //           "500 ms."
@@ -719,7 +757,7 @@ struct sleeping_loop_006 {
 //  }
 
 //  static const std::string desc() {
-//    return "\n'3 sleeping_loop' objects with interval of 1000 ms, time out
+//    return "\n'3 sleeping_loop' objects with interval of 1000 ms, timeout
 //    of
 //    "
 //           "500 ms."
@@ -823,7 +861,7 @@ struct sleeping_loop_006 {
 //  }
 
 //  static const std::string desc() {
-//    return "\n3 'sleeping_loop' objects with interval of 1000 ms, time out
+//    return "\n3 'sleeping_loop' objects with interval of 1000 ms, timeout
 //    of
 //    "
 //           "500 ms."
@@ -1008,13 +1046,13 @@ struct sleeping_loop_006 {
 //  static const std::string desc() {
 //    return "3 'sleeping_loops':"
 
-//           "\n'1' with 1000 ms of interval, work time out of 50 ms, and work
-//           " "function too simple to cause time out."
+//           "\n'1' with 1000 ms of interval, work timeout of 50 ms, and work
+//           " "function too simple to cause timeout."
 
-//           "\n'2' with interval of 500 ms, work time out of 100 ms, and work
+//           "\n'2' with interval of 500 ms, work timeout of 100 ms, and work
 //           " "won't cause timeout."
 
-//           "\n'3' with interval of 2000 ms, work time out of 75 ms, and work
+//           "\n'3' with interval of 2000 ms, work timeout of 75 ms, and work
 //           " "also too simple."
 
 //           "\nAll 3 use the same provider."

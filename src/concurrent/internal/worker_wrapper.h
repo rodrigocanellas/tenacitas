@@ -32,6 +32,8 @@ template <typename t_result, typename... t_params> struct work_wrapper_t {
     m_params = std::make_tuple(p_params...);
   }
 
+  inline worker get_worker() const { return m_worker; }
+
   inline operator bool() const noexcept { return (m_worker ? true : false); }
 
   inline std::optional<t_result> get_result_ok() { return m_result; }
@@ -56,6 +58,8 @@ template <typename... t_params> struct work_wrapper_t<void, t_params...> {
   inline void set_params(t_params... p_params) {
     m_params = std::make_tuple(p_params...);
   }
+
+  inline worker get_worker() const { return m_worker; }
 
   inline operator bool() const noexcept { return (m_worker ? true : false); }
 
@@ -85,6 +89,8 @@ struct work_wrapper_t<t_result, t_param> {
 
   inline std::optional<t_result> get_result_not_ok() { return {}; }
 
+  inline worker get_worker() const { return m_worker; }
+
   std::optional<t_result> m_result;
 
   t_param m_param;
@@ -101,6 +107,8 @@ template <typename t_param> struct work_wrapper_t<void, t_param> {
   inline operator bool() const noexcept { return (m_worker ? true : false); }
 
   inline void operator()() { m_worker(std::move(m_param)); }
+
+  inline worker get_worker() const { return m_worker; }
 
   inline void set_params(t_param p_param) { m_param = std::move(p_param); }
 
@@ -125,6 +133,8 @@ template <typename t_result> struct work_wrapper_t<t_result> {
 
   inline void set_params() {}
 
+  inline worker get_worker() const { return m_worker; }
+
   inline std::optional<t_result> get_result_ok() { return m_result; }
 
   inline std::optional<t_result> get_result_not_ok() { return {}; }
@@ -143,6 +153,8 @@ template <> struct work_wrapper_t<void> {
   inline operator bool() const noexcept { return (m_worker ? true : false); }
 
   inline void operator()() { m_worker(); }
+
+  inline worker get_worker() const { return m_worker; }
 
   inline void set_params() {}
 

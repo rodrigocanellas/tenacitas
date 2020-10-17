@@ -73,7 +73,7 @@ struct runner_t {
 
   inline t_time get_timeout() const { return m_timeout; }
 
-  //  inline worker get_worker() const { return m_worker; }
+  inline worker get_worker() const { return m_work_wrapper.get_worker(); }
 
   inline timeout_callback get_timeout_callback() { return m_timeout_callback; }
 

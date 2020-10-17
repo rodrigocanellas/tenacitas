@@ -258,6 +258,8 @@ struct async_loop_t<t_log, t_time, true, t_params...>
         m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
 
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
+
 private:
   typedef runner_t<t_log, std::chrono::milliseconds,
                    std::optional<std::tuple<t_params...>>>
@@ -373,6 +375,8 @@ struct async_loop_t<t_log, t_time, true, t_param>
         m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
 
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
+
 private:
   typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
       provider_executer;
@@ -482,6 +486,8 @@ struct async_loop_t<t_log, t_time, true>
         m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
                            p_breaker) {}
 
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
+
 private:
   typedef runner_t<t_log, t_time, void> work_executer;
 
@@ -563,6 +569,8 @@ struct async_loop_t<t_log, t_time, false, t_params...>
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
+
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
   typedef runner_t<t_log, std::chrono::milliseconds,
@@ -664,6 +672,8 @@ struct async_loop_t<t_log, t_time, false, t_param>
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
+
 private:
   typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
       provider_executer;
@@ -753,6 +763,8 @@ struct async_loop_t<t_log, t_time, false>
                       timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log, t_time>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback) {}
+
+  inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
   typedef runner_t<t_log, t_time, void> work_executer;

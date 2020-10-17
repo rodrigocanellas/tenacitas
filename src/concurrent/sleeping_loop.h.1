@@ -71,7 +71,7 @@ struct sleeping_loop_base_t {
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_async.is_stopped(); }
 
-  //  inline worker get_worker() const { return m_async.get_worker(); }
+  inline worker get_worker() const { return m_async.get_worker(); }
 
   /// \brief retrieves the timeout for the Work function
   ///
@@ -84,8 +84,6 @@ struct sleeping_loop_base_t {
   inline void set_timeout(t_timeout p_timeout) {
     m_async.set_timeout(p_timeout);
   }
-
-  inline worker get_worker() const { return m_async.get_worker(); }
 
   /// \brief run starts the loop
   void start() {
@@ -124,33 +122,13 @@ struct sleeping_loop_base_t {
   }
 
 protected:
-  /// \brief provider is the type of function that provides data to the work
-  /// function
-  ///
-  /// \return \p an optional tuple of objects needed by the \p worker
-  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
+  sleeping_loop_base_t(t_interval p_interval) : m_interval(p_interval) {}
 
-protected:
-  sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
-                       worker p_worker, timeout_callback p_timeout_callback,
-                       provider p_provider)
-      : m_async(
-            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
-            p_timeout_callback, p_provider),
-        m_interval(p_interval) {}
-
-  sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
-                       worker p_worker, timeout_callback p_timeout_callback)
-      : m_async(
-            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
-            p_timeout_callback),
-        m_interval(p_interval) {}
-
-protected:
+private:
   /// \brief a simpler name
   typedef async_loop_t<t_log, t_timeout, true, t_params...> async_loop;
 
-protected:
+private:
   /// \brief breaker defines if the loop should stop
   ///
   /// \return \p true if the loop should break; \p false othewise
@@ -166,10 +144,11 @@ protected:
     return true;
   }
 
-private:
+protected:
   /// \brief m_loop the async_loop used
   async_loop m_async;
 
+private:
   /// \brief m_interval
   t_interval m_interval;
 
@@ -267,8 +246,7 @@ struct sleeping_loop_t
   /// function
   ///
   /// \return \p an optional tuple of objects needed by the \p worker
-  typedef typename sleeping_loop_base_t<t_log, t_timeout, t_interval,
-                                        t_params...>::provider provider;
+  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
   /// != void</tt>, and a \p provider is necessary
@@ -282,21 +260,131 @@ struct sleeping_loop_t
   /// each time the loop wakes up
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   timeout_callback p_timeout_callback, provider p_provider)
-      : sleeping_loop_base_t<t_log, t_timeout, t_interval, t_params...>(
-            p_timeout, p_interval, p_worker,
-            [this]() -> bool { return this->breaker(); }, p_timeout_callback,
-            p_provider) {}
+      : sleeping_loop_base_t<t_log, t_timeout, t_interval>(p_interval),
+        m_async(
+            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
+            p_timeout_callback, p_provider) {}
 
   inline provider get_provider() const { return this->m_async.get_provider(); }
 };
 
-// ############### 2 #########################################################
+// ############### 2 ###########################################################
+template <typename t_log, typename t_timeout, typename t_interval,
+          typename t_param>
+struct sleeping_loop_t<t_log, t_timeout, t_interval, t_param>
+    : public sleeping_loop_base_t<t_log, t_timeout, t_interval, t_param> {
+
+  /// \brief worker is the type of work function, i.e., the function that will
+  /// be called in a loop in order to execute some work
+  typedef std::function<void(t_param)> worker;
+
+  /// \brief provider is the type of function that provides data to the work
+  /// function
+  ///
+  /// \return \p an optional tuple of objects needed by the \p worker
+  //  typedef std::function<std::optional<t_param()>> provider;
+  typedef std::function<std::optional<t_param>()> provider;
+
+  /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
+  /// != void</tt>, and a \p provider is necessary
+  ///
+  /// \param p_interval the amount of time that the loop will sleep between
+  /// executions
+  ///
+  /// \param p_worker function that will be executed each time the loop wakes up
+  ///
+  /// \param p_provide function that will provide data to the work function,
+  /// each time the loop wakes up
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
+                  timeout_callback p_timeout_callback, provider p_provider)
+      : sleeping_loop_base_t<t_log, t_timeout, t_interval>(p_interval),
+        m_async(
+            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
+            p_timeout_callback, p_provider) {}
+
+  /// \brief destructor interrupts the loop
+  inline ~sleeping_loop_t() {
+    concurrent_debug(this->m_log, "destructor");
+    stop();
+  }
+
+  /// \brief is_stopped
+  /// \return \p true if the loop is not running; \p false othewise
+  inline bool is_stopped() const { return m_async.is_stopped(); }
+
+  /// \brief retrieves the timeout for the Work function
+  ///
+  /// \return the timeout
+  inline t_timeout get_timeout() const { return m_async.get_timeout(); }
+
+  /// \brief redefines the value of the timeout
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_timeout(t_timeout p_timeout) {
+    m_async.set_timeout(p_timeout);
+  }
+
+  inline worker get_worker() const { return m_async.get_worker(); }
+
+  inline provider get_provider() const { return m_async.get_provider(); }
+
+  /// \brief run starts the loop
+  /// \tparam t_timeout is the type of timeout, it should be one of
+  /// std::chrono::* time types
+  ///
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  void start() {
+    if (!m_async.is_stopped()) {
+      concurrent_debug(this->m_log,
+                       "not running async loop because it was not stopped");
+      return;
+    }
+    concurrent_debug(this->m_log, "running async loop");
+    this->m_stopped = false;
+    m_async.start();
+  }
+
+  /// \brief stop stops the loop
+  void stop() {
+    if (m_async.is_stopped()) {
+      concurrent_debug(this->m_log,
+                       "not stopping async loop because it was not running");
+      return;
+    }
+
+    concurrent_debug(this->m_log, "stop");
+
+    this->m_stopped = true;
+
+    this->m_cond_var.notify_all();
+
+    m_async.stop();
+  }
+
+  /// \brief Stops the loop, and starts it again
+  void restart() {
+    concurrent_debug(this->m_log, "restart");
+    stop();
+    start();
+  }
+
+private:
+  /// \brief a simpler name
+  typedef async_loop_t<t_log, t_timeout, true, t_param> async_loop;
+
+private:
+  /// \brief m_loop the async_loop used
+  async_loop m_async;
+};
+
+// ############### 3 ###########################################################
 template <typename t_log, typename t_timeout, typename t_interval>
 struct sleeping_loop_t<t_log, t_timeout, t_interval>
     : public sleeping_loop_base_t<t_log, t_timeout, t_interval> {
 
-  typedef typename sleeping_loop_base_t<t_log, t_timeout, t_interval>::worker
-      worker;
+  /// be called in a loop in order to execute some work
+  typedef std::function<void()> worker;
 
   /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
   /// != void</tt>, and a \p provider is necessary
@@ -310,8 +398,88 @@ struct sleeping_loop_t<t_log, t_timeout, t_interval>
   /// each time the loop wakes up
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   timeout_callback p_timeout_callback)
-      : sleeping_loop_base_t<t_log, t_timeout, t_interval>(
-            p_timeout, p_interval, p_worker, p_timeout_callback) {}
+      : sleeping_loop_base_t<t_log, t_timeout, t_interval>(p_interval),
+        m_async(
+            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
+            p_timeout_callback) {}
+
+  inline ~sleeping_loop_t() {
+    concurrent_debug(this->m_log, "destructor");
+    stop();
+  }
+
+  /// \brief copy assignment not allowed
+  sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
+
+  /// \brief move assignment
+  sleeping_loop_t &operator=(sleeping_loop_t &&p_sleep) = delete;
+
+  /// \brief is_stopped
+  /// \return \p true if the loop is not running; \p false othewise
+  inline bool is_stopped() const { return m_async.is_stopped(); }
+
+  /// \brief retrieves the timeout for the Work function
+  ///
+  /// \return the timeout
+  inline t_timeout get_timeout() const { return m_async.get_timeout(); }
+
+  /// \brief redefines the value of the timeout
+  ///
+  /// It does not restart the loop, it is necessary to call \p restart
+  inline void set_timeout(t_timeout p_timeout) {
+    m_async.set_timeout(p_timeout);
+  }
+
+  inline worker get_worker() const { return m_async.get_worker(); }
+
+  /// \brief run starts the loop
+  /// \tparam t_timeout is the type of timeout, it should be one of
+  /// std::chrono::* time types
+  ///
+  /// \param p_timeout amount of time that the loop will wait for \p p_work to
+  /// execute
+  void start() {
+    if (!m_async.is_stopped()) {
+      concurrent_debug(this->m_log,
+                       "not running async loop because it was not stopped");
+      return;
+    }
+    concurrent_debug(this->m_log, "running async loop");
+    this->m_stopped = false;
+    m_async.start();
+  }
+
+  /// \brief stop stops the loop
+  void stop() {
+    if (m_async.is_stopped()) {
+      concurrent_debug(this->m_log,
+                       "not stopping async loop because it was not running");
+      return;
+    }
+
+    concurrent_debug(this->m_log, "stop");
+
+    this->m_stopped = true;
+
+    this->m_cond_var.notify_all();
+
+    m_async.stop();
+  }
+
+  /// \brief Stops the loop, and starts it again
+  void restart() {
+    concurrent_debug(this->m_log, "restart");
+    stop();
+    start();
+  }
+
+private:
+  /// \brief a simpler name
+  typedef async_loop_t<t_log, t_timeout, true> async_loop;
+
+private:
+  /// \brief m_loop the async_loop used
+  async_loop m_async;
 };
 
 } // namespace concurrent
