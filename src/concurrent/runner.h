@@ -21,7 +21,6 @@
 #include <concurrent/internal/log.h>
 #include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
-#include <concurrent/traits.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {

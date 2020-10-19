@@ -15,7 +15,6 @@
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
-#include <concurrent/traits.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -30,12 +29,11 @@ struct sleeping_loop_base_t {
   /// be called in a loop in order to execute some work
   typedef std::function<void(t_params...)> worker;
 
-  /// \brief used to notify about timeout of \p worker
-  typedef std::function<void(std::thread::id)> timeout_callback;
-
+  typedef t_interval interval;
   typedef t_timeout timeout;
 
-  typedef t_interval interval;
+  /// \brief used to notify about timeout of \p worker
+  typedef std::function<void(std::thread::id)> timeout_callback;
 
   /// \brief default constructor not allowed
   sleeping_loop_base_t() = delete;
@@ -137,14 +135,20 @@ protected:
       : m_async(
             p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
             p_timeout_callback, p_provider),
-        m_interval(p_interval) {}
+        m_interval(p_interval) {
+    concurrent_debug(m_log, "timeout = ", p_timeout.count(),
+                     ", interval = ", p_interval.count());
+  }
 
   sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
                        worker p_worker, timeout_callback p_timeout_callback)
       : m_async(
             p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
             p_timeout_callback),
-        m_interval(p_interval) {}
+        m_interval(p_interval) {
+    concurrent_debug(m_log, "timeout = ", p_timeout.count(),
+                     ", interval = ", p_interval.count());
+  }
 
 protected:
   /// \brief a simpler name
@@ -155,6 +159,8 @@ protected:
   ///
   /// \return \p true if the loop should break; \p false othewise
   bool breaker() {
+    concurrent_debug(m_log, "interval = ", m_interval.count());
+
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
       // timeout, so do not stop
@@ -183,76 +189,6 @@ private:
 
   t_log m_log{"concurrent::sleeping_loop"};
 };
-
-/// \brief sleeping_loop allows a function (object) to be called in a loop that
-/// is executed asyncronously at a user defined period of time.
-///
-/// A \p sleeping_loop needs a Worker function, that will execute a defined work
-/// at each round of the loop; a Timeout to execute; a Breaker function, that
-/// indicates when the loop should break; and a Provider function, that will
-/// provide data for the Work function, if the Worker function expects
-/// parameters.
-///
-/// \bWorker
-/// The Worker function can take any number and type of parameter, but the
-/// return type must \p std::conditional<bool>.
-///
-/// If the \p std::conditional<bool> does not return a value, the loop is
-/// stopped.
-///
-/// If the \p std::conditional<bool> returns a value and it is \p true, it means
-/// means that the Worker function will continue to work in the next loop. If it
-/// is \p false, it means that it will no work anymore, and the loop must stop.
-///
-/// The Worker has this signature:
-/// <code>std::function<std::optional<t_result>(t_params &&...)></code>.
-///
-/// If \p t_params... is \p void, the Worker has this signature
-/// <code>std::function<std::optional<t_result>(void)></code>.
-///
-/// \bTimeout
-/// If the Worker does not finish on time, \p std::conditional<bool> will not
-/// return a value, causing the loop to stop.
-///
-/// \bProvider
-/// The Provider function provides the \p t_params... parameters for the Worker
-/// function, in the case \p t_params... is not \p void
-///
-/// The Provider function has this signature:
-/// <code>std::function<std::optional<std::tuple<t_params...>>()></code>.
-///
-/// If \p std::conditional does not return a value, the Worker function will not
-/// return a \p bool value, making the loop to stop
-///
-/// If \p t_params... is \p void, the Provider is not used, and the constructor
-/// that does not take a Provider parameter must be used.
-///
-/// \pBreaker
-/// The Breaker function allows the loop to be stopped, caused by a other code
-/// than the Worker.
-///
-/// The Breaker function has this signature:
-/// <code>std::function<bool()></code>
-///
-/// \tparam t_log provides log funcionality:
-/// t_log(const char *p_id)
-/// void debug(int p_line, const t_params&... p_params)
-/// void info(int p_line, const t_params&... p_params)
-/// void warn(int p_line, const t_params&... p_params)
-/// void error(int p_line, const t_params&... p_params)
-/// void fatal(int p_line, const t_params&... p_params)
-///
-/// \tparam t_timeout is the type of time used for timeout control of the Worker
-/// function
-///
-/// \tparam t_interval is the type of time used to control the interval that the
-/// loop will sleep
-///
-/// \tparam t_params..., if not \p void, are the types of the the parameters
-/// expected by the Worker function the loop; it must be:
-///    - default constructible
-///    - move constructible
-///
 
 // ############### 1 #########################################################
 template <typename t_log, typename t_timeout, typename t_interval,

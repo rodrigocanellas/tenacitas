@@ -23,10 +23,8 @@
 #include <type_traits>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/internal/loop_wrapper.h>
 #include <concurrent/runner.h>
 #include <concurrent/thread.h>
-#include <concurrent/traits.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -483,8 +481,9 @@ struct async_loop_t<t_log, t_time, true>
                       timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log, t_time>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
-        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
-                           p_breaker) {}
+        m_breaker(p_breaker) {}
+  //        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
+  //                           p_breaker) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
@@ -502,7 +501,7 @@ private:
 
     this->m_stopped = false;
     m_work_executer.start();
-    m_breaker_executer.start();
+    //    m_breaker_executer.start();
 
     while (true) {
 
@@ -514,22 +513,29 @@ private:
       m_work_executer();
 
       concurrent_debug(this->m_log, "about to call breaker");
-      std::optional<bool> _maybe_break = m_breaker_executer();
-      if ((_maybe_break) && (_maybe_break.value())) {
+      //      std::optional<bool> _maybe_break = m_breaker_executer();
+      //      if ((_maybe_break) && (_maybe_break.value())) {
+      //        concurrent_debug(this->m_log, "stopped by breaker");
+      //        this->m_stopped = true;
+      //        break;
+      //      }
+      if (m_breaker()) {
         concurrent_debug(this->m_log, "stopped by breaker");
         this->m_stopped = true;
         break;
       }
     }
     m_work_executer.stop();
-    m_breaker_executer.stop();
+    //    m_breaker_executer.stop();
   }
 
 private:
   work_executer m_work_executer;
 
-  typename async_loop_base_t<t_log, t_time>::breaker_executer
-      m_breaker_executer;
+  breaker m_breaker;
+
+  //  typename async_loop_base_t<t_log, t_time>::breaker_executer
+  //      m_breaker_executer;
 };
 
 // ############### 4 ########################################################

@@ -18,7 +18,6 @@
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
-#include <concurrent/traits.h>
 #include <status/result.h>
 
 /// \brief namespace of the organization
@@ -54,28 +53,25 @@ namespace concurrent {
 ///    - move constructible
 ///
 /// t_log(const char *p_id)
-/// void debug(int p_line, const t_params&... p_params)
-/// void info(int p_line, const t_params&... p_params)
-/// void warn(int p_line, const t_params&... p_params)
-/// void error(int p_line, const t_params&... p_params)
-/// void fatal(int p_line, const t_params&... p_params)
+/// void debug(int p_line, const t_data&... p_params)
+/// void info(int p_line, const t_data&... p_params)
+/// void warn(int p_line, const t_data&... p_params)
+/// void error(int p_line, const t_data&... p_params)
+/// void fatal(int p_line, const t_data&... p_params)
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_log, typename t_time, typename t_container>
+template <typename t_log, typename t_time, typename t_container,
+          typename... t_data>
 class producer_consumer_t {
 public:
   /// \brief type of container that holds produced data to be consumed
   typedef t_container container;
 
-  typedef typename container::data data;
-
   /// \brief type of time used for timeout control
   typedef t_time time;
 
-  /// \brief worker type is the type of function that will consume the data
-  /// produced \sa traits_t<bool, t_params...>::worker in concurrent/traits.h
-  typedef typename traits_t<bool, data>::worker worker;
+  typedef std::function<void(t_data...)> worker;
 
 public:
   producer_consumer_t() = delete;
@@ -123,7 +119,7 @@ public:
   /// \param p_data is the data produced
   ///
   /// \return \p true if it was added, \p false otherwise
-  bool add(const data &p_data) {
+  bool add(const t_data &... p_data) {
     if (m_stopped) {
       concurrent_error(m_log, "could not add data because 'producer_consumer' "
                               "is not running; call 'start()' first");
@@ -140,9 +136,8 @@ public:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(p_data);
+      m_container.add(p_data...);
       ++m_queued_data;
-      concurrent_debug(m_log, p_data, " added");
     }
 
     // notifyng that new data is available
@@ -158,7 +153,7 @@ public:
   /// \param p_data is the data produced
   ///
   /// \return \p true if it was added, \p false otherwise
-  bool add(data &&p_data) {
+  bool add(t_data &&... p_data) {
     if (m_stopped) {
       concurrent_error(m_log, "could not add data because 'producer_consumer' "
                               "is not running; call 'start()' first");
@@ -175,9 +170,8 @@ public:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(std::move(p_data));
+      m_container.add(std::move(p_data...));
       ++m_queued_data;
-      concurrent_debug(m_log, p_data, " added");
     }
 
     // notifyng that new data is available
@@ -200,7 +194,7 @@ public:
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::optional<data> {
+    auto _provider = [this]() -> std::optional<t_data...> {
       return this->provider();
     };
 
@@ -224,7 +218,7 @@ public:
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::optional<data> {
+    auto _provider = [this]() -> std::optional<t_data...> {
       return this->provider();
     };
 
@@ -299,7 +293,7 @@ public:
 private:
   /// \brief async_loop_t is a \p async_loop where a \p worker function will be
   /// running
-  typedef async_loop_t<t_log, t_time, data> async_loop;
+  typedef async_loop_t<t_log, t_time, false, t_data...> async_loop;
 
   typedef typename std::shared_ptr<async_loop> async_loop_ptr;
 
@@ -325,7 +319,7 @@ private:
   ///
   /// \return {true, a filled \p data object}, if there is any instance of
   /// \p data available; of {false, data()} otherwise
-  std::optional<data> provider() {
+  std::optional<std::tuple<t_data...>> provider() {
     using namespace std;
 
     if (m_stopped) {
@@ -360,9 +354,9 @@ private:
 
     concurrent_debug(m_log, "there is data");
 
-    std::optional<data> _maybe = m_container.get();
+    std::optional<std::tuple<t_data...>> _maybe = m_container.get();
     if (_maybe) {
-      data _data = _maybe.value();
+      std::tuple<t_data...> _data = _maybe.value();
 
       concurrent_debug(m_log, "getting ", _data, " and notifying");
 

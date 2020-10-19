@@ -17,7 +17,6 @@
 
 #include <concurrent/internal/log.h>
 #include <concurrent/sleeping_loop.h>
-#include <concurrent/traits.h>
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
@@ -65,40 +64,40 @@ private:
 
 struct sleeping_loop_001 {
   typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
+      logger::cerr::log, std::chrono::milliseconds, std::chrono::seconds>
       loop;
 
   typedef uint16_t value;
 
   static const std::string desc() {
     std::stringstream _stream;
-    _stream << "\n'sleeping_loop' with interval of " << m_interval_ms
-            << "ms, work timeout of 100ms, increments a counter, and just "
-               "prints using 'cerr_test', so there will be no timeout."
+    _stream << "\n'sleeping_loop' with interval of " << m_interval_secs
+            << "s, work timeout of " << m_timeout
+            << "ms, increments a counter, and just prints using 'cerr_test', "
+            << "so there will be no timeout."
 
-               "\nThe main function will sleep for "
-            << m_sleep_secs
-            << "secs, and the 'sleeping_loop' will stop in the destructor."
+            << "\nThe main function will sleep for " << m_sleep_secs
+            << "s, and the 'sleeping_loop' will stop in the destructor."
 
-               "\nCounter should be "
-            << m_actual_amount;
+            << "\nCounter should be " << m_actual_amount;
     return _stream.str();
   }
 
   bool operator()() {
 
-    concurrent_debug(m_log, "interval = ", m_interval_ms,
+    concurrent_debug(m_log, "interval = ", m_interval_secs,
                      ", sleep = ", m_sleep_secs, ", amount = ", m_amount,
-                     ", actual amount = ", m_actual_amount);
+                     ", actual amount = ", m_actual_amount,
+                     ", timeout = ", m_timeout);
 
     std::function<void(std::thread::id)> _timeout_callback =
         [](std::thread::id) -> void {};
 
     work1 _work;
     loop _loop(
-        std::chrono::milliseconds(300),
-        std::chrono::milliseconds(m_interval_ms),
-        [&_work]() { return _work(); }, _timeout_callback);
+        std::chrono::milliseconds(m_timeout),
+        std::chrono::seconds(m_interval_secs), [&_work]() { return _work(); },
+        _timeout_callback);
 
     _loop.start();
     concurrent_debug(m_log, "starting to sleep");
@@ -126,7 +125,7 @@ private:
       concurrent_debug(m_log, "counter = ", counter);
     }
 
-    value counter = 0;
+    value counter{0};
 
   private:
     logger::cerr::log m_log{"sleeping_loop_001::work1"};
@@ -136,13 +135,14 @@ private:
   logger::cerr::log m_log{"sleeping_loop_001"};
 
   static constexpr value m_sleep_secs{10};
-  static constexpr value m_interval_ms{1000};
-  static constexpr float m_amount{static_cast<float>(
-      (1000 / static_cast<float>(m_interval_ms)) * m_sleep_secs)};
+  static constexpr value m_interval_secs{1};
+  static constexpr float m_amount{
+      static_cast<float>(m_sleep_secs / m_interval_secs)};
   static constexpr value m_actual_amount{
       static_cast<value>(((m_amount - static_cast<value>(m_amount)) != 0)
                              ? static_cast<value>(m_amount) + 1
                              : static_cast<value>(m_amount))};
+  static constexpr value m_timeout{300};
 };
 
 struct sleeping_loop_003 {
