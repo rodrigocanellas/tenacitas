@@ -31,22 +31,28 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+// ############### 1 ########################################################
 template <typename t_log, typename t_time, bool use_breaker,
           typename... t_params>
 struct async_loop_t;
 
+// ############### 2 ########################################################
 template <typename t_log, typename t_time, typename t_param>
 struct async_loop_t<t_log, t_time, true, t_param>;
 
+// ############### 3 ########################################################
 template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, true>;
 
+// ############### 4 ########################################################
 template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, false, t_params...>;
 
+// ############### 5 ########################################################
 template <typename t_log, typename t_time, typename t_param>
 struct async_loop_t<t_log, t_time, false, t_param>;
 
+// ############### 6 ########################################################
 template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, false>;
 
@@ -146,7 +152,7 @@ protected:
   t_log m_log{"concurrent::async_loop"};
 
   static constexpr std::chrono::milliseconds m_provider_timeout{300};
-  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+  //  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
 };
 
 /// \brief async_loop implements a generic loop that is executed in a non
@@ -253,8 +259,7 @@ struct async_loop_t<t_log, t_time, true, t_params...>
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
-        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
-                           p_breaker) {}
+        m_breaker(p_breaker) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
@@ -277,7 +282,6 @@ protected:
     this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
-    m_breaker_executer.start();
 
     while (true) {
 
@@ -312,8 +316,7 @@ protected:
       }
 
       concurrent_debug(this->m_log, "about to call breaker");
-      std::optional<bool> _maybe_break = m_breaker_executer();
-      if ((_maybe_break) && (_maybe_break.value())) {
+      if (m_breaker()) {
         concurrent_debug(this->m_log, "stopped by breaker");
         this->m_stopped = true;
         break;
@@ -321,7 +324,6 @@ protected:
     }
     m_work_executer.stop();
     m_provider_executer.stop();
-    m_breaker_executer.stop();
   }
 
 private:
@@ -329,8 +331,7 @@ private:
 
   provider_executer m_provider_executer;
 
-  typename async_loop_base_t<t_log, t_time>::breaker_executer
-      m_breaker_executer;
+  breaker m_breaker;
 };
 
 // ############### 2 ########################################################
@@ -370,8 +371,7 @@ struct async_loop_t<t_log, t_time, true, t_param>
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
-        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
-                           p_breaker) {}
+        m_breaker(p_breaker) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
@@ -393,7 +393,6 @@ private:
     this->m_stopped = false;
     m_work_executer.start();
     m_provider_executer.start();
-    m_breaker_executer.start();
 
     while (true) {
 
@@ -427,8 +426,8 @@ private:
       }
 
       concurrent_debug(this->m_log, "about to call breaker");
-      std::optional<bool> _maybe_break = m_breaker_executer();
-      if ((_maybe_break) && (_maybe_break.value())) {
+      if (m_breaker()) {
+
         concurrent_debug(this->m_log, "stopped by breaker");
         this->m_stopped = true;
         break;
@@ -436,7 +435,6 @@ private:
     }
     m_work_executer.stop();
     m_provider_executer.stop();
-    m_breaker_executer.stop();
   }
 
 private:
@@ -444,12 +442,10 @@ private:
 
   provider_executer m_provider_executer;
 
-  typename async_loop_base_t<t_log, t_time>::breaker_executer
-      m_breaker_executer;
+  breaker m_breaker;
 };
 
 // ############### 3 ########################################################
-
 /// \brief
 ///
 /// \example 25 async_loop_example
@@ -482,8 +478,6 @@ struct async_loop_t<t_log, t_time, true>
       : async_loop_base_t<t_log, t_time>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_breaker(p_breaker) {}
-  //        m_breaker_executer(std::chrono::milliseconds(this->m_breaker_timeout),
-  //                           p_breaker) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
@@ -501,7 +495,6 @@ private:
 
     this->m_stopped = false;
     m_work_executer.start();
-    //    m_breaker_executer.start();
 
     while (true) {
 
@@ -513,12 +506,6 @@ private:
       m_work_executer();
 
       concurrent_debug(this->m_log, "about to call breaker");
-      //      std::optional<bool> _maybe_break = m_breaker_executer();
-      //      if ((_maybe_break) && (_maybe_break.value())) {
-      //        concurrent_debug(this->m_log, "stopped by breaker");
-      //        this->m_stopped = true;
-      //        break;
-      //      }
       if (m_breaker()) {
         concurrent_debug(this->m_log, "stopped by breaker");
         this->m_stopped = true;
@@ -526,16 +513,12 @@ private:
       }
     }
     m_work_executer.stop();
-    //    m_breaker_executer.stop();
   }
 
 private:
   work_executer m_work_executer;
 
   breaker m_breaker;
-
-  //  typename async_loop_base_t<t_log, t_time>::breaker_executer
-  //      m_breaker_executer;
 };
 
 // ############### 4 ########################################################

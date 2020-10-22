@@ -7,7 +7,6 @@
 
 #include <concurrent/fixed_size_queue.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/loop.h>
 #include <concurrent/msg_a.h>
 #include <concurrent/producer_consumer.h>
 #include <concurrent/sleeping_loop.h>
@@ -20,7 +19,8 @@ struct producer_consumer_000 {
   typedef logger::cerr::log log;
   typedef concurrent::fixed_size_queue_t<log, int16_t> queue;
   typedef typename queue::data data;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue,
+                                          int16_t>
       producer_consumer;
 
   bool operator()() {

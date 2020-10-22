@@ -1,0 +1,94 @@
+@startuml
+
+hide empty members
+'skinparam linetype ortho
+skinparam groupInheritance 2
+
+namespace planner {
+
+    namespace processor {
+        class value_calculator
+    }
+
+    namespace data {
+        class "value" as value2
+        class "value" as value1
+        class "value" as value3
+        class "number" as number1
+        class "number" as number2
+
+        class institution
+
+        class event
+        
+        class periodicity
+        class frequency
+        class day
+        class week
+        class month 
+        class year
+        class one_time
+        class "date" as date1
+        class "date" as date2
+        class "date" as date3
+        enum weekday {
+            sun,mon,tue,wed,thu,fri
+        }
+        class transaction
+        
+        class "account" as account1
+        class "account" as account2
+        class "account" as account3
+        class "account" as account4
+        
+        class "user" as user1
+        class "user" as user2
+
+        event *-- periodicity
+        event *-up- "expected" date1
+        event *-- "actual" date2
+        event *-up- "expected" value3
+        event *-- "actual" value2
+        event o-- planner.processor.value_calculator
+        account1 *-- "*" transaction 
+        transaction *-- "destination" account4
+        
+        transaction *-- "*" event
+        
+        institution *-- "*" account1
+        institutions *-- "*" institution
+
+        account1 o-- "super" account2
+        account1 o-- "* sub" account3
+        
+        account1 *-- "*" history
+        history *-- "balance" value1
+        history *-- date3
+
+        periodicity *-- frequency
+        periodicity o-- "ends_on" date
+        periodicity o-- "ends_after" number1
+        periodicity o-- "at_each" number2
+
+        frequency <|-down- day
+        frequency <|-down- week
+        frequency <|-down- month
+        frequency <|-down- year
+        frequency <|-down- one_time
+
+        week *-- "*" weekday
+
+        users *-up- "*" user1 
+        users o-- "admin" user2
+
+        account1 o-left- "*" user1
+        user1 o-- "*" account1
+        
+    }
+
+    namespace persistence {}
+
+}
+
+
+@enduml

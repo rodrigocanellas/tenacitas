@@ -9,9 +9,8 @@ HEADERS += \
     $$code_src_dir/concurrent/runner.h \
     $$code_src_dir/concurrent/async_loop.h \
     $$code_src_dir/concurrent/fixed_size_queue.h \
-    $$code_src_dir/concurrent/sleeping_loop.h
-#    \
-#    $$code_src_dir/concurrent/producer_consumer.h
+    $$code_src_dir/concurrent/sleeping_loop.h \
+    $$code_src_dir/concurrent/producer_consumer.h
 
 
 
