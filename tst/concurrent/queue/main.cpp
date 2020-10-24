@@ -14,18 +14,17 @@
 
 using namespace tenacitas;
 
+typedef std::tuple<int16_t, double> data;
+
 struct printer {
 
-  void operator()(const std::tuple<int16_t, double> &p_value) {
-    concurrent_debug(m_log, p_value);
-  }
+  void operator()(const data &p_value) { concurrent_debug(m_log, p_value); }
 
 private:
   tenacitas::logger::cerr::log m_log{"printer"};
 };
 
-typedef concurrent::fixed_size_queue_t<logger::cerr::log, int16_t, double>
-    queue;
+typedef concurrent::fixed_size_queue_t<logger::cerr::log, data> queue;
 
 struct producer {
   producer(queue *p_queue) : m_queue(p_queue) {}
@@ -39,7 +38,7 @@ struct producer {
       m_d += 0.01;
       m_i++;
       concurrent_debug(m_log, "adding ", m_i, ",", m_d);
-      m_queue->add(m_i, m_d);
+      m_queue->add({m_i, m_d});
       std::this_thread::sleep_for(std::chrono::milliseconds(400));
     }
   }
@@ -84,7 +83,7 @@ struct queue_000 {
 
   bool operator()() {
     queue _queue(20);
-    _queue.add(9, -4.32);
+    _queue.add({9, -4.32});
     _queue.traverse(printer());
     std::optional<std::tuple<int16_t, double>> _maybe = _queue.get();
     if (_maybe) {

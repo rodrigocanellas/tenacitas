@@ -22,45 +22,16 @@
 #include <tuple>
 #include <type_traits>
 
+#include <concurrent/breaker.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/runner.h>
 #include <concurrent/thread.h>
+#include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
-
-// ############### 1 ########################################################
-template <typename t_log, typename t_time, bool use_breaker,
-          typename... t_params>
-struct async_loop_t;
-
-// ############### 2 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, true, t_param>;
-
-// ############### 3 ########################################################
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, true>;
-
-// ############### 4 ########################################################
-template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, false, t_params...>;
-
-// ############### 5 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, false, t_param>;
-
-// ############### 6 ########################################################
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, false>;
-
-/// \brief
-typedef std::function<bool()> breaker;
-
-/// \brief used to notify about timeout of \p worker
-typedef std::function<void(std::thread::id)> timeout_callback;
 
 /// \brief
 template <typename t_log, typename t_time> struct async_loop_base_t {
@@ -155,72 +126,33 @@ protected:
   //  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
 };
 
-/// \brief async_loop implements a generic loop that is executed in a non
-/// blocking way
-///
-/// A \p aync_loop needs a Worker function, that will execute a defined work at
-/// each round of the loop; a Timeout to execute; a Breaker function, that
-/// indicates when the loop should break; and a Provider function, that will
-/// provide data for the Work function, if the Worker function expects
-/// parameters.
-///
-/// \bWorker
-/// The Worker function can take any number and type of parameter, but the
-/// return type must \p std::conditional<bool>.
-///
-/// If the \p std::conditional<bool> does not return a value, the loop is
-/// stopped.
-///
-/// If the \p std::conditional<bool> returns a value and it is \p true, it means
-/// means that the Worker function will continue to work in the next loop. If it
-/// is \p false, it means that it will no work anymore, and the loop must stop.
-///
-/// The Worker has this signature:
-/// <code>std::function<std::optional<t_result>(t_params &&...)></code>.
-///
-/// If \p t_params... is \p void, the Worker has this signature
-/// <code>std::function<std::optional<t_result>(void)></code>.
-///
-/// \bTimeout
-/// If the Worker does not finish on time, \p std::conditional<bool> will not
-/// return a value, causing the loop to stop.
-///
-/// \bProvider
-/// The Provider function provides the \p t_params... parameters for the Worker
-/// function, in the case \p t_params... is not \p void
-///
-/// The Provider function has this signature:
-/// <code>std::function<std::optional<std::tuple<t_params...>>()></code>.
-///
-/// If \p std::conditional does not return a value, the Worker function will not
-/// return a \p bool value, making the loop to stop
-///
-/// If \p t_params... is \p void, the Provider is not used, and the constructor
-/// that does not take a Provider parameter must be used.
-///
-/// \pBreaker
-/// The Breaker function allows the loop to be stopped, caused by a other code
-/// than the Worker.
-///
-/// The Breaker function has this signature:
-/// <code>std::function<bool()></code>
-///
-/// \tparam t_log provides log funcionality:
-/// t_log(const char *p_id)
-/// void debug(int p_line, const t_params&... p_params)
-/// void info(int p_line, const t_params&... p_params)
-/// void warn(int p_line, const t_params&... p_params)
-/// void error(int p_line, const t_params&... p_params)
-/// void fatal(int p_line, const t_params&... p_params)
-///
-/// \tparam t_time is the type of time used for timeout control of the Worker
-/// function
-///
-/// \tparam t_params..., if not \p void, are the types of the the parameters
-/// expected by the Worker function the loop; it must be:
-///    - default constructible
-///    - move constructible
-///
+template <typename t_log, typename t_time, bool use_breaker,
+          typename... t_params>
+struct async_loop_t;
+
+// ############### 1 ########################################################
+template <typename t_log, typename t_time, typename... t_params>
+struct async_loop_t<t_log, t_time, true, t_params...>;
+
+// ############### 2 ########################################################
+template <typename t_log, typename t_time, typename t_param>
+struct async_loop_t<t_log, t_time, true, t_param>;
+
+// ############### 3 ########################################################
+template <typename t_log, typename t_time>
+struct async_loop_t<t_log, t_time, true>;
+
+// ############### 4 ########################################################
+template <typename t_log, typename t_time, typename... t_params>
+struct async_loop_t<t_log, t_time, false, t_params...>;
+
+// ############### 5 ########################################################
+template <typename t_log, typename t_time, typename t_param>
+struct async_loop_t<t_log, t_time, false, t_param>;
+
+// ############### 6 ########################################################
+template <typename t_log, typename t_time>
+struct async_loop_t<t_log, t_time, false>;
 
 // ############### 1 ########################################################
 template <typename t_log, typename t_time, typename... t_params>

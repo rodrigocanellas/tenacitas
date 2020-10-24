@@ -6,10 +6,12 @@ HEADERS += \
     $$code_src_dir/concurrent/internal/log.h \
     $$code_src_dir/concurrent/internal/worker_wrapper.h \
     $$code_src_dir/concurrent/thread.h \
+    $$code_src_dir/concurrent/timeout_callback.h \
+    $$code_src_dir/concurrent/breaker.h \
     $$code_src_dir/concurrent/runner.h \
     $$code_src_dir/concurrent/async_loop.h \
     $$code_src_dir/concurrent/fixed_size_queue.h \
-    $$code_src_dir/concurrent/sleeping_loop.h \
+    $$code_src_dir/concurrent/sleeping_loop.h    \
     $$code_src_dir/concurrent/producer_consumer.h
 
 

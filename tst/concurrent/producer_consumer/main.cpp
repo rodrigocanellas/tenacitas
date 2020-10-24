@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 
+#include <concurrent/async_loop.h>
 #include <concurrent/fixed_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/msg_a.h>
@@ -19,18 +20,30 @@ struct producer_consumer_000 {
   typedef logger::cerr::log log;
   typedef concurrent::fixed_size_queue_t<log, int16_t> queue;
   typedef typename queue::data data;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue,
-                                          int16_t>
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
       producer_consumer;
+  typedef concurrent::timeout_callback timeout_callback;
+
+  static std::string desc() {
+    return "Simple test, creating a producer_consumer, adding a single data, "
+           "and starting";
+  }
 
   bool operator()() {
     log _log{"000"};
 
     producer_consumer _pc({queue(10)});
     consumer _consumer;
-    _pc.add([&_consumer](
-                data &&p_data) -> bool { return _consumer(std::move(p_data)); },
-            std::chrono::milliseconds(500));
+
+    producer_consumer::worker _worker = [&_consumer](data &&p_data) -> void {
+      _consumer(std::move(p_data));
+    };
+
+    timeout_callback _timeout_callback = [&_log](std::thread::id p_id) -> void {
+      concurrent_debug(_log, "timeout for ", p_id);
+    };
+
+    _pc.add(_worker, std::chrono::milliseconds(500), _timeout_callback);
 
     concurrent_debug(_log, "capacity = ", _pc.capacity(),
                      ", occupied = ", _pc.occupied());
@@ -45,16 +58,10 @@ struct producer_consumer_000 {
     return true;
   }
 
-  static std::string desc() {
-    return "Simple test, creating a producer_consumer, adding a single data, "
-           "and starting";
-  }
-
 private:
   struct consumer {
-    bool operator()(data &&p_value) {
+    void operator()(data &&p_value) {
       concurrent_info(m_log, "value = ", p_value);
-      return true;
     }
 
   private:
@@ -66,16 +73,29 @@ struct producer_consumer_001 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
   typedef concurrent::sleeping_loop_t<log, std::chrono::milliseconds,
-                                      std::chrono::seconds, void>
+                                      std::chrono::seconds>
       sleeping_loop;
   typedef concurrent::fixed_size_queue_t<log, msg> queue;
   typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
       producer_consumer;
+  typedef concurrent::timeout_callback timeout_callback;
+
+  static std::string desc() {
+    return "\nA 'sleeping_loop' sending a message at each 500 ms, to a "
+           "'producer_consumer', with one consumer, that sleeps for 1 second,  "
+           "and using a 'fixed_size_queue', with size 10 \nThe main thread "
+           "will sleep for 50 secs"
+           "\nThe amount of data consumed must be equal to the provided";
+  }
 
   bool operator()() {
     log _log{"001"};
 
     producer_consumer _pc({queue(10)});
+
+    timeout_callback _timeout_callback = [&_log](std::thread::id p_id) -> void {
+      concurrent_debug(_log, "timeout for ", p_id);
+    };
 
     concurrent_debug(_log, "capacity = ", _pc.capacity(),
                      ", occupied = ", _pc.occupied());
@@ -87,15 +107,15 @@ struct producer_consumer_001 {
     consumer _consumer;
 
     concurrent_debug(_log, "creating the sleeping_loop");
-    sleeping_loop _loop(_producer, std::chrono::milliseconds(500),
-                        std::chrono::seconds(1));
+    sleeping_loop _loop(std::chrono::milliseconds(500), std::chrono::seconds(1),
+                        _producer, _timeout_callback);
 
     concurrent_debug(_log, "adding consumer to the producer_consumer");
     _pc.add(
         [&_consumer](msg &&p_msg) -> std::optional<bool> {
           return _consumer(std::move(p_msg));
         },
-        std::chrono::milliseconds(2000));
+        std::chrono::milliseconds(2000), _timeout_callback);
 
     concurrent_debug(_log, "starting the sleeping loop");
     _loop.start();
@@ -117,16 +137,6 @@ struct producer_consumer_001 {
   }
 
   ~producer_consumer_001() {}
-
-  static std::string desc() {
-    return "\nA 'sleeping_loop' sending a message at each 500 ms, to a "
-           "'producer_consumer', with one consumer, that sleeps for 1 second, "
-           "and using a 'fixed_size_queue', with size 10"
-
-           "\nThe main thread will sleep for 50 secs"
-
-           "\nThe amount of data consumed must be equal to the provided";
-  }
 
 private:
   struct producer {
@@ -179,11 +189,30 @@ struct producer_consumer_002 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
   typedef concurrent::sleeping_loop_t<log, std::chrono::milliseconds,
-                                      std::chrono::milliseconds, void>
+                                      std::chrono::milliseconds>
       sleeping_loop;
   typedef concurrent::fixed_size_queue_t<log, msg> queue;
   typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
       producer_consumer;
+  typedef concurrent::timeout_callback timeout_callback;
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream
+        << "\nA 'sleeping_loop' sending a message at each 500 ms, to "
+        << "a 'producer_consumer' with one consumer, using a "
+        << "'fixed_size_queue', with size 40"
+
+        << "\nThe main thread will sleep for 10 secs, the 'producer_consumer' "
+        << "will stop; main thread will sleep for 5 secs; 'producer_consumer' "
+        << "will run again; main thread will sleep for 4 secs."
+
+        << "\nThe messages added while the queue was stopped are handled when "
+        << "the pool runs again ."
+
+        << "\nThe amount of data consumed must be equal to the provided";
+    return _stream.str();
+  }
 
   bool operator()() {
 
@@ -197,15 +226,19 @@ struct producer_consumer_002 {
 
     consumer _consumer;
 
+    timeout_callback _timeout_callback = [&_log](std::thread::id p_id) -> void {
+      concurrent_debug(_log, "timeout for ", p_id);
+    };
+
     concurrent_debug(_log, "creating the sleeping_loop");
 
-    sleeping_loop _loop([&_producer]() -> bool { return _producer(); },
-                        std::chrono::milliseconds(300),
-                        std::chrono::milliseconds(500));
+    sleeping_loop _loop(
+        std::chrono::milliseconds(300), std::chrono::milliseconds(500),
+        [&_producer]() -> void { _producer(); }, _timeout_callback);
 
     concurrent_debug(_log, "adding consumer to the producer_consumer");
     _pc.add([&_consumer](msg &&p_msg) { return _consumer(std::move(p_msg)); },
-            std::chrono::milliseconds(100));
+            std::chrono::milliseconds(100), _timeout_callback);
 
     _loop.start();
     _pc.start();
@@ -236,21 +269,6 @@ struct producer_consumer_002 {
     }
 
     return true;
-  }
-
-  static std::string desc() {
-    return "\nA 'sleeping_loop' sending a message at each 500 ms, to a "
-           "'producer_consumer' with one consumer, using a 'fixed_size_queue', "
-           "with size 40"
-
-           "\nThe main thread will sleep for 10 secs, the 'producer_consumer' "
-           "will stop; main thread will sleep for 5 secs; 'producer_consumer' "
-           "will run again; main thread will sleep for 4 secs."
-
-           "\nThe messages added while the queue was stopped are handled when "
-           "the pool runs again."
-
-           "\nThe amount of data consumed must be equal to the provided";
   }
 
   struct consumer {
@@ -285,14 +303,19 @@ struct producer_consumer_002 {
 struct producer_consumer_003 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
-  //  typedef concurrent::sleeping_loop_t<log, std::chrono::milliseconds,
-  //                                      std::chrono::milliseconds, void>
-  //      sleeping_loop;
   typedef concurrent::fixed_size_queue_t<log, msg> queue;
   typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
       producer_consumer;
+  typedef concurrent::timeout_callback timeout_callback;
+
+  static std::string desc() {
+    return "\nProduces 300 messages, and waits for all to be consumed";
+  }
 
   bool operator()() {
+    timeout_callback _timeout_callback = [this](std::thread::id p_id) -> void {
+      concurrent_debug(m_log, "timeout for ", p_id);
+    };
 
     producer_consumer _pc{queue(40)};
 
@@ -300,7 +323,7 @@ struct producer_consumer_003 {
         [this](msg &&p_msg) -> std::optional<bool> {
           return m_consumer(std::move(p_msg));
         },
-        std::chrono::milliseconds(1000));
+        std::chrono::milliseconds(1000), _timeout_callback);
 
     _pc.start();
 
@@ -321,10 +344,6 @@ struct producer_consumer_003 {
     }
 
     return true;
-  }
-
-  static std::string desc() {
-    return "\nProduces 300 messages, and waits for all to be consumed";
   }
 
 private:
@@ -352,5 +371,4 @@ int main(int argc, char **argv) {
   run_test(_test, producer_consumer_001);
   run_test(_test, producer_consumer_002);
   run_test(_test, producer_consumer_003);
-  //  run_test(_test, producer_consumer_003);
 }

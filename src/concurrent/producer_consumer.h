@@ -16,9 +16,10 @@
 #include <vector>
 
 #include <concurrent/async_loop.h>
+#include <concurrent/breaker.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
-#include <status/result.h>
+#include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -61,17 +62,24 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_log, typename t_time, typename t_container,
-          typename... t_data>
+template <typename t_log, typename t_time, typename t_container>
 class producer_consumer_t {
 public:
   /// \brief type of container that holds produced data to be consumed
   typedef t_container container;
 
+  typedef typename container::data data;
+
   /// \brief type of time used for timeout control
   typedef t_time time;
 
-  typedef std::function<void(t_data...)> worker;
+  typedef std::function<void(data &&)> worker;
+
+  /// \brief async_loop_t is a \p async_loop where a \p worker function will be
+  /// running
+  typedef async_loop_t<t_log, t_time, true, data> async_loop;
+
+  //  typedef typename async_loop::timeout_callback timeout_callback;
 
 public:
   producer_consumer_t() = delete;
@@ -119,7 +127,7 @@ public:
   /// \param p_data is the data produced
   ///
   /// \return \p true if it was added, \p false otherwise
-  bool add(const t_data &... p_data) {
+  bool add(const data &p_data) {
     if (m_stopped) {
       concurrent_error(m_log, "could not add data because 'producer_consumer' "
                               "is not running; call 'start()' first");
@@ -136,7 +144,7 @@ public:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(p_data...);
+      m_container.add(p_data);
       ++m_queued_data;
     }
 
@@ -153,7 +161,7 @@ public:
   /// \param p_data is the data produced
   ///
   /// \return \p true if it was added, \p false otherwise
-  bool add(t_data &&... p_data) {
+  bool add(data &&p_data) {
     if (m_stopped) {
       concurrent_error(m_log, "could not add data because 'producer_consumer' "
                               "is not running; call 'start()' first");
@@ -170,7 +178,7 @@ public:
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(std::move(p_data...));
+      m_container.add(std::move(p_data));
       ++m_queued_data;
     }
 
@@ -188,18 +196,18 @@ public:
   /// \param p_work the \p worker fuction to be added
   ///
   /// \param p_timeout timeout of this \p worker function
-  void add(worker p_work, time p_timeout) {
+  void add(worker p_work, time p_timeout, timeout_callback p_timeout_callback) {
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::optional<t_data...> {
+    auto _provider = [this]() -> std::optional<data> {
       return this->provider();
     };
 
-    async_loop_ptr _loop(
-        std::make_shared<async_loop>(p_work, _breaker, p_timeout, _provider));
+    async_loop_ptr _loop(std::make_shared<async_loop>(
+        p_timeout, p_work, _breaker, _provider, p_timeout_callback));
 
     add(_loop);
   }
@@ -212,19 +220,20 @@ public:
   ///
   /// \param p_worker_timeout timeout for the \p worker functions
   void add(uint16_t p_num_works, std::function<worker()> p_work_factory,
-           time p_worker_timeout) {
+           time p_worker_timeout, timeout_callback p_timeout_callback) {
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
     auto _breaker = [this]() -> bool { return this->breaker(); };
 
-    auto _provider = [this]() -> std::optional<t_data...> {
+    auto _provider = [this]() -> std::optional<data> {
       return this->provider();
     };
 
     for (auto _i = 0; _i < p_num_works; ++_i) {
       async_loop_ptr _loop(std::make_shared<async_loop>(
-          p_work_factory(), _breaker, p_worker_timeout, _provider));
+          p_worker_timeout, p_work_factory(), _breaker, _provider,
+          p_timeout_callback));
 
       add(_loop);
     }
@@ -291,10 +300,6 @@ public:
   inline size_t occupied() const { return m_container.occupied(); }
 
 private:
-  /// \brief async_loop_t is a \p async_loop where a \p worker function will be
-  /// running
-  typedef async_loop_t<t_log, t_time, false, t_data...> async_loop;
-
   typedef typename std::shared_ptr<async_loop> async_loop_ptr;
 
   /// \brief async_loops_t is the collection of \p async_loop
@@ -319,7 +324,7 @@ private:
   ///
   /// \return {true, a filled \p data object}, if there is any instance of
   /// \p data available; of {false, data()} otherwise
-  std::optional<std::tuple<t_data...>> provider() {
+  std::optional<data> provider() {
     using namespace std;
 
     if (m_stopped) {
@@ -354,9 +359,9 @@ private:
 
     concurrent_debug(m_log, "there is data");
 
-    std::optional<std::tuple<t_data...>> _maybe = m_container.get();
+    std::optional<data> _maybe = m_container.get();
     if (_maybe) {
-      std::tuple<t_data...> _data = _maybe.value();
+      data _data(_maybe.value());
 
       concurrent_debug(m_log, "getting ", _data, " and notifying");
 

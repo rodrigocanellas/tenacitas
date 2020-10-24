@@ -21,6 +21,7 @@
 #include <concurrent/internal/log.h>
 #include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
+#include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -30,8 +31,6 @@ namespace concurrent {
 template <typename t_log, typename t_time, typename t_result,
           typename... t_params>
 struct runner_t {
-
-  typedef std::function<void(std::thread::id)> timeout_callback;
 
   typedef std::function<t_result(t_params...)> worker;
 
