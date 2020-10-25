@@ -4,9 +4,10 @@ SUBDIRS = \
     async_loop \
     queue \
     sleeping_loop    \
-    producer_consumer
+    producer_consumer \
+    dispatcher
 
-#    dispatcher \
+#\
 #    performance \
 #    writer \
 

@@ -75,12 +75,6 @@ public:
 
   typedef std::function<void(data &&)> worker;
 
-  /// \brief async_loop_t is a \p async_loop where a \p worker function will be
-  /// running
-  typedef async_loop_t<t_log, t_time, true, data> async_loop;
-
-  //  typedef typename async_loop::timeout_callback timeout_callback;
-
 public:
   producer_consumer_t() = delete;
 
@@ -300,6 +294,10 @@ public:
   inline size_t occupied() const { return m_container.occupied(); }
 
 private:
+  /// \brief async_loop_t is a \p async_loop where a \p worker function will be
+  /// running
+  typedef async_loop_t<t_log, t_time, true, data> async_loop;
+
   typedef typename std::shared_ptr<async_loop> async_loop_ptr;
 
   /// \brief async_loops_t is the collection of \p async_loop

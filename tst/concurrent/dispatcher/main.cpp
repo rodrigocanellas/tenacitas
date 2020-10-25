@@ -11,17 +11,119 @@
 #include <string>
 
 #include <concurrent/dispatcher.h>
+#include <concurrent/fixed_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/sleeping_loop.h>
-#include <concurrent/traits.h>
+#include <concurrent/timeout_callback.h>
 #include <logger/cerr/log.h>
-#include <status/result.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
+concurrent::timeout_callback _timeout_callback =
+    [](std::thread::id p_id) -> void {
+  logger::cerr::log _log{"timeout_callback"};
+  concurrent_warn(_log, "timeout for ", p_id);
+};
+
+struct dispatcher_004 {
+
+  static std::string desc() { return ""; }
+
+  // ############################## messages
+  struct msg_a {
+    friend std::ostringstream &operator<<(std::ostringstream &p_out,
+                                          const msg_a &p_msg) {
+      p_out << "|msg a|i|" << p_msg.i;
+      return p_out;
+    }
+
+    explicit msg_a(int16_t p_i = 0) : i(p_i) {}
+
+    int16_t i = {0};
+  };
+
+  typedef concurrent::fixed_size_queue_t<logger::cerr::log, msg_a> queue_a;
+
+  typedef concurrent::dispatcher_t<logger::cerr::log, std::chrono::milliseconds,
+                                   queue_a>
+      dispatcher_a;
+
+  struct subscriber_1 {
+    void operator()(msg_a &&p_msg) { concurrent_debug(m_log, "S 1", p_msg); }
+    logger::cerr::log m_log{"dispatcher_004::subscriber_1"};
+  };
+
+  struct publisher_1 {
+    void operator()() {
+
+      msg_a _msg(++i);
+      concurrent_debug(m_log, "P 1", _msg);
+
+      dispatcher_a::publish(++i);
+    }
+
+  private:
+    logger::cerr::log m_log{"dispatcher_004::publisher_1"};
+    int16_t i = {10};
+  };
+
+  typedef concurrent::sleeping_loop_t<
+      logger::cerr::log, std::chrono::milliseconds, std::chrono::seconds>
+      sleeping_loop;
+
+  bool operator()() {
+    sleeping_loop _sl1(std::chrono::milliseconds(200), std::chrono::seconds(1),
+                       publisher_1(), _timeout_callback);
+
+    bool _rc = true;
+    std::chrono::milliseconds _work_timeout(500);
+
+    dispatcher_a::add("a1", queue_a(50));
+
+    dispatcher_a::subscribe("a1", subscriber_1(), _work_timeout);
+
+    _sl1.start();
+
+    concurrent_debug(m_log, "------> starting to sleep");
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    concurrent_debug(m_log, "------> waking up");
+    return _rc;
+
+    return _rc;
+  }
+
+private:
+  logger::cerr::log m_log{"dispatcher_004"};
+};
+
 // ############################## subscribers
 struct dispatcher_000 {
+  static const std::string desc() {
+    return "\n3 types of messages, 4 subscribers, 3 publishers."
+
+           "\n\nMessage 'a' has an int16_t attribute; message 'b' has an "
+           "int32_t attribute; message 'c' has a double attribute."
+
+           "\n\nSubscriber 1 for message 'a', with two instances; subscriber 2 "
+           "for messages 'a' and 'b'; subscriber 3 for message 'b'; subscriber "
+           "4 for messages 'a', 'b' and 'c'."
+
+           "\n\nPublisher 1 publishes 'a', starting at 10, increasing 1 at "
+           "each publishing; publisher 2 publishes 'a' stating at -100, and "
+           "incrementing 10, and 'c', starting at 1.0 and multiplying times "
+           "2.5; publisher 3 publishes 'b', stating at 5000, and incrementing "
+           "300."
+
+           "\n\nA 'sleeping_loop' will call Publisher 1 to send messages at "
+           "each 1000ms; another 'sleeping_loop' will call Publisher 2 to send "
+           "messages at each 2000ms; and a third 'sleeping_loop' will call "
+           "Publisher 3 to send messages at each 1500ms."
+
+           "\n\nMain thread will sleep for 10 seconds, while publishers send "
+           "messages.";
+  }
+
   // ############################## messages
   struct msg_a {
     friend std::ostringstream &operator<<(std::ostringstream &p_out,
@@ -61,16 +163,32 @@ struct dispatcher_000 {
     double d = {0.0};
   };
 
+  typedef concurrent::fixed_size_queue_t<logger::cerr::log, msg_a> queue_a;
+  typedef concurrent::fixed_size_queue_t<logger::cerr::log, msg_b> queue_b;
+  typedef concurrent::fixed_size_queue_t<logger::cerr::log, msg_c> queue_c;
+
+  typedef concurrent::dispatcher_t<logger::cerr::log, std::chrono::milliseconds,
+                                   queue_a>
+      dispatcher_a;
+
+  typedef concurrent::dispatcher_t<logger::cerr::log, std::chrono::milliseconds,
+                                   queue_b>
+      dispatcher_b;
+
+  typedef concurrent::dispatcher_t<logger::cerr::log, std::chrono::milliseconds,
+                                   queue_c>
+      dispatcher_c;
+
   // ############################## publishers
   struct publisher_1 {
+
   public:
-    bool operator()() {
-      using namespace tenacitas;
+    void operator()() {
+
       msg_a _msg(++i);
       concurrent_debug(m_log, "P 1", _msg);
 
-      concurrent::dispatcher_t<msg_a, logger::cerr::log>::publish(++i);
-      return true;
+      dispatcher_a::publish(++i);
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_1"};
     int16_t i = {10};
@@ -78,19 +196,17 @@ struct dispatcher_000 {
 
   struct publisher_2 {
   public:
-    bool operator()() {
-      using namespace tenacitas;
+    void operator()() {
+
       i += 10;
       msg_a _msg_a(i);
       concurrent_debug(m_log, "P 2", _msg_a);
-      concurrent::dispatcher_t<msg_a, logger::cerr::log>::publish(_msg_a);
+      dispatcher_a::publish(_msg_a);
 
       d *= 2.5;
       msg_c _msg_c(d);
       concurrent_debug(m_log, "P 2", _msg_c);
-      concurrent::dispatcher_t<msg_c, logger::cerr::log>::publish(_msg_c);
-
-      return true;
+      dispatcher_c::publish(_msg_c);
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_2"};
     int16_t i = {-100};
@@ -99,15 +215,13 @@ struct dispatcher_000 {
 
   struct publisher_3 {
   public:
-    bool operator()() {
-      using namespace tenacitas;
+    void operator()() {
+
       i += 300;
       msg_b _msg_b(i);
 
       concurrent_debug(m_log, "P 3", _msg_b);
-      concurrent::dispatcher_t<msg_b, logger::cerr::log>::publish(_msg_b);
-
-      return true;
+      dispatcher_b::publish(_msg_b);
     }
     logger::cerr::log m_log{"dispatcher_000::publisher_3"};
     int32_t i = {5000};
@@ -115,86 +229,67 @@ struct dispatcher_000 {
 
   // ############################## subscribers
   struct subscriber_1 {
-    bool operator()(msg_a &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 1", p_msg);
-      return true;
-    }
+    void operator()(msg_a &&p_msg) { concurrent_debug(m_log, "S 1", p_msg); }
     logger::cerr::log m_log{"dispatcher_000::subscriber_1"};
   };
 
   struct subscriber_2 {
-    bool operator()(msg_a &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 2", p_msg);
-      return true;
-    }
+    void operator()(msg_a &&p_msg) { concurrent_debug(m_log, "S 2", p_msg); }
 
-    bool operator()(msg_b &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 2", p_msg);
-      return true;
-    }
+    void operator()(msg_b &&p_msg) { concurrent_debug(m_log, "S 2", p_msg); }
     logger::cerr::log m_log{"dispatcher_000::subscriber_2"};
   };
 
   struct subscriber_3 {
-    bool operator()(msg_b &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 3", p_msg);
-      return true;
-    }
+    void operator()(msg_b &&p_msg) { concurrent_debug(m_log, "S 3", p_msg); }
     logger::cerr::log m_log{"dispatcher_000::subscriber_3"};
   };
 
   struct subscriber_4 {
-    bool operator()(msg_a &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 4", p_msg);
-      return true;
-    }
+    void operator()(msg_a &&p_msg) { concurrent_debug(m_log, "S 4", p_msg); }
 
-    bool operator()(msg_b &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 4", p_msg);
-      return true;
-    }
+    void operator()(msg_b &&p_msg) { concurrent_debug(m_log, "S 4", p_msg); }
 
-    bool operator()(msg_c &&p_msg) {
-      using namespace tenacitas;
-      concurrent_debug(m_log, "S 4", p_msg);
-      return true;
-    }
+    void operator()(msg_c &&p_msg) { concurrent_debug(m_log, "S 4", p_msg); }
+
     logger::cerr::log m_log{"dispatcher_000::subscriber_4"};
   };
 
-  typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sleeping_loop;
+  typedef concurrent::sleeping_loop_t<
+      logger::cerr::log, std::chrono::milliseconds, std::chrono::seconds>
+      sleeping_loop;
 
   bool operator()() {
-    using namespace tenacitas;
-    sleeping_loop _sl1(std::chrono::milliseconds(1000), publisher_1(),
-                       std::chrono::milliseconds(1000));
-    sleeping_loop _sl2(std::chrono::milliseconds(2000), publisher_2(),
-                       std::chrono::milliseconds(1000));
-    sleeping_loop _sl3(std::chrono::milliseconds(1500), publisher_3(),
-                       std::chrono::milliseconds(1000));
-    using namespace tenacitas;
+
+    sleeping_loop _sl1(std::chrono::milliseconds(200), std::chrono::seconds(1),
+                       publisher_1(), _timeout_callback);
+    sleeping_loop _sl2(std::chrono::milliseconds(200), std::chrono::seconds(1),
+                       publisher_2(), _timeout_callback);
+    sleeping_loop _sl3(std::chrono::milliseconds(200), std::chrono::seconds(1),
+                       publisher_3(), _timeout_callback);
+
     bool _rc = true;
     std::chrono::milliseconds _work_timeout(500);
-    concurrent::dispatcher_t<msg_a, logger::cerr::log>::subscribe(
+
+    dispatcher_a::add("a1", queue_a(50));
+    dispatcher_a::add("a2", queue_a(90));
+    dispatcher_a::add("a3", queue_a(25));
+
+    dispatcher_b::add("b1", queue_b(100));
+    dispatcher_b::add("b2", queue_b(40));
+    dispatcher_b::add("b3", queue_b(75));
+
+    dispatcher_c::add("c1", queue_c(65));
+
+    dispatcher_a::subscribe(
         "a1", []() { return subscriber_1(); }, 2, _work_timeout);
-    concurrent::dispatcher_t<msg_a, logger::cerr::log>::subscribe(
-        "a2", subscriber_2(), _work_timeout);
-    concurrent::dispatcher_t<msg_a, logger::cerr::log>::subscribe(
-        "a3", subscriber_4(), _work_timeout);
-    concurrent::dispatcher_t<msg_b, logger::cerr::log>::subscribe(
-        "b1", subscriber_2(), _work_timeout);
-    concurrent::dispatcher_t<msg_b, logger::cerr::log>::subscribe(
-        "b2", subscriber_3(), _work_timeout);
-    concurrent::dispatcher_t<msg_b, logger::cerr::log>::subscribe(
-        "b3", subscriber_4(), _work_timeout);
-    concurrent::dispatcher_t<msg_c, logger::cerr::log>::subscribe(
-        "c1", subscriber_4(), _work_timeout);
+
+    dispatcher_a::subscribe("a2", subscriber_2(), _work_timeout);
+    dispatcher_a::subscribe("a3", subscriber_4(), _work_timeout);
+    dispatcher_b::subscribe("b1", subscriber_2(), _work_timeout);
+    dispatcher_b::subscribe("b2", subscriber_3(), _work_timeout);
+    dispatcher_b::subscribe("b3", subscriber_4(), _work_timeout);
+    dispatcher_c::subscribe("c1", subscriber_4(), _work_timeout);
 
     _sl1.start();
     _sl2.start();
@@ -206,389 +301,361 @@ struct dispatcher_000 {
     return _rc;
   }
 
-  static const std::string desc() {
-    return "\n3 types of messages, 4 subscribers, 3 publishers."
-           "\n\nMessage 'a' has an int16_t attribute; message 'b' has an "
-           "int32_t "
-           "attribute; message 'c' has a double attribute."
-
-           "\n\nSubscriber 1 for message 'a', with two instances; subscriber 2 "
-           "for "
-           "messages 'a' and 'b'; subscriber 3 for message 'b'; "
-           "subscriber 4 for messages 'a', 'b' and 'c'."
-
-           "\n\nPublisher 1 publishes 'a', starting at 10, increasing 1 at "
-           "each "
-           "publishing; "
-           "publisher 2 publishes 'a' stating at -100, and incrementing "
-           "10, and 'c', starting at 1.0 and multiplying times 2.5; "
-           "publisher 3 publishes 'b', stating at 5000, and incrementing 300."
-
-           "\n\nA 'sleeping_loop' will call Publisher 1 to send messages at "
-           "each "
-           "1000ms; "
-           "another 'sleeping_loop' will call Publisher 2 to send messages at "
-           "each "
-           "2000ms; "
-           "and a third 'sleeping_loop' will call Publisher 3 to send messages "
-           "at "
-           "each 1500ms."
-
-           "\n\nMain thread will sleep for 10 seconds, while publishers send "
-           "messages.";
-  }
+private:
   logger::cerr::log m_log{"dispatcher_000"};
 };
 
-// ############################## subscribers
-struct dispatcher_001 {
-  // ############################## messages
-  struct request {
-    friend std::ostringstream &operator<<(std::ostringstream &p_out,
-                                          const request &p_msg) {
-      p_out << "|msg a|i|" << p_msg.i;
-      return p_out;
-    }
+//// ############################## subscribers
+// struct dispatcher_001 {
 
-    explicit request(int16_t p_i = 0) : i(p_i) {}
+//  static const std::string desc() {
+//    return "\nTesting asynchronous work collaboration.";
+//  }
 
-    int32_t i = {0};
-  };
+//  // ############################## messages
+//  struct request {
+//    friend std::ostringstream &operator<<(std::ostringstream &p_out,
+//                                          const request &p_msg) {
+//      p_out << "|msg a|i|" << p_msg.i;
+//      return p_out;
+//    }
 
-  struct reply {
-    friend std::ostringstream &operator<<(std::ostringstream &p_out,
-                                          const reply &p_msg) {
-      p_out << "|msg a|i|" << p_msg.i;
-      return p_out;
-    }
+//    explicit request(int16_t p_i = 0) : i(p_i) {}
 
-    explicit reply(int16_t p_i = 0) : i(p_i) {}
+//    int32_t i = {0};
+//  };
 
-    int32_t i = {0};
-  };
+//  struct reply {
+//    friend std::ostringstream &operator<<(std::ostringstream &p_out,
+//                                          const reply &p_msg) {
+//      p_out << "|msg a|i|" << p_msg.i;
+//      return p_out;
+//    }
 
-  // ############################## processors
-  struct requester {
-    bool start() {
-      using namespace tenacitas;
-      using namespace tenacitas;
-      typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
-      dispatcher::publish(request(time(nullptr)));
-      return true;
-    }
+//    explicit reply(int16_t p_i = 0) : i(p_i) {}
 
-    bool operator()(reply &&p_reply) {
-      using namespace tenacitas;
-      using namespace tenacitas;
-      typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
-      concurrent_debug(m_log, "reply ", p_reply);
-      if (m_counter++ > 100) {
-        concurrent_info(m_log, "counter = ", m_counter, ", stopping");
-        dispatcher::publish(request(0));
-        return false;
-      }
-      if ((p_reply.i % 2) == 0) {
-        dispatcher::publish(request(5 * time(nullptr)));
-      } else {
-        dispatcher::publish(request(3 * time(nullptr)));
-      }
-      return true;
-    }
+//    int32_t i = {0};
+//  };
 
-  private:
-    logger::cerr::log m_log{"dispatcher_001::requester"};
-    int16_t m_counter = {0};
-  };
+//  typedef concurrent::fixed_size_queue_t<logger::cerr::log, request>
+//      request_queue;
 
-  struct replier {
-    bool operator()(request &&p_request) {
-      using namespace tenacitas;
-      using namespace tenacitas;
-      typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
-      concurrent_debug(m_log, "request ", p_request);
-      if (p_request.i == 0) {
-        concurrent_info(m_log, "stopping");
-        return false;
-      }
-      if ((p_request.i % 2) == 0) {
-        dispatcher::publish(reply(4 * time(nullptr)));
-      } else {
-        dispatcher::publish(reply(4 * time(nullptr)));
-      }
-      return true;
-    }
-    logger::cerr::log m_log{"dispatcher_001::replier"};
-  };
+//  typedef concurrent::fixed_size_queue_t<logger::cerr::log, reply>
+//  reply_queue;
 
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace tenacitas;
-    typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher_reply;
-    typedef concurrent::dispatcher_t<request, logger::cerr::log>
-        dispatcher_request;
-    std::chrono::milliseconds _work_timeout(500);
-    dispatcher_reply::subscribe("req", requester(), _work_timeout);
-    dispatcher_request::subscribe("rep", replier(), _work_timeout);
+//  typedef concurrent::dispatcher_t<logger::cerr::log,
+//  std::chrono::milliseconds,
+//                                   request_queue>
+//      request_dispatcher;
 
-    requester().start();
+//  typedef concurrent::dispatcher_t<logger::cerr::log,
+//  std::chrono::milliseconds,
+//                                   reply_queue>
+//      reply_dispatcher;
 
-    concurrent_debug(m_log, "------> starting to sleep");
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    concurrent_debug(m_log, "------> waking up");
+//  // ############################## processors
+//  struct requester {
+//    void start() { request_dispatcher::publish(request(time(nullptr))); }
 
-    return true;
-  }
+//    void operator()(reply &&p_reply) {
 
-  static const std::string desc() {
-    return "\nTesting asynchronous work collaboration.";
-  }
+//      concurrent_debug(m_log, "reply ", p_reply);
+//      if (m_counter++ > 100) {
+//        concurrent_info(m_log, "counter = ", m_counter, ", stopping");
+//        request_dispatcher::publish(request(0));
+//        return;
+//      }
+//      if ((p_reply.i % 2) == 0) {
+//        request_dispatcher::publish(request(5 * time(nullptr)));
+//      } else {
+//        request_dispatcher::publish(request(3 * time(nullptr)));
+//      }
+//    }
 
-  logger::cerr::log m_log{"dispatcher_001"};
-};
+//  private:
+//    logger::cerr::log m_log{"dispatcher_001::requester"};
+//    int16_t m_counter = {0};
+//  };
 
-struct dispatcher_002 {
+//  struct replier {
+//    void operator()(request &&p_request) {
 
-  // ############################## messages
-  struct request {
-    friend std::ostringstream &operator<<(std::ostringstream &p_out,
-                                          const request &p_msg) {
-      p_out << "|msg a|i|" << p_msg.i;
-      return p_out;
-    }
+//      concurrent_debug(m_log, "request ", p_request);
+//      if (p_request.i == 0) {
+//        concurrent_info(m_log, "stopping");
+//        return;
+//      }
+//      if ((p_request.i % 2) == 0) {
+//        reply_dispatcher::publish(reply(4 * time(nullptr)));
+//      } else {
+//        reply_dispatcher::publish(reply(4 * time(nullptr)));
+//      }
+//    }
+//    logger::cerr::log m_log{"dispatcher_001::replier"};
+//  };
 
-    explicit request(uint32_t p_i = 0) : i(p_i) {}
+//  bool operator()() {
 
-    uint32_t i = {0};
-  };
+//    std::chrono::milliseconds _work_timeout(500);
+//    reply_dispatcher::subscribe("req", requester(), reply_queue(40),
+//                                _work_timeout);
+//    request_dispatcher::subscribe("rep", replier(), request_queue(40),
+//                                  _work_timeout);
 
-  struct reply {
-    friend std::ostringstream &operator<<(std::ostringstream &p_out,
-                                          const reply &p_msg) {
-      p_out << "|msg a|i|" << p_msg.i;
-      return p_out;
-    }
+//    requester().start();
 
-    explicit reply(uint32_t p_i = 0) : i(p_i) {}
+//    concurrent_debug(m_log, "------> starting to sleep");
+//    std::this_thread::sleep_for(std::chrono::seconds(10));
+//    concurrent_debug(m_log, "------> waking up");
 
-    uint32_t i = {0};
-  };
+//    return true;
+//  }
 
-  // ############################## processors
-  struct requester {
-    requester(std::condition_variable *p_cond, std::mutex *p_mutex)
-        : m_cond(p_cond), m_mutex(p_mutex) {}
+//  logger::cerr::log m_log{"dispatcher_001"};
+//};
 
-    bool operator()(reply &&p_reply) {
-      using namespace tenacitas;
-      using namespace tenacitas;
-      typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
-      concurrent_info(m_log, "reply ", p_reply);
-      if (m_counter++ > 100) {
-        concurrent_info(m_log, "counter = ", m_counter, ", stopping");
-        dispatcher::publish(request(0));
-        concurrent_info(m_log, "sleeping...");
-        std::this_thread::sleep_for(std::chrono::seconds(8));
-        concurrent_info(m_log, "woke up!");
-        std::unique_lock<std::mutex> _lock(*m_mutex);
-        m_cond->notify_all();
-        return false;
-      }
-      if ((p_reply.i % 2) == 0) {
-        dispatcher::publish(request(5 * static_cast<uint32_t>(time(nullptr))));
-      } else {
-        dispatcher::publish(request(3 * static_cast<uint32_t>(time(nullptr))));
-      }
-      return true;
-    }
+// struct dispatcher_002 {
 
-  private:
-    logger::cerr::log m_log{"dispatcher_002::requester"};
-    int16_t m_counter = {0};
-    std::condition_variable *m_cond;
-    std::mutex *m_mutex;
-  };
+//  // ############################## messages
+//  struct request {
+//    friend std::ostringstream &operator<<(std::ostringstream &p_out,
+//                                          const request &p_msg) {
+//      p_out << "|msg a|i|" << p_msg.i;
+//      return p_out;
+//    }
 
-  struct replier {
-    bool operator()(request &&p_request) {
-      using namespace tenacitas;
-      using namespace tenacitas;
-      typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher;
-      concurrent_info(m_log, "request ", p_request);
-      if (p_request.i == 0) {
-        concurrent_info(m_log, "stopping");
-        return false;
-      }
-      if ((p_request.i % 2) == 0) {
-        dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
-      } else {
-        dispatcher::publish(reply(4 * static_cast<uint32_t>(time(nullptr))));
-      }
-      return true;
-    }
-    logger::cerr::log m_log{"dispatcher_002::replier"};
-  };
+//    explicit request(uint32_t p_i = 0) : i(p_i) {}
 
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace tenacitas;
-    typedef concurrent::dispatcher_t<reply, logger::cerr::log> dispatcher_reply;
-    typedef concurrent::dispatcher_t<request, logger::cerr::log>
-        dispatcher_request;
-    std::chrono::milliseconds _work_timeout(15000);
-    dispatcher_reply::subscribe("req", requester(&m_cond, &m_mutex),
-                                _work_timeout);
-    dispatcher_request::subscribe("rep", replier(), _work_timeout);
+//    uint32_t i = {0};
+//  };
 
-    start();
+//  struct reply {
+//    friend std::ostringstream &operator<<(std::ostringstream &p_out,
+//                                          const reply &p_msg) {
+//      p_out << "|msg a|i|" << p_msg.i;
+//      return p_out;
+//    }
 
-    concurrent_info(m_log, "------> waiting...");
-    std::unique_lock<std::mutex> _lock(m_mutex);
-    m_cond.wait(_lock);
-    concurrent_info(m_log, "------> done!");
+//    explicit reply(uint32_t p_i = 0) : i(p_i) {}
 
-    return true;
-  }
+//    uint32_t i = {0};
+//  };
 
-  static const std::string desc() {
-    return "\nTesting asynchronous work collaboration, and ending with "
-           "message.";
-  }
+//  typedef concurrent::fixed_size_queue_t<logger::cerr::log, request>
+//      request_queue;
 
-private:
-  logger::cerr::log m_log{"dispatcher_002"};
-  bool start() {
-    using namespace tenacitas;
-    using namespace tenacitas;
-    typedef concurrent::dispatcher_t<request, logger::cerr::log> dispatcher;
-    dispatcher::publish(request(static_cast<uint32_t>(time(nullptr))));
-    return true;
-  }
+//  typedef concurrent::fixed_size_queue_t<logger::cerr::log, reply>
+//  reply_queue;
 
-private:
-  std::condition_variable m_cond;
-  std::mutex m_mutex;
-};
+//  typedef concurrent::dispatcher_t<logger::cerr::log,
+//  std::chrono::milliseconds,
+//                                   request_queue>
+//      request_dispatcher;
 
-// ############################## main
-struct dispatcher_003 {
+//  typedef concurrent::dispatcher_t<logger::cerr::log,
+//  std::chrono::milliseconds,
+//                                   reply_queue>
+//      reply_dispatcher;
 
-  // ############################## loops
-  typedef concurrent::sleeping_loop_t<void, logger::cerr::log> sync_loop;
-  typedef concurrent::sleeping_loop_t<void, logger::cerr::log> rx_loop;
+//  // ############################## processors
+//  struct requester {
+//    requester(std::condition_variable *p_cond, std::mutex *p_mutex)
+//        : m_cond(p_cond), m_mutex(p_mutex) {}
 
-  // ############################## messages
+//    bool operator()(reply &&p_reply) {
 
-  struct end {};
+//      concurrent_info(m_log, "reply ", p_reply);
+//      if (m_counter++ > 100) {
+//        concurrent_info(m_log, "counter = ", m_counter, ", stopping");
+//        request_dispatcher::publish(request(0));
+//        concurrent_info(m_log, "sleeping...");
+//        std::this_thread::sleep_for(std::chrono::seconds(8));
+//        concurrent_info(m_log, "woke up!");
+//        std::unique_lock<std::mutex> _lock(*m_mutex);
+//        m_cond->notify_all();
+//        return false;
+//      }
+//      if ((p_reply.i % 2) == 0) {
+//        request_dispatcher::publish(
+//            request(5 * static_cast<uint32_t>(time(nullptr))));
+//      } else {
+//        request_dispatcher::publish(
+//            request(3 * static_cast<uint32_t>(time(nullptr))));
+//      }
+//      return true;
+//    }
 
-  struct msg_tpdo {
-    msg_tpdo() { ++counter; }
+//  private:
+//    logger::cerr::log m_log{"dispatcher_002::requester"};
+//    int16_t m_counter = {0};
+//    std::condition_variable *m_cond;
+//    std::mutex *m_mutex;
+//  };
 
-    friend std::ostream &operator<<(std::ostream &p_out,
-                                    const msg_tpdo & /*p_msg*/) {
-      p_out << static_cast<uint64_t>(
-          std::chrono::duration_cast<std::chrono::microseconds>(
-              std::chrono::high_resolution_clock::now().time_since_epoch())
-              .count());
-      return p_out;
-    }
-    static uint16_t counter;
-  };
+//  struct replier {
+//    bool operator()(request &&p_request) {
 
-  struct sync {
-    bool operator()() {
-      concurrent_debug(m_log, "sync");
-      return true;
-    }
-    logger::cerr::log m_log{"dispatcher_003::sync"};
-  };
+//      concurrent_info(m_log, "request ", p_request);
+//      if (p_request.i == 0) {
+//        concurrent_info(m_log, "stopping");
+//        return false;
+//      }
+//      if ((p_request.i % 2) == 0) {
+//        reply_dispatcher::publish(
+//            reply(4 * static_cast<uint32_t>(time(nullptr))));
+//      } else {
+//        reply_dispatcher::publish(
+//            reply(4 * static_cast<uint32_t>(time(nullptr))));
+//      }
+//      return true;
+//    }
+//    logger::cerr::log m_log{"dispatcher_002::replier"};
+//  };
 
-  // ############################## publishers
-  struct rx {
-    bool operator()() {
-      concurrent_debug(m_log, "rx");
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
-      concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::publish(
-          msg_tpdo());
+//  bool operator()() {
 
-      return true;
-    }
-    logger::cerr::log m_log{"dispatcher_003::rx"};
-  };
+//    std::chrono::milliseconds _work_timeout(15000);
+//    reply_dispatcher::subscribe("req", requester(&m_cond, &m_mutex),
+//                                reply_queue(30), _work_timeout);
+//    request_dispatcher::subscribe("rep", replier(), request_queue(30),
+//                                  _work_timeout);
 
-  // ############################## handler
-  struct tx {
-    tx() : m_id(++m_counter) {}
+//    start();
 
-    bool operator()(msg_tpdo &&p_msg) {
-      //    if (p_msg.counter > 20) {
-      //      debug(
-      //        m_log, "stopping because counter = ", p_msg.counter);
-      //      return bool::stop;
-      //    }
-      concurrent_debug(m_log, m_id, "|", p_msg);
+//    concurrent_info(m_log, "------> waiting...");
+//    std::unique_lock<std::mutex> _lock(m_mutex);
+//    m_cond.wait(_lock);
+//    concurrent_info(m_log, "------> done!");
 
-      return true;
-    }
+//    return true;
+//  }
 
-  private:
-    logger::cerr::log m_log{"dispatcher_003::tx"};
-    uint16_t m_id = 0;
-    static uint16_t m_counter;
-  };
+//  static const std::string desc() {
+//    return "\nTesting asynchronous work collaboration, and ending with "
+//           "message.";
+//  }
 
-  dispatcher_003() {}
+// private:
+//  logger::cerr::log m_log{"dispatcher_002"};
+//  bool start() {
+//    request_dispatcher::publish(request(static_cast<uint32_t>(time(nullptr))));
+//    return true;
+//  }
 
-  bool operator()() {
-    //    sync_loop _sync(
-    //      std::chrono::milliseconds(100), sync(),
-    //      std::chrono::milliseconds(2));
+// private:
+//  std::condition_variable m_cond;
+//  std::mutex m_mutex;
+//};
 
-    rx_loop _rx(std::chrono::milliseconds(40), rx(),
-                std::chrono::milliseconds(15));
+//// ############################## main
+// struct dispatcher_003 {
 
-    concurrent::dispatcher_t<msg_tpdo, logger::cerr::log>::subscribe(
-        "tx", tx(), std::chrono::milliseconds(10));
+//  // ############################## loops
+//  typedef concurrent::sleeping_loop_t<
+//      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
+//      sync_loop;
+//  typedef concurrent::sleeping_loop_t<
+//      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
+//      rx_loop;
 
-    //    _sync.start();
-    _rx.start();
+//  // ############################## messages
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(122));
+//  struct end {};
 
-    return true;
-  }
+//  struct msg_tpdo {
+//    msg_tpdo() { ++counter; }
 
-  static const std::string desc() {
-    return "\nTest inspired in a case brought by Fabio Costa";
-  }
+//    friend std::ostream &operator<<(std::ostream &p_out,
+//                                    const msg_tpdo & /*p_msg*/) {
+//      p_out << static_cast<uint64_t>(
+//          std::chrono::duration_cast<std::chrono::microseconds>(
+//              std::chrono::high_resolution_clock::now().time_since_epoch())
+//              .count());
+//      return p_out;
+//    }
+//    static uint16_t counter;
+//  };
 
-  static const std::string name() { return "dispatcher_003"; }
-};
+//  struct sync {
+//    void operator()() { concurrent_debug(m_log, "sync"); }
+//    logger::cerr::log m_log{"dispatcher_003::sync"};
+//  };
 
-uint16_t dispatcher_003::msg_tpdo::counter = 0;
-uint16_t dispatcher_003::tx::m_counter = 0;
+//  typedef concurrent::fixed_size_queue_t<logger::cerr::log, msg_tpdo>
+//      tpdo_queue;
+
+//  typedef concurrent::dispatcher_t<logger::cerr::log,
+//  std::chrono::milliseconds,
+//                                   tpdo_queue>
+//      tpdo_dispatcher;
+
+//  // ############################## publishers
+//  struct rx {
+//    void operator()() {
+//      concurrent_debug(m_log, "rx");
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//      tpdo_dispatcher::publish(msg_tpdo());
+//    }
+//    logger::cerr::log m_log{"dispatcher_003::rx"};
+//  };
+
+//  // ############################## handler
+//  struct tx {
+//    tx() : m_id(++m_counter) {}
+
+//    void operator()(msg_tpdo &&p_msg) {
+//      concurrent_debug(m_log, m_id, "|", p_msg);
+//    }
+
+//  private:
+//    logger::cerr::log m_log{"dispatcher_003::tx"};
+//    uint16_t m_id = 0;
+//    static uint16_t m_counter;
+//  };
+
+//  dispatcher_003() {}
+
+//  bool operator()() {
+//    //    sync_loop _sync(
+//    //      std::chrono::milliseconds(100), sync(),
+//    //      std::chrono::milliseconds(2));
+
+//    auto _timeout_callback = [](std::thread::id) -> void {};
+
+//    rx_loop _rx(std::chrono::milliseconds(40), std::chrono::milliseconds(15),
+//                rx(), _timeout_callback);
+
+//    tpdo_dispatcher::subscribe("tx", tx(), tpdo_queue(200),
+//                               std::chrono::milliseconds(10));
+
+//    //    _sync.start();
+//    _rx.start();
+
+//    std::this_thread::sleep_for(std::chrono::milliseconds(122));
+
+//    return true;
+//  }
+
+//  static const std::string desc() {
+//    return "\nTest inspired in a case brought by Fabio Costa";
+//  }
+
+//  static const std::string name() { return "dispatcher_003"; }
+//};
+
+// uint16_t dispatcher_003::msg_tpdo::counter = 0;
+// uint16_t dispatcher_003::tx::m_counter = 0;
 
 int main(int argc, char **argv) {
   logger::cerr::log::set_debug();
@@ -596,7 +663,8 @@ int main(int argc, char **argv) {
   tester::test _tester(argc, argv);
 
   run_test(_tester, dispatcher_000);
-  run_test(_tester, dispatcher_001);
-  run_test(_tester, dispatcher_002);
-  run_test(_tester, dispatcher_003);
+  //  run_test(_tester, dispatcher_001);
+  //  run_test(_tester, dispatcher_002);
+  //  run_test(_tester, dispatcher_003);
+  run_test(_tester, dispatcher_004);
 }
