@@ -16,8 +16,10 @@
 #include <thread>
 #include <tuple>
 
+#include <calendar/epoch.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/producer_consumer.h>
+#include <concurrent/queue.h>
 #include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
@@ -41,14 +43,14 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_log, typename t_time, typename t_container>
-class dispatcher_t {
+template <typename t_log, typename t_time, typename t_data> class dispatcher_t {
 public:
-  /// \brief type of container that holds produced data to be consumed
-  typedef t_container container;
+  typedef t_data data;
 
-  /// \brief type of data in the container
-  typedef typename container::data data;
+  /// \brief type of queue that holds produced data to be consumed
+  typedef queue_t<t_log, t_data> queue;
+
+  typedef typename queue::ptr queue_ptr;
 
   /// \brief type of time used for timeout control
   typedef t_time time;
@@ -56,8 +58,8 @@ public:
   /// \brief worker type
   typedef std::function<void(data &&)> worker;
 
-  /// \brief name of a container of data
-  typedef std::string queue;
+  /// \brief name for a group of \p worker functions
+  typedef std::string consumers_group;
 
   /// \brief dispatcher default constructor not allowed
   dispatcher_t() = delete;
@@ -85,23 +87,38 @@ public:
     }
   }
 
-  static void add(const queue &p_queue, t_container &&p_container) {
-    producer_consumer_ptr _producer_consumer(
-        std::make_shared<producer_consumer>(std::move(p_container)));
-    m_producer_consumer_list.insert({p_queue, _producer_consumer});
-  }
+  //  /// \brief Creates a queue for \p data messages, and defines a single \p
+  //  /// worker to handle them
+  //  static void create(t_data_queue &&p_queue) {
 
-  static void subscribe(const queue &p_queue,
+  //    const consumers_group _workers{
+  //        std::to_string(calendar::epoch::microsecs())};
+
+  //    create(_workers, std::move(p_queue));
+  //  }
+
+  //  /// \brief Creates a queue for \p data messages, and associates a name of
+  //  /// a group of \p worker objects
+  //  static void create(const consumers_group &p_workers, t_data_queue
+  //  &&p_queue) {
+  //    producer_consumer_ptr _producer_consumer(
+  //        std::make_shared<producer_consumer>(std::move(p_queue)));
+  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
+  //  }
+
+  /// \brief Adds \p worker objects to a already created group of \p worker
+  /// objects to handle \p data messages
+  static void subscribe(const consumers_group &p_workers,
                         std::function<worker()> p_work_factory,
                         uint16_t p_num_handlers, t_time p_work_timeout) {
 
     typename producer_consumer_list::iterator _ite =
-        m_producer_consumer_list.find(p_queue);
+        m_producer_consumer_list.find(p_workers);
 
     producer_consumer_ptr _producer_consumer;
     if (_ite == m_producer_consumer_list.end()) {
-      concurrent_fatal(m_log, "no " + p_queue + " defined");
-      throw std::runtime_error("no " + p_queue + " defined");
+      concurrent_fatal(m_log, "no " + p_workers + " defined");
+      throw std::runtime_error("no " + p_workers + " defined");
     }
 
     _producer_consumer = _ite->second;
@@ -114,19 +131,21 @@ public:
     _producer_consumer->start();
 
     // adding the \p producer_consumer to the list
-    m_producer_consumer_list.insert({p_queue, _producer_consumer});
+    m_producer_consumer_list.insert({p_workers, _producer_consumer});
   }
 
-  static void subscribe(const queue &p_queue, worker p_work,
+  /// \brief Adds a \p worker to a already created group of \p worker object to
+  /// handle messages \p data
+  static void subscribe(const consumers_group &p_workers, worker p_work,
                         t_time p_work_timeout) {
 
     typename producer_consumer_list::iterator _ite =
-        m_producer_consumer_list.find(p_queue);
+        m_producer_consumer_list.find(p_workers);
 
     producer_consumer_ptr _producer_consumer;
     if (_ite == m_producer_consumer_list.end()) {
-      concurrent_fatal(m_log, "no " + p_queue + " defined");
-      throw std::runtime_error("no " + p_queue + " defined");
+      concurrent_fatal(m_log, "no " + p_workers + " defined");
+      throw std::runtime_error("no " + p_workers + " defined");
     }
 
     _producer_consumer = _ite->second;
@@ -138,7 +157,7 @@ public:
     _producer_consumer->start();
 
     // adding the \p producer_consumer to the list
-    m_producer_consumer_list.insert({p_queue, _producer_consumer});
+    m_producer_consumer_list.insert({p_workers, _producer_consumer});
   }
 
   /// \brief handle sends a message to the \p work_t objects to be handled
@@ -183,12 +202,13 @@ public:
 
 private:
   /// \brief producer_consumer_t alias for \p producer_consumer of \p t_data
-  typedef producer_consumer_t<t_log, t_time, t_container> producer_consumer;
+  typedef producer_consumer_t<t_log, t_time, t_data> producer_consumer;
 
   typedef typename std::shared_ptr<producer_consumer> producer_consumer_ptr;
 
   /// \brief producer_consumer_list_t alias for list of \p producer_consumer_t
-  typedef std::map<queue, producer_consumer_ptr> producer_consumer_list;
+  typedef std::map<consumers_group, producer_consumer_ptr>
+      producer_consumer_list;
 
 private:
   /// \brief m_producer_consumer_list the single list of pools object
@@ -198,19 +218,17 @@ private:
   static t_log m_log;
 };
 
-///
 /// \brief definition of the single list of pools object
-///
-template <typename t_log, typename t_time, typename t_container>
-typename dispatcher_t<t_log, t_time, t_container>::producer_consumer_list
-    dispatcher_t<t_log, t_time, t_container>::m_producer_consumer_list;
+template <typename t_log, typename t_time, typename t_queue>
+typename dispatcher_t<t_log, t_time, t_queue>::producer_consumer_list
+    dispatcher_t<t_log, t_time, t_queue>::m_producer_consumer_list;
 
-template <typename t_log, typename t_time, typename t_container>
-timeout_callback dispatcher_t<t_log, t_time, t_container>::m_timeout_callback =
+template <typename t_log, typename t_time, typename t_queue>
+timeout_callback dispatcher_t<t_log, t_time, t_queue>::m_timeout_callback =
     [](std::thread::id) -> void {};
 
-template <typename t_log, typename t_time, typename t_container>
-t_log dispatcher_t<t_log, t_time, t_container>::m_log{"consumer::dispatcher"};
+template <typename t_log, typename t_time, typename t_queue>
+t_log dispatcher_t<t_log, t_time, t_queue>::m_log{"consumer::dispatcher"};
 
 } // namespace concurrent
 } // namespace tenacitas

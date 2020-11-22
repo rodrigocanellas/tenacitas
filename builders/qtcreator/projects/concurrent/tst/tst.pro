@@ -3,9 +3,11 @@ SUBDIRS = \
     runner \
     async_loop \
     queue \
-    sleeping_loop    \
-    producer_consumer \
-    dispatcher
+    circular_unlimited_size_queue \
+    sleeping_loop \
+    producer_consumer
+#    \
+#    dispatcher
 
 #\
 #    performance \

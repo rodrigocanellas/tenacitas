@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_QUEUE_H
-#define TENACITAS_CONCURRENT_QUEUE_H
+#ifndef TENACITAS_CONCURRENT_CIRCULAR_FIXED_SIZE_QUEUE_H
+#define TENACITAS_CONCURRENT_CIRCULAR_FIXED_SIZE_QUEUE_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -13,6 +13,7 @@
 #include <vector>
 
 #include <concurrent/internal/log.h>
+#include <concurrent/queue.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -36,18 +37,20 @@ namespace concurrent {
 ///
 /// \tparam t_data... defines the types of the data contained in the buffer
 ///
-template <typename t_log, typename t_data> class fixed_size_queue_t {
+template <typename t_log, typename t_data>
+struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
 public:
   typedef t_data data;
   typedef std::vector<t_data> values;
   typedef typename values::size_type size;
 
 public:
-  fixed_size_queue_t() = delete;
+  circular_fixed_size_queue_t() = delete;
 
-  fixed_size_queue_t(int16_t p_size) : m_size(p_size), m_values(p_size) {}
+  circular_fixed_size_queue_t(int16_t p_size)
+      : m_size(p_size), m_values(p_size) {}
 
-  fixed_size_queue_t(fixed_size_queue_t &&p_queue) noexcept {
+  circular_fixed_size_queue_t(circular_fixed_size_queue_t &&p_queue) noexcept {
     m_size = std::move(p_queue.m_size);
     m_values = std::move(p_queue.m_values);
     m_read = std::move(p_queue.m_read);
@@ -55,9 +58,10 @@ public:
     m_amount = std::move(p_queue.m_amount);
   }
 
-  fixed_size_queue_t(const fixed_size_queue_t &) = default;
+  circular_fixed_size_queue_t(const circular_fixed_size_queue_t &) = default;
 
-  fixed_size_queue_t &operator=(fixed_size_queue_t &&p_queue) noexcept {
+  circular_fixed_size_queue_t &
+  operator=(circular_fixed_size_queue_t &&p_queue) noexcept {
     if (this != &p_queue) {
       m_size = std::move(p_queue.m_size);
       m_values = std::move(p_queue.m_values);
@@ -68,9 +72,10 @@ public:
     return *this;
   }
 
-  fixed_size_queue_t &operator=(const fixed_size_queue_t &) = default;
+  circular_fixed_size_queue_t &
+  operator=(const circular_fixed_size_queue_t &) = default;
 
-  void add(const t_data &p_data) {
+  void add(const t_data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = p_data;
@@ -83,7 +88,7 @@ public:
     }
   }
 
-  void add(data &&p_data) {
+  void add(data &&p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = std::move(p_data);
@@ -96,7 +101,7 @@ public:
     }
   }
 
-  std::optional<data> get() {
+  std::optional<data> get() override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       concurrent_debug(m_log, "could not get because it is empty");
@@ -122,10 +127,10 @@ public:
     }
   }
 
-  inline bool full() const { return m_amount == m_size; }
-  inline bool empty() const { return m_amount == 0; }
-  inline size capacity() const { return m_size; }
-  inline size occupied() const { return m_amount; }
+  inline bool full() const override { return m_amount == m_size; }
+  inline bool empty() const override { return m_amount == 0; }
+  inline size capacity() const override { return m_size; }
+  inline size occupied() const override { return m_amount; }
 
 private:
   void report(const char *p_str, const t_data &p_data) {

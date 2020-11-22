@@ -79,7 +79,7 @@ struct dispatcher_004 {
     bool _rc = true;
     std::chrono::milliseconds _work_timeout(500);
 
-    dispatcher_a::add("a1", queue_a(50));
+    dispatcher_a::create("a1", 50);
 
     dispatcher_a::subscribe("a1", subscriber_1(), _work_timeout);
 
@@ -271,15 +271,15 @@ struct dispatcher_000 {
     bool _rc = true;
     std::chrono::milliseconds _work_timeout(500);
 
-    dispatcher_a::add("a1", queue_a(50));
-    dispatcher_a::add("a2", queue_a(90));
-    dispatcher_a::add("a3", queue_a(25));
+    dispatcher_a::create("a1", queue_a(50));
+    dispatcher_a::create("a2", queue_a(90));
+    dispatcher_a::create("a3", queue_a(25));
 
-    dispatcher_b::add("b1", queue_b(100));
-    dispatcher_b::add("b2", queue_b(40));
-    dispatcher_b::add("b3", queue_b(75));
+    dispatcher_b::create("b1", queue_b(100));
+    dispatcher_b::create("b2", queue_b(40));
+    dispatcher_b::create("b3", queue_b(75));
 
-    dispatcher_c::add("c1", queue_c(65));
+    dispatcher_c::create("c1", queue_c(65));
 
     dispatcher_a::subscribe(
         "a1", []() { return subscriber_1(); }, 2, _work_timeout);

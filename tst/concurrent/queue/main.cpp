@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-#include <concurrent/fixed_size_queue.h>
+#include <concurrent/circular_fixed_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
 #include <logger/cerr/log.h>
@@ -24,7 +24,7 @@ private:
   tenacitas::logger::cerr::log m_log{"printer"};
 };
 
-typedef concurrent::fixed_size_queue_t<logger::cerr::log, data> queue;
+typedef concurrent::circular_fixed_size_queue_t<logger::cerr::log, data> queue;
 
 struct producer {
   producer(queue *p_queue) : m_queue(p_queue) {}

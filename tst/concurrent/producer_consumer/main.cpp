@@ -6,7 +6,7 @@
 #include <string>
 
 #include <concurrent/async_loop.h>
-#include <concurrent/fixed_size_queue.h>
+#include <concurrent/circular_fixed_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/msg_a.h>
 #include <concurrent/producer_consumer.h>
@@ -18,9 +18,10 @@ using namespace tenacitas;
 
 struct producer_consumer_000 {
   typedef logger::cerr::log log;
-  typedef concurrent::fixed_size_queue_t<log, int16_t> queue;
+  typedef concurrent::circular_fixed_size_queue_t<log, int16_t> queue;
   typedef typename queue::data data;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds,
+                                          int16_t>
       producer_consumer;
   typedef concurrent::timeout_callback timeout_callback;
 
@@ -32,7 +33,7 @@ struct producer_consumer_000 {
   bool operator()() {
     log _log{"000"};
 
-    producer_consumer _pc({queue(10)});
+    producer_consumer _pc(std::make_unique<queue>(10));
     consumer _consumer;
 
     producer_consumer::worker _worker = [&_consumer](data &&p_data) -> void {
@@ -75,8 +76,8 @@ struct producer_consumer_001 {
   typedef concurrent::sleeping_loop_t<log, std::chrono::milliseconds,
                                       std::chrono::seconds>
       sleeping_loop;
-  typedef concurrent::fixed_size_queue_t<log, msg> queue;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
+  typedef concurrent::circular_fixed_size_queue_t<log, msg> queue;
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, msg>
       producer_consumer;
   typedef concurrent::timeout_callback timeout_callback;
 
@@ -91,7 +92,7 @@ struct producer_consumer_001 {
   bool operator()() {
     log _log{"001"};
 
-    producer_consumer _pc({queue(10)});
+    producer_consumer _pc(std::make_unique<queue>(10));
 
     timeout_callback _timeout_callback = [&_log](std::thread::id p_id) -> void {
       concurrent_debug(_log, "timeout for ", p_id);
@@ -191,8 +192,8 @@ struct producer_consumer_002 {
   typedef concurrent::sleeping_loop_t<log, std::chrono::milliseconds,
                                       std::chrono::milliseconds>
       sleeping_loop;
-  typedef concurrent::fixed_size_queue_t<log, msg> queue;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
+  typedef concurrent::circular_fixed_size_queue_t<log, msg> queue;
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, msg>
       producer_consumer;
   typedef concurrent::timeout_callback timeout_callback;
 
@@ -218,7 +219,7 @@ struct producer_consumer_002 {
 
     log _log{"002"};
 
-    producer_consumer _pc({queue(40)});
+    producer_consumer _pc(std::make_unique<queue>(40));
 
     msg _msg(0);
 
@@ -303,8 +304,8 @@ struct producer_consumer_002 {
 struct producer_consumer_003 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
-  typedef concurrent::fixed_size_queue_t<log, msg> queue;
-  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, queue>
+  typedef concurrent::circular_fixed_size_queue_t<log, msg> queue;
+  typedef concurrent::producer_consumer_t<log, std::chrono::milliseconds, msg>
       producer_consumer;
   typedef concurrent::timeout_callback timeout_callback;
 
@@ -317,7 +318,7 @@ struct producer_consumer_003 {
       concurrent_debug(m_log, "timeout for ", p_id);
     };
 
-    producer_consumer _pc{queue(40)};
+    producer_consumer _pc{std::make_unique<queue>(40)};
 
     _pc.add(
         [this](msg &&p_msg) -> std::optional<bool> {

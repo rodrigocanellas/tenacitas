@@ -1,0 +1,26 @@
+@startuml
+
+hide empty members
+skinparam groupInheritance 2
+
+class worker {
+    + void operator()(data &&)
+}
+
+class consumers_t<t_time, t_data_queue>
+
+consumers_t *-- "*" worker 
+
+
+class consumers_id 
+
+class consumers_list<t_time, t_data_queue>
+
+consumers_list *-- consumers_id 
+consumers_list *-- "*" consumers_t
+
+
+class dispatcher_t<t_time, t_data_queue>
+dispatcher_t *-- "*" consumers_list
+
+@enduml

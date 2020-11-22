@@ -1,6 +1,5 @@
 #ifndef TENACITAS_CONCURRENT_PRODUCER_CONSUMER_H
 #define TENACITAS_CONCURRENT_PRODUCER_CONSUMER_H
-
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
 
@@ -18,6 +17,7 @@
 #include <concurrent/async_loop.h>
 #include <concurrent/breaker.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/queue.h>
 #include <concurrent/result.h>
 #include <concurrent/timeout_callback.h>
 
@@ -62,24 +62,24 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_log, typename t_time, typename t_container>
+template <typename t_log, typename t_time, typename t_data>
 class producer_consumer_t {
 public:
-  /// \brief type of container that holds produced data to be consumed
-  typedef t_container container;
-
-  typedef typename container::data data;
+  typedef t_data data;
 
   /// \brief type of time used for timeout control
   typedef t_time time;
 
   typedef std::function<void(data &&)> worker;
 
+  typedef queue_t<t_log, t_data> queue;
+
+  typedef typename queue::ptr queue_ptr;
+
 public:
   producer_consumer_t() = delete;
 
-  producer_consumer_t(container &&p_container)
-      : m_container(std::move(p_container)) {}
+  producer_consumer_t(queue_ptr &&p_queue) : m_queue(std::move(p_queue)) {}
 
   producer_consumer_t(const producer_consumer_t &) = delete;
 
@@ -98,7 +98,7 @@ public:
     //    m_destroying = true;
     if (!all_loops_stopped()) {
       if (!m_stopped) {
-        while (!m_container.empty()) {
+        while (!m_queue->empty()) {
           m_data_produced.notify_all();
           //          debug(m_log, "waiting for poping");
           std::unique_lock<std::mutex> _lock(m_mutex_data);
@@ -132,13 +132,13 @@ public:
 
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
-    m_data_consumed.wait(
-        _lock, [this]() { return (!m_container.full() || m_stopped); });
+    m_data_consumed.wait(_lock,
+                         [this]() { return (!m_queue->full() || m_stopped); });
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(p_data);
+      m_queue->add(p_data);
       ++m_queued_data;
     }
 
@@ -166,13 +166,13 @@ public:
 
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
-    m_data_consumed.wait(
-        _lock, [this]() { return (!m_container.full() || m_stopped); });
+    m_data_consumed.wait(_lock,
+                         [this]() { return (!m_queue->full() || m_stopped); });
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_container.add(std::move(p_data));
+      m_queue->add(std::move(p_data));
       ++m_queued_data;
     }
 
@@ -288,10 +288,10 @@ public:
   }
 
   /// \brief the capacity if the \p t_container
-  inline size_t capacity() const { return m_container.capacity(); }
+  inline size_t capacity() const { return m_queue->capacity(); }
 
   /// \brief the amount of slots occupied in the \p t_container
-  inline size_t occupied() const { return m_container.occupied(); }
+  inline size_t occupied() const { return m_queue->occupied(); }
 
 private:
   /// \brief async_loop_t is a \p async_loop where a \p worker function will be
@@ -338,7 +338,7 @@ private:
         concurrent_debug(m_log, "stopped");
         return true;
       }
-      if (!m_container.empty()) {
+      if (!m_queue->empty()) {
         concurrent_debug(m_log, "not empty");
         return true;
       }
@@ -357,7 +357,7 @@ private:
 
     concurrent_debug(m_log, "there is data");
 
-    std::optional<data> _maybe = m_container.get();
+    std::optional<data> _maybe = m_queue->get();
     if (_maybe) {
       data _data(_maybe.value());
 
@@ -385,7 +385,7 @@ private:
   }
 
 private:
-  container m_container;
+  queue_ptr m_queue;
 
   /// \brief m_add_work controls access to the \p m_loops while inserting a
   /// new \p t_work function
