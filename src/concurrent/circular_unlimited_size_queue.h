@@ -12,7 +12,7 @@
 #include <mutex>
 
 #include <concurrent/internal/log.h>
-#include <concurrent/queue.h>
+//#include <concurrent/queue.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -20,7 +20,7 @@ namespace tenacitas {
 namespace concurrent {
 
 template <typename t_log, typename t_data>
-struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
+struct circular_unlimited_size_queue_t /*: public queue_t<t_log, t_data>*/ {
 
   typedef t_data data;
 
@@ -44,7 +44,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     p_visitor(_p->m_data);
   }
 
-  void add(data &&p_data) override {
+  void add(data &&p_data) /*override*/ {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       concurrent_warn(m_log, "not adding more slots");
@@ -57,7 +57,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     ++m_amount;
   }
 
-  void add(const data &p_data) override {
+  void add(const data &p_data) /*override*/ {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       concurrent_warn(m_log, "not adding more slots");
@@ -70,7 +70,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     ++m_amount;
   }
 
-  std::optional<data> get() override {
+  std::optional<data> get() /*override*/ {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       concurrent_debug(m_log, "empty");
@@ -83,13 +83,13 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     return {_data};
   }
 
-  inline bool full() const override { return m_amount == m_size; }
+  inline bool full() const /*override*/ { return m_amount == m_size; }
 
-  inline bool empty() const override { return m_amount == 0; }
+  inline bool empty() const /*override*/ { return m_amount == 0; }
 
-  inline size_t capacity() const override { return m_size; }
+  inline size_t capacity() const /*override*/ { return m_size; }
 
-  inline size_t occupied() const override { return m_amount; }
+  inline size_t occupied() const /*override*/ { return m_amount; }
 
 private:
   struct node {

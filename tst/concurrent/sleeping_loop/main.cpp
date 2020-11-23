@@ -38,17 +38,15 @@ struct sleeping_loop_000 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<
-        logger::cerr::log, std::chrono::milliseconds, std::chrono::seconds>
-        loop;
+    typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
     auto _worker = [this]() -> void { concurrent_debug(m_log, "loop1"); };
 
     std::function<void(std::thread::id)> _timeout_callback =
         [](std::thread::id) -> void {};
 
-    loop::interval _interval(1);
-    loop::timeout _timeout(100);
+    std::chrono::seconds _interval(1);
+    std::chrono::milliseconds _timeout(100);
 
     concurrent_debug(m_log, "timeout = ", _timeout.count(),
                      ", interval = ", _interval.count());
@@ -63,9 +61,7 @@ private:
 };
 
 struct sleeping_loop_001 {
-  typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::seconds>
-      loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
   typedef uint16_t value;
 
@@ -147,9 +143,7 @@ private:
 
 struct sleeping_loop_003 {
 
-  typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
-      loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
   static const std::string desc() {
     return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
@@ -174,7 +168,7 @@ struct sleeping_loop_003 {
         [](std::thread::id) -> void {};
 
     loop _loop(
-        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        std::chrono::milliseconds(500), std::chrono::seconds(1),
         [&_work]() { return _work(); }, _timeout_callback);
 
     _loop.start();
@@ -215,9 +209,7 @@ private:
 };
 
 struct sleeping_loop_004 {
-  typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
-      loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
   static const std::string desc() {
     return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
@@ -241,7 +233,7 @@ struct sleeping_loop_004 {
         [](std::thread::id) -> void {};
 
     loop _loop(
-        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        std::chrono::milliseconds(500), std::chrono::seconds(1),
         [&_work]() { return _work(); }, _timeout_callback);
 
     _loop.start();
@@ -282,9 +274,7 @@ private:
 };
 
 struct sleeping_loop_005 {
-  typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
-      loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
   static const std::string desc() {
     return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
@@ -307,7 +297,7 @@ struct sleeping_loop_005 {
         [](std::thread::id) -> void {};
 
     loop _loop_1(
-        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        std::chrono::milliseconds(500), std::chrono::seconds(1),
         [&_work]() { return _work(); }, _timeout_callback);
 
     _loop_1.start();
@@ -355,9 +345,7 @@ private:
 
 struct sleeping_loop_006 {
 
-  typedef concurrent::sleeping_loop_t<
-      logger::cerr::log, std::chrono::milliseconds, std::chrono::milliseconds>
-      loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr::log> loop;
 
   static const std::string desc() {
     return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
@@ -381,7 +369,7 @@ struct sleeping_loop_006 {
     work1 _work;
 
     loop _loop_1(
-        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
+        std::chrono::milliseconds(500), std::chrono::seconds(1),
         [&_work]() { return _work(); }, _timeout_callback);
 
     _loop_1.start();

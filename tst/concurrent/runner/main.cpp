@@ -13,9 +13,7 @@ struct runner_000 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 int32_t, int16_t>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, int32_t, int16_t> runner;
 
     auto _worker = [](int16_t p_int) -> int32_t {
       this_thread::sleep_for(chrono::milliseconds(2000));
@@ -59,9 +57,7 @@ struct runner_001 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 int32_t, int16_t>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, int32_t, int16_t> runner;
 
     auto _worker = [](int16_t p_int) -> int32_t {
       this_thread::sleep_for(chrono::milliseconds(500));
@@ -121,8 +117,7 @@ struct runner_002 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 double, int16_t, float>
+    typedef concurrent::runner_t<logger::cerr::log, double, int16_t, float>
         runner;
 
     auto _worker = [](int16_t p_int, float p_float) -> double {
@@ -168,8 +163,7 @@ struct runner_003 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 double, int16_t, float>
+    typedef concurrent::runner_t<logger::cerr::log, double, int16_t, float>
         runner;
 
     auto _worker = [](int16_t p_int, float p_float) -> double {
@@ -230,9 +224,7 @@ struct runner_004 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 double>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, double> runner;
 
     auto _worker = []() -> double {
       this_thread::sleep_for(chrono::milliseconds(2000));
@@ -277,9 +269,7 @@ struct runner_005 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 double>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, double> runner;
 
     auto _worker = []() -> double {
       this_thread::sleep_for(chrono::milliseconds(500));
@@ -339,9 +329,7 @@ struct runner_006 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void, int16_t>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, void, int16_t> runner;
 
     auto _worker = [this](int16_t p_int) -> void {
       this_thread::sleep_for(chrono::milliseconds(2000));
@@ -385,9 +373,7 @@ struct runner_007 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void, int16_t>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, void, int16_t> runner;
 
     auto _worker = [this](int16_t p_int) -> void {
       this_thread::sleep_for(chrono::milliseconds(500));
@@ -432,8 +418,7 @@ struct runner_008 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void, int16_t, float>
+    typedef concurrent::runner_t<logger::cerr::log, void, int16_t, float>
         runner;
 
     auto _worker = [this](int16_t p_int, float p_float) -> void {
@@ -479,8 +464,7 @@ struct runner_009 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void, int16_t, float>
+    typedef concurrent::runner_t<logger::cerr::log, void, int16_t, float>
         runner;
 
     auto _worker = [this](int16_t p_int, float p_float) -> void {
@@ -526,9 +510,7 @@ struct runner_010 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, void> runner;
 
     auto _worker = [this]() -> void {
       this_thread::sleep_for(chrono::milliseconds(2000));
@@ -573,9 +555,7 @@ struct runner_011 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, std::chrono::milliseconds,
-                                 void>
-        runner;
+    typedef concurrent::runner_t<logger::cerr::log, void> runner;
 
     auto _worker = [this]() -> void {
       this_thread::sleep_for(chrono::milliseconds(500));
@@ -620,8 +600,8 @@ struct runner_012 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::runner_t<logger::cerr::log, chrono::milliseconds, void,
-                                 int16_t, int32_t, float>
+    typedef concurrent::runner_t<logger::cerr::log, void, int16_t, int32_t,
+                                 float>
         runner;
 
     auto _worker = [this](int16_t p_i1, int32_t p_i2, float p_float) -> void {

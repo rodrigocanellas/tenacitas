@@ -5,9 +5,8 @@ SUBDIRS = \
     queue \
     circular_unlimited_size_queue \
     sleeping_loop \
-    producer_consumer
-#    \
-#    dispatcher
+    producer_consumer    \
+    dispatcher
 
 #\
 #    performance \

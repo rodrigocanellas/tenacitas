@@ -34,9 +34,9 @@ namespace tenacitas {
 namespace concurrent {
 
 /// \brief
-template <typename t_log, typename t_time> struct async_loop_base_t {
+template <typename t_log> struct async_loop_base_t {
 
-  typedef runner_t<t_log, std::chrono::milliseconds, bool> breaker_executer;
+  typedef runner_t<t_log, bool> breaker_executer;
 
   async_loop_base_t() = delete;
 
@@ -67,12 +67,14 @@ public:
   /// \brief retrieves the timeout for the Work function
   ///
   /// \return the timeout
-  inline t_time get_timeout() const { return m_timeout; }
+  inline std::chrono::nanoseconds get_timeout() const { return m_timeout; }
 
   /// \brief redefines the value of the timeout
   ///
   /// It does not restart the loop, it is necessary to call \p restart
-  inline void set_timeout(t_time p_timeout) { m_timeout = p_timeout; }
+  template <typename t_timeout> inline void set_timeout(t_timeout p_timeout) {
+    m_timeout = std::chrono::duration_cast<std::chrono::nanoseconds>(p_timeout);
+  }
 
   /// \brief run starts the loop asynchronously
   ///
@@ -105,12 +107,13 @@ public:
   }
 
 protected:
-  async_loop_base_t(t_time p_timeout) : m_timeout(p_timeout) {}
+  async_loop_base_t(std::chrono::nanoseconds p_timeout)
+      : m_timeout(p_timeout) {}
 
   virtual void loop() = 0;
 
 protected:
-  t_time m_timeout;
+  std::chrono::nanoseconds m_timeout;
 
   /// \brief m_thread is the thread where the \p loop will run
   concurrent::thread m_thread;
@@ -126,38 +129,35 @@ protected:
   //  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
 };
 
-template <typename t_log, typename t_time, bool use_breaker,
-          typename... t_params>
+template <typename t_log, bool use_breaker, typename... t_params>
 struct async_loop_t;
 
 // ############### 1 ########################################################
-template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, true, t_params...>;
+template <typename t_log, typename... t_params>
+struct async_loop_t<t_log, true, t_params...>;
 
 // ############### 2 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, true, t_param>;
+template <typename t_log, typename t_param>
+struct async_loop_t<t_log, true, t_param>;
 
 // ############### 3 ########################################################
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, true>;
+template <typename t_log> struct async_loop_t<t_log, true>;
 
 // ############### 4 ########################################################
-template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, false, t_params...>;
+template <typename t_log, typename... t_params>
+struct async_loop_t<t_log, false, t_params...>;
 
 // ############### 5 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, false, t_param>;
+template <typename t_log, typename t_param>
+struct async_loop_t<t_log, false, t_param>;
 
 // ############### 6 ########################################################
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, false>;
+template <typename t_log> struct async_loop_t<t_log, false>;
 
 // ############### 1 ########################################################
-template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, true, t_params...>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log, typename... t_params>
+struct async_loop_t<t_log, true, t_params...>
+    : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -185,9 +185,10 @@ struct async_loop_t<t_log, t_time, true, t_params...>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       provider p_provider, timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
@@ -196,11 +197,10 @@ struct async_loop_t<t_log, t_time, true, t_params...>
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, std::chrono::milliseconds,
-                   std::optional<std::tuple<t_params...>>>
+  typedef runner_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef runner_t<t_log, t_time, void, t_params...> work_executer;
+  typedef runner_t<t_log, void, t_params...> work_executer;
 
 protected:
   void loop() {
@@ -267,9 +267,8 @@ private:
 };
 
 // ############### 2 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, true, t_param>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log, typename t_param>
+struct async_loop_t<t_log, true, t_param> : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -297,9 +296,10 @@ struct async_loop_t<t_log, t_time, true, t_param>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       provider p_provider, timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
@@ -308,10 +308,9 @@ struct async_loop_t<t_log, t_time, true, t_param>
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
-      provider_executer;
+  typedef runner_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef runner_t<t_log, t_time, void, t_param> work_executer;
+  typedef runner_t<t_log, void, t_param> work_executer;
 
 private:
   void loop() {
@@ -381,9 +380,8 @@ private:
 /// \brief
 ///
 /// \example 25 async_loop_example
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, true>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log>
+struct async_loop_t<t_log, true> : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -405,16 +403,17 @@ struct async_loop_t<t_log, t_time, true>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
                       timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_breaker(p_breaker) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, t_time, void> work_executer;
+  typedef runner_t<t_log, void> work_executer;
 
 private:
   void loop() {
@@ -454,9 +453,9 @@ private:
 };
 
 // ############### 4 ########################################################
-template <typename t_log, typename t_time, typename... t_params>
-struct async_loop_t<t_log, t_time, false, t_params...>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log, typename... t_params>
+struct async_loop_t<t_log, false, t_params...>
+    : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -484,9 +483,10 @@ struct async_loop_t<t_log, t_time, false, t_params...>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
                       timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
@@ -494,11 +494,10 @@ struct async_loop_t<t_log, t_time, false, t_params...>
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, std::chrono::milliseconds,
-                   std::optional<std::tuple<t_params...>>>
+  typedef runner_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef runner_t<t_log, t_time, void, t_params...> work_executer;
+  typedef runner_t<t_log, void, t_params...> work_executer;
 
 private:
   void loop() {
@@ -556,9 +555,8 @@ private:
 };
 
 // ############### 5 ########################################################
-template <typename t_log, typename t_time, typename t_param>
-struct async_loop_t<t_log, t_time, false, t_param>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log, typename t_param>
+struct async_loop_t<t_log, false, t_param> : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -586,9 +584,10 @@ struct async_loop_t<t_log, t_time, false, t_param>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
                       timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
@@ -596,10 +595,9 @@ struct async_loop_t<t_log, t_time, false, t_param>
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, std::chrono::milliseconds, std::optional<t_param>>
-      provider_executer;
+  typedef runner_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef runner_t<t_log, t_time, void, t_param> work_executer;
+  typedef runner_t<t_log, void, t_param> work_executer;
 
 private:
   void loop() {
@@ -656,9 +654,8 @@ private:
 };
 
 // ############### 6 ########################################################
-template <typename t_log, typename t_time>
-struct async_loop_t<t_log, t_time, false>
-    : public async_loop_base_t<t_log, t_time> {
+template <typename t_log>
+struct async_loop_t<t_log, false> : public async_loop_base_t<t_log> {
 
   /// \brief worker is the type of work function, i.e., the function that will
   /// be called in a loop in order to execute some work
@@ -680,15 +677,16 @@ struct async_loop_t<t_log, t_time, false>
   /// \param p_provider instance of the function that will provide \p
   /// t_params..., if available. If \p t_params... is \p void, this parameter
   /// assumes a default value of a \p void returning function
+  template <typename t_time>
   inline async_loop_t(t_time p_timeout, worker p_worker,
                       timeout_callback p_timeout_callback)
-      : async_loop_base_t<t_log, t_time>(p_timeout),
+      : async_loop_base_t<t_log>(p_timeout),
         m_work_executer(p_timeout, p_worker, p_timeout_callback) {}
 
   inline worker get_worker() const { return m_work_executer.get_worker(); }
 
 private:
-  typedef runner_t<t_log, t_time, void> work_executer;
+  typedef runner_t<t_log, void> work_executer;
 
 private:
   void loop() {

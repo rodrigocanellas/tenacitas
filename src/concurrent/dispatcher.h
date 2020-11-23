@@ -21,6 +21,7 @@
 #include <concurrent/producer_consumer.h>
 #include <concurrent/queue.h>
 #include <concurrent/timeout_callback.h>
+#include <concurrent/traits.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -43,17 +44,9 @@ namespace concurrent {
 ///
 /// \tparam t_time is the type of time used for timeout control
 ///
-template <typename t_log, typename t_time, typename t_data> class dispatcher_t {
+template <typename t_log, typename t_data> class dispatcher_t {
 public:
   typedef t_data data;
-
-  /// \brief type of queue that holds produced data to be consumed
-  typedef queue_t<t_log, t_data> queue;
-
-  typedef typename queue::ptr queue_ptr;
-
-  /// \brief type of time used for timeout control
-  typedef t_time time;
 
   /// \brief worker type
   typedef std::function<void(data &&)> worker;
@@ -108,6 +101,8 @@ public:
 
   /// \brief Adds \p worker objects to a already created group of \p worker
   /// objects to handle \p data messages
+
+  template <typename t_time>
   static void subscribe(const consumers_group &p_workers,
                         std::function<worker()> p_work_factory,
                         uint16_t p_num_handlers, t_time p_work_timeout) {
@@ -136,6 +131,8 @@ public:
 
   /// \brief Adds a \p worker to a already created group of \p worker object to
   /// handle messages \p data
+
+  template <typename t_time>
   static void subscribe(const consumers_group &p_workers, worker p_work,
                         t_time p_work_timeout) {
 
@@ -201,8 +198,11 @@ public:
   }
 
 private:
+  /// \brief type of queue that holds produced data to be consumed
+  typedef typename traits<t_log, t_data>::queue queue;
+
   /// \brief producer_consumer_t alias for \p producer_consumer of \p t_data
-  typedef producer_consumer_t<t_log, t_time, t_data> producer_consumer;
+  typedef producer_consumer_t<t_log, t_data> producer_consumer;
 
   typedef typename std::shared_ptr<producer_consumer> producer_consumer_ptr;
 
@@ -219,16 +219,16 @@ private:
 };
 
 /// \brief definition of the single list of pools object
-template <typename t_log, typename t_time, typename t_queue>
-typename dispatcher_t<t_log, t_time, t_queue>::producer_consumer_list
-    dispatcher_t<t_log, t_time, t_queue>::m_producer_consumer_list;
+template <typename t_log, typename t_queue>
+typename dispatcher_t<t_log, t_queue>::producer_consumer_list
+    dispatcher_t<t_log, t_queue>::m_producer_consumer_list;
 
-template <typename t_log, typename t_time, typename t_queue>
-timeout_callback dispatcher_t<t_log, t_time, t_queue>::m_timeout_callback =
+template <typename t_log, typename t_queue>
+timeout_callback dispatcher_t<t_log, t_queue>::m_timeout_callback =
     [](std::thread::id) -> void {};
 
-template <typename t_log, typename t_time, typename t_queue>
-t_log dispatcher_t<t_log, t_time, t_queue>::m_log{"consumer::dispatcher"};
+template <typename t_log, typename t_queue>
+t_log dispatcher_t<t_log, t_queue>::m_log{"consumer::dispatcher"};
 
 } // namespace concurrent
 } // namespace tenacitas

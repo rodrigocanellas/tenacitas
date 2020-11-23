@@ -6,6 +6,7 @@
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
+#include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -28,19 +29,20 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-template <typename t_log, typename t_time, typename t_result,
-          typename... t_params>
+template <typename t_log, typename t_result, typename... t_params>
 struct runner_t {
 
   typedef std::function<t_result(t_params...)> worker;
 
   runner_t() = default;
 
+  template <typename t_time>
   runner_t(
       t_time p_timeout, worker p_worker,
       timeout_callback p_timeout_callback = [](std::thread::id) -> void {})
-      : m_timeout(p_timeout), m_work_wrapper(p_worker),
-        m_timeout_callback(p_timeout_callback) {
+      : m_timeout(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(p_timeout)),
+        m_work_wrapper(p_worker), m_timeout_callback(p_timeout_callback) {
     start();
   }
 
@@ -69,7 +71,9 @@ struct runner_t {
     }
   }
 
-  inline t_time get_timeout() const { return m_timeout; }
+  inline constexpr std::chrono::nanoseconds get_timeout() const {
+    return m_timeout;
+  }
 
   inline worker get_worker() const { return m_work_wrapper.get_worker(); }
 
@@ -161,7 +165,7 @@ private:
   }
 
 private:
-  t_time m_timeout;
+  std::chrono::nanoseconds m_timeout;
   work_wrapper m_work_wrapper;
   timeout_callback m_timeout_callback;
 
