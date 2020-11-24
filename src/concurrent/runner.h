@@ -19,6 +19,7 @@
 #include <type_traits>
 #include <utility>
 
+#include <concurrent/internal/constants.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
@@ -45,6 +46,8 @@ struct runner_t {
         m_work_wrapper(p_worker), m_timeout_callback(p_timeout_callback) {
     start();
   }
+
+  runner_t(worker p_worker) : m_work_wrapper(p_worker) { start(); }
 
   ~runner_t() { stop(); }
 
@@ -165,9 +168,11 @@ private:
   }
 
 private:
-  std::chrono::nanoseconds m_timeout;
+  std::chrono::nanoseconds m_timeout{infinite_timeout};
+
   work_wrapper m_work_wrapper;
-  timeout_callback m_timeout_callback;
+
+  timeout_callback m_timeout_callback{[](std::thread::id) -> void {}};
 
   t_log m_log{"concurrent::runner"};
   bool m_stopped{true};

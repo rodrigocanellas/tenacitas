@@ -4,8 +4,8 @@ TEMPLATE = subdirs
 
 HEADERS += \
     $$code_src_dir/concurrent/internal/log.h \
+    $$code_src_dir/concurrent/internal/constants.h \
     $$code_src_dir/concurrent/internal/worker_wrapper.h \
-    $$code_src_dir/concurrent/traits.h \
     $$code_src_dir/concurrent/thread.h \
     $$code_src_dir/concurrent/timeout_callback.h \
     $$code_src_dir/concurrent/breaker.h \
@@ -16,7 +16,7 @@ HEADERS += \
     $$code_src_dir/concurrent/sleeping_loop.h    \
     $$code_src_dir/concurrent/producer_consumer.h \
     $$code_src_dir/concurrent/queue.h \
-    $$code_src_dir/calendar/epoch.h    \
+    $$code_src_dir/calendar/epoch.h   \
     $$code_src_dir/concurrent/dispatcher.h
 
 

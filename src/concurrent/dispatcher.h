@@ -17,6 +17,7 @@
 #include <tuple>
 
 #include <calendar/epoch.h>
+#include <concurrent/circular_unlimited_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/producer_consumer.h>
 #include <concurrent/queue.h>
@@ -42,10 +43,9 @@ namespace concurrent {
 /// void warn(int p_line, const t_params&... p_params)
 /// void error(int p_line, const t_params&... p_params)
 ///
-/// \tparam t_time is the type of time used for timeout control
-///
 template <typename t_log, typename t_data> class dispatcher_t {
 public:
+  typedef t_log log;
   typedef t_data data;
 
   /// \brief worker type
@@ -102,60 +102,93 @@ public:
   /// \brief Adds \p worker objects to a already created group of \p worker
   /// objects to handle \p data messages
 
-  template <typename t_time>
-  static void subscribe(const consumers_group &p_workers,
-                        std::function<worker()> p_work_factory,
-                        uint16_t p_num_handlers, t_time p_work_timeout) {
+  //  template <typename t_time>
+  //  static void subscribe(const consumers_group &p_workers,
+  //                        std::function<worker()> p_work_factory,
+  //                        uint16_t p_num_handlers, t_time p_work_timeout) {
 
-    typename producer_consumer_list::iterator _ite =
-        m_producer_consumer_list.find(p_workers);
+  //    typename producer_consumer_list::iterator _ite =
+  //        m_producer_consumer_list.find(p_workers);
 
-    producer_consumer_ptr _producer_consumer;
-    if (_ite == m_producer_consumer_list.end()) {
-      concurrent_fatal(m_log, "no " + p_workers + " defined");
-      throw std::runtime_error("no " + p_workers + " defined");
-    }
+  //    producer_consumer_ptr _producer_consumer;
+  //    if (_ite == m_producer_consumer_list.end()) {
+  //      concurrent_fatal(m_log, "no " + p_workers + " defined");
+  //      throw std::runtime_error("no " + p_workers + " defined");
+  //    }
 
-    _producer_consumer = _ite->second;
+  //    _producer_consumer = _ite->second;
 
-    // adding the \p work_t functions
-    _producer_consumer->add(p_num_handlers, p_work_factory, p_work_timeout,
-                            m_timeout_callback);
+  //    // adding the \p work_t functions
+  //    _producer_consumer->add(p_num_handlers, p_work_factory, p_work_timeout,
+  //                            m_timeout_callback);
 
-    // running the \p producer_consumer
-    _producer_consumer->start();
+  //    // running the \p producer_consumer
+  //    _producer_consumer->start();
 
-    // adding the \p producer_consumer to the list
-    m_producer_consumer_list.insert({p_workers, _producer_consumer});
+  //    // adding the \p producer_consumer to the list
+  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
+  //  }
+
+  //  /// \brief Adds a \p worker to a already created group of \p worker object
+  //  to
+  //  /// handle messages \p data
+  //  template <typename t_time>
+  //  static void subscribe(const consumers_group &p_workers, worker p_work,
+  //                        t_time p_work_timeout) {
+
+  //    typename producer_consumer_list::iterator _ite =
+  //        m_producer_consumer_list.find(p_workers);
+
+  //    producer_consumer_ptr _producer_consumer;
+  //    if (_ite == m_producer_consumer_list.end()) {
+  //      concurrent_fatal(m_log, "no " + p_workers + " defined");
+  //      throw std::runtime_error("no " + p_workers + " defined");
+  //    }
+
+  //    _producer_consumer = _ite->second;
+
+  //    // adding the \p work_t functions
+  //    _producer_consumer->add(p_work, p_work_timeout, m_timeout_callback);
+
+  //    // running the \p producer_consumer
+  //    _producer_consumer->start();
+
+  //    // adding the \p producer_consumer to the list
+  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
+  //  }
+
+  static void subscribe(worker p_worker, size_t p_queue_size = 20) {
+
+    typedef circular_unlimited_size_queue_t<log, data> queue;
+
+    const consumers_group _workers{
+        std::to_string(calendar::epoch::microsecs())};
+
+    producer_consumer_ptr _producer =
+        std::make_shared<producer_consumer>(queue::create(p_queue_size));
+
+    _producer->add(p_worker);
+
+    _producer->start();
+
+    m_producer_consumer_list.insert({_workers, _producer});
   }
 
-  /// \brief Adds a \p worker to a already created group of \p worker object to
-  /// handle messages \p data
+  //  static void subscribe(worker p_worker, size_t p_queue_size = 20)
+  //  {
 
-  template <typename t_time>
-  static void subscribe(const consumers_group &p_workers, worker p_work,
-                        t_time p_work_timeout) {
+  //    typedef circular_unlimited_size_queue_t<log, data> queue;
 
-    typename producer_consumer_list::iterator _ite =
-        m_producer_consumer_list.find(p_workers);
+  //    const consumers_group _workers{ std::to_string(
+  //      calendar::epoch::microsecs()) };
 
-    producer_consumer_ptr _producer_consumer;
-    if (_ite == m_producer_consumer_list.end()) {
-      concurrent_fatal(m_log, "no " + p_workers + " defined");
-      throw std::runtime_error("no " + p_workers + " defined");
-    }
+  //    producer_consumer_ptr _producer =
+  //      std::make_shared<producer_consumer>(queue::create(p_queue_size));
 
-    _producer_consumer = _ite->second;
+  //    _producer->add(p_worker, [](std::thread::id) -> void {});
 
-    // adding the \p work_t functions
-    _producer_consumer->add(p_work, p_work_timeout, m_timeout_callback);
-
-    // running the \p producer_consumer
-    _producer_consumer->start();
-
-    // adding the \p producer_consumer to the list
-    m_producer_consumer_list.insert({p_workers, _producer_consumer});
-  }
+  //    m_producer_consumer_list.insert(_workers, _producer);
+  //  }
 
   /// \brief handle sends a message to the \p work_t objects to be handled
   ///
@@ -198,9 +231,6 @@ public:
   }
 
 private:
-  /// \brief type of queue that holds produced data to be consumed
-  typedef typename traits<t_log, t_data>::queue queue;
-
   /// \brief producer_consumer_t alias for \p producer_consumer of \p t_data
   typedef producer_consumer_t<t_log, t_data> producer_consumer;
 

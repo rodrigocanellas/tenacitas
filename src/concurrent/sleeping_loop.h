@@ -142,6 +142,16 @@ protected:
                      ", interval = ", p_interval.count());
   }
 
+  template <typename t_interval>
+  sleeping_loop_base_t(t_interval p_interval, worker p_worker,
+                       provider p_provider)
+      : m_async(
+            p_worker, [this]() -> bool { return this->breaker(); }, p_provider),
+        m_interval(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+    concurrent_debug(m_log, "interval = ", p_interval.count());
+  }
+
   template <typename t_timeout, typename t_interval>
   sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
                        worker p_worker, timeout_callback p_timeout_callback)
@@ -152,6 +162,14 @@ protected:
             std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
     concurrent_debug(m_log, "timeout = ", p_timeout.count(),
                      ", interval = ", p_interval.count());
+  }
+
+  template <typename t_interval>
+  sleeping_loop_base_t(t_interval p_interval, worker p_worker)
+      : m_async(p_worker, [this]() -> bool { return this->breaker(); }),
+        m_interval(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+    concurrent_debug(m_log, "interval = ", p_interval.count());
   }
 
 protected:
@@ -224,6 +242,13 @@ struct sleeping_loop_t : public sleeping_loop_base_t<t_log, t_params...> {
             [this]() -> bool { return this->breaker(); }, p_timeout_callback,
             p_provider) {}
 
+  template <typename t_interval>
+  sleeping_loop_t(t_interval p_interval, worker p_worker,
+                  timeout_callback p_timeout_callback, provider p_provider)
+      : sleeping_loop_base_t<t_log, t_params...>(
+            p_interval, p_worker, [this]() -> bool { return this->breaker(); },
+            p_timeout_callback, p_provider) {}
+
   inline provider get_provider() const { return this->m_async.get_provider(); }
 };
 
@@ -248,6 +273,9 @@ struct sleeping_loop_t<t_log> : public sleeping_loop_base_t<t_log> {
                   timeout_callback p_timeout_callback)
       : sleeping_loop_base_t<t_log>(p_timeout, p_interval, p_worker,
                                     p_timeout_callback) {}
+  template <typename t_interval>
+  sleeping_loop_t(t_interval p_interval, worker p_worker)
+      : sleeping_loop_base_t<t_log>(p_interval, p_worker) {}
 };
 
 } // namespace concurrent

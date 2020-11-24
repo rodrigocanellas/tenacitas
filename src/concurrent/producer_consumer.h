@@ -17,11 +17,10 @@
 
 #include <concurrent/async_loop.h>
 #include <concurrent/breaker.h>
-#include <concurrent/circular_unlimited_size_queue.h>
 #include <concurrent/internal/log.h>
+#include <concurrent/queue.h>
 #include <concurrent/result.h>
 #include <concurrent/timeout_callback.h>
-#include <concurrent/traits.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
@@ -68,10 +67,14 @@ template <typename t_log, typename t_data> class producer_consumer_t {
 public:
   typedef t_data data;
 
+  typedef queue_t<t_log, t_data> queue;
+
+  typedef typename queue::ptr queue_ptr;
+
   typedef std::function<void(data &&)> worker;
 
 public:
-  producer_consumer_t(size_t p_queue_size = 50) : m_queue(p_queue_size) {}
+  producer_consumer_t(queue_ptr &&p_queue_ptr) : m_queue(p_queue_ptr) {}
 
   producer_consumer_t(const producer_consumer_t &) = delete;
 
@@ -90,7 +93,7 @@ public:
     //    m_destroying = true;
     if (!all_loops_stopped()) {
       if (!m_stopped) {
-        while (!m_queue.empty()) {
+        while (!m_queue->empty()) {
           m_data_produced.notify_all();
           //          debug(m_log, "waiting for poping");
           std::unique_lock<std::mutex> _lock(m_mutex_data);
@@ -125,12 +128,12 @@ public:
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(_lock,
-                         [this]() { return (!m_queue.full() || m_stopped); });
+                         [this]() { return (!m_queue->full() || m_stopped); });
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_queue.add(p_data);
+      m_queue->add(p_data);
       ++m_queued_data;
     }
 
@@ -159,12 +162,12 @@ public:
     concurrent_debug(m_log, "waiting for room ...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_consumed.wait(_lock,
-                         [this]() { return (!m_queue.full() || m_stopped); });
+                         [this]() { return (!m_queue->full() || m_stopped); });
 
     if (m_stopped) {
       concurrent_debug(m_log, "stopped");
     } else {
-      m_queue.add(std::move(p_data));
+      m_queue->add(std::move(p_data));
       ++m_queued_data;
     }
 
@@ -196,6 +199,22 @@ public:
 
     async_loop_ptr _loop(std::make_shared<async_loop>(
         p_timeout, p_work, _breaker, _provider, p_timeout_callback));
+
+    add(_loop);
+  }
+
+  void add(worker p_work) {
+
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
+    auto _breaker = [this]() -> bool { return this->breaker(); };
+
+    auto _provider = [this]() -> std::optional<data> {
+      return this->provider();
+    };
+
+    async_loop_ptr _loop(
+        std::make_shared<async_loop>(p_work, _breaker, _provider));
 
     add(_loop);
   }
@@ -283,10 +302,10 @@ public:
   }
 
   /// \brief the capacity if the \p t_container
-  inline size_t capacity() const { return m_queue.capacity(); }
+  inline size_t capacity() const { return m_queue->capacity(); }
 
   /// \brief the amount of slots occupied in the \p t_container
-  inline size_t occupied() const { return m_queue.occupied(); }
+  inline size_t occupied() const { return m_queue->occupied(); }
 
 private:
   /// \brief async_loop_t is a \p async_loop where a \p worker function will be
@@ -297,8 +316,6 @@ private:
 
   /// \brief async_loops_t is the collection of \p async_loop
   typedef typename std::vector<async_loop_ptr> asyncs_loops;
-
-  typedef typename traits<t_log, t_data>::queue queue;
 
 private:
   /// \brief breaker
@@ -335,7 +352,7 @@ private:
         concurrent_debug(m_log, "stopped");
         return true;
       }
-      if (!m_queue.empty()) {
+      if (!m_queue->empty()) {
         concurrent_debug(m_log, "not empty");
         return true;
       }
@@ -354,7 +371,7 @@ private:
 
     concurrent_debug(m_log, "there is data");
 
-    std::optional<data> _maybe = m_queue.get();
+    std::optional<data> _maybe = m_queue->get();
     if (_maybe) {
       data _data(_maybe.value());
 
@@ -382,7 +399,7 @@ private:
   }
 
 private:
-  queue m_queue;
+  queue_ptr m_queue;
 
   /// \brief m_add_work controls access to the \p m_loops while inserting a
   /// new \p t_work function
