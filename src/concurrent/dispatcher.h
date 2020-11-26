@@ -48,11 +48,16 @@ public:
   typedef t_log log;
   typedef t_data data;
 
+  typedef queue_t<t_log, t_data> queue;
+  typedef typename queue::ptr queue_ptr;
+
+  typedef std::function<queue_ptr(size_t)> queue_factory;
+
   /// \brief worker type
   typedef std::function<void(data &&)> worker;
 
   /// \brief name for a group of \p worker functions
-  typedef std::string consumers_group;
+  typedef std::string group;
 
   /// \brief dispatcher default constructor not allowed
   dispatcher_t() = delete;
@@ -80,115 +85,186 @@ public:
     }
   }
 
-  //  /// \brief Creates a queue for \p data messages, and defines a single \p
-  //  /// worker to handle them
-  //  static void create(t_data_queue &&p_queue) {
+  inline static void set_queue_factory(queue_factory p_queue_factory) {
+    m_queue_factory = p_queue_factory;
+  }
 
-  //    const consumers_group _workers{
-  //        std::to_string(calendar::epoch::microsecs())};
+  /// \brief named group, one worker, timeout
+  template <typename t_time>
+  static void subscribe(
+      const group &p_group, worker p_worker, t_time p_timeout,
+      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
+      size_t p_queue_size = 20) {
 
-  //    create(_workers, std::move(p_queue));
-  //  }
+    typename producer_consumer_list::iterator _ite =
+        m_producer_consumer_list.find(p_group);
 
-  //  /// \brief Creates a queue for \p data messages, and associates a name of
-  //  /// a group of \p worker objects
-  //  static void create(const consumers_group &p_workers, t_data_queue
-  //  &&p_queue) {
-  //    producer_consumer_ptr _producer_consumer(
-  //        std::make_shared<producer_consumer>(std::move(p_queue)));
-  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
-  //  }
+    producer_consumer_ptr _producer;
+    if (_ite != m_producer_consumer_list.end()) {
+      _producer = _ite->second;
+    } else {
+      _producer =
+          std::make_shared<producer_consumer>(m_queue_factory(p_queue_size));
+    }
 
-  /// \brief Adds \p worker objects to a already created group of \p worker
-  /// objects to handle \p data messages
+    _producer->add(p_worker, p_timeout, p_timeout_callback);
 
-  //  template <typename t_time>
-  //  static void subscribe(const consumers_group &p_workers,
-  //                        std::function<worker()> p_work_factory,
-  //                        uint16_t p_num_handlers, t_time p_work_timeout) {
+    _producer->start();
 
-  //    typename producer_consumer_list::iterator _ite =
-  //        m_producer_consumer_list.find(p_workers);
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({p_group, _producer});
+  }
 
-  //    producer_consumer_ptr _producer_consumer;
-  //    if (_ite == m_producer_consumer_list.end()) {
-  //      concurrent_fatal(m_log, "no " + p_workers + " defined");
-  //      throw std::runtime_error("no " + p_workers + " defined");
-  //    }
+  /// \brief named group, one worker, no timeout
+  static void subscribe(const group &p_group, worker p_worker,
+                        size_t p_queue_size = 20) {
 
-  //    _producer_consumer = _ite->second;
+    typename producer_consumer_list::iterator _ite =
+        m_producer_consumer_list.find(p_group);
 
-  //    // adding the \p work_t functions
-  //    _producer_consumer->add(p_num_handlers, p_work_factory, p_work_timeout,
-  //                            m_timeout_callback);
-
-  //    // running the \p producer_consumer
-  //    _producer_consumer->start();
-
-  //    // adding the \p producer_consumer to the list
-  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
-  //  }
-
-  //  /// \brief Adds a \p worker to a already created group of \p worker object
-  //  to
-  //  /// handle messages \p data
-  //  template <typename t_time>
-  //  static void subscribe(const consumers_group &p_workers, worker p_work,
-  //                        t_time p_work_timeout) {
-
-  //    typename producer_consumer_list::iterator _ite =
-  //        m_producer_consumer_list.find(p_workers);
-
-  //    producer_consumer_ptr _producer_consumer;
-  //    if (_ite == m_producer_consumer_list.end()) {
-  //      concurrent_fatal(m_log, "no " + p_workers + " defined");
-  //      throw std::runtime_error("no " + p_workers + " defined");
-  //    }
-
-  //    _producer_consumer = _ite->second;
-
-  //    // adding the \p work_t functions
-  //    _producer_consumer->add(p_work, p_work_timeout, m_timeout_callback);
-
-  //    // running the \p producer_consumer
-  //    _producer_consumer->start();
-
-  //    // adding the \p producer_consumer to the list
-  //    m_producer_consumer_list.insert({p_workers, _producer_consumer});
-  //  }
-
-  static void subscribe(worker p_worker, size_t p_queue_size = 20) {
-
-    typedef circular_unlimited_size_queue_t<log, data> queue;
-
-    const consumers_group _workers{
-        std::to_string(calendar::epoch::microsecs())};
-
-    producer_consumer_ptr _producer =
-        std::make_shared<producer_consumer>(queue::create(p_queue_size));
+    producer_consumer_ptr _producer;
+    if (_ite != m_producer_consumer_list.end()) {
+      _producer = _ite->second;
+    } else {
+      _producer =
+          std::make_shared<producer_consumer>(m_queue_factory(p_queue_size));
+    }
 
     _producer->add(p_worker);
 
     _producer->start();
 
-    m_producer_consumer_list.insert({_workers, _producer});
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({p_group, _producer});
   }
 
-  //  static void subscribe(worker p_worker, size_t p_queue_size = 20)
-  //  {
+  /// \brief named group, many workers, timeout
+  template <typename t_time>
+  static void subscribe(
+      const group &p_group, uint16_t p_num_workers,
+      std::function<worker()> p_factory, t_time p_timeout,
+      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
+      size_t p_queue_size = 20) {
 
-  //    typedef circular_unlimited_size_queue_t<log, data> queue;
+    typename producer_consumer_list::iterator _ite =
+        m_producer_consumer_list.find(p_group);
 
-  //    const consumers_group _workers{ std::to_string(
-  //      calendar::epoch::microsecs()) };
+    producer_consumer_ptr _producer;
+    if (_ite != m_producer_consumer_list.end()) {
+      _producer = _ite->second;
+    } else {
+      _producer =
+          std::make_shared<producer_consumer>(m_queue_factory(p_queue_size));
+    }
 
-  //    producer_consumer_ptr _producer =
-  //      std::make_shared<producer_consumer>(queue::create(p_queue_size));
+    _producer->add(p_num_workers, p_factory, p_timeout, p_timeout_callback);
 
-  //    _producer->add(p_worker, [](std::thread::id) -> void {});
+    _producer->start();
 
-  //    m_producer_consumer_list.insert(_workers, _producer);
-  //  }
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({p_group, _producer});
+  }
+
+  /// \brief named group, many workers, no timeout
+  static void subscribe(const group &p_group, uint16_t p_num_workers,
+                        std::function<worker()> p_factory,
+                        size_t p_queue_size = 20) {
+
+    typename producer_consumer_list::iterator _ite =
+        m_producer_consumer_list.find(p_group);
+
+    producer_consumer_ptr _producer;
+    if (_ite != m_producer_consumer_list.end()) {
+      _producer = _ite->second;
+    } else {
+      _producer =
+          std::make_shared<producer_consumer>(m_queue_factory(p_queue_size));
+    }
+
+    _producer->add(p_num_workers, p_factory);
+
+    _producer->start();
+
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({p_group, _producer});
+  }
+
+  // ################
+
+  /// \brief unamed group, one worker, timeout
+  template <typename t_time>
+  static void subscribe(
+      worker p_worker, t_time p_timeout,
+      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
+      size_t p_queue_size = 20) {
+
+    producer_consumer_ptr _producer{
+        std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};
+
+    _producer->add(p_worker, p_timeout, p_timeout_callback);
+
+    _producer->start();
+
+    const group _group{std::to_string(calendar::epoch::microsecs())};
+
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({_group, _producer});
+  }
+
+  /// \brief unamed group, one worker, no timeout
+  static void subscribe(worker p_worker, size_t p_queue_size = 20) {
+
+    producer_consumer_ptr _producer{
+        std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};
+
+    _producer->add(p_worker);
+
+    _producer->start();
+
+    const group _group{std::to_string(calendar::epoch::microsecs())};
+
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({_group, _producer});
+  }
+
+  /// \brief unamed group, many workers, timeout
+  template <typename t_time>
+  static void subscribe(
+      uint16_t p_num_workers, std::function<worker()> p_factory,
+      t_time p_timeout,
+      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
+      size_t p_queue_size = 20) {
+
+    producer_consumer_ptr _producer{
+        std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};
+
+    _producer->add(p_num_workers, p_factory, p_timeout, p_timeout_callback);
+
+    _producer->start();
+
+    const group _group{std::to_string(calendar::epoch::microsecs())};
+
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({_group, _producer});
+  }
+
+  /// \brief unamed group, many workers, no timeout
+  static void subscribe(uint16_t p_num_workers,
+                        std::function<worker()> p_factory,
+                        size_t p_queue_size = 20) {
+
+    producer_consumer_ptr _producer{
+        std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};
+
+    _producer->add(p_num_workers, p_factory);
+
+    _producer->start();
+
+    const group _group{std::to_string(calendar::epoch::microsecs())};
+
+    std::lock_guard<std::mutex> _lock(m_list_mutex);
+    m_producer_consumer_list.insert({_group, _producer});
+  }
 
   /// \brief handle sends a message to the \p work_t objects to be handled
   ///
@@ -237,8 +313,7 @@ private:
   typedef typename std::shared_ptr<producer_consumer> producer_consumer_ptr;
 
   /// \brief producer_consumer_list_t alias for list of \p producer_consumer_t
-  typedef std::map<consumers_group, producer_consumer_ptr>
-      producer_consumer_list;
+  typedef std::map<group, producer_consumer_ptr> producer_consumer_list;
 
 private:
   /// \brief m_producer_consumer_list the single list of pools object
@@ -246,19 +321,34 @@ private:
 
   static timeout_callback m_timeout_callback;
   static t_log m_log;
+
+  static std::mutex m_list_mutex;
+
+  static queue_factory m_queue_factory;
 };
 
 /// \brief definition of the single list of pools object
-template <typename t_log, typename t_queue>
-typename dispatcher_t<t_log, t_queue>::producer_consumer_list
-    dispatcher_t<t_log, t_queue>::m_producer_consumer_list;
+template <typename t_log, typename t_data>
+typename dispatcher_t<t_log, t_data>::producer_consumer_list
+    dispatcher_t<t_log, t_data>::m_producer_consumer_list;
 
-template <typename t_log, typename t_queue>
-timeout_callback dispatcher_t<t_log, t_queue>::m_timeout_callback =
+template <typename t_log, typename t_data>
+timeout_callback dispatcher_t<t_log, t_data>::m_timeout_callback =
     [](std::thread::id) -> void {};
 
-template <typename t_log, typename t_queue>
-t_log dispatcher_t<t_log, t_queue>::m_log{"consumer::dispatcher"};
+template <typename t_log, typename t_data>
+t_log dispatcher_t<t_log, t_data>::m_log{"consumer::dispatcher"};
+
+template <typename t_log, typename t_data>
+std::mutex dispatcher_t<t_log, t_data>::m_list_mutex;
+
+template <typename t_log, typename t_data>
+typename dispatcher_t<t_log, t_data>::queue_factory
+    dispatcher_t<t_log, t_data>::m_queue_factory = [](size_t p_size) ->
+    typename dispatcher_t<t_log, t_data>::queue_ptr {
+      return typename dispatcher_t<t_log, t_data>::queue_ptr(
+          new circular_unlimited_size_queue_t<t_log, t_data>(p_size));
+    };
 
 } // namespace concurrent
 } // namespace tenacitas

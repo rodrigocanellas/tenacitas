@@ -247,6 +247,24 @@ public:
     }
   }
 
+  void add(uint16_t p_num_works, std::function<worker()> p_work_factory) {
+
+    std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
+
+    auto _breaker = [this]() -> bool { return this->breaker(); };
+
+    auto _provider = [this]() -> std::optional<data> {
+      return this->provider();
+    };
+
+    for (auto _i = 0; _i < p_num_works; ++_i) {
+      async_loop_ptr _loop(
+          std::make_shared<async_loop>(p_work_factory(), _breaker, _provider));
+
+      add(_loop);
+    }
+  }
+
   /// \brief is_stopped
   ///
   /// \return \p true if the loop is not running; \p false othewise
