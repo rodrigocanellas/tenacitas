@@ -76,7 +76,7 @@ struct dispatcher_100 {
 
     _sleeping_loop.stop();
 
-    concurrent_debug(m_log, "        last data produced = ", _data_produced);
+    concurrent_debug(m_log, "last data produced = ", _data_produced);
 
     concurrent_debug(m_log, "waiting for the consumer to notify");
     std::unique_lock<std::mutex> _lock_consumer(m_mutex_consumer);

@@ -242,7 +242,7 @@ protected:
             _maybe_executed.value());
 
         if (_maybe_provided) {
-          std::tuple<t_params...> _provided(_maybe_provided.value());
+          std::tuple<t_params...> _provided(std::move(*_maybe_provided));
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           std::apply(m_work_executer, std::move(_provided));
@@ -357,7 +357,7 @@ private:
         std::optional<t_param> _maybe_provided = _maybe_executed.value();
 
         if (_maybe_provided) {
-          t_param _provided = _maybe_provided.value();
+          t_param _provided = std::move(*_maybe_provided);
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           m_work_executer(_provided);
@@ -554,7 +554,8 @@ private:
             _maybe_executed.value();
 
         if (_maybe_provided) {
-          auto _provided = _maybe_provided.value();
+          auto _provided = std::move(*_maybe_provided);
+
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
           std::apply(m_work_executer, _provided);
