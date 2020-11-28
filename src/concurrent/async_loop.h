@@ -23,10 +23,11 @@
 #include <type_traits>
 
 #include <concurrent/breaker.h>
+#include <concurrent/executer.h>
 #include <concurrent/internal/constants.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/runner.h>
 #include <concurrent/thread.h>
+#include <concurrent/timeout.h>
 #include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
@@ -34,10 +35,15 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief
+/// \brief Base class to define a loop that run asynchronously
+///
+/// \tparam t_log
 template <typename t_log> struct async_loop_base_t {
 
-  typedef runner_t<t_log, bool> breaker_executer;
+  /// \brief Defines a \p executer for a breaker function, allowing the breaker
+  /// function to be executed asynchronously, and without creating a new thread
+  /// for each execution
+  typedef executer_t<t_log, bool> breaker_executer;
 
   /// \brief copy constructor not allowed
   async_loop_base_t(const async_loop_base_t &) = delete;
@@ -51,34 +57,26 @@ template <typename t_log> struct async_loop_base_t {
   /// \brief move assignment
   async_loop_base_t &operator=(async_loop_base_t &&p_async) = delete;
 
-  inline virtual ~async_loop_base_t() {
-    concurrent_debug(m_log, "destructor");
-    stop();
-    concurrent_info(m_log, "leaving destructor");
-  }
+  inline virtual ~async_loop_base_t() { stop(); }
 
   /// \brief is_stopped
   ///
   /// \return \p true if the loop is not running; \p false othewise
   inline bool is_stopped() const { return m_stopped; }
 
-  /// \brief retrieves the timeout for the Work function
+  /// \brief retrieves the timeout for the operation
   ///
   /// \return the timeout
-  inline std::chrono::nanoseconds get_timeout() const { return m_timeout; }
+  inline timeout get_timeout() const { return m_timeout; }
 
   /// \brief redefines the value of the timeout
   ///
   /// It does not restart the loop, it is necessary to call \p restart
   template <typename t_timeout> inline void set_timeout(t_timeout p_timeout) {
-    m_timeout = std::chrono::duration_cast<std::chrono::nanoseconds>(p_timeout);
+    m_timeout = to_timeout(p_timeout);
   }
 
-  /// \brief run starts the loop asynchronously
-  ///
-  /// \param p_timeout amount of time that the loop will wait for \p p_work to
-  /// execute
-  ///
+  /// \brief starts the loop asynchronously, if it was not already started
   void start() {
     if (!m_stopped) {
       concurrent_info(m_log, this,
@@ -88,10 +86,11 @@ template <typename t_log> struct async_loop_base_t {
     concurrent_debug(m_log, "starting the loop");
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    m_thread = concurrent::thread([this]() -> void { loop(); });
+    //    m_thread = concurrent::thread([this]() -> void { loop(); });
+    m_thread = concurrent::thread(&async_loop_base_t::loop, this);
   }
 
-  /// \brief stops the loop
+  /// \brief stops the loop, if it was running
   void stop() {
     if (m_stopped) {
       concurrent_warn(m_log, "not stopping because it was not running");
@@ -105,15 +104,20 @@ template <typename t_log> struct async_loop_base_t {
   }
 
 protected:
-  async_loop_base_t(std::chrono::nanoseconds p_timeout)
-      : m_timeout(p_timeout) {}
+  /// \brief Constructor base for sub-classes
+  ///
+  /// \param p_timeout is the amount of time a operation has to execute,
+  /// before the called loses interest in its result
+  async_loop_base_t(timeout p_timeout) : m_timeout(p_timeout) {}
 
   async_loop_base_t() = default;
 
+  /// \brief Abstract method to be implemented in sub-classes
   virtual void loop() = 0;
 
 protected:
-  std::chrono::nanoseconds m_timeout{infinite_timeout};
+  /// \brief Maximum time the operation has to execute
+  timeout m_timeout{infinite_timeout};
 
   /// \brief m_thread is the thread where the \p loop will run
   concurrent::thread m_thread;
@@ -121,40 +125,30 @@ protected:
   /// \brief m_mutex protects the start of the \p m_loop execution \p m_thread
   std::mutex m_mutex;
 
+  /// \brief Indicates if the loop should stop
   bool m_stopped{true};
 
+  /// \brief Logger for the class
   t_log m_log{"concurrent::async_loop"};
 
-  static constexpr std::chrono::milliseconds m_provider_timeout{300};
-  //  static constexpr std::chrono::milliseconds m_breaker_timeout{300};
+  /// \brief Time that the provider function has to execute
+  static constexpr timeout m_provider_timeout{300};
 };
 
+/// \brief Base template class
+///
+/// \tparam t_log
+///
+/// \tparam use_breaker identifies if the loop uses a breaker function, which
+/// allows another control if the loop should stop
+///
+/// \tparam t_params are the parameters that the operation needs
 template <typename t_log, bool use_breaker, typename... t_params>
 struct async_loop_t;
 
 // ############### 1 ########################################################
-template <typename t_log, typename... t_params>
-struct async_loop_t<t_log, true, t_params...>;
-
-// ############### 2 ########################################################
-template <typename t_log, typename t_param>
-struct async_loop_t<t_log, true, t_param>;
-
-// ############### 3 ########################################################
-template <typename t_log> struct async_loop_t<t_log, true>;
-
-// ############### 4 ########################################################
-template <typename t_log, typename... t_params>
-struct async_loop_t<t_log, false, t_params...>;
-
-// ############### 5 ########################################################
-template <typename t_log, typename t_param>
-struct async_loop_t<t_log, false, t_param>;
-
-// ############### 6 ########################################################
-template <typename t_log> struct async_loop_t<t_log, false>;
-
-// ############### 1 ########################################################
+/// \brief Specialization where the loop uses a breaker function, and the
+/// operation takes parameters
 template <typename t_log, typename... t_params>
 struct async_loop_t<t_log, true, t_params...>
     : public async_loop_base_t<t_log> {
@@ -200,13 +194,13 @@ struct async_loop_t<t_log, true, t_params...>
                             p_provider),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, std::optional<std::tuple<t_params...>>>
+  typedef executer_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef runner_t<t_log, void, t_params...> work_executer;
+  typedef executer_t<t_log, void, t_params...> work_executer;
 
 protected:
   void loop() {
@@ -273,6 +267,8 @@ private:
 };
 
 // ############### 2 ########################################################
+/// \brief Specialization where the loop uses a breaker function, and the
+/// operation takes one parameter
 template <typename t_log, typename t_param>
 struct async_loop_t<t_log, true, t_param> : public async_loop_base_t<t_log> {
 
@@ -317,12 +313,12 @@ struct async_loop_t<t_log, true, t_param> : public async_loop_base_t<t_log> {
                             p_provider),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, std::optional<t_param>> provider_executer;
+  typedef executer_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef runner_t<t_log, void, t_param> work_executer;
+  typedef executer_t<t_log, void, t_param> work_executer;
 
 private:
   void loop() {
@@ -389,9 +385,8 @@ private:
 };
 
 // ############### 3 ########################################################
-/// \brief
-///
-/// \example 25 async_loop_example
+/// \brief Specialization where the loop uses a breaker function, and the
+/// operation takes no parameter
 template <typename t_log>
 struct async_loop_t<t_log, true> : public async_loop_base_t<t_log> {
 
@@ -426,10 +421,10 @@ struct async_loop_t<t_log, true> : public async_loop_base_t<t_log> {
       : async_loop_base_t<t_log>(), m_work_executer(p_worker),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, void> work_executer;
+  typedef executer_t<t_log, void> work_executer;
 
 private:
   void loop() {
@@ -469,6 +464,8 @@ private:
 };
 
 // ############### 4 ########################################################
+/// \brief Specialization where the loop does not use a breaker function, and
+/// the operation takes parameters
 template <typename t_log, typename... t_params>
 struct async_loop_t<t_log, false, t_params...>
     : public async_loop_base_t<t_log> {
@@ -512,13 +509,13 @@ struct async_loop_t<t_log, false, t_params...>
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, std::optional<std::tuple<t_params...>>>
+  typedef executer_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef runner_t<t_log, void, t_params...> work_executer;
+  typedef executer_t<t_log, void, t_params...> work_executer;
 
 private:
   void loop() {
@@ -577,6 +574,8 @@ private:
 };
 
 // ############### 5 ########################################################
+/// \brief Specialization where the loop does not use a breaker function, and
+/// the operation takes one parameter
 template <typename t_log, typename t_param>
 struct async_loop_t<t_log, false, t_param> : public async_loop_base_t<t_log> {
 
@@ -619,12 +618,12 @@ struct async_loop_t<t_log, false, t_param> : public async_loop_base_t<t_log> {
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, std::optional<t_param>> provider_executer;
+  typedef executer_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef runner_t<t_log, void, t_param> work_executer;
+  typedef executer_t<t_log, void, t_param> work_executer;
 
 private:
   void loop() {
@@ -681,6 +680,8 @@ private:
 };
 
 // ############### 6 ########################################################
+/// \brief Specialization where the loop does not use a breaker function, and
+/// the operation takes no parameter
 template <typename t_log>
 struct async_loop_t<t_log, false> : public async_loop_base_t<t_log> {
 
@@ -713,10 +714,10 @@ struct async_loop_t<t_log, false> : public async_loop_base_t<t_log> {
   inline async_loop_t(worker p_worker)
       : async_loop_base_t<t_log>(), m_work_executer(p_worker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_worker(); }
+  inline worker get_worker() const { return m_work_executer.get_operation(); }
 
 private:
-  typedef runner_t<t_log, void> work_executer;
+  typedef executer_t<t_log, void> work_executer;
 
 private:
   void loop() {

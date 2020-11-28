@@ -8,12 +8,13 @@
 
 #include <functional>
 #include <thread>
+
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief
+/// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
 
 } // namespace concurrent
