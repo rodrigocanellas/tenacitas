@@ -18,6 +18,12 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+/// \brief Wrapper for the worker function, when it returns something, and
+/// receives many parameters
+///
+/// \tparam t_result is the type returned by the worker function
+///
+/// \tparam t_params are the parameters that the worker function receives
 template <typename t_result, typename... t_params> struct work_wrapper_t {
 
   typedef std::function<t_result(t_params...)> worker;
@@ -50,6 +56,10 @@ private:
   worker m_worker;
 };
 
+/// \brief Wrapper for the worker function, when it does not return, and
+/// receives many parameters
+///
+/// \tparam t_result is the type returned by the worker function
 template <typename... t_params> struct work_wrapper_t<void, t_params...> {
 
   typedef std::function<void(t_params...)> worker;
@@ -83,4 +93,4 @@ private:
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // HELPER_H
+#endif // TENACITAS_CONCURRENT_WORK_WRAPPER_H

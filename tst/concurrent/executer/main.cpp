@@ -1,2021 +1,658 @@
+#include <chrono>
 #include <cstdint>
-#include <cstring>
-#include <fstream>
-#include <future>
 #include <iostream>
-#include <string>
-#include <thread>
-#include <tuple>
-#include <utility>
+#include <optional>
 
 #include <concurrent/executer.h>
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
-using namespace tenacitas;
-
-/// \example
-
-/// \file This file contains tests for the \p executer_t class.
-///
-/// The tests were base on this state machine below, where the number in
-/// parentheses is the number o the test
-/*
-@startuml
-
-hide empty description
-
-[*] --> waiting_for_work : create
-
-waiting_for_work --> waiting_for_work : start (002)
-
-waiting_for_work --> working : work (004)
-                                                                                                              working --> working : start (003)
-                                                                                                                                      waiting_for_work --> stopped : stop (000)
-                                                                                                                                                                       stopped --> stopped : stop (001)
-                                                                                                                                                                                               working --> waiting_for_work : timeout (005)
-                                                                                                                                                                                                                                working --> stopped : stop (006)
-                                                                                                                                                                                                                                                        working --> waiting_for_work : done (007)
-                                                                                                                                                                                                                                                                                         waiting_for_work --> waiting_for_work : return (008)
-                                                                                                                                                                                                                                                                                                                                   @enduml
-*/
-
-struct executer_000 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<bool> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
+struct runner_000 {
   static std::string desc() {
-    return "waiting_for_work --> stopped : stop. \nStopping an executer (with "
-           "parameters and return) that was not called.";
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: one; timeout: yes";
+    return _stream.str();
   }
 
-private:
-  logger::cerr::log m_log{"executer_000"};
-};
-
-struct executer_001 {
   bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
 
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, int16_t, double>
-        executer;
+    typedef concurrent::executer_t<logger::cerr::log, int32_t, int16_t> runner;
 
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<bool> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    if (!_executer.is_stopped()) {
-      concurrent_error(m_log, "it should be stopped, but it is not");
-      return false;
-    }
-
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "stopped --> stopped : stop (001). \nStopping an executer (with "
-           "parameters and return) that was not called, and it was already "
-           "stopped";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_001"};
-};
-
-struct executer_002 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool,
-
-                                   int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<bool> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    if (!_executer.is_started()) {
-      concurrent_error(m_log, "it should be running, but it is not");
-      return false;
-    }
-
-    _executer.start();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an"
-           "executer (with parameters and return) that is started";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_002"};
-};
-
-struct executer_003 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<bool> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    concurrent_debug(m_log, "starting again");
-    _executer.start();
-
-    _thread.join();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "working --> working : start (003).\nStarting an executer (with "
-           "parameters and return) that is started, and after call to "
-           "'operator()()";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_003"};
-};
-
-struct executer_004 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t, double>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * p_double};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    if (!_ok) {
-      return false;
-    }
-
-    concurrent_debug(m_log, "value = ", _d);
-
-    return (_d == (-2 * 3.14));
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with parameters and return)";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_004"};
-};
-
-struct executer_005 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t, double>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker =
-        [this, _timeout](int16_t p_int,
-                         double p_double) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 1.1)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * p_double};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
+    auto _worker = [](int16_t p_int) -> int32_t {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      return p_int + 1;
     };
 
     bool _is_timeout{false};
 
-    double _d = 0.0;
-    bool _ok = true;
-
-    typename executer::timeout_callback _timeout_callback =
-        [this, &_is_timeout](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
       _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
 
-    std::thread _thread([this, &_executer, &_d, &_ok, &_is_timeout]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else if (_is_timeout) {
-        concurrent_warn(m_log, "timeout!!");
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
+    _runner(73);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
+    this_thread::sleep_for(chrono::milliseconds(3000));
 
-    _thread.join();
-
-    return (_ok ? false : true);
-  }
-
-  static std::string desc() {
-    return "working --> waiting_for_work : timeout (005).\nCalling an executer"
-           "(with parameters and return), but a timeout occurred";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_005"};
-};
-
-struct executer_006 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t, double>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker =
-        [this, _timeout](int16_t p_int,
-                         double p_double) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * p_double};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    _executer.stop();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return (_ok ? false : true);
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with "
-           "parameters and return), and stopped while working";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_006"};
-};
-
-struct executer_007 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t, double>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker =
-        [this, _timeout](int16_t p_int,
-                         double p_double) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * p_double};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "expected ", -2 * 3.14, ", got ", _d);
-        _ok = (_d == (-2 * 3.14));
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return (_ok ? true : false);
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with "
-           "parameters and return), and the work is done";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_007"};
-};
-
-// ###########################################################################
-
-struct executer_008 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> std::optional<bool> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> stopped : stop. \nStopping an executer (with "
-           "no parameters and with return) that was not called.";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_008"};
-};
-
-struct executer_009 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> std::optional<bool> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    if (!_executer.is_stopped()) {
-      concurrent_error(m_log, "it should be stopped, but it is not");
+    if (!_is_timeout) {
+      concurrent_error(m_log, "not timeout when it should");
       return false;
     }
 
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "stopped --> stopped : stop (001). \nStopping an executer (with "
-           "no parameters and with return) that was not called, and it was "
-           "already stopped";
+    return _is_timeout;
   }
 
 private:
-  logger::cerr::log m_log{"executer_009"};
+  tenacitas::logger::cerr::log m_log{"runner_000"};
 };
 
-struct executer_010 {
+struct runner_001 {
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: one; timeout: no";
+    return _stream.str();
+  }
+
   bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
 
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, void>
-        executer;
+    typedef concurrent::executer_t<logger::cerr::log, int32_t, int16_t> runner;
 
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> std::optional<bool> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
+    auto _worker = [](int16_t p_int) -> int32_t {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      return p_int + 4;
     };
 
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
 
-    if (!_executer.is_started()) {
-      concurrent_error(m_log, "it should be running, but it is not");
+    optional<int32_t> _maybe = _runner(73);
+
+    if (!_maybe) {
+      concurrent_error(m_log, "failed to return, when it should not");
       return false;
     }
 
-    _executer.start();
+    concurrent_debug(m_log, "run was ok");
 
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an "
-           "executer (with no parameters and with return) that is started";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_010"};
-};
-
-struct executer_011 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   bool, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> std::optional<bool> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {true};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    concurrent_debug(m_log, "starting again");
-    _executer.start();
-
-    _thread.join();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "working --> working : start (003).\nStarting an executer (with no "
-           "parameters and with return) that is started, and after call to "
-           "'operator()()";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_011"};
-};
-
-struct executer_012 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, void>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> std::optional<double> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {3.14};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    if (!_ok) {
+    int32_t _res = _maybe.value();
+    if (_res != 77) {
+      concurrent_error(m_log, "returned ", _res, ", but it should be ", 77);
       return false;
     }
 
-    concurrent_debug(m_log, "value = ", _d);
+    concurrent_debug(m_log, "value is ", _res, ", as it should");
 
-    return (_d == 3.14);
-  }
+    this_thread::sleep_for(chrono::milliseconds(3000));
 
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with no parameters and with return)";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_012"};
-};
-
-struct executer_013 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this,
-                                         _timeout]() -> std::optional<double> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 1.1)));
-      concurrent_debug(m_log, "waking");
-
-      return {3.14};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return (_ok ? false : true);
-  }
-
-  static std::string desc() {
-    return "working --> waiting_for_work : timeout (005).\nCalling an executer "
-           "(with no parameters and with return), but a timeout occurred";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_013"};
-};
-
-struct executer_014 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this,
-                                         _timeout]() -> std::optional<double> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-
-      return {3.14};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    _executer.stop();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return (_ok ? false : true);
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with no "
-           "parameters and with return), and stopped while working";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_014"};
-};
-
-struct executer_015 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this,
-                                         _timeout]() -> std::optional<double> {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-
-      return {3.14};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "expected ", 3.14, ", got ", _d);
-        _ok = (_d == 3.14);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return (_ok ? true : false);
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with no "
-           "parameters and with return), and the work is done";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_015"};
-};
-
-// ###########################################################################
-struct executer_016 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this](int16_t p_int,
-                                               double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> stopped : stop. \nStopping an executer (with "
-           "parameters and no return) that was not called.";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_016"};
-};
-
-struct executer_017 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this](int16_t p_int,
-                                               double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    if (!_executer.is_stopped()) {
-      concurrent_error(m_log, "it should be stopped, but it is not");
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
       return false;
     }
 
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "stopped --> stopped : stop (001). \nStopping an executer (with "
-           "parameters and no return) that was not called, and it was already "
-           "stopped";
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
   }
 
 private:
-  logger::cerr::log m_log{"executer_017"};
+  tenacitas::logger::cerr::log m_log{"runner_001"};
 };
 
-struct executer_018 {
+struct runner_002 {
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: many; timeout: yes";
+    return _stream.str();
+  }
+
   bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
 
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
+    typedef concurrent::executer_t<logger::cerr::log, double, int16_t, float>
+        runner;
 
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this](int16_t p_int,
-                                               double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
+    auto _worker = [](int16_t p_int, float p_float) -> double {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      return static_cast<double>(p_int) + p_float;
     };
 
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
+    _runner(73, 1.5);
 
-    if (!_executer.is_started()) {
-      concurrent_error(m_log, "it should be running, but it is not");
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (!_is_timeout) {
+      concurrent_error(m_log, "no timeout when it should");
       return false;
     }
 
-    _executer.start();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an "
-           "executer (with parameters and no return) that is started";
+    concurrent_debug(m_log, "timeout, as it should");
+    return _is_timeout;
   }
 
 private:
-  logger::cerr::log m_log{"executer_018"};
+  tenacitas::logger::cerr::log m_log{"runner_002"};
 };
 
-struct executer_019 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this](int16_t p_int,
-                                               double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-9, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    concurrent_debug(m_log, "starting again");
-    _executer.start();
-
-    _thread.join();
-
-    return _executer.is_started();
+struct runner_003 {
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: many; timeout: no";
+    return _stream.str();
   }
 
-  static std::string desc() {
-    return "working --> working : start (003).\nStarting an executer (with "
-           "parameters and no return) that is started, and after call to "
-           "'operator()()";
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, double, int16_t, float>
+        runner;
+
+    auto _worker = [](int16_t p_int, float p_float) -> double {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      return static_cast<double>(p_int) + p_float;
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    optional<double> _maybe = _runner(73, 1.5);
+
+    if (!_maybe) {
+      concurrent_error(m_log, "failed to return, when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "run was ok");
+
+    double _res = _maybe.value();
+    if (_res != (static_cast<double>(73) + 1.5)) {
+      concurrent_error(m_log, "returned ", _res, ", but it should be ", 77);
+      return false;
+    }
+
+    concurrent_debug(m_log, "value is ", _res, ", as it should");
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
   }
 
 private:
-  logger::cerr::log m_log{"executer_019"};
+  tenacitas::logger::cerr::log m_log{"runner_003"};
 };
 
-struct executer_020 {
+struct runner_004 {
+
   bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
+    using namespace tenacitas;
+    using namespace std;
 
-    const uint16_t _timeout = 6000;
+    typedef concurrent::executer_t<logger::cerr::log, double> runner;
 
-    bool _ok = true;
-    typename executer::worker _worker = [this, &_ok](int16_t p_int,
-                                                     double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      if ((p_int != -2) && (p_double != 3.14)) {
-        concurrent_error(m_log, "values should be -2 and 3,14");
-        _ok = false;
-      }
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-      _ok = true;
+    auto _worker = []() -> double {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      return 3.14;
     };
 
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
+    _runner();
 
-    std::thread _thread([&_executer]() -> void { _executer(); });
+    this_thread::sleep_for(chrono::milliseconds(3000));
 
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
+    if (!_is_timeout) {
+      concurrent_error(m_log, "no timeout when it should");
+      return false;
+    }
 
-    _thread.join();
-
-    return _ok;
+    concurrent_debug(m_log, "timeout, as it should");
+    return _is_timeout;
   }
 
   static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with parameters and no return)";
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: no; timeout: yes";
+    return _stream.str();
   }
 
 private:
-  logger::cerr::log m_log{"executer_020"};
+  tenacitas::logger::cerr::log m_log{"runner_004"};
 };
 
-struct executer_021 {
+struct runner_005 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: yes; parameter: no; timeout: no";
+    return _stream.str();
+  }
+
   bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
+    using namespace tenacitas;
+    using namespace std;
 
-    const std::chrono::milliseconds _timeout(3000);
+    typedef concurrent::executer_t<logger::cerr::log, double> runner;
 
-    typename executer::worker _worker =
-        [this, _timeout](int16_t p_int, double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 1.1)));
-      concurrent_debug(m_log, "waking");
+    auto _worker = []() -> double {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      return 3.14;
     };
 
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    optional<double> _maybe = _runner();
+
+    if (!_maybe) {
+      concurrent_error(m_log, "failed to return, when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "run was ok");
+
+    double _res = _maybe.value();
+    if (_res != 3.14) {
+      concurrent_error(m_log, "returned ", _res, ", but it should be ", 3.14);
+      return false;
+    }
+
+    concurrent_debug(m_log, "value is ", _res, ", as it should");
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_005"};
+};
+
+struct runner_006 {
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void, int16_t> runner;
+
+    auto _worker = [this](int16_t p_int) -> void {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      concurrent_debug(m_log, "parameter is ", p_int);
     };
 
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
+    bool _is_timeout{false};
 
-    std::thread _thread([&_executer]() -> void { _executer(); });
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
 
-    _thread.join();
+    _runner(73);
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (!_is_timeout) {
+      concurrent_error(m_log, "not timeout when it should");
+      return false;
+    }
+
+    return _is_timeout;
+  }
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: one; timeout: yes";
+    return _stream.str();
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_006"};
+};
+
+struct runner_007 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: one; timeout: no";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void, int16_t> runner;
+
+    auto _worker = [this](int16_t p_int) -> void {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      concurrent_debug(m_log, "parameter is ", p_int);
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    _runner(73);
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_007"};
+};
+
+struct runner_008 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: many; timeout: yes";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, float>
+        runner;
+
+    auto _worker = [this](int16_t p_int, float p_float) -> void {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      concurrent_debug(m_log, "int = ", p_int, ", float = ", p_float);
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    _runner(73, 1.5);
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (!_is_timeout) {
+      concurrent_error(m_log, "no timeout when it should");
+      return false;
+    }
+
+    concurrent_debug(m_log, "timeout, as it should");
+    return _is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_008"};
+};
+
+struct runner_009 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: many; timeout: no";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, float>
+        runner;
+
+    auto _worker = [this](int16_t p_int, float p_float) -> void {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      concurrent_debug(m_log, "int = ", p_int, ", float = ", p_float);
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    _runner(73, 1.5);
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_009"};
+};
+
+struct runner_010 {
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: no; timeout: yes";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void> runner;
+
+    auto _worker = [this]() -> void {
+      this_thread::sleep_for(chrono::milliseconds(2000));
+      concurrent_debug(m_log, "worker in action");
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    _runner();
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (!_is_timeout) {
+      concurrent_error(m_log, "no timeout when it should");
+      return false;
+    }
+
+    concurrent_debug(m_log, "timeout, as it should");
+    return _is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_010"};
+};
+
+struct runner_011 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "return: no; parameter: no; timeout: no";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void> runner;
+
+    auto _worker = [this]() -> void {
+      this_thread::sleep_for(chrono::milliseconds(500));
+      concurrent_debug(m_log, "worker in action");
+    };
+
+    bool _is_timeout{false};
+
+    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
+      _is_timeout = true;
+      concurrent_warn(m_log, "timeout for ", p_id);
+    };
+
+    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+
+    _runner();
+
+    this_thread::sleep_for(chrono::milliseconds(3000));
+
+    if (_is_timeout) {
+      concurrent_error(m_log, "timeout when it should not");
+      return false;
+    }
+
+    concurrent_debug(m_log, "no timeout, as it should");
+    return !_is_timeout;
+  }
+
+private:
+  tenacitas::logger::cerr::log m_log{"runner_011"};
+};
+
+struct runner_012 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "Runner with no return, 3 parameters: i1 (int16), i2 (int32), f "
+               "(float).\n"
+            << "A loop in i1 from 0 to 29, calling runner with i1, i2 + 10, i2 "
+               "* -1.5";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    using namespace tenacitas;
+    using namespace std;
+
+    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, int32_t,
+                                   float>
+        runner;
+
+    auto _worker = [this](int16_t p_i1, int32_t p_i2, float p_float) -> void {
+      concurrent_debug(m_log, "i1 = ", p_i1, ", i2 = ", p_i2,
+                       ", float = ", p_float);
+    };
+
+    runner _runner(std::chrono::milliseconds(300), _worker);
+
+    int16_t _i1 = 0;
+    int32_t _i2 = 100;
+    float _f = 0.0;
+    while (_i1 < 30) {
+      _i2 += 10;
+      _f += _i2 * -1.5;
+
+      _runner(_i1, _i2, _f);
+
+      ++_i1;
+
+      this_thread::sleep_for(chrono::milliseconds(500));
+    }
 
     return true;
   }
 
-  static std::string desc() {
-    return "working --> waiting_for_work : timeout (005).\nCalling an executer "
-           "(with parameters and no return), but a timeout occurred.\nTo be "
-           "certain that the there was a timeout, one must look at the log for "
-           "'worker did not finish in time' message.\nThis is necessary "
-           "because the work function does not return";
-  }
-
 private:
-  logger::cerr::log m_log{"executer_005"};
-};
-
-struct executer_022 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    double _d = 0.0;
-    typename executer::worker _worker =
-        [this, _timeout, &_d](int16_t p_int, double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      _d = p_int * p_double;
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    _executer.stop();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    concurrent_debug(m_log, "_d = ", _d);
-
-    return (_d == 0.0);
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with "
-           "parameters and no return), and stopped while working";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_022"};
-};
-
-struct executer_023 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    double _d = 0.0;
-    typename executer::worker _worker =
-        [this, _timeout, &_d](int16_t p_int, double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      _d = -2 * 3.14;
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{-2, 3.14}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    concurrent_debug(m_log, "_d = ", _d);
-
-    return (_d == (-2 * 3.14));
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with "
-           "parameters and no return), and the work is done";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_023"};
-};
-
-// ###########################################################################
-
-struct executer_024 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> stopped : stop. \nStopping an executer (with "
-           "no parameters and no return) that was not called.";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_024"};
-};
-
-struct executer_025 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    concurrent_debug(m_log, "stopping");
-    _executer.stop();
-
-    if (!_executer.is_stopped()) {
-      concurrent_error(m_log, "it should be stopped, but it is not");
-      return false;
-    }
-
-    _executer.stop();
-
-    return _executer.is_stopped();
-  }
-
-  static std::string desc() {
-    return "stopped --> stopped : stop (001). \nStopping an executer (with no "
-           "parameters and no return) that was not called, and it was already "
-           " stopped ";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_025"};
-};
-
-struct executer_026 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    if (!_executer.is_started()) {
-      concurrent_error(m_log, "it should be running, but it is not");
-      return false;
-    }
-
-    _executer.start();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> waiting_for_work : start (002). \nStarting an "
-           "executer (with no parameters and no return) that is started";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_026"};
-};
-
-struct executer_027 {
-  bool operator()() {
-
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const auto _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    concurrent_debug(m_log, "starting again");
-    _executer.start();
-
-    _thread.join();
-
-    return _executer.is_started();
-  }
-
-  static std::string desc() {
-    return "working --> working : start (003).\nStarting an executer (with no "
-           "parameters and no return) that is started, and after call to "
-           "'operator()()";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_027"};
-};
-
-struct executer_028 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    typename executer::worker _worker = [this]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with no parameters and no return).\nThe only way to find out "
-           "that the work function really worked, and on time, is looking in "
-           "the log, as the work return no data";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_028"};
-};
-
-struct executer_029 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this, _timeout]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 1.1)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "working --> waiting_for_work : timeout (005).\nCalling an executer "
-           "(with no parameters and no return), but a timeout occurred.\nThe "
-           "only way to find out that the work function really timedout is "
-           "looking in the log, as the work return no data";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_029"};
-};
-
-struct executer_030 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this, _timeout]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    _executer.stop();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with no "
-           "parameters and no return), and stopped while working.\nThe only "
-           "way to find out that the work function was really stopped is "
-           "looking in the log, as the work return no data";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_030"};
-};
-
-struct executer_031 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, void>
-        executer;
-
-    const std::chrono::milliseconds _timeout(3000); // millises
-
-    typename executer::worker _worker = [this, _timeout]() -> void {
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(std::chrono::milliseconds(
-          static_cast<uint16_t>(_timeout.count() * 0.7)));
-      concurrent_debug(m_log, "waking");
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout),
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(
-        static_cast<uint16_t>(_timeout.count() * 1.3)));
-
-    _thread.join();
-
-    return true;
-  }
-
-  static std::string desc() {
-    return "working --> stopped : stop (006).\nCalling an executer (with no "
-           "parameters and no return), and the work is done.\nThe only "
-           "way to find out that the work function really worked is "
-           "looking in the log, as the work return no data";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_031"};
-};
-
-// ###########################################################################
-
-struct executer_032 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t, double>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t p_int, double p_double) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * p_double};
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{0, 0}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer(-2, 3.14);
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    if (!_ok) {
-      return false;
-    }
-
-    concurrent_debug(m_log, "value = ", _d);
-
-    return (_d == (-2 * 3.14));
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with parameters and return), but receiving the parameters in the "
-           "'executer::operator()', instead of calling a provider";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_032"};
-};
-
-struct executer_033 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t, double>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    bool _ok = true;
-    typename executer::worker _worker = [this, &_ok](int16_t p_int,
-                                                     double p_double) -> void {
-      concurrent_debug(m_log, "int = ", p_int, ", double = ", p_double);
-      if ((p_int != -2) && (p_double != 3.14)) {
-        concurrent_error(m_log, "values should be -2 and 3,14");
-        _ok = false;
-      }
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-      _ok = true;
-    };
-
-    typename executer::provider _provider =
-        []() -> std::optional<std::tuple<int, double>> {
-      return {{0, 0}};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(-2, 3.14); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    return _ok;
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with parameters and no return), but receiving the parameters in "
-           "the 'executer::operator()', instead of calling a provider";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_033"};
-};
-
-// ###########################################################################
-struct executer_034 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   double, int16_t>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    typename executer::worker _worker =
-        [this](int16_t &&p_int) -> std::optional<double> {
-      concurrent_debug(m_log, "int = ", p_int);
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-
-      return {p_int * 3.5};
-    };
-
-    typename executer::provider _provider = []() -> std::optional<int> {
-      return {-2};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    double _d = 0.0;
-    bool _ok = true;
-
-    std::thread _thread([this, &_executer, &_d, &_ok]() -> void {
-      std::optional<double> _ret = _executer();
-      if (_ret) {
-        _d = _ret.value();
-        concurrent_debug(m_log, "calculated value = ", _d);
-      } else {
-        concurrent_debug(m_log, "error in execution");
-        _ok = false;
-      }
-    });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    if (!_ok) {
-      return false;
-    }
-
-    concurrent_debug(m_log, "value = ", _d);
-
-    return (_d == (-2 * 3.5));
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with one parameter and return)";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_034"};
-};
-
-// ###########################################################################
-
-struct executer_035 {
-  bool operator()() {
-    typedef concurrent::executer_t<logger::cerr::log, std::chrono::milliseconds,
-                                   void, int16_t>
-        executer;
-
-    const uint16_t _timeout = 6000;
-
-    bool _ok = true;
-    typename executer::worker _worker = [this, &_ok](int16_t p_int) -> void {
-      concurrent_debug(m_log, "int = ", p_int);
-      if (p_int != -2) {
-        concurrent_error(m_log, "value should be -2");
-        _ok = false;
-      }
-      concurrent_debug(m_log, "sleeping");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 2)));
-      concurrent_debug(m_log, "waking");
-      _ok = true;
-    };
-
-    typename executer::provider _provider = []() -> std::optional<int16_t> {
-      return {-2};
-    };
-
-    typename executer::timeout_callback _timeout_callback =
-        [this](std::thread::id p_th_id) -> void {
-      concurrent_warn(m_log, "timeout of worker ", p_th_id);
-    };
-
-    executer _executer(_worker, std::chrono::milliseconds(_timeout), _provider,
-                       _timeout_callback);
-
-    std::thread _thread([&_executer]() -> void { _executer(); });
-
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(static_cast<uint16_t>(_timeout / 4)));
-
-    _thread.join();
-
-    return _ok;
-  }
-
-  static std::string desc() {
-    return "waiting_for_work --> working : work (004).\nCalling an executer "
-           "(with one parameter and no return)";
-  }
-
-private:
-  logger::cerr::log m_log{"executer_035"};
+  tenacitas::logger::cerr::log m_log{"runner_012"};
 };
 
 int main(int argc, char **argv) {
-  logger::cerr::log::set_debug();
-  tester::test _test(argc, argv);
-  run_test(_test, executer_000);
-  run_test(_test, executer_001);
-  run_test(_test, executer_002);
-  run_test(_test, executer_003);
-  run_test(_test, executer_004);
-  run_test(_test, executer_005);
-  run_test(_test, executer_006);
-  run_test(_test, executer_007);
-  // ###########################
-  run_test(_test, executer_008);
-  run_test(_test, executer_009);
-  run_test(_test, executer_010);
-  run_test(_test, executer_011);
-  run_test(_test, executer_012);
-  run_test(_test, executer_013);
-  run_test(_test, executer_014);
-  run_test(_test, executer_015);
-  // ###########################
-  run_test(_test, executer_016);
-  run_test(_test, executer_017);
-  run_test(_test, executer_018);
-  run_test(_test, executer_019);
-  run_test(_test, executer_020);
-  run_test(_test, executer_021);
-  run_test(_test, executer_022);
-  run_test(_test, executer_023);
-  // ###########################
-  run_test(_test, executer_024);
-  run_test(_test, executer_025);
-  run_test(_test, executer_026);
-  run_test(_test, executer_027);
-  run_test(_test, executer_028);
-  run_test(_test, executer_029);
-  run_test(_test, executer_030);
-  run_test(_test, executer_031);
-  // ###########################
-  run_test(_test, executer_032);
-  run_test(_test, executer_033);
-  // ###########################
-  run_test(_test, executer_034);
-  // ###########################
-  run_test(_test, executer_035);
+
+  tenacitas::logger::cerr::log::set_debug();
+  tenacitas::tester::test _test(argc, argv);
+  run_test(_test, runner_000);
+  run_test(_test, runner_001);
+  run_test(_test, runner_002);
+  run_test(_test, runner_003);
+  run_test(_test, runner_004);
+  run_test(_test, runner_005);
+  run_test(_test, runner_006);
+  run_test(_test, runner_007);
+  run_test(_test, runner_008);
+  run_test(_test, runner_009);
+  run_test(_test, runner_010);
+  run_test(_test, runner_011);
+  run_test(_test, runner_012);
+
+  return 0;
 }

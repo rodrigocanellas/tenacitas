@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_RUNNER_H
-#define TENACITAS_CONCURRENT_RUNNER_H
+#ifndef TENACITAS_CONCURRENT_EXECUTER_H
+#define TENACITAS_CONCURRENT_EXECUTER_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,6 +9,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <functional>
+#include <future>
 #include <mutex>
 #include <optional>
 #include <sstream>
@@ -23,6 +24,7 @@
 #include <concurrent/internal/log.h>
 #include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
+#include <concurrent/timeout.h>
 #include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization
@@ -30,27 +32,62 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+/// \brief executes a work function asynchronously with creating a new thread
+/// for each execution
+///
+/// \tparam t_log
+///
+/// \tparam t_result
+///
+/// \tparam t_params
+///
 template <typename t_log, typename t_result, typename... t_params>
-struct runner_t {
+struct executer_t {
 
+  /// \brief type of work function to be executed asynchronously
   typedef std::function<t_result(t_params...)> worker;
 
-  runner_t() = default;
+  executer_t() = default;
 
+  /// \brief constructor
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for the
+  /// worker function to execute, before the calling code loses interest in the
+  /// result
+  ///
+  /// \param p_timeout is the amount of time defined as timeout for the worker
+  /// function
+  ///
+  /// \param p_worker is the function to be executed asynchronously
+  ///
+  /// \param p_timeout_callback is the function to be executed if \p p_worker
+  /// times out. \p p_timeout_callback is executed asynchronously with a timeout
+  /// of 300 ms
   template <typename t_time>
-  runner_t(
+  executer_t(
       t_time p_timeout, worker p_worker,
       timeout_callback p_timeout_callback = [](std::thread::id) -> void {})
-      : m_timeout(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(p_timeout)),
-        m_work_wrapper(p_worker), m_timeout_callback(p_timeout_callback) {
+      : m_timeout(to_timeout(p_timeout)), m_work_wrapper(p_worker),
+        m_timeout_callback(p_timeout_callback) {
     start();
   }
 
-  runner_t(worker p_worker) : m_work_wrapper(p_worker) { start(); }
+  /// \brief constructor
+  ///
+  /// This constructor does not define a timeout for the worker function, so the
+  /// caller function will wait indefinitely for the result
+  ///
+  /// \param p_worker is the function to be executed asynchronously
+  executer_t(worker p_worker) : m_work_wrapper(p_worker) { start(); }
 
-  ~runner_t() { stop(); }
+  /// \brief destructor
+  ///
+  /// Stops the execution of the single created thread for the execution of the
+  /// worker function asynchronously
+  ~executer_t() { stop(); }
 
+  /// \brief Stars the single thread that will execute the worker function
+  /// asynchronously
   void start() {
     if (!m_work_wrapper) {
       throw std::runtime_error("work function not defined");
@@ -64,6 +101,8 @@ struct runner_t {
     }
   }
 
+  /// \brief Stops the execution of the single created thread for the execution
+  /// of the worker function asynchronously
   void stop() {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
@@ -74,14 +113,22 @@ struct runner_t {
     }
   }
 
-  inline constexpr std::chrono::nanoseconds get_timeout() const {
-    return m_timeout;
-  }
+  /// \brief Retrieves the amount of time defined for timeout
+  inline constexpr timeout get_timeout() const { return m_timeout; }
 
+  /// \brief Retrieves the worker function
   inline worker get_worker() const { return m_work_wrapper.get_worker(); }
 
+  /// \brief Retrieves the function executed when the worker function exceeds
+  /// the defined timeout
   inline timeout_callback get_timeout_callback() { return m_timeout_callback; }
 
+  /// \brief Executes the defined worker function
+  ///
+  /// \param p_params are the defined parameters in the \p worker typedef
+  /// signature
+  ///
+  /// \returns whatever was defined in the \p worker typedef signature
   auto operator()(t_params... p_params) {
 
     std::lock_guard<std::mutex> _lock_operation(m_mutex_operation);
@@ -94,9 +141,6 @@ struct runner_t {
 
     m_work_wrapper.set_params(p_params...);
 
-    //    m_params = std::make_tuple(p_params...);
-    //    concurrent_debug(m_log, "parameters provided = ", m_params);
-
     m_is_timeout = false;
 
     concurrent_debug(m_log, "notifying there is work to be done ");
@@ -107,7 +151,9 @@ struct runner_t {
     if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
       concurrent_warn(m_log, "timeout: ", m_thread.get_id(),
                       " did not finish in time");
+
       timeout_callback_thread();
+
       m_is_timeout = true;
       return m_work_wrapper.get_result_not_ok();
     }
@@ -121,16 +167,27 @@ struct runner_t {
   }
 
 private:
+  /// \brief Type to adapt the different possible return types and parameters of
+  /// the \p worker function
   typedef work_wrapper_t<t_result, t_params...> work_wrapper;
 
 private:
+  /// \brief Thread to execute the function that is called if the \p worker
+  /// function times out
   void timeout_callback_thread() {
-    std::thread _timeout_thread(
-        [this]() -> void { m_timeout_callback(m_thread.get_id()); });
-    //    _timeout_thread.detach();
-    _timeout_thread.join();
+    std::thread::id _id{std::this_thread::get_id()};
+    m_timeout_thread =
+        std::thread([this, _id]() -> void { m_timeout_callback(_id); });
+    m_timeout_thread.detach();
+
+    //    std::future<void> _future_timeout = std::async(
+    //      std::launch::async, [this, _id]() -> void { m_timeout_callback(_id);
+    //      });
+    //    _future_timeout.wait_for(std::chrono::milliseconds(300));
   }
 
+  /// \brief Loop executed asynchronously that waits for notification to execute
+  /// the \p worker function
   void loop() {
     while (true) {
 
@@ -168,25 +225,50 @@ private:
   }
 
 private:
-  std::chrono::nanoseconds m_timeout{infinite_timeout};
+  /// \brief If no timeout is defined for the \p worker function, we wait
+  /// infinitely
+  timeout m_timeout{infinite_timeout};
 
+  /// \brief Wrapper that adapts to the different possible return types and
+  /// parameters of the \p worker function
   work_wrapper m_work_wrapper;
 
+  /// \brief If no timeout is defined the function that should be executed in
+  /// this case is void
   timeout_callback m_timeout_callback{[](std::thread::id) -> void {}};
 
+  /// \brief Logger object
   t_log m_log{"concurrent::runner"};
+
+  /// \brief The loop initiates stopped
   bool m_stopped{true};
+
+  /// \brief Nothing is in execution, so there is no timeout yet
   bool m_is_timeout{false};
 
+  /// \brief Controls the execution of the execution loop
   std::mutex m_mutex_operation;
+
+  /// \brief Controls the execution of the execution loop
   std::condition_variable m_cond_exec;
+
+  /// \brief Controls the waiting of the execution loop
   std::mutex m_mutex_wait;
+
+  /// \brief Controls the waiting of the execution loop
   std::condition_variable m_cond_wait;
+
+  /// \brief Single thread used to execute the \p worker function over and over
+  /// asynchronously
   concurrent::thread m_thread;
+
+  /// \brief Controls the execution of the thread
   std::mutex m_mutex_exec;
+
+  std::thread m_timeout_thread;
 };
 
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // TENACITAS_CONCURRENT_RUNNER_H
+#endif // TENACITAS_CONCURRENT_EXECUTER_H

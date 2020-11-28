@@ -17,7 +17,6 @@ namespace concurrent {
 
 /// \brief The thread class is a wrapper for the std::thread, which joins in
 /// destructor and move assignment
-///
 class thread {
 public:
   /// \brief thread constructor

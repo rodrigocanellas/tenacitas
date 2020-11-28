@@ -193,10 +193,9 @@ public:
 
   /// \brief unamed group, one worker, timeout
   template <typename t_time>
-  static void subscribe(
-      worker p_worker, t_time p_timeout,
-      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
-      size_t p_queue_size = 20) {
+  static void subscribe(worker p_worker, t_time p_timeout,
+                        timeout_callback p_timeout_callback,
+                        size_t p_queue_size = 20) {
 
     producer_consumer_ptr _producer{
         std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};
@@ -229,11 +228,10 @@ public:
 
   /// \brief unamed group, many workers, timeout
   template <typename t_time>
-  static void subscribe(
-      uint16_t p_num_workers, std::function<worker()> p_factory,
-      t_time p_timeout,
-      timeout_callback p_timeout_callback = [](std::thread::id) -> void {},
-      size_t p_queue_size = 20) {
+  static void subscribe(uint16_t p_num_workers,
+                        std::function<worker()> p_factory, t_time p_timeout,
+                        timeout_callback p_timeout_callback,
+                        size_t p_queue_size = 20) {
 
     producer_consumer_ptr _producer{
         std::make_shared<producer_consumer>(m_queue_factory(p_queue_size))};

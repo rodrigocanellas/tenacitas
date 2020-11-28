@@ -14,6 +14,7 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+/// \brief Type of function executed when a worker function times out
 typedef std::function<void(std::thread::id)> timeout_callback;
 
 } // namespace concurrent

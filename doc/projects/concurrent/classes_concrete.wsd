@@ -1,0 +1,72 @@
+@startuml
+
+hide empty members
+skinparam workersInheritance 2
+skinparam linetype ortho
+
+
+class queue_t<t_data> {    
+    add(t_data)
+    get() : t_data
+}
+
+class queue_ptr
+
+class circular_fixed_size_queue_t<t_data>
+class circular_unlimited_size_queue_t<t_data>
+class linear_size_queue_t<t_data>
+
+class size
+
+class competitor_t<t_data> {
+    + operator()(t_data) 
+}
+
+class id
+
+
+class worker_t<t_data> {
+    + add(competitor_t)
+    + add(competitor_t, timeout)
+    + set(queue_ptr)
+    + operator()(t_data)    
+}
+
+class workers_t <t_data> <<static>> {
+    + add_worker(worker_t.id, queue_ptr, size)
+    + add_competitor(worker_t.id, competitor_t, timeout)
+    + handle(t_data)
+}
+
+class subscriber_t  <t_data>  <<function>> {
+    + add_worker(worker_t.id, queue_ptr, size)
+    + add_competitor(worker_t.id, competitor_t, timeout)
+}
+
+class publisher_t  <t_data> <<function>> {
+    + operator()(t_data)
+}
+
+queue_t +-up- queue_ptr
+queue_t <|-- circular_fixed_size_queue_t
+queue_t <|-- circular_unlimited_size_queue_t
+queue_t <|-- linear_size_queue_t
+
+
+worker_t +-- id
+worker_t *-right- id
+
+queue_t *-up- size
+queue_t *-- "*" t_data
+competitor_t ..> "<<parameter>>" t_data
+worker_t *-- queue_t
+worker_t *-- "*" competitor_t
+
+workers_t *-- "*" worker_t
+
+subscriber_t ..> "<<use>>" workers_t
+publisher_t ..> "<<use>>" workers_t
+
+
+
+@enduml
