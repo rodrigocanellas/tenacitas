@@ -27,7 +27,7 @@ private:
 typedef concurrent::circular_fixed_size_queue_t<logger::cerr::log, data> queue;
 
 struct producer {
-  producer(queue *p_queue) : m_queue(p_queue) {}
+  producer(queue::ptr p_queue) : m_queue(p_queue) {}
 
   void operator()() {
     concurrent_debug(m_log, "starting producer");
@@ -46,7 +46,7 @@ struct producer {
   void stop() { m_stop = true; }
 
 private:
-  queue *m_queue = nullptr;
+  queue::ptr m_queue = nullptr;
   int16_t m_i = 100;
   double m_d = 3.14;
   bool m_stop = false;
@@ -54,7 +54,7 @@ private:
 };
 
 struct consumer {
-  consumer(queue *p_queue) : m_queue(p_queue) {}
+  consumer(queue::ptr p_queue) : m_queue(p_queue) {}
 
   void operator()() {
     concurrent_debug(m_log, "starting consumer");
@@ -74,7 +74,7 @@ struct consumer {
   void stop() { m_stop = true; }
 
 private:
-  queue *m_queue = nullptr;
+  queue::ptr m_queue = nullptr;
   bool m_stop = false;
   logger::cerr::log m_log{"consumer"};
 };
@@ -82,10 +82,10 @@ private:
 struct queue_000 {
 
   bool operator()() {
-    queue _queue(20);
-    _queue.add({9, -4.32});
-    _queue.traverse(printer());
-    std::optional<std::tuple<int16_t, double>> _maybe = _queue.get();
+    queue::ptr _queue = queue::create(20);
+    _queue->add({9, -4.32});
+    _queue->traverse(printer());
+    std::optional<std::tuple<int16_t, double>> _maybe = _queue->get();
     if (_maybe) {
       std::tuple<int16_t, double> _value = _maybe.value();
       if ((std::get<0>(_value) != 9) && (std::get<1>(_value) != -4.32)) {
@@ -93,7 +93,7 @@ struct queue_000 {
         return false;
       }
       concurrent_info(m_log, "got ", _value);
-      if (!_queue.empty()) {
+      if (!_queue->empty()) {
         concurrent_error(m_log, "Queue should be empty, but it is not");
         return false;
       }
@@ -112,11 +112,15 @@ private:
 
 struct queue_001 {
 
+  static std::string desc() {
+    return "1 consumer e 1 producer. Main thread sleeps for 5 seconds";
+  }
+
   bool operator()() {
 
-    queue _queue(20);
-    producer _producer(&_queue);
-    consumer _consumer(&_queue);
+    queue::ptr _queue = queue::create(20);
+    producer _producer(_queue);
+    consumer _consumer(_queue);
 
     std::thread _t1([&_producer]() { _producer(); });
     std::thread _t2([&_consumer]() { _consumer(); });
@@ -134,21 +138,24 @@ struct queue_001 {
     return true;
   }
 
-  static std::string desc() {
-    return "1 consumer e 1 producer. Main thread sleeps for 5 seconds";
-  }
-
 private:
   logger::cerr::log m_log{"queue_001"};
 };
 
 struct queue_002 {
+  static std::string desc() {
+    return "1 consumer e 1 producer."
+           "\nProducer starts."
+           "\nMain thread sleeps for 5 seconds."
+           "\nConsumer starts."
+           "\nMain thread sleeps for 5 seconds.";
+  }
 
   bool operator()() {
 
-    queue _queue(20);
-    producer _producer(&_queue);
-    consumer _consumer(&_queue);
+    queue::ptr _queue = queue::create(20);
+    producer _producer(_queue);
+    consumer _consumer(_queue);
 
     std::thread _t1([&_producer]() { _producer(); });
 
@@ -169,18 +176,6 @@ struct queue_002 {
     _t2.join();
 
     return true;
-  }
-
-  static std::string desc() {
-    return "1 consumer e 1 producer."
-
-           "\nProducer starts."
-
-           "\nMain thread sleeps for 5 seconds."
-
-           "\nConsumer starts."
-
-           "\nMain thread sleeps for 5 seconds.";
   }
 
 private:

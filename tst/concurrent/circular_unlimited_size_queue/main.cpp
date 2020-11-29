@@ -34,7 +34,7 @@ typedef concurrent::circular_unlimited_size_queue_t<logger::cerr::log, data>
     queue;
 
 struct producer {
-  producer(queue *p_queue) : m_queue(p_queue) {}
+  producer(queue::ptr p_queue) : m_queue(p_queue) {}
 
   void operator()() {
     concurrent_debug(m_log, "starting producer");
@@ -53,7 +53,7 @@ struct producer {
   void stop() { m_stop = true; }
 
 private:
-  queue *m_queue = nullptr;
+  queue::ptr m_queue = nullptr;
   int16_t m_i = 100;
   double m_d = 3.14;
   bool m_stop = false;
@@ -61,7 +61,7 @@ private:
 };
 
 struct consumer {
-  consumer(queue *p_queue) : m_queue(p_queue) {}
+  consumer(queue::ptr p_queue) : m_queue(p_queue) {}
 
   void operator()() {
     concurrent_debug(m_log, "starting consumer");
@@ -81,7 +81,7 @@ struct consumer {
   void stop() { m_stop = true; }
 
 private:
-  queue *m_queue = nullptr;
+  queue::ptr m_queue = nullptr;
   bool m_stop = false;
   logger::cerr::log m_log{"consumer"};
 };
@@ -89,10 +89,10 @@ private:
 struct queue_000 {
 
   bool operator()() {
-    queue _queue(20);
-    _queue.add({9, -4.32});
-    _queue.traverse(printer());
-    std::optional<data> _maybe = _queue.get();
+    queue::ptr _queue = queue::create(20);
+    _queue->add({9, -4.32});
+    _queue->traverse(printer());
+    std::optional<data> _maybe = _queue->get();
     if (_maybe) {
       data _value = _maybe.value();
       if (_value != data(9, -4.32)) {
@@ -100,7 +100,7 @@ struct queue_000 {
         return false;
       }
       concurrent_info(m_log, "got ", _value);
-      if (!_queue.empty()) {
+      if (!_queue->empty()) {
         concurrent_error(m_log, "Queue should be empty, but it is not");
         return false;
       }
@@ -121,9 +121,9 @@ struct queue_001 {
 
   bool operator()() {
 
-    queue _queue(20);
-    producer _producer(&_queue);
-    consumer _consumer(&_queue);
+    queue::ptr _queue = queue::create(20);
+    producer _producer(_queue);
+    consumer _consumer(_queue);
 
     std::thread _t1([&_producer]() { _producer(); });
     std::thread _t2([&_consumer]() { _consumer(); });
@@ -153,9 +153,9 @@ struct queue_002 {
 
   bool operator()() {
 
-    queue _queue(20);
-    producer _producer(&_queue);
-    consumer _consumer(&_queue);
+    queue::ptr _queue = queue::create(20);
+    producer _producer(_queue);
+    consumer _consumer(_queue);
 
     std::thread _t1([&_producer]() { _producer(); });
 
@@ -180,13 +180,9 @@ struct queue_002 {
 
   static std::string desc() {
     return "1 consumer e 1 producer."
-
            "\nProducer starts."
-
            "\nMain thread sleeps for 5 seconds."
-
            "\nConsumer starts."
-
            "\nMain thread sleeps for 5 seconds.";
   }
 
@@ -201,151 +197,151 @@ struct queue_003 {
 
   bool operator()() {
     printer _printer;
-    queue _q{4};
+    queue::ptr _q{queue::create(4)};
 
-    if (_q.capacity() != 4) {
+    if (_q->capacity() != 4) {
       concurrent_error(m_log, "capacity should be 4, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 0) {
+    if (_q->occupied() != 0) {
       concurrent_error(m_log,
                        "there should be 0 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 4 slots, and no occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 1
-    _q.add({10, 3.14});
-    if (_q.capacity() != 4) {
+    _q->add({10, 3.14});
+    if (_q->capacity() != 4) {
       concurrent_error(m_log, "capacity should be 4, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 1) {
+    if (_q->occupied() != 1) {
       concurrent_error(m_log, "there should be 1 slot occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 4 slots, and one occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 2
-    _q.add({-29, 0.93});
-    if (_q.capacity() != 4) {
+    _q->add({-29, 0.93});
+    if (_q->capacity() != 4) {
       concurrent_error(m_log, "capacity should be 4, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 2) {
+    if (_q->occupied() != 2) {
       concurrent_error(m_log,
                        "there should be 2 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 4 slots, and 2 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 3
-    _q.add({801, -4.328});
-    if (_q.capacity() != 4) {
+    _q->add({801, -4.328});
+    if (_q->capacity() != 4) {
       concurrent_error(m_log, "capacity should be 4, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 3) {
+    if (_q->occupied() != 3) {
       concurrent_error(m_log,
                        "there should be 3 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 4 slots, and 3 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 4
-    _q.add({8, 1024.95});
-    if (_q.capacity() != 4) {
+    _q->add({8, 1024.95});
+    if (_q->capacity() != 4) {
       concurrent_error(m_log, "capacity should be 4, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 4) {
+    if (_q->occupied() != 4) {
       concurrent_error(m_log,
                        "there should be 4 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 4 slots, and 4 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 5
-    _q.add({-4, -783.23});
-    if (_q.capacity() != 5) {
+    _q->add({-4, -783.23});
+    if (_q->capacity() != 5) {
       concurrent_error(m_log, "capacity should be 5, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 5) {
+    if (_q->occupied() != 5) {
       concurrent_error(m_log,
                        "there should be 5 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 5 slots, and 5 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 6
-    _q.add({18, 333.33});
-    if (_q.capacity() != 6) {
+    _q->add({18, 333.33});
+    if (_q->capacity() != 6) {
       concurrent_error(m_log, "capacity should be 6, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 6) {
+    if (_q->occupied() != 6) {
       concurrent_error(m_log,
                        "there should be 6 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 6 slots, and 6 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 7
-    _q.add({455, 12.88});
-    if (_q.capacity() != 7) {
+    _q->add({455, 12.88});
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 7) {
+    if (_q->occupied() != 7) {
       concurrent_error(m_log,
                        "there should be 7 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 7 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 1
-    std::optional<data> _maybe = _q.get();
+    std::optional<data> _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -360,42 +356,42 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 6) {
+    if (_q->occupied() != 6) {
       concurrent_error(m_log,
                        "there should be 6 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 6 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 8, with one slot empty
-    _q.add({-1, -2.3});
-    if (_q.capacity() != 7) {
+    _q->add({-1, -2.3});
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 7) {
+    if (_q->occupied() != 7) {
       concurrent_error(m_log,
                        "there should be 7 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 7 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 2
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -410,42 +406,42 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 6) {
+    if (_q->occupied() != 6) {
       concurrent_error(m_log,
                        "there should be 6 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 6 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // addition # 9, with one slot empty
-    _q.add({23, 4.021});
-    if (_q.capacity() != 7) {
+    _q->add({23, 4.021});
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 7) {
+    if (_q->occupied() != 7) {
       concurrent_error(m_log,
                        "there should be 7 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 7 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 3
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -460,24 +456,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 6) {
+    if (_q->occupied() != 6) {
       concurrent_error(m_log,
                        "there should be 6 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 6 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 4
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -492,24 +488,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 5) {
+    if (_q->occupied() != 5) {
       concurrent_error(m_log,
                        "there should be 5 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 5 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 5
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -524,24 +520,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 4) {
+    if (_q->occupied() != 4) {
       concurrent_error(m_log,
                        "there should be 4 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 4 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 6
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -556,24 +552,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 3) {
+    if (_q->occupied() != 3) {
       concurrent_error(m_log,
                        "there should be 3 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 3 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 7
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -588,24 +584,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 2) {
+    if (_q->occupied() != 2) {
       concurrent_error(m_log,
                        "there should be 2 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 2 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 8
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -620,24 +616,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 1) {
+    if (_q->occupied() != 1) {
       concurrent_error(m_log,
                        "there should be 1 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 1 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading # 9
-    _maybe = _q.get();
+    _maybe = _q->get();
     if (!_maybe) {
       concurrent_error(m_log, "no data read, when it should");
       return false;
@@ -652,24 +648,24 @@ struct queue_003 {
 
     concurrent_debug(m_log, "data = ", _data);
 
-    if (_q.capacity() != 7) {
+    if (_q->capacity() != 7) {
       concurrent_error(m_log, "capacity should be 7, but it is ",
-                       _q.capacity());
+                       _q->capacity());
       return false;
     }
 
-    if (_q.occupied() != 0) {
+    if (_q->occupied() != 0) {
       concurrent_error(m_log,
                        "there should be 0 slots occupied, but there are ",
-                       _q.occupied());
+                       _q->occupied());
       return false;
     }
 
     concurrent_debug(m_log, "traversing queue with 7 slots, and 0 occupied");
-    _q.traverse(_printer);
+    _q->traverse(_printer);
 
     // reading from an empty queue
-    _maybe = _q.get();
+    _maybe = _q->get();
 
     if (_maybe) {
       concurrent_error(m_log, "read data from an empty queue");

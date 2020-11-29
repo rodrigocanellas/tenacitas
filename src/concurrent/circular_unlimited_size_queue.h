@@ -19,34 +19,45 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+/// \brief Implements a circular queue which size is increased if it becomes
+/// full
+///
+/// \tparam t_log
+///
+/// \tparam t_data defines the types of the data contained in the buffer
 template <typename t_log, typename t_data>
 struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
 
+  /// \brief Alias for the data
   typedef t_data data;
 
+  /// \brief Alias for the log
   typedef t_log log;
 
-  typedef queue_t<log, data> queue;
+  //  /// \brief Type of the super class
+  //  typedef queue_t<log, data> queue;
 
-  typedef typename queue::ptr ptr;
+  //  /// \brief Type of the pointer
+  //  typedef typename queue::ptr ptr;
 
-  static ptr create(size_t p_queue_size) {
-    //    return ;
-    return ptr(new circular_unlimited_size_queue_t(p_queue_size));
+  /// \brief Type of pointer to the queue
+  typedef std::shared_ptr<circular_unlimited_size_queue_t> ptr;
+
+  /// \brief Creates a queue with a fixed size
+  ///
+  /// \param p_size the number of slots in the queue
+  ///
+  /// \return a pointer to the created queue
+  static ptr create(size_t p_size) {
+    ptr _ptr(new circular_unlimited_size_queue_t(p_size));
+    //    ptr _ptr();
+    return _ptr;
   }
 
-  circular_unlimited_size_queue_t(size_t p_size) {
-    m_root = create_node();
-    node_ptr _p = m_root;
-    for (size_t _i = 1; _i < p_size; ++_i) {
-      _p = insert(_p, data());
-    }
-    m_size = p_size;
-    m_write = m_root;
-    m_read = m_root;
-  }
-
-  void traverse(std::function<void(const t_data &)> p_visitor) {
+  /// \brief Traverses the queue
+  ///
+  /// \param p_function will be called for every data in the queue
+  void traverse(std::function<void(const t_data &)> p_visitor) const override {
     node_ptr _p = m_root;
     while (_p && (_p->m_next != m_root)) {
       p_visitor(_p->m_data);
@@ -55,7 +66,8 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     p_visitor(_p->m_data);
   }
 
-  void add(data &&p_data) {
+  /// \brief Adds a t_data object to the queue
+  void add(data &&p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       concurrent_warn(m_log, "not adding more slots");
@@ -68,6 +80,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     ++m_amount;
   }
 
+  /// \brief Adds a t_data object to the queue
   void add(const data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
@@ -81,6 +94,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     ++m_amount;
   }
 
+  /// \brief Gets the first t_data obect added to the queue, if there is one
   std::optional<data> get() override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
@@ -94,16 +108,22 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
     return {_data};
   }
 
+  /// \brief Informs if the queue is full
   inline bool full() const override { return m_amount == m_size; }
 
+  /// \brief Informs if the queue is empty
   inline bool empty() const override { return m_amount == 0; }
 
+  /// \brief Informs the total capacity of the queue
   inline size_t capacity() const override { return m_size; }
 
+  /// \brief Informs the current number of slots occupied in the queue
   inline size_t occupied() const override { return m_amount; }
 
 private:
+  /// \brief Node of the linked list used to implement the queue
   struct node {
+    /// \brief Type of pointer
     typedef std::shared_ptr<node> ptr;
 
     node() = default;
@@ -124,6 +144,13 @@ private:
   typedef typename node::ptr node_ptr;
 
 private:
+  /// \brief Inserts a node in the list after a node
+  ///
+  /// \param p_node which the new node will be inserted in front of
+  ///
+  /// \param p_data data inserted in the new node
+  ///
+  /// \return the new node
   node_ptr insert(node_ptr p_node, t_data &&p_data) {
     node_ptr _new_node = create_node(std::move(p_data));
 
@@ -136,6 +163,13 @@ private:
     return _new_node;
   }
 
+  /// \brief Inserts a node in the list after a node
+  ///
+  /// \param p_node which the new node will be inserted in front of
+  ///
+  /// \param p_data data inserted in the new node
+  ///
+  /// \return the new node
   node_ptr insert(node_ptr p_node, const t_data &p_data) {
     node_ptr _new_node = create_node(p_data);
 
@@ -148,6 +182,7 @@ private:
     return _new_node;
   }
 
+  /// \brief Creates a new node
   node_ptr create_node() {
     node_ptr _p(std::make_shared<node>());
     _p->m_next = _p;
@@ -155,6 +190,11 @@ private:
     return _p;
   }
 
+  /// \brief Creates a new node, defining its data
+  ///
+  /// \param p_data is the data inside the new node
+  ///
+  /// \return the new node
   node_ptr create_node(t_data &&p_data) {
     node_ptr _p(std::make_shared<node>(std::move(p_data)));
     _p->m_next = _p;
@@ -162,6 +202,11 @@ private:
     return _p;
   }
 
+  /// \brief Creates a new node, defining its data
+  ///
+  /// \param p_data is the data inside the new node
+  ///
+  /// \return the new node
   node_ptr create_node(const t_data &p_data) {
     node_ptr _p(std::make_shared<node>(p_data));
     _p->m_next = _p;
@@ -169,53 +214,46 @@ private:
     return _p;
   }
 
+  /// \brief Constructor
+  ///
+  /// \param p_size the number of initial slots in the queue
+  circular_unlimited_size_queue_t(size_t p_size) {
+    m_root = create_node();
+    node_ptr _p = m_root;
+    for (size_t _i = 1; _i < p_size; ++_i) {
+      _p = insert(_p, data());
+    }
+    m_size = p_size;
+    m_write = m_root;
+    m_read = m_root;
+  }
+
 private:
+  /// \brief The first node of the queue
   node_ptr m_root;
+
+  /// \brief The node where the next write, i.e., new data insertion, should be
+  /// done
   node_ptr m_write;
+
+  /// \brief The node where the next read, i.e., new data extraction, should be
+  /// done
   node_ptr m_read;
+
+  /// \brief Size of the queue
   size_t m_size;
+
+  /// \brief Amount of nodes actually used
   size_t m_amount{0};
+
+  /// \brief Controls insertion
   std::mutex m_mutex;
+
+  /// \brief Log of the class
   t_log m_log{"concurrent::circular_unlimited_size_queue"};
 };
 
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif
-
-// struct data {
-//  inline data() : m_value(m_counter++) {}
-
-//  inline operator int16_t() const { return m_value; }
-
-//  inline void set(int16_t p_i) { m_value = p_i; }
-
-//  friend std::ostream &operator<<(std::ostream &p_out, const data &p_data) {
-//    p_out << p_data.m_value;
-//    return p_out;
-//  }
-
-// private:
-//  static int16_t m_counter;
-//  int16_t m_value;
-//};
-
-// int16_t data::m_counter{0};
-
-// void test000() {
-//  typedef circular_list_t<data> circular_list;
-
-//  circular_list _list(5);
-
-//  _list.traverse([](const data &p_data) -> void {
-//    std::cout << "(" << p_data << ")";
-//    std::cout.flush();
-//  });
-//}
-
-// int main() {
-//  test000();
-
-//  return 0;
-//}
+#endif // TENACITAS_CONCURRENT_CIRCULAR_UNLIMITED_SIZE_QUEUE_H

@@ -20,69 +20,41 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief fixed_size_queue_t implments a circular queue with fixed size
+/// \brief Implements a circular queue with fixed size
 ///
 /// Unlike the usual implementation, if the buffer is full, the insertion of an
 /// element *does not* override the first element
 ///
-/// This specialization defines a single type contained in the queue
+/// \tparam t_log
 ///
-/// \tparam t_log provides log funcionality:
-/// t_log(const char *p_id)
-/// void debug(int p_line, const t_params&... p_params)
-/// void info(int p_line, const t_params&... p_params)
-/// void warn(int p_line, const t_params&... p_params)
-/// void error(int p_line, const t_params&... p_params)
-/// void fatal(int p_line, const t_params&... p_params)
-///
-/// \tparam t_data... defines the types of the data contained in the buffer
-///
+/// \tparam t_data defines the types of the data contained in the buffer
 template <typename t_log, typename t_data>
 struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
-public:
+
+  /// \brief Alias for the data
   typedef t_data data;
 
+  /// \brief Alias for the log
   typedef t_log log;
 
-  typedef queue_t<log, data> queue;
+  //  /// \brief Type of the super class
+  //  typedef queue_t<log, data> queue;
 
-  typedef typename queue::ptr ptr;
+  /// \brief Type of pointer to the queue
+  typedef std::shared_ptr<circular_fixed_size_queue_t> ptr;
 
-  static ptr create(size_t p_queue_size) {
-    return ptr(new circular_fixed_size_queue_t(p_queue_size));
+  /// \brief Creates a queue with a fixed size
+  ///
+  /// \param p_size the number of slots in the queue
+  ///
+  /// \return a pointer to the created queue
+  static ptr create(size_t p_size) {
+    ptr _ptr(new circular_fixed_size_queue_t(p_size));
+    return _ptr;
+    //    return std::make_shared<circular_fixed_size_queue_t>(p_size);
   }
 
-public:
-  circular_fixed_size_queue_t() = delete;
-
-  circular_fixed_size_queue_t(int16_t p_size)
-      : m_size(p_size), m_values(p_size) {}
-
-  circular_fixed_size_queue_t(circular_fixed_size_queue_t &&p_queue) noexcept {
-    m_size = std::move(p_queue.m_size);
-    m_values = std::move(p_queue.m_values);
-    m_read = std::move(p_queue.m_read);
-    m_write = std::move(p_queue.m_write);
-    m_amount = std::move(p_queue.m_amount);
-  }
-
-  circular_fixed_size_queue_t(const circular_fixed_size_queue_t &) = default;
-
-  circular_fixed_size_queue_t &
-  operator=(circular_fixed_size_queue_t &&p_queue) noexcept {
-    if (this != &p_queue) {
-      m_size = std::move(p_queue.m_size);
-      m_values = std::move(p_queue.m_values);
-      m_read = std::move(p_queue.m_read);
-      m_write = std::move(p_queue.m_write);
-      m_amount = std::move(p_queue.m_amount);
-    }
-    return *this;
-  }
-
-  circular_fixed_size_queue_t &
-  operator=(const circular_fixed_size_queue_t &) = default;
-
+  /// \brief Adds a t_data object to the queue
   void add(const t_data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
@@ -96,6 +68,7 @@ public:
     }
   }
 
+  /// \brief Adds a t_data object to the queue
   void add(data &&p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
@@ -109,6 +82,7 @@ public:
     }
   }
 
+  /// \brief Gets the first t_data obect added to the queue, if there is one
   std::optional<data> get() override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
@@ -123,6 +97,9 @@ public:
     return {_data};
   }
 
+  /// \brief Traverses the queue
+  ///
+  /// \param p_function will be called for every data in the queue
   void traverse(std ::function<void(const data &)> p_function) const {
     size _i = m_read;
     size _counter = 0;
@@ -135,39 +112,63 @@ public:
     }
   }
 
+  /// \brief Informs if the queue is full
   inline bool full() const override { return m_amount == m_size; }
+
+  /// \brief Informs if the queue is empty
   inline bool empty() const override { return m_amount == 0; }
+
+  /// \brief Informs the total capacity of the queue
   inline size_t capacity() const override { return m_size; }
+
+  /// \brief Informs the current number of slots occupied in the queue
   inline size_t occupied() const override { return m_amount; }
 
 private:
+  /// \brief Constructor
+  ///
+  /// \param p_size the number of slots in the queue
+  circular_fixed_size_queue_t(size_t p_size)
+      : m_size(p_size), m_values(p_size) {}
+
+private:
+  /// \brief Queue implemented as a vector
   typedef std::vector<t_data> values;
+
+  /// \brief Type of size of the queue
   typedef typename values::size_type size;
 
-private:
-  void report(const char *p_str, const t_data &p_data) {
-    concurrent_debug(m_log, p_str, ": data = ", p_data, ", read = ", m_read,
-                     ", write = ", m_write, ", length = ", m_amount);
-  }
+  // private:
+  //  /// \brief Helper
+  //  void report(const char *p_str, const t_data &p_data) {
+  //    concurrent_debug(m_log, p_str, ": data = ", p_data, ", read = ", m_read,
+  //                     ", write = ", m_write, ", length = ", m_amount);
+  //  }
 
 private:
-  /// \brief size of the buffer
+  /// \brief Size of the buffer
   size m_size = 0;
-  /// \brief buffer
+
+  /// \brief Vector with the values
   values m_values;
-  /// \brief position from where to read
+
+  /// \brief Position from where to read
   size m_read = 0;
-  /// \brief position where to write
+
+  /// \brief Position where to write
   size m_write = 0;
-  /// \brief amount of elements
+
+  /// \brief Amount of elements
   size m_amount = 0;
-  /// \brief controls access to positions
+
+  /// \brief Controls access to positions
   std::mutex m_mutex;
-  /// \brief logs messages
-  t_log m_log{"concurrent::fixed_size_queue.h"};
+
+  /// \brief Llogs messages
+  t_log m_log{"concurrent::circular_fixed_size_queue"};
 };
 
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // TENACITAS_CONCURRENT_QUEUE_H
+#endif // TENACITAS_CONCURRENT_CIRCULAR_FIXED_SIZE_QUEUE_H
