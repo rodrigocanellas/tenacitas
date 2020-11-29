@@ -24,7 +24,7 @@
 #include <concurrent/internal/log.h>
 #include <concurrent/internal/operation_wrapper.h>
 #include <concurrent/thread.h>
-#include <concurrent/timeout.h>
+#include <concurrent/time_unit.h>
 #include <concurrent/timeout_callback.h>
 
 /// \brief namespace of the organization

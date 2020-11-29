@@ -10,34 +10,34 @@
 #include <concurrent/circular_unlimited_size_queue.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/msg_a.h>
-#include <concurrent/producer_consumer.h>
 #include <concurrent/queue.h>
 #include <concurrent/sleeping_loop.h>
+#include <concurrent/worker.h>
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
-struct producer_consumer_000 {
+struct worker_000 {
   typedef logger::cerr::log log;
   typedef int16_t data;
   typedef concurrent::circular_unlimited_size_queue_t<log, data> queue;
-  typedef concurrent::producer_consumer_t<log, data> producer_consumer;
+  typedef concurrent::worker_t<log, data> worker;
   typedef concurrent::timeout_callback timeout_callback;
 
   static std::string desc() {
-    return "Simple test, creating a producer_consumer, adding a single data, "
+    return "Simple test, creating a worker, adding a single data, "
            "and starting";
   }
 
   bool operator()() {
     log _log{"000"};
 
-    producer_consumer _pc(queue::create(10));
+    worker _pc(queue::create(10));
 
     consumer _consumer;
 
-    producer_consumer::worker _worker = [&_consumer](data &&p_data) -> void {
+    worker::operation _worker = [&_consumer](data &&p_data) -> void {
       _consumer(std::move(p_data));
     };
 
@@ -71,26 +71,26 @@ private:
   };
 };
 
-struct producer_consumer_001 {
+struct worker_001 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
   typedef concurrent::circular_fixed_size_queue_t<log, msg> queue;
   typedef concurrent::sleeping_loop_t<log> sleeping_loop;
-  typedef concurrent::producer_consumer_t<log, msg> producer_consumer;
+  typedef concurrent::worker_t<log, msg> worker;
   typedef concurrent::timeout_callback timeout_callback;
 
   static std::string desc() {
-    return "\nA 'sleeping_loop' sending a message at each 500 ms, to a "
-           "'producer_consumer', with one consumer, that sleeps for 1 second,  "
-           "and using a 'fixed_size_queue', with size 10 \nThe main thread "
-           "will sleep for 50 secs"
+    return "\nA 'sleeping_loop' sending a message, at each 500 ms, to a "
+           "'worker', with one operation, that sleeps for 1 second,  and using "
+           "a 'circular_fixed_size_queue', with size 10."
+           "\nThe main thread will sleep for 50 secs."
            "\nThe amount of data consumed must be equal to the provided";
   }
 
   bool operator()() {
     log _log{"001"};
 
-    producer_consumer _pc(queue::create(10));
+    worker _pc(queue::create(10));
 
     timeout_callback _timeout_callback = [&_log](std::thread::id p_id) -> void {
       concurrent_debug(_log, "timeout for ", p_id);
@@ -109,7 +109,7 @@ struct producer_consumer_001 {
     sleeping_loop _loop(std::chrono::milliseconds(500), std::chrono::seconds(1),
                         _producer, _timeout_callback);
 
-    concurrent_debug(_log, "adding consumer to the producer_consumer");
+    concurrent_debug(_log, "adding consumer to the worker");
     _pc.add(
         [&_consumer](msg &&p_msg) -> std::optional<bool> {
           return _consumer(std::move(p_msg));
@@ -135,11 +135,11 @@ struct producer_consumer_001 {
     return true;
   }
 
-  ~producer_consumer_001() {}
+  ~worker_001() {}
 
 private:
   struct producer {
-    producer(producer_consumer *p_pc, msg *p_msg) : m_pc(p_pc), m_msg(p_msg) {}
+    producer(worker *p_pc, msg *p_msg) : m_pc(p_pc), m_msg(p_msg) {}
 
     bool operator()() {
       if (m_msg->value() > m_num_msgs) {
@@ -161,7 +161,7 @@ private:
 
   private:
     log m_log{"001::producer"};
-    producer_consumer *m_pc;
+    worker *m_pc;
     msg *m_msg;
   };
 
@@ -184,27 +184,27 @@ private:
   };
 };
 
-struct producer_consumer_002 {
+struct worker_002 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
   typedef concurrent::circular_fixed_size_queue_t<log, msg> queue;
   typedef concurrent::sleeping_loop_t<log> sleeping_loop;
-  typedef concurrent::producer_consumer_t<log, msg> producer_consumer;
+  typedef concurrent::worker_t<log, msg> worker;
   typedef concurrent::timeout_callback timeout_callback;
 
   static std::string desc() {
     std::stringstream _stream;
     _stream
-        << "\nA 'sleeping_loop' sending a message at each 500 ms, to "
-        << "a 'producer_consumer' with one consumer, using a "
-        << "'fixed_size_queue', with size 40"
+        << "\nA 'sleeping_loop' sending a message, at each 500 ms, to "
+        << "a 'worker' with one operation, using a "
+        << "'circular_fixed_size_queue', with size 40"
 
-        << "\nThe main thread will sleep for 10 secs, the 'producer_consumer' "
-        << "will stop; main thread will sleep for 5 secs; 'producer_consumer' "
+        << "\nThe main thread will sleep for 10 secs, the 'worker' "
+        << "will stop; main thread will sleep for 5 secs; 'worker' "
         << "will run again; main thread will sleep for 4 secs."
 
         << "\nThe messages added while the queue was stopped are handled when "
-        << "the pool runs again ."
+        << "the pool runs again."
 
         << "\nThe amount of data consumed must be equal to the provided";
     return _stream.str();
@@ -214,7 +214,7 @@ struct producer_consumer_002 {
 
     log _log{"002"};
 
-    producer_consumer _pc(queue::create(40));
+    worker _pc(queue::create(40));
 
     msg _msg(0);
 
@@ -232,7 +232,7 @@ struct producer_consumer_002 {
         std::chrono::milliseconds(300), std::chrono::milliseconds(500),
         [&_producer]() -> void { _producer(); }, _timeout_callback);
 
-    concurrent_debug(_log, "adding consumer to the producer_consumer");
+    concurrent_debug(_log, "adding consumer to the worker");
     _pc.add([&_consumer](msg &&p_msg) { return _consumer(std::move(p_msg)); },
             std::chrono::milliseconds(100), _timeout_callback);
 
@@ -243,14 +243,14 @@ struct producer_consumer_002 {
     std::this_thread::sleep_for(std::chrono::seconds(10));
     concurrent_debug(_log, "waking up after 10 secs");
 
-    concurrent_debug(_log, "stopping the producer_consumer");
+    concurrent_debug(_log, "stopping the worker");
     _pc.stop();
 
     concurrent_debug(_log, "sleeping for 5 secs");
     std::this_thread::sleep_for(std::chrono::seconds(5));
     concurrent_debug(_log, "waking up after 5 secs");
 
-    concurrent_debug(_log, "restarting the producer_consumer");
+    concurrent_debug(_log, "restarting the worker");
     _pc.start();
 
     concurrent_debug(_log, "sleeping for 4 secs");
@@ -278,8 +278,7 @@ struct producer_consumer_002 {
   };
 
   struct producer {
-    producer(producer_consumer *p_pc, msg *p_data)
-        : m_pc(p_pc), m_msg(p_data) {}
+    producer(worker *p_pc, msg *p_data) : m_pc(p_pc), m_msg(p_data) {}
 
     bool operator()() {
       m_msg->inc();
@@ -291,16 +290,16 @@ struct producer_consumer_002 {
 
   private:
     log m_log{"002::producer"};
-    producer_consumer *m_pc;
+    worker *m_pc;
     msg *m_msg;
   };
 };
 
-struct producer_consumer_003 {
+struct worker_003 {
   typedef logger::cerr::log log;
   typedef concurrent::msg_a msg;
   typedef concurrent::circular_unlimited_size_queue_t<log, msg> queue;
-  typedef concurrent::producer_consumer_t<log, msg> producer_consumer;
+  typedef concurrent::worker_t<log, msg> worker;
   typedef concurrent::timeout_callback timeout_callback;
 
   static std::string desc() {
@@ -312,7 +311,7 @@ struct producer_consumer_003 {
       concurrent_debug(m_log, "timeout for ", p_id);
     };
 
-    producer_consumer _pc{queue::create(40)};
+    worker _pc{queue::create(40)};
 
     _pc.add(
         [this](msg &&p_msg) -> std::optional<bool> {
@@ -353,7 +352,7 @@ private:
   };
 
 private:
-  log m_log{"producer_consumer_003"};
+  log m_log{"worker_003"};
   consumer m_consumer;
 };
 
@@ -362,8 +361,8 @@ int main(int argc, char **argv) {
   typedef tester::test test;
   log::set_debug();
   test _test(argc, argv);
-  run_test(_test, producer_consumer_000);
-  run_test(_test, producer_consumer_001);
-  run_test(_test, producer_consumer_002);
-  run_test(_test, producer_consumer_003);
+  run_test(_test, worker_000);
+  run_test(_test, worker_001);
+  run_test(_test, worker_002);
+  run_test(_test, worker_003);
 }

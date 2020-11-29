@@ -15,19 +15,25 @@
 #include <concurrent/async_loop.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/result.h>
+#include <concurrent/time_unit.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
+/// \brief Base class for sleeping loops, which are loops that sleep during a
+/// certain amount of time, just to wake up, and execute some operation
+///
+/// \tparam t_log
+///
+/// \tparam t_params are the parameters that the operation expects
 template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void(t_params...)> worker;
+  /// \brief type of operation executed in a loop in time intervals
+  typedef std::function<void(t_params...)> operation;
 
-  /// \brief used to notify about timeout of \p worker
+  /// \brief used to notify about timeout of \p operation
   typedef std::function<void(std::thread::id)> timeout_callback;
 
   /// \brief default constructor not allowed
@@ -51,30 +57,23 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
   /// \brief move assignment
   sleeping_loop_base_t &operator=(sleeping_loop_base_t &&p_sleep) = delete;
 
-  /// \brief get_interval
-  /// \return the interval of loop execution
-  inline std::chrono::nanoseconds get_interval() const { return m_interval; }
+  /// \brief retrieves the interval defined for the loop to sleep between the
+  /// execution of the operation
+  inline interval get_interval() const { return m_interval; }
 
   /// \brief redefines the value of the execution interval
   ///
   /// It does not restart the loop, it is necessary to call \p restart
   template <typename t_interval>
   inline void set_interval(t_interval p_interval) {
-    m_interval = p_interval;
+    m_interval = to_interval(p_interval);
   }
 
-  /// \brief is_stopped
-  /// \return \p true if the loop is not running; \p false othewise
+  /// \brief retrieves if the loop is stopped
   inline bool is_stopped() const { return m_async.is_stopped(); }
 
-  //  inline worker get_worker() const { return m_async.get_worker(); }
-
-  /// \brief retrieves the timeout for the Work function
-  ///
-  /// \return the timeout
-  inline std::chrono::nanoseconds get_timeout() const {
-    return m_async.get_timeout();
-  }
+  /// \brief retrieves the timeout for the operation
+  inline timeout get_timeout() const { return m_async.get_timeout(); }
 
   /// \brief redefines the value of the timeout
   ///
@@ -83,7 +82,8 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
     m_async.set_timeout(p_timeout);
   }
 
-  inline worker get_worker() const { return m_async.get_worker(); }
+  /// \brief Retrieves the operation defined to be executed
+  inline operation get_operation() const { return m_async.get_operation(); }
 
   /// \brief run starts the loop
   void start() {
@@ -122,53 +122,101 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
   }
 
 protected:
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief Provider is the type of function that provides data to the
+  /// operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the \p operation
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
 protected:
+  /// \brief Constructor
+  ///
+  /// \tparam t_timeout type of time used to define the timeout of the operation
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_timeout time used to define the timeout of the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_timeout_callback function to be executed if \p p_operation times
+  /// out
+  ///
+  /// \param p_provider function that provides the parameters to the \p
+  /// p_operation
   template <typename t_timeout, typename t_interval>
   sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
-                       worker p_worker, timeout_callback p_timeout_callback,
-                       provider p_provider)
+                       operation p_operation,
+                       timeout_callback p_timeout_callback, provider p_provider)
       : m_async(
-            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
-            p_timeout_callback, p_provider),
-        m_interval(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+            p_timeout, p_operation,
+            [this]() -> bool { return this->breaker(); }, p_timeout_callback,
+            p_provider),
+        m_interval(to_interval(p_interval)) {
     concurrent_debug(m_log, "timeout = ", p_timeout.count(),
                      ", interval = ", p_interval.count());
   }
 
+  /// \brief Constructor
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_provider function that provides the parameters to the \p
+  /// p_operation
   template <typename t_interval>
-  sleeping_loop_base_t(t_interval p_interval, worker p_worker,
+  sleeping_loop_base_t(t_interval p_interval, operation p_operation,
                        provider p_provider)
       : m_async(
-            p_worker, [this]() -> bool { return this->breaker(); }, p_provider),
-        m_interval(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+            p_operation, [this]() -> bool { return this->breaker(); },
+            p_provider),
+        m_interval(to_interval(p_interval)) {
     concurrent_debug(m_log, "interval = ", p_interval.count());
   }
 
+  /// \brief Constructor
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
   template <typename t_timeout, typename t_interval>
   sleeping_loop_base_t(t_timeout p_timeout, t_interval p_interval,
-                       worker p_worker, timeout_callback p_timeout_callback)
+                       operation p_operation,
+                       timeout_callback p_timeout_callback)
       : m_async(
-            p_timeout, p_worker, [this]() -> bool { return this->breaker(); },
-            p_timeout_callback),
-        m_interval(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+            p_timeout, p_operation,
+            [this]() -> bool { return this->breaker(); }, p_timeout_callback),
+        m_interval(to_interval(p_interval)) {
     concurrent_debug(m_log, "timeout = ", p_timeout.count(),
                      ", interval = ", p_interval.count());
   }
 
+  /// \brief Constructor
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
   template <typename t_interval>
-  sleeping_loop_base_t(t_interval p_interval, worker p_worker)
-      : m_async(p_worker, [this]() -> bool { return this->breaker(); }),
-        m_interval(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(p_interval)) {
+  sleeping_loop_base_t(t_interval p_interval, operation p_operation)
+      : m_async(p_operation, [this]() -> bool { return this->breaker(); }),
+        m_interval(to_interval(p_interval)) {
     concurrent_debug(m_log, "interval = ", p_interval.count());
   }
 
@@ -195,87 +243,148 @@ protected:
   }
 
 private:
-  /// \brief m_loop the async_loop used
+  /// \brief async_loop used
   async_loop m_async;
 
-  /// \brief m_interval
-  std::chrono::nanoseconds m_interval;
+  /// \brief time used to define the execution interval of the operation
+  interval m_interval;
 
-  /// \brief m_mutex
+  /// \brief controls asynchronous execution
   std::mutex m_mutex;
 
-  /// \brief m_cond_var
+  /// \brief controls asynchronous execution
   std::condition_variable m_cond_var;
 
+  /// \brief indicates if the loop is stopped
   bool m_stopped{true};
 
+  /// \brief log for the class
   t_log m_log{"concurrent::sleeping_loop"};
 };
 
 // ############### 1 #########################################################
+/// \brief Specialization of sleeping_loop_base_t for the operation that takes
+/// multiple parameters
+///
+/// \tparam t_log
+///
+/// \tparam t_params are the parameters that the operation expects
 template <typename t_log, typename... t_params>
 struct sleeping_loop_t : public sleeping_loop_base_t<t_log, t_params...> {
 
-  typedef typename sleeping_loop_base_t<t_log, t_params...>::worker worker;
+  /// \brief Operation to be executed at a defined interval
+  typedef
+      typename sleeping_loop_base_t<t_log, t_params...>::operation operation;
 
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief provider is the type of function that provides data to the
+  /// operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the \p operation
   typedef typename sleeping_loop_base_t<t_log, t_params...>::provider provider;
 
-  /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
-  /// != void</tt>, and a \p provider is necessary
+  /// \brief Constructor
   ///
-  /// \param p_interval the amount of time that the loop will sleep between
-  /// executions
+  /// \tparam t_timeout type of time used to define the timeout of the operation
   ///
-  /// \param p_worker function that will be executed each time the loop wakes up
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
   ///
-  /// \param p_provide function that will provide data to the work function,
-  /// each time the loop wakes up
+  /// \param p_timeout time used to define the timeout of the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_timeout_callback function to be executed if \p p_operation times
+  /// out
+  ///
+  /// \param p_provider function that provides the parameters to the \p
+  /// p_operation
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
-                  timeout_callback p_timeout_callback, provider p_provider)
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  operation p_operation, timeout_callback p_timeout_callback,
+                  provider p_provider)
       : sleeping_loop_base_t<t_log, t_params...>(
-            p_timeout, p_interval, p_worker,
+            p_timeout, p_interval, p_operation,
             [this]() -> bool { return this->breaker(); }, p_timeout_callback,
             p_provider) {}
 
+  /// \brief Constructor
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_timeout_callback function to be executed if \p p_operation times
+  /// out
+  ///
+  /// \param p_provider function that provides the parameters to the \p
+  /// p_operation
   template <typename t_interval>
-  sleeping_loop_t(t_interval p_interval, worker p_worker,
+  sleeping_loop_t(t_interval p_interval, operation p_operation,
                   timeout_callback p_timeout_callback, provider p_provider)
       : sleeping_loop_base_t<t_log, t_params...>(
-            p_interval, p_worker, [this]() -> bool { return this->breaker(); },
-            p_timeout_callback, p_provider) {}
+            p_interval, p_operation,
+            [this]() -> bool { return this->breaker(); }, p_timeout_callback,
+            p_provider) {}
 
+  /// \brief Retrieves the provider function
   inline provider get_provider() const { return this->m_async.get_provider(); }
 };
 
 // ############### 2 #########################################################
+/// \brief Specialization of sleeping_loop_base_t for the operation that takes
+/// no parameters
+///
+/// \tparam t_log
 template <typename t_log>
 struct sleeping_loop_t<t_log> : public sleeping_loop_base_t<t_log> {
 
-  typedef typename sleeping_loop_base_t<t_log>::worker worker;
+  /// \brief Operation to be executed at a defined interval
+  typedef typename sleeping_loop_base_t<t_log>::operation operation;
 
-  /// \brief sleeping_loop creates a \p sleeping_loop object, when <tt>t_data
-  /// != void</tt>, and a \p provider is necessary
+  /// \brief Constructor
   ///
-  /// \param p_interval the amount of time that the loop will sleep between
-  /// executions
+  /// \tparam t_timeout type of time used to define the timeout of the operation
   ///
-  /// \param p_worker function that will be executed each time the loop wakes up
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
   ///
-  /// \param p_provide function that will provide data to the work function,
-  /// each time the loop wakes up
+  /// \param p_timeout time used to define the timeout of the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_timeout_callback function to be executed if \p p_operation times
+  /// out
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
-                  timeout_callback p_timeout_callback)
-      : sleeping_loop_base_t<t_log>(p_timeout, p_interval, p_worker,
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  operation p_operation, timeout_callback p_timeout_callback)
+      : sleeping_loop_base_t<t_log>(p_timeout, p_interval, p_operation,
                                     p_timeout_callback) {}
+
+  /// \brief Constructor
+  ///
+  /// \tparam t_interval type of time used to define the execution interval of
+  /// the operation
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// operation
+  ///
+  /// \param p_operation the operation to be executed at \p p_interval
+  ///
+  /// \param p_timeout_callback function to be executed if \p p_operation times
+  /// out
   template <typename t_interval>
-  sleeping_loop_t(t_interval p_interval, worker p_worker)
-      : sleeping_loop_base_t<t_log>(p_interval, p_worker) {}
+  sleeping_loop_t(t_interval p_interval, operation p_operation)
+      : sleeping_loop_base_t<t_log>(p_interval, p_operation) {}
 };
 
 } // namespace concurrent

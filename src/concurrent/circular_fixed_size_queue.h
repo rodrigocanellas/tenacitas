@@ -37,9 +37,6 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   /// \brief Alias for the log
   typedef t_log log;
 
-  //  /// \brief Type of the super class
-  //  typedef queue_t<log, data> queue;
-
   /// \brief Type of pointer to the queue
   typedef std::shared_ptr<circular_fixed_size_queue_t> ptr;
 
@@ -51,7 +48,6 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   static ptr create(size_t p_size) {
     ptr _ptr(new circular_fixed_size_queue_t(p_size));
     return _ptr;
-    //    return std::make_shared<circular_fixed_size_queue_t>(p_size);
   }
 
   /// \brief Adds a t_data object to the queue
