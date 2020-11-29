@@ -86,8 +86,7 @@ template <typename t_log> struct async_loop_base_t {
     concurrent_debug(m_log, "starting the loop");
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    //    m_thread = concurrent::thread([this]() -> void { loop(); });
-    m_thread = concurrent::thread(&async_loop_base_t::loop, this);
+    m_thread = concurrent::thread([this]() -> void { loop(); });
   }
 
   /// \brief stops the loop, if it was running
@@ -132,7 +131,7 @@ protected:
   t_log m_log{"concurrent::async_loop"};
 
   /// \brief Time that the provider function has to execute
-  static constexpr timeout m_provider_timeout{300};
+  static constexpr std::chrono::milliseconds m_provider_timeout{300};
 };
 
 /// \brief Base template class
@@ -149,60 +148,77 @@ struct async_loop_t;
 // ############### 1 ########################################################
 /// \brief Specialization where the loop uses a breaker function, and the
 /// operation takes parameters
+///
+/// \tparam t_log
+///
+/// \tparam t_params are the parameters that the operation needs
 template <typename t_log, typename... t_params>
 struct async_loop_t<t_log, true, t_params...>
     : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void(t_params...)> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void(t_params...)> operation;
 
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief type of function that provides data to the operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the operation
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_breaker is the function that can be used to stop the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  ///
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
-                      provider p_provider, timeout_callback p_timeout_callback)
+  inline async_loop_t(t_time p_timeout, operation p_operation,
+                      breaker p_breaker, provider p_provider,
+                      timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
         m_breaker(p_breaker) {}
 
-  inline async_loop_t(worker p_worker, breaker p_breaker, provider p_provider)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker),
-        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
-                            p_provider),
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  ///
+  /// \param p_breaker is the function that can be used to stop the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  inline async_loop_t(operation p_operation, breaker p_breaker,
+                      provider p_provider)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation),
+        m_provider_executer(this->m_provider_timeout, p_provider),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the provider function
   typedef executer_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef executer_t<t_log, void, t_params...> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void, t_params...> operation_executer;
 
 protected:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting because it is running");
@@ -212,7 +228,7 @@ protected:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
     m_provider_executer.start();
 
     while (true) {
@@ -239,7 +255,7 @@ protected:
           std::tuple<t_params...> _provided(std::move(*_maybe_provided));
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          std::apply(m_work_executer, std::move(_provided));
+          std::apply(m_operation_executer, std::move(_provided));
           if (this->m_stopped) {
             concurrent_debug(this->m_log, "stopped!!");
             break;
@@ -254,73 +270,93 @@ protected:
         break;
       }
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
     m_provider_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 
+  /// \brief Asynchronous executer of the provider
   provider_executer m_provider_executer;
 
+  /// \brief Loop breaker function
   breaker m_breaker;
 };
 
 // ############### 2 ########################################################
 /// \brief Specialization where the loop uses a breaker function, and the
 /// operation takes one parameter
+///
+/// \tparam t_log
+///
+/// \tparam t_param is the parameter that the operation needs
 template <typename t_log, typename t_param>
 struct async_loop_t<t_log, true, t_param> : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void(t_param)> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void(t_param)> operation;
 
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief type of function that provides data to the operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the operation
   typedef std::function<std::optional<t_param>()> provider;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_breaker is the function that can be used to stop the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  ///
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
-                      provider p_provider, timeout_callback p_timeout_callback)
+  inline async_loop_t(t_time p_timeout, operation p_operation,
+                      breaker p_breaker, provider p_provider,
+                      timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider),
         m_breaker(p_breaker) {}
 
-  inline async_loop_t(worker p_worker, breaker p_breaker, provider p_provider)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker),
-        m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
-                            p_provider),
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  ///
+  /// \param p_breaker is the function that can be used to stop the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  inline async_loop_t(operation p_operation, breaker p_breaker,
+                      provider p_provider)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation),
+        m_provider_executer(this->m_provider_timeout, p_provider),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the provider function
   typedef executer_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef executer_t<t_log, void, t_param> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void, t_param> operation_executer;
 
 private:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting because it is running");
@@ -330,7 +366,7 @@ private:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
     m_provider_executer.start();
 
     while (true) {
@@ -356,7 +392,7 @@ private:
           t_param _provided = std::move(*_maybe_provided);
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          m_work_executer(_provided);
+          m_operation_executer(_provided);
           if (this->m_stopped) {
             concurrent_debug(this->m_log, "stopped!!");
             break;
@@ -372,61 +408,73 @@ private:
         break;
       }
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
     m_provider_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 
+  /// \brief Asynchronous executer of the provider
   provider_executer m_provider_executer;
 
+  /// \brief Loop breaker function
   breaker m_breaker;
 };
 
 // ############### 3 ########################################################
 /// \brief Specialization where the loop uses a breaker function, and the
 /// operation takes no parameter
+///
+/// \tparam t_log
 template <typename t_log>
 struct async_loop_t<t_log, true> : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void()> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void()> operation;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_breaker is the function that can be used to stop the loop
+  ///
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker, breaker p_breaker,
-                      timeout_callback p_timeout_callback)
+  inline async_loop_t(t_time p_timeout, operation p_operation,
+                      breaker p_breaker, timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback),
         m_breaker(p_breaker) {}
 
-  inline async_loop_t(worker p_worker, breaker p_breaker)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker),
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  ///
+  /// \param p_breaker is the function that can be used to stop the loop
+  inline async_loop_t(operation p_operation, breaker p_breaker)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation),
         m_breaker(p_breaker) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
-  typedef executer_t<t_log, void> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void> operation_executer;
 
 private:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting because it is running");
@@ -436,7 +484,7 @@ private:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
 
     while (true) {
 
@@ -445,7 +493,7 @@ private:
         break;
       }
 
-      m_work_executer();
+      m_operation_executer();
 
       concurrent_debug(this->m_log, "about to call breaker");
       if (m_breaker()) {
@@ -454,70 +502,84 @@ private:
         break;
       }
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 
+  /// \brief Asynchronous executer of the provider
   breaker m_breaker;
 };
 
 // ############### 4 ########################################################
 /// \brief Specialization where the loop does not use a breaker function, and
 /// the operation takes parameters
+/// \tparam t_log
+///
+/// \tparam t_params are the parameters that the operation needs
 template <typename t_log, typename... t_params>
 struct async_loop_t<t_log, false, t_params...>
     : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void(t_params...)> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void(t_params...)> operation;
 
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief type of function that provides data to the operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the operation
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_provider provides the parameters required by the operation
+  ///
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
-                      timeout_callback p_timeout_callback)
+  inline async_loop_t(t_time p_timeout, operation p_operation,
+                      provider p_provider, timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline async_loop_t(worker p_worker, provider p_provider)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker),
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  ///
+  inline async_loop_t(operation p_operation, provider p_provider)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the provider function
   typedef executer_t<t_log, std::optional<std::tuple<t_params...>>>
       provider_executer;
 
-  typedef executer_t<t_log, void, t_params...> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void, t_params...> operation_executer;
 
 private:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting because it is running");
@@ -527,7 +589,7 @@ private:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
     m_provider_executer.start();
 
     while (true) {
@@ -555,7 +617,7 @@ private:
 
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          std::apply(m_work_executer, _provided);
+          std::apply(m_operation_executer, _provided);
           if (this->m_stopped) {
             concurrent_debug(this->m_log, "stopped!!");
             break;
@@ -563,69 +625,83 @@ private:
         }
       }
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
     m_provider_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 
+  /// \brief Asynchronous executer of the provider
   provider_executer m_provider_executer;
 };
 
 // ############### 5 ########################################################
 /// \brief Specialization where the loop does not use a breaker function, and
 /// the operation takes one parameter
+///
+/// \tparam t_log
+///
+/// \tparam t_param is the parameter that the operation needs
 template <typename t_log, typename t_param>
 struct async_loop_t<t_log, false, t_param> : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void(t_param)> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void(t_param)> operation;
 
-  /// \brief provider is the type of function that provides data to the work
-  /// function
+  /// \brief type of function that provides data to the operation
   ///
-  /// \return \p an optional tuple of objects needed by the \p worker
+  /// \return \p an optional tuple of objects needed by the operation
   typedef std::function<std::optional<t_param>()> provider;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_provider provides the parameters required by the operation
+  ///
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker, provider p_provider,
-                      timeout_callback p_timeout_callback)
+  inline async_loop_t(t_time p_timeout, operation p_operation,
+                      provider p_provider, timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback),
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline async_loop_t(worker p_worker, provider p_provider)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker),
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  ///
+  /// \param p_provider provides the parameters required by the operation
+  inline async_loop_t(operation p_operation, provider p_provider)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation),
         m_provider_executer(std::chrono::milliseconds(this->m_provider_timeout),
                             p_provider) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the provider function
   typedef executer_t<t_log, std::optional<t_param>> provider_executer;
 
-  typedef executer_t<t_log, void, t_param> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void, t_param> operation_executer;
 
 private:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting p it is running");
@@ -635,7 +711,7 @@ private:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
     m_provider_executer.start();
 
     while (true) {
@@ -661,7 +737,7 @@ private:
           t_param _provided(_maybe_provided.value());
           concurrent_debug(this->m_log, "provider provided: ", _provided);
 
-          m_work_executer(_provided);
+          m_operation_executer(_provided);
           if (this->m_stopped) {
             concurrent_debug(this->m_log, "stopped!!");
             break;
@@ -669,57 +745,64 @@ private:
         }
       }
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
     m_provider_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 
+  /// \brief Asynchronous executer of the provider
   provider_executer m_provider_executer;
 };
 
 // ############### 6 ########################################################
 /// \brief Specialization where the loop does not use a breaker function, and
 /// the operation takes no parameter
+///
+/// \tparam t_log
 template <typename t_log>
 struct async_loop_t<t_log, false> : public async_loop_base_t<t_log> {
 
-  /// \brief worker is the type of work function, i.e., the function that will
-  /// be called in a loop in order to execute some work
-  typedef std::function<void()> worker;
+  /// \brief type of operation that will be executed in a loop
+  typedef std::function<void()> operation;
 
   /// \brief constructor
-  /// This constructor must be used when \p t_params... is not \p void, and
-  /// therefore, a Provider function must be defined
   ///
-  /// \param p_worker instance of the function that will execute the defined
-  /// work
+  /// \tparam t_time is the type of time used to define a timeout for the
+  /// operation
   ///
-  /// \param p_breaker instance of the function that will indicate when the loop
-  /// must stop
+  /// \param p_timeout is the timeout for the operation to execute
   ///
-  /// \param p_timeout defines the amount of time the work function has to
-  /// execute
+  /// \param p_operation is the operation to be executed in the loop
   ///
-  /// \param p_provider instance of the function that will provide \p
-  /// t_params..., if available. If \p t_params... is \p void, this parameter
-  /// assumes a default value of a \p void returning function
+  /// \param p_timeout_callback is the function to be called if the operation
+  /// exceeds the timeout
   template <typename t_time>
-  inline async_loop_t(t_time p_timeout, worker p_worker,
+  inline async_loop_t(t_time p_timeout, operation p_operation,
                       timeout_callback p_timeout_callback)
       : async_loop_base_t<t_log>(p_timeout),
-        m_work_executer(p_timeout, p_worker, p_timeout_callback) {}
+        m_operation_executer(p_timeout, p_operation, p_timeout_callback) {}
 
-  inline async_loop_t(worker p_worker)
-      : async_loop_base_t<t_log>(), m_work_executer(p_worker) {}
+  /// \brief constructor
+  ///
+  /// \param p_operation is the operation to be executed in the loop
+  inline async_loop_t(operation p_operation)
+      : async_loop_base_t<t_log>(), m_operation_executer(p_operation) {}
 
-  inline worker get_worker() const { return m_work_executer.get_operation(); }
+  /// \brief Retrieves the operation executed in the loop
+  inline operation get_operation() const {
+    return m_operation_executer.get_operation();
+  }
 
 private:
-  typedef executer_t<t_log, void> work_executer;
+  /// \brief Asynchronous execution, without creating a new thread for each
+  /// call, of the operation
+  typedef executer_t<t_log, void> operation_executer;
 
 private:
+  /// \brief Loop executed in another thread
   void loop() {
     if (!this->m_stopped) {
       concurrent_debug(this->m_log, "not starting because it is running");
@@ -729,7 +812,7 @@ private:
     concurrent_info(this->m_log, "starting");
 
     this->m_stopped = false;
-    m_work_executer.start();
+    m_operation_executer.start();
 
     while (true) {
 
@@ -738,13 +821,14 @@ private:
         break;
       }
 
-      m_work_executer();
+      m_operation_executer();
     }
-    m_work_executer.stop();
+    m_operation_executer.stop();
   }
 
 private:
-  work_executer m_work_executer;
+  /// \brief Asynchronous executer of the operation
+  operation_executer m_operation_executer;
 };
 
 } // namespace concurrent
