@@ -34,13 +34,13 @@ class processor_t<t_data> {
 
 class processors_t <t_data> <<static>> {
     + add_processor(processor_t.id, mat_ptr, size)
-    + add_competitor(processor_t.id, worker_t, timeout)
+    + add_operation(processor_t.id, worker_t, timeout)
     + handle(t_data)
 }
 
 class subscriber_t  <t_data>  <<function>> {
     + add_processor(processor_t.id, mat_ptr, size)
-    + add_competitor(processor_t.id, worker_t, timeout)
+    + add_operation(processor_t.id, worker_t, timeout)
 }
 
 class publisher_t  <t_data> <<function>> {

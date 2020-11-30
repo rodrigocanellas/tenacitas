@@ -17,11 +17,8 @@ HEADERS += \
     $$code_src_dir/concurrent/circular_fixed_size_queue.h \
     $$code_src_dir/concurrent/circular_unlimited_size_queue.h  \
     $$code_src_dir/concurrent/sleeping_loop.h \
-    $$code_src_dir/concurrent/worker.h
-#    \
-
-
-#    $$code_src_dir/concurrent/dispatcher.h
+    $$code_src_dir/concurrent/worker.h \
+    $$code_src_dir/concurrent/workers.h
 
 
 

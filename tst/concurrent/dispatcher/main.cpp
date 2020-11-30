@@ -13,7 +13,7 @@
 #include <string>
 
 #include <concurrent/circular_fixed_size_queue.h>
-#include <concurrent/dispatcher.h>
+#include <concurrent/workers.h>
 #include <concurrent/internal/log.h>
 #include <concurrent/sleeping_loop.h>
 #include <concurrent/timeout_callback.h>
@@ -31,7 +31,7 @@ struct dispatcher_005 {
   typedef int16_t data;
   typedef tenacitas::logger::cerr::log log;
   typedef tenacitas::concurrent::sleeping_loop_t<log> sleeping_loop;
-  typedef tenacitas::concurrent::dispatcher_t<log, data> dispatcher;
+  typedef tenacitas::concurrent::workers_t<log, data> dispatcher;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -124,7 +124,7 @@ struct dispatcher_006 {
   typedef int16_t data;
   typedef tenacitas::logger::cerr::log log;
   typedef tenacitas::concurrent::sleeping_loop_t<log> sleeping_loop;
-  typedef tenacitas::concurrent::dispatcher_t<log, data> dispatcher;
+  typedef tenacitas::concurrent::workers_t<log, data> dispatcher;
 
   static std::string desc() {
     std::stringstream _stream;
