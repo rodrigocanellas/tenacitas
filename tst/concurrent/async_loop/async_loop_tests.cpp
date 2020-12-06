@@ -20,7 +20,7 @@
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
-/// \brief Tests \p async_loop_t that uses a breaker, when the operation takes
+/// \brief Tests \p async_loop_t that uses a breaker, when the worker takes
 /// no parameters, and at some point it takes more time than defined
 struct async_loop_000 {
 
@@ -46,9 +46,9 @@ struct async_loop_000 {
       return _is_timeout;
     };
 
-    function<void()> _operation = [this, &_counter]() -> void {
+    function<void()> _worker = [this, &_counter]() -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -63,8 +63,8 @@ struct async_loop_000 {
       _is_timeout = true;
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _timeout_callback);
 
     _async_loop.start();
 
@@ -86,9 +86,6 @@ private:
   static constexpr uint16_t m_timeout{1000};
 };
 
-/// \brief Tests \p async_loop_t that uses a breaker, when the
-/// operation takes one parameter, and the operation does not take more
-/// time than defined
 struct async_loop_001 {
 
   static std::string desc() {
@@ -103,40 +100,44 @@ struct async_loop_001 {
 
     typedef concurrent::async_loop_t<logger::cerr::log, true> async_loop;
 
+    concurrent_debug(m_log, "starting async_loop_001");
+
     uint16_t _counter{0};
 
     function<bool()> _breaker = [this, &_counter]() -> bool {
       if (_counter == m_max) {
-        concurrent_debug(m_log, "counter = ", _counter,
-                         ", which is equal to max (", m_max, ")");
+        concurrent_debug(m_log, "breaking because counter = ", _counter);
         m_cond.notify_one();
         return true;
       }
       return false;
     };
 
-    function<void()> _operation = [this, &_counter]() -> void {
-      this_thread::sleep_for(
-          chrono::milliseconds(static_cast<uint16_t>(0.5 * m_timeout)));
+    function<void()> _worker = [this, &_counter]() -> void {
+      this_thread::sleep_for(chrono::seconds(1));
 
       ++_counter;
       concurrent_debug(m_log, "counter = ", _counter);
     };
 
-    function<void(thread::id)> _timeout_callback =
-        [this](thread::id p_id) -> void {
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
+    concurrent_debug(m_log, "creating async");
+    async_loop _async_loop(_worker, _breaker);
+    concurrent_debug(m_log, "async created");
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _timeout_callback);
-
+    concurrent_debug(m_log, "stating async");
     _async_loop.start();
+    concurrent_debug(m_log, "async started");
 
+    concurrent_debug(m_log, "waiting for the notification the loop stopped");
     unique_lock<mutex> _lock(m_mutex);
     m_cond.wait(_lock);
+    concurrent_debug(m_log, "notification that loop stopped arrived");
 
-    concurrent_debug(m_log, "notification that the loop stopped arrived");
+    if (_counter == m_max) {
+      concurrent_debug(m_log, "success");
+    } else {
+      concurrent_error(m_log, "fail");
+    }
 
     return (_counter == m_max);
   }
@@ -146,8 +147,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
 
-  static constexpr uint16_t m_max{20};
-  static constexpr uint16_t m_timeout{1000};
+  static constexpr uint16_t m_max{1};
 };
 
 struct async_loop_002 {
@@ -176,10 +176,10 @@ struct async_loop_002 {
       return false;
     };
 
-    function<void(int32_t)> _operation = [this,
-                                          &_counter](int32_t p_value) -> void {
+    function<void(int32_t)> _worker = [this,
+                                       &_counter](int32_t p_value) -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -202,8 +202,8 @@ struct async_loop_002 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
 
     _async_loop.start();
 
@@ -250,10 +250,9 @@ struct async_loop_003 {
       return false;
     };
 
-    function<void(int32_t)> _operation = [this,
-                                          &_counter](int32_t p_value) -> void {
-      this_thread::sleep_for(
-          chrono::milliseconds(static_cast<uint16_t>(0.5 * m_timeout)));
+    function<void(int32_t)> _worker = [this,
+                                       &_counter](int32_t p_value) -> void {
+      this_thread::sleep_for(chrono::seconds(1));
 
       ++_counter;
       concurrent_debug(m_log, "counter = ", _counter, " value = ", p_value);
@@ -272,8 +271,7 @@ struct async_loop_003 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _provider, _timeout_callback);
+    async_loop _async_loop(_worker, _breaker, _provider);
 
     _async_loop.start();
 
@@ -290,8 +288,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
 
-  static constexpr uint16_t m_max{20};
-  static constexpr uint16_t m_timeout{1000};
+  static constexpr uint16_t m_max{10};
 };
 
 struct async_loop_004 {
@@ -321,11 +318,11 @@ struct async_loop_004 {
       return false;
     };
 
-    function<void(int32_t, double, string)> _operation =
+    function<void(int32_t, double, string)> _worker =
         [this, &_counter](int32_t p_int, double p_double,
                           string p_str) -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -357,8 +354,8 @@ struct async_loop_004 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
 
     _async_loop.start();
 
@@ -406,7 +403,7 @@ struct async_loop_005 {
       return false;
     };
 
-    function<void(float, int16_t, double)> _operation =
+    function<void(float, int16_t, double)> _worker =
         [this, &_counter](float p_float, int16_t p_int,
                           double p_double) -> void {
       this_thread::sleep_for(
@@ -438,8 +435,8 @@ struct async_loop_005 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _breaker, _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _breaker,
+                           _provider, _timeout_callback);
 
     _async_loop.start();
 
@@ -479,9 +476,9 @@ struct async_loop_006 {
     bool _is_timeout{false};
     uint16_t _counter{0};
 
-    function<void()> _operation = [this, &_counter]() -> void {
+    function<void()> _worker = [this, &_counter]() -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -497,7 +494,7 @@ struct async_loop_006 {
       m_cond.notify_one();
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker,
                            _timeout_callback);
 
     _async_loop.start();
@@ -538,7 +535,7 @@ struct async_loop_007 {
 
     uint16_t _counter{0};
 
-    function<void()> _operation = [this, &_counter]() -> void {
+    function<void()> _worker = [this, &_counter]() -> void {
       if (_counter == m_max) {
         concurrent_debug(m_log, "counter reached ", m_max);
         m_cond.notify_one();
@@ -556,7 +553,7 @@ struct async_loop_007 {
       concurrent_warn(m_log, "timeout for ", p_id);
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker,
                            _timeout_callback);
 
     _async_loop.start();
@@ -596,10 +593,10 @@ struct async_loop_008 {
     uint16_t _counter{0};
     bool _is_timeout{false};
 
-    function<void(int32_t)> _operation = [this,
-                                          &_counter](int32_t p_value) -> void {
+    function<void(int32_t)> _worker = [this,
+                                       &_counter](int32_t p_value) -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -623,8 +620,8 @@ struct async_loop_008 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _provider,
+                           _timeout_callback);
 
     _async_loop.start();
 
@@ -664,8 +661,8 @@ struct async_loop_009 {
 
     uint16_t _counter{0};
 
-    function<void(int32_t)> _operation = [this,
-                                          &_counter](int32_t p_value) -> void {
+    function<void(int32_t)> _worker = [this,
+                                       &_counter](int32_t p_value) -> void {
       if (_counter == m_max) {
         m_cond.notify_one();
         return;
@@ -690,8 +687,8 @@ struct async_loop_009 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _provider,
+                           _timeout_callback);
 
     _async_loop.start();
 
@@ -733,11 +730,11 @@ struct async_loop_010 {
     uint16_t _counter{0};
     bool _is_timeout{false};
 
-    function<void(int32_t, double, string)> _operation =
+    function<void(int32_t, double, string)> _worker =
         [this, &_counter](int32_t p_int, double p_double,
                           string p_str) -> void {
       if (_counter == static_cast<uint16_t>(m_max / 2)) {
-        concurrent_debug(m_log, "operation will sleep enough for timeout");
+        concurrent_debug(m_log, "worker will sleep enough for timeout");
         this_thread::sleep_for(
             chrono::milliseconds(static_cast<uint16_t>(1.3 * m_timeout)));
         return;
@@ -770,8 +767,8 @@ struct async_loop_010 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _provider,
+                           _timeout_callback);
 
     _async_loop.start();
 
@@ -814,7 +811,7 @@ struct async_loop_011 {
 
     uint16_t _counter{0};
 
-    function<void(float, int16_t, double)> _operation =
+    function<void(float, int16_t, double)> _worker =
         [this, &_counter](float p_float, int16_t p_int,
                           double p_double) -> void {
       if (_counter == m_max) {
@@ -851,8 +848,8 @@ struct async_loop_011 {
       return {_value};
     };
 
-    async_loop _async_loop(chrono::milliseconds(m_timeout), _operation,
-                           _provider, _timeout_callback);
+    async_loop _async_loop(chrono::milliseconds(m_timeout), _worker, _provider,
+                           _timeout_callback);
 
     _async_loop.start();
 

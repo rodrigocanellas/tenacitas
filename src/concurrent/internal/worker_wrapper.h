@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_OPERATION_WRAPPER_H
-#define TENACITAS_CONCURRENT_OPERATION_WRAPPER_H
+#ifndef TENACITAS_CONCURRENT_WORKER_WRAPPER_H
+#define TENACITAS_CONCURRENT_WORKER_WRAPPER_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -18,31 +18,30 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace concurrent {
 
-/// \brief Wrapper for the operation, when it returns something, and
+/// \brief Wrapper for the worker, when it returns something, and
 /// receives many parameters
 ///
-/// \tparam t_result is the type returned by the operation
+/// \tparam t_result is the type returned by the worker
 ///
-/// \tparam t_params are the parameters that the operation receives
-template <typename t_result, typename... t_params> struct operation_wrapper_t {
+/// \tparam t_params are the parameters that the worker receives
+template <typename t_result, typename... t_params> struct worker_wrapper_t {
 
-  typedef std::function<t_result(t_params...)> operation;
+  typedef std::function<t_result(t_params...)> worker;
 
-  inline constexpr operation_wrapper_t(operation p_operation)
-      : m_operation(p_operation) {}
+  inline constexpr worker_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
   inline constexpr void operator()() {
-    m_result = std::apply(m_operation, std::move(m_params));
+    m_result = std::apply(m_worker, std::move(m_params));
   }
 
   inline constexpr void set_params(t_params... p_params) {
     m_params = std::make_tuple(p_params...);
   }
 
-  inline constexpr operation get_operation() const { return m_operation; }
+  inline constexpr worker get_worker() const { return m_worker; }
 
   inline constexpr operator bool() const noexcept {
-    return (m_operation ? true : false);
+    return (m_worker ? true : false);
   }
 
   inline constexpr std::optional<t_result> get_result_ok() { return m_result; }
@@ -54,32 +53,31 @@ private:
 
   std::tuple<t_params...> m_params;
 
-  operation m_operation;
+  worker m_worker;
 };
 
-/// \brief Wrapper for the operation, when it does not return, and
+/// \brief Wrapper for the worker, when it does not return, and
 /// receives many parameters
 ///
-/// \tparam t_result is the type returned by the operation
-template <typename... t_params> struct operation_wrapper_t<void, t_params...> {
+/// \tparam t_result is the type returned by the worker
+template <typename... t_params> struct worker_wrapper_t<void, t_params...> {
 
-  typedef std::function<void(t_params...)> operation;
+  typedef std::function<void(t_params...)> worker;
 
-  inline constexpr operation_wrapper_t(operation p_operation)
-      : m_operation(p_operation) {}
+  inline constexpr worker_wrapper_t(worker p_worker) : m_worker(p_worker) {}
 
   inline constexpr void operator()() {
-    std::apply(m_operation, std::move(m_params));
+    std::apply(m_worker, std::move(m_params));
   }
 
   inline constexpr void set_params(t_params... p_params) {
     m_params = std::make_tuple(p_params...);
   }
 
-  inline constexpr operation get_operation() const { return m_operation; }
+  inline constexpr worker get_worker() const { return m_worker; }
 
   inline constexpr operator bool() const noexcept {
-    return (m_operation ? true : false);
+    return (m_worker ? true : false);
   }
 
   inline constexpr void get_result_ok() {}
@@ -89,10 +87,10 @@ template <typename... t_params> struct operation_wrapper_t<void, t_params...> {
 private:
   std::tuple<t_params...> m_params;
 
-  operation m_operation;
+  worker m_worker;
 };
 
 } // namespace concurrent
 } // namespace tenacitas
 
-#endif // TENACITAS_CONCURRENT_OPERATION_WRAPPER_H
+#endif // TENACITAS_CONCURRENT_WORKER_WRAPPER_H
