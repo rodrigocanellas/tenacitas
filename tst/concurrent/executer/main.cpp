@@ -18,7 +18,9 @@ struct runner_000 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::executer_t<logger::cerr::log, int32_t, int16_t> runner;
+    typedef concurrent::executer_t<
+        logger::cerr::log, concurrent::timeout_control::yes, int32_t, int16_t>
+        runner;
 
     auto _worker = [](int16_t p_int) -> int32_t {
       this_thread::sleep_for(chrono::milliseconds(2000));
@@ -61,7 +63,9 @@ struct runner_001 {
     using namespace tenacitas;
     using namespace std;
 
-    typedef concurrent::executer_t<logger::cerr::log, int32_t, int16_t> runner;
+    typedef concurrent::executer_t<
+        logger::cerr::log, concurrent::timeout_control::yes, int32_t, int16_t>
+        runner;
 
     auto _worker = [](int16_t p_int) -> int32_t {
       this_thread::sleep_for(chrono::milliseconds(500));
