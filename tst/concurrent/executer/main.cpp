@@ -31,8 +31,6 @@ struct test900 {
 
     executer _executer(function);
 
-    _executer.start();
-
     int _i = 2;
     float _f = 3.5;
 
@@ -78,8 +76,6 @@ struct test901 {
 
     executer _executer(function);
 
-    _executer.start();
-
     int _i = 2;
 
     std::optional<double> _maybe = _executer(_i);
@@ -121,8 +117,6 @@ struct test902 {
 
     executer _executer(function);
 
-    _executer.start();
-
     std::optional<double> _maybe = _executer();
 
     if (!_maybe) {
@@ -144,6 +138,122 @@ struct test902 {
 
 private:
   log m_log{"test902"};
+};
+
+struct test903 {
+
+  static std::string desc() {
+    return "executer as <concurrent::timeout_control::no, void, int, float>";
+  }
+
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, void,
+                                   int, float>
+        executer;
+
+    double _d{0};
+
+    auto function = [this, &_d](int p_i, float p_f) -> void {
+      concurrent_debug(m_log, "i = ", p_i, ", f = ", p_f);
+      _d = p_i * p_f;
+    };
+
+    executer _executer(function);
+
+    int _i = 2;
+    float _f = 3.5;
+
+    _executer(_i, _f);
+
+    if (_d != (_i * _f)) {
+      concurrent_error(m_log, "expected ", _i * _f, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
+
+private:
+  log m_log{"test903"};
+};
+
+struct test904 {
+
+  static std::string desc() {
+    return "executer as <concurrent::timeout_control::no, void, int>";
+  }
+
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, void,
+                                   int>
+        executer;
+
+    double _d{0};
+
+    auto function = [this, &_d](int p_i) -> void {
+      concurrent_debug(m_log, "i = ", p_i);
+      _d = p_i * 2.5;
+    };
+
+    executer _executer(function);
+
+    int _i = 2;
+
+    _executer(_i);
+
+    if (_d != (_i * 2.5)) {
+      concurrent_error(m_log, "expected ", _i * 2.5, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
+
+private:
+  log m_log{"test904"};
+};
+
+struct test905 {
+
+  static std::string desc() {
+    return "executer as <concurrent::timeout_control::no, void, void>";
+  }
+
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, void,
+                                   void>
+        executer;
+
+    double _d{0};
+
+    auto function = [&_d]() -> void { _d = 2.5; };
+
+    executer _executer(function);
+
+    _executer();
+
+    if (_d != 2.5) {
+      concurrent_error(m_log, "expected ", 2.5, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
+
+private:
+  log m_log{"test905"};
 };
 
 struct test00 {
@@ -352,6 +462,9 @@ int main(int argc, char **argv) {
   run_test(_test, test900);
   run_test(_test, test901);
   run_test(_test, test902);
+  run_test(_test, test903);
+  run_test(_test, test904);
+  run_test(_test, test905);
 
   return 0;
 }

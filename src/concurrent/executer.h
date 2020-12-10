@@ -51,6 +51,9 @@ template <typename t_log> struct executer_base_t {
     concurrent_debug(m_log, "leaving destructor");
   }
 
+protected:
+  executer_base_t() = default;
+
   /// \brief Stars the single thread that will execute the function
   /// asynchronously
   void start() {
@@ -80,14 +83,11 @@ template <typename t_log> struct executer_base_t {
     }
   }
 
-protected:
-  executer_base_t() = default;
-
   virtual void loop() = 0;
 
 protected:
   /// \brief Logger object
-  t_log m_log{"concurrent::executer"};
+  t_log m_log{"executer"};
 
   /// \brief The loop initiates stopped
   bool m_stopped{true};
@@ -132,9 +132,9 @@ struct executer_t<t_log, timeout_control::no, t_result, void>;
 template <typename t_log, typename... t_params>
 struct executer_t<t_log, timeout_control::no, void, t_params...>;
 
-// ########## 5 ##########
-template <typename t_log, typename t_params>
-struct executer_t<t_log, timeout_control::no, void, t_params>;
+//// ########## 5 ##########
+// template <typename t_log, typename t_params>
+// struct executer_t<t_log, timeout_control::no, void, t_params>;
 
 // ########## 6 ##########
 template <typename t_log>
@@ -146,7 +146,10 @@ struct executer_t<t_log, timeout_control::no, t_result, t_params...>
     : public executer_base_t<t_log> {
   typedef std::function<t_result(t_params...)> function;
 
-  executer_t(function p_function) : m_function(p_function) {}
+  executer_t(function p_function)
+      : executer_base_t<t_log>(), m_function(p_function) {
+    this->start();
+  }
 
   std::optional<t_result> operator()(t_params... p_params) {
     std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
@@ -248,7 +251,10 @@ struct executer_t<t_log, timeout_control::no, t_result, void>
     : public executer_base_t<t_log> {
   typedef std::function<t_result()> function;
 
-  executer_t(function p_function) : m_function(p_function) {}
+  executer_t(function p_function)
+      : executer_base_t<t_log>(), m_function(p_function) {
+    this->start();
+  }
 
   std::optional<t_result> operator()() {
     std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
@@ -320,60 +326,172 @@ private:
 
 // ########## 4 ##########
 template <typename t_log, typename... t_params>
-struct executer_t<t_log, timeout_control::no, void, t_params...> {
+struct executer_t<t_log, timeout_control::no, void, t_params...>
+    : public executer_base_t<t_log> {
   typedef std::function<void(t_params...)> function;
 
-  executer_t() = delete;
-  executer_t(const executer_t &) = delete;
-  executer_t(executer_t &&) = delete;
-  executer_t &operator=(const executer_t &) = delete;
-  executer_t &operator=(executer_t &&) = delete;
+  executer_t(function p_function)
+      : executer_base_t<t_log>(), m_function(p_function) {
+    this->start();
+  }
 
-  executer_t(function p_function) : m_function(p_function) {}
+  void operator()(t_params... p_params)
 
-  void operator()(t_params... p_params) { return m_function(p_params...); }
+  {
+    std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
+    concurrent_debug(this->m_log, "operator()()");
+
+    if (this->m_stopped) {
+      concurrent_warn(this->m_log, "executer is stopped; call 'start()' first");
+      return;
+    }
+
+    m_params = {p_params...};
+
+    concurrent_debug(this->m_log, "notifying there is work to be done");
+    this->m_cond_exec.notify_one();
+
+    concurrent_debug(this->m_log, "waiting for work to be done");
+    std::unique_lock<std::mutex> _lock(this->m_mutex_wait);
+    this->m_cond_wait.wait(_lock);
+
+    concurrent_debug(this->m_log, "work was done or 'executer' was stopped");
+    if (this->m_stopped) {
+      concurrent_debug(this->m_log, "stopped");
+      return;
+    }
+
+    concurrent_debug(this->m_log, "function done");
+  }
+
+private:
+  void loop() override {
+    while (true) {
+
+      concurrent_debug(this->m_log, "waiting for work");
+
+      std::unique_lock<std::mutex> _lock(this->m_mutex_exec);
+      this->m_cond_exec.wait(_lock);
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
+        this->m_cond_wait.notify_one();
+        concurrent_debug(this->m_log, "about to break the loop");
+        break;
+      }
+
+      concurrent_debug(this->m_log, "function to execute!");
+
+      std::apply(m_function, std::move(m_params));
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped while in function");
+        this->m_cond_wait.notify_one();
+        break;
+      }
+
+      concurrent_debug(this->m_log, "notifying that work is done");
+      this->m_cond_wait.notify_one();
+      concurrent_debug(this->m_log, "notification sent");
+    }
+
+    concurrent_debug(this->m_log, "leaving the loop");
+  }
 
 private:
   function m_function;
 
-  t_log m_log{"executer"};
-};
-
-// ########## 5 ##########
-template <typename t_log, typename t_params>
-struct executer_t<t_log, timeout_control::no, void, t_params> {
-  typedef std::function<void(t_params)> function;
-
-  executer_t() = delete;
-  executer_t(const executer_t &) = delete;
-  executer_t(executer_t &&) = delete;
-  executer_t &operator=(const executer_t &) = delete;
-  executer_t &operator=(executer_t &&) = delete;
-
-  executer_t(function p_function) : m_function(p_function) {}
-
-  void operator()(t_params p_params) { return m_function(p_params); }
-
-private:
-  function m_function;
+  std::tuple<t_params...> m_params;
 
   t_log m_log{"executer"};
 };
+
+//// ########## 5 ##########
+// template <typename t_log, typename t_params>
+// struct executer_t<t_log, timeout_control::no, void, t_params>
+//    : public executer_base_t<t_log> {
+//  typedef std::function<void(t_params)> function;
+
+//  executer_t(function p_function)
+//      : executer_base_t<t_log>(), m_function(p_function) {}
+
+//  void operator()(t_params p_params) { return m_function(p_params); }
+
+// private:
+//  function m_function;
+
+//  t_log m_log{"executer"};
+//};
 
 // ########## 6 ##########
 template <typename t_log>
-struct executer_t<t_log, timeout_control::no, void, void> {
+struct executer_t<t_log, timeout_control::no, void, void>
+    : public executer_base_t<t_log> {
   typedef std::function<void()> function;
 
-  executer_t() = delete;
-  executer_t(const executer_t &) = delete;
-  executer_t(executer_t &&) = delete;
-  executer_t &operator=(const executer_t &) = delete;
-  executer_t &operator=(executer_t &&) = delete;
+  executer_t(function p_function)
+      : executer_base_t<t_log>(), m_function(p_function) {
+    this->start();
+  }
 
-  executer_t(function p_function) : m_function(p_function) {}
+  void operator()() {
+    std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
+    concurrent_debug(this->m_log, "operator()()");
 
-  void operator()() { return m_function(); }
+    if (this->m_stopped) {
+      concurrent_warn(this->m_log, "executer is stopped; call 'start()' first");
+      return;
+    }
+
+    concurrent_debug(this->m_log, "notifying there is work to be done");
+    this->m_cond_exec.notify_one();
+
+    concurrent_debug(this->m_log, "waiting for work to be done");
+    std::unique_lock<std::mutex> _lock(this->m_mutex_wait);
+    this->m_cond_wait.wait(_lock);
+
+    concurrent_debug(this->m_log, "work was done or 'executer' was stopped");
+    if (this->m_stopped) {
+      concurrent_debug(this->m_log, "stopped");
+      return;
+    }
+
+    concurrent_debug(this->m_log, "function done");
+  }
+
+private:
+  void loop() override {
+    while (true) {
+
+      concurrent_debug(this->m_log, "waiting for work");
+
+      std::unique_lock<std::mutex> _lock(this->m_mutex_exec);
+      this->m_cond_exec.wait(_lock);
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
+        this->m_cond_wait.notify_one();
+        concurrent_debug(this->m_log, "about to break the loop");
+        break;
+      }
+
+      concurrent_debug(this->m_log, "function to execute!");
+
+      m_function();
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped while in function");
+        this->m_cond_wait.notify_one();
+        break;
+      }
+
+      concurrent_debug(this->m_log, "notifying that work is done");
+      this->m_cond_wait.notify_one();
+      concurrent_debug(this->m_log, "notification sent");
+    }
+
+    concurrent_debug(this->m_log, "leaving the loop");
+  }
 
 private:
   function m_function;
