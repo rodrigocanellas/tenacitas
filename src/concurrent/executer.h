@@ -21,8 +21,8 @@
 #include <utility>
 
 #include <concurrent/internal/constants.h>
+#include <concurrent/internal/function_wrapper.h>
 #include <concurrent/internal/log.h>
-#include <concurrent/internal/worker_wrapper.h>
 #include <concurrent/thread.h>
 #include <concurrent/time_unit.h>
 #include <concurrent/timeout_callback.h>
@@ -34,39 +34,26 @@ namespace concurrent {
 
 enum class timeout_control : char { yes = 'y', no = 'n' };
 
-/// \brief Executes a worker function asynchronously with creating a new thread
-/// for each execution.
-///
-/// Sub classes will define if the worker with will have a timeout or not
-///
-/// \tparam t_log
-///
-/// \tparam t_result
-///
-/// \tparam t_params
-template <typename t_log, typename t_result, typename... t_params>
-struct executer_base_t {
+template <typename t_log> struct executer_base_t {
 
-  /// \brief type of worker to be executed asynchronously
-  typedef std::function<t_result(t_params...)> worker;
+  executer_base_t(const executer_base_t &) = delete;
+  executer_base_t(executer_base_t &&) = delete;
+  executer_base_t &operator=(const executer_base_t &) = delete;
+  executer_base_t &operator=(executer_base_t &&) = delete;
 
   /// \brief destructor
   ///
   /// Stops the execution of the single created thread for the execution of the
-  /// worker asynchronously
+  /// function asynchronously
   virtual ~executer_base_t() {
     concurrent_debug(m_log, "entering destructor");
     stop();
     concurrent_debug(m_log, "leaving destructor");
   }
 
-  /// \brief Stars the single thread that will execute the worker
+  /// \brief Stars the single thread that will execute the function
   /// asynchronously
   void start() {
-    if (!m_worker_wrapper) {
-      throw std::runtime_error("worker not defined");
-    }
-
     if (m_stopped) {
       concurrent_debug(m_log, "starting");
       m_stopped = false;
@@ -75,11 +62,8 @@ struct executer_base_t {
     }
   }
 
-  /// \brief Retrieves the worker
-  inline worker get_worker() const { return m_worker_wrapper.get_worker(); }
-
   /// \brief Stops the execution of the single created thread for the execution
-  /// of the worker asynchronously
+  /// of the function asynchronously
   void stop() {
     if (!m_stopped) {
       concurrent_debug(m_log, "stopping");
@@ -97,18 +81,11 @@ struct executer_base_t {
   }
 
 protected:
+  executer_base_t() = default;
+
   virtual void loop() = 0;
 
 protected:
-  /// \brief Type to adapt the different possible return types and parameters of
-  /// the \p worker
-  typedef worker_wrapper_t<t_result, t_params...> worker_wrapper;
-
-protected:
-  /// \brief Wrapper that adapts to the different possible return types and
-  /// parameters of the \p worker
-  worker_wrapper m_worker_wrapper;
-
   /// \brief Logger object
   t_log m_log{"concurrent::executer"};
 
@@ -116,7 +93,7 @@ protected:
   bool m_stopped{true};
 
   /// \brief Controls the execution of the execution loop
-  std::mutex m_mutex_worker;
+  std::mutex m_mutex_function;
 
   /// \brief Controls the execution of the execution loop
   std::condition_variable m_cond_exec;
@@ -127,7 +104,7 @@ protected:
   /// \brief Controls the waiting of the execution loop
   std::condition_variable m_cond_wait;
 
-  /// \brief Single thread used to execute the \p worker over and over
+  /// \brief Single thread used to execute the \p function over and over
   /// asynchronously
   concurrent::thread m_thread;
 
@@ -139,225 +116,67 @@ template <typename t_log, timeout_control, typename t_result,
           typename... t_params>
 struct executer_t;
 
-/// \brief Executes a worker function asynchronously with creating a new thread
-/// for each execution, with timeout control for the worker
-///
-/// \tparam t_log
-///
-/// \tparam t_result
-///
-/// \tparam t_params
-///
+// ########## 1 ##########
 template <typename t_log, typename t_result, typename... t_params>
-struct executer_t<t_log, timeout_control::yes, t_result, t_params...>
-    : public executer_base_t<t_log, t_result, t_params...> {
+struct executer_t<t_log, timeout_control::no, t_result, t_params...>;
 
-  /// \brief type of worker to be executed asynchronously
-  typedef executer_base_t<t_log, t_result, t_params...> executer_base;
-  typedef typename executer_base::worker worker;
+//// ########## 2 ##########
+// template <typename t_log, typename t_result, typename t_params>
+// struct executer_t<t_log, timeout_control::no, t_result, t_params>;
 
-  /// \brief constructor
-  ///
-  /// \tparam t_time is the type of time used to define the timeout for the
-  /// worker to execute, before the calling code loses interest in the
-  /// result
-  ///
-  /// \param p_timeout is the amount of time defined as timeout for the
-  /// worker
-  ///
-  /// \param p_worker is the function to be executed asynchronously
-  ///
-  /// \param p_timeout_callback is the function to be executed if \p p_worker
-  /// times out. \p p_timeout_callback is executed asynchronously with a timeout
-  /// of 300 ms
-  template <typename t_time>
-  executer_t(
-      t_time p_timeout, worker p_worker,
-      timeout_callback p_timeout_callback = [](std::thread::id) -> void {})
-      : m_timeout(to_timeout(p_timeout)), executer_base::m_worker_wrapper(
-                                              p_worker),
-        m_timeout_callback(p_timeout_callback) {
-    this->start();
-  }
+// ########## 3 ##########
+template <typename t_log, typename t_result>
+struct executer_t<t_log, timeout_control::no, t_result, void>;
 
-  /// \brief Retrieves the amount of time defined for timeout
-  inline constexpr timeout get_timeout() const { return m_timeout; }
+// ########## 4 ##########
+template <typename t_log, typename... t_params>
+struct executer_t<t_log, timeout_control::no, void, t_params...>;
 
-  /// \brief Retrieves the function executed when the worker exceeds
-  /// the defined timeout
-  inline timeout_callback get_timeout_callback() { return m_timeout_callback; }
+// ########## 5 ##########
+template <typename t_log, typename t_params>
+struct executer_t<t_log, timeout_control::no, void, t_params>;
 
-  /// \brief Executes the defined worker
-  ///
-  /// \param p_params are the defined parameters in the \p worker typedef
-  /// signature
-  ///
-  /// \returns whatever was defined in the \p worker typedef signature
-  auto operator()(t_params... p_params) {
+// ########## 6 ##########
+template <typename t_log>
+struct executer_t<t_log, timeout_control::no, void, void>;
 
-    std::lock_guard<std::mutex> _lock_worker(this->m_mutex_worker);
-    concurrent_debug(this->m_log, "operator()()");
-
-    if (this->m_stopped) {
-      concurrent_warn(this->m_log, "executer is stopped; call 'start()' first");
-      return this->m_worker_wrapper.get_result_not_ok();
-    }
-
-    this->m_worker_wrapper.set_params(p_params...);
-
-    m_is_timeout = false;
-
-    concurrent_debug(this->m_log, "notifying there is work to do");
-    this->m_cond_exec.notify_one();
-
-    concurrent_debug(this->m_log, "waiting for work to be done");
-    std::unique_lock<std::mutex> _lock(this->m_mutex_wait);
-    if (!this->m_cond_wait.wait_for(
-            _lock, m_timeout, [this]() -> bool { return this->m_stopped; })) {
-      concurrent_warn(this->m_log, "timeout: ", this->m_thread.get_id(),
-                      " did not finish in time");
-
-      timeout_callback_thread();
-
-      m_is_timeout = true;
-      return this->m_worker_wrapper.get_result_not_ok();
-    }
-    if (this->m_stopped) {
-      concurrent_debug(this->m_log, "stopped");
-      return this->m_worker_wrapper.get_result_not_ok();
-    }
-
-    concurrent_debug(this->m_log, "worker finished on time");
-    return this->m_worker_wrapper.get_result_ok();
-  }
-
-  /// \brief Thread to execute the function that is called if the \p worker
-  /// times out
-  void timeout_callback_thread() {
-    std::thread::id _id{std::this_thread::get_id()};
-    m_timeout_thread =
-        std::thread([this, _id]() -> void { m_timeout_callback(_id); });
-    m_timeout_thread.detach();
-  }
-
-  /// \brief Loop executed asynchronously that waits for notification to execute
-  /// the \p worker
-  void loop() override {
-    while (true) {
-
-      concurrent_debug(this->m_log, "waiting for work");
-
-      std::unique_lock<std::mutex> _lock(this->m_mutex_exec);
-      this->m_cond_exec.wait(_lock);
-
-      if (this->m_stopped) {
-        concurrent_debug(this->m_log, "stopped");
-        this->m_cond_wait.notify_one();
-        concurrent_debug(this->m_log, "about to break the loop");
-        break;
-      }
-
-      concurrent_debug(this->m_log, "worker to execute!");
-
-      this->m_worker_wrapper();
-
-      if (!m_is_timeout) {
-
-        if (this->m_stopped) {
-          concurrent_debug(this->m_log, "stopped while in worker");
-          this->m_cond_wait.notify_one();
-          break;
-        }
-
-        concurrent_debug(this->m_log, "notifying that work is done");
-        this->m_cond_wait.notify_one();
-      } else {
-        concurrent_debug(this->m_log, "timeout");
-        break;
-      }
-    }
-    concurrent_debug(this->m_log, "leaving the loop");
-  }
-
-private:
-  /// \brief Timeout for the worker to complete its work
-  timeout m_timeout;
-
-  /// \brief Function that should be executed in case of timeout
-  timeout_callback m_timeout_callback;
-
-  /// \brief Nothing is in execution, so there is no timeout yet
-  bool m_is_timeout{false};
-
-  std::thread m_timeout_thread;
-};
-
-/// \brief Executes a worker function asynchronously with creating a new thread
-/// for each execution, with no timeout control for the worker
-///
-/// \tparam t_log
-///
-/// \tparam t_result
-///
-/// \tparam t_params
-///
+// ########## 1 ##########
 template <typename t_log, typename t_result, typename... t_params>
 struct executer_t<t_log, timeout_control::no, t_result, t_params...>
-    : executer_base_t<t_log, t_result, t_params...> {
+    : public executer_base_t<t_log> {
+  typedef std::function<t_result(t_params...)> function;
 
-  /// \brief type of worker to be executed asynchronously
-  typedef executer_base_t<t_log, t_result, t_params...> executer_base;
-  typedef typename executer_base::worker worker;
+  executer_t(function p_function) : m_function(p_function) {}
 
-  /// \brief constructor
-  ///
-  /// \param p_worker is the function to be executed asynchronously
-  executer_t(worker p_worker) : executer_base::m_worker_wrapper(p_worker) {
-    this->start();
-  }
-
-  /// \brief Executes the defined worker
-  ///
-  /// \param p_params are the defined parameters in the \p worker typedef
-  /// signature
-  ///
-  /// \returns whatever was defined in the \p worker typedef signature
-  auto operator()(t_params... p_params) {
-
-    std::lock_guard<std::mutex> _lock_worker(this->m_mutex_worker);
+  std::optional<t_result> operator()(t_params... p_params) {
+    std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
     concurrent_debug(this->m_log, "operator()()");
 
     if (this->m_stopped) {
       concurrent_warn(this->m_log, "executer is stopped; call 'start()' first");
-      return this->m_worker_wrapper.get_result_not_ok();
+      return {};
     }
 
-    this->m_worker_wrapper.set_params(p_params...);
+    m_params = {p_params...};
 
     concurrent_debug(this->m_log, "notifying there is work to be done");
     this->m_cond_exec.notify_one();
 
     concurrent_debug(this->m_log, "waiting for work to be done");
     std::unique_lock<std::mutex> _lock(this->m_mutex_wait);
-    this->m_cond_wait.wait(_lock, [this]() -> bool { return this->m_stopped; });
+    this->m_cond_wait.wait(_lock);
+
     concurrent_debug(this->m_log, "work was done or 'executer' was stopped");
     if (this->m_stopped) {
       concurrent_debug(this->m_log, "stopped");
-      return this->m_worker_wrapper.get_result_not_ok();
+      return {};
     }
 
-    concurrent_debug(this->m_log, "worker done");
-    return this->m_worker_wrapper.get_result_ok();
+    concurrent_debug(this->m_log, "function done");
+    return m_result;
   }
 
 private:
-  /// \brief Type to adapt the different possible return types and parameters of
-  /// the \p worker
-  typedef worker_wrapper_t<t_result, t_params...> worker_wrapper;
-
-private:
-  /// \brief Loop executed asynchronously that waits for notification to execute
-  /// the \p worker
   void loop() override {
     while (true) {
 
@@ -373,22 +192,193 @@ private:
         break;
       }
 
-      concurrent_debug(this->m_log, "worker to execute!");
+      concurrent_debug(this->m_log, "function to execute!");
 
-      this->m_worker_wrapper();
+      m_result = std::apply(m_function, std::move(m_params));
+      concurrent_debug(m_log, "function returned ", m_result);
 
       if (this->m_stopped) {
-        concurrent_debug(this->m_log, "stopped while in worker");
+        concurrent_debug(this->m_log, "stopped while in function");
         this->m_cond_wait.notify_one();
         break;
       }
 
       concurrent_debug(this->m_log, "notifying that work is done");
       this->m_cond_wait.notify_one();
+      concurrent_debug(this->m_log, "notification sent");
     }
 
     concurrent_debug(this->m_log, "leaving the loop");
   }
+
+private:
+  function m_function;
+
+  std::tuple<t_params...> m_params;
+
+  t_result m_result;
+
+  t_log m_log{"executer"};
+};
+
+//// ########## 2 ##########
+// template <typename t_log, typename t_result, typename t_params>
+// struct executer_t<t_log, timeout_control::no, t_result, t_params> {
+//  typedef std::function<t_result(t_params)> function;
+
+//  executer_t() = delete;
+//  executer_t(const executer_t &) = delete;
+//  executer_t(executer_t &&) = delete;
+//  executer_t &operator=(const executer_t &) = delete;
+//  executer_t &operator=(executer_t &&) = delete;
+
+//  executer_t(function p_function) : m_function(p_function) {}
+
+//  t_result operator()(t_params p_params) { return m_function(p_params); }
+
+// private:
+//  function m_function;
+
+//  t_log m_log{"executer"};
+//};
+
+// ########## 3 ##########
+template <typename t_log, typename t_result>
+struct executer_t<t_log, timeout_control::no, t_result, void>
+    : public executer_base_t<t_log> {
+  typedef std::function<t_result()> function;
+
+  executer_t(function p_function) : m_function(p_function) {}
+
+  std::optional<t_result> operator()() {
+    std::lock_guard<std::mutex> _lock_function(this->m_mutex_function);
+    concurrent_debug(this->m_log, "operator()()");
+
+    if (this->m_stopped) {
+      concurrent_warn(this->m_log, "executer is stopped; call 'start()' first");
+      return {};
+    }
+
+    concurrent_debug(this->m_log, "notifying there is work to be done");
+    this->m_cond_exec.notify_one();
+
+    concurrent_debug(this->m_log, "waiting for work to be done");
+    std::unique_lock<std::mutex> _lock(this->m_mutex_wait);
+    this->m_cond_wait.wait(_lock);
+
+    concurrent_debug(this->m_log, "work was done or 'executer' was stopped");
+    if (this->m_stopped) {
+      concurrent_debug(this->m_log, "stopped");
+      return {};
+    }
+
+    concurrent_debug(this->m_log, "function done");
+    return m_result;
+  }
+
+private:
+  void loop() override {
+    while (true) {
+
+      concurrent_debug(this->m_log, "waiting for work");
+
+      std::unique_lock<std::mutex> _lock(this->m_mutex_exec);
+      this->m_cond_exec.wait(_lock);
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped");
+        this->m_cond_wait.notify_one();
+        concurrent_debug(this->m_log, "about to break the loop");
+        break;
+      }
+
+      concurrent_debug(this->m_log, "function to execute!");
+
+      m_result = m_function();
+
+      if (this->m_stopped) {
+        concurrent_debug(this->m_log, "stopped while in function");
+        this->m_cond_wait.notify_one();
+        break;
+      }
+
+      concurrent_debug(this->m_log, "notifying that work is done");
+      this->m_cond_wait.notify_one();
+      concurrent_debug(this->m_log, "notification sent");
+    }
+
+    concurrent_debug(this->m_log, "leaving the loop");
+  }
+
+private:
+  function m_function;
+
+  t_result m_result;
+
+  t_log m_log{"executer"};
+};
+
+// ########## 4 ##########
+template <typename t_log, typename... t_params>
+struct executer_t<t_log, timeout_control::no, void, t_params...> {
+  typedef std::function<void(t_params...)> function;
+
+  executer_t() = delete;
+  executer_t(const executer_t &) = delete;
+  executer_t(executer_t &&) = delete;
+  executer_t &operator=(const executer_t &) = delete;
+  executer_t &operator=(executer_t &&) = delete;
+
+  executer_t(function p_function) : m_function(p_function) {}
+
+  void operator()(t_params... p_params) { return m_function(p_params...); }
+
+private:
+  function m_function;
+
+  t_log m_log{"executer"};
+};
+
+// ########## 5 ##########
+template <typename t_log, typename t_params>
+struct executer_t<t_log, timeout_control::no, void, t_params> {
+  typedef std::function<void(t_params)> function;
+
+  executer_t() = delete;
+  executer_t(const executer_t &) = delete;
+  executer_t(executer_t &&) = delete;
+  executer_t &operator=(const executer_t &) = delete;
+  executer_t &operator=(executer_t &&) = delete;
+
+  executer_t(function p_function) : m_function(p_function) {}
+
+  void operator()(t_params p_params) { return m_function(p_params); }
+
+private:
+  function m_function;
+
+  t_log m_log{"executer"};
+};
+
+// ########## 6 ##########
+template <typename t_log>
+struct executer_t<t_log, timeout_control::no, void, void> {
+  typedef std::function<void()> function;
+
+  executer_t() = delete;
+  executer_t(const executer_t &) = delete;
+  executer_t(executer_t &&) = delete;
+  executer_t &operator=(const executer_t &) = delete;
+  executer_t &operator=(executer_t &&) = delete;
+
+  executer_t(function p_function) : m_function(p_function) {}
+
+  void operator()() { return m_function(); }
+
+private:
+  function m_function;
+
+  t_log m_log{"executer"};
 };
 
 } // namespace concurrent

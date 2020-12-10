@@ -19,7 +19,6 @@ typedef std::chrono::microseconds timeout;
 /// \brief Type of time used to define interval
 typedef std::chrono::microseconds interval;
 
-
 /// \brief Converts any type of time defined in std::chrono to \p timeout
 template <typename t_time> inline timeout to_timeout(t_time p_time) {
   return std::chrono::duration_cast<timeout>(p_time);

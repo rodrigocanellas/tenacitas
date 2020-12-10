@@ -6,7 +6,7 @@ HEADERS += \
     $$code_src_dir/calendar/epoch.h \
     $$code_src_dir/concurrent/internal/log.h \
     $$code_src_dir/concurrent/internal/constants.h \
-    $$code_src_dir/concurrent/internal/worker_wrapper.h   \
+    $$code_src_dir/concurrent/internal/function_wrapper.h   \
     $$code_src_dir/concurrent/time_unit.h \
     $$code_src_dir/concurrent/thread.h \
     $$code_src_dir/concurrent/timeout_callback.h \

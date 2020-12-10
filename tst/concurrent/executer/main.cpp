@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <iostream>
 #include <optional>
 
@@ -7,656 +8,350 @@
 #include <logger/cerr/log.h>
 #include <tester/test.h>
 
-struct runner_000 {
+using namespace tenacitas;
+
+typedef logger::cerr::log log;
+
+struct test900 {
+
   static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: one; timeout: yes";
-    return _stream.str();
+    return "executer as <concurrent::timeout_control::no, double, int, float>";
   }
 
   bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
 
-    typedef concurrent::executer_t<
-        logger::cerr::log, concurrent::timeout_control::yes, int32_t, int16_t>
-        runner;
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, double,
+                                   int, float>
+        executer;
 
-    auto _worker = [](int16_t p_int) -> int32_t {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      return p_int + 1;
+    auto function = [this](int p_i, float p_f) -> double {
+      concurrent_debug(m_log, "i = ", p_i, ", f = ", p_f);
+      return p_i * p_f;
     };
 
-    bool _is_timeout{false};
+    executer _executer(function);
 
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
+    _executer.start();
 
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
+    int _i = 2;
+    float _f = 3.5;
 
-    _runner(73);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "not timeout when it should");
-      return false;
-    }
-
-    return _is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_000"};
-};
-
-struct runner_001 {
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: one; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<
-        logger::cerr::log, concurrent::timeout_control::yes, int32_t, int16_t>
-        runner;
-
-    auto _worker = [](int16_t p_int) -> int32_t {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      return p_int + 4;
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    optional<int32_t> _maybe = _runner(73);
+    std::optional<double> _maybe = _executer(_i, _f);
 
     if (!_maybe) {
-      concurrent_error(m_log, "failed to return, when it should not");
+      concurrent_error(m_log, "nothing returned, but it should have");
+    }
+
+    double _d = std::move(*_maybe);
+
+    if (_d != (_i * _f)) {
+      concurrent_error(m_log, "expected ", _i * _f, ", but got ", _d);
       return false;
     }
 
-    concurrent_debug(m_log, "run was ok");
+    concurrent_debug(m_log, "got ", _d, ", as expected");
 
-    int32_t _res = _maybe.value();
-    if (_res != 77) {
-      concurrent_error(m_log, "returned ", _res, ", but it should be ", 77);
-      return false;
-    }
-
-    concurrent_debug(m_log, "value is ", _res, ", as it should");
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_001"};
-};
-
-struct runner_002 {
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: many; timeout: yes";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, double, int16_t, float>
-        runner;
-
-    auto _worker = [](int16_t p_int, float p_float) -> double {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      return static_cast<double>(p_int) + p_float;
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner(73, 1.5);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "no timeout when it should");
-      return false;
-    }
-
-    concurrent_debug(m_log, "timeout, as it should");
-    return _is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_002"};
-};
-
-struct runner_003 {
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: many; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, double, int16_t, float>
-        runner;
-
-    auto _worker = [](int16_t p_int, float p_float) -> double {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      return static_cast<double>(p_int) + p_float;
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    optional<double> _maybe = _runner(73, 1.5);
-
-    if (!_maybe) {
-      concurrent_error(m_log, "failed to return, when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "run was ok");
-
-    double _res = _maybe.value();
-    if (_res != (static_cast<double>(73) + 1.5)) {
-      concurrent_error(m_log, "returned ", _res, ", but it should be ", 77);
-      return false;
-    }
-
-    concurrent_debug(m_log, "value is ", _res, ", as it should");
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_003"};
-};
-
-struct runner_004 {
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, double> runner;
-
-    auto _worker = []() -> double {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      return 3.14;
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner();
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "no timeout when it should");
-      return false;
-    }
-
-    concurrent_debug(m_log, "timeout, as it should");
-    return _is_timeout;
-  }
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: no; timeout: yes";
-    return _stream.str();
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_004"};
-};
-
-struct runner_005 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: yes; parameter: no; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, double> runner;
-
-    auto _worker = []() -> double {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      return 3.14;
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    optional<double> _maybe = _runner();
-
-    if (!_maybe) {
-      concurrent_error(m_log, "failed to return, when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "run was ok");
-
-    double _res = _maybe.value();
-    if (_res != 3.14) {
-      concurrent_error(m_log, "returned ", _res, ", but it should be ", 3.14);
-      return false;
-    }
-
-    concurrent_debug(m_log, "value is ", _res, ", as it should");
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_005"};
-};
-
-struct runner_006 {
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void, int16_t> runner;
-
-    auto _worker = [this](int16_t p_int) -> void {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      concurrent_debug(m_log, "parameter is ", p_int);
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner(73);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "not timeout when it should");
-      return false;
-    }
-
-    return _is_timeout;
-  }
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: one; timeout: yes";
-    return _stream.str();
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_006"};
-};
-
-struct runner_007 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: one; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void, int16_t> runner;
-
-    auto _worker = [this](int16_t p_int) -> void {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      concurrent_debug(m_log, "parameter is ", p_int);
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner(73);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_007"};
-};
-
-struct runner_008 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: many; timeout: yes";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, float>
-        runner;
-
-    auto _worker = [this](int16_t p_int, float p_float) -> void {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      concurrent_debug(m_log, "int = ", p_int, ", float = ", p_float);
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner(73, 1.5);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "no timeout when it should");
-      return false;
-    }
-
-    concurrent_debug(m_log, "timeout, as it should");
-    return _is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_008"};
-};
-
-struct runner_009 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: many; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, float>
-        runner;
-
-    auto _worker = [this](int16_t p_int, float p_float) -> void {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      concurrent_debug(m_log, "int = ", p_int, ", float = ", p_float);
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner(73, 1.5);
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_009"};
-};
-
-struct runner_010 {
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: no; timeout: yes";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void> runner;
-
-    auto _worker = [this]() -> void {
-      this_thread::sleep_for(chrono::milliseconds(2000));
-      concurrent_debug(m_log, "worker in action");
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner();
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (!_is_timeout) {
-      concurrent_error(m_log, "no timeout when it should");
-      return false;
-    }
-
-    concurrent_debug(m_log, "timeout, as it should");
-    return _is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_010"};
-};
-
-struct runner_011 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "return: no; parameter: no; timeout: no";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void> runner;
-
-    auto _worker = [this]() -> void {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      concurrent_debug(m_log, "worker in action");
-    };
-
-    bool _is_timeout{false};
-
-    auto _timeout_callback = [this, &_is_timeout](thread::id p_id) -> void {
-      _is_timeout = true;
-      concurrent_warn(m_log, "timeout for ", p_id);
-    };
-
-    runner _runner(std::chrono::milliseconds(1000), _worker, _timeout_callback);
-
-    _runner();
-
-    this_thread::sleep_for(chrono::milliseconds(3000));
-
-    if (_is_timeout) {
-      concurrent_error(m_log, "timeout when it should not");
-      return false;
-    }
-
-    concurrent_debug(m_log, "no timeout, as it should");
-    return !_is_timeout;
-  }
-
-private:
-  tenacitas::logger::cerr::log m_log{"runner_011"};
-};
-
-struct runner_012 {
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "Runner with no return, 3 parameters: i1 (int16), i2 (int32), f "
-               "(float).\n"
-            << "A loop in i1 from 0 to 29, calling runner with i1, i2 + 10, i2 "
-               "* -1.5";
-    return _stream.str();
-  }
-
-  bool operator()() {
-    using namespace tenacitas;
-    using namespace std;
-
-    typedef concurrent::executer_t<logger::cerr::log, void, int16_t, int32_t,
-                                   float>
-        runner;
-
-    auto _worker = [this](int16_t p_i1, int32_t p_i2, float p_float) -> void {
-      concurrent_debug(m_log, "i1 = ", p_i1, ", i2 = ", p_i2,
-                       ", float = ", p_float);
-    };
-
-    runner _runner(std::chrono::milliseconds(300), _worker);
-
-    int16_t _i1 = 0;
-    int32_t _i2 = 100;
-    float _f = 0.0;
-    while (_i1 < 30) {
-      _i2 += 10;
-      _f += _i2 * -1.5;
-
-      _runner(_i1, _i2, _f);
-
-      ++_i1;
-
-      this_thread::sleep_for(chrono::milliseconds(500));
-    }
-
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     return true;
   }
 
 private:
-  tenacitas::logger::cerr::log m_log{"runner_012"};
+  log m_log{"test900"};
+};
+
+struct test901 {
+
+  static std::string desc() {
+    return "executer as <concurrent::timeout_control::no, double, int>";
+  }
+
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, double,
+                                   int>
+        executer;
+
+    auto function = [this](int p_i) -> double {
+      concurrent_debug(m_log, "i = ", p_i);
+      return p_i * 2.5;
+    };
+
+    executer _executer(function);
+
+    _executer.start();
+
+    int _i = 2;
+
+    std::optional<double> _maybe = _executer(_i);
+
+    if (!_maybe) {
+      concurrent_error(m_log, "nothing returned, but it should have");
+    }
+
+    double _d = std::move(*_maybe);
+
+    if (_d != (_i * 2.5)) {
+      concurrent_error(m_log, "expected ", _i * 2.5, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
+
+private:
+  log m_log{"test901"};
+};
+
+struct test902 {
+
+  static std::string desc() {
+    return "executer as <concurrent::timeout_control::no, double, void>";
+  }
+
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::no, double,
+                                   void>
+        executer;
+
+    auto function = []() -> double { return 3.14; };
+
+    executer _executer(function);
+
+    _executer.start();
+
+    std::optional<double> _maybe = _executer();
+
+    if (!_maybe) {
+      concurrent_error(m_log, "nothing returned, but it should have");
+    }
+
+    double _d = std::move(*_maybe);
+
+    if (_d != (3.14)) {
+      concurrent_error(m_log, "expected ", 3.14, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
+
+private:
+  log m_log{"test902"};
+};
+
+struct test00 {
+
+  static std::string desc() {
+    return "no timeout control; return; many parameters";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test00"};
+};
+
+struct test01 {
+  static std::string desc() {
+    return "no timeout control; return; one parameter";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test01"};
+};
+
+struct test02 {
+  static std::string desc() {
+    return "no timeout control; return; no parameter";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test02"};
+};
+
+struct test03 {
+  static std::string desc() {
+    return "no timeout control; no return; many parameters";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test03"};
+};
+
+struct test04 {
+  static std::string desc() {
+    return "no timeout control; no return; one parameter";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test04"};
+};
+
+struct test05 {
+  static std::string desc() {
+    return "no timeout control; no return; no parameter";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test05"};
+};
+
+struct test06 {
+  static std::string desc() {
+    return "timeout control; return; many parameterss; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test06"};
+};
+
+struct test07 {
+  static std::string desc() {
+    return "timeout control; return; many parameterss; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test07"};
+};
+
+struct test08 {
+  static std::string desc() {
+    return "timeout control; return; one parameter; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test08"};
+};
+
+struct test09 {
+  static std::string desc() {
+    return "timeout control; return; one parameter; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test09"};
+};
+
+struct test10 {
+  static std::string desc() {
+    return "timeout control; return; no parameter; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test10"};
+};
+
+struct test11 {
+  static std::string desc() {
+    return "timeout control; return; no parameter; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test11"};
+};
+
+struct test12 {
+  static std::string desc() {
+    return "timeout control; no return; many parameterss; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test12"};
+};
+
+struct test13 {
+  static std::string desc() {
+    return "timeout control; no return; many parameterss; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test13"};
+};
+
+struct test14 {
+  static std::string desc() {
+    return "timeout control; no return; one parameter; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test14"};
+};
+
+struct test15 {
+  static std::string desc() {
+    return "timeout control; no return; one parameter; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test15"};
+};
+
+struct test16 {
+  static std::string desc() {
+    return "timeout control; no return; no parameter; with timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test16"};
+};
+
+struct test17 {
+  static std::string desc() {
+    return "timeout control; no return; no parameter; without timeout";
+  }
+
+  bool operator()() { return true; }
+
+private:
+  log m_log{"test17"};
 };
 
 int main(int argc, char **argv) {
 
   tenacitas::logger::cerr::log::set_debug();
   tenacitas::tester::test _test(argc, argv);
-  run_test(_test, runner_000);
-  run_test(_test, runner_001);
-  run_test(_test, runner_002);
-  run_test(_test, runner_003);
-  run_test(_test, runner_004);
-  run_test(_test, runner_005);
-  run_test(_test, runner_006);
-  run_test(_test, runner_007);
-  run_test(_test, runner_008);
-  run_test(_test, runner_009);
-  run_test(_test, runner_010);
-  run_test(_test, runner_011);
-  run_test(_test, runner_012);
+  run_test(_test, test900);
+  run_test(_test, test901);
+  run_test(_test, test902);
 
   return 0;
 }
