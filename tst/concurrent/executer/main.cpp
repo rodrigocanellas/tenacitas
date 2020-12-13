@@ -12,7 +12,7 @@ using namespace tenacitas;
 
 typedef logger::cerr::log log;
 
-struct test900 {
+struct test000 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, double, int, float>";
@@ -54,10 +54,10 @@ struct test900 {
   }
 
 private:
-  log m_log{"test900"};
+  log m_log{"test000"};
 };
 
-struct test901 {
+struct test010 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, double, int>";
@@ -98,10 +98,10 @@ struct test901 {
   }
 
 private:
-  log m_log{"test901"};
+  log m_log{"test010"};
 };
 
-struct test902 {
+struct test020 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, double, void>";
@@ -137,10 +137,10 @@ struct test902 {
   }
 
 private:
-  log m_log{"test902"};
+  log m_log{"test020"};
 };
 
-struct test903 {
+struct test030 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, void, int, float>";
@@ -178,10 +178,10 @@ struct test903 {
   }
 
 private:
-  log m_log{"test903"};
+  log m_log{"test030"};
 };
 
-struct test904 {
+struct test040 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, void, int>";
@@ -218,10 +218,10 @@ struct test904 {
   }
 
 private:
-  log m_log{"test904"};
+  log m_log{"test040"};
 };
 
-struct test905 {
+struct test050 {
 
   static std::string desc() {
     return "executer as <concurrent::timeout_control::no, void, void>";
@@ -253,218 +253,116 @@ struct test905 {
   }
 
 private:
-  log m_log{"test905"};
+  log m_log{"test050"};
 };
 
-struct test00 {
+void timeout_callback(std::thread::id p_id) {
+  log _log{"timeout_callback"};
+  concurrent_warn(_log, "timeout for ", p_id);
+}
+
+struct test060 {
 
   static std::string desc() {
-    return "no timeout control; return; many parameters";
+    return "executer as <concurrent::timeout_control::yes, double, int, "
+           "float>, no timeout";
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    typedef concurrent::executer_t<log, concurrent::timeout_control::yes,
+                                   double, int, float>
+        executer;
+
+    auto function = [this](int p_i, float p_f) -> double {
+      concurrent_debug(m_log, "i = ", p_i, ", f = ", p_f);
+      return p_i * p_f;
+    };
+
+    executer _executer(function, std::chrono::seconds(1), timeout_callback);
+
+    int _i = 2;
+    float _f = 3.5;
+
+    std::optional<double> _maybe = _executer(_i, _f);
+
+    if (!_maybe) {
+      concurrent_error(m_log, "nothing returned, but it should have");
+    }
+
+    double _d = std::move(*_maybe);
+
+    if (_d != (_i * _f)) {
+      concurrent_error(m_log, "expected ", _i * _f, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
+  }
 
 private:
-  log m_log{"test00"};
+  log m_log{"test060"};
 };
 
-struct test01 {
+struct test070 {
+
   static std::string desc() {
-    return "no timeout control; return; one parameter";
+    return "executer as <concurrent::timeout_control::yes, double, int>, no "
+           "timeout";
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
 
-private:
-  log m_log{"test01"};
-};
+    typedef concurrent::executer_t<log, concurrent::timeout_control::yes,
+                                   double, int>
+        executer;
 
-struct test02 {
-  static std::string desc() {
-    return "no timeout control; return; no parameter";
+    auto function = [this](int p_i) -> double {
+      concurrent_debug(m_log, "i = ");
+      return p_i * 2.5;
+    };
+
+    executer _executer(function, std::chrono::seconds(1), timeout_callback);
+
+    int _i = 2;
+
+    std::optional<double> _maybe = _executer(_i);
+
+    if (!_maybe) {
+      concurrent_error(m_log, "nothing returned, but it should have");
+    }
+
+    double _d = std::move(*_maybe);
+
+    if (_d != (_i * 2.5)) {
+      concurrent_error(m_log, "expected ", _i * 2.5, ", but got ", _d);
+      return false;
+    }
+
+    concurrent_debug(m_log, "got ", _d, ", as expected");
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    return true;
   }
 
-  bool operator()() { return true; }
-
 private:
-  log m_log{"test02"};
+  log m_log{"test070"};
 };
-
-struct test03 {
-  static std::string desc() {
-    return "no timeout control; no return; many parameters";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test03"};
-};
-
-struct test04 {
-  static std::string desc() {
-    return "no timeout control; no return; one parameter";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test04"};
-};
-
-struct test05 {
-  static std::string desc() {
-    return "no timeout control; no return; no parameter";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test05"};
-};
-
-struct test06 {
-  static std::string desc() {
-    return "timeout control; return; many parameterss; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test06"};
-};
-
-struct test07 {
-  static std::string desc() {
-    return "timeout control; return; many parameterss; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test07"};
-};
-
-struct test08 {
-  static std::string desc() {
-    return "timeout control; return; one parameter; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test08"};
-};
-
-struct test09 {
-  static std::string desc() {
-    return "timeout control; return; one parameter; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test09"};
-};
-
-struct test10 {
-  static std::string desc() {
-    return "timeout control; return; no parameter; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test10"};
-};
-
-struct test11 {
-  static std::string desc() {
-    return "timeout control; return; no parameter; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test11"};
-};
-
-struct test12 {
-  static std::string desc() {
-    return "timeout control; no return; many parameterss; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test12"};
-};
-
-struct test13 {
-  static std::string desc() {
-    return "timeout control; no return; many parameterss; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test13"};
-};
-
-struct test14 {
-  static std::string desc() {
-    return "timeout control; no return; one parameter; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test14"};
-};
-
-struct test15 {
-  static std::string desc() {
-    return "timeout control; no return; one parameter; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test15"};
-};
-
-struct test16 {
-  static std::string desc() {
-    return "timeout control; no return; no parameter; with timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test16"};
-};
-
-struct test17 {
-  static std::string desc() {
-    return "timeout control; no return; no parameter; without timeout";
-  }
-
-  bool operator()() { return true; }
-
-private:
-  log m_log{"test17"};
-};
-
 int main(int argc, char **argv) {
 
   tenacitas::logger::cerr::log::set_debug();
   tenacitas::tester::test _test(argc, argv);
-  run_test(_test, test900);
-  run_test(_test, test901);
-  run_test(_test, test902);
-  run_test(_test, test903);
-  run_test(_test, test904);
-  run_test(_test, test905);
+  run_test(_test, test000);
+  run_test(_test, test010);
+  run_test(_test, test020);
+  run_test(_test, test030);
+  run_test(_test, test040);
+  run_test(_test, test050);
+  run_test(_test, test060);
+  run_test(_test, test070);
 
   return 0;
 }
