@@ -20,8 +20,7 @@ void timeout_callback(std::thread::id p_id) {
 struct test060 {
 
   static std::string desc() {
-    return "executer as < double, int, "
-           "float>, no timeout";
+    return "executer as executer_t<log, double, int, float>, no timeout";
   }
 
   bool operator()() {
@@ -67,39 +66,35 @@ private:
 struct test070 {
 
   static std::string desc() {
-    return "executer as < double, int>, no "
-           "timeout";
+    return "executer as executer_t<log, double, int> timeout";
   }
 
   bool operator()() {
 
     typedef concurrent::executer_t<log, double, int> executer;
 
+    std::chrono::seconds _timeout(1);
+
     auto function = [this](int p_i) -> double {
-      concurrent_debug(m_log, "i = ");
+      std::this_thread::sleep_for(std::chrono::seconds(2));
+      concurrent_debug(m_log, "i = ", p_i);
       return p_i * 2.5;
     };
 
-    executer _executer(function, std::chrono::seconds(1), timeout_callback);
+    executer _executer(function, _timeout, timeout_callback);
 
     int _i = 2;
 
     std::optional<double> _maybe = _executer(_i);
 
-    if (!_maybe) {
-      concurrent_error(m_log, "nothing returned, but it should have");
-    }
-
-    double _d = std::move(*_maybe);
-
-    if (_d != (_i * 2.5)) {
-      concurrent_error(m_log, "expected ", _i * 2.5, ", but got ", _d);
+    if (_maybe) {
+      concurrent_error(m_log, "returned, but it should have not");
       return false;
     }
 
-    concurrent_debug(m_log, "got ", _d, ", as expected");
-
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    concurrent_debug(m_log, "sleeping");
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    concurrent_debug(m_log, "waking");
     return true;
   }
 
@@ -110,9 +105,8 @@ private:
 struct test071 {
 
   static std::string desc() {
-    return "executer as < double, int>, with "
-           "timeout, and function returned before the next call, which did not "
-           "timeout";
+    return "executer as executer_t<log, double, int>, with timeout, and "
+           "function returned before the next call, which did not timeout";
   }
 
   bool operator()() {
@@ -178,9 +172,9 @@ private:
 struct test072 {
 
   static std::string desc() {
-    return "executer as < double, int>, with "
-           "timeout, and function did not returned before the next call, which "
-           "did not timeout";
+    return "executer as executer_t<log, double, int>, with timeout, and "
+           "function did not returned before the next call, which did not "
+           "timeout";
   }
 
   bool operator()() {

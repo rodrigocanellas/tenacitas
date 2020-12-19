@@ -50,6 +50,8 @@ public:
     }
   }
 
+  inline void detach() { m_thread.detach(); }
+
   inline std::thread::id get_id() const { return m_thread.get_id(); }
 
   /// \brief ~thread joins if the thread is still running
