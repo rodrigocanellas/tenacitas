@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG -= qt
 CONFIG+=test
-TARGET = tenacitas.logger.tst.cout_log
+TARGET = tenacitas.logger.tst.cout
 include (../../../../common.pri)
 
 

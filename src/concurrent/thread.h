@@ -10,6 +10,9 @@
 #include <mutex>
 #include <thread>
 
+#include <iostream>
+#include <sstream>
+
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
@@ -41,6 +44,12 @@ public:
     join();
     m_thread = std::move(p_th.m_thread);
     return *this;
+  }
+
+  inline friend std::ostream &operator<<(std::ostream &out,
+                                         const thread &p_thread) {
+    out << "(" << &p_thread << ", " << p_thread.m_thread.get_id() << ")";
+    return out;
   }
 
   /// \brief join waits for the thread to finish

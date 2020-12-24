@@ -199,7 +199,7 @@ private:
   ///
   /// \brief sleeping_loop_t an alias for the sleeping loop used
   ///
-  typedef concurrent::sleeping_loop_t<void, tenacitas::logger::cerr::log>
+  typedef concurrent::sleeping_loop_t<void, tenacitas::logger::cerr>
       sleeping_loop;
 
   struct deleter {
@@ -274,7 +274,7 @@ private:
     ///
     std::chrono::seconds m_retention = std::chrono::seconds(15 * 60);
 
-    tenacitas::logger::cerr::log m_log{
+    tenacitas::logger::cerr m_log{
         "logger::file::file_controller::deleter"};
   };
 
@@ -349,7 +349,7 @@ private:
   ///
   sleeping_loop m_sleeping_loop;
 
-  tenacitas::logger::cerr::log m_log{"logger::file::file_controler"};
+  tenacitas::logger::cerr m_log{"logger::file::file_controler"};
 };
 
 } // namespace file

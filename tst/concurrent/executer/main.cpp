@@ -13,7 +13,7 @@ using namespace tenacitas;
 typedef logger::cerr::log log;
 
 void timeout_callback(std::thread::id p_id) {
-  log _log{"timeout_callback "};
+  log _log{"timeout_callback"};
   concurrent_warn(_log, "timeout for ", p_id);
 }
 
@@ -66,7 +66,7 @@ private:
 struct test070 {
 
   static std::string desc() {
-    return "executer as executer_t<log, double, int> timeout";
+    return "executer as executer_t<log, double, int> with timeout";
   }
 
   bool operator()() {
@@ -209,7 +209,9 @@ struct test072 {
 
     _sleep = std::chrono::milliseconds(500);
 
-    concurrent_debug(m_log, "running again, and no timeout should occurr");
+    concurrent_debug(
+        m_log, "running again, and no timeout should occurr because sleep is ",
+        _sleep.count(), "millisecs");
 
     _maybe = _executer(_i);
 
@@ -227,7 +229,7 @@ struct test072 {
     }
     concurrent_debug(m_log, "value is ", _d, ", as it should");
 
-    std::this_thread::sleep_for(std::chrono::seconds(7));
+    std::this_thread::sleep_for(std::chrono::seconds(30));
 
     return true;
   }

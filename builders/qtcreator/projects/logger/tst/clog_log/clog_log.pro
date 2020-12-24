@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG -= qt
 CONFIG+=test
-TARGET = tenacitas.logger.tst.clog_log_how_to
+TARGET = tenacitas.logger.tst.clog
 include (../../../../common.pri)
 
 

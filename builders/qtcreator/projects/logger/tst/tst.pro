@@ -2,9 +2,13 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
   dep \
+  cout_log  \
   cerr_log \
-  cout_log \
-  clog_log  \
-  file_log
+  clog_log
+#  \
+
+
+#  \
+#  file_log
 
 CONFIG += ordered
