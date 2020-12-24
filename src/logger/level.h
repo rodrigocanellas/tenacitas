@@ -6,6 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -15,13 +16,13 @@ namespace tenacitas {
 namespace logger {
 
 /// \brief The level enum defines the possible logger::log levels
-enum class level : char {
-  debug = 'D',
-  info = 'I',
-  warn = 'W',
-  error = 'E',
-  fatal = 'F',
-  no_log = 'N'
+enum class level : int8_t {
+  no_log = -1,
+  debug = 0,
+  info = 1,
+  warn = 2,
+  error = 3,
+  fatal = 4
 };
 
 inline std::ostream &operator<<(std::ostream &p_out, level p_level) {

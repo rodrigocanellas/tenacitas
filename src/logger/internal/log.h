@@ -61,8 +61,17 @@ public:
   inline log(writer &&p_writer)
       : m_writer(std::move(p_writer)), m_is_writer_set(true) {}
 
-  /// \brief sets the level of the log for 'this'
-  inline void set_level(level p_level) { m_level = p_level; }
+  /// \brief sets 'this' log level for level::debug
+  inline void set_debug() { m_level = level::debug; }
+
+  /// \brief sets 'this' log level for level::info
+  inline void set_info() { m_level = level::info; }
+
+  /// \brief sets 'this' log level for level::warn
+  inline void set_warn() { m_level = level::warn; }
+
+  /// \brief sets 'this' log level for level::error
+  inline void set_error() { m_level = level::error; }
 
   /// \brief retrieves the level of the log for 'this'
   inline level get_level() const { return m_level; }
@@ -167,10 +176,11 @@ public:
   //  bool is_writer_set() const { return m_is_writer_set; }
 protected:
   log(std::string &&p_class, writer p_writer)
-      : m_class(std::move(p_class)), m_writer(p_writer) {}
+      : m_class(std::move(p_class)), m_writer(p_writer),
+        m_level(logger::get_level()) {}
 
   log(const char *p_class, writer p_writer)
-      : m_class(p_class), m_writer(p_writer) {}
+      : m_class(p_class), m_writer(p_writer), m_level(logger::get_level()) {}
 
 private:
   /// \brief write will actually write the message
@@ -301,11 +311,11 @@ private:
     std::cerr << "NO WRITER CONFIGURED FOR LOGGING" << std::endl;
   }};
 
-  /// \brief m_mutex allows a thread safe writing to the log writer
-  std::mutex m_mutex;
-
   /// \brief m_level is the current log level
   level m_level{get_level()};
+
+  /// \brief m_mutex allows a thread safe writing to the log writer
+  std::mutex m_mutex;
 
   /// \brief m_separator is used to separate parts of the log message
   char m_separator{'|'};

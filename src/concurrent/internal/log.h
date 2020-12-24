@@ -6,9 +6,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <algorithm>
-#include <string>
-
 /// \brief Wraps to the debug log function
 #define concurrent_debug(p_log, p_params...) p_log.debug(__LINE__, p_params)
 

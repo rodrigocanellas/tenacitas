@@ -9,10 +9,8 @@ HEADERS += \
     $$code_src_dir/concurrent/thread.h \
     $$code_src_dir/concurrent/timeout_callback.h \
     $$code_src_dir/concurrent/breaker.h \
-    $$code_src_dir/concurrent/executer.h
-
-#    \
-#    $$code_src_dir/concurrent/async_loop.h
+    $$code_src_dir/concurrent/executer.h \
+    $$code_src_dir/concurrent/async_loop.h
 
 #    $$code_src_dir/concurrent/internal/constants.h \
 #    \

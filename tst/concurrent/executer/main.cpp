@@ -5,12 +5,14 @@
 #include <optional>
 
 #include <concurrent/executer.h>
-#include <logger/cerr/log.h>
+#include <logger/cerr.h>
 #include <tester/test.h>
 
 using namespace tenacitas;
 
-typedef logger::cerr::log log;
+using namespace std::chrono_literals;
+
+typedef logger::cerr log;
 
 void timeout_callback(std::thread::id p_id) {
   log _log{"timeout_callback"};
@@ -33,7 +35,7 @@ struct test060 {
     };
 
     concurrent_debug(m_log, "about to create");
-    executer _executer(function, std::chrono::seconds(1), timeout_callback);
+    executer _executer(function, 1s, timeout_callback);
     concurrent_debug(m_log, "created");
 
     int _i = 2;
@@ -55,7 +57,7 @@ struct test060 {
 
     concurrent_debug(m_log, "got ", _d, ", as expected");
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(1s);
     return true;
   }
 
@@ -76,7 +78,7 @@ struct test070 {
     std::chrono::seconds _timeout(1);
 
     auto function = [this](int p_i) -> double {
-      std::this_thread::sleep_for(std::chrono::seconds(2));
+      std::this_thread::sleep_for(2s);
       concurrent_debug(m_log, "i = ", p_i);
       return p_i * 2.5;
     };
@@ -93,7 +95,7 @@ struct test070 {
     }
 
     concurrent_debug(m_log, "sleeping");
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::this_thread::sleep_for(5s);
     concurrent_debug(m_log, "waking");
     return true;
   }
@@ -138,9 +140,9 @@ struct test071 {
         m_log,
         "timeout in the first call, sleeping to allow the function to end");
 
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(1s);
 
-    _sleep = std::chrono::milliseconds(500);
+    _sleep = 500ms;
 
     concurrent_debug(m_log, "running again, and no timeout should occurr");
 
@@ -160,7 +162,7 @@ struct test071 {
     }
     concurrent_debug(m_log, "value is ", _d, ", as it should");
 
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+    std::this_thread::sleep_for(3s);
 
     return true;
   }
@@ -205,9 +207,9 @@ struct test072 {
     concurrent_debug(m_log, "timeout in the first call, sleeping not enough to "
                             "allow the function to end");
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(500ms);
 
-    _sleep = std::chrono::milliseconds(500);
+    _sleep = 500ms;
 
     concurrent_debug(
         m_log, "running again, and no timeout should occurr because sleep is ",
@@ -229,7 +231,7 @@ struct test072 {
     }
     concurrent_debug(m_log, "value is ", _d, ", as it should");
 
-    std::this_thread::sleep_for(std::chrono::seconds(30));
+    std::this_thread::sleep_for(30s);
 
     return true;
   }
@@ -240,8 +242,8 @@ private:
 
 int main(int argc, char **argv) {
 
-  tenacitas::logger::cerr::log::set_debug();
-  tenacitas::tester::test _test(argc, argv);
+  //  logger::set_level(logger::level::debug);
+  tester::test _test(argc, argv);
   run_test(_test, test060);
   run_test(_test, test070);
   run_test(_test, test071);

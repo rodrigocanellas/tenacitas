@@ -1,9 +1,7 @@
 SUBDIRS = \
     dep \
-    executer
-
-#\
-#    async_loop
+    executer \
+    async_loop
 
 
 #    \

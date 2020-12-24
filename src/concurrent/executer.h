@@ -43,9 +43,9 @@ template <typename t_log> struct executer_base_t {
 
 protected:
   template <typename t_time>
-  executer_base_t(std::function<void()> p_function, t_time p_timeout,
+  executer_base_t(std::function<void()> p_worker, t_time p_timeout,
                   timeout_callback p_timeout_callback)
-      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
+      : m_function(p_worker), m_timeout(to_timeout(p_timeout)),
         m_timeout_callback(p_timeout_callback) {
     concurrent_debug(m_log, this, " - calling start from constructor");
     start();
@@ -136,8 +136,8 @@ private:
   struct loop {
     loop() = default;
     loop(executer_base_t<t_log> *p_owner) : m_owner(p_owner) {
+      //      m_log.set_debug();
       concurrent_debug(m_log, this, " - m_owner = ", m_owner);
-      //      m_thread = std::thread([this]() -> void { (*this)(); });
     }
     loop(const loop &) = delete;
     loop(loop &&p_loop) noexcept : m_owner(p_loop.m_owner) {
@@ -303,33 +303,33 @@ private:
   std::thread m_thread;
 };
 
-// ########## 5 ##########
+// ########## 1 ##########
 template <typename t_log, typename t_result, typename... t_params>
 struct executer_t;
 
-// ########## 6 ##########
+// ########## 2 ##########
 template <typename t_log, typename t_result>
 struct executer_t<t_log, t_result, void>;
 
-// ########## 7 ##########
+// ########## 3 ##########
 template <typename t_log, typename... t_params>
 struct executer_t<t_log, void, t_params...>;
 
-// ########## 8 ##########
+// ########## 4 ##########
 template <typename t_log> struct executer_t<t_log, void, void>;
 
-// ########## 5 ##########
+// ########## 1 ##########
 template <typename t_log, typename t_result, typename... t_params>
 struct executer_t : public executer_base_t<t_log> {
 
-  typedef std::function<t_result(t_params...)> function;
+  typedef std::function<t_result(t_params...)> worker;
 
   template <typename t_time>
-  executer_t(function p_function, t_time p_timeout,
+  executer_t(worker p_worker, t_time p_timeout,
              timeout_callback p_timeout_callback)
       : executer_base_t<t_log>(
-            [this, p_function]() -> void {
-              m_result = std::apply(p_function, std::move(m_params));
+            [this, p_worker]() -> void {
+              m_result = std::apply(p_worker, std::move(m_params));
             },
             p_timeout, p_timeout_callback) {
     this->start();
@@ -352,18 +352,18 @@ private:
   t_result m_result;
 };
 
-// ########## 6 ##########
+// ########## 2 ##########
 template <typename t_log, typename t_result>
 struct executer_t<t_log, t_result, void> : public executer_base_t<t_log> {
 
-  typedef std::function<t_result()> function;
+  typedef std::function<t_result()> worker;
 
   template <typename t_time>
-  executer_t(function p_function, t_time p_timeout,
+  executer_t(worker p_worker, t_time p_timeout,
              timeout_callback p_timeout_callback)
       : executer_base_t<t_log>(
-            [this, p_function]() -> void { m_result = p_function(); },
-            p_timeout, p_timeout_callback) {
+            [this, p_worker]() -> void { m_result = p_worker(); }, p_timeout,
+            p_timeout_callback) {
     this->start();
   }
 
@@ -373,25 +373,26 @@ struct executer_t<t_log, t_result, void> : public executer_base_t<t_log> {
     auto not_ok = []() -> std::optional<t_result> { return {}; };
     auto save_params = []() -> void {};
 
-    this->template call<std::optional<t_result>>(ok, not_ok, save_params);
+    return this->template call<std::optional<t_result>>(ok, not_ok,
+                                                        save_params);
   }
 
 private:
   t_result m_result;
 };
 
-// ########## 7 ##########
+// ########## 3 ##########
 template <typename t_log, typename... t_params>
 struct executer_t<t_log, void, t_params...> : public executer_base_t<t_log> {
 
-  typedef std::function<void(t_params...)> function;
+  typedef std::function<void(t_params...)> worker;
 
   template <typename t_time>
-  executer_t(function p_function, t_time p_timeout,
+  executer_t(worker p_worker, t_time p_timeout,
              timeout_callback p_timeout_callback)
       : executer_base_t<t_log>(
-            [this, p_function]() -> void {
-              std::apply(p_function, std::move(m_params));
+            [this, p_worker]() -> void {
+              std::apply(p_worker, std::move(m_params));
             },
             p_timeout, p_timeout_callback) {
     this->start();
@@ -407,16 +408,16 @@ private:
   std::tuple<t_params...> m_params;
 };
 
-// ########## 8 ##########
+// ########## 4 ##########
 template <typename t_log>
 struct executer_t<t_log, void, void> : public executer_base_t<t_log> {
 
-  typedef std::function<void()> function;
+  typedef std::function<void()> worker;
 
   template <typename t_time>
-  executer_t(function p_function, t_time p_timeout,
+  executer_t(worker p_worker, t_time p_timeout,
              timeout_callback p_timeout_callback)
-      : executer_base_t<t_log>([this, p_function]() -> void { p_function(); },
+      : executer_base_t<t_log>([this, p_worker]() -> void { p_worker(); },
                                p_timeout, p_timeout_callback) {
     this->start();
   }
