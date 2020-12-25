@@ -35,7 +35,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  logger::set_level(logger::level::debug);
+  logger::set_debug_level();
   tester::test _tester(argc, argv);
   run_test(_tester, clog_how_to);
 }

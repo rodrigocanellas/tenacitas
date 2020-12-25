@@ -9,7 +9,7 @@ bool log::can_log(level p_level) const {
   if ((p_level == level::error) || (p_level == level::fatal)) {
     return true;
   }
-  return ((p_level >= m_level) || (p_level >= get_level()));
+  return ((p_level >= m_level) || (logger::can_log(p_level)));
 }
 
 std::string log::now() const {

@@ -63,6 +63,10 @@ template <typename t_log> struct async_loop_base_t {
     m_thread.join();
   }
 
+  inline void set_log_debug_level() { m_log.set_debug_level(); }
+  inline void set_log_info_level() { m_log.set_info_level(); }
+  inline void set_log_warn_level() { m_log.set_warn_level(); }
+
 protected:
   async_loop_base_t(breaker p_breaker) : m_breaker(p_breaker) {}
 

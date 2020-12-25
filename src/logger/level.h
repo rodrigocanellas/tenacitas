@@ -49,9 +49,16 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
   return p_out;
 }
 
-level get_level();
+/// \brief
+void set_debug_level();
 
-void set_level(level p_level);
+/// \brief
+void set_info_level();
+
+/// \brief
+void set_warn_level();
+
+bool can_log(level p_level);
 
 } // namespace logger
 } // namespace tenacitas

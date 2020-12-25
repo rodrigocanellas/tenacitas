@@ -62,19 +62,13 @@ public:
       : m_writer(std::move(p_writer)), m_is_writer_set(true) {}
 
   /// \brief sets 'this' log level for level::debug
-  inline void set_debug() { m_level = level::debug; }
+  inline void set_debug_level() { m_level = level::debug; }
 
   /// \brief sets 'this' log level for level::info
-  inline void set_info() { m_level = level::info; }
+  inline void set_info_level() { m_level = level::info; }
 
   /// \brief sets 'this' log level for level::warn
-  inline void set_warn() { m_level = level::warn; }
-
-  /// \brief sets 'this' log level for level::error
-  inline void set_error() { m_level = level::error; }
-
-  /// \brief retrieves the level of the log for 'this'
-  inline level get_level() const { return m_level; }
+  inline void set_warn_level() { m_level = level::warn; }
 
   /// \brief set_timestamp_as_number makes the timestamp to be printed as a
   /// number, instead of a string
@@ -177,10 +171,10 @@ public:
 protected:
   log(std::string &&p_class, writer p_writer)
       : m_class(std::move(p_class)), m_writer(p_writer),
-        m_level(logger::get_level()) {}
+        m_level(logger::level::warn) {}
 
   log(const char *p_class, writer p_writer)
-      : m_class(p_class), m_writer(p_writer), m_level(logger::get_level()) {}
+      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn) {}
 
 private:
   /// \brief write will actually write the message
@@ -312,7 +306,7 @@ private:
   }};
 
   /// \brief m_level is the current log level
-  level m_level{get_level()};
+  level m_level{logger::level::warn};
 
   /// \brief m_mutex allows a thread safe writing to the log writer
   std::mutex m_mutex;

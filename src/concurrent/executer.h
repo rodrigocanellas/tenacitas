@@ -83,6 +83,10 @@ protected:
     }
   }
 
+  inline void set_log_debug_level() { m_log.set_debug_level(); }
+  inline void set_log_info_level() { m_log.set_info_level(); }
+  inline void set_log_warn_level() { m_log.set_warn_level(); }
+
   template <typename t_result>
   t_result call(std::function<t_result()> p_ok,
                 std::function<t_result()> p_not_ok,
