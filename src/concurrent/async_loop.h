@@ -68,12 +68,15 @@ template <typename t_log> struct async_loop_base_t {
   inline void set_log_warn_level() { m_log.set_warn_level(); }
 
 protected:
-  async_loop_base_t(breaker p_breaker) : m_breaker(p_breaker) {}
+  async_loop_base_t(breaker p_breaker)
+      : m_breaker(p_breaker, 300ms, [this](std::thread::id p_id) -> void {
+          concurrent_warn(m_log, "thread ", p_id, " for breaker has timed out");
+        }) {}
 
   virtual void loop() = 0;
 
 protected:
-  breaker m_breaker;
+  executer_t<t_log, bool, void> m_breaker;
 
   bool m_stopped{true};
 
@@ -99,19 +102,19 @@ struct async_loop_t : public async_loop_base_t<t_log> {
 protected:
   void loop() override {
     while (true) {
-
-      std::optional<std::tuple<t_params...>> _maybe = m_provider();
+      std::optional<std::tuple<t_params...>> _maybe_data = m_provider();
 
       if (this->m_stopped) {
         break;
       }
 
-      if (this->m_breaker()) {
+      std::optional<bool> _maybe_break = this->m_breaker();
+      if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
-      if (_maybe) {
-        std::tuple<t_params...> _params = std::move(*_maybe);
+      if (_maybe_data) {
+        std::tuple<t_params...> _params = std::move(*_maybe_data);
 
         std::apply(m_worker, _params);
 
@@ -119,7 +122,8 @@ protected:
           break;
         }
 
-        if (this->m_breaker()) {
+        std::optional<bool> _maybe_break = this->m_breaker();
+        if ((_maybe_break) && (*_maybe_break)) {
           break;
         }
       }
@@ -157,7 +161,8 @@ protected:
         break;
       }
 
-      if (this->m_breaker()) {
+      std::optional<bool> _maybe_break = this->m_breaker();
+      if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
     }

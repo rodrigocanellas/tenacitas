@@ -89,7 +89,49 @@ struct async_loop_001 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    int16_t _i{0};
+    auto _provider = [this, &_i]() -> int16_t {
+      ++_i;
+      concurrent_debug(m_log, "providing ", _i);
+      return _i;
+    };
+
+    auto _worker = [this](int16_t p_i) -> void {
+      concurrent_debug(m_log, "working with = ", p_i);
+      std::this_thread::sleep_for(250ms);
+    };
+
+    auto _breaker = [&_i]() -> bool {
+      if (_i == 3) {
+        return true;
+      }
+      return false;
+    };
+
+    concurrent::async_loop_t<logger::cerr, int16_t> _loop(
+        500ms, _timeout_callback, _breaker, _worker, _provider);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _loop.stop();
+
+    if (_i != 3) {
+      concurrent_error(m_log, "i should be 3, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 3, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_001"};
