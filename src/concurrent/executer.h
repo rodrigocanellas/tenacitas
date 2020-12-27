@@ -85,7 +85,7 @@ protected:
 
   inline void set_log_debug_level() { m_log.set_debug_level(); }
   inline void set_log_info_level() { m_log.set_info_level(); }
-  inline void set_log_warn_level() { m_log.set_warn_level(); }
+  inline void set_log_level() { m_log.set_warn_level(); }
 
   template <typename t_result>
   t_result call(std::function<t_result()> p_ok,
@@ -95,15 +95,15 @@ protected:
     concurrent_debug(m_log, this, " - operator()()");
 
     if (m_stopped) {
-      concurrent_warn(m_log, this,
-                      " - executer is stopped; call 'start()' first");
+      concurrent_error(m_log, this,
+                       " - executer is stopped; call 'start()' first");
       return p_not_ok();
     }
 
     p_save_params();
 
     if (m_stopped) {
-      concurrent_warn(m_log, this, " - stopped");
+      concurrent_debug(m_log, this, " - stopped");
       return p_not_ok();
     }
 
@@ -157,7 +157,7 @@ private:
       concurrent_debug(m_log, this,
                        " - destructor before, m_owner = ", m_owner);
       if (m_owner == nullptr) {
-        concurrent_warn(m_log, this, " - m_owner is null, leaving destructor");
+        concurrent_debug(m_log, this, " - m_owner is null, leaving destructor");
         return;
       }
 
@@ -182,69 +182,44 @@ private:
 
     void operator()() {
       while (true) {
-        if (m_owner == nullptr) {
-          concurrent_debug(m_log, this, " - m_owner = ", m_owner);
+
+        if (!m_owner) {
+          concurrent_debug(m_log, this, " - owner is null");
           break;
         }
 
-        if (m_owner->m_stopped) {
+        if ((m_owner) && (m_owner->m_stopped)) {
           concurrent_debug(m_log, this, " - stopped ");
           break;
         }
-        concurrent_debug(m_log, this,
-                         " - waiting for work, m_owner = ", m_owner);
 
-        {
+        if (m_owner) {
           std::unique_lock<std::mutex> _lock(m_owner->m_mutex_exec);
-          concurrent_debug(m_log, this,
-                           " - m_cond_exec unlocked, m_owner = ", m_owner);
-          if (!m_owner) {
-            concurrent_error(m_log, this, " - no owner, but it should have");
-            break;
+          if (m_owner) {
+            concurrent_debug(m_log, this, " - waiting for work");
+            m_owner->m_cond_exec.wait(_lock);
+            concurrent_debug(m_log, this, " - not waiting for work anymore");
           }
-          concurrent_debug(m_log, this, " - waiting...");
-          m_owner->m_cond_exec.wait(_lock);
-
-          concurrent_debug(m_log, this, " - not waiting for work anymore");
-        }
-        if (!m_owner) {
-          concurrent_warn(
-              m_log, this,
-              " - not waiting for work anymore, but m_owner is null");
         }
 
-        if (m_owner->m_stopped) {
+        if ((m_owner) && (m_owner->m_stopped)) {
           concurrent_debug(m_log, this, " - stopped");
           break;
         }
 
-        concurrent_debug(m_log, this, " - function to execute!");
-
         if (m_owner) {
+          concurrent_debug(m_log, this, " - executing");
           m_owner->m_function();
-        } else {
-          concurrent_warn(m_log, this,
-                          " - could not call function as m_owener = ", m_owner);
-        }
-        concurrent_debug(m_log, this,
-                         " - function returned, m_owner = ", m_owner);
-
-        if (m_owner == nullptr) {
-          concurrent_debug(m_log, this, " - abandoning");
-          break;
         }
 
-        if (m_owner->m_stopped) {
+        if ((m_owner) && (m_owner->m_stopped)) {
           concurrent_debug(m_log, this, " - stopped");
           break;
         }
 
-        concurrent_debug(m_log, this, " - notifying");
         if (m_owner) {
+          concurrent_debug(m_log, this, " - notifying");
           m_owner->m_cond_wait.notify_one();
-        } else {
-          concurrent_warn(m_log, this,
-                          " - could not notify because m_owner = ", m_owner);
         }
       }
 

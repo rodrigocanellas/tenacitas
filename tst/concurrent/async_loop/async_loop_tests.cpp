@@ -355,6 +355,11 @@ struct async_loop_006 {
 
     m_log.set_debug_level();
 
+    auto _callback = [this](std::thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      m_cond.notify_one();
+    };
+
     int16_t _i{0};
     auto _provider = [this, &_i]() -> int16_t {
       ++_i;
@@ -362,17 +367,7 @@ struct async_loop_006 {
       return _i;
     };
 
-    bool _timeout{false};
-    auto _callback = [this, &_timeout](std::thread::id p_id) -> void {
-      concurrent_warn(m_log, "timeout for ", p_id);
-      _timeout = true;
-    };
-
-    auto _worker = [this, &_timeout](int16_t p_i) -> void {
-      if (_timeout) {
-        concurrent_warn(m_log, "rejecting ", p_i, " due to previous timeout");
-        return;
-      }
+    auto _worker = [this](int16_t p_i) -> void {
       concurrent_debug(m_log, "working with = ", p_i);
       if (p_i == 5) {
         concurrent_debug(m_log, "causing timeout");
@@ -389,9 +384,11 @@ struct async_loop_006 {
 
     _loop.start();
 
-    std::this_thread::sleep_for(3s);
-
-    _loop.stop();
+    {
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      m_cond.wait_for(_lock, 3s);
+      _loop.stop();
+    }
 
     if (_i != 5) {
       concurrent_error(m_log, "i should be 5, but it is ", _i);
@@ -405,6 +402,8 @@ struct async_loop_006 {
 
 private:
   logger::cerr m_log{"async_loop_006"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_007 {
@@ -436,7 +435,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  logger::set_debug_level();
+  //  logger::set_debug_level();
 
   tenacitas::tester::test _tester(argc, argv);
   run_test(_tester, async_loop_000);
