@@ -54,10 +54,8 @@ struct async_loop_000 {
       std::this_thread::sleep_for(250ms);
     };
 
-    auto _breaker = []() -> bool { return false; };
-
     concurrent::async_loop_t<logger::cerr, int16_t> _loop(
-        500ms, _timeout_callback, _breaker, _worker, _provider);
+        500ms, _timeout_callback, _worker, _provider);
 
     _loop.set_log_debug_level();
 
@@ -147,19 +145,41 @@ struct async_loop_002 {
 
   bool operator()() {
 
-    typedef concurrent::async_loop_t<logger::cerr, int16_t, float> async_loop;
+    m_log.set_debug_level();
 
-    auto _worker = [](int16_t p_i, float p_f) -> void {
-      std::cout << p_i * p_f;
+    int16_t _i{0};
+    float _f{0.0};
+    auto _provider = [this, &_i, &_f]() -> std::tuple<int16_t, float> {
+      ++_i;
+      _f = _i * 2.5;
+      concurrent_debug(m_log, "providing ", _i);
+      return {_i, _f};
     };
 
-    auto _provider = []() -> std::tuple<int16_t, float> { return {2, 3.5}; };
+    auto _worker = [this](int16_t p_i, float p_f) -> void {
+      concurrent_debug(m_log, "working with = ", p_i, ", ", p_f);
+      std::this_thread::sleep_for(250ms);
+    };
 
-    async_loop _async_loop(
-        1s, _timeout_callback, []() -> bool { return false; }, _worker,
-        _provider);
+    concurrent::async_loop_t<logger::cerr, int16_t, float> _loop(
+        500ms, _timeout_callback, _worker, _provider);
 
-    _async_loop.start();
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _loop.stop();
+
+    if ((_i != 8) && (_f != (8 * 2.5))) {
+      concurrent_error(
+          m_log, "i should be 8 and f should be 20.0, but they are they are ",
+          _i, " and ", _f);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 8 and f is 20, as expected");
 
     return true;
   }
@@ -176,7 +196,53 @@ struct async_loop_003 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    int16_t _i{0};
+    float _f{0.0};
+    auto _provider = [this, &_i, &_f]() -> std::tuple<int16_t, float> {
+      ++_i;
+      _f = _i * 2.5;
+      concurrent_debug(m_log, "providing ", _i);
+      return {_i, _f};
+    };
+
+    auto _worker = [this](int16_t p_i, float p_f) -> void {
+      concurrent_debug(m_log, "working with = ", p_i, ", ", p_f);
+      std::this_thread::sleep_for(250ms);
+    };
+
+    auto _breaker = [&_i]() -> bool {
+      if (_i == 3) {
+        return true;
+      }
+      return false;
+    };
+
+    concurrent::async_loop_t<logger::cerr, int16_t, float> _loop(
+        500ms, _timeout_callback, _breaker, _worker, _provider);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _loop.stop();
+
+    if ((_i != 3) && (_f != (3 * 2.5))) {
+      concurrent_error(
+          m_log, "i should be 8 and f should be 7.5, but they are they are ",
+          _i, " and ", _f);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 8 and f is 3.75, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_003"};
@@ -190,7 +256,37 @@ struct async_loop_004 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    int16_t _i{0};
+
+    auto _worker = [this, &_i]() -> void {
+      concurrent_debug(m_log, "working with = ", ++_i);
+      std::this_thread::sleep_for(250ms);
+    };
+
+    concurrent::async_loop_t<logger::cerr, void> _loop(500ms, _timeout_callback,
+                                                       _worker);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _loop.stop();
+
+    if (_i != 8) {
+      concurrent_error(m_log, "i should be 8, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 8, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_004"};
@@ -204,7 +300,44 @@ struct async_loop_005 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    int16_t _i{0};
+
+    auto _worker = [this, &_i]() -> void {
+      concurrent_debug(m_log, "working with = ", ++_i);
+      std::this_thread::sleep_for(250ms);
+    };
+
+    auto _breaker = [&_i]() -> bool {
+      if (_i == 3) {
+        return true;
+      }
+      return false;
+    };
+
+    concurrent::async_loop_t<logger::cerr, void> _loop(500ms, _timeout_callback,
+                                                       _breaker, _worker);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _loop.stop();
+
+    if (_i != 3) {
+      concurrent_error(m_log, "i should be 3, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 3, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_005"};
@@ -218,7 +351,57 @@ struct async_loop_006 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    int16_t _i{0};
+    auto _provider = [this, &_i]() -> int16_t {
+      ++_i;
+      concurrent_debug(m_log, "providing ", _i);
+      return _i;
+    };
+
+    bool _timeout{false};
+    auto _callback = [this, &_timeout](std::thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      _timeout = true;
+    };
+
+    auto _worker = [this, &_timeout](int16_t p_i) -> void {
+      if (_timeout) {
+        concurrent_warn(m_log, "rejecting ", p_i, " due to previous timeout");
+        return;
+      }
+      concurrent_debug(m_log, "working with = ", p_i);
+      if (p_i == 5) {
+        concurrent_debug(m_log, "causing timeout");
+        std::this_thread::sleep_for(1s);
+        return;
+      }
+      std::this_thread::sleep_for(250ms);
+    };
+
+    concurrent::async_loop_t<logger::cerr, int16_t> _loop(500ms, _callback,
+                                                          _worker, _provider);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    std::this_thread::sleep_for(3s);
+
+    _loop.stop();
+
+    if (_i != 5) {
+      concurrent_error(m_log, "i should be 5, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 5, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_006"};
@@ -253,7 +436,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  //  logger::set_debug_level();
+  logger::set_debug_level();
 
   tenacitas::tester::test _tester(argc, argv);
   run_test(_tester, async_loop_000);

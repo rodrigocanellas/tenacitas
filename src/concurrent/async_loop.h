@@ -69,7 +69,7 @@ template <typename t_log> struct async_loop_base_t {
 
 protected:
   async_loop_base_t(breaker p_breaker)
-      : m_breaker(p_breaker, 300ms, [this](std::thread::id p_id) -> void {
+      : m_breaker(p_breaker, 100ms, [this](std::thread::id p_id) -> void {
           concurrent_warn(m_log, "thread ", p_id, " for breaker has timed out");
         }) {}
 
@@ -97,7 +97,14 @@ struct async_loop_t : public async_loop_base_t<t_log> {
                breaker p_breaker, worker p_worker, provider p_provider)
       : async_loop_base_t<t_log>(p_breaker),
         m_worker(p_worker, p_timeout, p_timeout_callback),
-        m_provider(p_provider, 500ms, [](std::thread::id) -> void {}) {}
+        m_provider(p_provider, 100ms, [](std::thread::id) -> void {}) {}
+
+  template <typename t_time>
+  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
+               worker p_worker, provider p_provider)
+      : async_loop_base_t<t_log>([]() -> bool { return false; }),
+        m_worker(p_worker, p_timeout, p_timeout_callback),
+        m_provider(p_provider, 100ms, [](std::thread::id) -> void {}) {}
 
 protected:
   void loop() override {
@@ -149,6 +156,12 @@ struct async_loop_t<t_log, void> : public async_loop_base_t<t_log> {
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                breaker p_breaker, worker p_worker)
       : async_loop_base_t<t_log>(p_breaker),
+        m_worker(p_worker, p_timeout, p_timeout_callback) {}
+
+  template <typename t_time>
+  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
+               worker p_worker)
+      : async_loop_base_t<t_log>([]() -> bool { return false; }),
         m_worker(p_worker, p_timeout, p_timeout_callback) {}
 
 protected:
