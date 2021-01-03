@@ -13,13 +13,19 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <type_traits>
 
+#include <calendar/epoch.h>
 #include <logger/level.h>
 
 /// \brief namespace of the organization
 namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
+
+template <typename> struct is_tuple : std::false_type {};
+
+template <typename... T> struct is_tuple<std::tuple<T...>> : std::true_type {};
 
 /// \brief log is a class that guarantees thread safe writing to the log writer
 ///
@@ -72,7 +78,7 @@ public:
 
   /// \brief set_timestamp_as_number makes the timestamp to be printed as a
   /// number, instead of a string
-  inline void set_timestamp_as_number(bool p_value = true) {
+  inline static void set_timestamp_as_number(bool p_value = true) {
     m_timestamp_as_number = p_value;
   }
 
@@ -167,7 +173,84 @@ public:
     write(level::fatal, p_line, p_params...);
   }
 
-  //  bool is_writer_set() const { return m_is_writer_set; }
+  //  /// \brief logs message with \p debug severity
+  //  ///
+  //  /// \tparam t_params are the types of the values to be logged
+  //  ///
+  //  /// \attention each parameter must implement the \code std::ostream &
+  //  /// operator<<(const t &)\endcode operator, where \p t is the type of the
+  //  /// parameter
+  //  ///
+  //  /// \details the log message will only be printed if the current log level
+  //  /// is \p level::debug
+  //  template <typename... t_params>
+  //  inline void debug(uint32_t p_line, const std::tuple<t_params...> &p_tuple)
+  //  {
+  //    write(level::debug, p_line, p_tuple);
+  //  }
+
+  //  /// \brief logs message with \p info severity
+  //  ///
+  //  /// \tparam t_params are the types of the values to be logged
+  //  ///
+  //  /// \attention each parameter must implement the \code std::ostream &
+  //  /// operator<<(const t &)\endcode operator, where \p t is the type of the
+  //  /// parameter
+  //  ///
+  //  /// \details the log message will only be printed if the current log level
+  //  /// is at least \p level::info
+  //  template <typename... t_params>
+  //  inline void info(uint32_t p_line, const std::tuple<t_params...> &p_tuple)
+  //  {
+  //    write(level::info, p_line, p_tuple);
+  //  }
+
+  //  /// \brief logs message with \p warn severity
+  //  ///
+  //  /// \tparam t_params are the types of the values to be logged
+  //  ///
+  //  /// \attention each parameter must implement the \code std::ostream &
+  //  /// operator<<(const t &)\endcode operator, where \p t is the type of the
+  //  /// parameter
+  //  ///
+  //  /// \details the log message will only be printed if the current log level
+  //  /// is at least \p level::warn
+  //  template <typename... t_params>
+  //  inline void warn(uint32_t p_line, const std::tuple<t_params...> &p_tuple)
+  //  {
+  //    write(level::warn, p_line, p_tuple);
+  //  }
+
+  //  /// \brief logs message with \p error severity
+  //  ///
+  //  /// \tparam t_params are the types of the values to be logged
+  //  ///
+  //  /// \attention each parameter must implement the \code std::ostream &
+  //  /// operator<<(const t &)\endcode operator, where \p t is the type of the
+  //  /// parameter
+  //  ///
+  //  /// \details the log message with this severity will always be printed
+  //  template <typename... t_params>
+  //  inline void error(uint32_t p_line, const std::tuple<t_params...> &p_tuple)
+  //  {
+  //    write(level::error, p_line, p_tuple);
+  //  }
+
+  //  /// \brief logs message with \p fatal severity
+  //  ///
+  //  /// \tparam t_params are the types of the values to be logged
+  //  ///
+  //  /// \attention each parameter must implement the \code std::ostream &
+  //  /// operator<<(const t &)\endcode operator, where \p t is the type of the
+  //  /// parameter
+  //  ///
+  //  /// \details the log message with this severity will always be printed
+  //  template <typename... t_params>
+  //  inline void fatal(uint32_t p_line, const std::tuple<t_params...> &p_tuple)
+  //  {
+  //    write(level::fatal, p_line, p_tuple);
+  //  }
+
 protected:
   log(std::string &&p_class, writer p_writer)
       : m_class(std::move(p_class)), m_writer(p_writer),
@@ -192,8 +275,9 @@ private:
     if (can_log(p_level)) {
       std::ostringstream _stream;
       _stream << p_level << m_separator
-              << (m_timestamp_as_number ? std::to_string(microseconds())
-                                        : now())
+              << (m_timestamp_as_number
+                      ? std::to_string(calendar::epoch::microsecs())
+                      : now())
               << m_separator << std::this_thread::get_id() << m_separator
               << m_class << m_separator << p_line;
       format(_stream, m_separator, p_params...);
@@ -202,20 +286,6 @@ private:
       m_writer(_stream.str());
     }
   }
-
-  //  const char *file_name(const char *p_file_path, char *p_file_name) {
-  //    int16_t _len = static_cast<int16_t>(std::strlen(p_file_path));
-  //    for (int16_t _i = _len - 1; _i > -1; --_i) {
-  //      if ((p_file_path[_i] == '/') || (p_file_path[_i] == '\\')) {
-  //        if (_i > _MAX_PATH) {
-  //          return p_file_path;
-  //        }
-  //        std::memcpy(p_file_name, p_file_path + _i + 1, _len - _i);
-  //        return p_file_name;
-  //      }
-  //    }
-  //    return p_file_path;
-  //  }
 
   /// \brief can_log informs if a message with a certain log level can be
   /// printed, considering the current log level
@@ -240,7 +310,11 @@ private:
   /// parameter
   template <typename t>
   inline void format(std::ostringstream &p_stream, const t &p_t) const {
-    p_stream << p_t;
+    if constexpr (is_tuple<t>::value) {
+      p_stream << to_str(p_t);
+    } else {
+      p_stream << p_t;
+    }
   }
 
   inline void format(std::ostringstream &p_stream, const double &p_t) const {
@@ -257,29 +331,9 @@ private:
     p_stream << (p_t ? "true" : "false");
   }
 
-  inline uint64_t microseconds() const {
-    return static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch())
-            .count());
-  }
-
-  inline uint64_t milliseconds() const {
-    return static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch())
-            .count());
-  }
-
-  template <typename... t>
-  inline void format(std::ostringstream &p_stream,
-                     const std::tuple<t...> &p_t) {
-    p_stream << to_str(p_t);
-  }
-
   /// \brief copies a tuple fields into a string
   template <class TupType, size_t... I>
-  std::string to_str(const TupType &_tup, std::index_sequence<I...>) {
+  std::string to_str(const TupType &_tup, std::index_sequence<I...>) const {
     std::stringstream _stream;
     _stream << "(";
     (..., (_stream << (I == 0 ? "" : ", ") << std::get<I>(_tup)));
@@ -288,7 +342,7 @@ private:
   }
 
   /// \brief copies one tuple field into a string
-  template <class... T> std::string to_str(const std::tuple<T...> &_tup) {
+  template <class... T> std::string to_str(const std::tuple<T...> &_tup) const {
     return to_str(_tup, std::make_index_sequence<sizeof...(T)>());
   }
 
@@ -316,7 +370,7 @@ private:
 
   bool m_is_writer_set{false};
 
-  bool m_timestamp_as_number{false};
+  static bool m_timestamp_as_number;
 };
 
 } // namespace logger

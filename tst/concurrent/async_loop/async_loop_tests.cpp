@@ -20,6 +20,9 @@
 #include <logger/cerr.h>
 #include <tester/test.h>
 
+/// TODO test when provider and breaker functions take too long, causing
+/// timeout
+
 using namespace tenacitas;
 
 using namespace std::chrono_literals;
@@ -414,10 +417,60 @@ struct async_loop_007 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+    m_log.set_debug_level();
+
+    auto _callback = [this](std::thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      m_cond.notify_one();
+    };
+
+    int16_t _i{0};
+    auto _provider = [this, &_i]() -> std::tuple<int16_t, float> {
+      ++_i;
+      std::tuple<int16_t, float> _ret{_i, 2.5 * _i};
+      //      concurrent_debug(m_log, "providing ", _ret);
+      m_log.debug(__LINE__, "providing ", _ret);
+      return _ret;
+    };
+
+    auto _worker = [this](int16_t p_i, float p_f) -> void {
+      concurrent_debug(m_log, "working with = ", p_i, " and ", p_f);
+      if (p_i == 5) {
+        concurrent_debug(m_log, "causing timeout");
+        std::this_thread::sleep_for(1s);
+        return;
+      }
+      std::this_thread::sleep_for(250ms);
+    };
+
+    concurrent::async_loop_t<logger::cerr, int16_t, float> _loop(
+        500ms, _callback, _worker, _provider);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      m_cond.wait_for(_lock, 3s);
+      _loop.stop();
+    }
+
+    if (_i != 5) {
+      concurrent_error(m_log, "i should be 5, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 5, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_007"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_008 {
@@ -428,10 +481,54 @@ struct async_loop_008 {
     return _stream.str();
   }
 
-  bool operator()() { return true; }
+  bool operator()() {
+    m_log.set_debug_level();
+
+    auto _callback = [this](std::thread::id p_id) -> void {
+      concurrent_warn(m_log, "timeout for ", p_id);
+      m_cond.notify_one();
+    };
+
+    int16_t _i{0};
+
+    auto _worker = [this, &_i]() -> void {
+      concurrent_debug(m_log, "working with = ", _i);
+      if (_i == 5) {
+        concurrent_debug(m_log, "causing timeout");
+        std::this_thread::sleep_for(1s);
+        return;
+      }
+      ++_i;
+      std::this_thread::sleep_for(250ms);
+    };
+
+    concurrent::async_loop_t<logger::cerr, void> _loop(500ms, _callback,
+                                                       _worker);
+
+    _loop.set_log_debug_level();
+
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      m_cond.wait_for(_lock, 3s);
+      _loop.stop();
+    }
+
+    if (_i != 5) {
+      concurrent_error(m_log, "i should be 5, but it is ", _i);
+      return false;
+    }
+
+    concurrent_info(m_log, "i is 5, as expected");
+
+    return true;
+  }
 
 private:
   logger::cerr m_log{"async_loop_008"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 int main(int argc, char **argv) {

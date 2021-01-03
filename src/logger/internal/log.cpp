@@ -2,6 +2,8 @@
 namespace tenacitas {
 namespace logger {
 
+bool log::m_timestamp_as_number{false};
+
 bool log::can_log(level p_level) const {
   if (m_level == level::no_log) {
     return false;
@@ -17,7 +19,7 @@ std::string log::now() const {
   using namespace std;
   using namespace chrono;
 
-  const auto _microsecs = microseconds();
+  const auto _microsecs = calendar::epoch::microsecs();
   const auto _duration = std::chrono::microseconds(_microsecs);
   const time_point<system_clock> _time_point(_duration);
   const time_t _time_t = system_clock::to_time_t(_time_point);

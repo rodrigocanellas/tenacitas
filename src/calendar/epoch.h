@@ -44,7 +44,6 @@ struct epoch {
   }
 };
 
-
 } // namespace calendar
 } // namespace tenacitas
 

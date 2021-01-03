@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 
 //#include <concurrent/sleeping_loop.h>
 #include <logger/cout.h>
@@ -45,6 +46,27 @@ struct cout_log_how_to {
   }
 
   static std::string desc() { return "Simple 'cout' log usage"; }
+
+private:
+  logger::cout m_log{"cout_log_how_to"};
+};
+
+struct cout_log_print_tuple {
+  static std::string desc() { return "Prints a tuple"; }
+
+  bool operator()() {
+    try {
+      logger::cout::set_timestamp_as_number();
+      std::tuple<int16_t, float> _tuple{-3, 3.14};
+      m_log.set_debug_level();
+      m_log.debug(__LINE__, "how are you doing? ", _tuple);
+      return true;
+    } catch (std::exception &_ex) {
+      std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"
+                << std::endl;
+    }
+    return false;
+  }
 
 private:
   logger::cout m_log{"cout_log_how_to"};
@@ -178,6 +200,7 @@ int main(int argc, char **argv) {
   tester::test _tester(argc, argv);
   run_test(_tester, cout_log_creation);
   run_test(_tester, cout_log_how_to);
+  run_test(_tester, cout_log_print_tuple);
   //  run_test(_tester, cout_log_single);
   //  run_test(_tester, cout_log_multi);
 }
