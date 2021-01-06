@@ -1,7 +1,8 @@
 SUBDIRS = \
     dep \
     executer \
-    async_loop
+    async_loop \
+    sleeping_loop
 
 
 #    \
@@ -9,7 +10,7 @@ SUBDIRS = \
 #    \
 #    circular_fixed_size_queue \
 #    circular_unlimited_size_queue \
-#    sleeping_loop \
+
 #    worker \
 #    dispatcher
 

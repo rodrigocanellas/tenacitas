@@ -36,9 +36,9 @@ namespace concurrent {
 template <typename t_log> struct executer_base_t {
 
   virtual ~executer_base_t() {
-    concurrent_debug(m_log, this, " - entering destructor");
+    concurrent_debug(m_log, "entering destructor");
     stop();
-    concurrent_debug(m_log, this, " - leaving destructor");
+    concurrent_debug(m_log, "leaving destructor");
   }
 
 protected:
@@ -47,7 +47,7 @@ protected:
                   timeout_callback p_timeout_callback)
       : m_function(p_worker), m_timeout(to_timeout(p_timeout)),
         m_timeout_callback(p_timeout_callback) {
-    concurrent_debug(m_log, this, " - calling start from constructor");
+    concurrent_debug(m_log, "calling start from constructor");
     start();
   }
 
@@ -55,14 +55,14 @@ protected:
   /// asynchronously
   void start() {
     if (m_stopped) {
-      concurrent_debug(m_log, this, " - starting");
+      concurrent_debug(m_log, "starting");
       m_stopped = false;
-      concurrent_debug(m_log, this, " - about to push a new 'loop'");
+      concurrent_debug(m_log, "about to push a new 'loop'");
       m_loops.push_front({this});
 
       m_loop = m_loops.begin();
       m_loop->start();
-      concurrent_debug(m_log, this, " - new 'loop' pushed, ", &(*m_loop));
+      concurrent_debug(m_log, "new 'loop' pushed, ", &(*m_loop));
       std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
   }
@@ -71,15 +71,15 @@ protected:
   /// of the function asynchronously
   void stop() {
     if (!m_stopped) {
-      concurrent_debug(this->m_log, this, " - m_stopped = true");
+      concurrent_debug(this->m_log, "m_stopped = true");
       m_stopped = true;
-      concurrent_debug(this->m_log, this, " - m_cond_exec.notify_one()");
+      concurrent_debug(this->m_log, "m_cond_exec.notify_one()");
       m_cond_exec.notify_all();
-      concurrent_debug(this->m_log, this, " - m_cond_wait.notify_one()");
+      concurrent_debug(this->m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
     } else {
-      concurrent_debug(this->m_log, this,
-                       " - not stopping because it was already stopped");
+      concurrent_debug(this->m_log,
+                       "not stopping because it was already stopped");
     }
   }
 
@@ -92,30 +92,29 @@ protected:
                 std::function<t_result()> p_not_ok,
                 std::function<void()> p_save_params) {
     std::lock_guard<std::mutex> _lock_function(m_mutex_function);
-    concurrent_debug(m_log, this, " - operator()()");
+    concurrent_debug(m_log, "operator()()");
 
     if (m_stopped) {
-      concurrent_error(m_log, this,
-                       " - executer is stopped; call 'start()' first");
+      concurrent_error(m_log, "executer is stopped; call 'start()' first");
       return p_not_ok();
     }
 
     p_save_params();
 
     if (m_stopped) {
-      concurrent_debug(m_log, this, " - stopped");
+      concurrent_debug(m_log, "stopped");
       return p_not_ok();
     }
 
-    concurrent_debug(m_log, this, " - notifying there is work to be done");
+    concurrent_debug(m_log, "notifying there is work to be done");
     m_cond_exec.notify_all();
 
-    concurrent_debug(m_log, this, " - waiting ", m_timeout.count(),
+    concurrent_debug(m_log, "waiting ", m_timeout.count(),
                      " microsecs for work");
     {
       std::unique_lock<std::mutex> _lock(m_mutex_wait);
       if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-        concurrent_warn(m_log, this, " - timeout!");
+        concurrent_warn(m_log, "timeout!");
         timeout_callback_thread(m_loop->id());
         m_loop->abandon();
         m_stopped = true;
@@ -125,13 +124,13 @@ protected:
       }
     }
 
-    concurrent_debug(m_log, this, " - work was done or 'executer' was stopped");
+    concurrent_debug(m_log, "work was done or 'executer' was stopped");
     if (m_stopped) {
-      concurrent_debug(m_log, this, " - stopped");
+      concurrent_debug(m_log, "stopped");
       return p_not_ok();
     }
 
-    concurrent_debug(m_log, this, " - function done");
+    concurrent_debug(m_log, "function done");
     return p_ok();
   }
 
@@ -141,11 +140,11 @@ private:
     loop() = default;
     loop(executer_base_t<t_log> *p_owner) : m_owner(p_owner) {
       //      m_log.set_debug();
-      concurrent_debug(m_log, this, " - m_owner = ", m_owner);
+      concurrent_debug(m_log, "m_owner = ", m_owner);
     }
     loop(const loop &) = delete;
     loop(loop &&p_loop) noexcept : m_owner(p_loop.m_owner) {
-      concurrent_debug(m_log, this, " - move constructor m_owner = ", m_owner);
+      concurrent_debug(m_log, "move constructor m_owner = ", m_owner);
     }
 
     loop &operator=(const loop &) = delete;
@@ -154,25 +153,24 @@ private:
     inline std::thread::id id() const { return m_thread.get_id(); }
 
     inline ~loop() {
-      concurrent_debug(m_log, this,
-                       " - destructor before, m_owner = ", m_owner);
+      concurrent_debug(m_log, "destructor before, m_owner = ", m_owner);
       if (m_owner == nullptr) {
-        concurrent_debug(m_log, this, " - m_owner is null, leaving destructor");
+        concurrent_debug(m_log, "m_owner is null, leaving destructor");
         return;
       }
 
       if (m_thread.joinable()) {
-        concurrent_debug(m_log, this, " - joining");
+        concurrent_debug(m_log, "joining");
         m_owner->m_cond_exec.notify_one();
         m_thread.join();
       }
       m_owner = nullptr;
-      concurrent_debug(m_log, this, " - destructor after, m_owner = ", m_owner);
+      concurrent_debug(m_log, "destructor after, m_owner = ", m_owner);
     }
 
     inline void abandon() {
       m_thread.detach();
-      concurrent_debug(m_log, this, " - abandoning, m_owner = ", m_owner);
+      concurrent_debug(m_log, "abandoning, m_owner = ", m_owner);
       m_owner = nullptr;
     }
 
@@ -184,46 +182,46 @@ private:
       while (true) {
 
         if (!m_owner) {
-          concurrent_debug(m_log, this, " - owner is null");
+          concurrent_debug(m_log, "owner is null");
           break;
         }
 
         if ((m_owner) && (m_owner->m_stopped)) {
-          concurrent_debug(m_log, this, " - stopped ");
+          concurrent_debug(m_log, "stopped ");
           break;
         }
 
         if (m_owner) {
           std::unique_lock<std::mutex> _lock(m_owner->m_mutex_exec);
           if (m_owner) {
-            concurrent_debug(m_log, this, " - waiting for work");
+            concurrent_debug(m_log, "waiting for work");
             m_owner->m_cond_exec.wait(_lock);
-            concurrent_debug(m_log, this, " - not waiting for work anymore");
+            concurrent_debug(m_log, "not waiting for work anymore");
           }
         }
 
         if ((m_owner) && (m_owner->m_stopped)) {
-          concurrent_debug(m_log, this, " - stopped");
+          concurrent_debug(m_log, "stopped");
           break;
         }
 
         if (m_owner) {
-          concurrent_debug(m_log, this, " - executing");
+          concurrent_debug(m_log, "executing");
           m_owner->m_function();
         }
 
         if ((m_owner) && (m_owner->m_stopped)) {
-          concurrent_debug(m_log, this, " - stopped");
+          concurrent_debug(m_log, "stopped");
           break;
         }
 
         if (m_owner) {
-          concurrent_debug(m_log, this, " - notifying");
+          concurrent_debug(m_log, "notifying");
           m_owner->m_cond_wait.notify_one();
         }
       }
 
-      concurrent_debug(m_log, this, " - leaving the loop");
+      concurrent_debug(m_log, "leaving the loop");
     }
 
   private:
@@ -231,7 +229,7 @@ private:
 
     std::thread m_thread;
 
-    t_log m_log{"loop"};
+    t_log m_log{"concurrent::executer::loop"};
   };
 
 private:
@@ -251,7 +249,7 @@ private:
   timeout_callback m_timeout_callback;
 
   /// \brief Logger object
-  t_log m_log{"executer"};
+  t_log m_log{"concurrent::executer"};
 
   /// \brief The loop initiates stopped
   bool m_stopped{true};

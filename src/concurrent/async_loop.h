@@ -40,9 +40,9 @@ namespace concurrent {
 template <typename t_log> struct async_loop_base_t {
 
   async_loop_base_t(const async_loop_base_t &) = delete;
-  async_loop_base_t(async_loop_base_t &&) = delete;
+  async_loop_base_t(async_loop_base_t &&p_async_loop) = delete;
   async_loop_base_t &operator=(const async_loop_base_t &) = delete;
-  async_loop_base_t &operator=(async_loop_base_t &&) = delete;
+  async_loop_base_t &operator=(async_loop_base_t &&p_async_loop) = delete;
 
   virtual ~async_loop_base_t() { stop(); }
 
@@ -62,6 +62,7 @@ template <typename t_log> struct async_loop_base_t {
     m_thread.join();
   }
 
+  inline bool is_stopped() const { return m_stopped; }
   inline void set_log_debug_level() { m_log.set_debug_level(); }
   inline void set_log_info_level() { m_log.set_info_level(); }
   inline void set_log_warn_level() { m_log.set_warn_level(); }
@@ -81,7 +82,7 @@ protected:
 
   concurrent::thread m_thread;
 
-  t_log m_log{"async_loop"};
+  t_log m_log{"concurrent::async_loop"};
 };
 
 /// #### 1 ####
@@ -110,6 +111,8 @@ struct async_loop_t : public async_loop_base_t<t_log> {
           concurrent_warn(this->m_log, "thread ", p_id,
                           " for provider has timed out");
         }) {}
+
+  inline worker get_worker() const { return m_worker; }
 
 protected:
   void loop() override {
@@ -168,6 +171,8 @@ struct async_loop_t<t_log, void> : public async_loop_base_t<t_log> {
                worker p_worker)
       : async_loop_base_t<t_log>(),
         m_worker(p_worker, p_timeout, p_timeout_callback) {}
+
+  inline worker get_worker() const { return m_worker; }
 
 protected:
   void loop() override {

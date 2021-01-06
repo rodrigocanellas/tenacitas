@@ -1,6 +1,5 @@
 
-QMAKE_CXXFLAGS += -std=c++11 -Werror
-QMAKE_LFLAGS+=-fPIC -Wl,-rpath,$$libs_dir
+QMAKE_CXXFLAGS += -DTENACITAS_LOG
 
 base_dir=$$PWD/../..
 code_src_dir=$$base_dir/src
