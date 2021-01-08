@@ -43,9 +43,9 @@ template <typename t_log> struct executer_base_t {
 
 protected:
   template <typename t_time>
-  executer_base_t(std::function<void()> p_worker, t_time p_timeout,
+  executer_base_t(std::function<void()> p_function, t_time p_timeout,
                   timeout_callback p_timeout_callback)
-      : m_function(p_worker), m_timeout(to_timeout(p_timeout)),
+      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
         m_timeout_callback(p_timeout_callback) {
     concurrent_debug(m_log, "calling start from constructor");
     start();

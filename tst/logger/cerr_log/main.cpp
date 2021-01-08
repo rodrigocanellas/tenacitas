@@ -2,9 +2,7 @@
 #include <sstream>
 #include <string>
 
-//#include <concurrent/sleeping_loop.h>
-#include <logger/cerr.h>
-#include <tester/test.h>
+#include <tenacitas/tenacitas.h>
 
 using namespace tenacitas;
 

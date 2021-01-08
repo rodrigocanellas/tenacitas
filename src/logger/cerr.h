@@ -16,7 +16,7 @@ namespace tenacitas {
 /// \brief namespace of the project
 namespace logger {
 
-/// \brief The log struct logs message to \p std::cout
+/// \brief The log struct logs message to \p std::cerr
 struct cerr : public log {
   inline explicit cerr(std::string &&p_class)
       : log(std::move(p_class),

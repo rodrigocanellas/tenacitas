@@ -19,7 +19,7 @@ std::string log::now() const {
   using namespace std;
   using namespace chrono;
 
-  const auto _microsecs = calendar::epoch::microsecs();
+  const auto _microsecs = calendar::now::microsecs();
   const auto _duration = std::chrono::microseconds(_microsecs);
   const time_point<system_clock> _time_point(_duration);
   const time_t _time_t = system_clock::to_time_t(_time_point);

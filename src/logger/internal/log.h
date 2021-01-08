@@ -276,7 +276,7 @@ private:
       std::ostringstream _stream;
       _stream << p_level << m_separator
               << (m_timestamp_as_number
-                      ? std::to_string(calendar::epoch::microsecs())
+                      ? std::to_string(calendar::now::microsecs())
                       : now())
               << m_separator << std::this_thread::get_id() << m_separator
               << m_class << m_separator << p_line;

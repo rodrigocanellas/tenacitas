@@ -7,7 +7,7 @@
 namespace tenacitas {
 namespace calendar {
 
-struct epoch {
+struct now {
   inline static uint64_t microsecs() {
     return static_cast<uint64_t>(
         std::chrono::duration_cast<std::chrono::microseconds>(
