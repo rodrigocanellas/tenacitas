@@ -138,13 +138,14 @@ inline std::string format_000(int8_t p_num, char p_fill = '0',
 namespace program {
 
 /// \brief Class to parse program options
-struct options {
+template <bool use = true> struct options {
   /// \brief name of an option
   typedef std::string name;
 
   /// \brief value of an option
   typedef std::string value;
 
+  // TODO update program::options example
   /// \brief parse parses the options passed to a program
   /// \param p_argc number of options
   /// \param p_argv vector of strings with the options
@@ -172,9 +173,8 @@ struct options {
   ///#include <utility>
   ///#include <vector>
   ///
-  ///#include <program/options.h>
+  ///#include <tenacitas/tenacitas.h>
   ///
-  ///  using namespace std;
   ///
   ///  int main() {
   ///    try {
@@ -420,10 +420,10 @@ private:
 namespace calendar {
 
 /// \brief functions that return 'now' in different time units
-struct now {
+template <bool use = true> struct now {
 
   /// \brief now in microseconds
-  template <typename t_int = uint64_t> inline static t_int microsecs() {
+  template <typename t_int = uint64_t> inline static t_int microsecs_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -435,7 +435,7 @@ struct now {
     using namespace std;
     using namespace chrono;
 
-    const auto _microsecs = microsecs();
+    const auto _microsecs = microsecs_num();
     const time_t _time_t = static_cast<time_t>(_microsecs / 1000000);
 
     const auto _remainder = _microsecs % 1000000;
@@ -446,7 +446,7 @@ struct now {
   }
 
   /// \brief now in milliseconds
-  template <typename t_int = uint64_t> inline static t_int millisecs() {
+  template <typename t_int = uint64_t> inline static t_int millisecs_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -459,7 +459,7 @@ struct now {
     using namespace std;
     using namespace chrono;
 
-    const auto _microsecs = millisecs();
+    const auto _microsecs = millisecs_num();
     const time_t _time_t = static_cast<time_t>(_microsecs / 1000);
 
     const auto _remainder = _microsecs % 1000;
@@ -470,7 +470,7 @@ struct now {
   }
 
   /// \brief now in seconds
-  template <typename t_int = uint64_t> inline static t_int secs() {
+  template <typename t_int = uint64_t> inline static t_int secs_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -483,7 +483,7 @@ struct now {
     using namespace std;
     using namespace chrono;
 
-    const time_t _time_t = secs<time_t>();
+    const time_t _time_t = secs_num<time_t>();
 
     stringstream _stream;
     _stream << put_time(std::localtime(&_time_t), "%Y-%m-%d %H:%M:%S");
@@ -491,7 +491,8 @@ struct now {
   }
 
   /// \brief now in minutes
-  template <typename t_int = uint64_t> inline static t_int minutes() {
+  // TODO test minutes_num
+  template <typename t_int = uint64_t> inline static t_int minutes_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::minutes>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -499,7 +500,8 @@ struct now {
   }
 
   /// \brief now in hours
-  template <typename t_int = uint64_t> inline static t_int hours() {
+  // TODO test hours_num
+  template <typename t_int = uint64_t> inline static t_int hours_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::hours>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -507,7 +509,8 @@ struct now {
   }
 
   /// \brief now in days
-  template <typename t_int = uint64_t> inline static t_int days() {
+  // TODO test days_num
+  template <typename t_int = uint64_t> inline static t_int days_num() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::hours>(
             std::chrono::system_clock::now().time_since_epoch())
@@ -516,13 +519,15 @@ struct now {
   }
 
   /// \brief now in months
-  template <typename t_int = uint64_t> inline static t_int months() {
-    return static_cast<t_int>(days() / 30);
+  // TODO test months_num
+  template <typename t_int = uint64_t> inline static t_int months_num() {
+    return static_cast<t_int>(days_num() / 30);
   }
 
   /// \brief now in years
-  template <typename t_int = uint64_t> inline static t_int years() {
-    return static_cast<t_int>(months() / 12);
+  // TODO test years_num
+  template <typename t_int = uint64_t> inline static t_int years_num() {
+    return static_cast<t_int>(months_num() / 12);
   }
 };
 } // namespace calendar
@@ -594,7 +599,7 @@ namespace tester {
 ///}
 ///
 /// \endcode
-struct test {
+template <bool use = true> struct test {
 
   /// \brief test constructor
   ///
@@ -625,7 +630,7 @@ struct test {
         m_print_desc = true;
       } else {
 
-        std::pair<bool, std::list<program::options::value>> _tests_to_exec =
+        std::pair<bool, std::list<program::options<>::value>> _tests_to_exec =
             _options.get_set_param("exec");
         if (_tests_to_exec.first) {
           m_execute_tests = true;
@@ -810,7 +815,7 @@ bool can_log(level p_level) { return p_level >= global_level; }
 ///
 /// \tparam t_specific_logger is the class that will implement a concrete log
 ///
-class log {
+template <bool use = true> class log {
 public:
   /// \brief function responsible for actually writing the log message to a
   /// writer
@@ -871,13 +876,6 @@ public:
   ///
   /// \return the value of the separator
   inline char get_separator() const { return m_separator; }
-
-  //  inline void set_writer(writer &&p_writer) {
-  //    if (!m_is_writer_set) {
-  //      m_writer = std::move(p_writer);
-  //      m_is_writer_set = true;
-  //    }
-  //  }
 
   /// \brief logs message with \p debug severity
   ///
@@ -963,8 +961,8 @@ private:
       std::ostringstream _stream;
       _stream << p_level << m_separator
               << (m_timestamp_as_number
-                      ? std::to_string(calendar::now::microsecs())
-                      : calendar::now::microsecs_str())
+                      ? std::to_string(calendar::now<>::microsecs_num())
+                      : calendar::now<>::microsecs_str())
               << m_separator << std::this_thread::get_id() << m_separator
               << m_class << m_separator << p_line;
       format(_stream, m_separator, p_params...);
@@ -1066,16 +1064,17 @@ private:
   static bool m_timestamp_as_number;
 };
 
-bool log::m_timestamp_as_number{false};
+template <bool use> bool log<use>::m_timestamp_as_number{false};
 
 /// \brief The log struct logs message to \p std::cerr
-struct cerr : public log {
+template <bool use = true> struct cerr : public log<use> {
   inline explicit cerr(std::string &&p_class)
-      : log(std::move(p_class),
-            [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
+      : log<use>(std::move(p_class),
+                 [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 
   inline explicit cerr(const char *p_class)
-      : log(p_class, [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
+      : log<use>(p_class,
+                 [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 };
 } // namespace logger
 

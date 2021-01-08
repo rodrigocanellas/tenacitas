@@ -24,7 +24,7 @@ public:
   static std::string desc() { return "'cerr' log creation"; }
 
 private:
-  logger::cerr m_log{"cerr_log_creation"};
+  logger::cerr<> m_log{"cerr_log_creation"};
 };
 
 struct cerr_log_how_to {
@@ -49,7 +49,7 @@ struct cerr_log_how_to {
   static std::string desc() { return "Simple 'cerr' log usage"; }
 
 private:
-  logger::cerr m_log{"cerr_log_how_to"};
+  logger::cerr<> m_log{"cerr_log_how_to"};
 };
 
 // struct cerr_log_single {
@@ -167,7 +167,7 @@ private:
 
 int main(int argc, char **argv) {
   logger::set_debug_level();
-  tester::test _tester(argc, argv);
+  tester::test<> _tester(argc, argv);
   run_test(_tester, cerr_log_how_to);
   run_test(_tester, cerr_log_creation);
   //  run_test(_tester, cerr_log_single);
