@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
   program \
-  logger
+  logger \
+  concurrent

@@ -1,5 +1,4 @@
-#include <logger/clog.h>
-#include <tester/test.h>
+#include <tenacitas/tenacitas.h>
 
 using namespace tenacitas;
 
@@ -31,7 +30,7 @@ struct clog_how_to {
   static std::string desc() { return "Simple 'clog' log usage"; }
 
 private:
-  logger::clog m_log{"clog_how_to"};
+  logger::clog<> m_log{"clog_how_to"};
 };
 
 int main(int argc, char **argv) {

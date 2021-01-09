@@ -4,8 +4,7 @@
 #include <tuple>
 
 //#include <concurrent/sleeping_loop.h>
-#include <logger/cout.h>
-#include <tester/test.h>
+#include <tenacitas/tenacitas.h>
 
 using namespace tenacitas;
 
@@ -25,7 +24,7 @@ struct cout_log_creation {
   static std::string desc() { return "'cout' log creation"; }
 
 private:
-  logger::cout m_log{"cout_log_creation"};
+  logger::cout<> m_log{"cout_log_creation"};
 };
 
 struct cout_log_how_to {
@@ -48,7 +47,7 @@ struct cout_log_how_to {
   static std::string desc() { return "Simple 'cout' log usage"; }
 
 private:
-  logger::cout m_log{"cout_log_how_to"};
+  logger::cout<> m_log{"cout_log_how_to"};
 };
 
 struct cout_log_print_tuple {
@@ -56,7 +55,7 @@ struct cout_log_print_tuple {
 
   bool operator()() {
     try {
-      logger::cout::set_timestamp_as_number();
+      logger::cout<>::set_timestamp_as_number();
       std::tuple<int16_t, float> _tuple{-3, 3.14};
       m_log.set_debug_level();
       m_log.debug(__LINE__, "how are you doing? ", _tuple);
@@ -69,7 +68,7 @@ struct cout_log_print_tuple {
   }
 
 private:
-  logger::cout m_log{"cout_log_how_to"};
+  logger::cout<> m_log{"cout_log_how_to"};
 };
 
 // struct cout_log_single {
@@ -197,7 +196,7 @@ private:
 
 int main(int argc, char **argv) {
   logger::set_debug_level();
-  tester::test _tester(argc, argv);
+  tester::test<> _tester(argc, argv);
   run_test(_tester, cout_log_creation);
   run_test(_tester, cout_log_how_to);
   run_test(_tester, cout_log_print_tuple);

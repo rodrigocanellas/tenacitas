@@ -1,12 +1,14 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  cerr_log
+  cerr_log \
+  cout_log \
+  clog_log
 #  \
 
-#clog_log
 
-#  cout_log  \
+
+
 #  \
 
 
