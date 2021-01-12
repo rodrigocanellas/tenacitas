@@ -4,18 +4,26 @@
 #include <iostream>
 #include <optional>
 
-#include <tenacitas/tenacitas.h>
+#include <tenacitas/concurrent.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/tester.h>
 
 using namespace tenacitas;
 
 using namespace std::chrono_literals;
 
-void timeout_callback(std::thread::id p_id) {
-  logger::cerr<> _log{"timeout_callback"};
-  WAR(_log, "timeout for ", p_id);
-}
+struct timeout_callback {
+  inline void operator()(std::thread::id p_id) {
+    WAR(m_log, "timeout for ", p_id);
+  }
 
-struct test060 {
+private:
+  logger::cerr<> m_log{"timeout_callback"};
+};
+
+timeout_callback _timeout_callback;
+
+struct test000 {
 
   static std::string desc() {
     return "executer as executer_t<logger, double, int, float>, no timeout";
@@ -33,7 +41,7 @@ struct test060 {
     };
 
     DEB(m_log, "about to create");
-    executer _executer(function, 1s, timeout_callback);
+    executer _executer(function, 1s, _timeout_callback);
     DEB(m_log, "created");
 
     int _i = 2;
@@ -60,10 +68,51 @@ struct test060 {
   }
 
 private:
-  logger::cerr<> m_log{"test060"};
+  logger::cerr<> m_log{"test000"};
 };
 
-struct test070 {
+struct test100 {
+
+  static std::string desc() {
+    return "executer as executer_t<logger, double, int> with timeout";
+  }
+
+  bool operator()() {
+
+    m_log.set_debug_level();
+
+    typedef concurrent::executer_t<logger::cerr<>, double, int> executer;
+
+    std::chrono::seconds _timeout(1);
+
+    auto _worker = [this](int p_i) -> double {
+      std::this_thread::sleep_for(2s);
+      DEB(m_log, "i = ", p_i);
+      return p_i * 2.5;
+    };
+
+    executer _executer(_worker, _timeout, _timeout_callback);
+
+    int _i = 2;
+
+    std::optional<double> _maybe = _executer(_i);
+
+    if (_maybe) {
+      ERR(m_log, "returned, but it should have not");
+      return false;
+    }
+
+    DEB(m_log, "sleeping");
+    std::this_thread::sleep_for(5s);
+    DEB(m_log, "waking");
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"test100"};
+};
+
+struct test101 {
 
   static std::string desc() {
     return "executer as executer_t<logger, double, int> with timeout";
@@ -83,7 +132,7 @@ struct test070 {
       return p_i * 2.5;
     };
 
-    executer _executer(function, _timeout, timeout_callback);
+    executer _executer(function, _timeout, timeout_callback());
 
     int _i = 2;
 
@@ -101,10 +150,10 @@ struct test070 {
   }
 
 private:
-  logger::cerr<> m_log{"test070"};
+  logger::cerr<> m_log{"test101"};
 };
 
-struct test071 {
+struct test200 {
 
   static std::string desc() {
     return "executer as executer_t<logger, double, int>, with timeout, and "
@@ -126,7 +175,7 @@ struct test071 {
       return p_i * 2.5;
     };
 
-    executer _executer(_function, _timeout, timeout_callback);
+    executer _executer(_function, _timeout, timeout_callback());
 
     int _i = 2;
 
@@ -167,10 +216,10 @@ struct test071 {
   }
 
 private:
-  logger::cerr<> m_log{"test071"};
+  logger::cerr<> m_log{"test200"};
 };
 
-struct test072 {
+struct test300 {
 
   static std::string desc() {
     return "executer as executer_t<logger, double, int>, with timeout, and "
@@ -193,7 +242,7 @@ struct test072 {
       return p_i * 2.5;
     };
 
-    executer _executer(_function, _timeout, timeout_callback);
+    executer _executer(_function, _timeout, timeout_callback());
 
     int _i = 2;
 
@@ -235,17 +284,18 @@ struct test072 {
   }
 
 private:
-  logger::cerr<> m_log{"test072"};
+  logger::cerr<> m_log{"test300"};
 };
 
 int main(int argc, char **argv) {
 
-  //  logger::set_debug_level();
+  logger::set_debug_level();
   tester::test _test(argc, argv);
-  run_test(_test, test060);
-  run_test(_test, test070);
-  run_test(_test, test071);
-  run_test(_test, test072);
+  run_test(_test, test000);
+  run_test(_test, test100);
+  run_test(_test, test101);
+  run_test(_test, test200);
+  run_test(_test, test300);
 
   return 0;
 }

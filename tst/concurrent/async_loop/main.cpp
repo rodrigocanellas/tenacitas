@@ -14,7 +14,9 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas/tenacitas.h>
+#include <tenacitas/concurrent.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/tester.h>
 
 /// TODO test when provider and breaker functions take too long, causing
 /// timeout
@@ -23,10 +25,13 @@ using namespace tenacitas;
 
 using namespace std::chrono_literals;
 
-concurrent::timeout_callback _timeout_callback = [](std::thread::id p_id) {
-  logger::cerr<> _log{"timeout_callback "};
-  _log.set_debug_level();
-  WAR(_log, "timeout for ", p_id);
+struct timeout_callback {
+  inline void operator()(std::thread::id p_id) {
+    WAR(m_log, "timeout for ", p_id);
+  }
+
+private:
+  logger::cerr<> m_log{"timeout_callback"};
 };
 
 struct async_loop_000 {
@@ -53,8 +58,9 @@ struct async_loop_000 {
       std::this_thread::sleep_for(250ms);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t> _loop(
-        500ms, _timeout_callback, _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+                             int16_t>
+        _loop(500ms, timeout_callback(), _worker, _provider);
 
     _loop.set_log_debug();
 
@@ -109,8 +115,9 @@ struct async_loop_001 {
       return false;
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t> _loop(
-        500ms, _timeout_callback, _breaker, _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes,
+                             int16_t>
+        _loop(500ms, timeout_callback(), _breaker, _worker, _provider);
 
     _loop.set_log_debug();
 
@@ -160,8 +167,9 @@ struct async_loop_002 {
       std::this_thread::sleep_for(250ms);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t, float> _loop(
-        500ms, _timeout_callback, _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+                             int16_t, float>
+        _loop(500ms, timeout_callback(), _worker, _provider);
 
     _loop.set_log_debug();
 
@@ -219,8 +227,9 @@ struct async_loop_003 {
       return false;
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t, float> _loop(
-        500ms, _timeout_callback, _breaker, _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes,
+                             int16_t, float>
+        _loop(500ms, timeout_callback(), _breaker, _worker, _provider);
 
     _loop.set_log_debug();
 
@@ -264,8 +273,8 @@ struct async_loop_004 {
       std::this_thread::sleep_for(250ms);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, void> _loop(
-        500ms, _timeout_callback, _worker);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no, void>
+        _loop(500ms, timeout_callback(), _worker);
 
     _loop.set_log_debug();
 
@@ -315,8 +324,8 @@ struct async_loop_005 {
       return false;
     };
 
-    concurrent::async_loop_t<logger::cerr<>, void> _loop(
-        500ms, _timeout_callback, _breaker, _worker);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes, void>
+        _loop(500ms, timeout_callback(), _breaker, _worker);
 
     _loop.set_log_debug();
 
@@ -344,11 +353,19 @@ struct async_loop_006 {
 
   static std::string desc() {
     std::stringstream _stream;
-    _stream << "timeout, one param";
+    _stream << "timeout, one param, no breaker";
     return _stream.str();
   }
 
   bool operator()() {
+
+    const int16_t _max{9};
+    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_normal_sleep{250ms};
+    const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
+                                                        2};
+    const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
+                                          3000};
 
     m_log.set_debug_level();
 
@@ -358,41 +375,43 @@ struct async_loop_006 {
     };
 
     int16_t _i{0};
-    auto _provider = [this, &_i]() -> int16_t {
+    auto _provider = [this, &_i]() -> std::tuple<int16_t> {
       ++_i;
       DEB(m_log, "providing ", _i);
-      return _i;
+      return {_i};
     };
 
-    auto _worker = [this](int16_t p_i) -> void {
+    auto _worker = [this, _work_normal_sleep,
+                    _work_timeout_sleep](int16_t p_i) -> void {
       DEB(m_log, "working with = ", p_i);
-      if (p_i == 5) {
+      if (p_i == _max) {
         DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(_work_timeout_sleep);
         return;
       }
-      std::this_thread::sleep_for(250ms);
+      std::this_thread::sleep_for(_work_normal_sleep);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t> _loop(500ms, _callback,
-                                                            _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+                             int16_t>
+        _loop(_work_timeout, _callback, _worker, _provider);
 
-    _loop.set_log_debug();
+    //    _loop.set_log_debug();
 
     _loop.start();
 
     {
       std::unique_lock<std::mutex> _lock{m_mutex};
-      m_cond.wait_for(_lock, 3s);
+      m_cond.wait_for(_lock, _wait);
       _loop.stop();
     }
 
-    if (_i != 5) {
-      ERR(m_log, "i should be 5, but it is ", _i);
+    if (_i != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _i);
       return false;
     }
 
-    INF(m_log, "i is 5, as expected");
+    INF(m_log, "i is ", _max, " as expected");
 
     return true;
   }
@@ -403,15 +422,97 @@ private:
   std::mutex m_mutex;
 };
 
-struct async_loop_007 {
+struct async_loop_006a {
 
   static std::string desc() {
     std::stringstream _stream;
-    _stream << "timeout, many params";
+    _stream << "timeout, one param, no breaker";
     return _stream.str();
   }
 
   bool operator()() {
+
+    const int16_t _max{9};
+    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_normal_sleep{250ms};
+    const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
+                                                        2};
+    const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
+                                          3000};
+
+    m_log.set_debug_level();
+
+    auto _callback = [this](std::thread::id p_id) -> void {
+      WAR(m_log, "timeout for ", p_id);
+      m_cond.notify_one();
+    };
+
+    int16_t _i{0};
+    auto _provider = [this, &_i]() -> std::tuple<int16_t> {
+      ++_i;
+      DEB(m_log, "providing ", _i);
+      return {_i};
+    };
+
+    auto _worker = [this, _work_normal_sleep,
+                    _work_timeout_sleep](int16_t p_i) -> void {
+      DEB(m_log, "working with = ", p_i);
+      if (p_i == _max) {
+        DEB(m_log, "causing timeout");
+        std::this_thread::sleep_for(_work_timeout_sleep);
+        return;
+      }
+      std::this_thread::sleep_for(_work_normal_sleep);
+    };
+
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+                             int16_t>
+        _loop(_work_timeout, _callback, _worker, _provider);
+
+    //    _loop.set_log_debug();
+
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      m_cond.wait_for(_lock, _wait);
+      _loop.stop();
+    }
+
+    if (_i != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _i);
+      return false;
+    }
+
+    INF(m_log, "i is ", _max, " as expected");
+
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_006a"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
+struct async_loop_007 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "timeout, 2 params, no breaker";
+    return _stream.str();
+  }
+
+  bool operator()() {
+
+    const int16_t _max{6};
+    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_normal_sleep{250ms};
+    const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
+                                                        2};
+    const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
+                                          3000};
+
     m_log.set_debug_level();
 
     auto _callback = [this](std::thread::id p_id) -> void {
@@ -422,24 +523,25 @@ struct async_loop_007 {
     int16_t _i{0};
     auto _provider = [this, &_i]() -> std::tuple<int16_t, float> {
       ++_i;
-      std::tuple<int16_t, float> _ret{_i, 2.5 * _i};
-      //      DEB(m_log, "providing ", _ret);
-      m_log.debug(__LINE__, "providing ", _ret);
-      return _ret;
+      float _f(_i * 2.5);
+      DEB(m_log, "providing ", _i);
+      return {_i, _f};
     };
 
-    auto _worker = [this](int16_t p_i, float p_f) -> void {
-      DEB(m_log, "working with = ", p_i, " and ", p_f);
-      if (p_i == 5) {
+    auto _worker = [this, _work_normal_sleep,
+                    _work_timeout_sleep](int16_t p_i, float p_f) -> void {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
+      if (p_i == _max) {
         DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(_work_timeout_sleep);
         return;
       }
-      std::this_thread::sleep_for(250ms);
+      std::this_thread::sleep_for(_work_normal_sleep);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t, float> _loop(
-        500ms, _callback, _worker, _provider);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+                             int16_t, float>
+        _loop(_work_timeout, _callback, _worker, _provider);
 
     _loop.set_log_debug();
 
@@ -447,16 +549,16 @@ struct async_loop_007 {
 
     {
       std::unique_lock<std::mutex> _lock{m_mutex};
-      m_cond.wait_for(_lock, 3s);
+      m_cond.wait_for(_lock, _wait);
       _loop.stop();
     }
 
-    if (_i != 5) {
-      ERR(m_log, "i should be 5, but it is ", _i);
+    if (_i != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _i);
       return false;
     }
 
-    INF(m_log, "i is 5, as expected");
+    INF(m_log, "i is ", _max, " as expected");
 
     return true;
   }
@@ -471,11 +573,21 @@ struct async_loop_008 {
 
   static std::string desc() {
     std::stringstream _stream;
-    _stream << "timeout, no params";
+    _stream << "timeout, no params, no breaker";
     return _stream.str();
   }
 
   bool operator()() {
+    m_log.set_debug_level();
+
+    const int16_t _max{23};
+    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_normal_sleep{250ms};
+    const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
+                                                        2};
+    const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
+                                          3000};
+
     m_log.set_debug_level();
 
     auto _callback = [this](std::thread::id p_id) -> void {
@@ -485,19 +597,20 @@ struct async_loop_008 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i]() -> void {
+    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
+                    &_i]() -> void {
       DEB(m_log, "working with = ", _i);
-      if (_i == 5) {
+      if (_i == _max) {
         DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(1s);
+        std::this_thread::sleep_for(_work_timeout_sleep);
         return;
       }
       ++_i;
-      std::this_thread::sleep_for(250ms);
+      std::this_thread::sleep_for(_work_normal_sleep);
     };
 
-    concurrent::async_loop_t<logger::cerr<>, void> _loop(500ms, _callback,
-                                                         _worker);
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no, void>
+        _loop(_work_timeout, _callback, _worker);
 
     _loop.set_log_debug();
 
@@ -505,16 +618,16 @@ struct async_loop_008 {
 
     {
       std::unique_lock<std::mutex> _lock{m_mutex};
-      m_cond.wait_for(_lock, 3s);
+      m_cond.wait_for(_lock, _wait);
       _loop.stop();
     }
 
-    if (_i != 5) {
-      ERR(m_log, "i should be 5, but it is ", _i);
+    if (_i != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _i);
       return false;
     }
 
-    INF(m_log, "i is 5, as expected");
+    INF(m_log, "i is ", _max, " as expected");
 
     return true;
   }
@@ -526,7 +639,7 @@ private:
 };
 
 int main(int argc, char **argv) {
-  //  logger::set_debug_level();
+  logger::set_debug_level();
 
   tenacitas::tester::test _tester(argc, argv);
   run_test(_tester, async_loop_000);
@@ -536,6 +649,7 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_004);
   run_test(_tester, async_loop_005);
   run_test(_tester, async_loop_006);
+  run_test(_tester, async_loop_006a);
   run_test(_tester, async_loop_007);
   run_test(_tester, async_loop_008);
 }

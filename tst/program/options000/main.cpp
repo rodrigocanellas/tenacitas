@@ -20,7 +20,7 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas/tenacitas.h>
+#include <tenacitas/program.h>
 
 using namespace std;
 

@@ -1,4 +1,5 @@
-#include <tenacitas/tenacitas.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/tester.h>
 
 using namespace tenacitas;
 

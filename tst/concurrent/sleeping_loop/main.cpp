@@ -15,12 +15,14 @@
 #include <sstream>
 #include <thread>
 
-#include <tenacitas/tenacitas.h>
+#include <tenacitas/concurrent.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/tester.h>
 
 using namespace tenacitas;
 
-struct operation_timeout_callback {
-  operation_timeout_callback(logger::cerr<> &p_log) : m_log(p_log) {}
+struct timeout_callback {
+  timeout_callback(logger::cerr<> &p_log) : m_log(p_log) {}
   void operator()(std::thread::id p_id) { WAR(m_log, "TIMEOUT for ", p_id); }
 
 private:
