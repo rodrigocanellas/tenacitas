@@ -33,12 +33,12 @@ struct cerr_log_how_to {
 
     try {
 
-      m_log.debug(__LINE__, "hello! ", 309);
-      m_log.debug(__LINE__, "how are you doing? ", 3.14);
-      m_log.info(__LINE__, "fine!! ", 'W');
-      m_log.info(__LINE__, "and you?");
-      m_log.warn(__LINE__, "great! got a new job!! ", 6987.58f);
-      m_log.warn(__LINE__, "nice!! ", 10);
+      m_log.debug(this, __LINE__, "hello! ", 309);
+      m_log.debug(this, __LINE__, "how are you doing? ", 3.14);
+      m_log.info(this, __LINE__, "fine!! ", 'W');
+      m_log.info(this, __LINE__, "and you?");
+      m_log.warn(this, __LINE__, "great! got a new job!! ", 6987.58f);
+      m_log.warn(this, __LINE__, "nice!! ", 10);
       return true;
     } catch (std::exception &_ex) {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
@@ -61,14 +61,14 @@ private:
 //      sleeping_loop _loop1(
 //          std::chrono::milliseconds(1000),
 //          [this]() {
-//            m_log.debug(__LINE__, "================= work! ", time(nullptr));
-//            for (uint32_t _i = 0; _i < 5; ++_i) {
-//              m_log.debug(__LINE__, "ola! ", _i);
-//              m_log.debug(__LINE__, "como vai? ", _i);
-//              m_log.info(__LINE__, "vou bem!! ", _i);
-//              m_log.info(__LINE__, "e vc? ", _i);
-//              m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
-//              m_log.warn(__LINE__, "que bom! ", _i);
+//            m_log.debug(this, __LINE__, "================= work! ",
+//            time(nullptr)); for (uint32_t _i = 0; _i < 5; ++_i) {
+//              m_log.debug(this, __LINE__, "ola! ", _i);
+//              m_log.debug(this, __LINE__, "como vai? ", _i);
+//              m_log.info(this, __LINE__, "vou bem!! ", _i);
+//              m_log.info(this, __LINE__, "e vc? ", _i);
+//              m_log.warn(this, __LINE__, "ótimo! novo emprego! ", _i);
+//              m_log.warn(this, __LINE__, "que bom! ", _i);
 //            }
 //            return true;
 //          },
@@ -76,13 +76,14 @@ private:
 
 //      _loop1.start();
 
-//      m_log.debug(__LINE__, "---- sleeping");
+//      m_log.debug(this, __LINE__, "---- sleeping");
 //      std::this_thread::sleep_for(std::chrono::minutes(1));
-//      m_log.debug(__LINE__, "---- waking up");
+//      m_log.debug(this, __LINE__, "---- waking up");
 
 //      return true;
 //    } catch (std::exception &_ex) {
-//      m_log.fatal(__LINE__, "ERRO m_log.log_single: '", _ex.what(), "'");
+//      m_log.fatal(this, __LINE__, "ERRO m_log.log_single: '", _ex.what(),
+//      "'");
 //    }
 //    return false;
 //  }
@@ -103,12 +104,12 @@ private:
 //          std::chrono::milliseconds(1000),
 //          [this]() {
 //            for (uint32_t _i = 0; _i < 1000; ++_i) {
-//              m_log.debug(__LINE__, "ola! ", 33);
-//              m_log.debug(__LINE__, "como vai? ", _i);
-//              m_log.info(__LINE__, "vou bem!! ", _i);
-//              m_log.info(__LINE__, "e vc? ", _i);
-//              m_log.warn(__LINE__, "ótimo! novo emprego! ", _i);
-//              m_log.warn(__LINE__, "que bom! ", _i);
+//              m_log.debug(this, __LINE__, "ola! ", 33);
+//              m_log.debug(this, __LINE__, "como vai? ", _i);
+//              m_log.info(this, __LINE__, "vou bem!! ", _i);
+//              m_log.info(this, __LINE__, "e vc? ", _i);
+//              m_log.warn(this, __LINE__, "ótimo! novo emprego! ", _i);
+//              m_log.warn(this, __LINE__, "que bom! ", _i);
 //            }
 //            return true;
 //          },
@@ -118,12 +119,12 @@ private:
 //          std::chrono::milliseconds(500),
 //          [this]() {
 //            for (uint32_t _i = 0; _i < 1500; ++_i) {
-//              m_log.debug(__LINE__, "aaa! ", 33);
-//              m_log.debug(__LINE__, "bbb? ", _i);
-//              m_log.info(__LINE__, "ccc!! ", _i);
-//              m_log.info(__LINE__, "ddd ", _i);
-//              m_log.warn(__LINE__, "eee! ", _i);
-//              m_log.warn(__LINE__, "fff! ", _i);
+//              m_log.debug(this, __LINE__, "aaa! ", 33);
+//              m_log.debug(this, __LINE__, "bbb? ", _i);
+//              m_log.info(this, __LINE__, "ccc!! ", _i);
+//              m_log.info(this, __LINE__, "ddd ", _i);
+//              m_log.warn(this, __LINE__, "eee! ", _i);
+//              m_log.warn(this, __LINE__, "fff! ", _i);
 //            }
 //            return true;
 //          },
@@ -133,12 +134,12 @@ private:
 //          std::chrono::milliseconds(100),
 //          [this]() {
 //            for (uint32_t _i = 0; _i < 3000; ++_i) {
-//              m_log.debug(__LINE__, "abcdefghijklmnopqrstivwxyz! ", 33);
-//              m_log.debug(__LINE__, "abcdefghijklmnopqrstivwxyz? ", _i);
-//              m_log.info(__LINE__, "abcdefghijklmnopqrstivwxyz!! ", _i);
-//              m_log.info(__LINE__, "abcdefghijklmnopqrstivwxyz ", _i);
-//              m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
-//              m_log.warn(__LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
+//              m_log.debug(this, __LINE__, "abcdefghijklmnopqrstivwxyz! ", 33);
+//              m_log.debug(this, __LINE__, "abcdefghijklmnopqrstivwxyz? ", _i);
+//              m_log.info(this, __LINE__, "abcdefghijklmnopqrstivwxyz!! ", _i);
+//              m_log.info(this, __LINE__, "abcdefghijklmnopqrstivwxyz ", _i);
+//              m_log.warn(this, __LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
+//              m_log.warn(this, __LINE__, "abcdefghijklmnopqrstivwxyz! ", _i);
 //            }
 //            return true;
 //          },
@@ -148,9 +149,9 @@ private:
 //      _loop2.start();
 //      _loop3.start();
 
-//      m_log.debug(__LINE__, "---- sleeping");
+//      m_log.debug(this, __LINE__, "---- sleeping");
 //      std::this_thread::sleep_for(std::chrono::seconds(50));
-//      m_log.debug(__LINE__, "---- waking up");
+//      m_log.debug(this, __LINE__, "---- waking up");
 
 //      return true;
 //    } catch (std::exception &_ex) {

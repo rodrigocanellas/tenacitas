@@ -143,8 +143,9 @@ public:
   /// \details the log message will only be printed if the current log level
   /// is \p level::debug
   template <typename t_class, typename... t_params>
-  inline void debug(t_class * p_this, uint16_t p_line, const t_params &... p_params) {
-    write(level::debug, p_this, p_line , p_params...);
+  inline void debug(t_class *p_this, uint16_t p_line,
+                    const t_params &... p_params) {
+    write(level::debug, p_this, p_line, p_params...);
   }
 
   /// \brief logs message with \p info severity
@@ -158,7 +159,8 @@ public:
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::info
   template <typename t_class, typename... t_params>
-  inline void info(t_class *p_this, uint16_t p_line, const t_params &... p_params) {
+  inline void info(t_class *p_this, uint16_t p_line,
+                   const t_params &... p_params) {
     write(level::info, p_this, p_line, p_params...);
   }
 
@@ -173,7 +175,8 @@ public:
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::warn
   template <typename t_class, typename... t_params>
-  inline void warn(t_class *p_this, uint16_t p_line, const t_params &... p_params) {
+  inline void warn(t_class *p_this, uint16_t p_line,
+                   const t_params &... p_params) {
     write(level::warn, p_this, p_line, p_params...);
   }
 
@@ -187,7 +190,8 @@ public:
   ///
   /// \details the log message with this severity will always be printed
   template <typename t_class, typename... t_params>
-  inline void error(t_class * p_this, uint16_t p_line, const t_params &... p_params) {
+  inline void error(t_class *p_this, uint16_t p_line,
+                    const t_params &... p_params) {
     write(level::error, p_this, p_line, p_params...);
   }
 
@@ -201,7 +205,8 @@ public:
   ///
   /// \details the log message with this severity will always be printed
   template <typename t_class, typename... t_params>
-  inline void fatal(t_class *p_this, uint16_t p_line, const t_params &... p_params) {
+  inline void fatal(t_class *p_this, uint16_t p_line,
+                    const t_params &... p_params) {
     write(level::fatal, p_this, p_line, p_params...);
   }
 
@@ -224,7 +229,8 @@ private:
   ///
   /// \param p_params are the values to be logged
   template <typename t_class, typename... t_params>
-  void write(level p_level, t_class *p_this, uint16_t p_line, const t_params &... p_params) {
+  void write(level p_level, t_class *p_this, uint16_t p_line,
+             const t_params &... p_params) {
 
     if (can_log(p_level)) {
       std::ostringstream _stream;
@@ -232,10 +238,9 @@ private:
               << (m_timestamp_as_number
                       ? std::to_string(calendar::now<>::microsecs_num())
                       : calendar::now<>::microsecs_str())
-              << m_separator << std::this_thread::get_id()
-              << m_separator << number::format_000(p_this)
-              << m_separator << number::format_000(p_line)
-              << m_separator << m_class ;
+              << m_separator << std::this_thread::get_id() << m_separator
+              << p_this << m_separator << number::format_000(p_line)
+              << m_separator << m_class;
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);

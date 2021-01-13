@@ -123,9 +123,10 @@ protected:
   executer_base_t(std::function<void()> p_function, t_time p_timeout,
                   timeout_callback p_timeout_callback)
       : m_function(p_function), m_timeout(to_timeout(p_timeout)),
-        m_timeout_callback(p_timeout_callback) {
+        m_timeout_callback(p_timeout_callback), m_loop(this) {
     DEB(m_log, "calling start from constructor");
-    start();
+    m_loop_thread = std::thread([this]() -> void { m_loop(); });
+    std::this_thread::sleep_for(50ms);
   }
 
   /// \brief Stars the single thread that will execute the function
@@ -134,13 +135,9 @@ protected:
     if (m_stopped) {
       DEB(m_log, "starting");
       m_stopped = false;
-      DEB(m_log, "about to push a new 'loop'");
-      m_loops.push_front({this});
-
-      m_loop = m_loops.begin();
-      m_loop->start();
-      DEB(m_log, "new 'loop' pushed, ", &(*m_loop));
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      m_loop = loop(this);
+      m_loop_thread = std::thread([this]() -> void { m_loop(); });
+      std::this_thread::sleep_for(50ms);
     }
   }
 
@@ -154,6 +151,9 @@ protected:
       m_cond_exec.notify_all();
       DEB(this->m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
+      if (m_loop_thread.joinable()) {
+        m_loop_thread.join();
+      }
     } else {
       DEB(this->m_log, "not stopping because it was already stopped");
     }
@@ -177,134 +177,131 @@ protected:
 
     p_save_params();
 
-    if (m_stopped) {
-      DEB(m_log, "stopped");
-      return p_not_ok();
-    }
-
     DEB(m_log, "notifying there is work to be done");
     m_cond_exec.notify_all();
 
     DEB(m_log, "waiting ", m_timeout.count(), " microsecs for work");
     {
       std::unique_lock<std::mutex> _lock(m_mutex_wait);
-      if (m_cond_wait.wait_for(_lock, m_timeout) == std::cv_status::timeout) {
-        WAR(m_log, "timeout!");
-        timeout_callback_thread(m_loop->id());
-        m_loop->abandon();
-        m_stopped = true;
-        start();
+      if (m_cond_wait.wait_for(_lock, m_timeout) ==
+          std::cv_status::no_timeout) {
+        DEB(m_log, "work was done or 'executer' was stopped");
+        if (m_stopped) {
+          DEB(m_log, "stopped");
+          return p_not_ok();
+        }
 
-        return p_not_ok();
+        DEB(m_log, "function done");
+        return p_ok();
       }
-    }
+      m_loop.abandon();
+      WAR(m_log, "timeout!");
+      m_loop_thread.detach();
+      m_abandoned.push_back({std::move(m_loop_thread), std::move(m_loop)});
+      start();
 
-    DEB(m_log, "work was done or 'executer' was stopped");
-    if (m_stopped) {
-      DEB(m_log, "stopped");
       return p_not_ok();
     }
-
-    DEB(m_log, "function done");
-    return p_ok();
   }
 
 private:
   /// \brief Loop that will be executed asyncrhonously
   struct loop {
-    loop() = default;
+    loop() = delete;
+
     loop(executer_base_t<t_log> *p_owner) : m_owner(p_owner) {
       //      m_log.set_DEB();
       DEB(m_log, "m_owner = ", m_owner);
     }
-    loop(const loop &) = delete;
-    loop(loop &&p_loop) noexcept : m_owner(p_loop.m_owner) {
-      DEB(m_log, "move constructor m_owner = ", m_owner);
+    loop(const loop &p_loop)
+        : m_owner(p_loop.m_owner), m_abandon(p_loop.m_abandon) {}
+    loop(loop &&p_loop)
+        : m_owner(p_loop.m_owner), m_abandon(p_loop.m_abandon) {}
+
+    loop &operator=(const loop &p_loop) {
+      m_owner = p_loop.m_owner;
+      m_abandon = p_loop.m_abandon;
+      return *this;
+    }
+    loop &operator=(loop &&p_loop) {
+      m_owner = p_loop.m_owner;
+      m_abandon = p_loop.m_abandon;
+      return *this;
     }
 
-    loop &operator=(const loop &) = delete;
-    loop &operator=(loop &&p_loop) = delete;
-
-    inline std::thread::id id() const { return m_thread.get_id(); }
-
     inline ~loop() {
-      if (!m_owner) {
-        return;
+      if (!m_abandon) {
+        DEB(m_log, "destructor");
       }
-      DEB(m_log, "destructor before, m_owner = ", m_owner);
-      if (m_owner == nullptr) {
-        DEB(m_log, "m_owner is null, leaving destructor");
-        return;
-      }
-
-      if (m_thread.joinable()) {
-        DEB(m_log, "joining");
-        m_owner->m_cond_exec.notify_one();
-        m_thread.join();
-      }
-      m_owner = nullptr;
-      DEB(m_log, "destructor after, m_owner = ", m_owner);
     }
 
     inline void abandon() {
-      DEB(m_log, "abandoning");
-      m_owner = nullptr;
-    }
-
-    void start() {
-      m_thread = concurrent::thread<t_log>([this]() -> void { (*this)(); });
+      WAR(m_log, "abandoning");
+      std::lock_guard<std::mutex> _lock(m_mutex);
+      m_abandon = true;
     }
 
     void operator()() {
       while (true) {
 
-        if (!m_owner) {
-          //          DEB(m_log, "owner is null");
+        if (m_abandon) {
+          DEB(m_log, "abandoned");
           break;
         }
 
-        if ((m_owner) && (m_owner->m_stopped)) {
+        if (m_owner->m_stopped) {
           DEB(m_log, "stopped ");
           break;
         }
 
-        if (m_owner) {
+        {
           std::unique_lock<std::mutex> _lock(m_owner->m_mutex_exec);
-          if (m_owner) {
 
-            DEB(m_log, "waiting for work");
+          DEB(m_log, "waiting for work");
 
-            m_owner->m_cond_exec.wait(_lock);
+          m_owner->m_cond_exec.wait(_lock);
 
-            DEB(m_log, "not waiting for work anymore");
-          }
+          DEB(m_log, "not waiting for work anymore");
+        }
 
-          if ((m_owner) && (m_owner->m_stopped)) {
-            DEB(m_log, "stopped");
+        if (m_abandon) {
+          DEB(m_log, "abandoned");
+          break;
+        }
+
+        if (m_owner->m_stopped) {
+          DEB(m_log, "stopped ");
+          break;
+        }
+
+        DEB(m_log, "executing");
+        m_owner->m_function();
+
+        {
+          std::lock_guard<std::mutex> _lock(m_mutex);
+          if (m_abandon) {
+            DEB(m_log, "abandoned");
             break;
-          }
-
-          if (m_owner) {
-            DEB(m_log, "executing");
-            m_owner->m_function();
-          }
-
-          if ((m_owner) && (m_owner->m_stopped)) {
-            DEB(m_log, "stopped");
-            break;
-          }
-
-          if (m_owner) {
-            DEB(m_log, "notifying");
           }
         }
+
+        if (m_owner->m_stopped) {
+          DEB(m_log, "stopped");
+          break;
+        }
+
+        m_owner->m_cond_wait.notify_one();
+
+        DEB(m_log, "work done notification sent");
       }
     }
 
   private:
     executer_base_t<t_log> *m_owner{nullptr};
 
-    concurrent::thread<t_log> m_thread;
+    bool m_abandon{false};
+
+    std::mutex m_mutex;
 
     t_log m_log{"concurrent::executer::loop"};
   };
@@ -313,8 +310,8 @@ private:
   /// \brief Thread to execute the function that is called if the \p
   /// function times out
   void timeout_callback_thread(std::thread::id p_id) {
-    m_timeout_thread = concurrent::thread<t_log>(
-        [this, p_id]() -> void { m_timeout_callback(p_id); });
+    m_timeout_thread =
+        std::thread([this, p_id]() -> void { m_timeout_callback(p_id); });
     m_timeout_thread.detach();
   }
 
@@ -324,6 +321,8 @@ private:
   timeout m_timeout;
 
   timeout_callback m_timeout_callback;
+
+  loop m_loop;
 
   /// \brief Logger object
   t_log m_log{"concurrent::executer"};
@@ -337,24 +336,22 @@ private:
   /// \brief Controls the execution of the execution loop
   std::condition_variable m_cond_exec;
 
+  /// \brief Controls the execution of the thread
+  std::mutex m_mutex_exec;
+
   /// \brief Controls the waiting of the execution loop
   std::mutex m_mutex_wait;
 
   /// \brief Controls the waiting of the execution loop
   std::condition_variable m_cond_wait;
 
-  /// \brief Controls the execution of the thread
-  std::mutex m_mutex_exec;
+  std::thread m_timeout_thread;
 
-  concurrent::thread<t_log> m_timeout_thread;
-
-  std::list<loop> m_loops;
-
-  typename std::list<loop>::iterator m_loop;
+  std::list<std::pair<std::thread, loop>> m_abandoned;
 
   /// \brief Single thread used to execute the \p function over and over
   /// asynchronously
-  concurrent::thread<t_log> m_thread;
+  std::thread m_loop_thread;
 };
 
 // ########## 1 ##########
