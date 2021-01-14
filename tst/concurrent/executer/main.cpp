@@ -44,6 +44,8 @@ struct test000 {
     executer _executer(function, 1s, _timeout_callback);
     DEB(m_log, "created");
 
+    _executer.start();
+
     int _i = 2;
     float _f = 3.5;
 
@@ -93,6 +95,8 @@ struct test100 {
 
     executer _executer(_worker, _timeout, _timeout_callback);
 
+    _executer.start();
+
     int _i = 2;
 
     std::optional<double> _maybe = _executer(_i);
@@ -133,6 +137,8 @@ struct test101 {
     };
 
     executer _executer(function, _timeout, timeout_callback());
+
+    _executer.start();
 
     int _i = 2;
 
@@ -176,6 +182,8 @@ struct test200 {
     };
 
     executer _executer(_function, _timeout, timeout_callback());
+
+    _executer.start();
 
     int _i = 2;
 
@@ -243,6 +251,8 @@ struct test300 {
     };
 
     executer _executer(_function, _timeout, timeout_callback());
+
+    _executer.start();
 
     int _i = 2;
 

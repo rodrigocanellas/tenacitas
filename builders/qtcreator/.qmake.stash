@@ -43,3 +43,22 @@ QMAKE_LICHECK_TIMESTAMP = "Mon Jan 28"
 QMAKE_LICHECK_TIMESTAMP = "Mon Feb 11"
 QMAKE_LICHECK_TIMESTAMP = "Wed Feb 27"
 QMAKE_LICHECK_TIMESTAMP = "Mon Mar 18"
+QMAKE_LICHECK_TIMESTAMP = "Thu Jan 14"
+QMAKE_MAC_SDK.macosx.Path = /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+QMAKE_MAC_SDK.macosx.SDKVersion = 10.15.6
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_CC = /Library/Developer/CommandLineTools/usr/bin/clang
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_CXX = /Library/Developer/CommandLineTools/usr/bin/clang++
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_FIX_RPATH = \
+    /Library/Developer/CommandLineTools/usr/bin/install_name_tool \
+    -id
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_AR = \
+    /Library/Developer/CommandLineTools/usr/bin/ar \
+    cq
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_RANLIB = \
+    /Library/Developer/CommandLineTools/usr/bin/ranlib \
+    -s
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK = /Library/Developer/CommandLineTools/usr/bin/clang++
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK_SHLIB = /Library/Developer/CommandLineTools/usr/bin/clang++
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK_C = /Library/Developer/CommandLineTools/usr/bin/clang
+QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK_C_SHLIB = /Library/Developer/CommandLineTools/usr/bin/clang
+QMAKE_XCODE_DEVELOPER_PATH = /Library/Developer/CommandLineTools
