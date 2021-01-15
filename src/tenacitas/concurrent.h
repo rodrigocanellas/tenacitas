@@ -149,17 +149,6 @@ template <typename t_log> struct executer_base_t {
     }
   }
 
-protected:
-  template <typename t_time>
-  executer_base_t(std::function<void()> p_function, t_time p_timeout,
-                  timeout_callback p_timeout_callback)
-      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
-        m_timeout_callback(p_timeout_callback), m_loop(this) {
-    //    DEB(m_log, "calling start from constructor");
-    //    m_loop_thread = std::thread([this]() -> void { m_loop(); });
-    //    std::this_thread::sleep_for(50ms);
-  }
-
   inline void set_log_debug_level() { m_log.set_debug_level(); }
   inline void set_log_info_level() { m_log.set_info_level(); }
   inline void set_log_level() { m_log.set_warn_level(); }
@@ -206,6 +195,18 @@ protected:
       return p_not_ok();
     }
   }
+
+protected:
+  template <typename t_time>
+  executer_base_t(std::function<void()> p_function, t_time p_timeout,
+                  timeout_callback p_timeout_callback)
+      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
+        m_timeout_callback(p_timeout_callback), m_loop(this) {
+    //    DEB(m_log, "calling start from constructor");
+    //    m_loop_thread = std::thread([this]() -> void { m_loop(); });
+    //    std::this_thread::sleep_for(50ms);
+  }
+
 
 private:
   /// \brief Loop that will be executed asyncrhonously
@@ -362,20 +363,24 @@ template <typename t_log> struct executer_t<t_log, void, void>;
 
 // ########## 1 ##########
 template <typename t_log, typename t_result, typename... t_params>
-struct executer_t : public executer_base_t<t_log> {
+struct executer_t {
+//        : public executer_base_t<t_log> {
 
   typedef std::function<t_result(t_params...)> worker;
 
   template <typename t_time>
   executer_t(worker p_worker, t_time p_timeout,
              timeout_callback p_timeout_callback)
-      : executer_base_t<t_log>(
+      : m_exec(
             [this, p_worker]() -> void {
               m_result = std::apply(p_worker, std::move(m_params));
             },
             p_timeout, p_timeout_callback) {
     //    this->start();
   }
+
+  inline void start() {m_exec.start();}
+  inline void stop() {m_exec.stop();}
 
   std::optional<t_result> operator()(t_params... p_params) {
     auto ok = [this]() -> std::optional<t_result> { return m_result; };
@@ -384,14 +389,19 @@ struct executer_t : public executer_base_t<t_log> {
       m_params = {p_params...};
     };
 
-    return this->template call<std::optional<t_result>>(ok, not_ok,
-                                                        save_params);
+//    return this->template call<std::optional<t_result>>(ok, not_ok,
+//                                                        save_params);
+    return m_exec.call(ok, not_ok, save_params);
   }
 
 private:
+
+  executer_base_t<t_log> m_exec;
+
   std::tuple<t_params...> m_params;
 
   t_result m_result;
+
 };
 
 // ########## 2 ##########
