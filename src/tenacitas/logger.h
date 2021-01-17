@@ -228,6 +228,7 @@ private:
   /// \param p_level is the severity level of the message
   ///
   /// \param p_params are the values to be logged
+#ifdef TENACITAS_LOG
   template <typename t_class, typename... t_params>
   void write(level p_level, t_class *p_this, uint16_t p_line,
              const t_params &... p_params) {
@@ -238,15 +239,20 @@ private:
               << (m_timestamp_as_number
                       ? std::to_string(calendar::now<>::microsecs_num())
                       : calendar::now<>::microsecs_str())
-              << m_separator << std::this_thread::get_id() << m_separator
-              << p_this << m_separator << number::format_000(p_line)
-              << m_separator << m_class;
+              << m_separator << m_class << m_separator << p_this << m_separator
+              << std::this_thread::get_id() << m_separator
+              << number::format_000(p_line);
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_writer(_stream.str());
     }
   }
+#else
+  template <typename t_class, typename... t_params>
+  void write(level, t_class *, uint16_t, const t_params &...) {}
+
+#endif
 
   /// \brief can_log informs if a message with a certain log level can be
   /// printed, considering the current log level
@@ -372,8 +378,6 @@ template <bool use = true> struct clog : public log<use> {
       : log<use>(p_class,
                  [](std::string &&p_str) -> void { std::clog << p_str; }) {}
 };
-
-/// \brief macros to make it easier to log
 
 } // namespace logger
 

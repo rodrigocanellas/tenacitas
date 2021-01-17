@@ -116,9 +116,9 @@ template <typename t_log> struct executer_base_t {
   virtual ~executer_base_t() {
     DEB(m_log, "entering destructor");
     stop();
+
     DEB(m_log, "leaving destructor");
   }
-
 
   /// \brief Stars the single thread that will execute the function
   /// asynchronously
@@ -126,8 +126,8 @@ template <typename t_log> struct executer_base_t {
     if (m_stopped) {
       DEB(m_log, "starting");
       m_stopped = false;
-      m_loop = loop(this);
-      m_loop_thread = std::thread([this]() -> void { m_loop(); });
+      m_loop = loop(this, m_id);
+      m_loop_thread = concurrent::thread<t_log>([this]() -> void { m_loop(); });
       std::this_thread::sleep_for(50ms);
     }
   }
@@ -142,9 +142,9 @@ template <typename t_log> struct executer_base_t {
       m_cond_exec.notify_all();
       DEB(m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
-      if (m_loop_thread.joinable()) {
-        m_loop_thread.join();
-      }
+      //      if (m_loop_thread.joinable()) {
+      //        m_loop_thread.join();
+      //      }
     } else {
       DEB(m_log, "not stopping because it was already stopped");
     }
@@ -155,6 +155,18 @@ template <typename t_log> struct executer_base_t {
   inline void set_log_level() { m_log.set_warn_level(); }
 
 protected:
+  template <typename t_time>
+  executer_base_t(std::function<void()> p_function, t_time p_timeout,
+                  timeout_callback p_timeout_callback, std::string &&p_id = "")
+      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
+        m_timeout_callback(p_timeout_callback), m_id(std::move(p_id)),
+        m_log("concurrent::executer" + (m_id.empty() ? "" : (" " + m_id))),
+        m_loop(this, m_id) {
+    //    DEB(m_log, "calling start from constructor");
+    //    m_loop_thread = std::thread([this]() -> void { m_loop(); });
+    //    std::this_thread::sleep_for(50ms);
+  }
+
   template <typename t_result>
   t_result call(std::function<t_result()> p_ok,
                 std::function<t_result()> p_not_ok,
@@ -189,10 +201,9 @@ protected:
       m_loop.abandon();
       WAR(m_log, "timeout!");
 
-
       std::thread::id _abandoned = m_loop_thread.get_id();
       m_abandoned.push_back({std::move(m_loop_thread), std::move(m_loop)});
-      m_abandoned.back().first.detach();
+      //      m_abandoned.back().first.detach();
       m_stopped = true;
       timeout_callback_thread(_abandoned);
 
@@ -202,29 +213,21 @@ protected:
     }
   }
 
-
-  template <typename t_time>
-  executer_base_t(std::function<void()> p_function, t_time p_timeout,
-                  timeout_callback p_timeout_callback)
-      : m_function(p_function), m_timeout(to_timeout(p_timeout)),
-        m_timeout_callback(p_timeout_callback), m_loop(this) {
-    //    DEB(m_log, "calling start from constructor");
-    //    m_loop_thread = std::thread([this]() -> void { m_loop(); });
-    //    std::this_thread::sleep_for(50ms);
-  }
-
-
 private:
   /// \brief Loop that will be executed asyncrhonously
   struct loop {
     loop() = delete;
 
-    loop(executer_base_t<t_log> *p_owner) : m_owner(p_owner) {}
+    loop(executer_base_t<t_log> *p_owner, const std::string &p_id)
+        : m_owner(p_owner), m_log("concurrent::executer::loop" +
+                                  (p_id.empty() ? "" : (" " + p_id))) {}
 
     loop(const loop &p_loop)
-        : m_owner(p_loop.m_owner), m_abandon(p_loop.m_abandon) {}
+        : m_owner(p_loop.m_owner), m_log(p_loop.m_log),
+          m_abandon(p_loop.m_abandon) {}
     loop(loop &&p_loop)
-        : m_owner(p_loop.m_owner), m_abandon(p_loop.m_abandon) {}
+        : m_owner(p_loop.m_owner), m_log(std::move(p_loop.m_log)),
+          m_abandon(p_loop.m_abandon) {}
 
     loop &operator=(const loop &p_loop) {
       m_owner = p_loop.m_owner;
@@ -294,16 +297,14 @@ private:
       }
     }
 
-
-
   private:
     executer_base_t<t_log> *m_owner{nullptr};
+
+    t_log m_log;
 
     bool m_abandon{false};
 
     std::mutex m_mutex;
-
-    t_log m_log{"concurrent::executer::loop"};
   };
 
 private:
@@ -322,10 +323,11 @@ private:
 
   timeout_callback m_timeout_callback;
 
-  loop m_loop;
+  std::string m_id;
 
-  /// \brief Logger object
-  t_log m_log{"concurrent::executer"};
+  t_log m_log;
+
+  loop m_loop;
 
   /// \brief The loop initiates stopped
   bool m_stopped{true};
@@ -347,11 +349,11 @@ private:
 
   std::thread m_timeout_thread;
 
-  std::list<std::pair<std::thread, loop>> m_abandoned;
+  std::list<std::pair<concurrent::thread<t_log>, loop>> m_abandoned;
 
   /// \brief Single thread used to execute the \p function over and over
   /// asynchronously
-  std::thread m_loop_thread;
+  concurrent::thread<t_log> m_loop_thread;
 };
 
 // ########## 1 ##########
@@ -377,17 +379,17 @@ struct executer_t : public executer_base_t<t_log> {
 
   template <typename t_time>
   executer_t(worker p_worker, t_time p_timeout,
-             timeout_callback p_timeout_callback)
+             timeout_callback p_timeout_callback, std::string &&p_id = "")
       : executer_base_t<t_log>(
             [this, p_worker]() -> void {
               m_result = std::apply(p_worker, std::move(m_params));
             },
-            p_timeout, p_timeout_callback) {
+            p_timeout, p_timeout_callback, std::move(p_id)) {
     //    this->start();
   }
 
-//  inline void start() {m_exec.start();}
-//  inline void stop() {m_exec.stop();}
+  //  inline void start() {m_exec.start();}
+  //  inline void stop() {m_exec.stop();}
 
   std::optional<t_result> operator()(t_params... p_params) {
     auto ok = [this]() -> std::optional<t_result> { return m_result; };
@@ -398,17 +400,16 @@ struct executer_t : public executer_base_t<t_log> {
 
     return this->template call<std::optional<t_result>>(ok, not_ok,
                                                         save_params);
-//    return m_exec.template call<std::optional<t_result>>(ok, not_ok, save_params);
+    //    return m_exec.template call<std::optional<t_result>>(ok, not_ok,
+    //    save_params);
   }
 
 private:
-
-//  executer_base_t<t_log> m_exec;
+  //  executer_base_t<t_log> m_exec;
 
   std::tuple<t_params...> m_params;
 
   t_result m_result;
-
 };
 
 // ########## 2 ##########
@@ -419,10 +420,10 @@ struct executer_t<t_log, t_result, void> : public executer_base_t<t_log> {
 
   template <typename t_time>
   executer_t(worker p_worker, t_time p_timeout,
-             timeout_callback p_timeout_callback)
+             timeout_callback p_timeout_callback, std::string &&p_id = "")
       : executer_base_t<t_log>(
             [this, p_worker]() -> void { m_result = p_worker(); }, p_timeout,
-            p_timeout_callback) {
+            p_timeout_callback, std::move(p_id)) {
     //    this->start();
   }
 
@@ -448,12 +449,12 @@ struct executer_t<t_log, void, t_params...> : public executer_base_t<t_log> {
 
   template <typename t_time>
   executer_t(worker p_worker, t_time p_timeout,
-             timeout_callback p_timeout_callback)
+             timeout_callback p_timeout_callback, std::string &&p_id = "")
       : executer_base_t<t_log>(
             [this, p_worker]() -> void {
               std::apply(p_worker, std::move(m_params));
             },
-            p_timeout, p_timeout_callback) {
+            p_timeout, p_timeout_callback, std::move(p_id)) {
     //    this->start();
   }
 
@@ -478,9 +479,9 @@ struct executer_t<t_log, void, void> : public executer_base_t<t_log> {
 
   template <typename t_time>
   executer_t(worker p_worker, t_time p_timeout,
-             timeout_callback p_timeout_callback)
+             timeout_callback p_timeout_callback, std::string &&p_id = "")
       : executer_base_t<t_log>([p_worker]() -> void { p_worker(); }, p_timeout,
-                               p_timeout_callback) {
+                               p_timeout_callback, std::move(p_id)) {
     //    this->start();
   }
 
@@ -511,7 +512,7 @@ template <typename t_log> struct async_loop_base_t {
       return;
     }
     m_stopped = false;
-    m_thread = concurrent::thread<t_log>([this]() { loop(); });
+    m_thread = std::thread([this]() { loop(); });
   }
 
   void stop() {
@@ -520,7 +521,7 @@ template <typename t_log> struct async_loop_base_t {
     }
     m_stopped = true;
     if (m_thread.joinable()) {
-        m_thread.join();
+      m_thread.join();
     }
   }
 
@@ -537,7 +538,7 @@ protected:
 protected:
   bool m_stopped{true};
 
-  concurrent::thread<t_log> m_thread;
+  std::thread m_thread;
 
   t_log m_log{"concurrent::async_loop"};
 };
@@ -561,27 +562,31 @@ struct async_loop_t<t_log, use_breaker::yes, t_params...>
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                breaker p_breaker, worker p_worker, provider p_provider)
       : async_loop_base_t<t_log>(),
-        m_worker(p_worker, p_timeout, p_timeout_callback),
-        m_provider(p_provider, 500ms,
-                   [this](std::thread::id p_id) -> void {
-                     WAR(this->m_log, "thread ", p_id,
-                         " for provider has timed out");
-                   }),
-        m_breaker(p_breaker, 300ms, [this](std::thread::id p_id) -> void {
-          WAR(this->m_log, "thread ", p_id, " for breaker has timed out");
-        }) {
-        m_worker.start();
-        m_provider.start();
-        m_breaker.start();
-}
+        m_worker(p_worker, p_timeout, p_timeout_callback, "w"),
+        m_provider(
+            p_provider, 500ms,
+            [this](std::thread::id p_id) -> void {
+              WAR(this->m_log, "thread ", p_id, " for provider has timed out");
+            },
+            "p"),
+        m_breaker(
+            p_breaker, 300ms,
+            [this](std::thread::id p_id) -> void {
+              WAR(this->m_log, "thread ", p_id, " for breaker has timed out");
+            },
+            "b") {
+    m_worker.start();
+    m_provider.start();
+    m_breaker.start();
+  }
 
 protected:
   void loop() override {
     while (true) {
       if (this->m_stopped) {
-          m_worker.stop();
-          m_provider.stop();
-          m_breaker.stop();
+        m_worker.stop();
+        m_provider.stop();
+        m_breaker.stop();
         break;
       }
 
@@ -632,23 +637,25 @@ struct async_loop_t<t_log, use_breaker::no, t_params...>
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                worker p_worker, provider p_provider)
       : async_loop_base_t<t_log>(),
-        m_worker(p_worker, p_timeout, p_timeout_callback),
-        m_provider(p_provider, 500ms, [this](std::thread::id p_id) -> void {
-          WAR(this->m_log, "thread ", p_id, " for provider has timed out");
-        }) {
+        m_worker(p_worker, p_timeout, p_timeout_callback, "w"),
+        m_provider(
+            p_provider, 500ms,
+            [this](std::thread::id p_id) -> void {
+              WAR(this->m_log, "thread ", p_id, " for provider has timed out");
+            },
+            std::string{"p"}) {
     m_worker.start();
-  m_provider.start();
-
-}
+    m_provider.start();
+  }
 
 protected:
   void loop() override {
     DEB(this->m_log, "entering loop");
     while (true) {
-        DEB(this->m_log, "another loop, m_stopped = ", this->m_stopped);
+      DEB(this->m_log, "another loop, m_stopped = ", this->m_stopped);
       if (this->m_stopped) {
-          m_worker.stop();
-          m_provider.stop();
+        m_worker.stop();
+        m_provider.stop();
         break;
       }
 
@@ -686,20 +693,25 @@ struct async_loop_t<t_log, use_breaker::yes, void>
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                breaker p_breaker, worker p_worker)
       : async_loop_base_t<t_log>(),
-        m_worker(p_worker, p_timeout, p_timeout_callback),
-        m_breaker(p_breaker, 300ms, [this](std::thread::id p_id) -> void {
-          WAR(this->m_log, "thread ", p_id, " for breaker has timed out");
-        }) {m_worker.start();
+        m_worker(p_worker, p_timeout, p_timeout_callback, "w"),
+        m_breaker(
+            p_breaker, 300ms,
+            [this](std::thread::id p_id) -> void {
+              WAR(this->m_log, "thread ", p_id, " for breaker has timed out");
+            },
+            "b") {
+    m_worker.start();
 
-  m_breaker.start();}
+    m_breaker.start();
+  }
 
 protected:
   void loop() override {
     while (true) {
       if (this->m_stopped) {
-          m_worker.stop();
+        m_worker.stop();
 
-          m_breaker.stop();
+        m_breaker.stop();
 
         break;
       }
@@ -733,15 +745,16 @@ struct async_loop_t<t_log, use_breaker::no, void>
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                worker p_worker)
       : async_loop_base_t<t_log>(),
-        m_worker(p_worker, p_timeout, p_timeout_callback) {m_worker.start();
-                                                            }
+        m_worker(p_worker, p_timeout, p_timeout_callback, "w") {
+    m_worker.start();
+  }
 
 protected:
   void loop() override {
     while (true) {
 
       if (this->m_stopped) {
-          m_worker.stop();
+        m_worker.stop();
 
         break;
       }

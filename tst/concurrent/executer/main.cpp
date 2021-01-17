@@ -118,9 +118,7 @@ private:
 
 struct test101 {
 
-  static std::string desc() {
-    return "executer as executer_t<logger, double, int> with timeout";
-  }
+  static std::string desc() { return "same code as test100"; }
 
   bool operator()() {
 
