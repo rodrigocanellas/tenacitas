@@ -433,8 +433,8 @@ struct async_loop_006a {
   }
 
   bool operator()() {
-    INF(m_log, "sleeping for 10s");
-    std::this_thread::sleep_for(10s);
+    //    INF(m_log, "sleeping for 10s");
+    //    std::this_thread::sleep_for(10s);
     async_loop_006 _al;
     return _al();
   }

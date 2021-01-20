@@ -126,8 +126,10 @@ template <typename t_log> struct executer_base_t {
     if (m_stopped) {
       DEB(m_log, "starting");
       m_stopped = false;
-      m_loop = loop(this, m_id);
-      m_loop_thread = concurrent::thread<t_log>([this]() -> void { m_loop(); });
+      m_loop = std::make_unique<loop>(this, m_id);
+      m_loop->start();
+      //      m_loop_thread = concurrent::thread<t_log>([this]() -> void {
+      //      m_loop(); });
       std::this_thread::sleep_for(50ms);
     }
   }
@@ -142,9 +144,6 @@ template <typename t_log> struct executer_base_t {
       m_cond_exec.notify_all();
       DEB(m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
-      //      if (m_loop_thread.joinable()) {
-      //        m_loop_thread.join();
-      //      }
     } else {
       DEB(m_log, "not stopping because it was already stopped");
     }
@@ -161,11 +160,7 @@ protected:
       : m_function(p_function), m_timeout(to_timeout(p_timeout)),
         m_timeout_callback(p_timeout_callback), m_id(std::move(p_id)),
         m_log("concurrent::executer" + (m_id.empty() ? "" : (" " + m_id))),
-        m_loop(this, m_id) {
-    //    DEB(m_log, "calling start from constructor");
-    //    m_loop_thread = std::thread([this]() -> void { m_loop(); });
-    //    std::this_thread::sleep_for(50ms);
-  }
+        m_loop(nullptr) {}
 
   template <typename t_result>
   t_result call(std::function<t_result()> p_ok,
@@ -198,11 +193,13 @@ protected:
         DEB(m_log, "function done");
         return p_ok();
       }
-      m_loop.abandon();
+      //      m_loop.abandon();
       WAR(m_log, "timeout!");
 
-      std::thread::id _abandoned = m_loop_thread.get_id();
-      m_abandoned.push_back({std::move(m_loop_thread), std::move(m_loop)});
+      std::thread::id _abandoned = m_loop->get_thread_id();
+
+      m_abandoned.push_back(std::move(m_loop));
+      m_abandoned.back()->abandon();
       //      m_abandoned.back().first.detach();
       m_stopped = true;
       timeout_callback_thread(_abandoned);
@@ -222,23 +219,13 @@ private:
         : m_owner(p_owner), m_log("concurrent::executer::loop" +
                                   (p_id.empty() ? "" : (" " + p_id))) {}
 
-    loop(const loop &p_loop)
-        : m_owner(p_loop.m_owner), m_log(p_loop.m_log),
-          m_abandon(p_loop.m_abandon) {}
-    loop(loop &&p_loop)
-        : m_owner(p_loop.m_owner), m_log(std::move(p_loop.m_log)),
-          m_abandon(p_loop.m_abandon) {}
+    loop(const loop &) = delete;
 
-    loop &operator=(const loop &p_loop) {
-      m_owner = p_loop.m_owner;
-      m_abandon = p_loop.m_abandon;
-      return *this;
-    }
-    loop &operator=(loop &&p_loop) {
-      m_owner = p_loop.m_owner;
-      m_abandon = p_loop.m_abandon;
-      return *this;
-    }
+    loop(loop &&p_loop) = delete;
+
+    loop &operator=(const loop &) = delete;
+
+    loop &operator=(loop &&p_loop) = delete;
 
     inline ~loop() {
       if (!m_abandon) {
@@ -246,10 +233,18 @@ private:
       }
     }
 
+    inline std::thread::id get_thread_id() const { return m_thread.get_id(); }
+
+    inline void start() {
+
+      m_thread = concurrent::thread<t_log>([this]() -> void { (*this)(); });
+    }
+
     inline void abandon() {
-      WAR(m_log, "abandoning");
+      DEB(m_log, "abandoning");
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_abandon = true;
+      //      m_thread.detach();
     }
 
     void operator()() {
@@ -304,8 +299,12 @@ private:
 
     bool m_abandon{false};
 
+    concurrent::thread<t_log> m_thread;
+
     std::mutex m_mutex;
   };
+
+  typedef std::unique_ptr<loop> loop_ptr;
 
 private:
   /// \brief Thread to execute the function that is called if the \p
@@ -327,7 +326,7 @@ private:
 
   t_log m_log;
 
-  loop m_loop;
+  loop_ptr m_loop;
 
   /// \brief The loop initiates stopped
   bool m_stopped{true};
@@ -349,11 +348,11 @@ private:
 
   std::thread m_timeout_thread;
 
-  std::list<std::pair<concurrent::thread<t_log>, loop>> m_abandoned;
+  std::list<loop_ptr> m_abandoned;
 
   /// \brief Single thread used to execute the \p function over and over
   /// asynchronously
-  concurrent::thread<t_log> m_loop_thread;
+  //  concurrent::thread<t_log> m_loop_thread;
 };
 
 // ########## 1 ##########
