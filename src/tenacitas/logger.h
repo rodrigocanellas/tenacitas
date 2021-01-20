@@ -350,7 +350,7 @@ template <bool use> bool log<use>::m_timestamp_as_number{false};
 
 /// \brief logs message to \p std::cerr
 template <bool use = true> struct cerr : public log<use> {
-  inline explicit cerr(std::string &&p_class)
+  inline explicit cerr(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
                  [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 
@@ -361,7 +361,7 @@ template <bool use = true> struct cerr : public log<use> {
 
 /// \brief logs message to \p std::cout
 template <bool use = true> struct cout : public log<use> {
-  inline explicit cout(std::string &&p_class)
+  inline explicit cout(std::string &&p_class="no-class")
       : log<use>(std::move(p_class),
                  [](std::string &&p_str) -> void { std::cout << p_str; }) {}
   inline explicit cout(const char *p_class)
@@ -371,7 +371,7 @@ template <bool use = true> struct cout : public log<use> {
 
 /// \brief The log struct logs message to \p std::clog
 template <bool use = true> struct clog : public log<use> {
-  inline explicit clog(std::string &&p_class)
+  inline explicit clog(std::string &&p_class="no-class")
       : log<use>(std::move(p_class),
                  [](std::string &&p_str) -> void { std::clog << p_str; }) {}
   inline explicit clog(const char *p_class)

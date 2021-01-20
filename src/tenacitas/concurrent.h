@@ -48,8 +48,9 @@ public:
   /// \brief thread constructor
   ///
   /// \param p_func function that will run in a separated thread
-  inline explicit thread(std::function<void()> &&p_func)
-      : m_thread(std::move(p_func)) {}
+  inline explicit thread(std::function<void()> &&p_func, const std::string & p_id = "")
+      : m_thread(std::move(p_func)),
+  m_log((p_id.empty()?"concurrent::thread": "concurrent::thread " + p_id  )){}
 
   inline thread() = default;
   thread(const thread &) = delete;
@@ -103,7 +104,7 @@ private:
   /// \brief m_thread the wrappered std::thread
   std::thread m_thread;
 
-  t_log m_log{"concurrent::thread"};
+  t_log m_log;
 };
 
 /// \brief Type of function executed when a function times out
@@ -144,6 +145,8 @@ template <typename t_log> struct executer_base_t {
       m_cond_exec.notify_all();
       DEB(m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
+      m_loop->stop();
+
     } else {
       DEB(m_log, "not stopping because it was already stopped");
     }
@@ -156,9 +159,9 @@ template <typename t_log> struct executer_base_t {
 protected:
   template <typename t_time>
   executer_base_t(std::function<void()> p_function, t_time p_timeout,
-                  timeout_callback p_timeout_callback, std::string &&p_id = "")
+                  timeout_callback p_timeout_callback, const std::string &p_id = "")
       : m_function(p_function), m_timeout(to_timeout(p_timeout)),
-        m_timeout_callback(p_timeout_callback), m_id(std::move(p_id)),
+        m_timeout_callback(p_timeout_callback), m_id(p_id),
         m_log("concurrent::executer" + (m_id.empty() ? "" : (" " + m_id))),
         m_loop(nullptr) {}
 
@@ -196,12 +199,13 @@ protected:
       //      m_loop.abandon();
       WAR(m_log, "timeout!");
 
-      std::thread::id _abandoned = m_loop->get_thread_id();
-
-      m_abandoned.push_back(std::move(m_loop));
-      m_abandoned.back()->abandon();
-      //      m_abandoned.back().first.detach();
       m_stopped = true;
+      m_loop->abandon();
+      std::thread::id _abandoned = m_loop->get_thread_id();
+      m_abandoned.push_back(std::move(m_loop));
+
+      //      m_abandoned.back().first.detach();
+
       timeout_callback_thread(_abandoned);
 
       start();
@@ -216,8 +220,9 @@ private:
     loop() = delete;
 
     loop(executer_base_t<t_log> *p_owner, const std::string &p_id)
-        : m_owner(p_owner), m_log("concurrent::executer::loop" +
-                                  (p_id.empty() ? "" : (" " + p_id))) {}
+        : m_owner(p_owner), m_id(std::move(p_id)),
+          m_log("concurrent::executer::loop" +
+                                  (m_id.empty() ? "" : (" " + m_id))){}
 
     loop(const loop &) = delete;
 
@@ -236,8 +241,14 @@ private:
     inline std::thread::id get_thread_id() const { return m_thread.get_id(); }
 
     inline void start() {
+        auto f = [this]() -> void { (*this)(); };
+      m_thread = concurrent::thread<t_log>(f, m_id);
+    }
 
-      m_thread = concurrent::thread<t_log>([this]() -> void { (*this)(); });
+    inline void stop() {
+        if (m_thread.joinable()) {
+            m_thread.join();
+        }
     }
 
     inline void abandon() {
@@ -295,11 +306,13 @@ private:
   private:
     executer_base_t<t_log> *m_owner{nullptr};
 
+    std::string m_id;
+
     t_log m_log;
 
-    bool m_abandon{false};
-
     concurrent::thread<t_log> m_thread;
+
+    bool m_abandon{false};
 
     std::mutex m_mutex;
   };
@@ -511,7 +524,7 @@ template <typename t_log> struct async_loop_base_t {
       return;
     }
     m_stopped = false;
-    m_thread = std::thread([this]() { loop(); });
+    m_thread = concurrent::thread<t_log>([this]() { loop(); }, "a");
   }
 
   void stop() {
@@ -537,7 +550,7 @@ protected:
 protected:
   bool m_stopped{true};
 
-  std::thread m_thread;
+  concurrent::thread<t_log> m_thread;
 
   t_log m_log{"concurrent::async_loop"};
 };

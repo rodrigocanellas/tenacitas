@@ -39,3 +39,4 @@ QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK_C = /Library/Developer/CommandLineToo
 QMAKE_MAC_SDK.macx-clang.macosx.QMAKE_LINK_C_SHLIB = /Library/Developer/CommandLineTools/usr/bin/clang
 QMAKE_XCODE_DEVELOPER_PATH = /Library/Developer/CommandLineTools
 QMAKE_LICHECK_TIMESTAMP = "Fri Jan 15"
+QMAKE_LICHECK_TIMESTAMP = "Wed Jan 20"
