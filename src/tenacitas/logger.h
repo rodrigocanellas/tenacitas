@@ -6,10 +6,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <mutex>
 #include <sstream>
 #include <thread>
@@ -212,11 +214,22 @@ public:
 
 protected:
   log(std::string &&p_class, writer p_writer)
-      : m_class(std::move(p_class)), m_writer(p_writer),
-        m_level(logger::level::warn) {}
+      : m_class(m_max_class, ' '), m_writer(p_writer),
+        m_level(logger::level::warn) {
+    if (p_class.size() < m_max_class) {
+      // std::copy(p_class.begin(), p_class.end(), m_class.begin());
+      std::string::size_type _size = p_class.size();
+      for (std::string::size_type _i = 0; _i < _size; ++_i) {
+        m_class[_i] = p_class[_i];
+      }
+    } else {
+      m_class = p_class.substr(0, m_max_class - 1);
+    }
+  }
 
-  log(const char *p_class, writer p_writer)
-      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn) {}
+  //  log(const char *p_class, writer p_writer)
+  //      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn)
+  //      {}
 
 private:
   /// \brief write will actually write the message
@@ -233,6 +246,7 @@ private:
   void write(level p_level, t_class *p_this, uint16_t p_line,
              const t_params &... p_params) {
 
+    std::hash<std::thread::id> _hash;
     if (can_log(p_level)) {
       std::ostringstream _stream;
       _stream << p_level << m_separator
@@ -240,8 +254,8 @@ private:
                       ? std::to_string(calendar::now<>::microsecs_num())
                       : calendar::now<>::microsecs_str())
               << m_separator << m_class << m_separator << p_this << m_separator
-              << std::this_thread::get_id() << m_separator
-              << number::format_000(p_line);
+              << number::format_000(_hash(std::this_thread::get_id()))
+              << m_separator << number::format_000(p_line);
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -322,7 +336,9 @@ private:
   }
 
 private:
-  std::string m_class = {"no-class"};
+  static const uint8_t m_max_class{30};
+
+  std::string m_class;
 
   /// \brief m_writer is the writer where the messages will be logged.
   ///
@@ -355,27 +371,29 @@ template <bool use = true> struct cerr : public log<use> {
                  [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 
   inline explicit cerr(const char *p_class)
-      : log<use>(p_class,
+      : log<use>(std::string(p_class),
                  [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 };
 
 /// \brief logs message to \p std::cout
 template <bool use = true> struct cout : public log<use> {
-  inline explicit cout(std::string &&p_class="no-class")
+  inline explicit cout(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
                  [](std::string &&p_str) -> void { std::cout << p_str; }) {}
+
   inline explicit cout(const char *p_class)
-      : log<use>(p_class,
+      : log<use>(std::string(p_class),
                  [](std::string &&p_str) -> void { std::cout << p_str; }) {}
 };
 
 /// \brief The log struct logs message to \p std::clog
 template <bool use = true> struct clog : public log<use> {
-  inline explicit clog(std::string &&p_class="no-class")
+  inline explicit clog(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
                  [](std::string &&p_str) -> void { std::clog << p_str; }) {}
+
   inline explicit clog(const char *p_class)
-      : log<use>(p_class,
+      : log<use>(std::string(p_class),
                  [](std::string &&p_str) -> void { std::clog << p_str; }) {}
 };
 
