@@ -667,6 +667,75 @@ private:
   std::mutex m_mutex;
 };
 
+struct async_loop_009 {
+
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "timeout, no params, no breaker";
+    return _stream.str();
+  }
+
+  bool operator()() {
+    m_log.set_debug_level();
+
+    const int16_t _max{249};
+    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_normal_sleep{250ms};
+    const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
+                                                        2};
+    const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
+                                          3000};
+
+    m_log.set_debug_level();
+
+    auto _callback = [this](std::thread::id p_id) -> void {
+      WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+      m_cond.notify_one();
+    };
+
+    int16_t _i{0};
+
+    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
+                    &_i]() -> void {
+      DEB(m_log, "working with = ", _i);
+      if (_i == _max) {
+        DEB(m_log, "causing timeout");
+        std::this_thread::sleep_for(_work_timeout_sleep);
+        return;
+      }
+      ++_i;
+      std::this_thread::sleep_for(_work_normal_sleep);
+    };
+
+    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no, void>
+        _loop(_work_timeout, _callback, _worker);
+
+    _loop.set_log_debug();
+
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      m_cond.wait_for(_lock, _wait);
+      _loop.stop();
+    }
+
+    if (_i != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _i);
+      return false;
+    }
+
+    INF(m_log, "i is ", _max, " as expected");
+
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_009"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
 int main(int argc, char **argv) {
   logger::set_debug_level();
 
@@ -682,4 +751,5 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_006b);
   run_test(_tester, async_loop_007);
   run_test(_tester, async_loop_008);
+  run_test(_tester, async_loop_009);
 }

@@ -129,8 +129,9 @@ template <typename t_log> struct executer_base_t {
     if (m_stopped) {
       DEB(m_log, "starting");
       m_stopped = false;
-      m_loop = std::make_unique<loop>(this, m_id);
-      m_thread_loop = std::thread([this]() -> void { (*m_loop)(); });
+      m_loops.push_front({std::thread(), false});
+      m_loops.begin()->first =
+          std::thread([this]() -> void { loop(m_loops.begin()->second); });
       std::this_thread::sleep_for(50ms);
     }
   }
@@ -146,12 +147,16 @@ template <typename t_log> struct executer_base_t {
       //      DEB(m_log, "m_cond_wait.notify_one()");
       m_cond_wait.notify_one();
 
-      if (m_thread_loop.joinable()) {
-        m_thread_loop.join();
+      loops::iterator _end = m_loops.end();
+      for (loops::iterator _ite = m_loops.begin(); _ite != _end; ++_ite) {
+        if (_ite->first.joinable()) {
+          _ite->first.join();
+        }
       }
+
     } /*else {
-      DEB(m_log, "not stopping because it was already stopped");
-    }*/
+     DEB(m_log, "not stopping because it was already stopped");
+   }*/
   }
 
   inline void set_log_debug_level() { m_log.set_debug_level(); }
@@ -165,15 +170,14 @@ protected:
                   const std::string &p_id = "")
       : m_function(p_function), m_timeout(to_timeout(p_timeout)),
         m_timeout_callback(p_timeout_callback), m_id(p_id),
-        m_log("concurrent::executer" + (m_id.empty() ? "" : (" " + m_id))),
-        m_loop(nullptr) {}
+        m_log("concurrent::executer" + (m_id.empty() ? "" : (" " + m_id))) {}
 
   template <typename t_result>
   t_result call(std::function<t_result()> p_ok,
                 std::function<t_result()> p_not_ok,
                 std::function<void()> p_save_params) {
     std::lock_guard<std::mutex> _lock_function(m_mutex_function);
-    DEB(m_log, "operator()()");
+    DEB(m_log, "operator()() ", m_counter_call++);
 
     if (m_stopped) {
       ERR(m_log, "executer is stopped; call 'start()' first");
@@ -183,11 +187,15 @@ protected:
     p_save_params();
 
     DEB(m_log, "notifying there is work to be done");
-    m_cond_exec.notify_all();
+    m_cond_exec.notify_one();
 
     DEB(m_log, "waiting ", m_timeout.count(), " microsecs for work");
     {
       std::unique_lock<std::mutex> _lock(m_mutex_wait);
+      if (m_stopped) {
+        DEB(m_log, "stopped");
+        return p_not_ok();
+      }
       if (m_cond_wait.wait_for(_lock, m_timeout) ==
           std::cv_status::no_timeout) {
         DEB(m_log, "work was done or 'executer' was stopped");
@@ -203,10 +211,10 @@ protected:
       WAR(m_log, "timeout!");
 
       m_stopped = true;
-      m_loop->abandon();
-      std::thread::id _abandoned = m_thread_loop.get_id();
-      m_abandoned.push_back({std::move(m_thread_loop), std::move(m_loop)});
-      //      m_abandoned.back().first.detach();
+
+      std::thread::id _abandoned = m_loops.begin()->first.get_id();
+      m_loops.begin()->second = true;
+      //      m_loops.begin()->first.detach();
 
       timeout_callback_thread(_abandoned);
 
@@ -217,93 +225,61 @@ protected:
   }
 
 private:
-  /// \brief Loop that will be executed asyncrhonously
-  struct loop {
-    loop() = delete;
+  void loop(bool &p_abandoned) {
+    while (true) {
+      DEB(m_log, "another loop ", m_counter_loop++);
 
-    loop(executer_base_t<t_log> *p_owner, const std::string &p_id)
-        : m_owner(p_owner), m_id(std::move(p_id)),
-          m_log("concurrent::executer::loop" +
-                (m_id.empty() ? "" : (" " + m_id))) {}
+      {
 
-    loop(const loop &) = delete;
+        std::unique_lock<std::mutex> _lock(m_mutex_exec);
 
-    loop(loop &&p_loop) = delete;
-
-    loop &operator=(const loop &) = delete;
-
-    loop &operator=(loop &&p_loop) = delete;
-
-    inline ~loop() {
-      //      if (!m_abandon) {
-      //        DEB(m_log, "destructor");
-      //      }
-    }
-
-    inline void abandon() {
-      DEB(m_log, "abandoning");
-      std::lock_guard<std::mutex> _lock(m_mutex);
-      m_abandon = true;
-    }
-
-    void operator()() {
-      while (true) {
-
-        {
-          std::unique_lock<std::mutex> _lock(m_owner->m_mutex_exec);
-
-          if (m_owner->m_stopped) {
-            DEB(m_log, "stopped ");
-            break;
-          }
-
-          DEB(m_log, "waiting for work");
-
-          m_owner->m_cond_exec.wait(_lock);
-
-          DEB(m_log, "not waiting for work anymore");
-        }
-
-        if (m_owner->m_stopped) {
-          DEB(m_log, "stopped ");
+        if (p_abandoned) {
+          DEB(m_log, "abandoned");
           break;
         }
 
-        DEB(m_log, "executing");
-        m_owner->m_function();
-
-        {
-          std::lock_guard<std::mutex> _lock(m_mutex);
-          if (m_abandon) {
-            DEB(m_log, "abandoned");
-            break;
-          }
-        }
-
-        if (m_owner->m_stopped) {
+        if (m_stopped) {
           DEB(m_log, "stopped");
           break;
         }
 
-        m_owner->m_cond_wait.notify_one();
+        DEB(m_log, "waiting for work");
 
-        DEB(m_log, "work done notification sent");
+        m_cond_exec.wait(_lock);
+
+        DEB(m_log, "not waiting for work anymore");
       }
+
+      if (p_abandoned) {
+        DEB(m_log, "abandoned");
+        break;
+      }
+
+      if (m_stopped) {
+        DEB(m_log, "stopped");
+        break;
+      }
+
+      DEB(m_log, "executing");
+      m_function();
+
+      if (p_abandoned) {
+        DEB(m_log, "abandoned");
+        break;
+      }
+
+      if (m_stopped) {
+        DEB(m_log, "stopped");
+        break;
+      }
+
+      m_cond_wait.notify_one();
+
+      DEB(m_log, "work done notification sent");
     }
+  }
 
-  private:
-    executer_base_t<t_log> *m_owner{nullptr};
-
-    std::string m_id;
-
-    t_log m_log;
-
-    bool m_abandon{false};
-
-    std::mutex m_mutex;
-  };
-
-  typedef std::unique_ptr<loop> loop_ptr;
+  typedef std::list<std::pair<std::thread, bool>> loops;
 
 private:
   /// \brief Thread to execute the function that is called if the \p
@@ -325,10 +301,6 @@ private:
 
   t_log m_log;
 
-  std::thread m_thread_loop;
-
-  loop_ptr m_loop;
-
   /// \brief The loop initiates stopped
   bool m_stopped{true};
 
@@ -347,9 +319,13 @@ private:
   /// \brief Controls the waiting of the execution loop
   std::condition_variable m_cond_wait;
 
-  std::list<std::pair<std::thread, loop_ptr>> m_abandoned;
+  loops m_loops;
 
   std::thread m_timeout_thread;
+
+  uint16_t m_counter_call{0};
+
+  uint16_t m_counter_loop{0};
 };
 
 // ########## 1 ##########
