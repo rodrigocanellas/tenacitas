@@ -344,8 +344,10 @@ private:
   ///
   /// Please, read the \p log class documentation above to be aware of the
   /// methods \p t_writer should implement
-  writer m_writer = {[](std::string &&) {
-    std::cerr << "NO WRITER CONFIGURED FOR LOGGING" << std::endl;
+  writer m_writer = {[](std::string &&p_str) {
+    std::stringstream _stream;
+    _stream << "NO WRITER - " << p_str;
+    std::cerr << _stream.str();
   }};
 
   /// \brief m_level is the current log level
