@@ -17,19 +17,19 @@
 #include <concurrent/internal/log.h>
 #include <concurrent/sleeping_loop.h>
 #include <concurrent/timeout_callback.h>
-#include <logger/cerr/log.h>
+#include <logger/cerr.h>
 #include <tester/test.h>
 
 tenacitas::concurrent::timeout_callback _timeout_callback =
     [](std::thread::id p_id) -> void {
-  tenacitas::logger::cerr::log _log{"timeout_callback"};
+  tenacitas::logger::cerr _log{"timeout_callback"};
   concurrent_warn(_log, "timeout for ", p_id);
 };
 
 struct dispatcher_005 {
 
   typedef int16_t data;
-  typedef tenacitas::logger::cerr::log log;
+  typedef tenacitas::logger::cerr log;
   typedef tenacitas::concurrent::sleeping_loop_t<log> sleeping_loop;
   typedef tenacitas::concurrent::workers_t<log, data> dispatcher;
 
