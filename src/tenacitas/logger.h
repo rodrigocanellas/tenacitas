@@ -118,12 +118,6 @@ public:
   /// \brief sets 'this' log level for level::warn
   inline void set_warn_level() { m_level = level::warn; }
 
-  /// \brief set_timestamp_as_number makes the timestamp to be printed as a
-  /// number, instead of a string
-  inline static void set_timestamp_as_number(bool p_value = true) {
-    m_timestamp_as_number = p_value;
-  }
-
   /// \brief set_separator defines the separator to be used in the log
   /// messages
   ///
@@ -215,22 +209,7 @@ public:
 
 protected:
   log(std::string &&p_class, writer p_writer)
-      : m_class(m_max_class, ' '), m_writer(p_writer),
-        m_level(logger::level::warn) {
-    if (p_class.size() < m_max_class) {
-      // std::copy(p_class.begin(), p_class.end(), m_class.begin());
-      std::string::size_type _size = p_class.size();
-      for (std::string::size_type _i = 0; _i < _size; ++_i) {
-        m_class[_i] = p_class[_i];
-      }
-    } else {
-      m_class = p_class.substr(0, m_max_class - 1);
-    }
-  }
-
-  //  log(const char *p_class, writer p_writer)
-  //      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn)
-  //      {}
+      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn) {}
 
 private:
   /// \brief write will actually write the message
@@ -248,63 +227,12 @@ private:
              uint16_t p_line, const t_params &... p_params) {
 
     if (can_log(p_level)) {
-      const uint8_t _str_size{4};
-
-      char _this[2 + _str_size + 1];
-      memset(_this, ' ', 2 + _str_size);
-      _this[2 + _str_size] = '\0';
-      {
-        _this[0] = '0';
-        _this[1] = 'x';
-        std::stringstream _aux;
-        _aux << p_this;
-        std::string _str = _aux.str();
-        uint8_t _size_to_copy = size_to_copy(_str, _str_size);
-
-        std::string::size_type _idx = _str.size() - _size_to_copy;
-
-        for (std::string::size_type _i = 0; _i < _size_to_copy; ++_i) {
-          _this[_i + 2] = _str[_idx + _i];
-        }
-        _this[2 + _str_size] = '\0';
-      }
-
-      std::hash<std::thread::id> _hash;
-      char _th_id[_str_size + 1];
-      {
-        std::string _str{number::format_000(_hash(std::this_thread::get_id()))};
-        uint8_t _size_to_copy = size_to_copy(_str, _str_size);
-        std::string::size_type _idx = _str.size() - _size_to_copy;
-        for (std::string::size_type _i = 0; _i < _size_to_copy; ++_i) {
-          _th_id[_i] = _str[_idx + _i];
-        }
-        _th_id[_str_size] = '\0';
-      }
-
-      char _func[m_max_func + 1];
-      memset(_func, ' ', m_max_func);
-      _func[m_max_func] = '\0';
-      {
-        decltype(m_max_func) _size = strlen(p_func);
-        if (_size < m_max_func) {
-          for (auto _i = 0; _i < _size; ++_i) {
-            _func[_i] = p_func[_i];
-          }
-        } else {
-          for (auto _i = 0; _i < m_max_func; ++_i) {
-            _func[_i] = p_func[_i];
-          }
-        }
-      }
 
       std::ostringstream _stream;
-      _stream << p_level << m_separator
-              << (m_timestamp_as_number
-                      ? std::to_string(calendar::now<>::microsecs_num())
-                      : calendar::now<>::microsecs_str().substr(14, 25))
-              << m_separator << _this << m_separator << m_class << m_separator
-              << _func << m_separator << _th_id << m_separator
-              << number::format_000(p_line);
+      _stream << p_level << m_separator << calendar::now<>::microsecs_num()
+              << m_separator << p_this << m_separator << m_class << m_separator
+              << p_func << m_separator << std::this_thread::get_id()
+              << m_separator << p_line;
       format(_stream, m_separator, p_params...);
       _stream << std::endl;
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -386,7 +314,7 @@ private:
   }
 
   inline void format(std::ostringstream &p_stream, std::thread::id p_id) const {
-    p_stream << std::hash<std::thread::id>()(p_id);
+    p_stream << p_id;
   }
 
   /// \brief copies a tuple fields into a string
@@ -405,9 +333,6 @@ private:
   }
 
 private:
-  static const uint8_t m_max_class{15};
-  static const uint8_t m_max_func{15};
-
   std::string m_class;
 
   /// \brief m_writer is the writer where the messages will be logged.
@@ -430,11 +355,7 @@ private:
   char m_separator{'|'};
 
   bool m_is_writer_set{false};
-
-  static bool m_timestamp_as_number;
 };
-
-template <bool use> bool log<use>::m_timestamp_as_number{false};
 
 /// \brief logs message to \p std::cerr
 template <bool use = true> struct cerr : public log<use> {

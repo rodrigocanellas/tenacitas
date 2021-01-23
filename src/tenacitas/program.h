@@ -57,7 +57,7 @@ template <bool use = true> struct options {
   ///#include <utility>
   ///#include <vector>
   ///
-  ///#include <tenacitas/tenacitas.h>
+  ///#include <tenacitas/program.h>
   ///
   ///
   ///  int main() {

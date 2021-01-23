@@ -8,16 +8,16 @@ struct clog_how_to {
   bool operator()() {
     try {
       using namespace tenacitas;
-      m_log.debug(this, __LINE__, "teste de clog para debug ", -345, ' ', 19023,
-                  ' ', 'W', ' ', 3.1415);
-      m_log.info(this, __LINE__, "teste de clog para debug ", -345, ' ', 19023,
-                 ' ', 'W', ' ', 3.1415);
-      m_log.warn(this, __LINE__, "teste de clog para debug ", -345, ' ', 19023,
-                 ' ', 'W', ' ', 3.1415);
-      m_log.error(this, __LINE__, "teste de clog para debug ", -345, ' ', 19023,
-                  ' ', 'W', ' ', 3.1415);
-      m_log.fatal(this, __LINE__, "teste de clog para debug ", -345, ' ', 19023,
-                  ' ', 'W', ' ', 3.1415);
+      m_log.debug(this, __func__, __LINE__, "teste de clog para debug ", -345,
+                  ' ', 19023, ' ', 'W', ' ', 3.1415);
+      m_log.info(this, __func__, __LINE__, "teste de clog para debug ", -345,
+                 ' ', 19023, ' ', 'W', ' ', 3.1415);
+      m_log.warn(this, __func__, __LINE__, "teste de clog para debug ", -345,
+                 ' ', 19023, ' ', 'W', ' ', 3.1415);
+      m_log.error(this, __func__, __LINE__, "teste de clog para debug ", -345,
+                  ' ', 19023, ' ', 'W', ' ', 3.1415);
+      m_log.fatal(this, __func__, __LINE__, "teste de clog para debug ", -345,
+                  ' ', 19023, ' ', 'W', ' ', 3.1415);
 
       return true;
 

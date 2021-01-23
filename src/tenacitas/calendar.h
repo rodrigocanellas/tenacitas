@@ -43,6 +43,20 @@ template <bool use = true> struct now {
     return _stream.str();
   }
 
+  /// \brief YYYY-MM-DD HH::MM::SS,999999
+  static std::string microsecs_str(uint64_t p_microsecs) {
+    using namespace std;
+    using namespace chrono;
+
+    const time_t _time_t = static_cast<time_t>(p_microsecs / 1000000);
+
+    const auto _remainder = p_microsecs % 1000000;
+    stringstream _stream;
+    _stream << put_time(std::localtime(&_time_t), "%Y-%m-%d %H:%M:%S,")
+            << std::setw(6) << std::setfill('0') << std::left << _remainder;
+    return _stream.str();
+  }
+
   /// \brief now in milliseconds
   template <typename t_int = uint64_t> inline static t_int millisecs_num() {
     return static_cast<t_int>(

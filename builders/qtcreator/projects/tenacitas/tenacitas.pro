@@ -13,4 +13,5 @@ HEADERS += \
     $$code_src_dir/tenacitas/macros.h
 
 SUBDIRS += \
+  log_formater \
   tst
