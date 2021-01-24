@@ -61,6 +61,30 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
   return p_out;
 }
 
+inline const char *level2str(level p_level) {
+  static const char *_deb = "DEB";
+  static const char *_inf = "INF";
+  static const char *_war = "WAR";
+  static const char *_err = "ERR";
+  static const char *_fat = "FAT";
+  static const char *_n_ = "-N_";
+
+  switch (p_level) {
+  case level::debug:
+    return _deb;
+  case level::info:
+    return _inf;
+  case level::warn:
+    return _war;
+  case level::error:
+    return _err;
+  case level::fatal:
+    return _fat;
+  default:
+    return _n_;
+  }
+}
+
 level global_level{level::warn};
 
 void set_debug_level() { global_level = level::debug; }
@@ -77,7 +101,7 @@ template <bool use = true> class log {
 public:
   /// \brief function responsible for actually writing the log message to a
   /// writer
-  typedef std::function<void(std::string &&)> writer;
+  typedef std::function<void(const char *)> writer;
 
 public:
   log() = delete;
@@ -212,6 +236,76 @@ protected:
       : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn) {}
 
 private:
+  struct appender {
+    appender(char p_separator) : m_separator(p_separator) {
+      std::memset(m_line, '\0', m_line_size);
+    }
+
+    void operator()(const char *p_str, bool p_sep = true) {
+      auto _size = std::strlen(p_str);
+      if ((m_p1 + _size) > m_line_size) {
+        std::cerr << "overflow in log buffer trying to write '" << p_str
+                  << "', starting at " << m_p1 << " and ending at "
+                  << m_p1 + _size << std::endl;
+        m_p1 += _size;
+        return;
+      }
+      std::copy(&p_str[0], &p_str[_size], &m_line[m_p1]);
+      m_p1 += _size;
+      if (p_sep) {
+        m_line[m_p1] = m_separator;
+        ++m_p1;
+      }
+    }
+
+    const char *get() const { return m_line; }
+
+  private:
+    static const uint16_t m_line_size{10 * 1024};
+
+    char m_separator;
+
+    uint16_t m_p1{0};
+
+    char m_line[m_line_size + 1];
+  };
+
+private:
+  //  /// \brief write will actually write the message
+  //  ///
+  //  /// tparam t_params are the types of the values to be logged, and each
+  //  /// parameter must implement the \code std::ostream & operator<<(const t
+  //  /// &)\endcode operator, where \p t is the type of the parameter
+  //  ///
+  //  /// \param p_level is the severity level of the message
+  //  ///
+  //  /// \param p_params are the values to be logged
+  //#ifdef TENACITAS_LOG
+  //  template <typename t_class, typename... t_params>
+  //  void write(level p_level, t_class *p_this, const char *p_func,
+  //             uint16_t p_line, const t_params &... p_params) {
+
+  //    if (can_log(p_level)) {
+
+  //      std::ostringstream _stream;
+  //      _stream << p_level << m_separator << calendar::now<>::microsecs_num()
+  //              << m_separator << p_this << m_separator << m_class <<
+  //              m_separator
+  //              << p_func << m_separator << std::this_thread::get_id()
+  //              << m_separator << p_line;
+  //      format(_stream, m_separator, p_params...);
+  //      _stream << std::endl;
+  //      std::lock_guard<std::mutex> _lock(m_mutex);
+  //      m_writer(_stream.str());
+  //    }
+  //  }
+  //#else
+  //  template <typename t_class, typename... t_params>
+  //  void write(level, t_class *, const char *, uint16_t, const t_params &...)
+  //  {}
+
+  //#endif
+
   /// \brief write will actually write the message
   ///
   /// tparam t_params are the types of the values to be logged, and each
@@ -227,16 +321,39 @@ private:
              uint16_t p_line, const t_params &... p_params) {
 
     if (can_log(p_level)) {
+      appender _append(m_separator);
 
-      std::ostringstream _stream;
-      _stream << p_level << m_separator << calendar::now<>::microsecs_num()
-              << m_separator << p_this << m_separator << m_class << m_separator
-              << p_func << m_separator << std::this_thread::get_id()
-              << m_separator << p_line;
-      format(_stream, m_separator, p_params...);
-      _stream << std::endl;
+      const char *_level_str = level2str(p_level);
+      _append(_level_str);
+
+      {
+        std::string _now = std::to_string(calendar::now<>::microsecs_num());
+        _append(_now.c_str());
+      }
+
+      {
+        std::ostringstream _stream;
+        _stream << p_this;
+        _append(_stream.str().c_str());
+      }
+
+      _append(m_class.c_str());
+      _append(p_func);
+
+      {
+        std::ostringstream _stream;
+        _stream << std::this_thread::get_id();
+        _append(_stream.str().c_str());
+      }
+
+      _append(std::to_string(p_line).c_str());
+
+      format(_append, p_params...);
+
+      _append("\n", false);
+
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_writer(_stream.str());
+      m_writer(_append.get());
     }
   }
 #else
@@ -244,22 +361,6 @@ private:
   void write(level, t_class *, const char *, uint16_t, const t_params &...) {}
 
 #endif
-
-  uint8_t size_to_copy(const char *p_str, uint8_t p_size) const {
-    auto _str_size = strlen(p_str);
-    if (_str_size > p_size) {
-      return p_size;
-    }
-    return _str_size;
-  };
-
-  uint8_t size_to_copy(const std::string &p_str, uint8_t p_size) const {
-    auto _str_size = p_str.size();
-    if (_str_size > p_size) {
-      return p_size;
-    }
-    return _str_size;
-  };
 
   /// \brief can_log informs if a message with a certain log level can be
   /// printed, considering the current log level
@@ -282,39 +383,49 @@ private:
   /// \brief format compile time recursion to solve the variadic template
   /// parameter
   template <typename t, typename... ts>
-  inline void format(std::ostringstream &p_stream, const t &p_t,
+  inline void format(appender &p_append, const t &p_t,
                      const ts &... p_ts) const {
-    format(p_stream, p_t);
-    format(p_stream, p_ts...);
+    format(p_append, p_t);
+    format(p_append, p_ts...);
   }
 
   /// \brief end of compile time recursion to solve the variadic template
   /// parameter
   template <typename t>
-  inline void format(std::ostringstream &p_stream, const t &p_t) const {
+  inline void format(appender &p_append, const t &p_t) const {
+    std::stringstream _stream;
     if constexpr (type::is_tuple<t>::value) {
-      p_stream << to_str(p_t);
+      _stream << to_str(p_t);
     } else {
-      p_stream << p_t;
+      _stream << p_t;
     }
+    p_append(_stream.str().c_str(), false);
   }
 
-  inline void format(std::ostringstream &p_stream, const double &p_t) const {
-    p_stream << std::setprecision(std::numeric_limits<double>::max_digits10)
-             << p_t;
+  inline void format(appender &p_append, const double &p_t) const {
+    std::stringstream _stream;
+    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+            << p_t;
+    p_append(_stream.str().c_str(), false);
   }
 
-  inline void format(std::ostringstream &p_stream, const float &p_t) const {
-    p_stream << std::setprecision(std::numeric_limits<float>::max_digits10)
-             << p_t;
+  inline void format(appender &p_append, const float &p_t) const {
+    std::stringstream _stream;
+    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+            << p_t;
+    p_append(_stream.str().c_str(), false);
   }
 
-  inline void format(std::ostringstream &p_stream, const bool &p_t) const {
-    p_stream << (p_t ? "true" : "false");
+  inline void format(appender &p_append, const bool &p_t) const {
+    static const char *_true = "true";
+    static const char *_false = "true";
+    p_append((p_t ? _true : _false), false);
   }
 
-  inline void format(std::ostringstream &p_stream, std::thread::id p_id) const {
-    p_stream << p_id;
+  inline void format(appender &p_append, std::thread::id p_id) const {
+    std::stringstream _stream;
+    _stream << p_id;
+    p_append(_stream.str().c_str(), false);
   }
 
   /// \brief copies a tuple fields into a string
@@ -361,33 +472,33 @@ private:
 template <bool use = true> struct cerr : public log<use> {
   inline explicit cerr(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
-                 [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
+                 [](const char *p_str) -> void { std::cerr << p_str; }) {}
 
   inline explicit cerr(const char *p_class)
       : log<use>(std::string(p_class),
-                 [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
+                 [](const char *p_str) -> void { std::cerr << p_str; }) {}
 };
 
 /// \brief logs message to \p std::cout
 template <bool use = true> struct cout : public log<use> {
   inline explicit cout(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
-                 [](std::string &&p_str) -> void { std::cout << p_str; }) {}
+                 [](const char *p_str) -> void { std::cout << p_str; }) {}
 
   inline explicit cout(const char *p_class)
       : log<use>(std::string(p_class),
-                 [](std::string &&p_str) -> void { std::cout << p_str; }) {}
+                 [](const char *p_str) -> void { std::cout << p_str; }) {}
 };
 
 /// \brief The log struct logs message to \p std::clog
 template <bool use = true> struct clog : public log<use> {
   inline explicit clog(std::string &&p_class = "no-class")
       : log<use>(std::move(p_class),
-                 [](std::string &&p_str) -> void { std::clog << p_str; }) {}
+                 [](const char *p_str) -> void { std::clog << p_str; }) {}
 
   inline explicit clog(const char *p_class)
       : log<use>(std::string(p_class),
-                 [](std::string &&p_str) -> void { std::clog << p_str; }) {}
+                 [](const char *p_str) -> void { std::clog << p_str; }) {}
 };
 
 } // namespace logger
