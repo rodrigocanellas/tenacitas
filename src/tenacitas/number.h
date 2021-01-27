@@ -48,8 +48,8 @@ enum class align : char { left = 'l', right = 'd' };
 /// of the string
 ///
 template <typename t_num_type>
-inline std::string format_000(t_num_type p_num, char p_fill = '0',
-                              align p_align = align::right) {
+inline std::string format(t_num_type p_num, char p_fill = '0',
+                          align p_align = align::right) {
   std::stringstream _stream;
   _stream << (p_align == align::right ? std::right : std::left)
           << std::setfill(p_fill) << std::setw(max_str_length<t_num_type>())
@@ -67,8 +67,8 @@ inline std::string format_000(t_num_type p_num, char p_fill = '0',
 /// \param p_align defines if \p p_num will be aligned at left, right, or center
 /// of the string
 ///
-inline std::string format_000(uint8_t p_num, char p_fill = '0',
-                              align p_align = align::right) {
+inline std::string format(uint8_t p_num, char p_fill = '0',
+                          align p_align = align::right) {
   std::stringstream _stream;
   _stream << (p_align == align::right ? std::right : std::left)
           << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
@@ -86,8 +86,8 @@ inline std::string format_000(uint8_t p_num, char p_fill = '0',
 /// \param p_align defines if \p p_num will be aligned at left, right, or center
 /// of the string
 ///
-inline std::string format_000(int8_t p_num, char p_fill = '0',
-                              align p_align = align::right) {
+inline std::string format(int8_t p_num, char p_fill = '0',
+                          align p_align = align::right) {
   std::stringstream _stream;
   _stream << (p_align == align::right ? std::right : std::left)
           << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
@@ -96,8 +96,8 @@ inline std::string format_000(int8_t p_num, char p_fill = '0',
 }
 
 template <typename t_num_type>
-inline std::string format_000(t_num_type p_num, uint8_t p_size,
-                              char p_fill = '0', align p_align = align::right) {
+inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
+                          align p_align = align::right) {
   std::stringstream _stream;
   _stream << (p_align == align::right ? std::right : std::left)
           << std::setfill(p_fill) << std::setw(p_size) << p_num;

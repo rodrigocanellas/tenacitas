@@ -125,7 +125,7 @@ private:
                                std::string::size_type p_1,
                                std::string::size_type p_2) -> void {
       auto _num = std::stoul(std::string(&p_line[p_1], &p_line[p_2]));
-      m_out << number::format_000(_num, m_max_line_number) << m_separator;
+      m_out << number::format(_num, m_max_line_number) << m_separator;
     };
 
     auto _msg = [this](const std::string &p_line, std::string::size_type p_1,

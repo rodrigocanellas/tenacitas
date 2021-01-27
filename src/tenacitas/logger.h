@@ -271,41 +271,6 @@ private:
   };
 
 private:
-  //  /// \brief write will actually write the message
-  //  ///
-  //  /// tparam t_params are the types of the values to be logged, and each
-  //  /// parameter must implement the \code std::ostream & operator<<(const t
-  //  /// &)\endcode operator, where \p t is the type of the parameter
-  //  ///
-  //  /// \param p_level is the severity level of the message
-  //  ///
-  //  /// \param p_params are the values to be logged
-  //#ifdef TENACITAS_LOG
-  //  template <typename t_class, typename... t_params>
-  //  void write(level p_level, t_class *p_this, const char *p_func,
-  //             uint16_t p_line, const t_params &... p_params) {
-
-  //    if (can_log(p_level)) {
-
-  //      std::ostringstream _stream;
-  //      _stream << p_level << m_separator << calendar::now<>::microsecs_num()
-  //              << m_separator << p_this << m_separator << m_class <<
-  //              m_separator
-  //              << p_func << m_separator << std::this_thread::get_id()
-  //              << m_separator << p_line;
-  //      format(_stream, m_separator, p_params...);
-  //      _stream << std::endl;
-  //      std::lock_guard<std::mutex> _lock(m_mutex);
-  //      m_writer(_stream.str());
-  //    }
-  //  }
-  //#else
-  //  template <typename t_class, typename... t_params>
-  //  void write(level, t_class *, const char *, uint16_t, const t_params &...)
-  //  {}
-
-  //#endif
-
   /// \brief write will actually write the message
   ///
   /// tparam t_params are the types of the values to be logged, and each
@@ -370,7 +335,7 @@ private:
   ///
   /// \return \p true if the messsage can be logged, \p false otherwise
   ///
-  bool can_log(level p_level) const {
+  inline bool can_log(level p_level) const {
     if (m_level == level::no_log) {
       return false;
     }
