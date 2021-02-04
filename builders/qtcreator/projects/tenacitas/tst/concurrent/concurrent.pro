@@ -1,7 +1,8 @@
 SUBDIRS = \
-    executer \
-    async_loop \
-    sleeping_loop
+    executer
+#    \
+#    async_loop \
+#    sleeping_loop
 
 
 #    \
