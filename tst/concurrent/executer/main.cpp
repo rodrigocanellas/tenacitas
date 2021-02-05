@@ -23,7 +23,7 @@ private:
 
 timeout_callback _timeout_callback;
 
-//struct test000 {
+// struct test000 {
 
 //  static std::string desc() {
 //    return "executer as executer_t<logger, double, int, float>, no timeout";
@@ -31,7 +31,8 @@ timeout_callback _timeout_callback;
 
 //  bool operator()() {
 
-//    typedef concurrent::executer_t<logger::cerr<>, double, int, float> executer;
+//    typedef concurrent::executer_t<logger::cerr<>, double, int, float>
+//    executer;
 
 //    m_log.set_debug_level();
 
@@ -69,11 +70,11 @@ timeout_callback _timeout_callback;
 //    return true;
 //  }
 
-//private:
+// private:
 //  logger::cerr<> m_log{"test000"};
 //};
 
-//struct test100 {
+// struct test100 {
 
 //  static std::string desc() {
 //    return "executer as executer_t<logger, double, int> with timeout";
@@ -112,11 +113,11 @@ timeout_callback _timeout_callback;
 //    return true;
 //  }
 
-//private:
+// private:
 //  logger::cerr<> m_log{"test100"};
 //};
 
-//struct test101 {
+// struct test101 {
 
 //  static std::string desc() { return "same code as test100"; }
 
@@ -153,11 +154,11 @@ timeout_callback _timeout_callback;
 //    return true;
 //  }
 
-//private:
+// private:
 //  logger::cerr<> m_log{"test101"};
 //};
 
-//struct test200 {
+// struct test200 {
 
 //  static std::string desc() {
 //    return "executer as executer_t<logger, double, int>, with timeout, and "
@@ -221,11 +222,11 @@ timeout_callback _timeout_callback;
 //    return true;
 //  }
 
-//private:
+// private:
 //  logger::cerr<> m_log{"test200"};
 //};
 
-//struct test300 {
+// struct test300 {
 
 //  static std::string desc() {
 //    return "executer as executer_t<logger, double, int>, with timeout, and "
@@ -268,7 +269,8 @@ timeout_callback _timeout_callback;
 
 //    _sleep = 500ms;
 
-//    DEB(m_log, "running again, and no timeout should occurr because sleep is ",
+//    DEB(m_log, "running again, and no timeout should occurr because sleep is
+//    ",
 //        _sleep.count(), "millisecs");
 
 //    _maybe = _executer(_i);
@@ -291,7 +293,7 @@ timeout_callback _timeout_callback;
 //    return true;
 //  }
 
-//private:
+// private:
 //  logger::cerr<> m_log{"test300"};
 //};
 
@@ -339,8 +341,7 @@ private:
 
     work() = delete;
     work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout),
-          m_max(p_max) {
+        : m_timeout(p_timeout), m_max(p_max) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -415,8 +416,7 @@ private:
 
     work() = delete;
     work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout),
-          m_max(p_max) {
+        : m_timeout(p_timeout), m_max(p_max) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -459,7 +459,8 @@ struct test300 {
       const uint16_t _max{9};
 
       work _work(_timeout, static_cast<uint16_t>(_max / 3));
-      executer _exec([&_work](int16_t p_val) -> void { _work(p_val); }, _timeout,
+      executer _exec([&_work](int16_t p_val) -> void { _work(p_val); },
+                     _timeout,
                      [this](std::thread::id p_id) -> void {
                        WAR(m_log, "timeout for ", p_id);
                      });
@@ -494,7 +495,7 @@ private:
         : m_timeout(p_timeout),
 
           m_max(p_max) {
-      DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count() );
+      DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
     void operator()(int16_t p_val) {
@@ -566,8 +567,7 @@ private:
 
     work() = delete;
     work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout),
-          m_max(p_max) {
+        : m_timeout(p_timeout), m_sleep(p_timeout.count() / 2), m_max(p_max) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -580,6 +580,8 @@ private:
         return;
       }
 
+      DEB(m_log, "sleeping");
+      std::this_thread::sleep_for(m_sleep);
       DEB(m_log, "i = ", m_i);
     }
 
@@ -587,6 +589,7 @@ private:
 
   private:
     std::chrono::milliseconds m_timeout;
+    std::chrono::milliseconds m_sleep;
     uint16_t m_max;
     uint16_t m_i{0};
     logger::cerr<> m_log{"work400"};
