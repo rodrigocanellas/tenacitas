@@ -26,7 +26,7 @@ timeout_callback _timeout_callback;
 // struct test000 {
 
 //  static std::string desc() {
-//    return "executer as executer_t<logger, double, int, float>, no timeout";
+//    return "no timeout - two parameters - return";
 //  }
 
 //  bool operator()() {
@@ -44,8 +44,6 @@ timeout_callback _timeout_callback;
 //    DEB(m_log, "about to create");
 //    executer _executer(function, 1s, _timeout_callback);
 //    DEB(m_log, "created");
-
-//    _executer.start();
 
 //    int _i = 2;
 //    float _f = 3.5;
@@ -304,10 +302,18 @@ struct test100 {
     try {
       typedef concurrent::executer_t<logger::cerr<>, double, int16_t> executer;
 
-      const std::chrono::milliseconds _timeout{1000};
-      const uint16_t _max{9};
+      constexpr std::chrono::milliseconds _timeout{100};
+      constexpr uint16_t _max{7};
+      constexpr uint16_t _missed{static_cast<uint16_t>(_max / 3)};
 
-      work _work(_timeout, static_cast<uint16_t>(_max / 3));
+      uint16_t _expected = 0;
+      for (int16_t _i{0}; _i < _max; ++_i) {
+        if (_i != _missed) {
+          _expected += _i;
+        }
+      }
+
+      work _work(_timeout, _missed);
       executer _exec([&_work](int16_t p_val) -> double { return _work(p_val); },
                      _timeout,
                      [this](std::thread::id p_id) -> void {
@@ -317,19 +323,32 @@ struct test100 {
       for (int16_t _i{0}; _i < _max; ++_i) {
         _exec(_i);
       }
-      INF(m_log, "sleeping...");
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(_timeout.count() * _max + 3000));
-      double _res = _work.get();
-      double _expected{(_max - 1) * 2.75};
-      if (_res != _expected) {
-        ERR(m_log, "res = ", _res, ", but it should be ", _expected);
+
+      // template <class Rep, class Period, class Predicate>
+      // bool wait_for (unique_lock<mutex>& lck, const
+      // chrono::duration<Rep,Period>& rel_time, Predicate pred);
+      //
+      // false if the predicate pred still evaluates to false after the rel_time
+      // timeout expired, otherwise true.
+      //
+      // or...
+      //
+      // The predicate version (2) returns pred(), regardless of whether the
+      // timeout was triggered (although it can only be false if triggered).
+      constexpr auto _rel_time{
+          std::chrono::milliseconds(_timeout.count() * _max + 3000)};
+      auto _pred = [&_work, _expected]() -> bool {
+        return _work.get() == _expected;
+      };
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      if (!m_cond.wait_for(_lock, _rel_time, _pred)) {
+        ERR(m_log, _rel_time.count(), "ms elapsed, and the result is ",
+            _work.get(), ", when it should be ", _expected);
         return false;
       }
-      INF(m_log, "res = ", _res, ", and it is right, as ", _expected,
-          " was expected");
+      INF(m_log, "result is ", _work.get(),
+          ", and it must be correct, as it should ", _expected);
       return true;
-
     } catch (std::exception &_ex) {
       FAT(m_log, _ex.what());
     }
@@ -340,14 +359,14 @@ private:
   struct work {
 
     work() = delete;
-    work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout), m_max(p_max) {
-      DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
+    work(std::chrono::milliseconds p_timeout, uint16_t p_missed)
+        : m_timeout(p_timeout), m_missed(p_missed) {
+      DEB(m_log, "max = ", m_missed, ", timeout = ", m_timeout.count());
     }
 
     double operator()(int16_t p_val) {
-      m_val = p_val * 2.75;
-      if (p_val == m_max) {
+
+      if (p_val == m_missed) {
         INF(m_log, "causing timeout with i = ", p_val);
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() * 2));
@@ -355,22 +374,26 @@ private:
 
         return -3.14;
       }
-
-      DEB(m_log, "val = ", m_val);
+      m_val += p_val;
+      DEB(m_log, "p_val = ", p_val, ", m_val = ", m_val);
       return m_val;
     }
 
-    double get() const { return m_val; }
+    uint16_t get() const { return m_val; }
 
   private:
     std::chrono::milliseconds m_timeout;
-    uint16_t m_max;
-    double m_val{0};
+
+    uint16_t m_missed;
+    uint16_t m_val{0};
+
     logger::cerr<> m_log{"work100"};
   };
 
 private:
   logger::cerr<> m_log{"test100"};
+  std::mutex m_mutex;
+  std::condition_variable m_cond;
 };
 
 struct test200 {
@@ -415,8 +438,8 @@ private:
   struct work {
 
     work() = delete;
-    work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout), m_max(p_max) {
+    work(std::chrono::milliseconds p_timeout, uint16_t p_missed)
+        : m_timeout(p_timeout), m_max(p_missed) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -491,10 +514,10 @@ private:
   struct work {
 
     work() = delete;
-    work(std::chrono::milliseconds p_timeout, uint16_t p_max)
+    work(std::chrono::milliseconds p_timeout, uint16_t p_missed)
         : m_timeout(p_timeout),
 
-          m_max(p_max) {
+          m_max(p_missed) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -566,8 +589,9 @@ private:
   struct work {
 
     work() = delete;
-    work(std::chrono::milliseconds p_timeout, uint16_t p_max)
-        : m_timeout(p_timeout), m_sleep(p_timeout.count() / 2), m_max(p_max) {
+    work(std::chrono::milliseconds p_timeout, uint16_t p_missed)
+        : m_timeout(p_timeout), m_sleep(p_timeout.count() / 2),
+          m_max(p_missed) {
       DEB(m_log, "max = ", m_max, ", timeout = ", m_timeout.count());
     }
 
@@ -601,7 +625,7 @@ private:
 
 int main(int argc, char **argv) {
 
-  logger::set_debug_level();
+  logger::set_info_level();
   tester::test _test(argc, argv);
   run_test(_test, test100);
   run_test(_test, test200);
