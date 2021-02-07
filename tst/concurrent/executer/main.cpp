@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cstdint>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <optional>
 
@@ -302,8 +303,8 @@ struct test100 {
     try {
       typedef concurrent::executer_t<logger::cerr<>, double, int16_t> executer;
 
-      constexpr std::chrono::milliseconds _timeout{100};
-      constexpr uint16_t _max{7};
+      constexpr std::chrono::milliseconds _timeout{50};
+      constexpr uint16_t _max{100};
       constexpr uint16_t _missed{static_cast<uint16_t>(_max / 3)};
 
       uint16_t _expected = 0;
@@ -392,6 +393,103 @@ private:
 
 private:
   logger::cerr<> m_log{"test100"};
+  std::mutex m_mutex;
+  std::condition_variable m_cond;
+};
+
+struct test101 {
+  static std::string desc() { return "timeout - one param - return"; }
+
+  bool operator()() {
+    try {
+
+      constexpr std::chrono::milliseconds _timeout{50};
+      constexpr uint16_t _max{100};
+      constexpr uint16_t _missed{static_cast<uint16_t>(_max / 3)};
+
+      uint16_t _expected = 0;
+      for (int16_t _i{0}; _i < _max; ++_i) {
+        if (_i != _missed) {
+          _expected += _i;
+        }
+      }
+
+      work _work(_timeout, _missed);
+
+      auto _exec = [&_work](int16_t p_i) -> void { _work(p_i); };
+
+      for (int16_t _i{0}; _i < _max; ++_i) {
+        std::future<void> _future = std::async(std::launch::async, _exec, _i);
+      }
+
+      // template <class Rep, class Period, class Predicate>
+      // bool wait_for (unique_lock<mutex>& lck, const
+      // chrono::duration<Rep,Period>& rel_time, Predicate pred);
+      //
+      // false if the predicate pred still evaluates to false after the rel_time
+      // timeout expired, otherwise true.
+      //
+      // or...
+      //
+      // The predicate version (2) returns pred(), regardless of whether the
+      // timeout was triggered (although it can only be false if triggered).
+      constexpr auto _rel_time{
+          std::chrono::milliseconds(_timeout.count() * _max + 3000)};
+      auto _pred = [&_work, _expected]() -> bool {
+        return _work.get() == _expected;
+      };
+      std::unique_lock<std::mutex> _lock{m_mutex};
+      if (!m_cond.wait_for(_lock, _rel_time, _pred)) {
+        ERR(m_log, _rel_time.count(), "ms elapsed, and the result is ",
+            _work.get(), ", when it should be ", _expected);
+        return false;
+      }
+      INF(m_log, "result is ", _work.get(),
+          ", and it must be correct, as it should ", _expected);
+      return true;
+    } catch (std::exception &_ex) {
+      FAT(m_log, _ex.what());
+    }
+    return false;
+  }
+
+private:
+  struct work {
+
+    work() = delete;
+    work(std::chrono::milliseconds p_timeout, uint16_t p_missed)
+        : m_timeout(p_timeout), m_missed(p_missed) {
+      DEB(m_log, "max = ", m_missed, ", timeout = ", m_timeout.count());
+    }
+
+    double operator()(int16_t p_val) {
+
+      if (p_val == m_missed) {
+        INF(m_log, "causing timeout with i = ", p_val);
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(m_timeout.count() * 2));
+        DEB(m_log, "woke up");
+
+        return -3.14;
+      }
+      m_val += p_val;
+      DEB(m_log, "p_val = ", p_val, ", m_val = ", m_val);
+      return m_val;
+    }
+
+    uint16_t get() const { return m_val; }
+
+  private:
+    std::chrono::milliseconds m_timeout;
+
+    uint16_t m_missed;
+    uint16_t m_val{0};
+
+    logger::cerr<> m_log{"work101"};
+  };
+
+private:
+  logger::cerr<> m_log{"test101"};
   std::mutex m_mutex;
   std::condition_variable m_cond;
 };
@@ -628,6 +726,7 @@ int main(int argc, char **argv) {
   logger::set_info_level();
   tester::test _test(argc, argv);
   run_test(_test, test100);
+  run_test(_test, test101);
   run_test(_test, test200);
   run_test(_test, test300);
   run_test(_test, test400);

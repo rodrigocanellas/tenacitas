@@ -9,6 +9,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <functional>
+#include <future>
 #include <iostream>
 #include <list>
 #include <mutex>
@@ -41,76 +42,15 @@ template <typename t_time> inline interval to_interval(t_time p_time) {
   return std::chrono::duration_cast<interval>(p_time);
 }
 
-///// \brief The thread class is a wrapper for the std::thread, which joins in
-///// destructor and move assignment
-// template <typename t_log, bool use = true> class thread {
-// public:
-//  /// \brief thread constructor
-//  ///
-//  /// \param p_func function that will run in a separated thread
-//  inline explicit thread(std::function<void()> &&p_func,
-//                         const std::string &p_id = "")
-//      : m_thread(std::move(p_func)),
-//        m_log((p_id.empty() ? "concurrent::thread"
-//                            : "concurrent::thread " + p_id)) {}
-
-//  inline thread() = default;
-//  thread(const thread &) = delete;
-//  inline thread(thread &&) noexcept = default;
-//  thread &operator=(const thread &) = delete;
-
-//  ///
-//  /// \brief operator = move joins the \p this thread, if the thread is still
-//  /// running
-//  ///
-//  /// \param p_th thread to be move to \p this
-//  ///
-//  /// \return the new thread
-//  inline thread &operator=(thread &&p_th) noexcept {
-//    DEB(m_log, "move assignment");
-//    join();
-//    m_thread = std::move(p_th.m_thread);
-//    return *this;
-//  }
-
-//  inline friend std::ostream &operator<<(std::ostream &out,
-//                                         const thread &p_thread) {
-//    out << "(" << &p_thread << ", " << p_thread.m_thread.get_id() << ")";
-//    return out;
-//  }
-
-//  /// \brief join waits for the thread to finish
-//  inline void join() {
-//    if (m_thread.joinable()) {
-//      DEB(m_log, "joining");
-//      m_thread.join();
-//    }
-//  }
-
-//  inline void detach() {
-//    DEB(m_log, "detaching");
-//    m_thread.detach();
-//  }
-
-//  inline std::thread::id get_id() const { return m_thread.get_id(); }
-
-//  /// \brief ~thread joins if the thread is still running
-//  inline ~thread() {
-//    //    DEB(m_log, "destructor");
-//    join();
-//  }
-
-//  inline bool joinable() const { return m_thread.joinable(); }
-
-// private:
-//  /// \brief m_thread the wrappered std::thread
-//  std::thread m_thread;
-
-//  t_log m_log;
-//};
-
 /// \brief Type of function executed when a function times out
 typedef std::function<void(std::thread::id)> timeout_callback;
+
+/// ##########################################################################
+/// \attention DO NOT USE 'executer_base_t' or any of the 'executer_t'
+/// specialization, as they DO NOT WORK
+/// ##########################################################################
+
+#if 0
 
 /// \brief Base class to allow a function to be executed with timeout control,
 /// but not starting a thread for each execution
@@ -397,11 +337,13 @@ private:
   executer_base_t<t_log> m_exec;
 };
 
+#endif
+
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
 
 /// \brief base class for asynchronous loop
-template <typename t_log> struct async_loop_base_t {
+template <typename t_log, typename t_time> struct async_loop_base_t {
 
   async_loop_base_t(const async_loop_base_t &) = delete;
   async_loop_base_t(async_loop_base_t &&p_async_loop) = delete;
@@ -434,11 +376,16 @@ template <typename t_log> struct async_loop_base_t {
   inline void set_log_warn() { m_log.set_warn_level(); }
 
 protected:
-  async_loop_base_t() = default;
+  async_loop_base_t(t_time p_time, timeout_callback p_timeout_callback)
+      : m_timeout(to_timeout(p_time)), m_timeout_callback(p_timeout_callback) {}
 
   virtual void loop() = 0;
 
 protected:
+  timeout m_timeout;
+
+  timeout_callback m_timeout_callback;
+
   bool m_stopped{true};
 
   std::thread m_thread;
@@ -449,50 +396,79 @@ protected:
 /// \brief Used to define if a loop will use a breaker function or not
 enum class use_breaker : char { yes = 'y', no = 'n' };
 
+// template <typename TF, typename TDuration, class... TArgs>
+// std::result_of_t<TF&&(TArgs&&...)> run_with_timeout(TF&& f, TDuration
+// timeout, TArgs&&... args)
+//{
+//    using R = std::result_of_t<TF&&(TArgs&&...)>;
+//    std::packaged_task<R(TArgs...)> task(f);
+//    auto future = task.get_future();
+//    std::thread thr(std::move(task), std::forward<TArgs>(args)...);
+//    if (future.wait_for(timeout) != std::future_status::timeout)
+//    {
+//       thr.join();
+//       return future.get(); // this will propagate exception from f() if any
+//    }
+//    else
+//    {
+//       thr.detach(); // we leave the thread still running
+//       throw std::runtime_error("Timeout");
+//    }
+//}
+
+template <typename t_time, typename t_function, typename... t_params>
+std::optional<std::result_of<t_function(t_params &&...)>>
+call(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
+  typedef std::result_of<t_function && (t_params && ...)> result;
+  std::future<result> _future = std::async(std::launch::async, p_function,
+                                           std::forward<t_params>(p_params)...);
+  std::future_status _status = _future.wait_for(p_timeout);
+  if (_status == std::future_status::ready) {
+    return {_future.get()};
+  }
+  return {};
+}
+
 /// \brief Base class for asynchronous loop
-template <typename t_log, use_breaker use, typename... t_params>
+template <typename t_log, typename t_time, use_breaker use,
+          typename... t_params>
 struct async_loop_t;
 
 /// #### async_loop 1 ####
-template <typename t_log, typename... t_params>
-struct async_loop_t<t_log, use_breaker::yes, t_params...>
-    : public async_loop_base_t<t_log> {
+template <typename t_log, typename t_time, typename... t_params>
+struct async_loop_t<t_log, t_time, use_breaker::yes, t_params...>
+    : public async_loop_base_t<t_log, t_time> {
 
   typedef std::function<void(t_params...)> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
-  template <typename t_time>
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                breaker p_breaker, worker p_worker, provider p_provider)
-      : async_loop_base_t<t_log>(),
-        m_worker(p_worker, p_timeout, p_timeout_callback, "w"),
-        m_provider(
-            p_provider, 500ms,
-            [this](std::thread::id p_id) -> void {
-              WAR(this->m_log, "thread ", p_id, " for provider has timed out");
-            },
-            "p"),
-        m_breaker(
-            p_breaker, 300ms,
-            [this](std::thread::id p_id) -> void {
-              WAR(this->m_log, "thread ", p_id, " for breaker has timed out");
-            },
-            "b") {}
+      : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
+        m_worker(p_worker), m_provider(p_provider), m_breaker(p_breaker) {}
+  //            p_breaker, 300ms,
+  //            [this](std::thread::id p_id) -> void {
+  //              WAR(this->m_log, "thread ", p_id, " for breaker has timed
+  //              out");
+  //            },
+  //            "b") {}
+
+  //  , 500ms,
+  //              [this](std::thread::id p_id) -> void {
+  //                WAR(this->m_log, "thread ", p_id, " for provider has timed
+  //                out");
+  //              },
+  //              "p"),
 
 protected:
   void loop() override {
-    m_worker.start();
-    m_provider.start();
-    m_breaker.start();
+
     while (true) {
       if (this->m_stopped) {
-        m_worker.stop();
-        m_provider.stop();
-        m_breaker.stop();
         break;
       }
 
-      std::optional<bool> _maybe_break = m_breaker();
+      std::optional<bool> _maybe_break = call(300ms, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
@@ -517,14 +493,9 @@ protected:
   }
 
 private:
-  typedef executer_t<t_log, void, t_params...> worker_executer;
-  typedef executer_t<t_log, std::tuple<t_params...>, void> provider_executer;
-  typedef executer_t<t_log, bool, void> breaker_executer;
-
-private:
-  worker_executer m_worker;
-  provider_executer m_provider;
-  breaker_executer m_breaker;
+  worker m_worker;
+  provider m_provider;
+  breaker m_breaker;
 };
 
 /// #### async_loop 2 ####
