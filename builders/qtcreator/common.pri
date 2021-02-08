@@ -1,6 +1,8 @@
 
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 
+CONFIG += sdk_no_version_check
+
 base_dir=$$PWD/../..
 code_src_dir=$$base_dir/src
 test_src_dir=$$base_dir/tst

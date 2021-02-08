@@ -598,7 +598,7 @@ private:
 
 int main(int argc, char **argv) {
 
-  logger::set_debug_level();
+//  logger::set_debug_level();
   tester::test _test(argc, argv);
   run_test(_test, test100);
   run_test(_test, test200);
