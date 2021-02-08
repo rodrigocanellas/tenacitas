@@ -14,7 +14,7 @@ SUBDIRS = \
 #    circular_fixed_size_queue \
 #    circular_unlimited_size_queue \
 
-#    worker \
+º#    worker \
 #    dispatcher
 
 #\
