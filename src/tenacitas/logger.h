@@ -282,7 +282,7 @@ private:
   /// \param p_params are the values to be logged
 #ifdef TENACITAS_LOG
   template <typename t_class, typename... t_params>
-  void write(level p_level, t_class */*p_this*/, const char */*p_func*/,
+  void write(level p_level, t_class *p_this, const char *p_func,
              uint16_t p_line, const t_params &... p_params) {
 
     if (can_log(p_level)) {
@@ -296,14 +296,14 @@ private:
         _append(_now.c_str());
       }
 
-//      {
-//        std::ostringstream _stream;
-//        _stream << p_this;
-//        _append(_stream.str().c_str());
-//      }
+      {
+        std::ostringstream _stream;
+        _stream << p_this;
+        _append(_stream.str().c_str());
+      }
 
       _append(m_class.c_str());
-//      _append(p_func);
+      _append(p_func);
 
       {
         std::ostringstream _stream;
