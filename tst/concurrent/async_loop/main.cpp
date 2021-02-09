@@ -54,7 +54,10 @@ struct async_loop_000 {
       return _i;
     };
 
-    auto _worker = [this](int16_t p_i) -> void {
+    auto _worker = [this](bool &p_stop, int16_t p_i) -> void {
+        if (p_stop) {
+            return;
+        }
       DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -104,7 +107,10 @@ struct async_loop_001 {
       return _i;
     };
 
-    auto _worker = [this](int16_t p_i) -> void {
+    auto _worker = [this](bool &p_stop, int16_t p_i) -> void {
+        if (p_stop) {
+            return;
+        }
       DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -163,7 +169,10 @@ struct async_loop_002 {
       return {_i, _f};
     };
 
-    auto _worker = [this](int16_t p_i, float p_f) -> void {
+    auto _worker = [this](bool &p_stop, int16_t p_i, float p_f) -> void {
+        if (p_stop) {
+            return;
+        }
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     };
@@ -216,7 +225,10 @@ struct async_loop_003 {
       return {_i, _f};
     };
 
-    auto _worker = [this](int16_t p_i, float p_f) -> void {
+    auto _worker = [this](bool &p_stop, int16_t p_i, float p_f) -> void {
+        if (p_stop) {
+            return;
+        }
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     };
@@ -269,7 +281,7 @@ struct async_loop_004 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i]() -> void {
+    auto _worker = [this, &_i](bool &) -> void {
       DEB(m_log, "working with = ", ++_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -314,7 +326,7 @@ struct async_loop_005 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i]() -> void {
+    auto _worker = [this, &_i](bool &) -> void {
       DEB(m_log, "working with = ", ++_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -388,7 +400,10 @@ struct async_loop_006 {
       };
 
       auto _worker = [this, _work_normal_sleep,
-                      _work_timeout_sleep](int16_t p_i) -> void {
+                      _work_timeout_sleep](bool &p_stop, int16_t p_i) -> void {
+          if (p_stop) {
+              return;
+          }
         DEB(m_log, "working with = ", p_i);
         if (p_i == _max) {
           DEB(m_log, "causing timeout sleeping for ",
@@ -398,7 +413,7 @@ struct async_loop_006 {
         }
 
         std::this_thread::sleep_for(_work_normal_sleep);
-      };
+       };
 
       concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                                concurrent::use_breaker::no, int16_t>
@@ -471,7 +486,10 @@ struct async_loop_007 {
     };
 
     auto _worker = [this, _work_normal_sleep,
-                    _work_timeout_sleep](int16_t p_i, float p_f) -> void {
+                    _work_timeout_sleep](bool &p_stop, int16_t p_i, float p_f) -> void {
+        if (p_stop) {
+            return;
+        }
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       if (p_i == _max) {
         DEB(m_log, "causing timeout");
@@ -479,7 +497,7 @@ struct async_loop_007 {
         return;
       }
       std::this_thread::sleep_for(_work_normal_sleep);
-    };
+     };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
@@ -540,7 +558,7 @@ struct async_loop_008 {
     int16_t _i{0};
 
     auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i]() -> void {
+                    &_i](bool &p_stop) -> void {
       DEB(m_log, "working with = ", _i);
       if (_i == _max) {
         DEB(m_log, "causing timeout");
@@ -549,6 +567,9 @@ struct async_loop_008 {
       }
       if (_i > _max) {
         return;
+      }
+      if (p_stop) {
+          return;
       }
       ++_i;
       std::this_thread::sleep_for(_work_normal_sleep);
@@ -613,7 +634,7 @@ struct async_loop_009 {
     int16_t _i{0};
 
     auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i]() -> void {
+                    &_i](bool &p_stop) -> void {
       DEB(m_log, "working with = ", _i);
       if (_i == _max) {
         DEB(m_log, "causing timeout");
@@ -622,6 +643,9 @@ struct async_loop_009 {
       }
       if (_i > _max) {
         return;
+      }
+      if (p_stop) {
+          return;
       }
       ++_i;
       std::this_thread::sleep_for(_work_normal_sleep);
