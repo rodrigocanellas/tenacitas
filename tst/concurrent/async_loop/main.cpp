@@ -54,11 +54,11 @@ struct async_loop_000 {
       return _i;
     };
 
-    auto _worker = [this](bool &p_stop, int16_t p_i) -> void {
-        if (p_stop) {
-            return;
-        }
-      DEB(m_log, "working with = ", p_i);
+    auto _worker = [this](bool &p_stop, std::tuple<int16_t> &&p_tuple) -> void {
+      if (p_stop) {
+        return;
+      }
+      DEB(m_log, "working with = ", p_tuple);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -107,11 +107,11 @@ struct async_loop_001 {
       return _i;
     };
 
-    auto _worker = [this](bool &p_stop, int16_t p_i) -> void {
-        if (p_stop) {
-            return;
-        }
-      DEB(m_log, "working with = ", p_i);
+    auto _worker = [this](bool &p_stop, std::tuple<int16_t> &&p_tuple) -> void {
+      if (p_stop) {
+        return;
+      }
+      DEB(m_log, "working with = ", p_tuple);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -169,11 +169,12 @@ struct async_loop_002 {
       return {_i, _f};
     };
 
-    auto _worker = [this](bool &p_stop, int16_t p_i, float p_f) -> void {
-        if (p_stop) {
-            return;
-        }
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
+    auto _worker = [this](bool &p_stop,
+                          std::tuple<int16_t, float> &&p_tuple) -> void {
+      if (p_stop) {
+        return;
+      }
+      DEB(m_log, "working with = ", p_tuple);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -225,11 +226,12 @@ struct async_loop_003 {
       return {_i, _f};
     };
 
-    auto _worker = [this](bool &p_stop, int16_t p_i, float p_f) -> void {
-        if (p_stop) {
-            return;
-        }
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
+    auto _worker = [this](bool &p_stop,
+                          std::tuple<int16_t, float> &&p_tuple) -> void {
+      if (p_stop) {
+        return;
+      }
+      DEB(m_log, "working with = ", p_tuple);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -399,13 +401,13 @@ struct async_loop_006 {
         return {_i};
       };
 
-      auto _worker = [this, _work_normal_sleep,
-                      _work_timeout_sleep](bool &p_stop, int16_t p_i) -> void {
-          if (p_stop) {
-              return;
-          }
-        DEB(m_log, "working with = ", p_i);
-        if (p_i == _max) {
+      auto _worker = [this, _work_normal_sleep, _work_timeout_sleep](
+                         bool &p_stop, std::tuple<int16_t> p_tuple) -> void {
+        if (p_stop) {
+          return;
+        }
+        DEB(m_log, "working with = ", p_tuple);
+        if (std::get<0>(p_tuple) == _max) {
           DEB(m_log, "causing timeout sleeping for ",
               _work_timeout_sleep.count());
           std::this_thread::sleep_for(_work_timeout_sleep);
@@ -413,7 +415,7 @@ struct async_loop_006 {
         }
 
         std::this_thread::sleep_for(_work_normal_sleep);
-       };
+      };
 
       concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                                concurrent::use_breaker::no, int16_t>
@@ -485,19 +487,20 @@ struct async_loop_007 {
       return {_i, _f};
     };
 
-    auto _worker = [this, _work_normal_sleep,
-                    _work_timeout_sleep](bool &p_stop, int16_t p_i, float p_f) -> void {
-        if (p_stop) {
-            return;
-        }
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
-      if (p_i == _max) {
+    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep](
+                       bool &p_stop,
+                       std::tuple<int16_t, float> p_tuple) -> void {
+      if (p_stop) {
+        return;
+      }
+      DEB(m_log, "working with = ", p_tuple);
+      if (std::get<0>(p_tuple) == _max) {
         DEB(m_log, "causing timeout");
         std::this_thread::sleep_for(_work_timeout_sleep);
         return;
       }
       std::this_thread::sleep_for(_work_normal_sleep);
-     };
+    };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
@@ -569,7 +572,7 @@ struct async_loop_008 {
         return;
       }
       if (p_stop) {
-          return;
+        return;
       }
       ++_i;
       std::this_thread::sleep_for(_work_normal_sleep);
@@ -645,7 +648,7 @@ struct async_loop_009 {
         return;
       }
       if (p_stop) {
-          return;
+        return;
       }
       ++_i;
       std::this_thread::sleep_for(_work_normal_sleep);
