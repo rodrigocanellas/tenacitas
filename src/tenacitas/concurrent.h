@@ -42,6 +42,9 @@ template <typename t_time> inline interval to_interval(t_time p_time) {
   return std::chrono::duration_cast<interval>(p_time);
 }
 
+/// \brief Type of function executed when a function times out
+typedef std::function<void(std::thread::id)> timeout_callback;
+
 /// \brief helper class for \p execute function
 ///
 /// \tparam t_type type returned by the executed function
@@ -69,16 +72,33 @@ struct executer_helper_t {
   /// \param p_params... possible parameters required by \p p_function
   ///
   /// \return std::optional<t_type> with value if not timeout, {} otherwise
-  static result call(std::function<t_type(t_params...)> p_function,
-                     t_time p_timeout, t_params... p_params) {
+  static result call(timeout_callback p_timeout_callback,
+                     std::function<t_type(t_params &&...)> p_function,
+                     t_time p_timeout, t_params &&... p_params) {
 
-    std::future<t_type> _future =
-        std::async(std::launch::async, p_function, p_params...);
+    std::packaged_task<type(t_params && ...)> _task(p_function);
+    auto _future = _task.get_future();
+    std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
     if (_future.wait_for(p_timeout) != std::future_status::timeout) {
+      _thr.join();
       return {_future.get()};
     }
+    std::thread::id _id = _thr.get_id();
+    _thr.detach(); // we leave the thread still running
+    std::thread([p_timeout_callback, _id]() {
+      p_timeout_callback(_id);
+    }).detach();
+
     return {};
   }
+
+  //    std::future<t_type> _future =
+  //        std::async(std::launch::async, p_function, p_params...);
+  //    if (_future.wait_for(p_timeout) != std::future_status::timeout) {
+  //      return {_future.get()};
+  //    }
+  //    return {};
+  //  }
 };
 
 /// \brief helper class for \p execute function, when the function being
@@ -107,16 +127,32 @@ struct executer_helper_t<void, t_time, t_params...> {
   /// \param p_params... possible parameters required by \p p_function
   ///
   /// \return true if no timeout; false otherwise
-  static result call(std::function<void(t_params...)> p_function,
-                     t_time p_timeout, t_params... p_params) {
+  static result call(timeout_callback p_timeout_callback,
+                     std::function<void(t_params &&...)> p_function,
+                     t_time p_timeout, t_params &&... p_params) {
 
-    std::future<void> _future =
-        std::async(std::launch::async, p_function, p_params...);
+    std::packaged_task<type(t_params && ...)> _task(p_function);
+    auto _future = _task.get_future();
+    std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
     if (_future.wait_for(p_timeout) != std::future_status::timeout) {
-      return true;
+      _thr.join();
+      return true; // this will propagate exception from f() if any
     }
+    std::thread::id _id = _thr.get_id();
+    _thr.detach(); // we leave the thread still running
+    std::thread([p_timeout_callback, _id]() {
+      p_timeout_callback(_id);
+    }).detach();
+
     return false;
   }
+  //    std::future<void> _future =
+  //        std::async(std::launch::async, p_function, p_params...);
+  //    if (_future.wait_for(p_timeout) != std::future_status::timeout) {
+  //      return true;
+  //    }
+  //    return false;
+  //  }
 };
 
 /// \brief executes a callable object in a maximum amount of time
@@ -138,7 +174,8 @@ struct executer_helper_t<void, t_time, t_params...> {
 /// \return if the callable object returns void, \p execute returns true if no
 /// timeout; false otherwise
 ///         if the callable object does not return void, \p execute
-///         std::optional<type-returned> with value if not timeout, {} otherwise
+///         std::optional<type-returned> with value if not timeout, {}
+///         otherwise
 ///
 /// \code
 ///
@@ -340,19 +377,19 @@ struct executer_helper_t<void, t_time, t_params...> {
 ///
 /// \endcode
 template <typename t_time, typename t_function, typename... t_params>
-inline typename executer_helper_t<std::invoke_result_t<t_function, t_params...>,
-                                  t_time, t_params...>::result
-execute(t_time p_timeout, t_function p_function, t_params... p_params) {
+inline
+    typename executer_helper_t<std::invoke_result_t<t_function, t_params &&...>,
+                               t_time, t_params &&...>::result
+    execute(t_time p_timeout, timeout_callback p_timeout_callback,
+            t_function p_function, t_params... p_params) {
 
   typedef std::invoke_result_t<t_function, t_params...> type;
 
   typedef executer_helper_t<type, t_time, t_params...> executer_helper;
 
-  return executer_helper::call(p_function, p_timeout, p_params...);
+  return executer_helper::call(p_timeout_callback, p_function, p_timeout,
+                               p_params...);
 }
-
-/// \brief Type of function executed when a function times out
-typedef std::function<void(std::thread::id)> timeout_callback;
 
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
@@ -428,7 +465,7 @@ template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::yes, t_params...>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef std::function<void(bool &, std::tuple<t_params...> &&)> worker;
+  typedef std::function<void(t_params...)> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
@@ -438,46 +475,39 @@ struct async_loop_t<t_log, t_time, use_breaker::yes, t_params...>
 
 protected:
   void loop() override {
-    bool _abandon{false};
-    auto _worker = [this,
-                    &_abandon](std::tuple<t_params...> &&p_params) -> void {
-      std::invoke(m_worker, _abandon, std::move(p_params));
-    };
+
+    auto _dummy = [](std::thread::id) {};
 
     while (true) {
-
       if (this->m_stopped) {
         break;
       }
 
       std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, m_breaker);
+          execute(this->m_breaker_timeout, _dummy, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
       std::optional<std::tuple<t_params...>> _maybe_data =
-          execute(this->m_provider_timeout, m_provider);
+          execute(this->m_provider_timeout, _dummy, m_provider);
 
       if (this->m_stopped) {
         break;
       }
 
-      _maybe_break = execute(this->m_breaker_timeout, m_breaker);
+      _maybe_break = execute(this->m_breaker_timeout, _dummy, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
       if (_maybe_data) {
-
         std::tuple<t_params...> _params = std::move(*_maybe_data);
+        auto _worker = [this, _params]() -> void {
+          std::apply(m_worker, _params);
+        };
 
-        _abandon = false;
-
-        if (!execute(this->m_timeout, _worker, std::move(_params))) {
-          _abandon = true;
-          this->launch_timeout_callback();
-        }
+        execute(this->m_timeout, this->m_timeout_callback, _worker);
       }
     }
   }
@@ -493,7 +523,7 @@ template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::no, t_params...>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef std::function<void(bool &, std::tuple<t_params...> &&)> worker;
+  typedef std::function<void(t_params...)> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
@@ -504,12 +534,8 @@ struct async_loop_t<t_log, t_time, use_breaker::no, t_params...>
 protected:
   void loop() override {
     DEB(this->m_log, "entering loop");
-    bool _abandon{false};
 
-    auto _worker = [this,
-                    &_abandon](std::tuple<t_params...> &&p_params) -> void {
-      std::invoke(m_worker, _abandon, std::move(p_params));
-    };
+    auto _dummy = [](std::thread::id) {};
 
     while (true) {
 
@@ -519,20 +545,19 @@ protected:
       }
 
       std::optional<std::tuple<t_params...>> _maybe_data =
-          execute(this->m_provider_timeout, m_provider);
+          execute(this->m_provider_timeout, _dummy, m_provider);
 
       if (this->m_stopped) {
         break;
       }
 
       if (_maybe_data) {
-
         std::tuple<t_params...> _params = std::move(*_maybe_data);
+        auto _worker = [this, _params]() -> void {
+          std::apply(m_worker, _params);
+        };
 
-        if (!execute(this->m_timeout, _worker, std::move(_params))) {
-          _abandon = true;
-          this->launch_timeout_callback();
-        }
+        execute(this->m_timeout, this->m_timeout_callback, _worker);
       }
     }
   }
@@ -547,7 +572,7 @@ template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::yes, void>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef std::function<void(bool &)> worker;
+  typedef std::function<void()> worker;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                breaker p_breaker, worker p_worker)
@@ -556,8 +581,8 @@ struct async_loop_t<t_log, t_time, use_breaker::yes, void>
 
 protected:
   void loop() override {
-    bool _abandon{false};
-    auto _worker = [this, &_abandon]() -> void { m_worker(_abandon); };
+
+    auto _dummy = [](std::thread::id) {};
 
     while (true) {
       if (this->m_stopped) {
@@ -565,15 +590,12 @@ protected:
       }
 
       std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, m_breaker);
+          execute(this->m_breaker_timeout, _dummy, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
-      if (!execute(this->m_timeout, _worker)) {
-        _abandon = true;
-        this->launch_timeout_callback();
-      }
+      execute(this->m_timeout, this->m_timeout_callback, m_worker);
     }
   }
 
@@ -587,7 +609,7 @@ template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::no, void>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef std::function<void(bool &)> worker;
+  typedef std::function<void()> worker;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
                worker p_worker)
@@ -596,8 +618,6 @@ struct async_loop_t<t_log, t_time, use_breaker::no, void>
 
 protected:
   void loop() override {
-    bool _abandon{false};
-    auto _worker = [this, &_abandon]() -> void { m_worker(_abandon); };
 
     while (true) {
 
@@ -605,10 +625,7 @@ protected:
         break;
       }
 
-      if (!execute(this->m_timeout, _worker)) {
-        _abandon = true;
-        this->launch_timeout_callback();
-      }
+      execute(this->m_timeout, this->m_timeout_callback, m_worker);
     }
   }
 
@@ -768,14 +785,16 @@ protected:
 //    /// work function
 //    ///
 //    /// \return \p an optional tuple of objects needed by the \p operation
-//    typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
+//    typedef std::function<std::optional<std::tuple<t_params...>>()>
+//    provider;
 
 //    /// \brief Constructor
 //    ///
 //    /// \tparam t_timeout type of time used to define the timeout of the
 //    /// operation
 //    ///
-//    /// \tparam t_interval type of time used to define the execution interval
+//    /// \tparam t_interval type of time used to define the execution
+//    interval
 //    /// of the operation
 //    ///
 //    /// \param p_timeout time used to define the timeout of the operation
@@ -785,7 +804,8 @@ protected:
 //    ///
 //    /// \param p_worker the work function to be executed at \p p_interval
 //    ///
-//    /// \param p_timeout_callback function to be executed if \p p_worker times
+//    /// \param p_timeout_callback function to be executed if \p p_worker
+//    times
 //    /// out
 //    ///
 //    /// \param p_provider function that provides the parameters to the \p
@@ -793,7 +813,8 @@ protected:
 //    template <typename t_timeout, typename t_interval>
 //    sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker
 //    p_worker,
-//                    timeout_callback p_timeout_callback, provider p_provider)
+//                    timeout_callback p_timeout_callback, provider
+//                    p_provider)
 //        : sleeping_loop_base_t<
 //          t_log, async_loop_t<t_log, use_breaker::yes, t_params...>>(
 //              p_interval, p_timeout, p_timeout_callback,
@@ -820,7 +841,8 @@ protected:
 
 //    /// \brief Constructor
 //    ///
-//    /// \tparam t_interval type of time used to define the execution interval
+//    /// \tparam t_interval type of time used to define the execution
+//    interval
 //    /// of the operation
 //    ///
 //    /// \param p_interval time used to define the execution interval of the

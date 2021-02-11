@@ -28,7 +28,7 @@ using namespace std::chrono_literals;
 
 struct timeout_callback {
   inline void operator()(std::thread::id p_id) {
-    WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+    WAR(m_log, "timeout for ", p_id);
   }
 
 private:
@@ -54,11 +54,8 @@ struct async_loop_000 {
       return _i;
     };
 
-    auto _worker = [this](bool &p_stop, std::tuple<int16_t> &&p_tuple) -> void {
-      if (p_stop) {
-        return;
-      }
-      DEB(m_log, "working with = ", p_tuple);
+    auto _worker = [this](int16_t p_i) -> void {
+      DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -107,11 +104,8 @@ struct async_loop_001 {
       return _i;
     };
 
-    auto _worker = [this](bool &p_stop, std::tuple<int16_t> &&p_tuple) -> void {
-      if (p_stop) {
-        return;
-      }
-      DEB(m_log, "working with = ", p_tuple);
+    auto _worker = [this](int16_t p_i) -> void {
+      DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -169,12 +163,8 @@ struct async_loop_002 {
       return {_i, _f};
     };
 
-    auto _worker = [this](bool &p_stop,
-                          std::tuple<int16_t, float> &&p_tuple) -> void {
-      if (p_stop) {
-        return;
-      }
-      DEB(m_log, "working with = ", p_tuple);
+    auto _worker = [this](int16_t p_i, float p_f) -> void {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -226,12 +216,8 @@ struct async_loop_003 {
       return {_i, _f};
     };
 
-    auto _worker = [this](bool &p_stop,
-                          std::tuple<int16_t, float> &&p_tuple) -> void {
-      if (p_stop) {
-        return;
-      }
-      DEB(m_log, "working with = ", p_tuple);
+    auto _worker = [this](int16_t p_i, float p_f) -> void {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     };
 
@@ -283,7 +269,7 @@ struct async_loop_004 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i](bool &) -> void {
+    auto _worker = [this, &_i]() -> void {
       DEB(m_log, "working with = ", ++_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -328,7 +314,7 @@ struct async_loop_005 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i](bool &) -> void {
+    auto _worker = [this, &_i]() -> void {
       DEB(m_log, "working with = ", ++_i);
       std::this_thread::sleep_for(250ms);
     };
@@ -387,7 +373,7 @@ struct async_loop_006 {
       m_log.set_debug_level();
 
       auto _callback = [this](std::thread::id p_id) -> void {
-        WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+        WAR(m_log, "timeout for ", p_id);
         m_cond.notify_one();
       };
 
@@ -401,13 +387,10 @@ struct async_loop_006 {
         return {_i};
       };
 
-      auto _worker = [this, _work_normal_sleep, _work_timeout_sleep](
-                         bool &p_stop, std::tuple<int16_t> p_tuple) -> void {
-        if (p_stop) {
-          return;
-        }
-        DEB(m_log, "working with = ", p_tuple);
-        if (std::get<0>(p_tuple) == _max) {
+      auto _worker = [this, _work_normal_sleep,
+                      _work_timeout_sleep](int16_t p_i) -> void {
+        DEB(m_log, "working with = ", p_i);
+        if (p_i == _max) {
           DEB(m_log, "causing timeout sleeping for ",
               _work_timeout_sleep.count());
           std::this_thread::sleep_for(_work_timeout_sleep);
@@ -472,7 +455,7 @@ struct async_loop_007 {
     m_log.set_debug_level();
 
     auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+      WAR(m_log, "timeout for ", p_id);
       m_cond.notify_one();
     };
 
@@ -487,14 +470,10 @@ struct async_loop_007 {
       return {_i, _f};
     };
 
-    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep](
-                       bool &p_stop,
-                       std::tuple<int16_t, float> p_tuple) -> void {
-      if (p_stop) {
-        return;
-      }
-      DEB(m_log, "working with = ", p_tuple);
-      if (std::get<0>(p_tuple) == _max) {
+    auto _worker = [this, _work_normal_sleep,
+                    _work_timeout_sleep](int16_t p_i, float p_f) -> void {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
+      if (p_i == _max) {
         DEB(m_log, "causing timeout");
         std::this_thread::sleep_for(_work_timeout_sleep);
         return;
@@ -554,14 +533,14 @@ struct async_loop_008 {
     m_log.set_debug_level();
 
     auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+      WAR(m_log, "timeout for ", p_id);
       m_cond.notify_one();
     };
 
     int16_t _i{0};
 
     auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i](bool &p_stop) -> void {
+                    &_i]() -> void {
       DEB(m_log, "working with = ", _i);
       if (_i == _max) {
         DEB(m_log, "causing timeout");
@@ -569,9 +548,6 @@ struct async_loop_008 {
         return;
       }
       if (_i > _max) {
-        return;
-      }
-      if (p_stop) {
         return;
       }
       ++_i;
@@ -630,14 +606,14 @@ struct async_loop_009 {
     m_log.set_debug_level();
 
     auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", std::hash<std::thread::id>()(p_id));
+      WAR(m_log, "timeout for ", p_id);
       m_cond.notify_one();
     };
 
     int16_t _i{0};
 
     auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i](bool &p_stop) -> void {
+                    &_i]() -> void {
       DEB(m_log, "working with = ", _i);
       if (_i == _max) {
         DEB(m_log, "causing timeout");
@@ -645,9 +621,6 @@ struct async_loop_009 {
         return;
       }
       if (_i > _max) {
-        return;
-      }
-      if (p_stop) {
         return;
       }
       ++_i;
