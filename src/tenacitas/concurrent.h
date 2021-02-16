@@ -32,6 +32,8 @@ typedef std::chrono::milliseconds timeout;
 /// \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
 
+namespace internal {
+
 /// \brief Converts any type of time defined in std::chrono to \p timeout
 template <typename t_time> inline timeout to_timeout(t_time p_time) {
   return std::chrono::duration_cast<timeout>(p_time);
@@ -42,19 +44,27 @@ template <typename t_time> inline interval to_interval(t_time p_time) {
   return std::chrono::duration_cast<interval>(p_time);
 }
 
+} // namespace internal
+
 /// \brief Type of function executed when a function times out
 typedef std::function<void(std::thread::id)> timeout_callback;
 
-template <typename t_type, typename... t_params> struct worker {
+template <typename t_type, typename... t_params> struct worker_t {
 
   inline void stop() { m_stop = true; }
 
-  virtual t_type exec(t_params &&... p_params) = 0;
+  virtual t_type operator()(t_params &&... p_params) = 0;
+
+  virtual ~worker_t() {}
 
 protected:
+  inline bool stopped() const { return m_stop; }
+
+private:
   bool m_stop{false};
 };
 
+namespace internal {
 template <typename t_type> struct executer_helper_result_t {
   /// \brief returned by the executed function
   typedef t_type type;
@@ -103,13 +113,12 @@ struct executer_helper_t {
   /// \param p_params... possible parameters required by \p p_function
   ///
   /// \return std::optional<t_type> with value if not timeout, {} otherwise
-  static result call(timeout_callback p_timeout_callback,
-                     std::function<t_type(t_params &&...)> p_work,
+  static result call(std::function<t_type(t_params &&...)> p_work,
                      t_time p_timeout, t_params &&... p_params) {
 
     std::packaged_task<type(t_params && ...)> _task(
         [p_work](t_params &&... p_params) -> t_type {
-          p_work(std::move(p_params...));
+          return p_work(std::forward<t_params>(p_params)...);
         });
     auto _future = _task.get_future();
     std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
@@ -117,16 +126,13 @@ struct executer_helper_t {
       _thr.join();
       return executer_helper_result::ok(std::move(_future));
     }
-    std::thread::id _id = _thr.get_id();
-
     _thr.detach();
-    std::thread([p_timeout_callback, _id]() {
-      p_timeout_callback(_id);
-    }).detach();
 
-    executer_helper_result::not_ok(std::move(_future));
+    return executer_helper_result::not_ok(std::move(_future));
   }
 };
+
+} // namespace internal
 
 /// \brief executes a callable object in a maximum amount of time
 ///
@@ -163,209 +169,256 @@ struct executer_helper_t {
 /// using namespace std::chrono_literals;
 ///
 /// double f1(int i) {
-///    std::cout << "f1: ";
-///    return i / 4;
+///  std::cout << "f2: ";
+///  return i / 4;
 ///}
 ///
 /// double f2(int i, float f) {
-///    std::cout << "f2: ";
-///    return f * i / 4;
+///  std::cout << "f2: ";
+///  return f * i / 4;
 ///}
 ///
 /// double f3() {
-///    std::cout << "f3: ";
-///    return 3.14;
+///  std::cout << "f3: ";
+///  return 3.14;
 ///}
 ///
 /// void f4(int i) { std::cout << "f4: " << i / 4 << " "; }
 ///
-/// void f5(int i, float f) {
-///    std::cout << "f5: " << f * i / 4 << " ";
-///}
+/// void f5(int i, float f) { std::cout << "f5: " << f * i / 4 << " "; }
 ///
-/// void f6() {
-///    std::cout << "f6: " << 3.14 << " ";
-///}
+/// void f6() { std::cout << "f6: " << 3.14 << " "; }
 ///
 /// double f7(int i) {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f7: ";
-///    return i / 4;
+///  std::cout << "f7: ";
+///  std::this_thread::sleep_for(2s);
+///
+///  return i / 4;
 ///}
 ///
 /// double f8(int i, float f) {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f8: ";
-///    return f * i / 4;
+///
+///  std::cout << "f8: ";
+///  std::this_thread::sleep_for(2s);
+///  return f * i / 4;
 ///}
 ///
 /// double f9() {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f9: ";
-///    return 3.14;
+///  std::cout << "f9: ";
+///  std::this_thread::sleep_for(2s);
+///
+///  return 3.14;
 ///}
 ///
 /// void f10(int i) {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f10: " << i / 4 << " ";
+///  std::cout << "f10: ";
+///  std::this_thread::sleep_for(2s);
+///  std::cout << i / 4 << " ";
 ///}
 ///
 /// void f11(int i, float f) {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f11: " << f * i / 4 << " ";
+///  std::cout << "f11: ";
+///  std::this_thread::sleep_for(2s);
+///  std::cout << f * i / 4 << " ";
 ///}
 ///
 /// void f12() {
-///    std::this_thread::sleep_for(2s);
-///    std::cout << "f6: " << 3.14 << " ";
+///  std::cout << "f6: ";
+///  std::this_thread::sleep_for(2s);
+///  std::cout << 3.14 << " ";
 ///}
 ///
-////// ##################
+/// void f13(bool &b) { std::cout << "f13: " << (b ? "true" : "false") << " "; }
+///
+/// void f14(bool &&b) {
+///  std::cout << "f14: ";
+///  std::this_thread::sleep_for(2s);
+///  std::cout << (b ? "true" : "false") << " ";
+///}
+///
+/// void f15(bool &b) {
+///  std::cout << "f15: ";
+///  std::this_thread::sleep_for(2s);
+///  std::cout << (b ? "true" : "false") << " ";
+///  b = !b;
+///}
+///
+/// ##########################
+/// ########################## main
 ///
 /// int main() {
-///    using namespace tenacitas;
+///  using namespace tenacitas;
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f1, 8);
-///        if (_maybe) {
-///            std::cout << "with exec: " << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f1, 8);
+///    if (_maybe) {
+///      std::cout << *_maybe;
+///    } else {
+///      std::cout << " timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f2,
-///        8, 4.2f); if (_maybe) {
-///            std::cout << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f2, 8, 4.2f);
+///    if (_maybe) {
+///      std::cout << *_maybe;
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f3);
-///        if (_maybe) {
-///            std::cout << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f3);
+///    if (_maybe) {
+///      std::cout << *_maybe;
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f4,  -8)) {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
-///
+///  {
+///    if (concurrent::execute(300ms, f4, -8)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f5,  -8, 3.56))  {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
-///
+///  {
+///    if (concurrent::execute(300ms, f5, -8, 3.56)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f6))  {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    if (concurrent::execute(300ms, f6)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f7, 8);
-///        if (_maybe) {
-///            std::cout << "with exec: " << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f7, 8);
+///    if (_maybe) {
+///      std::cout << "with exec: " << *_maybe;
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f8,
-///        8, 4.2f); if (_maybe) {
-///            std::cout << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f8, 8, 4.2f);
+///    if (_maybe) {
+///      std::cout << *_maybe;
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        std::optional<double> _maybe = concurrent::execute(300ms, f9);
-///        if (_maybe) {
-///            std::cout << *_maybe;
-///        } else {
-///            std::cout << "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    std::optional<double> _maybe = concurrent::execute(300ms, f9);
+///    if (_maybe) {
+///      std::cout << *_maybe;
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f10,  -18))  {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    if (concurrent::execute(300ms, f10, -18)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f11,  -18, 3.3))   {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    if (concurrent::execute(300ms, f11, -18, 3.3)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
 ///
-///    {
-///        if (concurrent::execute(300ms, f12) ) {
-///            std::cout << "ok";
-///        }
-///        else {
-///            std::cout<< "timeout!";
-///        }
-///        std::cout << std::endl;
+///  {
+///    if (concurrent::execute(300ms, f12)) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout!";
 ///    }
+///    std::cout << std::endl;
+///  }
+///
+///  {
+///    bool b{false};
+///    if (concurrent::execute(300ms, f13, std::ref(b))) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout";
+///    }
+///    std::cout << std::endl;
+///  }
+///
+///  {
+///    bool b{false};
+///    if (concurrent::execute(300ms, f14, std::move(b))) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout";
+///    }
+///    std::cout << std::endl;
+///  }
+///  {
+///    bool b{false};
+///    if (concurrent::execute(300ms, f15, std::ref(b))) {
+///      std::cout << "ok";
+///    } else {
+///      std::cout << "timeout";
+///    }
+///    std::cout << std::endl;
+///  }
 ///}
 ///
 /// \endcode
 template <typename t_time, typename t_function, typename... t_params>
-inline
-    typename executer_helper_t<std::invoke_result_t<t_function, t_params &&...>,
-                               t_time, t_params &&...>::result
-    execute(t_time p_timeout, timeout_callback p_timeout_callback,
-            t_function p_function, t_params... p_params) {
+inline typename internal::executer_helper_t<
+    std::invoke_result_t<t_function, t_params &&...>, t_time,
+    t_params &&...>::result
+execute(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
 
-  typedef std::invoke_result_t<t_function, t_params...> type;
+  typedef std::invoke_result_t<t_function, t_params &&...> type;
 
-  typedef executer_helper_t<type, t_time, t_params...> executer_helper;
+  typedef internal::executer_helper_t<type, t_time, t_params &&...>
+      executer_helper;
 
-  return executer_helper::call(p_timeout_callback, p_function, p_timeout,
-                               p_params...);
+  return executer_helper::call(p_function, p_timeout,
+                               std::forward<t_params>(p_params)...);
 }
 
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
+
+/// \brief Used to define if a loop will use a breaker function or not
+enum class use_breaker : char { yes = 'y', no = 'n' };
+
+/// \brief Base class for asynchronous loop
+// template <typename t_log, typename t_time, use_breaker use,
+//          typename... t_params>
+// struct loop_t;
 
 /// \brief base class for asynchronous loop
 template <typename t_log, typename t_time> struct async_loop_base_t {
@@ -402,7 +455,8 @@ template <typename t_log, typename t_time> struct async_loop_base_t {
 
 protected:
   async_loop_base_t(t_time p_time, timeout_callback p_timeout_callback)
-      : m_timeout(to_timeout(p_time)), m_timeout_callback(p_timeout_callback) {}
+      : m_timeout(internal::to_timeout(p_time)),
+        m_timeout_callback(p_timeout_callback) {}
 
   virtual void loop() = 0;
 
@@ -421,9 +475,6 @@ protected:
   t_log m_log{"async_loop"};
 };
 
-/// \brief Used to define if a loop will use a breaker function or not
-enum class use_breaker : char { yes = 'y', no = 'n' };
-
 /// \brief Base class for asynchronous loop
 template <typename t_log, typename t_time, use_breaker use,
           typename... t_params>
@@ -434,18 +485,18 @@ template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::yes, t_params...>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef worker<void, t_params...> worker;
+  typedef worker_t<void, t_params...> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               breaker p_breaker, worker *p_worker, provider p_provider)
+               breaker p_breaker, std::unique_ptr<worker> p_worker,
+               provider p_provider)
       : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(p_worker), m_provider(p_provider), m_breaker(p_breaker) {}
+        m_worker(std::move(p_worker)), m_provider(p_provider),
+        m_breaker(p_breaker) {}
 
 protected:
   void loop() override {
-
-    auto _dummy = [](std::thread::id) {};
 
     while (true) {
       if (this->m_stopped) {
@@ -453,19 +504,19 @@ protected:
       }
 
       std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, _dummy, m_breaker);
+          execute(this->m_breaker_timeout, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
       std::optional<std::tuple<t_params...>> _maybe_data =
-          execute(this->m_provider_timeout, _dummy, m_provider);
+          execute(this->m_provider_timeout, m_provider);
 
       if (this->m_stopped) {
         break;
       }
 
-      _maybe_break = execute(this->m_breaker_timeout, _dummy, m_breaker);
+      _maybe_break = execute(this->m_breaker_timeout, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
@@ -473,13 +524,11 @@ protected:
       if (_maybe_data) {
         std::tuple<t_params...> _params = std::move(*_maybe_data);
 
-        auto _aux = [this](t_params &&... p_params) -> void {
-          m_worker->exec(std::move(p_params...));
+        auto _worker = [this, &_params]() -> void {
+          std::apply(*m_worker, std::move(_params));
         };
 
-        auto _worker = [_aux, _params]() -> void { std::apply(_aux, _params); };
-
-        if (!execute(this->m_timeout, this->m_timeout_callback, _worker)) {
+        if (!execute(this->m_timeout, _worker)) {
           m_worker->stop();
         }
       }
@@ -487,7 +536,7 @@ protected:
   }
 
 private:
-  worker *m_worker;
+  std::unique_ptr<worker> m_worker;
   provider m_provider;
   breaker m_breaker;
 };
@@ -497,19 +546,17 @@ template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::no, t_params...>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef worker<void, t_params...> worker;
+  typedef worker_t<void, t_params...> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               worker *p_worker, provider p_provider)
+               std::unique_ptr<worker> p_worker, provider p_provider)
       : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(p_worker), m_provider(p_provider) {}
+        m_worker(std::move(p_worker)), m_provider(p_provider) {}
 
 protected:
   void loop() override {
     DEB(this->m_log, "entering loop");
-
-    auto _dummy = [](std::thread::id) {};
 
     while (true) {
 
@@ -519,7 +566,7 @@ protected:
       }
 
       std::optional<std::tuple<t_params...>> _maybe_data =
-          execute(this->m_provider_timeout, _dummy, m_provider);
+          execute(this->m_provider_timeout, m_provider);
 
       if (this->m_stopped) {
         break;
@@ -527,13 +574,13 @@ protected:
 
       if (_maybe_data) {
         std::tuple<t_params...> _params = std::move(*_maybe_data);
-        auto _aux = [this](t_params &&... p_params) -> void {
-          m_worker->exec(std::move(p_params...));
+        DEB(m_log, "data provided = ", _params);
+
+        auto _worker = [this, &_params]() -> void {
+          std::apply(*m_worker, std::move(_params));
         };
 
-        auto _worker = [_aux, _params]() -> void { std::apply(_aux, _params); };
-
-        if (!execute(this->m_timeout, this->m_timeout_callback, _worker)) {
+        if (!execute(this->m_timeout, _worker)) {
           m_worker->stop();
         }
       }
@@ -541,7 +588,8 @@ protected:
   }
 
 private:
-  worker *m_worker;
+  t_log m_log{"async_loop_t 2"};
+  std::unique_ptr<worker> m_worker;
   provider m_provider;
 };
 
@@ -550,18 +598,17 @@ template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::yes, void>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef worker<void> worker;
+  typedef worker_t<void> worker;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               breaker p_breaker, worker *p_worker)
+               breaker p_breaker, std::unique_ptr<worker> p_worker)
       : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(p_worker), m_breaker(p_breaker) {}
+        m_worker(std::move(p_worker)), m_breaker(p_breaker) {}
 
 protected:
   void loop() override {
 
-    auto _dummy = [](std::thread::id) {};
-    auto _worker = [this]() -> void { m_worker->exec(); };
+    auto _worker = [this]() -> void { (*m_worker)(); };
 
     while (true) {
       if (this->m_stopped) {
@@ -569,19 +616,19 @@ protected:
       }
 
       std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, _dummy, m_breaker);
+          execute(this->m_breaker_timeout, m_breaker);
       if ((_maybe_break) && (*_maybe_break)) {
         break;
       }
 
-      if (!execute(this->m_timeout, this->m_timeout_callback, _worker)) {
+      if (!execute(this->m_timeout, _worker)) {
         m_worker->stop();
       }
     }
   }
 
 private:
-  worker *m_worker;
+  std::unique_ptr<worker> m_worker;
   breaker m_breaker;
 };
 
@@ -590,17 +637,17 @@ template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::no, void>
     : public async_loop_base_t<t_log, t_time> {
 
-  typedef worker<void> worker;
+  typedef worker_t<void> worker;
 
   async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               worker *p_worker)
+               std::unique_ptr<worker> p_worker)
       : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(p_worker) {}
+        m_worker(std::move(p_worker)) {}
 
 protected:
   void loop() override {
 
-    auto _worker = [this]() -> void { m_worker->exec(); };
+    auto _worker = [this]() -> void { (*m_worker)(); };
 
     while (true) {
 
@@ -608,12 +655,14 @@ protected:
         break;
       }
 
-      execute(this->m_timeout, this->m_timeout_callback, _worker);
+      if (execute(this->m_timeout, _worker)) {
+        m_worker->stop();
+      }
     }
   }
 
 private:
-  worker *m_worker;
+  std::unique_ptr<worker> m_worker;
 };
 
 /// \brief Executes a work function in fixed period of times
@@ -654,7 +703,7 @@ template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
   /// It does not restart the loop, it is necessary to call \p restart
   template <typename t_interval>
   inline void set_interval(t_interval p_interval) {
-    m_interval = to_interval(p_interval);
+    m_interval = internal::to_interval(p_interval);
   }
 
   //  /// \brief Retrieves the operation defined to be executed

@@ -14,16 +14,9 @@ libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
 test_dir=$$products_dir/tst
 example_dir=$$products_dir/example
+tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
 
-unix {
-    tmp_dir=~/tenacitas/tmp/qtcreator/$$TARGET
-}
-
-win32 {
-    tmp_dir=$$TMP/tenacitas/tmp/qtcreator/$$TARGET
-}
-
-OUT_PWD = $${tmp_dir}
+#OUT_PWD = $${tmp_dir}
 MOC_DIR += $${tmp_dir}/moc
 UI_DIR  += $${tmp_dir}/ui
 #UI_DIR  += $$_PRO_FILE_PWD_/../..

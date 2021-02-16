@@ -54,14 +54,9 @@ struct async_loop_000 {
       return _i;
     };
 
-    auto _worker = [this](int16_t p_i) -> void {
-      DEB(m_log, "working with = ", p_i);
-      std::this_thread::sleep_for(250ms);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t>
-        _loop(500ms, timeout_callback(), _worker, _provider);
+        _loop(500ms, timeout_callback(), std::make_unique<worker>(), _provider);
 
     _loop.set_log_debug();
 
@@ -80,6 +75,17 @@ struct async_loop_000 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void, int16_t> {
+    void operator()(int16_t &&p_i) override {
+      DEB(m_log, "working with = ", p_i);
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_000"};
@@ -104,11 +110,6 @@ struct async_loop_001 {
       return _i;
     };
 
-    auto _worker = [this](int16_t p_i) -> void {
-      DEB(m_log, "working with = ", p_i);
-      std::this_thread::sleep_for(250ms);
-    };
-
     auto _breaker = [&_i]() -> bool {
       if (_i == 3) {
         return true;
@@ -118,7 +119,8 @@ struct async_loop_001 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, int16_t>
-        _loop(500ms, timeout_callback(), _breaker, _worker, _provider);
+        _loop(500ms, timeout_callback(), _breaker, std::make_unique<worker>(),
+              _provider);
 
     _loop.set_log_debug();
 
@@ -137,6 +139,18 @@ struct async_loop_001 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void, int16_t> {
+    void operator()(int16_t &&p_i) override {
+      DEB(m_log, "working with = ", p_i);
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+  private:
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_001"};
@@ -163,14 +177,9 @@ struct async_loop_002 {
       return {_i, _f};
     };
 
-    auto _worker = [this](int16_t p_i, float p_f) -> void {
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
-      std::this_thread::sleep_for(250ms);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
-        _loop(500ms, timeout_callback(), _worker, _provider);
+        _loop(500ms, timeout_callback(), std::make_unique<worker>(), _provider);
 
     _loop.set_log_debug();
 
@@ -190,6 +199,17 @@ struct async_loop_002 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void, int16_t, float> {
+    void operator()(int16_t &&p_i, float &&p_f) override {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_002"};
@@ -216,11 +236,6 @@ struct async_loop_003 {
       return {_i, _f};
     };
 
-    auto _worker = [this](int16_t p_i, float p_f) -> void {
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
-      std::this_thread::sleep_for(250ms);
-    };
-
     auto _breaker = [&_i]() -> bool {
       if (_i == 3) {
         return true;
@@ -230,7 +245,8 @@ struct async_loop_003 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, int16_t, float>
-        _loop(500ms, timeout_callback(), _breaker, _worker, _provider);
+        _loop(500ms, timeout_callback(), _breaker, std::make_unique<worker>(),
+              _provider);
 
     _loop.set_log_debug();
 
@@ -252,6 +268,17 @@ struct async_loop_003 {
   }
 
 private:
+  struct worker : public concurrent::worker_t<void, int16_t, float> {
+    void operator()(int16_t &&p_i, float &&p_f) override {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+    logger::cerr<> m_log{"worker"};
+  };
+
+private:
   logger::cerr<> m_log{"async_loop_003"};
 };
 
@@ -269,14 +296,9 @@ struct async_loop_004 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i]() -> void {
-      DEB(m_log, "working with = ", ++_i);
-      std::this_thread::sleep_for(250ms);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(500ms, timeout_callback(), _worker);
+        _loop(500ms, timeout_callback(), std::make_unique<worker>(&_i));
 
     _loop.set_log_debug();
 
@@ -297,6 +319,20 @@ struct async_loop_004 {
   }
 
 private:
+  struct worker : public concurrent::worker_t<void> {
+    worker(int16_t *p_i) : m_i(p_i) {}
+
+    void operator()() override {
+      DEB(m_log, "working with = ", ++(*m_i));
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+    int16_t *m_i;
+    logger::cerr<> m_log{"worker"};
+  };
+
+private:
   logger::cerr<> m_log{"async_loop_004"};
 };
 
@@ -314,11 +350,6 @@ struct async_loop_005 {
 
     int16_t _i{0};
 
-    auto _worker = [this, &_i]() -> void {
-      DEB(m_log, "working with = ", ++_i);
-      std::this_thread::sleep_for(250ms);
-    };
-
     auto _breaker = [&_i]() -> bool {
       if (_i == 3) {
         return true;
@@ -328,7 +359,8 @@ struct async_loop_005 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, void>
-        _loop(500ms, timeout_callback(), _breaker, _worker);
+        _loop(500ms, timeout_callback(), _breaker,
+              std::make_unique<worker>(&_i));
 
     _loop.set_log_debug();
 
@@ -347,6 +379,21 @@ struct async_loop_005 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void> {
+
+    worker(int16_t *p_i) : m_i(p_i) {}
+
+    void operator()() override {
+      DEB(m_log, "working with = ", ++(*m_i));
+      std::this_thread::sleep_for(250ms);
+    }
+
+  private:
+    int16_t *m_i;
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_005"};
@@ -378,8 +425,11 @@ struct async_loop_006 {
       };
 
       int16_t _i{0};
-      auto _provider = [this, &_i]() -> std::tuple<int16_t> {
+      auto _provider = [this, &_i, _max]() -> std::tuple<int16_t> {
         if (_i == _max) {
+          DEB(m_log, "causing timeout to not provide data when ", _i,
+              " == ", _max);
+          std::this_thread::sleep_for(2s);
           return {};
         }
         ++_i;
@@ -387,24 +437,12 @@ struct async_loop_006 {
         return {_i};
       };
 
-      auto _worker = [this, _work_normal_sleep,
-                      _work_timeout_sleep](int16_t p_i) -> void {
-        DEB(m_log, "working with = ", p_i);
-        if (p_i == _max) {
-          DEB(m_log, "causing timeout sleeping for ",
-              _work_timeout_sleep.count());
-          std::this_thread::sleep_for(_work_timeout_sleep);
-          return;
-        }
-
-        std::this_thread::sleep_for(_work_normal_sleep);
-      };
-
       concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                                concurrent::use_breaker::no, int16_t>
-          _loop(_work_timeout, _callback, _worker, _provider);
-
-      //    _loop.set_log_debug();
+          _loop(_work_timeout, _callback,
+                std::make_unique<worker>(_max, _work_normal_sleep,
+                                         _work_timeout_sleep),
+                _provider);
 
       _loop.start();
 
@@ -427,6 +465,33 @@ struct async_loop_006 {
     }
     return false;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void, int16_t> {
+    worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
+           std::chrono::milliseconds p_work_timeout_sleep)
+        : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
+          m_work_timeout_sleep(p_work_timeout_sleep) {}
+
+    void operator()(int16_t &&p_i) override {
+      DEB(m_log, "working with = ", p_i);
+      if (p_i == m_max) {
+        DEB(m_log, "causing timeout sleeping for ",
+            m_work_timeout_sleep.count());
+        std::this_thread::sleep_for(m_work_timeout_sleep);
+        return;
+      }
+
+      std::this_thread::sleep_for(m_work_normal_sleep);
+    }
+
+  private:
+    int16_t m_max;
+    std::chrono::milliseconds m_work_normal_sleep;
+    std::chrono::milliseconds m_work_timeout_sleep;
+
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_006"};
@@ -460,8 +525,11 @@ struct async_loop_007 {
     };
 
     int16_t _i{0};
-    auto _provider = [this, &_i]() -> std::tuple<int16_t, float> {
+    auto _provider = [this, &_i, _max]() -> std::tuple<int16_t, float> {
       if (_i == _max) {
+        DEB(m_log, "causing timeout to not provide data when ", _i,
+            " == ", _max);
+        std::this_thread::sleep_for(2s);
         return {};
       }
       ++_i;
@@ -470,20 +538,12 @@ struct async_loop_007 {
       return {_i, _f};
     };
 
-    auto _worker = [this, _work_normal_sleep,
-                    _work_timeout_sleep](int16_t p_i, float p_f) -> void {
-      DEB(m_log, "working with = ", p_i, ", ", p_f);
-      if (p_i == _max) {
-        DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(_work_timeout_sleep);
-        return;
-      }
-      std::this_thread::sleep_for(_work_normal_sleep);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
-        _loop(_work_timeout, _callback, _worker, _provider);
+        _loop(_work_timeout, _callback,
+              std::make_unique<worker>(_max, _work_normal_sleep,
+                                       _work_timeout_sleep),
+              _provider);
 
     _loop.set_log_debug();
 
@@ -504,6 +564,32 @@ struct async_loop_007 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void, int16_t, float> {
+
+    worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
+           std::chrono::milliseconds p_work_timeout_sleep)
+        : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
+          m_work_timeout_sleep(p_work_timeout_sleep) {}
+
+    void operator()(int16_t &&p_i, float &&p_f) {
+      DEB(m_log, "working with = ", p_i, ", ", p_f);
+      if (p_i == m_max) {
+        DEB(m_log, "causing timeout");
+        std::this_thread::sleep_for(m_work_timeout_sleep);
+        return;
+      }
+      std::this_thread::sleep_for(m_work_normal_sleep);
+    }
+
+  private:
+    int16_t m_max;
+    std::chrono::milliseconds m_work_normal_sleep;
+    std::chrono::milliseconds m_work_timeout_sleep;
+
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_007"};
@@ -539,24 +625,11 @@ struct async_loop_008 {
 
     int16_t _i{0};
 
-    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i]() -> void {
-      DEB(m_log, "working with = ", _i);
-      if (_i == _max) {
-        DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(_work_timeout_sleep);
-        return;
-      }
-      if (_i > _max) {
-        return;
-      }
-      ++_i;
-      std::this_thread::sleep_for(_work_normal_sleep);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(_work_timeout, _callback, _worker);
+        _loop(_work_timeout, _callback,
+              std::make_unique<worker>(_max, _work_normal_sleep,
+                                       _work_timeout_sleep, &_i));
 
     _loop.set_log_debug();
 
@@ -577,6 +650,38 @@ struct async_loop_008 {
 
     return true;
   }
+
+private:
+  struct worker : concurrent::worker_t<void> {
+
+    worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
+           std::chrono::milliseconds p_work_timeout_sleep, int16_t *p_i)
+        : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
+          m_work_timeout_sleep(p_work_timeout_sleep), m_i(p_i) {}
+
+    void operator()() override {
+      if ((*m_i) > m_max) {
+        return;
+      }
+
+      if ((*m_i) == m_max) {
+        DEB(m_log, "causing timeout");
+        std::this_thread::sleep_for(m_work_timeout_sleep);
+        return;
+      }
+      DEB(m_log, "working with = ", *m_i);
+      ++(*m_i);
+      std::this_thread::sleep_for(m_work_normal_sleep);
+    }
+
+  private:
+    int16_t m_max;
+    std::chrono::milliseconds m_work_normal_sleep;
+    std::chrono::milliseconds m_work_timeout_sleep;
+    int16_t *m_i;
+
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_008"};
@@ -601,7 +706,7 @@ struct async_loop_009 {
     const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
                                                         2};
     const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
-                                          3000};
+                                          10000};
 
     m_log.set_debug_level();
 
@@ -612,24 +717,11 @@ struct async_loop_009 {
 
     int16_t _i{0};
 
-    auto _worker = [this, _work_normal_sleep, _work_timeout_sleep,
-                    &_i]() -> void {
-      DEB(m_log, "working with = ", _i);
-      if (_i == _max) {
-        DEB(m_log, "causing timeout");
-        std::this_thread::sleep_for(_work_timeout_sleep);
-        return;
-      }
-      if (_i > _max) {
-        return;
-      }
-      ++_i;
-      std::this_thread::sleep_for(_work_normal_sleep);
-    };
-
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(_work_timeout, _callback, _worker);
+        _loop(_work_timeout, _callback,
+              std::make_unique<worker>(_max, _work_normal_sleep,
+                                       _work_timeout_sleep, &_i));
 
     _loop.set_log_debug();
 
@@ -650,6 +742,37 @@ struct async_loop_009 {
 
     return true;
   }
+
+private:
+  struct worker : public concurrent::worker_t<void> {
+
+    worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
+           std::chrono::milliseconds p_work_timeout_sleep, int16_t *p_i)
+        : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
+          m_work_timeout_sleep(p_work_timeout_sleep), m_i(p_i) {}
+
+    void operator()() override {
+      DEB(m_log, "working with = ", *m_i);
+      if ((*m_i) == m_max) {
+        DEB(m_log, "causing timeout");
+        std::this_thread::sleep_for(m_work_timeout_sleep);
+        return;
+      }
+      if ((*m_i) > m_max) {
+        return;
+      }
+      ++(*m_i);
+      std::this_thread::sleep_for(m_work_normal_sleep);
+    }
+
+  private:
+    int16_t m_max;
+    std::chrono::milliseconds m_work_normal_sleep;
+    std::chrono::milliseconds m_work_timeout_sleep;
+    int16_t *m_i;
+
+    logger::cerr<> m_log{"worker"};
+  };
 
 private:
   logger::cerr<> m_log{"async_loop_009"};
