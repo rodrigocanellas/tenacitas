@@ -26,14 +26,7 @@ using namespace tenacitas;
 
 using namespace std::chrono_literals;
 
-struct timeout_callback {
-  inline void operator()(std::thread::id p_id) {
-    WAR(m_log, "timeout for ", p_id);
-  }
-
-private:
-  logger::cerr<> m_log{"timeout_callback"};
-};
+auto _on_dummy_timeout = []() -> void {};
 
 struct async_loop_000 {
 
@@ -49,20 +42,27 @@ struct async_loop_000 {
 
     int16_t _i{0};
     auto _provider = [this, &_i]() -> int16_t {
-      ++_i;
-      DEB(m_log, "providing ", _i);
+      if (_i == 8) {
+        m_cond.notify_one();
+      } else {
+        ++_i;
+        DEB(m_log, "providing ", _i);
+      }
       return _i;
     };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t>
-        _loop(500ms, timeout_callback(), std::make_unique<worker>(), _provider);
+        _loop(worker(), 500ms, _on_dummy_timeout, _provider);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
@@ -77,8 +77,8 @@ struct async_loop_000 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t> {
-    void operator()(int16_t &&p_i) override {
+  struct worker {
+    void operator()(int16_t &&p_i) {
       DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     }
@@ -89,6 +89,8 @@ private:
 
 private:
   logger::cerr<> m_log{"async_loop_000"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_001 {
@@ -110,8 +112,9 @@ struct async_loop_001 {
       return _i;
     };
 
-    auto _breaker = [&_i]() -> bool {
+    auto _breaker = [this, &_i]() -> bool {
       if (_i == 3) {
+        m_cond.notify_one();
         return true;
       }
       return false;
@@ -119,14 +122,16 @@ struct async_loop_001 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, int16_t>
-        _loop(500ms, timeout_callback(), _breaker, std::make_unique<worker>(),
-              _provider);
+        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
@@ -141,19 +146,20 @@ struct async_loop_001 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t> {
-    void operator()(int16_t &&p_i) override {
+  struct worker {
+    void operator()(int16_t &&p_i) {
       DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     }
 
-  private:
   private:
     logger::cerr<> m_log{"worker"};
   };
 
 private:
   logger::cerr<> m_log{"async_loop_001"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_002 {
@@ -171,21 +177,28 @@ struct async_loop_002 {
     int16_t _i{0};
     float _f{0.0};
     auto _provider = [this, &_i, &_f]() -> std::tuple<int16_t, float> {
-      ++_i;
-      _f = _i * 2.5;
-      DEB(m_log, "providing ", _i);
+      if (_i == 8) {
+        m_cond.notify_one();
+      } else {
+        ++_i;
+        _f = _i * 2.5;
+        DEB(m_log, "providing ", _i);
+      }
       return {_i, _f};
     };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
-        _loop(500ms, timeout_callback(), std::make_unique<worker>(), _provider);
+        _loop(worker(), 500ms, _on_dummy_timeout, _provider);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
@@ -201,8 +214,8 @@ struct async_loop_002 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t, float> {
-    void operator()(int16_t &&p_i, float &&p_f) override {
+  struct worker {
+    void operator()(int16_t &&p_i, float &&p_f) {
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     }
@@ -213,6 +226,8 @@ private:
 
 private:
   logger::cerr<> m_log{"async_loop_002"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_003 {
@@ -233,11 +248,13 @@ struct async_loop_003 {
       ++_i;
       _f = _i * 2.5;
       DEB(m_log, "providing ", _i);
+
       return {_i, _f};
     };
 
-    auto _breaker = [&_i]() -> bool {
+    auto _breaker = [this, &_i]() -> bool {
       if (_i == 3) {
+        m_cond.notify_one();
         return true;
       }
       return false;
@@ -245,14 +262,16 @@ struct async_loop_003 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, int16_t, float>
-        _loop(500ms, timeout_callback(), _breaker, std::make_unique<worker>(),
-              _provider);
+        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
@@ -268,8 +287,8 @@ struct async_loop_003 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t, float> {
-    void operator()(int16_t &&p_i, float &&p_f) override {
+  struct worker {
+    void operator()(int16_t &&p_i, float &&p_f) {
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     }
@@ -280,6 +299,8 @@ private:
 
 private:
   logger::cerr<> m_log{"async_loop_003"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_004 {
@@ -294,22 +315,33 @@ struct async_loop_004 {
 
     m_log.set_debug_level();
 
-    int16_t _i{0};
+    worker _worker;
+
+    auto _aux = [this, &_worker]() -> void {
+      if (_worker.get() == 8) {
+        m_cond.notify_one();
+      } else {
+        _worker();
+      }
+    };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(500ms, timeout_callback(), std::make_unique<worker>(&_i));
+        _loop(_aux, 500ms, _on_dummy_timeout);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
-    if (_i != 8) {
-      ERR(m_log, "i should be 8, but it is ", _i);
+    if (_worker.get() != 8) {
+      ERR(m_log, "i should be 8, but it is ", _worker.get());
       return false;
     }
 
@@ -319,21 +351,24 @@ struct async_loop_004 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void> {
-    worker(int16_t *p_i) : m_i(p_i) {}
+  struct worker {
 
-    void operator()() override {
-      DEB(m_log, "working with = ", ++(*m_i));
+    void operator()() {
+      DEB(m_log, "working with = ", ++m_i);
       std::this_thread::sleep_for(250ms);
     }
 
+    inline int16_t get() const { return m_i; }
+
   private:
-    int16_t *m_i;
+    int16_t m_i{0};
     logger::cerr<> m_log{"worker"};
   };
 
 private:
   logger::cerr<> m_log{"async_loop_004"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_005 {
@@ -348,10 +383,11 @@ struct async_loop_005 {
 
     m_log.set_debug_level();
 
-    int16_t _i{0};
+    worker _worker;
 
-    auto _breaker = [&_i]() -> bool {
-      if (_i == 3) {
+    auto _breaker = [this, &_worker]() -> bool {
+      if (_worker.get() == 3) {
+        m_cond.notify_one();
         return true;
       }
       return false;
@@ -359,19 +395,22 @@ struct async_loop_005 {
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::yes, void>
-        _loop(500ms, timeout_callback(), _breaker,
-              std::make_unique<worker>(&_i));
+    _loop([&_worker]() -> void { _worker(); }, 500ms, _on_dummy_timeout,
+          _breaker);
 
     _loop.set_log_debug();
 
     _loop.start();
 
-    std::this_thread::sleep_for(2s);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     _loop.stop();
 
-    if (_i != 3) {
-      ERR(m_log, "i should be 3, but it is ", _i);
+    if (_worker.get() != 3) {
+      ERR(m_log, "i should be 3, but it is ", _worker.get());
       return false;
     }
 
@@ -381,22 +420,25 @@ struct async_loop_005 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void> {
+  struct worker {
 
-    worker(int16_t *p_i) : m_i(p_i) {}
-
-    void operator()() override {
-      DEB(m_log, "working with = ", ++(*m_i));
+    void operator()() {
+      DEB(m_log, "working with = ", ++m_i);
       std::this_thread::sleep_for(250ms);
     }
 
+    inline int16_t get() const { return m_i; }
+
   private:
-    int16_t *m_i;
+    int16_t m_i{0};
+
     logger::cerr<> m_log{"worker"};
   };
 
 private:
   logger::cerr<> m_log{"async_loop_005"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
 struct async_loop_006 {
@@ -419,10 +461,7 @@ struct async_loop_006 {
 
       m_log.set_debug_level();
 
-      auto _callback = [this](std::thread::id p_id) -> void {
-        WAR(m_log, "timeout for ", p_id);
-        m_cond.notify_one();
-      };
+      auto _on_timeout = [this]() -> void { WAR(m_log, "timeout"); };
 
       int16_t _i{0};
       auto _provider = [this, &_i, _max]() -> std::tuple<int16_t> {
@@ -437,12 +476,18 @@ struct async_loop_006 {
         return {_i};
       };
 
+      worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
+
+      auto _aux = [this, &_worker](int16_t &&p_i) -> void {
+        if (p_i == _max) {
+          m_cond.notify_one();
+        }
+        _worker(std::move(p_i));
+      };
+
       concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                                concurrent::use_breaker::no, int16_t>
-          _loop(_work_timeout, _callback,
-                std::make_unique<worker>(_max, _work_normal_sleep,
-                                         _work_timeout_sleep),
-                _provider);
+          _loop(_aux, _work_timeout, _on_timeout, _provider);
 
       _loop.start();
 
@@ -467,13 +512,13 @@ struct async_loop_006 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t> {
+  struct worker {
     worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
            std::chrono::milliseconds p_work_timeout_sleep)
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()(int16_t &&p_i) override {
+    void operator()(int16_t &&p_i) {
       DEB(m_log, "working with = ", p_i);
       if (p_i == m_max) {
         DEB(m_log, "causing timeout sleeping for ",
@@ -519,8 +564,8 @@ struct async_loop_007 {
 
     m_log.set_debug_level();
 
-    auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", p_id);
+    auto _on_timeout = [this]() -> void {
+      WAR(m_log, "timeout");
       m_cond.notify_one();
     };
 
@@ -538,12 +583,15 @@ struct async_loop_007 {
       return {_i, _f};
     };
 
+    worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
+
+    auto _aux = [&_worker](int16_t &&p_i, float &&p_f) -> void {
+      _worker(std::move(p_i), std::move(p_f));
+    };
+
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, int16_t, float>
-        _loop(_work_timeout, _callback,
-              std::make_unique<worker>(_max, _work_normal_sleep,
-                                       _work_timeout_sleep),
-              _provider);
+        _loop(_aux, _work_timeout, _on_timeout, _provider);
 
     _loop.set_log_debug();
 
@@ -566,7 +614,7 @@ struct async_loop_007 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void, int16_t, float> {
+  struct worker {
 
     worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
            std::chrono::milliseconds p_work_timeout_sleep)
@@ -609,7 +657,7 @@ struct async_loop_008 {
     m_log.set_debug_level();
 
     const int16_t _max{23};
-    const std::chrono::milliseconds _work_timeout{500};
+    const std::chrono::milliseconds _work_timeout{500ms};
     const std::chrono::milliseconds _work_normal_sleep{250ms};
     const std::chrono::milliseconds _work_timeout_sleep{_work_timeout.count() *
                                                         2};
@@ -618,18 +666,16 @@ struct async_loop_008 {
 
     m_log.set_debug_level();
 
-    auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", p_id);
+    auto _on_timeout = [this]() -> void {
+      WAR(m_log, "timeout");
       m_cond.notify_one();
     };
 
-    int16_t _i{0};
+    worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(_work_timeout, _callback,
-              std::make_unique<worker>(_max, _work_normal_sleep,
-                                       _work_timeout_sleep, &_i));
+    _loop([&_worker]() -> void { _worker(); }, _work_timeout, _on_timeout);
 
     _loop.set_log_debug();
 
@@ -641,8 +687,8 @@ struct async_loop_008 {
       _loop.stop();
     }
 
-    if (_i != _max) {
-      ERR(m_log, "i should be ", _max, ", but it is ", _i);
+    if (_worker.get() != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _worker.get());
       return false;
     }
 
@@ -652,33 +698,35 @@ struct async_loop_008 {
   }
 
 private:
-  struct worker : concurrent::worker_t<void> {
+  struct worker {
 
     worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
-           std::chrono::milliseconds p_work_timeout_sleep, int16_t *p_i)
+           std::chrono::milliseconds p_work_timeout_sleep)
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
-          m_work_timeout_sleep(p_work_timeout_sleep), m_i(p_i) {}
+          m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()() override {
-      if ((*m_i) > m_max) {
+    void operator()() {
+      if (m_i > m_max) {
         return;
       }
 
-      if ((*m_i) == m_max) {
+      if (m_i == m_max) {
         DEB(m_log, "causing timeout");
         std::this_thread::sleep_for(m_work_timeout_sleep);
         return;
       }
-      DEB(m_log, "working with = ", *m_i);
-      ++(*m_i);
+      DEB(m_log, "working with = ", m_i);
+      ++m_i;
       std::this_thread::sleep_for(m_work_normal_sleep);
     }
+
+    inline int16_t get() const { return m_i; }
 
   private:
     int16_t m_max;
     std::chrono::milliseconds m_work_normal_sleep;
     std::chrono::milliseconds m_work_timeout_sleep;
-    int16_t *m_i;
+    int16_t m_i{0};
 
     logger::cerr<> m_log{"worker"};
   };
@@ -710,18 +758,18 @@ struct async_loop_009 {
 
     m_log.set_debug_level();
 
-    auto _callback = [this](std::thread::id p_id) -> void {
-      WAR(m_log, "timeout for ", p_id);
+    auto _on_timeout = [this]() -> void {
+      WAR(m_log, "timeout");
       m_cond.notify_one();
     };
 
-    int16_t _i{0};
+    worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
+
+    auto _aux = [&_worker]() -> void { _worker(); };
 
     concurrent::async_loop_t<logger::cerr<>, std::chrono::milliseconds,
                              concurrent::use_breaker::no, void>
-        _loop(_work_timeout, _callback,
-              std::make_unique<worker>(_max, _work_normal_sleep,
-                                       _work_timeout_sleep, &_i));
+        _loop(_aux, _work_timeout, _on_timeout);
 
     _loop.set_log_debug();
 
@@ -733,8 +781,8 @@ struct async_loop_009 {
       _loop.stop();
     }
 
-    if (_i != _max) {
-      ERR(m_log, "i should be ", _max, ", but it is ", _i);
+    if (_worker.get() != _max) {
+      ERR(m_log, "i should be ", _max, ", but it is ", _worker.get());
       return false;
     }
 
@@ -744,32 +792,34 @@ struct async_loop_009 {
   }
 
 private:
-  struct worker : public concurrent::worker_t<void> {
+  struct worker {
 
     worker(int16_t p_max, std::chrono::milliseconds p_work_normal_sleep,
-           std::chrono::milliseconds p_work_timeout_sleep, int16_t *p_i)
+           std::chrono::milliseconds p_work_timeout_sleep)
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
-          m_work_timeout_sleep(p_work_timeout_sleep), m_i(p_i) {}
+          m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()() override {
-      DEB(m_log, "working with = ", *m_i);
-      if ((*m_i) == m_max) {
+    void operator()() {
+      DEB(m_log, "working with = ", m_i);
+      if (m_i == m_max) {
         DEB(m_log, "causing timeout");
         std::this_thread::sleep_for(m_work_timeout_sleep);
         return;
       }
-      if ((*m_i) > m_max) {
+      if (m_i > m_max) {
         return;
       }
-      ++(*m_i);
+      ++m_i;
       std::this_thread::sleep_for(m_work_normal_sleep);
     }
+
+    inline int16_t get() const { return m_i; }
 
   private:
     int16_t m_max;
     std::chrono::milliseconds m_work_normal_sleep;
     std::chrono::milliseconds m_work_timeout_sleep;
-    int16_t *m_i;
+    int16_t m_i{0};
 
     logger::cerr<> m_log{"worker"};
   };
@@ -778,6 +828,92 @@ private:
   logger::cerr<> m_log{"async_loop_009"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+};
+
+struct async_loop_010 {
+  static std::string desc() { return "timeout, no params, breaker"; }
+
+  bool operator()() {
+    const int16_t _max{15};
+    concurrent::timeout _timeout{1s};
+    worker _worker(_max, _timeout);
+
+    auto _on_timeout = [this, &_worker]() -> void {
+      _worker.stop();
+      m_cond.notify_one();
+    };
+
+    auto _aux = [&_worker]() -> void { _worker.work(); };
+
+    concurrent::async_loop_t<logger::cerr<>, concurrent::timeout,
+                             concurrent::use_breaker::no, void>
+        _loop(_aux, _timeout, _on_timeout);
+
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
+
+    _loop.stop();
+
+    if (_worker.get() != _max) {
+      ERR(m_log, "value should be ", _max, " but it is ", _worker.get());
+      return false;
+    }
+
+    INF(m_log, "value is ", _worker.get(), " and it is right because ", _max,
+        " was expected");
+
+    return true;
+  }
+
+private:
+  struct worker {
+
+    worker(int16_t p_max, concurrent::timeout p_timeout)
+        : m_max(p_max), m_timeout(p_timeout),
+          m_over_timeout(m_timeout.count() * 2),
+          m_under_timeout((m_timeout.count() / 2)) {}
+
+    void work() {
+
+      DEB(m_log, "m_i = ", m_i);
+
+      if (m_i == m_max) {
+        std::this_thread::sleep_for(m_over_timeout);
+      }
+
+      if (m_stop) {
+        WAR(m_log, "ordered to stop, m_i = ", m_i, ", and m_max = ", m_max);
+        return;
+      }
+
+      std::this_thread::sleep_for(m_under_timeout);
+
+      ++m_i;
+    }
+
+    inline void stop() { m_stop = true; }
+
+    inline int16_t get() const { return m_i; }
+
+  private:
+    int16_t m_max{0};
+    concurrent::timeout m_timeout;
+    concurrent::timeout m_over_timeout;
+    concurrent::timeout m_under_timeout;
+    int16_t m_i{0};
+    bool m_stop{false};
+
+    logger::cerr<> m_log{"worker"};
+  };
+
+private:
+  logger::cerr<> m_log{"async_loop_010"};
+  std::mutex m_mutex;
+  std::condition_variable m_cond;
 };
 
 int main(int argc, char **argv) {
@@ -794,4 +930,5 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_007);
   run_test(_tester, async_loop_008);
   run_test(_tester, async_loop_009);
+  run_test(_tester, async_loop_010);
 }

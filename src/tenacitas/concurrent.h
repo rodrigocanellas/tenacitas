@@ -47,22 +47,7 @@ template <typename t_time> inline interval to_interval(t_time p_time) {
 } // namespace internal
 
 /// \brief Type of function executed when a function times out
-typedef std::function<void(std::thread::id)> timeout_callback;
-
-template <typename t_type, typename... t_params> struct worker_t {
-
-  inline void stop() { m_stop = true; }
-
-  virtual t_type operator()(t_params &&... p_params) = 0;
-
-  virtual ~worker_t() {}
-
-protected:
-  inline bool stopped() const { return m_stop; }
-
-private:
-  bool m_stop{false};
-};
+typedef std::function<void()> on_timeout;
 
 namespace internal {
 template <typename t_type> struct executer_helper_result_t {
@@ -152,7 +137,7 @@ struct executer_helper_t {
 ///
 /// \return if the callable object returns void, \p execute returns true if no
 /// timeout; false otherwise
-///         if the callable object does not return void, \p execute
+///         if the callable object does not return void, \p execute returns
 ///         std::optional<type-returned> with value if not timeout, {}
 ///         otherwise
 ///
@@ -412,6 +397,9 @@ execute(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
 
+/// \brief Type of function used to inform a worker that it should stop
+typedef std::function<void()> interrupt;
+
 /// \brief Used to define if a loop will use a breaker function or not
 enum class use_breaker : char { yes = 'y', no = 'n' };
 
@@ -421,7 +409,8 @@ enum class use_breaker : char { yes = 'y', no = 'n' };
 // struct loop_t;
 
 /// \brief base class for asynchronous loop
-template <typename t_log, typename t_time> struct async_loop_base_t {
+template <typename t_log, typename t_time, typename t_worker>
+struct async_loop_base_t {
 
   async_loop_base_t(const async_loop_base_t &) = delete;
   async_loop_base_t(async_loop_base_t &&p_async_loop) = delete;
@@ -454,16 +443,18 @@ template <typename t_log, typename t_time> struct async_loop_base_t {
   inline void set_log_warn() { m_log.set_warn_level(); }
 
 protected:
-  async_loop_base_t(t_time p_time, timeout_callback p_timeout_callback)
-      : m_timeout(internal::to_timeout(p_time)),
-        m_timeout_callback(p_timeout_callback) {}
+  async_loop_base_t(t_worker p_worker, t_time p_time, on_timeout p_on_timeout)
+      : m_worker(p_worker), m_timeout(internal::to_timeout(p_time)),
+        m_on_timeout(p_on_timeout) {}
 
   virtual void loop() = 0;
 
 protected:
+  t_worker m_worker;
+
   timeout m_timeout;
 
-  timeout_callback m_timeout_callback;
+  on_timeout m_on_timeout;
 
   bool m_stopped{true};
 
@@ -483,17 +474,18 @@ struct async_loop_t;
 /// #### async_loop 1 ####
 template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::yes, t_params...>
-    : public async_loop_base_t<t_log, t_time> {
+    : public async_loop_base_t<t_log, t_time,
+                               std::function<void(t_params &&...)>> {
 
-  typedef worker_t<void, t_params...> worker;
+  typedef std::function<void(t_params &&...)> worker;
+
   typedef std::function<std::tuple<t_params...>()> provider;
 
-  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               breaker p_breaker, std::unique_ptr<worker> p_worker,
-               provider p_provider)
-      : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(std::move(p_worker)), m_provider(p_provider),
-        m_breaker(p_breaker) {}
+  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+               breaker p_breaker, provider p_provider)
+      : async_loop_base_t<t_log, t_time, worker>(p_worker, p_timeout,
+                                                 p_on_timeout),
+        m_provider(p_provider), m_breaker(p_breaker) {}
 
 protected:
   void loop() override {
@@ -525,18 +517,17 @@ protected:
         std::tuple<t_params...> _params = std::move(*_maybe_data);
 
         auto _worker = [this, &_params]() -> void {
-          std::apply(*m_worker, std::move(_params));
+          std::apply(this->m_worker, std::move(_params));
         };
 
         if (!execute(this->m_timeout, _worker)) {
-          m_worker->stop();
+          this->m_on_timeout();
         }
       }
     }
   }
 
 private:
-  std::unique_ptr<worker> m_worker;
   provider m_provider;
   breaker m_breaker;
 };
@@ -544,15 +535,17 @@ private:
 /// #### async_loop 2 ####
 template <typename t_log, typename t_time, typename... t_params>
 struct async_loop_t<t_log, t_time, use_breaker::no, t_params...>
-    : public async_loop_base_t<t_log, t_time> {
+    : public async_loop_base_t<t_log, t_time,
+                               std::function<void(t_params &&...)>> {
 
-  typedef worker_t<void, t_params...> worker;
+  typedef std::function<void(t_params &&...)> worker;
   typedef std::function<std::tuple<t_params...>()> provider;
 
-  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               std::unique_ptr<worker> p_worker, provider p_provider)
-      : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(std::move(p_worker)), m_provider(p_provider) {}
+  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+               provider p_provider)
+      : async_loop_base_t<t_log, t_time, worker>(p_worker, p_timeout,
+                                                 p_on_timeout),
+        m_provider(p_provider) {}
 
 protected:
   void loop() override {
@@ -574,41 +567,41 @@ protected:
 
       if (_maybe_data) {
         std::tuple<t_params...> _params = std::move(*_maybe_data);
-        DEB(m_log, "data provided = ", _params);
+        DEB(this->m_log, "data provided = ", _params);
 
         auto _worker = [this, &_params]() -> void {
-          std::apply(*m_worker, std::move(_params));
+          std::apply(this->m_worker, std::move(_params));
         };
 
         if (!execute(this->m_timeout, _worker)) {
-          m_worker->stop();
+          this->m_on_timeout();
         }
       }
     }
   }
 
 private:
-  t_log m_log{"async_loop_t 2"};
-  std::unique_ptr<worker> m_worker;
+  worker m_worker;
   provider m_provider;
 };
 
 /// #### async_loop 3 ####
 template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::yes, void>
-    : public async_loop_base_t<t_log, t_time> {
+    : public async_loop_base_t<t_log, t_time, std::function<void()>> {
 
-  typedef worker_t<void> worker;
+  typedef std::function<void()> worker;
 
-  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               breaker p_breaker, std::unique_ptr<worker> p_worker)
-      : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(std::move(p_worker)), m_breaker(p_breaker) {}
+  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+               breaker p_breaker)
+      : async_loop_base_t<t_log, t_time, worker>(p_worker, p_timeout,
+                                                 p_on_timeout),
+        m_breaker(p_breaker) {}
 
 protected:
   void loop() override {
 
-    auto _worker = [this]() -> void { (*m_worker)(); };
+    auto _worker = [this]() -> void { this->m_worker(); };
 
     while (true) {
       if (this->m_stopped) {
@@ -622,32 +615,30 @@ protected:
       }
 
       if (!execute(this->m_timeout, _worker)) {
-        m_worker->stop();
+        this->m_on_timeout();
       }
     }
   }
 
 private:
-  std::unique_ptr<worker> m_worker;
   breaker m_breaker;
 };
 
 /// #### async_loop 4 ####
 template <typename t_log, typename t_time>
 struct async_loop_t<t_log, t_time, use_breaker::no, void>
-    : public async_loop_base_t<t_log, t_time> {
+    : public async_loop_base_t<t_log, t_time, std::function<void()>> {
 
-  typedef worker_t<void> worker;
+  typedef std::function<void()> worker;
 
-  async_loop_t(t_time p_timeout, timeout_callback p_timeout_callback,
-               std::unique_ptr<worker> p_worker)
-      : async_loop_base_t<t_log, t_time>(p_timeout, p_timeout_callback),
-        m_worker(std::move(p_worker)) {}
+  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout)
+      : async_loop_base_t<t_log, t_time, worker>(p_worker, p_timeout,
+                                                 p_on_timeout) {}
 
 protected:
   void loop() override {
 
-    auto _worker = [this]() -> void { (*m_worker)(); };
+    auto _worker = [this]() -> void { this->m_worker(); };
 
     while (true) {
 
@@ -655,21 +646,18 @@ protected:
         break;
       }
 
-      if (execute(this->m_timeout, _worker)) {
-        m_worker->stop();
+      if (!execute(this->m_timeout, _worker)) {
+        this->m_on_timeout();
       }
     }
   }
-
-private:
-  std::unique_ptr<worker> m_worker;
 };
 
 /// \brief Executes a work function in fixed period of times
 template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
 
   /// \brief used to notify about timeout of \p operation
-  typedef std::function<void(std::thread::id)> timeout_callback;
+  typedef std::function<void(std::thread::id)> on_timeout;
 
   /// \brief default constructor not allowed
   sleeping_loop_base_t() = delete;
@@ -836,7 +824,7 @@ protected:
 //    ///
 //    /// \param p_worker the work function to be executed at \p p_interval
 //    ///
-//    /// \param p_timeout_callback function to be executed if \p p_worker
+//    /// \param p_on_timeout function to be executed if \p p_worker
 //    times
 //    /// out
 //    ///
@@ -845,11 +833,11 @@ protected:
 //    template <typename t_timeout, typename t_interval>
 //    sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker
 //    p_worker,
-//                    timeout_callback p_timeout_callback, provider
+//                    on_timeout p_on_timeout, provider
 //                    p_provider)
 //        : sleeping_loop_base_t<
 //          t_log, async_loop_t<t_log, use_breaker::yes, t_params...>>(
-//              p_interval, p_timeout, p_timeout_callback,
+//              p_interval, p_timeout, p_on_timeout,
 //              [this]() -> bool { return this->breaker(); }, p_worker,
 //    p_provider) {
 //        DEB(this->m_log, "timeout = ", p_timeout.count(),
@@ -884,10 +872,10 @@ protected:
 //    template <typename t_timeout, typename t_interval>
 //    sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker
 //    p_worker,
-//                    timeout_callback p_timeout_callback)
+//                    on_timeout p_on_timeout)
 //        : sleeping_loop_base_t<t_log,
 //          async_loop_t<t_log, use_breaker::yes, void>>(
-//              p_interval, p_timeout, p_timeout_callback,
+//              p_interval, p_timeout, p_on_timeout,
 //              [this]() -> bool { return this->breaker(); }, p_worker) {
 
 //        DEB(this->m_log, "timeout = ", p_timeout.count(),
