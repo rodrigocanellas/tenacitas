@@ -20,10 +20,11 @@
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
+using namespace std::chrono_literals;
 
 struct timeout_callback {
   timeout_callback(logger::cerr<> &p_log) : m_log(p_log) {}
-  void operator()(std::thread::id p_id) { WAR(m_log, "TIMEOUT for ", p_id); }
+  void operator()() { WAR(m_log, "TIMEOUT"); }
 
 private:
   logger::cerr<> &m_log;
@@ -40,16 +41,9 @@ struct sleeping_loop_000 {
 
     auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
 
-    std::function<void(std::thread::id)> _timeout_callback =
-        [](std::thread::id) -> void {};
+    auto _on_timeout = []() -> void {};
 
-    std::chrono::seconds _interval(1);
-    std::chrono::milliseconds _timeout(100);
-
-    DEB(m_log, "timeout = ", _timeout.count(),
-        ", interval = ", _interval.count());
-
-    loop _loop(_timeout, _interval, _operation, _timeout_callback);
+    loop _loop(100ms, 1s, _operation, _on_timeout);
 
     return true;
   }
@@ -67,48 +61,40 @@ struct sleeping_loop_001 {
     std::stringstream _stream;
     _stream << "\n'sleeping_loop' with interval of " << m_interval_secs
             << "s, operation timeout of " << m_timeout
-            << "ms, increments a counter, and just prints using 'cerr_test', "
-            << "so there will be no timeout."
+            << "ms, increments a counter, and just prints so there will be no "
+               "timeout."
 
-            << "\nThe main function will sleep for " << m_sleep_secs
-            << "s, and the 'sleeping_loop' will stop in the destructor."
-
-            << "\nCounter should be " << m_actual_amount;
+            << "\nCounter should be " << m_amount;
     return _stream.str();
   }
 
   bool operator()() {
     m_log.set_debug_level();
 
-    DEB(m_log, "interval = ", m_interval_secs, ", sleep = ", m_sleep_secs,
-        ", amount = ", m_amount, ", actual amount = ", m_actual_amount,
-        ", timeout = ", m_timeout);
+    auto _on_timeout = []() -> void {};
 
-    std::function<void(std::thread::id)> _timeout_callback =
-        [](std::thread::id) -> void {};
-
-    operation1 _operation;
+    operation1 _op(&m_cond);
     loop _loop(
         std::chrono::milliseconds(m_timeout),
-        std::chrono::seconds(m_interval_secs),
-        [&_operation]() { return _operation(); }, _timeout_callback);
+        std::chrono::seconds(m_interval_secs), [&_op]() { return _op(); },
+        _on_timeout);
 
-    //    _loop.
+    _loop.start();
 
-    //  .start();
-    DEB(m_log, "starting to sleep");
-    std::this_thread::sleep_for(std::chrono::seconds(m_sleep_secs));
-    DEB(m_log, "waking up");
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock, [&_op]() -> bool { return _op.counter >= m_amount; });
+    }
 
-    DEB(m_log, "data = ", _operation.counter);
-    if (_operation.counter != m_actual_amount) {
-      ERR(m_log, "counter should be ", m_actual_amount, ", but it is ",
-          _operation.counter);
+    _loop.stop();
+
+    if (_op.counter != m_amount) {
+      ERR(m_log, "counter should be ", m_amount, ", but it is ", _op.counter);
       return false;
     }
 
-    INF(m_log, "counter should be ", m_actual_amount, ", and it is ",
-        _operation.counter);
+    INF(m_log, "counter should be ", m_amount, ", and it really is ",
+        _op.counter);
 
     return true;
   }
@@ -116,234 +102,234 @@ struct sleeping_loop_001 {
 private:
   struct operation1 {
 
+    operation1(std::condition_variable *p_cond) : m_cond(p_cond) {}
+
     void operator()() {
-      ++counter;
-      DEB(m_log, "counter = ", counter);
+      if (counter < m_amount) {
+        ++counter;
+        DEB(m_log, "counter = ", counter);
+        std::this_thread::sleep_for(m_sleep);
+      } else {
+        m_cond->notify_one();
+      }
     }
 
     value counter{0};
 
   private:
     logger::cerr<> m_log{"sleeping_loop_001::operation1"};
+    std::condition_variable *m_cond;
   };
 
 private:
   logger::cerr<> m_log{"sleeping_loop_001"};
+  std::mutex m_mutex;
+  std::condition_variable m_cond;
 
-  static constexpr value m_sleep_secs{10};
   static constexpr value m_interval_secs{1};
-  static constexpr float m_amount{
-      static_cast<float>(m_sleep_secs / m_interval_secs)};
-  static constexpr value m_actual_amount{
-      static_cast<value>(((m_amount - static_cast<value>(m_amount)) != 0)
-                             ? static_cast<value>(m_amount) + 1
-                             : static_cast<value>(m_amount))};
-  static constexpr value m_timeout{300};
+  static constexpr value m_amount{14};
+  static constexpr value m_timeout{400};
+  static constexpr std::chrono::milliseconds m_sleep{200};
 };
 
-struct sleeping_loop_003 {
+// struct sleeping_loop_003 {
 
-  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+//  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
 
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there  "
-           "will be no timeout."
+//  static const std::string desc() {
+//    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+//           "increments a counter, and just prints using 'cerr_test', so there
+//           " "will be no timeout."
 
-           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10 "
-           "secs; the 'sleeping_loop' will stop by calling 'stop'; the main "
-           "thread will sleep for 5 secs;, the 'sleeping_loop' will be "
-           "restarted with 'start'; the main thread will sleep for 8 secs; the "
-           "'sleeping_loop' will stop in the destructor."
+//           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10
+//           " "secs; the 'sleeping_loop' will stop by calling 'stop'; the main
+//           " "thread will sleep for 5 secs;, the 'sleeping_loop' will be "
+//           "restarted with 'start'; the main thread will sleep for 8 secs; the
+//           "
+//           "'sleeping_loop' will stop in the destructor."
 
-           "\nCounter should be 18.";
-  }
+//           "\nCounter should be 18.";
+//  }
 
-  bool operator()() {
-    m_log.set_debug_level();
-    using namespace tenacitas;
+//  bool operator()() {
+//    m_log.set_debug_level();
+//    using namespace tenacitas;
 
-    operation1 _operation;
+//    operation1 _op;
 
-    std::function<void(std::thread::id)> _timeout_callback =
-        [](std::thread::id) -> void {};
+//    auto _on_timeout = []() -> void {};
 
-    loop _loop(
-        std::chrono::milliseconds(500), std::chrono::seconds(1),
-        [&_operation]() { return _operation(); }, _timeout_callback);
+//    loop _loop(
+//        500ms, 1s, [&_op]() { return _op(); }, _on_timeout);
 
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    _loop.stop();
+//    _loop.start();
+//    std::this_thread::sleep_for(10s);
+//    _loop.stop();
 
-    DEB(m_log, "data = ", _operation.counter);
-    if (_operation.counter != 10) {
-      return false;
-    }
+//    DEB(m_log, "data = ", _op.counter);
+//    if (_op.counter != 10) {
+//      return false;
+//    }
 
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+//    std::this_thread::sleep_for(5s);
 
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(8));
+//    _loop.start();
+//    std::this_thread::sleep_for(8s);
 
-    DEB(m_log, "data = ", _operation.counter);
-    if (_operation.counter != 18) {
-      return false;
-    }
+//    DEB(m_log, "data = ", _op.counter);
+//    if (_op.counter != 18) {
+//      return false;
+//    }
 
-    return true;
-  }
+//    return true;
+//  }
 
-private:
-  struct operation1 {
-    void operator()() {
+// private:
+//  struct operation1 {
+//    void operator()() {
 
-      ++counter;
-      DEB(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr<> m_log{"sleeping_loop_003::operation1"};
-  };
+//      ++counter;
+//      DEB(m_log, counter);
+//    }
+//    uint64_t counter = 0;
+//    logger::cerr<> m_log{"sleeping_loop_003::operation1"};
+//  };
 
-private:
-  logger::cerr<> m_log{"sleeping_loop_003"};
-};
+// private:
+//  logger::cerr<> m_log{"sleeping_loop_003"};
+//};
 
-struct sleeping_loop_004 {
-  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+// struct sleeping_loop_004 {
+//  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
 
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there "
-           "will be no timeout."
+//  static const std::string desc() {
+//    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+//           "increments a counter, and just prints using 'cerr_test', so there
+//           " "will be no timeout."
 
-           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10 "
-           "secs; the 'sleeping_loop' will stop by calling 'stop'; the main "
-           "thread will sleep for 5 secs;, then 'sleeping_loop' will be "
-           "restarted with 'start'; the main thread will sleep for 8 secs; the "
-           "'sleeping_loop' will stop by calling 'stop'."
+//           "\n'sleeping_loop' will call 'start'; main thread will sleep for 10
+//           " "secs; the 'sleeping_loop' will stop by calling 'stop'; the main
+//           " "thread will sleep for 5 secs;, then 'sleeping_loop' will be "
+//           "restarted with 'start'; the main thread will sleep for 8 secs; the
+//           "
+//           "'sleeping_loop' will stop by calling 'stop'."
 
-           "\nCounter should be 18.";
-  }
+//           "\nCounter should be 18.";
+//  }
 
-  bool operator()() {
-    m_log.set_debug_level();
+//  bool operator()() {
+//    m_log.set_debug_level();
 
-    operation1 _operation;
+//    operation1 _operation;
 
-    std::function<void(std::thread::id)> _timeout_callback =
-        [](std::thread::id) -> void {};
+//    auto _on_timeout = []() -> void {};
 
-    loop _loop(
-        std::chrono::milliseconds(500), std::chrono::seconds(1),
-        [&_operation]() { return _operation(); }, _timeout_callback);
+//    loop _loop(
+//        500ms, 1s, [&_operation]() { return _operation(); }, _on_timeout);
 
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    _loop.stop();
+//    _loop.start();
+//    std::this_thread::sleep_for(10s);
+//    _loop.stop();
 
-    DEB(m_log, "data = ", _operation.counter);
-    if (_operation.counter != 10) {
-      return false;
-    }
+//    DEB(m_log, "data = ", _operation.counter);
+//    if (_operation.counter != 10) {
+//      return false;
+//    }
 
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+//    std::this_thread::sleep_for(5s);
 
-    _loop.start();
-    std::this_thread::sleep_for(std::chrono::seconds(8));
-    _loop.stop();
+//    _loop.start();
+//    std::this_thread::sleep_for(8s);
+//    _loop.stop();
 
-    DEB(m_log, "data = ", _operation.counter);
-    if (_operation.counter != 18) {
-      return false;
-    }
-    return true;
-  }
+//    DEB(m_log, "data = ", _operation.counter);
+//    if (_operation.counter != 18) {
+//      return false;
+//    }
+//    return true;
+//  }
 
-private:
-  struct operation1 {
-    void operator()() {
-      using namespace tenacitas;
-      ++counter;
-      DEB(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr<> m_log{"sleeping_loop_004::operation1"};
-  };
+// private:
+//  struct operation1 {
+//    void operator()() {
+//      using namespace tenacitas;
+//      ++counter;
+//      DEB(m_log, counter);
+//    }
+//    uint64_t counter = 0;
+//    logger::cerr<> m_log{"sleeping_loop_004::operation1"};
+//  };
 
-private:
-  logger::cerr<> m_log{"sleeping_loop_004"};
-};
+// private:
+//  logger::cerr<> m_log{"sleeping_loop_004"};
+//};
 
-struct sleeping_loop_005 {
-  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+// struct sleeping_loop_005 {
+//  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
 
-  static const std::string desc() {
-    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
-           "increments a counter, and just prints using 'cerr_test', so there "
-           "will be no timeout."
+//  static const std::string desc() {
+//    return "\n'sleeping_loop' with interval of 1000 ms, timeout of 500 ms, "
+//           "increments a counter, and just prints using 'cerr_test', so there
+//           " "will be no timeout."
 
-           "\nA 'sleeping_loop' will be started, the main thread will sleep "
-           "for 10 secs, 'sleeping_loop' will be created using the same "
-           "parameters as the first one, the main thread will sleep for 3 "
-           "secs, the new 'sleeping_loop' will stop by its destructor."
+//           "\nA 'sleeping_loop' will be started, the main thread will sleep "
+//           "for 10 secs, 'sleeping_loop' will be created using the same "
+//           "parameters as the first one, the main thread will sleep for 3 "
+//           "secs, the new 'sleeping_loop' will stop by its destructor."
 
-           "\nCounter should be 13.";
-  }
+//           "\nCounter should be 13.";
+//  }
 
-  bool operator()() {
+//  bool operator()() {
 
-    m_log.set_debug_level();
+//    m_log.set_debug_level();
 
-    operation1 _operation;
+//    operation1 _operation;
 
-    std::function<void(std::thread::id)> _timeout_callback =
-        [](std::thread::id) -> void {};
+//    auto _on_timeout = []() -> void {};
 
-    loop _loop_1(
-        std::chrono::milliseconds(500), std::chrono::seconds(1),
-        [&_operation]() { return _operation(); }, _timeout_callback);
+//    loop _loop_1(
+//        500ms, 1s, [&_operation]() { return _operation(); }, _on_timeout);
 
-    _loop_1.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+//    _loop_1.start();
+//    std::this_thread::sleep_for(10s);
 
-    if (_operation.counter != 10) {
-      ERR(m_log, "counter should be 10, but it is ", _operation.counter);
-      return false;
-    }
-    DEB(m_log, "data = ", _operation.counter);
+//    if (_operation.counter != 10) {
+//      ERR(m_log, "counter should be 10, but it is ", _operation.counter);
+//      return false;
+//    }
+//    DEB(m_log, "data = ", _operation.counter);
 
-    _loop_1.stop();
+//    _loop_1.stop();
 
-    loop _loop_2(
-        std::chrono::milliseconds(500), std::chrono::milliseconds(1000),
-        [&_operation]() { return _operation(); }, _timeout_callback);
+//    loop _loop_2(
+//        500ms, 1000ms, [&_operation]() { return _operation(); }, _on_timeout);
 
-    _loop_2.start();
-    std::this_thread::sleep_for(std::chrono::seconds(3));
+//    _loop_2.start();
+//    std::this_thread::sleep_for(3s);
 
-    if (_operation.counter != 13) {
-      ERR(m_log, "counter should be 10, but it is ", _operation.counter);
-      return false;
-    }
-    DEB(m_log, "data = ", _operation.counter);
-    return true;
-  }
+//    if (_operation.counter != 13) {
+//      ERR(m_log, "counter should be 10, but it is ", _operation.counter);
+//      return false;
+//    }
+//    DEB(m_log, "data = ", _operation.counter);
+//    return true;
+//  }
 
-private:
-  struct operation1 {
-    void operator()() {
-      using namespace tenacitas;
-      ++counter;
-      DEB(m_log, counter);
-    }
-    uint64_t counter = 0;
-    logger::cerr<> m_log{"sleeping_loop_005::operation1"};
-  };
+// private:
+//  struct operation1 {
+//    void operator()() {
+//      using namespace tenacitas;
+//      ++counter;
+//      DEB(m_log, counter);
+//    }
+//    uint64_t counter = 0;
+//    logger::cerr<> m_log{"sleeping_loop_005::operation1"};
+//  };
 
-private:
-  logger::cerr<> m_log{"sleeping_loop_005"};
-};
+// private:
+//  logger::cerr<> m_log{"sleeping_loop_005"};
+//};
 
 // struct sleeping_loop_006 {
 
@@ -365,14 +351,14 @@ private:
 //  bool operator()() {
 //    using namespace tenacitas;
 
-//    std::function<void(std::thread::id)> _timeout_callback =
+//    std::function<void(std::thread::id)> _on_timeout =
 //        [](std::thread::id) -> void {};
 
 //    operation1 _operation;
 
 //    loop _loop_1(
 //        std::chrono::milliseconds(500), std::chrono::seconds(1),
-//        [&_operation]() { return _operation(); }, _timeout_callback);
+//        [&_operation]() { return _operation(); }, _on_timeout);
 
 //    _loop_1.start();
 //    std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -387,7 +373,7 @@ private:
 //    _loop_1.stop();
 
 //    loop _loop_2(_loop_1.get_timeout(), _loop_1.get_interval(),
-//                 _loop_1.get_operation(), _timeout_callback);
+//                 _loop_1.get_operation(), _on_timeout);
 
 //    _loop_2.start();
 
@@ -421,13 +407,13 @@ private:
 //};
 
 int main(int argc, char **argv) {
-  //  logger::cerr<>::
+  logger::set_debug_level();
   tester::test<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);
-  run_test(_tester, sleeping_loop_003);
-  run_test(_tester, sleeping_loop_004);
-  run_test(_tester, sleeping_loop_005);
+  //  run_test(_tester, sleeping_loop_003);
+  //  run_test(_tester, sleeping_loop_004);
+  //  run_test(_tester, sleeping_loop_005);
   //  run_test(_tester, sleeping_loop_006);
 }
