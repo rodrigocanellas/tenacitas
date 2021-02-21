@@ -396,11 +396,8 @@ execute(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
 
-/// \brief Type of function used to inform a worker that it should stop
-// typedef std::function<void()> interrupt;
-
-/// \brief Used to define if a loop will use a breaker function or not
-enum class use_breaker : char { yes = 'y', no = 'n' };
+///// \brief Used to define if a loop will use a breaker function or not
+// enum class use_breaker : char { yes = 'y', no = 'n' };
 
 namespace internal {
 
@@ -476,74 +473,93 @@ protected:
 };
 } // namespace internal
 /// \brief Base class for asynchronous loop
-template <typename t_log, use_breaker use, typename... t_params>
+template <typename t_log /*, use_breaker use*/, typename... t_params>
 struct async_loop_t;
 
-/// #### async_loop 1 ####
-template <typename t_log, typename... t_params>
-struct async_loop_t<t_log, use_breaker::yes, t_params...>
-    : public internal::async_loop_base_t<t_log,
-                                         std::function<void(t_params &&...)>> {
+///// #### async_loop 1 ####
+// template <typename t_log, typename... t_params>
+// struct async_loop_t<t_log, use_breaker::yes, t_params...>
+//    : public internal::async_loop_base_t<t_log,
+//                                         std::function<void(t_params &&...)>>
+//                                         {
 
-  typedef std::function<void(t_params &&...)> worker;
+//  typedef std::function<void(t_params &&...)> worker;
 
-  typedef std::function<std::tuple<t_params...>()> provider;
+//  typedef std::function<std::tuple<t_params...>()> provider;
 
-  template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
-               breaker p_breaker, provider p_provider)
-      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
-                                                   p_on_timeout),
-        m_provider(p_provider), m_breaker(p_breaker) {}
+//  template <typename t_time>
+//  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+//               breaker p_breaker, provider p_provider)
+//      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
+//                                                   p_on_timeout),
+//        m_provider(p_provider), m_breaker(p_breaker) {}
 
-protected:
-  void loop() override {
+// protected:
+//  void loop() override {
 
-    while (true) {
-      if (this->m_stopped) {
-        break;
-      }
+//    while (true) {
+//      if (this->m_stopped) {
+//        break;
+//      }
 
-      std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, m_breaker);
-      if ((_maybe_break) && (*_maybe_break)) {
-        break;
-      }
+//      std::optional<bool> _maybe_break =
+//          execute(this->m_breaker_timeout, m_breaker);
 
-      std::optional<std::tuple<t_params...>> _maybe_data =
-          execute(this->m_provider_timeout, m_provider);
+//      if (this->m_stopped) {
+//        DEB(this->m_log, "stopped before checking it should break");
+//        break;
+//      }
 
-      if (this->m_stopped) {
-        break;
-      }
+//      if ((_maybe_break) && (*_maybe_break)) {
+//        DEB(this->m_log, "breaking loop");
+//        break;
+//      }
 
-      _maybe_break = execute(this->m_breaker_timeout, m_breaker);
-      if ((_maybe_break) && (*_maybe_break)) {
-        break;
-      }
+//      std::optional<std::tuple<t_params...>> _maybe_data =
+//          execute(this->m_provider_timeout, m_provider);
 
-      if (_maybe_data) {
-        std::tuple<t_params...> _params = std::move(*_maybe_data);
+//      if (this->m_stopped) {
+//        DEB(this->m_log, "stopped before checking if data was provided");
+//        break;
+//      }
 
-        auto _worker = [this, &_params]() -> void {
-          std::apply(this->m_worker, std::move(_params));
-        };
+//      _maybe_break = execute(this->m_breaker_timeout, m_breaker);
 
-        if (!execute(this->m_timeout, _worker)) {
-          std::thread([this]() -> void { this->m_on_timeout(); }).detach();
-        }
-      }
-    }
-  }
+//      if (this->m_stopped) {
+//        DEB(this->m_log, "stopped before checking it should break");
+//        break;
+//      }
 
-private:
-  provider m_provider;
-  breaker m_breaker;
-};
+//      if ((_maybe_break) && (*_maybe_break)) {
+//        DEB(this->m_log, "breaking before checking if data was provided");
+//        break;
+//      }
+
+//      if (_maybe_data) {
+
+//        std::tuple<t_params...> _params = std::move(*_maybe_data);
+//        DEB(this->m_log, "data was provided: ", _params);
+
+//        auto _worker = [this, &_params]() -> void {
+//          std::apply(this->m_worker, std::move(_params));
+//        };
+
+//        if (!execute(this->m_timeout, _worker)) {
+//          DEB(this->m_log, "timeout for worker");
+//          std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+//        }
+//      }
+//    }
+//  }
+
+// private:
+//  provider m_provider;
+//  breaker m_breaker;
+//};
 
 /// #### async_loop 2 ####
 template <typename t_log, typename... t_params>
-struct async_loop_t<t_log, use_breaker::no, t_params...>
+struct async_loop_t /*<t_log, use_breaker::no, t_params...>*/
     : public internal::async_loop_base_t<t_log,
                                          std::function<void(t_params &&...)>> {
 
@@ -572,6 +588,7 @@ protected:
           execute(this->m_provider_timeout, m_provider);
 
       if (this->m_stopped) {
+        DEB(this->m_log, "stopped before checking if data was provided");
         break;
       }
 
@@ -584,6 +601,7 @@ protected:
         };
 
         if (!execute(this->m_timeout, _worker)) {
+          DEB(this->m_log, "timeout for worker");
           std::thread([this]() -> void { this->m_on_timeout(); }).detach();
         }
       }
@@ -591,53 +609,52 @@ protected:
   }
 
 private:
-  worker m_worker;
   provider m_provider;
 };
 
-/// #### async_loop 3 ####
-template <typename t_log>
-struct async_loop_t<t_log, use_breaker::yes, void>
-    : public internal::async_loop_base_t<t_log, std::function<void()>> {
+///// #### async_loop 3 ####
+// template <typename t_log>
+// struct async_loop_t<t_log, use_breaker::yes, void>
+//    : public internal::async_loop_base_t<t_log, std::function<void()>> {
 
-  typedef std::function<void()> worker;
+//  typedef std::function<void()> worker;
 
-  template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
-               breaker p_breaker)
-      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
-                                                   p_on_timeout),
-        m_breaker(p_breaker) {}
+//  template <typename t_time>
+//  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+//               breaker p_breaker)
+//      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
+//                                                   p_on_timeout),
+//        m_breaker(p_breaker) {}
 
-protected:
-  void loop() override {
+// protected:
+//  void loop() override {
 
-    auto _worker = [this]() -> void { this->m_worker(); };
+//    auto _worker = [this]() -> void { this->m_worker(); };
 
-    while (true) {
-      if (this->m_stopped) {
-        break;
-      }
+//    while (true) {
+//      if (this->m_stopped) {
+//        break;
+//      }
 
-      std::optional<bool> _maybe_break =
-          execute(this->m_breaker_timeout, m_breaker);
-      if ((_maybe_break) && (*_maybe_break)) {
-        break;
-      }
+//      std::optional<bool> _maybe_break =
+//          execute(this->m_breaker_timeout, m_breaker);
+//      if ((_maybe_break) && (*_maybe_break)) {
+//        break;
+//      }
 
-      if (!execute(this->m_timeout, _worker)) {
-        std::thread([this]() -> void { this->m_on_timeout(); }).detach();
-      }
-    }
-  }
+//      if (!execute(this->m_timeout, _worker)) {
+//        std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+//      }
+//    }
+//  }
 
-private:
-  breaker m_breaker;
-};
+// private:
+//  breaker m_breaker;
+//};
 
 /// #### async_loop 4 ####
 template <typename t_log>
-struct async_loop_t<t_log, use_breaker::no, void>
+struct async_loop_t<t_log, /*use_breaker::no,*/ void>
     : public internal::async_loop_base_t<t_log, std::function<void()>> {
 
   typedef std::function<void()> worker;
@@ -668,7 +685,7 @@ protected:
 namespace internal {
 
 /// \brief Executes a work function in fixed period of times
-template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
+template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 
   sleeping_loop_base_t() = delete;
   sleeping_loop_base_t(const sleeping_loop_base_t &) = delete;
@@ -678,7 +695,7 @@ template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
 
   /// \brief destructor interrupts the loop
   inline virtual ~sleeping_loop_base_t() {
-    //    DEB(this->m_log, "destructor");
+    DEB(this->m_log, "destructor");
     stop();
   }
 
@@ -706,27 +723,47 @@ template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
   /// \brief Starts the loop
   void start() {
     if (!m_async.is_stopped()) {
-      DEB(this->m_log, "not running async loop because it was not stopped");
+      DEB(this->m_log, "not starting async loop because it is running");
       return;
+    }
+    if (!m_stopped) {
+      DEB(this->m_log, "not starting because it is running");
     }
     DEB(this->m_log, "running async loop");
     m_stopped = false;
+    m_thread = std::thread([this]() -> void { breaker(); });
     m_async.start();
   }
 
   /// \brief Stops the loop
   void stop() {
 
-    if (m_async.is_stopped()) {
-      DEB(this->m_log, "not stopping async loop because it was not running");
-      return;
-    }
+    //    if (m_stopped) {
+    //      if (m_thread.joinable()) {
+    //        m_thread.join();
+    //      }
+    //      return;
+    //    }
+
+    //    if (m_async.is_stopped()) {
+    //      DEB(this->m_log, "not stopping async loop because it was not
+    //      running"); if (m_thread.joinable()) {
+    //        m_thread.join();
+    //      }
+    //      return;
+    //    }
 
     m_stopped = true;
 
-    m_cond_var.notify_all();
-
     m_async.stop();
+
+    DEB(m_log, "notifying");
+    m_cond.notify_one();
+
+    if (m_thread.joinable()) {
+      m_thread.join();
+    }
+    DEB(m_log, "stopping");
   }
 
   /// \brief retrieves if the loop is stopped
@@ -746,44 +783,72 @@ template <typename t_log, typename t_async_loop> struct sleeping_loop_base_t {
   }
 
 protected:
-  template <typename t_interval, typename... t_async_loop_params>
-  sleeping_loop_base_t(t_interval p_interval,
-                       t_async_loop_params &&... p_async_loop_params)
+  template <typename t_timeout, typename t_interval, typename t_worker>
+  sleeping_loop_base_t(t_interval p_interval, t_worker p_worker,
+                       t_timeout p_timeout, on_timeout p_on_timeout)
       : m_interval(internal::to_interval(p_interval)),
-        m_async(std::forward<t_async_loop_params>(p_async_loop_params)...) {}
+        m_async(p_worker, internal::to_timeout(p_timeout), p_on_timeout) {
+    DEB(m_log, "constructor without provider called");
+  }
+
+  template <typename t_timeout, typename t_interval, typename t_worker,
+            typename t_provider>
+  sleeping_loop_base_t(t_interval p_interval, t_worker p_worker,
+                       t_timeout p_timeout, on_timeout p_on_timeout,
+                       t_provider p_provider)
+      : m_interval(internal::to_interval(p_interval)),
+        m_async(p_worker, internal::to_timeout(p_timeout), p_on_timeout,
+                p_provider) {
+    DEB(m_log, "constructor with provider called");
+  }
 
   /// \brief breaker defines if the loop should stop
   ///
   /// \return \p true if the loop should break; \p false othewise
   bool breaker() {
-    DEB(m_log, "interval = ", m_interval.count());
+
+    // The predicate version returns pred(), regardless of whether the
+    // timeout was triggered (although it can only be false if triggered).
 
     std::unique_lock<std::mutex> _lock(m_mutex);
-    if (m_cond_var.wait_for(_lock, m_interval) == std::cv_status::timeout) {
+    if (!m_cond.wait_for(_lock, m_interval,
+                         [this]() -> bool { return m_stopped; })) {
+      //      if (m_stopped) {
+      //        DEB(m_log, "breaking because it is stopped");
+      //        m_async.stop();
+      //        return true;
+      //      }
+
       // timeout, so do not stop
       DEB(m_log, "must not stop");
       return false;
     }
     // no timeout, which means the loop was stopped
     DEB(m_log, "must stop");
+    m_async.stop();
     return true;
   }
 
 protected:
+  typedef async_loop_t<t_log, /*use_breaker::no,*/ t_params...> async_loop;
+
+protected:
   interval m_interval;
 
-  t_async_loop m_async;
+  async_loop m_async;
+
+  std::thread m_thread;
 
   /// \brief controls asynchronous execution
   std::mutex m_mutex;
 
   /// \brief controls asynchronous execution
-  std::condition_variable m_cond_var;
+  std::condition_variable m_cond;
 
   bool m_stopped{true};
 
   /// \brief log for the class
-  t_log m_log{"concurrent::sleeping_loop"};
+  t_log m_log{"sleeping_loop"};
 };
 
 } // namespace internal
@@ -796,8 +861,7 @@ protected:
 /// \tparam t_params are the parameters that the work function
 template <typename t_log, typename... t_params>
 struct sleeping_loop_t
-    : public internal::sleeping_loop_base_t<
-          t_log, async_loop_t<t_log, use_breaker::yes, t_params...>> {
+    : public internal::sleeping_loop_base_t<t_log, t_params...> {
 
   /// \brief type of work executed in a loop in time intervals
   typedef std::function<void(t_params...)> worker;
@@ -806,7 +870,7 @@ struct sleeping_loop_t
   /// work function
   ///
   /// \return \p an optional tuple of objects needed by the \p operation
-  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
+  typedef std::function<std::tuple<t_params...>()> provider;
 
   /// \brief Constructor
   ///
@@ -830,10 +894,8 @@ struct sleeping_loop_t
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   on_timeout p_on_timeout, provider p_provider)
-      : internal::sleeping_loop_base_t<
-            t_log, async_loop_t<t_log, use_breaker::yes, t_params...>>(
-            p_interval, p_worker, p_timeout, p_on_timeout,
-            [this]() -> bool { return this->breaker(); }, p_provider) {
+      : internal::sleeping_loop_base_t<t_log, t_params...>(
+            p_interval, p_worker, p_timeout, p_on_timeout, p_provider) {
     DEB(this->m_log, "timeout = ", p_timeout.count(),
         ", interval = ", p_interval.count());
   }
@@ -847,8 +909,7 @@ struct sleeping_loop_t
 /// \tparam t_params are the parameters that the work function
 template <typename t_log>
 struct sleeping_loop_t<t_log, void>
-    : public internal::sleeping_loop_base_t<
-          t_log, async_loop_t<t_log, use_breaker::yes, void>> {
+    : public internal::sleeping_loop_base_t<t_log, void> {
 
   /// \brief type of work executed in a loop in time intervals
   typedef std::function<void()> worker;
@@ -865,10 +926,8 @@ struct sleeping_loop_t<t_log, void>
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   on_timeout p_on_timeout)
-      : internal::sleeping_loop_base_t<
-            t_log, async_loop_t<t_log, use_breaker::yes, void>>(
-            p_interval, p_worker, p_timeout, p_on_timeout,
-            [this]() -> bool { return this->breaker(); }) {
+      : internal::sleeping_loop_base_t<t_log, void>(p_interval, p_worker,
+                                                    p_timeout, p_on_timeout) {
 
     DEB(this->m_log, "timeout = ", p_timeout.count(),
         ", interval = ", p_interval.count());
