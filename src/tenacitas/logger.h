@@ -27,6 +27,9 @@ namespace tenacitas {
 /// \brief logger classes
 namespace logger {
 
+namespace internal {
+
+
 /// \brief The level enum defines the possible logger::log levels
 enum class level : int8_t {
   no_log = -1,
@@ -87,11 +90,7 @@ inline const char *level2str(level p_level) {
 
 level global_level{level::warn};
 
-void set_debug_level() { global_level = level::debug; }
-void set_info_level() { global_level = level::info; }
-void set_warn_level() { global_level = level::warn; }
-
-bool can_log(level p_level) { return p_level >= global_level; }
+bool can_log(internal::level p_level) { return p_level >= internal::global_level; }
 
 /// \brief log is a class that guarantees thread safe writing to the log writer
 ///
@@ -233,7 +232,7 @@ public:
 
 protected:
   log(std::string &&p_class, writer p_writer)
-      : m_class(p_class), m_writer(p_writer), m_level(logger::level::warn) {}
+      : m_class(p_class), m_writer(p_writer), m_level(level::warn) {}
 
 private:
   struct appender {
@@ -342,7 +341,7 @@ private:
     if ((p_level == level::error) || (p_level == level::fatal)) {
       return true;
     }
-    return ((p_level >= m_level) || (logger::can_log(p_level)));
+    return ((p_level >= m_level) || (internal::can_log(p_level)));
   }
 
   /// \brief format compile time recursion to solve the variadic template
@@ -422,7 +421,7 @@ private:
   }};
 
   /// \brief m_level is the current log level
-  level m_level{logger::level::warn};
+  level m_level{level::warn};
 
   /// \brief m_mutex allows a thread safe writing to the log writer
   std::mutex m_mutex;
@@ -433,36 +432,46 @@ private:
   bool m_is_writer_set{false};
 };
 
+
+}
+
+void set_debug_level() { internal::global_level = internal::level::debug; }
+void set_info_level() { internal::global_level = internal::level::info; }
+void set_warn_level() { internal::global_level = internal::level::warn; }
+
+
+
+
 /// \brief logs message to \p std::cerr
-template <bool use = true> struct cerr : public log<use> {
+template <bool use = true> struct cerr : public internal::log<use> {
   inline explicit cerr(std::string &&p_class = "no-class")
-      : log<use>(std::move(p_class),
+      : internal::log<use>(std::move(p_class),
                  [](const char *p_str) -> void { std::cerr << p_str; }) {}
 
   inline explicit cerr(const char *p_class)
-      : log<use>(std::string(p_class),
+      : internal::log<use>(std::string(p_class),
                  [](const char *p_str) -> void { std::cerr << p_str; }) {}
 };
 
 /// \brief logs message to \p std::cout
-template <bool use = true> struct cout : public log<use> {
+template <bool use = true> struct cout : public internal::log<use> {
   inline explicit cout(std::string &&p_class = "no-class")
-      : log<use>(std::move(p_class),
+      : internal::log<use>(std::move(p_class),
                  [](const char *p_str) -> void { std::cout << p_str; }) {}
 
   inline explicit cout(const char *p_class)
-      : log<use>(std::string(p_class),
+      : internal::log<use>(std::string(p_class),
                  [](const char *p_str) -> void { std::cout << p_str; }) {}
 };
 
 /// \brief The log struct logs message to \p std::clog
-template <bool use = true> struct clog : public log<use> {
+template <bool use = true> struct clog : public internal::log<use> {
   inline explicit clog(std::string &&p_class = "no-class")
-      : log<use>(std::move(p_class),
+      : internal::log<use>(std::move(p_class),
                  [](const char *p_str) -> void { std::clog << p_str; }) {}
 
   inline explicit clog(const char *p_class)
-      : log<use>(std::string(p_class),
+      : internal::log<use>(std::string(p_class),
                  [](const char *p_str) -> void { std::clog << p_str; }) {}
 };
 
