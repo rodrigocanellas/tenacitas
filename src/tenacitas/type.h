@@ -14,9 +14,11 @@ namespace tenacitas {
 /// \brief type traits
 namespace type {
 
-template <typename> struct is_tuple : std::false_type {};
+template <typename> struct is_tuple { const static bool value{false}; };
 
-template <typename... T> struct is_tuple<std::tuple<T...>> : std::true_type {};
+template <typename... T> struct is_tuple<std::tuple<T...>> {
+  const static bool value{true};
+};
 
 } // namespace type
 

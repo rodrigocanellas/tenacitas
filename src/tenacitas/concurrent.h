@@ -934,66 +934,72 @@ struct sleeping_loop_t<t_log, void>
   }
 };
 
-/// \brief Base class for all types of queues used in the tenacitas::concurrent
-///
-/// \tparam t_log
-///
-/// \param type of data in the queue
-template <typename t_log, typename t_data> struct queue_t {
+///// \brief Base class for all types of queues used in the
+/// tenacitas::concurrent
+/////
+///// \tparam t_log
+/////
+///// \param type of data in the queue
+// template <typename t_log, typename t_data> struct queue_t {
 
-  /// \brief Alias for the data
-  typedef t_data data;
+//  /// \brief Alias for the data
+//  typedef t_data data;
 
-  /// \brief Alias for the log
-  typedef t_log log;
+//  /// \brief Alias for the log
+//  typedef t_log log;
 
-  /// \brief Type of pointer to the queue
-  typedef std::shared_ptr<queue_t> ptr;
+//  /// \brief Type of pointer to the queue
+//  typedef std::shared_ptr<queue_t> ptr;
 
-  /// \brief Copy constructor not allowed
-  queue_t() = default;
+//  /// \brief Copy constructor not allowed
+//  queue_t() = default;
 
-  /// \brief Destructor
-  virtual ~queue_t() {}
+//  /// \brief Destructor
+//  virtual ~queue_t() {}
 
-  /// \brief Copy constructor not allowed
-  queue_t(const queue_t &) = delete;
+//  /// \brief Copy constructor not allowed
+//  queue_t(const queue_t &) = delete;
 
-  /// \brief Move constructor not allowed
-  queue_t(queue_t &&) = delete;
+//  /// \brief Move constructor not allowed
+//  queue_t(queue_t &&) = delete;
 
-  /// \brief Copy assignment not allowed
-  queue_t &operator=(const queue_t &) = delete;
+//  /// \brief Copy assignment not allowed
+//  queue_t &operator=(const queue_t &) = delete;
 
-  /// \brief Move assignment not allowed
-  queue_t &operator=(queue_t &&) = delete;
+//  /// \brief Move assignment not allowed
+//  queue_t &operator=(queue_t &&) = delete;
 
-  /// \brief Adds a t_data object to the queue
-  virtual void add(const t_data &) = 0;
+//  /// \brief Adds a t_data object to the queue
+//  virtual void add(const t_data &) = 0;
 
-  /// \brief Adds a t_data object to the queue
-  virtual void add(t_data &&) = 0;
+//  /// \brief Adds a t_data object to the queue
+//  virtual void add(t_data &&) = 0;
 
-  /// \brief Gets the first t_data obect added to the queue, if there is one
-  virtual std::optional<t_data> get() = 0;
+//  /// \brief Gets the first t_data obect added to the queue, if there is one
+//  virtual std::optional<t_data> get() = 0;
 
-  /// \brief Informs if the queue is full
-  virtual bool full() const = 0;
+//  /// \brief Informs if the queue is full
+//  virtual bool full() const = 0;
 
-  /// \brief Informs if the queue is empty
-  virtual bool empty() const = 0;
+//  /// \brief Informs if the queue is empty
+//  virtual bool empty() const = 0;
 
-  /// \brief Informs the total capacity of the queue
-  virtual size_t capacity() const = 0;
+//  /// \brief Informs the total capacity of the queue
+//  virtual size_t capacity() const = 0;
 
-  /// \brief Informs the current number of slots occupied in the queue
-  virtual size_t occupied() const = 0;
+//  /// \brief Informs the current number of slots occupied in the queue
+//  virtual size_t occupied() const = 0;
 
-  /// \brief Traverses the queue
-  ///
-  /// \param p_function will be called for every data in the queue
-  virtual void
-  traverse(std ::function<void(const data &)> p_function) const = 0;
+//  /// \brief Traverses the queue
+//  ///
+//  /// \param p_function will be called for every data in the queue
+//  virtual void
+//  traverse(std ::function<void(const data &)> p_function) const = 0;
+//};
+
+enum class queue_type : uint8_t {
+  CIRCULAR_FIXED_SIZE = 0,
+  CIRCULAR_UNLIMITED_SIZE = 1
 };
 
 /// \brief Implements a circular queue with fixed size
@@ -1004,8 +1010,9 @@ template <typename t_log, typename t_data> struct queue_t {
 /// \tparam t_log
 ///
 /// \tparam t_data defines the types of the data contained in the buffer
-template <typename t_log, typename t_data>
-struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
+///
+///
+template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
 
   /// \brief Alias for the data
   typedef t_data data;
@@ -1013,21 +1020,14 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   /// \brief Alias for the log
   typedef t_log log;
 
-  /// \brief Type of pointer to the queue
-  typedef std::shared_ptr<circular_fixed_size_queue_t> ptr;
-
-  /// \brief Creates a queue with a fixed size
+  /// \brief Constructor
   ///
   /// \param p_size the number of slots in the queue
-  ///
-  /// \return a pointer to the created queue
-  static ptr create(size_t p_size) {
-    ptr _ptr(new circular_fixed_size_queue_t(p_size));
-    return _ptr;
-  }
+  circular_fixed_size_queue_t(size_t p_size)
+      : m_size(p_size), m_values(p_size) {}
 
   /// \brief Adds a t_data object to the queue
-  void add(const t_data &p_data) override {
+  void add(const t_data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = p_data;
@@ -1041,7 +1041,7 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(data &&p_data) override {
+  void add(data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = std::move(p_data);
@@ -1055,7 +1055,7 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Gets the first t_data obect added to the queue, if there is one
-  std::optional<data> get() override {
+  std::optional<data> get() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       DEB(m_log, "could not get because it is empty");
@@ -1072,7 +1072,7 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   /// \brief Traverses the queue
   ///
   /// \param p_function will be called for every data in the queue
-  void traverse(std ::function<void(const data &)> p_function) const override {
+  void traverse(std ::function<void(const data &)> p_function) const {
     size _i = m_read;
     size _counter = 0;
     while (_counter < m_amount) {
@@ -1085,23 +1085,16 @@ struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Informs if the queue is full
-  inline bool full() const override { return m_amount == m_size; }
+  inline bool full() const { return m_amount == m_size; }
 
   /// \brief Informs if the queue is empty
-  inline bool empty() const override { return m_amount == 0; }
+  inline bool empty() const { return m_amount == 0; }
 
   /// \brief Informs the total capacity of the queue
-  inline size_t capacity() const override { return m_size; }
+  inline size_t capacity() const { return m_size; }
 
   /// \brief Informs the current number of slots occupied in the queue
-  inline size_t occupied() const override { return m_amount; }
-
-private:
-  /// \brief Constructor
-  ///
-  /// \param p_size the number of slots in the queue
-  circular_fixed_size_queue_t(size_t p_size)
-      : m_size(p_size), m_values(p_size) {}
+  inline size_t occupied() const { return m_amount; }
 
 private:
   /// \brief Queue implemented as a vector
@@ -1109,13 +1102,6 @@ private:
 
   /// \brief Type of size of the queue
   typedef typename values::size_type size;
-
-  // private:
-  //  /// \brief Helper
-  //  void report(const char *p_str, const t_data &p_data) {
-  //    DEB(m_log, p_str, ": data = ", p_data, ", read = ", m_read,
-  //                     ", write = ", m_write, ", length = ", m_amount);
-  //  }
 
 private:
   /// \brief Size of the buffer
@@ -1147,7 +1133,7 @@ private:
 ///
 /// \tparam t_data defines the types of the data contained in the buffer
 template <typename t_log, typename t_data>
-struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
+struct circular_unlimited_size_queue_t {
 
   /// \brief Alias for the data
   typedef t_data data;
@@ -1155,23 +1141,24 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
   /// \brief Alias for the log
   typedef t_log log;
 
-  /// \brief Type of pointer to the queue
-  typedef std::shared_ptr<circular_unlimited_size_queue_t> ptr;
-
-  /// \brief Creates a queue with a fixed size
+  /// \brief Constructor
   ///
-  /// \param p_size the number of slots in the queue
-  ///
-  /// \return a pointer to the created queue
-  static ptr create(size_t p_size) {
-    ptr _ptr(new circular_unlimited_size_queue_t(p_size));
-    return _ptr;
+  /// \param p_size the number of initial slots in the queue
+  circular_unlimited_size_queue_t(size_t p_size) {
+    m_root = create_node();
+    node_ptr _p = m_root;
+    for (size_t _i = 1; _i < p_size; ++_i) {
+      _p = insert(_p, data());
+    }
+    m_size = p_size;
+    m_write = m_root;
+    m_read = m_root;
   }
 
   /// \brief Traverses the queue
   ///
   /// \param p_function will be called for every data in the queue
-  void traverse(std::function<void(const t_data &)> p_visitor) const override {
+  void traverse(std::function<void(const t_data &)> p_visitor) const {
     node_ptr _p = m_root;
     while (_p && (_p->m_next != m_root)) {
       p_visitor(_p->m_data);
@@ -1181,7 +1168,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(data &&p_data) override {
+  void add(data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       WAR(m_log, "not adding more slots");
@@ -1195,7 +1182,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(const data &p_data) override {
+  void add(const data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       WAR(m_log, "not adding more slots");
@@ -1209,7 +1196,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Gets the first t_data obect added to the queue, if there is one
-  std::optional<data> get() override {
+  std::optional<data> get() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       DEB(m_log, "empty");
@@ -1223,16 +1210,16 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
   }
 
   /// \brief Informs if the queue is full
-  inline bool full() const override { return m_amount == m_size; }
+  inline bool full() const { return m_amount == m_size; }
 
   /// \brief Informs if the queue is empty
-  inline bool empty() const override { return m_amount == 0; }
+  inline bool empty() const { return m_amount == 0; }
 
   /// \brief Informs the total capacity of the queue
-  inline size_t capacity() const override { return m_size; }
+  inline size_t capacity() const { return m_size; }
 
   /// \brief Informs the current number of slots occupied in the queue
-  inline size_t occupied() const override { return m_amount; }
+  inline size_t occupied() const { return m_amount; }
 
 private:
   /// \brief Node of the linked list used to implement the queue
@@ -1328,20 +1315,6 @@ private:
     return _p;
   }
 
-  /// \brief Constructor
-  ///
-  /// \param p_size the number of initial slots in the queue
-  circular_unlimited_size_queue_t(size_t p_size) {
-    m_root = create_node();
-    node_ptr _p = m_root;
-    for (size_t _i = 1; _i < p_size; ++_i) {
-      _p = insert(_p, data());
-    }
-    m_size = p_size;
-    m_write = m_root;
-    m_read = m_root;
-  }
-
 private:
   /// \brief The first node of the queue
   node_ptr m_root;
@@ -1367,7 +1340,19 @@ private:
   t_log m_log{"concurrent::circular_unlimited_size_queue"};
 };
 
+template <typename t_log, typename t_data, queue_type qt> struct queue_traits;
 
+template <typename t_log, typename t_data>
+struct queue_traits<t_log, t_data, queue_type::CIRCULAR_FIXED_SIZE> {
+  typedef circular_fixed_size_queue_t<t_log, t_data> queue;
+};
+
+template <typename t_log, typename t_data>
+struct queue_traits<t_log, t_data, queue_type::CIRCULAR_UNLIMITED_SIZE> {
+  typedef circular_unlimited_size_queue_t<t_log, t_data> queue;
+};
+
+// template <queue_type qt>
 
 } // namespace concurrent
 } // namespace tenacitas

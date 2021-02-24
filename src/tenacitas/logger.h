@@ -29,7 +29,6 @@ namespace logger {
 
 namespace internal {
 
-
 /// \brief The level enum defines the possible logger::log levels
 enum class level : int8_t {
   no_log = -1,
@@ -90,7 +89,9 @@ inline const char *level2str(level p_level) {
 
 level global_level{level::warn};
 
-bool can_log(internal::level p_level) { return p_level >= internal::global_level; }
+bool can_log(internal::level p_level) {
+  return p_level >= internal::global_level;
+}
 
 /// \brief log is a class that guarantees thread safe writing to the log writer
 ///
@@ -257,6 +258,23 @@ private:
       }
     }
 
+    void operator()(char p_char, bool p_sep = true) {
+      auto _size = 1;
+      if ((m_p1 + _size) > m_line_size) {
+        std::cerr << "overflow in log buffer trying to write '" << p_char
+                  << "', starting at " << m_p1 << " and ending at "
+                  << m_p1 + _size << std::endl;
+        m_p1 += _size;
+        return;
+      }
+      m_line[m_p1] = p_char;
+      m_p1 += _size;
+      if (p_sep) {
+        m_line[m_p1] = m_separator;
+        ++m_p1;
+      }
+    }
+
     const char *get() const { return m_line; }
 
   private:
@@ -386,6 +404,16 @@ private:
     p_append((p_t ? _true : _false), false);
   }
 
+  template <typename t_first, typename t_second>
+  inline void format(appender &p_append,
+                     const std::pair<t_first, t_second> &p_pair) const {
+    p_append('(', false);
+    format(p_append, std::get<0>(p_pair));
+    p_append(',', false);
+    format(p_append, std::get<1>(p_pair));
+    p_append(')', false);
+  }
+
   inline void format(appender &p_append, std::thread::id p_id) const {
     std::stringstream _stream;
     _stream << p_id;
@@ -432,47 +460,49 @@ private:
   bool m_is_writer_set{false};
 };
 
-
-}
+} // namespace internal
 
 void set_debug_level() { internal::global_level = internal::level::debug; }
 void set_info_level() { internal::global_level = internal::level::info; }
 void set_warn_level() { internal::global_level = internal::level::warn; }
 
-
-
-
 /// \brief logs message to \p std::cerr
 template <bool use = true> struct cerr : public internal::log<use> {
   inline explicit cerr(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class),
-                 [](const char *p_str) -> void { std::cerr << p_str; }) {}
+      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+          std::cerr << p_str;
+        }) {}
 
   inline explicit cerr(const char *p_class)
-      : internal::log<use>(std::string(p_class),
-                 [](const char *p_str) -> void { std::cerr << p_str; }) {}
+      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
+          std::cerr << p_str;
+        }) {}
 };
 
 /// \brief logs message to \p std::cout
 template <bool use = true> struct cout : public internal::log<use> {
   inline explicit cout(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class),
-                 [](const char *p_str) -> void { std::cout << p_str; }) {}
+      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+          std::cout << p_str;
+        }) {}
 
   inline explicit cout(const char *p_class)
-      : internal::log<use>(std::string(p_class),
-                 [](const char *p_str) -> void { std::cout << p_str; }) {}
+      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
+          std::cout << p_str;
+        }) {}
 };
 
 /// \brief The log struct logs message to \p std::clog
 template <bool use = true> struct clog : public internal::log<use> {
   inline explicit clog(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class),
-                 [](const char *p_str) -> void { std::clog << p_str; }) {}
+      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+          std::clog << p_str;
+        }) {}
 
   inline explicit clog(const char *p_class)
-      : internal::log<use>(std::string(p_class),
-                 [](const char *p_str) -> void { std::clog << p_str; }) {}
+      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
+          std::clog << p_str;
+        }) {}
 };
 
 } // namespace logger
