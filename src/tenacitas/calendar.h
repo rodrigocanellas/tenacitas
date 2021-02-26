@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <string>
+#include <sstream>
 
 /// \brief master namespace
 namespace tenacitas {

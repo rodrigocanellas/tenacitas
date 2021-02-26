@@ -14,6 +14,7 @@
 #include <list>
 #include <mutex>
 #include <optional>
+#include <vector>
 #include <thread>
 
 #include <tenacitas/calendar.h>

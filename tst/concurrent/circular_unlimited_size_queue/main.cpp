@@ -55,7 +55,7 @@ struct consumer {
       }
       std::optional<std::tuple<int16_t, double>> _maybe(m_queue.get());
       if (_maybe) {
-        std::tuple<int16_t, double> _data = _maybe.value();
+        std::tuple<int16_t, double> _data {std::move(*_maybe)};
         DEB(m_log, "getting ", _data);
       }
       std::this_thread::sleep_for(std::chrono::milliseconds(950));
@@ -78,7 +78,7 @@ struct queue_000 {
     _queue.traverse([this](const data &p_data) -> void { DEB(m_log, p_data); });
     std::optional<data> _maybe = _queue.get();
     if (_maybe) {
-      data _value = _maybe.value();
+      data _value {std::move(*_maybe)};
       if (_value != data(9, -4.32)) {
         ERR(m_log, "Expected [9, -4.32], but got ", _value);
         return false;
