@@ -19,7 +19,7 @@ struct msg_a {
   explicit msg_a(int32_t p_value = std::numeric_limits<int32_t>::max())
       : m_counter(p_value) {}
   friend std::ostream &operator<<(std::ostream &p_out, const msg_a &p_msg) {
-    p_out << "{" << number::format(p_msg.m_counter) << "}";
+    p_out << "{" << p_msg.m_counter << "}";
     return p_out;
   }
   inline int32_t value() const { return m_counter; }

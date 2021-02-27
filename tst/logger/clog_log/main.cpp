@@ -8,34 +8,31 @@ struct clog_how_to {
   bool operator()() {
     try {
       using namespace tenacitas;
-      m_log.debug(this, __func__, __LINE__, "teste de clog para debug ", -345,
-                  ' ', 19023, ' ', 'W', ' ', 3.1415);
-      m_log.info(this, __func__, __LINE__, "teste de clog para debug ", -345,
-                 ' ', 19023, ' ', 'W', ' ', 3.1415);
-      m_log.warn(this, __func__, __LINE__, "teste de clog para debug ", -345,
-                 ' ', 19023, ' ', 'W', ' ', 3.1415);
-      m_log.error(this, __func__, __LINE__, "teste de clog para debug ", -345,
-                  ' ', 19023, ' ', 'W', ' ', 3.1415);
-      m_log.fatal(this, __func__, __LINE__, "teste de clog para debug ", -345,
-                  ' ', 19023, ' ', 'W', ' ', 3.1415);
+      logger::log::debug(__FILE__, __LINE__, "teste de clog para debug ", -345,
+                         ' ', 19023, ' ', 'W', ' ', 3.1415);
+      logger::log::info(__FILE__, __LINE__, "teste de clog para debug ", -345,
+                        ' ', 19023, ' ', 'W', ' ', 3.1415);
+      logger::log::warn(__FILE__, __LINE__, "teste de clog para debug ", -345,
+                        ' ', 19023, ' ', 'W', ' ', 3.1415);
+      logger::log::error(__FILE__, __LINE__, "teste de clog para debug ", -345,
+                         ' ', 19023, ' ', 'W', ' ', 3.1415);
+      logger::log::fatal(__FILE__, __LINE__, "teste de clog para debug ", -345,
+                         ' ', 19023, ' ', 'W', ' ', 3.1415);
 
       return true;
 
     } catch (std::exception &_ex) {
-      std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"
-                << std::endl;
+      std::cout << "ERRO clog_how_to: '" << _ex.what() << "'" << std::endl;
     }
     return false;
   }
 
   static std::string desc() { return "Simple 'clog' log usage"; }
-
-private:
-  logger::clog<> m_log{"clog_how_to"};
 };
 
 int main(int argc, char **argv) {
-  logger::set_debug_level();
+  logger::log::set_debug_level();
+  logger::log::use_clog();
   tester::test _tester(argc, argv);
   run_test(_tester, clog_how_to);
 }

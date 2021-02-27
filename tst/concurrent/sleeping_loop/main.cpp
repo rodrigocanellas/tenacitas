@@ -23,11 +23,7 @@ using namespace tenacitas;
 using namespace std::chrono_literals;
 
 struct timeout_callback {
-  timeout_callback(logger::cerr<> &p_log) : m_log(p_log) {}
-  void operator()() { WAR(m_log, "TIMEOUT"); }
-
-private:
-  logger::cerr<> &m_log;
+  void operator()() { WAR(logger::log, "TIMEOUT"); }
 };
 
 struct sleeping_loop_000 {
@@ -35,11 +31,9 @@ struct sleeping_loop_000 {
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
   bool operator()() {
-    m_log.set_debug_level();
+    typedef concurrent::sleeping_loop_t<logger::log, void> loop;
 
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
-
-    auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
+    auto _operation = [this]() -> void { DEB(logger::log, "loop1"); };
 
     auto _on_timeout = []() -> void {};
 
@@ -47,13 +41,10 @@ struct sleeping_loop_000 {
 
     return true;
   }
-
-private:
-  logger::cerr<> m_log{"sleeping_loop_000"};
 };
 
 struct sleeping_loop_001 {
-  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+  typedef concurrent::sleeping_loop_t<logger::log, void> loop;
 
   typedef uint16_t value;
 
@@ -69,7 +60,6 @@ struct sleeping_loop_001 {
   }
 
   bool operator()() {
-    m_log.set_debug_level();
 
     auto _on_timeout = []() -> void {};
 
@@ -89,11 +79,12 @@ struct sleeping_loop_001 {
     _loop.stop();
 
     if (_op.counter != m_amount) {
-      ERR(m_log, "counter should be ", m_amount, ", but it is ", _op.counter);
+      ERR(logger::log, "counter should be ", m_amount, ", but it is ",
+          _op.counter);
       return false;
     }
 
-    INF(m_log, "counter should be ", m_amount, ", and it really is ",
+    INF(logger::log, "counter should be ", m_amount, ", and it really is ",
         _op.counter);
 
     return true;
@@ -107,7 +98,7 @@ private:
     void operator()() {
       if (counter < m_amount) {
         ++counter;
-        DEB(m_log, "counter = ", counter);
+        DEB(logger::log, "counter = ", counter);
         std::this_thread::sleep_for(m_sleep);
       } else {
         m_cond->notify_one();
@@ -117,12 +108,10 @@ private:
     value counter{0};
 
   private:
-    logger::cerr<> m_log{"sleeping_loop_001::operation1"};
     std::condition_variable *m_cond;
   };
 
 private:
-  logger::cerr<> m_log{"sleeping_loop_001"};
   std::mutex m_mutex;
   std::condition_variable m_cond;
 
@@ -141,11 +130,11 @@ struct sleeping_loop_002 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<logger::log, int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
     auto _on_timeout = [this, &_i]() {
-      WAR(m_log, "timeout! for i = ", _i);
+      WAR(logger::log, "timeout! for i = ", _i);
       m_cond.notify_one();
     };
 
@@ -155,7 +144,7 @@ struct sleeping_loop_002 {
     };
 
     auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
-      DEB(m_log, "worker called with ", p_i, " and ", p_f);
+      DEB(logger::log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
         std::this_thread::sleep_for(
@@ -164,7 +153,7 @@ struct sleeping_loop_002 {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
 
-        INF(m_log, p_i, " - ", p_f);
+        INF(logger::log, p_i, " - ", p_f);
       }
     };
 
@@ -180,18 +169,17 @@ struct sleeping_loop_002 {
     _loop.stop();
 
     if (_value != m_max) {
-      ERR(m_log, "value = ", _value, " but it should be ", m_max);
+      ERR(logger::log, "value = ", _value, " but it should be ", m_max);
       return false;
     }
 
-    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
+    INF(logger::log, "value = ", _value, " and it is correct as ", m_max,
         " was expected");
 
     return true;
   }
 
 private:
-  logger::cerr<> m_log{"sleeping_loop_002"};
   std::mutex m_mutex;
   std::condition_variable m_cond;
   static constexpr int16_t m_max{2};
@@ -206,11 +194,11 @@ struct sleeping_loop_003 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<logger::log, int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
     auto _on_timeout = [this, &_i]() {
-      WAR(m_log, "timeout! for i = ", _i);
+      WAR(logger::log, "timeout! for i = ", _i);
       m_cond.notify_one();
     };
 
@@ -220,7 +208,7 @@ struct sleeping_loop_003 {
     };
 
     auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
-      DEB(m_log, "worker called with ", p_i, " and ", p_f);
+      DEB(logger::log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
         std::this_thread::sleep_for(
@@ -229,7 +217,7 @@ struct sleeping_loop_003 {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
 
-        INF(m_log, p_i, " - ", p_f);
+        INF(logger::log, p_i, " - ", p_f);
       }
     };
 
@@ -245,18 +233,17 @@ struct sleeping_loop_003 {
     _loop.stop();
 
     if (_value != m_max) {
-      ERR(m_log, "value = ", _value, " but it should be ", m_max);
+      ERR(logger::log, "value = ", _value, " but it should be ", m_max);
       return false;
     }
 
-    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
+    INF(logger::log, "value = ", _value, " and it is correct as ", m_max,
         " was expected");
 
     return true;
   }
 
 private:
-  logger::cerr<> m_log{"sleeping_loop_003"};
   std::mutex m_mutex;
   std::condition_variable m_cond;
   static constexpr int16_t m_max{38};
@@ -264,7 +251,8 @@ private:
 };
 
 int main(int argc, char **argv) {
-  logger::set_debug_level();
+  logger::log::set_debug_level();
+  logger::log::use_cerr();
   tester::test<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);

@@ -97,50 +97,26 @@ bool can_log(internal::level p_level) {
 ///
 /// \tparam t_specific_logger is the class that will implement a concrete log
 ///
-template <bool use = true> class log {
+template <bool use = true> class log_t {
 public:
   /// \brief function responsible for actually writing the log message to a
   /// writer
   typedef std::function<void(const char *)> writer;
 
 public:
-  log() = delete;
-
-  log(const log &p_log) : m_class(p_log.m_class) {}
-
-  log(log &&p_log) noexcept : m_class(std::move(p_log.m_class)) {}
-
-  log &operator=(const log &p_log) {
-    if (this != &p_log) {
-      m_class = p_log.m_class;
-    }
-    return *this;
-  }
-
-  log &operator=(log &&p_log) noexcept {
-    if (this != &p_log) {
-      m_class = std::move(p_log.m_class);
-    }
-    return *this;
-  }
-
-  virtual ~log() = default;
+  log_t() = delete;
+  log_t(const log_t &p_log) = default;
+  log_t(log_t &&) noexcept = default;
+  log_t &operator=(const log_t &) = default;
+  log_t &operator=(log_t &&) noexcept = default;
+  virtual ~log_t() = default;
 
   /// \brief Constructor
   /// \param p_writer the actual writer. Please, read the \p log class
   /// documentation above to be aware of the methods \p t_writer should
   /// implement
-  inline log(writer &&p_writer)
-      : m_writer(std::move(p_writer)), m_is_writer_set(true) {}
-
-  /// \brief sets 'this' log level for level::debug
-  inline void set_debug_level() { m_level = level::debug; }
-
-  /// \brief sets 'this' log level for level::info
-  inline void set_info_level() { m_level = level::info; }
-
-  /// \brief sets 'this' log level for level::warn
-  inline void set_warn_level() { m_level = level::warn; }
+  //  inline log_t(writer &&p_writer)
+  //      : m_writer(std::move(p_writer)), m_is_writer_set(true) {}
 
   /// \brief set_separator defines the separator to be used in the log
   /// messages
@@ -163,10 +139,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is \p level::debug
-  template <typename t_class, typename... t_params>
-  inline void debug(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void debug(const char *p_file, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::debug, p_this, p_func, p_line, p_params...);
+    write(level::debug, p_file, p_line, p_params...);
   }
 
   /// \brief logs message with \p info severity
@@ -179,10 +155,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::info
-  template <typename t_class, typename... t_params>
-  inline void info(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void info(const char *p_file, uint16_t p_line,
                    const t_params &... p_params) {
-    write(level::info, p_this, p_func, p_line, p_params...);
+    write(level::info, p_file, p_line, p_params...);
   }
 
   /// \brief logs message with \p warn severity
@@ -195,10 +171,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::warn
-  template <typename t_class, typename... t_params>
-  inline void warn(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void warn(const char *p_file, uint16_t p_line,
                    const t_params &... p_params) {
-    write(level::warn, p_this, p_func, p_line, p_params...);
+    write(level::warn, p_file, p_line, p_params...);
   }
 
   /// \brief logs message with \p error severity
@@ -210,10 +186,10 @@ public:
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  template <typename t_class, typename... t_params>
-  inline void error(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void error(const char *p_file, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::error, p_this, p_func, p_line, p_params...);
+    write(level::error, p_file, p_line, p_params...);
   }
 
   /// \brief logs message with \p fatal severity
@@ -225,15 +201,14 @@ public:
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  template <typename t_class, typename... t_params>
-  inline void fatal(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void fatal(const char *p_file, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::fatal, p_this, p_func, p_line, p_params...);
+    write(level::fatal, p_file, p_line, p_params...);
   }
 
 protected:
-  log(std::string &&p_class, writer p_writer)
-      : m_class(p_class), m_writer(p_writer), m_level(level::warn) {}
+  inline log_t(writer p_writer) : m_writer(p_writer), m_is_writer_set(true) {}
 
 private:
   struct appender {
@@ -298,9 +273,9 @@ private:
   ///
   /// \param p_params are the values to be logged
 #ifdef TENACITAS_LOG
-  template <typename t_class, typename... t_params>
-  void write(level p_level, t_class *p_this, const char *p_func,
-             uint16_t p_line, const t_params &... p_params) {
+  template <typename... t_params>
+  void write(level p_level, const char *p_file, uint16_t p_line,
+             const t_params &... p_params) {
 
     if (can_log(p_level)) {
       appender _append(m_separator);
@@ -313,22 +288,15 @@ private:
         _append(_now.c_str());
       }
 
-      {
-        std::ostringstream _stream;
-        _stream << p_this;
-        _append(_stream.str().c_str());
-      }
+      _append(p_file);
 
-      _append(m_class.c_str());
-      _append(p_func);
+      _append(std::to_string(p_line).c_str());
 
       {
         std::ostringstream _stream;
         _stream << std::this_thread::get_id();
         _append(_stream.str().c_str());
       }
-
-      _append(std::to_string(p_line).c_str());
 
       format(_append, p_params...);
 
@@ -339,7 +307,7 @@ private:
     }
   }
 #else
-  template <typename t_class, typename... t_params>
+  template <typename... t_params>
   void write(level, t_class *, const char *, uint16_t, const t_params &...) {}
 
 #endif
@@ -353,13 +321,10 @@ private:
   /// \return \p true if the messsage can be logged, \p false otherwise
   ///
   inline bool can_log(level p_level) const {
-    if (m_level == level::no_log) {
-      return false;
-    }
     if ((p_level == level::error) || (p_level == level::fatal)) {
       return true;
     }
-    return ((p_level >= m_level) || (internal::can_log(p_level)));
+    return (internal::can_log(p_level));
   }
 
   /// \brief format compile time recursion to solve the variadic template
@@ -436,8 +401,6 @@ private:
   }
 
 private:
-  std::string m_class;
-
   /// \brief m_writer is the writer where the messages will be logged.
   ///
   /// Please, read the \p log class documentation above to be aware of the
@@ -448,9 +411,6 @@ private:
     std::cerr << _stream.str();
   }};
 
-  /// \brief m_level is the current log level
-  level m_level{level::warn};
-
   /// \brief m_mutex allows a thread safe writing to the log writer
   std::mutex m_mutex;
 
@@ -460,49 +420,85 @@ private:
   bool m_is_writer_set{false};
 };
 
-} // namespace internal
-
-void set_debug_level() { internal::global_level = internal::level::debug; }
-void set_info_level() { internal::global_level = internal::level::info; }
-void set_warn_level() { internal::global_level = internal::level::warn; }
-
 /// \brief logs message to \p std::cerr
-template <bool use = true> struct cerr : public internal::log<use> {
-  inline explicit cerr(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
-          std::cerr << p_str;
-        }) {}
-
-  inline explicit cerr(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::cerr << p_str;
-        }) {}
+template <bool use = true> struct cerr : public internal::log_t<use> {
+  inline explicit cerr()
+      : internal::log_t<use>(
+            [](const char *p_str) -> void { std::cerr << p_str; }) {}
 };
 
 /// \brief logs message to \p std::cout
-template <bool use = true> struct cout : public internal::log<use> {
-  inline explicit cout(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
-          std::cout << p_str;
-        }) {}
-
-  inline explicit cout(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::cout << p_str;
-        }) {}
+template <bool use = true> struct cout : public internal::log_t<use> {
+  inline explicit cout()
+      : internal::log_t<use>(
+            [](const char *p_str) -> void { std::cout << p_str; }) {}
 };
 
 /// \brief The log struct logs message to \p std::clog
-template <bool use = true> struct clog : public internal::log<use> {
-  inline explicit clog(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
-          std::clog << p_str;
-        }) {}
+template <bool use = true> struct clog : public internal::log_t<use> {
+  inline explicit clog()
+      : internal::log_t<use>(
+            [](const char *p_str) -> void { std::clog << p_str; }) {}
+};
 
-  inline explicit clog(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::clog << p_str;
-        }) {}
+std::unique_ptr<internal::log_t<>> global_log =
+    std::make_unique<internal::cerr<>>();
+
+} // namespace internal
+
+struct log {
+
+  static inline void set_debug_level() {
+    internal::global_level = internal::level::debug;
+  }
+  static inline void set_info_level() {
+    internal::global_level = internal::level::info;
+  }
+  static inline void set_warn_level() {
+    internal::global_level = internal::level::warn;
+  }
+
+  static inline void use_cerr() {
+    internal::global_log = std::make_unique<internal::cerr<>>();
+  }
+
+  static inline void use_cout() {
+    internal::global_log = std::make_unique<internal::cout<>>();
+  }
+
+  static inline void use_clog() {
+    internal::global_log = std::make_unique<internal::clog<>>();
+  }
+
+  template <typename... t_params>
+  static inline void debug(const char *p_file, uint16_t p_line,
+                           const t_params &... p_params) {
+    internal::global_log->debug(p_file, p_line, p_params...);
+  }
+
+  template <typename... t_params>
+  static inline void info(const char *p_file, uint16_t p_line,
+                          const t_params &... p_params) {
+    internal::global_log->info(p_file, p_line, p_params...);
+  }
+
+  template <typename... t_params>
+  static inline void warn(const char *p_file, uint16_t p_line,
+                          const t_params &... p_params) {
+    internal::global_log->warn(p_file, p_line, p_params...);
+  }
+
+  template <typename... t_params>
+  static inline void error(const char *p_file, uint16_t p_line,
+                           const t_params &... p_params) {
+    internal::global_log->error(p_file, p_line, p_params...);
+  }
+
+  template <typename... t_params>
+  static inline void fatal(const char *p_file, uint16_t p_line,
+                           const t_params &... p_params) {
+    internal::global_log->fatal(p_file, p_line, p_params...);
+  }
 };
 
 } // namespace logger
