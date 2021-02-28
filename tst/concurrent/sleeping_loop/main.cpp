@@ -33,7 +33,7 @@ struct sleeping_loop_000 {
   bool operator()() {
     typedef concurrent::sleeping_loop_t<logger::log, void> loop;
 
-    auto _operation = [this]() -> void { DEB(logger::log, "loop1"); };
+    auto _operation = []() -> void { DEB(logger::log, "loop1"); };
 
     auto _on_timeout = []() -> void {};
 
@@ -138,12 +138,13 @@ struct sleeping_loop_002 {
       m_cond.notify_one();
     };
 
-    auto _provider = [&_i]() -> std::tuple<int16_t, float> {
+    std::function<std::optional<std::tuple<int16_t, float>>()> _provider =
+        [&_i]() -> std::optional<std::tuple<int16_t, float>> {
       ++_i;
-      return {_i, 2.5 * _i};
+      return {{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+    auto _worker = [&_value](int16_t &&p_i, float &&p_f) {
       DEB(logger::log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
@@ -202,12 +203,12 @@ struct sleeping_loop_003 {
       m_cond.notify_one();
     };
 
-    auto _provider = [&_i]() -> std::tuple<int16_t, float> {
+    auto _provider = [&_i]() -> std::optional<std::tuple<int16_t, float>> {
       ++_i;
-      return {_i, 2.5 * _i};
+      return {std::tuple<int16_t, float>{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+    auto _worker = [&_value](int16_t &&p_i, float &&p_f) {
       DEB(logger::log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;

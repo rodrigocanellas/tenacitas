@@ -276,67 +276,158 @@ struct message_queue_002 {
   };
 };
 
-// struct message_queue_003 {
-//  typedef logger::log log;
-//  typedef concurrent::msg_a msg;
+struct message_queue_003 {
+  typedef logger::log log;
+  typedef concurrent::msg_a msg;
 
-//  typedef concurrent::message_queue_t<
-//      log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
-//      message_queue;
-//  typedef concurrent::on_timeout on_timeout;
+  typedef concurrent::message_queue_t<
+      log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
+      message_queue;
+  typedef concurrent::on_timeout on_timeout;
 
-//  static std::string desc() {
-//    return "\nProduces 300 messages, and waits for all to be consumed";
-//  }
+  static std::string desc() {
+    return "Produces 300 messages, and waits for all to be consumed";
+  }
 
-//  bool operator()() {
-//    on_timeout _on_timeout = [this]() -> void { WAR(logger::log, "timeout!!");
-//    };
+  bool operator()() {
+    on_timeout _on_timeout = []() -> void { WAR(logger::log, "timeout!!"); };
 
-//    message_queue _msg_queue{40};
+    msg::number _last_added{0};
 
-//    _msg_queue.add(
-//        [this](msg &&p_msg) -> std::optional<bool> {
-//          return m_consumer(std::move(p_msg));
-//        },
-//        1s, _on_timeout);
+    {
+      message_queue _msg_queue{40};
 
-//    _msg_queue.start();
+      _msg_queue.add(
+          [this](msg &&p_msg) -> void { m_consumer(std::move(p_msg)); }, 1s,
+          _on_timeout);
 
-//    for (uint16_t _i = 0; _i < 300; ++_i) {
-//      msg _msg(_i);
-//      DEB(logger::log, "adding msg ", _msg);
-//      _msg_queue.add(std::move(_msg));
-//    }
+      _msg_queue.start();
 
-//    msg::number _amount_added =
-//        static_cast<msg::number>(_msg_queue.amount_added());
+      for (uint16_t _i = 0; _i < 300; ++_i) {
+        msg _msg(_i);
+        DEB(logger::log, "adding msg ", _msg);
+        _msg_queue.add(std::move(_msg));
+      }
 
-//    while ((m_consumer.m_msg.value() + 1) != _amount_added) {
-//      DEB(logger::log, "amount added = ", _amount_added,
-//          ", m_consumer.m_msg.value() = ", m_consumer.m_msg.value());
-//      std::this_thread::sleep_for(50ms);
-//      DEB(logger::log, "still waiting...");
-//    }
+      _last_added = static_cast<msg::number>(_msg_queue.amount_added() - 1);
 
-//    return true;
-//  }
+      std::this_thread::sleep_for(15s);
+    }
 
-// private:
-//  struct consumer {
-//    std::optional<bool> operator()(msg &&p_msg) {
-//      m_msg = p_msg;
-//      DEB(logger::log, "handling msg ", m_msg);
-//      return {true};
-//    }
-//    log logger::log{"003::consumer"};
-//    msg m_msg;
-//  };
+    DEB(logger::log, "amount added = ", _last_added,
+        ", m_consumer.m_msg.value() = ", m_consumer.get_msg().value());
 
-// private:
-//  log logger::log{"message_queue_003"};
-//  consumer m_consumer;
-//};
+    return (_last_added == m_consumer.get_msg().value());
+  }
+
+private:
+  struct consumer {
+    void operator()(msg &&p_msg) {
+      m_msg = p_msg;
+      DEB(logger::log, "handling msg ", m_msg);
+    }
+
+    inline const msg &get_msg() const { return m_msg; }
+
+  private:
+    msg m_msg;
+  };
+
+private:
+  consumer m_consumer;
+};
+
+struct message_queue_004 {
+  typedef logger::log log;
+  typedef concurrent::msg_a msg;
+
+  typedef concurrent::message_queue_t<
+      log, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, msg>
+      message_queue;
+  typedef concurrent::on_timeout on_timeout;
+
+  static std::string desc() {
+    return "Produces 3000 messages, and waits for all to be consumed by 4 "
+           "consumers";
+  }
+
+  bool operator()() {
+    on_timeout _on_timeout_c1 = []() -> void {
+      WAR(logger::log, "timeout c2!!");
+    };
+    on_timeout _on_timeout_c2 = []() -> void {
+      WAR(logger::log, "timeout c2!!");
+    };
+    on_timeout _on_timeout_c3 = []() -> void {
+      WAR(logger::log, "timeout c3!!");
+    };
+    on_timeout _on_timeout_c4 = []() -> void {
+      WAR(logger::log, "timeout c4!!");
+    };
+
+    msg::number _last_added{0};
+
+    consumer _c1{"c1"};
+    consumer _c2{"c2"};
+    consumer _c3{"c3"};
+    consumer _c4{"c4"};
+
+    {
+      message_queue _msg_queue{40};
+
+      _msg_queue.add([&_c1](msg &&p_msg) -> void { _c1(std::move(p_msg)); }, 2s,
+                     _on_timeout_c1);
+
+      _msg_queue.add([&_c2](msg &&p_msg) -> void { _c2(std::move(p_msg)); }, 2s,
+                     _on_timeout_c2);
+
+      _msg_queue.add([&_c3](msg &&p_msg) -> void { _c3(std::move(p_msg)); }, 2s,
+                     _on_timeout_c3);
+
+      _msg_queue.add([&_c4](msg &&p_msg) -> void { _c4(std::move(p_msg)); }, 2s,
+                     _on_timeout_c4);
+
+      _msg_queue.start();
+
+      for (uint16_t _i = 0; _i < 3000; ++_i) {
+        msg _msg(_i);
+        DEB(logger::log, "adding msg ", _msg);
+        _msg_queue.add(std::move(_msg));
+      }
+
+      _last_added = static_cast<msg::number>(_msg_queue.amount_added() - 1);
+
+      std::this_thread::sleep_for(10s);
+    }
+
+    DEB(logger::log, "amount added = ", _last_added, ", _c1 = (",
+        _c1.get_msg().value(), ",", _c1.get_num(), "), _c2 = (",
+        _c2.get_msg().value(), ",", _c2.get_num(),
+        "), _c3 = ", _c3.get_msg().value(), ",", _c3.get_num(), "), _c4 = (",
+        _c4.get_msg().value(), ",", _c4.get_num(), ")");
+
+    return (_last_added ==
+            (_c1.get_num() + _c2.get_num()) + _c3.get_num() + _c4.get_num());
+  }
+
+private:
+  struct consumer {
+    consumer(const char *p_id) : m_id(p_id) {}
+    void operator()(msg &&p_msg) {
+      m_msg = p_msg;
+      ++m_num;
+      DEB(logger::log, m_id, " handling msg ", m_msg, ", total = ", m_num);
+    }
+
+    inline const msg &get_msg() const { return m_msg; }
+    inline msg::number get_num() const { return m_num; }
+
+  private:
+    std::string m_id;
+    msg m_msg;
+    msg::number m_num{0};
+  };
+};
 
 int main(int argc, char **argv) {
   logger::log::set_debug_level();
@@ -345,5 +436,6 @@ int main(int argc, char **argv) {
   run_test(_test, message_queue_000);
   run_test(_test, message_queue_001);
   run_test(_test, message_queue_002);
-  //  run_test(_test, message_queue_003);
+  run_test(_test, message_queue_003);
+  run_test(_test, message_queue_004);
 }

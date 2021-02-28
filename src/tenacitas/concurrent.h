@@ -500,7 +500,7 @@ struct async_loop_t
                                          std::function<void(t_params &&...)>> {
 
   typedef std::function<void(t_params &&...)> worker;
-  typedef std::function<std::tuple<t_params...>()> provider;
+  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   template <typename t_time>
   async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
@@ -534,7 +534,7 @@ protected:
         break;
       }
 
-      std::optional<std::tuple<t_params...>> _maybe_data =
+      std::optional<std::optional<std::tuple<t_params...>>> _maybe_in_time =
           execute(this->m_provider_timeout, m_provider);
 
       //      if (this->m_stopped) {
@@ -542,17 +542,23 @@ protected:
       //        break;
       //      }
 
-      if (_maybe_data) {
-        std::tuple<t_params...> _params = std::move(*_maybe_data);
-        DEB(t_log, "data provided = ", _params);
+      if (_maybe_in_time) {
+        std::optional<std::tuple<t_params...>> _maybe_data =
+            std::move(*_maybe_in_time);
 
-        auto _worker = [this, &_params]() -> void {
-          std::apply(this->m_worker, std::move(_params));
-        };
+        if (_maybe_data) {
+          std::tuple<t_params...> _params = std::move(*_maybe_data);
 
-        if (!execute(this->m_timeout, _worker)) {
-          DEB(t_log, "timeout for worker");
-          std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+          DEB(t_log, "data provided = ", _params);
+
+          auto _worker = [this, &_params]() -> void {
+            std::apply(this->m_worker, std::move(_params));
+          };
+
+          if (!execute(this->m_timeout, _worker)) {
+            DEB(t_log, "timeout for worker");
+            std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+          }
         }
       }
     }
@@ -648,21 +654,6 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
   /// \brief Stops the loop
   void stop() {
 
-    //    if (m_stopped) {
-    //      if (m_thread.joinable()) {
-    //        m_thread.join();
-    //      }
-    //      return;
-    //    }
-
-    //    if (m_async.is_stopped()) {
-    //      DEB(t_log, "not stopping async loop because it was not
-    //      running"); if (m_thread.joinable()) {
-    //        m_thread.join();
-    //      }
-    //      return;
-    //    }
-
     m_stopped = true;
 
     m_async.stop();
@@ -723,12 +714,6 @@ protected:
     std::unique_lock<std::mutex> _lock(m_mutex);
     if (!m_cond.wait_for(_lock, m_interval,
                          [this]() -> bool { return m_stopped; })) {
-      //      if (m_stopped) {
-      //        DEB(t_log, "breaking because it is stopped");
-      //        m_async.stop();
-      //        return true;
-      //      }
-
       // timeout, so do not stop
       DEB(t_log, "must not stop");
       return false;
@@ -740,7 +725,7 @@ protected:
   }
 
 protected:
-  typedef async_loop_t<t_log, /*use_breaker::no,*/ t_params...> async_loop;
+  typedef async_loop_t<t_log, t_params...> async_loop;
 
 protected:
   interval m_interval;
@@ -777,7 +762,7 @@ struct sleeping_loop_t
   /// work function
   ///
   /// \return \p an optional tuple of objects needed by the \p operation
-  typedef std::function<std::tuple<t_params...>()> provider;
+  typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   /// \brief Constructor
   ///
@@ -808,12 +793,9 @@ struct sleeping_loop_t
   }
 };
 
-/// \brief Base class for sleeping loops, which are loops that sleep during
-/// a certain amount of time, then wake up and execute some work
+/// \brief
 ///
 /// \tparam t_log
-///
-/// \tparam t_params are the parameters that the work function
 template <typename t_log>
 struct sleeping_loop_t<t_log, void>
     : public internal::sleeping_loop_base_t<t_log, void> {
@@ -1012,11 +994,11 @@ struct circular_unlimited_size_queue_t {
   void add(data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      WAR(t_log, "not adding more slots");
+      DEB(t_log, "not adding more slots");
       m_write->m_data = std::move(p_data);
       m_write = m_write->m_next;
     } else {
-      WAR(t_log, "adding more slots");
+      DEB(t_log, "adding more slots");
       insert(m_write->m_prev, std::move(p_data));
     }
     ++m_amount;
@@ -1026,11 +1008,11 @@ struct circular_unlimited_size_queue_t {
   void add(const data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      WAR(t_log, "not adding more slots");
+      DEB(t_log, "not adding more slots");
       m_write->m_data = p_data;
       m_write = m_write->m_next;
     } else {
-      WAR(t_log, "adding more slots");
+      DEB(t_log, "adding more slots");
       insert(m_write->m_prev, p_data);
     }
     ++m_amount;
@@ -1392,7 +1374,9 @@ public:
   template <typename t_time>
   void add(operation p_operation, t_time p_timeout, on_timeout p_on_timeout) {
     std::lock_guard<std::mutex> _lock(m_add_work);
-    auto _provider = [this]() -> std::tuple<data> { return this->provider(); };
+    auto _provider = [this]() -> std::optional<std::tuple<data>> {
+      return this->provider();
+    };
 
     m_loops.emplace(m_loops.begin(), p_operation, p_timeout, p_on_timeout,
                     _provider);
@@ -1416,7 +1400,7 @@ public:
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    auto _provider = [this]() -> std::optional<data> {
+    auto _provider = [this]() -> std::optional<std::tuple<data>> {
       return this->provider();
     };
 
@@ -1497,10 +1481,10 @@ private:
   ///
   /// \return \p true if the flag indicating that the \p operation should stop
   /// is \p true; \p false otherwise
-  inline bool breaker() { return (m_stopped ? true : false); }
+  //  inline bool breaker() { return (m_stopped ? true : false); }
 
   /// \brief provider provides data, if available, to a \p operation
-  std::tuple<data> provider() {
+  std::optional<std::tuple<data>> provider() {
     using namespace std;
 
     if (m_stopped) {
@@ -1530,7 +1514,7 @@ private:
     if (m_stopped) {
       DEB(t_log, "stopped and notifying");
       m_data_consumed.notify_all();
-      return std::tuple<data>{};
+      return {};
     }
 
     DEB(t_log, "there is data");
@@ -1542,10 +1526,10 @@ private:
       DEB(t_log, "getting ", _data, " and notifying");
 
       m_data_consumed.notify_all();
-      return {_data};
+      return {{_data}};
     }
     DEB(t_log, "it was not possible to get data");
-    return std::tuple<data>{};
+    return {};
   }
 
   /// \brief informs if all the \p async_loops are stopped

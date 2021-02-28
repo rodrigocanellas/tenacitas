@@ -438,10 +438,10 @@ struct async_loop_006 {
       const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                             3000};
 
-      auto _on_timeout = [this]() -> void { WAR(logger::log, "timeout"); };
+      auto _on_timeout = []() -> void { WAR(logger::log, "timeout"); };
 
       int16_t _i{0};
-      auto _provider = [this, &_i, _max]() -> std::tuple<int16_t> {
+      auto _provider = [&_i, _max]() -> std::optional<std::tuple<int16_t>> {
         if (_i == _max) {
           DEB(logger::log, "causing timeout to not provide data when ", _i,
               " == ", _max);
@@ -450,7 +450,7 @@ struct async_loop_006 {
         }
         ++_i;
         DEB(logger::log, "providing ", _i);
-        return {_i};
+        return {{_i}};
       };
 
       worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
@@ -462,9 +462,8 @@ struct async_loop_006 {
         _worker(std::move(p_i));
       };
 
-      concurrent::async_loop_t<logger::log, /*concurrent::use_breaker::no,*/
-                               int16_t>
-          _loop(_aux, _work_timeout, _on_timeout, _provider);
+      concurrent::async_loop_t<logger::log, int16_t> _loop(
+          _aux, _work_timeout, _on_timeout, _provider);
 
       _loop.start();
 
@@ -542,7 +541,8 @@ struct async_loop_007 {
     };
 
     int16_t _i{0};
-    auto _provider = [this, &_i, _max]() -> std::tuple<int16_t, float> {
+    auto _provider = [&_i,
+                      _max]() -> std::optional<std::tuple<int16_t, float>> {
       if (_i == _max) {
         DEB(logger::log, "causing timeout to not provide data when ", _i,
             " == ", _max);
@@ -552,7 +552,7 @@ struct async_loop_007 {
       ++_i;
       float _f(_i * 2.5);
       DEB(logger::log, "providing ", _i);
-      return {_i, _f};
+      return {{_i, _f}};
     };
 
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
