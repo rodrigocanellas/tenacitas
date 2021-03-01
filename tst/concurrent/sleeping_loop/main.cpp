@@ -22,18 +22,14 @@
 using namespace tenacitas;
 using namespace std::chrono_literals;
 
-struct timeout_callback {
-  void operator()() { WAR(logger::log, "TIMEOUT"); }
-};
-
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
   bool operator()() {
-    typedef concurrent::sleeping_loop_t<logger::log, void> loop;
+    typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
 
-    auto _operation = []() -> void { DEB(logger::log, "loop1"); };
+    auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
 
     auto _on_timeout = []() -> void {};
 
@@ -41,10 +37,13 @@ struct sleeping_loop_000 {
 
     return true;
   }
+
+private:
+  logger::cerr<> m_log{"sleeping_loop_000"};
 };
 
 struct sleeping_loop_001 {
-  typedef concurrent::sleeping_loop_t<logger::log, void> loop;
+  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
 
   typedef uint16_t value;
 
@@ -79,12 +78,11 @@ struct sleeping_loop_001 {
     _loop.stop();
 
     if (_op.counter != m_amount) {
-      ERR(logger::log, "counter should be ", m_amount, ", but it is ",
-          _op.counter);
+      ERR(m_log, "counter should be ", m_amount, ", but it is ", _op.counter);
       return false;
     }
 
-    INF(logger::log, "counter should be ", m_amount, ", and it really is ",
+    INF(m_log, "counter should be ", m_amount, ", and it really is ",
         _op.counter);
 
     return true;
@@ -98,7 +96,7 @@ private:
     void operator()() {
       if (counter < m_amount) {
         ++counter;
-        DEB(logger::log, "counter = ", counter);
+        DEB(m_log, "counter = ", counter);
         std::this_thread::sleep_for(m_sleep);
       } else {
         m_cond->notify_one();
@@ -109,6 +107,7 @@ private:
 
   private:
     std::condition_variable *m_cond;
+    logger::cerr<> m_log{"operation1"};
   };
 
 private:
@@ -119,6 +118,7 @@ private:
   static constexpr value m_amount{14};
   static constexpr value m_timeout{400};
   static constexpr std::chrono::milliseconds m_sleep{200};
+  logger::cerr<> m_log{"sleeping_loop_001"};
 };
 
 struct sleeping_loop_002 {
@@ -130,11 +130,11 @@ struct sleeping_loop_002 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::log, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
-    auto _on_timeout = [this, &_i]() {
-      WAR(logger::log, "timeout! for i = ", _i);
+    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
+      WAR(m_log, "timeout for ", p_i, ", ", p_f);
       m_cond.notify_one();
     };
 
@@ -144,8 +144,8 @@ struct sleeping_loop_002 {
       return {{_i, 2.5 * _i}};
     };
 
-    auto _worker = [&_value](int16_t &&p_i, float &&p_f) {
-      DEB(logger::log, "worker called with ", p_i, " and ", p_f);
+    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+      DEB(m_log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
         std::this_thread::sleep_for(
@@ -154,7 +154,7 @@ struct sleeping_loop_002 {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
 
-        INF(logger::log, p_i, " - ", p_f);
+        INF(m_log, p_i, " - ", p_f);
       }
     };
 
@@ -170,11 +170,11 @@ struct sleeping_loop_002 {
     _loop.stop();
 
     if (_value != m_max) {
-      ERR(logger::log, "value = ", _value, " but it should be ", m_max);
+      ERR(m_log, "value = ", _value, " but it should be ", m_max);
       return false;
     }
 
-    INF(logger::log, "value = ", _value, " and it is correct as ", m_max,
+    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
         " was expected");
 
     return true;
@@ -185,6 +185,7 @@ private:
   std::condition_variable m_cond;
   static constexpr int16_t m_max{2};
   static constexpr std::chrono::milliseconds m_timeout{500ms};
+  logger::cerr<> m_log{"sleeping_loop_002"};
 };
 
 struct sleeping_loop_003 {
@@ -195,11 +196,12 @@ struct sleeping_loop_003 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::log, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
-    auto _on_timeout = [this, &_i]() {
-      WAR(logger::log, "timeout! for i = ", _i);
+
+    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
+      WAR(m_log, "timeout for ", p_i, ", ", p_f);
       m_cond.notify_one();
     };
 
@@ -208,8 +210,8 @@ struct sleeping_loop_003 {
       return {std::tuple<int16_t, float>{_i, 2.5 * _i}};
     };
 
-    auto _worker = [&_value](int16_t &&p_i, float &&p_f) {
-      DEB(logger::log, "worker called with ", p_i, " and ", p_f);
+    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+      DEB(m_log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
         std::this_thread::sleep_for(
@@ -218,7 +220,7 @@ struct sleeping_loop_003 {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
 
-        INF(logger::log, p_i, " - ", p_f);
+        INF(m_log, p_i, " - ", p_f);
       }
     };
 
@@ -234,11 +236,11 @@ struct sleeping_loop_003 {
     _loop.stop();
 
     if (_value != m_max) {
-      ERR(logger::log, "value = ", _value, " but it should be ", m_max);
+      ERR(m_log, "value = ", _value, " but it should be ", m_max);
       return false;
     }
 
-    INF(logger::log, "value = ", _value, " and it is correct as ", m_max,
+    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
         " was expected");
 
     return true;
@@ -249,11 +251,12 @@ private:
   std::condition_variable m_cond;
   static constexpr int16_t m_max{38};
   static constexpr std::chrono::milliseconds m_timeout{500ms};
+  logger::cerr<> m_log{"sleeping_loop_003"};
 };
 
 int main(int argc, char **argv) {
-  logger::log::set_debug_level();
-  logger::log::use_cerr();
+  logger::set_debug_level();
+
   tester::test<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);

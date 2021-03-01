@@ -36,9 +36,6 @@ typedef std::chrono::milliseconds timeout;
 /// \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
 
-/// \brief Type of function executed when a function times out
-typedef std::function<void()> on_timeout;
-
 namespace internal {
 
 /// \brief Converts any type of time defined in std::chrono to \p timeout
@@ -401,6 +398,8 @@ typedef std::function<bool()> breaker;
 ///// \brief Used to define if a loop will use a breaker function or not
 // enum class use_breaker : char { yes = 'y', no = 'n' };
 
+uint64_t uuid() { return calendar::now<>::microsecs_num(); }
+
 namespace internal {
 
 /// \brief base class for asynchronous loop
@@ -410,7 +409,8 @@ namespace internal {
 /// \tparam t_time
 ///
 /// \tparam t_worker
-template <typename t_log, typename t_worker> struct async_loop_base_t {
+template <typename t_log, typename t_on_timeout, typename t_worker>
+struct async_loop_base_t {
 
   async_loop_base_t() = delete;
   async_loop_base_t(const async_loop_base_t &) = delete;
@@ -469,7 +469,7 @@ template <typename t_log, typename t_worker> struct async_loop_base_t {
 
 protected:
   template <typename t_time>
-  async_loop_base_t(t_worker p_worker, t_time p_time, on_timeout p_on_timeout)
+  async_loop_base_t(t_worker p_worker, t_time p_time, t_on_timeout p_on_timeout)
       : m_worker(p_worker), m_timeout(internal::to_timeout(p_time)),
         m_on_timeout(p_on_timeout) {}
 
@@ -480,14 +480,16 @@ protected:
 
   timeout m_timeout;
 
-  on_timeout m_on_timeout;
+  t_on_timeout m_on_timeout;
 
   bool m_stopped{true};
 
   std::thread m_thread;
 
-  const timeout m_breaker_timeout{200ms};
-  const timeout m_provider_timeout{300ms};
+  t_log m_log{"async_loop"};
+
+  //  const timeout m_breaker_timeout{200ms};
+  //  const timeout m_provider_timeout{300ms};
 };
 } // namespace internal
 /// \brief Base class for asynchronous loop
@@ -497,20 +499,23 @@ template <typename t_log, typename... t_params> struct async_loop_t;
 template <typename t_log, typename... t_params>
 struct async_loop_t
     : public internal::async_loop_base_t<t_log,
+                                         std::function<void(t_params &&...)>,
                                          std::function<void(t_params &&...)>> {
 
+  typedef std::function<void(t_params &&...)> on_timeout;
   typedef std::function<void(t_params &&...)> worker;
   typedef std::function<std::optional<std::tuple<t_params...>>()> provider;
 
   template <typename t_time>
   async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
                provider p_provider)
-      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
-                                                   p_on_timeout),
+      : internal::async_loop_base_t<t_log, on_timeout, worker>(
+            p_worker, p_timeout, p_on_timeout),
         m_provider(p_provider) {}
 
   async_loop_t(async_loop_t &&p_async_loop)
-      : internal::async_loop_base_t<t_log, worker>(std::move(p_async_loop)) {
+      : internal::async_loop_base_t<t_log, on_timeout, worker>(
+            std::move(p_async_loop)) {
     m_provider = std::move(p_async_loop.m_provider);
   }
 
@@ -525,40 +530,36 @@ struct async_loop_t
 
 protected:
   void loop() override {
-    DEB(t_log, "entering loop");
+    DEB(this->m_log, "entering loop");
 
     while (true) {
 
       if (this->m_stopped) {
-        DEB(t_log, "another loop, m_stopped = ", this->m_stopped);
+        DEB(this->m_log, "another loop, m_stopped = ", this->m_stopped);
         break;
       }
 
-      std::optional<std::optional<std::tuple<t_params...>>> _maybe_in_time =
-          execute(this->m_provider_timeout, m_provider);
+      std::optional<std::tuple<t_params...>> _maybe_data = m_provider();
 
-      //      if (this->m_stopped) {
-      //        DEB(t_log, "stopped before checking if data was provided");
-      //        break;
-      //      }
+      if (_maybe_data) {
+        std::tuple<t_params...> _params = std::move(*_maybe_data);
 
-      if (_maybe_in_time) {
-        std::optional<std::tuple<t_params...>> _maybe_data =
-            std::move(*_maybe_in_time);
+        DEB(this->m_log, "data provided = ", _params);
 
-        if (_maybe_data) {
-          std::tuple<t_params...> _params = std::move(*_maybe_data);
+        auto _worker = [this, &_params]() -> void {
+          std::apply(this->m_worker, std::move(_params));
+        };
 
-          DEB(t_log, "data provided = ", _params);
+        if (!execute(this->m_timeout, _worker)) {
+          DEB(this->m_log, "timeout for worker");
 
-          auto _worker = [this, &_params]() -> void {
-            std::apply(this->m_worker, std::move(_params));
+          std::tuple<t_params...> _copy{_params};
+
+          auto _on_timeout = [this, &_copy]() {
+            std::apply(this->m_on_timeout, std::move(_copy));
           };
 
-          if (!execute(this->m_timeout, _worker)) {
-            DEB(t_log, "timeout for worker");
-            std::thread([this]() -> void { this->m_on_timeout(); }).detach();
-          }
+          std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
         }
       }
     }
@@ -571,14 +572,16 @@ private:
 /// #### async_loop 2 ####
 template <typename t_log>
 struct async_loop_t<t_log, void>
-    : public internal::async_loop_base_t<t_log, std::function<void()>> {
+    : public internal::async_loop_base_t<t_log, std::function<void()>,
+                                         std::function<void()>> {
 
+  typedef std::function<void()> on_timeout;
   typedef std::function<void()> worker;
 
   template <typename t_time>
   async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout)
-      : internal::async_loop_base_t<t_log, worker>(p_worker, p_timeout,
-                                                   p_on_timeout) {}
+      : internal::async_loop_base_t<t_log, on_timeout, worker>(
+            p_worker, p_timeout, p_on_timeout) {}
 
 protected:
   void loop() override {
@@ -601,7 +604,8 @@ protected:
 namespace internal {
 
 /// \brief Executes a work function in fixed period of times
-template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
+template <typename t_log, typename t_on_timeout, typename... t_params>
+struct sleeping_loop_base_t {
 
   sleeping_loop_base_t() = delete;
   sleeping_loop_base_t(const sleeping_loop_base_t &) = delete;
@@ -611,7 +615,7 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 
   /// \brief destructor interrupts the loop
   inline virtual ~sleeping_loop_base_t() {
-    DEB(t_log, "destructor");
+    DEB(m_log, "destructor");
     stop();
   }
 
@@ -631,7 +635,7 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 
   /// \brief Stops the loop, and starts it again
   void restart() {
-    DEB(t_log, "restart");
+    DEB(m_log, "restart");
     stop();
     start();
   }
@@ -639,13 +643,13 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
   /// \brief Starts the loop
   void start() {
     if (!m_async.is_stopped()) {
-      DEB(t_log, "not starting async loop because it is running");
+      DEB(m_log, "not starting async loop because it is running");
       return;
     }
     if (!m_stopped) {
-      DEB(t_log, "not starting because it is running");
+      DEB(m_log, "not starting because it is running");
     }
-    DEB(t_log, "running async loop");
+    DEB(m_log, "running async loop");
     m_stopped = false;
     m_thread = std::thread([this]() -> void { breaker(); });
     m_async.start();
@@ -658,13 +662,13 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 
     m_async.stop();
 
-    DEB(t_log, "notifying");
+    DEB(m_log, "notifying");
     m_cond.notify_one();
 
     if (m_thread.joinable()) {
       m_thread.join();
     }
-    DEB(t_log, "stopping");
+    DEB(m_log, "stopping");
   }
 
   /// \brief retrieves if the loop is stopped
@@ -686,21 +690,21 @@ template <typename t_log, typename... t_params> struct sleeping_loop_base_t {
 protected:
   template <typename t_timeout, typename t_interval, typename t_worker>
   sleeping_loop_base_t(t_interval p_interval, t_worker p_worker,
-                       t_timeout p_timeout, on_timeout p_on_timeout)
+                       t_timeout p_timeout, t_on_timeout p_on_timeout)
       : m_interval(internal::to_interval(p_interval)),
         m_async(p_worker, internal::to_timeout(p_timeout), p_on_timeout) {
-    DEB(t_log, "constructor without provider called");
+    DEB(m_log, "constructor without provider called");
   }
 
   template <typename t_timeout, typename t_interval, typename t_worker,
             typename t_provider>
   sleeping_loop_base_t(t_interval p_interval, t_worker p_worker,
-                       t_timeout p_timeout, on_timeout p_on_timeout,
+                       t_timeout p_timeout, t_on_timeout p_on_timeout,
                        t_provider p_provider)
       : m_interval(internal::to_interval(p_interval)),
         m_async(p_worker, internal::to_timeout(p_timeout), p_on_timeout,
                 p_provider) {
-    DEB(t_log, "constructor with provider called");
+    DEB(m_log, "constructor with provider called");
   }
 
   /// \brief breaker defines if the loop should stop
@@ -715,11 +719,11 @@ protected:
     if (!m_cond.wait_for(_lock, m_interval,
                          [this]() -> bool { return m_stopped; })) {
       // timeout, so do not stop
-      DEB(t_log, "must not stop");
+      DEB(m_log, "must not stop");
       return false;
     }
     // no timeout, which means the loop was stopped
-    DEB(t_log, "must stop");
+    DEB(m_log, "must stop");
     m_async.stop();
     return true;
   }
@@ -741,6 +745,8 @@ protected:
   std::condition_variable m_cond;
 
   bool m_stopped{true};
+
+  t_log m_log{"sleeping_loop"};
 };
 
 } // namespace internal
@@ -753,10 +759,13 @@ protected:
 /// \tparam t_params are the parameters that the work function
 template <typename t_log, typename... t_params>
 struct sleeping_loop_t
-    : public internal::sleeping_loop_base_t<t_log, t_params...> {
+    : public internal::sleeping_loop_base_t<
+          t_log, std::function<void(t_params &&...)>, t_params...> {
 
   /// \brief type of work executed in a loop in time intervals
-  typedef std::function<void(t_params...)> worker;
+  typedef std::function<void(t_params &&...)> worker;
+
+  typedef std::function<void(t_params &&...)> on_timeout;
 
   /// \brief Provider is the type of function that provides data to the
   /// work function
@@ -786,9 +795,9 @@ struct sleeping_loop_t
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   on_timeout p_on_timeout, provider p_provider)
-      : internal::sleeping_loop_base_t<t_log, t_params...>(
+      : internal::sleeping_loop_base_t<t_log, on_timeout, t_params...>(
             p_interval, p_worker, p_timeout, p_on_timeout, p_provider) {
-    DEB(t_log, "timeout = ", p_timeout.count(),
+    DEB(this->m_log, "timeout = ", p_timeout.count(),
         ", interval = ", p_interval.count());
   }
 };
@@ -798,10 +807,13 @@ struct sleeping_loop_t
 /// \tparam t_log
 template <typename t_log>
 struct sleeping_loop_t<t_log, void>
-    : public internal::sleeping_loop_base_t<t_log, void> {
+    : public internal::sleeping_loop_base_t<t_log, std::function<void()>,
+                                            void> {
 
   /// \brief type of work executed in a loop in time intervals
   typedef std::function<void()> worker;
+
+  typedef std::function<void()> on_timeout;
 
   /// \brief Constructor
   ///
@@ -815,10 +827,10 @@ struct sleeping_loop_t<t_log, void>
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_worker,
                   on_timeout p_on_timeout)
-      : internal::sleeping_loop_base_t<t_log, void>(p_interval, p_worker,
-                                                    p_timeout, p_on_timeout) {
+      : internal::sleeping_loop_base_t<t_log, on_timeout, void>(
+            p_interval, p_worker, p_timeout, p_on_timeout) {
 
-    DEB(t_log, "timeout = ", p_timeout.count(),
+    DEB(this->m_log, "timeout = ", p_timeout.count(),
         ", interval = ", p_interval.count());
   }
 };
@@ -862,7 +874,7 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
         m_write = 0;
       }
     } else {
-      DEB(t_log, "could not add ", p_data, ", because it is full");
+      DEB(m_log, "could not add ", p_data, ", because it is full");
     }
   }
 
@@ -876,7 +888,7 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
         m_write = 0;
       }
     } else {
-      DEB(t_log, "could not add ", p_data, ", because it is full");
+      DEB(m_log, "could not add ", p_data, ", because it is full");
     }
   }
 
@@ -884,7 +896,7 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   std::optional<data> get() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
-      DEB(t_log, "could not get because it is empty");
+      DEB(m_log, "could not get because it is empty");
       return {};
     }
     data _data(m_values[m_read++]);
@@ -947,6 +959,8 @@ private:
 
   /// \brief Controls access to positions
   std::mutex m_mutex;
+
+  t_log m_log{"circular_fixed_size_queue_t"};
 };
 
 /// \brief Implements a circular queue which size is increased if it becomes
@@ -994,11 +1008,11 @@ struct circular_unlimited_size_queue_t {
   void add(data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      DEB(t_log, "not adding more slots");
+      DEB(m_log, "not adding more slots");
       m_write->m_data = std::move(p_data);
       m_write = m_write->m_next;
     } else {
-      DEB(t_log, "adding more slots");
+      DEB(m_log, "adding more slots");
       insert(m_write->m_prev, std::move(p_data));
     }
     ++m_amount;
@@ -1008,11 +1022,11 @@ struct circular_unlimited_size_queue_t {
   void add(const data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      DEB(t_log, "not adding more slots");
+      DEB(m_log, "not adding more slots");
       m_write->m_data = p_data;
       m_write = m_write->m_next;
     } else {
-      DEB(t_log, "adding more slots");
+      DEB(m_log, "adding more slots");
       insert(m_write->m_prev, p_data);
     }
     ++m_amount;
@@ -1022,10 +1036,10 @@ struct circular_unlimited_size_queue_t {
   std::optional<data> get() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
-      DEB(t_log, "empty");
+      DEB(m_log, "empty");
       return {};
     }
-    DEB(t_log, "not empty");
+    DEB(m_log, "not empty");
     data _data(m_read->m_data);
     m_read = m_read->m_next;
     --m_amount;
@@ -1158,6 +1172,8 @@ private:
 
   /// \brief Controls insertion
   std::mutex m_mutex;
+
+  t_log m_log{"circular_unlimited_size_queue"};
 };
 
 template <typename t_log, typename t_data, queue_type qt> struct queue_traits;
@@ -1198,6 +1214,8 @@ public:
   /// \brief Type fot the priority of a worker
   typedef int16_t priority;
 
+  typedef std::function<void(data &&)> on_timeout;
+
 public:
   /// \brief Constructor
   ///
@@ -1216,8 +1234,7 @@ public:
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
   template <typename t_size>
   message_queue_t(t_size p_queue_size)
-      : m_id(std::to_string(calendar::now<>::millisecs_num<>())),
-        m_queue(p_queue_size) {}
+      : m_id(std::to_string(uuid())), m_queue(p_queue_size) {}
 
   /// \brief copy constructor not allowed
   message_queue_t(const message_queue_t &) = delete;
@@ -1236,7 +1253,7 @@ public:
   /// If 'stop' was not called, empties the queue, waiting for all the data to
   /// be processed
   ~message_queue_t() {
-    DEB(t_log, "destructor");
+    DEB(m_log, "destructor");
     if (!all_loops_stopped()) {
       if (!m_stopped) {
         while (!m_queue.empty()) {
@@ -1247,7 +1264,7 @@ public:
         stop();
       }
     }
-    DEB(t_log, "leaving destructor");
+    DEB(m_log, "leaving destructor");
   }
 
   /// \brief Equal-to operator
@@ -1298,29 +1315,33 @@ public:
   ///
   /// \return \p true if it was added, \p false otherwise
   bool add(const data &p_data) {
+    data _data{p_data};
     if (m_stopped) {
-      ERR(t_log, "could not add data because 'worker' "
-                 "is not running; call 'start()' first");
+      ERR(m_log, "could not add data ", _data,
+          " because 'worker' is not running; call 'start()' first");
       return false;
     }
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    DEB(t_log, "waiting for room ...");
-    std::unique_lock<std::mutex> _lock(m_mutex_data);
-    m_data_consumed.wait(_lock,
-                         [this]() { return (!m_queue.full() || m_stopped); });
+    DEB(m_log, "waiting for room to add ", _data);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex_data);
+      m_data_consumed.wait(_lock,
+                           [this]() { return (!m_queue.full() || m_stopped); });
 
-    if (m_stopped) {
-      DEB(t_log, "stopped");
-    } else {
-      m_queue.add(p_data);
-      ++m_queued_data;
+      if (m_stopped) {
+        DEB(m_log, "stopped when about to add ", _data);
+      } else {
+        DEB(m_log, "adding ", _data);
+        m_queue.add(_data);
+        ++m_queued_data;
+      }
     }
-
     // notifyng that new data is available
-    DEB(t_log, "notifying");
+    DEB(m_log, "notifying");
     m_data_produced.notify_all();
+
     return true;
   }
 
@@ -1332,28 +1353,32 @@ public:
   ///
   /// \return \p true if it was added, \p false otherwise
   bool add(data &&p_data) {
+    data _data{p_data};
     if (m_stopped) {
-      ERR(t_log, "could not add data because 'worker' "
-                 "is not running; call 'start()' first");
+      ERR(m_log, "could not add data ", _data,
+          " because 'worker' is not running; call 'start()' first");
       return false;
     }
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
-    DEB(t_log, "waiting for room ...");
-    std::unique_lock<std::mutex> _lock(m_mutex_data);
-    m_data_consumed.wait(_lock,
-                         [this]() { return (!m_queue.full() || m_stopped); });
+    DEB(m_log, "waiting for room to add ", _data);
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex_data);
+      m_data_consumed.wait(_lock,
+                           [this]() { return (!m_queue.full() || m_stopped); });
 
-    if (m_stopped) {
-      DEB(t_log, "stopped");
-    } else {
-      m_queue.add(std::move(p_data));
-      ++m_queued_data;
+      if (m_stopped) {
+        DEB(m_log, "stopped when about to add ", _data);
+      } else {
+        DEB(m_log, "adding ", _data);
+        m_queue.add(std::move(_data));
+        ++m_queued_data;
+      }
     }
 
     // notifyng that new data is available
-    DEB(t_log, "notifying");
+    DEB(m_log, "notifying");
     m_data_produced.notify_all();
     return true;
   }
@@ -1373,13 +1398,12 @@ public:
   /// \param p_loop the new \p operation to be added
   template <typename t_time>
   void add(operation p_operation, t_time p_timeout, on_timeout p_on_timeout) {
-    std::lock_guard<std::mutex> _lock(m_add_work);
     auto _provider = [this]() -> std::optional<std::tuple<data>> {
       return this->provider();
     };
+    std::lock_guard<std::mutex> _lock(m_add_work);
 
-    m_loops.emplace(m_loops.begin(), p_operation, p_timeout, p_on_timeout,
-                    _provider);
+    m_loops.push_back({p_operation, p_timeout, p_on_timeout, _provider});
   }
 
   /// \brief adds a bunch of \p operation
@@ -1422,23 +1446,23 @@ public:
   ///         \p true if it was already started, or if it started successfully
   bool start() {
     if (!m_stopped) {
-      ERR(t_log, "not starting because it is already running");
+      ERR(m_log, "not starting because it is already running");
       return true;
     }
 
     std::unique_lock<std::mutex> _lock(m_mutex_stop);
     if (m_loops.empty()) {
-      WAR(t_log, "can't run because there are no workers");
+      WAR(m_log, "can't run because there are no workers");
       return false;
     }
 
-    DEB(t_log, "starting");
+    DEB(m_log, "starting");
     m_stopped = false;
     for (async_loop &_loop : m_loops) {
       _loop.start();
     }
 
-    DEB(t_log, "started");
+    DEB(m_log, "started");
     return true;
   }
 
@@ -1457,7 +1481,7 @@ public:
 
     m_data_produced.notify_all();
     for (async_loop &_loop : m_loops) {
-      DEB(t_log, "stopping loop");
+      DEB(m_log, "stopping loop");
       _loop.stop();
     }
   }
@@ -1477,58 +1501,52 @@ private:
   typedef typename std::vector<async_loop> asyncs_loops;
 
 private:
-  /// \brief breaker
-  ///
-  /// \return \p true if the flag indicating that the \p operation should stop
-  /// is \p true; \p false otherwise
-  //  inline bool breaker() { return (m_stopped ? true : false); }
-
   /// \brief provider provides data, if available, to a \p operation
   std::optional<std::tuple<data>> provider() {
     using namespace std;
 
     if (m_stopped) {
-      DEB(t_log, "stopped");
-      return std::tuple<data>{};
+      DEB(m_log, "stopped");
+      return {};
     }
 
-    DEB(t_log, "waiting for data...");
+    DEB(m_log, "waiting for data...");
     std::unique_lock<std::mutex> _lock(m_mutex_data);
     m_data_produced.wait(_lock, [this]() -> bool {
       //      return (!m_container.empty() || m_stopped);
       if (m_stopped) {
-        DEB(t_log, "stopped");
+        DEB(m_log, "stopped");
         return true;
       }
       if (!m_queue.empty()) {
-        DEB(t_log, "not empty");
+        DEB(m_log, "not empty");
         return true;
       }
-      DEB(t_log, "still waiting for data");
+      DEB(m_log, "still waiting for data");
 
       return false;
     });
 
-    DEB(t_log, "either there is data, or it was stopped");
+    DEB(m_log, "either there is data, or it was stopped");
 
     if (m_stopped) {
-      DEB(t_log, "stopped and notifying");
+      DEB(m_log, "stopped and notifying");
       m_data_consumed.notify_all();
       return {};
     }
 
-    DEB(t_log, "there is data");
+    DEB(m_log, "there is data");
 
     std::optional<data> _maybe = m_queue.get();
     if (_maybe) {
-      data _data(_maybe.value());
+      data _data(std::move(*_maybe));
 
-      DEB(t_log, "getting ", _data, " and notifying");
+      DEB(m_log, "getting ", _data, " and notifying");
 
       m_data_consumed.notify_all();
       return {{_data}};
     }
-    DEB(t_log, "it was not possible to get data");
+    DEB(m_log, "it was not possible to get data");
     return {};
   }
 
@@ -1579,6 +1597,8 @@ private:
 
   /// \brief amount of queued data
   size_t m_queued_data{0};
+
+  t_log m_log{"message_queue"};
 };
 
 } // namespace concurrent

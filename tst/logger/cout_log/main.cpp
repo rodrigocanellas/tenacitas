@@ -8,32 +8,15 @@
 
 using namespace tenacitas;
 
-struct cout_log_creation {
-  bool operator()() {
-
-    try {
-
-      return true;
-    } catch (std::exception &_ex) {
-      std::cerr << "ERRO cout_log_creation: '" << _ex.what() << "'"
-                << std::endl;
-    }
-    return false;
-  }
-
-  static std::string desc() { return "'cout' log creation"; }
-};
-
 struct cout_log_how_to {
   bool operator()() {
     try {
 
-      logger::log::debug(__FILE__, __LINE__, "how are you doing? ", 3.14);
-      logger::log::info(__FILE__, __LINE__, "fine!! ", 'W');
-      logger::log::info(__FILE__, __LINE__, "and you?");
-      logger::log::warn(__FILE__, __LINE__, "great! got a new job!! ",
-                        6987.58f);
-      logger::log::warn(__FILE__, __LINE__, "nice!! ", 10);
+      m_log.debug(this, __FILE__, __LINE__, "how are you doing? ", 3.14);
+      m_log.info(this, __FILE__, __LINE__, "fine!! ", 'W');
+      m_log.info(this, __FILE__, __LINE__, "and you?");
+      m_log.warn(this, __FILE__, __LINE__, "great! got a new job!! ", 6987.58f);
+      m_log.warn(this, __FILE__, __LINE__, "nice!! ", 10);
       return true;
     } catch (std::exception &_ex) {
       std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"
@@ -43,6 +26,7 @@ struct cout_log_how_to {
   }
 
   static std::string desc() { return "Simple 'cout' log usage"; }
+  logger::cout<> m_log{"cout_log_how_to"};
 };
 
 struct cout_log_print_tuple {
@@ -52,7 +36,7 @@ struct cout_log_print_tuple {
     try {
       std::tuple<int16_t, float> _tuple{-3, 3.14};
 
-      logger::log::debug(__FILE__, __LINE__, "how are you doing? ", _tuple);
+      m_log.debug(this, __FILE__, __LINE__, "how are you doing? ", _tuple);
       return true;
     } catch (std::exception &_ex) {
       std::cout << "ERRO cout_log_creation: '" << _ex.what() << "'"
@@ -60,6 +44,7 @@ struct cout_log_print_tuple {
     }
     return false;
   }
+  logger::cout<> m_log{"cout_log_print_tuple"};
 };
 
 // struct cout_log_single {
@@ -188,10 +173,9 @@ struct cout_log_print_tuple {
 //};
 
 int main(int argc, char **argv) {
-  logger::log::use_cout();
-  logger::log::set_debug_level();
+  logger::set_debug_level();
   tester::test<> _tester(argc, argv);
-  run_test(_tester, cout_log_creation);
+
   run_test(_tester, cout_log_how_to);
   run_test(_tester, cout_log_print_tuple);
   //  run_test(_tester, cout_log_single);

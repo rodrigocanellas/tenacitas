@@ -6,19 +6,19 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \brief Wraps to the debug p_log function
-#define DEB(log, p_params...) log::debug(__FILE__, __LINE__, p_params)
+/// \brief Wraps to the debug log function
+#define DEB(p_log, p_params...) p_log.debug(this, __func__, __LINE__, p_params)
 
 /// \brief Wraps to the info log function
-#define INF(log, p_params...) log::info(__FILE__, __LINE__, p_params)
+#define INF(p_log, p_params...) p_log.info(this, __func__, __LINE__, p_params)
 
 /// \brief Wraps to the warn log function
-#define WAR(log, p_params...) log::warn(__FILE__, __LINE__, p_params)
+#define WAR(p_log, p_params...) p_log.warn(this, __func__, __LINE__, p_params)
 
 /// \brief Wraps to the error log function
-#define ERR(log, p_params...) log::error(__FILE__, __LINE__, p_params)
+#define ERR(p_log, p_params...) p_log.error(this, __func__, __LINE__, p_params)
 
 /// \brief Wraps to the fatal log function
-#define FAT(log, p_params...) log::fatal(__FILE__, __LINE__, p_params)
+#define FAT(p_log, p_params...) p_log.fatal(this, __func__, __LINE__, p_params)
 
 #endif

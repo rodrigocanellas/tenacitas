@@ -16,10 +16,10 @@ namespace concurrent {
 
 struct msg_a {
   typedef int32_t number;
-  explicit msg_a(int32_t p_value = std::numeric_limits<int32_t>::max())
+  explicit msg_a(number p_value = std::numeric_limits<int32_t>::min())
       : m_counter(p_value) {}
   friend std::ostream &operator<<(std::ostream &p_out, const msg_a &p_msg) {
-    p_out << "{" << p_msg.m_counter << "}";
+    p_out << number::format(p_msg.m_counter);
     return p_out;
   }
   inline int32_t value() const { return m_counter; }
@@ -27,7 +27,7 @@ struct msg_a {
 
 private:
 //  static const char *m_s;
-  int32_t m_counter = 0;
+  int32_t m_counter {std::numeric_limits<int32_t>::min()};
 //  uint64_t m_timestamp = static_cast<uint64_t>(
 //      std::chrono::duration_cast<std::chrono::milliseconds>(
 //          std::chrono::high_resolution_clock::now().time_since_epoch())
