@@ -96,11 +96,11 @@ struct executer_helper_t {
   /// \param p_params... possible parameters required by \p p_function
   ///
   /// \return std::optional<t_type> with value if not timeout, {} otherwise
-  static result call(std::function<t_type(t_params &&...)> p_work,
-                     t_time p_timeout, t_params &&... p_params) {
+  static result call(std::function<t_type(t_params...)> p_work,
+                     t_time p_timeout, t_params... p_params) {
 
-    std::packaged_task<type(t_params && ...)> _task(
-        [p_work](t_params &&... p_params) -> t_type {
+    std::packaged_task<type(t_params...)> _task(
+        [p_work](t_params... p_params) -> t_type {
           return p_work(std::forward<t_params>(p_params)...);
         });
     auto _future = _task.get_future();
@@ -379,13 +379,12 @@ struct executer_helper_t {
 /// \endcode
 template <typename t_time, typename t_function, typename... t_params>
 inline typename internal::executer_helper_t<
-    std::invoke_result_t<t_function, t_params &&...>, t_time,
-    t_params &&...>::result
-execute(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
+    std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
+execute(t_time p_timeout, t_function p_function, t_params... p_params) {
 
-  typedef std::invoke_result_t<t_function, t_params &&...> type;
+  typedef std::invoke_result_t<t_function, t_params...> type;
 
-  typedef internal::executer_helper_t<type, t_time, t_params &&...>
+  typedef internal::executer_helper_t<type, t_time, t_params...>
       executer_helper;
 
   return executer_helper::call(p_function, p_timeout,
@@ -394,9 +393,6 @@ execute(t_time p_timeout, t_function &&p_function, t_params &&... p_params) {
 
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
-
-///// \brief Used to define if a loop will use a breaker function or not
-// enum class use_breaker : char { yes = 'y', no = 'n' };
 
 uint64_t uuid() { return calendar::now<>::microsecs_num(); }
 
