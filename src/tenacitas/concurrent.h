@@ -1003,7 +1003,7 @@ struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
       : queue_t<t_log, t_data>(p_size) {
     m_root = create_node();
     node_ptr _p = m_root;
-    for (size_t _i = 1; _i < this->m_size; ++_i) {
+    for (size_t _i = 1; _i < p_size; ++_i) {
       _p = insert(_p, data());
     }
 
@@ -1204,6 +1204,23 @@ struct queue_traits<t_log, t_data, queue_type::CIRCULAR_UNLIMITED_SIZE> {
   typedef circular_unlimited_size_queue_t<t_log, t_data> type;
 };
 
+template <typename t_log, typename t_data, typename t_size>
+std::unique_ptr<queue_t<t_log, t_data>> queue_factory(queue_type p_queue_type, t_size p_size) {
+    std::unique_ptr<queue_t<t_log, t_data>> _res;
+    switch (p_queue_type) {
+    case queue_type::CIRCULAR_FIXED_SIZE:
+        typedef circular_fixed_size_queue_t<t_log, t_data> queue_1 ;
+        _res = std::unique_ptr<queue_t<t_log, t_data>> (new queue_1(p_size));
+        break;
+    case queue_type::CIRCULAR_UNLIMITED_SIZE:
+        typedef circular_unlimited_size_queue_t<t_log, t_data> queue_2 ;
+        queue_2 * _q = new queue_2(p_size);
+        _res = std::unique_ptr<queue_t<t_log, t_data>> (_q);
+        break;
+    }
+    return _res;
+}
+
 /// \brief worker implements the producer/consumer pattern
 ///
 /// A worker uses some type of queue to cache data in order a bunch of
@@ -1238,8 +1255,8 @@ public:
   ///
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
   template <typename t_size>
-  worker_pool_t(const id &p_id, t_size p_queue_size)
-      : m_id(p_id), m_queue(p_queue_size) {}
+  worker_pool_t(const id &p_id, size_t p_queue_size, queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE)
+      : m_id(p_id), m_queue(queue_factory<t_log, t_data, t_size>(p_queue_type, p_queue_size)) {}
 
   /// \brief Constructor
   ///
@@ -1247,12 +1264,10 @@ public:
   /// identifier
   ///
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
-  template <queue_type queue_type_t, typename t_size>
-  worker_pool_t(t_size p_queue_size)
+  template <typename t_size>
+  worker_pool_t(t_size p_queue_size, queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE)
       : m_id(std::to_string(uuid())),
-        m_queue(
-            std::make_unique<queue_traits<t_log, t_data, queue_type_t>::type>(
-                p_queue_size)) {}
+        m_queue(queue_factory<t_log, t_data, t_size>(p_queue_type, p_queue_size)) {}
 
   /// \brief copy constructor not allowed
   worker_pool_t(const worker_pool_t &) = delete;
@@ -1277,7 +1292,7 @@ public:
         while (!m_queue->empty()) {
           m_data_produced.notify_all();
           std::unique_lock<std::mutex> _lock(m_mutex_data);
-          m_data_consumed.wait(_lock, [this] { return true; });
+          m_data_consumed.wait(_lock, [] { return true; });
         }
         stop();
       }

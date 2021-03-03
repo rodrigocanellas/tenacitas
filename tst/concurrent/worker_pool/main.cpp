@@ -25,8 +25,7 @@ struct worker_pool_000 {
 
   bool operator()() {
 
-    worker_pool _msg_queue<concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE,
-                           uint16_t>(10);
+    worker_pool _msg_queue(10);
 
     on_timeout _on_timeout = [this](data &&p_data) -> void {
       WAR(m_log, "timeout handlind ", p_data);
@@ -63,7 +62,7 @@ struct worker_pool_001 {
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
   typedef concurrent::worker_pool_t<
-      log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
+      log, msg>
       worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
@@ -83,7 +82,7 @@ struct worker_pool_001 {
     msg _msg(0);
     {
 
-      worker_pool _msg_queue(10);
+      worker_pool _msg_queue(10,concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
 
       on_timeout _on_timeout = [this](msg &&p_msg) -> void {
         WAR(m_log, "timeout handling ", p_msg);
@@ -176,7 +175,7 @@ struct worker_pool_002 {
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
   typedef concurrent::worker_pool_t<
-      log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
+      log, msg>
       worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
@@ -292,7 +291,7 @@ struct worker_pool_003 {
   typedef concurrent::msg_a msg;
 
   typedef concurrent::worker_pool_t<
-      log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
+      log, msg>
       worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
@@ -308,7 +307,7 @@ struct worker_pool_003 {
     msg::number _last_added{0};
 
     {
-      worker_pool _msg_queue{40};
+      worker_pool _msg_queue{40, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
 
       _msg_queue.add(
           [this](msg &&p_msg) -> void { m_consumer(std::move(p_msg)); }, 1s,
@@ -357,7 +356,7 @@ struct worker_pool_004 {
   typedef concurrent::msg_a msg;
 
   typedef concurrent::worker_pool_t<
-      log, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, msg>
+      log, msg>
       worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
@@ -378,7 +377,7 @@ struct worker_pool_004 {
     _consumers.push_back({"c5"});
 
     {
-      worker_pool _msg_queue{40};
+      worker_pool _msg_queue{40, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
 
       on_timeout _on_timeout = [this, &_msg_queue](msg &&p_msg) -> void {
         WAR(m_log, "timeout hadling ", p_msg);
@@ -455,7 +454,7 @@ struct worker_pool_005 {
   typedef concurrent::msg_a msg;
 
   typedef concurrent::worker_pool_t<
-      log, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, msg>
+      log, msg>
       worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
