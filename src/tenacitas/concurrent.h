@@ -836,6 +836,30 @@ enum class queue_type : uint8_t {
   CIRCULAR_UNLIMITED_SIZE = 1
 };
 
+template <typename t_log, typename t_data> struct queue_t {
+
+  queue_t(size_t p_size) : m_size(p_size) {}
+
+  virtual ~queue_t() {}
+
+  queue_t() = delete;
+  queue_t(const queue_t &) = default;
+  queue_t(queue_t &&) = default;
+  queue_t &operator=(const queue_t &) = default;
+  queue_t &operator=(queue_t &&) = default;
+
+  virtual void add(const t_data &) = 0;
+  virtual void add(t_data &&) = 0;
+  virtual std::optional<t_data> get() = 0;
+  virtual void traverse(std ::function<void(const t_data &)>) const = 0;
+  virtual bool full() const = 0;
+  virtual bool empty() const = 0;
+  virtual size_t capacity() const = 0;
+  virtual size_t occupied() const = 0;
+
+protected:
+  size_t m_size{0};
+};
 /// \brief Implements a circular queue with fixed size
 ///
 /// Unlike the usual implementation, if the buffer is full, the insertion of an
@@ -846,7 +870,8 @@ enum class queue_type : uint8_t {
 /// \tparam t_data defines the types of the data contained in the buffer
 ///
 ///
-template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
+template <typename t_log, typename t_data>
+struct circular_fixed_size_queue_t : public queue_t<t_log, t_data> {
 
   /// \brief Alias for the data
   typedef t_data data;
@@ -858,15 +883,15 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   ///
   /// \param p_size the number of slots in the queue
   circular_fixed_size_queue_t(size_t p_size)
-      : m_size(p_size), m_values(p_size) {}
+      : queue_t<t_log, t_data>(p_size), m_values(p_size) {}
 
   /// \brief Adds a t_data object to the queue
-  void add(const t_data &p_data) {
+  void add(const t_data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = p_data;
       ++m_amount;
-      if (m_write == m_size) {
+      if (m_write == this->m_size) {
         m_write = 0;
       }
     } else {
@@ -875,12 +900,12 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(data &&p_data) {
+  void add(data &&p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       m_values[m_write++] = std::move(p_data);
       ++m_amount;
-      if (m_write == m_size) {
+      if (m_write == this->m_size) {
         m_write = 0;
       }
     } else {
@@ -889,7 +914,7 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   }
 
   /// \brief Gets the first t_data obect added to the queue, if there is one
-  std::optional<data> get() {
+  std::optional<data> get() override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       DEB(m_log, "could not get because it is empty");
@@ -897,7 +922,7 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
     }
     data _data(m_values[m_read++]);
     --m_amount;
-    if (m_read == m_size) {
+    if (m_read == this->m_size) {
       m_read = 0;
     }
     return {_data};
@@ -906,11 +931,11 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   /// \brief Traverses the queue
   ///
   /// \param p_function will be called for every data in the queue
-  void traverse(std ::function<void(const data &)> p_function) const {
+  void traverse(std ::function<void(const data &)> p_function) const override {
     size _i = m_read;
     size _counter = 0;
     while (_counter < m_amount) {
-      if (_i == m_size) {
+      if (_i == this->m_size) {
         _i = 0;
       }
       p_function(m_values[_i++]);
@@ -919,16 +944,16 @@ template <typename t_log, typename t_data> struct circular_fixed_size_queue_t {
   }
 
   /// \brief Informs if the queue is full
-  inline bool full() const { return m_amount == m_size; }
+  inline bool full() const override { return m_amount == this->m_size; }
 
   /// \brief Informs if the queue is empty
-  inline bool empty() const { return m_amount == 0; }
+  inline bool empty() const override { return m_amount == 0; }
 
   /// \brief Informs the total capacity of the queue
-  inline size_t capacity() const { return m_size; }
+  inline size_t capacity() const override { return this->m_size; }
 
   /// \brief Informs the current number of slots occupied in the queue
-  inline size_t occupied() const { return m_amount; }
+  inline size_t occupied() const override { return m_amount; }
 
 private:
   /// \brief Queue implemented as a vector
@@ -938,9 +963,6 @@ private:
   typedef typename values::size_type size;
 
 private:
-  /// \brief Size of the buffer
-  size m_size = 0;
-
   /// \brief Vector with the values
   values m_values;
 
@@ -966,7 +988,7 @@ private:
 ///
 /// \tparam t_data defines the types of the data contained in the buffer
 template <typename t_log, typename t_data>
-struct circular_unlimited_size_queue_t {
+struct circular_unlimited_size_queue_t : public queue_t<t_log, t_data> {
 
   /// \brief Alias for the data
   typedef t_data data;
@@ -977,13 +999,14 @@ struct circular_unlimited_size_queue_t {
   /// \brief Constructor
   ///
   /// \param p_size the number of initial slots in the queue
-  circular_unlimited_size_queue_t(size_t p_size) {
+  circular_unlimited_size_queue_t(size_t p_size)
+      : queue_t<t_log, t_data>(p_size) {
     m_root = create_node();
     node_ptr _p = m_root;
-    for (size_t _i = 1; _i < p_size; ++_i) {
+    for (size_t _i = 1; _i < this->m_size; ++_i) {
       _p = insert(_p, data());
     }
-    m_size = p_size;
+
     m_write = m_root;
     m_read = m_root;
   }
@@ -991,7 +1014,7 @@ struct circular_unlimited_size_queue_t {
   /// \brief Traverses the queue
   ///
   /// \param p_function will be called for every data in the queue
-  void traverse(std::function<void(const t_data &)> p_visitor) const {
+  void traverse(std::function<void(const t_data &)> p_visitor) const override {
     node_ptr _p = m_root;
     while (_p && (_p->m_next != m_root)) {
       p_visitor(_p->m_data);
@@ -1001,7 +1024,7 @@ struct circular_unlimited_size_queue_t {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(data &&p_data) {
+  void add(data &&p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       DEB(m_log, "not adding more slots");
@@ -1015,7 +1038,7 @@ struct circular_unlimited_size_queue_t {
   }
 
   /// \brief Adds a t_data object to the queue
-  void add(const data &p_data) {
+  void add(const data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
       DEB(m_log, "not adding more slots");
@@ -1029,7 +1052,7 @@ struct circular_unlimited_size_queue_t {
   }
 
   /// \brief Gets the first t_data obect added to the queue, if there is one
-  std::optional<data> get() {
+  std::optional<data> get() override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (empty()) {
       DEB(m_log, "empty");
@@ -1043,16 +1066,16 @@ struct circular_unlimited_size_queue_t {
   }
 
   /// \brief Informs if the queue is full
-  inline bool full() const { return m_amount == m_size; }
+  inline bool full() const override { return m_amount == this->m_size; }
 
   /// \brief Informs if the queue is empty
-  inline bool empty() const { return m_amount == 0; }
+  inline bool empty() const override { return m_amount == 0; }
 
   /// \brief Informs the total capacity of the queue
-  inline size_t capacity() const { return m_size; }
+  inline size_t capacity() const override { return this->m_size; }
 
   /// \brief Informs the current number of slots occupied in the queue
-  inline size_t occupied() const { return m_amount; }
+  inline size_t occupied() const override { return m_amount; }
 
 private:
   /// \brief Node of the linked list used to implement the queue
@@ -1093,7 +1116,7 @@ private:
 
     p_node->m_next->m_prev = _new_node;
     p_node->m_next = _new_node;
-    ++m_size;
+    ++this->m_size;
     return _new_node;
   }
 
@@ -1112,7 +1135,7 @@ private:
 
     p_node->m_next->m_prev = _new_node;
     p_node->m_next = _new_node;
-    ++m_size;
+    ++this->m_size;
     return _new_node;
   }
 
@@ -1160,9 +1183,6 @@ private:
   /// done
   node_ptr m_read;
 
-  /// \brief Size of the queue
-  size_t m_size;
-
   /// \brief Amount of nodes actually used
   size_t m_amount{0};
 
@@ -1192,14 +1212,13 @@ struct queue_traits<t_log, t_data, queue_type::CIRCULAR_UNLIMITED_SIZE> {
 /// \tparam t_log
 ///
 /// \param t_data type of data to be processed
-template <typename t_log, queue_type p_queue_type, typename t_data>
-class message_queue_t {
+template <typename t_log, typename t_data> class worker_pool_t {
 public:
   /// \brief Alias for the data
   typedef t_data data;
 
   /// \brief Alias for a generic queue type, used to order data to be processed
-  typedef typename queue_traits<t_log, t_data, p_queue_type>::type queue;
+  typedef queue_t<t_log, t_data> queue;
 
   /// \brief Type of operation that a worker will execute
   typedef std::function<void(data &&)> operation;
@@ -1219,7 +1238,7 @@ public:
   ///
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
   template <typename t_size>
-  message_queue_t(const id &p_id, t_size p_queue_size)
+  worker_pool_t(const id &p_id, t_size p_queue_size)
       : m_id(p_id), m_queue(p_queue_size) {}
 
   /// \brief Constructor
@@ -1228,31 +1247,34 @@ public:
   /// identifier
   ///
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
-  template <typename t_size>
-  message_queue_t(t_size p_queue_size)
-      : m_id(std::to_string(uuid())), m_queue(p_queue_size) {}
+  template <queue_type queue_type_t, typename t_size>
+  worker_pool_t(t_size p_queue_size)
+      : m_id(std::to_string(uuid())),
+        m_queue(
+            std::make_unique<queue_traits<t_log, t_data, queue_type_t>::type>(
+                p_queue_size)) {}
 
   /// \brief copy constructor not allowed
-  message_queue_t(const message_queue_t &) = delete;
+  worker_pool_t(const worker_pool_t &) = delete;
 
   /// \brief move constructor not allowed
-  message_queue_t(message_queue_t &&) = delete;
+  worker_pool_t(worker_pool_t &&) = delete;
 
   /// \brief copy assignemnt not allowed
-  message_queue_t &operator=(const message_queue_t &) = delete;
+  worker_pool_t &operator=(const worker_pool_t &) = delete;
 
   /// \brief move assignemnt not allowed
-  message_queue_t &operator=(message_queue_t &&p_pc) = delete;
+  worker_pool_t &operator=(worker_pool_t &&p_pc) = delete;
 
   /// \brief destructor
   ///
   /// If 'stop' was not called, empties the queue, waiting for all the data to
   /// be processed
-  ~message_queue_t() {
+  ~worker_pool_t() {
     DEB(m_log, "destructor");
     if (!all_loops_stopped()) {
       if (!m_stopped) {
-        while (!m_queue.empty()) {
+        while (!m_queue->empty()) {
           m_data_produced.notify_all();
           std::unique_lock<std::mutex> _lock(m_mutex_data);
           m_data_consumed.wait(_lock, [this] { return true; });
@@ -1266,14 +1288,14 @@ public:
   /// \brief Equal-to operator
   ///
   /// a worker is equal to another if theirs ids are equals
-  bool operator==(const message_queue_t &p_operation) const {
+  bool operator==(const worker_pool_t &p_operation) const {
     return m_id == p_operation.m_id;
   }
 
   /// \brief Not-equal-to operator
   ///
   /// a worker is equal to another if theirs ids are not equals
-  bool operator!=(const message_queue_t &p_operation) const {
+  bool operator!=(const worker_pool_t &p_operation) const {
     return m_id != p_operation.m_id;
   }
 
@@ -1283,7 +1305,7 @@ public:
   /// this makes worker with higher priority numbers to become before workers
   /// with lower priority, i.e., a worker with priority 5 comes before a worker
   /// with priority 2
-  bool operator<(const message_queue_t &p_operation) const {
+  bool operator<(const worker_pool_t &p_operation) const {
     return m_priority > p_operation.m_priority;
   }
 
@@ -1293,7 +1315,7 @@ public:
   /// this makes worker with higher priority numbers to become before workers
   /// with lower priority, i.e., a worker with priority 5 comes before a worker
   /// with priority 2
-  bool operator>(const message_queue_t &p_operation) const {
+  bool operator>(const worker_pool_t &p_operation) const {
     return m_priority < p_operation.m_priority;
   }
 
@@ -1323,14 +1345,14 @@ public:
     DEB(m_log, "waiting for room to add ", _data);
     {
       std::unique_lock<std::mutex> _lock(m_mutex_data);
-      m_data_consumed.wait(_lock,
-                           [this]() { return (!m_queue.full() || m_stopped); });
+      m_data_consumed.wait(
+          _lock, [this]() { return (!m_queue->full() || m_stopped); });
 
       if (m_stopped) {
         DEB(m_log, "stopped when about to add ", _data);
       } else {
         DEB(m_log, "adding ", _data);
-        m_queue.add(_data);
+        m_queue->add(_data);
         ++m_queued_data;
       }
     }
@@ -1361,14 +1383,14 @@ public:
     DEB(m_log, "waiting for room to add ", _data);
     {
       std::unique_lock<std::mutex> _lock(m_mutex_data);
-      m_data_consumed.wait(_lock,
-                           [this]() { return (!m_queue.full() || m_stopped); });
+      m_data_consumed.wait(
+          _lock, [this]() { return (!m_queue->full() || m_stopped); });
 
       if (m_stopped) {
         DEB(m_log, "stopped when about to add ", _data);
       } else {
         DEB(m_log, "adding ", _data);
-        m_queue.add(std::move(_data));
+        m_queue->add(std::move(_data));
         ++m_queued_data;
       }
     }
@@ -1483,10 +1505,10 @@ public:
   }
 
   /// \brief retrieves the capacity if the queue
-  inline auto capacity() const { return m_queue.capacity(); }
+  inline auto capacity() const { return m_queue->capacity(); }
 
   /// \brief the amount of slots occupied in the \p queue
-  inline auto occupied() const { return m_queue.occupied(); }
+  inline auto occupied() const { return m_queue->occupied(); }
 
 private:
   /// \brief async_loop_t is a \p async_loop where a \p operation will be
@@ -1495,6 +1517,8 @@ private:
 
   /// \brief async_loops_t is the collection of \p async_loop pointers
   typedef typename std::vector<async_loop> asyncs_loops;
+
+  typedef std::unique_ptr<queue> queue_ptr;
 
 private:
   /// \brief provider provides data, if available, to a \p operation
@@ -1514,7 +1538,7 @@ private:
         DEB(m_log, "stopped");
         return true;
       }
-      if (!m_queue.empty()) {
+      if (!m_queue->empty()) {
         DEB(m_log, "not empty");
         return true;
       }
@@ -1533,7 +1557,7 @@ private:
 
     DEB(m_log, "there is data");
 
-    std::optional<data> _maybe = m_queue.get();
+    std::optional<data> _maybe = m_queue->get();
     if (_maybe) {
       data _data(std::move(*_maybe));
 
@@ -1564,7 +1588,7 @@ private:
   priority m_priority{0};
 
   /// \brief queue where data will be inserted for the operation to compete for
-  queue m_queue;
+  queue_ptr m_queue;
 
   /// \brief controls access to the \p m_loops while inserting a new \p
   /// operation
@@ -1594,7 +1618,31 @@ private:
   /// \brief amount of queued data
   size_t m_queued_data{0};
 
-  t_log m_log{"message_queue"};
+  t_log m_log{"worker_pool"};
+};
+
+template <typename t_log, typename t_data> struct messenger_t {
+
+  /// \brief Type for the identifier of the worker pool
+  typedef std::string pool_id;
+
+  /// \brief Type of operation that a worker will execute
+  typedef std::function<void(t_data &&)> worker;
+
+  typedef uint8_t priority;
+
+  static void add_worker_pool(pool_id &&, priority = 0,
+                              queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE);
+
+  static pool_id add_worker_pool(queue_type, priority = 0);
+
+  static void set_priority(const pool_id &, priority);
+
+  static void publish(const t_data &);
+
+  static void subscribe(const pool_id &, worker);
+
+  static void subscribe(const pool_id &, std::function<worker()>);
 };
 
 } // namespace concurrent

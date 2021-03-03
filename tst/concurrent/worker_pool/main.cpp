@@ -13,11 +13,9 @@
 using namespace tenacitas;
 using namespace std::chrono_literals;
 
-struct message_queue_000 {
+struct worker_pool_000 {
   typedef int16_t data;
-  typedef concurrent::message_queue_t<
-      logger::cerr<>, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, data>
-      message_queue;
+  typedef concurrent::worker_pool_t<logger::cerr<>, data> worker_pool;
   typedef std::function<void(data &&)> on_timeout;
 
   static std::string desc() {
@@ -27,7 +25,8 @@ struct message_queue_000 {
 
   bool operator()() {
 
-    message_queue _msg_queue(10);
+    worker_pool _msg_queue<concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE,
+                           uint16_t>(10);
 
     on_timeout _on_timeout = [this](data &&p_data) -> void {
       WAR(m_log, "timeout handlind ", p_data);
@@ -55,17 +54,17 @@ private:
   private:
     logger::cerr<> m_log{"consumer"};
   };
-  logger::cerr<> m_log{"message_queue_000"};
+  logger::cerr<> m_log{"worker_pool_000"};
 };
 
-struct message_queue_001 {
+struct worker_pool_001 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
-  typedef concurrent::message_queue_t<
+  typedef concurrent::worker_pool_t<
       log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
-      message_queue;
+      worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -84,7 +83,7 @@ struct message_queue_001 {
     msg _msg(0);
     {
 
-      message_queue _msg_queue(10);
+      worker_pool _msg_queue(10);
 
       on_timeout _on_timeout = [this](msg &&p_msg) -> void {
         WAR(m_log, "timeout handling ", p_msg);
@@ -127,7 +126,7 @@ struct message_queue_001 {
 
 private:
   struct producer {
-    producer(message_queue *p_msg_queue, msg *p_msg)
+    producer(worker_pool *p_msg_queue, msg *p_msg)
         : m_msg_queue(p_msg_queue), m_msg(p_msg) {}
 
     void operator()() {
@@ -146,7 +145,7 @@ private:
     const uint16_t m_num_msgs = 50;
 
   private:
-    message_queue *m_msg_queue;
+    worker_pool *m_msg_queue;
     msg *m_msg;
     log m_log{"producer"};
   };
@@ -168,17 +167,17 @@ private:
     msg m_msg;
     log m_log{"consumer"};
   };
-  log m_log{"message_queue_001"};
+  log m_log{"worker_pool_001"};
 };
 
-struct message_queue_002 {
+struct worker_pool_002 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
-  typedef concurrent::message_queue_t<
+  typedef concurrent::worker_pool_t<
       log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
-      message_queue;
+      worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -206,7 +205,7 @@ struct message_queue_002 {
     consumer _consumer;
 
     {
-      message_queue _msg_queue(40);
+      worker_pool _msg_queue(40);
 
       on_timeout _on_timeout = [this](msg &&p_msg) -> void {
         WAR(m_log, "timeout handling ", p_msg);
@@ -270,7 +269,7 @@ struct message_queue_002 {
   };
 
   struct producer {
-    producer(message_queue *p_msg_queue, msg *p_data)
+    producer(worker_pool *p_msg_queue, msg *p_data)
         : m_msg_queue(p_msg_queue), m_msg(p_data) {}
 
     void operator()() {
@@ -281,20 +280,20 @@ struct message_queue_002 {
     }
 
   private:
-    message_queue *m_msg_queue;
+    worker_pool *m_msg_queue;
     msg *m_msg;
     log m_log{"producer"};
   };
-  log m_log{"message_queue_001"};
+  log m_log{"worker_pool_001"};
 };
 
-struct message_queue_003 {
+struct worker_pool_003 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::message_queue_t<
+  typedef concurrent::worker_pool_t<
       log, concurrent::queue_type::CIRCULAR_FIXED_SIZE, msg>
-      message_queue;
+      worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -309,7 +308,7 @@ struct message_queue_003 {
     msg::number _last_added{0};
 
     {
-      message_queue _msg_queue{40};
+      worker_pool _msg_queue{40};
 
       _msg_queue.add(
           [this](msg &&p_msg) -> void { m_consumer(std::move(p_msg)); }, 1s,
@@ -350,16 +349,16 @@ private:
 
 private:
   consumer m_consumer;
-  log m_log{"message_queue_003"};
+  log m_log{"worker_pool_003"};
 };
 
-struct message_queue_004 {
+struct worker_pool_004 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::message_queue_t<
+  typedef concurrent::worker_pool_t<
       log, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, msg>
-      message_queue;
+      worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -379,7 +378,7 @@ struct message_queue_004 {
     _consumers.push_back({"c5"});
 
     {
-      message_queue _msg_queue{40};
+      worker_pool _msg_queue{40};
 
       on_timeout _on_timeout = [this, &_msg_queue](msg &&p_msg) -> void {
         WAR(m_log, "timeout hadling ", p_msg);
@@ -448,23 +447,27 @@ private:
     msg::number m_num{0};
     log m_log{"consumer"};
   };
-  log m_log{"message_queue_004"};
+  log m_log{"worker_pool_004"};
 };
 
-struct message_queue_005 {
+struct worker_pool_005 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::message_queue_t<
+  typedef concurrent::worker_pool_t<
       log, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE, msg>
-      message_queue;
+      worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
     std::stringstream _stream;
-    _stream << "Produces 3000 messages, and waits for all to be consumed by 5 "
-            << "consumers.\n"
-            << "From 10 to 10 messages, every consumer will cause a timeout";
+    _stream << "Produces 50 messages, and waits for all to be consumed by "
+            << "5 consumers.\n"
+            << "From 8 to 8 messages, every consumer will cause a timeout, "
+            << "the message will be added again to the pool, and will "
+            << "eventually be handled, may be by another worker.\n"
+            << "As a consequence, they will appear in the log in different a "
+            << "position from the sequencial.";
 
     return _stream.str();
   }
@@ -484,7 +487,7 @@ struct message_queue_005 {
 
     uint16_t _num_timeouts{0};
     {
-      message_queue _msg_queue{40};
+      worker_pool _msg_queue{40};
 
       on_timeout _on_timeout = [this, &_msg_queue,
                                 &_num_timeouts](msg &&p_msg) -> void {
@@ -501,7 +504,7 @@ struct message_queue_005 {
 
       _msg_queue.start();
 
-      for (uint16_t _i = 0; _i < 5000; ++_i) {
+      for (uint16_t _i = 0; _i < 50; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
         _msg_queue.add(_msg);
@@ -590,16 +593,16 @@ private:
     std::string m_id;
     logger::cerr<> m_log{"timeout"};
   };
-  log m_log{"message_queue_005"};
+  log m_log{"worker_pool_005"};
 };
 
 int main(int argc, char **argv) {
   logger::set_debug_level();
   tester::test<> _test(argc, argv);
-  run_test(_test, message_queue_000);
-  run_test(_test, message_queue_001);
-  run_test(_test, message_queue_002);
-  run_test(_test, message_queue_003);
-  run_test(_test, message_queue_004);
-  run_test(_test, message_queue_005);
+  run_test(_test, worker_pool_000);
+  run_test(_test, worker_pool_001);
+  run_test(_test, worker_pool_002);
+  run_test(_test, worker_pool_003);
+  run_test(_test, worker_pool_004);
+  run_test(_test, worker_pool_005);
 }
