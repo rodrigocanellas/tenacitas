@@ -12,6 +12,7 @@
 #include <future>
 #include <iostream>
 #include <list>
+#include <map>
 #include <mutex>
 #include <optional>
 #include <thread>
@@ -1205,20 +1206,21 @@ struct queue_traits<t_log, t_data, queue_type::CIRCULAR_UNLIMITED_SIZE> {
 };
 
 template <typename t_log, typename t_data, typename t_size>
-std::unique_ptr<queue_t<t_log, t_data>> queue_factory(queue_type p_queue_type, t_size p_size) {
-    std::unique_ptr<queue_t<t_log, t_data>> _res;
-    switch (p_queue_type) {
-    case queue_type::CIRCULAR_FIXED_SIZE:
-        typedef circular_fixed_size_queue_t<t_log, t_data> queue_1 ;
-        _res = std::unique_ptr<queue_t<t_log, t_data>> (new queue_1(p_size));
-        break;
-    case queue_type::CIRCULAR_UNLIMITED_SIZE:
-        typedef circular_unlimited_size_queue_t<t_log, t_data> queue_2 ;
-        queue_2 * _q = new queue_2(p_size);
-        _res = std::unique_ptr<queue_t<t_log, t_data>> (_q);
-        break;
-    }
-    return _res;
+std::unique_ptr<queue_t<t_log, t_data>> queue_factory(queue_type p_queue_type,
+                                                      t_size p_size) {
+  std::unique_ptr<queue_t<t_log, t_data>> _res;
+  switch (p_queue_type) {
+  case queue_type::CIRCULAR_FIXED_SIZE:
+    typedef circular_fixed_size_queue_t<t_log, t_data> queue_1;
+    _res = std::unique_ptr<queue_t<t_log, t_data>>(new queue_1(p_size));
+    break;
+  case queue_type::CIRCULAR_UNLIMITED_SIZE:
+    typedef circular_unlimited_size_queue_t<t_log, t_data> queue_2;
+    queue_2 *_q = new queue_2(p_size);
+    _res = std::unique_ptr<queue_t<t_log, t_data>>(_q);
+    break;
+  }
+  return _res;
 }
 
 /// \brief worker implements the producer/consumer pattern
@@ -1254,20 +1256,13 @@ public:
   /// \param p_id identifier of the worker
   ///
   /// \param p_queue_ptr pointer to the queue used to cache data to be processed
-  template <typename t_size>
-  worker_pool_t(const id &p_id, size_t p_queue_size, queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE)
-      : m_id(p_id), m_queue(queue_factory<t_log, t_data, t_size>(p_queue_type, p_queue_size)) {}
-
-  /// \brief Constructor
-  ///
-  /// In this constructor, which is epoch in microseconds is set as the
-  /// identifier
-  ///
-  /// \param p_queue_ptr pointer to the queue used to cache data to be processed
-  template <typename t_size>
-  worker_pool_t(t_size p_queue_size, queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE)
-      : m_id(std::to_string(uuid())),
-        m_queue(queue_factory<t_log, t_data, t_size>(p_queue_type, p_queue_size)) {}
+  template <typename t_size, typename t_time>
+  worker_pool_t(t_size p_queue_size, t_time p_timeout, on_timeout p_on_timeout,
+                queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE)
+      : m_queue(
+            queue_factory<t_log, t_data, t_size>(p_queue_type, p_queue_size)),
+        m_timeout(internal::to_timeout(p_timeout)), m_on_timeout(p_on_timeout) {
+  }
 
   /// \brief copy constructor not allowed
   worker_pool_t(const worker_pool_t &) = delete;
@@ -1299,46 +1294,6 @@ public:
     }
     DEB(m_log, "leaving destructor");
   }
-
-  /// \brief Equal-to operator
-  ///
-  /// a worker is equal to another if theirs ids are equals
-  bool operator==(const worker_pool_t &p_operation) const {
-    return m_id == p_operation.m_id;
-  }
-
-  /// \brief Not-equal-to operator
-  ///
-  /// a worker is equal to another if theirs ids are not equals
-  bool operator!=(const worker_pool_t &p_operation) const {
-    return m_id != p_operation.m_id;
-  }
-
-  /// \brief Less-than operator
-  ///
-  /// a worker is less than another if its priority is *higher* than the other;
-  /// this makes worker with higher priority numbers to become before workers
-  /// with lower priority, i.e., a worker with priority 5 comes before a worker
-  /// with priority 2
-  bool operator<(const worker_pool_t &p_operation) const {
-    return m_priority > p_operation.m_priority;
-  }
-
-  /// \brief Greater-than operator
-  ///
-  /// a worker is less than another if its priority is *lower* than the other;
-  /// this makes worker with higher priority numbers to become before workers
-  /// with lower priority, i.e., a worker with priority 5 comes before a worker
-  /// with priority 2
-  bool operator>(const worker_pool_t &p_operation) const {
-    return m_priority < p_operation.m_priority;
-  }
-
-  /// \brief Defines the priority for this worker
-  void set_priority(priority p_priority) { m_priority = p_priority; }
-
-  /// \brief Defines the priority for this worker
-  priority get_priority() { return m_priority; }
 
   /// \brief adds data to be passed to an operation
   ///
@@ -1429,14 +1384,13 @@ public:
   /// \brief common function called to add a \p operation
   ///
   /// \param p_loop the new \p operation to be added
-  template <typename t_time>
-  void add(operation p_operation, t_time p_timeout, on_timeout p_on_timeout) {
+  void add(operation p_operation) {
     auto _provider = [this]() -> std::optional<std::tuple<data>> {
       return this->provider();
     };
     std::lock_guard<std::mutex> _lock(m_add_work);
 
-    m_loops.push_back({p_operation, p_timeout, p_on_timeout, _provider});
+    m_loops.push_back({p_operation, m_timeout, m_on_timeout, _provider});
   }
 
   /// \brief adds a bunch of \p operation
@@ -1452,8 +1406,8 @@ public:
   /// \param p_on_timeout function to be called when the operation times
   /// out
   template <typename t_time>
-  void add(uint16_t p_num_works, std::function<operation()> p_operation_factory,
-           t_time p_timeout, on_timeout p_on_timeout) {
+  void add(uint16_t p_num_works,
+           std::function<operation()> p_operation_factory) {
 
     std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
@@ -1463,7 +1417,7 @@ public:
 
     for (auto _i = 0; _i < p_num_works; ++_i) {
 
-      add(p_operation_factory(), p_timeout, p_on_timeout);
+      add(p_operation_factory(), m_timeout, m_on_timeout);
     }
   }
 
@@ -1596,14 +1550,12 @@ private:
   }
 
 private:
-  /// \brief identifier of the worker
-  id m_id;
-
-  /// \brief priority of this worker
-  priority m_priority{0};
-
   /// \brief queue where data will be inserted for the operation to compete for
   queue_ptr m_queue;
+
+  timeout m_timeout;
+
+  on_timeout m_on_timeout;
 
   /// \brief controls access to the \p m_loops while inserting a new \p
   /// operation
@@ -1644,20 +1596,121 @@ template <typename t_log, typename t_data> struct messenger_t {
   /// \brief Type of operation that a worker will execute
   typedef std::function<void(t_data &&)> worker;
 
+  typedef std::function<void(t_data &&)> on_timeout;
+
   typedef uint8_t priority;
 
-  static void add_worker_pool(pool_id &&, priority = 0,
-                              queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE);
+  template <typename t_size, typename t_time>
+  static void add_worker_pool(
+      const pool_id &p_pool_id, priority p_priority, t_size p_queue_size,
+      t_time p_timeout, on_timeout p_on_timeout,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+    item _item{p_pool_id,    p_priority, p_queue_size,
+               p_queue_type, p_timeout,  p_on_timeout};
+    m_itens.insert({_item.get_id(), std::move(_item)});
+  }
 
-  static pool_id add_worker_pool(queue_type, priority = 0);
+  template <typename t_size, typename t_time>
+  static pool_id add_worker_pool(
+      priority p_priority, t_size p_queue_size, t_time p_timeout,
+      on_timeout p_on_timeout,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+    pool_id _pool_id(std::to_string(uuid()));
+    add_worker_pool(_pool_id, p_priority, p_queue_size, p_queue_type, p_timeout,
+                    p_on_timeout);
+    return _pool_id;
+  }
 
-  static void set_priority(const pool_id &, priority);
+  static void set_priority(const pool_id &p_pool_id, priority p_priority) {
+    iterator _ite = m_itens.find(p_pool_id);
+    if (_ite != m_itens.end()) {
+      _ite->second.set_priority(p_priority);
+    }
+  }
 
-  static void publish(const t_data &);
+  static void publish(const t_data &p_data) {
+    for (item &_item : m_itens) {
+      _item.add_data(p_data);
+    }
+  }
 
-  static void subscribe(const pool_id &, worker);
+  static void subscribe(const pool_id &p_pool_id, worker p_worker) {
+    iterator _ite = m_itens.find(p_pool_id);
+    if (_ite != m_itens.end()) {
+      _ite->second.add_worker(p_worker);
+    }
+  }
 
-  static void subscribe(const pool_id &, std::function<worker()>);
+  static void subscribe(const pool_id &p_pool_id, uint16_t p_num_workers,
+                        std::function<worker()> p_factory) {
+    iterator _ite = m_itens.find(p_pool_id);
+    if (_ite != m_itens.end()) {
+      _ite->second.add_worker(p_num_workers, p_factory);
+    }
+  }
+
+private:
+  typedef worker_pool_t<t_log, t_data> worker_pool;
+
+  struct item {
+
+    item() = delete;
+
+    item(const item &) = delete;
+
+    item(item &&) = default;
+
+    template <typename t_size, typename t_time>
+    item(const pool_id &p_pool_id, priority p_priority, t_size p_size,
+         queue_type p_queue_type, t_time p_timeout, on_timeout p_on_timeout)
+        : m_pool_id(p_pool_id), m_priority(p_priority),
+          m_worker_pool(p_size, p_timeout, p_on_timeout, p_queue_type) {}
+
+    item &operator=(const item &) = delete;
+
+    item &operator=(item &&) = default;
+
+    inline bool operator==(const pool_id &p_pool_id) const {
+      return m_pool_id == p_pool_id;
+    }
+
+    inline bool operator!=(const pool_id &p_pool_id) const {
+      return m_pool_id == p_pool_id;
+    }
+
+    inline bool operator<(const item &p_item) const {
+      return m_priority > p_item.m_priority;
+    }
+
+    inline const pool_id &get_id() const { return m_pool_id; }
+
+    inline priority get_priority() const { return m_priority; }
+
+    inline void set_priority(priority p_priority) { m_priority = p_priority; }
+
+    inline void add_worker(worker p_worker) { m_worker_pool.add(p_worker); }
+
+    inline void add_worker(uint16_t p_num_workers,
+                           std::function<worker()> p_factory) {
+      m_worker_pool.add(p_num_workers, p_factory);
+    }
+
+    inline void add_data(const t_data &p_data) { m_worker_pool.add(p_data); }
+
+  private:
+    pool_id m_pool_id;
+    priority m_priority;
+    worker_pool m_worker_pool;
+  };
+
+  typedef std::map<pool_id, item> itens;
+
+  typedef typename itens::iterator iterator;
+
+private:
+  static itens m_itens;
+
+  static t_log m_log{"messenger"};
 };
 
 } // namespace concurrent

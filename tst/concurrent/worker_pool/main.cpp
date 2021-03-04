@@ -16,7 +16,6 @@ using namespace std::chrono_literals;
 struct worker_pool_000 {
   typedef int16_t data;
   typedef concurrent::worker_pool_t<logger::cerr<>, data> worker_pool;
-  typedef std::function<void(data &&)> on_timeout;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -25,21 +24,21 @@ struct worker_pool_000 {
 
   bool operator()() {
 
-    worker_pool _msg_queue(10);
-
-    on_timeout _on_timeout = [this](data &&p_data) -> void {
+    auto _on_timeout = [this](data &&p_data) -> void {
       WAR(m_log, "timeout handlind ", p_data);
     };
 
-    _msg_queue.add(consumer(), 500ms, _on_timeout);
+    worker_pool _worker_pool(10, 500ms, _on_timeout);
 
-    DEB(m_log, "capacity = ", _msg_queue.capacity(),
-        ", occupied = ", _msg_queue.occupied());
-    _msg_queue.start();
-    _msg_queue.add(-8);
+    _worker_pool.add(consumer());
 
-    DEB(m_log, "capacity = ", _msg_queue.capacity(),
-        ", occupied = ", _msg_queue.occupied());
+    DEB(m_log, "capacity = ", _worker_pool.capacity(),
+        ", occupied = ", _worker_pool.occupied());
+    _worker_pool.start();
+    _worker_pool.add(-8);
+
+    DEB(m_log, "capacity = ", _worker_pool.capacity(),
+        ", occupied = ", _worker_pool.occupied());
 
     std::this_thread::sleep_for(1s);
 
@@ -61,9 +60,7 @@ struct worker_pool_001 {
   typedef concurrent::msg_a msg;
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
-  typedef concurrent::worker_pool_t<
-      log, msg>
-      worker_pool;
+  typedef concurrent::worker_pool_t<log, msg> worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -75,6 +72,9 @@ struct worker_pool_001 {
   }
 
   bool operator()() {
+    on_timeout _on_timeout = [this](msg &&p_msg) -> void {
+      WAR(m_log, "timeout handling ", p_msg);
+    };
 
     const std::chrono::seconds _sleep{10s};
 
@@ -82,31 +82,26 @@ struct worker_pool_001 {
     msg _msg(0);
     {
 
-      worker_pool _msg_queue(10,concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
+      worker_pool _worker_pool(10, 2s, _on_timeout,
+                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
 
-      on_timeout _on_timeout = [this](msg &&p_msg) -> void {
-        WAR(m_log, "timeout handling ", p_msg);
-      };
+      DEB(m_log, "capacity = ", _worker_pool.capacity(),
+          ", occupied = ", _worker_pool.occupied());
 
-      DEB(m_log, "capacity = ", _msg_queue.capacity(),
-          ", occupied = ", _msg_queue.occupied());
-
-      producer _producer(&_msg_queue, &_msg);
+      producer _producer(&_worker_pool, &_msg);
 
       DEB(m_log, "creating the sleeping_loop");
       sleeping_loop _loop(500ms, 1s, _producer, []() -> void {});
 
       DEB(m_log, "adding consumer to the worker");
-      _msg_queue.add(
-          [&_consumer](msg &&p_msg) -> void {
-            return _consumer(std::move(p_msg));
-          },
-          2s, _on_timeout);
+      _worker_pool.add([&_consumer](msg &&p_msg) -> void {
+        return _consumer(std::move(p_msg));
+      });
 
       DEB(m_log, "starting the producer loop");
       _loop.start();
       DEB(m_log, "starting the consumer message queue");
-      _msg_queue.start();
+      _worker_pool.start();
 
       DEB(m_log, "sleeping for ", _sleep.count(), " secs");
       std::this_thread::sleep_for(_sleep);
@@ -125,8 +120,8 @@ struct worker_pool_001 {
 
 private:
   struct producer {
-    producer(worker_pool *p_msg_queue, msg *p_msg)
-        : m_msg_queue(p_msg_queue), m_msg(p_msg) {}
+    producer(worker_pool *p_worker_pool, msg *p_msg)
+        : m_worker_pool(p_worker_pool), m_msg(p_msg) {}
 
     void operator()() {
       if (m_msg->value() > m_num_msgs) {
@@ -137,14 +132,14 @@ private:
       msg _msg(m_msg->value());
       DEB(m_log, "going to add ", _msg);
 
-      m_msg_queue->add(_msg);
-      DEB(m_log, "added msg ", _msg, "; capacity = ", m_msg_queue->capacity(),
-          ", occupied = ", m_msg_queue->occupied());
+      m_worker_pool->add(_msg);
+      DEB(m_log, "added msg ", _msg, "; capacity = ", m_worker_pool->capacity(),
+          ", occupied = ", m_worker_pool->occupied());
     }
     const uint16_t m_num_msgs = 50;
 
   private:
-    worker_pool *m_msg_queue;
+    worker_pool *m_worker_pool;
     msg *m_msg;
     log m_log{"producer"};
   };
@@ -174,9 +169,7 @@ struct worker_pool_002 {
   typedef concurrent::msg_a msg;
 
   typedef concurrent::sleeping_loop_t<log, void> sleeping_loop;
-  typedef concurrent::worker_pool_t<
-      log, msg>
-      worker_pool;
+  typedef concurrent::worker_pool_t<log, msg> worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -204,38 +197,37 @@ struct worker_pool_002 {
     consumer _consumer;
 
     {
-      worker_pool _msg_queue(40);
-
       on_timeout _on_timeout = [this](msg &&p_msg) -> void {
         WAR(m_log, "timeout handling ", p_msg);
       };
 
+      worker_pool _worker_pool(40, 100ms, _on_timeout);
+
       DEB(m_log, "creating the sleeping_loop");
 
-      sleeping_loop _loop(300ms, 500ms, producer{&_msg_queue, &_msg},
+      sleeping_loop _loop(300ms, 500ms, producer{&_worker_pool, &_msg},
                           []() -> void {});
 
       DEB(m_log, "adding consumer to the worker");
-      _msg_queue.add(
-          [&_consumer](msg &&p_msg) { return _consumer(std::move(p_msg)); },
-          100ms, _on_timeout);
+      _worker_pool.add(
+          [&_consumer](msg &&p_msg) { return _consumer(std::move(p_msg)); });
 
       _loop.start();
-      _msg_queue.start();
+      _worker_pool.start();
 
       DEB(m_log, "sleeping for 10 secs");
       std::this_thread::sleep_for(10s);
       DEB(m_log, "waking up after 10 secs");
 
       DEB(m_log, "stopping the message queue");
-      _msg_queue.stop();
+      _worker_pool.stop();
 
       DEB(m_log, "sleeping for 5 secs");
       std::this_thread::sleep_for(5s);
       DEB(m_log, "waking up after 5 secs");
 
       DEB(m_log, "restarting the worker");
-      _msg_queue.start();
+      _worker_pool.start();
 
       DEB(m_log, "sleeping for 4 secs");
       std::this_thread::sleep_for(4s);
@@ -268,18 +260,18 @@ struct worker_pool_002 {
   };
 
   struct producer {
-    producer(worker_pool *p_msg_queue, msg *p_data)
-        : m_msg_queue(p_msg_queue), m_msg(p_data) {}
+    producer(worker_pool *p_worker_pool, msg *p_data)
+        : m_worker_pool(p_worker_pool), m_msg(p_data) {}
 
     void operator()() {
       m_msg->inc();
       msg _msg(m_msg->value());
       DEB(m_log, "adding msg ", _msg);
-      m_msg_queue->add(std::move(_msg));
+      m_worker_pool->add(std::move(_msg));
     }
 
   private:
-    worker_pool *m_msg_queue;
+    worker_pool *m_worker_pool;
     msg *m_msg;
     log m_log{"producer"};
   };
@@ -290,9 +282,7 @@ struct worker_pool_003 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::worker_pool_t<
-      log, msg>
-      worker_pool;
+  typedef concurrent::worker_pool_t<log, msg> worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -307,21 +297,21 @@ struct worker_pool_003 {
     msg::number _last_added{0};
 
     {
-      worker_pool _msg_queue{40, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
+      worker_pool _worker_pool{40, 1s, _on_timeout,
+                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
 
-      _msg_queue.add(
-          [this](msg &&p_msg) -> void { m_consumer(std::move(p_msg)); }, 1s,
-          _on_timeout);
+      _worker_pool.add(
+          [this](msg &&p_msg) -> void { m_consumer(std::move(p_msg)); });
 
-      _msg_queue.start();
+      _worker_pool.start();
 
       for (uint16_t _i = 0; _i < 300; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _msg_queue.add(std::move(_msg));
+        _worker_pool.add(std::move(_msg));
       }
 
-      _last_added = static_cast<msg::number>(_msg_queue.amount_added() - 1);
+      _last_added = static_cast<msg::number>(_worker_pool.amount_added() - 1);
 
       std::this_thread::sleep_for(15s);
     }
@@ -355,9 +345,7 @@ struct worker_pool_004 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::worker_pool_t<
-      log, msg>
-      worker_pool;
+  typedef concurrent::worker_pool_t<log, msg> worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -377,30 +365,29 @@ struct worker_pool_004 {
     _consumers.push_back({"c5"});
 
     {
-      worker_pool _msg_queue{40, concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
-
-      on_timeout _on_timeout = [this, &_msg_queue](msg &&p_msg) -> void {
-        WAR(m_log, "timeout hadling ", p_msg);
-        _msg_queue.add(std::move(p_msg));
-      };
+      worker_pool _worker_pool{40, 2s,
+                               [this, &_worker_pool](msg &&p_msg) -> void {
+                                 WAR(m_log, "timeout hadling ", p_msg);
+                                 _worker_pool.add(std::move(p_msg));
+                               },
+                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
 
       for (consumer &_consumer : _consumers) {
-        _msg_queue.add(
-            [&_consumer](msg &&p_msg) -> void { _consumer(std::move(p_msg)); },
-            2s, _on_timeout);
+        _worker_pool.add(
+            [&_consumer](msg &&p_msg) -> void { _consumer(std::move(p_msg)); });
       }
 
-      _msg_queue.start();
+      _worker_pool.start();
 
       for (uint16_t _i = 0; _i < 3000; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _msg_queue.add(std::move(_msg));
+        _worker_pool.add(std::move(_msg));
       }
 
-      _amount_added = static_cast<msg::number>(_msg_queue.amount_added());
+      _amount_added = static_cast<msg::number>(_worker_pool.amount_added());
 
-      while (_msg_queue.occupied() != 0) {
+      while (_worker_pool.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
         std::this_thread::sleep_for(50ms);
       }
@@ -453,9 +440,7 @@ struct worker_pool_005 {
   typedef logger::cerr<> log;
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::worker_pool_t<
-      log, msg>
-      worker_pool;
+  typedef concurrent::worker_pool_t<log, msg> worker_pool;
   typedef std::function<void(msg &&)> on_timeout;
 
   static std::string desc() {
@@ -478,43 +463,41 @@ struct worker_pool_005 {
     msg::number _amount_added{0};
 
     std::vector<consumer> _consumers;
-    _consumers.push_back({"c1", 100ms});
+    _consumers.push_back({"c1", 200ms});
     _consumers.push_back({"c2", 200ms});
-    _consumers.push_back({"c3", 150ms});
-    _consumers.push_back({"c4", 2000ms});
-    _consumers.push_back({"c5", 100ms});
+    _consumers.push_back({"c3", 200ms});
+    _consumers.push_back({"c4", 200ms});
+    _consumers.push_back({"c5", 200ms});
 
     uint16_t _num_timeouts{0};
     {
-      worker_pool _msg_queue{40};
-
-      on_timeout _on_timeout = [this, &_msg_queue,
-                                &_num_timeouts](msg &&p_msg) -> void {
-        WAR(m_log, "timeout handling ", p_msg);
-        ++_num_timeouts;
-        _msg_queue.add(p_msg);
-      };
+      worker_pool _worker_pool{
+          40, 200ms,
+          [this, &_worker_pool, &_num_timeouts](msg &&p_msg) -> void {
+            WAR(m_log, "timeout handling ", p_msg);
+            ++_num_timeouts;
+            _worker_pool.add(p_msg);
+          }};
 
       for (consumer &_consumer : _consumers) {
-        _msg_queue.add(
-            [&_consumer](msg &&p_msg) -> void { _consumer(std::move(p_msg)); },
-            _consumer.get_timeout(), _on_timeout);
+        _worker_pool.add(
+            [&_consumer](msg &&p_msg) -> void { _consumer(std::move(p_msg)); });
       }
 
-      _msg_queue.start();
+      _worker_pool.start();
 
       for (uint16_t _i = 0; _i < 50; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _msg_queue.add(_msg);
+        _worker_pool.add(_msg);
       }
 
       _amount_added =
-          static_cast<msg::number>(_msg_queue.amount_added()) - _num_timeouts;
+          static_cast<msg::number>(_worker_pool.amount_added()) - _num_timeouts;
 
       std::this_thread::sleep_for(3s);
 
-      while (_msg_queue.occupied() != 0) {
+      while (_worker_pool.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
         std::this_thread::sleep_for(50ms);
       }
