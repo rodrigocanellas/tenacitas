@@ -27,7 +27,7 @@ struct sleeping_loop_000 {
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
   bool operator()() {
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+    typedef concurrent::sleeping_loop_t<void> loop;
 
     auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
 
@@ -43,7 +43,7 @@ private:
 };
 
 struct sleeping_loop_001 {
-  typedef concurrent::sleeping_loop_t<logger::cerr<>, void> loop;
+  typedef concurrent::sleeping_loop_t<void> loop;
 
   typedef uint16_t value;
 
@@ -130,7 +130,7 @@ struct sleeping_loop_002 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
     auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
@@ -196,7 +196,7 @@ struct sleeping_loop_003 {
 
   bool operator()() {
 
-    typedef concurrent::sleeping_loop_t<logger::cerr<>, int16_t, float> loop;
+    typedef concurrent::sleeping_loop_t<int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
 

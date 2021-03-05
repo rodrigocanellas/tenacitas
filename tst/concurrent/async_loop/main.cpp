@@ -47,7 +47,7 @@ struct async_loop_000 {
       return _i;
     };
 
-    concurrent::async_loop_t<logger::cerr<>, int16_t> _loop(
+    concurrent::async_loop_t<int16_t> _loop(
         worker(), 500ms, [](int16_t &&) -> void {}, _provider);
 
     _loop.start();
@@ -113,7 +113,7 @@ private:
 //      return false;
 //    };
 
-//    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes,
+//    concurrent::async_loop_t concurrent::use_breaker::yes,
 //                             int16_t>
 //        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
 
@@ -179,8 +179,8 @@ struct async_loop_002 {
     };
 
     auto _on_timeout = [](int16_t &&, float &&) -> void {};
-    concurrent::async_loop_t<logger::cerr<>, int16_t, float> _loop(
-        worker(), 500ms, _on_timeout, _provider);
+    concurrent::async_loop_t<int16_t, float> _loop(worker(), 500ms, _on_timeout,
+                                                   _provider);
 
     _loop.start();
 
@@ -249,7 +249,7 @@ private:
 //      return false;
 //    };
 
-//    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes,
+//    concurrent::async_loop_t concurrent::use_breaker::yes,
 //                             int16_t, float>
 //        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
 
@@ -315,8 +315,7 @@ struct async_loop_004 {
 
     auto _on_timeout = []() -> void {};
 
-    concurrent::async_loop_t<logger::cerr<>, void> _loop(_aux, 500ms,
-                                                         _on_timeout);
+    concurrent::async_loop_t<void> _loop(_aux, 500ms, _on_timeout);
 
     _loop.start();
 
@@ -380,7 +379,7 @@ private:
 //      return false;
 //    };
 
-//    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::yes,
+//    concurrent::async_loop_t concurrent::use_breaker::yes,
 //    void> _loop([&_worker]() -> void { _worker(); }, 500ms, _on_dummy_timeout,
 //          _breaker);
 
@@ -472,8 +471,8 @@ struct async_loop_006 {
         _worker(std::move(p_i));
       };
 
-      concurrent::async_loop_t<logger::cerr<>, int16_t> _loop(
-          _aux, _work_timeout, _on_timeout, _provider);
+      concurrent::async_loop_t<int16_t> _loop(_aux, _work_timeout, _on_timeout,
+                                              _provider);
 
       _loop.start();
 
@@ -573,9 +572,8 @@ struct async_loop_007 {
       _worker(std::move(p_i), std::move(p_f));
     };
 
-    concurrent::async_loop_t<logger::cerr<>, /*concurrent::use_breaker::no,*/
-                             int16_t, float>
-        _loop(_aux, _work_timeout, _on_timeout, _provider);
+    concurrent::async_loop_t<int16_t, float> _loop(_aux, _work_timeout,
+                                                   _on_timeout, _provider);
 
     _loop.start();
 
@@ -651,9 +649,8 @@ struct async_loop_008 {
 
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    concurrent::async_loop_t<logger::cerr<>,
-                             /*concurrent::use_breaker::no,*/ void>
-    _loop([&_worker]() -> void { _worker(); }, _work_timeout, _on_timeout);
+    concurrent::async_loop_t<void> _loop([&_worker]() -> void { _worker(); },
+                                         _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -739,8 +736,7 @@ struct async_loop_009 {
 
     auto _aux = [&_worker]() -> void { _worker(); };
 
-    concurrent::async_loop_t<logger::cerr<>, void> _loop(_aux, _work_timeout,
-                                                         _on_timeout);
+    concurrent::async_loop_t<void> _loop(_aux, _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -813,7 +809,7 @@ private:
 
 //    auto _aux = [&_worker]() -> void { _worker.work(); };
 
-//    concurrent::async_loop_t<logger::cerr<>, concurrent::use_breaker::no,
+//    concurrent::async_loop_t concurrent::use_breaker::no,
 //    void>
 //        _loop(_aux, _timeout, _on_timeout);
 
