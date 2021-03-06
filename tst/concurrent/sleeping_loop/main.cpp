@@ -49,7 +49,7 @@ struct sleeping_loop_001 {
 
   static const std::string desc() {
     std::stringstream _stream;
-    _stream << "\n'sleeping_loop' with interval of " << m_interval_secs
+    _stream << "'sleeping_loop' with interval of " << m_interval_secs
             << "s, operation timeout of " << m_timeout
             << "ms, increments a counter, and just prints so there will be no "
             << "timeout."
