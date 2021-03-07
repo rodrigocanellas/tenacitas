@@ -27,7 +27,7 @@ struct sleeping_loop_000 {
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
   bool operator()() {
-    typedef concurrent::sleeping_loop_t<void> loop;
+    typedef concurrent::sleeping_loop loop;
 
     auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
 
@@ -43,7 +43,7 @@ private:
 };
 
 struct sleeping_loop_001 {
-  typedef concurrent::sleeping_loop_t<void> loop;
+  typedef concurrent::sleeping_loop loop;
 
   typedef uint16_t value;
 
@@ -121,137 +121,36 @@ private:
   logger::cerr<> m_log{"sleeping_loop_001"};
 };
 
-struct sleeping_loop_002 {
-  static std::string desc() {
-    return std::string("sleep interval of 2 seconds, work timeout of 500ms, "
-                       "timeout when a counter reaches 2, not giving time for "
-                       "not even one sleep loop");
-  }
+struct sleeping_loop_004 {
+
+  static const std::string desc() { return "interval of 300ms for 5s"; }
 
   bool operator()() {
+    typedef concurrent::sleeping_loop loop;
 
-    typedef concurrent::sleeping_loop_t<int16_t, float> loop;
-    int16_t _i{0};
-    int16_t _value{0};
-    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
-      WAR(m_log, "timeout for ", p_i, ", ", p_f);
-      m_cond.notify_one();
+    uint16_t _counter{0};
+
+    auto _operation = [this, &_counter]() -> void {
+      DEB(m_log, "counter = ", _counter++);
     };
 
-    std::function<std::optional<std::tuple<int16_t, float>>()> _provider =
-        [&_i]() -> std::optional<std::tuple<int16_t, float>> {
-      ++_i;
-      return {{_i, 2.5 * _i}};
-    };
+    auto _on_timeout = []() -> void {};
 
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
-      DEB(m_log, "worker called with ", p_i, " and ", p_f);
-      if (p_i == m_max) {
-        _value = p_i;
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(m_timeout.count() * 2));
-      } else {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(m_timeout.count() / 2));
-
-        INF(m_log, p_i, " - ", p_f);
-      }
-    };
-
-    loop _loop(500ms, 2s, _worker, _on_timeout, _provider);
+    loop _loop(1s, 500ms, _operation, _on_timeout);
 
     _loop.start();
 
-    {
-      std::unique_lock<std::mutex> _lock(m_mutex);
-      m_cond.wait(_lock);
-    }
+    std::this_thread::sleep_for(3s);
 
     _loop.stop();
 
-    if (_value != m_max) {
-      ERR(m_log, "value = ", _value, " but it should be ", m_max);
-      return false;
-    }
+    INF(m_log, "final counter = ", _counter);
 
-    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
-        " was expected");
-
-    return true;
+    return (_counter == 5);
   }
 
 private:
-  std::mutex m_mutex;
-  std::condition_variable m_cond;
-  static constexpr int16_t m_max{2};
-  static constexpr std::chrono::milliseconds m_timeout{500ms};
-  logger::cerr<> m_log{"sleeping_loop_002"};
-};
-
-struct sleeping_loop_003 {
-  static std::string desc() {
-    return std::string("sleep interval of 2 seconds, work timeout of 500ms, "
-                       "timeout when a counter reaches 38");
-  }
-
-  bool operator()() {
-
-    typedef concurrent::sleeping_loop_t<int16_t, float> loop;
-    int16_t _i{0};
-    int16_t _value{0};
-
-    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
-      WAR(m_log, "timeout for ", p_i, ", ", p_f);
-      m_cond.notify_one();
-    };
-
-    auto _provider = [&_i]() -> std::optional<std::tuple<int16_t, float>> {
-      ++_i;
-      return {std::tuple<int16_t, float>{_i, 2.5 * _i}};
-    };
-
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
-      DEB(m_log, "worker called with ", p_i, " and ", p_f);
-      if (p_i == m_max) {
-        _value = p_i;
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(m_timeout.count() * 2));
-      } else {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(m_timeout.count() / 2));
-
-        INF(m_log, p_i, " - ", p_f);
-      }
-    };
-
-    loop _loop(500ms, 2s, _worker, _on_timeout, _provider);
-
-    _loop.start();
-
-    {
-      std::unique_lock<std::mutex> _lock(m_mutex);
-      m_cond.wait(_lock);
-    }
-
-    _loop.stop();
-
-    if (_value != m_max) {
-      ERR(m_log, "value = ", _value, " but it should be ", m_max);
-      return false;
-    }
-
-    INF(m_log, "value = ", _value, " and it is correct as ", m_max,
-        " was expected");
-
-    return true;
-  }
-
-private:
-  std::mutex m_mutex;
-  std::condition_variable m_cond;
-  static constexpr int16_t m_max{38};
-  static constexpr std::chrono::milliseconds m_timeout{500ms};
-  logger::cerr<> m_log{"sleeping_loop_003"};
+  logger::cerr<> m_log{"sleeping_loop_004"};
 };
 
 int main(int argc, char **argv) {
@@ -261,6 +160,5 @@ int main(int argc, char **argv) {
 
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);
-  run_test(_tester, sleeping_loop_002);
-  run_test(_tester, sleeping_loop_003);
+  run_test(_tester, sleeping_loop_004);
 }

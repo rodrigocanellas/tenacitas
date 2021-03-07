@@ -28,121 +28,144 @@ struct messenger_000 {
 
     auto _subscriber = [this](const int16_t &p_int) {
       DEB(m_log, "i = ", p_int);
+      m_cond.notify_one();
     };
 
     messenger::pool_id _pool_id =
         messenger::add_worker_pool(messenger::priority{0}, 20, 1s);
 
+    std::optional<messenger::priority> _maybe =
+        messenger::get_priority(_pool_id);
+
+    if (_maybe) {
+      DEB(m_log, "priority = ", *_maybe);
+    }
+
+    messenger::set_priority(_pool_id, 9);
+
     messenger::subscribe(_pool_id, _subscriber);
 
     messenger::publish(42);
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
     return true;
   }
 
 private:
   logger::cerr<> m_log{"messenger_000"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
 };
 
-// struct dispatcher_005 {
+struct messenger_005 {
 
-//  typedef int16_t data;
-//  typedef logger::cerr<> log;
-//  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-//  typedef concurrent::messenger_t<data> messenger;
+  typedef int16_t data;
+  typedef logger::cerr<> log;
+  typedef concurrent::sleeping_loop sleeping_loop;
+  typedef concurrent::messenger_t<data> messenger;
 
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream << "unamed, one worker, timeout";
-//    return _stream.str();
-//  }
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "unamed, one worker, timeout";
+    return _stream.str();
+  }
 
-//  bool operator()() {
-//    using namespace std;
+  bool operator()() {
+    using namespace std;
 
-//    const chrono::seconds _timeout_subscriber{2};
-//    const data _data_to_produce{30};
-//    data _data_produced{0};
-//    data _data_consumed{0};
+    //    m_log.set_debug_level();
 
-//    messenger::pool_id _pool_id =
-//        messenger::add_worker_pool(messenger::priority{0}, 20, 2s);
+    const data _data_to_produce{30};
+    data _data_produced{0};
+    data _data_consumed{0};
+    const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-//    function<void(const data &)> _subscriber =
-//        [this, &_data_consumed,
-//         _timeout_subscriber](const data &p_data) -> void {
-//      typedef decltype(_timeout_subscriber) time;
-//      static const time _timeout{time(_timeout_subscriber.count() * 2)};
+    messenger::pool_id _pool_id = messenger::add_worker_pool(
+        messenger::priority{0}, 20, _subscriber_timeout);
 
-//      static const data _half_produced{static_cast<data>(_data_to_produce /
-//      2)}; DEB(m_log, "consuming ", p_data); _data_consumed = p_data; if
-//      (p_data == _half_produced) {
-//        this_thread::sleep_for(_timeout);
-//        m_cond_consumer.notify_one();
-//      }
-//    };
+    function<void(const data &)> _subscriber =
+        [this, &_data_consumed,
+         _subscriber_timeout](const data &p_data) -> void {
+      ++_data_consumed;
+      DEB(m_log, "subscriber sleeping for ", _data_consumed, ", ", p_data);
+      std::this_thread::sleep_for(
+          decltype(_subscriber_timeout)(_subscriber_timeout.count() / 2));
+      DEB(m_log, "subscriber waking for ", _data_consumed, ", ", p_data);
 
-//    messenger::subscribe(_pool_id, _subscriber);
+      DEB(m_log, "consuming ", _data_consumed, ", ", p_data);
+      if (_data_consumed == _data_to_produce) {
+        m_cond_consumer.notify_one();
+      }
+    };
 
-//    function<void(void)> _slepper = [this, &_data_produced]() -> void {
-//      ++_data_produced;
-//      messenger::publish(_data_produced);
-//      DEB(m_log, "published ", _data_produced);
-//      if (_data_produced == _data_to_produce) {
-//        m_cond_producer.notify_one();
-//      }
-//    };
+    messenger::subscribe(_pool_id, _subscriber);
 
-//    sleeping_loop _sleeping_loop(300ms, 1s, _slepper, []() {});
+    function<void(void)> _slepper = [this, &_data_produced]() -> void {
+      if (_data_produced == _data_to_produce) {
+        m_cond_producer.notify_one();
+      } else {
+        ++_data_produced;
+        messenger::publish(_data_produced);
+        DEB(m_log, "published ", _data_produced);
+      }
+    };
 
-//    _sleeping_loop.start();
+    sleeping_loop _sleeping_loop(
+        300ms, decltype(_subscriber_timeout)(_subscriber_timeout.count() / 4),
+        _slepper, []() {});
 
-//    DEB(m_log, "waiting for the producer to notify");
-//    unique_lock<mutex> _lock_producer(m_mutex_producer);
-//    m_cond_producer.wait(_lock_producer);
-//    DEB(m_log, "producer notified");
+    _sleeping_loop.start();
 
-//    _sleeping_loop.stop();
+    DEB(m_log, "waiting for the producer to notify");
+    {
+      unique_lock<mutex> _lock_producer(m_mutex_producer);
+      m_cond_producer.wait(_lock_producer);
+    }
+    _sleeping_loop.stop();
 
-//    DEB(m_log, "last data produced = ", _data_produced);
+    DEB(m_log, "last data produced = ", _data_produced);
 
-//    DEB(m_log, "waiting for the consumer to notify");
-//    unique_lock<mutex> _lock_consumer(m_mutex_consumer);
-//    cv_status _status =
-//        m_cond_consumer.wait_for(_lock_consumer, chrono::seconds(65));
-//    DEB(m_log, "consumer notified");
+    DEB(m_log, "waiting for the consumer to notify");
+    unique_lock<mutex> _lock_consumer(m_mutex_consumer);
+    cv_status _status =
+        m_cond_consumer.wait_for(_lock_consumer, chrono::seconds(60));
+    DEB(m_log, "consumer notified");
 
-//    if (_status == cv_status::timeout) {
-//      ERR(m_log, "it took more time than allowed for the consumer");
-//      return false;
-//    }
+    if (_status == cv_status::timeout) {
+      ERR(m_log, "it took more time than allowed for the consumer");
+      return false;
+    }
 
-//    if (_data_consumed != _data_produced) {
-//      ERR(m_log, "data consumed = ", _data_consumed, ", but it should be ",
-//          _data_produced);
-//      return false;
-//    }
+    if (_data_consumed != _data_produced) {
+      ERR(m_log, "data consumed = ", _data_consumed, ", but it should be ",
+          _data_produced);
+      return false;
+    }
 
-//    DEB(m_log, "data consumed = ", _data_consumed,
-//        ", and is equal to data produced = ", _data_produced);
+    DEB(m_log, "data consumed = ", _data_consumed,
+        ", and is equal to data produced = ", _data_produced);
 
-//    return true;
-//  }
+    return true;
+  }
 
-// private:
-//  log m_log{"dispatcher_005"};
-//  std::mutex m_mutex_producer;
-//  std::condition_variable m_cond_producer;
-//  std::mutex m_mutex_consumer;
-//  std::condition_variable m_cond_consumer;
-//};
+private:
+  log m_log{"messenger_005"};
+  std::mutex m_mutex_producer;
+  std::condition_variable m_cond_producer;
+  std::mutex m_mutex_consumer;
+  std::condition_variable m_cond_consumer;
+};
 
-// struct dispatcher_006 {
+// struct messenger_006 {
 
 //  typedef int16_t data;
 //  typedef logger::cerr<>::log log;
 //  typedef concurrent::sleeping_loop_t<log> sleeping_loop;
-//  typedef concurrent::workers_t<log, data> dispatcher;
+//  typedef concurrent::workers_t<log, data> messenger;
 
 //  static std::string desc() {
 //    std::stringstream _stream;
@@ -158,7 +181,7 @@ private:
 //    data _data_produced{0};
 //    data _data_consumed{0};
 
-//    dispatcher::subscribe(
+//    messenger::subscribe(
 //        [this, &_data_consumed, &_data_produced](data &&p_data) -> void {
 //          DEB(m_log, "consuming ", p_data);
 //          _data_consumed = p_data;
@@ -171,7 +194,7 @@ private:
 //    sleeping_loop _sleeping_loop(
 //        chrono::seconds(1), [this, &_data_produced]() -> void {
 //          ++_data_produced;
-//          dispatcher::publish(_data_produced);
+//          messenger::publish(_data_produced);
 //          DEB(m_log, "published ", _data_produced);
 //          if (_data_produced == 30) {
 //            m_cond_producer.notify_one();
@@ -210,13 +233,13 @@ private:
 //    DEB(m_log, "data consumed = ", _data_consumed,
 //                     ", and is equal to data produced = ", _data_produced);
 
-//    dispatcher::stop();
+//    messenger::stop();
 
 //    return true;
 //  }
 
 // private:
-//  log m_log{"dispatcher_006"};
+//  log m_log{"messenger_006"};
 //  std::mutex m_mutex_producer;
 //  std::condition_variable m_cond_producer;
 //  std::mutex m_mutex_consumer;
@@ -228,4 +251,5 @@ int main(int argc, char **argv) {
   tester::test _tester(argc, argv);
 
   run_test(_tester, messenger_000);
+  run_test(_tester, messenger_005);
 }
