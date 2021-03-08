@@ -58,7 +58,7 @@ private:
 struct worker_pool_001 {
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::sleeping_loop sleeping_loop;
+  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
   typedef concurrent::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
@@ -166,7 +166,7 @@ struct worker_pool_002 {
 
   typedef concurrent::msg_a msg;
 
-  typedef concurrent::sleeping_loop sleeping_loop;
+  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
   typedef concurrent::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
