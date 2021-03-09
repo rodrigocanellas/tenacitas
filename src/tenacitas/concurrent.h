@@ -1340,11 +1340,12 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
   void add(const t_data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      DEB(m_log, "not adding more slots");
+      DEB(m_log, "not adding more slots for ", p_data, ":", capacity(), ":",
+          occupied());
       m_write->m_data = p_data;
       m_write = m_write->m_next;
     } else {
-      DEB(m_log, "adding more slots");
+      DEB(m_log, "adding more slots: ", capacity(), ":", occupied());
       insert(m_write->m_prev, p_data);
     }
     ++m_amount;
@@ -1466,15 +1467,14 @@ std::unique_ptr<internal::queue_t<t_data>>
 queue_factory(queue_type p_queue_type, t_size p_size) {
   std::unique_ptr<internal::queue_t<t_data>> _res;
   switch (p_queue_type) {
-  case queue_type::CIRCULAR_FIXED_SIZE:
-    typedef circular_fixed_size_queue_t<t_data> queue_1;
-    _res = std::unique_ptr<internal::queue_t<t_data>>(new queue_1(p_size));
-    break;
-  case queue_type::CIRCULAR_UNLIMITED_SIZE:
-    typedef circular_unlimited_size_queue_t<t_data> queue_2;
-    queue_2 *_q = new queue_2(p_size);
-    _res = std::unique_ptr<internal::queue_t<t_data>>(_q);
-    break;
+  case queue_type::CIRCULAR_FIXED_SIZE: {
+    typedef circular_fixed_size_queue_t<t_data> queue;
+    _res = std::unique_ptr<internal::queue_t<t_data>>(new queue(p_size));
+  } break;
+  case queue_type::CIRCULAR_UNLIMITED_SIZE: {
+    typedef circular_unlimited_size_queue_t<t_data> queue;
+    _res = std::unique_ptr<internal::queue_t<t_data>>(new queue(p_size));
+  } break;
   }
   return _res;
 }
@@ -1685,8 +1685,7 @@ private:
       DEB(m_log, "waiting for room to add ", _data);
       {
         std::unique_lock<std::mutex> _lock(m_mutex_data);
-        m_data_consumed.wait(
-            _lock, [this]() { return (!m_queue->full() || m_stopped); });
+        m_data_consumed.wait(_lock, [this]() { return !m_stopped; });
 
         if (m_stopped) {
           DEB(m_log, "stopped when about to add ", _data);
@@ -1973,8 +1972,8 @@ template <typename t_data> struct messenger_t {
   template <typename t_size, typename t_time>
   static inline void add_worker_pool(
       const pool_id &p_pool_id, priority p_priority, t_size p_queue_size,
-      t_time p_timeout, on_timeout p_on_timeout,
-      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+      t_time p_timeout, on_timeout p_on_timeout/*,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE*/) {
 
     //    item _item{p_pool_id,    p_priority, p_queue_size,
     //               p_queue_type, p_timeout,  p_on_timeout};
@@ -1987,8 +1986,9 @@ template <typename t_data> struct messenger_t {
     //    m_itens.emplace(m_itens.begin(), p_pool_id, p_priority, p_queue_size,
     //                    p_queue_type, p_timeout, p_on_timeout);
 
-    item _item{p_pool_id,    p_priority, p_queue_size,
-               p_queue_type, p_timeout,  p_on_timeout};
+    item _item{p_pool_id,    p_priority,
+               p_queue_size, queue_type::CIRCULAR_UNLIMITED_SIZE,
+               p_timeout,    p_on_timeout};
     m_itens.push_back(std::move(_item));
     //    std::sort(m_itens.begin(), m_itens.end());
     m_itens.sort(
@@ -1999,11 +1999,11 @@ template <typename t_data> struct messenger_t {
   template <typename t_size, typename t_time>
   static pool_id add_worker_pool(
       priority p_priority, t_size p_queue_size, t_time p_timeout,
-      on_timeout p_on_timeout,
-      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+      on_timeout p_on_timeout/*,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE*/) {
     pool_id _pool_id(std::to_string(uuid()));
     add_worker_pool(_pool_id, p_priority, p_queue_size, p_timeout, p_on_timeout,
-                    p_queue_type);
+                    queue_type::CIRCULAR_UNLIMITED_SIZE);
     return _pool_id;
   }
 
@@ -2011,8 +2011,8 @@ template <typename t_data> struct messenger_t {
   template <typename t_size, typename t_time>
   static inline void add_worker_pool(
       const pool_id &p_pool_id, priority p_priority, t_size p_queue_size,
-      t_time p_timeout,
-      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+      t_time p_timeout/*,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE*/) {
 
     //    item _item{p_pool_id, p_priority, p_queue_size, p_queue_type,
     //    p_timeout}; m_itens.push_back(std::move(_item));
@@ -2023,7 +2023,8 @@ template <typename t_data> struct messenger_t {
     //    m_itens.emplace(m_itens.begin(), p_pool_id, p_priority, p_queue_size,
     //                    p_queue_type, p_timeout);
 
-    item _item{p_pool_id, p_priority, p_queue_size, p_queue_type, p_timeout};
+    item _item{p_pool_id, p_priority, p_queue_size,
+               queue_type::CIRCULAR_UNLIMITED_SIZE, p_timeout};
     m_itens.push_back(std::move(_item));
 
     //    std::sort(m_itens.begin(), m_itens.end());
@@ -2034,13 +2035,13 @@ template <typename t_data> struct messenger_t {
   /// \brief
   template <typename t_size, typename t_time>
   static pool_id add_worker_pool(
-      priority p_priority, t_size p_queue_size, t_time p_timeout,
-      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE) {
+      priority p_priority, t_size p_queue_size, t_time p_timeout/*,
+      queue_type p_queue_type = queue_type::CIRCULAR_UNLIMITED_SIZE*/) {
 
     pool_id _pool_id(std::to_string(uuid()));
 
-    add_worker_pool(_pool_id, p_priority, p_queue_size, p_timeout,
-                    p_queue_type);
+    add_worker_pool(_pool_id, p_priority, p_queue_size, p_timeout/*,
+                    queue_type::CIRCULAR_UNLIMITED_SIZE*/);
 
     return _pool_id;
   }

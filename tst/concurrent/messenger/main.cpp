@@ -195,9 +195,8 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    messenger::pool_id _pool_id = messenger::add_worker_pool(
-        messenger::priority{0}, 20, 3s,
-        concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
+    messenger::pool_id _pool_id =
+        messenger::add_worker_pool(messenger::priority{0}, 20, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
