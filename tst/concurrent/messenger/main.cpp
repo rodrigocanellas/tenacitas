@@ -191,12 +191,13 @@ struct messenger_002 {
   bool operator()() {
     using namespace std;
 
-    const data _total_to_produce{100};
+    const data _total_to_produce{58};
     data _data_produced{0};
     data _data_consumed{0};
 
-    messenger::pool_id _pool_id =
-        messenger::add_worker_pool(messenger::priority{0}, 20, 3s);
+    messenger::pool_id _pool_id = messenger::add_worker_pool(
+        messenger::priority{0}, 20, 3s,
+        concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -241,7 +242,7 @@ struct messenger_002 {
     {
       unique_lock<mutex> _lock_consumer(m_mutex_consumer);
       cv_status _status =
-          m_cond_consumer.wait_for(_lock_consumer, chrono::seconds(10));
+          m_cond_consumer.wait_for(_lock_consumer, chrono::seconds(5));
 
       DEB(m_log, "consumer notified");
 

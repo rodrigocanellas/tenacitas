@@ -424,6 +424,7 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
   virtual ~async_loop_base_t() {
     DEB(m_log, "destructor");
     stop();
+    DEB(m_log, "leaving destructor");
   }
 
   /// \brief
@@ -437,12 +438,17 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
 
   /// \brief
   void stop() {
+
     if (m_stopped) {
+      DEB(m_log, "not stopping because it is stopped");
       return;
     }
+    DEB(m_log, "stopping");
     m_stopped = true;
     if (m_thread.joinable()) {
+      DEB(m_log, "joining");
       m_thread.join();
+      DEB(m_log, "joined");
     }
   }
 
@@ -494,7 +500,7 @@ protected:
   std::thread m_thread;
 
   /// \brief
-  logger::cerr<> m_log{"async_loop"};
+  logger::cerr<> m_log{"async_loop " + std::to_string(uuid())};
 };
 
 } // namespace internal
@@ -750,6 +756,7 @@ struct sleeping_loop_base_t {
   inline virtual ~sleeping_loop_base_t() {
     DEB(m_log, "destructor");
     stop();
+    DEB(m_log, "leaving destructor");
   }
 
   /// \brief retrieves the interval defined for the loop to sleep between
@@ -900,7 +907,7 @@ protected:
 
   bool m_stopped{true};
 
-  logger::cerr<> m_log{"sleeping_loop"};
+  logger::cerr<> m_log{"sleeping_loop " + std::to_string(uuid())};
 };
 
 } // namespace internal
@@ -1298,6 +1305,12 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     m_read = m_root;
   }
 
+  ~circular_unlimited_size_queue_t() override {
+    DEB(m_log, "destructor");
+    DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
+    DEB(m_log, "leaving destructor");
+  }
+
   circular_unlimited_size_queue_t() = delete;
 
   circular_unlimited_size_queue_t(const circular_unlimited_size_queue_t &) =
@@ -1524,9 +1537,10 @@ public:
   ///
   /// If 'stop' was not called, empties the queue, waiting for all the data to
   /// be processed
-  inline ~worker_pool_t() {
+  ~worker_pool_t() {
     DEB(m_log, "destructor");
     stop();
+    DEB(m_log, "leaving destructor");
   }
 
   /// \brief adds data to be passed to a worker
@@ -1628,54 +1642,9 @@ private:
 
     /// \brief move constructor not allowed
     implementation(worker_pool_t &&) = delete;
-    //    implementation(worker_pool_t &&p_wp) {
-    //      /// \brief queue where data will be inserted for the worker to
-    //      compete for m_queue = std::move(p_wp.m_queue);
-
-    //      m_timeout = p_wp.m_timeout;
-
-    //      m_on_timeout = std::move(p_wp.m_on_timeout);
-
-    //      m_loops = std::move(p_wp.m_loops);
-
-    //      /// \brief indicates if the worker is running
-    //      m_stopped = p_wp.m_stopped;
-
-    //      /// \brief m_destroying indicates that the \p produce_consumer
-    //      should stop m_destroying = p_wp.m_destroying;
-
-    //      /// \brief amount of queued data
-    //      m_queued_data = p_wp.m_queued_data;
-    //    }
 
     /// \brief move assignemnt not allowed
     implementation &operator=(implementation &&) = delete;
-    //    implementation &operator=(implementation &&p_wp) {
-    //      if (this != &p_wp) {
-    //        /// \brief queue where data will be inserted for the worker to
-    //        compete
-    //        /// for
-    //        m_queue = std::move(p_wp.m_queue);
-
-    //        m_timeout = p_wp.m_timeout;
-
-    //        m_on_timeout = std::move(p_wp.m_on_timeout);
-
-    //        m_loops = std::move(p_wp.m_loops);
-
-    //        /// \brief indicates if the worker is running
-    //        m_stopped = p_wp.m_stopped;
-
-    //        /// \brief m_destroying indicates that the \p produce_consumer
-    //        should
-    //        /// stop
-    //        m_destroying = p_wp.m_destroying;
-
-    //        /// \brief amount of queued data
-    //        m_queued_data = p_wp.m_queued_data;
-    //      }
-    //      return *this;
-    //    }
 
     /// \brief destructor
     ///
@@ -1704,7 +1673,6 @@ private:
     ///
     /// \return \p true if it was added, \p false otherwise
     bool add_data(const data &p_data) {
-      std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
 
       data _data{p_data};
 
@@ -1774,11 +1742,9 @@ private:
     void add_worker(uint16_t p_num_works,
                     std::function<worker()> p_worker_factory) {
 
-      std::unique_lock<std::mutex> _lock_stop(m_mutex_stop);
-
-      auto _provider = [this]() -> std::optional<std::tuple<data>> {
-        return this->provider();
-      };
+      //      auto _provider = [this]() -> std::optional<std::tuple<data>> {
+      //        return this->provider();
+      //      };
 
       for (auto _i = 0; _i < p_num_works; ++_i) {
         add_worker(p_worker_factory(), m_timeout, m_on_timeout);
@@ -1797,8 +1763,6 @@ private:
     ///         \p true if it was already started, or if it started successfully
     bool start() {
 
-      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-
       if (!m_stopped) {
         ERR(m_log, "not starting because it is already running");
         return true;
@@ -1809,8 +1773,13 @@ private:
         return false;
       }
 
+      {
+        DEB(m_log, "waiting for locking");
+        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+        m_stopped = false;
+      }
+
       DEB(m_log, "starting");
-      m_stopped = false;
       for (async_loop &_loop : m_loops) {
         _loop.start();
       }
@@ -1826,16 +1795,18 @@ private:
     /// queue
     void stop() {
 
-      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-
       if (m_stopped) {
         DEB(m_log, "not stopping because it is stopped");
         return;
       }
 
-      DEB(m_log, "stopping");
+      {
+        DEB(m_log, "waiting for locking");
+        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+        m_stopped = true;
+      }
 
-      m_stopped = true;
+      DEB(m_log, "stopping");
       if (m_loops.empty()) {
         return;
       }
@@ -1967,7 +1938,7 @@ private:
     size_t m_queued_data{0};
 
     /// \brief
-    logger::cerr<> m_log{"implementation"};
+    logger::cerr<> m_log{"worker_pool"};
   };
 
 private:
@@ -1992,10 +1963,11 @@ template <typename t_data> struct messenger_t {
   /// \brief 0 is the lowest
   typedef uint16_t priority;
 
-  ~messenger_t() {
-    DEB(m_log, "destructor");
-    stop();
-  }
+  ~messenger_t() = default;
+  //  {
+  //    DEB(m_log, "destructor");
+  //    stop();
+  //  }
 
   /// \brief
   template <typename t_size, typename t_time>
@@ -2120,12 +2092,12 @@ template <typename t_data> struct messenger_t {
   }
 
   /// \brief
-  static void stop() {
-    iterator _end = m_itens.end();
-    for (iterator _ite = m_itens.begin(); _ite != _end; ++_ite) {
-      _ite->stop();
-    }
-  }
+  //  static void stop() {
+  //    iterator _end = m_itens.end();
+  //    for (iterator _ite = m_itens.begin(); _ite != _end; ++_ite) {
+  //      _ite->stop();
+  //    }
+  //  }
 
 private:
   /// \brief
@@ -2145,6 +2117,7 @@ private:
     ~item() {
       DEB(m_log, "destructor");
       m_worker_pool.stop();
+      DEB(m_log, "leaving destructor");
     }
 
     /// \brief
