@@ -13,6 +13,7 @@
 #include <future>
 #include <iostream>
 #include <list>
+#include <set>
 #include <mutex>
 #include <optional>
 #include <thread>
@@ -1952,10 +1953,6 @@ template <typename t_data> struct messenger_t {
   typedef uint16_t priority;
 
   ~messenger_t() = default;
-  //  {
-  //    DEB(m_log, "destructor");
-  //    stop();
-  //  }
 
   /// \brief
   template <typename t_size, typename t_time>
@@ -1964,20 +1961,14 @@ template <typename t_data> struct messenger_t {
                                      t_time p_timeout,
                                      on_timeout p_on_timeout) {
 
-    //    item _item{p_pool_id,    p_priority, p_queue_size,
-    //               p_queue_type, p_timeout,  p_on_timeout};
-    //    m_itens.push_back(std::move(_item));
-
     if (find(p_pool_id) != m_itens.end()) {
       return;
     }
 
-    //    m_itens.emplace(m_itens.begin(), p_pool_id, p_priority, p_queue_size,
-    //                    p_queue_type, p_timeout, p_on_timeout);
-
     item _item{p_pool_id, p_priority, p_queue_size, p_timeout, p_on_timeout};
+//    m_itens.insert(std::move(_item));
+
     m_itens.push_back(std::move(_item));
-    //    std::sort(m_itens.begin(), m_itens.end());
     m_itens.sort(
         [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
   }
@@ -1998,19 +1989,15 @@ template <typename t_data> struct messenger_t {
                                      priority p_priority, t_size p_queue_size,
                                      t_time p_timeout) {
 
-    //    item _item{p_pool_id, p_priority, p_queue_size, p_queue_type,
-    //    p_timeout}; m_itens.push_back(std::move(_item));
+
     if (find(p_pool_id) != m_itens.end()) {
       return;
     }
 
-    //    m_itens.emplace(m_itens.begin(), p_pool_id, p_priority, p_queue_size,
-    //                    p_queue_type, p_timeout);
-
     item _item{p_pool_id, p_priority, p_queue_size, p_timeout};
-    m_itens.push_back(std::move(_item));
+//    m_itens.insert(std::move(_item));
 
-    //    std::sort(m_itens.begin(), m_itens.end());
+    m_itens.push_back(std::move(_item));
     m_itens.sort(
         [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
   }
@@ -2029,17 +2016,26 @@ template <typename t_data> struct messenger_t {
 
   /// \brief
   static void set_priority(const pool_id &p_pool_id, priority p_priority) {
-    iterator _ite = find(p_pool_id);
-    if (_ite != m_itens.end()) {
-      _ite->set_priority(p_priority);
-    }
-    //    std::sort(m_itens.begin(), m_itens.end());
-    m_itens.sort(
-        [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
+//    iterator _ite = find(p_pool_id);
+//    if (_ite != m_itens.end()) {
+//      _ite->set_priority(p_priority);
+//      sort();
+//    }
+
+
+    auto _cb = [p_priority](item & p_item) -> void {
+      p_item.set_priority(p_priority);
+      sort();
+    };
+
+    find_handle(p_pool_id, _cb);
+
   }
 
   /// \brief
   static std::optional<priority> get_priority(const pool_id &p_pool_id) {
+
+
     iterator _ite = find(p_pool_id);
     if (_ite != m_itens.end()) {
       return {_ite->get_priority()};
@@ -2050,27 +2046,47 @@ template <typename t_data> struct messenger_t {
   /// \brief
   static void publish(const t_data &p_data) {
 
-    iterator _end = m_itens.end();
-    for (iterator _ite = m_itens.begin(); _ite != _end; ++_ite) {
-      _ite->add_data(p_data);
-    }
+//    iterator _end = m_itens.end();
+//    for (iterator _ite = m_itens.begin(); _ite != _end; ++_ite) {
+//      _ite->add_data(p_data);
+//    }
+      for (item & _item : m_itens) {
+          _item.add_data(p_data);
+      }
   }
 
   /// \brief
   static void add_subscriber(const pool_id &p_pool_id, worker p_worker) {
-    iterator _ite = find(p_pool_id);
-    if (_ite != m_itens.end()) {
-      _ite->add_worker(p_worker);
-    }
+//    auto  _ite = find(p_pool_id);
+//    auto _end = m_itens.end();
+//    if (_ite != _end) {
+//      _ite->add_worker(p_worker);
+//    }
+
+    auto _cb = [p_worker](item & p_item) -> void {
+      p_item.add_worker(p_worker);
+    };
+
+    find_handle(p_pool_id, _cb);
+
   }
 
   /// \brief
   static void add_subscriber(const pool_id &p_pool_id, uint16_t p_num_workers,
                              std::function<worker()> p_factory) {
-    iterator _ite = find(p_pool_id);
-    if (_ite != m_itens.end()) {
-      _ite->add_worker(p_num_workers, p_factory);
-    }
+//    iterator _ite = find(p_pool_id);
+//    if (_ite != m_itens.end()) {
+//        item & _item = *_ite;
+//      _item.add_worker(p_num_workers, p_factory);
+//    }
+
+    auto _cb = [p_num_workers, p_factory](item & p_item) -> void {
+      p_item.add_worker(p_num_workers, p_factory);
+    };
+
+    find_handle(p_pool_id, _cb);
+
+
   }
 
   /// \brief
@@ -2214,11 +2230,32 @@ private:
 
 private:
   /// \brief
-  static inline iterator find(const pool_id &p_pool_id) {
+  static auto find(const pool_id &p_pool_id) {
     auto _cmp = [&p_pool_id](const item &p_item) -> bool {
       return p_pool_id == p_item.get_id();
     };
     return std::find_if(m_itens.begin(), m_itens.end(), _cmp);
+  }
+
+  static void find_handle(const pool_id &p_pool_id, std::function<void(item &)> p_cb) {
+    auto _cmp = [&p_pool_id](const item &p_item) -> bool {
+      return p_pool_id == p_item.get_id();
+    };
+    auto _end = m_itens.end();
+    auto _ite = std::find_if(m_itens.begin(), _end, _cmp);
+    if (_ite != _end) {
+        p_cb(*_ite);
+    }
+  }
+  static void traverse(std::function<void(item &)> p_cb) {
+      for (item & _item : m_itens) {
+          p_cb(_item);
+      }
+  }
+
+  static inline void sort() {
+      m_itens.sort(
+          [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
   }
 
 private:
