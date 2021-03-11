@@ -265,6 +265,46 @@ private:
   std::condition_variable m_cond_consumer;
 };
 
+struct messenger_003 {
+  static std::string desc() { return "Testing order of worker pools"; }
+
+  bool operator()() {
+    typedef concurrent::messenger_t<int16_t> messenger;
+
+    const messenger::pool_id _p2{"hello"};
+    messenger::add_worker_pool(_p2, 2, 15, 4s);
+
+    const messenger::pool_id _p1{"good morning"};
+    messenger::add_worker_pool(_p1, 5, 20, 1s);
+
+    bool _first{true};
+    bool _result{true};
+    auto _visitor = [this, &_first, &_result, _p1,
+                     _p2](const messenger::pool_id &p_pool_id,
+                          messenger::priority p_priority,
+                          concurrent::timeout p_timeout) {
+      if (_first) {
+        if (p_pool_id != _p1) {
+          _result = false;
+        } else {
+          _first = false;
+        }
+      } else {
+        if (p_pool_id != _p2) {
+          _result = false;
+        }
+      }
+      INF(m_log, p_pool_id, ':', p_priority, ':', p_timeout.count());
+    };
+
+    messenger::traverse(_visitor);
+    return _result;
+  }
+
+private:
+  logger::cerr<> m_log{"messenger_003"};
+};
+
 int main(int argc, char **argv) {
   logger::set_debug_level();
   tester::test _tester(argc, argv);
@@ -272,4 +312,5 @@ int main(int argc, char **argv) {
   run_test(_tester, messenger_000);
   run_test(_tester, messenger_001);
   run_test(_tester, messenger_002);
+  run_test(_tester, messenger_003);
 }
