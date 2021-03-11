@@ -81,8 +81,7 @@ struct worker_pool_001 {
     msg _msg(0);
     {
 
-      worker_pool _worker_pool(10, 2s, _on_timeout,
-                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE);
+      worker_pool _worker_pool(10, 2s, _on_timeout);
 
       DEB(m_log, "capacity = ", _worker_pool.capacity(),
           ", occupied = ", _worker_pool.occupied());
@@ -295,8 +294,7 @@ struct worker_pool_003 {
     msg::number _last_added{0};
 
     {
-      worker_pool _worker_pool{40, 1s, _on_timeout,
-                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
+      worker_pool _worker_pool{40, 1s, _on_timeout};
 
       _worker_pool.add_worker(
           [this](const msg &p_msg) -> void { m_consumer(p_msg); });
@@ -367,8 +365,7 @@ struct worker_pool_004 {
                                [this, &_worker_pool](const msg &p_msg) -> void {
                                  WAR(m_log, "timeout hadling ", p_msg);
                                  _worker_pool.add_data(p_msg);
-                               },
-                               concurrent::queue_type::CIRCULAR_UNLIMITED_SIZE};
+                               }};
 
       for (consumer &_consumer : _consumers) {
         _worker_pool.add_worker(
