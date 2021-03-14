@@ -163,10 +163,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is \p level::debug
-  template <typename t_class, typename... t_params>
-  inline void debug(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void debug(const char *p_func, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::debug, p_this, p_func, p_line, p_params...);
+    write(level::debug, p_func, p_line, p_params...);
   }
 
   /// \brief logs message with \p info severity
@@ -179,10 +179,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::info
-  template <typename t_class, typename... t_params>
-  inline void info(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void info(const char *p_func, uint16_t p_line,
                    const t_params &... p_params) {
-    write(level::info, p_this, p_func, p_line, p_params...);
+    write(level::info, p_func, p_line, p_params...);
   }
 
   /// \brief logs message with \p warn severity
@@ -195,10 +195,10 @@ public:
   ///
   /// \details the log message will only be printed if the current log level
   /// is at least \p level::warn
-  template <typename t_class, typename... t_params>
-  inline void warn(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void warn(const char *p_func, uint16_t p_line,
                    const t_params &... p_params) {
-    write(level::warn, p_this, p_func, p_line, p_params...);
+    write(level::warn, p_func, p_line, p_params...);
   }
 
   /// \brief logs message with \p error severity
@@ -210,10 +210,10 @@ public:
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  template <typename t_class, typename... t_params>
-  inline void error(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void error(const char *p_func, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::error, p_this, p_func, p_line, p_params...);
+    write(level::error, p_func, p_line, p_params...);
   }
 
   /// \brief logs message with \p fatal severity
@@ -225,10 +225,10 @@ public:
   /// parameter
   ///
   /// \details the log message with this severity will always be printed
-  template <typename t_class, typename... t_params>
-  inline void fatal(t_class *p_this, const char *p_func, uint16_t p_line,
+  template <typename... t_params>
+  inline void fatal(const char *p_func, uint16_t p_line,
                     const t_params &... p_params) {
-    write(level::fatal, p_this, p_func, p_line, p_params...);
+    write(level::fatal, p_func, p_line, p_params...);
   }
 
 protected:
@@ -298,9 +298,9 @@ private:
   ///
   /// \param p_params are the values to be logged
 #ifdef TENACITAS_LOG
-  template <typename t_class, typename... t_params>
-  void write(level p_level, t_class *p_this, const char *p_func,
-             uint16_t p_line, const t_params &... p_params) {
+  template <typename... t_params>
+  void write(level p_level, const char *p_func, uint16_t p_line,
+             const t_params &... p_params) {
 
     if (can_log(p_level)) {
       appender _append(m_separator);
@@ -311,12 +311,6 @@ private:
       {
         std::string _now = std::to_string(calendar::now<>::microsecs_num());
         _append(_now.c_str());
-      }
-
-      {
-        std::ostringstream _stream;
-        _stream << p_this;
-        _append(_stream.str().c_str());
       }
 
       _append(m_class.c_str());
@@ -444,7 +438,7 @@ private:
   /// methods \p t_writer should implement
   writer m_writer = {[](std::string &&p_str) {
     std::stringstream _stream;
-    _stream << "NO WRITER - " << p_str;
+    _stream << p_str;
     std::cerr << _stream.str();
   }};
 

@@ -12,12 +12,12 @@ struct cerr_log_how_to {
 
     try {
 
-      m_log.debug(this, __FILE__, __LINE__, "hello! ", 309);
-      m_log.debug(this, __FILE__, __LINE__, "how are you doing? ", 3.14);
-      m_log.info(this, __FILE__, __LINE__, "fine!! ", 'W');
-      m_log.info(this, __FILE__, __LINE__, "and you?");
-      m_log.warn(this, __FILE__, __LINE__, "great! got a new job!! ", 6987.58f);
-      m_log.warn(this, __FILE__, __LINE__, "nice!! ", 10);
+      m_log.debug(__FILE__, __LINE__, "hello! ", 309);
+      m_log.debug(__FILE__, __LINE__, "how are you doing? ", 3.14);
+      m_log.info(__FILE__, __LINE__, "fine!! ", 'W');
+      m_log.info(__FILE__, __LINE__, "and you?");
+      m_log.warn(__FILE__, __LINE__, "great! got a new job!! ", 6987.58f);
+      m_log.warn(__FILE__, __LINE__, "nice!! ", 10);
       return true;
     } catch (std::exception &_ex) {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"

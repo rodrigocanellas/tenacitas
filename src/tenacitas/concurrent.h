@@ -501,7 +501,7 @@ protected:
   std::thread m_thread;
 
   /// \brief
-  logger::cerr<> m_log{"async_loop " + std::to_string(uuid())};
+  logger::cerr<> m_log{"async_loop"};
 };
 
 } // namespace internal
@@ -908,7 +908,7 @@ protected:
 
   bool m_stopped{true};
 
-  logger::cerr<> m_log{"sleeping_loop " + std::to_string(uuid())};
+  logger::cerr<> m_log{"sleeping_loop"};
 };
 
 } // namespace internal
@@ -1347,6 +1347,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
       m_write = m_write->m_next;
     } else {
       DEB(m_log, "adding more slots: ", capacity(), ":", occupied());
+
       insert(m_write->m_prev, p_data);
     }
     ++m_amount;
@@ -1577,7 +1578,6 @@ public:
   ///
   /// \param p_on_timeout function to be called when the worker times
   /// out
-  template <typename t_time>
   inline void add_worker(uint16_t p_num_works,
                          std::function<worker()> p_worker_factory) {
     m_impl->add_worker(p_num_works, p_worker_factory);
@@ -1735,7 +1735,6 @@ private:
     ///
     /// \param p_on_timeout function to be called when the worker times
     /// out
-    template <typename t_time>
     void add_worker(uint16_t p_num_works,
                     std::function<worker()> p_worker_factory) {
 
@@ -1744,7 +1743,7 @@ private:
       //      };
 
       for (auto _i = 0; _i < p_num_works; ++_i) {
-        add_worker(p_worker_factory(), m_timeout, m_on_timeout);
+        add_worker(p_worker_factory());
       }
     }
 
@@ -1990,6 +1989,33 @@ template <typename t_data> struct messenger_t {
   }
 
   /// \brief
+  template <typename t_time>
+  static inline void add_worker_pool(const pool_id &p_pool_id,
+                                     priority p_priority, t_time p_timeout,
+                                     on_timeout p_on_timeout) {
+
+    if (find(p_pool_id) != m_itens.end()) {
+      return;
+    }
+
+    item _item{p_pool_id, p_priority, 20, p_timeout, p_on_timeout};
+    //    m_itens.insert(std::move(_item));
+
+    m_itens.push_back(std::move(_item));
+    m_itens.sort(
+        [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
+  }
+
+  /// \brief
+  template <typename t_time>
+  static pool_id add_worker_pool(priority p_priority, t_time p_timeout,
+                                 on_timeout p_on_timeout) {
+    pool_id _pool_id(std::to_string(uuid()));
+    add_worker_pool(_pool_id, p_priority, 20, p_timeout, p_on_timeout);
+    return _pool_id;
+  }
+
+  /// \brief
   template <typename t_size, typename t_time>
   static inline void add_worker_pool(const pool_id &p_pool_id,
                                      priority p_priority, t_size p_queue_size,
@@ -2015,6 +2041,34 @@ template <typename t_data> struct messenger_t {
     pool_id _pool_id(std::to_string(uuid()));
 
     add_worker_pool(_pool_id, p_priority, p_queue_size, p_timeout);
+
+    return _pool_id;
+  }
+
+  /// \brief
+  template <typename t_time>
+  static void add_worker_pool(const pool_id &p_pool_id, priority p_priority,
+                              t_time p_timeout) {
+
+    if (find(p_pool_id) != m_itens.end()) {
+      return;
+    }
+
+    item _item{p_pool_id, p_priority, 20, p_timeout};
+    //    m_itens.insert(std::move(_item));
+
+    m_itens.push_back(std::move(_item));
+    m_itens.sort(
+        [](const item &p_i1, const item &p_i2) -> bool { return p_i1 < p_i2; });
+  }
+
+  /// \brief
+  template <typename t_time>
+  static pool_id add_worker_pool(priority p_priority, t_time p_timeout) {
+
+    pool_id _pool_id(std::to_string(uuid()));
+
+    add_worker_pool(_pool_id, p_priority, 20, p_timeout);
 
     return _pool_id;
   }
@@ -2059,33 +2113,34 @@ template <typename t_data> struct messenger_t {
 
   /// \brief
   static void add_subscriber(const pool_id &p_pool_id, worker p_worker) {
-    //    auto  _ite = find(p_pool_id);
-    //    auto _end = m_itens.end();
-    //    if (_ite != _end) {
-    //      _ite->add_worker(p_worker);
-    //    }
+    DEB(m_log, "adding subscriber for ", p_pool_id);
+    auto _ite = find(p_pool_id);
+    auto _end = m_itens.end();
+    if (_ite != _end) {
+      DEB(m_log, "adding another worker for ", p_pool_id);
+      _ite->add_worker(p_worker);
+    }
 
-    auto _cb = [p_worker](item &p_item) -> void {
-      p_item.add_worker(p_worker);
-    };
+    //    auto _cb = [p_worker](item &p_item) -> void {
+    //      p_item.add_worker(p_worker);
+    //    };
 
-    find_handle(p_pool_id, _cb);
+    //    find_handle(p_pool_id, _cb);
   }
 
   /// \brief
   static void add_subscriber(const pool_id &p_pool_id, uint16_t p_num_workers,
                              std::function<worker()> p_factory) {
-    //    iterator _ite = find(p_pool_id);
-    //    if (_ite != m_itens.end()) {
-    //        item & _item = *_ite;
-    //      _item.add_worker(p_num_workers, p_factory);
-    //    }
+    iterator _ite = find(p_pool_id);
+    if (_ite != m_itens.end()) {
+      _ite->add_worker(p_num_workers, p_factory);
+    }
 
-    auto _cb = [p_num_workers, p_factory](item &p_item) -> void {
-      p_item.add_worker(p_num_workers, p_factory);
-    };
+    //    auto _cb = [p_num_workers, p_factory](item &p_item) -> void {
+    //      p_item.add_worker(p_num_workers, p_factory);
+    //    };
 
-    find_handle(p_pool_id, _cb);
+    //    find_handle(p_pool_id, _cb);
   }
 
   inline static void
@@ -2093,6 +2148,14 @@ template <typename t_data> struct messenger_t {
     for (const item &_item : m_itens) {
       p_visitor(_item.get_id(), _item.get_priority(), _item.get_timeout());
     }
+  }
+
+  inline static uint32_t size(const pool_id &p_pool_id) {
+    iterator _ite = find(p_pool_id);
+    if (_ite != m_itens.end()) {
+      return {_ite->get_size()};
+    }
+    return {};
   }
 
   /// \brief
@@ -2195,24 +2258,33 @@ private:
 
     /// \brief
     inline void add_worker(worker p_worker) {
+      DEB(m_log, "adding worker for ", m_pool_id);
       m_worker_pool.add_worker(p_worker);
-      m_worker_pool.start();
+      if (m_worker_pool.is_stopped()) {
+        m_worker_pool.start();
+      }
     }
 
     /// \brief
     inline void add_worker(uint16_t p_num_workers,
                            std::function<worker()> p_factory) {
+      DEB(m_log, "adding ", p_num_workers, " workers for ", m_pool_id);
       m_worker_pool.add_worker(p_num_workers, p_factory);
-      m_worker_pool.start();
+      if (m_worker_pool.is_stopped()) {
+        m_worker_pool.start();
+      }
     }
 
     /// \brief
     inline void add_data(const t_data &p_data) {
+      DEB(m_log, "adding to ", m_pool_id);
       m_worker_pool.add_data(p_data);
     }
 
     /// \brief
     inline void stop() { m_worker_pool.stop(); }
+
+    inline uint32_t get_size() { return m_worker_pool.occupied(); }
 
   private:
     /// \brief
@@ -2271,12 +2343,15 @@ private:
 private:
   /// \brief
   static itens m_itens;
-  logger::cerr<> m_log{"messenger"};
+  static logger::cerr<> m_log;
 };
 
 /// \brief
 template <typename t_data>
 typename messenger_t<t_data>::itens messenger_t<t_data>::m_itens;
+
+template <typename t_data>
+logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
 
 } // namespace concurrent
 } // namespace tenacitas

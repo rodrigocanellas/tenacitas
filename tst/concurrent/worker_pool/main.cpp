@@ -106,7 +106,8 @@ struct worker_pool_001 {
       DEB(m_log, "waking up after ", _sleep.count(), " secs, and ",
           _msg.value(), " was the last value produced");
     }
-    DEB(m_log, "produced = ", _msg, ", consumed = ", _consumer.get_msg());
+    DEB(m_log, "produced = ", _msg.value(),
+        ", consumed = ", _consumer.get_msg().value());
     if (_consumer.get_msg().value() != _msg.value()) {
       ERR(m_log, "Data value consumed should be equal to provided");
       return false;
@@ -143,7 +144,6 @@ private:
 
   struct consumer {
     void operator()(const msg &p_msg) {
-      DEB(m_log, "handling msg ", p_msg);
       m_msg = p_msg;
 
       DEB(m_log, "handling msg ", m_msg);
@@ -352,13 +352,9 @@ struct worker_pool_004 {
   bool operator()() {
 
     msg::number _amount_added{0};
+    const msg::number _amount_to_add{3000};
 
-    std::vector<consumer> _consumers;
-    _consumers.push_back({"c1"});
-    _consumers.push_back({"c2"});
-    _consumers.push_back({"c3"});
-    _consumers.push_back({"c4"});
-    _consumers.push_back({"c5"});
+    std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
     {
       worker_pool _worker_pool{40, 2s,
@@ -374,7 +370,7 @@ struct worker_pool_004 {
 
       _worker_pool.start();
 
-      for (uint16_t _i = 0; _i < 3000; ++_i) {
+      for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
         _worker_pool.add_data(_msg);
@@ -456,6 +452,7 @@ struct worker_pool_005 {
     m_log.set_debug_level();
 
     msg::number _amount_added{0};
+    const msg::number _amount_to_add{50};
 
     std::vector<consumer> _consumers;
     _consumers.push_back({"c1", 200ms});
@@ -475,7 +472,7 @@ struct worker_pool_005 {
 
       _worker_pool.start();
 
-      for (uint16_t _i = 0; _i < 50; ++_i) {
+      for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
         _worker_pool.add_data(_msg);

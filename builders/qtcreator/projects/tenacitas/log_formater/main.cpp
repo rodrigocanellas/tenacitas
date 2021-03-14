@@ -70,18 +70,19 @@ private:
       m_out.flush();
     };
 
-    auto _this = [this](const std::string &p_line, std::string::size_type p_1,
-                        std::string::size_type p_2) -> void {
-      const uint8_t _size = static_cast<uint8_t>(p_2 - p_1) - 2; // 0x
-      if (_size >= m_this_size) {
-        m_out << "0x" << p_line.substr(p_2 - m_this_size, m_this_size);
-      } else {
-        m_out << "0x" << std::string(m_this_size - _size, '0');
-        m_out.write(p_line.c_str() + p_1, p_2 - p_1);
-      }
-      m_out << m_separator;
-      m_out.flush();
-    };
+    //    auto _this = [this](const std::string &p_line, std::string::size_type
+    //    p_1,
+    //                        std::string::size_type p_2) -> void {
+    //      const uint8_t _size = static_cast<uint8_t>(p_2 - p_1) - 2; // 0x
+    //      if (_size >= m_this_size) {
+    //        m_out << "0x" << p_line.substr(p_2 - m_this_size, m_this_size);
+    //      } else {
+    //        m_out << "0x" << std::string(m_this_size - _size, '0');
+    //        m_out.write(p_line.c_str() + p_1, p_2 - p_1);
+    //      }
+    //      m_out << m_separator;
+    //      m_out.flush();
+    //    };
 
     auto _class_name = [this](const std::string &p_line,
                               std::string::size_type p_1,
@@ -136,7 +137,7 @@ private:
 
     while (true) {
 
-      if (!parse_line(_line, _log_level, _timestamp, _this, _class_name,
+      if (!parse_line(_line, _log_level, _timestamp, /*_this,*/ _class_name,
                       _function_name, _thread_id, _line_number, _msg)) {
         return;
       }
@@ -202,7 +203,7 @@ private:
 
     while (true) {
 
-      if (!parse_line(_line, _do_nothing, _do_nothing, _do_nothing,
+      if (!parse_line(_line, _do_nothing, _do_nothing, /*_do_nothing,*/
                       _max_class_name, _max_function_name, _do_nothing,
                       _max_line_number, _do_nothing)) {
         return false;
@@ -232,7 +233,7 @@ private:
   }
 
   bool parse_line(const std::string &p_line, parse_field p_level,
-                  parse_field p_timestamp, parse_field p_this,
+                  parse_field p_timestamp, /*parse_field p_this,*/
                   parse_field p_class_name, parse_field p_function_name,
                   parse_field p_thread_id, parse_field p_line_number,
                   parse_field p_msg) {
@@ -258,13 +259,13 @@ private:
     }
     p_timestamp(p_line, _p1, _p2);
 
-    _p1 = ++_p2;
-    _p2 = p_line.find(m_separator, _p1);
-    if (_p2 == string::npos) {
-      ERR(m_log, "this separator not found");
-      return false;
-    }
-    p_this(p_line, _p1, _p2);
+    //    _p1 = ++_p2;
+    //    _p2 = p_line.find(m_separator, _p1);
+    //    if (_p2 == string::npos) {
+    //      ERR(m_log, "this separator not found");
+    //      return false;
+    //    }
+    //    p_this(p_line, _p1, _p2);
 
     _p1 = ++_p2;
     _p2 = p_line.find(m_separator, _p1);
