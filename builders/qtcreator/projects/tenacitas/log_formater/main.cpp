@@ -390,7 +390,7 @@ private:
 
   uint8_t m_max_line_number{0};
 
-  const uint8_t m_this_size{4};
+//  const uint8_t m_this_size{4};
   const uint8_t m_thread_id_size{4};
 
   const char m_separator = {'|'};

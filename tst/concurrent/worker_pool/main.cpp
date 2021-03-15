@@ -28,7 +28,7 @@ struct worker_pool_000 {
       WAR(m_log, "timeout handlind ", p_data);
     };
 
-    worker_pool _worker_pool(10, 500ms, _on_timeout);
+    worker_pool _worker_pool(500ms, _on_timeout);
 
     _worker_pool.add_worker(consumer());
 
@@ -81,7 +81,7 @@ struct worker_pool_001 {
     msg _msg(0);
     {
 
-      worker_pool _worker_pool(10, 2s, _on_timeout);
+      worker_pool _worker_pool(2s, _on_timeout);
 
       DEB(m_log, "capacity = ", _worker_pool.capacity(),
           ", occupied = ", _worker_pool.occupied());
@@ -198,7 +198,7 @@ struct worker_pool_002 {
         WAR(m_log, "timeout handling ", p_msg);
       };
 
-      worker_pool _worker_pool(40, 100ms, _on_timeout);
+      worker_pool _worker_pool(100ms, _on_timeout);
 
       DEB(m_log, "creating the sleeping_loop");
 
@@ -294,7 +294,7 @@ struct worker_pool_003 {
     msg::number _last_added{0};
 
     {
-      worker_pool _worker_pool{40, 1s, _on_timeout};
+      worker_pool _worker_pool{1s, _on_timeout};
 
       _worker_pool.add_worker(
           [this](const msg &p_msg) -> void { m_consumer(p_msg); });
@@ -357,7 +357,7 @@ struct worker_pool_004 {
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
     {
-      worker_pool _worker_pool{40, 2s,
+      worker_pool _worker_pool{2s,
                                [this, &_worker_pool](const msg &p_msg) -> void {
                                  WAR(m_log, "timeout hadling ", p_msg);
                                  _worker_pool.add_data(p_msg);
@@ -463,7 +463,7 @@ struct worker_pool_005 {
 
     uint16_t _num_timeouts{0};
     {
-      worker_pool _worker_pool{40, 200ms};
+      worker_pool _worker_pool{200ms};
 
       for (consumer &_consumer : _consumers) {
         _worker_pool.add_worker(
