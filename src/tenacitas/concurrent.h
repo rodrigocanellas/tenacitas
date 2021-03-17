@@ -1886,8 +1886,13 @@ private:
       };
       std::lock_guard<std::mutex> _lock(m_add_work);
 
-      m_loops.emplace(m_loops.begin(), p_worker, m_timeout, m_on_timeout,
-                      _provider);
+      async_loop _async_loop{p_worker, m_timeout, m_on_timeout, _provider};
+
+      _async_loop.start();
+
+      m_loops.emplace(m_loops.begin(), std::move(_async_loop));
+
+      m_stopped = false;
     }
 
     /// \brief adds a bunch of \p worker
@@ -1921,28 +1926,28 @@ private:
     ///         \p true if it was already started, or if it started successfully
     bool start() {
 
-      if (!m_stopped) {
-        ERR(m_log, "not starting because it is already running");
-        return true;
-      }
+      //      if (!m_stopped) {
+      //        ERR(m_log, "not starting because it is already running");
+      //        return true;
+      //      }
 
       if (m_loops.empty()) {
         WAR(m_log, "can't run because there are no workers");
         return false;
       }
 
-      {
-        DEB(m_log, "waiting for locking");
-        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-        m_stopped = false;
-      }
+      //      {
+      //        DEB(m_log, "waiting for locking");
+      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+      //        m_stopped = false;
+      //      }
 
-      DEB(m_log, "starting");
-      for (async_loop &_loop : m_loops) {
-        _loop.start();
-      }
+      //      DEB(m_log, "starting");
+      //      for (async_loop &_loop : m_loops) {
+      //        _loop.start();
+      //      }
 
-      DEB(m_log, "started");
+      //      DEB(m_log, "started");
       return true;
     }
 
@@ -2255,9 +2260,6 @@ template <typename t_data> struct messenger_t {
     if (_ite != _end) {
       DEB(m_log, "adding another worker for ", p_id);
       _ite->add_worker(p_worker);
-      if (_ite->is_stopped()) {
-        _ite->start();
-      }
     }
   }
 
@@ -2267,9 +2269,6 @@ template <typename t_data> struct messenger_t {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       _ite->add_worker(p_num_workers, p_factory);
-      if (_ite->is_stopped()) {
-        _ite->start();
-      }
     }
   }
 
@@ -2324,7 +2323,7 @@ private:
   static inline void insert(worker_pool &&p_worker_pool) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_list.push_back(std::move(p_worker_pool));
-    m_list.back().start();
+    //    m_list.back().start();
     sort();
   }
 

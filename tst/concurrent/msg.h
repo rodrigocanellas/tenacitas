@@ -13,33 +13,38 @@
 
 namespace tenacitas {
 namespace concurrent {
+namespace test {
 
-struct msg_a
+template<char id = 'A'>
+struct msg
 {
   typedef uint64_t number;
-  explicit msg_a(number p_value = std::numeric_limits<number>::min())
+  explicit msg(number p_value = 1)
     : m_counter(p_value)
-    , m_up(tenacitas::number::format(p_value))
-    , m_down(
-        tenacitas::number::format(std::numeric_limits<number>::min() - p_value))
-    , m_d(3.14 * p_value)
-  {}
+    , m_up(
+        tenacitas::number::format(std::numeric_limits<number>::min() + p_value))
+    , m_down(tenacitas::number::format(tenacitas::number::format(
+        std::numeric_limits<number>::max() - p_value)))
 
-  friend std::ostream& operator<<(std::ostream& p_out, const msg_a& p_msg)
   {
-    p_out << "(" << p_msg.m_counter << "," << p_msg.m_up << "," << p_msg.m_down
-          << "," << p_msg.m_d << ")";
+    m_d = 2.5 * p_value;
+  }
+
+  friend std::ostream& operator<<(std::ostream& p_out, const msg& p_msg)
+  {
+    p_out << "(" << id << "," << p_msg.m_counter << "," << p_msg.m_up << ","
+          << p_msg.m_down << "," << p_msg.m_d << ")";
     return p_out;
   }
   inline number value() const { return m_counter; }
   inline void inc() { ++m_counter; }
-  inline msg_a& operator++()
+  inline msg& operator++()
   {
     ++m_counter;
     m_up = tenacitas::number::format(m_counter);
     m_down =
       tenacitas::number::format(std::numeric_limits<number>::min() - m_counter);
-    m_d = 3.14 * m_counter;
+    m_d = 2.5 * m_counter;
     return *this;
   }
 
@@ -50,6 +55,7 @@ private:
   double m_d;
 };
 
+} // namespace test
 } // namespace concurrent
 } // namespace tenacitas
 

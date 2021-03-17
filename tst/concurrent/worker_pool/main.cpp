@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-#include <concurrent/msg_a.h>
+#include <concurrent/msg.h>
 #include <tenacitas/concurrent.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
@@ -56,7 +56,7 @@ private:
 };
 
 struct worker_pool_001 {
-  typedef concurrent::msg_a msg;
+  typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::sleeping_loop_t<void> sleeping_loop;
   typedef concurrent::worker_pool_t<msg> worker_pool;
@@ -163,7 +163,7 @@ private:
 
 struct worker_pool_002 {
 
-  typedef concurrent::msg_a msg;
+  typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::sleeping_loop_t<void> sleeping_loop;
   typedef concurrent::worker_pool_t<msg> worker_pool;
@@ -277,7 +277,7 @@ struct worker_pool_002 {
 
 struct worker_pool_003 {
 
-  typedef concurrent::msg_a msg;
+  typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
@@ -339,7 +339,7 @@ private:
 
 struct worker_pool_004 {
 
-  typedef concurrent::msg_a msg;
+  typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
@@ -429,7 +429,7 @@ private:
 
 struct worker_pool_005 {
 
-  typedef concurrent::msg_a msg;
+  typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;

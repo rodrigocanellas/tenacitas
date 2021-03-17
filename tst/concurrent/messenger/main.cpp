@@ -14,7 +14,7 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/msg_a.h>
+#include <concurrent/msg.h>
 #include <tenacitas/calendar.h>
 #include <tenacitas/concurrent.h>
 #include <tenacitas/logger.h>
@@ -507,45 +507,9 @@ private:
   // ###################################
   //                     messages
 
-  template <char id> struct msg {
-    typedef uint64_t number;
-    explicit msg(number p_value = 1)
-        : m_counter(p_value),
-          m_up(tenacitas::number::format(std::numeric_limits<number>::min() +
-                                         p_value)),
-          m_down(tenacitas::number::format(tenacitas::number::format(
-              std::numeric_limits<number>::max() - p_value)))
-
-    {
-      m_d = 2.5 * p_value;
-    }
-
-    friend std::ostream &operator<<(std::ostream &p_out, const msg &p_msg) {
-      p_out << "(" << id << "," << p_msg.m_counter << "," << p_msg.m_up << ","
-            << p_msg.m_down << "," << p_msg.m_d << ")";
-      return p_out;
-    }
-    inline number value() const { return m_counter; }
-    inline void inc() { ++m_counter; }
-    inline msg &operator++() {
-      ++m_counter;
-      m_up = tenacitas::number::format(m_counter);
-      m_down = tenacitas::number::format(std::numeric_limits<number>::min() -
-                                         m_counter);
-      m_d = 2.5 * m_counter;
-      return *this;
-    }
-
-  private:
-    number m_counter{std::numeric_limits<number>::min()};
-    std::string m_up;
-    std::string m_down;
-    double m_d;
-  };
-
-  typedef msg<'B'> msg_b;
-  typedef msg<'C'> msg_c;
-  typedef msg<'D'> msg_d;
+  typedef concurrent::test::msg<'B'> msg_b;
+  typedef concurrent::test::msg<'C'> msg_c;
+  typedef concurrent::test::msg<'D'> msg_d;
 
   struct subscriber {
 
@@ -649,6 +613,127 @@ private:
   static const uint16_t m_max_d{2};
 };
 
+struct messenger_005 {
+  static std::string desc() {
+    std::stringstream stream;
+
+    stream << ""
+           << "None of the subscribers will timeout.";
+
+    return stream.str();
+  }
+
+  bool operator()() {
+    logger::set_debug_level();
+
+    typedef concurrent::sleeping_loop_t<void> publisher;
+
+    typedef concurrent::messenger_t<msg_c> messenger_c;
+
+    const concurrent::id _pool_c{"pool c"};
+    messenger_c::add_worker_pool(_pool_c, concurrent::priority{1}, 4s);
+
+    std::vector<subscriber_c> _subs_c{
+        {this, '1'}, {this, '2'}, {this, '3'}, {this, '4'}};
+
+    for (subscriber_c &_sub_c : _subs_c) {
+      DEB(m_log, "adding sub c ", _sub_c.get_id());
+      messenger_c::add_subscriber(
+          _pool_c, [&_sub_c](const msg_c &p_msg) -> void { _sub_c(p_msg); });
+    }
+
+    uint16_t _count_c{0};
+    msg_c _msg_c;
+
+    publisher _publisher_c(1s, 300ms, [this, &_count_c, &_msg_c]() -> void {
+      if (_count_c >= m_max_c) {
+        m_cond_c.notify_one();
+        return;
+      }
+      std::this_thread::sleep_for(100ms);
+      ++_count_c;
+      ++_msg_c;
+      DEB(m_log, "publishing C: ", _count_c, ",", _msg_c);
+      messenger_c::publish(_msg_c);
+    });
+
+    DEB(m_log, "starting publishers");
+
+    _publisher_c.start();
+
+    {
+      DEB(m_log, "waiting for 'c'");
+      std::unique_lock<std::mutex> _lock_c(m_mutex_c);
+      m_cond_c.wait(_lock_c,
+                    [&_count_c]() -> bool { return _count_c == m_max_c; });
+    }
+
+    while (true) {
+      if (messenger_c::occupied(_pool_c) == 0) {
+        break;
+      }
+      std::this_thread::sleep_for(1s);
+      DEB(m_log, " pool c = ", messenger_c::occupied(_pool_c));
+    }
+
+    uint16_t _total{0};
+    {
+      std::stringstream stream;
+
+      for (uint16_t _i = 0; _i < _subs_c.size(); ++_i) {
+        _total += _subs_c[_i].total();
+        stream << "sub c[" << _i << "]: " << _subs_c[_i].total() << ", ";
+      }
+
+      stream << "total: " << _total;
+      INF(m_log, stream.str());
+    }
+
+    return (_total == m_max_c);
+  }
+
+private:
+  // ###################################
+  //                     messages
+
+  typedef concurrent::test::msg<'C'> msg_c;
+
+  struct subscriber {
+
+    inline uint16_t total() const { return m_counter; }
+    inline uint16_t inc() {
+      ++m_counter;
+      return m_counter;
+    };
+
+  private:
+    uint16_t m_counter{0};
+  };
+
+  struct subscriber_c : public subscriber {
+    subscriber_c(messenger_005 *p_test, char p_id)
+        : m_test(p_test), m_id(p_id) {}
+    void operator()(const msg_c &p_msg_c) {
+      INF(m_test->m_log, "C", m_id, ": ", p_msg_c, " - ", inc());
+      std::this_thread::sleep_for(2s);
+    }
+
+    inline char get_id() const { return m_id; }
+
+  private:
+    messenger_005 *m_test;
+    char m_id;
+  };
+
+private:
+  logger::cerr<> m_log{"messenger_005"};
+
+  std::mutex m_mutex_c;
+  std::condition_variable m_cond_c;
+
+  static const uint16_t m_max_c{20};
+};
+
 int main(int argc, char **argv) {
   logger::set_debug_level();
   tester::test _tester(argc, argv);
@@ -658,4 +743,5 @@ int main(int argc, char **argv) {
   run_test(_tester, messenger_002);
   run_test(_tester, messenger_003);
   run_test(_tester, messenger_004);
+  run_test(_tester, messenger_005);
 }
