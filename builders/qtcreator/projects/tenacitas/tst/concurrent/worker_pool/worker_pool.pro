@@ -8,4 +8,7 @@ include (../../../../../common.pri)
 SOURCES += \
   $$test_src_dir/concurrent/worker_pool/main.cpp
 
+HEADERS += \
+  ../../../../../../../tst/concurrent/msg.h
+
 

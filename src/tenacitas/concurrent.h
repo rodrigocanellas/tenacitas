@@ -553,11 +553,7 @@ template <typename... t_params> struct async_loop_t {
   inline void start() { m_impl->start(); }
 
   /// \brief
-  inline void stop() {
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  inline void stop() { m_impl->stop(); }
 
   /// \brief
   inline bool is_stopped() const { return m_impl->is_stopped(); }
@@ -606,6 +602,7 @@ private:
           break;
         }
 
+        DEB(this->m_log, "calling provider");
         std::optional<std::tuple<t_params...>> _maybe_data = m_provider();
 
         if (_maybe_data) {
@@ -644,6 +641,7 @@ template <> struct async_loop_t<void> {
 
   /// \brief
   typedef std::function<void()> on_timeout;
+
   /// \brief
   typedef std::function<void()> worker;
 
@@ -678,11 +676,7 @@ template <> struct async_loop_t<void> {
   inline void start() { m_impl->start(); }
 
   /// \brief
-  inline void stop() {
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  inline void stop() { m_impl->stop(); }
   /// \brief
   inline bool is_stopped() const { return m_impl->is_stopped(); }
 
@@ -723,7 +717,7 @@ private:
 
       while (true) {
 
-        if ((this->m_breaker()) || (this->m_stopped)) {
+        if (this->m_stopped || this->m_breaker()) {
           DEB(this->m_log, "stopped? ", this->m_stopped);
           break;
         }
@@ -1341,8 +1335,8 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
   void add(const t_data &p_data) override {
     std::lock_guard<std::mutex> _lock(m_mutex);
     if (!full()) {
-      DEB(m_log, "not adding more slots for ", p_data, ":", capacity(), ":",
-          occupied());
+      DEB(m_log, "not adding more slots for ", p_data, " - size: ", capacity(),
+          ", occupied: ", occupied());
       m_write->m_data = p_data;
       m_write = m_write->m_next;
     } else {
@@ -1503,7 +1497,7 @@ struct id {
   bool operator!=(const id &p_id) const { return m_value != p_id.m_value; }
 
   id &operator=(const id &) = default;
-  id &operator=(id &&) = default;
+  id &operator=(id &&) = delete;
 
 private:
   std::string m_value;
@@ -1694,12 +1688,7 @@ public:
   /// From this call on, the \p workers will stop competing among each other,
   /// in order to process any instance of \p data that was inserted into the
   /// queue
-  inline void stop() {
-
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  inline void stop() { m_impl->stop(); }
 
   /// \brief retrieves the capacity if the queue
   inline auto capacity() const { return m_impl->capacity(); }
@@ -1818,14 +1807,12 @@ private:
     ~implementation() {
       DEB(m_log, "destructor");
       if (!all_loops_stopped()) {
-        if (!m_stopped) {
-          while (!m_queue.empty()) {
-            m_data_produced.notify_all();
-            std::unique_lock<std::mutex> _lock(m_mutex_data);
-            m_data_consumed.wait(_lock, [] { return true; });
-          }
-          stop();
+        while (!m_queue.empty()) {
+          m_data_produced.notify_all();
+          std::unique_lock<std::mutex> _lock(m_mutex_data);
+          m_data_consumed.wait(_lock, [] { return true; });
         }
+        stop();
       }
       DEB(m_log, "leaving destructor");
     }
@@ -1837,32 +1824,65 @@ private:
     /// \param p_data is the data to be passed to a worker
     ///
     /// \return \p true if it was added, \p false otherwise
+    //    bool add_data(const data &p_data) {
+
+    //      data _data{p_data};
+
+    //      if (all_loops_stopped()) {
+    //        ERR(m_log, "could not add data ", _data,
+    //            " because 'worker' is not running; call 'start()' first");
+    //        return false;
+    //      }
+
+    //      DEB(m_log, "waiting for room to add ", _data);
+    //      {
+    //        std::unique_lock<std::mutex> _lock(m_mutex_data);
+    //        m_data_consumed.wait(_lock, [this]() { return
+    //        !all_loops_stopped(); });
+
+    //        if (all_loops_stopped()) {
+    //          DEB(m_log, "stopped when about to add ", _data);
+    //        } else {
+    //          DEB(m_log, "adding ", _data);
+    //          m_queue.add(_data);
+    //          ++m_queued_data;
+    //        }
+    //      }
+    //      // notifyng that new data is available
+    //      DEB(m_log, "notifying");
+    //      m_data_produced.notify_all();
+
+    //      return true;
+    //    }
+
     bool add_data(const data &p_data) {
 
-      data _data{p_data};
-
-      if (m_stopped) {
-        ERR(m_log, "could not add data ", _data,
-            " because 'worker' is not running; call 'start()' first");
-        return false;
-      }
-
-      DEB(m_log, "waiting for room to add ", _data);
-      {
-        std::unique_lock<std::mutex> _lock(m_mutex_data);
-        m_data_consumed.wait(_lock, [this]() { return !m_stopped; });
-
-        if (m_stopped) {
-          DEB(m_log, "stopped when about to add ", _data);
-        } else {
-          DEB(m_log, "adding ", _data);
-          m_queue.add(_data);
-          ++m_queued_data;
-        }
-      }
-      // notifyng that new data is available
-      DEB(m_log, "notifying");
+      m_queue.add(p_data);
       m_data_produced.notify_all();
+      {
+        std::lock_guard<std::mutex> _lock(m_mutex_data);
+        ++m_queued_data;
+      }
+
+      //      data _data{p_data};
+
+      //      DEB(m_log, "waiting for room to add ", _data);
+      //      {
+      //        std::unique_lock<std::mutex> _lock(m_mutex_data);
+      //        m_data_consumed.wait(_lock, [this]() { return
+      //        !all_loops_stopped(); });
+
+      //        if (all_loops_stopped()) {
+      //          DEB(m_log, "stopped when about to add ", _data);
+      //        } else {
+      //          DEB(m_log, "adding ", _data);
+      //          m_queue.add(_data);
+      //          ++m_queued_data;
+      //        }
+      //      }
+      //      // notifyng that new data is available
+      //      DEB(m_log, "notifying");
+      //      m_data_produced.notify_all();
 
       return true;
     }
@@ -1892,7 +1912,7 @@ private:
 
       m_loops.emplace(m_loops.begin(), std::move(_async_loop));
 
-      m_stopped = false;
+      //      m_stopped = false;
     }
 
     /// \brief adds a bunch of \p worker
@@ -1915,7 +1935,7 @@ private:
     }
 
     /// \brief informs if the worker is stopped
-    inline bool is_stopped() const { return m_stopped; }
+    inline bool is_stopped() const { return all_loops_stopped(); }
 
     /// \brief starts the worker
     ///
@@ -1942,11 +1962,12 @@ private:
       //        m_stopped = false;
       //      }
 
-      //      DEB(m_log, "starting");
-      //      for (async_loop &_loop : m_loops) {
-      //        _loop.start();
-      //      }
+      DEB(m_log, "starting");
+      for (async_loop &_loop : m_loops) {
+        _loop.start();
+      }
 
+      m_stopped = false;
       //      DEB(m_log, "started");
       return true;
     }
@@ -1958,34 +1979,34 @@ private:
     /// queue
     void stop() {
 
-      if (m_stopped) {
-        DEB(m_log, "not stopping because it is stopped");
-        return;
-      }
+      //      if (all_loops_stopped()) {
+      //        DEB(m_log, "not stopping because it is stopped");
+      //      }
 
-      {
-        DEB(m_log, "waiting for locking");
-        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-        m_stopped = true;
-      }
+      //      {
+      //        DEB(m_log, "waiting for locking");
+      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+      //        m_stopped = true;
+      //      }
 
-      DEB(m_log, "stopping");
-      if (m_loops.empty()) {
-        return;
-      }
+      //      if (m_loops.empty()) {
+      //        DEB(m_log, "not stopping because there are no loops");
+      //      }
 
+      m_stopped = true;
       m_data_produced.notify_all();
       for (async_loop &_loop : m_loops) {
         DEB(m_log, "stopping loop");
+        //        m_data_produced.notify_all();
         _loop.stop();
       }
     }
 
     /// \brief retrieves the capacity if the queue
-    inline auto capacity() const { return m_queue.capacity(); }
+    inline size_t capacity() const { return m_queue.capacity(); }
 
     /// \brief the amount of slots occupied in the \p queue
-    inline auto occupied() const { return m_queue.occupied(); }
+    inline size_t occupied() const { return m_queue.occupied(); }
 
     /// \brief
     inline timeout get_timeout() const { return m_timeout; }
@@ -2039,7 +2060,7 @@ private:
     std::optional<std::tuple<data>> provider() {
       using namespace std;
 
-      if (m_stopped) {
+      if (all_loops_stopped()) {
         DEB(m_log, "stopped");
         return {};
       }
@@ -2048,10 +2069,17 @@ private:
       std::unique_lock<std::mutex> _lock(m_mutex_data);
       m_data_produced.wait(_lock, [this]() -> bool {
         //      return (!m_container.empty() || m_stopped);
+
         if (m_stopped) {
           DEB(m_log, "stopped");
           return true;
         }
+
+        if (all_loops_stopped()) {
+          DEB(m_log, "stopped");
+          return true;
+        }
+
         if (!m_queue.empty()) {
           DEB(m_log, "not empty");
           return true;
@@ -2064,6 +2092,12 @@ private:
       DEB(m_log, "either there is data, or it was stopped");
 
       if (m_stopped) {
+        DEB(m_log, "stopped and notifying");
+        m_data_consumed.notify_all();
+        return {};
+      }
+
+      if (all_loops_stopped()) {
         DEB(m_log, "stopped and notifying");
         m_data_consumed.notify_all();
         return {};

@@ -98,7 +98,7 @@ struct worker_pool_001 {
       DEB(m_log, "starting the producer loop");
       _loop.start();
       DEB(m_log, "starting the consumer message queue");
-      _worker_pool.start();
+      //      _worker_pool.start();
 
       DEB(m_log, "sleeping for ", _sleep.count(), " secs");
       std::this_thread::sleep_for(_sleep);
@@ -126,7 +126,7 @@ private:
         return;
       }
 
-      m_msg->inc();
+      ++(*m_msg);
       msg _msg(m_msg->value());
       DEB(m_log, "going to add ", _msg);
 
@@ -189,7 +189,7 @@ struct worker_pool_002 {
 
   bool operator()() {
 
-    msg _msg(0);
+    msg _msg;
 
     consumer _consumer;
 
@@ -202,14 +202,25 @@ struct worker_pool_002 {
 
       DEB(m_log, "creating the sleeping_loop");
 
-      sleeping_loop _loop(300ms, 500ms, producer{&_worker_pool, &_msg},
-                          []() -> void {});
+      //      sleeping_loop _loop(300ms, 500ms, producer{&_worker_pool, &_msg},
+      //                          []() -> void {});
 
       DEB(m_log, "adding consumer to the worker");
       _worker_pool.add_worker(
           [&_consumer](const msg &p_msg) { return _consumer(p_msg); });
 
-      _loop.start();
+      //      _loop.start();
+
+      bool _stop_producer{false};
+      producer _producer{&_worker_pool, &_msg};
+      m_th = std::thread([this, &_producer, &_stop_producer]() {
+        while (!_stop_producer) {
+          _producer();
+          std::this_thread::sleep_for(500ms);
+        }
+        DEB(m_log, "leaving producer");
+      });
+
       _worker_pool.start();
 
       DEB(m_log, "sleeping for 10 secs");
@@ -231,9 +242,13 @@ struct worker_pool_002 {
       DEB(m_log, "waking up after 4 secs");
 
       INF(m_log, _msg.value(), " was the last value produced");
+
+      _stop_producer = true;
+      m_th.join();
+      DEB(m_log, "producer joined");
     }
 
-    INF(m_log, "provided = ", _msg,
+    INF(m_log, "provided = ", _msg.value(),
         ", consumed = ", _consumer.get_msg().value());
     if (_consumer.get_msg().value() != _msg.value()) {
       ERR(m_log, "Data value consumed should be equal to provided");
@@ -261,7 +276,7 @@ struct worker_pool_002 {
         : m_worker_pool(p_worker_pool), m_msg(p_data) {}
 
     void operator()() {
-      m_msg->inc();
+      ++(*m_msg);
       msg _msg(m_msg->value());
       DEB(m_log, "adding msg ", _msg);
       m_worker_pool->add_data(_msg);
@@ -273,6 +288,8 @@ struct worker_pool_002 {
     logger::cerr<> m_log{"producer"};
   };
   logger::cerr<> m_log{"worker_pool_001"};
+
+  std::thread m_th;
 };
 
 struct worker_pool_003 {
