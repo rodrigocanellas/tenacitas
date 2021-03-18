@@ -1809,55 +1809,23 @@ private:
     /// \brief destructor
     ~implementation() {
       DEB(m_log, "destructor");
-      if (!all_loops_stopped()) {
-        if (!m_stopped) {
-          while (!m_queue.empty()) {
-            m_data_produced.notify_all();
-            std::unique_lock<std::mutex> _lock(m_mutex_data);
-            m_data_consumed.wait(_lock, [] { return true; });
-          }
-          stop();
-        }
-      }
+      stop();
       DEB(m_log, "leaving destructor");
     }
 
-    /// \brief adds data to be passed to a worker
-    ///
-    /// \p data will only be added if \p start() was called
-    ///
-    /// \param p_data is the data to be passed to a worker
-    ///
-    /// \return \p true if it was added, \p false otherwise
-    //    bool add_data(const data &p_data) {
-
-    //      data _data{p_data};
-
-    //      if (all_loops_stopped()) {
-    //        ERR(m_log, "could not add data ", _data,
-    //            " because 'worker' is not running; call 'start()' first");
-    //        return false;
-    //      }
-
-    //      DEB(m_log, "waiting for room to add ", _data);
-    //      {
-    //        std::unique_lock<std::mutex> _lock(m_mutex_data);
-    //        m_data_consumed.wait(_lock, [this]() { return
-    //        !all_loops_stopped(); });
-
-    //        if (all_loops_stopped()) {
-    //          DEB(m_log, "stopped when about to add ", _data);
-    //        } else {
-    //          DEB(m_log, "adding ", _data);
-    //          m_queue.add(_data);
-    //          ++m_queued_data;
+    //    ~implementation() {
+    //      DEB(m_log, "destructor");
+    //      if (!all_loops_stopped()) {
+    //        if (!m_stopped) {
+    //          while (!m_queue.empty()) {
+    //            m_data_produced.notify_all();
+    //            std::unique_lock<std::mutex> _lock(m_mutex_data);
+    //            m_data_consumed.wait(_lock, [] { return true; });
+    //          }
+    //          stop();
     //        }
     //      }
-    //      // notifyng that new data is available
-    //      DEB(m_log, "notifying");
-    //      m_data_produced.notify_all();
-
-    //      return true;
+    //      DEB(m_log, "leaving destructor");
     //    }
 
     bool add_data(const data &p_data) {
@@ -1868,27 +1836,6 @@ private:
         std::lock_guard<std::mutex> _lock(m_mutex_data);
         ++m_queued_data;
       }
-
-      //      data _data{p_data};
-
-      //      DEB(m_log, "waiting for room to add ", _data);
-      //      {
-      //        std::unique_lock<std::mutex> _lock(m_mutex_data);
-      //        m_data_consumed.wait(_lock, [this]() { return
-      //        !all_loops_stopped(); });
-
-      //        if (all_loops_stopped()) {
-      //          DEB(m_log, "stopped when about to add ", _data);
-      //        } else {
-      //          DEB(m_log, "adding ", _data);
-      //          m_queue.add(_data);
-      //          ++m_queued_data;
-      //        }
-      //      }
-      //      // notifyng that new data is available
-      //      DEB(m_log, "notifying");
-      //      m_data_produced.notify_all();
-
       return true;
     }
 
@@ -1940,7 +1887,7 @@ private:
     }
 
     /// \brief informs if the worker is stopped
-    inline bool is_stopped() const { return all_loops_stopped(); }
+    inline bool is_stopped() const { return m_stopped; }
 
     /// \brief starts the worker
     ///
@@ -1984,24 +1931,12 @@ private:
     /// in order to process any instance of \p data that was inserted into the
     /// queue
     void stop() {
-
-      //      if (all_loops_stopped()) {
-      //        DEB(m_log, "not stopping because it is stopped");
-      //      }
-
-      //      {
-      //        DEB(m_log, "waiting for locking");
-      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-      //        m_stopped = true;
-      //      }
-
-      //      if (m_loops.empty()) {
-      //        DEB(m_log, "not stopping because there are no loops");
-      //      }
       if (m_stopped) {
         DEB(m_log, "not stopping because it is stopped");
         return;
       }
+
+      empty_queue();
 
       std::unique_lock<std::mutex> _lock(m_mutex_stop);
       m_stopped = true;
@@ -2067,14 +2002,18 @@ private:
     typedef circular_unlimited_size_queue_t<t_data> queue;
 
   private:
+    void empty_queue() {
+      DEB(m_log, "empty queue");
+      while (!m_queue.empty()) {
+        m_data_produced.notify_all();
+        std::unique_lock<std::mutex> _lock(m_mutex_data);
+        m_data_consumed.wait(_lock, [] { return true; });
+      }
+    }
+
     /// \brief provider provides data, if available, to a \p worker
     std::optional<std::tuple<data>> provider() {
       using namespace std;
-
-      //      if (all_loops_stopped()) {
-      //        DEB(m_log, "stopped");
-      //        return {};
-      //      }
 
       if (m_stopped) {
         DEB(m_log, "stopped");
@@ -2091,11 +2030,6 @@ private:
           return true;
         }
 
-        //        if (all_loops_stopped()) {
-        //          DEB(m_log, "stopped");
-        //          return true;
-        //        }
-
         if (!m_queue.empty()) {
           DEB(m_log, "not empty");
           return true;
@@ -2105,21 +2039,11 @@ private:
         return false;
       });
 
-      DEB(m_log, "either there is data, or it was stopped");
-
       if (m_stopped) {
         DEB(m_log, "stopped and notifying");
         m_data_consumed.notify_all();
         return {};
       }
-
-      //      if (all_loops_stopped()) {
-      //        DEB(m_log, "stopped and notifying");
-      //        m_data_consumed.notify_all();
-      //        return {};
-      //      }
-
-      DEB(m_log, "there is data");
 
       std::optional<data> _maybe = m_queue.get();
       if (_maybe) {
