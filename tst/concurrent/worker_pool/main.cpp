@@ -71,17 +71,14 @@ struct worker_pool_001 {
   }
 
   bool operator()() {
-    on_timeout _on_timeout = [this](const msg &p_msg) -> void {
-      WAR(m_log, "timeout handling ", p_msg);
-    };
 
-    const std::chrono::seconds _sleep{10s};
+    const std::chrono::seconds _sleep{5s};
 
     consumer _consumer;
     msg _msg(0);
     {
 
-      worker_pool _worker_pool(2s, _on_timeout);
+      worker_pool _worker_pool(2s);
 
       DEB(m_log, "capacity = ", _worker_pool.capacity(),
           ", occupied = ", _worker_pool.occupied());
@@ -97,7 +94,7 @@ struct worker_pool_001 {
 
       DEB(m_log, "starting the producer loop");
       _loop.start();
-      DEB(m_log, "starting the consumer message queue");
+      //      DEB(m_log, "starting the consumer message queue");
       //      _worker_pool.start();
 
       DEB(m_log, "sleeping for ", _sleep.count(), " secs");

@@ -423,9 +423,9 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
 
   /// \brief
   virtual ~async_loop_base_t() {
-    DEB(m_log, "destructor");
+    DEB(m_log, m_id, " - destructor");
     stop();
-    DEB(m_log, "leaving destructor");
+    DEB(m_log, m_id, " - leaving destructor");
   }
 
   /// \brief
@@ -441,15 +441,15 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
   void stop() {
 
     if (m_stopped) {
-      DEB(m_log, "not stopping because it is stopped");
+      DEB(m_log, m_id, " - not stopping because it is stopped");
       return;
     }
-    DEB(m_log, "stopping");
+    DEB(m_log, m_id, " - stopping");
     m_stopped = true;
     if (m_thread.joinable()) {
-      DEB(m_log, "joining");
+      DEB(m_log, m_id, " - joining");
       m_thread.join();
-      DEB(m_log, "joined");
+      DEB(m_log, m_id, " - joined");
     }
   }
 
@@ -502,6 +502,8 @@ protected:
 
   /// \brief
   logger::cerr<> m_log{"async_loop"};
+
+  uint64_t m_id{uuid()};
 };
 
 } // namespace internal
@@ -593,12 +595,12 @@ private:
   protected:
     /// \brief
     void loop() override {
-      DEB(this->m_log, "entering loop");
+      DEB(this->m_log, this->m_id, " - entering loop");
 
       while (true) {
 
-        if ((this->m_breaker()) || (this->m_stopped)) {
-          DEB(this->m_log, "stopped? ", this->m_stopped);
+        if (this->m_stopped || this->m_breaker()) {
+          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
           break;
         }
 
@@ -608,14 +610,15 @@ private:
         if (_maybe_data) {
           std::tuple<t_params...> _params = std::move(*_maybe_data);
 
-          DEB(this->m_log, "data provided = ", _params);
+          DEB(this->m_log, this->m_id, " - data provided = ", _params);
 
           auto _worker = [this, &_params]() -> void {
             std::apply(this->m_worker, _params);
           };
 
           if (!execute(this->m_timeout, _worker)) {
-            WAR(this->m_log, "timeout for worker with data = ", _params);
+            WAR(this->m_log, this->m_id,
+                " - timeout for worker with data = ", _params);
 
             auto _on_timeout = [this, &_params]() {
               std::apply(this->m_on_timeout, _params);
@@ -711,14 +714,14 @@ private:
   protected:
     /// \brief
     void loop() override {
-      DEB(m_log, "entering loop");
+      DEB(m_log, this->m_id, " - entering loop");
 
       auto _worker = [this]() -> void { this->m_worker(); };
 
       while (true) {
 
         if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, "stopped? ", this->m_stopped);
+          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
           break;
         }
 
@@ -726,7 +729,7 @@ private:
           std::thread([this]() -> void { this->m_on_timeout(); }).detach();
         }
       }
-      DEB(m_log, "leaving loop");
+      DEB(m_log, this->m_id, " - leaving loop");
     }
   };
 
@@ -1505,7 +1508,7 @@ private:
 
 struct priority {
 
-  explicit priority(uint8_t p_value = 0) : m_value(p_value) {}
+  explicit priority(uint8_t p_value = 255) : m_value(p_value) {}
 
   priority(const priority &) = default;
   priority(priority &&) = default;
@@ -1807,12 +1810,14 @@ private:
     ~implementation() {
       DEB(m_log, "destructor");
       if (!all_loops_stopped()) {
-        while (!m_queue.empty()) {
-          m_data_produced.notify_all();
-          std::unique_lock<std::mutex> _lock(m_mutex_data);
-          m_data_consumed.wait(_lock, [] { return true; });
+        if (!m_stopped) {
+          while (!m_queue.empty()) {
+            m_data_produced.notify_all();
+            std::unique_lock<std::mutex> _lock(m_mutex_data);
+            m_data_consumed.wait(_lock, [] { return true; });
+          }
+          stop();
         }
-        stop();
       }
       DEB(m_log, "leaving destructor");
     }
@@ -1912,7 +1917,7 @@ private:
 
       m_loops.emplace(m_loops.begin(), std::move(_async_loop));
 
-      //      m_stopped = false;
+      m_stopped = false;
     }
 
     /// \brief adds a bunch of \p worker
@@ -1962,6 +1967,7 @@ private:
       //        m_stopped = false;
       //      }
 
+      std::unique_lock<std::mutex> _lock(m_mutex_stop);
       DEB(m_log, "starting");
       for (async_loop &_loop : m_loops) {
         _loop.start();
@@ -1992,7 +1998,12 @@ private:
       //      if (m_loops.empty()) {
       //        DEB(m_log, "not stopping because there are no loops");
       //      }
+      if (m_stopped) {
+        DEB(m_log, "not stopping because it is stopped");
+        return;
+      }
 
+      std::unique_lock<std::mutex> _lock(m_mutex_stop);
       m_stopped = true;
       m_data_produced.notify_all();
       for (async_loop &_loop : m_loops) {
@@ -2060,7 +2071,12 @@ private:
     std::optional<std::tuple<data>> provider() {
       using namespace std;
 
-      if (all_loops_stopped()) {
+      //      if (all_loops_stopped()) {
+      //        DEB(m_log, "stopped");
+      //        return {};
+      //      }
+
+      if (m_stopped) {
         DEB(m_log, "stopped");
         return {};
       }
@@ -2075,10 +2091,10 @@ private:
           return true;
         }
 
-        if (all_loops_stopped()) {
-          DEB(m_log, "stopped");
-          return true;
-        }
+        //        if (all_loops_stopped()) {
+        //          DEB(m_log, "stopped");
+        //          return true;
+        //        }
 
         if (!m_queue.empty()) {
           DEB(m_log, "not empty");
@@ -2097,11 +2113,11 @@ private:
         return {};
       }
 
-      if (all_loops_stopped()) {
-        DEB(m_log, "stopped and notifying");
-        m_data_consumed.notify_all();
-        return {};
-      }
+      //      if (all_loops_stopped()) {
+      //        DEB(m_log, "stopped and notifying");
+      //        m_data_consumed.notify_all();
+      //        return {};
+      //      }
 
       DEB(m_log, "there is data");
 
