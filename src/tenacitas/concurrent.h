@@ -425,6 +425,12 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
   virtual ~async_loop_base_t() {
     DEB(m_log, m_id, " - destructor");
     stop();
+    if (m_thread.joinable()) {
+      DEB(m_log, m_id, " - joining");
+      m_thread.join();
+      DEB(m_log, m_id, " - joined");
+    }
+
     DEB(m_log, m_id, " - leaving destructor");
   }
 
@@ -446,11 +452,6 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
     }
     DEB(m_log, m_id, " - stopping");
     m_stopped = true;
-    if (m_thread.joinable()) {
-      DEB(m_log, m_id, " - joining");
-      m_thread.join();
-      DEB(m_log, m_id, " - joined");
-    }
   }
 
   /// \brief
@@ -604,7 +605,7 @@ private:
           break;
         }
 
-        DEB(this->m_log, "calling provider");
+        DEB(this->m_log, this->m_id, " - calling provider");
         std::optional<std::tuple<t_params...>> _maybe_data = m_provider();
 
         if (_maybe_data) {
@@ -1521,11 +1522,11 @@ struct priority {
   }
 
   bool operator<(priority p_priority) const {
-    return m_value > p_priority.m_value;
+    return m_value < p_priority.m_value;
   }
 
   bool operator>(priority p_priority) const {
-    return m_value < p_priority.m_value;
+    return m_value > p_priority.m_value;
   }
 
   bool operator==(priority p_priority) const {
@@ -1691,7 +1692,11 @@ public:
   /// From this call on, the \p workers will stop competing among each other,
   /// in order to process any instance of \p data that was inserted into the
   /// queue
-  inline void stop() { m_impl->stop(); }
+  inline void stop() {
+    if (m_impl) {
+      m_impl->stop();
+    }
+  }
 
   /// \brief retrieves the capacity if the queue
   inline auto capacity() const { return m_impl->capacity(); }
@@ -1943,7 +1948,8 @@ private:
       m_data_produced.notify_all();
       for (async_loop &_loop : m_loops) {
         DEB(m_log, "stopping loop");
-        //        m_data_produced.notify_all();
+        //        std::async(std::launch::async, [&_loop]() -> void {
+        //        _loop.stop(); });
         _loop.stop();
       }
     }
