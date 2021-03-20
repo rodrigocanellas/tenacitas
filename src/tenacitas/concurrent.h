@@ -621,7 +621,7 @@ private:
             WAR(this->m_log, this->m_id,
                 " - timeout for worker with data = ", _params);
 
-            auto _on_timeout = [this, &_params]() {
+            auto _on_timeout = [this, _params]() {
               std::apply(this->m_on_timeout, _params);
             };
 
