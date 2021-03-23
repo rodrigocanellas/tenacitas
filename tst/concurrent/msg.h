@@ -60,7 +60,7 @@ private:
   }
 
 private:
-  value m_counter{1};
+  value m_counter{0};
   std::string m_up;
   std::string m_down;
   double m_d;
@@ -215,7 +215,11 @@ template <msg_id id> struct subscriber {
     return m_number;
   };
 
-  ~subscriber() { INF(m_log, "consumed: ", m_number); }
+  ~subscriber() {
+    if (m_number > 0) {
+      INF(m_log, "consumed: ", m_number);
+    }
+  }
 
   void operator()(const msg<id> &p_msg) {
     INF(m_log, "msg: ", p_msg, ", counter:", m_number);

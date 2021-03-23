@@ -631,11 +631,11 @@ struct messenger_006 {
 
     test_base _test("messenger_006");
 
-    _test.add_publisher<'A'>(3s, publish_id{345}, value{8});
+    //    _test.add_publisher<'A'>(3s, publish_id{345}, value{8});
     _test.add_publisher<'B'>(500ms, publish_id{2}, value{15});
-    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
-    _test.add_publisher<'D'>(5s, publish_id{9}, value{7});
-    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
+    //    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
+    //    _test.add_publisher<'D'>(5s, publish_id{9}, value{7});
+    //    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
 
     _test.add_pool<'A'>(pool_num{1}, priority{9}, 1s);
     _test.add_pool<'B'>(pool_num{1}, priority{5}, 1s);
@@ -648,12 +648,12 @@ struct messenger_006 {
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1}, instance_id{1});
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1}, instance_id{2});
 
-    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1}, instance_id{1});
-    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1}, instance_id{1});
+    //    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1}, instance_id{1});
+    //    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1}, instance_id{1});
 
-    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1}, instance_id{1});
-    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{1});
-    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{2});
+    //    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1}, instance_id{1});
+    //    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{1});
+    //    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{2});
 
     return _test(2min);
   }
