@@ -5,12 +5,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <complex>
 #include <condition_variable>
 #include <cstdint>
+#include <iterator>
 #include <mutex>
+#include <set>
 #include <sstream>
 #include <string>
 
@@ -21,7 +24,15 @@
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
+using namespace tenacitas::concurrent::test;
 using namespace std::chrono_literals;
+
+static const concurrent::id g_pool_b1{"pool b1"};
+static const concurrent::id g_pool_b2{"pool b2"};
+static const concurrent::id g_pool_b3{"pool b3"};
+static const concurrent::id g_pool_c{"pool c"};
+static const concurrent::id g_pool_d1{"pool d1"};
+static const concurrent::id g_pool_d2{"pool d2"};
 
 struct messenger_000 {
 
@@ -98,7 +109,7 @@ struct messenger_000 {
     DEB(m_log, "consumer notified");
 
     if (_status == cv_status::timeout) {
-      ERR(m_log, "it took more time than allowed for the consumer");
+      ERR(m_log, "it took more time than nowed for the consumer");
       return false;
     }
 
@@ -307,441 +318,356 @@ private:
   logger::cerr<> m_log{"messenger_003"};
 };
 
-struct messenger_004 {
-  static std::string desc() {
-    std::stringstream stream;
+// struct messenger_004 {
+//  static std::string desc() {
+//    std::stringstream stream;
 
-    stream << "messengers for 'msb_b', 'msg_c' and 'msg_d'.\n"
-           << "3 types of subscribers for 'msg_b', 1 for 'msg_c', and 2 for "
-              "'msg_d'.\n"
-           << "4 instances of subscribers for 'msg_c'.\n"
-           << m_max_b << " 'msg_b' will be published, " << m_max_c
-           << " 'msg_b' will be published, and " << m_max_d
-           << " 'msg_d' will be published.\n"
-           << "None of the subscribers will timeout.";
+//    stream << "messengers for 'msb_b', 'xpto_c' and 'xpto_d'.\n"
+//           << "3 types of subscribers for 'xpto_b', 1 for 'xpto_c', and 2 for
+//           "
+//              "'xpto_d'.\n"
+//           << "4 instances of subscribers for 'xpto_c'.\n"
+//           << p_max_b << " 'xpto_b' will be published, " << p_max_c
+//           << " 'xpto_b' will be published, and " << p_max_d
+//           << " 'xpto_d' will be published.\n"
+//           << "None of the subscribers will timeout.";
 
-    return stream.str();
-  }
+//    return stream.str();
+//  }
 
-  bool operator()() {
-    logger::set_debug_level();
+//  bool operator()() {
+//    logger::set_info_level();
 
-    typedef concurrent::sleeping_loop_t<void> publisher;
+//    // creation of worker pools
+//    messenger_b::add_worker_pool(g_pool_b1, concurrent::priority{100}, 2s);
+//    messenger_b::add_worker_pool(g_pool_b2, concurrent::priority{50}, 2s);
+//    messenger_b::add_worker_pool(g_pool_b3, concurrent::priority{10}, 2s);
+//    messenger_c::add_worker_pool(g_pool_c, concurrent::priority{1}, 4s);
+//    messenger_d::add_worker_pool(g_pool_d1, concurrent::priority{10}, 2s);
+//    messenger_d::add_worker_pool(g_pool_d2, concurrent::priority{1}, 2s);
 
-    typedef concurrent::messenger_t<msg_b> messenger_b;
-    typedef concurrent::messenger_t<msg_c> messenger_c;
-    typedef concurrent::messenger_t<msg_d> messenger_d;
+//    // adding subscribers to work pools
+//    subscriber<'B'> _sub_b1(1);
+//    messenger_b::add_subscriber(
+//        g_pool_b1, [&_sub_b1](const xpto_b &p_msg) -> void { _sub_b1(p_msg);
+//        });
 
-    // creation of worker pools
-    const concurrent::id _pool_b1{"pool b1"};
-    messenger_b::add_worker_pool(_pool_b1, concurrent::priority{100}, 2s);
+//    subscriber<'B'> _sub_b2(2);
+//    messenger_b::add_subscriber(
+//        g_pool_b2, [&_sub_b2](const xpto_b &p_msg) -> void { _sub_b2(p_msg);
+//        });
 
-    const concurrent::id _pool_b2{"pool b2"};
-    messenger_b::add_worker_pool(_pool_b2, concurrent::priority{50}, 2s);
+//    subscriber<'B'> _sub_b31(3, 1);
+//    messenger_b::add_subscriber(
+//        g_pool_b3,
+//        [&_sub_b31](const xpto_b &p_msg) -> void { _sub_b31(p_msg); });
 
-    const concurrent::id _pool_b3{"pool b3"};
-    messenger_b::add_worker_pool(_pool_b3, concurrent::priority{10}, 2s);
+//    subscriber<'B'> _sub_b32(3, 2);
+//    messenger_b::add_subscriber(
+//        g_pool_b3,
+//        [&_sub_b32](const xpto_b &p_msg) -> void { _sub_b32(p_msg); });
 
-    const concurrent::id _pool_c{"pool c"};
-    messenger_c::add_worker_pool(_pool_c, concurrent::priority{1}, 4s);
+//    std::vector<subscriber<'C'>> _subs_c{{1, 1}, {1, 2}, {1, 3}, {1, 4}};
 
-    const concurrent::id _pool_d1{"pool d1"};
-    messenger_d::add_worker_pool(_pool_d1, concurrent::priority{10}, 2s);
+//    for (subscriber<'C'> &_sub_c : _subs_c) {
+//      DEB(m_log, "adding sub c ", _sub_c.get_id());
+//      messenger_c::add_subscriber(
+//          g_pool_c, [&_sub_c](const xpto_c &p_msg) -> void { _sub_c(p_msg);
+//          });
+//    }
 
-    const concurrent::id _pool_d2{"pool d2"};
-    messenger_d::add_worker_pool(_pool_d2, concurrent::priority{1}, 2s);
+//    subscriber<'D'> _sub_d1(1);
+//    messenger_d::add_subscriber(
+//        g_pool_d1, [&_sub_d1](const xpto_d &p_msg) -> void { _sub_d1(p_msg);
+//        });
 
-    // adding subscribers to work pools
-    subscriber_b1 _sub_b1(this);
-    messenger_b::add_subscriber(
-        _pool_b1, [&_sub_b1](const msg_b &p_msg) -> void { _sub_b1(p_msg); });
+//    subscriber<'D'> _sub_d2(1);
+//    messenger_d::add_subscriber(
+//        g_pool_d2, [&_sub_d2](const xpto_d &p_msg) -> void { _sub_d2(p_msg);
+//        });
 
-    subscriber_b2 _sub_b2(this);
-    messenger_b::add_subscriber(
-        _pool_b2, [&_sub_b2](const msg_b &p_msg) -> void { _sub_b2(p_msg); });
+//    // creating publishers
+//    uint16_t _count_b{0};
+//    xpto_b _xpto_b;
 
-    subscriber_b3 _sub_b31(this, '1');
-    messenger_b::add_subscriber(
-        _pool_b3, [&_sub_b31](const msg_b &p_msg) -> void { _sub_b31(p_msg); });
+//    uint16_t _count_c{0};
+//    xpto_c _xpto_c;
 
-    subscriber_b3 _sub_b32(this, '2');
-    messenger_b::add_subscriber(
-        _pool_b3, [&_sub_b32](const msg_b &p_msg) -> void { _sub_b32(p_msg); });
+//    uint16_t _count_d{0};
+//    xpto_d _xpto_d;
 
-    std::vector<subscriber_c> _subs_c{
-        {this, '1'}, {this, '2'}, {this, '3'}, {this, '4'}};
+//    publisher _publisher_b(1s, 500ms,
+//                           publish<'B'>(_xpto_b, m_cond_b, _count_b,
+//                           p_max_b));
 
-    for (subscriber_c &_sub_c : _subs_c) {
-      DEB(m_log, "adding sub c ", _sub_c.get_id());
-      messenger_c::add_subscriber(
-          _pool_c, [&_sub_c](const msg_c &p_msg) -> void { _sub_c(p_msg); });
-    }
+//    publisher _publisher_c(1s, 300ms,
+//                           publish<'C'>(_xpto_c, m_cond_c, _count_c,
+//                           p_max_c));
 
-    subscriber_d1 _sub_d1(this);
-    messenger_d::add_subscriber(
-        _pool_d1, [&_sub_d1](const msg_d &p_msg) -> void { _sub_d1(p_msg); });
+//    publisher _publisher_d(1s, 750ms,
+//                           publish<'D'>(_xpto_d, m_cond_d, _count_d,
+//                           p_max_d));
 
-    subscriber_d2 _sub_d2(this);
-    messenger_d::add_subscriber(
-        _pool_d2, [&_sub_d2](const msg_d &p_msg) -> void { _sub_d2(p_msg); });
+//    DEB(m_log, "starting publishers");
 
-    // creating publishers
-    uint16_t _count_b{0};
-    msg_b _msg_b;
+//    _publisher_b.start();
+//    _publisher_c.start();
+//    _publisher_d.start();
 
-    uint16_t _count_c{0};
-    msg_c _msg_c;
+//    {
+//      DEB(m_log, "waiting for 'b'");
+//      std::unique_lock<std::mutex> _lock_b(m_mutex_b);
+//      m_cond_b.wait(_lock_b,
+//                    [&_count_b]() -> bool { return _count_b == p_max_b; });
+//    }
 
-    uint16_t _count_d{0};
-    msg_d _msg_d;
+//    {
+//      DEB(m_log, "waiting for 'c'");
+//      std::unique_lock<std::mutex> _lock_c(m_mutex_c);
+//      m_cond_c.wait(_lock_c,
+//                    [&_count_c]() -> bool { return _count_c == p_max_c; });
+//    }
 
-    publisher _publisher_b(1s, 500ms, [this, &_count_b, &_msg_b]() -> void {
-      if (_count_b >= m_max_b) {
-        m_cond_b.notify_one();
-        return;
-      }
-      std::this_thread::sleep_for(350ms);
-      ++_count_b;
-      ++_msg_b;
-      DEB(m_log, "publishing B: ", _count_b, ",", _msg_b);
-      messenger_b::publish(_msg_b);
-    });
+//    {
+//      DEB(m_log, "waiting for 'd'");
+//      std::unique_lock<std::mutex> _lock_d(m_mutex_d);
+//      m_cond_d.wait(_lock_d,
+//                    [&_count_d]() -> bool { return _count_d == p_max_d; });
+//    }
 
-    publisher _publisher_c(1s, 300ms, [this, &_count_c, &_msg_c]() -> void {
-      if (_count_c >= m_max_c) {
-        m_cond_c.notify_one();
-        return;
-      }
-      std::this_thread::sleep_for(100ms);
-      ++_count_c;
-      ++_msg_c;
-      DEB(m_log, "publishing C: ", _count_c, ",", _msg_c);
-      messenger_c::publish(_msg_c);
-    });
+//    while (true) {
+//      if ((messenger_b::occupied(g_pool_b1) == 0) &&
+//          (messenger_b::occupied(g_pool_b2) == 0) &&
+//          (messenger_b::occupied(g_pool_b3) == 0) &&
+//          (messenger_c::occupied(g_pool_c) == 0) &&
+//          (messenger_d::occupied(g_pool_d1) == 0) &&
+//          (messenger_d::occupied(g_pool_d2) == 0)) {
+//        break;
+//      }
+//      std::this_thread::sleep_for(1s);
+//      DEB(m_log, "pool b1 = ", messenger_b::occupied(g_pool_b1),
+//          " pool b2 = ", messenger_b::occupied(g_pool_b2),
+//          " pool b3 = ", messenger_b::occupied(g_pool_b3),
+//          " pool c = ", messenger_c::occupied(g_pool_c),
+//          " pool d1 = ", messenger_d::occupied(g_pool_d1),
+//          " pool d2 = ", messenger_b::occupied(g_pool_d2));
+//    }
 
-    publisher _publisher_d(1s, 750ms, [this, &_count_d, &_msg_d]() -> void {
-      if (_count_d >= m_max_d) {
-        m_cond_d.notify_one();
-        return;
-      }
-      std::this_thread::sleep_for(300ms);
-      ++_count_d;
-      ++_msg_d;
-      DEB(m_log, "publishing D: ", _count_d, ",", _msg_d);
-      messenger_d::publish(_msg_d);
-    });
+//    uint16_t _total{0};
+//    {
+//      std::stringstream stream;
+//      stream << "sub b1: " << _sub_b1.total() << ", "
+//             << "sub b2: " << _sub_b2.total() << ", "
+//             << "sub b31: " << _sub_b31.total() << ", "
+//             << "sub b32: " << _sub_b32.total() << ", ";
+//      _total += _sub_b1.total();
+//      _total += _sub_b2.total();
+//      _total += _sub_b31.total();
+//      _total += _sub_b32.total();
 
-    DEB(m_log, "starting publishers");
+//      for (uint16_t _i = 0; _i < _subs_c.size(); ++_i) {
+//        _total += _subs_c[_i].total();
+//        stream << "sub c[" << _i << "]: " << _subs_c[_i].total() << ", ";
+//      }
+//      _total += _sub_d1.total();
+//      _total += _sub_d2.total();
+//      stream << "sub d1: " << _sub_d1.total() << ", "
+//             << "sub d2: " << _sub_d2.total() << ", "
+//             << "total: " << _total;
+//      INF(m_log, stream.str());
+//    }
 
-    _publisher_b.start();
-    _publisher_c.start();
-    _publisher_d.start();
+//    return (_total == (3 * p_max_b + p_max_c + 2 * p_max_d));
+//  }
 
-    {
-      DEB(m_log, "waiting for 'b'");
-      std::unique_lock<std::mutex> _lock_b(m_mutex_b);
-      m_cond_b.wait(_lock_b,
-                    [&_count_b]() -> bool { return _count_b == m_max_b; });
-    }
+// private:
+//  // ###################################
+//  //                     messages
 
-    {
-      DEB(m_log, "waiting for 'c'");
-      std::unique_lock<std::mutex> _lock_c(m_mutex_c);
-      m_cond_c.wait(_lock_c,
-                    [&_count_c]() -> bool { return _count_c == m_max_c; });
-    }
+// private:
+//  logger::cerr<> m_log{"messenger_004"};
+//  std::mutex m_mutex_b;
+//  std::condition_variable m_cond_b;
 
-    {
-      DEB(m_log, "waiting for 'd'");
-      std::unique_lock<std::mutex> _lock_d(m_mutex_d);
-      m_cond_d.wait(_lock_d,
-                    [&_count_d]() -> bool { return _count_d == m_max_d; });
-    }
+//  std::mutex m_mutex_c;
+//  std::condition_variable m_cond_c;
 
-    while (true) {
-      if ((messenger_b::occupied(_pool_b1) == 0) &&
-          (messenger_b::occupied(_pool_b2) == 0) &&
-          (messenger_b::occupied(_pool_b3) == 0) &&
-          (messenger_c::occupied(_pool_c) == 0) &&
-          (messenger_d::occupied(_pool_d1) == 0) &&
-          (messenger_d::occupied(_pool_d2) == 0)) {
-        break;
-      }
-      std::this_thread::sleep_for(1s);
-      DEB(m_log, "pool b1 = ", messenger_b::occupied(_pool_b1),
-          " pool b2 = ", messenger_b::occupied(_pool_b2),
-          " pool b3 = ", messenger_b::occupied(_pool_b3),
-          " pool c = ", messenger_c::occupied(_pool_c),
-          " pool d1 = ", messenger_d::occupied(_pool_d1),
-          " pool d2 = ", messenger_b::occupied(_pool_d2));
-    }
+//  std::mutex m_mutex_d;
+//  std::condition_variable m_cond_d;
 
-    uint16_t _total{0};
-    {
-      std::stringstream stream;
-      stream << "sub b1: " << _sub_b1.total() << ", "
-             << "sub b2: " << _sub_b2.total() << ", "
-             << "sub b31: " << _sub_b31.total() << ", "
-             << "sub b32: " << _sub_b32.total() << ", ";
-      _total += _sub_b1.total();
-      _total += _sub_b2.total();
-      _total += _sub_b31.total();
-      _total += _sub_b32.total();
+//  static const uint16_t p_max_b{5};
+//  static const uint16_t p_max_c{20};
+//  static const uint16_t p_max_d{2};
+//};
 
-      for (uint16_t _i = 0; _i < _subs_c.size(); ++_i) {
-        _total += _subs_c[_i].total();
-        stream << "sub c[" << _i << "]: " << _subs_c[_i].total() << ", ";
-      }
-      _total += _sub_d1.total();
-      _total += _sub_d2.total();
-      stream << "sub d1: " << _sub_d1.total() << ", "
-             << "sub d2: " << _sub_d2.total() << ", "
-             << "total: " << _total;
-      INF(m_log, stream.str());
-    }
+// struct messenger_005 {
+//  static std::string desc() {
+//    std::stringstream stream;
 
-    return (_total == (3 * m_max_b + m_max_c + 2 * m_max_d));
-  }
+//    stream << "messengers for 'xpto_c'.\n"
+//           << "4 instances of subscribers for 'xpto_c'.\n"
+//           << p_max_c << " 'xpto_c' will be published.\n"
+//           << "None of the subscribers will timeout.";
 
-private:
-  // ###################################
-  //                     messages
+//    return stream.str();
+//  }
 
-  typedef concurrent::test::msg<'B'> msg_b;
-  typedef concurrent::test::msg<'C'> msg_c;
-  typedef concurrent::test::msg<'D'> msg_d;
+//  bool operator()() {
+//    logger::set_debug_level();
 
-  struct subscriber {
+//    typedef concurrent::sleeping_loop_t<void> publisher;
 
-    inline uint16_t total() const { return m_counter; }
-    inline uint16_t inc() {
-      ++m_counter;
-      return m_counter;
-    };
+//    typedef concurrent::messenger_t<xpto_c> messenger_c;
 
-  private:
-    uint16_t m_counter{0};
-  };
+//    const concurrent::id _pool_c{"pool c"};
+//    messenger_c::add_worker_pool(_pool_c, concurrent::priority{1}, 4s);
 
-  struct subscriber_b1 : public subscriber {
-    subscriber_b1(messenger_004 *p_test) : m_test(p_test) {}
-    void operator()(const msg_b &p_msg_b) {
-      INF(m_test->m_log, "B1: ", p_msg_b, " - ", inc());
-      std::this_thread::sleep_for(250ms);
-    };
+//    std::vector<subscriber_c> _subs_c{
+//        {this, '1'}, {this, '2'}, {this, '3'}, {this, '4'}};
 
-  private:
-    messenger_004 *m_test;
-  };
+//    for (subscriber_c &_sub_c : _subs_c) {
+//      DEB(m_log, "adding sub c ", _sub_c.get_id());
+//      messenger_c::add_subscriber(
+//          _pool_c, [&_sub_c](const xpto_c &p_msg) -> void { _sub_c(p_msg); });
+//    }
 
-  struct subscriber_b2 : public subscriber {
-    subscriber_b2(messenger_004 *p_test) : m_test(p_test) {}
-    void operator()(const msg_b &p_msg_b) {
-      INF(m_test->m_log, "B2: ", p_msg_b, " - ", inc());
-      std::this_thread::sleep_for(250ms);
-    };
+//    uint16_t _count_c{0};
+//    xpto_c _xpto_c;
 
-  private:
-    messenger_004 *m_test;
-  };
+//    publisher _publisher_c(1s, 300ms, [this, &_count_c, &_xpto_c]() -> void {
+//      if (_count_c >= p_max_c) {
+//        m_cond_c.notify_one();
+//        return;
+//      }
+//      std::this_thread::sleep_for(100ms);
+//      ++_count_c;
+//      ++_xpto_c;
+//      DEB(m_log, "publishing C: ", _count_c, ",", _xpto_c);
+//      messenger_c::publish(_xpto_c);
+//    });
 
-  struct subscriber_b3 : public subscriber {
-    subscriber_b3(messenger_004 *p_test, char p_id)
-        : m_test(p_test), m_id(p_id) {}
-    void operator()(const msg_b &p_msg_b) {
-      INF(m_test->m_log, "B3", m_id, ": ", p_msg_b, " - ", inc());
-      std::this_thread::sleep_for(250ms);
-    };
+//    DEB(m_log, "starting publishers");
 
-  private:
-    messenger_004 *m_test;
-    char m_id;
-  };
+//    _publisher_c.start();
 
-  struct subscriber_c : public subscriber {
-    subscriber_c(messenger_004 *p_test, char p_id)
-        : m_test(p_test), m_id(p_id) {}
-    void operator()(const msg_c &p_msg_c) {
-      INF(m_test->m_log, "C", m_id, ": ", p_msg_c, " - ", inc());
-      std::this_thread::sleep_for(2s);
-    }
+//    {
+//      DEB(m_log, "waiting for 'c'");
+//      std::unique_lock<std::mutex> _lock_c(m_mutex_c);
+//      m_cond_c.wait(_lock_c,
+//                    [&_count_c]() -> bool { return _count_c == p_max_c; });
+//    }
 
-    inline char get_id() const { return m_id; }
+//    while (true) {
+//      if (messenger_c::occupied(_pool_c) == 0) {
+//        break;
+//      }
+//      std::this_thread::sleep_for(1s);
+//      DEB(m_log, " pool c = ", messenger_c::occupied(_pool_c));
+//    }
 
-  private:
-    messenger_004 *m_test;
-    char m_id;
-  };
+//    uint16_t _total{0};
+//    {
+//      std::stringstream stream;
 
-  struct subscriber_d1 : public subscriber {
-    subscriber_d1(messenger_004 *p_test) : m_test(p_test) {}
+//      for (uint16_t _i = 0; _i < _subs_c.size(); ++_i) {
+//        _total += _subs_c[_i].total();
+//        stream << "sub c[" << _i << "]: " << _subs_c[_i].total() << ", ";
+//      }
 
-    void operator()(const msg_d &p_msg_d) {
-      INF(m_test->m_log, "D1: ", p_msg_d, " - ", inc());
-      std::this_thread::sleep_for(500ms);
-    }
+//      stream << "total: " << _total;
+//      INF(m_log, stream.str());
+//    }
 
-  private:
-    messenger_004 *m_test;
-  };
+//    return (_total == p_max_c);
+//  }
 
-  struct subscriber_d2 : public subscriber {
-    subscriber_d2(messenger_004 *p_test) : m_test(p_test) {}
+// private:
+//  // ###################################
+//  //                     messages
 
-    void operator()(const msg_d &p_msg_d) {
-      INF(m_test->m_log, "D2: ", p_msg_d, " - ", inc());
-      std::this_thread::sleep_for(1s);
-    }
+//  struct subscriber {
 
-  private:
-    messenger_004 *m_test;
-  };
+//    inline uint16_t total() const { return m_counter; }
+//    inline uint16_t inc() {
+//      ++m_counter;
+//      return m_counter;
+//    };
 
-private:
-  logger::cerr<> m_log{"messenger_004"};
-  std::mutex m_mutex_b;
-  std::condition_variable m_cond_b;
+//  private:
+//    uint16_t m_counter{0};
+//  };
 
-  std::mutex m_mutex_c;
-  std::condition_variable m_cond_c;
+//  struct subscriber_c : public subscriber {
+//    subscriber_c(messenger_005 *p_test, char p_id)
+//        : m_test(p_test), m_id(p_id) {}
+//    void operator()(const xpto_c &p_xpto_c) {
+//      INF(m_test->m_log, "C", m_id, ": ", p_xpto_c, " - ", inc());
+//      std::this_thread::sleep_for(2s);
+//    }
 
-  std::mutex m_mutex_d;
-  std::condition_variable m_cond_d;
+//    inline char get_id() const { return m_id; }
 
-  static const uint16_t m_max_b{5};
-  static const uint16_t m_max_c{20};
-  static const uint16_t m_max_d{2};
-};
+//  private:
+//    messenger_005 *m_test;
+//    char m_id;
+//  };
 
-struct messenger_005 {
-  static std::string desc() {
-    std::stringstream stream;
+// private:
+//  logger::cerr<> m_log{"messenger_005"};
 
-    stream << ""
-           << "None of the subscribers will timeout.";
+//  std::mutex m_mutex_c;
+//  std::condition_variable m_cond_c;
 
-    return stream.str();
-  }
+//  static const uint16_t p_max_c{20};
+//};
+
+struct messenger_006 {
+  static std::string desc() { return ""; }
 
   bool operator()() {
-    logger::set_debug_level();
+    logger::set_info_level();
+    using namespace concurrent;
+    using namespace concurrent::test;
 
-    typedef concurrent::sleeping_loop_t<void> publisher;
+    test_base _test("messenger_006");
 
-    typedef concurrent::messenger_t<msg_c> messenger_c;
+    _test.add_publisher<'A'>(3s, publish_id{345}, value{8});
+    _test.add_publisher<'B'>(500ms, publish_id{2}, value{15});
+    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
+    _test.add_publisher<'D'>(5s, publish_id{9}, value{7});
+    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
 
-    const concurrent::id _pool_c{"pool c"};
-    messenger_c::add_worker_pool(_pool_c, concurrent::priority{1}, 4s);
+    _test.add_pool<'A'>(pool_num{1}, priority{9}, 1s);
+    _test.add_pool<'B'>(pool_num{1}, priority{5}, 1s);
+    _test.add_pool<'C'>(pool_num{1}, priority{10}, 1s);
+    _test.add_pool<'C'>(pool_num{2}, priority{2}, 1s);
+    _test.add_pool<'D'>(pool_num{1}, priority{3}, 1s);
+    _test.add_pool<'E'>(pool_num{1}, priority{10}, 1s);
+    _test.add_pool<'E'>(pool_num{2}, priority{2}, 1s);
 
-    std::vector<subscriber_c> _subs_c{
-        {this, '1'}, {this, '2'}, {this, '3'}, {this, '4'}};
+    _test.add_subscriber<'B'>(pool_num{1}, sub_id{1}, instance_id{1});
+    _test.add_subscriber<'B'>(pool_num{1}, sub_id{1}, instance_id{2});
 
-    for (subscriber_c &_sub_c : _subs_c) {
-      DEB(m_log, "adding sub c ", _sub_c.get_id());
-      messenger_c::add_subscriber(
-          _pool_c, [&_sub_c](const msg_c &p_msg) -> void { _sub_c(p_msg); });
-    }
+    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1}, instance_id{1});
+    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1}, instance_id{1});
 
-    uint16_t _count_c{0};
-    msg_c _msg_c;
+    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1}, instance_id{1});
+    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{1});
+    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, instance_id{2});
 
-    publisher _publisher_c(1s, 300ms, [this, &_count_c, &_msg_c]() -> void {
-      if (_count_c >= m_max_c) {
-        m_cond_c.notify_one();
-        return;
-      }
-      std::this_thread::sleep_for(100ms);
-      ++_count_c;
-      ++_msg_c;
-      DEB(m_log, "publishing C: ", _count_c, ",", _msg_c);
-      messenger_c::publish(_msg_c);
-    });
-
-    DEB(m_log, "starting publishers");
-
-    _publisher_c.start();
-
-    {
-      DEB(m_log, "waiting for 'c'");
-      std::unique_lock<std::mutex> _lock_c(m_mutex_c);
-      m_cond_c.wait(_lock_c,
-                    [&_count_c]() -> bool { return _count_c == m_max_c; });
-    }
-
-    while (true) {
-      if (messenger_c::occupied(_pool_c) == 0) {
-        break;
-      }
-      std::this_thread::sleep_for(1s);
-      DEB(m_log, " pool c = ", messenger_c::occupied(_pool_c));
-    }
-
-    uint16_t _total{0};
-    {
-      std::stringstream stream;
-
-      for (uint16_t _i = 0; _i < _subs_c.size(); ++_i) {
-        _total += _subs_c[_i].total();
-        stream << "sub c[" << _i << "]: " << _subs_c[_i].total() << ", ";
-      }
-
-      stream << "total: " << _total;
-      INF(m_log, stream.str());
-    }
-
-    return (_total == m_max_c);
+    return _test(2min);
   }
-
-private:
-  // ###################################
-  //                     messages
-
-  typedef concurrent::test::msg<'C'> msg_c;
-
-  struct subscriber {
-
-    inline uint16_t total() const { return m_counter; }
-    inline uint16_t inc() {
-      ++m_counter;
-      return m_counter;
-    };
-
-  private:
-    uint16_t m_counter{0};
-  };
-
-  struct subscriber_c : public subscriber {
-    subscriber_c(messenger_005 *p_test, char p_id)
-        : m_test(p_test), m_id(p_id) {}
-    void operator()(const msg_c &p_msg_c) {
-      INF(m_test->m_log, "C", m_id, ": ", p_msg_c, " - ", inc());
-      std::this_thread::sleep_for(2s);
-    }
-
-    inline char get_id() const { return m_id; }
-
-  private:
-    messenger_005 *m_test;
-    char m_id;
-  };
-
-private:
-  logger::cerr<> m_log{"messenger_005"};
-
-  std::mutex m_mutex_c;
-  std::condition_variable m_cond_c;
-
-  static const uint16_t m_max_c{20};
 };
 
 int main(int argc, char **argv) {
-  logger::set_debug_level();
+  //  logger::set_debug_level();
   tester::test _tester(argc, argv);
 
   run_test(_tester, messenger_000);
   run_test(_tester, messenger_001);
   run_test(_tester, messenger_002);
   run_test(_tester, messenger_003);
-  run_test(_tester, messenger_004);
-  run_test(_tester, messenger_005);
+  //  run_test(_tester, messenger_004);
+  //  run_test(_tester, messenger_005);
+  run_test(_tester, messenger_006);
 }

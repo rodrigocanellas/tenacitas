@@ -15,7 +15,7 @@ using namespace tenacitas;
 
 typedef std::tuple<int16_t, double> data;
 
-typedef concurrent::circular_fixed_size_queue_t<data> queue;
+typedef concurrent::internal::circular_fixed_size_queue_t<data> queue;
 
 struct producer {
   producer(queue &p_queue) : m_queue(p_queue) {}

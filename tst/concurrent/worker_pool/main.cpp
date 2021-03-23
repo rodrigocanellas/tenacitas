@@ -11,11 +11,12 @@
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
+using namespace tenacitas::concurrent;
 using namespace std::chrono_literals;
 
 struct worker_pool_000 {
   typedef int16_t data;
-  typedef concurrent::worker_pool_t<data> worker_pool;
+  typedef concurrent::internal::worker_pool_t<data> worker_pool;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -59,7 +60,7 @@ struct worker_pool_001 {
   typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::worker_pool_t<msg> worker_pool;
+  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -101,11 +102,11 @@ struct worker_pool_001 {
       std::this_thread::sleep_for(_sleep);
       _loop.stop();
       DEB(m_log, "waking up after ", _sleep.count(), " secs, and ",
-          _msg.value(), " was the last value produced");
+          _msg.get_value(), " was the last value produced");
     }
-    DEB(m_log, "produced = ", _msg.value(),
-        ", consumed = ", _consumer.get_msg().value());
-    if (_consumer.get_msg().value() != _msg.value()) {
+    DEB(m_log, "produced = ", _msg.get_value(),
+        ", consumed = ", _consumer.get_msg().get_value());
+    if (_consumer.get_msg().get_value() != _msg.get_value()) {
       ERR(m_log, "Data value consumed should be equal to provided");
       return false;
     }
@@ -119,12 +120,12 @@ private:
         : m_worker_pool(p_worker_pool), m_msg(p_msg) {}
 
     void operator()() {
-      if (m_msg->value() > m_num_msgs) {
+      if (m_msg->get_value() > m_num_msgs) {
         return;
       }
 
       ++(*m_msg);
-      msg _msg(m_msg->value());
+      msg _msg(m_msg->get_value());
       DEB(m_log, "going to add ", _msg);
 
       m_worker_pool->add_data(_msg);
@@ -163,7 +164,7 @@ struct worker_pool_002 {
   typedef concurrent::test::msg<'Z'> msg;
 
   typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::worker_pool_t<msg> worker_pool;
+  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -238,16 +239,16 @@ struct worker_pool_002 {
       std::this_thread::sleep_for(4s);
       DEB(m_log, "waking up after 4 secs");
 
-      INF(m_log, _msg.value(), " was the last value produced");
+      INF(m_log, _msg.get_value(), " was the last value produced");
 
       _stop_producer = true;
       m_th.join();
       DEB(m_log, "producer joined");
     }
 
-    INF(m_log, "provided = ", _msg.value(),
-        ", consumed = ", _consumer.get_msg().value());
-    if (_consumer.get_msg().value() != _msg.value()) {
+    INF(m_log, "provided = ", _msg.get_value(),
+        ", consumed = ", _consumer.get_msg().get_value());
+    if (_consumer.get_msg().get_value() != _msg.get_value()) {
       ERR(m_log, "Data value consumed should be equal to provided");
       return false;
     }
@@ -274,7 +275,7 @@ struct worker_pool_002 {
 
     void operator()() {
       ++(*m_msg);
-      msg _msg(m_msg->value());
+      msg _msg(m_msg->get_value());
       DEB(m_log, "adding msg ", _msg);
       m_worker_pool->add_data(_msg);
     }
@@ -293,7 +294,7 @@ struct worker_pool_003 {
 
   typedef concurrent::test::msg<'Z'> msg;
 
-  typedef concurrent::worker_pool_t<msg> worker_pool;
+  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -305,7 +306,7 @@ struct worker_pool_003 {
       WAR(m_log, "timeout handling ", p_msg);
     };
 
-    msg::number _last_added{0};
+    test::value _last_added{0};
 
     {
       worker_pool _worker_pool{1s, _on_timeout};
@@ -321,15 +322,15 @@ struct worker_pool_003 {
         _worker_pool.add_data(_msg);
       }
 
-      _last_added = static_cast<msg::number>(_worker_pool.amount_added() - 1);
+      _last_added = static_cast<test::value>(_worker_pool.amount_added() - 1);
 
       std::this_thread::sleep_for(15s);
     }
 
     DEB(m_log, "amount added = ", _last_added,
-        ", m_consumer.m_msg.value() = ", m_consumer.get_msg().value());
+        ", m_consumer.m_msg.value() = ", m_consumer.get_msg().get_value());
 
-    return (_last_added == m_consumer.get_msg().value());
+    return (_last_added == m_consumer.get_msg().get_value());
   }
 
 private:
@@ -355,7 +356,7 @@ struct worker_pool_004 {
 
   typedef concurrent::test::msg<'Z'> msg;
 
-  typedef concurrent::worker_pool_t<msg> worker_pool;
+  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -365,8 +366,8 @@ struct worker_pool_004 {
 
   bool operator()() {
 
-    msg::number _amount_added{0};
-    const msg::number _amount_to_add{3000};
+    test::value _amount_added{0};
+    const test::value _amount_to_add{3000};
 
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
@@ -390,7 +391,7 @@ struct worker_pool_004 {
         _worker_pool.add_data(_msg);
       }
 
-      _amount_added = static_cast<msg::number>(_worker_pool.amount_added());
+      _amount_added = static_cast<test::value>(_worker_pool.amount_added());
 
       while (_worker_pool.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
@@ -398,7 +399,7 @@ struct worker_pool_004 {
       }
     }
 
-    msg::number _consumed{0};
+    test::value _consumed{0};
     {
       std::stringstream _stream;
       for (const consumer &_consumer : _consumers) {
@@ -430,12 +431,12 @@ private:
 
     const std::string &get_id() const { return m_id; }
     inline const msg &get_msg() const { return m_msg; }
-    inline msg::number get_num() const { return m_num; }
+    inline test::value get_num() const { return m_num; }
 
   private:
     std::string m_id;
     msg m_msg;
-    msg::number m_num{0};
+    test::value m_num{0};
     logger::cerr<> m_log{"consumer"};
   };
   logger::cerr<> m_log{"worker_pool_004"};
@@ -445,7 +446,7 @@ struct worker_pool_005 {
 
   typedef concurrent::test::msg<'Z'> msg;
 
-  typedef concurrent::worker_pool_t<msg> worker_pool;
+  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -465,8 +466,8 @@ struct worker_pool_005 {
 
     m_log.set_debug_level();
 
-    msg::number _amount_added{0};
-    const msg::number _amount_to_add{50};
+    test::value _amount_added{0};
+    const test::value _amount_to_add{50};
 
     std::vector<consumer> _consumers;
     _consumers.push_back({"c1", 200ms});
@@ -492,8 +493,8 @@ struct worker_pool_005 {
         _worker_pool.add_data(_msg);
       }
 
-      _amount_added =
-          static_cast<msg::number>(_worker_pool.amount_added()) - _num_timeouts;
+      _amount_added = static_cast<test::value>(_worker_pool.amount_added()) -
+                      _num_timeouts;
 
       std::this_thread::sleep_for(3s);
 
@@ -503,7 +504,7 @@ struct worker_pool_005 {
       }
     }
 
-    msg::number _consumed{0};
+    test::value _consumed{0};
     {
       std::stringstream _stream;
       for (const consumer &_consumer : _consumers) {
@@ -533,7 +534,7 @@ private:
         m_count = 1;
         ++m_timeout_counter;
         WAR(m_log, "causing timeout for ", m_id, " when msg = ", p_msg,
-            ", count = ", m_count, ", timeour counter = ", m_timeout_counter);
+            ", count = ", m_count, ", timeout counter = ", m_timeout_counter);
         std::this_thread::sleep_for(m_over_timeout);
       } else {
         m_msg = p_msg;
@@ -552,7 +553,7 @@ private:
 
     const std::string &get_id() const { return m_id; }
     inline const msg &get_msg() const { return m_msg; }
-    inline msg::number get_num() const { return m_num; }
+    inline test::value get_num() const { return m_num; }
     std::chrono::milliseconds get_timeout() const { return m_timeout; }
     uint16_t get_num_timeouts() const { return m_timeout_counter; }
 
@@ -562,8 +563,8 @@ private:
     std::chrono::milliseconds m_over_timeout;
     msg m_msg;
 
-    msg::number m_num{0};
-    msg::number m_count{1};
+    test::value m_num{0};
+    test::value m_count{1};
     uint16_t m_timeout_counter{0};
     logger::cerr<> m_log{"consumer"};
   };
