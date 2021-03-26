@@ -669,10 +669,10 @@ private:
         }
 
         DEB(this->m_log, this->m_id, " - calling provider");
-        std::optional<std::tuple<t_params...>> _maybe_data = m_provider();
+        std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
 
         if (_maybe_data) {
-          std::tuple<t_params...> _params = std::move(*_maybe_data);
+          std::tuple<t_params...> _params{std::move(*_maybe_data)};
 
           DEB(this->m_log, this->m_id, " - data provided = ", _params);
 
@@ -684,7 +684,7 @@ private:
             WAR(this->m_log, this->m_id,
                 " - timeout for worker with data = ", _params);
 
-            auto _on_timeout = [this, _params]() {
+            auto _on_timeout = [this, &_params]() {
               std::apply(this->m_on_timeout, std::move(_params));
             };
 
@@ -1711,7 +1711,8 @@ private:
     /// \brief stops the \p worker
     ///
     /// From this call on, the \p workers will stop competing among each other,
-    /// in order to process any instance of \p data that was inserted into the
+    // aayasy/ in order to process any instance of \p data that was inserted
+    // into the
     /// queue
     void stop() {
       if (m_stopped) {
