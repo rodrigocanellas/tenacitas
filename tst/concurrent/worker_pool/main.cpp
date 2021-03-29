@@ -35,7 +35,7 @@ struct worker_pool_000 {
 
     DEB(m_log, "capacity = ", _worker_pool.capacity(),
         ", occupied = ", _worker_pool.occupied());
-    _worker_pool.start();
+
     _worker_pool.add_data(-8);
 
     DEB(m_log, "capacity = ", _worker_pool.capacity(),
@@ -159,137 +159,6 @@ private:
   logger::cerr<> m_log{"worker_pool_001"};
 };
 
-struct worker_pool_002 {
-
-  typedef concurrent::test::msg<'Z'> msg;
-
-  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
-  typedef std::function<void(const msg &)> on_timeout;
-
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream
-        << "\nA 'sleeping_loop' sending a message, at each 500 ms, to "
-        << "a 'worker' with one operation, using a "
-        << "'circular_fixed_size_queue', with size 40"
-
-        << "\nThe main thread will sleep for 10 secs, the 'worker' "
-        << "will stop; main thread will sleep for 5 secs; 'worker' "
-        << "will run again; main thread will sleep for 4 secs."
-
-        << "\nThe messages added while the queue was stopped are handled when "
-        << "the pool runs again."
-
-        << "\nThe amount of data consumed must be equal to the provided";
-    return _stream.str();
-  }
-
-  bool operator()() {
-
-    msg _msg;
-
-    consumer _consumer;
-
-    {
-      on_timeout _on_timeout = [this](const msg &p_msg) -> void {
-        WAR(m_log, "timeout handling ", p_msg);
-      };
-
-      worker_pool _worker_pool(100ms, _on_timeout);
-
-      DEB(m_log, "creating the sleeping_loop");
-
-      //      sleeping_loop _loop(300ms, 500ms, producer{&_worker_pool, &_msg},
-      //                          []() -> void {});
-
-      DEB(m_log, "adding consumer to the worker");
-      _worker_pool.add_worker(
-          [&_consumer](const msg &p_msg) { return _consumer(p_msg); });
-
-      //      _loop.start();
-
-      bool _stop_producer{false};
-      producer _producer{&_worker_pool, &_msg};
-      m_th = std::thread([this, &_producer, &_stop_producer]() {
-        while (!_stop_producer) {
-          _producer();
-          std::this_thread::sleep_for(500ms);
-        }
-        DEB(m_log, "leaving producer");
-      });
-
-      _worker_pool.start();
-
-      DEB(m_log, "sleeping for 10 secs");
-      std::this_thread::sleep_for(10s);
-      DEB(m_log, "waking up after 10 secs");
-
-      DEB(m_log, "stopping the message queue");
-      _worker_pool.stop();
-
-      DEB(m_log, "sleeping for 5 secs");
-      std::this_thread::sleep_for(5s);
-      DEB(m_log, "waking up after 5 secs");
-
-      DEB(m_log, "restarting the worker");
-      _worker_pool.start();
-
-      DEB(m_log, "sleeping for 4 secs");
-      std::this_thread::sleep_for(4s);
-      DEB(m_log, "waking up after 4 secs");
-
-      INF(m_log, _msg.get_value(), " was the last value produced");
-
-      _stop_producer = true;
-      m_th.join();
-      DEB(m_log, "producer joined");
-    }
-
-    INF(m_log, "provided = ", _msg.get_value(),
-        ", consumed = ", _consumer.get_msg().get_value());
-    if (_consumer.get_msg().get_value() != _msg.get_value()) {
-      ERR(m_log, "Data value consumed should be equal to provided");
-      return false;
-    }
-
-    return true;
-  }
-
-  struct consumer {
-    void operator()(const msg &p_msg) {
-      m_msg = p_msg;
-      DEB(m_log, "handling msg ", m_msg);
-    }
-
-    inline const msg &get_msg() const { return m_msg; }
-
-  private:
-    msg m_msg;
-    logger::cerr<> m_log{"consumer"};
-  };
-
-  struct producer {
-    producer(worker_pool *p_worker_pool, msg *p_data)
-        : m_worker_pool(p_worker_pool), m_msg(p_data) {}
-
-    void operator()() {
-      ++(*m_msg);
-      msg _msg(m_msg->get_value());
-      DEB(m_log, "adding msg ", _msg);
-      m_worker_pool->add_data(_msg);
-    }
-
-  private:
-    worker_pool *m_worker_pool;
-    msg *m_msg;
-    logger::cerr<> m_log{"producer"};
-  };
-  logger::cerr<> m_log{"worker_pool_001"};
-
-  std::thread m_th;
-};
-
 struct worker_pool_003 {
 
   typedef concurrent::test::msg<'Z'> msg;
@@ -313,8 +182,6 @@ struct worker_pool_003 {
 
       _worker_pool.add_worker(
           [this](const msg &p_msg) -> void { m_consumer(p_msg); });
-
-      _worker_pool.start();
 
       for (uint16_t _i = 0; _i < 300; ++_i) {
         msg _msg(_i);
@@ -382,8 +249,6 @@ struct worker_pool_004 {
         _worker_pool.add_worker(
             [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
       }
-
-      _worker_pool.start();
 
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
@@ -485,16 +350,14 @@ struct worker_pool_005 {
             [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
       }
 
-      _worker_pool.start();
-
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
         _worker_pool.add_data(_msg);
       }
 
-      _amount_added = static_cast<test::value>(_worker_pool.amount_added()) -
-                      _num_timeouts;
+      _amount_added =
+          static_cast<test::value>(_worker_pool.amount_added()) - _num_timeouts;
 
       std::this_thread::sleep_for(3s);
 
@@ -586,7 +449,6 @@ int main(int argc, char **argv) {
   tester::test<> _test(argc, argv);
   run_test(_test, worker_pool_000);
   run_test(_test, worker_pool_001);
-  run_test(_test, worker_pool_002);
   run_test(_test, worker_pool_003);
   run_test(_test, worker_pool_004);
   run_test(_test, worker_pool_005);

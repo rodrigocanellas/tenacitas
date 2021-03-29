@@ -490,11 +490,11 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
   virtual ~async_loop_base_t() {
     DEB(m_log, m_id, " - destructor");
     stop();
-    if (m_thread.joinable()) {
-      DEB(m_log, m_id, " - joining");
-      m_thread.join();
-      DEB(m_log, m_id, " - joined");
-    }
+    //    if (m_thread.joinable()) {
+    //      DEB(m_log, m_id, " - joining");
+    //      m_thread.join();
+    //      DEB(m_log, m_id, " - joined");
+    //    }
 
     DEB(m_log, m_id, " - leaving destructor");
   }
@@ -505,6 +505,8 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
       return;
     }
     m_stopped = false;
+
+    DEB(m_log, m_id, " - starting loop thread");
     m_thread = std::thread([this]() { loop(); });
   }
 
@@ -517,6 +519,23 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
     }
     DEB(m_log, m_id, " - stopping");
     m_stopped = true;
+    m_worker = nullptr;
+    if (m_thread.get_id() == std::thread::id()) {
+      DEB(m_log, m_id,
+          " - not joining because m_thread.get_id() == std::thread::id()");
+      return;
+    }
+    DEB(m_log, m_id, " - m_thread.get_id() != std::thread::id()");
+    if (!m_thread.joinable()) {
+      DEB(m_log, m_id, " - not joining because m_thread is not joinable");
+      return;
+    }
+    DEB(m_log, m_id, " - m_thread.joinable()");
+    {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+      m_thread.join();
+    }
+    DEB(m_log, "leaving stop");
   }
 
   /// \brief
@@ -569,6 +588,8 @@ protected:
   /// \brief
   logger::cerr<> m_log{"async_loop"};
 
+  std::mutex m_mutex;
+
   uint64_t m_id{uuid()};
 };
 
@@ -616,21 +637,41 @@ template <typename... t_params> struct async_loop_t {
   async_loop_t &operator=(const async_loop_t &) = delete;
 
   /// \brief
-  inline void start() { m_impl->start(); }
-
-  /// \brief
-  inline void stop() { m_impl->stop(); }
-
-  /// \brief
-  inline bool is_stopped() const { return m_impl->is_stopped(); }
-
-  /// \brief
-  template <typename t_time> inline void set_timeout(t_time p_timeout) {
-    m_impl->set_timeout(p_timeout);
+  inline void start() {
+    if (m_impl) {
+      m_impl->start();
+    }
   }
 
   /// \brief
-  inline timeout get_timeout() const { return m_impl->get_timeout(); }
+  inline void stop() {
+    if (m_impl) {
+      m_impl->stop();
+    }
+  }
+
+  /// \brief
+  inline bool is_stopped() const {
+    if (m_impl) {
+      return m_impl->is_stopped();
+    }
+    return true;
+  }
+
+  /// \brief
+  template <typename t_time> inline void set_timeout(t_time p_timeout) {
+    if (m_impl) {
+      m_impl->set_timeout(p_timeout);
+    }
+  }
+
+  /// \brief
+  inline timeout get_timeout() const {
+    if (m_impl) {
+      return m_impl->get_timeout();
+    }
+    return timeout(0);
+  }
 
   /// \brief
   inline operator bool() const { return m_impl != nullptr; }
@@ -662,6 +703,7 @@ private:
       DEB(this->m_log, this->m_id, " - entering loop");
 
       while (true) {
+        std::lock_guard<std::mutex> _lock(this->m_mutex);
 
         if (this->m_stopped || this->m_breaker()) {
           DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
@@ -671,26 +713,58 @@ private:
         DEB(this->m_log, this->m_id, " - calling provider");
         std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
 
+        if (this->m_stopped || this->m_breaker()) {
+          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+          break;
+        }
+
         if (_maybe_data) {
           std::tuple<t_params...> _params{std::move(*_maybe_data)};
 
           DEB(this->m_log, this->m_id, " - data provided = ", _params);
 
-          auto _worker = [this, &_params]() -> void {
-            std::apply(this->m_worker, _params);
-          };
+          if (this->m_stopped || this->m_breaker()) {
+            DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+            break;
+          }
 
-          if (!execute(this->m_timeout, _worker)) {
+          DEB(this->m_log, "still here");
+
+          if (!this->m_worker) {
+            DEB(this->m_log, "worker is invalid");
+            break;
+          }
+
+          //          auto _worker = [this, &_params]() -> void {
+          //            std::apply(this->m_worker, _params);
+          //          };
+
+          if (!execute(this->m_timeout, [this, &_params]() -> void {
+                DEB(this->m_log, "still here");
+                std::apply(this->m_worker, _params);
+              })) {
             WAR(this->m_log, this->m_id,
                 " - timeout for worker with data = ", _params);
+
+            if (this->m_stopped || this->m_breaker()) {
+              DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+              break;
+            }
 
             auto _on_timeout = [this, &_params]() {
               std::apply(this->m_on_timeout, std::move(_params));
             };
 
+            if (this->m_stopped || this->m_breaker()) {
+              DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+              break;
+            }
+
             std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
           }
+          DEB(this->m_log, "still here");
         }
+        DEB(this->m_log, "still here");
       }
     }
 
@@ -711,6 +785,8 @@ template <> struct async_loop_t<void> {
 
   /// \brief
   typedef std::function<void()> worker;
+
+  async_loop_t() = delete;
 
   /// \brief
   template <typename t_time>
@@ -740,20 +816,40 @@ template <> struct async_loop_t<void> {
   async_loop_t &operator=(const async_loop_t &) = delete;
 
   /// \brief
-  inline void start() { m_impl->start(); }
-
-  /// \brief
-  inline void stop() { m_impl->stop(); }
-  /// \brief
-  inline bool is_stopped() const { return m_impl->is_stopped(); }
-
-  /// \brief
-  template <typename t_time> inline void set_timeout(t_time p_timeout) {
-    m_impl->set_timeout(p_timeout);
+  inline void start() {
+    if (m_impl) {
+      m_impl->start();
+    }
   }
 
   /// \brief
-  inline timeout get_timeout() const { return m_impl->get_timeout(); }
+  inline void stop() {
+    if (m_impl) {
+      m_impl->stop();
+    }
+  }
+  /// \brief
+  inline bool is_stopped() const {
+    if (m_impl) {
+      return m_impl->is_stopped();
+    }
+    return true;
+  }
+
+  /// \brief
+  template <typename t_time> inline void set_timeout(t_time p_timeout) {
+    if (m_impl) {
+      m_impl->set_timeout(p_timeout);
+    }
+  }
+
+  /// \brief
+  inline timeout get_timeout() const {
+    if (m_impl) {
+      return m_impl->get_timeout();
+    }
+    return timeout(0);
+  }
   /// \brief
   inline operator bool() const { return m_impl != nullptr; }
 
@@ -1343,7 +1439,7 @@ public:
 
 public:
   /// \brief
-  worker_pool_t() : m_impl(nullptr) {}
+  worker_pool_t() = delete;
 
   /// \brief
   template <typename t_time>
@@ -1406,11 +1502,12 @@ public:
   ///
   /// If 'stop' was not called, empties the queue, waiting for all the data to
   /// be processed
-  ~worker_pool_t() {
-    DEB(m_log, "destructor");
-    stop();
-    DEB(m_log, "leaving destructor");
-  }
+  ~worker_pool_t() = default;
+  //  {
+  //    DEB(m_log, "destructor");
+  //    stop();
+  //    DEB(m_log, "leaving destructor");
+  //  }
 
   /// \brief adds data to be passed to a worker
   ///
@@ -1456,31 +1553,32 @@ public:
   /// \brief informs if the worker is stopped
   inline bool is_stopped() const { return m_impl->is_stopped(); }
 
-  /// \brief starts the worker
-  ///
-  /// From this call on, the workers will compete among each other, in order
-  /// to process any instance of \p data that was inserted into the queue
-  ///
-  /// \return \p false if it not start because no \p worker was added
-  ///         \p true if it was already started, or if it started successfully
-  bool start() { return m_impl->start(); }
+  //  /// \brief starts the worker
+  //  ///
+  //  /// From this call on, the workers will compete among each other, in order
+  //  /// to process any instance of \p data that was inserted into the queue
+  //  ///
+  //  /// \return \p false if it not start because no \p worker was added
+  //  ///         \p true if it was already started, or if it started
+  //  successfully bool start() {
+  //    if (m_impl) {
+  //      return m_impl->start();
+  //    }
+  //    return false;
+  //  }
 
   /// \brief stops the \p worker
   ///
   /// From this call on, the \p workers will stop competing among each other,
   /// in order to process any instance of \p data that was inserted into the
   /// queue
-  inline void stop() {
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  inline void stop() { m_impl->stop(); }
 
   /// \brief retrieves the capacity if the queue
-  inline auto capacity() const { return m_impl->capacity(); }
+  inline size_t capacity() const { return m_impl->capacity(); }
 
   /// \brief the amount of slots occupied in the \p queue
-  inline auto occupied() const { return m_impl->occupied(); }
+  inline size_t occupied() const { return m_impl->occupied(); }
 
   /// \brief
   inline timeout get_timeout() const { return m_impl->get_timeout(); }
@@ -1489,35 +1587,39 @@ public:
   inline const id &get_id() const { return m_impl->get_id(); }
 
   /// \brief
-  const priority &get_priority() const { return m_impl->get_priority(); }
+  inline const priority &get_priority() const { return m_impl->get_priority(); }
 
   /// \brief
-  void set_priority(const priority &p_priority) {
+  inline void set_priority(const priority &p_priority) {
     m_impl->set_priority(p_priority);
   }
 
   /// \brief
-  bool operator<(const worker_pool_t &p_worker_pool) const {
+  inline bool operator<(const worker_pool_t &p_worker_pool) const {
+
     return m_impl->get_priority() < p_worker_pool.m_impl->get_priority();
   }
 
   /// \brief
-  bool operator>(const worker_pool_t &p_worker_pool) const {
+  inline bool operator>(const worker_pool_t &p_worker_pool) const {
     return m_impl->get_priority() > p_worker_pool.m_impl->get_priority();
   }
 
   /// \brief
-  bool operator!=(const worker_pool_t &p_worker_pool) const {
+  inline bool operator!=(const worker_pool_t &p_worker_pool) const {
     return m_impl->get_id() != p_worker_pool.m_impl->get_id();
   }
 
   /// \brief
-  bool operator==(const worker_pool_t &p_worker_pool) const {
+  inline bool operator==(const worker_pool_t &p_worker_pool) const {
     return m_impl->get_id() == p_worker_pool.m_impl->get_id();
   }
 
-  size_t get_size() const { return m_impl->get_size(); }
-  size_t get_occupied() const { return m_impl->get_occupied(); }
+  inline size_t get_size() const { return m_impl->get_size(); }
+
+  inline size_t get_occupied() const { return m_impl->get_occupied(); }
+
+  inline void empty_queue() { m_impl->empty_queue(); }
 
 private:
   struct implementation {
@@ -1591,25 +1693,28 @@ private:
 
     /// \brief destructor
     ~implementation() {
-      DEB(m_log, "destructor");
-      stop();
-      DEB(m_log, "leaving destructor");
+      if (m_stopped) {
+        DEB(m_log, "not stopping because it is stopped");
+        return;
+      }
+
+      set_stopped();
+      m_data_produced.notify_one();
+      for (async_loop &_loop : m_loops) {
+        DEB(m_log, "stopping loop");
+        _loop.stop();
+      }
+      DEB(m_log, "leaving");
     }
 
-    //    ~implementation() {
-    //      DEB(m_log, "destructor");
-    //      if (!all_loops_stopped()) {
-    //        if (!m_stopped) {
-    //          while (!m_queue.empty()) {
-    //            m_data_produced.notify_all();
-    //            std::unique_lock<std::mutex> _lock(m_mutex_data);
-    //            m_data_consumed.wait(_lock, [] { return true; });
-    //          }
-    //          stop();
-    //        }
-    //      }
-    //      DEB(m_log, "leaving destructor");
-    //    }
+    void empty_queue() {
+      DEB(m_log, "empty queue");
+      while (!m_queue.empty()) {
+        m_data_produced.notify_one();
+        //        std::unique_lock<std::mutex> _lock(m_mutex_data);
+        //        m_data_consumed.wait(_lock, [] { return true; });
+      }
+    }
 
     bool add_data(const data &p_data) {
 
@@ -1647,7 +1752,7 @@ private:
 
       m_loops.emplace(m_loops.begin(), std::move(_async_loop));
 
-      m_stopped = false;
+      set_stopped(false);
     }
 
     /// \brief adds a bunch of \p worker
@@ -1672,66 +1777,67 @@ private:
     /// \brief informs if the worker is stopped
     inline bool is_stopped() const { return m_stopped; }
 
-    /// \brief starts the worker
-    ///
-    /// From this call on, the workers will compete among each other, in order
-    /// to process any instance of \p data that was inserted into the queue
-    ///
-    /// \return \p false if it not start because no \p worker was added
-    ///         \p true if it was already started, or if it started successfully
-    bool start() {
+    //    /// \brief starts the worker
+    //    ///
+    //    /// From this call on, the workers will compete among each other, in
+    //    order
+    //    /// to process any instance of \p data that was inserted into the
+    //    queue
+    //    ///
+    //    /// \return \p false if it not start because no \p worker was added
+    //    ///         \p true if it was already started, or if it started
+    //    successfully bool start() {
 
-      //      if (!m_stopped) {
-      //        ERR(m_log, "not starting because it is already running");
-      //        return true;
-      //      }
+    //      //      if (!m_stopped) {
+    //      //        ERR(m_log, "not starting because it is already
+    //      running");
+    //      //        return true;
+    //      //      }
 
-      if (m_loops.empty()) {
-        WAR(m_log, "can't run because there are no workers");
-        return false;
-      }
+    //      if (m_loops.empty()) {
+    //        WAR(m_log, "can't run because there are no workers");
+    //        return false;
+    //      }
 
-      //      {
-      //        DEB(m_log, "waiting for locking");
-      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-      //        m_stopped = false;
-      //      }
+    //      //      {
+    //      //        DEB(m_log, "waiting for locking");
+    //      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+    //      //        m_stopped = false;
+    //      //      }
 
-      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-      DEB(m_log, "starting");
-      for (async_loop &_loop : m_loops) {
-        _loop.start();
-      }
+    //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
+    //      DEB(m_log, "starting");
+    //      m_stopped = false;
+    //      for (async_loop &_loop : m_loops) {
+    //        DEB(m_log, "starting loop");
+    //        _loop.start();
+    //      }
 
-      m_stopped = false;
-      //      DEB(m_log, "started");
-      return true;
-    }
+    //      //      DEB(m_log, "started");
+    //      return true;
+    //    }
 
     /// \brief stops the \p worker
     ///
     /// From this call on, the \p workers will stop competing among each other,
-    // aayasy/ in order to process any instance of \p data that was inserted
-    // into the
+    /// in order to process any instance of \p data that was inserted into the
     /// queue
-    void stop() {
-      if (m_stopped) {
-        DEB(m_log, "not stopping because it is stopped");
-        return;
-      }
+    //    void stop() {
+    //      if (m_stopped) {
+    //        DEB(m_log, "not stopping because it is stopped");
+    //        return;
+    //      }
 
-      empty_queue();
-
-      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-      m_stopped = true;
-      m_data_produced.notify_all();
-      for (async_loop &_loop : m_loops) {
-        DEB(m_log, "stopping loop");
-        //        std::async(std::launch::async, [&_loop]() -> void {
-        //        _loop.stop(); });
-        _loop.stop();
-      }
-    }
+    //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
+    //      m_stopped = true;
+    //      m_data_produced.notify_all();
+    //      for (async_loop &_loop : m_loops) {
+    //        DEB(m_log, "stopping loop");
+    //        //        std::async(std::launch::async, [&_loop]() -> void {
+    //        //        _loop.stop(); });
+    //        _loop.stop();
+    //      }
+    //    }
 
     /// \brief retrieves the capacity if the queue
     inline size_t capacity() const { return m_queue.capacity(); }
@@ -1787,13 +1893,9 @@ private:
     typedef circular_unlimited_size_queue_t<t_data> queue;
 
   private:
-    void empty_queue() {
-      DEB(m_log, "empty queue");
-      while (!m_queue.empty()) {
-        m_data_produced.notify_all();
-        std::unique_lock<std::mutex> _lock(m_mutex_data);
-        m_data_consumed.wait(_lock, [] { return true; });
-      }
+    void set_stopped(bool p_value = true) {
+      std::unique_lock<std::mutex> _lock(m_mutex_stop);
+      m_stopped = p_value;
     }
 
     /// \brief provider provides data, if available, to a \p worker
@@ -1808,8 +1910,6 @@ private:
       DEB(m_log, "waiting for data...");
       std::unique_lock<std::mutex> _lock(m_mutex_data);
       m_data_produced.wait(_lock, [this]() -> bool {
-        //      return (!m_container.empty() || m_stopped);
-
         if (m_stopped) {
           DEB(m_log, "stopped");
           return true;
@@ -1826,17 +1926,18 @@ private:
 
       if (m_stopped) {
         DEB(m_log, "stopped and notifying");
-        m_data_consumed.notify_all();
+        //        m_data_consumed.notify_all();
         return {};
       }
 
-      std::optional<data> _maybe = m_queue.get();
+      std::optional<data> _maybe{m_queue.get()};
       if (_maybe) {
         data _data(std::move(*_maybe));
 
         DEB(m_log, "getting ", _data, " and notifying");
 
-        m_data_consumed.notify_all();
+        //        m_data_consumed.notify_all();
+
         return {{_data}};
       }
       DEB(m_log, "it was not possible to get data");
@@ -1880,7 +1981,7 @@ private:
     std::mutex m_mutex_stop;
 
     /// \brief controls access to the data consumed
-    std::condition_variable m_data_consumed;
+    //    std::condition_variable m_data_consumed;
 
     /// \brief controls access to the data produced
     std::condition_variable m_data_produced;
@@ -2138,7 +2239,7 @@ template <typename t_data> struct messenger_t {
   typedef std::function<void(const t_data &)> on_timeout;
 
   /// \brief
-  ~messenger_t() = default;
+  ~messenger_t() { DEB(m_log, "destructor"); }
 
   /// \brief
   template <typename t_time>
@@ -2273,12 +2374,13 @@ template <typename t_data> struct messenger_t {
   }
 
   /// \brief
-  //  static void stop() {
-  //    iterator _end = m_itens.end();
-  //    for (iterator _ite = m_itens.begin(); _ite != _end; ++_ite) {
-  //      _ite->stop();
-  //    }
-  //  }
+  static void wait() {
+    DEB(m_log, "starting to wait");
+    for (worker_pool &_worker_pool : m_list) {
+      _worker_pool.empty_queue();
+    }
+    DEB(m_log, "finished waiting");
+  }
 
 private:
   /// \brief

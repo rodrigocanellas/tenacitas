@@ -27,12 +27,12 @@ using namespace tenacitas;
 using namespace tenacitas::concurrent::test;
 using namespace std::chrono_literals;
 
-static const concurrent::id g_pool_b1{"pool b1"};
-static const concurrent::id g_pool_b2{"pool b2"};
-static const concurrent::id g_pool_b3{"pool b3"};
-static const concurrent::id g_pool_c{"pool c"};
-static const concurrent::id g_pool_d1{"pool d1"};
-static const concurrent::id g_pool_d2{"pool d2"};
+// static const concurrent::id g_pool_b1{"pool b1"};
+// static const concurrent::id g_pool_b2{"pool b2"};
+// static const concurrent::id g_pool_b3{"pool b3"};
+// static const concurrent::id g_pool_c{"pool c"};
+// static const concurrent::id g_pool_d1{"pool d1"};
+// static const concurrent::id g_pool_d2{"pool d2"};
 
 struct messenger_000 {
 
@@ -202,6 +202,7 @@ struct messenger_002 {
   }
 
   bool operator()() {
+    //    m_log.set_debug_level();
     using namespace std;
 
     const data _total_to_produce{58};
@@ -226,7 +227,7 @@ struct messenger_002 {
       DEB(m_log, "data produced = ", _data_produced, ", total to produce ",
           _total_to_produce);
       if (_data_produced >= _total_to_produce) {
-        DEB(m_log, "notofying");
+        DEB(m_log, "notifying");
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
@@ -261,6 +262,7 @@ struct messenger_002 {
       if (_status == cv_status::timeout) {
         ERR(m_log,
             "it took more time than allowed for the consumer, as expected");
+        messenger::wait();
         return true;
       }
     }
@@ -683,7 +685,7 @@ struct messenger_006 {
 };
 
 int main(int argc, char **argv) {
-  //  logger::set_debug_level();
+  logger::set_debug_level();
   tester::test _tester(argc, argv);
 
   run_test(_tester, messenger_000);

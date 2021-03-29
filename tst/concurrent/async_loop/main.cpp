@@ -86,74 +86,71 @@ private:
   logger::cerr<> m_log{"async_loop_000"};
 };
 
-// struct async_loop_001 {
+struct async_loop_001 {
 
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream << "no timeout, one param, breaker";
-//    return _stream.str();
-//  }
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "no timeout, one param, breaker";
+    return _stream.str();
+  }
 
-//  bool operator()() {
+  bool operator()() {
 
-//
+    int16_t _i{0};
+    auto _provider = [this, &_i]() -> std::optional<std::tuple<int16_t>> {
+      ++_i;
+      DEB(m_log, "providing ", _i);
+      return {{_i}};
+    };
 
-//    int16_t _i{0};
-//    auto _provider = [this, &_i]() -> int16_t {
-//      ++_i;
-//      DEB(m_log, "providing ", _i);
-//      return _i;
-//    };
+    auto _breaker = [this, &_i]() -> bool {
+      if (_i == 3) {
+        m_cond.notify_one();
+        return true;
+      }
+      return false;
+    };
 
-//    auto _breaker = [this, &_i]() -> bool {
-//      if (_i == 3) {
-//        m_cond.notify_one();
-//        return true;
-//      }
-//      return false;
-//    };
+    auto _on_dummy_timeout = [](int16_t &&) -> void {};
 
-//    concurrent::internal::async_loop_t concurrent::use_breaker::yes,
-//                             int16_t>
-//        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
+    concurrent::internal::async_loop_t<int16_t> _loop(
+        worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
 
-//
+    _loop.start();
 
-//    _loop.start();
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
 
-//    {
-//      std::unique_lock<std::mutex> _lock(m_mutex);
-//      m_cond.wait(_lock);
-//    }
+    _loop.stop();
 
-//    _loop.stop();
+    if (_i != 3) {
+      ERR(m_log, "i should be 3, but it is ", _i);
+      return false;
+    }
 
-//    if (_i != 3) {
-//      ERR(m_log, "i should be 3, but it is ", _i);
-//      return false;
-//    }
+    INF(m_log, "i is 3, as expected");
 
-//    INF(m_log, "i is 3, as expected");
+    return true;
+  }
 
-//    return true;
-//  }
+private:
+  struct worker {
+    void operator()(int16_t &&p_i) {
+      DEB(m_log, "working with = ", p_i);
+      std::this_thread::sleep_for(250ms);
+    }
 
-// private:
-//  struct worker {
-//    void operator()(int16_t &&p_i) {
-//      DEB(m_log, "working with = ", p_i);
-//      std::this_thread::sleep_for(250ms);
-//    }
+  private:
+    logger::cerr<> m_log{"worker"};
+  };
 
-//  private:
-//    m_log m_log{"worker"};
-//  };
-
-// private:
-//  m_log m_log{"async_loop_001"};
-//  std::condition_variable m_cond;
-//  std::mutex m_mutex;
-//};
+private:
+  logger::cerr<> m_log{"async_loop_001"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
 
 struct async_loop_002 {
 
@@ -895,11 +892,238 @@ private:
   logger::cerr<> m_log{"async_loop_010"};
 };
 
+struct async_loop_011 {
+  static std::string desc() {
+    return "stopping and starting the same async_loop";
+  }
+
+  bool operator()() {
+    typedef concurrent::internal::async_loop_t<void> async_loop;
+
+    const uint16_t _max{10};
+    uint16_t _counter{1};
+
+    auto _worker = [this, &_counter]() -> void {
+      if (_counter == _max) {
+        DEB(m_log, "notifying");
+        m_cond.notify_one();
+        return;
+      }
+      DEB(m_log, " counter = ", _counter++);
+      std::this_thread::sleep_for(500ms);
+    };
+
+    async_loop _a1(_worker, 1s, []() -> void {});
+
+    _a1.start();
+
+    std::this_thread::sleep_for(2s);
+
+    _a1.stop();
+
+    _a1.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock, [&_counter]() -> bool { return _counter == _max; });
+    }
+
+    _a1.stop();
+
+    if (_counter != _max) {
+      ERR(m_log, "counter should be ", _max, ", but it is ", _counter);
+      return false;
+    }
+
+    INF(m_log, "counter should be ", _max, ", and it is ", _counter);
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_011"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
+struct async_loop_012 {
+  static std::string desc() {
+    return "starting, sleeping, stopping, moving, starting the new one, "
+           "stopping";
+  }
+
+  bool operator()() {
+    typedef concurrent::internal::async_loop_t<void> async_loop;
+
+    const uint16_t _max{10};
+    uint16_t _counter{1};
+
+    auto _worker = [this, &_counter]() -> void {
+      if (_counter == _max) {
+        DEB(m_log, "notifying");
+        m_cond.notify_one();
+        return;
+      }
+      DEB(m_log, " counter = ", _counter++);
+      std::this_thread::sleep_for(500ms);
+    };
+
+    async_loop _a1(_worker, 1s, []() -> void {});
+
+    DEB(m_log, "starting");
+    _a1.start();
+
+    DEB(m_log, "sleeping");
+    std::this_thread::sleep_for(2s);
+
+    DEB(m_log, "stopping");
+    _a1.stop();
+
+    DEB(m_log, "moving");
+    async_loop _a2(std::move(_a1));
+
+    DEB(m_log, "starting");
+    _a2.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock, [&_counter]() -> bool { return _counter == _max; });
+    }
+
+    DEB(m_log, "stopping");
+    _a2.stop();
+
+    if (_counter != _max) {
+      ERR(m_log, "counter should be ", _max, ", but it is ", _counter);
+      return false;
+    }
+
+    INF(m_log, "counter should be ", _max, ", and it is ", _counter);
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_012"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
+struct async_loop_013 {
+  static std::string desc() { return "starting, sleeping, moving, stopping"; }
+
+  bool operator()() {
+    typedef concurrent::internal::async_loop_t<void> async_loop;
+
+    const uint16_t _max{10};
+    uint16_t _counter{1};
+
+    auto _worker = [this, &_counter]() -> void {
+      if (_counter == _max) {
+        DEB(m_log, "notifying");
+        m_cond.notify_one();
+        return;
+      }
+      DEB(m_log, " counter = ", _counter++);
+      std::this_thread::sleep_for(500ms);
+    };
+
+    async_loop _a1(_worker, 1s, []() -> void {});
+
+    DEB(m_log, "starting");
+    _a1.start();
+
+    DEB(m_log, "sleeping");
+    std::this_thread::sleep_for(2s);
+
+    DEB(m_log, "moving");
+    async_loop _a2(std::move(_a1));
+
+    DEB(m_log, "starting");
+    _a2.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock, [&_counter]() -> bool { return _counter == _max; });
+    }
+
+    DEB(m_log, "stopping");
+    _a2.stop();
+
+    if (_counter != _max) {
+      ERR(m_log, "counter should be ", _max, ", but it is ", _counter);
+      return false;
+    }
+
+    INF(m_log, "counter should be ", _max, ", and it is ", _counter);
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_013"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
+struct async_loop_014 {
+  static std::string desc() {
+    return "starting, sleeping, moving, destructing";
+  }
+
+  bool operator()() {
+    typedef concurrent::internal::async_loop_t<void> async_loop;
+
+    const uint16_t _max{10};
+    uint16_t _counter{1};
+
+    auto _worker = [this, &_counter]() -> void {
+      if (_counter == _max) {
+        DEB(m_log, "notifying");
+        m_cond.notify_one();
+        return;
+      }
+      DEB(m_log, " counter = ", _counter++);
+      std::this_thread::sleep_for(500ms);
+    };
+
+    async_loop _a1(_worker, 1s, []() -> void {});
+
+    DEB(m_log, "starting");
+    _a1.start();
+
+    DEB(m_log, "sleeping");
+    std::this_thread::sleep_for(2s);
+
+    DEB(m_log, "moving");
+    async_loop _a2(std::move(_a1));
+
+    DEB(m_log, "starting");
+    _a2.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock, [&_counter]() -> bool { return _counter == _max; });
+    }
+
+    if (_counter != _max) {
+      ERR(m_log, "counter should be ", _max, ", but it is ", _counter);
+      return false;
+    }
+
+    INF(m_log, "counter should be ", _max, ", and it is ", _counter);
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"async_loop_014"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+};
+
 int main(int argc, char **argv) {
   logger::set_debug_level();
 
   tenacitas::tester::test _tester(argc, argv);
   run_test(_tester, async_loop_000);
+  run_test(_tester, async_loop_001);
   run_test(_tester, async_loop_002);
   run_test(_tester, async_loop_004);
   run_test(_tester, async_loop_006);
@@ -907,4 +1131,8 @@ int main(int argc, char **argv) {
   run_test(_tester, async_loop_008);
   run_test(_tester, async_loop_009);
   run_test(_tester, async_loop_010);
+  run_test(_tester, async_loop_011);
+  run_test(_tester, async_loop_012);
+  run_test(_tester, async_loop_013);
+  run_test(_tester, async_loop_014);
 }
