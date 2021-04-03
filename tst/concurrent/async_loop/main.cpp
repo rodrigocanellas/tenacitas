@@ -909,26 +909,35 @@ struct async_loop_011 {
         m_cond.notify_one();
         return;
       }
-      DEB(m_log, " counter = ", _counter++);
+      DEB(m_log, "counter = ", _counter++);
       std::this_thread::sleep_for(500ms);
     };
 
     async_loop _a1(_worker, 1s, []() -> void {});
 
+    DEB(m_log, "starting");
     _a1.start();
 
+    DEB(m_log, "sleeping");
     std::this_thread::sleep_for(2s);
+    DEB(m_log, "waking up");
 
+    DEB(m_log, "stopping");
     _a1.stop();
 
+    DEB(m_log, "starting again");
     _a1.start();
 
     {
+      DEB(m_log, "waiting");
       std::unique_lock<std::mutex> _lock(m_mutex);
       m_cond.wait(_lock, [&_counter]() -> bool { return _counter == _max; });
     }
 
+    DEB(m_log, "done waiting");
+
     _a1.stop();
+    DEB(m_log, "stopped");
 
     if (_counter != _max) {
       ERR(m_log, "counter should be ", _max, ", but it is ", _counter);

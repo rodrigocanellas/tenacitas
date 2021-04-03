@@ -499,6 +499,8 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
     DEB(m_log, m_id, " - leaving destructor");
   }
 
+  inline uint64_t get_id() const { return m_id; }
+
   /// \brief
   void start() {
     if (!m_stopped) {
@@ -519,7 +521,7 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
     }
     DEB(m_log, m_id, " - stopping");
     m_stopped = true;
-    m_worker = nullptr;
+    //    m_worker = nullptr;
     if (m_thread.get_id() == std::thread::id()) {
       DEB(m_log, m_id,
           " - not joining because m_thread.get_id() == std::thread::id()");
@@ -643,6 +645,8 @@ template <typename... t_params> struct async_loop_t {
     }
   }
 
+  inline uint64_t get_id() const { return m_impl->get_id(); }
+
   /// \brief
   inline void stop() {
     if (m_impl) {
@@ -728,19 +732,10 @@ private:
             break;
           }
 
-          DEB(this->m_log, "still here");
-
-          if (!this->m_worker) {
-            DEB(this->m_log, "worker is invalid");
-            break;
-          }
-
-          //          auto _worker = [this, &_params]() -> void {
-          //            std::apply(this->m_worker, _params);
-          //          };
+          DEB(this->m_log, this->m_id, " - still here");
 
           if (!execute(this->m_timeout, [this, &_params]() -> void {
-                DEB(this->m_log, "still here");
+                DEB(this->m_log, this->m_id, " - still here");
                 std::apply(this->m_worker, _params);
               })) {
             WAR(this->m_log, this->m_id,
@@ -762,10 +757,11 @@ private:
 
             std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
           }
-          DEB(this->m_log, "still here");
+          DEB(this->m_log, this->m_id, " - still here");
         }
-        DEB(this->m_log, "still here");
+        DEB(this->m_log, this->m_id, " - still here");
       }
+      DEB(this->m_log, this->m_id, " - leaving loop");
     }
 
   private:
@@ -814,6 +810,8 @@ template <> struct async_loop_t<void> {
 
   /// \brief
   async_loop_t &operator=(const async_loop_t &) = delete;
+
+  inline uint64_t get_id() const { return m_impl->get_id(); }
 
   /// \brief
   inline void start() {
@@ -1699,9 +1697,10 @@ private:
       }
 
       set_stopped();
-      m_data_produced.notify_one();
+      DEB(m_log, "notifying all providers");
+      m_data_produced.notify_all();
       for (async_loop &_loop : m_loops) {
-        DEB(m_log, "stopping loop");
+        DEB(m_log, "stopping loop ", _loop.get_id());
         _loop.stop();
       }
       DEB(m_log, "leaving");
@@ -1710,7 +1709,7 @@ private:
     void empty_queue() {
       DEB(m_log, "empty queue");
       while (!m_queue.empty()) {
-        m_data_produced.notify_one();
+        m_data_produced.notify_all();
         //        std::unique_lock<std::mutex> _lock(m_mutex_data);
         //        m_data_consumed.wait(_lock, [] { return true; });
       }
@@ -1893,7 +1892,7 @@ private:
     typedef circular_unlimited_size_queue_t<t_data> queue;
 
   private:
-    void set_stopped(bool p_value = true) {
+    inline void set_stopped(bool p_value = true) {
       std::unique_lock<std::mutex> _lock(m_mutex_stop);
       m_stopped = p_value;
     }
@@ -2239,7 +2238,7 @@ template <typename t_data> struct messenger_t {
   typedef std::function<void(const t_data &)> on_timeout;
 
   /// \brief
-  ~messenger_t() { DEB(m_log, "destructor"); }
+  ~messenger_t() = default;
 
   /// \brief
   template <typename t_time>
