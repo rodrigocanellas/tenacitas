@@ -260,9 +260,9 @@ struct messenger_002 {
       DEB(m_log, "consumer notified");
 
       if (_status == cv_status::timeout) {
-        ERR(m_log,
+        INF(m_log,
             "it took more time than allowed for the consumer, as expected");
-        messenger::wait();
+        //        messenger::wait();
         return true;
       }
     }

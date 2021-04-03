@@ -735,6 +735,10 @@ private:
           DEB(this->m_log, this->m_id, " - still here");
 
           if (!execute(this->m_timeout, [this, &_params]() -> void {
+                if (this->m_stopped || this->m_breaker()) {
+                  DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+                  return;
+                }
                 DEB(this->m_log, this->m_id, " - still here");
                 std::apply(this->m_worker, _params);
               })) {
@@ -1695,6 +1699,8 @@ private:
         DEB(m_log, "not stopping because it is stopped");
         return;
       }
+
+      //      empty_queue();
 
       set_stopped();
       DEB(m_log, "notifying all providers");
