@@ -20,7 +20,6 @@ namespace test {
 typedef char msg_id;
 typedef uint16_t pool_num;
 typedef uint16_t sub_id;
-// typedef uint16_t instance_id;
 typedef uint16_t publish_id;
 typedef uint32_t value;
 
@@ -196,11 +195,7 @@ template <msg_id id> struct subscriber {
     return m_number;
   };
 
-  ~subscriber() {
-    //    if (m_number >= 0) {
-    //      INF(m_log, "consumed: ", m_number);
-    //    }
-  }
+  ~subscriber() = default;
 
   void operator()(const msg<id> &p_msg) {
     if (m_actual_sleep) {
@@ -241,7 +236,7 @@ template <msg_id id> struct publish {
       return;
     }
 
-    if (m_msg.get_value() > m_max) {
+    if (m_msg.get_value() >= m_max) {
       m_ended = true;
       DEB(m_log, "sending end of publishing");
       messenger_end_publishing::publish({id, m_publish_id, m_msg.get_value()});
@@ -394,7 +389,10 @@ struct test_base {
     return true;
   };
 
-  const updates &get_updates() const { return m_updates; }
+  const updates &get_updates() {
+    std::sort(m_updates.begin(), m_updates.end());
+    return m_updates;
+  }
 
 private:
   typedef std::vector<internal::publisher> publishers;
@@ -492,7 +490,7 @@ private:
   }
 
   void on_update(const update &p_update) {
-    INF(m_log, "update = ", p_update);
+    DEB(m_log, "update = ", p_update);
     std::lock_guard<std::mutex> _lock(m_mutex_update);
     for (update &_update : m_updates) {
       if (_update == p_update) {
