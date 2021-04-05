@@ -10,7 +10,8 @@ HEADERS += \
     $$code_src_dir/tenacitas/tester.h  \
     $$code_src_dir/tenacitas/logger.h  \
     $$code_src_dir/tenacitas/concurrent.h \
-    $$code_src_dir/tenacitas/macros.h
+    $$code_src_dir/tenacitas/macros.h \
+    $$code_src_dir/tenacitas/message.h
 
 SUBDIRS += \
   log_formater \

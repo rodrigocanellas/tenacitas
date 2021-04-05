@@ -7,13 +7,22 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <algorithm>
+#include <chrono>
+#include <condition_variable>
 #include <cstring>
 #include <iostream>
 #include <list>
 #include <map>
+#include <mutex>
 #include <set>
 #include <stdexcept>
 #include <string>
+
+#include <tenacitas/concurrent.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/message.h>
+
+using namespace std::chrono_literals;
 
 /// \brief master namespace
 namespace tenacitas {
@@ -296,6 +305,62 @@ private:
   singles m_singles;
   sets m_sets;
 };
+
+/// \brief
+struct application {
+
+  application() = delete;
+  application(const application &) = delete;
+  application(application &&) = delete;
+  application &operator=(const application &) = delete;
+  application &operator=(application &&) = delete;
+  void *operator new(size_t) = delete;
+  void operator delete(void *) = delete;
+  ~application() = default;
+
+  template <typename t_time>
+  application(t_time p_wait)
+      : m_wait(std::chrono::duration_cast<decltype(m_wait)>(p_wait)) {
+    concurrent::messenger_t<message::exit_app>::add_subscriber(
+        m_pool_id, [this](const message::exit_app &p_exit_app) -> void {
+          on_exit_app(p_exit_app);
+        });
+
+    concurrent::messenger_t<message::halt_app>::add_subscriber(
+        m_pool_id, [this](const message::halt_app &p_halt_app) -> void {
+          on_halt_app(p_halt_app);
+        });
+  }
+
+  void start() {
+    DEB(m_log, "starting app");
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex);
+      m_cond.wait(_lock);
+    }
+    DEB(m_log, "notified");
+  }
+
+private:
+  void on_exit_app(const message::exit_app &) {
+    DEB(m_log, "on exit");
+    std::this_thread::sleep_for(m_wait);
+    m_cond.notify_one();
+  }
+
+  void on_halt_app(const message::halt_app &) {
+    DEB(m_log, "on halt");
+    m_cond.notify_one();
+  }
+
+private:
+  std::chrono::milliseconds m_wait;
+  concurrent::id m_pool_id{"app"};
+  std::condition_variable m_cond;
+  std::mutex m_mutex;
+  logger::cerr<> m_log{"application"};
+};
+
 } // namespace program
 
 } // namespace tenacitas
