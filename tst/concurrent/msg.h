@@ -20,11 +20,9 @@ namespace test {
 typedef char msg_id;
 typedef uint16_t pool_num;
 typedef uint16_t sub_id;
-typedef uint16_t instance_id;
+// typedef uint16_t instance_id;
 typedef uint16_t publish_id;
 typedef uint32_t value;
-
-typedef concurrent::sleeping_loop_t<void> publisher;
 
 template <msg_id id = 'A'> struct msg {
 
@@ -66,11 +64,6 @@ private:
   double m_d;
 };
 
-concurrent::id pool_id(msg_id p_msg_id, pool_num p_pool_num) {
-  return concurrent::id(std::string("pool ") + std::string(1, p_msg_id) +
-                        std::string(" ") + std::to_string(p_pool_num));
-}
-
 typedef msg<'A'> msg_a;
 typedef msg<'B'> msg_b;
 typedef msg<'C'> msg_c;
@@ -78,17 +71,21 @@ typedef msg<'D'> msg_d;
 typedef msg<'E'> msg_e;
 
 struct update {
-  update(msg_id p_msg_id, pool_num p_pool_num, sub_id p_sub_id,
-         instance_id p_instance_id, value p_number)
+  update(msg_id p_msg_id, pool_num p_pool_num, sub_id p_sub_id, value p_number)
       : m_msg_id(p_msg_id), m_pool_num(p_pool_num), m_sub_id(p_sub_id),
-        m_instance_id(p_instance_id), m_number(p_number) {}
+        m_number(p_number) {}
 
   update()
       : m_msg_id(std::numeric_limits<msg_id>::max()),
         m_pool_num(std::numeric_limits<pool_num>::max()),
         m_sub_id(std::numeric_limits<sub_id>::max()),
-        m_instance_id(std::numeric_limits<instance_id>::max()),
         m_number(std::numeric_limits<value>::max()) {}
+
+  bool operator==(const update &p_update) const {
+    return (m_msg_id == p_update.m_msg_id) &&
+           (m_pool_num == p_update.m_pool_num) &&
+           (m_sub_id == p_update.m_sub_id);
+  }
 
   bool operator<(const update &p_update) const {
     if (m_msg_id < p_update.m_msg_id) {
@@ -99,31 +96,24 @@ struct update {
       return false;
     }
 
-    if (m_sub_id < p_update.m_sub_id) {
+    if (m_pool_num < p_update.m_pool_num) {
       return true;
     }
 
-    if (m_sub_id > p_update.m_sub_id) {
+    if (m_pool_num > p_update.m_pool_num) {
       return false;
     }
 
-    if (m_instance_id < p_update.m_instance_id) {
+    if (m_sub_id < p_update.m_sub_id) {
       return true;
     }
 
     return false;
   }
 
-  bool operator==(const update &p_update) const {
-    return ((m_msg_id == p_update.m_msg_id) &&
-            (m_sub_id == p_update.m_sub_id) &&
-            (m_instance_id == p_update.m_instance_id));
-  }
-
   friend std::ostream &operator<<(std::ostream &p_out, const update &p_update) {
     p_out << "(" << p_update.m_msg_id << "," << p_update.m_pool_num << ","
-          << p_update.m_sub_id << "," << p_update.m_instance_id << ","
-          << p_update.m_number << ")";
+          << p_update.m_sub_id << "," << p_update.m_number << ")";
 
     return p_out;
   }
@@ -131,9 +121,19 @@ struct update {
   msg_id m_msg_id;
   pool_num m_pool_num;
   sub_id m_sub_id;
-  instance_id m_instance_id;
   value m_number;
 };
+
+typedef std::vector<update> updates;
+
+namespace internal {
+
+typedef concurrent::sleeping_loop_t<void> publisher;
+
+concurrent::id pool_id(msg_id p_msg_id, pool_num p_pool_num) {
+  return concurrent::id(std::string("pool ") + std::string(1, p_msg_id) +
+                        std::string(" ") + std::to_string(p_pool_num));
+}
 
 struct end_publishing {
   end_publishing()
@@ -170,38 +170,19 @@ template <msg_id id> struct subscriber {
       pool_num p_pool_num, sub_id p_sub_id,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {})
-      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_instance_id(0),
-        m_sleep(100ms), m_function(p_function), m_log(log_name()) {}
-
-  inline subscriber(
-      pool_num p_pool_num, sub_id p_sub_id, std::chrono::milliseconds p_sleep,
-      instance_id p_instance,
-      std::function<void(const msg<id> &)> p_function =
-          [](const msg<id> &) -> void {})
-      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_instance_id(p_instance),
-        m_sleep(p_sleep), m_function(p_function), m_log(log_name()),
-        m_actual_sleep(true) {}
+      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_sleep(100ms),
+        m_function(p_function), m_log(log_name()) {}
 
   inline subscriber(
       pool_num p_pool_num, sub_id p_sub_id, std::chrono::milliseconds p_sleep,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {})
-      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_instance_id(1),
-        m_sleep(p_sleep), m_function(p_function), m_log(log_name()),
-        m_actual_sleep(true) {}
-
-  inline subscriber(
-      pool_num p_pool_num, sub_id p_sub_id, instance_id p_instance,
-      std::function<void(const msg<id> &)> p_function =
-          [](const msg<id> &) -> void {})
-      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_instance_id(p_instance),
-        m_sleep(100ms), m_function(p_function), m_log(log_name()) {}
+      : m_pool_num(p_pool_num), m_sub_id(p_sub_id), m_sleep(p_sleep),
+        m_function(p_function), m_log(log_name()), m_actual_sleep(true) {}
 
   inline msg_id get_msg_id() const { return id; }
 
   inline sub_id get_id() const { return m_sub_id; }
-
-  inline instance_id get_instance() const { return m_instance_id; }
 
   inline void set_sleep(std::chrono::milliseconds p_sleep) {
     m_sleep = p_sleep;
@@ -216,33 +197,31 @@ template <msg_id id> struct subscriber {
   };
 
   ~subscriber() {
-    if (m_number > 0) {
-      INF(m_log, "consumed: ", m_number);
-    }
+    //    if (m_number >= 0) {
+    //      INF(m_log, "consumed: ", m_number);
+    //    }
   }
 
   void operator()(const msg<id> &p_msg) {
-    INF(m_log, "msg: ", p_msg, ", counter:", m_number);
-    inc();
-    messenger_update::publish(
-        {id, m_pool_num, m_sub_id, m_instance_id, p_msg.get_value()});
-    m_function(p_msg);
     if (m_actual_sleep) {
       std::this_thread::sleep_for(m_sleep);
+    } else {
+      inc();
+      INF(m_log, "msg: ", p_msg, ", counter:", m_number);
+      messenger_update::publish({id, m_pool_num, m_sub_id, m_number});
+      m_function(p_msg);
     }
   };
 
 private:
   std::string log_name() {
     return ("subscriber " + std::string(1, id) + "-" +
-            std ::to_string(m_pool_num) + "-" + std::to_string(m_sub_id) + "-" +
-            std::to_string(m_instance_id));
+            std ::to_string(m_pool_num) + "-" + std::to_string(m_sub_id));
   }
 
 private:
   pool_num m_pool_num;
   sub_id m_sub_id;
-  instance_id m_instance_id;
   std::chrono::milliseconds m_sleep;
   std::function<void(const msg<id> &)> m_function;
   logger::cerr<> m_log;
@@ -321,36 +300,39 @@ private:
 };
 
 template <msg_id id> std::vector<publish<id>> publish_list<id>::m_list;
+} // namespace internal
 
 struct test_base {
 
   test_base(const char *p_name) : m_log(p_name) {
 
-    messenger_end_publishing::add_subscriber(
-        messenger_end_publishing::add_worker_pool(2s),
-        [this](const end_publishing &p_end_publishing) -> void {
+    internal::messenger_end_publishing::add_subscriber(
+        internal::messenger_end_publishing::add_worker_pool(2s),
+        [this](const internal::end_publishing &p_end_publishing) -> void {
           on_end_publishing(p_end_publishing);
         });
 
-    messenger_update::add_subscriber(
-        messenger_update::add_worker_pool(2s),
+    internal::messenger_update::add_subscriber(
+        internal::messenger_update::add_worker_pool(2s),
         [this](const update &p_update) -> void { on_update(p_update); });
-  }
-
-  template <msg_id id, typename t_time>
-  void add_publisher(t_time p_interval, publish_id p_publish_id, value p_max) {
-    publish<id> _publish(p_publish_id, p_max);
-    publish<id> &_added = publish_list<id>::add(std::move(_publish));
-    publisher _publisher(500ms, p_interval, [&_added]() -> void { _added(); });
-    m_publishers.push_back(std::move(_publisher));
-    m_publishing_ended.push_back({id, p_publish_id, false});
   }
 
   template <msg_id id, typename t_time>
   void add_pool(pool_num p_pool_num, const concurrent::priority &p_priority,
                 t_time p_timeout) {
-    concurrent::messenger_t<msg<id>>::add_worker_pool(pool_id(id, p_pool_num),
-                                                      p_priority, p_timeout);
+    concurrent::messenger_t<msg<id>>::add_worker_pool(
+        internal::pool_id(id, p_pool_num), p_priority, p_timeout);
+  }
+
+  template <msg_id id, typename t_time>
+  void add_publisher(t_time p_interval, publish_id p_publish_id, value p_max) {
+    internal::publish<id> _publish(p_publish_id, p_max);
+    internal::publish<id> &_added =
+        internal::publish_list<id>::add(std::move(_publish));
+    internal::publisher _publisher(500ms, p_interval,
+                                   [&_added]() -> void { _added(); });
+    m_publishers.push_back(std::move(_publisher));
+    m_publishing_ended.push_back({id, p_publish_id, false});
   }
 
   template <msg_id id>
@@ -359,8 +341,8 @@ struct test_base {
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
     concurrent::messenger_t<msg<id>>::add_subscriber(
-        pool_id(id, p_pool_num),
-        subscriber<id>(p_pool_num, p_sub_id, p_function));
+        internal::pool_id(id, p_pool_num),
+        internal::subscriber<id>(p_pool_num, p_sub_id, p_function));
     update_totals<id>(p_pool_num);
   }
 
@@ -370,31 +352,8 @@ struct test_base {
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
     concurrent::messenger_t<msg<id>>::add_subscriber(
-        pool_id(id, p_pool_num),
-        subscriber<id>(p_pool_num, p_sub_id, p_sleep, p_function));
-    update_totals<id>(p_pool_num);
-  }
-
-  template <msg_id id, typename t_time>
-  void add_subscriber(
-      pool_num p_pool_num, sub_id p_sub_id, t_time p_sleep,
-      instance_id p_instance_id,
-      std::function<void(const msg<id> &)> p_function =
-          [](const msg<id> &) -> void {}) {
-    concurrent::messenger_t<msg<id>>::add_subscriber(
-        pool_id(id, p_pool_num), subscriber<id>(p_pool_num, p_sub_id, p_sleep,
-                                                p_instance_id, p_function));
-    update_totals<id>(p_pool_num);
-  }
-
-  template <msg_id id, typename t_time>
-  void add_subscriber(
-      pool_num p_pool_num, sub_id p_sub_id, instance_id p_instance_id,
-      std::function<void(const msg<id> &)> p_function =
-          [](const msg<id> &) -> void {}) {
-    concurrent::messenger_t<msg<id>>::add_subscriber(
-        pool_id(id, p_pool_num),
-        subscriber<id>(p_pool_num, p_sub_id, p_instance_id, p_function));
+        internal::pool_id(id, p_pool_num),
+        internal::subscriber<id>(p_pool_num, p_sub_id, p_sleep, p_function));
     update_totals<id>(p_pool_num);
   }
 
@@ -417,14 +376,6 @@ struct test_base {
 
     DEB(m_log, "finished");
 
-    //    while (true) {
-    //      if (all_produced_was_consumed()) {
-    //        INF(m_log, "ALL PRODUCED WAS CONSUMED");
-    //        return true;
-    //      }
-    //      INF(m_log, "still waiting for all produced to be consumed");
-    //      std::this_thread::sleep_for(50ms);
-    //    }
     {
       DEB(m_log, "waiting for all produced to be consumed");
       std::unique_lock<std::mutex> _lock(m_mutex_all_consumed);
@@ -443,15 +394,17 @@ struct test_base {
     return true;
   };
 
+  const updates &get_updates() const { return m_updates; }
+
 private:
-  typedef std::vector<publisher> publishers;
+  typedef std::vector<internal::publisher> publishers;
   typedef typename publishers::iterator publishers_iterator;
   typedef std::vector<std::tuple<msg_id, publish_id, bool>> publishing_ended;
   typedef std::map<std::pair<msg_id, pool_num>, value> totals;
 
 private:
   void start_publishing() {
-    for (publisher &_publisher : m_publishers) {
+    for (internal::publisher &_publisher : m_publishers) {
       _publisher.start();
     }
   }
@@ -516,30 +469,10 @@ private:
   }
 
   template <msg_id id> void update_totals(pool_num p_pool_num) {
-    //    bool _found{false};
-
-    m_totals[{id, p_pool_num}] = publish_list<id>::get_total();
-
-    //    for (totals::value_type &_value : m_totals) {
-    //      if ((std::get<0>(_value) == id) && (std::get<1>(_value) ==
-    //      p_pool_num)) {
-    //        DEB(m_log, "total for msg ", std::get<0>(_value), ", pool ",
-    //            std::get<0>(_value), " already inserted");
-    //        return;
-    //      }
-    //    }
-
-    //    if (!_found) {
-
-    //      std::lock_guard<std::mutex> _lock(m_mutex_totals);
-    //      auto _total{publish_list<id>::get_total()};
-    //      DEB(m_log, "another consumer for ", id, ", in pool ", p_pool_num,
-    //          " adding ", _total);
-    //      m_totals.push_back({id, p_pool_num, _total});
-    //    }
+    m_totals[{id, p_pool_num}] = internal::publish_list<id>::get_total();
   }
 
-  void on_end_publishing(const end_publishing &p_end_publishing) {
+  void on_end_publishing(const internal::end_publishing &p_end_publishing) {
     DEB(m_log, "end of publishing for ", p_end_publishing);
     bool _all_ended{true};
     for (publishing_ended::value_type &_tuple : m_publishing_ended) {
@@ -559,11 +492,10 @@ private:
   }
 
   void on_update(const update &p_update) {
-    DEB(m_log, "update = ", p_update);
+    INF(m_log, "update = ", p_update);
     std::lock_guard<std::mutex> _lock(m_mutex_update);
     for (update &_update : m_updates) {
-      if ((_update.m_msg_id == p_update.m_msg_id) &&
-          (_update.m_pool_num == p_update.m_pool_num)) {
+      if (_update == p_update) {
         _update.m_number = p_update.m_number;
         if (all_produced_was_consumed()) {
           DEB(m_log, "notifying all produced was consumed");
@@ -582,7 +514,7 @@ private:
   std::mutex m_mutex_end_publishing;
   std::condition_variable m_cond_end_publishing;
   logger::cerr<> m_log;
-  std::vector<update> m_updates;
+  updates m_updates;
   std::mutex m_mutex_update;
   std::mutex m_mutex_totals;
   totals m_totals;

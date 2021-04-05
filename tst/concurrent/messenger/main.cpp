@@ -633,19 +633,19 @@ struct messenger_006 {
         << "Publisher #732 will publish 14 'E' messages, at each 100ms.\n"
         << "Message 'B' has one pool, #1, with priority 5, and timeout of 1s.\n"
         << "Message 'C' has two pools: #1 with priority 10, and timeout of 1s, "
-        << "#2 with priority 2, and timeout of 1s.\n"
+           "#2 with priority 2, and timeout of 1s.\n"
         << "Message 'E' has two pools: #1 with priority 10, and timeout of 1s, "
-        << "#2 with priority 2, and timeout of 1s.\n"
+           "#2 with priority 2, and timeout of 1s.\n"
         << "Message 'B' has two subscribers for pool #1.\n"
         << "Message 'C' has one subscribers for pool #1, and two subscribres "
-        << "for pool #2.\n"
-        << "Message 'E' has one subscriber for pool #1, and one subscriber "
-        << "for pool #2\n"
-        << "subscriber B-1-1 and B-1-2 will handle 15 messages among them\n"
-        << "Subscriber C-1-1 will handle 12 messages\n"
-        << "Subscriber C-2-1 and will C-2-2 12 messages among them\n"
-        << "Subscriber E-2-1 will handle 14 messages\n"
-        << "Subscriber E-1-2 will handle 14 messages\n";
+           "for pool #2.\n"
+        << "Message 'E' has one subscriber for pool #1, and one subscriber for "
+           "pool #2\n"
+        << "Subscriber B-1-1 and B-1-2 will handle 15 messages among them.\n"
+        << "Subscriber C-1-1 will handle 12 messages.\n"
+        << "Subscriber C-2-1 and will C-2-2 12 messages among them.\n"
+        << "Subscriber E-2-1 will handle 14 messages.\n"
+        << "Subscriber E-1-2 will handle 14 messages.\n";
     return _stream.str();
   }
 
@@ -679,9 +679,96 @@ struct messenger_006 {
     _test.add_subscriber<'E'>(pool_num{1}, sub_id{1});
     _test.add_subscriber<'E'>(pool_num{2}, sub_id{1});
 
+    bool _res = _test(1min);
+
     // start test
-    return _test(1min);
+    if (_res) {
+      const updates &_updates = _test.get_updates();
+      for (const update &_update : _updates) {
+        INF(m_log, _update);
+      }
+    }
+    return _res;
   }
+
+private:
+  logger::cerr<> m_log{"messenger_006"};
+};
+
+struct messenger_007 {
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream
+        << "Messages 'B', 'C' and 'E.\n"
+        << "Publisher #2 will publish 15 'B' messages, at each 500ms.\n"
+        << "Publisher #1 will publish 12 'C' messages, at each 2ms.\n"
+        << "Publisher #732 will publish 14 'E' messages, at each 100ms.\n"
+        << "Message 'B' has one pool, #1, with priority 5, and timeout of 1s.\n"
+        << "Message 'C' has two pools: #1 with priority 10, and timeout of 1s, "
+        << "#2 with priority 2, and timeout of 1s.\n"
+        << "Message 'E' has two pools: #1 with priority 10, and timeout of 1s, "
+           "#2 with priority 2, and timeout of 1s.\n"
+        << "Message 'B' has two subscribers for pool #1.\n"
+        << "Message 'C' has one subscribers for pool #1, and two subscribres "
+           "for pool #2.\n"
+        << "Message 'E' has one subscriber for pool #1, and one subscriber for "
+           "pool #2.\n"
+        << "Subscriber B-1-1 and B-1-2 will handle 15 messages among them.\n"
+        << "Subscriber C-1-1 will handle 12 messages.\n"
+        << "Subscriber C-2-1 will sleep for 2s, causing timeout for all the "
+           "messages. Those messages will be inserted again in the pool C-2, "
+           "so C-2-2 will handle all 12 messages.\n"
+        << "Subscriber C-2-1 will handle 12 messages among them.\n"
+        << "Subscriber E-2-1 will handle 14 messages.\n"
+        << "Subscriber E-1-2 will handle 14 messages.\n";
+
+    return _stream.str();
+  }
+
+  bool operator()() {
+    logger::set_info_level();
+    using namespace concurrent;
+    using namespace concurrent::test;
+
+    test_base _test("messenger_006");
+
+    // publishers
+    _test.add_publisher<'B'>(500ms, publish_id{2}, value{15});
+    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
+    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
+
+    // pools
+    _test.add_pool<'B'>(pool_num{1}, priority{5}, 1s);
+    _test.add_pool<'C'>(pool_num{1}, priority{10}, 1s);
+    _test.add_pool<'C'>(pool_num{2}, priority{2}, 1s);
+    _test.add_pool<'E'>(pool_num{1}, priority{10}, 1s);
+    _test.add_pool<'E'>(pool_num{2}, priority{2}, 1s);
+
+    // subscribers
+    _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
+    _test.add_subscriber<'B'>(pool_num{1}, sub_id{2});
+
+    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1});
+    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, 2s);
+    _test.add_subscriber<'C'>(pool_num{2}, sub_id{2});
+
+    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1});
+    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1});
+
+    bool _res = _test(1min);
+
+    // start test
+    if (_res) {
+      const updates &_updates = _test.get_updates();
+      for (const update &_update : _updates) {
+        INF(m_log, _update);
+      }
+    }
+    return _res;
+  }
+
+private:
+  logger::cerr<> m_log{"messenger_007"};
 };
 
 int main(int argc, char **argv) {
@@ -695,4 +782,5 @@ int main(int argc, char **argv) {
   //  run_test(_tester, messenger_004);
   //  run_test(_tester, messenger_005);
   run_test(_tester, messenger_006);
+  run_test(_tester, messenger_007);
 }
