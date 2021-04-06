@@ -329,7 +329,7 @@ struct application {
     concurrent::id _exit_pool_id{"exit_pool"};
 
     concurrent::messenger_t<message::exit_app>::add_worker_pool(
-        _exit_pool_id, concurrent::priority{1},
+        _exit_pool_id, concurrent::priority::lowest,
         milliseconds(m_wait.count() + 2000));
     concurrent::messenger_t<message::exit_app>::add_subscriber(
         _exit_pool_id, [this](const message::exit_app &p_exit_app) -> void {
@@ -338,7 +338,7 @@ struct application {
 
     concurrent::id _halt_pool_id{"halt_pool"};
     concurrent::messenger_t<message::halt_app>::add_worker_pool(
-        _halt_pool_id, concurrent::priority{1},
+        _halt_pool_id, concurrent::priority::highest,
         milliseconds(m_wait.count() + 2000));
     concurrent::messenger_t<message::halt_app>::add_subscriber(
         _halt_pool_id, [this](const message::halt_app &p_halt_app) -> void {

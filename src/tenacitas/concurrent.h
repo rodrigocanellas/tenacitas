@@ -69,7 +69,7 @@ private:
 
 struct priority {
 
-  explicit priority(uint8_t p_value = 255) : m_value(p_value) {}
+  priority() = delete;
 
   priority(const priority &) = default;
   priority(priority &&) = default;
@@ -100,9 +100,34 @@ struct priority {
   priority &operator=(const priority &) = default;
   priority &operator=(priority &&) = default;
 
+  static const priority lowest;
+
+  static const priority low;
+
+  static const priority low_middle;
+
+  static const priority middle;
+
+  static const priority middle_high;
+
+  static const priority high;
+
+  static const priority highest;
+
+private:
+  explicit priority(uint8_t p_value) : m_value(p_value) {}
+
 private:
   uint8_t m_value;
 };
+
+const priority priority::lowest{1};
+const priority priority::low{45};
+const priority priority::low_middle{90};
+const priority priority::middle{135};
+const priority priority::middle_high{180};
+const priority priority::high{225};
+const priority priority::highest{255};
 
 namespace internal {
 
@@ -1644,14 +1669,14 @@ private:
     /// \brief
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(p_id), m_priority(1), m_queue(10),
+        : m_id(p_id), m_priority(concurrent::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
     /// \brief
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout)
-        : m_id(p_id), m_priority(1), m_queue(10),
+        : m_id(p_id), m_priority(concurrent::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(
               [this](const data &p_data) -> void { add_data(p_data); }) {}
@@ -1675,14 +1700,16 @@ private:
     /// \brief
     template <typename t_time>
     implementation(t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(std::to_string(uuid())), m_priority(1), m_queue(10),
+        : m_id(std::to_string(uuid())),
+          m_priority(concurrent::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
     /// \brief
     template <typename t_time>
     implementation(t_time p_timeout)
-        : m_id(std::to_string(uuid())), m_priority(1), m_queue(10),
+        : m_id(std::to_string(uuid())),
+          m_priority(concurrent::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(
               [this](const data &p_data) -> void { add_data(p_data); }) {}

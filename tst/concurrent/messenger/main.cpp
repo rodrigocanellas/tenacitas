@@ -57,8 +57,8 @@ struct messenger_000 {
     data _data_consumed{0};
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-    concurrent::id _id = messenger::add_worker_pool(concurrent::priority{0},
-                                                    _subscriber_timeout);
+    concurrent::id _id = messenger::add_worker_pool(
+        concurrent::priority::lowest, _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
         [this, &_data_consumed,
@@ -148,7 +148,7 @@ struct messenger_001 {
 
     DEB(m_log, "adding worker pool");
     concurrent::id _id =
-        messenger::add_worker_pool(concurrent::priority{0}, 1s);
+        messenger::add_worker_pool(concurrent::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
@@ -159,7 +159,7 @@ struct messenger_001 {
     }
 
     DEB(m_log, "resetting priority");
-    messenger::set_priority(_id, concurrent::priority{9});
+    messenger::set_priority(_id, concurrent::priority::middle);
     DEB(m_log, "priority reset");
 
     DEB(m_log, "adding subscriber");
@@ -210,7 +210,7 @@ struct messenger_002 {
     data _data_consumed{0};
 
     concurrent::id _id =
-        messenger::add_worker_pool(concurrent::priority{0}, 3s);
+        messenger::add_worker_pool(concurrent::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -287,10 +287,10 @@ struct messenger_003 {
     typedef concurrent::messenger_t<int16_t> messenger;
 
     const concurrent::id _p2{"hello"};
-    messenger::add_worker_pool(_p2, concurrent::priority{2}, 4s);
+    messenger::add_worker_pool(_p2, concurrent::priority::low, 4s);
 
     const concurrent::id _p1{"good morning"};
-    messenger::add_worker_pool(_p1, concurrent::priority{5}, 1s);
+    messenger::add_worker_pool(_p1, concurrent::priority::low_middle, 1s);
 
     bool _first{true};
     bool _result{true};
@@ -662,11 +662,11 @@ struct messenger_006 {
     _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
 
     // pools
-    _test.add_pool<'B'>(pool_num{1}, priority{5}, 1s);
-    _test.add_pool<'C'>(pool_num{1}, priority{10}, 1s);
-    _test.add_pool<'C'>(pool_num{2}, priority{2}, 1s);
-    _test.add_pool<'E'>(pool_num{1}, priority{10}, 1s);
-    _test.add_pool<'E'>(pool_num{2}, priority{2}, 1s);
+    _test.add_pool<'B'>(pool_num{1}, priority{priority::low}, 1s);
+    _test.add_pool<'C'>(pool_num{1}, priority{priority::low_middle}, 1s);
+    _test.add_pool<'C'>(pool_num{2}, priority{priority::low}, 1s);
+    _test.add_pool<'E'>(pool_num{1}, priority{priority::low_middle}, 1s);
+    _test.add_pool<'E'>(pool_num{2}, priority{priority::low}, 1s);
 
     // subscribers
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
@@ -738,11 +738,11 @@ struct messenger_007 {
     _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
 
     // pools
-    _test.add_pool<'B'>(pool_num{1}, priority{5}, 1s);
-    _test.add_pool<'C'>(pool_num{1}, priority{10}, 1s);
-    _test.add_pool<'C'>(pool_num{2}, priority{2}, 1s);
-    _test.add_pool<'E'>(pool_num{1}, priority{10}, 1s);
-    _test.add_pool<'E'>(pool_num{2}, priority{2}, 1s);
+    _test.add_pool<'B'>(pool_num{1}, priority{priority::low}, 1s);
+    _test.add_pool<'C'>(pool_num{1}, priority{priority::low_middle}, 1s);
+    _test.add_pool<'C'>(pool_num{2}, priority{priority::low}, 1s);
+    _test.add_pool<'E'>(pool_num{1}, priority{priority::low_middle}, 1s);
+    _test.add_pool<'E'>(pool_num{2}, priority{priority::low}, 1s);
 
     // subscribers
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
