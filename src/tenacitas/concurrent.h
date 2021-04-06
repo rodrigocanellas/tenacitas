@@ -2463,6 +2463,273 @@ logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
 
 template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
 
+// #########################################
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+template <typename t_msg, typename t_time>
+static inline void add_queue(const id &p_id, const priority &p_priority,
+                             t_time p_timeout,
+                             std::function<void(const t_msg &)> p_on_timeout) {
+  messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout,
+                                      p_on_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \details In this configuration, if any handler times out, the message will
+/// be added again to the queue
+template <typename t_msg, typename t_time>
+static inline void add_queue(const id &p_id, const priority &p_priority,
+                             t_time p_timeout) {
+  messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message.
+template <typename t_msg, typename t_time>
+static inline void add_queue(const id &p_id, t_time p_timeout,
+                             std::function<void(const t_msg &)> p_on_timeout) {
+  messenger_t<t_msg>::add_worker_pool(p_id, p_timeout, p_on_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message; and if any
+/// handler times out, the message will be added again to the queue
+template <typename t_msg, typename t_time>
+static inline void add_queue(const id &p_id, t_time p_timeout) {
+  messenger_t<t_msg>::add_worker_pool(p_id, p_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+template <typename t_msg, typename t_time>
+static id add_queue(const priority &p_priority, t_time p_timeout,
+                    std::function<void(const t_msg &)> p_on_timeout) {
+  return messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout,
+                                             p_on_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+///
+///
+/// \details In this configuration, if any handler times out, the message will
+/// be added again to the queue
+template <typename t_msg, typename t_time>
+static id add_queue(const priority &p_priority, t_time p_timeout) {
+  return messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message.
+template <typename t_msg, typename t_time>
+static id add_queue(t_time p_timeout,
+                    std::function<void(const t_msg &)> p_on_timeout) {
+  return messenger_t<t_msg>::add_worker_pool(p_timeout, p_on_timeout);
+}
+
+/// \brief Adds a queue to receive messages to be handled
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+///
+/// \param p_timeout is the maximum amount of time that the handler function
+/// will have to complete its work.
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message; and if any
+/// handler times out, the message will be added again to the queue
+template <typename t_msg, typename t_time>
+static id add_queue(t_time p_timeout) {
+  return messenger_t<t_msg>::add_worker_pool(p_timeout);
+}
+
+/// \brief Defines the priority of a message queue
+/// The priority of the queue defines the order in which a message will be
+/// added.
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \param p_id is the identifier of the queue
+///
+/// \param p_priority is the priority of the queue. This defines the order that
+/// the message will be placed in the queue.
+template <typename t_msg>
+static void set_priority(const id &p_id, priority p_priority) {
+  messenger_t<t_msg>::set_priority(p_id, p_priority);
+}
+
+/// \brief Retrieves the priority of a message queue
+/// The priority of the queue defines the order in which a message will be
+/// added.
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \param p_id is the identifier of the queue
+///
+/// \return The priority of the queue
+template <typename t_msg>
+static std::optional<priority> get_priority(const id &p_id) {
+  return messenger_t<t_msg>::get_priority(p_id);
+}
+
+/// \brief Sends a message to all the queues associated to a message type
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \param p_msg is the message to be copied to all the queues
+template <typename t_msg> static void send(const t_msg &p_msg) {
+  messenger_t<t_msg>::publish(p_msg);
+}
+
+/// \brief Adds a handler to a queue
+/// It is possible to add many handlers to the same queue. Those handlers will
+/// compete with each other to handle a added message.
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \param p_id is the identifier of the queue to which this handler will be
+/// added to
+///
+/// \param p_handler is the function that will handle a message added to the
+/// queue
+template <typename t_msg>
+static void add_handler(const id &p_id,
+                        std::function<void(const t_msg &)> p_handler) {
+  messenger_t<t_msg>::add_subscriber(p_id, p_handler);
+}
+
+/// \brief Adds a bunch of handlers to a queue
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \param p_id is the identifier of the queue to which this handler will be
+/// added to
+///
+/// \param p_num_handlers is the number of handlers to be added
+///
+/// \param p_handler_factory is the function that will create handler functions
+template <typename t_msg>
+static void add_handler(
+    const id &p_id, uint16_t p_num_handlers,
+    std::function<std::function<void(const t_msg &)>> p_handler_factory) {
+  messenger_t<t_msg>::add_subscriber(p_id, p_num_handlers, p_handler_factory);
+}
+
 } // namespace concurrent
 } // namespace tenacitas
 
