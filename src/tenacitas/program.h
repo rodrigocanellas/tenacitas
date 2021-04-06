@@ -10,6 +10,8 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstring>
+#include <functional>
+#include <future>
 #include <iostream>
 #include <list>
 #include <map>
@@ -17,6 +19,7 @@
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <thread>
 
 #include <tenacitas/concurrent.h>
 #include <tenacitas/logger.h>
@@ -316,34 +319,62 @@ struct application {
   application &operator=(application &&) = delete;
   void *operator new(size_t) = delete;
   void operator delete(void *) = delete;
-  ~application() = default;
 
   template <typename t_time>
-  application(t_time p_wait)
-      : m_wait(std::chrono::duration_cast<decltype(m_wait)>(p_wait)) {
+  application(t_time p_wait, std::function<void()> p_function) {
+    using namespace std;
+    using namespace std::chrono;
+
+    m_wait = (duration_cast<milliseconds>(p_wait));
+    concurrent::id _exit_pool_id{"exit_pool"};
+
+    concurrent::messenger_t<message::exit_app>::add_worker_pool(
+        _exit_pool_id, concurrent::priority{1},
+        milliseconds(m_wait.count() + 2000));
     concurrent::messenger_t<message::exit_app>::add_subscriber(
-        m_pool_id, [this](const message::exit_app &p_exit_app) -> void {
+        _exit_pool_id, [this](const message::exit_app &p_exit_app) -> void {
           on_exit_app(p_exit_app);
         });
 
+    concurrent::id _halt_pool_id{"halt_pool"};
+    concurrent::messenger_t<message::halt_app>::add_worker_pool(
+        _halt_pool_id, concurrent::priority{1},
+        milliseconds(m_wait.count() + 2000));
     concurrent::messenger_t<message::halt_app>::add_subscriber(
-        m_pool_id, [this](const message::halt_app &p_halt_app) -> void {
+        _halt_pool_id, [this](const message::halt_app &p_halt_app) -> void {
           on_halt_app(p_halt_app);
         });
-  }
 
-  void start() {
-    DEB(m_log, "starting app");
+    DEB(m_log, "starting application");
+
+    future<void> _future = async(launch::async, p_function);
+
     {
-      std::unique_lock<std::mutex> _lock(m_mutex);
+      DEB(m_log, "waiting...");
+      unique_lock<mutex> _lock(m_mutex);
       m_cond.wait(_lock);
     }
+
     DEB(m_log, "notified");
+
+    uint16_t _time{static_cast<uint16_t>(m_wait.count() / 2)};
+    if (_future.wait_for(milliseconds(_time)) == future_status::timeout) {
+      WAR(m_log, "timeout waiting for the function thread to finish");
+    } else {
+      DEB(m_log, "function thread finished in time");
+    }
   }
+
+  ~application() = default;
 
 private:
   void on_exit_app(const message::exit_app &) {
+    if (m_on_exit_handled) {
+      WAR(m_log, "on_exit already handled");
+      return;
+    }
     DEB(m_log, "on exit");
+    m_on_exit_handled = true;
     std::this_thread::sleep_for(m_wait);
     m_cond.notify_one();
   }
@@ -354,10 +385,10 @@ private:
   }
 
 private:
-  std::chrono::milliseconds m_wait;
-  concurrent::id m_pool_id{"app"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  std::chrono::milliseconds m_wait;
+  bool m_on_exit_handled{false};
   logger::cerr<> m_log{"application"};
 };
 

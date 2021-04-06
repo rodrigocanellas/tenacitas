@@ -2331,6 +2331,7 @@ template <typename t_data> struct messenger_t {
   /// \brief
   static void publish(const t_data &p_data) {
     for (worker_pool &_work_pool : m_list) {
+      DEB(m_log, "publishing data to pool '", _work_pool.get_id(), "'");
       _work_pool.add_data(p_data);
     }
   }
