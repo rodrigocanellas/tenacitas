@@ -2713,6 +2713,31 @@ static void add_handler(const id &p_id,
   messenger_t<t_msg>::add_subscriber(p_id, p_handler);
 }
 
+/// \brief Adds a handler to a queue
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_handler is the function that will handle a message added to the
+/// queue
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message; and if any
+/// handler times out, the message will be added again to the queue
+template <typename t_msg, typename t_time = std::chrono::minutes>
+static id add_handler(std::function<void(const t_msg &)> p_handler,
+                      t_time p_timeout = 10min) {
+  id _id = add_queue(p_timeout);
+  add_handler(_id, p_handler);
+  return _id;
+}
+
 /// \brief Adds a bunch of handlers to a queue
 ///
 /// \tparam t_msg is the type of message to be added to the queue
