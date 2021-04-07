@@ -34,7 +34,7 @@ struct cerr_log_how_to {
 //  bool operator()() {
 //    try {
 
-//      typedef concurrent::sleeping_loop_t<void, logger::cerr> sleeping_loop;
+//      typedef async::sleeping_loop_t<void, logger::cerr> sleeping_loop;
 //      sleeping_loop _loop1(
 //          std::chrono::milliseconds(1000),
 //          [this]() {
@@ -79,7 +79,7 @@ struct cerr_log_how_to {
 
 // public:
 //  bool operator()() {
-//    typedef concurrent::sleeping_loop_t<void, logger::cerr> sleeping_loop;
+//    typedef async::sleeping_loop_t<void, logger::cerr> sleeping_loop;
 //    try {
 //      sleeping_loop _loop1(
 //          std::chrono::milliseconds(1000),

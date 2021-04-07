@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_H
-#define TENACITAS_CONCURRENT_H
+#ifndef TENACITAS_ASYNC_H
+#define TENACITAS_ASYNC_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -30,8 +30,8 @@ using namespace std::chrono_literals;
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief support for concurrent (asynchronous) programming
-namespace concurrent {
+/// \brief support for async (asynchronous) programming
+namespace async {
 
 /// \brief Type of time used to define timeout
 typedef std::chrono::milliseconds timeout;
@@ -240,7 +240,7 @@ struct executer_helper_t {
 ///#include <chrono>
 ///#include <iostream>
 ///
-///#include <tenacitas/concurrent.h>
+///#include <tenacitas/async.h>
 ///
 /// using namespace std::chrono_literals;
 ///
@@ -326,7 +326,7 @@ struct executer_helper_t {
 ///  using namespace tenacitas;
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f1, 8);
+///    std::optional<double> _maybe = async::execute(300ms, f1, 8);
 ///    if (_maybe) {
 ///      std::cout << *_maybe;
 ///    } else {
@@ -336,7 +336,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f2, 8, 4.2f);
+///    std::optional<double> _maybe = async::execute(300ms, f2, 8, 4.2f);
 ///    if (_maybe) {
 ///      std::cout << *_maybe;
 ///    } else {
@@ -346,7 +346,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f3);
+///    std::optional<double> _maybe = async::execute(300ms, f3);
 ///    if (_maybe) {
 ///      std::cout << *_maybe;
 ///    } else {
@@ -356,7 +356,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f4, -8)) {
+///    if (async::execute(300ms, f4, -8)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -365,7 +365,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f5, -8, 3.56)) {
+///    if (async::execute(300ms, f5, -8, 3.56)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -374,7 +374,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f6)) {
+///    if (async::execute(300ms, f6)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -383,7 +383,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f7, 8);
+///    std::optional<double> _maybe = async::execute(300ms, f7, 8);
 ///    if (_maybe) {
 ///      std::cout << "with exec: " << *_maybe;
 ///    } else {
@@ -393,7 +393,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f8, 8, 4.2f);
+///    std::optional<double> _maybe = async::execute(300ms, f8, 8, 4.2f);
 ///    if (_maybe) {
 ///      std::cout << *_maybe;
 ///    } else {
@@ -403,7 +403,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    std::optional<double> _maybe = concurrent::execute(300ms, f9);
+///    std::optional<double> _maybe = async::execute(300ms, f9);
 ///    if (_maybe) {
 ///      std::cout << *_maybe;
 ///    } else {
@@ -413,7 +413,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f10, -18)) {
+///    if (async::execute(300ms, f10, -18)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -422,7 +422,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f11, -18, 3.3)) {
+///    if (async::execute(300ms, f11, -18, 3.3)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -431,7 +431,7 @@ struct executer_helper_t {
 ///  }
 ///
 ///  {
-///    if (concurrent::execute(300ms, f12)) {
+///    if (async::execute(300ms, f12)) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout!";
@@ -441,7 +441,7 @@ struct executer_helper_t {
 ///
 ///  {
 ///    bool b{false};
-///    if (concurrent::execute(300ms, f13, std::ref(b))) {
+///    if (async::execute(300ms, f13, std::ref(b))) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout";
@@ -451,7 +451,7 @@ struct executer_helper_t {
 ///
 ///  {
 ///    bool b{false};
-///    if (concurrent::execute(300ms, f14, std::move(b))) {
+///    if (async::execute(300ms, f14, std::move(b))) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout";
@@ -460,7 +460,7 @@ struct executer_helper_t {
 ///  }
 ///  {
 ///    bool b{false};
-///    if (concurrent::execute(300ms, f15, std::ref(b))) {
+///    if (async::execute(300ms, f15, std::ref(b))) {
 ///      std::cout << "ok";
 ///    } else {
 ///      std::cout << "timeout";
@@ -498,21 +498,21 @@ namespace internal {
 /// \tparam t_time
 ///
 /// \tparam t_worker
-template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
+template <typename t_on_timeout, typename t_worker> struct loop_base_t {
 
   /// \brief
-  async_loop_base_t() = delete;
+  loop_base_t() = delete;
   /// \brief
-  async_loop_base_t(const async_loop_base_t &) = delete;
+  loop_base_t(const loop_base_t &) = delete;
   /// \brief
-  async_loop_base_t(async_loop_base_t &&) = delete;
+  loop_base_t(loop_base_t &&) = delete;
   /// \brief
-  async_loop_base_t &operator=(const async_loop_base_t &) = delete;
+  loop_base_t &operator=(const loop_base_t &) = delete;
   /// \brief
-  async_loop_base_t &operator=(async_loop_base_t &&) = delete;
+  loop_base_t &operator=(loop_base_t &&) = delete;
 
   /// \brief
-  virtual ~async_loop_base_t() {
+  virtual ~loop_base_t() {
     DEB(m_log, m_id, " - destructor");
     stop();
     //    if (m_thread.joinable()) {
@@ -579,14 +579,14 @@ template <typename t_on_timeout, typename t_worker> struct async_loop_base_t {
 protected:
   /// \brief
   template <typename t_time>
-  async_loop_base_t(t_worker p_worker, t_time p_time, t_on_timeout p_on_timeout)
+  loop_base_t(t_worker p_worker, t_time p_time, t_on_timeout p_on_timeout)
       : m_worker(p_worker), m_timeout(to_timeout(p_time)),
         m_on_timeout(p_on_timeout), m_breaker([]() -> bool { return false; }) {}
 
   /// \brief
   template <typename t_time>
-  async_loop_base_t(t_worker p_worker, t_time p_time, t_on_timeout p_on_timeout,
-                    breaker p_breaker)
+  loop_base_t(t_worker p_worker, t_time p_time, t_on_timeout p_on_timeout,
+              breaker p_breaker)
       : m_worker(p_worker), m_timeout(to_timeout(p_time)),
         m_on_timeout(p_on_timeout), m_breaker(p_breaker) {}
 
@@ -613,7 +613,7 @@ protected:
   std::thread m_thread;
 
   /// \brief
-  logger::cerr<> m_log{"async_loop"};
+  logger::cerr<> m_log{"loop"};
 
   std::mutex m_mutex;
 
@@ -621,10 +621,10 @@ protected:
 };
 
 /// \brief Base class for asynchronous loop
-template <typename... t_params> struct async_loop_t;
+template <typename... t_params> struct loop_t;
 
 /// #### async_loop 1 ####
-template <typename... t_params> struct async_loop_t {
+template <typename... t_params> struct loop_t {
 
   /// \brief
   typedef std::function<void(t_params...)> on_timeout;
@@ -637,31 +637,31 @@ template <typename... t_params> struct async_loop_t {
 
   /// \brief
   template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
-               provider p_provider)
+  loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+         provider p_provider)
       : m_impl(std::make_unique<implementation>(p_worker, p_timeout,
                                                 p_on_timeout, p_provider)) {}
 
   /// \brief
   template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
-               provider p_provider, breaker p_breaker)
+  loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+         provider p_provider, breaker p_breaker)
       : m_impl(std::make_unique<implementation>(
             p_worker, p_timeout, p_on_timeout, p_provider, p_breaker)) {}
 
-  ~async_loop_t() = default;
+  ~loop_t() = default;
 
   /// \brief
-  async_loop_t(const async_loop_t &) = delete;
+  loop_t(const loop_t &) = delete;
 
   /// \brief
-  async_loop_t(async_loop_t &&p_async_loop) = default;
+  loop_t(loop_t &&p_async_loop) = default;
 
   /// \brief
-  async_loop_t &operator=(async_loop_t &&p_async_loop) = default;
+  loop_t &operator=(loop_t &&p_async_loop) = default;
 
   /// \brief
-  async_loop_t &operator=(const async_loop_t &) = delete;
+  loop_t &operator=(const loop_t &) = delete;
 
   /// \brief
   inline void start() {
@@ -708,22 +708,22 @@ template <typename... t_params> struct async_loop_t {
 private:
   /// \brief
   struct implementation
-      : public internal::async_loop_base_t<std::function<void(t_params...)>,
-                                           std::function<void(t_params...)>> {
+      : public internal::loop_base_t<std::function<void(t_params...)>,
+                                     std::function<void(t_params...)>> {
     /// \brief
     template <typename t_time>
     implementation(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
                    provider p_provider)
-        : internal::async_loop_base_t<on_timeout, worker>(p_worker, p_timeout,
-                                                          p_on_timeout),
+        : internal::loop_base_t<on_timeout, worker>(p_worker, p_timeout,
+                                                    p_on_timeout),
           m_provider(p_provider) {}
 
     /// \brief
     template <typename t_time>
     implementation(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
                    provider p_provider, breaker p_breaker)
-        : internal::async_loop_base_t<on_timeout, worker>(
-              p_worker, p_timeout, p_on_timeout, p_breaker),
+        : internal::loop_base_t<on_timeout, worker>(p_worker, p_timeout,
+                                                    p_on_timeout, p_breaker),
           m_provider(p_provider) {}
 
   protected:
@@ -803,7 +803,7 @@ private:
 };
 
 /// #### async_loop 2 ####
-template <> struct async_loop_t<void> {
+template <> struct loop_t<void> {
 
   /// \brief
   typedef std::function<void()> on_timeout;
@@ -811,34 +811,34 @@ template <> struct async_loop_t<void> {
   /// \brief
   typedef std::function<void()> worker;
 
-  async_loop_t() = delete;
+  loop_t() = delete;
 
   /// \brief
   template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout)
+  loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_worker, p_timeout,
                                                 p_on_timeout)) {}
 
   /// \brief
   template <typename t_time>
-  async_loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
-               breaker p_breaker)
+  loop_t(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
+         breaker p_breaker)
       : m_impl(std::make_unique<implementation>(p_worker, p_timeout,
                                                 p_on_timeout, p_breaker)) {}
 
-  ~async_loop_t() = default;
+  ~loop_t() = default;
 
   /// \brief
-  async_loop_t(const async_loop_t &) = delete;
+  loop_t(const loop_t &) = delete;
 
   /// \brief
-  async_loop_t(async_loop_t &&) = default;
+  loop_t(loop_t &&) = default;
 
   /// \brief
-  async_loop_t &operator=(async_loop_t &&) = default;
+  loop_t &operator=(loop_t &&) = default;
 
   /// \brief
-  async_loop_t &operator=(const async_loop_t &) = delete;
+  loop_t &operator=(const loop_t &) = delete;
 
   inline uint64_t get_id() const { return m_impl->get_id(); }
 
@@ -882,21 +882,19 @@ template <> struct async_loop_t<void> {
 
 private:
   /// \brief
-  struct implementation
-      : public internal::async_loop_base_t<std::function<void()>,
-                                           std::function<void()>> {
+  struct implementation : public internal::loop_base_t<std::function<void()>,
+                                                       std::function<void()>> {
     /// \brief
     template <typename t_time>
     implementation(worker p_worker, t_time p_timeout, on_timeout p_on_timeout)
-        : async_loop_base_t<on_timeout, worker>(p_worker, p_timeout,
-                                                p_on_timeout) {}
+        : loop_base_t<on_timeout, worker>(p_worker, p_timeout, p_on_timeout) {}
 
     /// \brief
     template <typename t_time>
     implementation(worker p_worker, t_time p_timeout, on_timeout p_on_timeout,
                    breaker p_breaker)
-        : async_loop_base_t<on_timeout, worker>(p_worker, p_timeout,
-                                                p_on_timeout, p_breaker) {}
+        : loop_base_t<on_timeout, worker>(p_worker, p_timeout, p_on_timeout,
+                                          p_breaker) {}
 
   protected:
     /// \brief
@@ -1075,7 +1073,7 @@ protected:
   }
 
 protected:
-  typedef internal::async_loop_t<t_params...> async_loop;
+  typedef internal::loop_t<t_params...> async_loop;
 
 protected:
   interval m_interval;
@@ -1669,14 +1667,14 @@ private:
     /// \brief
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(p_id), m_priority(concurrent::priority::lowest), m_queue(10),
+        : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
     /// \brief
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout)
-        : m_id(p_id), m_priority(concurrent::priority::lowest), m_queue(10),
+        : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
           m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(
               [this](const data &p_data) -> void { add_data(p_data); }) {}
@@ -1700,17 +1698,15 @@ private:
     /// \brief
     template <typename t_time>
     implementation(t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(std::to_string(uuid())),
-          m_priority(concurrent::priority::lowest), m_queue(10),
-          m_timeout(internal::to_timeout(p_timeout)),
+        : m_id(std::to_string(uuid())), m_priority(async::priority::lowest),
+          m_queue(10), m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
     /// \brief
     template <typename t_time>
     implementation(t_time p_timeout)
-        : m_id(std::to_string(uuid())),
-          m_priority(concurrent::priority::lowest), m_queue(10),
-          m_timeout(internal::to_timeout(p_timeout)),
+        : m_id(std::to_string(uuid())), m_priority(async::priority::lowest),
+          m_queue(10), m_timeout(internal::to_timeout(p_timeout)),
           m_on_timeout(
               [this](const data &p_data) -> void { add_data(p_data); }) {}
 
@@ -1915,9 +1911,9 @@ private:
     }
 
   private:
-    /// \brief async_loop_t is a \p async_loop where a \p worker will be
+    /// \brief loop_t is a \p async_loop where a \p worker will be
     /// running
-    typedef async_loop_t<data> async_loop;
+    typedef loop_t<data> async_loop;
 
     /// \brief async_loops_t is the collection of \p async_loop pointers
     typedef typename std::vector<async_loop> asyncs_loops;
@@ -2755,7 +2751,7 @@ static void add_handler(
   messenger_t<t_msg>::add_subscriber(p_id, p_num_handlers, p_handler_factory);
 }
 
-} // namespace concurrent
+} // namespace async
 } // namespace tenacitas
 
 #endif

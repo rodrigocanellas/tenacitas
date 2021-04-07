@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include <tenacitas/concurrent.h>
+#include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
 #include <tenacitas/tester.h>
@@ -15,7 +15,7 @@ using namespace tenacitas;
 
 typedef std::tuple<int16_t, double> data;
 
-typedef concurrent::internal::circular_fixed_size_queue_t<data> queue;
+typedef async::internal::circular_fixed_size_queue_t<data> queue;
 
 struct producer {
   producer(queue &p_queue) : m_queue(p_queue) {}

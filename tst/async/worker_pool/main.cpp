@@ -1,22 +1,22 @@
-/// \example Basic use of concurrent::loop_t
+/// \example Basic use of async::loop_t
 
 #include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <string>
 
-#include <concurrent/msg.h>
-#include <tenacitas/concurrent.h>
+#include <async/msg.h>
+#include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
-using namespace tenacitas::concurrent;
+using namespace tenacitas::async;
 using namespace std::chrono_literals;
 
 struct worker_pool_000 {
   typedef int16_t data;
-  typedef concurrent::internal::worker_pool_t<data> worker_pool;
+  typedef async::internal::worker_pool_t<data> worker_pool;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -57,10 +57,10 @@ private:
 };
 
 struct worker_pool_001 {
-  typedef concurrent::test::msg<'Z'> msg;
+  typedef async::test::msg<'Z'> msg;
 
-  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
+  typedef async::sleeping_loop_t<void> sleeping_loop;
+  typedef async::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -161,9 +161,9 @@ private:
 
 struct worker_pool_003 {
 
-  typedef concurrent::test::msg<'Z'> msg;
+  typedef async::test::msg<'Z'> msg;
 
-  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -221,9 +221,9 @@ private:
 
 struct worker_pool_004 {
 
-  typedef concurrent::test::msg<'Z'> msg;
+  typedef async::test::msg<'Z'> msg;
 
-  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -309,9 +309,9 @@ private:
 
 struct worker_pool_005 {
 
-  typedef concurrent::test::msg<'Z'> msg;
+  typedef async::test::msg<'Z'> msg;
 
-  typedef concurrent::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::worker_pool_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {

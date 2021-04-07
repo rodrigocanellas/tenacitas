@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <tenacitas/concurrent.h>
+#include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
 #include <tenacitas/message.h>
@@ -32,13 +32,13 @@ struct exit_000 {
     auto _function = [&_counter, &_log]() -> void {
       if (_counter > _max) {
         DEB(_log, "about to publish 'exit_app'");
-        concurrent::messenger_t<message::exit_app>::publish({});
+        async::messenger_t<message::exit_app>::publish({});
       } else {
         DEB(_log, _counter++);
       }
     };
 
-    concurrent::sleeping_loop_t<void> _loop(200ms, 1s, _function);
+    async::sleeping_loop_t<void> _loop(200ms, 1s, _function);
 
     program::application _app(2s, [&_loop]() { _loop.start(); });
 
@@ -63,8 +63,9 @@ struct exit_001 {
     uint16_t _counter{0};
     auto _function = [&_counter, &_log]() -> void {
       if (_counter > _max) {
+
         DEB(_log, "about to publish 'exit_app'");
-        concurrent::messenger_t<message::exit_app>::publish({});
+        async::messenger_t<message::exit_app>::publish({});
         DEB(_log, "sleeping...");
         std::this_thread::sleep_for(5s);
         DEB(_log, "waking up...");
@@ -73,7 +74,7 @@ struct exit_001 {
       }
     };
 
-    concurrent::sleeping_loop_t<void> _loop(200ms, 1s, _function);
+    async::sleeping_loop_t<void> _loop(200ms, 1s, _function);
 
     program::application _app(2s, [&_loop]() { _loop.start(); });
 

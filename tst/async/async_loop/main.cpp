@@ -14,7 +14,7 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas/concurrent.h>
+#include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
 #include <tenacitas/tester.h>
@@ -47,7 +47,7 @@ struct async_loop_000 {
       return _i;
     };
 
-    concurrent::internal::async_loop_t<int16_t> _loop(
+    async::internal::loop_t<int16_t> _loop(
         worker(), 500ms, [](int16_t &&) -> void {}, _provider);
 
     _loop.start();
@@ -113,8 +113,8 @@ struct async_loop_001 {
 
     auto _on_dummy_timeout = [](int16_t &&) -> void {};
 
-    concurrent::internal::async_loop_t<int16_t> _loop(
-        worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
+    async::internal::loop_t<int16_t> _loop(worker(), 500ms, _on_dummy_timeout,
+                                           _provider, _breaker);
 
     _loop.start();
 
@@ -176,8 +176,8 @@ struct async_loop_002 {
     };
 
     auto _on_timeout = [](int16_t &&, float &&) -> void {};
-    concurrent::internal::async_loop_t<int16_t, float> _loop(
-        worker(), 500ms, _on_timeout, _provider);
+    async::internal::loop_t<int16_t, float> _loop(worker(), 500ms, _on_timeout,
+                                                  _provider);
 
     _loop.start();
 
@@ -246,7 +246,7 @@ private:
 //      return false;
 //    };
 
-//    concurrent::internal::async_loop_t concurrent::use_breaker::yes,
+//    async::internal::loop_t async::use_breaker::yes,
 //                             int16_t, float>
 //        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
 
@@ -312,7 +312,7 @@ struct async_loop_004 {
 
     auto _on_timeout = []() -> void {};
 
-    concurrent::internal::async_loop_t<void> _loop(_aux, 500ms, _on_timeout);
+    async::internal::loop_t<void> _loop(_aux, 500ms, _on_timeout);
 
     _loop.start();
 
@@ -376,7 +376,7 @@ private:
 //      return false;
 //    };
 
-//    concurrent::internal::async_loop_t concurrent::use_breaker::yes,
+//    async::internal::loop_t async::use_breaker::yes,
 //    void> _loop([&_worker]() -> void { _worker(); }, 500ms, _on_dummy_timeout,
 //          _breaker);
 
@@ -468,8 +468,8 @@ struct async_loop_006 {
         _worker(std::move(p_i));
       };
 
-      concurrent::internal::async_loop_t<int16_t> _loop(_aux, _work_timeout,
-                                                        _on_timeout, _provider);
+      async::internal::loop_t<int16_t> _loop(_aux, _work_timeout, _on_timeout,
+                                             _provider);
 
       _loop.start();
 
@@ -569,8 +569,8 @@ struct async_loop_007 {
       _worker(std::move(p_i), std::move(p_f));
     };
 
-    concurrent::internal::async_loop_t<int16_t, float> _loop(
-        _aux, _work_timeout, _on_timeout, _provider);
+    async::internal::loop_t<int16_t, float> _loop(_aux, _work_timeout,
+                                                  _on_timeout, _provider);
 
     _loop.start();
 
@@ -646,8 +646,8 @@ struct async_loop_008 {
 
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    concurrent::internal::async_loop_t<void> _loop(
-        [&_worker]() -> void { _worker(); }, _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop([&_worker]() -> void { _worker(); },
+                                        _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -733,8 +733,7 @@ struct async_loop_009 {
 
     auto _aux = [&_worker]() -> void { _worker(); };
 
-    concurrent::internal::async_loop_t<void> _loop(_aux, _work_timeout,
-                                                   _on_timeout);
+    async::internal::loop_t<void> _loop(_aux, _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -819,11 +818,10 @@ struct async_loop_010 {
 
     auto _aux = [&_worker]() -> void { _worker(); };
 
-    concurrent::internal::async_loop_t<void> _loop(_aux, _work_timeout,
-                                                   _on_timeout);
+    async::internal::loop_t<void> _loop(_aux, _work_timeout, _on_timeout);
 
     DEB(m_log, "moving loop to loop1");
-    concurrent::internal::async_loop_t<void> _loop1(std::move(_loop));
+    async::internal::loop_t<void> _loop1(std::move(_loop));
 
     _loop1.start();
 
@@ -898,7 +896,7 @@ struct async_loop_011 {
   }
 
   bool operator()() {
-    typedef concurrent::internal::async_loop_t<void> async_loop;
+    typedef async::internal::loop_t<void> async_loop;
 
     const uint16_t _max{10};
     uint16_t _counter{1};
@@ -961,7 +959,7 @@ struct async_loop_012 {
   }
 
   bool operator()() {
-    typedef concurrent::internal::async_loop_t<void> async_loop;
+    typedef async::internal::loop_t<void> async_loop;
 
     const uint16_t _max{10};
     uint16_t _counter{1};
@@ -1020,7 +1018,7 @@ struct async_loop_013 {
   static std::string desc() { return "starting, sleeping, moving, stopping"; }
 
   bool operator()() {
-    typedef concurrent::internal::async_loop_t<void> async_loop;
+    typedef async::internal::loop_t<void> async_loop;
 
     const uint16_t _max{10};
     uint16_t _counter{1};
@@ -1078,7 +1076,7 @@ struct async_loop_014 {
   }
 
   bool operator()() {
-    typedef concurrent::internal::async_loop_t<void> async_loop;
+    typedef async::internal::loop_t<void> async_loop;
 
     const uint16_t _max{10};
     uint16_t _counter{1};

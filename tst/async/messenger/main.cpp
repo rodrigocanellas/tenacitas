@@ -17,29 +17,29 @@
 #include <sstream>
 #include <string>
 
-#include <concurrent/msg.h>
+#include <async/msg.h>
 #include <tenacitas/calendar.h>
-#include <tenacitas/concurrent.h>
+#include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
-using namespace tenacitas::concurrent::test;
+using namespace tenacitas::async::test;
 using namespace std::chrono_literals;
 
-// static const concurrent::id g_pool_b1{"pool b1"};
-// static const concurrent::id g_pool_b2{"pool b2"};
-// static const concurrent::id g_pool_b3{"pool b3"};
-// static const concurrent::id g_pool_c{"pool c"};
-// static const concurrent::id g_pool_d1{"pool d1"};
-// static const concurrent::id g_pool_d2{"pool d2"};
+// static const async::id g_pool_b1{"pool b1"};
+// static const async::id g_pool_b2{"pool b2"};
+// static const async::id g_pool_b3{"pool b3"};
+// static const async::id g_pool_c{"pool c"};
+// static const async::id g_pool_d1{"pool d1"};
+// static const async::id g_pool_d2{"pool d2"};
 
 struct messenger_000 {
 
   typedef int16_t data;
   typedef logger::cerr<> log;
-  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::messenger_t<data> messenger;
+  typedef async::sleeping_loop_t<void> sleeping_loop;
+  typedef async::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -57,8 +57,8 @@ struct messenger_000 {
     data _data_consumed{0};
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-    concurrent::id _id = messenger::add_worker_pool(
-        concurrent::priority::lowest, _subscriber_timeout);
+    async::id _id = messenger::add_worker_pool(
+        async::priority::lowest, _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
         [this, &_data_consumed,
@@ -137,7 +137,7 @@ struct messenger_001 {
   static std::string desc() { return "compiling"; }
 
   bool operator()() {
-    typedef concurrent::messenger_t<int16_t> messenger;
+    typedef async::messenger_t<int16_t> messenger;
 
     DEB(m_log, "starting");
 
@@ -147,19 +147,19 @@ struct messenger_001 {
     };
 
     DEB(m_log, "adding worker pool");
-    concurrent::id _id =
-        messenger::add_worker_pool(concurrent::priority::lowest, 1s);
+    async::id _id =
+        messenger::add_worker_pool(async::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
-    std::optional<concurrent::priority> _maybe = messenger::get_priority(_id);
+    std::optional<async::priority> _maybe = messenger::get_priority(_id);
 
     if (_maybe) {
       DEB(m_log, "priority = ", *_maybe);
     }
 
     DEB(m_log, "resetting priority");
-    messenger::set_priority(_id, concurrent::priority::middle);
+    messenger::set_priority(_id, async::priority::middle);
     DEB(m_log, "priority reset");
 
     DEB(m_log, "adding subscriber");
@@ -190,8 +190,8 @@ private:
 struct messenger_002 {
 
   typedef int16_t data;
-  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::messenger_t<data> messenger;
+  typedef async::sleeping_loop_t<void> sleeping_loop;
+  typedef async::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -209,8 +209,8 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    concurrent::id _id =
-        messenger::add_worker_pool(concurrent::priority::lowest, 3s);
+    async::id _id =
+        messenger::add_worker_pool(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -283,8 +283,8 @@ private:
 struct messenger_004 {
 
   typedef int16_t data;
-  typedef concurrent::sleeping_loop_t<void> sleeping_loop;
-  typedef concurrent::messenger_t<data> messenger;
+  typedef async::sleeping_loop_t<void> sleeping_loop;
+  typedef async::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -302,8 +302,8 @@ struct messenger_004 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    concurrent::id _id =
-        concurrent::add_queue<data>(concurrent::priority::lowest, 3s);
+    async::id _id =
+        async::add_queue<data>(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -314,7 +314,7 @@ struct messenger_004 {
       }
     };
 
-    concurrent::add_handler<data>(_id, _subscriber);
+    async::add_handler<data>(_id, _subscriber);
 
     auto _sleeper = [this, &_data_produced, _total_to_produce]() -> void {
       DEB(m_log, "data produced = ", _data_produced, ", total to produce ",
@@ -377,20 +377,20 @@ struct messenger_003 {
   static std::string desc() { return "Testing order of worker pools"; }
 
   bool operator()() {
-    typedef concurrent::messenger_t<int16_t> messenger;
+    typedef async::messenger_t<int16_t> messenger;
 
-    const concurrent::id _p2{"hello"};
-    messenger::add_worker_pool(_p2, concurrent::priority::low, 4s);
+    const async::id _p2{"hello"};
+    messenger::add_worker_pool(_p2, async::priority::low, 4s);
 
-    const concurrent::id _p1{"good morning"};
-    messenger::add_worker_pool(_p1, concurrent::priority::low_middle, 1s);
+    const async::id _p1{"good morning"};
+    messenger::add_worker_pool(_p1, async::priority::low_middle, 1s);
 
     bool _first{true};
     bool _result{true};
     auto _visitor = [this, &_first, &_result, _p1,
-                     _p2](const concurrent::id &p_id,
-                          concurrent::priority p_priority,
-                          concurrent::timeout p_timeout) {
+                     _p2](const async::id &p_id,
+                          async::priority p_priority,
+                          async::timeout p_timeout) {
       if (_first) {
         if (p_id != _p2) {
           _result = false;
@@ -441,8 +441,8 @@ struct messenger_006 {
 
   bool operator()() {
     logger::set_info_level();
-    using namespace concurrent;
-    using namespace concurrent::test;
+    using namespace async;
+    using namespace async::test;
 
     test_base _test("messenger_006");
 
@@ -517,8 +517,8 @@ struct messenger_007 {
 
   bool operator()() {
     logger::set_info_level();
-    using namespace concurrent;
-    using namespace concurrent::test;
+    using namespace async;
+    using namespace async::test;
 
     test_base _test("messenger_006");
 

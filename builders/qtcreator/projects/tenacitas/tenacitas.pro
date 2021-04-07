@@ -9,7 +9,7 @@ HEADERS += \
     $$code_src_dir/tenacitas/calendar.h \
     $$code_src_dir/tenacitas/tester.h  \
     $$code_src_dir/tenacitas/logger.h  \
-    $$code_src_dir/tenacitas/concurrent.h \
+    $$code_src_dir/tenacitas/async.h \
     $$code_src_dir/tenacitas/macros.h \
     $$code_src_dir/tenacitas/message.h
 

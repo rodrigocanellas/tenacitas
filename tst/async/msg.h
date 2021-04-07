@@ -1,5 +1,5 @@
-#ifndef TENACITAS_CONCURRENT_TST_MSG_A_H
-#define TENACITAS_CONCURRENT_TST_MSG_A_H
+#ifndef TENACITAS_ASYNC_TST_MSG_A_H
+#define TENACITAS_ASYNC_TST_MSG_A_H
 
 #include <chrono>
 #include <cstdint>
@@ -10,11 +10,11 @@
 #include <tuple>
 #include <vector>
 
-#include <tenacitas/concurrent.h>
+#include <tenacitas/async.h>
 #include <tenacitas/number.h>
 
 namespace tenacitas {
-namespace concurrent {
+namespace async {
 namespace test {
 
 typedef char msg_id;
@@ -127,11 +127,11 @@ typedef std::vector<update> updates;
 
 namespace internal {
 
-typedef concurrent::sleeping_loop_t<void> publisher;
+typedef async::sleeping_loop_t<void> publisher;
 
-concurrent::id pool_id(msg_id p_msg_id, pool_num p_pool_num) {
-  return concurrent::id(std::string("pool ") + std::string(1, p_msg_id) +
-                        std::string(" ") + std::to_string(p_pool_num));
+async::id pool_id(msg_id p_msg_id, pool_num p_pool_num) {
+  return async::id(std::string("pool ") + std::string(1, p_msg_id) +
+                   std::string(" ") + std::to_string(p_pool_num));
 }
 
 struct end_publishing {
@@ -156,13 +156,13 @@ struct end_publishing {
   value m_last;
 };
 
-typedef concurrent::messenger_t<msg_a> messenger_a;
-typedef concurrent::messenger_t<msg_b> messenger_b;
-typedef concurrent::messenger_t<msg_c> messenger_c;
-typedef concurrent::messenger_t<msg_d> messenger_d;
-typedef concurrent::messenger_t<msg_e> messenger_e;
-typedef concurrent::messenger_t<update> messenger_update;
-typedef concurrent::messenger_t<end_publishing> messenger_end_publishing;
+typedef async::messenger_t<msg_a> messenger_a;
+typedef async::messenger_t<msg_b> messenger_b;
+typedef async::messenger_t<msg_c> messenger_c;
+typedef async::messenger_t<msg_d> messenger_d;
+typedef async::messenger_t<msg_e> messenger_e;
+typedef async::messenger_t<update> messenger_update;
+typedef async::messenger_t<end_publishing> messenger_end_publishing;
 
 template <msg_id id> struct subscriber {
   inline subscriber(
@@ -244,7 +244,7 @@ template <msg_id id> struct publish {
     }
 
     DEB(m_log, "publishing ", m_msg);
-    concurrent::messenger_t<msg<id>>::publish(m_msg);
+    async::messenger_t<msg<id>>::publish(m_msg);
     ++m_msg;
   }
 
@@ -313,9 +313,9 @@ struct test_base {
   }
 
   template <msg_id id, typename t_time>
-  void add_pool(pool_num p_pool_num, const concurrent::priority &p_priority,
+  void add_pool(pool_num p_pool_num, const async::priority &p_priority,
                 t_time p_timeout) {
-    concurrent::messenger_t<msg<id>>::add_worker_pool(
+    async::messenger_t<msg<id>>::add_worker_pool(
         internal::pool_id(id, p_pool_num), p_priority, p_timeout);
   }
 
@@ -335,7 +335,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    concurrent::messenger_t<msg<id>>::add_subscriber(
+    async::messenger_t<msg<id>>::add_subscriber(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_function));
     update_totals<id>(p_pool_num);
@@ -346,7 +346,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id, t_time p_sleep,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    concurrent::messenger_t<msg<id>>::add_subscriber(
+    async::messenger_t<msg<id>>::add_subscriber(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_sleep, p_function));
     update_totals<id>(p_pool_num);
@@ -522,7 +522,7 @@ private:
 };
 
 } // namespace test
-} // namespace concurrent
+} // namespace async
 } // namespace tenacitas
 
-#endif // TENACITAS_CONCURRENT_TST_MSG_A_H
+#endif // TENACITAS_ASYNC_TST_MSG_A_H
