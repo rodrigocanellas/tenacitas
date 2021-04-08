@@ -309,7 +309,7 @@ private:
       _append(_level_str);
 
       {
-        std::string _now = std::to_string(calendar::now<>::microsecs_num());
+        std::string _now = std::to_string(calendar::now<>::microsecs());
         _append(_now.c_str());
       }
 

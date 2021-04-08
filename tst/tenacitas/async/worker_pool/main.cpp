@@ -5,8 +5,8 @@
 #include <iostream>
 #include <string>
 
-#include <async/msg.h>
 #include <tenacitas/async.h>
+#include <tenacitas/async/msg.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
 

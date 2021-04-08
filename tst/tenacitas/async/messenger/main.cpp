@@ -17,9 +17,9 @@
 #include <sstream>
 #include <string>
 
-#include <async/msg.h>
-#include <tenacitas/calendar.h>
 #include <tenacitas/async.h>
+#include <tenacitas/async/msg.h>
+#include <tenacitas/calendar.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
 
@@ -57,8 +57,8 @@ struct messenger_000 {
     data _data_consumed{0};
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-    async::id _id = messenger::add_worker_pool(
-        async::priority::lowest, _subscriber_timeout);
+    async::id _id = messenger::add_worker_pool(async::priority::lowest,
+                                               _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
         [this, &_data_consumed,
@@ -147,8 +147,7 @@ struct messenger_001 {
     };
 
     DEB(m_log, "adding worker pool");
-    async::id _id =
-        messenger::add_worker_pool(async::priority::lowest, 1s);
+    async::id _id = messenger::add_worker_pool(async::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
@@ -209,8 +208,7 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    async::id _id =
-        messenger::add_worker_pool(async::priority::lowest, 3s);
+    async::id _id = messenger::add_worker_pool(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -302,8 +300,7 @@ struct messenger_004 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    async::id _id =
-        async::add_queue<data>(async::priority::lowest, 3s);
+    async::id _id = async::add_queue<data>(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -388,8 +385,7 @@ struct messenger_003 {
     bool _first{true};
     bool _result{true};
     auto _visitor = [this, &_first, &_result, _p1,
-                     _p2](const async::id &p_id,
-                          async::priority p_priority,
+                     _p2](const async::id &p_id, async::priority p_priority,
                           async::timeout p_timeout) {
       if (_first) {
         if (p_id != _p2) {

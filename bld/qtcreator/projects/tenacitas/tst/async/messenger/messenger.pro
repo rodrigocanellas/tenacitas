@@ -5,8 +5,8 @@ CONFIG+=test
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/async/messenger/main.cpp
+  $$test_src_dir/tenacitas/async/messenger/main.cpp
 
 HEADERS += \
-  $$test_src_dir/async/msg.h
+  $$test_src_dir/tenacitas/async/msg.h
 

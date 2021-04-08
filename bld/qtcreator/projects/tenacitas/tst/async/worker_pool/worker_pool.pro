@@ -6,9 +6,9 @@ CONFIG+=test
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/async/worker_pool/main.cpp
+  $$test_src_dir/tenacitas/async/worker_pool/main.cpp
 
 HEADERS += \
-  ../../../../../../../tst/async/msg.h
+  $$test_src_dir/tenacitas/async/msg.h
 
 

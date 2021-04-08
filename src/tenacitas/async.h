@@ -487,7 +487,7 @@ execute(t_time p_timeout, t_function p_function, t_params... p_params) {
 /// \brief Type of function used to inform if a loop should stop
 typedef std::function<bool()> breaker;
 
-uint64_t uuid() { return calendar::now<>::microsecs_num(); }
+uint64_t uuid() { return calendar::now<>::microsecs(); }
 
 typedef std::function<bool()> breaker;
 
