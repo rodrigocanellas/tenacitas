@@ -1,8 +1,0 @@
-digraph "tenacitas::measures::time::hour"
-{
- // LATEX_PDF_SIZE
-  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
-  node [fontname="Helvetica",fontsize="10",shape=record];
-  Node1 [label="tenacitas::measures\l::time::hour",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="The hour struct represents a valid hour value."];
-  Node1 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" _18\n_07\n_19\n_08\n_09\n_20\n_21\n_10\n_22\n_11\n..." ,fontname="Helvetica"];
-}

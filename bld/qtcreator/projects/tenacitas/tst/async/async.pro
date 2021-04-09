@@ -1,34 +1,18 @@
 SUBDIRS = \
-    async_loop \
+    loop \
     sleeping_loop    \
     circular_fixed_size_queue    \
     circular_unlimited_size_queue \
     worker_pool    \
     messenger
 
-#    \
-#    executer
-    #    \
-
-#    \
 
 
-
-#    \
-
-#    \
-
-
-
+#    executer  \
 #    worker \
-#    dispatcher
-
-#\
+#    dispatcher \
 #    performance \
 #    writer \
-
-
-
 
 
 TEMPLATE = subdirs
