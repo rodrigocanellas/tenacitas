@@ -1,5 +1,3 @@
-/// \example
-
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
 
@@ -32,7 +30,7 @@ struct exit_000 {
     auto _function = [&_counter, &_log]() -> void {
       if (_counter > _max) {
         DEB(_log, "about to publish 'exit_app'");
-        async::messenger_t<message::exit_app>::publish({});
+        async::send(message::exit_app());
       } else {
         DEB(_log, _counter++);
       }
@@ -65,7 +63,7 @@ struct exit_001 {
       if (_counter > _max) {
 
         DEB(_log, "about to publish 'exit_app'");
-        async::messenger_t<message::exit_app>::publish({});
+        async::send(message::exit_app());
         DEB(_log, "sleeping...");
         std::this_thread::sleep_for(5s);
         DEB(_log, "waking up...");

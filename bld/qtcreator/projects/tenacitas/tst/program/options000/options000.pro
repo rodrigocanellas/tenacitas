@@ -9,7 +9,7 @@ TARGET = tenacitas.program.tst.options000
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/program/options000/main.cpp
+  $$test_src_dir/tenacitas/program/options000/main.cpp
 
 
 

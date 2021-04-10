@@ -2037,6 +2037,208 @@ private:
   logger::cerr<> m_log{"worker_pool"};
 };
 
+/// \brief
+template <typename t_data> struct messenger_t {
+
+  /// \brief Type of worker that a worker will execute
+  typedef std::function<void(const t_data &)> worker;
+
+  /// \brief
+  typedef std::function<void(const t_data &)> on_timeout;
+
+  /// \brief
+  ~messenger_t() = default;
+
+  /// \brief
+  template <typename t_time>
+  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
+                                     t_time p_timeout,
+                                     on_timeout p_on_timeout) {
+    insert({p_id, p_priority, p_timeout, p_on_timeout});
+  }
+
+  /// \brief
+  template <typename t_time>
+  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
+                                     t_time p_timeout) {
+    insert({p_id, p_priority, p_timeout});
+  }
+
+  /// \brief
+  template <typename t_time>
+  static inline void add_worker_pool(const id &p_id, t_time p_timeout,
+                                     on_timeout p_on_timeout) {
+    insert({p_id, p_timeout, p_on_timeout});
+  }
+
+  /// \brief
+  template <typename t_time>
+  static inline void add_worker_pool(const id &p_id, t_time p_timeout) {
+    insert({p_id, p_timeout});
+  }
+
+  /// \brief
+  template <typename t_time>
+  static id add_worker_pool(const priority &p_priority, t_time p_timeout,
+                            on_timeout p_on_timeout) {
+    worker_pool _worker_pool{p_priority, p_timeout, p_on_timeout};
+    id _id{_worker_pool.get_id()};
+    insert(std::move(_worker_pool));
+    return _id;
+  }
+
+  /// \brief
+  template <typename t_time>
+  static id add_worker_pool(const priority &p_priority, t_time p_timeout) {
+    worker_pool _worker_pool{p_priority, p_timeout};
+    id _id{_worker_pool.get_id()};
+    insert(std::move(_worker_pool));
+    return _id;
+  }
+
+  /// \brief
+  template <typename t_time>
+  static id add_worker_pool(t_time p_timeout, on_timeout p_on_timeout) {
+    worker_pool _worker_pool{p_timeout, p_on_timeout};
+    id _id{_worker_pool.get_id()};
+    insert(std::move(_worker_pool));
+    return _id;
+  }
+
+  /// \brief
+  template <typename t_time> static id add_worker_pool(t_time p_timeout) {
+    worker_pool _worker_pool{p_timeout};
+    id _id{_worker_pool.get_id()};
+    insert(std::move(_worker_pool));
+    return _id;
+  }
+
+  /// \brief
+  static void set_priority(const id &p_id, priority p_priority) {
+    iterator _ite = find(p_id);
+    if (_ite != m_list.end()) {
+      _ite->set_priority(p_priority);
+      sort();
+    }
+  }
+
+  /// \brief
+  static std::optional<priority> get_priority(const id &p_id) {
+    iterator _ite = find(p_id);
+    if (_ite != m_list.end()) {
+      return {_ite->get_priority()};
+    }
+    return {};
+  }
+
+  /// \brief
+  static void publish(const t_data &p_data) {
+    for (worker_pool &_work_pool : m_list) {
+      DEB(m_log, "publishing data to pool '", _work_pool.get_id(), "'");
+      _work_pool.add_data(p_data);
+    }
+  }
+
+  /// \brief
+  static void add_subscriber(const id &p_id, worker p_worker) {
+    auto _ite = find(p_id);
+    auto _end = m_list.end();
+    if (_ite != _end) {
+      DEB(m_log, "adding another worker for ", p_id);
+      _ite->add_worker(p_worker);
+    }
+  }
+
+  /// \brief
+  static void add_subscriber(const id &p_id, uint16_t p_num_workers,
+                             std::function<worker()> p_factory) {
+    iterator _ite = find(p_id);
+    if (_ite != m_list.end()) {
+      _ite->add_worker(p_num_workers, p_factory);
+    }
+  }
+
+  static void
+  traverse(std::function<void(const id &, priority, timeout)> p_visitor) {
+    for (const worker_pool &_work_pool : m_list) {
+      p_visitor(_work_pool.get_id(), _work_pool.get_priority(),
+                _work_pool.get_timeout());
+    }
+  }
+
+  static size_t size(const id &p_id) {
+    iterator _ite = find(p_id);
+    if (_ite != m_list.end()) {
+      return _ite->get_size();
+    }
+    return 0;
+  }
+
+  static size_t occupied(const id &p_id) {
+    iterator _ite = find(p_id);
+    if (_ite != m_list.end()) {
+      return _ite->get_occupied();
+    }
+    return 0;
+  }
+
+  /// \brief
+  static void wait() {
+    DEB(m_log, "starting to wait");
+    for (worker_pool &_worker_pool : m_list) {
+      _worker_pool.empty_queue();
+    }
+    DEB(m_log, "finished waiting");
+  }
+
+private:
+  /// \brief
+  typedef internal::worker_pool_t<t_data> worker_pool;
+
+  /// \brief
+  typedef std::list<worker_pool> list;
+
+  /// \brief
+  typedef typename list::iterator iterator;
+
+private:
+  /// \brief
+  static auto find(const id &p_id) {
+    auto _cmp = [&p_id](const worker_pool &p_work_pool) -> bool {
+      return p_id == p_work_pool.get_id();
+    };
+    return std::find_if(m_list.begin(), m_list.end(), _cmp);
+  }
+
+  static inline void insert(worker_pool &&p_worker_pool) {
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_list.push_back(std::move(p_worker_pool));
+    //    m_list.back().start();
+    sort();
+  }
+
+  static inline void sort() {
+    m_list.sort([](const worker_pool &p_i1, const worker_pool &p_i2) -> bool {
+      return p_i1 < p_i2;
+    });
+  }
+
+private:
+  /// \brief
+  static list m_list;
+  static logger::cerr<> m_log;
+  static std::mutex m_mutex;
+};
+
+/// \brief
+template <typename t_data>
+typename messenger_t<t_data>::list messenger_t<t_data>::m_list;
+
+template <typename t_data>
+logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
+
+template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
+
 } // namespace internal
 
 /// \brief Base class for sleeping loops, which are loops that sleep during
@@ -2257,208 +2459,6 @@ private:
   std::unique_ptr<implementation> m_impl;
 };
 
-/// \brief
-template <typename t_data> struct messenger_t {
-
-  /// \brief Type of worker that a worker will execute
-  typedef std::function<void(const t_data &)> worker;
-
-  /// \brief
-  typedef std::function<void(const t_data &)> on_timeout;
-
-  /// \brief
-  ~messenger_t() = default;
-
-  /// \brief
-  template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
-                                     t_time p_timeout,
-                                     on_timeout p_on_timeout) {
-    insert({p_id, p_priority, p_timeout, p_on_timeout});
-  }
-
-  /// \brief
-  template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
-                                     t_time p_timeout) {
-    insert({p_id, p_priority, p_timeout});
-  }
-
-  /// \brief
-  template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, t_time p_timeout,
-                                     on_timeout p_on_timeout) {
-    insert({p_id, p_timeout, p_on_timeout});
-  }
-
-  /// \brief
-  template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, t_time p_timeout) {
-    insert({p_id, p_timeout});
-  }
-
-  /// \brief
-  template <typename t_time>
-  static id add_worker_pool(const priority &p_priority, t_time p_timeout,
-                            on_timeout p_on_timeout) {
-    worker_pool _worker_pool{p_priority, p_timeout, p_on_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
-    return _id;
-  }
-
-  /// \brief
-  template <typename t_time>
-  static id add_worker_pool(const priority &p_priority, t_time p_timeout) {
-    worker_pool _worker_pool{p_priority, p_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
-    return _id;
-  }
-
-  /// \brief
-  template <typename t_time>
-  static id add_worker_pool(t_time p_timeout, on_timeout p_on_timeout) {
-    worker_pool _worker_pool{p_timeout, p_on_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
-    return _id;
-  }
-
-  /// \brief
-  template <typename t_time> static id add_worker_pool(t_time p_timeout) {
-    worker_pool _worker_pool{p_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
-    return _id;
-  }
-
-  /// \brief
-  static void set_priority(const id &p_id, priority p_priority) {
-    iterator _ite = find(p_id);
-    if (_ite != m_list.end()) {
-      _ite->set_priority(p_priority);
-      sort();
-    }
-  }
-
-  /// \brief
-  static std::optional<priority> get_priority(const id &p_id) {
-    iterator _ite = find(p_id);
-    if (_ite != m_list.end()) {
-      return {_ite->get_priority()};
-    }
-    return {};
-  }
-
-  /// \brief
-  static void publish(const t_data &p_data) {
-    for (worker_pool &_work_pool : m_list) {
-      DEB(m_log, "publishing data to pool '", _work_pool.get_id(), "'");
-      _work_pool.add_data(p_data);
-    }
-  }
-
-  /// \brief
-  static void add_subscriber(const id &p_id, worker p_worker) {
-    auto _ite = find(p_id);
-    auto _end = m_list.end();
-    if (_ite != _end) {
-      DEB(m_log, "adding another worker for ", p_id);
-      _ite->add_worker(p_worker);
-    }
-  }
-
-  /// \brief
-  static void add_subscriber(const id &p_id, uint16_t p_num_workers,
-                             std::function<worker()> p_factory) {
-    iterator _ite = find(p_id);
-    if (_ite != m_list.end()) {
-      _ite->add_worker(p_num_workers, p_factory);
-    }
-  }
-
-  static void
-  traverse(std::function<void(const id &, priority, timeout)> p_visitor) {
-    for (const worker_pool &_work_pool : m_list) {
-      p_visitor(_work_pool.get_id(), _work_pool.get_priority(),
-                _work_pool.get_timeout());
-    }
-  }
-
-  static size_t size(const id &p_id) {
-    iterator _ite = find(p_id);
-    if (_ite != m_list.end()) {
-      return _ite->get_size();
-    }
-    return 0;
-  }
-
-  static size_t occupied(const id &p_id) {
-    iterator _ite = find(p_id);
-    if (_ite != m_list.end()) {
-      return _ite->get_occupied();
-    }
-    return 0;
-  }
-
-  /// \brief
-  static void wait() {
-    DEB(m_log, "starting to wait");
-    for (worker_pool &_worker_pool : m_list) {
-      _worker_pool.empty_queue();
-    }
-    DEB(m_log, "finished waiting");
-  }
-
-private:
-  /// \brief
-  typedef internal::worker_pool_t<t_data> worker_pool;
-
-  /// \brief
-  typedef std::list<worker_pool> list;
-
-  /// \brief
-  typedef typename list::iterator iterator;
-
-private:
-  /// \brief
-  static auto find(const id &p_id) {
-    auto _cmp = [&p_id](const worker_pool &p_work_pool) -> bool {
-      return p_id == p_work_pool.get_id();
-    };
-    return std::find_if(m_list.begin(), m_list.end(), _cmp);
-  }
-
-  static inline void insert(worker_pool &&p_worker_pool) {
-    std::lock_guard<std::mutex> _lock(m_mutex);
-    m_list.push_back(std::move(p_worker_pool));
-    //    m_list.back().start();
-    sort();
-  }
-
-  static inline void sort() {
-    m_list.sort([](const worker_pool &p_i1, const worker_pool &p_i2) -> bool {
-      return p_i1 < p_i2;
-    });
-  }
-
-private:
-  /// \brief
-  static list m_list;
-  static logger::cerr<> m_log;
-  static std::mutex m_mutex;
-};
-
-/// \brief
-template <typename t_data>
-typename messenger_t<t_data>::list messenger_t<t_data>::m_list;
-
-template <typename t_data>
-logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
-
-template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
-
 // #########################################
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2481,8 +2481,8 @@ template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout,
-                                      p_on_timeout);
+  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout,
+                                                p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2504,7 +2504,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout) {
-  messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout);
+  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2526,7 +2526,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  messenger_t<t_msg>::add_worker_pool(p_id, p_timeout, p_on_timeout);
+  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2545,7 +2545,7 @@ static inline void add_queue(const id &p_id, t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout) {
-  messenger_t<t_msg>::add_worker_pool(p_id, p_timeout);
+  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2569,8 +2569,8 @@ static inline void add_queue(const id &p_id, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout,
-                                             p_on_timeout);
+  return internal::messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout,
+                                                       p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2597,7 +2597,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout,
 /// be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout) {
-  return messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout);
+  return internal::messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2624,7 +2624,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return messenger_t<t_msg>::add_worker_pool(p_timeout, p_on_timeout);
+  return internal::messenger_t<t_msg>::add_worker_pool(p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2651,7 +2651,7 @@ static id add_queue(t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout) {
-  return messenger_t<t_msg>::add_worker_pool(p_timeout);
+  return internal::messenger_t<t_msg>::add_worker_pool(p_timeout);
 }
 
 /// \brief Defines the priority of a message queue
@@ -2666,7 +2666,7 @@ static id add_queue(t_time p_timeout) {
 /// the message will be placed in the queue.
 template <typename t_msg>
 static void set_priority(const id &p_id, priority p_priority) {
-  messenger_t<t_msg>::set_priority(p_id, p_priority);
+  internal::messenger_t<t_msg>::set_priority(p_id, p_priority);
 }
 
 /// \brief Retrieves the priority of a message queue
@@ -2680,7 +2680,7 @@ static void set_priority(const id &p_id, priority p_priority) {
 /// \return The priority of the queue
 template <typename t_msg>
 static std::optional<priority> get_priority(const id &p_id) {
-  return messenger_t<t_msg>::get_priority(p_id);
+  return internal::messenger_t<t_msg>::get_priority(p_id);
 }
 
 /// \brief Sends a message to all the queues associated to a message type
@@ -2689,7 +2689,7 @@ static std::optional<priority> get_priority(const id &p_id) {
 ///
 /// \param p_msg is the message to be copied to all the queues
 template <typename t_msg> static void send(const t_msg &p_msg) {
-  messenger_t<t_msg>::publish(p_msg);
+  internal::messenger_t<t_msg>::publish(p_msg);
 }
 
 /// \brief Adds a handler to a queue
@@ -2706,7 +2706,7 @@ template <typename t_msg> static void send(const t_msg &p_msg) {
 template <typename t_msg>
 static void add_handler(const id &p_id,
                         std::function<void(const t_msg &)> p_handler) {
-  messenger_t<t_msg>::add_subscriber(p_id, p_handler);
+  internal::messenger_t<t_msg>::add_subscriber(p_id, p_handler);
 }
 
 /// \brief Adds a handler to a queue
@@ -2748,7 +2748,8 @@ template <typename t_msg>
 static void add_handler(
     const id &p_id, uint16_t p_num_handlers,
     std::function<std::function<void(const t_msg &)>> p_handler_factory) {
-  messenger_t<t_msg>::add_subscriber(p_id, p_num_handlers, p_handler_factory);
+  internal::messenger_t<t_msg>::add_subscriber(p_id, p_num_handlers,
+                                               p_handler_factory);
 }
 
 } // namespace async

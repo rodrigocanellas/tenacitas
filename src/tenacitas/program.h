@@ -328,19 +328,17 @@ struct application {
     m_wait = (duration_cast<milliseconds>(p_wait));
     async::id _exit_pool_id{"exit_pool"};
 
-    async::messenger_t<message::exit_app>::add_worker_pool(
-        _exit_pool_id, async::priority::lowest,
-        milliseconds(m_wait.count() + 2000));
-    async::messenger_t<message::exit_app>::add_subscriber(
+    async::add_queue<message::exit_app>(_exit_pool_id, async::priority::lowest,
+                                        milliseconds(m_wait.count() + 2000));
+    async::add_handler<message::exit_app>(
         _exit_pool_id, [this](const message::exit_app &p_exit_app) -> void {
           on_exit_app(p_exit_app);
         });
 
     async::id _halt_pool_id{"halt_pool"};
-    async::messenger_t<message::halt_app>::add_worker_pool(
-        _halt_pool_id, async::priority::highest,
-        milliseconds(m_wait.count() + 2000));
-    async::messenger_t<message::halt_app>::add_subscriber(
+    async::add_queue<message::halt_app>(_halt_pool_id, async::priority::highest,
+                                        milliseconds(m_wait.count() + 2000));
+    async::add_handler<message::halt_app>(
         _halt_pool_id, [this](const message::halt_app &p_halt_app) -> void {
           on_halt_app(p_halt_app);
         });

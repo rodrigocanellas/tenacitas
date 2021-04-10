@@ -6,4 +6,4 @@ TARGET = tenacitas.program.tst.exit
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/program/exit/main.cpp
+  $$test_src_dir/tenacitas/program/exit/main.cpp

@@ -1,5 +1,3 @@
-/// \example
-
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
 
@@ -39,7 +37,7 @@ struct messenger_000 {
   typedef int16_t data;
   typedef logger::cerr<> log;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -137,7 +135,7 @@ struct messenger_001 {
   static std::string desc() { return "compiling"; }
 
   bool operator()() {
-    typedef async::messenger_t<int16_t> messenger;
+    typedef async::internal::messenger_t<int16_t> messenger;
 
     DEB(m_log, "starting");
 
@@ -190,7 +188,7 @@ struct messenger_002 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -282,7 +280,7 @@ struct messenger_004 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -374,7 +372,7 @@ struct messenger_003 {
   static std::string desc() { return "Testing order of worker pools"; }
 
   bool operator()() {
-    typedef async::messenger_t<int16_t> messenger;
+    typedef async::internal::messenger_t<int16_t> messenger;
 
     const async::id _p2{"hello"};
     messenger::add_worker_pool(_p2, async::priority::low, 4s);
