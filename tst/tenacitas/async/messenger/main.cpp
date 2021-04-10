@@ -16,21 +16,13 @@
 #include <string>
 
 #include <tenacitas/async.h>
-#include <tenacitas/async/msg.h>
 #include <tenacitas/calendar.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
+#include <tst/tenacitas/async/msg.h>
 
 using namespace tenacitas;
-using namespace tenacitas::async::test;
 using namespace std::chrono_literals;
-
-// static const async::id g_pool_b1{"pool b1"};
-// static const async::id g_pool_b2{"pool b2"};
-// static const async::id g_pool_b3{"pool b3"};
-// static const async::id g_pool_c{"pool c"};
-// static const async::id g_pool_d1{"pool d1"};
-// static const async::id g_pool_d2{"pool d2"};
 
 struct messenger_000 {
 
@@ -436,7 +428,6 @@ struct messenger_006 {
   bool operator()() {
     logger::set_info_level();
     using namespace async;
-    using namespace async::test;
 
     test_base _test("messenger_006");
 
@@ -512,7 +503,6 @@ struct messenger_007 {
   bool operator()() {
     logger::set_info_level();
     using namespace async;
-    using namespace async::test;
 
     test_base _test("messenger_006");
 

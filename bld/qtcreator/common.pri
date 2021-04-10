@@ -5,14 +5,14 @@ CONFIG += sdk_no_version_check
 
 base_dir=$$PWD/../..
 code_src_dir=$$base_dir/src
-test_src_dir=$$base_dir/tst
+test_src_dir=$$base_dir
 builder_dir=$$base_dir/bld/qtcreator/projects
 products_dir=$$base_dir/prd
 third_dir=$$base_dir/3rd
 
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
-test_dir=$$products_dir/tst
+test_dir=$$products_dir/dir
 example_dir=$$products_dir/example
 tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
 

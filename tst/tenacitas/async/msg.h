@@ -18,9 +18,7 @@
 #include <tenacitas/async.h>
 #include <tenacitas/number.h>
 
-namespace tenacitas {
-namespace async {
-namespace test {
+using namespace tenacitas;
 
 typedef char msg_id;
 typedef uint16_t pool_num;
@@ -525,9 +523,5 @@ private:
   std::mutex m_mutex_all_consumed;
   bool m_all_consumed{false};
 };
-
-} // namespace test
-} // namespace async
-} // namespace tenacitas
 
 #endif // TENACITAS_ASYNC_TST_MSG_A_H

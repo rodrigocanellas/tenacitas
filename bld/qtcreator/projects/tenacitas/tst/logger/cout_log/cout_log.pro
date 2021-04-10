@@ -6,6 +6,6 @@ include (../../../../../common.pri)
 
 
 SOURCES += \
-  $$test_src_dir/tenacitas/logger/cout_log/main.cpp
+  $$test_src_dir/tst/tenacitas/logger/cout_log/main.cpp
 
 

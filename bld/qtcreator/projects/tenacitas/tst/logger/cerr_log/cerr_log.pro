@@ -9,7 +9,7 @@ include (../../../../../common.pri)
 #LIBS += $$libs_dir/libtenacitas.logger.cerr.$$static_lib_ext
 
 SOURCES += \
-  $$test_src_dir/tenacitas/logger/cerr_log/main.cpp
+  $$test_src_dir/tst/tenacitas/logger/cerr_log/main.cpp
 
 
 

@@ -9,9 +9,9 @@
 #include <string>
 
 #include <tenacitas/async.h>
-#include <tenacitas/async/msg.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/tester.h>
+#include <tst/tenacitas/async/msg.h>
 
 using namespace tenacitas;
 using namespace tenacitas::async;
@@ -19,7 +19,7 @@ using namespace std::chrono_literals;
 
 struct worker_pool_000 {
   typedef int16_t data;
-  typedef async::internal::worker_pool_t<data> worker_pool;
+  typedef async::internal::handler_group_t<data> worker_pool;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -60,10 +60,10 @@ private:
 };
 
 struct worker_pool_001 {
-  typedef async::test::msg<'Z'> msg;
+  typedef msg<'Z'> msg;
 
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::handler_group_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -164,9 +164,9 @@ private:
 
 struct worker_pool_003 {
 
-  typedef async::test::msg<'Z'> msg;
+  typedef msg<'Z'> msg;
 
-  typedef async::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::handler_group_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -178,7 +178,7 @@ struct worker_pool_003 {
       WAR(m_log, "timeout handling ", p_msg);
     };
 
-    test::value _last_added{0};
+    value _last_added{0};
 
     {
       worker_pool _worker_pool{1s, _on_timeout};
@@ -192,7 +192,7 @@ struct worker_pool_003 {
         _worker_pool.add_data(_msg);
       }
 
-      _last_added = static_cast<test::value>(_worker_pool.amount_added() - 1);
+      _last_added = static_cast<value>(_worker_pool.amount_added() - 1);
 
       std::this_thread::sleep_for(15s);
     }
@@ -224,9 +224,9 @@ private:
 
 struct worker_pool_004 {
 
-  typedef async::test::msg<'Z'> msg;
+  typedef msg<'Z'> msg;
 
-  typedef async::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::handler_group_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -236,8 +236,8 @@ struct worker_pool_004 {
 
   bool operator()() {
 
-    test::value _amount_added{0};
-    const test::value _amount_to_add{3000};
+    value _amount_added{0};
+    const value _amount_to_add{3000};
 
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
@@ -259,7 +259,7 @@ struct worker_pool_004 {
         _worker_pool.add_data(_msg);
       }
 
-      _amount_added = static_cast<test::value>(_worker_pool.amount_added());
+      _amount_added = static_cast<value>(_worker_pool.amount_added());
 
       while (_worker_pool.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
@@ -267,7 +267,7 @@ struct worker_pool_004 {
       }
     }
 
-    test::value _consumed{0};
+    value _consumed{0};
     {
       std::stringstream _stream;
       for (const consumer &_consumer : _consumers) {
@@ -299,12 +299,12 @@ private:
 
     const std::string &get_id() const { return m_id; }
     inline const msg &get_msg() const { return m_msg; }
-    inline test::value get_num() const { return m_num; }
+    inline value get_num() const { return m_num; }
 
   private:
     std::string m_id;
     msg m_msg;
-    test::value m_num{0};
+    value m_num{0};
     logger::cerr<> m_log{"consumer"};
   };
   logger::cerr<> m_log{"worker_pool_004"};
@@ -312,9 +312,9 @@ private:
 
 struct worker_pool_005 {
 
-  typedef async::test::msg<'Z'> msg;
+  typedef msg<'Z'> msg;
 
-  typedef async::internal::worker_pool_t<msg> worker_pool;
+  typedef async::internal::handler_group_t<msg> worker_pool;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -334,8 +334,8 @@ struct worker_pool_005 {
 
     m_log.set_debug_level();
 
-    test::value _amount_added{0};
-    const test::value _amount_to_add{50};
+    value _amount_added{0};
+    const value _amount_to_add{50};
 
     std::vector<consumer> _consumers;
     _consumers.push_back({"c1", 200ms});
@@ -360,7 +360,7 @@ struct worker_pool_005 {
       }
 
       _amount_added =
-          static_cast<test::value>(_worker_pool.amount_added()) - _num_timeouts;
+          static_cast<value>(_worker_pool.amount_added()) - _num_timeouts;
 
       std::this_thread::sleep_for(3s);
 
@@ -370,7 +370,7 @@ struct worker_pool_005 {
       }
     }
 
-    test::value _consumed{0};
+    value _consumed{0};
     {
       std::stringstream _stream;
       for (const consumer &_consumer : _consumers) {
@@ -419,7 +419,7 @@ private:
 
     const std::string &get_id() const { return m_id; }
     inline const msg &get_msg() const { return m_msg; }
-    inline test::value get_num() const { return m_num; }
+    inline value get_num() const { return m_num; }
     std::chrono::milliseconds get_timeout() const { return m_timeout; }
     uint16_t get_num_timeouts() const { return m_timeout_counter; }
 
@@ -429,8 +429,8 @@ private:
     std::chrono::milliseconds m_over_timeout;
     msg m_msg;
 
-    test::value m_num{0};
-    test::value m_count{1};
+    value m_num{0};
+    value m_count{1};
     uint16_t m_timeout_counter{0};
     logger::cerr<> m_log{"consumer"};
   };

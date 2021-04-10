@@ -5,6 +5,6 @@ TARGET = tenacitas.async.tst.circular_unlimited_size_queue
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/tenacitas/async/circular_unlimited_size_queue/main.cpp
+  $$test_src_dir/tst/tenacitas/async/circular_unlimited_size_queue/main.cpp
 
 

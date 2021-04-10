@@ -18,6 +18,10 @@ namespace tenacitas {
 /// \brief about calendar and time
 namespace calendar {
 
+template <typename t_to, typename t_from> t_to convert(t_from p_from) {
+  return std::chrono::duration_cast<t_to>(p_from);
+}
+
 /// \brief functions that return 'now' in different time units
 template <bool use = true> struct now {
 

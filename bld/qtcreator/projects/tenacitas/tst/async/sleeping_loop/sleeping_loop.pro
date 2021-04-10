@@ -6,7 +6,7 @@ CONFIG+=test
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/tenacitas/async/sleeping_loop/main.cpp
+  $$test_src_dir/tst/tenacitas/async/sleeping_loop/main.cpp
 
 
 

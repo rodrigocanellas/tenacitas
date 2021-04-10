@@ -11,11 +11,15 @@
 #include <sstream>
 #include <string>
 
+#include <tenacitas/calendar.h>
+
 /// \brief master namespace
 namespace tenacitas {
 
 /// \brief manipulates numbers, like formating
 namespace number {
+
+uint64_t uuid() { return calendar::now<>::microsecs(); }
 
 /// \brief maximum number of characters needed to represent a type of
 /// number
