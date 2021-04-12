@@ -17,9 +17,9 @@ using namespace tenacitas;
 using namespace tenacitas::async;
 using namespace std::chrono_literals;
 
-struct worker_pool_000 {
+struct handlers_000 {
   typedef int16_t data;
-  typedef async::internal::handler_group_t<data> worker_pool;
+  typedef async::internal::handlers_t<data> handlers;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -32,17 +32,17 @@ struct worker_pool_000 {
       WAR(m_log, "timeout handlind ", p_data);
     };
 
-    worker_pool _worker_pool(500ms, _on_timeout);
+    handlers _handlers(500ms, _on_timeout);
 
-    _worker_pool.add_worker(consumer());
+    _handlers.add_handler(consumer());
 
-    DEB(m_log, "capacity = ", _worker_pool.capacity(),
-        ", occupied = ", _worker_pool.occupied());
+    DEB(m_log, "capacity = ", _handlers.capacity(),
+        ", occupied = ", _handlers.occupied());
 
-    _worker_pool.add_data(-8);
+    _handlers.add_data(-8);
 
-    DEB(m_log, "capacity = ", _worker_pool.capacity(),
-        ", occupied = ", _worker_pool.occupied());
+    DEB(m_log, "capacity = ", _handlers.capacity(),
+        ", occupied = ", _handlers.occupied());
 
     std::this_thread::sleep_for(1s);
 
@@ -56,14 +56,14 @@ private:
   private:
     logger::cerr<> m_log{"consumer"};
   };
-  logger::cerr<> m_log{"worker_pool_000"};
+  logger::cerr<> m_log{"handlers_000"};
 };
 
-struct worker_pool_001 {
+struct handlers_001 {
   typedef msg<'Z'> msg;
 
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::handler_group_t<msg> worker_pool;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -82,24 +82,24 @@ struct worker_pool_001 {
     msg _msg(0);
     {
 
-      worker_pool _worker_pool(2s);
+      handlers _handlers(2s);
 
-      DEB(m_log, "capacity = ", _worker_pool.capacity(),
-          ", occupied = ", _worker_pool.occupied());
+      DEB(m_log, "capacity = ", _handlers.capacity(),
+          ", occupied = ", _handlers.occupied());
 
-      producer _producer(&_worker_pool, &_msg);
+      producer _producer(&_handlers, &_msg);
 
       DEB(m_log, "creating the sleeping_loop");
       sleeping_loop _loop(500ms, 1s, _producer, []() -> void {});
 
       DEB(m_log, "adding consumer to the worker");
-      _worker_pool.add_worker(
+      _handlers.add_handler(
           [&_consumer](const msg &p_msg) -> void { return _consumer(p_msg); });
 
       DEB(m_log, "starting the producer loop");
       _loop.start();
       //      DEB(m_log, "starting the consumer message queue");
-      //      _worker_pool.start();
+      //      _handlers.start();
 
       DEB(m_log, "sleeping for ", _sleep.count(), " secs");
       std::this_thread::sleep_for(_sleep);
@@ -119,8 +119,8 @@ struct worker_pool_001 {
 
 private:
   struct producer {
-    producer(worker_pool *p_worker_pool, msg *p_msg)
-        : m_worker_pool(p_worker_pool), m_msg(p_msg) {}
+    producer(handlers *p_handlers, msg *p_msg)
+        : m_handlers(p_handlers), m_msg(p_msg) {}
 
     void operator()() {
       if (m_msg->get_value() > m_num_msgs) {
@@ -131,14 +131,14 @@ private:
       msg _msg(m_msg->get_value());
       DEB(m_log, "going to add ", _msg);
 
-      m_worker_pool->add_data(_msg);
-      DEB(m_log, "added msg ", _msg, "; capacity = ", m_worker_pool->capacity(),
-          ", occupied = ", m_worker_pool->occupied());
+      m_handlers->add_data(_msg);
+      DEB(m_log, "added msg ", _msg, "; capacity = ", m_handlers->capacity(),
+          ", occupied = ", m_handlers->occupied());
     }
     const uint16_t m_num_msgs = 50;
 
   private:
-    worker_pool *m_worker_pool;
+    handlers *m_handlers;
     msg *m_msg;
     logger::cerr<> m_log{"producer"};
   };
@@ -159,14 +159,14 @@ private:
     msg m_msg;
     logger::cerr<> m_log{"consumer"};
   };
-  logger::cerr<> m_log{"worker_pool_001"};
+  logger::cerr<> m_log{"handlers_001"};
 };
 
-struct worker_pool_003 {
+struct handlers_003 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handler_group_t<msg> worker_pool;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -181,18 +181,18 @@ struct worker_pool_003 {
     value _last_added{0};
 
     {
-      worker_pool _worker_pool{1s, _on_timeout};
+      handlers _handlers{1s, _on_timeout};
 
-      _worker_pool.add_worker(
+      _handlers.add_handler(
           [this](const msg &p_msg) -> void { m_consumer(p_msg); });
 
       for (uint16_t _i = 0; _i < 300; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _worker_pool.add_data(_msg);
+        _handlers.add_data(_msg);
       }
 
-      _last_added = static_cast<value>(_worker_pool.amount_added() - 1);
+      _last_added = static_cast<value>(_handlers.amount_added() - 1);
 
       std::this_thread::sleep_for(15s);
     }
@@ -219,14 +219,14 @@ private:
 
 private:
   consumer m_consumer;
-  logger::cerr<> m_log{"worker_pool_003"};
+  logger::cerr<> m_log{"handlers_003"};
 };
 
-struct worker_pool_004 {
+struct handlers_004 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handler_group_t<msg> worker_pool;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -242,26 +242,25 @@ struct worker_pool_004 {
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
     {
-      worker_pool _worker_pool{2s,
-                               [this, &_worker_pool](const msg &p_msg) -> void {
-                                 WAR(m_log, "timeout hadling ", p_msg);
-                                 _worker_pool.add_data(p_msg);
-                               }};
+      handlers _handlers{2s, [this, &_handlers](const msg &p_msg) -> void {
+                           WAR(m_log, "timeout hadling ", p_msg);
+                           _handlers.add_data(p_msg);
+                         }};
 
       for (consumer &_consumer : _consumers) {
-        _worker_pool.add_worker(
+        _handlers.add_handler(
             [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
       }
 
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _worker_pool.add_data(_msg);
+        _handlers.add_data(_msg);
       }
 
-      _amount_added = static_cast<value>(_worker_pool.amount_added());
+      _amount_added = static_cast<value>(_handlers.amount_added());
 
-      while (_worker_pool.occupied() != 0) {
+      while (_handlers.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
         std::this_thread::sleep_for(50ms);
       }
@@ -307,14 +306,14 @@ private:
     value m_num{0};
     logger::cerr<> m_log{"consumer"};
   };
-  logger::cerr<> m_log{"worker_pool_004"};
+  logger::cerr<> m_log{"handlers_004"};
 };
 
-struct worker_pool_005 {
+struct handlers_005 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handler_group_t<msg> worker_pool;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -346,25 +345,25 @@ struct worker_pool_005 {
 
     uint16_t _num_timeouts{0};
     {
-      worker_pool _worker_pool{200ms};
+      handlers _handlers{200ms};
 
       for (consumer &_consumer : _consumers) {
-        _worker_pool.add_worker(
+        _handlers.add_handler(
             [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
       }
 
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
         msg _msg(_i);
         DEB(m_log, "adding msg ", _msg);
-        _worker_pool.add_data(_msg);
+        _handlers.add_data(_msg);
       }
 
       _amount_added =
-          static_cast<value>(_worker_pool.amount_added()) - _num_timeouts;
+          static_cast<value>(_handlers.amount_added()) - _num_timeouts;
 
       std::this_thread::sleep_for(3s);
 
-      while (_worker_pool.occupied() != 0) {
+      while (_handlers.occupied() != 0) {
         DEB(m_log, "msg queue still not empty");
         std::this_thread::sleep_for(50ms);
       }
@@ -444,15 +443,15 @@ private:
     std::string m_id;
     logger::cerr<> m_log{"timeout"};
   };
-  logger::cerr<> m_log{"worker_pool_005"};
+  logger::cerr<> m_log{"handlers_005"};
 };
 
 int main(int argc, char **argv) {
   logger::set_debug_level();
   tester::test<> _test(argc, argv);
-  run_test(_test, worker_pool_000);
-  run_test(_test, worker_pool_001);
-  run_test(_test, worker_pool_003);
-  run_test(_test, worker_pool_004);
-  run_test(_test, worker_pool_005);
+  run_test(_test, handlers_000);
+  run_test(_test, handlers_001);
+  run_test(_test, handlers_003);
+  run_test(_test, handlers_004);
+  run_test(_test, handlers_005);
 }

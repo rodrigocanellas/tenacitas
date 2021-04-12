@@ -16,6 +16,7 @@
 #include <list>
 #include <map>
 #include <mutex>
+#include <optional>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -167,51 +168,65 @@ template <bool use = true> struct options {
     }
 
     for (const name &_name : p_mandatory) {
-      if ((!get_bool_param(_name).first) && (!get_single_param(_name).first) &&
-          (!get_set_param(_name).first)) {
+      if ((!get_bool_param(_name)) && (!get_single_param(_name)) &&
+          (!get_set_param(_name))) {
         throw std::runtime_error("parameter '" + _name +
                                  "' should have been defined, but it was not");
       }
     }
   }
 
-  std::pair<bool, bool> get_bool_param(const name &p_name) const {
+  /// \brief Retrieves the bool parameter, if possible
+  ///
+  /// \param p_name is the name of the parameter
+  ///
+  /// \return {true} if it was possible to retrieve, and \p p_name exists;
+  /// {} otherwise
+  std::optional<bool> get_bool_param(const name &p_name) const {
     booleans::const_iterator _ite =
         std::find(m_booleans.begin(), m_booleans.end(), p_name);
     if (_ite == m_booleans.end()) {
-      return {false, false};
+      return {};
     }
-    return {true, true};
+    return {};
   }
 
-  std::pair<bool, value> get_single_param(const name &p_name) const {
+  /// \brief Retrieves a single parameter, if possible
+  ///
+  /// \param p_name is the name of the parameter
+  ///
+  /// \return {<some-value>} if \p p_name was found; {} if
+  /// not
+  std::optional<value> get_single_param(const name &p_name) const {
     singles::const_iterator _ite =
         std::find_if(m_singles.begin(), m_singles.end(),
                      [p_name](const std::pair<name, value> &p_single) -> bool {
                        return p_single.first == p_name;
                      });
     if (_ite == m_singles.end()) {
-      return {false, value()};
+      return {};
     }
-    return {true, _ite->second};
+    return {_ite->second};
   }
 
-  std::pair<bool, std::list<value>> get_set_param(const name &p_name) const {
+  /// \brief Retrieves the values of a parameter
+  ///
+  /// \param p_name is the name of the parameter
+  ///
+  /// \return {list with the values} if \p p_name was found; {} if not
+  std::optional<std::list<value>> get_set_param(const name &p_name) const {
     sets::const_iterator _ite =
         std::find_if(m_sets.begin(), m_sets.end(),
                      [p_name](const std::pair<name, values> &p_set) -> bool {
                        return p_set.first == p_name;
                      });
     if (_ite == m_sets.end()) {
-      return {false, std::list<options::value>()};
+      return {};
     }
-    return {true, _ite->second};
+    return {_ite->second};
   }
 
-  /// \brief operator <<
-  /// \param p_out
-  /// \param p_options
-  /// \return
+  /// \brief Output operator
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const options &p_options) {
     for (const options::name &_boolean : p_options.m_booleans) {
@@ -236,6 +251,12 @@ template <bool use = true> struct options {
   }
 
 private:
+  /// \brief Checks if a string is the start of an option
+  /// An option must be preceded with '--'
+  ///
+  /// \param p_str is string to be checked
+  ///
+  /// \return true if it is, false otherwise
   inline bool is_option(const char *p_str) {
     return ((p_str[0] == '-') && (p_str[1] == '-'));
   }
@@ -259,6 +280,13 @@ private:
   typedef std::map<name, values> sets;
 
 private:
+  /// \brief Parses a set of options
+  ///
+  /// \brief p_name is the name of the option
+  ///
+  /// \brief p_argv string vector with the set of options
+  ///
+  /// \brief p_index position in \p p_argv where the set of options starts
   int parse_set(name &&p_name, int p_last, char **p_argv, int p_index) {
     std::string _str(&p_argv[p_index][0],
                      &p_argv[p_index][strlen(p_argv[p_index])]);
@@ -304,22 +332,48 @@ private:
   }
 
 private:
+  /// \brief Booleans options
   booleans m_booleans;
+
+  /// \brief Single value options
   singles m_singles;
+
+  /// \brief Sets options
   sets m_sets;
 };
 
-/// \brief
+/// \brief Entry point for an application
+/// This class allows asynchronously execution of a function, which must use
+/// tenacitas::async::messenger_t<tenacitas::message::exit_app> to send a
+/// tenacitas::message::exit_app or
+/// tenacitas::async::messenger_t<tenacitas::message::halt_app> to send a
+/// tenacitas::message::halt_app to end the application
 struct application {
 
+  /// \brief Default constructor not allowed
   application() = delete;
+  /// \brief Copy constructor not allowed
   application(const application &) = delete;
+  /// \brief Move constructor not allowed
   application(application &&) = delete;
+  /// \brief Copy assignment not allowed
   application &operator=(const application &) = delete;
+  /// \brief Move assignment not allowed
   application &operator=(application &&) = delete;
+  /// \brief Allocation not allowed
   void *operator new(size_t) = delete;
+  /// \brief Deallocation not allowed
   void operator delete(void *) = delete;
 
+  /// \brief Constructor
+  ///
+  /// \tparam t_time is the type of type used to define how long will the
+  /// application will sleep after receive a tenacitas::message::exit_app
+  ///
+  /// \param p_wait how long will the
+  /// application will sleep after receive a tenacitas::message::exit_app
+  ///
+  /// \param p_function function to be executed asynchronously
   template <typename t_time>
   application(t_time p_wait, std::function<void()> p_function) {
     using namespace std;
@@ -366,6 +420,7 @@ struct application {
   ~application() = default;
 
 private:
+  /// \brief Handler for the tenacitas::message::exit_app
   void on_exit_app(const message::exit_app &) {
     if (m_on_exit_handled) {
       WAR(m_log, "on_exit already handled");
@@ -377,16 +432,27 @@ private:
     m_cond.notify_one();
   }
 
+  /// \brief Handler for the tenacitas::message::halt_app
   void on_halt_app(const message::halt_app &) {
     DEB(m_log, "on halt");
     m_cond.notify_one();
   }
 
 private:
+  /// \brief Controls application ending
   std::condition_variable m_cond;
+
+  /// \brief Controls application ending
   std::mutex m_mutex;
+
+  /// \brief How long will the application will sleep after receive a
+  /// tenacitas::message::exit_app
   std::chrono::milliseconds m_wait;
+
+  /// \brief Indicates that a tenacitas::message::exit_app was already handled
   bool m_on_exit_handled{false};
+
+  /// \brief Logger
   logger::cerr<> m_log{"application"};
 };
 

@@ -832,7 +832,8 @@ private:
         std::lock_guard<std::mutex> _lock(this->m_mutex);
 
         if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+          DEB(this->m_log, this->m_id, " - stopped? ",
+              (this->m_stopped ? "true" : "false"));
           break;
         }
 
@@ -840,7 +841,8 @@ private:
         std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
 
         if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+          DEB(this->m_log, this->m_id, " - stopped? ",
+              (this->m_stopped ? "true" : "false"));
           break;
         }
 
@@ -850,7 +852,8 @@ private:
           DEB(this->m_log, this->m_id, " - data provided = ", _params);
 
           if (this->m_stopped || this->m_breaker()) {
-            DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+            DEB(this->m_log, this->m_id, " - stopped? ",
+                (this->m_stopped ? "true" : "false"));
             break;
           }
 
@@ -858,7 +861,8 @@ private:
 
           if (!execute(this->m_timeout, [this, &_params]() -> void {
                 if (this->m_stopped || this->m_breaker()) {
-                  DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+                  DEB(this->m_log, this->m_id, " - stopped? ",
+                      (this->m_stopped ? "true" : "false"));
                   return;
                 }
                 DEB(this->m_log, this->m_id, " - still here");
@@ -868,7 +872,8 @@ private:
                 " - timeout for worker with data = ", _params);
 
             if (this->m_stopped || this->m_breaker()) {
-              DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+              DEB(this->m_log, this->m_id, " - stopped? ",
+                  (this->m_stopped ? "true" : "false"));
               break;
             }
 
@@ -877,7 +882,8 @@ private:
             };
 
             if (this->m_stopped || this->m_breaker()) {
-              DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+              DEB(this->m_log, this->m_id, " - stopped? ",
+                  (this->m_stopped ? "true" : "false"));
               break;
             }
 
@@ -1056,7 +1062,8 @@ private:
       while (true) {
 
         if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_id, " - stopped? ", this->m_stopped);
+          DEB(this->m_log, this->m_id, " - stopped? ",
+              (this->m_stopped ? "true" : "false"));
           break;
         }
 
@@ -1819,7 +1826,7 @@ namespace internal {
 /// \brief A group of functions that compete to handle a data added to a queue
 ///
 /// \param t_data type of data to be processed
-template <typename t_data> class handler_group_t {
+template <typename t_data> class handlers_t {
 public:
   /// \brief Type of function that will handle the data
   typedef std::function<void(const t_data &)> handler;
@@ -1828,80 +1835,162 @@ public:
   typedef std::function<void(const t_data &)> on_timeout;
 
 public:
-  /// \brief
-  handler_group_t() = delete;
+  /// \brief Default constructor not allowed
+  handlers_t() = delete;
 
-  /// \brief
+  /// \brief Constructor
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  handler_group_t(const id &p_id, const priority &p_priority, t_time p_timeout,
-                  on_timeout p_on_timeout)
+  handlers_t(const id &p_id, const priority &p_priority, t_time p_timeout,
+             on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_priority, p_timeout,
                                                 p_on_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, if a handler times out, no action is taken, as no
+  /// on_timeout function is defined
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handler_group_t(const id &p_id, const priority &p_priority, t_time p_timeout)
+  handlers_t(const id &p_id, const priority &p_priority, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_priority, p_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  handler_group_t(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
+  handlers_t(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
       : m_impl(
             std::make_unique<implementation>(p_id, p_timeout, p_on_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, if a handler times out, no action is taken, as no
+  /// on_timeout function is defined, and this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handler_group_t(const id &p_id, t_time p_timeout)
+  handlers_t(const id &p_id, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, the tenacitas::async::id of this group of handlers
+  /// will be automatically generated
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  handler_group_t(const priority &p_priority, t_time p_timeout,
-                  on_timeout p_on_timeout)
+  handlers_t(const priority &p_priority, t_time p_timeout,
+             on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_priority, p_timeout,
                                                 p_on_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, the tenacitas::async::id of this group of handlers
+  /// will be automatically generated, if a handler times out, no action is
+  /// taken, as no on_timeout function is defined
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handler_group_t(const priority &p_priority, t_time p_timeout)
+  handlers_t(const priority &p_priority, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_priority, p_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, the tenacitas::async::id of this group of handlers
+  /// will be automatically generated, and this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  handler_group_t(t_time p_timeout, on_timeout p_on_timeout)
+  handlers_t(t_time p_timeout, on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_timeout, p_on_timeout)) {}
 
-  /// \brief
+  /// \brief Constructor
+  /// Using this constructor, the tenacitas::async::id of this group of handlers
+  /// will be automatically generated, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority, and if a handler times out,
+  /// no action is taken, as no on_timeout function is defined
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all the
+  /// handler functions. It must be one of the defined in std::chrono, like
+  /// std::chrono::seconds
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handler_group_t(t_time p_timeout)
+  handlers_t(t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_timeout)) {}
 
-  /// \brief copy constructor not allowed
-  handler_group_t(const handler_group_t &) = delete;
+  /// \brief Copy constructor not allowed
+  handlers_t(const handlers_t &) = delete;
 
-  /// \brief
-  handler_group_t(handler_group_t &&p_wp) = default;
+  handlers_t(handlers_t &&p_wp) = default;
 
-  /// \brief copy assignemnt not allowed
-  handler_group_t &operator=(const handler_group_t &) = delete;
+  /// \brief Copy assignemnt not allowed
+  handlers_t &operator=(const handlers_t &) = delete;
 
-  /// \brief
-  handler_group_t &operator=(handler_group_t &&p_wp) = default;
+  handlers_t &operator=(handlers_t &&p_wp) = default;
 
-  /// \brief destructor
-  ///
-  /// If 'stop' was not called, empties the queue, waiting for all the data to
-  /// be processed
-  ~handler_group_t() = default;
-  //  {
-  //    DEB(m_log, "destructor");
-  //    stop();
-  //    DEB(m_log, "leaving destructor");
-  //  }
+  ~handlers_t() = default;
 
-  /// \brief adds data to be passed to a worker
-  ///
-  /// \p data will only be added if \p start() was called
+  /// \brief Adds data to be passed to a handler
   ///
   /// \param p_data is the data to be passed to a worker
   ///
@@ -1910,112 +1999,104 @@ public:
     return m_impl->add_data(p_data);
   }
 
-  /// \brief informs the amount of data added
+  /// \return the amount of data added
   inline size_t amount_added() const { return m_impl->amount_added(); }
 
-  /// \brief add adds one \p worker
+  /// \brief Adds one handler
   ///
   /// \tparam t_time type of time used to define timeout for the worker
   ///
   /// \param p_function the \p worker to be added
-  ///
-  /// \param p_timeout timeout of \p worker
-  /// \brief common function called to add a \p worker
-  ///
-  /// \param p_loop the new \p worker to be added
-  inline void add_worker(handler p_function) { m_impl->add_worker(p_function); }
+  inline void add_handler(handler p_handler) { m_impl->add_handler(p_handler); }
 
-  /// \brief adds a bunch of \p worker
+  /// \brief Adds a bunch of handler functions
   ///
   /// \tparam t_time type of time used to define timeout for the worker
   ///
   /// \param p_num_works the number of \p workers to be added
   ///
   /// \param p_function_factory a function that creates \p workers
-  ///
-  /// \param p_timeout timeout for the workers
-  ///
-  /// \param p_on_timeout function to be called when the worker times
-  /// out
-  inline void add_worker(uint16_t p_num_works,
-                         std::function<handler()> p_function_factory) {
-    m_impl->add_worker(p_num_works, p_function_factory);
+  inline void add_handler(uint16_t p_num_works,
+                          std::function<handler()> p_handler_factory) {
+    m_impl->add_handler(p_num_works, p_handler_factory);
   }
 
-  /// \brief informs if the worker is stopped
+  /// \return if this group of hanlers is stoppeda
   inline bool is_stopped() const { return m_impl->is_stopped(); }
 
-  //  /// \brief starts the worker
-  //  ///
-  //  /// From this call on, the workers will compete among each other, in order
-  //  /// to process any instance of \p data that was inserted into the queue
-  //  ///
-  //  /// \return \p false if it not start because no \p worker was added
-  //  ///         \p true if it was already started, or if it started
-  //  successfully bool start() {
-  //    if (m_impl) {
-  //      return m_impl->start();
-  //    }
-  //    return false;
-  //  }
-
-  /// \brief stops the \p worker
-  ///
-  /// From this call on, the \p workers will stop competing among each other,
-  /// in order to process any instance of \p data that was inserted into the
-  /// queue
-  inline void stop() { m_impl->stop(); }
-
-  /// \brief retrieves the capacity if the queue
+  /// \return The capacity if the queue
   inline size_t capacity() const { return m_impl->capacity(); }
 
-  /// \brief the amount of slots occupied in the \p queue
+  /// \return The amount of slots occupied in the \p queue
   inline size_t occupied() const { return m_impl->occupied(); }
 
-  /// \brief
-  inline timeout get_timeout() const { return m_impl->get_timeout(); }
+  /// \return The timeout defined for this group of handlers
+  template <typename t_time> inline t_time get_timeout() const {
+    return m_impl->template get_timeout<t_time>();
+  }
 
-  /// \brief
+  /// \return The tenacitas::async::id of this group of handlers
   inline const id &get_id() const { return m_impl->get_id(); }
 
-  /// \brief
+  /// \return The tenacitas::async::priority of this group of handlers
   inline const priority &get_priority() const { return m_impl->get_priority(); }
 
-  /// \brief
+  /// \brief Sets the tenacitas::async::priority of this group of handlers
   inline void set_priority(const priority &p_priority) {
     m_impl->set_priority(p_priority);
   }
 
-  /// \brief
-  inline bool operator<(const handler_group_t &p_function_pool) const {
-
+  /// \brief Less-than
+  /// \p handlers are ordered by tenacitas::async::priority
+  inline bool operator<(const handlers_t &p_function_pool) const {
     return m_impl->get_priority() < p_function_pool.m_impl->get_priority();
   }
 
-  /// \brief
-  inline bool operator>(const handler_group_t &p_function_pool) const {
+  /// \brief Greater-than
+  /// \p handlers are ordered by tenacitas::async::priority
+  inline bool operator>(const handlers_t &p_function_pool) const {
     return m_impl->get_priority() > p_function_pool.m_impl->get_priority();
   }
 
-  /// \brief
-  inline bool operator!=(const handler_group_t &p_function_pool) const {
+  /// \brief Not-equal
+  /// \p handlers are compared by tenacitas::async::id
+  inline bool operator!=(const handlers_t &p_function_pool) const {
     return m_impl->get_id() != p_function_pool.m_impl->get_id();
   }
 
-  /// \brief
-  inline bool operator==(const handler_group_t &p_function_pool) const {
+  /// \brief Equal-to
+  /// \p handlers are compared by tenacitas::async::id
+  inline bool operator==(const handlers_t &p_function_pool) const {
     return m_impl->get_id() == p_function_pool.m_impl->get_id();
   }
 
+  /// \return Returns the size of the queue of \p t_data
   inline size_t get_size() const { return m_impl->get_size(); }
 
+  /// \return Returns the amount of \p t_data objects in the queue
   inline size_t get_occupied() const { return m_impl->get_occupied(); }
 
+  /// \return Returns if the queue o \p t_data is empty
   inline void empty_queue() { m_impl->empty_queue(); }
 
 private:
+  /// \brief Implementation of the loop
+  /// Using an internal implentation makes it easy to move loop objects
   struct implementation {
-    /// \brief
+    /// \brief Constructor
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_id identifier of this group of handlers
+    ///
+    /// \param p_priority is the priority of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
+    ///
+    /// \param p_on_timeout is a function that will be called if a handler times
+    /// out
     template <typename t_time>
     implementation(const id &p_id, const priority &p_priority, t_time p_timeout,
                    on_timeout p_on_timeout)
@@ -2023,7 +2104,19 @@ private:
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, this group of handlers will have the
+    /// tenacitas::async::priority::lowest priority
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_id identifier of this group of handlers
+    ///
+    /// \param p_priority is the priority of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
     implementation(const id &p_id, const priority &p_priority, t_time p_timeout)
         : m_id(p_id), m_priority(p_priority), m_queue(10),
@@ -2031,14 +2124,38 @@ private:
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, this group of handlers will have the
+    /// tenacitas::async::priority::lowest priority
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_id identifier of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
+    ///
+    /// \param p_on_timeout is a function that will be called if a handler times
+    /// out
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
         : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, if a handler times out, no action is taken, as
+    /// no on_timeout function is defined, and this group of handlers will have
+    /// the tenacitas::async::priority::lowest priority
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_id identifier of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
     implementation(const id &p_id, t_time p_timeout)
         : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
@@ -2046,7 +2163,20 @@ private:
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, the tenacitas::async::id of this group of
+    /// handlers will be automatically generated
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_priority is the priority of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
+    ///
+    /// \param p_on_timeout is a function that will be called if a handler times
+    /// out
     template <typename t_time>
     implementation(const priority &p_priority, t_time p_timeout,
                    on_timeout p_on_timeout)
@@ -2054,7 +2184,18 @@ private:
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, the tenacitas::async::id of this group of
+    /// handlers will be automatically generated, if a handler times out, no
+    /// action is taken, as no on_timeout function is defined
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_priority is the priority of this group of handlers
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
     implementation(const priority &p_priority, t_time p_timeout)
         : m_id(), m_priority(p_priority), m_queue(10),
@@ -2062,14 +2203,36 @@ private:
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, the tenacitas::async::id of this group of
+    /// handlers will be automatically generated, and this group of handlers
+    /// will have the tenacitas::async::priority::lowest priority
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
+    ///
+    /// \param p_on_timeout is a function that will be called if a handler times
+    /// out
     template <typename t_time>
     implementation(t_time p_timeout, on_timeout p_on_timeout)
         : m_id(), m_priority(async::priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
-    /// \brief
+    /// \brief Constructor
+    /// Using this constructor, the tenacitas::async::id of this group of
+    /// handlers will be automatically generated, this group of handlers will
+    /// have the tenacitas::async::priority::lowest priority, and if a handler
+    /// times out, no action is taken, as no on_timeout function is defined
+    ///
+    /// \tparam t_time is the type of time used to define the timeout for all
+    /// the handler functions. It must be one of the defined in std::chrono,
+    /// like std::chrono::seconds
+    ///
+    /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
     implementation(t_time p_timeout)
         : m_id(), m_priority(async::priority::lowest), m_queue(10),
@@ -2077,21 +2240,18 @@ private:
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
 
-    /// \brief move constructor not allowed
-    implementation(handler_group_t &&) = delete;
+    /// \brief Move constructor not allowed
+    implementation(handlers_t &&) = delete;
 
-    /// \brief move assignemnt not allowed
+    /// \brief Move assignment not allowed
     implementation &operator=(implementation &&) = delete;
 
-    /// \brief destructor
+    /// \brief Destructor
     ~implementation() {
       if (m_stopped) {
         DEB(m_log, "not stopping because it is stopped");
         return;
       }
-
-      //      empty_queue();
-
       set_stopped();
       DEB(m_log, "notifying all providers");
       m_data_produced.notify_all();
@@ -2102,15 +2262,19 @@ private:
       DEB(m_log, "leaving");
     }
 
+    /// \brief Empties the queue of data
     void empty_queue() {
       DEB(m_log, "empty queue");
       while (!m_queue.empty()) {
         m_data_produced.notify_all();
-        //        std::unique_lock<std::mutex> _lock(m_mutex_data);
-        //        m_data_consumed.wait(_lock, [] { return true; });
       }
     }
 
+    /// \brief Adds data to be passed to a handler
+    ///
+    /// \param p_data is the data to be passed to a worker
+    ///
+    /// \return \p true if it was added, \p false otherwise
     bool add_data(const t_data &p_data) {
 
       m_queue.add(p_data);
@@ -2122,7 +2286,7 @@ private:
       return true;
     }
 
-    /// \brief informs the amount of data added
+    /// \return Informs the amount of data added
     inline size_t amount_added() const { return m_queued_data; }
 
     /// \brief add adds one \p worker
@@ -2135,11 +2299,11 @@ private:
     /// \brief common function called to add a \p worker
     ///
     /// \param p_loop the new \p worker to be added
-    void add_worker(handler p_function) {
+    void add_handler(handler p_function) {
       auto _provider = [this]() -> std::optional<std::tuple<t_data>> {
         return this->provider();
       };
-      std::lock_guard<std::mutex> _lock(m_add_work);
+      std::lock_guard<std::mutex> _lock(m_add_handler);
 
       async_loop _async_loop{p_function, m_timeout, m_on_timeout, _provider};
 
@@ -2150,150 +2314,95 @@ private:
       set_stopped(false);
     }
 
-    /// \brief adds a bunch of \p worker
+    /// \brief Adds a bunch of handler functions
     ///
     /// \tparam t_time type of time used to define timeout for the worker
     ///
     /// \param p_num_works the number of \p workers to be added
     ///
     /// \param p_function_factory a function that creates \p workers
-    ///
-    /// \param p_timeout timeout for the workers
-    ///
-    /// \param p_on_timeout function to be called when the worker times
-    /// out
-    void add_worker(uint16_t p_num_works,
-                    std::function<handler()> p_function_factory) {
+    void add_handler(uint16_t p_num_works,
+                     std::function<handler()> p_handler_factory) {
       for (auto _i = 0; _i < p_num_works; ++_i) {
-        add_worker(p_function_factory());
+        add_handler(p_handler_factory());
       }
     }
 
-    /// \brief informs if the worker is stopped
+    /// \return Informs if the worker is stopped
     inline bool is_stopped() const { return m_stopped; }
 
-    //    /// \brief starts the worker
-    //    ///
-    //    /// From this call on, the workers will compete among each other, in
-    //    order
-    //    /// to process any instance of \p data that was inserted into the
-    //    queue
-    //    ///
-    //    /// \return \p false if it not start because no \p worker was added
-    //    ///         \p true if it was already started, or if it started
-    //    successfully bool start() {
-
-    //      //      if (!m_stopped) {
-    //      //        ERR(m_log, "not starting because it is already
-    //      running");
-    //      //        return true;
-    //      //      }
-
-    //      if (m_loops.empty()) {
-    //        WAR(m_log, "can't run because there are no workers");
-    //        return false;
-    //      }
-
-    //      //      {
-    //      //        DEB(m_log, "waiting for locking");
-    //      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-    //      //        m_stopped = false;
-    //      //      }
-
-    //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-    //      DEB(m_log, "starting");
-    //      m_stopped = false;
-    //      for (async_loop &_loop : m_loops) {
-    //        DEB(m_log, "starting loop");
-    //        _loop.start();
-    //      }
-
-    //      //      DEB(m_log, "started");
-    //      return true;
-    //    }
-
-    /// \brief stops the \p worker
-    ///
-    /// From this call on, the \p workers will stop competing among each other,
-    /// in order to process any instance of \p data that was inserted into the
-    /// queue
-    //    void stop() {
-    //      if (m_stopped) {
-    //        DEB(m_log, "not stopping because it is stopped");
-    //        return;
-    //      }
-
-    //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
-    //      m_stopped = true;
-    //      m_data_produced.notify_all();
-    //      for (async_loop &_loop : m_loops) {
-    //        DEB(m_log, "stopping loop");
-    //        //        std::async(std::launch::async, [&_loop]() -> void {
-    //        //        _loop.stop(); });
-    //        _loop.stop();
-    //      }
-    //    }
-
-    /// \brief retrieves the capacity if the queue
+    /// \return The capacity if the queue
     inline size_t capacity() const { return m_queue.capacity(); }
 
-    /// \brief the amount of slots occupied in the \p queue
+    /// \return The amount of slots occupied in the \p queue
     inline size_t occupied() const { return m_queue.occupied(); }
 
-    /// \brief
-    inline timeout get_timeout() const { return m_timeout; }
+    /// \return The timeout defined for this group of handlers
+    template <typename t_time> inline t_time get_timeout() const {
+      return calendar::convert<t_time>(m_timeout);
+    }
 
-    /// \brief
+    /// \return The tenacitas::async::id of this group of handlers
     inline const id &get_id() const { return m_id; }
 
-    /// \brief
+    /// \return The tenacitas::async::priority of this group of handlers
     inline const priority &get_priority() const { return m_priority; }
 
-    /// \brief
+    /// \brief Sets the tenacitas::async::priority of this group of handlers
     inline void set_priority(const priority &p_priority) {
       m_priority = p_priority;
     }
 
+    /// \return Returns the size of the queue of \p t_data
     size_t get_size() const { return m_queue.capacity(); }
+
+    /// \return Returns the amount of \p t_data objects in the queue
     size_t get_occupied() const { return m_queue.occupied(); }
 
-    /// \brief
+    /// \brief Less-than
+    /// \p handlers are ordered by tenacitas::async::priority
     inline bool operator<(const implementation &p_impl) const {
       return m_priority < p_impl.m_priority;
     }
 
-    /// \brief
+    /// \brief Greater-than
+    /// \p handlers are ordered by tenacitas::async::priority
     inline bool operator>(const implementation &p_impl) const {
       return m_priority > p_impl.m_priority;
     }
 
-    /// \brief
+    /// \brief Not-equal
+    /// \p handlers are compared by tenacitas::async::id
     inline bool operator!=(const implementation &p_impl) const {
       return m_id != p_impl.m_id;
     }
 
-    /// \brief
+    /// \brief Equal-to
+    /// \p handlers are compared by tenacitas::async::id
     inline bool operator==(const implementation &p_impl) const {
       return m_id == p_impl.m_id;
     }
 
   private:
-    /// \brief loop_t is a \p async_loop where a \p worker will be
-    /// running
+    /// \brief Type of loop used to call the handlers
     typedef loop_t<t_data> async_loop;
 
-    /// \brief async_loops_t is the collection of \p async_loop pointers
+    /// \brief Type of group of loops
     typedef typename std::vector<async_loop> asyncs_loops;
 
+    /// \brief Type of the queue used to store the data to be handled
     typedef circular_unlimited_size_queue_t<t_data> queue;
 
   private:
+    /// \brief Sets this group of handles to stop
     inline void set_stopped(bool p_value = true) {
       std::unique_lock<std::mutex> _lock(m_mutex_stop);
       m_stopped = p_value;
     }
 
-    /// \brief provider provides data, if available, to a \p worker
+    /// \brief Provides data, if available, to a \p handler
+    ///
+    /// \return data, if available
     std::optional<std::tuple<t_data>> provider() {
       using namespace std;
 
@@ -2339,148 +2448,250 @@ private:
       return {};
     }
 
-    /// \brief informs if all the \p async_loops are stopped
-    bool all_loops_stopped() const {
-      for (const async_loop &_loop : m_loops) {
-        if (!_loop.is_stopped()) {
-          return false;
-        }
-      }
-      return true;
-    }
-
   private:
-    /// \brief
+    /// \brief Identifier of this group of handlers
     id m_id;
 
-    /// \brief
+    /// \brief Priority of this group of handlers
     priority m_priority;
 
-    /// \brief queue where data will be inserted for the worker to compete for
+    /// \brief Queue where data will be inserted for the handlers to compete for
+    /// handling
     queue m_queue;
 
-    /// \brief
+    /// \brief Maximum amount of time a handler has to complete
     timeout m_timeout;
 
-    /// \brief
+    /// \brief Function that will be called if a handler does not complete in \p
+    /// m_timeout
     on_timeout m_on_timeout;
 
-    /// \brief controls access to the \p m_loops while inserting a new \p
-    /// worker
-    std::mutex m_add_work;
+    /// \brief Controls access to the \p m_loops while inserting a new \p
+    /// handler
+    std::mutex m_add_handler;
 
-    /// \brief controls access to inserting data
+    /// \brief Controls access to inserting data
     std::mutex m_mutex_data;
 
-    /// \brief controls access to attributes while the worker is stopping
+    /// \brief Controls access to attributes while the worker is stopping
     std::mutex m_mutex_stop;
 
-    /// \brief controls access to the data consumed
-    //    std::condition_variable m_data_consumed;
-
-    /// \brief controls access to the data produced
+    /// \brief Controls access to the data produced
     std::condition_variable m_data_produced;
 
-    /// \brief asynchronous loops, where the workers are running
+    /// \brief Asynchronous loops, where the handlers are running
     asyncs_loops m_loops;
 
-    /// \brief indicates if the worker is running
+    /// \brief Indicates if the worker is running
     std::atomic<bool> m_stopped{true};
 
-    /// \brief m_destroying indicates that the \p produce_consumer should stop
-    std::atomic<bool> m_destroying{false};
-
-    /// \brief amount of queued data
+    /// \brief Amount of queued data
     size_t m_queued_data{0};
 
-    /// \brief
+    /// \brief Logger
     logger::cerr<> m_log{"worker_pool"};
   };
 
 private:
-  /// \brief
+  /// \brief Implementation pointer
   std::unique_ptr<implementation> m_impl;
 
+  /// \brief Logger
   logger::cerr<> m_log{"worker_pool"};
 };
 
-/// \brief
-template <typename t_data> struct messenger_t {
+/// \brief Distributes a message to a list of group of handlers
+/// Each group of handlers handles the same message in a different way, has its
+/// own definition of timeout for the handlers, its own definition of priority,
+/// and what should be done if a handler times out
+///
+/// \tparam is the type of message this messenger distributes
+template <typename t_msg> struct messenger_t {
 
-  /// \brief Type of worker that a worker will execute
-  typedef std::function<void(const t_data &)> worker;
+  /// \brief Type of handler
+  typedef std::function<void(const t_msg &)> handler;
 
-  /// \brief
-  typedef std::function<void(const t_data &)> on_timeout;
+  /// \brief Type of function that is called when a handler times out
+  typedef std::function<void(const t_msg &)> on_timeout;
 
-  /// \brief
   ~messenger_t() = default;
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
-                                     t_time p_timeout,
-                                     on_timeout p_on_timeout) {
+  static inline void add_handlers(const id &p_id, const priority &p_priority,
+                                  t_time p_timeout, on_timeout p_on_timeout) {
     insert({p_id, p_priority, p_timeout, p_on_timeout});
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, if a handler times out, the message will be inserted
+  /// again to be handled
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, const priority &p_priority,
-                                     t_time p_timeout) {
+  static inline void add_handlers(const id &p_id, const priority &p_priority,
+                                  t_time p_timeout) {
     insert({p_id, p_priority, p_timeout});
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
   template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, t_time p_timeout,
-                                     on_timeout p_on_timeout) {
+  static inline void add_handlers(const id &p_id, t_time p_timeout,
+                                  on_timeout p_on_timeout) {
     insert({p_id, p_timeout, p_on_timeout});
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, if a handler times out, the message will be inserted
+  /// again to be handled, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  static inline void add_worker_pool(const id &p_id, t_time p_timeout) {
+  static inline void add_handlers(const id &p_id, t_time p_timeout) {
     insert({p_id, p_timeout});
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
+  ///
+  /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_worker_pool(const priority &p_priority, t_time p_timeout,
-                            on_timeout p_on_timeout) {
-    worker_pool _worker_pool{p_priority, p_timeout, p_on_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
+  static id add_handlers(const priority &p_priority, t_time p_timeout,
+                         on_timeout p_on_timeout) {
+    handlers _handlers{p_priority, p_timeout, p_on_timeout};
+    id _id{_handlers.get_id()};
+    insert(std::move(_handlers));
     return _id;
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, if a handler times out, the message will be inserted
+  /// again to be handled
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_priority is the priority of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_worker_pool(const priority &p_priority, t_time p_timeout) {
-    worker_pool _worker_pool{p_priority, p_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
+  static id add_handlers(const priority &p_priority, t_time p_timeout) {
+    handlers _handlers{p_priority, p_timeout};
+    id _id{_handlers.get_id()};
+    insert(std::move(_handlers));
     return _id;
   }
 
-  /// \brief
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \param p_on_timeout is a function that will be called if a handler times
+  /// out
+  ///
+  /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_worker_pool(t_time p_timeout, on_timeout p_on_timeout) {
-    worker_pool _worker_pool{p_timeout, p_on_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
+  static id add_handlers(t_time p_timeout, on_timeout p_on_timeout) {
+    handlers _handlers{p_timeout, p_on_timeout};
+    id _id{_handlers.get_id()};
+    insert(std::move(_handlers));
     return _id;
   }
 
-  /// \brief
-  template <typename t_time> static id add_worker_pool(t_time p_timeout) {
-    worker_pool _worker_pool{p_timeout};
-    id _id{_worker_pool.get_id()};
-    insert(std::move(_worker_pool));
+  /// \brief Adds a group of handlers to the messenger, which will handle a
+  /// message in a specific fashion
+  /// Using this method, if a handler times out, the message will be inserted
+  /// again to be handled, this group of handlers will have the
+  /// tenacitas::async::priority::lowest priority
+  ///
+  /// \tparam t_time is the type of time used to define the timeout for all
+  /// the handler functions. It must be one of the defined in std::chrono,
+  /// like std::chrono::seconds
+  ///
+  /// \param p_id identifier of this group of handlers
+  ///
+  /// \param p_timeout is the value of timeout for all the handler functions
+  ///
+  /// \return an automatically generated tenacitas::async::id
+  template <typename t_time> static id add_handlers(t_time p_timeout) {
+    handlers _handlers{p_timeout};
+    id _id{_handlers.get_id()};
+    insert(std::move(_handlers));
     return _id;
   }
 
-  /// \brief
+  /// \brief Sets the priority for a group of handlers
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ///
+  /// \param p_priority is the priority to be set for the group of handlers
   static void set_priority(const id &p_id, priority p_priority) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
@@ -2489,7 +2700,11 @@ template <typename t_data> struct messenger_t {
     }
   }
 
-  /// \brief
+  /// \brief Retrieves the priority for a group of handlers, if found
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ///
+  /// \return the priority of the group of handlers, if \p p_id exists
   static std::optional<priority> get_priority(const id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
@@ -2498,41 +2713,64 @@ template <typename t_data> struct messenger_t {
     return {};
   }
 
-  /// \brief
-  static void publish(const t_data &p_data) {
-    for (worker_pool &_work_pool : m_list) {
+  /// \brief Sends a data to be handled
+  /// This data will be copied to all the handler groups, and one of the handler
+  /// functions in each handler group will handle the message
+  ///
+  /// \param p_msg is the message to be handled
+  static void send(const t_msg &p_msg) {
+    for (handlers &_work_pool : m_list) {
       DEB(m_log, "publishing data to pool '", _work_pool.get_id(), "'");
-      _work_pool.add_data(p_data);
+      _work_pool.add_data(p_msg);
     }
   }
 
-  /// \brief
-  static void add_subscriber(const id &p_id, worker p_function) {
+  /// \brief Adds a handler function to a group of handlers
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ///
+  /// \param p_handler is the handler function to be added
+  static void add_handler(const id &p_id, handler p_handler) {
     auto _ite = find(p_id);
     auto _end = m_list.end();
     if (_ite != _end) {
       DEB(m_log, "adding another worker for ", p_id);
-      _ite->add_worker(p_function);
+      _ite->add_handler(p_handler);
     }
   }
 
-  /// \brief
-  static void add_subscriber(const id &p_id, uint16_t p_num_workers,
-                             std::function<worker()> p_factory) {
+  /// \brief Adds a bunch of handler function to a group of handlers
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ///
+  /// \param p_num_workers defines the number of handler functions to be added
+  ///
+  /// \param p_factoy is a function that creates handler function
+  static void add_handler(const id &p_id, uint16_t p_num_workers,
+                          std::function<handler()> p_factory) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
-      _ite->add_worker(p_num_workers, p_factory);
+      _ite->add_handler(p_num_workers, p_factory);
     }
   }
 
+  /// \brief Traverse the groups of handlers
+  ///
+  /// \param p_visitor is a function that will be called for each roup of
+  /// handlers
   static void
   traverse(std::function<void(const id &, priority, timeout)> p_visitor) {
-    for (const worker_pool &_work_pool : m_list) {
-      p_visitor(_work_pool.get_id(), _work_pool.get_priority(),
-                _work_pool.get_timeout());
+    for (const handlers &_handlers : m_list) {
+      p_visitor(_handlers.get_id(), _handlers.get_priority(),
+                _handlers.template get_timeout<async::timeout>());
     }
   }
 
+  /// \brief Retrieves the size of the queue of messages for a group of handlers
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ////
+  /// \return the size of the message queue
   static size_t size(const id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
@@ -2541,6 +2779,12 @@ template <typename t_data> struct messenger_t {
     return 0;
   }
 
+  /// \brief Retrieves how many positions in the queue of messages for a group
+  /// of handlers are occupied
+  ///
+  /// \param p_id is the identifier of the group of handlers
+  ////
+  /// \return the number of occupied positions
   static size_t occupied(const id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
@@ -2549,57 +2793,68 @@ template <typename t_data> struct messenger_t {
     return 0;
   }
 
-  /// \brief
+  /// \brief Waits for all the messages in all the groups of handlers to be
+  /// handled
   static void wait() {
     DEB(m_log, "starting to wait");
-    for (worker_pool &_worker_pool : m_list) {
-      _worker_pool.empty_queue();
+    for (handlers &_handlers : m_list) {
+      _handlers.empty_queue();
     }
     DEB(m_log, "finished waiting");
   }
 
 private:
-  /// \brief
-  typedef internal::handler_group_t<t_data> worker_pool;
+  /// \brief Alias for the group of handlers for this message
+  typedef internal::handlers_t<t_msg> handlers;
 
-  /// \brief
-  typedef std::list<worker_pool> list;
+  /// \brief List of handlers
+  typedef std::list<handlers> handlers_list;
 
-  /// \brief
-  typedef typename list::iterator iterator;
+  /// \brief Iterator for the list of handlers
+  typedef typename handlers_list::iterator iterator;
 
 private:
-  /// \brief
-  static auto find(const id &p_id) {
-    auto _cmp = [&p_id](const worker_pool &p_work_pool) -> bool {
+  /// \brief Finds a group of handlers based on a tenacitas::async::id
+  ///
+  /// \return an iterator to the group of handlers, of m_list.end() if not
+  static iterator find(const id &p_id) {
+    auto _cmp = [&p_id](const handlers &p_work_pool) -> bool {
       return p_id == p_work_pool.get_id();
     };
     return std::find_if(m_list.begin(), m_list.end(), _cmp);
   }
 
-  static inline void insert(worker_pool &&p_function_pool) {
+  /// \brief Inserts a group of handlers to the list
+  ///
+  /// \param p_handlers is the group of handlers to be added
+  static inline void insert(handlers &&p_handlers) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_list.push_back(std::move(p_function_pool));
+    m_list.push_back(std::move(p_handlers));
     //    m_list.back().start();
     sort();
   }
 
+  /// \brief Sorts the list of group of handlers
   static inline void sort() {
-    m_list.sort([](const worker_pool &p_i1, const worker_pool &p_i2) -> bool {
+    m_list.sort([](const handlers &p_i1, const handlers &p_i2) -> bool {
       return p_i1 < p_i2;
     });
   }
 
 private:
-  /// \brief
-  static list m_list;
+  /// \brief The list of group of handlers
+  static handlers_list m_list;
+
+  /// \brief Logger
   static logger::cerr<> m_log;
+
+  /// \brief Access control
   static std::mutex m_mutex;
 };
 
 /// \brief
 template <typename t_data>
-typename messenger_t<t_data>::list messenger_t<t_data>::m_list;
+typename messenger_t<t_data>::handlers_list messenger_t<t_data>::m_list;
 
 template <typename t_data>
 logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
@@ -2614,9 +2869,10 @@ template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
 /// \tparam t_params are the parameters that the work function
 template <typename... t_params> struct sleeping_loop_t {
 
-  /// \brief type of work executed in a loop in time intervals
-  typedef std::function<void(t_params...)> worker;
+  /// \brief Type of function to be executed in a loop in time intervals
+  typedef std::function<void(t_params...)> function;
 
+  /// \brief Type of function to be executed if a function times out
   typedef std::function<void(t_params...)> on_timeout;
 
   /// \brief Provider is the type of function that provides data to the
@@ -2628,15 +2884,15 @@ template <typename... t_params> struct sleeping_loop_t {
   /// \brief Constructor
   ///
   /// \tparam t_timeout type of time used to define the timeout of the
-  /// worker
+  /// work function
   ///
   /// \tparam t_interval type of time used to define the execution interval
-  /// of the worker
+  /// of the work function
   ///
-  /// \param p_timeout time used to define the timeout of the worker
+  /// \param p_timeout time used to define the timeout of the work function
   ///
   /// \param p_interval time used to define the execution interval of the
-  /// worker
+  /// work function
   ///
   /// \param p_function the work function to be executed at \p p_interval
   ///
@@ -2644,54 +2900,93 @@ template <typename... t_params> struct sleeping_loop_t {
   ///
   /// \param p_provider function that provides the parameters to the \p
   /// p_function
-
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_function,
-                  on_timeout p_on_timeout, provider p_provider)
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  function p_function, on_timeout p_on_timeout,
+                  provider p_provider)
       : m_impl(std::make_unique<implementation>(
             p_timeout, p_interval, p_function, p_on_timeout, p_provider)) {}
 
+  /// \brief Constructor
+  /// Using this constructor, if a work function times out, nothing will be done
+  ///
+  /// \tparam t_timeout type of time used to define the timeout of the
+  /// work function
+  ///
+  /// \tparam t_interval type of time used to define the execution interval
+  /// of the work function
+  ///
+  /// \param p_timeout time used to define the timeout of the work function
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// work function
+  ///
+  /// \param p_function the work function to be executed at \p p_interval
+  ///
+  /// \param p_provider function that provides the parameters to the \p
+  /// p_function
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_function,
-                  provider p_provider)
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  function p_function, provider p_provider)
       : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
                                                 p_function, p_provider)) {}
 
+  /// \brief Default constructor not allowed
   sleeping_loop_t() = delete;
+
   ~sleeping_loop_t() = default;
 
+  /// \brief Copy constructor not allowed
   sleeping_loop_t(const sleeping_loop_t &) = delete;
+
   sleeping_loop_t(sleeping_loop_t &&p_sl) = default;
 
+  /// \brief Copy assignment not allowed
   sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
+
   sleeping_loop_t &operator=(sleeping_loop_t &&p_sl) = default;
 
+  /// \brief Sets a new interval for the loop
+  ///
+  /// \tparam t_interval type of time used to define the execution interval
+  /// of the work function
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// worker
   template <typename t_interval>
   inline void set_interval(t_interval p_interval) {
     m_impl->set_interval(p_interval);
   }
 
+  /// \brief Retrieves the interval for the loop
+  ///
+  /// \tparam t_time type of time used to convert the interval time to
+  ///
+  /// \return the interval time
   template <typename t_time> inline t_time get_interval() const {
     return m_impl->template get_interval<t_time>();
   }
 
+  /// \brief Starts the loop
   inline void start() { m_impl->start(); }
 
-  inline void stop() {
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  /// \brief Stops the loop
+  inline void stop() { m_impl->stop(); }
 
+  /// \brief Starts and stops the loop
   inline void restart() { m_impl->restart(); }
 
-  /// \brief retrieves if the loop is stopped
+  /// \brief Retrieves if the loop is stopped
   inline bool is_stopped() const { return m_impl->is_stopped(); }
 
-  /// \brief retrieves the timeout for the worker
-  inline timeout get_timeout() const { return m_impl->get_timeout(); }
+  /// \brief Retrieves the timeout for the worker
+  ///
+  /// \tparam t_time type of time used to convert the timeout to
+  template <typename t_time> inline t_time get_timeout() const {
+    return m_impl->template get_timeout<t_time>();
+  }
 
-  /// \brief redefines the value of the timeout
+  /// \brief Redefines the value of the timeout
   ///
   /// \tparam t_timeout is the type of time used to define timeout for the
   /// worker function
@@ -2702,12 +2997,34 @@ template <typename... t_params> struct sleeping_loop_t {
   }
 
 private:
+  /// \brief Implementation of the loop
+  /// Using an internal implentation makes it easy to move loop objects
   struct implementation
-      : public internal::sleeping_loop_base_t<std::function<void(t_params...)>,
-                                              t_params...> {
+      : public internal::sleeping_loop_base_t<on_timeout, t_params...> {
+
+    /// \brief Constructor
+    ///
+    /// \tparam t_timeout is the type of time used to define the
+    ///
+    /// \tparam t_interval is the type of time used to define the interval of
+    /// the loop execution
+    ///
+    /// \param p_timeout is the maximum time that the work function has to
+    /// execute
+    ///
+    /// \param p_interval is the time interval that the loop will execute
+    ///
+    /// \param p_function is the work function that will be executed at each \p
+    /// p_interval
+    ///
+    /// \param p_on_timeout is the function that will be called if \p p_function
+    /// times out
+    ///
+    /// \param p_provider is the function that will provide data for the \p
+    /// p_function
     template <typename t_timeout, typename t_interval>
     implementation(t_timeout p_timeout, t_interval p_interval,
-                   worker p_function, on_timeout p_on_timeout,
+                   function p_function, on_timeout p_on_timeout,
                    provider p_provider)
         : internal::sleeping_loop_base_t<on_timeout, t_params...>(
               p_interval, p_function, p_timeout, p_on_timeout, p_provider) {
@@ -2715,9 +3032,28 @@ private:
           ", interval = ", p_interval.count());
     }
 
+    /// \brief Constructor
+    /// Using this constructor, if a work function times out, no action will be
+    /// taken
+    ///
+    /// \tparam t_timeout is the type of time used to define the
+    ///
+    /// \tparam t_interval is the type of time used to define the interval of
+    /// the loop execution
+    ///
+    /// \param p_timeout is the maximum time that the work function has to
+    /// execute
+    ///
+    /// \param p_interval is the time interval that the loop will execute
+    ///
+    /// \param p_function is the work function that will be executed at each \p
+    /// p_interval
+    ///
+    /// \param p_provider is the function that will provide data for the \p
+    /// p_function
     template <typename t_timeout, typename t_interval>
     implementation(t_timeout p_timeout, t_interval p_interval,
-                   worker p_function, provider p_provider)
+                   function p_function, provider p_provider)
         : internal::sleeping_loop_base_t<on_timeout, t_params...>(
               p_interval, p_function, p_timeout, p_provider) {
       DEB(this->m_log, "timeout = ", p_timeout.count(),
@@ -2726,76 +3062,121 @@ private:
   };
 
 private:
+  /// \brief Implementation pointer
   std::unique_ptr<implementation> m_impl;
 };
 
-/// \brief
-///
-///
+/// \brief Specialization of sleeping_loop_t for a work function that takes no
+/// parameter
 template <> struct sleeping_loop_t<void> {
 
-  /// \brief type of work executed in a loop in time intervals
-  typedef std::function<void()> worker;
+  /// \brief Type of work function executed in a loop in time intervals
+  typedef std::function<void()> function;
 
+  /// \brief Type of function to be executed if a function times out
   typedef std::function<void()> on_timeout;
 
   /// \brief Constructor
   ///
-  /// \tparam t_interval type of time used to define the execution interval
-  /// of the worker
+  /// \tparam t_timeout is the type of time used to define the
   ///
-  /// \param p_interval time used to define the execution interval of the
-  /// worker
+  /// \tparam t_interval is the type of time used to define the interval of the
+  /// loop execution
   ///
-  /// \param p_function the worker to be executed at \p p_interval
+  /// \param p_timeout is the maximum time that the work function has to
+  /// execute
+  ///
+  /// \param p_interval is the time interval that the loop will execute
+  ///
+  /// \param p_function is the work function that will be executed at each \p
+  /// p_interval
+  ///
+  /// \param p_on_timeout is the function that will be called if \p p_function
+  /// times out
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_function,
-                  on_timeout p_on_timeout)
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  function p_function, on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
                                                 p_function, p_on_timeout)) {}
 
+  /// \brief Constructor
+  /// Using this constructor, if a work function times out, no action will be
+  /// taken
+  ///
+  /// \tparam t_timeout is the type of time used to define the
+  ///
+  /// \tparam t_interval is the type of time used to define the interval of the
+  /// loop execution
+  ///
+  /// \param p_timeout is the maximum time that the work function has to
+  /// execute
+  ///
+  /// \param p_interval is the time interval that the loop will execute
+  ///
+  /// \param p_function is the work function that will be executed at each \p
+  /// p_interval
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval, worker p_function)
+  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
+                  function p_function)
       : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
                                                 p_function)) {}
 
+  /// \brief Default constructor is not allowed
   sleeping_loop_t() = delete;
+
   ~sleeping_loop_t() = default;
 
+  /// \brief Copy constructor is not allowed
   sleeping_loop_t(const sleeping_loop_t &) = delete;
+
   sleeping_loop_t(sleeping_loop_t &&p_sl) = default;
 
+  /// \brief Assignment operator not allowed
   sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
+
   sleeping_loop_t &operator=(sleeping_loop_t &&p_sl) = default;
 
+  /// \brief Sets a new interval for the loop
+  ///
+  /// \tparam t_interval type of time used to define the execution interval
+  /// of the work function
+  ///
+  /// \param p_interval time used to define the execution interval of the
+  /// worker
   template <typename t_interval>
   inline void set_interval(t_interval p_interval) {
     m_impl->set_interval(p_interval);
   }
 
+  /// \brief Retrieves the interval for the loop
+  ///
+  /// \tparam t_time type of time used to convert the interval time to
+  ///
+  /// \return the interval time
   template <typename t_time> inline t_time get_interval() const {
     return m_impl->template get_interval<t_time>();
   }
 
+  /// \brief Starts the loop
   inline void start() { m_impl->start(); }
 
-  inline void stop() {
-    if (m_impl) {
-      m_impl->stop();
-    }
-  }
+  /// \brief Stops the loop
+  inline void stop() { m_impl->stop(); }
 
+  /// \brief Starts and stops the loop
   inline void restart() { m_impl->restart(); }
 
-  /// \brief retrieves if the loop is stopped
+  /// \brief Retrieves if the loop is stopped
   inline bool is_stopped() const { return m_impl->is_stopped(); }
 
-  /// \brief retrieves the timeout for the worker
+  /// \brief Retrieves the timeout for the worker
+  ///
+  /// \tparam t_time type of time used to convert the timeout to
   template <typename t_time> inline t_time get_timeout() const {
     return m_impl->template get_timeout<t_time>();
   }
 
-  /// \brief redefines the value of the timeout
+  /// \brief Redefines the value of the timeout
   ///
   /// \tparam t_timeout is the type of time used to define timeout for the
   /// worker function
@@ -2806,12 +3187,31 @@ template <> struct sleeping_loop_t<void> {
   }
 
 private:
+  /// \brief Implementation of the loop
+  /// Using an internal implentation makes it easy to move loop objects
   struct implementation
       : public internal::sleeping_loop_base_t<std::function<void()>, void> {
 
+    /// \brief Constructor
+    ///
+    /// \tparam t_timeout is the type of time used to define the
+    ///
+    /// \tparam t_interval is the type of time used to define the interval of
+    /// the loop execution
+    ///
+    /// \param p_timeout is the maximum time that the work function has to
+    /// execute
+    ///
+    /// \param p_interval is the time interval that the loop will execute
+    ///
+    /// \param p_function is the work function that will be executed at each \p
+    /// p_interval
+    ///
+    /// \param p_on_timeout is the function that will be called if \p p_function
+    /// times out
     template <typename t_timeout, typename t_interval>
     implementation(t_timeout p_timeout, t_interval p_interval,
-                   worker p_function, on_timeout p_on_timeout)
+                   function p_function, on_timeout p_on_timeout)
         : internal::sleeping_loop_base_t<on_timeout, void>(
               p_interval, p_function, p_timeout, p_on_timeout) {
 
@@ -2819,9 +3219,25 @@ private:
           ", interval = ", p_interval.count());
     }
 
+    /// \brief Constructor
+    /// Using this constructor, if a work function times out, no action will be
+    /// taken
+    ///
+    /// \tparam t_timeout is the type of time used to define the
+    ///
+    /// \tparam t_interval is the type of time used to define the interval of
+    /// the loop execution
+    ///
+    /// \param p_timeout is the maximum time that the work function has to
+    /// execute
+    ///
+    /// \param p_interval is the time interval that the loop will execute
+    ///
+    /// \param p_function is the work function that will be executed at each \p
+    /// p_interval
     template <typename t_timeout, typename t_interval>
     implementation(t_timeout p_timeout, t_interval p_interval,
-                   worker p_function)
+                   function p_function)
         : internal::sleeping_loop_base_t<on_timeout, void>(
               p_interval, p_function, p_timeout) {
 
@@ -2831,6 +3247,7 @@ private:
   };
 
 private:
+  /// \brief Implementation pointer
   std::unique_ptr<implementation> m_impl;
 };
 
@@ -2856,8 +3273,8 @@ template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout,
-                                                p_on_timeout);
+  internal::messenger_t<t_msg>::add_handlers(p_id, p_priority, p_timeout,
+                                             p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2879,7 +3296,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout) {
-  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_priority, p_timeout);
+  internal::messenger_t<t_msg>::add_handlers(p_id, p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2901,7 +3318,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_timeout, p_on_timeout);
+  internal::messenger_t<t_msg>::add_handlers(p_id, p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2920,7 +3337,7 @@ static inline void add_queue(const id &p_id, t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout) {
-  internal::messenger_t<t_msg>::add_worker_pool(p_id, p_timeout);
+  internal::messenger_t<t_msg>::add_handlers(p_id, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2944,8 +3361,8 @@ static inline void add_queue(const id &p_id, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout,
-                                                       p_on_timeout);
+  return internal::messenger_t<t_msg>::add_handlers(p_priority, p_timeout,
+                                                    p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2972,7 +3389,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout,
 /// be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout) {
-  return internal::messenger_t<t_msg>::add_worker_pool(p_priority, p_timeout);
+  return internal::messenger_t<t_msg>::add_handlers(p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -2999,7 +3416,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg>::add_worker_pool(p_timeout, p_on_timeout);
+  return internal::messenger_t<t_msg>::add_handlers(p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3026,7 +3443,7 @@ static id add_queue(t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout) {
-  return internal::messenger_t<t_msg>::add_worker_pool(p_timeout);
+  return internal::messenger_t<t_msg>::add_handlers(p_timeout);
 }
 
 /// \brief Defines the priority of a message queue
@@ -3064,7 +3481,7 @@ static std::optional<priority> get_priority(const id &p_id) {
 ///
 /// \param p_msg is the message to be copied to all the queues
 template <typename t_msg> static void send(const t_msg &p_msg) {
-  internal::messenger_t<t_msg>::publish(p_msg);
+  internal::messenger_t<t_msg>::send(p_msg);
 }
 
 /// \brief Adds a handler to a queue
@@ -3081,7 +3498,7 @@ template <typename t_msg> static void send(const t_msg &p_msg) {
 template <typename t_msg>
 static void add_handler(const id &p_id,
                         std::function<void(const t_msg &)> p_handler) {
-  internal::messenger_t<t_msg>::add_subscriber(p_id, p_handler);
+  internal::messenger_t<t_msg>::add_handler(p_id, p_handler);
 }
 
 /// \brief Adds a handler to a queue
@@ -3123,8 +3540,8 @@ template <typename t_msg>
 static void add_handler(
     const id &p_id, uint16_t p_num_handlers,
     std::function<std::function<void(const t_msg &)>> p_handler_factory) {
-  internal::messenger_t<t_msg>::add_subscriber(p_id, p_num_handlers,
-                                               p_handler_factory);
+  internal::messenger_t<t_msg>::add_handler(p_id, p_num_handlers,
+                                            p_handler_factory);
 }
 
 } // namespace async

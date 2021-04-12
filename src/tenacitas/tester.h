@@ -80,22 +80,21 @@ namespace tester {
 /// \endcode
 template <bool use = true> struct test {
 
-  /// \brief test constructor
-  ///
-  /// \param argc number of strings in \p argv
-  /// \param argv parameters passed to the program
-  ///
-  /// \details
+  /// \brief Constructor
   /// If '--desc' is passed, \p operator() will print a description of the
   /// tests.
   /// If '--exec' is passed, \p operator() will execute the tests
   /// If '--exec { <test-name-1> <test-name-2> ... }' is passed, \p operator()
   /// will execute the tests will execute tests  defined between '{' and '}'
   ///
-  /// \details the user prints should use \p cerr
+  /// \param argc number of strings in \p argv
   ///
-  /// \throw std::runtime_error
-  test(int argc, char **argv) : m_argc(argc), m_argv(argv) {
+  /// \param argv parameters passed to the program
+  ///
+  /// \details
+  ///
+  /// \details the user prints should use \p cerr
+  test(int argc, char **argv) noexcept : m_argc(argc), m_argv(argv) {
     m_pgm_name = m_argv[0];
 
     try {
@@ -103,18 +102,19 @@ template <bool use = true> struct test {
       program::options _options;
 
       _options.parse(m_argc, m_argv);
-      if (_options.get_bool_param("exec").first) {
+
+      if (_options.get_bool_param("exec")) {
         m_execute_tests = true;
-      } else if (_options.get_bool_param("desc").first) {
+      } else if (_options.get_bool_param("desc")) {
         m_print_desc = true;
       } else {
-
-        std::pair<bool, std::list<program::options<>::value>> _tests_to_exec =
+        std::optional<std::list<program::options<>::value>> _maybe =
             _options.get_set_param("exec");
-        if (_tests_to_exec.first) {
+        if (_maybe) {
           m_execute_tests = true;
-          m_tests_to_exec.insert(_tests_to_exec.second.begin(),
-                                 _tests_to_exec.second.end());
+          std::list<program::options<>::value> _tests_to_exec =
+              std::move(*_maybe);
+          m_tests_to_exec.insert(_tests_to_exec.begin(), _tests_to_exec.end());
         }
       }
 
@@ -127,14 +127,26 @@ template <bool use = true> struct test {
     }
   }
 
+  /// \brief Default constructor not allowed
   test() = delete;
+
+  /// \brief Copy constructor not allowed
   test(const test &) = delete;
+
+  /// \brief Copy constructor not allowed
   test(test &&) = delete;
 
+  /// \brief Copy assignment not allowed
   test &operator=(const test &) = delete;
+
+  /// \brief Move assignment not allowed
   test &operator=(test &&) = delete;
 
-  /// \brief run executes the test
+  /// \brief Executes the test
+  ///  If the test passes, the message "SUCCESS for <name>" will be
+  /// printed; if the test does not pass, the message "FAIL for <name>" will be
+  /// printed; if an error occurr while executing the test , the messae "ERROR
+  /// for <name> <desc>" will be printed
   ///
   /// \tparam t_test_class must implement:
   /// \code
@@ -145,36 +157,39 @@ template <bool use = true> struct test {
   ///
   /// \details You can use the macro 'run_test' defined above, instead of
   /// calling this method
-  ///
-  /// \details user should use <tt>std::cerr</tt> to print specific test
-  /// messages
-  ///
-  /// \details if the test passes, the message "SUCCESS for <name>" will be
-  /// printed; if the test does not pass, the message "FAIL for <name>" will be
-  /// printed; if an error occurr while executing the test , the messae "ERROR
-  /// for <name> <desc>" will be printed; if an exception occurrs, the message
-  /// 'EXCEPTION <description>' will be displayed
-  template <typename t_test_class> void run(const std::string p_test_name) {
+  template <typename t_test_class>
+  void run(const std::string &p_test_name) noexcept {
     using namespace std;
+    try {
+      if (m_print_desc) {
+        cout << p_test_name << ": " << t_test_class::desc() << "\n" << endl;
+        return;
+      }
 
-    if (m_print_desc) {
-      cout << p_test_name << ": " << t_test_class::desc() << "\n" << endl;
-      return;
-    }
-
-    if (m_execute_tests) {
-      if (!m_tests_to_exec.empty()) {
-        if ((std::find(m_tests_to_exec.begin(), m_tests_to_exec.end(),
-                       p_test_name)) != m_tests_to_exec.end()) {
+      if (m_execute_tests) {
+        if (!m_tests_to_exec.empty()) {
+          if ((std::find(m_tests_to_exec.begin(), m_tests_to_exec.end(),
+                         p_test_name)) != m_tests_to_exec.end()) {
+            exec<t_test_class>(p_test_name);
+          }
+        } else {
           exec<t_test_class>(p_test_name);
         }
-      } else {
-        exec<t_test_class>(p_test_name);
       }
+    } catch (std::exception &_ex) {
+      std::cout << "EXCEPTION '" << _ex.what() << "'" << std::endl;
+      return;
     }
   }
 
 private:
+  /// \brief Executes the test
+  /// \tparam t_test_class must implement:
+  /// \code
+  /// bool operator()()
+  ///
+  /// static std::string desc()
+  /// \endcode
   template <typename t_test_class> void exec(const std::string p_test_name) {
     using namespace std;
     bool result = false;
@@ -222,22 +237,23 @@ private:
   }
 
 private:
-  /// \brief name of the test program
+  /// \brief Name of the test program
   std::string m_pgm_name;
 
-  /// \brief indicates if the tests should actually be executed, or if theirs
+  /// \brief Indicates if the tests should actually be executed, or if theirs
   /// description should be printed
   bool m_execute_tests = {false};
 
-  /// prints test decription to \p cout
+  /// \brief Prints test decription to \p cout
   bool m_print_desc = {false};
 
-  /// \brief number of parameters passed to the \p test object
+  /// \brief Number of parameters passed to the \p test object
   int m_argc = {-1};
 
-  /// \brief parameters passed to the \p test object
+  /// \brief Parameters passed to the \p test object
   char **m_argv = {nullptr};
 
+  /// \brief Set of tests to execute
   std::set<std::string> m_tests_to_exec;
 };
 

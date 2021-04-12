@@ -2,7 +2,7 @@ SUBDIRS = \
     loop \
     sleeping_loop    \
     circular_unlimited_size_queue \
-    worker_pool    \
+    handlers    \
     messenger
 
 

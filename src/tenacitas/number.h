@@ -19,23 +19,22 @@ namespace tenacitas {
 /// \brief manipulates numbers, like formating
 namespace number {
 
+/// \brief Generates a unique (sort of) identifier
 uint64_t uuid() { return calendar::now<>::microsecs(); }
 
-/// \brief maximum number of characters needed to represent a type of
-/// number
+/// \brief Maximum number of characters needed to represent a type of number
 ///
 /// <tt>max_str_length<uint16_t>()</tt> is 5, while
 /// <tt>max_str_length<uint32_t>()</tt> is 10
 ///
 /// \tparam t_num_type is the type of number
-///
 template <typename t_num_type> inline uint16_t max_str_length() {
   return (
       static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
       1);
 }
 
-/// \brief type of alingnment when formating numbers
+/// \brief Type of alingnment when formating numbers
 enum class align : char { left = 'l', right = 'd' };
 
 /// \brief Formats a number with the maximum characters necessary to represent
@@ -50,7 +49,6 @@ enum class align : char { left = 'l', right = 'd' };
 ///
 /// \param p_align defines if \p p_num will be aligned at left, right, or center
 /// of the string
-///
 template <typename t_num_type>
 inline std::string format(t_num_type p_num, char p_fill = '0',
                           align p_align = align::right) {
@@ -61,7 +59,7 @@ inline std::string format(t_num_type p_num, char p_fill = '0',
   return _stream.str();
 }
 
-/// \brief Specialization for uint8_t of \p tenacitas::number::format_000
+/// \brief Specialization for uint8_t of \p tenacitas::number::format
 ///
 /// \param p_num is the value of the number to be formated
 ///
@@ -70,7 +68,6 @@ inline std::string format(t_num_type p_num, char p_fill = '0',
 ///
 /// \param p_align defines if \p p_num will be aligned at left, right, or center
 /// of the string
-///
 inline std::string format(uint8_t p_num, char p_fill = '0',
                           align p_align = align::right) {
   std::stringstream _stream;
@@ -80,7 +77,7 @@ inline std::string format(uint8_t p_num, char p_fill = '0',
   return _stream.str();
 }
 
-/// \brief Specialization for int8_t of \p tenacitas::number::format_000
+/// \brief Specialization for int8_t of \p tenacitas::number::format
 ///
 /// \param p_num is the value of the number to be formated
 ///
@@ -89,7 +86,6 @@ inline std::string format(uint8_t p_num, char p_fill = '0',
 ///
 /// \param p_align defines if \p p_num will be aligned at left, right, or center
 /// of the string
-///
 inline std::string format(int8_t p_num, char p_fill = '0',
                           align p_align = align::right) {
   std::stringstream _stream;
@@ -99,6 +95,15 @@ inline std::string format(int8_t p_num, char p_fill = '0',
   return _stream.str();
 }
 
+/// \brief Specialization for uint8_t of \p tenacitas::number::format
+///
+/// \param p_num is the value of the number to be formated
+///
+/// \param p_fill is the char used to fill the parts of the string not filled
+/// with \p p_num digits
+///
+/// \param p_align defines if \p p_num will be aligned at left, right, or center
+/// of the string
 template <typename t_num_type>
 inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
                           align p_align = align::right) {

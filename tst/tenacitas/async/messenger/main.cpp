@@ -47,8 +47,8 @@ struct messenger_000 {
     data _data_consumed{0};
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-    async::id _id = messenger::add_worker_pool(async::priority::lowest,
-                                               _subscriber_timeout);
+    async::id _id =
+        messenger::add_handlers(async::priority::lowest, _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
         [this, &_data_consumed,
@@ -65,14 +65,14 @@ struct messenger_000 {
       }
     };
 
-    messenger::add_subscriber(_id, _subscriber);
+    messenger::add_handler(_id, _subscriber);
 
     function<void(void)> _slepper = [this, &_data_produced]() -> void {
       if (_data_produced == _data_to_produce) {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::publish(_data_produced);
+        messenger::send(_data_produced);
         DEB(m_log, "published ", _data_produced);
       }
     };
@@ -137,7 +137,7 @@ struct messenger_001 {
     };
 
     DEB(m_log, "adding worker pool");
-    async::id _id = messenger::add_worker_pool(async::priority::lowest, 1s);
+    async::id _id = messenger::add_handlers(async::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
@@ -152,11 +152,11 @@ struct messenger_001 {
     DEB(m_log, "priority reset");
 
     DEB(m_log, "adding subscriber");
-    messenger::add_subscriber(_id, _subscriber);
+    messenger::add_handler(_id, _subscriber);
     DEB(m_log, "subscriber added");
 
     DEB(m_log, "publishing");
-    messenger::publish(42);
+    messenger::send(42);
     DEB(m_log, "published");
 
     DEB(m_log, "wating notification");
@@ -198,7 +198,7 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    async::id _id = messenger::add_worker_pool(async::priority::lowest, 3s);
+    async::id _id = messenger::add_handlers(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -209,7 +209,7 @@ struct messenger_002 {
       }
     };
 
-    messenger::add_subscriber(_id, _subscriber);
+    messenger::add_handler(_id, _subscriber);
 
     auto _sleeper = [this, &_data_produced, _total_to_produce]() -> void {
       DEB(m_log, "data produced = ", _data_produced, ", total to produce ",
@@ -219,7 +219,7 @@ struct messenger_002 {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::publish(_data_produced);
+        messenger::send(_data_produced);
         DEB(m_log, "published data ", _data_produced);
       }
     };
@@ -311,7 +311,7 @@ struct messenger_004 {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::publish(_data_produced);
+        messenger::send(_data_produced);
         DEB(m_log, "published data ", _data_produced);
       }
     };
@@ -367,10 +367,10 @@ struct messenger_003 {
     typedef async::internal::messenger_t<int16_t> messenger;
 
     const async::id _p2{"hello"};
-    messenger::add_worker_pool(_p2, async::priority::low, 4s);
+    messenger::add_handlers(_p2, async::priority::low, 4s);
 
     const async::id _p1{"good morning"};
-    messenger::add_worker_pool(_p1, async::priority::low_middle, 1s);
+    messenger::add_handlers(_p1, async::priority::low_middle, 1s);
 
     bool _first{true};
     bool _result{true};

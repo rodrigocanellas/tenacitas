@@ -3,17 +3,33 @@ QMAKE_CXXFLAGS += -DTENACITAS_LOG
 
 CONFIG += sdk_no_version_check
 
+CONFIG(debug, debug|release) {
+    cfg=debug
+}
+
+
+CONFIG(release, debug|release) {
+    cfg=release
+}
+
+
+macx:os=mac
+linux:os=linux
+win32:os=win32
+
+
 base_dir=$$PWD/../..
 code_src_dir=$$base_dir/src
 test_src_dir=$$base_dir
+exp_src_dir=$$base_dir/exp
 builder_dir=$$base_dir/bld/qtcreator/projects
-products_dir=$$base_dir/prd
+products_dir=$$base_dir/prd/$$os/$$cfg
 third_dir=$$base_dir/3rd
 
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/bin
-test_dir=$$products_dir/dir
-example_dir=$$products_dir/example
+test_dir=$$products_dir/tst
+exp_dir=$$products_dir/exp
 tmp_dir=$$base_dir/tmp/qtcreator/$$TARGET
 
 #OUT_PWD = $${tmp_dir}
@@ -35,7 +51,7 @@ equals(TEMPLATE,app) {
         DESTDIR=$$test_dir
     }
     contains(CONFIG,example){
-        DESTDIR = $$example_dir
+        DESTDIR = $$exp_dir
     }
 }
 

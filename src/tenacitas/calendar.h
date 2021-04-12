@@ -18,14 +18,25 @@ namespace tenacitas {
 /// \brief about calendar and time
 namespace calendar {
 
-template <typename t_to, typename t_from> t_to convert(t_from p_from) {
+/// \brief Converts time formats
+///
+/// \tparam t_to destination type
+///
+/// \tparam t_from origin type
+///
+/// \param p_from origin value
+///
+/// \return p_from converted to t_to type
+template <typename t_to, typename t_from> inline t_to convert(t_from p_from) {
   return std::chrono::duration_cast<t_to>(p_from);
 }
 
-/// \brief functions that return 'now' in different time units
+/// \brief Calculates 'now' in different time units
+///
+/// \tparam use exists to make \p log to be compiled only it is really used
 template <bool use = true> struct now {
 
-  /// \brief now in microseconds
+  /// \brief 'now' in microseconds
   template <typename t_int = uint64_t> inline static t_int microsecs() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::microseconds>(
@@ -33,7 +44,7 @@ template <bool use = true> struct now {
             .count());
   }
 
-  /// \brief YYYY-MM-DD HH::MM::SS,999999
+  /// \brief 'now' as a string in the sformat YYYY-MM-DD HH::MM::SS,999999
   static std::string iso8601_microsecs() {
     using namespace std;
     using namespace chrono;
@@ -48,7 +59,10 @@ template <bool use = true> struct now {
     return _stream.str();
   }
 
-  /// \brief YYYY-MM-DD HH::MM::SS,999999
+  /// \brief A specific time as a string in the format 'YYYY-MM-DD
+  /// HH::MM::SS,999999'
+  ///
+  /// \param p_microsecs is the time one wants to convert to string
   static std::string iso8601_microsecs(uint64_t p_microsecs) {
     using namespace std;
     using namespace chrono;
@@ -62,7 +76,7 @@ template <bool use = true> struct now {
     return _stream.str();
   }
 
-  /// \brief now in milliseconds
+  /// \brief 'now' in milliseconds
   template <typename t_int = uint64_t> inline static t_int millisecs() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -70,7 +84,7 @@ template <bool use = true> struct now {
             .count());
   }
 
-  /// \brief YYYY-MM-DD HH::MM::SS,999
+  /// \brief 'now' as a string in the format 'YYYY-MM-DD HH::MM::SS,999'
   // TODO test iso8601_millisecs
   static std::string iso8601_millisecs() {
     using namespace std;
@@ -86,7 +100,7 @@ template <bool use = true> struct now {
     return _stream.str();
   }
 
-  /// \brief now in seconds
+  /// \brief 'now' in seconds
   template <typename t_int = uint64_t> inline static t_int secs() {
     return static_cast<t_int>(
         std::chrono::duration_cast<std::chrono::seconds>(
@@ -94,7 +108,7 @@ template <bool use = true> struct now {
             .count());
   }
 
-  /// \brief YYYY-MM-DD HH::MM::SS
+  /// \brief 'now' as a string in the format 'YYYY-MM-DD HH::MM::SS'
   // TODO test iso8601_secs
   static std::string iso8601_secs() {
     using namespace std;
@@ -107,7 +121,7 @@ template <bool use = true> struct now {
     return _stream.str();
   }
 
-  /// \brief now in minutes
+  /// \brief 'now' in minutes
   // TODO test minutes
   template <typename t_int = uint64_t> inline static t_int minutes() {
     return static_cast<t_int>(
@@ -116,7 +130,7 @@ template <bool use = true> struct now {
             .count());
   }
 
-  /// \brief now in hours
+  /// \brief 'now' in hours
   // TODO test hours
   template <typename t_int = uint64_t> inline static t_int hours() {
     return static_cast<t_int>(
@@ -125,7 +139,7 @@ template <bool use = true> struct now {
             .count());
   }
 
-  /// \brief now in days
+  /// \brief 'now' in days
   // TODO test days
   template <typename t_int = uint64_t> inline static t_int days() {
     return static_cast<t_int>(
@@ -135,13 +149,13 @@ template <bool use = true> struct now {
         24);
   }
 
-  /// \brief now in months
+  /// \brief 'now' in months
   // TODO test months
   template <typename t_int = uint64_t> inline static t_int months() {
     return static_cast<t_int>(days() / 30);
   }
 
-  /// \brief now in years
+  /// \brief 'now' in years
   // TODO test years
   template <typename t_int = uint64_t> inline static t_int years() {
     return static_cast<t_int>(months() / 12);

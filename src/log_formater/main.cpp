@@ -13,7 +13,18 @@
 
 using namespace tenacitas;
 
+/// \brief Formats a log file created by one of the tenacitas::logger classes
 struct log_formater {
+
+  /// \brief Call operator
+  ///
+  /// \param argc number of strings in argv
+  ///
+  /// \param argv string vector with parameters
+  ///
+  /// \details Parameters passed to the program must be '--in', with the name of
+  /// the input file, containing log messages, and '--out', which will be the
+  /// name of the output file, containg formated log  messages
   void operator()(int argc, char **argv) {
     if (argc < 5) {
       std::cout << "Syntax: " << argv[0]
@@ -66,7 +77,8 @@ private:
                              std::string::size_type p_2) -> void {
       std::string _timestamp_str{&p_line[p_1], &p_line[p_2]};
       auto _timestamp_num = std::stoull(_timestamp_str);
-      m_out << calendar::now<>::iso8601_microsecs(_timestamp_num) << m_separator;
+      m_out << calendar::now<>::iso8601_microsecs(_timestamp_num)
+            << m_separator;
       m_out.flush();
     };
 
@@ -351,29 +363,30 @@ private:
   }
 
   bool open_in(program::options<> &p_options) {
-    std::pair<bool, std::string> _p = p_options.get_single_param("in");
-    if (!_p.first) {
+    std::optional<std::string> _p = p_options.get_single_param("in");
+    if (!_p) {
       ERR(m_log, "error in parameter 'in'");
       return false;
     }
-    m_name_in = std::move(_p.second);
+    m_name_in = std::move(*_p);
     m_in.open(m_name_in);
     if (m_in.bad()) {
-      ERR(m_log, "error opening file '", _p.second, "'");
+      ERR(m_log, "error opening file '", m_name_in, "'");
       return false;
     }
     return true;
   }
 
   bool open_out(program::options<> &p_options) {
-    std::pair<bool, std::string> _p = p_options.get_single_param("out");
-    if (!_p.first) {
+    std::optional<std::string> _p = p_options.get_single_param("out");
+    if (!_p) {
       ERR(m_log, "error in parameter 'out'");
       return false;
     }
-    m_out.open(_p.second);
+    const std::string _name_out{std::move(*_p)};
+    m_out.open(_name_out);
     if (m_out.bad()) {
-      ERR(m_log, "error opening file '", _p.second, "'");
+      ERR(m_log, "error opening file '", _name_out, "'");
       return false;
     }
     return true;
@@ -390,7 +403,7 @@ private:
 
   uint8_t m_max_line_number{0};
 
-//  const uint8_t m_this_size{4};
+  //  const uint8_t m_this_size{4};
   const uint8_t m_thread_id_size{4};
 
   const char m_separator = {'|'};

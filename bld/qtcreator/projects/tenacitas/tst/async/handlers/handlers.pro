@@ -1,12 +1,12 @@
 
 QT -= core
 TEMPLATE = app
-TARGET = tenacitas.async.tst.worker_pool
+TARGET = tenacitas.async.tst.handlers
 CONFIG+=test
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/tst/tenacitas/async/worker_pool/main.cpp
+  $$test_src_dir/tst/tenacitas/async/handlers/main.cpp
 
 HEADERS += \
   $$test_src_dir/tst/tenacitas/async/msg.h

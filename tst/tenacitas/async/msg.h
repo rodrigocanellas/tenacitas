@@ -206,7 +206,7 @@ template <msg_id id> struct subscriber {
     } else {
       inc();
       INF(m_log, "msg: ", p_msg, ", counter:", m_number);
-      messenger_update::publish({id, m_pool_num, m_sub_id, m_number});
+      messenger_update::send({id, m_pool_num, m_sub_id, m_number});
       m_function(p_msg);
     }
   };
@@ -242,12 +242,12 @@ template <msg_id id> struct publish {
     if (m_msg.get_value() >= m_max) {
       m_ended = true;
       DEB(m_log, "sending end of publishing");
-      messenger_end_publishing::publish({id, m_publish_id, m_msg.get_value()});
+      messenger_end_publishing::send({id, m_publish_id, m_msg.get_value()});
       return;
     }
 
     DEB(m_log, "publishing ", m_msg);
-    async::internal::messenger_t<msg<id>>::publish(m_msg);
+    async::internal::messenger_t<msg<id>>::send(m_msg);
     ++m_msg;
   }
 
@@ -304,21 +304,21 @@ struct test_base {
 
   test_base(const char *p_name) : m_log(p_name) {
 
-    internal::messenger_end_publishing::add_subscriber(
-        internal::messenger_end_publishing::add_worker_pool(2s),
+    internal::messenger_end_publishing::add_handler(
+        internal::messenger_end_publishing::add_handlers(2s),
         [this](const internal::end_publishing &p_end_publishing) -> void {
           on_end_publishing(p_end_publishing);
         });
 
-    internal::messenger_update::add_subscriber(
-        internal::messenger_update::add_worker_pool(2s),
+    internal::messenger_update::add_handler(
+        internal::messenger_update::add_handlers(2s),
         [this](const update &p_update) -> void { on_update(p_update); });
   }
 
   template <msg_id id, typename t_time>
   void add_pool(pool_num p_pool_num, const async::priority &p_priority,
                 t_time p_timeout) {
-    async::internal::messenger_t<msg<id>>::add_worker_pool(
+    async::internal::messenger_t<msg<id>>::add_handlers(
         internal::pool_id(id, p_pool_num), p_priority, p_timeout);
   }
 
@@ -338,7 +338,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    async::internal::messenger_t<msg<id>>::add_subscriber(
+    async::internal::messenger_t<msg<id>>::add_handler(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_function));
     update_totals<id>(p_pool_num);
@@ -349,7 +349,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id, t_time p_sleep,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    async::internal::messenger_t<msg<id>>::add_subscriber(
+    async::internal::messenger_t<msg<id>>::add_handler(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_sleep, p_function));
     update_totals<id>(p_pool_num);
