@@ -376,7 +376,7 @@ struct messenger_003 {
     bool _result{true};
     auto _visitor = [this, &_first, &_result, _p1,
                      _p2](const async::id &p_id, async::priority p_priority,
-                          async::timeout p_timeout) {
+                          std::chrono::milliseconds p_timeout) {
       if (_first) {
         if (p_id != _p2) {
           _result = false;
