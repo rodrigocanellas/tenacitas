@@ -3521,7 +3521,7 @@ static void add_handler(const id &p_id,
 template <typename t_msg, typename t_time = std::chrono::minutes>
 static id add_handler(std::function<void(const t_msg &)> p_handler,
                       t_time p_timeout = 10min) {
-  id _id = add_queue(p_timeout);
+  id _id = add_queue<t_msg>(p_timeout);
   add_handler(_id, p_handler);
   return _id;
 }
