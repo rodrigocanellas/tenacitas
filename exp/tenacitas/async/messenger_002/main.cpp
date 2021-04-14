@@ -144,6 +144,9 @@ int main() {
   // handler 2, that will sleep 1250ms while handling
   temperature_handler _handler_2{'B', _printer, 1250ms};
 
+  // handler 3, that will sleep 1250ms while handling
+  temperature_handler _handler_3{'C', _printer, 750ms};
+
   // lambda 1, so that _handler_1 can be used later
   auto _h1 = [&_handler_1](const temperature &p_temperature) -> void {
     _handler_1(p_temperature);
@@ -154,11 +157,19 @@ int main() {
     _handler_2(p_temperature);
   };
 
+  // lambda 3, so that _handler_3 can be used later
+  auto _h3 = [&_handler_3](const temperature &p_temperature) -> void {
+    _handler_3(p_temperature);
+  };
+
   // adds a handler to a handlers group, and save the id of this handlers group
   async::id _handlers_id = async::add_handler<temperature>(_h1, 2s);
 
   // adds another handler to _handlers_id
   async::add_handler<temperature>(_handlers_id, _h2);
+
+  // add handler 3 to another group of handlers
+  async::add_handler<temperature>(_h3, 2s);
 
   // declaring the temperature sensor
   temperature_sensor _sensor{_max};
@@ -167,7 +178,11 @@ int main() {
   _sensor.start();
 
   // busy wait for all the temperatures to be handled
-  while ((_handler_1.counter() + _handler_2.counter()) != _max) {
+  while (true) {
+    if ((_handler_3.counter() == _max) &&
+        ((_handler_1.counter() + _handler_2.counter()) == _max)) {
+      break;
+    }
     std::this_thread::sleep_for(50ms);
   }
 }
