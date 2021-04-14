@@ -46,3 +46,4 @@ CMakeLists.txt.user*
 prd/
 tmp/
 *~
+.qmake.stash
