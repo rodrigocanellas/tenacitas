@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example messenger_000
+/// \example messenger_002
 
 #include <chrono>
 #include <condition_variable>
@@ -165,7 +165,9 @@ int main() {
   // adds a handler to a handlers group, and save the id of this handlers group
   async::id _handlers_id = async::add_handler<temperature>(_h1, 2s);
 
-  // adds another handler to _handlers_id
+  // adds another handler to _handlers_id, so _handler_1 and _handler_2 will
+  // compete with each other to handle temperature messages, in the handler
+  // group _handlers_id
   async::add_handler<temperature>(_handlers_id, _h2);
 
   // add handler 3 to another group of handlers

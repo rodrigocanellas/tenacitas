@@ -188,7 +188,7 @@ template <bool use = true> struct options {
     if (_ite == m_booleans.end()) {
       return {};
     }
-    return {};
+    return {true};
   }
 
   /// \brief Retrieves a single parameter, if possible
@@ -399,7 +399,7 @@ struct application {
 
     DEB(m_log, "starting application");
 
-    future<void> _future = std::async(launch::async, p_function);
+    std::thread _thread(p_function);
 
     {
       DEB(m_log, "waiting...");
@@ -409,12 +409,9 @@ struct application {
 
     DEB(m_log, "notified");
 
-    uint16_t _time{static_cast<uint16_t>(m_wait.count() / 2)};
-    if (_future.wait_for(milliseconds(_time)) == future_status::timeout) {
-      WAR(m_log, "timeout waiting for the function thread to finish");
-    } else {
-      DEB(m_log, "function thread finished in time");
-    }
+    std::this_thread::sleep_for(m_wait);
+
+    _thread.join();
   }
 
   ~application() = default;
