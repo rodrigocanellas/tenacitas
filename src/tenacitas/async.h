@@ -34,7 +34,14 @@ namespace tenacitas {
 /// \brief support for async (asynchronous) programming
 namespace async {
 
+namespace internal {
+
+
 typedef std::function<bool()> breaker;
+}
+
+
+namespace internal {
 
 /// \brief Type of time used to define timeout
 typedef std::chrono::milliseconds timeout;
@@ -42,99 +49,6 @@ typedef std::chrono::milliseconds timeout;
 /// \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
 
-struct id {
-  id() : m_value(std::to_string(number::uuid())) {}
-
-  explicit id(const std::string &p_value) : m_value(p_value) {}
-
-  explicit id(std::string &&p_value) : m_value(std::move(p_value)) {}
-
-  explicit id(const char *p_value) : m_value(p_value) {}
-
-  id(const id &) = default;
-  id(id &&) = default;
-
-  ~id() = default;
-
-  friend std::ostream &operator<<(std::ostream &p_out, id p_id) {
-    p_out << p_id.m_value;
-    return p_out;
-  }
-
-  bool operator==(const id &p_id) const { return m_value == p_id.m_value; }
-
-  bool operator!=(const id &p_id) const { return m_value != p_id.m_value; }
-
-  id &operator=(const id &) = default;
-  id &operator=(id &&) = delete;
-
-private:
-  std::string m_value;
-};
-
-struct priority {
-
-  priority() = delete;
-
-  priority(const priority &) = default;
-  priority(priority &&) = default;
-
-  ~priority() = default;
-
-  friend std::ostream &operator<<(std::ostream &p_out, priority p_priority) {
-    p_out << static_cast<uint16_t>(p_priority.m_value);
-    return p_out;
-  }
-
-  bool operator<(priority p_priority) const {
-    return m_value < p_priority.m_value;
-  }
-
-  bool operator>(priority p_priority) const {
-    return m_value > p_priority.m_value;
-  }
-
-  bool operator==(priority p_priority) const {
-    return m_value == p_priority.m_value;
-  }
-
-  bool operator!=(priority p_priority) const {
-    return m_value != p_priority.m_value;
-  }
-
-  priority &operator=(const priority &) = default;
-  priority &operator=(priority &&) = default;
-
-  static const priority lowest;
-
-  static const priority low;
-
-  static const priority low_middle;
-
-  static const priority middle;
-
-  static const priority middle_high;
-
-  static const priority high;
-
-  static const priority highest;
-
-private:
-  explicit priority(uint8_t p_value) : m_value(p_value) {}
-
-private:
-  uint8_t m_value;
-};
-
-const priority priority::lowest{1};
-const priority priority::low{45};
-const priority priority::low_middle{90};
-const priority priority::middle{135};
-const priority priority::middle_high{180};
-const priority priority::high{225};
-const priority priority::highest{255};
-
-namespace internal {
 
 template <typename t_type> struct executer_helper_result_t {
   /// \brief returned by the executed function
@@ -203,8 +117,6 @@ struct executer_helper_t {
   }
 };
 
-} // namespace internal
-
 /// \brief executes a callable object in a maximum amount of time
 ///
 /// \tparam t_time type of time used to control timeout of the function being
@@ -226,245 +138,6 @@ struct executer_helper_t {
 ///         if the callable object does not return void, \p execute returns
 ///         std::optional<type-returned> with value if not timeout, {}
 ///         otherwise
-///
-/// \code
-///
-///#include <thread>
-///#include <optional>
-///#include <type_traits>
-///#include <chrono>
-///#include <iostream>
-///
-///#include <tenacitas/async.h>
-///
-/// using namespace std::chrono_literals;
-///
-/// double f1(int i) {
-///  std::cout << "f2: ";
-///  return i / 4;
-///}
-///
-/// double f2(int i, float f) {
-///  std::cout << "f2: ";
-///  return f * i / 4;
-///}
-///
-/// double f3() {
-///  std::cout << "f3: ";
-///  return 3.14;
-///}
-///
-/// void f4(int i) { std::cout << "f4: " << i / 4 << " "; }
-///
-/// void f5(int i, float f) { std::cout << "f5: " << f * i / 4 << " "; }
-///
-/// void f6() { std::cout << "f6: " << 3.14 << " "; }
-///
-/// double f7(int i) {
-///  std::cout << "f7: ";
-///  std::this_thread::sleep_for(2s);
-///
-///  return i / 4;
-///}
-///
-/// double f8(int i, float f) {
-///
-///  std::cout << "f8: ";
-///  std::this_thread::sleep_for(2s);
-///  return f * i / 4;
-///}
-///
-/// double f9() {
-///  std::cout << "f9: ";
-///  std::this_thread::sleep_for(2s);
-///
-///  return 3.14;
-///}
-///
-/// void f10(int i) {
-///  std::cout << "f10: ";
-///  std::this_thread::sleep_for(2s);
-///  std::cout << i / 4 << " ";
-///}
-///
-/// void f11(int i, float f) {
-///  std::cout << "f11: ";
-///  std::this_thread::sleep_for(2s);
-///  std::cout << f * i / 4 << " ";
-///}
-///
-/// void f12() {
-///  std::cout << "f6: ";
-///  std::this_thread::sleep_for(2s);
-///  std::cout << 3.14 << " ";
-///}
-///
-/// void f13(bool &b) { std::cout << "f13: " << (b ? "true" : "false") << " "; }
-///
-/// void f14(bool &&b) {
-///  std::cout << "f14: ";
-///  std::this_thread::sleep_for(2s);
-///  std::cout << (b ? "true" : "false") << " ";
-///}
-///
-/// void f15(bool &b) {
-///  std::cout << "f15: ";
-///  std::this_thread::sleep_for(2s);
-///  std::cout << (b ? "true" : "false") << " ";
-///  b = !b;
-///}
-///
-/// ##########################
-/// ########################## main
-///
-/// int main() {
-///  using namespace tenacitas;
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f1, 8);
-///    if (_maybe) {
-///      std::cout << *_maybe;
-///    } else {
-///      std::cout << " timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f2, 8, 4.2f);
-///    if (_maybe) {
-///      std::cout << *_maybe;
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f3);
-///    if (_maybe) {
-///      std::cout << *_maybe;
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f4, -8)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f5, -8, 3.56)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f6)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f7, 8);
-///    if (_maybe) {
-///      std::cout << "with exec: " << *_maybe;
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f8, 8, 4.2f);
-///    if (_maybe) {
-///      std::cout << *_maybe;
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    std::optional<double> _maybe = async::execute(300ms, f9);
-///    if (_maybe) {
-///      std::cout << *_maybe;
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f10, -18)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f11, -18, 3.3)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    if (async::execute(300ms, f12)) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout!";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    bool b{false};
-///    if (async::execute(300ms, f13, std::ref(b))) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout";
-///    }
-///    std::cout << std::endl;
-///  }
-///
-///  {
-///    bool b{false};
-///    if (async::execute(300ms, f14, std::move(b))) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout";
-///    }
-///    std::cout << std::endl;
-///  }
-///  {
-///    bool b{false};
-///    if (async::execute(300ms, f15, std::ref(b))) {
-///      std::cout << "ok";
-///    } else {
-///      std::cout << "timeout";
-///    }
-///    std::cout << std::endl;
-///  }
-///}
-///
-/// \endcode
 template <typename t_time, typename t_function, typename... t_params>
 inline typename internal::executer_helper_t<
     std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
@@ -478,6 +151,8 @@ execute(t_time p_timeout, t_function p_function, t_params... p_params) {
   return executer_helper::call(p_function, p_timeout,
                                std::forward<t_params>(p_params)...);
 }
+
+} // namespace internal
 
 namespace internal {
 
@@ -1826,7 +1501,7 @@ namespace internal {
 /// \brief A group of functions that compete to handle a data added to a queue
 ///
 /// \param t_data type of data to be processed
-template <typename t_data> class handlers_t {
+template <typename t_data, typename t_id, typename t_priority> class handlers_t {
 public:
   /// \brief Type of function that will handle the data
   typedef std::function<void(const t_data &)> handler;
@@ -1853,7 +1528,7 @@ public:
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  handlers_t(const id &p_id, const priority &p_priority, t_time p_timeout,
+  handlers_t(const t_id &p_id, const t_priority &p_priority, t_time p_timeout,
              on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_priority, p_timeout,
                                                 p_on_timeout)) {}
@@ -1872,7 +1547,7 @@ public:
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handlers_t(const id &p_id, const priority &p_priority, t_time p_timeout)
+  handlers_t(const t_id &p_id, const t_priority &p_priority, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_priority, p_timeout)) {}
 
   /// \brief Constructor
@@ -1890,7 +1565,7 @@ public:
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  handlers_t(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
+  handlers_t(const t_id &p_id, t_time p_timeout, on_timeout p_on_timeout)
       : m_impl(
             std::make_unique<implementation>(p_id, p_timeout, p_on_timeout)) {}
 
@@ -1907,7 +1582,7 @@ public:
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handlers_t(const id &p_id, t_time p_timeout)
+  handlers_t(const t_id &p_id, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_id, p_timeout)) {}
 
   /// \brief Constructor
@@ -1925,7 +1600,7 @@ public:
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  handlers_t(const priority &p_priority, t_time p_timeout,
+  handlers_t(const t_priority &p_priority, t_time p_timeout,
              on_timeout p_on_timeout)
       : m_impl(std::make_unique<implementation>(p_priority, p_timeout,
                                                 p_on_timeout)) {}
@@ -1943,7 +1618,7 @@ public:
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handlers_t(const priority &p_priority, t_time p_timeout)
+  handlers_t(const t_priority &p_priority, t_time p_timeout)
       : m_impl(std::make_unique<implementation>(p_priority, p_timeout)) {}
 
   /// \brief Constructor
@@ -2036,13 +1711,13 @@ public:
   }
 
   /// \return The tenacitas::async::id of this group of handlers
-  inline const id &get_id() const { return m_impl->get_id(); }
+  inline const t_id &get_id() const { return m_impl->get_id(); }
 
   /// \return The tenacitas::async::priority of this group of handlers
-  inline const priority &get_priority() const { return m_impl->get_priority(); }
+  inline const t_priority &get_priority() const { return m_impl->get_priority(); }
 
   /// \brief Sets the tenacitas::async::priority of this group of handlers
-  inline void set_priority(const priority &p_priority) {
+  inline void set_priority(const t_priority &p_priority) {
     m_impl->set_priority(p_priority);
   }
 
@@ -2098,7 +1773,7 @@ private:
     /// \param p_on_timeout is a function that will be called if a handler times
     /// out
     template <typename t_time>
-    implementation(const id &p_id, const priority &p_priority, t_time p_timeout,
+    implementation(const t_id &p_id, const t_priority &p_priority, t_time p_timeout,
                    on_timeout p_on_timeout)
         : m_id(p_id), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
@@ -2118,7 +1793,7 @@ private:
     ///
     /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
-    implementation(const id &p_id, const priority &p_priority, t_time p_timeout)
+    implementation(const t_id &p_id, const t_priority &p_priority, t_time p_timeout)
         : m_id(p_id), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(
@@ -2139,8 +1814,8 @@ private:
     /// \param p_on_timeout is a function that will be called if a handler times
     /// out
     template <typename t_time>
-    implementation(const id &p_id, t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
+    implementation(const t_id &p_id, t_time p_timeout, on_timeout p_on_timeout)
+        : m_id(p_id), m_priority(t_priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
@@ -2157,8 +1832,8 @@ private:
     ///
     /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
-    implementation(const id &p_id, t_time p_timeout)
-        : m_id(p_id), m_priority(async::priority::lowest), m_queue(10),
+    implementation(const t_id &p_id, t_time p_timeout)
+        : m_id(p_id), m_priority(t_priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
@@ -2178,7 +1853,7 @@ private:
     /// \param p_on_timeout is a function that will be called if a handler times
     /// out
     template <typename t_time>
-    implementation(const priority &p_priority, t_time p_timeout,
+    implementation(const t_priority &p_priority, t_time p_timeout,
                    on_timeout p_on_timeout)
         : m_id(), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
@@ -2197,7 +1872,7 @@ private:
     ///
     /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
-    implementation(const priority &p_priority, t_time p_timeout)
+    implementation(const t_priority &p_priority, t_time p_timeout)
         : m_id(), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(
@@ -2218,7 +1893,7 @@ private:
     /// out
     template <typename t_time>
     implementation(t_time p_timeout, on_timeout p_on_timeout)
-        : m_id(), m_priority(async::priority::lowest), m_queue(10),
+        : m_id(), m_priority(t_priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
 
@@ -2235,7 +1910,7 @@ private:
     /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
     implementation(t_time p_timeout)
-        : m_id(), m_priority(async::priority::lowest), m_queue(10),
+        : m_id(), m_priority(t_priority::lowest), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(
               [this](const t_data &p_data) -> void { add_data(p_data); }) {}
@@ -2343,13 +2018,13 @@ private:
     }
 
     /// \return The tenacitas::async::id of this group of handlers
-    inline const id &get_id() const { return m_id; }
+    inline const t_id &get_id() const { return m_id; }
 
     /// \return The tenacitas::async::priority of this group of handlers
-    inline const priority &get_priority() const { return m_priority; }
+    inline const t_priority &get_priority() const { return m_priority; }
 
     /// \brief Sets the tenacitas::async::priority of this group of handlers
-    inline void set_priority(const priority &p_priority) {
+    inline void set_priority(const t_priority &p_priority) {
       m_priority = p_priority;
     }
 
@@ -2450,10 +2125,10 @@ private:
 
   private:
     /// \brief Identifier of this group of handlers
-    id m_id;
+    t_id m_id;
 
     /// \brief Priority of this group of handlers
-    priority m_priority;
+    t_priority m_priority;
 
     /// \brief Queue where data will be inserted for the handlers to compete for
     /// handling
@@ -2506,7 +2181,7 @@ private:
 /// and what should be done if a handler times out
 ///
 /// \tparam is the type of message this messenger distributes
-template <typename t_msg> struct messenger_t {
+template <typename t_msg, typename t_id, typename t_priority> struct messenger_t {
 
   /// \brief Type of handler
   typedef std::function<void(const t_msg &)> handler;
@@ -2532,7 +2207,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  static inline void add_handlers(const id &p_id, const priority &p_priority,
+  static inline void add_handlers(const t_id &p_id, const t_priority &p_priority,
                                   t_time p_timeout, on_timeout p_on_timeout) {
     insert({p_id, p_priority, p_timeout, p_on_timeout});
   }
@@ -2552,7 +2227,7 @@ template <typename t_msg> struct messenger_t {
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  static inline void add_handlers(const id &p_id, const priority &p_priority,
+  static inline void add_handlers(const t_id &p_id, const t_priority &p_priority,
                                   t_time p_timeout) {
     insert({p_id, p_priority, p_timeout});
   }
@@ -2573,7 +2248,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  static inline void add_handlers(const id &p_id, t_time p_timeout,
+  static inline void add_handlers(const t_id &p_id, t_time p_timeout,
                                   on_timeout p_on_timeout) {
     insert({p_id, p_timeout, p_on_timeout});
   }
@@ -2592,7 +2267,7 @@ template <typename t_msg> struct messenger_t {
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  static inline void add_handlers(const id &p_id, t_time p_timeout) {
+  static inline void add_handlers(const t_id &p_id, t_time p_timeout) {
     insert({p_id, p_timeout});
   }
 
@@ -2612,10 +2287,10 @@ template <typename t_msg> struct messenger_t {
   ///
   /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_handlers(const priority &p_priority, t_time p_timeout,
+  static t_id add_handlers(const t_priority &p_priority, t_time p_timeout,
                          on_timeout p_on_timeout) {
     handlers _handlers{p_priority, p_timeout, p_on_timeout};
-    id _id{_handlers.get_id()};
+    t_id _id{_handlers.get_id()};
     insert(std::move(_handlers));
     return _id;
   }
@@ -2635,9 +2310,9 @@ template <typename t_msg> struct messenger_t {
   ///
   /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_handlers(const priority &p_priority, t_time p_timeout) {
+  static t_id add_handlers(const t_priority &p_priority, t_time p_timeout) {
     handlers _handlers{p_priority, p_timeout};
-    id _id{_handlers.get_id()};
+    t_id _id{_handlers.get_id()};
     insert(std::move(_handlers));
     return _id;
   }
@@ -2658,9 +2333,9 @@ template <typename t_msg> struct messenger_t {
   ///
   /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
-  static id add_handlers(t_time p_timeout, on_timeout p_on_timeout) {
+  static t_id add_handlers(t_time p_timeout, on_timeout p_on_timeout) {
     handlers _handlers{p_timeout, p_on_timeout};
-    id _id{_handlers.get_id()};
+    t_id _id{_handlers.get_id()};
     insert(std::move(_handlers));
     return _id;
   }
@@ -2680,9 +2355,9 @@ template <typename t_msg> struct messenger_t {
   /// \param p_timeout is the value of timeout for all the handler functions
   ///
   /// \return an automatically generated tenacitas::async::id
-  template <typename t_time> static id add_handlers(t_time p_timeout) {
+  template <typename t_time> static t_id add_handlers(t_time p_timeout) {
     handlers _handlers{p_timeout};
-    id _id{_handlers.get_id()};
+    t_id _id{_handlers.get_id()};
     insert(std::move(_handlers));
     return _id;
   }
@@ -2692,7 +2367,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ///
   /// \param p_priority is the priority to be set for the group of handlers
-  static void set_priority(const id &p_id, priority p_priority) {
+  static void set_priority(const t_id &p_id, t_priority p_priority) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       _ite->set_priority(p_priority);
@@ -2705,7 +2380,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ///
   /// \return the priority of the group of handlers, if \p p_id exists
-  static std::optional<priority> get_priority(const id &p_id) {
+  static std::optional<t_priority> get_priority(const t_id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       return {_ite->get_priority()};
@@ -2730,7 +2405,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ///
   /// \param p_handler is the handler function to be added
-  static void add_handler(const id &p_id, handler p_handler) {
+  static void add_handler(const t_id &p_id, handler p_handler) {
     auto _ite = find(p_id);
     auto _end = m_list.end();
     if (_ite != _end) {
@@ -2746,7 +2421,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_num_workers defines the number of handler functions to be added
   ///
   /// \param p_factoy is a function that creates handler function
-  static void add_handler(const id &p_id, uint16_t p_num_workers,
+  static void add_handler(const t_id &p_id, uint16_t p_num_workers,
                           std::function<handler()> p_factory) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
@@ -2759,10 +2434,10 @@ template <typename t_msg> struct messenger_t {
   /// \param p_visitor is a function that will be called for each roup of
   /// handlers
   static void
-  traverse(std::function<void(const id &, priority, timeout)> p_visitor) {
+  traverse(std::function<void(const t_id &, t_priority, std::chrono::milliseconds)> p_visitor) {
     for (const handlers &_handlers : m_list) {
       p_visitor(_handlers.get_id(), _handlers.get_priority(),
-                _handlers.template get_timeout<async::timeout>());
+                _handlers.template get_timeout<std::chrono::milliseconds>());
     }
   }
 
@@ -2771,7 +2446,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ////
   /// \return the size of the message queue
-  static size_t size(const id &p_id) {
+  static size_t size(const t_id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       return _ite->get_size();
@@ -2785,7 +2460,7 @@ template <typename t_msg> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ////
   /// \return the number of occupied positions
-  static size_t occupied(const id &p_id) {
+  static size_t occupied(const t_id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       return _ite->get_occupied();
@@ -2805,7 +2480,7 @@ template <typename t_msg> struct messenger_t {
 
 private:
   /// \brief Alias for the group of handlers for this message
-  typedef internal::handlers_t<t_msg> handlers;
+  typedef internal::handlers_t<t_msg, t_id, t_priority> handlers;
 
   /// \brief List of handlers
   typedef std::list<handlers> handlers_list;
@@ -2817,7 +2492,7 @@ private:
   /// \brief Finds a group of handlers based on a tenacitas::async::id
   ///
   /// \return an iterator to the group of handlers, of m_list.end() if not
-  static iterator find(const id &p_id) {
+  static iterator find(const t_id &p_id) {
     auto _cmp = [&p_id](const handlers &p_work_pool) -> bool {
       return p_id == p_work_pool.get_id();
     };
@@ -2853,15 +2528,138 @@ private:
 };
 
 /// \brief
-template <typename t_data>
-typename messenger_t<t_data>::handlers_list messenger_t<t_data>::m_list;
+template <typename t_data, typename t_id, typename t_priority>
+typename messenger_t<t_data, t_id,t_priority>::handlers_list messenger_t<t_data, t_id,t_priority>::m_list;
 
-template <typename t_data>
-logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
+template <typename t_data, typename t_id, typename t_priority>
+logger::cerr<> messenger_t<t_data, t_id,t_priority>::m_log{"messenger"};
 
-template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
+template <typename t_data, typename t_id, typename t_priority> std::mutex messenger_t<t_data, t_id,t_priority>::m_mutex;
 
 } // namespace internal
+
+/// \brief executes a callable object in a maximum amount of time
+///
+/// \tparam t_time type of time used to control timeout of the function being
+/// executed
+///
+/// \tparam t_function type of callable object
+///
+/// \tparam t_params possible types of the arguments of the function being
+/// executed
+///
+/// \param p_timeout maximum amount of time for the function to execute
+///
+/// \param p_function callable object
+///
+/// \param p_params... possible parameters required by \p p_function
+///
+/// \return if the callable object returns void, \p execute returns true if no
+/// timeout; false otherwise
+///         if the callable object does not return void, \p execute returns
+///         std::optional<type-returned> with value if not timeout, {}
+///         otherwise
+template <typename t_time, typename t_function, typename... t_params>
+inline typename internal::executer_helper_t<
+    std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
+execute(t_time p_timeout, t_function p_function, t_params... p_params) {
+return internal::execute(p_timeout, p_function, p_params...);
+}
+
+
+struct id {
+  id() : m_value(std::to_string(number::uuid())) {}
+
+  explicit id(const std::string &p_value) : m_value(p_value) {}
+
+  explicit id(std::string &&p_value) : m_value(std::move(p_value)) {}
+
+  explicit id(const char *p_value) : m_value(p_value) {}
+
+  id(const id &) = default;
+  id(id &&) = default;
+
+  ~id() = default;
+
+  friend std::ostream &operator<<(std::ostream &p_out, id p_id) {
+    p_out << p_id.m_value;
+    return p_out;
+  }
+
+  bool operator==(const id &p_id) const { return m_value == p_id.m_value; }
+
+  bool operator!=(const id &p_id) const { return m_value != p_id.m_value; }
+
+  id &operator=(const id &) = default;
+  id &operator=(id &&) = delete;
+
+private:
+  std::string m_value;
+};
+
+struct priority {
+
+  priority() = delete;
+
+  priority(const priority &) = default;
+  priority(priority &&) = default;
+
+  ~priority() = default;
+
+  friend std::ostream &operator<<(std::ostream &p_out, priority p_priority) {
+    p_out << static_cast<uint16_t>(p_priority.m_value);
+    return p_out;
+  }
+
+  bool operator<(priority p_priority) const {
+    return m_value < p_priority.m_value;
+  }
+
+  bool operator>(priority p_priority) const {
+    return m_value > p_priority.m_value;
+  }
+
+  bool operator==(priority p_priority) const {
+    return m_value == p_priority.m_value;
+  }
+
+  bool operator!=(priority p_priority) const {
+    return m_value != p_priority.m_value;
+  }
+
+  priority &operator=(const priority &) = default;
+  priority &operator=(priority &&) = default;
+
+  static const priority lowest;
+
+  static const priority low;
+
+  static const priority low_middle;
+
+  static const priority middle;
+
+  static const priority middle_high;
+
+  static const priority high;
+
+  static const priority highest;
+
+private:
+  explicit priority(uint8_t p_value) : m_value(p_value) {}
+
+private:
+  uint8_t m_value;
+};
+
+const priority priority::lowest{1};
+const priority priority::low{45};
+const priority priority::low_middle{90};
+const priority priority::middle{135};
+const priority priority::middle_high{180};
+const priority priority::high{225};
+const priority priority::highest{255};
+
+typedef internal::breaker breaker ;
 
 /// \brief Base class for sleeping loops, which are loops that sleep during
 /// a certain amount of time, then wake up and execute some work
@@ -3273,7 +3071,7 @@ template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg>::add_handlers(p_id, p_priority, p_timeout,
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority, p_timeout,
                                              p_on_timeout);
 }
 
@@ -3296,7 +3094,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout) {
-  internal::messenger_t<t_msg>::add_handlers(p_id, p_priority, p_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3318,7 +3116,7 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg>::add_handlers(p_id, p_timeout, p_on_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3337,7 +3135,7 @@ static inline void add_queue(const id &p_id, t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout) {
-  internal::messenger_t<t_msg>::add_handlers(p_id, p_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3361,7 +3159,7 @@ static inline void add_queue(const id &p_id, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg>::add_handlers(p_priority, p_timeout,
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority, p_timeout,
                                                     p_on_timeout);
 }
 
@@ -3389,7 +3187,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout,
 /// be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout) {
-  return internal::messenger_t<t_msg>::add_handlers(p_priority, p_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority, p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3416,7 +3214,7 @@ static id add_queue(const priority &p_priority, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg>::add_handlers(p_timeout, p_on_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3443,7 +3241,7 @@ static id add_queue(t_time p_timeout,
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout) {
-  return internal::messenger_t<t_msg>::add_handlers(p_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout);
 }
 
 /// \brief Defines the priority of a message queue
@@ -3458,7 +3256,7 @@ static id add_queue(t_time p_timeout) {
 /// the message will be placed in the queue.
 template <typename t_msg>
 static void set_priority(const id &p_id, priority p_priority) {
-  internal::messenger_t<t_msg>::set_priority(p_id, p_priority);
+  internal::messenger_t<t_msg, id, priority>::set_priority(p_id, p_priority);
 }
 
 /// \brief Retrieves the priority of a message queue
@@ -3472,7 +3270,7 @@ static void set_priority(const id &p_id, priority p_priority) {
 /// \return The priority of the queue
 template <typename t_msg>
 static std::optional<priority> get_priority(const id &p_id) {
-  return internal::messenger_t<t_msg>::get_priority(p_id);
+  return internal::messenger_t<t_msg, id, priority>::get_priority(p_id);
 }
 
 /// \brief Sends a message to all the queues associated to a message type
@@ -3481,7 +3279,7 @@ static std::optional<priority> get_priority(const id &p_id) {
 ///
 /// \param p_msg is the message to be copied to all the queues
 template <typename t_msg> static void send(const t_msg &p_msg) {
-  internal::messenger_t<t_msg>::send(p_msg);
+  internal::messenger_t<t_msg, id, priority>::send(p_msg);
 }
 
 /// \brief Adds a handler to a queue
@@ -3498,7 +3296,7 @@ template <typename t_msg> static void send(const t_msg &p_msg) {
 template <typename t_msg>
 static void add_handler(const id &p_id,
                         std::function<void(const t_msg &)> p_handler) {
-  internal::messenger_t<t_msg>::add_handler(p_id, p_handler);
+  internal::messenger_t<t_msg, id, priority>::add_handler(p_id, p_handler);
 }
 
 /// \brief Adds a handler to a queue
@@ -3540,7 +3338,7 @@ template <typename t_msg>
 static void add_handler(
     const id &p_id, uint16_t p_num_handlers,
     std::function<std::function<void(const t_msg &)>> p_handler_factory) {
-  internal::messenger_t<t_msg>::add_handler(p_id, p_num_handlers,
+  internal::messenger_t<t_msg, id, priority>::add_handler(p_id, p_num_handlers,
                                             p_handler_factory);
 }
 

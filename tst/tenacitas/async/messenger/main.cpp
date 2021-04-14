@@ -29,7 +29,7 @@ struct messenger_000 {
   typedef int16_t data;
   typedef logger::cerr<> log;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -127,7 +127,7 @@ struct messenger_001 {
   static std::string desc() { return "compiling"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t> messenger;
+    typedef async::internal::messenger_t<int16_t, async::id, async::priority> messenger;
 
     DEB(m_log, "starting");
 
@@ -180,7 +180,7 @@ struct messenger_002 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -272,7 +272,7 @@ struct messenger_004 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data> messenger;
+  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -364,7 +364,7 @@ struct messenger_003 {
   static std::string desc() { return "Testing order of worker pools"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t> messenger;
+    typedef async::internal::messenger_t<int16_t, async::id, async::priority> messenger;
 
     const async::id _p2{"hello"};
     messenger::add_handlers(_p2, async::priority::low, 4s);
@@ -376,7 +376,7 @@ struct messenger_003 {
     bool _result{true};
     auto _visitor = [this, &_first, &_result, _p1,
                      _p2](const async::id &p_id, async::priority p_priority,
-                          async::timeout p_timeout) {
+                          std::chrono::milliseconds p_timeout) {
       if (_first) {
         if (p_id != _p2) {
           _result = false;
