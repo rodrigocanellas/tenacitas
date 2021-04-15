@@ -409,7 +409,7 @@ struct application {
 
     DEB(m_log, "notified");
 
-    std::this_thread::sleep_for(m_wait);
+    // std::this_thread::sleep_for(m_wait);
 
     _thread.join();
   }

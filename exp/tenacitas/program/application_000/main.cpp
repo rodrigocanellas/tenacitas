@@ -15,11 +15,15 @@
 #include <thread>
 
 #include <tenacitas/async.h>
+#include <tenacitas/logger.h>
+#include <tenacitas/macros.h>
 #include <tenacitas/message.h>
 #include <tenacitas/program.h>
 
 using namespace tenacitas;
 using namespace std::chrono_literals;
+
+logger::cerr<> g_logger{"global"};
 
 // message to be sent
 struct temperature {
@@ -77,8 +81,10 @@ struct printer {
   void operator()(char p_id, uint16_t p_counter,
                   const temperature p_temperature) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    std::cerr << '[' << p_id << ',' << p_counter << "," << p_temperature << ']'
-              << std::endl;
+    INF(g_logger, '[', p_id, ',', p_counter, ',', p_temperature, ']');
+    //    std::cerr << '[' << p_id << ',' << p_counter << "," << p_temperature
+    //    << ']'
+    //              << std::endl;
   }
 
 private:
@@ -120,8 +126,8 @@ void app() {
   std::condition_variable _cond;
   std::mutex _mutex;
 
-  async::add_handler<message::exit_app>(
-      [&_cond](const message::exit_app &) -> void { _cond.notify_one(); });
+  async::add_handler<message::halt_app>(
+      [&_cond](const message::halt_app &) -> void { _cond.notify_one(); });
 
   std::thread _th([]() -> void {
     std::cout << "Press Q at any time to stop the application" << std::endl;
@@ -132,7 +138,7 @@ void app() {
         break;
       }
     }
-    async::send(message::exit_app());
+    async::send(message::halt_app());
   });
 
   // thread-safe printer
@@ -171,4 +177,7 @@ void app() {
   }
 }
 
-int main() { program::application _program(3s, app); }
+int main() {
+  logger::set_debug_level();
+  program::application _program(10ms, app);
+}
