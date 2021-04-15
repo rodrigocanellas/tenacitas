@@ -36,10 +36,8 @@ namespace async {
 
 namespace internal {
 
-
 typedef std::function<bool()> breaker;
 }
-
 
 namespace internal {
 
@@ -48,7 +46,6 @@ typedef std::chrono::milliseconds timeout;
 
 /// \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
-
 
 template <typename t_type> struct executer_helper_result_t {
   /// \brief returned by the executed function
@@ -192,7 +189,7 @@ template <typename t_function, typename t_on_timeout> struct loop_base_t {
   /// The identifier is (was) used for debuging purposes
   ///
   /// \return identifier of the current object
-  inline uint64_t get_id() const { return m_id; }
+  inline number::uuid get_id() const { return m_id; }
 
   /// \brief Starts the loop asynchronously, if the loop was already started
   void start() {
@@ -325,7 +322,7 @@ protected:
   std::mutex m_mutex;
 
   /// \brief Identifier of this object, used for debugging purposes
-  uint64_t m_id{number::uuid()};
+  number::uuid m_id;
 };
 
 /// \brief Asynchronous loop with function that takes parameters
@@ -415,7 +412,7 @@ template <typename... t_params> struct loop_t {
   /// The identifier is (was) used for debuging purposes
   ///
   /// \return identifier of the current object
-  inline uint64_t get_id() const { return m_impl->get_id(); }
+  inline number::uuid get_id() const { return m_impl->get_id(); }
 
   /// \brief Stops the loop
   inline void stop() { m_impl->stop(); }
@@ -650,7 +647,7 @@ template <> struct loop_t<void> {
   /// The identifier is (was) used for debuging purposes
   ///
   /// \return identifier of the current object
-  inline uint64_t get_id() const { return m_impl->get_id(); }
+  inline number::uuid get_id() const { return m_impl->get_id(); }
 
   /// \brief Starts the loop
   inline void start() { m_impl->start(); }
@@ -1471,7 +1468,7 @@ private:
   /// \brief Controls insertion
   std::mutex m_mutex;
 
-  logger::cerr<> m_log{"circular_unlimited_size_queue"};
+  logger::cerr<> m_log{"queue"};
 };
 
 #if 0
@@ -1501,7 +1498,8 @@ namespace internal {
 /// \brief A group of functions that compete to handle a data added to a queue
 ///
 /// \param t_data type of data to be processed
-template <typename t_data, typename t_id, typename t_priority> class handlers_t {
+template <typename t_data, typename t_id, typename t_priority>
+class handlers_t {
 public:
   /// \brief Type of function that will handle the data
   typedef std::function<void(const t_data &)> handler;
@@ -1714,7 +1712,9 @@ public:
   inline const t_id &get_id() const { return m_impl->get_id(); }
 
   /// \return The tenacitas::async::priority of this group of handlers
-  inline const t_priority &get_priority() const { return m_impl->get_priority(); }
+  inline const t_priority &get_priority() const {
+    return m_impl->get_priority();
+  }
 
   /// \brief Sets the tenacitas::async::priority of this group of handlers
   inline void set_priority(const t_priority &p_priority) {
@@ -1773,8 +1773,8 @@ private:
     /// \param p_on_timeout is a function that will be called if a handler times
     /// out
     template <typename t_time>
-    implementation(const t_id &p_id, const t_priority &p_priority, t_time p_timeout,
-                   on_timeout p_on_timeout)
+    implementation(const t_id &p_id, const t_priority &p_priority,
+                   t_time p_timeout, on_timeout p_on_timeout)
         : m_id(p_id), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(p_on_timeout) {}
@@ -1793,7 +1793,8 @@ private:
     ///
     /// \param p_timeout is the value of timeout for all the handler functions
     template <typename t_time>
-    implementation(const t_id &p_id, const t_priority &p_priority, t_time p_timeout)
+    implementation(const t_id &p_id, const t_priority &p_priority,
+                   t_time p_timeout)
         : m_id(p_id), m_priority(p_priority), m_queue(10),
           m_timeout(calendar::convert<timeout>(p_timeout)),
           m_on_timeout(
@@ -2181,7 +2182,8 @@ private:
 /// and what should be done if a handler times out
 ///
 /// \tparam is the type of message this messenger distributes
-template <typename t_msg, typename t_id, typename t_priority> struct messenger_t {
+template <typename t_msg, typename t_id, typename t_priority>
+struct messenger_t {
 
   /// \brief Type of handler
   typedef std::function<void(const t_msg &)> handler;
@@ -2207,7 +2209,8 @@ template <typename t_msg, typename t_id, typename t_priority> struct messenger_t
   /// \param p_on_timeout is a function that will be called if a handler times
   /// out
   template <typename t_time>
-  static inline void add_handlers(const t_id &p_id, const t_priority &p_priority,
+  static inline void add_handlers(const t_id &p_id,
+                                  const t_priority &p_priority,
                                   t_time p_timeout, on_timeout p_on_timeout) {
     insert({p_id, p_priority, p_timeout, p_on_timeout});
   }
@@ -2227,7 +2230,8 @@ template <typename t_msg, typename t_id, typename t_priority> struct messenger_t
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  static inline void add_handlers(const t_id &p_id, const t_priority &p_priority,
+  static inline void add_handlers(const t_id &p_id,
+                                  const t_priority &p_priority,
                                   t_time p_timeout) {
     insert({p_id, p_priority, p_timeout});
   }
@@ -2288,7 +2292,7 @@ template <typename t_msg, typename t_id, typename t_priority> struct messenger_t
   /// \return an automatically generated tenacitas::async::id
   template <typename t_time>
   static t_id add_handlers(const t_priority &p_priority, t_time p_timeout,
-                         on_timeout p_on_timeout) {
+                           on_timeout p_on_timeout) {
     handlers _handlers{p_priority, p_timeout, p_on_timeout};
     t_id _id{_handlers.get_id()};
     insert(std::move(_handlers));
@@ -2433,8 +2437,9 @@ template <typename t_msg, typename t_id, typename t_priority> struct messenger_t
   ///
   /// \param p_visitor is a function that will be called for each roup of
   /// handlers
-  static void
-  traverse(std::function<void(const t_id &, t_priority, std::chrono::milliseconds)> p_visitor) {
+  static void traverse(
+      std::function<void(const t_id &, t_priority, std::chrono::milliseconds)>
+          p_visitor) {
     for (const handlers &_handlers : m_list) {
       p_visitor(_handlers.get_id(), _handlers.get_priority(),
                 _handlers.template get_timeout<std::chrono::milliseconds>());
@@ -2529,12 +2534,14 @@ private:
 
 /// \brief
 template <typename t_data, typename t_id, typename t_priority>
-typename messenger_t<t_data, t_id,t_priority>::handlers_list messenger_t<t_data, t_id,t_priority>::m_list;
+typename messenger_t<t_data, t_id, t_priority>::handlers_list
+    messenger_t<t_data, t_id, t_priority>::m_list;
 
 template <typename t_data, typename t_id, typename t_priority>
-logger::cerr<> messenger_t<t_data, t_id,t_priority>::m_log{"messenger"};
+logger::cerr<> messenger_t<t_data, t_id, t_priority>::m_log{"messenger"};
 
-template <typename t_data, typename t_id, typename t_priority> std::mutex messenger_t<t_data, t_id,t_priority>::m_mutex;
+template <typename t_data, typename t_id, typename t_priority>
+std::mutex messenger_t<t_data, t_id, t_priority>::m_mutex;
 
 } // namespace internal
 
@@ -2563,12 +2570,11 @@ template <typename t_time, typename t_function, typename... t_params>
 inline typename internal::executer_helper_t<
     std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
 execute(t_time p_timeout, t_function p_function, t_params... p_params) {
-return internal::execute(p_timeout, p_function, p_params...);
+  return internal::execute(p_timeout, p_function, p_params...);
 }
 
-
 struct id {
-  id() : m_value(std::to_string(number::uuid())) {}
+  id() : m_value(number::uuid()) {}
 
   explicit id(const std::string &p_value) : m_value(p_value) {}
 
@@ -2659,7 +2665,7 @@ const priority priority::middle_high{180};
 const priority priority::high{225};
 const priority priority::highest{255};
 
-typedef internal::breaker breaker ;
+typedef internal::breaker breaker;
 
 /// \brief Base class for sleeping loops, which are loops that sleep during
 /// a certain amount of time, then wake up and execute some work
@@ -3071,8 +3077,8 @@ template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority, p_timeout,
-                                             p_on_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(
+      p_id, p_priority, p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3094,7 +3100,8 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, const priority &p_priority,
                              t_time p_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority, p_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority,
+                                                           p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3116,7 +3123,8 @@ static inline void add_queue(const id &p_id, const priority &p_priority,
 template <typename t_msg, typename t_time>
 static inline void add_queue(const id &p_id, t_time p_timeout,
                              std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout, p_on_timeout);
+  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout,
+                                                           p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3159,8 +3167,8 @@ static inline void add_queue(const id &p_id, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority, p_timeout,
-                                                    p_on_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(
+      p_priority, p_timeout, p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3187,7 +3195,8 @@ static id add_queue(const priority &p_priority, t_time p_timeout,
 /// be added again to the queue
 template <typename t_msg, typename t_time>
 static id add_queue(const priority &p_priority, t_time p_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority, p_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority,
+                                                                  p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3214,7 +3223,8 @@ static id add_queue(const priority &p_priority, t_time p_timeout) {
 template <typename t_msg, typename t_time>
 static id add_queue(t_time p_timeout,
                     std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout, p_on_timeout);
+  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout,
+                                                                  p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -3324,6 +3334,34 @@ static id add_handler(std::function<void(const t_msg &)> p_handler,
   return _id;
 }
 
+/// \brief Adds a handler to a queue
+///
+/// \tparam t_msg is the type of message to be added to the queue
+///
+/// \tparam t_time is the type of time used to define the timeout
+///
+/// \param p_id is the identifier of the queue to which this handler will be
+/// added to
+///
+/// \param p_handler is the function that will handle a message added to the
+/// queue
+///
+/// \param p_on_timeout is the function that will be called to handle the
+/// message that the handler function could not handle in time.
+///
+/// \return An auto generated \p id of the queue
+///
+/// \details In this configuration, this queue has the lowest priority, i.e.,
+/// this queue will be the last to receive a copy of the message; and if any
+/// handler times out, the message will be added again to the queue
+template <typename t_msg, typename t_time = std::chrono::minutes>
+static void add_handler(const id &_id,
+                        std::function<void(const t_msg &)> p_handler,
+                        t_time p_timeout) {
+  add_queue<t_msg>(_id, p_timeout);
+  add_handler(_id, p_handler);
+}
+
 /// \brief Adds a bunch of handlers to a queue
 ///
 /// \tparam t_msg is the type of message to be added to the queue
@@ -3339,7 +3377,7 @@ static void add_handler(
     const id &p_id, uint16_t p_num_handlers,
     std::function<std::function<void(const t_msg &)>> p_handler_factory) {
   internal::messenger_t<t_msg, id, priority>::add_handler(p_id, p_num_handlers,
-                                            p_handler_factory);
+                                                          p_handler_factory);
 }
 
 } // namespace async

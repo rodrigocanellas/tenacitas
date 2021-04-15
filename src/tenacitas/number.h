@@ -20,7 +20,43 @@ namespace tenacitas {
 namespace number {
 
 /// \brief Generates a unique (sort of) identifier
-uint64_t uuid() { return calendar::now<>::microsecs(); }
+struct uuid {
+  inline uuid() : m_value(calendar::now<>::microsecs()) {}
+  uuid(const uuid &) = default;
+  uuid(uuid &&) = default;
+  uuid &operator=(const uuid &) = default;
+  uuid &operator=(uuid &&) = default;
+  inline bool operator==(const uuid &p_uuid) const {
+    return m_value == p_uuid.m_value;
+  }
+  inline bool operator!=(const uuid &p_uuid) const {
+    return m_value != p_uuid.m_value;
+  }
+  inline bool operator>(const uuid &p_uuid) const {
+    return m_value > p_uuid.m_value;
+  }
+  inline bool operator<(const uuid &p_uuid) const {
+    return m_value < p_uuid.m_value;
+  }
+  inline bool operator>=(const uuid &p_uuid) const {
+    return m_value >= p_uuid.m_value;
+  }
+  inline bool operator<=(const uuid &p_uuid) const {
+    return m_value < p_uuid.m_value;
+  }
+
+  friend std::ostream &operator<<(std::ostream &p_out, const uuid &p_uuid) {
+
+    std::string _str{std::to_string(p_uuid.m_value)};
+    p_out << _str.substr(_str.size() - 4);
+    return p_out;
+  }
+
+  inline operator std::string() const { return std::to_string(m_value); }
+
+private:
+  uint64_t m_value;
+};
 
 /// \brief Maximum number of characters needed to represent a type of number
 ///

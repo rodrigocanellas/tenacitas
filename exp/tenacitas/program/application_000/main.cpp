@@ -47,6 +47,8 @@ struct temperature_sensor {
   // starts to generate temperatures
   void start() { m_temperature_generator.start(); }
 
+  void stop() { m_temperature_generator.stop(); }
+
 private:
   // type for the asynchronous loop that will call the 'generator' method
   typedef async::sleeping_loop_t<void> temperature_generator;
@@ -144,37 +146,45 @@ void app() {
   // thread-safe printer
   printer _printer;
 
-  // handler 1, that will sleep 250ms while handling
-  temperature_handler _handler_1{'A', _printer, 250ms};
+  //  // handler 1, that will sleep 250ms while handling
+  //  temperature_handler _handler_1{'A', _printer, 250ms};
 
-  // handler 2, that will sleep 1250ms while handling
-  temperature_handler _handler_2{'B', _printer, 1250ms};
+  //  // handler 2, that will sleep 1250ms while handling
+  //  temperature_handler _handler_2{'B', _printer, 1250ms};
 
   // handler 3, that will sleep 1250ms while handling
   temperature_handler _handler_3{'C', _printer, 750ms};
 
-  // adds a handler to a handlers group, and save the id of this handlers group
-  async::id _handlers_id = async::add_handler<temperature>(_handler_1, 2s);
+  //  // adds a handler to a handlers group, and save the id of this handlers
+  //  group async::id _handlers_id = async::add_handler<temperature>(_handler_1,
+  //  2s);
 
-  // adds another handler to _handlers_id, so _handler_1 and _handler_2 will
-  // compete with each other to handle temperature messages, in the handler
-  // group _handlers_id
-  async::add_handler<temperature>(_handlers_id, _handler_2);
+  //  // adds another handler to _handlers_id, so _handler_1 and _handler_2 will
+  //  // compete with each other to handle temperature messages, in the handler
+  //  // group _handlers_id
+  //  async::add_handler<temperature>(_handlers_id, _handler_2);
 
   // add handler 3 to another group of handlers
-  async::add_handler<temperature>(_handler_3, 2s);
-
-  // declaring the temperature sensor
-  temperature_sensor _sensor;
-
-  // starting the sensor
-  _sensor.start();
+  async::id _id("handler 3");
+  async::add_handler<temperature>(_id, _handler_3, 2s);
 
   {
-    std::unique_lock<std::mutex> _lock(_mutex);
-    _cond.wait(_lock);
-    _th.join();
+    // declaring the temperature sensor
+    temperature_sensor _sensor;
+
+    // starting the sensor
+    _sensor.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(_mutex);
+      _cond.wait(_lock);
+      DEB(g_logger, "joining app() thread");
+      _th.join();
+      DEB(g_logger, "stopping sensor");
+      _sensor.stop();
+    }
   }
+  DEB(g_logger, "leaving app()");
 }
 
 int main() {
