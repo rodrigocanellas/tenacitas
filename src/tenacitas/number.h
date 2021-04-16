@@ -13,69 +13,13 @@
 #include <string>
 #include <thread>
 
+#include <tenacitas/calendar.h>
+
 /// \brief master namespace
 namespace tenacitas {
 
 /// \brief manipulates numbers, like formating
 namespace number {
-
-/// \brief Generates a unique (sort of) identifier
-struct uuid {
-  inline uuid() : m_v1(std::this_thread::get_id()), m_v2(time(nullptr)) {}
-
-  uuid(const uuid &) = default;
-  uuid(uuid &&) = default;
-  uuid &operator=(const uuid &) = default;
-  uuid &operator=(uuid &&) = default;
-  inline bool operator==(const uuid &p_uuid) const {
-    return ((m_v1 == p_uuid.m_v1) && (m_v2 == p_uuid.m_v2));
-  }
-  inline bool operator!=(const uuid &p_uuid) const {
-    return ((m_v1 != p_uuid.m_v1) || (m_v2 != p_uuid.m_v2));
-  }
-  inline bool operator>(const uuid &p_uuid) const {
-    if (m_v1 > p_uuid.m_v1) {
-      return true;
-    }
-    if (m_v1 < p_uuid.m_v1) {
-      return false;
-    }
-    return m_v2 > p_uuid.m_v2;
-  }
-  inline bool operator<(const uuid &p_uuid) const {
-    if (m_v1 < p_uuid.m_v1) {
-      return true;
-    }
-    if (m_v1 > p_uuid.m_v1) {
-      return false;
-    }
-    return m_v2 < p_uuid.m_v2;
-  }
-  inline bool operator>=(const uuid &p_uuid) const {
-    return (*this > p_uuid) || (*this == p_uuid);
-  }
-  inline bool operator<=(const uuid &p_uuid) const {
-    return (*this < p_uuid) || (*this == p_uuid);
-  }
-
-  friend std::ostream &operator<<(std::ostream &p_out, const uuid &p_uuid) {
-    p_out << p_uuid.to_str();
-    return p_out;
-  }
-
-  inline operator std::string() const { return to_str(); }
-
-private:
-  std::string to_str() const {
-    std::stringstream _stream;
-    _stream << '[' << m_v1 << ',' << m_v2 << ']';
-    return _stream.str();
-  }
-
-private:
-  std::thread::id m_v1;
-  uint32_t m_v2;
-};
 
 /// \brief Maximum number of characters needed to represent a type of number
 ///
@@ -167,6 +111,66 @@ inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
           << std::setfill(p_fill) << std::setw(p_size) << p_num;
   return _stream.str();
 }
+
+/// \brief Generates a unique (sort of) identifier
+struct uuid {
+
+  /// \brief
+  uuid() : m_value(calendar::now<>::microsecs()) {}
+
+  uuid(const uuid &) = default;
+  uuid(uuid &&) = default;
+  uuid &operator=(const uuid &) = default;
+  uuid &operator=(uuid &&) = default;
+
+  /// \brief
+  inline bool operator==(const uuid &p_uuid) const {
+    return m_value == p_uuid.m_value;
+  }
+
+  /// \brief
+  inline bool operator!=(const uuid &p_uuid) const {
+    return m_value != p_uuid.m_value;
+  }
+
+  /// \brief
+  inline bool operator>(const uuid &p_uuid) const {
+    return m_value > p_uuid.m_value;
+  }
+
+  /// \brief
+  inline bool operator<(const uuid &p_uuid) const {
+    return m_value < p_uuid.m_value;
+  }
+
+  /// \brief
+  inline bool operator>=(const uuid &p_uuid) const {
+    return m_value >= p_uuid.m_value;
+  }
+
+  /// \brief
+  inline bool operator<=(const uuid &p_uuid) const {
+    return m_value <= p_uuid.m_value;
+  }
+
+  /// \brief
+  friend std::ostream &operator<<(std::ostream &p_out, const uuid &p_uuid) {
+    p_out << p_uuid.to_str();
+    return p_out;
+  }
+
+  /// \brief
+  inline operator std::string() const { return to_str(); }
+
+private:
+  inline std::string to_str() const {
+    std::string _str{std::to_string(m_value)};
+    return _str.substr(_str.size() - 4);
+  }
+
+private:
+  uint64_t m_value;
+};
 
 } // namespace number
 
