@@ -9,6 +9,7 @@
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
 #include <tenacitas/message.h>
+#include <tenacitas/number.h>
 #include <tenacitas/program.h>
 #include <tenacitas/tester.h>
 
@@ -36,12 +37,15 @@ struct exit_000 {
       }
     };
 
-    async::sleeping_loop_t<void> _loop(200ms, 1s, _function);
+    async::sleeping_loop_t<void> _loop(m_id, 200ms, 1s, _function);
 
     program::application _app(2s, [&_loop]() { _loop.start(); });
 
     return true;
   }
+
+private:
+  number::id m_id;
 };
 
 struct exit_001 {
@@ -72,12 +76,15 @@ struct exit_001 {
       }
     };
 
-    async::sleeping_loop_t<void> _loop(200ms, 1s, _function);
+    async::sleeping_loop_t<void> _loop(m_id, 200ms, 1s, _function);
 
     program::application _app(2s, [&_loop]() { _loop.start(); });
 
     return true;
   }
+
+private:
+  number::id m_id;
 };
 
 int main(int argc, char **argv) {

@@ -15,6 +15,7 @@
 
 #include <tenacitas/async.h>
 #include <tenacitas/logger.h>
+#include <tenacitas/number.h>
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
@@ -31,13 +32,14 @@ struct sleeping_loop_000 {
 
     auto _on_timeout = []() -> void {};
 
-    loop _loop(100ms, 1s, _operation, _on_timeout);
+    loop _loop(m_id, 100ms, 1s, _operation, _on_timeout);
 
     return true;
   }
 
 private:
   logger::cerr<> m_log{"sleeping_loop_000"};
+  number::id m_id;
 };
 
 struct sleeping_loop_001 {
@@ -62,7 +64,7 @@ struct sleeping_loop_001 {
 
     operation1 _op(&m_cond);
     loop _loop(
-        std::chrono::milliseconds(m_timeout),
+        m_id, std::chrono::milliseconds(m_timeout),
         std::chrono::seconds(m_interval_secs), [&_op]() { return _op(); },
         _on_timeout);
 
@@ -117,6 +119,7 @@ private:
   static constexpr value m_timeout{400};
   static constexpr std::chrono::milliseconds m_sleep{200};
   logger::cerr<> m_log{"sleeping_loop_001"};
+  number::id m_id;
 };
 
 struct sleeping_loop_002 {
@@ -156,7 +159,7 @@ struct sleeping_loop_002 {
       }
     };
 
-    loop _loop(500ms, 2s, _worker, _on_timeout, _provider);
+    loop _loop(m_id, 500ms, 2s, _worker, _on_timeout, _provider);
 
     _loop.start();
 
@@ -184,6 +187,7 @@ private:
   static constexpr int16_t m_max{2};
   static constexpr std::chrono::milliseconds m_timeout{500ms};
   logger::cerr<> m_log{"sleeping_loop_002"};
+  number::id m_id;
 };
 
 struct sleeping_loop_003 {
@@ -222,7 +226,7 @@ struct sleeping_loop_003 {
       }
     };
 
-    loop _loop(500ms, 2s, _worker, _on_timeout, _provider);
+    loop _loop(m_id, 500ms, 2s, _worker, _on_timeout, _provider);
 
     _loop.start();
 
@@ -250,6 +254,7 @@ private:
   static constexpr int16_t m_max{38};
   static constexpr std::chrono::milliseconds m_timeout{500ms};
   logger::cerr<> m_log{"sleeping_loop_003"};
+  number::id m_id;
 };
 
 int main(int argc, char **argv) {

@@ -18,6 +18,7 @@
 #include <tenacitas/async.h>
 #include <tenacitas/calendar.h>
 #include <tenacitas/logger.h>
+#include <tenacitas/number.h>
 #include <tenacitas/tester.h>
 #include <tst/tenacitas/async/msg.h>
 
@@ -29,7 +30,7 @@ struct messenger_000 {
   typedef int16_t data;
   typedef logger::cerr<> log;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
+  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -47,7 +48,7 @@ struct messenger_000 {
     data _data_consumed{0};
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-    async::id _id =
+    number::id _id =
         messenger::add_handlers(async::priority::lowest, _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
@@ -78,7 +79,8 @@ struct messenger_000 {
     };
 
     sleeping_loop _sleeping_loop(
-        300ms, decltype(_subscriber_timeout)(_subscriber_timeout.count() / 4),
+        m_id, 300ms,
+        decltype(_subscriber_timeout)(_subscriber_timeout.count() / 4),
         _slepper);
 
     _sleeping_loop.start();
@@ -121,13 +123,14 @@ private:
   std::condition_variable m_cond_producer;
   std::mutex m_mutex_consumer;
   std::condition_variable m_cond_consumer;
+  number::id m_id;
 };
 
 struct messenger_001 {
   static std::string desc() { return "compiling"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t, async::id, async::priority> messenger;
+    typedef async::internal::messenger_t<int16_t, async::priority> messenger;
 
     DEB(m_log, "starting");
 
@@ -137,7 +140,7 @@ struct messenger_001 {
     };
 
     DEB(m_log, "adding worker pool");
-    async::id _id = messenger::add_handlers(async::priority::lowest, 1s);
+    number::id _id = messenger::add_handlers(async::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
@@ -180,7 +183,7 @@ struct messenger_002 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
+  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -198,7 +201,7 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    async::id _id = messenger::add_handlers(async::priority::lowest, 3s);
+    number::id _id = messenger::add_handlers(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -224,7 +227,7 @@ struct messenger_002 {
       }
     };
 
-    sleeping_loop _sleeping_loop(100ms, 500ms, _sleeper);
+    sleeping_loop _sleeping_loop(m_id, 100ms, 500ms, _sleeper);
 
     _sleeping_loop.start();
 
@@ -266,13 +269,14 @@ private:
   std::condition_variable m_cond_producer;
   std::mutex m_mutex_consumer;
   std::condition_variable m_cond_consumer;
+  number::id m_id;
 };
 
 struct messenger_004 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::id, async::priority> messenger;
+  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -290,7 +294,7 @@ struct messenger_004 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    async::id _id = async::add_queue<data>(async::priority::lowest, 3s);
+    number::id _id = async::add_handlers<data>(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -316,7 +320,7 @@ struct messenger_004 {
       }
     };
 
-    sleeping_loop _sleeping_loop(100ms, 500ms, _sleeper);
+    sleeping_loop _sleeping_loop(m_id, 100ms, 500ms, _sleeper);
 
     _sleeping_loop.start();
 
@@ -358,24 +362,24 @@ private:
   std::condition_variable m_cond_producer;
   std::mutex m_mutex_consumer;
   std::condition_variable m_cond_consumer;
+  number::id m_id;
 };
 
 struct messenger_003 {
   static std::string desc() { return "Testing order of worker pools"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t, async::id, async::priority> messenger;
+    typedef async::internal::messenger_t<int16_t, async::priority> messenger;
 
-    const async::id _p2{"hello"};
-    messenger::add_handlers(_p2, async::priority::low, 4s);
+    const number::id _p2 = messenger::add_handlers(async::priority::low, 4s);
 
-    const async::id _p1{"good morning"};
-    messenger::add_handlers(_p1, async::priority::low_middle, 1s);
+    const number::id _p1 =
+        messenger::add_handlers(async::priority::low_middle, 1s);
 
     bool _first{true};
     bool _result{true};
     auto _visitor = [this, &_first, &_result, _p1,
-                     _p2](const async::id &p_id, async::priority p_priority,
+                     _p2](const number::id &p_id, async::priority p_priority,
                           std::chrono::milliseconds p_timeout) {
       if (_first) {
         if (p_id != _p2) {
@@ -432,16 +436,16 @@ struct messenger_006 {
     test_base _test("messenger_006");
 
     // publishers
-    _test.add_publisher<'B'>(500ms, publish_id{2}, value{15});
-    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
-    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
+    _test.add_publisher<'B'>(m_id, 500ms, publish_id{2}, value{15});
+    _test.add_publisher<'C'>(m_id, 2s, publish_id{1}, value{12});
+    _test.add_publisher<'E'>(m_id, 100ms, publish_id{732}, value{14});
 
     // pools
-    _test.add_pool<'B'>(pool_num{1}, priority{priority::low}, 1s);
-    _test.add_pool<'C'>(pool_num{1}, priority{priority::low_middle}, 1s);
-    _test.add_pool<'C'>(pool_num{2}, priority{priority::low}, 1s);
-    _test.add_pool<'E'>(pool_num{1}, priority{priority::low_middle}, 1s);
-    _test.add_pool<'E'>(pool_num{2}, priority{priority::low}, 1s);
+    _test.add_pool<'B'>(priority{priority::low}, 1s);
+    _test.add_pool<'C'>(priority{priority::low_middle}, 1s);
+    _test.add_pool<'C'>(priority{priority::low}, 1s);
+    _test.add_pool<'E'>(priority{priority::low_middle}, 1s);
+    _test.add_pool<'E'>(priority{priority::low}, 1s);
 
     // subscribers
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
@@ -468,6 +472,7 @@ struct messenger_006 {
 
 private:
   logger::cerr<> m_log{"messenger_006"};
+  number::id m_id;
 };
 
 struct messenger_007 {
@@ -507,16 +512,16 @@ struct messenger_007 {
     test_base _test("messenger_006");
 
     // publishers
-    _test.add_publisher<'B'>(500ms, publish_id{2}, value{15});
-    _test.add_publisher<'C'>(2s, publish_id{1}, value{12});
-    _test.add_publisher<'E'>(100ms, publish_id{732}, value{14});
+    _test.add_publisher<'B'>(m_id, 500ms, publish_id{2}, value{15});
+    _test.add_publisher<'C'>(m_id, 2s, publish_id{1}, value{12});
+    _test.add_publisher<'E'>(m_id, 100ms, publish_id{732}, value{14});
 
     // pools
-    _test.add_pool<'B'>(pool_num{1}, priority{priority::low}, 1s);
-    _test.add_pool<'C'>(pool_num{1}, priority{priority::low_middle}, 1s);
-    _test.add_pool<'C'>(pool_num{2}, priority{priority::low}, 1s);
-    _test.add_pool<'E'>(pool_num{1}, priority{priority::low_middle}, 1s);
-    _test.add_pool<'E'>(pool_num{2}, priority{priority::low}, 1s);
+    _test.add_pool<'B'>(priority{priority::low}, 1s);
+    _test.add_pool<'C'>(priority{priority::low_middle}, 1s);
+    _test.add_pool<'C'>(priority{priority::low}, 1s);
+    _test.add_pool<'E'>(priority{priority::low_middle}, 1s);
+    _test.add_pool<'E'>(priority{priority::low}, 1s);
 
     // subscribers
     _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
@@ -543,6 +548,7 @@ struct messenger_007 {
 
 private:
   logger::cerr<> m_log{"messenger_007"};
+  number::id m_id;
 };
 
 int main(int argc, char **argv) {

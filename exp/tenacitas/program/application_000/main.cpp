@@ -18,6 +18,7 @@
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
 #include <tenacitas/message.h>
+#include <tenacitas/number.h>
 #include <tenacitas/program.h>
 
 using namespace tenacitas;
@@ -41,7 +42,7 @@ struct temperature {
 // simulates a temperature sensor generating values
 struct temperature_sensor {
   temperature_sensor()
-      : m_temperature_generator(m_timeout, m_interval,
+      : m_temperature_generator(m_id, m_timeout, m_interval,
                                 [this]() { generator(); }) {}
 
   // starts to generate temperatures
@@ -73,6 +74,8 @@ private:
 
   // asynchronous loop that will generate temperature at each m_interval
   temperature_generator m_temperature_generator;
+
+  number::id m_id;
 };
 
 // thread-safe std::cout printer
@@ -128,8 +131,8 @@ void app() {
   std::condition_variable _cond;
   std::mutex _mutex;
 
-  async::add_handler<message::halt_app>(
-      [&_cond](const message::halt_app &) -> void { _cond.notify_one(); });
+  async::add_handler<message::exit_app>(
+      [&_cond](const message::exit_app &) -> void { _cond.notify_one(); });
 
   std::thread _th([]() -> void {
     std::cout << "Press Q at any time to stop the application" << std::endl;
@@ -140,7 +143,7 @@ void app() {
         break;
       }
     }
-    async::send(message::halt_app());
+    async::send(message::exit_app());
   });
 
   // thread-safe printer
@@ -165,8 +168,7 @@ void app() {
   //  async::add_handler<temperature>(_handlers_id, _handler_2);
 
   // add handler 3 to another group of handlers
-  async::id _id("handler 3");
-  async::add_handler<temperature>(_id, _handler_3, 2s);
+  async::add_handler<temperature>(_handler_3, 2s);
 
   {
     // declaring the temperature sensor

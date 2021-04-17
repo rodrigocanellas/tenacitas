@@ -10,6 +10,7 @@
 
 #include <tenacitas/async.h>
 #include <tenacitas/logger.h>
+#include <tenacitas/number.h>
 #include <tenacitas/tester.h>
 #include <tst/tenacitas/async/msg.h>
 
@@ -19,7 +20,7 @@ using namespace std::chrono_literals;
 
 struct handlers_000 {
   typedef int16_t data;
-  typedef async::internal::handlers_t<data, async::id, async::priority> handlers;
+  typedef async::internal::handlers_t<data, async::priority> handlers;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -32,7 +33,7 @@ struct handlers_000 {
       WAR(m_log, "timeout handlind ", p_data);
     };
 
-    handlers _handlers(500ms, _on_timeout);
+    handlers _handlers(m_id, 500ms, _on_timeout);
 
     _handlers.add_handler(consumer());
 
@@ -57,13 +58,14 @@ private:
     logger::cerr<> m_log{"consumer"};
   };
   logger::cerr<> m_log{"handlers_000"};
+  number::id m_id;
 };
 
 struct handlers_001 {
   typedef msg<'Z'> msg;
 
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::handlers_t<msg, async::id, async::priority> handlers;
+  typedef async::internal::handlers_t<msg, async::priority> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -82,7 +84,7 @@ struct handlers_001 {
     msg _msg(0);
     {
 
-      handlers _handlers(2s);
+      handlers _handlers(m_id, 2s);
 
       DEB(m_log, "capacity = ", _handlers.capacity(),
           ", occupied = ", _handlers.occupied());
@@ -90,7 +92,7 @@ struct handlers_001 {
       producer _producer(&_handlers, &_msg);
 
       DEB(m_log, "creating the sleeping_loop");
-      sleeping_loop _loop(500ms, 1s, _producer, []() -> void {});
+      sleeping_loop _loop(m_id, 500ms, 1s, _producer, []() -> void {});
 
       DEB(m_log, "adding consumer to the worker");
       _handlers.add_handler(
@@ -160,13 +162,14 @@ private:
     logger::cerr<> m_log{"consumer"};
   };
   logger::cerr<> m_log{"handlers_001"};
+  number::id m_id;
 };
 
 struct handlers_003 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::id, async::priority> handlers;
+  typedef async::internal::handlers_t<msg, async::priority> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -181,7 +184,7 @@ struct handlers_003 {
     value _last_added{0};
 
     {
-      handlers _handlers{1s, _on_timeout};
+      handlers _handlers{m_id, 1s, _on_timeout};
 
       _handlers.add_handler(
           [this](const msg &p_msg) -> void { m_consumer(p_msg); });
@@ -220,13 +223,14 @@ private:
 private:
   consumer m_consumer;
   logger::cerr<> m_log{"handlers_003"};
+  number::id m_id;
 };
 
 struct handlers_004 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::id, async::priority> handlers;
+  typedef async::internal::handlers_t<msg, async::priority> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -242,7 +246,8 @@ struct handlers_004 {
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
     {
-      handlers _handlers{2s, [this, &_handlers](const msg &p_msg) -> void {
+      handlers _handlers{m_id, 2s,
+                         [this, &_handlers](const msg &p_msg) -> void {
                            WAR(m_log, "timeout hadling ", p_msg);
                            _handlers.add_data(p_msg);
                          }};
@@ -307,13 +312,14 @@ private:
     logger::cerr<> m_log{"consumer"};
   };
   logger::cerr<> m_log{"handlers_004"};
+  number::id m_id;
 };
 
 struct handlers_005 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::id, async::priority> handlers;
+  typedef async::internal::handlers_t<msg, async::priority> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -345,7 +351,7 @@ struct handlers_005 {
 
     uint16_t _num_timeouts{0};
     {
-      handlers _handlers{200ms};
+      handlers _handlers{m_id, 200ms};
 
       for (consumer &_consumer : _consumers) {
         _handlers.add_handler(
@@ -444,6 +450,7 @@ private:
     logger::cerr<> m_log{"timeout"};
   };
   logger::cerr<> m_log{"handlers_005"};
+  number::id m_id;
 };
 
 int main(int argc, char **argv) {

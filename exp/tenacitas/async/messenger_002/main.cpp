@@ -13,6 +13,7 @@
 #include <mutex>
 
 #include <tenacitas/async.h>
+#include <tenacitas/number.h>
 
 using namespace tenacitas;
 using namespace std::chrono_literals;
@@ -33,7 +34,7 @@ struct temperature {
 // simulates a temperature sensor generating values
 struct temperature_sensor {
   temperature_sensor(uint16_t p_max)
-      : m_max(p_max), m_temperature_generator(m_timeout, m_interval,
+      : m_max(p_max), m_temperature_generator(m_id, m_timeout, m_interval,
                                               [this]() { generator(); }) {}
 
   // starts to generate temperatures
@@ -82,6 +83,8 @@ private:
   // to avoid writing more than one time that all the temperatures were
   // generated
   bool m_reported{false};
+
+  number::id m_id;
 };
 
 // thread-safe std::cout printer
@@ -163,7 +166,7 @@ int main() {
   };
 
   // adds a handler to a handlers group, and save the id of this handlers group
-  async::id _handlers_id = async::add_handler<temperature>(_h1, 2s);
+  number::id _handlers_id = async::add_handler<temperature>(_h1, 2s);
 
   // adds another handler to _handlers_id, so _handler_1 and _handler_2 will
   // compete with each other to handle temperature messages, in the handler

@@ -113,48 +113,48 @@ inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
 }
 
 /// \brief Generates a unique (sort of) identifier
-struct uuid {
+struct id {
 
   /// \brief
-  uuid() : m_value(calendar::now<>::microsecs()) {}
+  id() : m_value(calendar::now<>::microsecs()) {}
 
-  uuid(const uuid &) = default;
-  uuid(uuid &&) = default;
-  uuid &operator=(const uuid &) = default;
-  uuid &operator=(uuid &&) = default;
+  id(const id &) = default;
+  id(id &&) = default;
+  id &operator=(const id &) = default;
+  id &operator=(id &&) = default;
 
   /// \brief
-  inline bool operator==(const uuid &p_uuid) const {
+  inline bool operator==(const id &p_uuid) const {
     return m_value == p_uuid.m_value;
   }
 
   /// \brief
-  inline bool operator!=(const uuid &p_uuid) const {
+  inline bool operator!=(const id &p_uuid) const {
     return m_value != p_uuid.m_value;
   }
 
   /// \brief
-  inline bool operator>(const uuid &p_uuid) const {
+  inline bool operator>(const id &p_uuid) const {
     return m_value > p_uuid.m_value;
   }
 
   /// \brief
-  inline bool operator<(const uuid &p_uuid) const {
+  inline bool operator<(const id &p_uuid) const {
     return m_value < p_uuid.m_value;
   }
 
   /// \brief
-  inline bool operator>=(const uuid &p_uuid) const {
+  inline bool operator>=(const id &p_uuid) const {
     return m_value >= p_uuid.m_value;
   }
 
   /// \brief
-  inline bool operator<=(const uuid &p_uuid) const {
+  inline bool operator<=(const id &p_uuid) const {
     return m_value <= p_uuid.m_value;
   }
 
   /// \brief
-  friend std::ostream &operator<<(std::ostream &p_out, const uuid &p_uuid) {
+  friend std::ostream &operator<<(std::ostream &p_out, const id &p_uuid) {
     p_out << p_uuid.to_str();
     return p_out;
   }

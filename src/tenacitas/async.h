@@ -64,39 +64,6 @@ execute(t_time p_timeout, t_function p_function, t_params... p_params) {
   return internal::execute(p_timeout, p_function, p_params...);
 }
 
-///// \brief String identifier
-// struct id {
-//  id() : m_value("no-owner") {}
-
-//  explicit id(number::uuid &p_uuid) : m_value(p_uuid) {}
-
-//  explicit id(const std::string &p_value) : m_value(p_value) {}
-
-//  explicit id(std::string &&p_value) : m_value(std::move(p_value)) {}
-
-//  explicit id(const char *p_value) : m_value(p_value) {}
-
-//  id(const id &) = default;
-//  id(id &&) = default;
-
-//  ~id() = default;
-
-//  friend std::ostream &operator<<(std::ostream &p_out, id p_id) {
-//    p_out << p_id.m_value;
-//    return p_out;
-//  }
-
-//  bool operator==(const id &p_id) const { return m_value == p_id.m_value; }
-
-//  bool operator!=(const id &p_id) const { return m_value != p_id.m_value; }
-
-//  id &operator=(const id &) = default;
-//  id &operator=(id &&) = delete;
-
-// private:
-//  std::string m_value;
-//};
-
 /// \brief Priority
 struct priority {
 
@@ -202,11 +169,12 @@ template <typename... t_params> struct sleeping_loop_t {
   /// \param p_provider function that provides the parameters to the \p
   /// p_function
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
-                  function p_function, on_timeout p_on_timeout,
-                  provider p_provider)
-      : m_impl(std::make_unique<implementation>(
-            p_timeout, p_interval, p_function, p_on_timeout, p_provider)) {}
+  sleeping_loop_t(const number::id &p_owner, t_timeout p_timeout,
+                  t_interval p_interval, function p_function,
+                  on_timeout p_on_timeout, provider p_provider)
+      : m_impl(std::make_unique<implementation>(p_owner, p_timeout, p_interval,
+                                                p_function, p_on_timeout,
+                                                p_provider)) {}
 
   /// \brief Constructor
   /// Using this constructor, if a work function times out, nothing will be done
@@ -227,9 +195,10 @@ template <typename... t_params> struct sleeping_loop_t {
   /// \param p_provider function that provides the parameters to the \p
   /// p_function
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
-                  function p_function, provider p_provider)
-      : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
+  sleeping_loop_t(const number::id &p_owner, t_timeout p_timeout,
+                  t_interval p_interval, function p_function,
+                  provider p_provider)
+      : m_impl(std::make_unique<implementation>(p_owner, p_timeout, p_interval,
                                                 p_function, p_provider)) {}
 
   /// \brief Default constructor not allowed
@@ -267,6 +236,10 @@ template <typename... t_params> struct sleeping_loop_t {
   template <typename t_time> inline t_time get_interval() const {
     return m_impl->template get_interval<t_time>();
   }
+
+  const number::id &get_owner() const { return m_impl->get_owner(); }
+
+  const number::id &get_id() const { return m_impl->get_id(); }
 
   /// \brief Starts the loop
   inline void start() { m_impl->start(); }
@@ -324,12 +297,14 @@ private:
     /// \param p_provider is the function that will provide data for the \p
     /// p_function
     template <typename t_timeout, typename t_interval>
-    implementation(t_timeout p_timeout, t_interval p_interval,
-                   function p_function, on_timeout p_on_timeout,
-                   provider p_provider)
+    implementation(const number::id &p_owner, t_timeout p_timeout,
+                   t_interval p_interval, function p_function,
+                   on_timeout p_on_timeout, provider p_provider)
         : internal::sleeping_loop_base_t<on_timeout, t_params...>(
-              p_interval, p_function, p_timeout, p_on_timeout, p_provider) {
-      DEB(this->m_log, "timeout = ", p_timeout.count(),
+              p_owner, p_interval, p_function, p_timeout, p_on_timeout,
+              p_provider) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - timeout = ", p_timeout.count(),
           ", interval = ", p_interval.count());
     }
 
@@ -353,11 +328,13 @@ private:
     /// \param p_provider is the function that will provide data for the \p
     /// p_function
     template <typename t_timeout, typename t_interval>
-    implementation(t_timeout p_timeout, t_interval p_interval,
-                   function p_function, provider p_provider)
+    implementation(const number::id &p_owner, t_timeout p_timeout,
+                   t_interval p_interval, function p_function,
+                   provider p_provider)
         : internal::sleeping_loop_base_t<on_timeout, t_params...>(
-              p_interval, p_function, p_timeout, p_provider) {
-      DEB(this->m_log, "timeout = ", p_timeout.count(),
+              p_owner, p_interval, p_function, p_timeout, p_provider) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - timeout = ", p_timeout.count(),
           ", interval = ", p_interval.count());
     }
   };
@@ -395,9 +372,10 @@ template <> struct sleeping_loop_t<void> {
   /// \param p_on_timeout is the function that will be called if \p p_function
   /// times out
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
-                  function p_function, on_timeout p_on_timeout)
-      : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
+  sleeping_loop_t(const number::id &p_owner, t_timeout p_timeout,
+                  t_interval p_interval, function p_function,
+                  on_timeout p_on_timeout)
+      : m_impl(std::make_unique<implementation>(p_owner, p_timeout, p_interval,
                                                 p_function, p_on_timeout)) {}
 
   /// \brief Constructor
@@ -417,9 +395,9 @@ template <> struct sleeping_loop_t<void> {
   /// \param p_function is the work function that will be executed at each \p
   /// p_interval
   template <typename t_timeout, typename t_interval>
-  sleeping_loop_t(t_timeout p_timeout, t_interval p_interval,
-                  function p_function)
-      : m_impl(std::make_unique<implementation>(p_timeout, p_interval,
+  sleeping_loop_t(const number::id &p_owner, t_timeout p_timeout,
+                  t_interval p_interval, function p_function)
+      : m_impl(std::make_unique<implementation>(p_owner, p_timeout, p_interval,
                                                 p_function)) {}
 
   /// \brief Default constructor is not allowed
@@ -448,6 +426,10 @@ template <> struct sleeping_loop_t<void> {
   inline void set_interval(t_interval p_interval) {
     m_impl->set_interval(p_interval);
   }
+
+  const number::id &get_owner() const { return m_impl->get_owner(); }
+
+  const number::id &get_id() const { return m_impl->get_id(); }
 
   /// \brief Retrieves the interval for the loop
   ///
@@ -511,12 +493,14 @@ private:
     /// \param p_on_timeout is the function that will be called if \p p_function
     /// times out
     template <typename t_timeout, typename t_interval>
-    implementation(t_timeout p_timeout, t_interval p_interval,
-                   function p_function, on_timeout p_on_timeout)
+    implementation(const number::id &p_owner, t_timeout p_timeout,
+                   t_interval p_interval, function p_function,
+                   on_timeout p_on_timeout)
         : internal::sleeping_loop_base_t<on_timeout, void>(
-              p_interval, p_function, p_timeout, p_on_timeout) {
+              p_owner, p_interval, p_function, p_timeout, p_on_timeout) {
 
-      DEB(this->m_log, "timeout = ", p_timeout.count(),
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - timeout = ", p_timeout.count(),
           ", interval = ", p_interval.count());
     }
 
@@ -537,12 +521,13 @@ private:
     /// \param p_function is the work function that will be executed at each \p
     /// p_interval
     template <typename t_timeout, typename t_interval>
-    implementation(t_timeout p_timeout, t_interval p_interval,
-                   function p_function)
+    implementation(const number::id &p_owner, t_timeout p_timeout,
+                   t_interval p_interval, function p_function)
         : internal::sleeping_loop_base_t<on_timeout, void>(
-              p_interval, p_function, p_timeout) {
+              p_owner, p_interval, p_function, p_timeout) {
 
-      DEB(this->m_log, "timeout = ", p_timeout.count(),
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - timeout = ", p_timeout.count(),
           ", interval = ", p_interval.count());
     }
   };
@@ -571,100 +556,10 @@ private:
 /// \param p_on_timeout is the function that will be called to handle the
 /// message that the handler function could not handle in time.
 template <typename t_msg, typename t_time>
-static inline void add_queue(const id &p_id, const priority &p_priority,
-                             t_time p_timeout,
-                             std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(
-      p_id, p_priority, p_timeout, p_on_timeout);
-}
-
-/// \brief Adds a queue to receive messages to be handled
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \tparam t_time is the type of time used to define the timeout
-///
-/// \param p_id is the identifier of the queue
-///
-/// \param p_priority is the priority of the queue. This defines the order that
-/// the message will be placed in the queue.
-///
-/// \param p_timeout is the maximum amount of time that the handler function
-/// will have to complete its work.
-///
-/// \details In this configuration, if any handler times out, the message will
-/// be added again to the queue
-template <typename t_msg, typename t_time>
-static inline void add_queue(const id &p_id, const priority &p_priority,
-                             t_time p_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_priority,
-                                                           p_timeout);
-}
-
-/// \brief Adds a queue to receive messages to be handled
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \tparam t_time is the type of time used to define the timeout
-///
-/// \param p_id is the identifier of the queue
-///
-/// \param p_timeout is the maximum amount of time that the handler function
-/// will have to complete its work.
-///
-/// \param p_on_timeout is the function that will be called to handle the
-/// message that the handler function could not handle in time.
-///
-/// \details In this configuration, this queue has the lowest priority, i.e.,
-/// this queue will be the last to receive a copy of the message.
-template <typename t_msg, typename t_time>
-static inline void add_queue(const id &p_id, t_time p_timeout,
-                             std::function<void(const t_msg &)> p_on_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout,
-                                                           p_on_timeout);
-}
-
-/// \brief Adds a queue to receive messages to be handled
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \tparam t_time is the type of time used to define the timeout
-///
-/// \param p_id is the identifier of the queue
-///
-/// \param p_timeout is the maximum amount of time that the handler function
-/// will have to complete its work.
-///
-/// \details In this configuration, this queue has the lowest priority, i.e.,
-/// this queue will be the last to receive a copy of the message; and if any
-/// handler times out, the message will be added again to the queue
-template <typename t_msg, typename t_time>
-static inline void add_queue(const id &p_id, t_time p_timeout) {
-  internal::messenger_t<t_msg, id, priority>::add_handlers(p_id, p_timeout);
-}
-
-/// \brief Adds a queue to receive messages to be handled
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \tparam t_time is the type of time used to define the timeout
-///
-/// \param p_id is the identifier of the queue
-///
-/// \param p_priority is the priority of the queue. This defines the order that
-/// the message will be placed in the queue.
-///
-/// \param p_timeout is the maximum amount of time that the handler function
-/// will have to complete its work.
-///
-/// \param p_on_timeout is the function that will be called to handle the
-/// message that the handler function could not handle in time.
-///
-/// \return An auto generated \p id of the queue
-template <typename t_msg, typename t_time>
-static id add_queue(const priority &p_priority, t_time p_timeout,
-                    std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(
+static inline number::id
+add_handlers(const priority &p_priority, t_time p_timeout,
+             std::function<void(const t_msg &)> p_on_timeout) {
+  return internal::messenger_t<t_msg, priority>::add_handlers(
       p_priority, p_timeout, p_on_timeout);
 }
 
@@ -682,18 +577,13 @@ static id add_queue(const priority &p_priority, t_time p_timeout,
 /// \param p_timeout is the maximum amount of time that the handler function
 /// will have to complete its work.
 ///
-/// \param p_on_timeout is the function that will be called to handle the
-/// message that the handler function could not handle in time.
-///
-/// \return An auto generated \p id of the queue
-///
-///
 /// \details In this configuration, if any handler times out, the message will
 /// be added again to the queue
 template <typename t_msg, typename t_time>
-static id add_queue(const priority &p_priority, t_time p_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_priority,
-                                                                  p_timeout);
+static inline number::id add_handlers(const priority &p_priority,
+                                      t_time p_timeout) {
+  return internal::messenger_t<t_msg, priority>::add_handlers(p_priority,
+                                                              p_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -704,24 +594,20 @@ static id add_queue(const priority &p_priority, t_time p_timeout) {
 ///
 /// \param p_id is the identifier of the queue
 ///
-/// \param p_priority is the priority of the queue. This defines the order that
-/// the message will be placed in the queue.
-///
 /// \param p_timeout is the maximum amount of time that the handler function
 /// will have to complete its work.
 ///
 /// \param p_on_timeout is the function that will be called to handle the
 /// message that the handler function could not handle in time.
-///
-/// \return An auto generated \p id of the queue
 ///
 /// \details In this configuration, this queue has the lowest priority, i.e.,
 /// this queue will be the last to receive a copy of the message.
 template <typename t_msg, typename t_time>
-static id add_queue(t_time p_timeout,
-                    std::function<void(const t_msg &)> p_on_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout,
-                                                                  p_on_timeout);
+static number::id
+add_handlers(t_time p_timeout,
+             std::function<void(const t_msg &)> p_on_timeout) {
+  return internal::messenger_t<t_msg, priority>::add_handlers(p_timeout,
+                                                              p_on_timeout);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -732,23 +618,15 @@ static id add_queue(t_time p_timeout,
 ///
 /// \param p_id is the identifier of the queue
 ///
-/// \param p_priority is the priority of the queue. This defines the order that
-/// the message will be placed in the queue.
-///
 /// \param p_timeout is the maximum amount of time that the handler function
 /// will have to complete its work.
-///
-/// \param p_on_timeout is the function that will be called to handle the
-/// message that the handler function could not handle in time.
-///
-/// \return An auto generated \p id of the queue
 ///
 /// \details In this configuration, this queue has the lowest priority, i.e.,
 /// this queue will be the last to receive a copy of the message; and if any
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time>
-static id add_queue(t_time p_timeout) {
-  return internal::messenger_t<t_msg, id, priority>::add_handlers(p_timeout);
+static inline number::id add_handlers(t_time p_timeout) {
+  return internal::messenger_t<t_msg, priority>::add_handlers(p_timeout);
 }
 
 /// \brief Defines the priority of a message queue
@@ -762,8 +640,9 @@ static id add_queue(t_time p_timeout) {
 /// \param p_priority is the priority of the queue. This defines the order that
 /// the message will be placed in the queue.
 template <typename t_msg>
-static void set_priority(const id &p_id, priority p_priority) {
-  internal::messenger_t<t_msg, id, priority>::set_priority(p_id, p_priority);
+static inline void set_priority(const number::id &p_handlers,
+                                priority p_priority) {
+  internal::messenger_t<t_msg, priority>::set_priority(p_handlers, p_priority);
 }
 
 /// \brief Retrieves the priority of a message queue
@@ -776,8 +655,9 @@ static void set_priority(const id &p_id, priority p_priority) {
 ///
 /// \return The priority of the queue
 template <typename t_msg>
-static std::optional<priority> get_priority(const id &p_id) {
-  return internal::messenger_t<t_msg, id, priority>::get_priority(p_id);
+static inline std::optional<priority>
+get_priority(const number::id &p_handlers) {
+  return internal::messenger_t<t_msg, priority>::get_priority(p_handlers);
 }
 
 /// \brief Sends a message to all the queues associated to a message type
@@ -785,8 +665,8 @@ static std::optional<priority> get_priority(const id &p_id) {
 /// \tparam t_msg is the type of message to be added to the queue
 ///
 /// \param p_msg is the message to be copied to all the queues
-template <typename t_msg> static void send(const t_msg &p_msg) {
-  internal::messenger_t<t_msg, id, priority>::send(p_msg);
+template <typename t_msg> static inline void send(const t_msg &p_msg) {
+  internal::messenger_t<t_msg, priority>::send(p_msg);
 }
 
 /// \brief Adds a handler to a queue
@@ -801,9 +681,9 @@ template <typename t_msg> static void send(const t_msg &p_msg) {
 /// \param p_handler is the function that will handle a message added to the
 /// queue
 template <typename t_msg>
-static void add_handler(const id &p_id,
-                        std::function<void(const t_msg &)> p_handler) {
-  internal::messenger_t<t_msg, id, priority>::add_handler(p_id, p_handler);
+static inline void add_handler(const number::id &p_handlers,
+                               std::function<void(const t_msg &)> p_handler) {
+  internal::messenger_t<t_msg, priority>::add_handler(p_handlers, p_handler);
 }
 
 /// \brief Adds a handler to a queue
@@ -824,57 +704,11 @@ static void add_handler(const id &p_id,
 /// this queue will be the last to receive a copy of the message; and if any
 /// handler times out, the message will be added again to the queue
 template <typename t_msg, typename t_time = std::chrono::minutes>
-static id add_handler(std::function<void(const t_msg &)> p_handler,
-                      t_time p_timeout = 10min) {
-  id _id = add_queue<t_msg>(p_timeout);
-  add_handler(_id, p_handler);
-  return _id;
-}
-
-/// \brief Adds a handler to a queue
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \tparam t_time is the type of time used to define the timeout
-///
-/// \param p_id is the identifier of the queue to which this handler will be
-/// added to
-///
-/// \param p_handler is the function that will handle a message added to the
-/// queue
-///
-/// \param p_on_timeout is the function that will be called to handle the
-/// message that the handler function could not handle in time.
-///
-/// \return An auto generated \p id of the queue
-///
-/// \details In this configuration, this queue has the lowest priority, i.e.,
-/// this queue will be the last to receive a copy of the message; and if any
-/// handler times out, the message will be added again to the queue
-template <typename t_msg, typename t_time = std::chrono::minutes>
-static void add_handler(const id &_id,
-                        std::function<void(const t_msg &)> p_handler,
-                        t_time p_timeout) {
-  add_queue<t_msg>(_id, p_timeout);
-  add_handler(_id, p_handler);
-}
-
-/// \brief Adds a bunch of handlers to a queue
-///
-/// \tparam t_msg is the type of message to be added to the queue
-///
-/// \param p_id is the identifier of the queue to which this handler will be
-/// added to
-///
-/// \param p_num_handlers is the number of handlers to be added
-///
-/// \param p_handler_factory is the function that will create handler functions
-template <typename t_msg>
-static void add_handler(
-    const id &p_id, uint16_t p_num_handlers,
-    std::function<std::function<void(const t_msg &)>> p_handler_factory) {
-  internal::messenger_t<t_msg, id, priority>::add_handler(p_id, p_num_handlers,
-                                                          p_handler_factory);
+static inline number::id
+add_handler(std::function<void(const t_msg &)> p_handler,
+            t_time p_timeout = 10min) {
+  return internal::messenger_t<t_msg, priority>::add_handler(p_handler,
+                                                             p_timeout);
 }
 
 } // namespace async

@@ -17,6 +17,7 @@
 #include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/macros.h>
+#include <tenacitas/number.h>
 #include <tenacitas/tester.h>
 
 /// TODO test when provider and breaker functions take too long, causing
@@ -48,7 +49,7 @@ struct async_loop_000 {
     };
 
     async::internal::loop_t<int16_t> _loop(
-        worker(), 500ms, [](int16_t &&) -> void {}, _provider);
+        m_id, worker(), 500ms, [](int16_t &&) -> void {}, _provider);
 
     _loop.start();
 
@@ -84,6 +85,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_000"};
+  number::id m_id;
 };
 
 struct async_loop_001 {
@@ -113,8 +115,8 @@ struct async_loop_001 {
 
     auto _on_dummy_timeout = [](int16_t &&) -> void {};
 
-    async::internal::loop_t<int16_t> _loop(worker(), 500ms, _on_dummy_timeout,
-                                           _provider, _breaker);
+    async::internal::loop_t<int16_t> _loop(
+        m_id, worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
 
     _loop.start();
 
@@ -150,6 +152,7 @@ private:
   logger::cerr<> m_log{"async_loop_001"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  number::id m_id;
 };
 
 struct async_loop_002 {
@@ -176,8 +179,8 @@ struct async_loop_002 {
     };
 
     auto _on_timeout = [](int16_t &&, float &&) -> void {};
-    async::internal::loop_t<int16_t, float> _loop(worker(), 500ms, _on_timeout,
-                                                  _provider);
+    async::internal::loop_t<int16_t, float> _loop(m_id, worker(), 500ms,
+                                                  _on_timeout, _provider);
 
     _loop.start();
 
@@ -214,6 +217,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_002"};
+  number::id m_id;
 };
 
 // struct async_loop_003 {
@@ -312,7 +316,7 @@ struct async_loop_004 {
 
     auto _on_timeout = []() -> void {};
 
-    async::internal::loop_t<void> _loop(_aux, 500ms, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, 500ms, _on_timeout);
 
     _loop.start();
 
@@ -352,6 +356,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_003"};
+  number::id m_id;
 };
 
 // struct async_loop_005 {
@@ -468,8 +473,8 @@ struct async_loop_006 {
         _worker(std::move(p_i));
       };
 
-      async::internal::loop_t<int16_t> _loop(_aux, _work_timeout, _on_timeout,
-                                             _provider);
+      async::internal::loop_t<int16_t> _loop(m_id, _aux, _work_timeout,
+                                             _on_timeout, _provider);
 
       _loop.start();
 
@@ -523,6 +528,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_006"};
+  number::id m_id;
 };
 
 struct async_loop_007 {
@@ -569,7 +575,7 @@ struct async_loop_007 {
       _worker(std::move(p_i), std::move(p_f));
     };
 
-    async::internal::loop_t<int16_t, float> _loop(_aux, _work_timeout,
+    async::internal::loop_t<int16_t, float> _loop(m_id, _aux, _work_timeout,
                                                   _on_timeout, _provider);
 
     _loop.start();
@@ -619,6 +625,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_007"};
+  number::id m_id;
 };
 
 struct async_loop_008 {
@@ -646,8 +653,8 @@ struct async_loop_008 {
 
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    async::internal::loop_t<void> _loop([&_worker]() -> void { _worker(); },
-                                        _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop(
+        m_id, [&_worker]() -> void { _worker(); }, _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -704,6 +711,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_008"};
+  number::id m_id;
 };
 
 struct async_loop_009 {
@@ -733,7 +741,7 @@ struct async_loop_009 {
 
     auto _aux = [&_worker]() -> void { _worker(); };
 
-    async::internal::loop_t<void> _loop(_aux, _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout, _on_timeout);
 
     _loop.start();
 
@@ -789,6 +797,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_009"};
+  number::id m_id;
 };
 
 struct async_loop_010 {
@@ -818,7 +827,7 @@ struct async_loop_010 {
 
     auto _aux = [&_worker]() -> void { _worker(); };
 
-    async::internal::loop_t<void> _loop(_aux, _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout, _on_timeout);
 
     DEB(m_log, "moving loop to loop1");
     async::internal::loop_t<void> _loop1(std::move(_loop));
@@ -888,6 +897,7 @@ private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
   logger::cerr<> m_log{"async_loop_010"};
+  number::id m_id;
 };
 
 struct async_loop_011 {
@@ -911,7 +921,7 @@ struct async_loop_011 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(_worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s, []() -> void {});
 
     DEB(m_log, "starting");
     _a1.start();
@@ -950,6 +960,7 @@ private:
   logger::cerr<> m_log{"async_loop_011"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  number::id m_id;
 };
 
 struct async_loop_012 {
@@ -974,7 +985,7 @@ struct async_loop_012 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(_worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s, []() -> void {});
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1012,6 +1023,7 @@ private:
   logger::cerr<> m_log{"async_loop_012"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  number::id m_id;
 };
 
 struct async_loop_013 {
@@ -1033,7 +1045,7 @@ struct async_loop_013 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(_worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s, []() -> void {});
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1068,6 +1080,7 @@ private:
   logger::cerr<> m_log{"async_loop_013"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  number::id m_id;
 };
 
 struct async_loop_014 {
@@ -1091,7 +1104,7 @@ struct async_loop_014 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(_worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s, []() -> void {});
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1123,6 +1136,7 @@ private:
   logger::cerr<> m_log{"async_loop_014"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
+  number::id m_id;
 };
 
 int main(int argc, char **argv) {

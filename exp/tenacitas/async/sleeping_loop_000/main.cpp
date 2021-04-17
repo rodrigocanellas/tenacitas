@@ -14,11 +14,14 @@
 
 // tenacitas::async::sleeping_loop is defined in 'tenacitas/async.h'
 #include <tenacitas/async.h>
+#include <tenacitas/number.h>
 
 using namespace tenacitas;
 using namespace std::chrono_literals;
 
 int main() {
+
+  number::id _id;
 
   // this the function to be executed in this sleeping loop does not require
   // parameters
@@ -52,7 +55,7 @@ int main() {
   };
 
   // sleeping loop object
-  sleeping_loop _sleeping_loop(_timeout, _interval, _function);
+  sleeping_loop _sleeping_loop(_id, _timeout, _interval, _function);
 
   // starts the loop asynchronously
   _sleeping_loop.start();

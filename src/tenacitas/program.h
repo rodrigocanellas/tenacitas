@@ -25,6 +25,7 @@
 #include <tenacitas/async.h>
 #include <tenacitas/logger.h>
 #include <tenacitas/message.h>
+#include <tenacitas/number.h>
 
 using namespace std::chrono_literals;
 
@@ -392,12 +393,11 @@ struct application {
     //          on_exit_app(p_exit_app);
     //        });
 
-    async::id _halt_pool_id{"halt_pool"};
-    async::add_queue<message::halt_app>(_halt_pool_id, async::priority::highest,
-                                        milliseconds(m_wait.count() + 2000));
-    async::add_handler<message::halt_app>(
-        _halt_pool_id, [this](const message::halt_app &p_halt_app) -> void {
-          on_halt_app(p_halt_app);
+    number::id _exit_pool_id = async::add_handlers<message::exit_app>(
+        async::priority::highest, milliseconds(m_wait.count() + 2000));
+    async::add_handler<message::exit_app>(
+        _exit_pool_id, [this](const message::exit_app &p_exit_app) -> void {
+          on_exit_app(p_exit_app);
         });
 
     DEB(m_log, "starting application");
@@ -412,7 +412,7 @@ struct application {
 
     DEB(m_log, "notified");
 
-    // std::this_thread::sleep_for(m_wait);
+    std::this_thread::sleep_for(m_wait);
 
     _thread.join();
   }
@@ -421,20 +421,13 @@ struct application {
 
 private:
   /// \brief Handler for the tenacitas::message::exit_app
-  //  void on_exit_app(const message::exit_app &) {
-  //    if (m_on_exit_handled) {
-  //      WAR(m_log, "on_exit already handled");
-  //      return;
-  //    }
-  //    DEB(m_log, "on exit");
-  //    m_on_exit_handled = true;
-  //    std::this_thread::sleep_for(m_wait);
-  //    m_cond.notify_one();
-  //  }
-
-  /// \brief Handler for the tenacitas::message::halt_app
-  void on_halt_app(const message::halt_app &) {
-    DEB(m_log, "on halt");
+  void on_exit_app(const message::exit_app &) {
+    if (m_on_exit_handled) {
+      WAR(m_log, "on_exit already handled");
+      return;
+    }
+    DEB(m_log, "on exit");
+    m_on_exit_handled = true;
     m_cond.notify_one();
   }
 
@@ -450,7 +443,7 @@ private:
   std::chrono::milliseconds m_wait;
 
   /// \brief Indicates that a tenacitas::message::exit_app was already handled
-  //  bool m_on_exit_handled{false};
+  bool m_on_exit_handled{false};
 
   /// \brief Logger
   logger::cerr<> m_log{"application"};
