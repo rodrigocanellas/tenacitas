@@ -35,7 +35,7 @@ struct sleeping_loop_000 {
 
     auto _on_timeout = []() -> void {};
 
-    loop _loop(m_id, 100ms, 1s, _operation, _on_timeout);
+    loop _loop(m_id, _operation, 100ms, _on_timeout, 1s);
 
     return true;
   }
@@ -69,9 +69,8 @@ struct sleeping_loop_001 {
 
     operation1 _op(&m_cond);
     loop _loop(
-        m_id, std::chrono::milliseconds(m_timeout),
-        std::chrono::seconds(m_interval_secs), [&_op]() { return _op(); },
-        _on_timeout);
+        m_id, [&_op]() { return _op(); }, std::chrono::milliseconds(m_timeout),
+        _on_timeout, std::chrono::seconds(m_interval_secs));
 
     _loop.start();
 
@@ -159,17 +158,14 @@ struct sleeping_loop_002 {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() * 2));
       } else {
-        //        std::this_thread::sleep_for(
-        //            std::chrono::milliseconds(m_timeout.count() / 2));
-
-        std::this_thread::sleep_for(200ms);
-
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(m_timeout.count() / 2));
         INF(m_log, p_i, " - ", p_f);
       }
       DEB(m_log, "exiting");
     };
 
-    loop _loop(m_id, 3s, 2s, _worker, _on_timeout, _provider);
+    loop _loop(m_id, _worker, m_timeout, _on_timeout, _provider, 2s);
 
     _loop.start();
 
@@ -195,7 +191,7 @@ private:
   std::mutex m_mutex;
   std::condition_variable m_cond;
   static constexpr int16_t m_max{2};
-  static constexpr std::chrono::milliseconds m_timeout{500ms};
+  static constexpr std::chrono::milliseconds m_timeout{500};
   logger::cerr<> m_log{"sleeping_loop_002"};
   number::id m_id;
 };
@@ -238,7 +234,7 @@ struct sleeping_loop_003 {
       }
     };
 
-    loop _loop(m_id, m_timeout, 2s, _worker, _on_timeout, _provider);
+    loop _loop(m_id, _worker, m_timeout, _on_timeout, _provider, 2s);
 
     _loop.start();
 

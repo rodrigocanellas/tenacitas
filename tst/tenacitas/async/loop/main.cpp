@@ -27,7 +27,7 @@ using namespace tenacitas;
 
 using namespace std::chrono_literals;
 
-struct async_loop_000 {
+struct loop_000 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -84,78 +84,78 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_000"};
+  logger::cerr<> m_log{"loop_000"};
   number::id m_id;
 };
 
-struct async_loop_001 {
+// struct loop_001 {
 
-  static std::string desc() {
-    std::stringstream _stream;
-    _stream << "no timeout, one param, breaker";
-    return _stream.str();
-  }
+//  static std::string desc() {
+//    std::stringstream _stream;
+//    _stream << "no timeout, one param, breaker";
+//    return _stream.str();
+//  }
 
-  bool operator()() {
+//  bool operator()() {
 
-    int16_t _i{0};
-    auto _provider = [this, &_i]() -> std::optional<std::tuple<int16_t>> {
-      ++_i;
-      DEB(m_log, "providing ", _i);
-      return {{_i}};
-    };
+//    int16_t _i{0};
+//    auto _provider = [this, &_i]() -> std::optional<std::tuple<int16_t>> {
+//      ++_i;
+//      DEB(m_log, "providing ", _i);
+//      return {{_i}};
+//    };
 
-    auto _breaker = [this, &_i]() -> bool {
-      if (_i == 3) {
-        m_cond.notify_one();
-        return true;
-      }
-      return false;
-    };
+//    auto _breaker = [this, &_i]() -> bool {
+//      if (_i == 3) {
+//        m_cond.notify_one();
+//        return true;
+//      }
+//      return false;
+//    };
 
-    auto _on_dummy_timeout = [](int16_t &&) -> void {};
+//    auto _on_dummy_timeout = [](int16_t &&) -> void {};
 
-    async::internal::loop_t<int16_t> _loop(
-        m_id, worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
+//    async::internal::loop_t<int16_t> _loop(
+//        m_id, worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
 
-    _loop.start();
+//    _loop.start();
 
-    {
-      std::unique_lock<std::mutex> _lock(m_mutex);
-      m_cond.wait(_lock);
-    }
+//    {
+//      std::unique_lock<std::mutex> _lock(m_mutex);
+//      m_cond.wait(_lock);
+//    }
 
-    _loop.stop();
+//    _loop.stop();
 
-    if (_i != 3) {
-      ERR(m_log, "i should be 3, but it is ", _i);
-      return false;
-    }
+//    if (_i != 3) {
+//      ERR(m_log, "i should be 3, but it is ", _i);
+//      return false;
+//    }
 
-    INF(m_log, "i is 3, as expected");
+//    INF(m_log, "i is 3, as expected");
 
-    return true;
-  }
+//    return true;
+//  }
 
-private:
-  struct worker {
-    void operator()(int16_t &&p_i) {
-      DEB(m_log, "working with = ", p_i);
-      std::this_thread::sleep_for(250ms);
-    }
+// private:
+//  struct worker {
+//    void operator()(int16_t &&p_i) {
+//      DEB(m_log, "working with = ", p_i);
+//      std::this_thread::sleep_for(250ms);
+//    }
 
-  private:
-    logger::cerr<> m_log{"worker"};
-  };
+//  private:
+//    logger::cerr<> m_log{"worker"};
+//  };
 
-private:
-  logger::cerr<> m_log{"async_loop_001"};
-  std::condition_variable m_cond;
-  std::mutex m_mutex;
-  number::id m_id;
-};
+// private:
+//  logger::cerr<> m_log{"loop_001"};
+//  std::condition_variable m_cond;
+//  std::mutex m_mutex;
+//  number::id m_id;
+//};
 
-struct async_loop_002 {
+struct loop_002 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -216,11 +216,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_002"};
+  logger::cerr<> m_log{"loop_002"};
   number::id m_id;
 };
 
-// struct async_loop_003 {
+// struct loop_003 {
 
 //  static std::string desc() {
 //    std::stringstream _stream;
@@ -289,12 +289,12 @@ private:
 //  };
 
 // private:
-//  m_log m_log{"async_loop_003"};
+//  m_log m_log{"loop_003"};
 //  std::condition_variable m_cond;
 //  std::mutex m_mutex;
 //};
 
-struct async_loop_004 {
+struct loop_004 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -355,11 +355,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_003"};
+  logger::cerr<> m_log{"loop_003"};
   number::id m_id;
 };
 
-// struct async_loop_005 {
+// struct loop_005 {
 
 //  static std::string desc() {
 //    std::stringstream _stream;
@@ -423,12 +423,12 @@ private:
 //  };
 
 // private:
-//  m_log m_log{"async_loop_005"};
+//  m_log m_log{"loop_005"};
 //  std::condition_variable m_cond;
 //  std::mutex m_mutex;
 //};
 
-struct async_loop_006 {
+struct loop_006 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -436,8 +436,12 @@ struct async_loop_006 {
     return _stream.str();
   }
 
+  loop_006() { INF(m_log, "006 starts"); }
+  ~loop_006() { INF(m_log, "006 ends"); }
+
   bool operator()() {
     try {
+
       const int16_t _max{9};
       const std::chrono::milliseconds _work_timeout{500};
       const std::chrono::milliseconds _work_normal_sleep{250ms};
@@ -527,17 +531,20 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_006"};
+  logger::cerr<> m_log{"loop_006"};
   number::id m_id;
 };
 
-struct async_loop_007 {
+struct loop_007 {
 
   static std::string desc() {
     std::stringstream _stream;
     _stream << "timeout, 2 params";
     return _stream.str();
   }
+
+  loop_007() { INF(m_log, "007 starts"); }
+  ~loop_007() { INF(m_log, "007 ends"); }
 
   bool operator()() {
 
@@ -555,12 +562,13 @@ struct async_loop_007 {
     };
 
     int16_t _i{0};
-    auto _provider = [this, &_i,
+    auto _provider = [this, &_i, _work_timeout,
                       _max]() -> std::optional<std::tuple<int16_t, float>> {
       if (_i == _max) {
         DEB(m_log, "causing timeout to not provide data when ", _i,
             " == ", _max);
-        std::this_thread::sleep_for(2s);
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(_work_timeout.count() * 2));
         return {};
       }
       ++_i;
@@ -624,11 +632,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_007"};
+  logger::cerr<> m_log{"loop_007"};
   number::id m_id;
 };
 
-struct async_loop_008 {
+struct loop_008 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -710,11 +718,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_008"};
+  logger::cerr<> m_log{"loop_008"};
   number::id m_id;
 };
 
-struct async_loop_009 {
+struct loop_009 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -796,11 +804,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_009"};
+  logger::cerr<> m_log{"loop_009"};
   number::id m_id;
 };
 
-struct async_loop_010 {
+struct loop_010 {
 
   static std::string desc() {
     std::stringstream _stream;
@@ -852,12 +860,6 @@ struct async_loop_010 {
 
     INF(m_log, "i is ", _max, " as expected");
 
-    if (_loop1) {
-      ERR(m_log, "loop 1 should not be valid");
-      return false;
-    }
-
-    DEB(m_log, "loop 1 is correctly not valid");
     return true;
   }
 
@@ -896,11 +898,11 @@ private:
 private:
   std::condition_variable m_cond;
   std::mutex m_mutex;
-  logger::cerr<> m_log{"async_loop_010"};
+  logger::cerr<> m_log{"loop_010"};
   number::id m_id;
 };
 
-struct async_loop_011 {
+struct loop_011 {
   static std::string desc() {
     return "stopping and starting the same async_loop";
   }
@@ -957,13 +959,13 @@ struct async_loop_011 {
   }
 
 private:
-  logger::cerr<> m_log{"async_loop_011"};
+  logger::cerr<> m_log{"loop_011"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
   number::id m_id;
 };
 
-struct async_loop_012 {
+struct loop_012 {
   static std::string desc() {
     return "starting, sleeping, stopping, moving, starting the new one, "
            "stopping";
@@ -1020,13 +1022,13 @@ struct async_loop_012 {
   }
 
 private:
-  logger::cerr<> m_log{"async_loop_012"};
+  logger::cerr<> m_log{"loop_012"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
   number::id m_id;
 };
 
-struct async_loop_013 {
+struct loop_013 {
   static std::string desc() { return "starting, sleeping, moving, stopping"; }
 
   bool operator()() {
@@ -1077,13 +1079,13 @@ struct async_loop_013 {
   }
 
 private:
-  logger::cerr<> m_log{"async_loop_013"};
+  logger::cerr<> m_log{"loop_013"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
   number::id m_id;
 };
 
-struct async_loop_014 {
+struct loop_014 {
   static std::string desc() {
     return "starting, sleeping, moving, destructing";
   }
@@ -1133,7 +1135,7 @@ struct async_loop_014 {
   }
 
 private:
-  logger::cerr<> m_log{"async_loop_014"};
+  logger::cerr<> m_log{"loop_014"};
   std::condition_variable m_cond;
   std::mutex m_mutex;
   number::id m_id;
@@ -1142,18 +1144,25 @@ private:
 int main(int argc, char **argv) {
   logger::set_debug_level();
 
-  tenacitas::tester::test _tester(argc, argv);
-  run_test(_tester, async_loop_000);
-  run_test(_tester, async_loop_001);
-  run_test(_tester, async_loop_002);
-  run_test(_tester, async_loop_004);
-  run_test(_tester, async_loop_006);
-  run_test(_tester, async_loop_007);
-  run_test(_tester, async_loop_008);
-  run_test(_tester, async_loop_009);
-  run_test(_tester, async_loop_010);
-  run_test(_tester, async_loop_011);
-  run_test(_tester, async_loop_012);
-  run_test(_tester, async_loop_013);
-  run_test(_tester, async_loop_014);
+  logger::cerr<> m_log{"main"};
+
+  try {
+    tenacitas::tester::test _tester(argc, argv);
+    run_test(_tester, loop_000);
+    //  run_test(_tester, loop_001);
+    run_test(_tester, loop_002);
+    run_test(_tester, loop_004);
+    run_test(_tester, loop_006);
+    run_test(_tester, loop_007);
+    run_test(_tester, loop_008);
+    run_test(_tester, loop_009);
+    run_test(_tester, loop_010);
+    run_test(_tester, loop_011);
+    run_test(_tester, loop_012);
+    run_test(_tester, loop_013);
+    run_test(_tester, loop_014);
+
+  } catch (std::exception &_ex) {
+    FAT(m_log, "ERROR: '", _ex.what(), '\'');
+  }
 }

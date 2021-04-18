@@ -156,6 +156,134 @@ execute(t_time p_timeout, t_function p_function, t_params... p_params) {
                                std::forward<t_params>(p_params)...);
 }
 
+// template <typename t_result, typename... t_params> struct exec {
+//  template <typename t_time>
+//  std::optional<t_result>
+//  operator()(t_time p_timeout, std::function<t_result(t_params...)>
+//  p_function,
+//             t_params... p_params) {
+//    std::mutex _mutex;
+//    std::condition_variable _cond;
+
+//    t_result _result;
+
+//    auto _f = [&_cond, p_function, &_result, &p_params...]() -> void {
+//      _result = p_function(p_params...);
+//      _cond.notify_one();
+//    };
+
+//    std::thread _thread(_f);
+
+//    std::unique_lock<std::mutex> _lock(_mutex);
+//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+//      _thread.detach();
+//      return {};
+//    }
+
+//    _thread.join();
+//    return _result;
+//  }
+//};
+
+// template <typename t_result> struct exec<t_result, void> {
+
+//  template <typename t_time>
+//  std::optional<t_result> operator()(t_time p_timeout,
+//                                     std::function<t_result()> p_function) {
+//    std::mutex _mutex;
+//    std::condition_variable _cond;
+
+//    t_result _result;
+
+//    auto _f = [&_cond, p_function, &_result]() -> void {
+//      _result = p_function();
+//      _cond.notify_one();
+//    };
+
+//    std::thread _thread(_f);
+
+//    std::unique_lock<std::mutex> _lock(_mutex);
+//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+//      _thread.detach();
+//      return {};
+//    }
+
+//    _thread.join();
+//    return _result;
+//  }
+//};
+
+// template <typename... t_params> struct exec<void, t_params...> {
+//  template <typename t_time>
+//  bool operator()(t_time p_timeout, std::function<void(t_params...)>
+//  p_function,
+//                  t_params... p_params) {
+//    std::mutex _mutex;
+//    std::condition_variable _cond;
+
+//    DEB(m_log, "timeout: ", p_timeout.count());
+
+//    auto _f = [this, &_cond, p_function, &p_params...]() -> void {
+//      DEB(m_log, "calling with ", p_params...);
+//      p_function(p_params...);
+//      DEB(m_log, "notifying");
+//      _cond.notify_one();
+//    };
+
+//    std::thread _thread(_f);
+
+//    std::unique_lock<std::mutex> _lock(_mutex);
+//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+//      DEB(m_log, "notification with timeout");
+//      _thread.detach();
+//      return false;
+//    }
+
+//    DEB(m_log, "notification without timeout");
+
+//    _thread.join();
+//    return true;
+//  }
+
+// private:
+//  logger::cerr<> m_log{"exec<void,params>"};
+//};
+
+// template <> struct exec<void, void> {
+//  template <typename t_time>
+//  bool operator()(t_time p_timeout, std::function<void()> p_function) {
+//    std::mutex _mutex;
+//    std::condition_variable _cond;
+
+//    DEB(m_log, "timeout: ", p_timeout.count());
+
+//    auto _f = [this, &_cond, p_function]() -> void {
+//      DEB(m_log, "calling");
+//      p_function();
+//      _cond.notify_one();
+//      DEB(m_log, "notifying");
+//    };
+
+//    DEB(m_log, "1");
+//    std::thread _thread(_f);
+//    DEB(m_log, "2");
+
+//    std::unique_lock<std::mutex> _lock(_mutex);
+//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+//      DEB(m_log, "notification with timeout");
+//      _thread.detach();
+//      return false;
+//    }
+
+//    DEB(m_log, "notification without timeout");
+//    _thread.join();
+//    return true;
+//  }
+
+// private:
+//  logger::cerr<> m_log{"exec<void,void>"};
+//};
+
 /// \brief Base class for asynchronous loop
 /// An asynchronous loop class runs a loop apart from the caller code. A
 /// function is set to be executed in each round of the loop.
@@ -170,16 +298,15 @@ template <typename t_function, typename t_on_timeout> struct loop_base_t {
   loop_base_t() = delete;
 
   /// \brief copy contructor not allowed
-  loop_base_t(const loop_base_t &) = delete;
-
-  /// \brief move contructor not allowed
-  loop_base_t(loop_base_t &&) = delete;
+  loop_base_t(loop_base_t &&p_loop) { move_constructor(std::move(p_loop)); }
 
   /// \brief copy assignment operator not allowed
   loop_base_t &operator=(const loop_base_t &) = delete;
 
-  /// \brief move assignment operator not allowed
-  loop_base_t &operator=(loop_base_t &&) = delete;
+  loop_base_t &operator=(loop_base_t &&p_loop) {
+    move_assign(std::move(p_loop));
+    return *this;
+  }
 
   /// \brief destructor
   virtual ~loop_base_t() {
@@ -217,6 +344,7 @@ template <typename t_function, typename t_on_timeout> struct loop_base_t {
     }
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopping");
     m_stopped = true;
+    m_cond_stop.notify_one();
 
     if (m_thread.get_id() == std::thread::id()) {
       DEB(this->m_log, this->m_owner, ':', this->m_id,
@@ -232,7 +360,7 @@ template <typename t_function, typename t_on_timeout> struct loop_base_t {
     }
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - m_thread.joinable()");
     {
-      std::lock_guard<std::mutex> _lock(m_mutex);
+      std::lock_guard<std::mutex> _lock(m_mutex_join);
       m_thread.join();
     }
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving stop");
@@ -278,32 +406,33 @@ protected:
               t_on_timeout p_on_timeout)
       : m_owner(p_owner), m_function(p_function),
         m_timeout(calendar::convert<timeout>(p_time)),
-        m_on_timeout(p_on_timeout), m_breaker([]() -> bool { return false; }) {}
-
-  /// \brief Constuctor
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It must be
-  /// one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_function is the function to be executed in each run of the loop
-  ///
-  /// \param p_time is the amount of time \p p_function has to executed in each
-  /// round of the loop
-  ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails to
-  /// execute in \p p_time
-  ///
-  /// \param p_breaker is a function that will also be execute at each round of
-  /// the loop, allowing it to be "breaked"
-  template <typename t_time>
-  loop_base_t(const number::id &p_owner, t_function p_function, t_time p_time,
-              t_on_timeout p_on_timeout, breaker p_breaker)
-      : m_owner(p_owner), m_function(p_function),
-        m_timeout(calendar::convert<timeout>(p_time)),
-        m_on_timeout(p_on_timeout), m_breaker(p_breaker) {}
+        m_on_timeout(p_on_timeout) {}
 
   /// \brief Method that implements the loop that runs aynchronously
   virtual void loop() = 0;
+
+  void move_constructor(loop_base_t &&p_loop) {
+    DEB(m_log, "move constructor");
+    this->m_owner = std::move(p_loop.m_owner);
+    this->m_function = std::move(p_loop.m_function);
+    this->m_timeout = std::move(p_loop.m_timeout);
+    this->m_on_timeout = std::move(p_loop.m_on_timeout);
+    this->m_stopped = true;
+
+    if (!p_loop.is_stopped()) {
+      DEB(m_log, "right loop was not stopped");
+      p_loop.stop();
+      DEB(m_log, "now right loop is stopped");
+      this->start();
+    }
+  }
+
+  void move_assign(loop_base_t &&p_loop) {
+    DEB(m_log, "move assignment");
+    if (this != &p_loop) {
+      move_constructor(std::move(p_loop));
+    }
+  }
 
 protected:
   /// \brief Identifier of the object that owns this object
@@ -322,11 +451,7 @@ protected:
   /// m_timeout to execute
   t_on_timeout m_on_timeout;
 
-  /// \brief Function that will also be execute at each round of the loop,
-  /// allowing it to be "breaked"
-  breaker m_breaker;
-
-  /// \brief Indicates that the loop should be stopped
+  /// \brief Indicates that the loop must stop
   std::atomic<bool> m_stopped{true};
 
   /// \brief Thread where the \p loop method will run
@@ -335,134 +460,10 @@ protected:
   /// \brief Logger
   logger::cerr<> m_log{"loop"};
 
-  /// \brief Synchronizes execution
-  std::mutex m_mutex;
-};
+  /// \brief Protects joining the thread
+  std::mutex m_mutex_join;
 
-template <typename t_result, typename... t_params> struct exec {
-  template <typename t_time>
-  std::optional<t_result>
-  operator()(t_time p_timeout, std::function<t_result(t_params...)> p_function,
-             t_params... p_params) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
-
-    t_result _result;
-
-    auto _f = [&_cond, p_function, &_result, &p_params...]() -> void {
-      _result = p_function(p_params...);
-      _cond.notify_one();
-    };
-
-    std::thread _thread(_f);
-
-    std::unique_lock<std::mutex> _lock(_mutex);
-    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-      _thread.detach();
-      return {};
-    }
-
-    _thread.join();
-    return _result;
-  }
-};
-
-template <typename t_result> struct exec<t_result, void> {
-
-  template <typename t_time>
-  std::optional<t_result> operator()(t_time p_timeout,
-                                     std::function<t_result()> p_function) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
-
-    t_result _result;
-
-    auto _f = [&_cond, p_function, &_result]() -> void {
-      _result = p_function();
-      _cond.notify_one();
-    };
-
-    std::thread _thread(_f);
-
-    std::unique_lock<std::mutex> _lock(_mutex);
-    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-      _thread.detach();
-      return {};
-    }
-
-    _thread.join();
-    return _result;
-  }
-};
-
-template <typename... t_params> struct exec<void, t_params...> {
-  template <typename t_time>
-  bool operator()(t_time p_timeout, std::function<void(t_params...)> p_function,
-                  t_params... p_params) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
-
-    DEB(m_log, "timeout: ", p_timeout.count());
-
-    auto _f = [this, &_cond, p_function, &p_params...]() -> void {
-      DEB(m_log, "calling with ", p_params...);
-      p_function(p_params...);
-      DEB(m_log, "notifying");
-      _cond.notify_one();
-    };
-
-    std::thread _thread(_f);
-
-    std::unique_lock<std::mutex> _lock(_mutex);
-    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-      DEB(m_log, "notification with timeout");
-      _thread.detach();
-      return false;
-    }
-
-    DEB(m_log, "notification without timeout");
-
-    _thread.join();
-    return true;
-  }
-
-private:
-  logger::cerr<> m_log{"exec<void,params>"};
-};
-
-template <> struct exec<void, void> {
-  template <typename t_time>
-  bool operator()(t_time p_timeout, std::function<void()> p_function) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
-
-    DEB(m_log, "timeout: ", p_timeout.count());
-
-    auto _f = [this, &_cond, p_function]() -> void {
-      DEB(m_log, "calling");
-      p_function();
-      _cond.notify_one();
-      DEB(m_log, "notifying");
-    };
-
-    DEB(m_log, "1");
-    std::thread _thread(_f);
-    DEB(m_log, "2");
-
-    std::unique_lock<std::mutex> _lock(_mutex);
-    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-      DEB(m_log, "notification with timeout");
-      _thread.detach();
-      return false;
-    }
-
-    DEB(m_log, "notification without timeout");
-    _thread.join();
-    return true;
-  }
-
-private:
-  logger::cerr<> m_log{"exec<void,void>"};
+  std::condition_variable m_cond_stop;
 };
 
 /// \brief Asynchronous loop with function that takes parameters
@@ -471,7 +472,9 @@ private:
 /// executed in each round of the loop expects
 ///
 /// \sa loop_base_t
-template <typename... t_params> struct loop_t {
+template <typename... t_params>
+struct loop_t : public loop_base_t<std::function<void(t_params...)>,
+                                   std::function<void(t_params...)>> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
@@ -503,33 +506,9 @@ template <typename... t_params> struct loop_t {
   template <typename t_time>
   loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
          on_timeout p_on_timeout, provider p_provider)
-      : m_impl(std::make_unique<implementation>(p_owner, p_function, p_timeout,
-                                                p_on_timeout, p_provider)) {}
-
-  /// \brief Constructor
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It must be
-  /// one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_function is the function to be executed in each run of the loop
-  ///
-  /// \param p_time is the amount of time \p p_function has to executed in each
-  /// round of the loop
-  ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails to
-  /// execute in \p p_time
-  ///
-  /// \param p_provider is the function that will be called in the loop to
-  /// provide the parameters for the function
-  ///
-  /// \param p_breaker is a function that will also be execute at each round of
-  /// the loop, allowing it to be "breaked"
-  template <typename t_time>
-  loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
-         on_timeout p_on_timeout, provider p_provider, breaker p_breaker)
-      : m_impl(std::make_unique<implementation>(p_owner, p_function, p_timeout,
-                                                p_on_timeout, p_provider,
-                                                p_breaker)) {}
+      : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
+                                          p_on_timeout),
+        m_provider(p_provider) {}
 
   /// \brief Default constructor not allowed
   loop_t() = delete;
@@ -539,189 +518,105 @@ template <typename... t_params> struct loop_t {
   /// \brief Copy constructor not allowed
   loop_t(const loop_t &) = delete;
 
-  loop_t(loop_t &&p_async_loop) = default;
-
-  loop_t &operator=(loop_t &&p_async_loop) = default;
-
   /// \brief Copy assignment allowed
   loop_t &operator=(const loop_t &) = delete;
 
-  /// \brief Starts the loop
-  inline void start() { m_impl->start(); }
+  loop_t(loop_t &&p_loop)
+      : loop_base_t<function, on_timeout>(std::move(p_loop)),
+        m_provider(std ::move(p_loop.m_provider)) {}
 
-  /// \brief Retieves the identifier of the current object
-  /// The identifier is (was) used for debuging purposes
-  ///
-  /// \return identifier of the current object
-  inline number::id get_id() const { return m_impl->get_id(); }
-
-  /// \brief Stops the loop
-  inline void stop() { m_impl->stop(); }
-
-  /// \brief Informs if the loop is stopped
-  inline bool is_stopped() const { return m_impl->is_stopped(); }
-
-  /// \brief Defines the timeout for the function being executed in the loop
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It must be
-  /// one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_timeout is the value of the timeout
-  template <typename t_time> inline void set_timeout(t_time p_timeout) {
-    m_impl->set_timeout(p_timeout);
+  loop_t &operator=(loop_t &&p_loop) {
+    this->move_assign(std::move(p_loop));
+    return *this;
   }
 
-  /// \brief Retrieves the timeout for the function being executed in the loop
-  ///
-  /// \tparam t_time is the type of time to which the timeout should be
-  /// converted to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  template <typename t_time> inline t_time get_timeout() const {
-    return m_impl->template get_timeout<t_time>();
-  }
+protected:
+  bool core() {
+    std::lock_guard<std::mutex> _lock(this->m_mutex_join);
 
-  /// \brief Informs if the loop is valid
-  inline operator bool() const { return m_impl != nullptr; }
-
-private:
-  /// \brief Implementation of the loop
-  /// Using an internal implentation makes it easy to move loop objects
-  struct implementation : public loop_base_t<function, on_timeout> {
-
-    /// \brief Constructor
-    ///
-    /// \tparam t_time is the type of time used to define the timeout. It must
-    /// be one of the defined in std::chrono, like std::chrono::seconds
-    ///
-    /// \param p_function is the function to be executed in each run of the loop
-    ///
-    /// \param p_time is the amount of time \p p_function has to executed in
-    /// each round of the loop
-    ///
-    /// \param p_on_timeout is the function to be called it \p p_function fails
-    /// to execute in \p p_time
-    ///
-    /// \param p_provider is the function that will be called in the loop to
-    /// provide the parameters for the function
-    template <typename t_time>
-    implementation(const number::id &p_owner, function p_function,
-                   t_time p_timeout, on_timeout p_on_timeout,
-                   provider p_provider)
-        : internal::loop_base_t<function, on_timeout>(p_owner, p_function,
-                                                      p_timeout, p_on_timeout),
-          m_provider(p_provider) {}
-
-    /// \brief Constructor
-    ///
-    /// \tparam t_time is the type of time used to define the timeout. It must
-    /// be one of the defined in std::chrono, like std::chrono::seconds
-    ///
-    /// \param p_function is the function to be executed in each run of the loop
-    ///
-    /// \param p_time is the amount of time \p p_function has to executed in
-    /// each round of the loop
-    ///
-    /// \param p_on_timeout is the function to be called it \p p_function fails
-    /// to execute in \p p_time
-    ///
-    /// \param p_provider is the function that will be called in the loop to
-    /// provide the parameters for the function
-    ///
-    /// \param p_breaker is a function that will also be execute at each round
-    /// of the loop, allowing it to be "breaked"
-    template <typename t_time>
-    implementation(const number::id &p_owner, function p_function,
-                   t_time p_timeout, on_timeout p_on_timeout,
-                   provider p_provider, breaker p_breaker)
-        : internal::loop_base_t<function, on_timeout>(
-              p_owner, p_function, p_timeout, p_on_timeout, p_breaker),
-          m_provider(p_provider) {}
-
-  protected:
-    /// \brief Specific implementation of the loop virtual method
-    void loop() override {
-      DEB(this->m_log, this->m_owner, ':', this->m_id,
-          " - entering loop, m_timeout = ", this->m_timeout.count());
-
-      while (true) {
-        std::lock_guard<std::mutex> _lock(this->m_mutex);
-
-        if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-          break;
-        }
-
-        DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling provider");
-        std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
-
-        if (this->m_stopped /*|| this->m_breaker()*/) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-          break;
-        }
-
-        if (_maybe_data) {
-          std::tuple<t_params...> _tuple{std::move(*_maybe_data)};
-
-          DEB(this->m_log, this->m_owner, ':', this->m_id,
-              " - data provided = ", _tuple);
-
-          if (this->m_stopped /*|| this->m_breaker()*/) {
-            DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-            break;
-          }
-
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling");
-
-          //          std::apply(this->m_function, std::move(_tuple));
-
-          auto _function = [this, &_tuple]() -> void {
-            if (this->m_stopped || this->m_breaker()) {
-              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-              return;
-            }
-            std::apply(this->m_function, std::move(_tuple));
-          };
-
-          if (!exec<void, void>()(this->m_timeout, _function)) {
-            WAR(this->m_log, this->m_owner, ':', this->m_id,
-                " - timeout for worker with data = ", _tuple);
-
-            if (this->m_stopped /*|| this->m_breaker()*/) {
-              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-              break;
-            }
-
-            auto _on_timeout = [this, &_tuple]() {
-              std::apply(this->m_on_timeout, std::move(_tuple));
-            };
-
-            if (this->m_stopped /*|| this->m_breaker()*/) {
-              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
-              break;
-            }
-
-            std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
-          }
-        }
-      }
-      DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
+    if (this->m_stopped) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      return false;
     }
 
-  private:
-    /// \brief Function that will be called in the loop to provide the
-    /// parameters for the function
-    provider m_provider;
-  };
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling provider");
+    std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
+
+    if (this->m_stopped) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      return false;
+    }
+
+    if (_maybe_data) {
+      std::tuple<t_params...> _tuple{std::move(*_maybe_data)};
+
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - data provided = ", _tuple);
+
+      if (this->m_stopped) {
+        DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+        return false;
+      }
+
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling");
+
+      auto _function = [this, &_tuple]() -> void {
+        if (this->m_stopped) {
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+          return;
+        }
+        std::apply(this->m_function, std::move(_tuple));
+      };
+
+      if (!execute(this->m_timeout, _function)) {
+        WAR(this->m_log, this->m_owner, ':', this->m_id,
+            " - timeout for worker with data = ", _tuple);
+
+        if (this->m_stopped) {
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - break");
+          return false;
+        }
+
+        auto _on_timeout = [this, &_tuple]() {
+          std::apply(this->m_on_timeout, std::move(_tuple));
+        };
+
+        if (this->m_stopped) {
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+          return false;
+        }
+
+        std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
+      }
+    }
+    return true;
+  }
+
+  /// \brief Specific implementation of the loop virtual method
+  virtual void loop() override {
+    DEB(this->m_log, this->m_owner, ':', this->m_id,
+        " - entering loop, m_timeout = ", this->m_timeout.count());
+
+    while (true) {
+      if (!core()) {
+        break;
+      }
+    }
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
+  }
 
 private:
-  /// \brief Pointer to the implementation
-  std::unique_ptr<implementation> m_impl;
+  /// \brief Function that will be called in the loop to provide the
+  /// parameters for the function
+  provider m_provider;
 };
 
 /// \brief Asynchronous loop with function that takes no parameters
 ///
 /// \sa loop_base_t
-template <> struct loop_t<void> {
+template <>
+struct loop_t<void>
+    : public loop_base_t<std::function<void()>, std::function<void()>> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
@@ -749,490 +644,392 @@ template <> struct loop_t<void> {
   template <typename t_time>
   loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
          on_timeout p_on_timeout)
-      : m_impl(std::make_unique<implementation>(p_owner, p_function, p_timeout,
-                                                p_on_timeout)) {}
-
-  /// \brief Constructor
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It must
-  /// be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_function is the function to be executed in each run of the loop
-  ///
-  /// \param p_time is the amount of time \p p_function has to executed in
-  /// each round of the loop
-  ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails
-  /// to execute in \p p_time
-  ///
-  /// \param p_breaker is a function that will also be execute at each round
-  /// of the loop, allowing it to be "breaked"
-  template <typename t_time>
-  loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
-         on_timeout p_on_timeout, breaker p_breaker)
-      : m_impl(std::make_unique<implementation>(p_owner, p_function, p_timeout,
-                                                p_on_timeout, p_breaker)) {}
+      : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
+                                          p_on_timeout) {}
 
   ~loop_t() = default;
 
   /// \brief Copy constructor not allowed
   loop_t(const loop_t &) = delete;
 
-  loop_t(loop_t &&) = default;
+  loop_t(loop_t &&p_loop)
+      : loop_base_t<function, on_timeout>(std::move(p_loop)) {}
 
-  /// \brief Move constructor not allowed
-  loop_t &operator=(loop_t &&) = default;
+  loop_t &operator=(loop_t &&p_loop) {
+    this->move_assign(std::move(p_loop));
+    return *this;
+  }
 
   loop_t &operator=(const loop_t &) = delete;
 
-  /// \brief Retieves the identifier of the current object
-  /// The identifier is (was) used for debuging purposes
-  ///
-  /// \return identifier of the current object
-  inline number::id get_id() const { return m_impl->get_id(); }
-
-  /// \brief Starts the loop
-  inline void start() { m_impl->start(); }
-
-  /// \brief Stops the loop
-  inline void stop() { m_impl->stop(); }
-
-  /// \brief Informs if the loop is stopped
-  inline bool is_stopped() const { return m_impl->is_stopped(); }
-
-  /// \brief Defines the timeout for the function being executed in the loop
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It must be
-  /// one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_timeout is the value of the timeout
-  template <typename t_time> inline void set_timeout(t_time p_timeout) {
-    m_impl->set_timeout(p_timeout);
-  }
-
-  /// \brief Retrieves the timeout for the function being executed in the loop
-  ///
-  /// \tparam t_time is the type of time to which the timeout should be
-  /// converted to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  template <typename t_time> inline t_time get_timeout() const {
-    return m_impl->template get_timeout<t_time>();
-  }
-
-  /// \brief Informs if the loop is valid
-  inline operator bool() const { return m_impl != nullptr; }
-
-private:
-  /// \brief Implementation of the loop
-  /// Using an internal implentation makes it easy to move loop objects
-  struct implementation : public loop_base_t<function, on_timeout> {
-
-    /// \brief Constructor
-    ///
-    /// \tparam t_time is the type of time used to define the timeout. It must
-    /// be one of the defined in std::chrono, like std::chrono::seconds
-    ///
-    /// \param p_function is the function to be executed in each run of the loop
-    ///
-    /// \param p_time is the amount of time \p p_function has to executed in
-    /// each round of the loop
-    ///
-    /// \param p_on_timeout is the function to be called it \p p_function fails
-    /// to execute in \p p_time
-    template <typename t_time>
-    implementation(const number::id &p_owner, function p_function,
-                   t_time p_timeout, on_timeout p_on_timeout)
-        : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
-                                            p_on_timeout) {}
-
-    /// \brief Constructor
-    ///
-    /// \tparam t_time is the type of time used to define the timeout. It must
-    /// be one of the defined in std::chrono, like std::chrono::seconds
-    ///
-    /// \param p_function is the function to be executed in each run of the loop
-    ///
-    /// \param p_time is the amount of time \p p_function has to executed in
-    /// each round of the loop
-    ///
-    /// \param p_on_timeout is the function to be called it \p p_function fails
-    /// to execute in \p p_time
-    ///
-    /// \param p_breaker is a function that will also be execute at each round
-    /// of the loop, allowing it to be "breaked"
-    template <typename t_time>
-    implementation(const number::id &p_owner, function p_function,
-                   t_time p_timeout, on_timeout p_on_timeout, breaker p_breaker)
-        : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
-                                            p_on_timeout, p_breaker) {}
-
-  protected:
-    /// \brief Specific implementation of the loop virtual method
-    void loop() override {
-      DEB(this->m_log, this->m_owner, ':', this->m_id,
-          " - entering loop, m_timeout = ", this->m_timeout.count());
-
-      auto _worker = [this]() -> void { this->m_function(); };
-
-      while (true) {
-
-        if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-              (this->m_stopped ? "true" : "false"));
-          break;
-        }
-
-        DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling work");
-
-        if (!exec<void, void>()(this->m_timeout, _worker)) {
-          std::thread([this]() -> void { this->m_on_timeout(); }).detach();
-        }
-
-        //        if (!execute(this->m_timeout, _worker)) {
-        //          std::thread([this]() -> void { this->m_on_timeout();
-        //          }).detach();
-        //        }
-      }
-      DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
-    }
-  };
-
-private:
-  /// \brief Pointer to the implementation
-  std::unique_ptr<implementation> m_impl;
-};
-
-/// \brief Executes function in fixed period of times
-///
-/// \tparam t_on_timeout is a function that will be executed if the function
-/// times out
-///
-/// \tparam t_params are the types of parameters that the function expects
-template <typename t_on_timeout, typename... t_params>
-struct sleeping_loop_base_t {
-
-  /// \brief Default constructor not allowed
-  sleeping_loop_base_t() = delete;
-
-  /// \brief Copy constructor not allowed
-  sleeping_loop_base_t(const sleeping_loop_base_t &) = delete;
-
-  /// \brief Move constructor not allowed
-  sleeping_loop_base_t(sleeping_loop_base_t &&p_sleep) = delete;
-
-  /// \brief Copy assignment not allowed
-  sleeping_loop_base_t &operator=(const sleeping_loop_base_t &) = delete;
-
-  /// \brief Move assignment not allowed
-  sleeping_loop_base_t &operator=(sleeping_loop_base_t &&p_sleep) = delete;
-
-  /// \brief Destructor
-  /// Interrupts the loop
-  inline virtual ~sleeping_loop_base_t() {
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - destructor");
-    stop();
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving destructor");
-  }
-
-  /// \brief Retrieves the interval defined for the loop to sleep between
-  /// the execution of the worker
-  ///
-  /// \tparam t_time is the type of time one wants the interval converted to.
-  /// It must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \return interval of repetition of the loop, in \p t_time measure
-  template <typename t_time> inline t_time get_interval() const {
-    return calendar::convert<t_time>(m_interval);
-  }
-
-  /// \brief Redefines the value of the execution interval
-  ///
-  /// \tparam t_time is the type of time used to define the interval. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_interval value of the interval of repetition
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  template <typename t_time> inline void set_interval(t_time p_interval) {
-    m_interval = calendar::convert<interval>(p_interval);
-  }
-
-  /// \brief Stops the loop, and starts it again
-  void restart() {
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - restart");
-    stop();
-    start();
-  }
-
-  /// \brief Starts the loop
-  void start() {
-    if (!m_async.is_stopped()) {
-      DEB(this->m_log, this->m_owner, ':', this->m_id,
-          " - not starting async loop because it is running");
-      return;
-    }
-    if (!m_stopped) {
-      DEB(this->m_log, this->m_owner, ':', this->m_id,
-          " - not starting because it is running");
-    }
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - running async loop");
-    m_stopped = false;
-    m_async.start();
-  }
-
-  /// \brief Stops the loop
-  void stop() {
-    if (m_stopped) {
-      DEB(this->m_log, this->m_owner, ':', this->m_id,
-          " - not stopping because it is stopped");
-      return;
-    }
-
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopping");
-    m_stopped = true;
-
-    m_async.stop();
-
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - notifying");
-    m_cond.notify_one();
-
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopping");
-  }
-
-  /// \brief Retrieves if the loop is stopped
-  inline bool is_stopped() const { return m_async.is_stopped(); }
-
-  /// \brief Retrieves the timeout for the worker
-  ///
-  /// \tparam t_time is the type of time one wants the timeout converted to.
-  /// It must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \return timeout for the function executed in the loop
-  template <typename t_time> inline t_time get_timeout() const {
-    return m_async.template get_timeout<t_time>();
-  }
-
-  /// \brief Redefines the value of the timeout
-  ///
-  /// \tparam t_time is the type of time used to define the timeout. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \param p_timeout is the value for the timeout of the function executed in
-  /// the loop
-  ///
-  /// It does not restart the loop, it is necessary to call \p restart
-  template <typename t_time> inline void set_timeout(t_time p_timeout) {
-    m_async.set_timeout(p_timeout);
-  }
-
-  inline const number::id &get_owner() const { return m_owner; }
-  inline const number::id &get_id() const { return m_id; }
-
 protected:
-  /// \brief Constructor
-  ///
-  /// \tparam t_timeout is the type of time used to define the timeout. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \tparam t_interval is the type of time one wants the interval converted
-  /// to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  ///
-  /// \tparam t_function is the function executed in the loop, each time it is
-  /// executed
-  ///
-  /// \param p_interval is the value of the interval of time that the loop will
-  /// execute
-  ///
-  /// \param p_function is the function that will be executed in the loop, at
-  /// each \p p_interval
-  ///
-  /// \param p_timeout is the maximum amount of time that \p p_function has to
-  /// execute
-  ///
-  /// \param p_on_timeout is the function that will be execute, if \p p_function
-  /// does not execute in \p p_timeout
-  template <typename t_interval, typename t_timeout, typename t_function>
-  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
-                       t_function p_function, t_timeout p_timeout,
-                       t_on_timeout p_on_timeout)
-      : m_owner(p_owner), m_id(),
-        m_interval(calendar::convert<interval>(p_interval)),
-        m_async(m_id, p_function, calendar::convert<timeout>(p_timeout),
-                p_on_timeout, [this]() -> bool { return breaker(); }) {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - constructor without provider called");
-  }
-
-  /// \brief Constructor
-  ///
-  /// \tparam t_timeout is the type of time used to define the timeout. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \tparam t_interval is the type of time one wants the interval converted
-  /// to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  ///
-  /// \tparam t_function is the function executed in the loop, each time it is
-  /// executed
-  ///
-  /// \tparam t_provider is the type of function that will provide the
-  /// parameters that the function expects
-  ///
-  /// \param p_interval is the value of the interval of time that the loop will
-  /// execute
-  ///
-  /// \param p_function is the function that will be executed in the loop, at
-  /// each \p p_interval
-  ///
-  /// \param p_timeout is the maximum amount of time that \p p_function has to
-  /// execute
-  ///
-  /// \param p_on_timeout is the function that will be execute, if \p p_function
-  /// does not execute in \p p_timeout
-  ///
-  /// \param p_provider is the function that will provide the parameters that
-  /// the function expects
-  template <typename t_timeout, typename t_interval, typename t_function,
-            typename t_provider>
-  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
-                       t_function p_function, t_timeout p_timeout,
-                       t_on_timeout p_on_timeout, t_provider p_provider)
-      : m_owner(p_owner), m_id(),
-        m_interval(calendar::convert<interval>(p_interval)),
-        m_async(m_id, p_function, calendar::convert<timeout>(p_timeout),
-                p_on_timeout, p_provider,
-                [this]() -> bool { return breaker(); }) {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - constructor with provider called");
-  }
-
-  /// \brief Constructor
-  /// If the function times out, the on_timeout will ignore its execution
-  ///
-  /// \tparam t_timeout is the type of time used to define the timeout. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \tparam t_interval is the type of time one wants the interval converted
-  /// to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  ///
-  /// \tparam t_function is the function executed in the loop, each time it is
-  /// executed
-  ///
-  /// \param p_interval is the value of the interval of time that the loop will
-  /// execute
-  ///
-  /// \param p_function is the function that will be executed in the loop, at
-  /// each \p p_interval
-  ///
-  /// \param p_timeout is the maximum amount of time that \p p_function has to
-  /// execute
-  template <typename t_timeout, typename t_interval, typename t_function>
-  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
-                       t_function p_function, t_timeout p_timeout)
-      : m_owner(p_owner), m_id(),
-        m_interval(calendar::convert<interval>(p_interval)),
-        m_async(
-            m_id, p_function, calendar::convert<timeout>(p_timeout), []() {},
-            [this]() -> bool { return breaker(); }) {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - constructor without provider called");
-  }
-
-  /// \brief Constructor
-  /// If the function times out, the on_timeout will ignore its execution
-  ///
-  /// \tparam t_timeout is the type of time used to define the timeout. It
-  /// must be one of the defined in std::chrono, like std::chrono::seconds
-  ///
-  /// \tparam t_interval is the type of time one wants the interval converted
-  /// to. It must be one of the defined in std::chrono, like
-  /// std::chrono::seconds
-  ///
-  /// \tparam t_function is the function executed in the loop, each time it is
-  /// executed
-  ///
-  /// \tparam t_provider is the type of function that will provide the
-  /// parameters that the function expects
-  ///
-  /// \param p_interval is the value of the interval of time that the loop will
-  /// execute
-  ///
-  /// \param p_function is the function that will be executed in the loop, at
-  /// each \p p_interval
-  ///
-  /// \param p_timeout is the maximum amount of time that \p p_function has to
-  /// execute
-  ///
-  /// \param p_on_timeout is the function that will be execute, if \p p_function
-  /// does not execute in \p p_timeout
-  ///
-  /// \param p_provider is the function that will provide the parameters that
-  /// the function expects
-  template <typename t_timeout, typename t_interval, typename t_function,
-            typename t_provider>
-  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
-                       t_function p_function, t_timeout p_timeout,
-                       t_provider p_provider)
-      : m_owner(p_owner), m_id(),
-        m_interval(calendar::convert<interval>(p_interval)),
-        m_async(
-            m_id, p_function, calendar::convert<timeout>(p_timeout), []() {},
-            p_provider, [this]() -> bool { return breaker(); }) {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - constructor with provider called");
-  }
-
-  /// \brief breaker defines if the loop should stop
-  ///
-  /// \return \p true if the loop should break; \p false othewise
-  bool breaker() {
-
-    // The predicate version returns pred(), regardless of whether the
-    // timeout was triggered (although it can only be false if triggered).
-
-    std::unique_lock<std::mutex> _lock(m_mutex);
-    if (!m_cond.wait_for(_lock, m_interval,
-                         [this]() -> bool { return m_stopped; })) {
-      // timeout, so do not stop
-      //      DEB(this->m_log, this->m_owner, ':' , this->m_id, " - must not
-      //      stop");
+  bool core() {
+    if (this->m_stopped) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
       return false;
     }
-    // no timeout, which means the loop was stopped
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - must stop");
 
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling work");
+
+    if (!execute(this->m_timeout, [this]() -> void { this->m_function(); })) {
+      std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+    }
     return true;
   }
 
-protected:
-  /// \brief Type of loop used
-  typedef internal::loop_t<t_params...> async_loop;
+  /// \brief Specific implementation of the loop virtual method
+  void loop() override {
+    DEB(this->m_log, this->m_owner, ':', this->m_id,
+        " - entering loop, m_timeout = ", this->m_timeout.count());
 
-protected:
-  number::id m_owner;
-
-  number::id m_id;
-
-  /// \brief Interval of the execution of the loop
-  interval m_interval;
-
-  /// \brief Asynchronous loop used
-  async_loop m_async;
-
-  /// \brief Controls asynchronous execution
-  std::mutex m_mutex;
-
-  /// \brief Controls asynchronous execution
-  std::condition_variable m_cond;
-
-  /// \brief Indicates if the loop should stop
-  std::atomic<bool> m_stopped{true};
-
-  /// \brief Logger
-  logger::cerr<> m_log{"sleeping_loop"};
+    while (true) {
+      if (!core()) {
+        break;
+      }
+    }
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
+  }
 };
+
+///// \brief Executes function in fixed period of times
+/////
+///// \tparam t_on_timeout is a function that will be executed if the function
+///// times out
+/////
+///// \tparam t_params are the types of parameters that the function expects
+// template <typename t_on_timeout, typename... t_params>
+// struct sleeping_loop_base_t {
+
+//  /// \brief Default constructor not allowed
+//  sleeping_loop_base_t() = delete;
+
+//  /// \brief Copy constructor not allowed
+//  sleeping_loop_base_t(const sleeping_loop_base_t &) = delete;
+
+//  /// \brief Move constructor not allowed
+//  sleeping_loop_base_t(sleeping_loop_base_t &&p_sleep) = delete;
+
+//  /// \brief Copy assignment not allowed
+//  sleeping_loop_base_t &operator=(const sleeping_loop_base_t &) = delete;
+
+//  /// \brief Move assignment not allowed
+//  sleeping_loop_base_t &operator=(sleeping_loop_base_t &&p_sleep) = delete;
+
+//  /// \brief Destructor
+//  /// Interrupts the loop
+//  inline virtual ~sleeping_loop_base_t() {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - destructor");
+//    stop();
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving destructor");
+//  }
+
+//  /// \brief Retrieves the interval defined for the loop to sleep between
+//  /// the execution of the worker
+//  ///
+//  /// \tparam t_time is the type of time one wants the interval converted to.
+//  /// It must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \return interval of repetition of the loop, in \p t_time measure
+//  template <typename t_time> inline t_time get_interval() const {
+//    return calendar::convert<t_time>(m_interval);
+//  }
+
+//  /// \brief Redefines the value of the execution interval
+//  ///
+//  /// \tparam t_time is the type of time used to define the interval. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \param p_interval value of the interval of repetition
+//  ///
+//  /// It does not restart the loop, it is necessary to call \p restart
+//  template <typename t_time> inline void set_interval(t_time p_interval) {
+//    m_interval = calendar::convert<interval>(p_interval);
+//  }
+
+//  /// \brief Stops the loop, and starts it again
+//  void restart() {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - restart");
+//    stop();
+//    start();
+//  }
+
+//  /// \brief Starts the loop
+//  void start() {
+//    if (!m_async.is_stopped()) {
+//      DEB(this->m_log, this->m_owner, ':', this->m_id,
+//          " - not starting async loop because it is running");
+//      return;
+//    }
+//    if (!m_stopped) {
+//      DEB(this->m_log, this->m_owner, ':', this->m_id,
+//          " - not starting because it is running");
+//    }
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - running async loop");
+//    m_stopped = false;
+//    m_async.start();
+//  }
+
+//  /// \brief Stops the loop
+//  void stop() {
+//    if (m_stopped) {
+//      DEB(this->m_log, this->m_owner, ':', this->m_id,
+//          " - not stopping because it is stopped");
+//      return;
+//    }
+
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopping");
+//    m_stopped = true;
+
+//    m_async.stop();
+
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - notifying");
+//    m_cond.notify_one();
+
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopping");
+//  }
+
+//  /// \brief Retrieves if the loop is stopped
+//  inline bool is_stopped() const { return m_async.is_stopped(); }
+
+//  /// \brief Retrieves the timeout for the worker
+//  ///
+//  /// \tparam t_time is the type of time one wants the timeout converted to.
+//  /// It must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \return timeout for the function executed in the loop
+//  template <typename t_time> inline t_time get_timeout() const {
+//    return m_async.template get_timeout<t_time>();
+//  }
+
+//  /// \brief Redefines the value of the timeout
+//  ///
+//  /// \tparam t_time is the type of time used to define the timeout. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \param p_timeout is the value for the timeout of the function executed
+//  in
+//  /// the loop
+//  ///
+//  /// It does not restart the loop, it is necessary to call \p restart
+//  template <typename t_time> inline void set_timeout(t_time p_timeout) {
+//    m_async.set_timeout(p_timeout);
+//  }
+
+//  inline const number::id &get_owner() const { return m_owner; }
+//  inline const number::id &get_id() const { return m_id; }
+
+// protected:
+//  /// \brief Constructor
+//  ///
+//  /// \tparam t_timeout is the type of time used to define the timeout. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \tparam t_interval is the type of time one wants the interval converted
+//  /// to. It must be one of the defined in std::chrono, like
+//  /// std::chrono::seconds
+//  ///
+//  /// \tparam t_function is the function executed in the loop, each time it is
+//  /// executed
+//  ///
+//  /// \param p_interval is the value of the interval of time that the loop
+//  will
+//  /// execute
+//  ///
+//  /// \param p_function is the function that will be executed in the loop, at
+//  /// each \p p_interval
+//  ///
+//  /// \param p_timeout is the maximum amount of time that \p p_function has to
+//  /// execute
+//  ///
+//  /// \param p_on_timeout is the function that will be execute, if \p
+//  p_function
+//  /// does not execute in \p p_timeout
+//  template <typename t_interval, typename t_timeout, typename t_function>
+//  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
+//                       t_function p_function, t_timeout p_timeout,
+//                       t_on_timeout p_on_timeout)
+//      : m_owner(p_owner), m_id(),
+//        m_interval(calendar::convert<interval>(p_interval)),
+//        m_async(m_id, p_function, calendar::convert<timeout>(p_timeout),
+//                p_on_timeout, [this]() -> bool { return breaker(); }) {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id,
+//        " - constructor without provider called");
+//  }
+
+//  /// \brief Constructor
+//  ///
+//  /// \tparam t_timeout is the type of time used to define the timeout. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \tparam t_interval is the type of time one wants the interval converted
+//  /// to. It must be one of the defined in std::chrono, like
+//  /// std::chrono::seconds
+//  ///
+//  /// \tparam t_function is the function executed in the loop, each time it is
+//  /// executed
+//  ///
+//  /// \tparam t_provider is the type of function that will provide the
+//  /// parameters that the function expects
+//  ///
+//  /// \param p_interval is the value of the interval of time that the loop
+//  will
+//  /// execute
+//  ///
+//  /// \param p_function is the function that will be executed in the loop, at
+//  /// each \p p_interval
+//  ///
+//  /// \param p_timeout is the maximum amount of time that \p p_function has to
+//  /// execute
+//  ///
+//  /// \param p_on_timeout is the function that will be execute, if \p
+//  p_function
+//  /// does not execute in \p p_timeout
+//  ///
+//  /// \param p_provider is the function that will provide the parameters that
+//  /// the function expects
+//  template <typename t_timeout, typename t_interval, typename t_function,
+//            typename t_provider>
+//  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
+//                       t_function p_function, t_timeout p_timeout,
+//                       t_on_timeout p_on_timeout, t_provider p_provider)
+//      : m_owner(p_owner), m_id(),
+//        m_interval(calendar::convert<interval>(p_interval)),
+//        m_async(m_id, p_function, calendar::convert<timeout>(p_timeout),
+//                p_on_timeout, p_provider,
+//                [this]() -> bool { return breaker(); }) {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id,
+//        " - constructor with provider called");
+//  }
+
+//  /// \brief Constructor
+//  /// If the function times out, the on_timeout will ignore its execution
+//  ///
+//  /// \tparam t_timeout is the type of time used to define the timeout. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \tparam t_interval is the type of time one wants the interval converted
+//  /// to. It must be one of the defined in std::chrono, like
+//  /// std::chrono::seconds
+//  ///
+//  /// \tparam t_function is the function executed in the loop, each time it is
+//  /// executed
+//  ///
+//  /// \param p_interval is the value of the interval of time that the loop
+//  will
+//  /// execute
+//  ///
+//  /// \param p_function is the function that will be executed in the loop, at
+//  /// each \p p_interval
+//  ///
+//  /// \param p_timeout is the maximum amount of time that \p p_function has to
+//  /// execute
+//  template <typename t_timeout, typename t_interval, typename t_function>
+//  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
+//                       t_function p_function, t_timeout p_timeout)
+//      : m_owner(p_owner), m_id(),
+//        m_interval(calendar::convert<interval>(p_interval)),
+//        m_async(
+//            m_id, p_function, calendar::convert<timeout>(p_timeout), []() {},
+//            [this]() -> bool { return breaker(); }) {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id,
+//        " - constructor without provider called");
+//  }
+
+//  /// \brief Constructor
+//  /// If the function times out, the on_timeout will ignore its execution
+//  ///
+//  /// \tparam t_timeout is the type of time used to define the timeout. It
+//  /// must be one of the defined in std::chrono, like std::chrono::seconds
+//  ///
+//  /// \tparam t_interval is the type of time one wants the interval converted
+//  /// to. It must be one of the defined in std::chrono, like
+//  /// std::chrono::seconds
+//  ///
+//  /// \tparam t_function is the function executed in the loop, each time it is
+//  /// executed
+//  ///
+//  /// \tparam t_provider is the type of function that will provide the
+//  /// parameters that the function expects
+//  ///
+//  /// \param p_interval is the value of the interval of time that the loop
+//  will
+//  /// execute
+//  ///
+//  /// \param p_function is the function that will be executed in the loop, at
+//  /// each \p p_interval
+//  ///
+//  /// \param p_timeout is the maximum amount of time that \p p_function has to
+//  /// execute
+//  ///
+//  /// \param p_on_timeout is the function that will be execute, if \p
+//  p_function
+//  /// does not execute in \p p_timeout
+//  ///
+//  /// \param p_provider is the function that will provide the parameters that
+//  /// the function expects
+//  template <typename t_timeout, typename t_interval, typename t_function,
+//            typename t_provider>
+//  sleeping_loop_base_t(const number::id &p_owner, t_interval p_interval,
+//                       t_function p_function, t_timeout p_timeout,
+//                       t_provider p_provider)
+//      : m_owner(p_owner), m_id(),
+//        m_interval(calendar::convert<interval>(p_interval)),
+//        m_async(
+//            m_id, p_function, calendar::convert<timeout>(p_timeout), []() {},
+//            p_provider, [this]() -> bool { return breaker(); }) {
+//    DEB(this->m_log, this->m_owner, ':', this->m_id,
+//        " - constructor with provider called");
+//  }
+
+//  /// \brief breaker defines if the loop should stop
+//  ///
+//  /// \return \p true if the loop should break; \p false othewise
+//  bool breaker() {
+
+//    // The predicate version returns pred(), regardless of whether the
+//    // timeout was triggered (although it can only be false if triggered).
+
+//    std::unique_lock<std::mutex> _lock(m_mutex);
+//    if (!m_cond.wait_for(_lock, m_interval,
+//                         [this]() -> bool { return m_stopped; })) {
+//      // timeout, so do not stop
+//      //      DEB(this->m_log, this->m_owner, ':' , this->m_id, " - must not
+//      //      stop");
+//      return false;
+//    }
+//    // no timeout, which means the loop was stopped
+//    DEB(this->m_log, this->m_owner, ':', this->m_id, " - must stop");
+
+//    return true;
+//  }
+
+// protected:
+//  /// \brief Type of loop used
+//  typedef internal::loop_t<t_params...> async_loop;
+
+// protected:
+//  number::id m_owner;
+
+//  number::id m_id;
+
+//  /// \brief Interval of the execution of the loop
+//  interval m_interval;
+
+//  /// \brief Asynchronous loop used
+//  async_loop m_async;
+
+//  /// \brief Controls asynchronous execution
+//  std::mutex m_mutex;
+
+//  /// \brief Controls asynchronous execution
+//  std::condition_variable m_cond;
+
+//  /// \brief Indicates if the loop should stop
+//  std::atomic<bool> m_stopped{true};
+
+//  /// \brief Logger
+//  logger::cerr<> m_log{"sleeping_loop"};
+//};
 
 #if 0
 /// \brief

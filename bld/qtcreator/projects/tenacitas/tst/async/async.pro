@@ -1,9 +1,10 @@
 SUBDIRS = \
     loop \
-    sleeping_loop    \
     circular_unlimited_size_queue \
-    handlers    \
-    messenger
+    sleeping_loop
+
+#    handlers    \
+#    messenger \
 
 
 
