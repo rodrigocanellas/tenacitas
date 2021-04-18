@@ -26,14 +26,14 @@ typedef uint16_t sub_id;
 typedef uint16_t publish_id;
 typedef uint32_t value;
 
+// data message
 template <msg_id id = 'A'> struct msg {
 
   explicit msg(value p_value = 0)
       : m_counter(p_value), m_up(up()), m_down(down()), m_d(2.5 * m_counter) {}
 
   friend std::ostream &operator<<(std::ostream &p_out, const msg &p_msg) {
-    p_out << "[" << id << ","
-          << tenacitas::number::format<value>(p_msg.m_counter) << ","
+    p_out << "[" << id << "," << number::format<value>(p_msg.m_counter) << ","
           << p_msg.m_up << "," << p_msg.m_down << "," << p_msg.m_d << "]";
     return p_out;
   }
@@ -50,13 +50,11 @@ template <msg_id id = 'A'> struct msg {
 
 private:
   inline std::string up() {
-    return tenacitas::number::format<value>(std::numeric_limits<value>::min() +
-                                            m_counter);
+    return number::format<value>(std::numeric_limits<value>::min() + m_counter);
   }
 
   inline std::string down() {
-    return tenacitas::number::format<value>(std::numeric_limits<value>::max() -
-                                            m_counter);
+    return number::format<value>(std::numeric_limits<value>::max() - m_counter);
   }
 
 private:
@@ -72,6 +70,7 @@ typedef msg<'C'> msg_c;
 typedef msg<'D'> msg_d;
 typedef msg<'E'> msg_e;
 
+// update message
 struct update {
   update(msg_id p_msg_id, pool_num p_pool_num, sub_id p_sub_id, value p_number)
       : m_msg_id(p_msg_id), m_pool_num(p_pool_num), m_sub_id(p_sub_id),
@@ -138,6 +137,7 @@ number::id pool_id(msg_id /*p_msg_id*/, pool_num /*p_pool_num*/) {
   return number::id();
 }
 
+// end publishing message
 struct end_publishing {
   end_publishing()
       : m_msg_id(std::numeric_limits<msg_id>::max()),
@@ -160,15 +160,7 @@ struct end_publishing {
   value m_last;
 };
 
-typedef async::internal::messenger_t<msg_a, async::priority> messenger_a;
-typedef async::internal::messenger_t<msg_b, async::priority> messenger_b;
-typedef async::internal::messenger_t<msg_c, async::priority> messenger_c;
-typedef async::internal::messenger_t<msg_d, async::priority> messenger_d;
-typedef async::internal::messenger_t<msg_e, async::priority> messenger_e;
-typedef async::internal::messenger_t<update, async::priority> messenger_update;
-typedef async::internal::messenger_t<end_publishing, async::priority>
-    messenger_end_publishing;
-
+// generic subscriber
 template <msg_id id> struct subscriber {
   inline subscriber(
       pool_num p_pool_num, sub_id p_sub_id,
@@ -208,7 +200,7 @@ template <msg_id id> struct subscriber {
     } else {
       inc();
       INF(m_log, "msg: ", p_msg, ", counter:", m_number);
-      messenger_update::send({id, m_pool_num, m_sub_id, m_number});
+      async::send(update{id, m_pool_num, m_sub_id, m_number});
       m_function(p_msg);
     }
   };
@@ -229,6 +221,7 @@ private:
   bool m_actual_sleep{false};
 };
 
+// generic publisher
 template <msg_id id> struct publish {
   publish() = delete;
   publish(publish_id p_publish_id, value p_max)
@@ -244,12 +237,12 @@ template <msg_id id> struct publish {
     if (m_msg.get_value() >= m_max) {
       m_ended = true;
       DEB(m_log, "sending end of publishing");
-      messenger_end_publishing::send({id, m_publish_id, m_msg.get_value()});
+      async::send(end_publishing{id, m_publish_id, m_msg.get_value()});
       return;
     }
 
     DEB(m_log, "publishing ", m_msg);
-    async::internal::messenger_t<msg<id>, async::priority>::send(m_msg);
+    async::send<msg<id>>(m_msg);
     ++m_msg;
   }
 
@@ -263,6 +256,7 @@ private:
   logger::cerr<> m_log;
 };
 
+// list of generic publishers
 template <msg_id id> struct publish_list {
 
   static publish<id> &add(publish<id> &&p_publish) {
@@ -285,6 +279,7 @@ private:
   static list m_list;
 };
 
+// list of generic subscriber
 template <msg_id id> struct subscriber_list {
 
   static publish<id> &add(subscriber<id> &&p_subscriber) {
@@ -300,27 +295,37 @@ private:
 };
 
 template <msg_id id> std::vector<publish<id>> publish_list<id>::m_list;
+
 } // namespace internal
 
+// class to create tests using async namespace
 struct test_base {
 
   test_base(const char *p_name) : m_log(p_name) {
 
-    internal::messenger_end_publishing::add_handler(
-        internal::messenger_end_publishing::add_handlers(2s),
+    async::add_handler<internal::end_publishing>(
         [this](const internal::end_publishing &p_end_publishing) -> void {
           on_end_publishing(p_end_publishing);
-        });
+        },
+        2s);
+    //    internal::messenger_end_publishing::add_handler(
+    //        internal::messenger_end_publishing::add_handlers(2s),
+    //        [this](const internal::end_publishing &p_end_publishing) -> void {
+    //          on_end_publishing(p_end_publishing);
+    //        });
 
-    internal::messenger_update::add_handler(
-        internal::messenger_update::add_handlers(2s),
-        [this](const update &p_update) -> void { on_update(p_update); });
+    //    internal::messenger_update::add_handler(
+    //        internal::messenger_update::add_handlers(2s),
+    //        [this](const update &p_update) -> void { on_update(p_update); });
+    async::add_handler<update>(
+        [this](const update &p_update) -> void { on_update(p_update); }, 2s);
   }
 
   template <msg_id id, typename t_time>
   void add_pool(const async::priority &p_priority, t_time p_timeout) {
-    async::internal::messenger_t<msg<id>, async::priority>::add_handlers(
-        p_priority, p_timeout);
+    async::add_handlers<msg<id>>(p_priority, p_timeout);
+    //    async::internal::messenger_t<msg<id>, async::priority>::add_handlers(
+    //        p_priority, p_timeout);
   }
 
   template <msg_id id, typename t_time>

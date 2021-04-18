@@ -103,11 +103,20 @@ struct executer_helper_t {
     auto _future = _task.get_future();
     std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
     if (_future.wait_for(p_timeout) != std::future_status::timeout) {
+#ifdef TENACITAS_LOG
+      std::cerr << "DEB|" << calendar::now<>::microsecs()
+                << "|executer_helper|call()|" << std::this_thread::get_id()
+                << '|' << __LINE__ << "|no timeout" << std::endl;
+#endif
       _thr.join();
       return executer_helper_result::ok(std::move(_future));
     }
+#ifdef TENACITAS_LOG
+    std::cerr << "DEB|" << calendar::now<>::microsecs()
+              << "|executer_helper|call()|" << std::this_thread::get_id() << '|'
+              << __LINE__ << "|timeout" << std::endl;
+#endif
     _thr.detach();
-
     return executer_helper_result::not_ok(std::move(_future));
   }
 };
@@ -330,6 +339,132 @@ protected:
   std::mutex m_mutex;
 };
 
+template <typename t_result, typename... t_params> struct exec {
+  template <typename t_time>
+  std::optional<t_result>
+  operator()(t_time p_timeout, std::function<t_result(t_params...)> p_function,
+             t_params... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    t_result _result;
+
+    auto _f = [&_cond, p_function, &_result, &p_params...]() -> void {
+      _result = p_function(p_params...);
+      _cond.notify_one();
+    };
+
+    std::thread _thread(_f);
+
+    std::unique_lock<std::mutex> _lock(_mutex);
+    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+      _thread.detach();
+      return {};
+    }
+
+    _thread.join();
+    return _result;
+  }
+};
+
+template <typename t_result> struct exec<t_result, void> {
+
+  template <typename t_time>
+  std::optional<t_result> operator()(t_time p_timeout,
+                                     std::function<t_result()> p_function) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    t_result _result;
+
+    auto _f = [&_cond, p_function, &_result]() -> void {
+      _result = p_function();
+      _cond.notify_one();
+    };
+
+    std::thread _thread(_f);
+
+    std::unique_lock<std::mutex> _lock(_mutex);
+    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+      _thread.detach();
+      return {};
+    }
+
+    _thread.join();
+    return _result;
+  }
+};
+
+template <typename... t_params> struct exec<void, t_params...> {
+  template <typename t_time>
+  bool operator()(t_time p_timeout, std::function<void(t_params...)> p_function,
+                  t_params... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    DEB(m_log, "timeout: ", p_timeout.count());
+
+    auto _f = [this, &_cond, p_function, &p_params...]() -> void {
+      DEB(m_log, "calling with ", p_params...);
+      p_function(p_params...);
+      DEB(m_log, "notifying");
+      _cond.notify_one();
+    };
+
+    std::thread _thread(_f);
+
+    std::unique_lock<std::mutex> _lock(_mutex);
+    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+      DEB(m_log, "notification with timeout");
+      _thread.detach();
+      return false;
+    }
+
+    DEB(m_log, "notification without timeout");
+
+    _thread.join();
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"exec<void,params>"};
+};
+
+template <> struct exec<void, void> {
+  template <typename t_time>
+  bool operator()(t_time p_timeout, std::function<void()> p_function) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    DEB(m_log, "timeout: ", p_timeout.count());
+
+    auto _f = [this, &_cond, p_function]() -> void {
+      DEB(m_log, "calling");
+      p_function();
+      _cond.notify_one();
+      DEB(m_log, "notifying");
+    };
+
+    DEB(m_log, "1");
+    std::thread _thread(_f);
+    DEB(m_log, "2");
+
+    std::unique_lock<std::mutex> _lock(_mutex);
+    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
+      DEB(m_log, "notification with timeout");
+      _thread.detach();
+      return false;
+    }
+
+    DEB(m_log, "notification without timeout");
+    _thread.join();
+    return true;
+  }
+
+private:
+  logger::cerr<> m_log{"exec<void,void>"};
+};
+
 /// \brief Asynchronous loop with function that takes parameters
 ///
 /// \tparams are the types of the parameters that the function that will be
@@ -505,66 +640,63 @@ private:
   protected:
     /// \brief Specific implementation of the loop virtual method
     void loop() override {
-      DEB(this->m_log, this->m_owner, ':', this->m_id, " - entering loop");
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - entering loop, m_timeout = ", this->m_timeout.count());
 
       while (true) {
         std::lock_guard<std::mutex> _lock(this->m_mutex);
 
         if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-              (this->m_stopped ? "true" : "false"));
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
           break;
         }
 
         DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling provider");
         std::optional<std::tuple<t_params...>> _maybe_data{m_provider()};
 
-        if (this->m_stopped || this->m_breaker()) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-              (this->m_stopped ? "true" : "false"));
+        if (this->m_stopped /*|| this->m_breaker()*/) {
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
           break;
         }
 
         if (_maybe_data) {
-          std::tuple<t_params...> _params{std::move(*_maybe_data)};
+          std::tuple<t_params...> _tuple{std::move(*_maybe_data)};
 
           DEB(this->m_log, this->m_owner, ':', this->m_id,
-              " - data provided = ", _params);
+              " - data provided = ", _tuple);
 
-          if (this->m_stopped || this->m_breaker()) {
-            DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-                (this->m_stopped ? "true" : "false"));
+          if (this->m_stopped /*|| this->m_breaker()*/) {
+            DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
             break;
           }
 
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - still here");
+          DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling");
 
-          if (!execute(this->m_timeout, [this, &_params]() -> void {
-                if (this->m_stopped || this->m_breaker()) {
-                  DEB(this->m_log, this->m_owner, ':', this->m_id,
-                      " - stopped? ", (this->m_stopped ? "true" : "false"));
-                  return;
-                }
-                DEB(this->m_log, this->m_owner, ':', this->m_id,
-                    " - still here");
-                std::apply(this->m_function, _params);
-              })) {
-            WAR(this->m_log, this->m_owner, ':', this->m_id,
-                " - timeout for worker with data = ", _params);
+          //          std::apply(this->m_function, std::move(_tuple));
 
+          auto _function = [this, &_tuple]() -> void {
             if (this->m_stopped || this->m_breaker()) {
-              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-                  (this->m_stopped ? "true" : "false"));
+              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
+              return;
+            }
+            std::apply(this->m_function, std::move(_tuple));
+          };
+
+          if (!exec<void, void>()(this->m_timeout, _function)) {
+            WAR(this->m_log, this->m_owner, ':', this->m_id,
+                " - timeout for worker with data = ", _tuple);
+
+            if (this->m_stopped /*|| this->m_breaker()*/) {
+              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
               break;
             }
 
-            auto _on_timeout = [this, &_params]() {
-              std::apply(this->m_on_timeout, std::move(_params));
+            auto _on_timeout = [this, &_tuple]() {
+              std::apply(this->m_on_timeout, std::move(_tuple));
             };
 
-            if (this->m_stopped || this->m_breaker()) {
-              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stopped? ",
-                  (this->m_stopped ? "true" : "false"));
+            if (this->m_stopped /*|| this->m_breaker()*/) {
+              DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop/break");
               break;
             }
 
@@ -737,7 +869,8 @@ private:
   protected:
     /// \brief Specific implementation of the loop virtual method
     void loop() override {
-      DEB(this->m_log, this->m_owner, ':', this->m_id, " - entering loop");
+      DEB(this->m_log, this->m_owner, ':', this->m_id,
+          " - entering loop, m_timeout = ", this->m_timeout.count());
 
       auto _worker = [this]() -> void { this->m_function(); };
 
@@ -749,9 +882,16 @@ private:
           break;
         }
 
-        if (!execute(this->m_timeout, _worker)) {
+        DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling work");
+
+        if (!exec<void, void>()(this->m_timeout, _worker)) {
           std::thread([this]() -> void { this->m_on_timeout(); }).detach();
         }
+
+        //        if (!execute(this->m_timeout, _worker)) {
+        //          std::thread([this]() -> void { this->m_on_timeout();
+        //          }).detach();
+        //        }
       }
       DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
     }

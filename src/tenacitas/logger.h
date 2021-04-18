@@ -205,7 +205,7 @@ bool can_log(internal::level p_level) {
 template <bool use = true> class log {
 public:
   /// \brief Responsible for actually writing the log message
-  typedef std::function<void(const char *)> writer;
+  typedef std::function<void(std::string &&)> writer;
 
 public:
   /// \brief Default contructor not allowed
@@ -455,34 +455,49 @@ private:
   void write(level p_level, const char *p_func, uint16_t p_line,
              const t_params &... p_params) {
 
+    //    if (can_log(p_level)) {
+    //      appender _append(m_separator);
+
+    //      const char *_level_str = level2str(p_level);
+    //      _append(_level_str);
+
+    //      {
+    //        std::string _now = std::to_string(calendar::now<>::microsecs());
+    //        _append(_now.c_str());
+    //      }
+
+    //      _append(m_class.c_str());
+    //      _append(p_func);
+
+    //      {
+    //        std::ostringstream _stream;
+    //        _stream << std::this_thread::get_id();
+    //        _append(_stream.str().c_str());
+    //      }
+
+    //      _append(std::to_string(p_line).c_str());
+
+    //      format(_append, p_params...);
+
+    //      _append("\n", false);
+
+    //      std::lock_guard<std::mutex> _lock(m_mutex);
+    //      m_writer(_append.get());
+    //    }
     if (can_log(p_level)) {
-      appender _append(m_separator);
 
-      const char *_level_str = level2str(p_level);
-      _append(_level_str);
+      std::stringstream _stream;
 
-      {
-        std::string _now = std::to_string(calendar::now<>::microsecs());
-        _append(_now.c_str());
-      }
-
-      _append(m_class.c_str());
-      _append(p_func);
-
-      {
-        std::ostringstream _stream;
-        _stream << std::this_thread::get_id();
-        _append(_stream.str().c_str());
-      }
-
-      _append(std::to_string(p_line).c_str());
-
-      format(_append, p_params...);
-
-      _append("\n", false);
+      _stream << level2str(p_level) << m_separator
+              << calendar::now<>::microsecs() << m_separator << m_class
+              << m_separator << p_func << m_separator
+              << std::this_thread::get_id() << m_separator << p_line
+              << m_separator;
+      format(_stream, p_params...);
+      _stream << "\n";
 
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_writer(_append.get());
+      m_writer(_stream.str());
     }
   }
 
@@ -504,23 +519,40 @@ private:
   }
 
   /// \brief Compile time recursion to solve the variadic template parameter
+  //  template <typename t, typename... ts>
+  //  inline void format(appender &p_append, const t &p_t,
+  //                     const ts &... p_ts) const {
+  //    format(p_append, p_t);
+  //    format(p_append, p_ts...);
+  //  }
+
   template <typename t, typename... ts>
-  inline void format(appender &p_append, const t &p_t,
+  inline void format(std::ostream &p_stream, const t &p_t,
                      const ts &... p_ts) const {
-    format(p_append, p_t);
-    format(p_append, p_ts...);
+    format(p_stream, p_t);
+    format(p_stream, p_ts...);
   }
 
   /// \brief End of compile time recursion to solve the variadic template
   /// parameter
-  template <typename t> void format(appender &p_append, const t &p_t) const {
-    std::stringstream _stream;
+  //  template <typename t> void format(appender &p_append, const t &p_t) const
+  //  {
+  //    std::stringstream _stream;
+  //    if constexpr (type::is_tuple<t>::value) {
+  //      _stream << to_str(p_t);
+  //    } else {
+  //      _stream << p_t;
+  //    }
+  //    p_append(_stream.str().c_str(), false);
+  //  }
+
+  template <typename t>
+  void format(std::ostream &p_stream, const t &p_t) const {
     if constexpr (type::is_tuple<t>::value) {
-      _stream << to_str(p_t);
+      to_str(p_stream, p_t);
     } else {
-      _stream << p_t;
+      p_stream << p_t;
     }
-    p_append(_stream.str().c_str(), false);
   }
 
   /// \brief Appends a double to the buffer
@@ -528,11 +560,17 @@ private:
   /// \param p_append will append the double to the buffer
   ///
   /// \param p_t is the double to be appended to the buffer
-  void format(appender &p_append, const double &p_t) const {
-    std::stringstream _stream;
-    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
-            << p_t;
-    p_append(_stream.str().c_str(), false);
+  //  void format(appender &p_append, const double &p_t) const {
+  //    std::stringstream _stream;
+  //    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+  //            << p_t;
+  //    p_append(_stream.str().c_str(), false);
+  //  }
+
+  void format(std::ostream &p_stream, const double &p_t) const {
+
+    p_stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+             << p_t;
   }
 
   /// \brief Appends a float to the buffer
@@ -540,11 +578,16 @@ private:
   /// \param p_append will append the float to the buffer
   ///
   /// \param p_t is the float to be appended to the buffer
-  void format(appender &p_append, const float &p_t) const {
-    std::stringstream _stream;
-    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
-            << p_t;
-    p_append(_stream.str().c_str(), false);
+  //  void format(appender &p_append, const float &p_t) const {
+  //    std::stringstream _stream;
+  //    _stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+  //            << p_t;
+  //    p_append(_stream.str().c_str(), false);
+  //  }
+
+  void format(std::ostream &p_stream, const float &p_t) const {
+    p_stream << std::setprecision(std::numeric_limits<double>::max_digits10)
+             << p_t;
   }
 
   /// \brief Appends a bool to the buffer
@@ -552,10 +595,16 @@ private:
   /// \param p_append will append the bool to the buffer
   ///
   /// \param p_t is the bool to be appended to the buffer
-  void format(appender &p_append, const bool &p_t) const {
+  //  void format(appender &p_append, const bool &p_t) const {
+  //    static const char *_true = "true";
+  //    static const char *_false = "true";
+  //    p_append((p_t ? _true : _false), false);
+  //  }
+
+  void format(std::ostream &p_stream, const bool &p_t) const {
     static const char *_true = "true";
     static const char *_false = "true";
-    p_append((p_t ? _true : _false), false);
+    p_stream << (p_t ? _true : _false);
   }
 
   /// \brief Appends a pair to the buffer
@@ -567,14 +616,24 @@ private:
   /// \param p_append will append the pair to the buffer
   ///
   /// \param p_pair is the pair to be appended to the buffer
+  //  template <typename t_first, typename t_second>
+  //  void format(appender &p_append,
+  //              const std::pair<t_first, t_second> &p_pair) const {
+  //    p_append('(', false);
+  //    format(p_append, std::get<0>(p_pair));
+  //    p_append(',', false);
+  //    format(p_append, std::get<1>(p_pair));
+  //    p_append(')', false);
+  //  }
+
   template <typename t_first, typename t_second>
-  void format(appender &p_append,
+  void format(std::ostream &p_stream,
               const std::pair<t_first, t_second> &p_pair) const {
-    p_append('(', false);
-    format(p_append, std::get<0>(p_pair));
-    p_append(',', false);
-    format(p_append, std::get<1>(p_pair));
-    p_append(')', false);
+    p_stream << '(';
+    format(p_stream, std::get<0>(p_pair));
+    p_stream << ',';
+    format(p_stream, std::get<1>(p_pair));
+    p_stream << ')';
   }
 
   /// \brief Appends a thread id to the buffer
@@ -582,25 +641,27 @@ private:
   /// \param p_append will append the thread id to the buffer
   ///
   /// \param p_id is the thread id to be appended to the buffer
-  inline void format(appender &p_append, std::thread::id p_id) const {
-    std::stringstream _stream;
-    _stream << p_id;
-    p_append(_stream.str().c_str(), false);
-  }
+  //  inline void format(appender &p_append, std::thread::id p_id) const {
+  //    std::stringstream _stream;
+  //    _stream << p_id;
+  //    p_append(_stream.str().c_str(), false);
+  //  }
 
   /// \brief Copies a tuple fields into a string
   template <class TupType, size_t... I>
-  std::string to_str(const TupType &_tup, std::index_sequence<I...>) const {
-    std::stringstream _stream;
-    _stream << "(";
-    (..., (_stream << (I == 0 ? "" : ", ") << std::get<I>(_tup)));
-    _stream << ")";
-    return _stream.str();
+  void to_str(std::ostream &p_stream, const TupType &_tup,
+              std::index_sequence<I...>) const {
+    //    std::stringstream _stream;
+    p_stream << "(";
+    (..., (p_stream << (I == 0 ? "" : ", ") << std::get<I>(_tup)));
+    p_stream << ")";
+    //    return _stream.str();
   }
 
   /// \brief Copies one tuple field into a string
-  template <class... T> std::string to_str(const std::tuple<T...> &_tup) const {
-    return to_str(_tup, std::make_index_sequence<sizeof...(T)>());
+  template <class... T>
+  void to_str(std::ostream &p_stream, const std::tuple<T...> &_tup) const {
+    to_str(p_stream, _tup, std::make_index_sequence<sizeof...(T)>());
   }
 
 private:
@@ -654,16 +715,16 @@ template <bool use = true> struct cerr : public internal::log<use> {
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit cerr(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+      : internal::log<use>(std::move(p_class), [](std::string &&p_str) -> void {
           std::cerr << p_str;
         }) {}
 
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit cerr(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::cerr << p_str;
-        }) {}
+      : internal::log<use>(
+            std::string(p_class),
+            [](std::string &&p_str) -> void { std::cerr << p_str; }) {}
 };
 
 /// \brief Logs message to \p std::cout
@@ -683,16 +744,16 @@ template <bool use = true> struct cout : public internal::log<use> {
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit cout(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+      : internal::log<use>(std::move(p_class), [](std::string &&p_str) -> void {
           std::cout << p_str;
         }) {}
 
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit cout(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::cout << p_str;
-        }) {}
+      : internal::log<use>(
+            std::string(p_class),
+            [](std::string &&p_str) -> void { std::cout << p_str; }) {}
 };
 
 /// \brief Logs message to \p std::clog
@@ -712,16 +773,16 @@ template <bool use = true> struct clog : public internal::log<use> {
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit clog(std::string &&p_class = "no-class")
-      : internal::log<use>(std::move(p_class), [](const char *p_str) -> void {
+      : internal::log<use>(std::move(p_class), [](std::string &&p_str) -> void {
           std::clog << p_str;
         }) {}
 
   /// \brief Constructor
   /// \param p_class is the name of the class responsible for logging
   inline explicit clog(const char *p_class)
-      : internal::log<use>(std::string(p_class), [](const char *p_str) -> void {
-          std::clog << p_str;
-        }) {}
+      : internal::log<use>(
+            std::string(p_class),
+            [](std::string &&p_str) -> void { std::clog << p_str; }) {}
 };
 
 #endif

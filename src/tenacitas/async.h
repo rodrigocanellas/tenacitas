@@ -711,6 +711,13 @@ add_handler(std::function<void(const t_msg &)> p_handler,
                                                              p_timeout);
 }
 
+template <typename t_msg, typename t_priority>
+static inline void traverse(std::function<void(const number::id &, t_priority,
+                                               std::chrono::milliseconds)>
+                                p_visitor) {
+  internal::messenger_t<t_msg, t_priority>::traverse(p_visitor);
+}
+
 } // namespace async
 } // namespace tenacitas
 

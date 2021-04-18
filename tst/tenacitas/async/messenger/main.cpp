@@ -30,7 +30,6 @@ struct messenger_000 {
   typedef int16_t data;
   typedef logger::cerr<> log;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -49,7 +48,7 @@ struct messenger_000 {
     const std::chrono::milliseconds _subscriber_timeout{800ms};
 
     number::id _id =
-        messenger::add_handlers(async::priority::lowest, _subscriber_timeout);
+        async::add_handlers<data>(async::priority::lowest, _subscriber_timeout);
 
     function<void(const data &)> _subscriber =
         [this, &_data_consumed,
@@ -66,14 +65,14 @@ struct messenger_000 {
       }
     };
 
-    messenger::add_handler(_id, _subscriber);
+    async::add_handler(_id, _subscriber);
 
     function<void(void)> _slepper = [this, &_data_produced]() -> void {
       if (_data_produced == _data_to_produce) {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::send(_data_produced);
+        async::send(_data_produced);
         DEB(m_log, "published ", _data_produced);
       }
     };
@@ -130,7 +129,8 @@ struct messenger_001 {
   static std::string desc() { return "compiling"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t, async::priority> messenger;
+    //    typedef async::internal::messenger_t<int16_t, async::priority>
+    //    messenger;
 
     DEB(m_log, "starting");
 
@@ -140,26 +140,26 @@ struct messenger_001 {
     };
 
     DEB(m_log, "adding worker pool");
-    number::id _id = messenger::add_handlers(async::priority::lowest, 1s);
+    number::id _id = async::add_handlers<int16_t>(async::priority::lowest, 1s);
     DEB(m_log, "worker pool, ", _id, " added");
 
     DEB(m_log, "getting priority");
-    std::optional<async::priority> _maybe = messenger::get_priority(_id);
+    std::optional<async::priority> _maybe = async::get_priority<int16_t>(_id);
 
     if (_maybe) {
       DEB(m_log, "priority = ", *_maybe);
     }
 
     DEB(m_log, "resetting priority");
-    messenger::set_priority(_id, async::priority::middle);
+    async::set_priority<int16_t>(_id, async::priority::middle);
     DEB(m_log, "priority reset");
 
     DEB(m_log, "adding subscriber");
-    messenger::add_handler(_id, _subscriber);
+    async::add_handler<int16_t>(_id, _subscriber);
     DEB(m_log, "subscriber added");
 
     DEB(m_log, "publishing");
-    messenger::send(42);
+    async::send<int16_t>(42);
     DEB(m_log, "published");
 
     DEB(m_log, "wating notification");
@@ -183,7 +183,6 @@ struct messenger_002 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -201,7 +200,7 @@ struct messenger_002 {
     data _data_produced{0};
     data _data_consumed{0};
 
-    number::id _id = messenger::add_handlers(async::priority::lowest, 3s);
+    number::id _id = async::add_handlers<data>(async::priority::lowest, 3s);
 
     auto _subscriber = [this, &_data_consumed](const data &p_data) -> void {
       DEB(m_log, "consuming ", p_data);
@@ -212,7 +211,7 @@ struct messenger_002 {
       }
     };
 
-    messenger::add_handler(_id, _subscriber);
+    async::add_handler<data>(_id, _subscriber);
 
     auto _sleeper = [this, &_data_produced, _total_to_produce]() -> void {
       DEB(m_log, "data produced = ", _data_produced, ", total to produce ",
@@ -222,7 +221,7 @@ struct messenger_002 {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::send(_data_produced);
+        async::send<data>(_data_produced);
         DEB(m_log, "published data ", _data_produced);
       }
     };
@@ -276,7 +275,6 @@ struct messenger_004 {
 
   typedef int16_t data;
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::messenger_t<data, async::priority> messenger;
 
   static std::string desc() {
     std::stringstream _stream;
@@ -315,7 +313,7 @@ struct messenger_004 {
         m_cond_producer.notify_one();
       } else {
         ++_data_produced;
-        messenger::send(_data_produced);
+        async::send<data>(_data_produced);
         DEB(m_log, "published data ", _data_produced);
       }
     };
@@ -369,12 +367,12 @@ struct messenger_003 {
   static std::string desc() { return "Testing order of worker pools"; }
 
   bool operator()() {
-    typedef async::internal::messenger_t<int16_t, async::priority> messenger;
+    typedef int32_t data;
 
-    const number::id _p2 = messenger::add_handlers(async::priority::low, 4s);
+    const number::id _p2 = async::add_handlers<data>(async::priority::low, 4s);
 
     const number::id _p1 =
-        messenger::add_handlers(async::priority::low_middle, 1s);
+        async::add_handlers<data>(async::priority::low_middle, 1s);
 
     bool _first{true};
     bool _result{true};
@@ -395,7 +393,7 @@ struct messenger_003 {
       INF(m_log, p_id, ':', p_priority, ':', p_timeout.count());
     };
 
-    messenger::traverse(_visitor);
+    async::traverse<data, async::priority>(_visitor);
     return _result;
   }
 
