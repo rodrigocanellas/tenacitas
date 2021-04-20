@@ -103,23 +103,23 @@ struct executer_helper_t {
     auto _future = _task.get_future();
     std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
     if (_future.wait_for(p_timeout) != std::future_status::timeout) {
-#ifdef TENACITAS_LOG
-      std::cerr << "DEB|" << calendar::now<>::microsecs()
-                << "|executer_helper|call()|" << std::this_thread::get_id()
-                << '|' << __LINE__ << "|no timeout" << std::endl;
-#endif
+
+      DEB(m_log, "no timeout");
+
       _thr.join();
       return executer_helper_result::ok(std::move(_future));
     }
-#ifdef TENACITAS_LOG
-    std::cerr << "DEB|" << calendar::now<>::microsecs()
-              << "|executer_helper|call()|" << std::this_thread::get_id() << '|'
-              << __LINE__ << "|timeout" << std::endl;
-#endif
+    DEB(m_log, "no timeout");
     _thr.detach();
     return executer_helper_result::not_ok(std::move(_future));
   }
+
+private:
+  static logger::cerr<> m_log;
 };
+
+template <typename t_type, typename t_time, typename... t_params>
+logger::cerr<> executer_helper_t<t_type, t_time, t_params...>::m_log{"execute"};
 
 /// \brief executes a callable object in a maximum amount of time
 ///
@@ -156,133 +156,78 @@ execute(t_time p_timeout, t_function p_function, t_params... p_params) {
                                std::forward<t_params>(p_params)...);
 }
 
-// template <typename t_result, typename... t_params> struct exec {
-//  template <typename t_time>
-//  std::optional<t_result>
-//  operator()(t_time p_timeout, std::function<t_result(t_params...)>
-//  p_function,
-//             t_params... p_params) {
-//    std::mutex _mutex;
-//    std::condition_variable _cond;
+template <typename t_ret> struct execute_timeout {
+  template <typename t_time, typename t_function, typename... t_params>
+  std::optional<t_ret> operator()(t_time p_timeout, t_function p_function,
+                                  t_params... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
 
-//    t_result _result;
+    //    std::cout << __LINE__ << " timeout = " << p_timeout.count() <<
+    //    std::endl;
 
-//    auto _f = [&_cond, p_function, &_result, &p_params...]() -> void {
-//      _result = p_function(p_params...);
-//      _cond.notify_one();
-//    };
+    std::shared_ptr<bool> _stop{std::make_shared<bool>(false)};
 
-//    std::thread _thread(_f);
+    t_ret _ret;
 
-//    std::unique_lock<std::mutex> _lock(_mutex);
-//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-//      _thread.detach();
-//      return {};
-//    }
+    std::thread _th(
+        [&p_function, &_cond, &_ret, _stop, &p_params...]() -> void {
+          _ret = p_function(_stop, p_params...);
+          //          std::cout << __LINE__ << " ret = " << _ret << std::endl;
+          _cond.notify_one();
+        });
 
-//    _thread.join();
-//    return _result;
-//  }
-//};
+    std::unique_lock<std::mutex> _lock{_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+      _th.join();
+      //      std::cout << __LINE__ << " ret = " << _ret << std::endl;
+      return {_ret};
+    }
+    //    std::cout << __LINE__ << " setting stop = true" << std::endl;
+    *_stop = true;
+    _th.detach();
+    return {};
+  }
+};
 
-// template <typename t_result> struct exec<t_result, void> {
+template <> struct execute_timeout<void> {
+  template <typename t_time, typename t_function, typename... t_params>
+  bool operator()(t_time p_timeout, t_function p_function,
+                  t_params... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
 
-//  template <typename t_time>
-//  std::optional<t_result> operator()(t_time p_timeout,
-//                                     std::function<t_result()> p_function) {
-//    std::mutex _mutex;
-//    std::condition_variable _cond;
+    //    std::cout << __LINE__ << " timeout = " << p_timeout.count() <<
+    //    std::endl;
 
-//    t_result _result;
+    std::shared_ptr<bool> _stop{std::make_shared<bool>(false)};
 
-//    auto _f = [&_cond, p_function, &_result]() -> void {
-//      _result = p_function();
-//      _cond.notify_one();
-//    };
+    std::thread _th([&p_function, &_cond, _stop, &p_params...]() -> void {
+      p_function(_stop, p_params...);
+      _cond.notify_one();
+    });
 
-//    std::thread _thread(_f);
+    std::unique_lock<std::mutex> _lock{_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+      _th.join();
+      return true;
+    }
+    //    std::cout << "setting stop = true" << std::endl;
+    *_stop = true;
+    _th.detach();
+    return false;
+  }
+};
 
-//    std::unique_lock<std::mutex> _lock(_mutex);
-//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-//      _thread.detach();
-//      return {};
-//    }
+template <typename t_time, typename t_function, typename... t_params>
+typename executer_helper_result_t<std::invoke_result_t<
+    t_function, std::shared_ptr<bool>, t_params...>>::result
+execute_new(t_time p_timeout, t_function p_function, t_params... p_params) {
+  typedef std::invoke_result_t<t_function, std::shared_ptr<bool>, t_params...>
+      type;
 
-//    _thread.join();
-//    return _result;
-//  }
-//};
-
-// template <typename... t_params> struct exec<void, t_params...> {
-//  template <typename t_time>
-//  bool operator()(t_time p_timeout, std::function<void(t_params...)>
-//  p_function,
-//                  t_params... p_params) {
-//    std::mutex _mutex;
-//    std::condition_variable _cond;
-
-//    DEB(m_log, "timeout: ", p_timeout.count());
-
-//    auto _f = [this, &_cond, p_function, &p_params...]() -> void {
-//      DEB(m_log, "calling with ", p_params...);
-//      p_function(p_params...);
-//      DEB(m_log, "notifying");
-//      _cond.notify_one();
-//    };
-
-//    std::thread _thread(_f);
-
-//    std::unique_lock<std::mutex> _lock(_mutex);
-//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-//      DEB(m_log, "notification with timeout");
-//      _thread.detach();
-//      return false;
-//    }
-
-//    DEB(m_log, "notification without timeout");
-
-//    _thread.join();
-//    return true;
-//  }
-
-// private:
-//  logger::cerr<> m_log{"exec<void,params>"};
-//};
-
-// template <> struct exec<void, void> {
-//  template <typename t_time>
-//  bool operator()(t_time p_timeout, std::function<void()> p_function) {
-//    std::mutex _mutex;
-//    std::condition_variable _cond;
-
-//    DEB(m_log, "timeout: ", p_timeout.count());
-
-//    auto _f = [this, &_cond, p_function]() -> void {
-//      DEB(m_log, "calling");
-//      p_function();
-//      _cond.notify_one();
-//      DEB(m_log, "notifying");
-//    };
-
-//    DEB(m_log, "1");
-//    std::thread _thread(_f);
-//    DEB(m_log, "2");
-
-//    std::unique_lock<std::mutex> _lock(_mutex);
-//    if (_cond.wait_for(_lock, p_timeout) == std::cv_status::timeout) {
-//      DEB(m_log, "notification with timeout");
-//      _thread.detach();
-//      return false;
-//    }
-
-//    DEB(m_log, "notification without timeout");
-//    _thread.join();
-//    return true;
-//  }
-
-// private:
-//  logger::cerr<> m_log{"exec<void,void>"};
-//};
+  return execute_timeout<type>()(p_timeout, p_function, p_params...);
+}
 
 /// \brief Base class for asynchronous loop
 /// An asynchronous loop class runs a loop apart from the caller code. A
