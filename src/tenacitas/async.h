@@ -36,34 +36,6 @@ namespace tenacitas {
 /// \brief support for async (asynchronous) programming
 namespace async {
 
-/// \brief executes a callable object in a maximum amount of time
-///
-/// \tparam t_time type of time used to control timeout of the function being
-/// executed
-///
-/// \tparam t_function type of callable object
-///
-/// \tparam t_params possible types of the arguments of the function being
-/// executed
-///
-/// \param p_timeout maximum amount of time for the function to execute
-///
-/// \param p_function callable object
-///
-/// \param p_params... possible parameters required by \p p_function
-///
-/// \return if the callable object returns void, \p execute returns true if no
-/// timeout; false otherwise
-///         if the callable object does not return void, \p execute returns
-///         std::optional<type-returned> with value if not timeout, {}
-///         otherwise
-template <typename t_time, typename t_function, typename... t_params>
-inline typename internal::executer_helper_t<
-    std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
-execute(t_time p_timeout, t_function p_function, t_params... p_params) {
-  return internal::execute(p_timeout, p_function, p_params...);
-}
-
 /// \brief Priority
 struct priority {
 
@@ -132,11 +104,7 @@ struct sleeping_loop_t : public internal::loop_t<t_params...> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
-  typedef std::function<void(t_params...)> function;
-
-  /// \brief Signature of the function that will be called if the function
-  /// called in the loop times out
-  typedef std::function<void(t_params...)> on_timeout;
+  typedef std::function<void(std::shared_ptr<bool>, t_params...)> function;
 
   /// \brief Signature of the function that will be called in the loop to
   /// provide the parameters for the function
@@ -156,10 +124,10 @@ struct sleeping_loop_t : public internal::loop_t<t_params...> {
 
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(const number::id &p_owner, function p_function,
-                  t_timeout p_timeout, on_timeout p_on_timeout,
-                  provider p_provider, t_interval p_interval)
+                  t_timeout p_timeout, provider p_provider,
+                  t_interval p_interval)
       : internal::loop_t<t_params...>(p_owner, p_function, p_timeout,
-                                      p_on_timeout, p_provider),
+                                      p_provider),
         m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
 protected:
@@ -193,11 +161,7 @@ template <> struct sleeping_loop_t<void> : public internal::loop_t<void> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
-  typedef std::function<void()> function;
-
-  /// \brief Signature of the function that will be called if the function
-  /// called in the loop times out
-  typedef std::function<void()> on_timeout;
+  typedef std::function<void(std::shared_ptr<bool>)> function;
 
   sleeping_loop_t() = delete;
 
@@ -216,9 +180,8 @@ template <> struct sleeping_loop_t<void> : public internal::loop_t<void> {
 
   template <typename t_timeout, typename t_interval>
   sleeping_loop_t(const number::id &p_owner, function p_function,
-                  t_timeout p_timeout, on_timeout p_on_timeout,
-                  t_interval p_interval)
-      : internal::loop_t<void>(p_owner, p_function, p_timeout, p_on_timeout),
+                  t_timeout p_timeout, t_interval p_interval)
+      : internal::loop_t<void>(p_owner, p_function, p_timeout),
         m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
 protected:

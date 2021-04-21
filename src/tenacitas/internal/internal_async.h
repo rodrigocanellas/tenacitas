@@ -45,165 +45,96 @@ typedef std::chrono::milliseconds timeout;
 /// \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
 
-template <typename t_type> struct executer_helper_result_t {
+using namespace std::chrono_literals;
+template <typename t_type> struct executer_traits_t {
   /// \brief returned by the executed function
   typedef t_type type;
 
   /// \brief result of the time controlled execution of the function
   typedef std::optional<type> result;
-
-  static std::optional<t_type> ok(std::future<t_type> &&p_future) {
-    return p_future.get();
-  }
-  static std::optional<t_type> not_ok(std::future<t_type> &&) { return {}; }
 };
 
-template <> struct executer_helper_result_t<void> {
+template <> struct executer_traits_t<void> {
   /// \brief returned by the executed function
   typedef void type;
 
   /// \brief result of the time controlled execution of the function
   typedef bool result;
-
-  static bool ok(std::future<void> &&) { return true; }
-  static bool not_ok(std::future<void> &&) { return false; }
 };
 
-/// \brief helper class for \p execute function
-///
-/// \tparam t_type type returned by the executed function
-///
-/// \tparam t_time type of time used to control timeout of the function being
-/// executed
-///
-/// \tparam t_params... possible types of the arguments of the function being
-/// executed
-template <typename t_type, typename t_time, typename... t_params>
-struct executer_helper_t {
-  typedef executer_helper_result_t<t_type> executer_helper_result;
-  typedef typename executer_helper_result::type type;
-  typedef typename executer_helper_result::result result;
+typedef std::shared_ptr<bool> bool_ptr;
 
-  /// \brief executes a function, controlling its timeout
-  ///
-  /// \param p_function function to be executed
-  ///
-  /// \param p_timeout maximum amount of time for \p p_function to execute
-  ///
-  /// \param p_params... possible parameters required by \p p_function
-  ///
-  /// \return std::optional<t_type> with value if not timeout, {} otherwise
-  static result call(std::function<t_type(t_params...)> p_work,
-                     t_time p_timeout, t_params... p_params) {
-
-    std::packaged_task<type(t_params...)> _task(
-        [p_work](t_params... p_params) -> t_type {
-          return p_work(std::forward<t_params>(p_params)...);
-        });
-    auto _future = _task.get_future();
-    std::thread _thr(std::move(_task), std::forward<t_params>(p_params)...);
-    if (_future.wait_for(p_timeout) != std::future_status::timeout) {
-
-      DEB(m_log, "no timeout");
-
-      _thr.join();
-      return executer_helper_result::ok(std::move(_future));
-    }
-    DEB(m_log, "no timeout");
-    _thr.detach();
-    return executer_helper_result::not_ok(std::move(_future));
-  }
-
-private:
-  static logger::cerr<> m_log;
-};
-
-template <typename t_type, typename t_time, typename... t_params>
-logger::cerr<> executer_helper_t<t_type, t_time, t_params...>::m_log{"execute"};
-
-/// \brief executes a callable object in a maximum amount of time
-///
-/// \tparam t_time type of time used to control timeout of the function being
-/// executed
-///
-/// \tparam t_function type of callable object
-///
-/// \tparam t_params possible types of the arguments of the function being
-/// executed
-///
-/// \param p_timeout maximum amount of time for the function to execute
-///
-/// \param p_function callable object
-///
-/// \param p_params... possible parameters required by \p p_function
-///
-/// \return if the callable object returns void, \p execute returns true if no
-/// timeout; false otherwise
-///         if the callable object does not return void, \p execute returns
-///         std::optional<type-returned> with value if not timeout, {}
-///         otherwise
-template <typename t_time, typename t_function, typename... t_params>
-inline typename internal::executer_helper_t<
-    std::invoke_result_t<t_function, t_params...>, t_time, t_params...>::result
-execute(t_time p_timeout, t_function p_function, t_params... p_params) {
-
-  typedef std::invoke_result_t<t_function, t_params...> type;
-
-  typedef internal::executer_helper_t<type, t_time, t_params...>
-      executer_helper;
-
-  return executer_helper::call(p_function, p_timeout,
-                               std::forward<t_params>(p_params)...);
-}
-
-template <typename t_ret> struct execute_timeout {
+template <typename t_ret> struct executer_t {
   template <typename t_time, typename t_function, typename... t_params>
   std::optional<t_ret> operator()(t_time p_timeout, t_function p_function,
-                                  t_params... p_params) {
+                                  std::tuple<t_params...> &&p_tuple) {
     std::mutex _mutex;
     std::condition_variable _cond;
 
-    //    std::cout << __LINE__ << " timeout = " << p_timeout.count() <<
-    //    std::endl;
+    bool_ptr _stop{std::make_shared<bool>(false)};
 
-    std::shared_ptr<bool> _stop{std::make_shared<bool>(false)};
+    std::tuple<std::shared_ptr<bool>, t_params...> _tuple =
+        std::tuple_cat(std::make_tuple(_stop), std::move(p_tuple));
 
     t_ret _ret;
 
-    std::thread _th(
-        [&p_function, &_cond, &_ret, _stop, &p_params...]() -> void {
-          _ret = p_function(_stop, p_params...);
-          //          std::cout << __LINE__ << " ret = " << _ret << std::endl;
-          _cond.notify_one();
-        });
+    std::thread _th([&p_function, &_cond, &_ret, &_tuple]() -> void {
+      _ret = std::apply(p_function, std::move(_tuple));
+      _cond.notify_one();
+    });
 
     std::unique_lock<std::mutex> _lock{_mutex};
     if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
       _th.join();
-      //      std::cout << __LINE__ << " ret = " << _ret << std::endl;
       return {_ret};
     }
-    //    std::cout << __LINE__ << " setting stop = true" << std::endl;
+
+    *_stop = true;
+    _th.detach();
+    return {};
+  }
+
+  template <typename t_time, typename t_function>
+  std::optional<t_ret> operator()(t_time p_timeout, t_function p_function) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    bool_ptr _stop{std::make_shared<bool>(false)};
+
+    t_ret _ret;
+
+    std::thread _th([&p_function, _stop, &_cond, &_ret]() -> void {
+      _ret = p_function(_stop);
+      _cond.notify_one();
+    });
+
+    std::unique_lock<std::mutex> _lock{_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+      _th.join();
+      return {_ret};
+    }
+
     *_stop = true;
     _th.detach();
     return {};
   }
 };
 
-template <> struct execute_timeout<void> {
+template <> struct executer_t<void> {
+
   template <typename t_time, typename t_function, typename... t_params>
   bool operator()(t_time p_timeout, t_function p_function,
-                  t_params... p_params) {
+                  std::tuple<t_params...> &&p_tuple) {
     std::mutex _mutex;
     std::condition_variable _cond;
 
-    //    std::cout << __LINE__ << " timeout = " << p_timeout.count() <<
-    //    std::endl;
+    bool_ptr _stop{std::make_shared<bool>(false)};
 
-    std::shared_ptr<bool> _stop{std::make_shared<bool>(false)};
+    std::tuple<std::shared_ptr<bool>, t_params...> _tuple =
+        std::tuple_cat(std::make_tuple(_stop), std::move(p_tuple));
 
-    std::thread _th([&p_function, &_cond, _stop, &p_params...]() -> void {
-      p_function(_stop, p_params...);
+    std::thread _th([&p_function, &_cond, &_tuple]() -> void {
+      std::apply(p_function, std::move(_tuple));
       _cond.notify_one();
     });
 
@@ -212,7 +143,30 @@ template <> struct execute_timeout<void> {
       _th.join();
       return true;
     }
-    //    std::cout << "setting stop = true" << std::endl;
+
+    *_stop = true;
+    _th.detach();
+    return false;
+  }
+
+  template <typename t_time, typename t_function>
+  bool operator()(t_time p_timeout, t_function p_function) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    bool_ptr _stop{std::make_shared<bool>(false)};
+
+    std::thread _th([&p_function, _stop, &_cond]() -> void {
+      p_function(_stop);
+      _cond.notify_one();
+    });
+
+    std::unique_lock<std::mutex> _lock{_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+      _th.join();
+      return true;
+    }
+
     *_stop = true;
     _th.detach();
     return false;
@@ -220,13 +174,31 @@ template <> struct execute_timeout<void> {
 };
 
 template <typename t_time, typename t_function, typename... t_params>
-typename executer_helper_result_t<std::invoke_result_t<
+typename executer_traits_t<std::invoke_result_t<
     t_function, std::shared_ptr<bool>, t_params...>>::result
-execute_new(t_time p_timeout, t_function p_function, t_params... p_params) {
-  typedef std::invoke_result_t<t_function, std::shared_ptr<bool>, t_params...>
-      type;
+execute(t_time p_timeout, t_function p_function,
+        std::tuple<t_params...> &&p_tuple) {
 
-  return execute_timeout<type>()(p_timeout, p_function, p_params...);
+  typedef typename executer_traits_t<std::invoke_result_t<
+      t_function, std::shared_ptr<bool>, t_params...>>::type type;
+
+  executer_t<type> _executer;
+
+  return _executer(p_timeout, p_function, std::move(p_tuple));
+}
+
+template <typename t_time, typename t_function>
+typename executer_traits_t<
+    std::invoke_result_t<t_function, std::shared_ptr<bool>>>::result
+
+execute(t_time p_timeout, t_function p_function) {
+
+  typedef typename executer_traits_t<
+      std::invoke_result_t<t_function, std::shared_ptr<bool>>>::type type;
+
+  executer_t<type> _executer;
+
+  return _executer(p_timeout, p_function);
 }
 
 /// \brief Base class for asynchronous loop
@@ -237,7 +209,7 @@ execute_new(t_time p_timeout, t_function p_function, t_params... p_params) {
 ///
 /// \tparam t_on_timeout function to be called if the function being executed in
 /// the loop times out
-template <typename t_function, typename t_on_timeout> struct loop_base_t {
+template <typename t_function> struct loop_base_t {
 
   /// \brief default contructor not allowed
   loop_base_t() = delete;
@@ -347,11 +319,9 @@ protected:
   /// \param p_on_timeout is the function to be called it \p p_function fails to
   /// execute in \p p_time
   template <typename t_time>
-  loop_base_t(const number::id &p_owner, t_function p_function, t_time p_time,
-              t_on_timeout p_on_timeout)
+  loop_base_t(const number::id &p_owner, t_function p_function, t_time p_time)
       : m_owner(p_owner), m_function(p_function),
-        m_timeout(calendar::convert<timeout>(p_time)),
-        m_on_timeout(p_on_timeout) {}
+        m_timeout(calendar::convert<timeout>(p_time)) {}
 
   /// \brief Method that implements the loop that runs aynchronously
   virtual void loop() = 0;
@@ -361,7 +331,6 @@ protected:
     this->m_owner = std::move(p_loop.m_owner);
     this->m_function = std::move(p_loop.m_function);
     this->m_timeout = std::move(p_loop.m_timeout);
-    this->m_on_timeout = std::move(p_loop.m_on_timeout);
     this->m_stopped = true;
 
     if (!p_loop.is_stopped()) {
@@ -392,10 +361,6 @@ protected:
   /// \brief Maximum time that \p m_function will have to execute
   timeout m_timeout;
 
-  /// \brief Function that will be called if \p m_function takes more than \p
-  /// m_timeout to execute
-  t_on_timeout m_on_timeout;
-
   /// \brief Indicates that the loop must stop
   std::atomic<bool> m_stopped{true};
 
@@ -418,16 +383,13 @@ protected:
 ///
 /// \sa loop_base_t
 template <typename... t_params>
-struct loop_t : public loop_base_t<std::function<void(t_params...)>,
-                                   std::function<void(t_params...)>> {
+struct loop_t
+    : public loop_base_t<
+          std::function<void(std::shared_ptr<bool>, t_params &&...)>> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
-  typedef std::function<void(t_params...)> function;
-
-  /// \brief Signature of the function that will be called if the function
-  /// called in the loop times out
-  typedef std::function<void(t_params...)> on_timeout;
+  typedef std::function<void(std::shared_ptr<bool>, t_params &&...)> function;
 
   /// \brief Signature of the function that will be called in the loop to
   /// provide the parameters for the function
@@ -450,9 +412,8 @@ struct loop_t : public loop_base_t<std::function<void(t_params...)>,
   /// provide the parameters for the function
   template <typename t_time>
   loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
-         on_timeout p_on_timeout, provider p_provider)
-      : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
-                                          p_on_timeout),
+         provider p_provider)
+      : loop_base_t<function>(p_owner, p_function, p_timeout),
         m_provider(p_provider) {}
 
   /// \brief Default constructor not allowed
@@ -467,7 +428,7 @@ struct loop_t : public loop_base_t<std::function<void(t_params...)>,
   loop_t &operator=(const loop_t &) = delete;
 
   loop_t(loop_t &&p_loop)
-      : loop_base_t<function, on_timeout>(std::move(p_loop)),
+      : loop_base_t<function>(std::move(p_loop)),
         m_provider(std ::move(p_loop.m_provider)) {}
 
   loop_t &operator=(loop_t &&p_loop) {
@@ -505,33 +466,9 @@ protected:
 
       DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling");
 
-      auto _function = [this, &_tuple]() -> void {
-        if (this->m_stopped) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
-          return;
-        }
-        std::apply(this->m_function, std::move(_tuple));
-      };
-
-      if (!execute(this->m_timeout, _function)) {
+      if (!execute(this->m_timeout, this->m_function, std::move(_tuple))) {
         WAR(this->m_log, this->m_owner, ':', this->m_id,
             " - timeout for worker with data = ", _tuple);
-
-        if (this->m_stopped) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - break");
-          return false;
-        }
-
-        auto _on_timeout = [this, &_tuple]() {
-          std::apply(this->m_on_timeout, std::move(_tuple));
-        };
-
-        if (this->m_stopped) {
-          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
-          return false;
-        }
-
-        std::thread([_on_timeout]() -> void { _on_timeout(); }).detach();
       }
     }
     return true;
@@ -561,15 +498,11 @@ private:
 /// \sa loop_base_t
 template <>
 struct loop_t<void>
-    : public loop_base_t<std::function<void()>, std::function<void()>> {
+    : public loop_base_t<std::function<void(std::shared_ptr<bool>)>> {
 
   /// \brief Signature of the function that will be called in each round of the
   /// loop
-  typedef std::function<void()> function;
-
-  /// \brief Signature of the function that will be called if the function
-  /// called in the loop times out
-  typedef std::function<void()> on_timeout;
+  typedef std::function<void(std::shared_ptr<bool>)> function;
 
   /// \brief Default constructor not allowed
   loop_t() = delete;
@@ -587,18 +520,15 @@ struct loop_t<void>
   /// \param p_on_timeout is the function to be called it \p p_function fails
   /// to execute in \p p_time
   template <typename t_time>
-  loop_t(const number::id &p_owner, function p_function, t_time p_timeout,
-         on_timeout p_on_timeout)
-      : loop_base_t<function, on_timeout>(p_owner, p_function, p_timeout,
-                                          p_on_timeout) {}
+  loop_t(const number::id &p_owner, function p_function, t_time p_timeout)
+      : loop_base_t<function>(p_owner, p_function, p_timeout) {}
 
   ~loop_t() = default;
 
   /// \brief Copy constructor not allowed
   loop_t(const loop_t &) = delete;
 
-  loop_t(loop_t &&p_loop)
-      : loop_base_t<function, on_timeout>(std::move(p_loop)) {}
+  loop_t(loop_t &&p_loop) : loop_base_t<function>(std::move(p_loop)) {}
 
   loop_t &operator=(loop_t &&p_loop) {
     this->move_assign(std::move(p_loop));
@@ -616,8 +546,10 @@ protected:
 
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling work");
 
-    if (!execute(this->m_timeout, [this]() -> void { this->m_function(); })) {
-      std::thread([this]() -> void { this->m_on_timeout(); }).detach();
+    if (!execute(this->m_timeout, [this](std::shared_ptr<bool> p_stop) -> void {
+          this->m_function(p_stop);
+        })) {
+      WAR(this->m_log, this->m_owner, ':', this->m_id, " - timeout");
     }
     return true;
   }

@@ -27,6 +27,26 @@ namespace tenacitas {
 /// \brief logger classes
 namespace logger {
 
+// template <typename t_type>
+// std::ostream &operator<<(std::ostream &p_stream,
+//                         std::shared_ptr<t_type> p_ptr) {
+//  p_stream << (p_ptr ? *p_ptr : "nullptr");
+//  return p_stream;
+//}
+
+// template <typename t_type>
+// std::ostream &operator<<(std::ostream &p_stream,
+//                         std::unique_ptr<t_type> p_ptr) {
+//  p_stream << (p_ptr ? *p_ptr : "nullptr");
+//  return p_stream;
+//}
+
+// template <typename t_type>
+// std::ostream &operator<<(std::ostream &p_stream, t_type *p_ptr) {
+//  p_stream << (p_ptr ? *p_ptr : "nullptr");
+//  return p_stream;
+//}
+
 // dummy log implementations
 #ifndef TENACITAS_LOG
 
@@ -657,6 +677,21 @@ private:
     p_stream << ")";
     //    return _stream.str();
   }
+
+  //  template <typename t_type>
+  //  void format(std::ostream &p_stream, std::shared_ptr<t_type> p_ptr) {
+  //    p_stream << (p_ptr ? *p_ptr : "nullptr");
+  //  }
+
+  //  template <typename t_type>
+  //  void format(std::ostream &p_stream, std::unique_ptr<t_type> p_ptr) {
+  //    p_stream << (p_ptr ? *p_ptr : "nullptr");
+  //  }
+
+  //  template <typename t_type>
+  //  void format(std::ostream &p_stream, t_type *p_ptr) {
+  //    p_stream << (p_ptr ? *p_ptr : "nullptr");
+  //  }
 
   /// \brief Copies one tuple field into a string
   template <class... T>

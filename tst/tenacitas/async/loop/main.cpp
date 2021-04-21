@@ -48,8 +48,7 @@ struct loop_000 {
       return _i;
     };
 
-    async::internal::loop_t<int16_t> _loop(
-        m_id, worker(), 500ms, [](int16_t &&) -> void {}, _provider);
+    async::internal::loop_t<int16_t> _loop(m_id, worker(), 500ms, _provider);
 
     _loop.start();
 
@@ -72,7 +71,7 @@ struct loop_000 {
 
 private:
   struct worker {
-    void operator()(int16_t &&p_i) {
+    void operator()(std::shared_ptr<bool>, int16_t &&p_i) {
       DEB(m_log, "working with = ", p_i);
       std::this_thread::sleep_for(250ms);
     }
@@ -87,73 +86,6 @@ private:
   logger::cerr<> m_log{"loop_000"};
   number::id m_id;
 };
-
-// struct loop_001 {
-
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream << "no timeout, one param, breaker";
-//    return _stream.str();
-//  }
-
-//  bool operator()() {
-
-//    int16_t _i{0};
-//    auto _provider = [this, &_i]() -> std::optional<std::tuple<int16_t>> {
-//      ++_i;
-//      DEB(m_log, "providing ", _i);
-//      return {{_i}};
-//    };
-
-//    auto _breaker = [this, &_i]() -> bool {
-//      if (_i == 3) {
-//        m_cond.notify_one();
-//        return true;
-//      }
-//      return false;
-//    };
-
-//    auto _on_dummy_timeout = [](int16_t &&) -> void {};
-
-//    async::internal::loop_t<int16_t> _loop(
-//        m_id, worker(), 500ms, _on_dummy_timeout, _provider, _breaker);
-
-//    _loop.start();
-
-//    {
-//      std::unique_lock<std::mutex> _lock(m_mutex);
-//      m_cond.wait(_lock);
-//    }
-
-//    _loop.stop();
-
-//    if (_i != 3) {
-//      ERR(m_log, "i should be 3, but it is ", _i);
-//      return false;
-//    }
-
-//    INF(m_log, "i is 3, as expected");
-
-//    return true;
-//  }
-
-// private:
-//  struct worker {
-//    void operator()(int16_t &&p_i) {
-//      DEB(m_log, "working with = ", p_i);
-//      std::this_thread::sleep_for(250ms);
-//    }
-
-//  private:
-//    logger::cerr<> m_log{"worker"};
-//  };
-
-// private:
-//  logger::cerr<> m_log{"loop_001"};
-//  std::condition_variable m_cond;
-//  std::mutex m_mutex;
-//  number::id m_id;
-//};
 
 struct loop_002 {
 
@@ -178,9 +110,8 @@ struct loop_002 {
       return {_i, _f};
     };
 
-    auto _on_timeout = [](int16_t &&, float &&) -> void {};
     async::internal::loop_t<int16_t, float> _loop(m_id, worker(), 500ms,
-                                                  _on_timeout, _provider);
+                                                  _provider);
 
     _loop.start();
 
@@ -204,7 +135,7 @@ struct loop_002 {
 
 private:
   struct worker {
-    void operator()(int16_t &&p_i, float &&p_f) {
+    void operator()(std::shared_ptr<bool>, int16_t &&p_i, float &&p_f) {
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       std::this_thread::sleep_for(250ms);
     }
@@ -220,80 +151,6 @@ private:
   number::id m_id;
 };
 
-// struct loop_003 {
-
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream << "no timeout, many params, breaker";
-//    return _stream.str();
-//  }
-
-//  bool operator()() {
-
-//
-
-//    int16_t _i{0};
-//    float _f{0.0};
-//    auto _provider = [this, &_i, &_f]() -> std::tuple<int16_t, float> {
-//      ++_i;
-//      _f = _i * 2.5;
-//      DEB(m_log, "providing ", _i);
-
-//      return {_i, _f};
-//    };
-
-//    auto _breaker = [this, &_i]() -> bool {
-//      if (_i == 3) {
-//        m_cond.notify_one();
-//        return true;
-//      }
-//      return false;
-//    };
-
-//    async::internal::loop_t async::use_breaker::yes,
-//                             int16_t, float>
-//        _loop(worker(), 500ms, _on_dummy_timeout, _breaker, _provider);
-
-//
-
-//    _loop.start();
-
-//    {
-//      std::unique_lock<std::mutex> _lock(m_mutex);
-//      m_cond.wait(_lock);
-//    }
-
-//    _loop.stop();
-
-//    if ((_i != 3) && (_f != (3 * 2.5))) {
-//      ERR(m_log, "i should be 8 and f should be 7.5, but they are they
-//      are ",
-//          _i, " and ", _f);
-//      return false;
-//    }
-
-//    INF(m_log, "i is 8 and f is 3.75, as expected");
-
-//    return true;
-//  }
-
-// private:
-//  struct worker {
-//    void operator()(int16_t &&p_i, float &&p_f) {
-//      DEB(m_log, "working with = ", p_i, ", ", p_f);
-//      std::this_thread::sleep_for(250ms);
-//    }
-
-//  private:
-//    m_log m_log{"worker"};
-//  };
-
-// private:
-//  m_log m_log{"loop_003"};
-//  std::condition_variable m_cond;
-//  std::mutex m_mutex;
-//};
-
 struct loop_004 {
 
   static std::string desc() {
@@ -306,17 +163,15 @@ struct loop_004 {
 
     worker _worker;
 
-    auto _aux = [this, &_worker]() -> void {
+    auto _aux = [this, &_worker](std::shared_ptr<bool> p_stop) -> void {
       if (_worker.get() == 8) {
         m_cond.notify_one();
       } else {
-        _worker();
+        _worker(p_stop);
       }
     };
 
-    auto _on_timeout = []() -> void {};
-
-    async::internal::loop_t<void> _loop(m_id, _aux, 500ms, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, 500ms);
 
     _loop.start();
 
@@ -340,7 +195,7 @@ struct loop_004 {
 private:
   struct worker {
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       DEB(m_log, "working with = ", ++m_i);
       std::this_thread::sleep_for(250ms);
     }
@@ -358,75 +213,6 @@ private:
   logger::cerr<> m_log{"loop_003"};
   number::id m_id;
 };
-
-// struct loop_005 {
-
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream << "no timeout, no params, breaker";
-//    return _stream.str();
-//  }
-
-//  bool operator()() {
-
-//
-
-//    worker _worker;
-
-//    auto _breaker = [this, &_worker]() -> bool {
-//      if (_worker.get() == 3) {
-//        m_cond.notify_one();
-//        return true;
-//      }
-//      return false;
-//    };
-
-//    async::internal::loop_t async::use_breaker::yes,
-//    void> _loop([&_worker]() -> void { _worker(); }, 500ms, _on_dummy_timeout,
-//          _breaker);
-
-//
-
-//    _loop.start();
-
-//    {
-//      std::unique_lock<std::mutex> _lock(m_mutex);
-//      m_cond.wait(_lock);
-//    }
-
-//    _loop.stop();
-
-//    if (_worker.get() != 3) {
-//      ERR(m_log, "i should be 3, but it is ", _worker.get());
-//      return false;
-//    }
-
-//    INF(m_log, "i is 3, as expected");
-
-//    return true;
-//  }
-
-// private:
-//  struct worker {
-
-//    void operator()() {
-//      DEB(m_log, "working with = ", ++m_i);
-//      std::this_thread::sleep_for(250ms);
-//    }
-
-//    inline int16_t get() const { return m_i; }
-
-//  private:
-//    int16_t m_i{0};
-
-//    m_log m_log{"worker"};
-//  };
-
-// private:
-//  m_log m_log{"loop_005"};
-//  std::condition_variable m_cond;
-//  std::mutex m_mutex;
-//};
 
 struct loop_006 {
 
@@ -449,11 +235,6 @@ struct loop_006 {
           _work_timeout.count() * 2};
       const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                             3000};
-
-      auto _on_timeout = [this](int16_t &&p_int) -> void {
-        WAR(m_log, "timeout for ", p_int);
-      };
-
       int16_t _i{0};
       auto _provider = [this, &_i,
                         _max]() -> std::optional<std::tuple<int16_t>> {
@@ -470,15 +251,16 @@ struct loop_006 {
 
       worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-      auto _aux = [this, &_worker](int16_t &&p_i) -> void {
+      auto _aux = [this, &_worker](std::shared_ptr<bool> p_stop,
+                                   int16_t &&p_i) -> void {
         if (p_i == _max) {
           m_cond.notify_one();
         }
-        _worker(std::move(p_i));
+        _worker(p_stop, std::move(p_i));
       };
 
       async::internal::loop_t<int16_t> _loop(m_id, _aux, _work_timeout,
-                                             _on_timeout, _provider);
+                                             _provider);
 
       _loop.start();
 
@@ -509,7 +291,7 @@ private:
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()(int16_t &&p_i) {
+    void operator()(std::shared_ptr<bool>, int16_t &&p_i) {
       DEB(m_log, "working with = ", p_i);
       if (p_i == m_max) {
         DEB(m_log, "causing timeout sleeping for ",
@@ -556,11 +338,6 @@ struct loop_007 {
     const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                           3000};
 
-    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) -> void {
-      WAR(m_log, "timeout for ", p_i, ", ", p_f);
-      m_cond.notify_one();
-    };
-
     int16_t _i{0};
     auto _provider = [this, &_i, _work_timeout,
                       _max]() -> std::optional<std::tuple<int16_t, float>> {
@@ -579,12 +356,13 @@ struct loop_007 {
 
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    auto _aux = [&_worker](int16_t &&p_i, float &&p_f) -> void {
-      _worker(std::move(p_i), std::move(p_f));
+    auto _aux = [&_worker](std::shared_ptr<bool> p_stop, int16_t &&p_i,
+                           float &&p_f) -> void {
+      _worker(p_stop, std::move(p_i), std::move(p_f));
     };
 
     async::internal::loop_t<int16_t, float> _loop(m_id, _aux, _work_timeout,
-                                                  _on_timeout, _provider);
+                                                  _provider);
 
     _loop.start();
 
@@ -612,7 +390,7 @@ private:
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()(int16_t &&p_i, float &&p_f) {
+    void operator()(std::shared_ptr<bool>, int16_t &&p_i, float &&p_f) {
       DEB(m_log, "working with = ", p_i, ", ", p_f);
       if (p_i == m_max) {
         DEB(m_log, "causing timeout");
@@ -654,15 +432,12 @@ struct loop_008 {
     const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                           3000};
 
-    auto _on_timeout = [this]() -> void {
-      WAR(m_log, "timeout");
-      m_cond.notify_one();
-    };
-
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
     async::internal::loop_t<void> _loop(
-        m_id, [&_worker]() -> void { _worker(); }, _work_timeout, _on_timeout);
+        m_id,
+        [&_worker](std::shared_ptr<bool> p_stop) -> void { _worker(p_stop); },
+        _work_timeout);
 
     _loop.start();
 
@@ -690,7 +465,7 @@ private:
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       if (m_i > m_max) {
         return;
       }
@@ -740,16 +515,13 @@ struct loop_009 {
     const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                           10000};
 
-    auto _on_timeout = [this]() -> void {
-      WAR(m_log, "timeout");
-      m_cond.notify_one();
-    };
-
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    auto _aux = [&_worker]() -> void { _worker(); };
+    auto _aux = [&_worker](std::shared_ptr<bool> p_stop) -> void {
+      _worker(p_stop);
+    };
 
-    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout);
 
     _loop.start();
 
@@ -777,7 +549,7 @@ private:
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       DEB(m_log, "working with = ", m_i);
       if (m_i == m_max) {
         DEB(m_log, "causing timeout");
@@ -826,16 +598,13 @@ struct loop_010 {
     const std::chrono::milliseconds _wait{_max * _work_normal_sleep.count() +
                                           10000};
 
-    auto _on_timeout = [this]() -> void {
-      WAR(m_log, "timeout");
-      m_cond.notify_one();
-    };
-
     worker _worker(_max, _work_normal_sleep, _work_timeout_sleep);
 
-    auto _aux = [&_worker]() -> void { _worker(); };
+    auto _aux = [&_worker](std::shared_ptr<bool> p_stop) -> void {
+      _worker(p_stop);
+    };
 
-    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout, _on_timeout);
+    async::internal::loop_t<void> _loop(m_id, _aux, _work_timeout);
 
     DEB(m_log, "moving loop to loop1");
     async::internal::loop_t<void> _loop1(std::move(_loop));
@@ -871,7 +640,7 @@ private:
         : m_max(p_max), m_work_normal_sleep(p_work_normal_sleep),
           m_work_timeout_sleep(p_work_timeout_sleep) {}
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       DEB(m_log, "working with = ", m_i);
       if (m_i == m_max) {
         DEB(m_log, "causing timeout");
@@ -913,7 +682,7 @@ struct loop_011 {
     const uint16_t _max{10};
     uint16_t _counter{1};
 
-    auto _worker = [this, &_counter]() -> void {
+    auto _worker = [this, &_counter](std::shared_ptr<bool>) -> void {
       if (_counter == _max) {
         DEB(m_log, "notifying");
         m_cond.notify_one();
@@ -923,7 +692,7 @@ struct loop_011 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(m_id, _worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s);
 
     DEB(m_log, "starting");
     _a1.start();
@@ -977,7 +746,7 @@ struct loop_012 {
     const uint16_t _max{10};
     uint16_t _counter{1};
 
-    auto _worker = [this, &_counter]() -> void {
+    auto _worker = [this, &_counter](std::shared_ptr<bool>) -> void {
       if (_counter == _max) {
         DEB(m_log, "notifying");
         m_cond.notify_one();
@@ -987,7 +756,7 @@ struct loop_012 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(m_id, _worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s);
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1037,7 +806,7 @@ struct loop_013 {
     const uint16_t _max{10};
     uint16_t _counter{1};
 
-    auto _worker = [this, &_counter]() -> void {
+    auto _worker = [this, &_counter](std::shared_ptr<bool>) -> void {
       if (_counter == _max) {
         DEB(m_log, "notifying");
         m_cond.notify_one();
@@ -1047,7 +816,7 @@ struct loop_013 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(m_id, _worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s);
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1096,7 +865,7 @@ struct loop_014 {
     const uint16_t _max{10};
     uint16_t _counter{1};
 
-    auto _worker = [this, &_counter]() -> void {
+    auto _worker = [this, &_counter](std::shared_ptr<bool>) -> void {
       if (_counter == _max) {
         DEB(m_log, "notifying");
         m_cond.notify_one();
@@ -1106,7 +875,7 @@ struct loop_014 {
       std::this_thread::sleep_for(500ms);
     };
 
-    async_loop _a1(m_id, _worker, 1s, []() -> void {});
+    async_loop _a1(m_id, _worker, 1s);
 
     DEB(m_log, "starting");
     _a1.start();
@@ -1149,7 +918,7 @@ int main(int argc, char **argv) {
   try {
     tenacitas::tester::test _tester(argc, argv);
     run_test(_tester, loop_000);
-    //  run_test(_tester, loop_001);
+
     run_test(_tester, loop_002);
     run_test(_tester, loop_004);
     run_test(_tester, loop_006);

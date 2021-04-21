@@ -31,11 +31,11 @@ struct sleeping_loop_000 {
 
     typedef async::sleeping_loop_t<void> loop;
 
-    auto _operation = [this]() -> void { DEB(m_log, "loop1"); };
+    auto _operation = [this](std::shared_ptr<bool>) -> void {
+      DEB(m_log, "loop1");
+    };
 
-    auto _on_timeout = []() -> void {};
-
-    loop _loop(m_id, _operation, 100ms, _on_timeout, 1s);
+    loop _loop(m_id, _operation, 100ms, 1s);
 
     return true;
   }
@@ -65,12 +65,12 @@ struct sleeping_loop_001 {
 
     DEB(m_log, "id = ", m_id);
 
-    auto _on_timeout = []() -> void {};
-
     operation1 _op(&m_cond);
+
     loop _loop(
-        m_id, [&_op]() { return _op(); }, std::chrono::milliseconds(m_timeout),
-        _on_timeout, std::chrono::seconds(m_interval_secs));
+        m_id, [&_op](std::shared_ptr<bool> p_bool) { return _op(p_bool); },
+        std::chrono::milliseconds(m_timeout),
+        std::chrono::seconds(m_interval_secs));
 
     _loop.start();
 
@@ -97,7 +97,7 @@ private:
 
     operation1(std::condition_variable *p_cond) : m_cond(p_cond) {}
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       if (counter < m_amount) {
         ++counter;
         DEB(m_log, "counter = ", counter);
@@ -140,10 +140,6 @@ struct sleeping_loop_002 {
     typedef async::sleeping_loop_t<int16_t, float> loop;
     int16_t _i{0};
     int16_t _value{0};
-    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
-      WAR(m_log, "timeout for ", p_i, ", ", p_f);
-      m_cond.notify_one();
-    };
 
     std::function<std::optional<std::tuple<int16_t, float>>()> _provider =
         [&_i]() -> std::optional<std::tuple<int16_t, float>> {
@@ -151,7 +147,8 @@ struct sleeping_loop_002 {
       return {{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+    auto _worker = [this, &_value](std::shared_ptr<bool>, int16_t &&p_i,
+                                   float &&p_f) {
       DEB(m_log, "entering with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
@@ -165,7 +162,7 @@ struct sleeping_loop_002 {
       DEB(m_log, "exiting");
     };
 
-    loop _loop(m_id, _worker, m_timeout, _on_timeout, _provider, 2s);
+    loop _loop(m_id, _worker, m_timeout, _provider, 2s);
 
     _loop.start();
 
@@ -210,17 +207,13 @@ struct sleeping_loop_003 {
     int16_t _i{0};
     int16_t _value{0};
 
-    auto _on_timeout = [this](int16_t &&p_i, float &&p_f) {
-      WAR(m_log, "timeout for ", p_i, ", ", p_f);
-      m_cond.notify_one();
-    };
-
     auto _provider = [&_i]() -> std::optional<std::tuple<int16_t, float>> {
       ++_i;
       return {std::tuple<int16_t, float>{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](int16_t &&p_i, float &&p_f) {
+    auto _worker = [this, &_value](std::shared_ptr<bool>, int16_t &&p_i,
+                                   float &&p_f) {
       DEB(m_log, "worker called with ", p_i, " and ", p_f);
       if (p_i == m_max) {
         _value = p_i;
@@ -234,7 +227,7 @@ struct sleeping_loop_003 {
       }
     };
 
-    loop _loop(m_id, _worker, m_timeout, _on_timeout, _provider, 2s);
+    loop _loop(m_id, _worker, m_timeout, _provider, 2s);
 
     _loop.start();
 
