@@ -20,7 +20,7 @@ using namespace std::chrono_literals;
 
 struct handlers_000 {
   typedef int16_t data;
-  typedef async::internal::handlers_t<data, async::priority> handlers;
+  typedef async::internal::handlers_t<data> handlers;
 
   static std::string desc() {
     return "Simple test, creating a worker, adding a single data, "
@@ -63,7 +63,7 @@ struct handlers_001 {
   typedef msg<'Z'> msg;
 
   typedef async::sleeping_loop_t<void> sleeping_loop;
-  typedef async::internal::handlers_t<msg, async::priority> handlers;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -169,7 +169,7 @@ struct handlers_003 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::priority> handlers;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -229,7 +229,7 @@ struct handlers_004 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::priority> handlers;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {
@@ -316,7 +316,7 @@ struct handlers_005 {
 
   typedef msg<'Z'> msg;
 
-  typedef async::internal::handlers_t<msg, async::priority> handlers;
+  typedef async::internal::handlers_t<msg> handlers;
   typedef std::function<void(const msg &)> on_timeout;
 
   static std::string desc() {

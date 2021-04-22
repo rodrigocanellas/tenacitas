@@ -304,8 +304,9 @@ struct test_base {
   test_base(const char *p_name) : m_log(p_name) {
 
     async::add_handler<internal::end_publishing>(
-        [this](const internal::end_publishing &p_end_publishing) -> void {
-          on_end_publishing(p_end_publishing);
+        [this](std::shared_ptr<bool> p_bool,
+               const internal::end_publishing &p_end_publishing) -> void {
+          on_end_publishing(p_bool, p_end_publishing);
         },
         2s);
     //    internal::messenger_end_publishing::add_handler(
@@ -318,7 +319,10 @@ struct test_base {
     //        internal::messenger_update::add_handlers(2s),
     //        [this](const update &p_update) -> void { on_update(p_update); });
     async::add_handler<update>(
-        [this](const update &p_update) -> void { on_update(p_update); }, 2s);
+        [this](std::shared_ptr<bool> p_bool, const update &p_update) -> void {
+          on_update(p_bool, p_update);
+        },
+        2s);
   }
 
   template <msg_id id, typename t_time>
@@ -345,7 +349,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    async::internal::messenger_t<msg<id>, async::priority>::add_handler(
+    async::internal::messenger_t<msg<id>>::add_handler(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_function));
     update_totals<id>(p_pool_num);
@@ -356,7 +360,7 @@ struct test_base {
       pool_num p_pool_num, sub_id p_sub_id, t_time p_sleep,
       std::function<void(const msg<id> &)> p_function =
           [](const msg<id> &) -> void {}) {
-    async::internal::messenger_t<msg<id>, async::priority>::add_handler(
+    async::internal::messenger_t<msg<id>>::add_handler(
         internal::pool_id(id, p_pool_num),
         internal::subscriber<id>(p_pool_num, p_sub_id, p_sleep, p_function));
     update_totals<id>(p_pool_num);
@@ -480,7 +484,8 @@ private:
     m_totals[{id, p_pool_num}] = internal::publish_list<id>::get_total();
   }
 
-  void on_end_publishing(const internal::end_publishing &p_end_publishing) {
+  void on_end_publishing(std::shared_ptr<bool>,
+                         const internal::end_publishing &p_end_publishing) {
     DEB(m_log, "end of publishing for ", p_end_publishing);
     bool _all_ended{true};
     for (publishing_ended::value_type &_tuple : m_publishing_ended) {
@@ -499,7 +504,7 @@ private:
     }
   }
 
-  void on_update(const update &p_update) {
+  void on_update(std::shared_ptr<bool>, const update &p_update) {
     DEB(m_log, "update = ", p_update);
     std::lock_guard<std::mutex> _lock(m_mutex_update);
     for (update &_update : m_updates) {

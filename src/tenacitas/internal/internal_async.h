@@ -37,6 +37,76 @@ namespace async {
 
 namespace internal {
 
+/// \brief Priority
+struct priority {
+
+  priority() {}
+
+  priority(const priority &p_priority) : m_value(p_priority.m_value) {}
+
+  priority(priority &&p_priority) : m_value(p_priority.m_value) {}
+
+  ~priority() = default;
+
+  friend std::ostream &operator<<(std::ostream &p_out, priority p_priority) {
+    p_out << static_cast<uint16_t>(p_priority.m_value);
+    return p_out;
+  }
+
+  bool operator<(priority p_priority) const {
+    return m_value < p_priority.m_value;
+  }
+
+  bool operator>(priority p_priority) const {
+    return m_value > p_priority.m_value;
+  }
+
+  bool operator==(priority p_priority) const {
+    return m_value == p_priority.m_value;
+  }
+
+  bool operator!=(priority p_priority) const {
+    return m_value != p_priority.m_value;
+  }
+
+  priority &operator=(const priority &p_priority) {
+    m_value = p_priority.m_value;
+    return *this;
+  }
+  priority &operator=(priority &&p_priority) {
+    m_value = p_priority.m_value;
+    return *this;
+  }
+
+  static const priority lowest;
+
+  static const priority low;
+
+  static const priority low_middle;
+
+  static const priority middle;
+
+  static const priority middle_high;
+
+  static const priority high;
+
+  static const priority highest;
+
+private:
+  explicit priority(uint8_t p_value) : m_value(p_value) {}
+
+private:
+  uint8_t m_value{1};
+};
+
+const priority priority::lowest{1};
+const priority priority::low{45};
+const priority priority::low_middle{90};
+const priority priority::middle{135};
+const priority priority::middle_high{180};
+const priority priority::high{225};
+const priority priority::highest{255};
+
 typedef std::function<bool()> breaker;
 
 /// \brief Type of time used to define timeout
@@ -206,8 +276,6 @@ execute(t_time p_timeout, t_function p_function) {
 ///
 /// \tparam t_function function to be executed in each round of the loop
 ///
-/// \tparam t_on_timeout function to be called if the function being executed in
-/// the loop times out
 template <typename t_function> struct loop_base_t {
 
   /// \brief default contructor not allowed
@@ -314,34 +382,49 @@ protected:
   ///
   /// \param p_time is the amount of time \p p_function has to executed in each
   /// round of the loop
-  ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails to
-  /// execute in \p p_time
   template <typename t_time>
   loop_base_t(const number::id &p_owner, t_function p_function, t_time p_time)
       : m_owner(p_owner), m_function(p_function),
         m_timeout(calendar::convert<timeout>(p_time)) {}
 
   /// \brief Method that implements the loop that runs aynchronously
-  virtual void loop() = 0;
+  virtual void loop() {
+    DEB(this->m_log, this->m_owner, ':', this->m_id,
+        " - entering loop, m_timeout = ", this->m_timeout.count());
+
+    while (true) {
+      if (m_stopped) {
+        DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+        break;
+      }
+
+      if (!core()) {
+        break;
+      }
+    }
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
+  }
+
+  virtual bool core() = 0;
 
   void move_constructor(loop_base_t &&p_loop) {
-    DEB(m_log, "move constructor");
+
     this->m_owner = std::move(p_loop.m_owner);
     this->m_function = std::move(p_loop.m_function);
     this->m_timeout = std::move(p_loop.m_timeout);
     this->m_stopped = true;
+    DEB(m_log, m_owner, ':', m_id, " - move constructor");
 
     if (!p_loop.is_stopped()) {
-      DEB(m_log, "right loop was not stopped");
+      DEB(m_log, m_owner, ':', m_id, " - right loop was not stopped");
       p_loop.stop();
-      DEB(m_log, "now right loop is stopped");
+      DEB(m_log, m_owner, ':', m_id, " - now right loop is stopped");
       this->start();
     }
   }
 
   void move_assign(loop_base_t &&p_loop) {
-    DEB(m_log, "move assignment");
+    DEB(m_log, m_owner, ':', m_id, " - move assignment");
     if (this != &p_loop) {
       move_constructor(std::move(p_loop));
     }
@@ -404,9 +487,6 @@ struct loop_t
   /// \param p_time is the amount of time \p p_function has to executed in each
   /// round of the loop
   ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails to
-  /// execute in \p p_time
-  ///
   /// \param p_provider is the function that will be called in the loop to
   /// provide the parameters for the function
   template <typename t_time>
@@ -436,7 +516,13 @@ struct loop_t
   }
 
 protected:
-  bool core() {
+  virtual bool core() override {
+    if (this->m_stopped) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      return false;
+    }
+
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - about to lock");
     std::lock_guard<std::mutex> _lock(this->m_mutex_join);
 
     if (this->m_stopped) {
@@ -473,19 +559,6 @@ protected:
     return true;
   }
 
-  /// \brief Specific implementation of the loop virtual method
-  virtual void loop() override {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - entering loop, m_timeout = ", this->m_timeout.count());
-
-    while (true) {
-      if (!core()) {
-        break;
-      }
-    }
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
-  }
-
 private:
   /// \brief Function that will be called in the loop to provide the
   /// parameters for the function
@@ -515,9 +588,6 @@ struct loop_t<void>
   ///
   /// \param p_time is the amount of time \p p_function has to executed in
   /// each round of the loop
-  ///
-  /// \param p_on_timeout is the function to be called it \p p_function fails
-  /// to execute in \p p_time
   template <typename t_time>
   loop_t(const number::id &p_owner, function p_function, t_time p_timeout)
       : loop_base_t<function>(p_owner, p_function, p_timeout) {}
@@ -537,7 +607,15 @@ struct loop_t<void>
   loop_t &operator=(const loop_t &) = delete;
 
 protected:
-  bool core() {
+  virtual bool core() override {
+    if (this->m_stopped) {
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      return false;
+    }
+
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - about to lock");
+    std::lock_guard<std::mutex> _lock(this->m_mutex_join);
+
     if (this->m_stopped) {
       DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
       return false;
@@ -551,19 +629,6 @@ protected:
       WAR(this->m_log, this->m_owner, ':', this->m_id, " - timeout");
     }
     return true;
-  }
-
-  /// \brief Specific implementation of the loop virtual method
-  void loop() override {
-    DEB(this->m_log, this->m_owner, ':', this->m_id,
-        " - entering loop, m_timeout = ", this->m_timeout.count());
-
-    while (true) {
-      if (!core()) {
-        break;
-      }
-    }
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
   }
 };
 
@@ -636,7 +701,8 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
   /// \brief Constructor
   ///
   /// \param p_size the number of initial slots in the queue
-  circular_unlimited_size_queue_t(size_t p_size) : internal::queue_t<t_data>() {
+  circular_unlimited_size_queue_t(size_t p_size = 10)
+      : internal::queue_t<t_data>() {
     m_root = create_node();
     node_ptr _p = m_root;
     for (size_t _i = 0; _i < p_size; ++_i) {
@@ -649,15 +715,16 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
 
   ~circular_unlimited_size_queue_t() override {}
 
-  /// \brief Default constructor not allowed
-  circular_unlimited_size_queue_t() = delete;
-
   /// \brief Copy constructor not allowed
   circular_unlimited_size_queue_t(const circular_unlimited_size_queue_t &) =
       delete;
 
   /// \brief Move constructor not allowed
-  circular_unlimited_size_queue_t(circular_unlimited_size_queue_t &&) = default;
+  circular_unlimited_size_queue_t(circular_unlimited_size_queue_t &&p_queue) {
+    m_root = p_queue.m_root;
+    m_write = p_queue.m_write;
+    m_amount = p_queue.m_amount;
+  }
 
   /// \brief Copy assignment not allowed
   circular_unlimited_size_queue_t &
@@ -665,7 +732,14 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
 
   /// \brief Move assignment not allowed
   circular_unlimited_size_queue_t &
-  operator=(circular_unlimited_size_queue_t &&) = default;
+  operator=(circular_unlimited_size_queue_t &&p_queue) {
+    if (this != p_queue) {
+      m_root = p_queue.m_root;
+      m_write = p_queue.m_write;
+      m_amount = p_queue.m_amount;
+    }
+    return *this;
+  }
 
   /// \brief Traverses the queue
   ///
@@ -896,7 +970,7 @@ queue_factory(queue_type p_queue_type, t_size p_size) {
 /// \brief A group of functions that compete to handle a data added to a queue
 ///
 /// \param t_data type of data to be processed
-template <typename t_data, typename t_priority> class handlers_t {
+template <typename t_data> class handlers_t {
 public:
   /// \brief Type of function that will handle the data
   typedef std::function<void(std::shared_ptr<bool>, t_data &&)> handler;
@@ -917,9 +991,10 @@ public:
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
-  handlers_t(const number::id &p_owner, const t_priority &p_priority,
+  handlers_t(const number::id &p_owner, const priority &p_priority,
              t_time p_timeout)
-      : m_owner(p_owner), m_priority(p_priority), m_timeout(p_timeout) {}
+      : m_owner(p_owner), m_priority(p_priority), m_queue(10),
+        m_timeout(p_timeout) {}
 
   /// \brief Constructor
   /// Using this constructor, this group of handlers will have the
@@ -933,23 +1008,37 @@ public:
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   ///
-  /// \param p_on_timeout is a function that will be called if a handler times
-  /// out
   template <typename t_time>
   handlers_t(const number::id &p_owner, t_time p_timeout)
-      : m_owner(p_owner), m_timeout(p_timeout) {}
+      : m_owner(p_owner), m_priority(priority::lowest), m_queue(10),
+        m_timeout(p_timeout) {}
 
   /// \brief Copy constructor not allowed
   handlers_t(const handlers_t &) = delete;
 
-  handlers_t(handlers_t &&p_handlers) { move(std::move(p_handlers)); }
+  handlers_t(handlers_t &&p_handlers)
+      : m_owner(std::move(p_handlers.m_owner)),
+        m_id(std::move(p_handlers.m_id)),
+        m_priority(std::move(p_handlers.m_priority)),
+        m_queue(std::move(p_handlers.m_queue)),
+        m_timeout(std::move(p_handlers.m_timeout)),
+        m_loops(std::move(p_handlers.m_loops)),
+        m_stopped(p_handlers.m_stopped.load()),
+        m_queued_data(std::move(p_handlers.m_queued_data)) {}
 
   /// \brief Copy assignemnt not allowed
   handlers_t &operator=(const handlers_t &) = delete;
 
   handlers_t &operator=(handlers_t &&p_handlers) {
     if (this != &p_handlers) {
-      move(std::move(p_handlers));
+      m_owner = std::move(p_handlers.m_owner);
+      m_id = std::move(p_handlers.m_id);
+      m_priority = std::move(p_handlers.m_priority);
+      m_queue = std::move(p_handlers.m_queue);
+      m_timeout = std::move(p_handlers.m_timeout);
+      m_loops = std::move(p_handlers.m_loops);
+      m_stopped = p_handlers.m_stopped.load();
+      m_queued_data = std::move(p_handlers.m_queued_data);
     }
     return *this;
   }
@@ -977,8 +1066,7 @@ public:
   /// \param p_data is the data to be passed to a worker
   ///
   /// \return \p true if it was added, \p false otherwise
-  inline bool add_data(const t_data &p_data) {
-
+  bool add_data(const t_data &p_data) {
     m_queue.add(p_data);
     m_data_produced.notify_all();
     {
@@ -996,7 +1084,7 @@ public:
   /// \tparam t_time type of time used to define timeout for the worker
   ///
   /// \param p_function the \p worker to be added
-  inline void add_handler(handler p_handler) {
+  void add_handler(handler p_handler) {
     auto _provider = [this]() -> std::optional<std::tuple<t_data>> {
       return this->provider();
     };
@@ -1018,8 +1106,8 @@ public:
   /// \param p_num_works the number of \p workers to be added
   ///
   /// \param p_function_factory a function that creates \p workers
-  inline void add_handler(uint16_t p_num_works,
-                          std::function<handler()> p_handler_factory) {
+  void add_handler(uint16_t p_num_works,
+                   std::function<handler()> p_handler_factory) {
     for (auto _i = 0; _i < p_num_works; ++_i) {
       add_handler(p_handler_factory());
     }
@@ -1046,10 +1134,10 @@ public:
   inline const number::id &get_id() const { return m_id; }
 
   /// \return The tenacitas::async::priority of this group of handlers
-  inline const t_priority &get_priority() const { return m_priority; }
+  inline const priority &get_priority() const { return m_priority; }
 
   /// \brief Sets the tenacitas::async::priority of this group of handlers
-  inline void set_priority(const t_priority &p_priority) {
+  inline void set_priority(const priority &p_priority) {
     m_priority = p_priority;
   }
 
@@ -1178,7 +1266,7 @@ private:
   number::id m_id;
 
   /// \brief Priority of this group of handlers
-  t_priority m_priority;
+  priority m_priority;
 
   /// \brief Queue where data will be inserted for the handlers to compete for
   /// handling
@@ -1226,13 +1314,10 @@ template <typename t_msg> struct msg_id_t {
 /// priority, and what should be done if a handler times out
 ///
 /// \tparam is the type of message this messenger distributes
-template <typename t_msg, typename t_priority> struct messenger_t {
+template <typename t_msg> struct messenger_t {
 
   /// \brief Type of handler
-  typedef std::function<void(const t_msg &)> handler;
-
-  /// \brief Type of function that is called when a handler times out
-  typedef std::function<void(const t_msg &)> on_timeout;
+  typedef std::function<void(std::shared_ptr<bool>, const t_msg &)> handler;
 
   ~messenger_t() = default;
 
@@ -1249,35 +1334,8 @@ template <typename t_msg, typename t_priority> struct messenger_t {
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   ///
-  /// \param p_on_timeout is a function that will be called if a handler times
-  /// out
   template <typename t_time>
-  static inline number::id add_handlers(const t_priority &p_priority,
-                                        t_time p_timeout,
-                                        on_timeout p_on_timeout) {
-    handlers _handlers{msg_id_t<t_msg>::get(), p_priority, p_timeout,
-                       p_on_timeout};
-    number::id _id = _handlers.get_id();
-    insert(std::move(_handlers));
-    return _id;
-  }
-
-  /// \brief Adds a group of handlers to the messenger, which will handle a
-  /// message in a specific fashion
-  /// Using this method, if a handler times out, the message will be inserted
-  /// again to be handled
-  ///
-  /// \tparam t_time is the type of time used to define the timeout for all
-  /// the handler functions. It must be one of the defined in std::chrono,
-  /// like std::chrono::seconds
-  ///
-  /// \param p_id identifier of this group of handlers
-  ///
-  /// \param p_priority is the priority of this group of handlers
-  ///
-  /// \param p_timeout is the value of timeout for all the handler functions
-  template <typename t_time>
-  static inline number::id add_handlers(const t_priority &p_priority,
+  static inline number::id add_handlers(const priority &p_priority,
                                         t_time p_timeout) {
     handlers _handlers{msg_id_t<t_msg>::get(), p_priority, p_timeout};
     number::id _id = _handlers.get_id();
@@ -1298,30 +1356,6 @@ template <typename t_msg, typename t_priority> struct messenger_t {
   ///
   /// \param p_timeout is the value of timeout for all the handler functions
   ///
-  /// \param p_on_timeout is a function that will be called if a handler times
-  /// out
-  template <typename t_time>
-  static inline number::id add_handlers(t_time p_timeout,
-                                        on_timeout p_on_timeout) {
-    handlers _handlers{msg_id_t<t_msg>::get(), p_timeout, p_on_timeout};
-    number::id _id = _handlers.get_id();
-    insert(std::move(_handlers));
-    return _id;
-  }
-
-  /// \brief Adds a group of handlers to the messenger, which will handle a
-  /// message in a specific fashion
-  /// Using this method, if a handler times out, the message will be inserted
-  /// again to be handled, this group of handlers will have the
-  /// tenacitas::async::priority::lowest priority
-  ///
-  /// \tparam t_time is the type of time used to define the timeout for all
-  /// the handler functions. It must be one of the defined in std::chrono,
-  /// like std::chrono::seconds
-  ///
-  /// \param p_id identifier of this group of handlers
-  ///
-  /// \param p_timeout is the value of timeout for all the handler functions
   template <typename t_time>
   static inline number::id add_handlers(t_time p_timeout) {
     handlers _handlers{msg_id_t<t_msg>::get(), p_timeout};
@@ -1335,7 +1369,7 @@ template <typename t_msg, typename t_priority> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ///
   /// \param p_priority is the priority to be set for the group of handlers
-  static void set_priority(const number::id &p_id, t_priority p_priority) {
+  static void set_priority(const number::id &p_id, priority p_priority) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       _ite->set_priority(p_priority);
@@ -1348,7 +1382,7 @@ template <typename t_msg, typename t_priority> struct messenger_t {
   /// \param p_id is the identifier of the group of handlers
   ///
   /// \return the priority of the group of handlers, if \p p_id exists
-  static std::optional<t_priority> get_priority(const number::id &p_id) {
+  static std::optional<priority> get_priority(const number::id &p_id) {
     iterator _ite = find(p_id);
     if (_ite != m_list.end()) {
       return {_ite->get_priority()};
@@ -1409,7 +1443,7 @@ template <typename t_msg, typename t_priority> struct messenger_t {
   ///
   /// \param p_visitor is a function that will be called for each roup of
   /// handlers
-  static void traverse(std::function<void(const number::id &, t_priority,
+  static void traverse(std::function<void(const number::id &, priority,
                                           std::chrono::milliseconds)>
                            p_visitor) {
     for (const handlers &_handlers : m_list) {
@@ -1460,7 +1494,7 @@ template <typename t_msg, typename t_priority> struct messenger_t {
 
 private:
   /// \brief Alias for the group of handlers for this message
-  typedef internal::handlers_t<t_msg, t_priority> handlers;
+  typedef internal::handlers_t<t_msg> handlers;
 
   /// \brief List of handlers
   typedef std::list<handlers> handlers_list;
@@ -1508,15 +1542,13 @@ private:
 };
 
 /// \brief
-template <typename t_data, typename t_priority>
-typename messenger_t<t_data, t_priority>::handlers_list
-    messenger_t<t_data, t_priority>::m_list;
+template <typename t_data>
+typename messenger_t<t_data>::handlers_list messenger_t<t_data>::m_list;
 
-template <typename t_data, typename t_priority>
-logger::cerr<> messenger_t<t_data, t_priority>::m_log{"messenger"};
+template <typename t_data>
+logger::cerr<> messenger_t<t_data>::m_log{"messenger"};
 
-template <typename t_data, typename t_priority>
-std::mutex messenger_t<t_data, t_priority>::m_mutex;
+template <typename t_data> std::mutex messenger_t<t_data>::m_mutex;
 
 } // namespace internal
 
