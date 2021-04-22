@@ -29,11 +29,7 @@ struct handlers_000 {
 
   bool operator()() {
 
-    auto _on_timeout = [this](const data &p_data) -> void {
-      WAR(m_log, "timeout handlind ", p_data);
-    };
-
-    handlers _handlers(m_id, 500ms, _on_timeout);
+    handlers _handlers(m_id, 500ms);
 
     _handlers.add_handler(consumer());
 
@@ -52,7 +48,9 @@ struct handlers_000 {
 
 private:
   struct consumer {
-    void operator()(const data &p_value) { INF(m_log, "value = ", p_value); }
+    void operator()(std::shared_ptr<bool>, const data &p_value) {
+      INF(m_log, "value = ", p_value);
+    }
 
   private:
     logger::cerr<> m_log{"consumer"};
@@ -92,11 +90,13 @@ struct handlers_001 {
       producer _producer(&_handlers, &_msg);
 
       DEB(m_log, "creating the sleeping_loop");
-      sleeping_loop _loop(m_id, 500ms, 1s, _producer, []() -> void {});
+      sleeping_loop _loop(m_id, _producer, 500ms, 1s);
 
       DEB(m_log, "adding consumer to the worker");
       _handlers.add_handler(
-          [&_consumer](const msg &p_msg) -> void { return _consumer(p_msg); });
+          [&_consumer](std::shared_ptr<bool>, const msg &p_msg) -> void {
+            return _consumer(p_msg);
+          });
 
       DEB(m_log, "starting the producer loop");
       _loop.start();
@@ -124,7 +124,7 @@ private:
     producer(handlers *p_handlers, msg *p_msg)
         : m_handlers(p_handlers), m_msg(p_msg) {}
 
-    void operator()() {
+    void operator()(std::shared_ptr<bool>) {
       if (m_msg->get_value() > m_num_msgs) {
         return;
       }
@@ -177,17 +177,16 @@ struct handlers_003 {
   }
 
   bool operator()() {
-    on_timeout _on_timeout = [this](const msg &p_msg) -> void {
-      WAR(m_log, "timeout handling ", p_msg);
-    };
 
     value _last_added{0};
 
     {
-      handlers _handlers{m_id, 1s, _on_timeout};
+      handlers _handlers{m_id, 1s};
 
       _handlers.add_handler(
-          [this](const msg &p_msg) -> void { m_consumer(p_msg); });
+          [this](std::shared_ptr<bool> p_bool, const msg &p_msg) -> void {
+            m_consumer(p_bool, p_msg);
+          });
 
       for (uint16_t _i = 0; _i < 300; ++_i) {
         msg _msg(_i);
@@ -208,7 +207,7 @@ struct handlers_003 {
 
 private:
   struct consumer {
-    void operator()(const msg &p_msg) {
+    void operator()(std::shared_ptr<bool>, const msg &p_msg) {
       m_msg = p_msg;
       DEB(m_log, "handling msg ", m_msg);
     }
@@ -246,15 +245,13 @@ struct handlers_004 {
     std::vector<consumer> _consumers{{"c1"}, {"c2"}, {"c3"}, {"c4"}, {"c5"}};
 
     {
-      handlers _handlers{m_id, 2s,
-                         [this, &_handlers](const msg &p_msg) -> void {
-                           WAR(m_log, "timeout hadling ", p_msg);
-                           _handlers.add_data(p_msg);
-                         }};
+      handlers _handlers{m_id, 2s};
 
       for (consumer &_consumer : _consumers) {
         _handlers.add_handler(
-            [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
+            [&_consumer](std::shared_ptr<bool>, const msg &p_msg) -> void {
+              _consumer(p_msg);
+            });
       }
 
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
@@ -355,7 +352,9 @@ struct handlers_005 {
 
       for (consumer &_consumer : _consumers) {
         _handlers.add_handler(
-            [&_consumer](const msg &p_msg) -> void { _consumer(p_msg); });
+            [&_consumer](std::shared_ptr<bool>, const msg &p_msg) -> void {
+              _consumer(p_msg);
+            });
       }
 
       for (uint16_t _i = 0; _i < _amount_to_add; ++_i) {
