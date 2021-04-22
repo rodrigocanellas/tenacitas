@@ -464,7 +464,7 @@ protected:
         return false;
       }
 
-      DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling");
+      DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling handler");
 
       if (!execute(this->m_timeout, this->m_function, std::move(_tuple))) {
         WAR(this->m_log, this->m_owner, ':', this->m_id,
@@ -544,7 +544,7 @@ protected:
       return false;
     }
 
-    DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling work");
+    DEB(this->m_log, this->m_owner, ':', this->m_id, " - calling handler");
 
     if (!execute(this->m_timeout, [this](std::shared_ptr<bool> p_stop) -> void {
           this->m_function(p_stop);
@@ -567,6 +567,29 @@ protected:
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
   }
 };
+
+bool sleeping_loop_control(std::atomic<bool> &p_stopped, logger::cerr<> &p_log,
+                           std::condition_variable &p_cond,
+                           const interval &p_interval,
+                           const number::id &p_owner, const number::id &p_id) {
+  std::mutex _mutex_stop;
+  if (p_stopped) {
+    DEB(p_log, p_owner, ':', p_id, " - stop");
+    return false;
+  }
+
+  DEB(p_log, p_owner, ':', p_id, " - waiting for ", p_interval.count(),
+      "ms to elaps, or a stop order");
+  std::unique_lock<std::mutex> _lock(_mutex_stop);
+  if ((p_cond.wait_for(_lock, p_interval) == std::cv_status::no_timeout) &&
+      (p_stopped)) {
+    DEB(p_log, p_owner, ':', p_id, " - ordered to stop");
+    return false;
+  }
+  DEB(p_log, p_owner, ':', p_id, " - ", p_interval.count(), "ms elapsed");
+
+  return true;
+}
 
 ///// \brief Executes function in fixed period of times
 /////

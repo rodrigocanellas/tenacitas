@@ -147,16 +147,33 @@ struct sleeping_loop_002 {
       return {{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](std::shared_ptr<bool>, int16_t &&p_i,
+    auto _worker = [this, &_value](std::shared_ptr<bool> p_stop, int16_t &&p_i,
                                    float &&p_f) {
       DEB(m_log, "entering with ", p_i, " and ", p_f);
+
+      if (*p_stop) {
+        DEB(m_log, "must stop");
+        m_cond.notify_one();
+        return;
+      }
+
       if (p_i == m_max) {
         _value = p_i;
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() * 2));
+        if (*p_stop) {
+          DEB(m_log, "must stop");
+          m_cond.notify_one();
+          return;
+        }
       } else {
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
+        if (*p_stop) {
+          DEB(m_log, "must stop");
+          m_cond.notify_one();
+          return;
+        }
         INF(m_log, p_i, " - ", p_f);
       }
       DEB(m_log, "exiting");
@@ -171,6 +188,7 @@ struct sleeping_loop_002 {
       m_cond.wait(_lock);
     }
 
+    DEB(m_log, "stopping the sleeping loop");
     _loop.stop();
 
     if (_value != m_max) {
@@ -195,7 +213,7 @@ private:
 
 struct sleeping_loop_003 {
   static std::string desc() {
-    return std::string("sleep interval of 2 seconds, work timeout of 3s, "
+    return std::string("sleep interval of 2s, work timeout of 3s, "
                        "timeout when a counter reaches 38");
   }
 
@@ -212,22 +230,41 @@ struct sleeping_loop_003 {
       return {std::tuple<int16_t, float>{_i, 2.5 * _i}};
     };
 
-    auto _worker = [this, &_value](std::shared_ptr<bool>, int16_t &&p_i,
+    auto _worker = [this, &_value](std::shared_ptr<bool> p_stop, int16_t &&p_i,
                                    float &&p_f) {
       DEB(m_log, "worker called with ", p_i, " and ", p_f);
+      if (*p_stop) {
+        DEB(m_log, "must stop");
+        m_cond.notify_one();
+        return;
+      }
+
       if (p_i == m_max) {
         _value = p_i;
+        DEB(m_log, "going to sleep for ", m_timeout.count() * 2, "ms");
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() * 2));
+        if (*p_stop) {
+          DEB(m_log, "must stop");
+          m_cond.notify_one();
+          return;
+        }
+
       } else {
+        DEB(m_log, "going to sleep for ", m_timeout.count() / 2, "ms");
         std::this_thread::sleep_for(
             std::chrono::milliseconds(m_timeout.count() / 2));
+        if (*p_stop) {
+          DEB(m_log, "must stop");
+          m_cond.notify_one();
+          return;
+        }
 
         INF(m_log, p_i, " - ", p_f);
       }
     };
 
-    loop _loop(m_id, _worker, m_timeout, _provider, 2s);
+    loop _loop(m_id, _worker, m_timeout, _provider, 2000ms);
 
     _loop.start();
 
@@ -235,6 +272,8 @@ struct sleeping_loop_003 {
       std::unique_lock<std::mutex> _lock(m_mutex);
       m_cond.wait(_lock);
     }
+
+    DEB(m_log, "stopping the loop");
 
     _loop.stop();
 
@@ -253,7 +292,7 @@ private:
   std::mutex m_mutex;
   std::condition_variable m_cond;
   static constexpr int16_t m_max{38};
-  static constexpr std::chrono::seconds m_timeout{3s};
+  static constexpr std::chrono::milliseconds m_timeout{3000};
   logger::cerr<> m_log{"sleeping_loop_003"};
   number::id m_id;
 };

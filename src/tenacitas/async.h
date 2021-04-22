@@ -138,23 +138,40 @@ protected:
       if (!this->core()) {
         break;
       }
-      {
-        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-        if (!this->m_cond_stop.wait_for(_lock, m_interval, [this]() -> bool {
-              return this->m_stopped;
-            })) {
-          if (this->m_stopped) {
-            break;
-          }
-        }
+      if (!internal::sleeping_loop_control(this->m_stopped, this->m_log,
+                                           this->m_cond_stop, m_interval,
+                                           this->m_owner, this->m_id)) {
+        break;
       }
+      //      {
+      //        if (this->m_stopped) {
+      //          DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      //        }
+
+      //        DEB(this->m_log, this->m_owner, ':', this->m_id, " - waiting for
+      //        ",
+      //            m_interval.count(), "ms to elaps, or a stop order");
+      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+      //        if (!this->m_cond_stop.wait_for(_lock, m_interval, [this]() ->
+      //        bool {
+      //              return this->m_stopped;
+      //            })) {
+      //          if (this->m_stopped) {
+      //            DEB(this->m_log, this->m_owner, ':', this->m_id,
+      //                " - ordered to stop");
+      //            break;
+      //          }
+      //          DEB(this->m_log, this->m_owner, ':', this->m_id, " - ",
+      //              m_interval.count(), "ms elapsed");
+      //        }
+      //      }
     }
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
   }
 
 private:
   internal::interval m_interval;
-  std::mutex m_mutex_stop;
+  //  std::mutex m_mutex_stop;
 };
 
 template <> struct sleeping_loop_t<void> : public internal::loop_t<void> {
@@ -192,22 +209,39 @@ protected:
       if (!core()) {
         break;
       }
-      {
-        std::unique_lock<std::mutex> _lock(m_mutex_stop);
-        if (!m_cond_stop.wait_for(_lock, m_interval,
-                                  [this]() -> bool { return m_stopped; })) {
-          if (m_stopped) {
-            break;
-          }
-        }
+      if (!internal::sleeping_loop_control(this->m_stopped, this->m_log,
+                                           this->m_cond_stop, m_interval,
+                                           this->m_owner, this->m_id)) {
+        break;
       }
+
+      //      if (this->m_stopped) {
+      //        DEB(this->m_log, this->m_owner, ':', this->m_id, " - stop");
+      //      }
+      //      {
+      //        DEB(this->m_log, this->m_owner, ':', this->m_id, " - waiting for
+      //        ",
+      //            m_interval.count(), "ms to elaps, or a stop order");
+      //        std::unique_lock<std::mutex> _lock(m_mutex_stop);
+      //        if (!m_cond_stop.wait_for(_lock, m_interval,
+      //                                  [this]() -> bool { return m_stopped;
+      //                                  })) {
+      //          if (m_stopped) {
+      //            DEB(this->m_log, this->m_owner, ':', this->m_id,
+      //                " - ordered to stop");
+      //            break;
+      //          }
+      //          DEB(this->m_log, this->m_owner, ':', this->m_id, " - ",
+      //              m_interval.count(), "ms elapsed");
+      //        }
+      //      }
     }
     DEB(this->m_log, this->m_owner, ':', this->m_id, " - leaving loop");
   }
 
 private:
   internal::interval m_interval;
-  std::mutex m_mutex_stop;
+  //  std::mutex m_mutex_stop;
 };
 
 ///// \brief Breaker function signature
