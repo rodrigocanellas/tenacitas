@@ -413,18 +413,22 @@ protected:
     this->m_function = std::move(p_loop.m_function);
     this->m_timeout = std::move(p_loop.m_timeout);
     this->m_stopped = true;
-    DEB(m_log, m_owner, ':', m_id, " - move constructor");
+    DEB(m_log, m_owner, ':', m_id, " - move constructor from ", p_loop.m_owner,
+        ':', p_loop.m_id);
 
     if (!p_loop.is_stopped()) {
-      DEB(m_log, m_owner, ':', m_id, " - right loop was not stopped");
+      DEB(m_log, m_owner, ':', m_id, " - right loop ", p_loop.m_owner, ':',
+          p_loop.m_id, " was not stopped");
       p_loop.stop();
-      DEB(m_log, m_owner, ':', m_id, " - now right loop is stopped");
+      DEB(m_log, m_owner, ':', m_id, " - now right loop ", p_loop.m_owner, ':',
+          p_loop.m_id, " is stopped");
       this->start();
     }
   }
 
   void move_assign(loop_base_t &&p_loop) {
-    DEB(m_log, m_owner, ':', m_id, " - move assignment");
+    DEB(m_log, m_owner, ':', m_id, " - move assignment from ", p_loop.m_owner,
+        ':', p_loop.m_id);
     if (this != &p_loop) {
       move_constructor(std::move(p_loop));
     }
@@ -1298,7 +1302,7 @@ private:
   size_t m_queued_data{0};
 
   /// \brief Logger
-  logger::cerr<> m_log{"worker_pool"};
+  logger::cerr<> m_log{"handlers"};
 };
 
 template <typename t_msg> struct msg_id_t {
