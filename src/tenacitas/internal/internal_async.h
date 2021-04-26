@@ -1155,11 +1155,12 @@ public:
   /// \tparam t_time type of time used to define timeout for the worker
   ///
   /// \param p_function the \p worker to be added
-  void add_handler(handler p_handler) {
+  void add_handler(handler &&p_handler) {
 
     std::lock_guard<std::mutex> _lock(m_add_handler);
-    m_loops.push_back(std::thread(
-        [this, &p_handler]() -> void { this->handler_loop(p_handler); }));
+    m_loops.push_back(std::thread([this, &p_handler]() -> void {
+      this->handler_loop(std::move(p_handler));
+    }));
     m_stopped = false;
   }
 
@@ -1237,9 +1238,9 @@ private:
   typedef circular_unlimited_size_queue_t<t_data> queue;
 
 private:
-  void handler_loop(handler p_handler) {
+  void handler_loop(handler &&p_handler) {
 
-    //        handler _handler{std::move(p_handler)};
+    handler _handler{std::move(p_handler)};
 
     number::id _loop_id;
     DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
@@ -1289,9 +1290,9 @@ private:
 
         DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - calling handler");
 
-        auto _function = [&p_handler](std::shared_ptr<bool> p_bool,
-                                      t_data &&p_data) -> void {
-          p_handler(p_bool, std::move(p_data));
+        auto _function = [&_handler](std::shared_ptr<bool> p_bool,
+                                     t_data &&p_data) -> void {
+          _handler(p_bool, std::move(p_data));
         };
 
         if (!execute(m_timeout, _function, std::move(_data))) {
