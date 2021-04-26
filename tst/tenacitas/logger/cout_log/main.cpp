@@ -56,7 +56,7 @@ struct cout_log_print_tuple {
 
 //  bool operator()() {
 //    try {
-//      typedef async::sleeping_loop_t<void, logger::cout::log>
+//      typedef async::sleeping_loop<void, logger::cout::log>
 //          sleeping_loop;
 //      sleeping_loop _loop1(
 //          std::chrono::milliseconds(1000),
@@ -105,7 +105,7 @@ struct cout_log_print_tuple {
 //  bool operator()() {
 //    try {
 
-//      typedef async::sleeping_loop_t<void, logger::cout::log>
+//      typedef async::sleeping_loop<void, logger::cout::log>
 //          sleeping_loop;
 
 //      sleeping_loop _loop1(

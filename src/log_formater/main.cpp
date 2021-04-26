@@ -7,7 +7,6 @@
 
 #include <tenacitas/calendar.h>
 #include <tenacitas/logger.h>
-#include <tenacitas/macros.h>
 #include <tenacitas/number.h>
 #include <tenacitas/program.h>
 

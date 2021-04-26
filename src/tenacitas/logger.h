@@ -21,31 +21,26 @@
 #include <tenacitas/number.h>
 #include <tenacitas/type.h>
 
+/// \brief Wraps to the debug log function
+#define DEB(p_log, p_params...) p_log.debug(__func__, __LINE__, p_params)
+
+/// \brief Wraps to the info log function
+#define INF(p_log, p_params...) p_log.info(__func__, __LINE__, p_params)
+
+/// \brief Wraps to the warn log function
+#define WAR(p_log, p_params...) p_log.warn(__func__, __LINE__, p_params)
+
+/// \brief Wraps to the error log function
+#define ERR(p_log, p_params...) p_log.error(__func__, __LINE__, p_params)
+
+/// \brief Wraps to the fatal log function
+#define FAT(p_log, p_params...) p_log.fatal(__func__, __LINE__, p_params)
+
 /// \brief master namespace
 namespace tenacitas {
 
 /// \brief logger classes
 namespace logger {
-
-// template <typename t_type>
-// std::ostream &operator<<(std::ostream &p_stream,
-//                         std::shared_ptr<t_type> p_ptr) {
-//  p_stream << (p_ptr ? *p_ptr : "nullptr");
-//  return p_stream;
-//}
-
-// template <typename t_type>
-// std::ostream &operator<<(std::ostream &p_stream,
-//                         std::unique_ptr<t_type> p_ptr) {
-//  p_stream << (p_ptr ? *p_ptr : "nullptr");
-//  return p_stream;
-//}
-
-// template <typename t_type>
-// std::ostream &operator<<(std::ostream &p_stream, t_type *p_ptr) {
-//  p_stream << (p_ptr ? *p_ptr : "nullptr");
-//  return p_stream;
-//}
 
 // dummy log implementations
 #ifndef TENACITAS_LOG

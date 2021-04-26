@@ -393,12 +393,13 @@ struct application {
     //          on_exit_app(p_exit_app);
     //        });
 
-    number::id _exit_pool_id = async::add_handlers<message::exit_app>(
-        async::priority::highest, milliseconds(m_wait.count() + 2000));
-    async::add_handler<message::exit_app>(
-        _exit_pool_id, [this](const message::exit_app &p_exit_app) -> void {
-          on_exit_app(p_exit_app);
-        });
+    auto _handler = [this](const message::exit_app &p_exit_app) -> void {
+      on_exit_app(p_exit_app);
+    };
+
+    //    number::id _exit_pool_id = async::add_handlers<message::exit_app>(
+    //        async::priority::highest, _handler, milliseconds(m_wait.count() +
+    //        2000));
 
     DEB(m_log, "starting application");
 

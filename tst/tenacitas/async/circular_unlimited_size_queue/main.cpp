@@ -11,7 +11,7 @@
 
 #include <tenacitas/async.h>
 #include <tenacitas/logger.h>
-#include <tenacitas/macros.h>
+
 #include <tenacitas/tester.h>
 
 using namespace tenacitas;
