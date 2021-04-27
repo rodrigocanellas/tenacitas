@@ -188,7 +188,8 @@ struct handlers_002 {
   bool operator()() {
 
     logger::cerr<> _log{"handlers_002"};
-    _log.set_debug_level();
+    //    _log.set_debug_level();
+    logger::set_debug_level();
 
     number::id _id;
     std::condition_variable _cond_producer;
@@ -206,12 +207,7 @@ struct handlers_002 {
           _consumer(p_bool, std::move(p_msg));
         });
 
-    sleeping_loop _sleeping_loop(
-        _id,
-        [&_producer](std::shared_ptr<bool> p_bool) -> void {
-          _producer(p_bool);
-        },
-        1s, 100ms);
+    sleeping_loop _sleeping_loop(_id, _producer, 1s, 100ms);
 
     _sleeping_loop.start();
 
