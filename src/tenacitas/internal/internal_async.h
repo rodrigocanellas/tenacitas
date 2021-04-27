@@ -1158,9 +1158,9 @@ public:
   void add_handler(handler &&p_handler) {
 
     std::lock_guard<std::mutex> _lock(m_add_handler);
-    m_loops.push_back(std::thread([this, &p_handler]() -> void {
-      this->handler_loop(std::move(p_handler));
-    }));
+
+    m_loops.push_back(std::thread(&handlers_t<t_data>::handler_loop, this,
+                                  std::move(p_handler)));
     m_stopped = false;
   }
 
@@ -1244,16 +1244,6 @@ private:
     DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
         " - entering loop, m_timeout = ", this->m_timeout.count());
 
-    handler _handler = std::move(p_handler);
-
-    {
-      DEB(m_log, "###### calling handler!!!");
-      std::shared_ptr<bool> _bool(std::make_shared<bool>(false));
-      _handler(_bool, t_data());
-    }
-
-    //    std::mutex _mutex;
-
     while (true) {
 
       {
@@ -1264,7 +1254,8 @@ private:
             return true;
           }
           if (!m_queue.empty()) {
-            DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - there is data");
+            DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+                " - there is                data");
             return true;
           }
           DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - waiting");
@@ -1294,7 +1285,8 @@ private:
           break;
         }
 
-        DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - calling handler");
+        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+            " - calling            handler");
 
         //        auto _function = [&p_handler](std::shared_ptr<bool> p_bool,
         //                                     t_data &&p_data) -> void {
@@ -1306,11 +1298,12 @@ private:
           break;
         }
 
-        if (!execute(m_timeout, _handler, std::move(_data))) {
+        if (!execute(m_timeout, p_handler, std::move(_data))) {
           WAR(m_log, m_owner, ':', m_id, ':', _loop_id, " - timeout ", _data);
         }
       } else {
-        DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - no data available");
+        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+            " - no data            available");
       }
     }
   }
