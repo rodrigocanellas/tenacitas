@@ -1240,11 +1240,17 @@ private:
 private:
   void handler_loop(handler &&p_handler) {
 
-    handler _handler{std::move(p_handler)};
-
     number::id _loop_id;
     DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
         " - entering loop, m_timeout = ", this->m_timeout.count());
+
+    handler _handler = std::move(p_handler);
+
+    {
+      DEB(m_log, "###### calling handler!!!");
+      std::shared_ptr<bool> _bool(std::make_shared<bool>(false));
+      _handler(_bool, t_data());
+    }
 
     //    std::mutex _mutex;
 
@@ -1290,12 +1296,17 @@ private:
 
         DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - calling handler");
 
-        auto _function = [&_handler](std::shared_ptr<bool> p_bool,
-                                     t_data &&p_data) -> void {
-          _handler(p_bool, std::move(p_data));
-        };
+        //        auto _function = [&p_handler](std::shared_ptr<bool> p_bool,
+        //                                     t_data &&p_data) -> void {
+        //          _handler(p_bool, std::move(p_data));
+        //        };
 
-        if (!execute(m_timeout, _function, std::move(_data))) {
+        if (this->m_stopped) {
+          DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - stop");
+          break;
+        }
+
+        if (!execute(m_timeout, _handler, std::move(_data))) {
           WAR(m_log, m_owner, ':', m_id, ':', _loop_id, " - timeout ", _data);
         }
       } else {
@@ -1311,7 +1322,7 @@ private:
       return;
     }
 
-    DEB(m_log, m_owner, ':', m_id, "stoping");
+    DEB(m_log, m_owner, ':', m_id, " - stoping");
 
     //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
     m_stopped = true;
