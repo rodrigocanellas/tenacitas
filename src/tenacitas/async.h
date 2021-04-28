@@ -319,6 +319,15 @@ static inline void add_handler(const number::id &p_handlers,
                                             p_factory);
 }
 
+template <typename t_msg, typename t_time>
+static inline const number::id
+add_handler(handler_t<t_msg> &&p_handler, t_time p_timeout,
+            const priority &p_priority = priority::middle) {
+  number::id _id = add_handlers<t_msg>(p_timeout, p_priority);
+  internal::messenger_t<t_msg>::add_handler(_id, std::move(p_handler));
+  return _id;
+}
+
 /// \brief Traverse the groups of handlers
 ///
 /// \param p_visitor is a function that will be called for each group of

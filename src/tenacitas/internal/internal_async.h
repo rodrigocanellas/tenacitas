@@ -404,6 +404,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
   circular_unlimited_size_queue_t(circular_unlimited_size_queue_t &&p_queue) {
     m_root = p_queue.m_root;
     m_write = p_queue.m_write;
+    m_read = p_queue.m_read;
     m_amount = p_queue.m_amount;
   }
 
@@ -417,6 +418,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     if (this != p_queue) {
       m_root = p_queue.m_root;
       m_write = p_queue.m_write;
+      m_read = p_queue.m_read;
       m_amount = p_queue.m_amount;
     }
     return *this;
