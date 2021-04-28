@@ -6,6 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <memory>
 #include <type_traits>
 
 /// \brief master namespace
@@ -13,6 +14,8 @@ namespace tenacitas {
 
 /// \brief type traits
 namespace type {
+
+template <typename t> using ptr = std::shared_ptr<t>;
 
 /// \brief Type trait that identifies if a type is not a tuple
 template <typename> struct is_tuple { const static bool value{false}; };
