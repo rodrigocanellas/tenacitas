@@ -27,7 +27,12 @@ namespace calendar {
 /// \param p_from origin value
 ///
 /// \return p_from converted to t_to type
-template <typename t_to, typename t_from> inline t_to convert(t_from p_from) {
+// template <typename t_to, typename t_from> inline t_to convert(t_from p_from)
+// {
+//  return std::chrono::duration_cast<t_to>(p_from);
+//}
+template <typename t_to, typename t_from>
+inline t_to convert(const t_from &p_from) {
   return std::chrono::duration_cast<t_to>(p_from);
 }
 

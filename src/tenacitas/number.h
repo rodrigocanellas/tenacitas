@@ -155,19 +155,20 @@ struct id {
 
   /// \brief
   friend std::ostream &operator<<(std::ostream &p_out, const id &p_uuid) {
-    p_out << p_uuid.to_str();
+    p_out << p_uuid.str();
     return p_out;
   }
 
   /// \brief
-  inline operator std::string() const { return to_str(); }
+  inline operator std::string() const { return str(); }
 
-private:
-  inline std::string to_str() const {
+  /// \brief
+  inline std::string str() const {
     std::string _str{std::to_string(m_value)};
     return _str.substr(_str.size() - 4);
   }
 
+private:
 private:
   uint64_t m_value;
 };

@@ -675,10 +675,10 @@ public:
   /// \param p_timeout is the value of timeout for all the handler functions
   ///
   template <typename t_time>
-  handlers_t(const number::id &p_owner, const t_time &p_timeout,
+  handlers_t(const number::id &p_owner, t_time p_timeout,
              const priority &p_priority = priority::middle)
-      : m_owner(p_owner), m_timeout(p_timeout), m_priority(p_priority),
-        m_queue(10) {}
+      : m_owner(p_owner), m_timeout(calendar::convert<timeout>(p_timeout)),
+        m_priority(p_priority), m_queue(10) {}
 
   /// \brief Copy constructor not allowed
   handlers_t(const handlers_t &) = delete;
