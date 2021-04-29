@@ -1,0 +1,56 @@
+@startuml
+
+hide empty members
+allow_mixing
+
+namespace mhi {
+  class mhi1<t_factory>
+  class mhi2<t_factory>
+  mhi1 -[hidden]-> mhi2
+}
+namespace business {
+  class bus1<t_factory>
+  class bus2<t_factory>
+  bus1 -[hidden]-> bus2
+}
+namespace persistence {
+  class per1
+  class per2
+  per1 -[hidden]-> per2
+}
+namespace client {
+  class cli1
+  class cli2
+  cli1 -[hidden]-> cli2
+}
+namespace service {
+  class ser1<t_factory>
+  class ser2<t_factory>
+  ser1 -[hidden]-> ser2
+}
+namespace memory {
+  class mem1
+  class mem2
+  mem1 -[hidden]-> mem2
+}
+
+mhi.mhi2 -[hidden]-> business.bus1
+business.bus2 -[hidden]-> persistence.per1
+service.ser1    -[hidden]> business.bus1
+business.bus2 -[hidden]-> client.cli1
+
+' business -[hidden]> memory 
+
+mhi ..> business
+business ..> persistence
+service ..> business
+business *-- memory
+service *-- memory
+mhi *-- memory
+persistence *-- memory
+client *-- memory
+business ..> client
+client o-- "proxy" business
+mhi ..> client
+service ..> client
+@enduml
