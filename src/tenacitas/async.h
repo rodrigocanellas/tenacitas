@@ -132,6 +132,8 @@ struct sleeping_loop {
     DEB(m_log, m_owner, ':', m_id, " - leaving stop");
   }
 
+  inline bool is_stopped() const { return m_stopped; }
+
 private:
   void loop() {
     DEB(m_log, m_owner, ':', m_id,

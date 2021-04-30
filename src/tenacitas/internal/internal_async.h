@@ -738,6 +738,7 @@ public:
   ///
   /// \return \p true if it was added, \p false otherwise
   bool add_data(const t_data &p_data) {
+    DEB(m_log, m_owner, ':', m_id, " - adding ", p_data);
     m_queue.add(p_data);
     m_cond.notify_all();
     {
@@ -886,6 +887,10 @@ private:
       }
 
       if (_maybe_data) {
+
+        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+            " - data = ", _maybe_data.value());
+
         t_data _data{std::move(*_maybe_data)};
 
         DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - data = ", _data);
@@ -966,12 +971,9 @@ private:
   logger::cerr<> m_log{"handlers"};
 };
 
-template <typename t_msg> struct msg_id_t {
-  static number::id get() {
-    number::id _id;
-    return _id;
-  };
-};
+template <typename t_msg> struct msg_id_t { static number::id value; };
+
+template <typename t_msg> number::id msg_id_t<t_msg>::value;
 
 /// \brief Distributes a message to a list of group of handlers
 /// Each group of handlers handles the same message in a different way, has
@@ -1003,8 +1005,9 @@ template <typename t_msg> struct messenger_t {
   add_handlers(const t_time &p_timeout,
                const priority &p_priority = priority::middle) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_list.push_back({msg_id_t<t_msg>::get(), p_timeout, p_priority});
+    m_list.push_back({msg_id_t<t_msg>::value, p_timeout, p_priority});
     number::id _id = m_list.back().get_id();
+    //    DEB(m_log, msg_id_t<t_msg>::value)
     sort();
     return _id;
   }
@@ -1066,8 +1069,8 @@ template <typename t_msg> struct messenger_t {
   /// \param p_msg is the message to be handled
   static void send(const t_msg &p_msg) {
     for (handlers &_handlers : m_list) {
-      DEB(m_log, msg_id_t<t_msg>::get(), " - publishing data to pool '",
-          _handlers.get_id(), "'");
+      DEB(m_log, msg_id_t<t_msg>::value, " - sending ", p_msg, " to pool ",
+          _handlers.get_id());
       _handlers.add_data(p_msg);
     }
   }
@@ -1081,7 +1084,8 @@ template <typename t_msg> struct messenger_t {
     auto _ite = find(p_id);
     auto _end = m_list.end();
     if (_ite != _end) {
-      DEB(m_log, msg_id_t<t_msg>::get(), " - adding another worker for ", p_id);
+      DEB(m_log, msg_id_t<t_msg>::value, " - adding another handler for ",
+          p_id);
       _ite->add_handler(std::move(p_handler));
     }
   }
@@ -1145,14 +1149,14 @@ template <typename t_msg> struct messenger_t {
   /// \brief Waits for all the messages in all the groups of handlers to be
   /// handled
   static void wait() {
-    DEB(m_log, msg_id_t<t_msg>::get(), "  - starting to wait");
+    DEB(m_log, msg_id_t<t_msg>::value, "  - starting to wait");
     for (handlers &_handlers : m_list) {
       _handlers.empty_queue();
     }
-    DEB(m_log, msg_id_t<t_msg>::get(), "  - finished waiting");
+    DEB(m_log, msg_id_t<t_msg>::value, "  - finished waiting");
   }
 
-  static number::id get_id() { return msg_id_t<t_msg>::get(); }
+  static number::id get_id() { return msg_id_t<t_msg>::value; }
 
 private:
   /// \brief Alias for the group of handlers for this message

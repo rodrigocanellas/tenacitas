@@ -34,6 +34,42 @@ template <message_id id = 'A'> struct msg_t {
   explicit msg_t(value p_value = 0)
       : m_counter(p_value), m_up(up()), m_down(down()), m_d(2.5 * m_counter) {}
 
+  msg_t(const msg_t &p_msg)
+      : m_counter(p_msg.m_counter), m_up(p_msg.m_up), m_down(p_msg.m_down),
+        m_d(p_msg.m_d) {}
+
+  msg_t(msg_t &&p_msg)
+      : m_counter(p_msg.m_counter), m_up(std::move(p_msg.m_up)),
+        m_down(std::move(p_msg.m_down)), m_d(p_msg.m_d) {}
+
+  msg_t &operator=(const msg_t &p_msg) {
+    if (this != &p_msg) {
+      m_counter = p_msg.m_counter;
+      m_up = p_msg.m_up;
+      m_down = p_msg.m_down;
+      m_d = p_msg.m_d;
+    }
+    return *this;
+  }
+
+  msg_t &operator=(msg_t &&p_msg) {
+    if (this != &p_msg) {
+      m_counter = p_msg.m_counter;
+      m_up = std::move(p_msg.m_up);
+      m_down = std::move(p_msg.m_down);
+      m_d = p_msg.m_d;
+    }
+    return *this;
+  }
+
+  inline bool operator==(const msg_t &p_msg) const {
+    return m_counter == p_msg.m_counter;
+  }
+
+  inline bool operator!=(const msg_t &p_msg) const {
+    return m_counter != p_msg.m_counter;
+  }
+
   friend std::ostream &operator<<(std::ostream &p_out, const msg_t &p_msg) {
     p_out << "[" << id << "," << number::format<value>(p_msg.m_counter) << ","
           << p_msg.m_up << "," << p_msg.m_down << "," << p_msg.m_d << "]";

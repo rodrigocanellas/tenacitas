@@ -431,7 +431,9 @@ template <message_id msg_id> struct publish_t {
 
   inline void start() { m_loop.start(); }
   inline void stop() { m_loop.stop(); }
-  inline bool over() const { return m_current == m_max; }
+  inline bool over() const {
+    return (m_loop.is_stopped() ? true : m_current == m_max);
+  }
 
 private:
   number::id m_owner;
@@ -451,7 +453,7 @@ template <message_id msg_id> struct subscriber_t {
               "_" + std::to_string(p_number)) {
 
     async::add_handler<msg_t<msg_id>>(
-        p_handlers, [this](type::ptr<bool>, msg_t<msg_id> &&p_msg) -> void {
+        m_handlers, [this](type::ptr<bool>, msg_t<msg_id> &&p_msg) -> void {
           DEB(m_log, "handling ", p_msg);
           m_current = p_msg.get_value();
         });
@@ -474,15 +476,24 @@ struct messenger_005 {
     m_log.set_debug_level();
 
     number::id _e_1 = async::add_handlers<msg_t<'E'>>(1s);
-    number::id _f_1 = async::add_handlers<msg_t<'F'>>(1s);
+    //    number::id _f_1 = async::add_handlers<msg_t<'F'>>(1s);
 
-    subscriber_t<'E'> _sub_e_1_1(_e_1, 1);
-    subscriber_t<'F'> _sub_f_1_1(_f_1, 1);
+    msg_t<'E'> _current;
+
+    auto _sub_e_1_1 = [&](type::ptr<bool>, msg_t<'E'> &&p_msg) -> void {
+      DEB(m_log, "handling ", p_msg);
+      _current = p_msg;
+    };
+    async::add_handler<msg_t<'E'>>(_e_1, _sub_e_1_1);
+
+    //    subscriber_t<'E'> _sub_e_1_1(_e_1, 1);
+    //    subscriber_t<'F'> _sub_f_1_1(_f_1, 1);
 
     publish();
 
     while (true) {
-      uint16_t _amount = _sub_e_1_1.get_last() + _sub_f_1_1.get_last();
+      // uint16_t _amount = _sub_e_1_1.get_last() + _sub_f_1_1.get_last();
+      uint16_t _amount = _current.get_value();
       if (_amount == 8) {
         DEB(m_log, "all ", _amount, " messages where handled");
         break;
@@ -500,7 +511,7 @@ private:
     publish_t<'F'> _pub_f(m_id, value{3}, &m_cond_publish, 2s);
 
     _pub_e.start();
-    _pub_f.start();
+    //    _pub_f.start();
 
     {
       std::unique_lock<std::mutex> _lock(m_mutex_publish);
@@ -533,158 +544,244 @@ private:
   logger::cerr<> m_log{"messenger_005"};
 };
 
-// struct messenger_006 {
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream
-//        << "Messages 'B', 'C' and 'E.\n"
-//        << "Publisher #2 will publish 15 'B' messages, at each 500ms.\n"
-//        << "Publisher #1 will publish 12 'C' messages, at each 2ms.\n"
-//        << "Publisher #732 will publish 14 'E' messages, at each 100ms.\n"
-//        << "Message 'B' has one pool, #1, with priority 5, and timeout of "
-//        << "1s.\n "
-//        << "Message 'C' has two pools: #1 with priority 10, and timeout of "
-//        << "1s, #2 with priority 2, and timeout of 1s.\n"
-//        << "Message 'E' has two pools: #1 with priority 10, and timeout of "
-//        << "1s, #2 with priority 2, and timeout of 1s.\n"
-//        << "Message 'B' has two subscribers for pool #1.\n"
-//        << "Message 'C' has one subscribers for pool #1, and two subscribres "
-//        << "for pool #2.\n"
-//        << "Message 'E' has one subscriber for pool #1, and one subscriber "
-//        << "for pool #2\n"
-//        << "Subscriber B-1-1 and B-1-2 will handle 15 messages among them.\n"
-//        << "Subscriber C-1-1 will handle 12 messages.\n"
-//        << "Subscriber C-2-1 and will C-2-2 12 messages among them.\n"
-//        << "Subscriber E-2-1 will handle 14 messages.\n"
-//        << "Subscriber E-1-2 will handle 14 messages.\n";
-//    return _stream.str();
-//  }
+struct messenger_006 {
 
-//  bool operator()() {
-//    //    logger::set_info_level();
-//    using namespace async;
+  typedef msg_t<'H'> data;
+  typedef logger::cerr<> log;
+  typedef async::sleeping_loop sleeping_loop;
 
-//    test_base _test("messenger_006");
+  static std::string desc() {
+    std::stringstream _stream;
+    _stream << "unamed, one worker, timeout";
+    return _stream.str();
+  }
 
-//    // publishers
-//    _test.add_publisher<'B'>(m_id, 500ms, publish_id{2}, value{15});
-//    _test.add_publisher<'C'>(m_id, 2s, publish_id{1}, value{12});
-//    _test.add_publisher<'E'>(m_id, 100ms, publish_id{732}, value{14});
+  bool operator()() {
+    using namespace std;
 
-//    // pools
-//    _test.add_pool<'B'>(1s, priority{priority::low});
-//    _test.add_pool<'C'>(1s, priority{priority::middle});
-//    _test.add_pool<'C'>(1s, priority{priority::low});
-//    _test.add_pool<'E'>(1s, priority{priority::middle});
-//    _test.add_pool<'E'>(1s, priority{priority::low});
+    //    m_log.set_debug_level();
 
-//    // subscribers
-//    _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'B'>(pool_num{1}, sub_id{2});
+    const data _data_to_produce{30};
+    data _data_produced{0};
+    data _data_consumed{0};
+    const std::chrono::milliseconds _subscriber_timeout{800ms};
 
-//    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1});
-//    _test.add_subscriber<'C'>(pool_num{2}, sub_id{2});
+    number::id _id =
+        async::add_handlers<data>(_subscriber_timeout, async::priority::lowest);
 
-//    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1});
+    auto _subscriber = [this, &_data_consumed, &_data_to_produce,
+                        _subscriber_timeout](std::shared_ptr<bool>,
+                                             data &&p_data) -> void {
+      _data_consumed = p_data;
+      DEB(m_log, "subscriber sleeping for ", p_data);
+      std::this_thread::sleep_for(
+          decltype(_subscriber_timeout)(_subscriber_timeout.count() / 2));
+      DEB(m_log, "subscriber waking for ", p_data);
 
-//    bool _res = _test(1min);
+      DEB(m_log, "consuming ", p_data);
+      if (_data_consumed == _data_to_produce) {
+        m_cond_consumer.notify_one();
+      }
+    };
 
-//    // start test
-//    if (_res) {
-//      const updates &_updates = _test.get_updates();
-//      for (const update &_update : _updates) {
-//        INF(m_log, _update);
-//      }
-//    }
-//    return _res;
-//  }
+    async::add_handler<data>(_id, std::move(_subscriber));
 
-// private:
-//  logger::cerr<> m_log{"messenger_006"};
-//  number::id m_id;
-//};
+    function<void(std::shared_ptr<bool>)> _slepper =
+        [this, &_data_produced,
+         &_data_to_produce](std::shared_ptr<bool>) -> void {
+      if (_data_produced == _data_to_produce) {
+        m_cond_producer.notify_one();
+      } else {
+        ++_data_produced;
+        async::send(_data_produced);
+        DEB(m_log, "published ", _data_produced);
+      }
+    };
 
-// struct messenger_007 {
-//  static std::string desc() {
-//    std::stringstream _stream;
-//    _stream
-//        << "Messages 'B', 'C' and 'E.\n"
-//        << "Publisher #2 will publish 15 'B' messages, at each 500ms.\n"
-//        << "Publisher #1 will publish 12 'C' messages, at each 2ms.\n"
-//        << "Publisher #732 will publish 14 'E' messages, at each 100ms.\n"
-//        << "Message 'B' has one pool, #1, with priority 5, and timeout of
-//        1s.\n"
-//        << "Message 'C' has two pools: #1 with priority 10, and timeout of 1s,
-//        "
-//        << "#2 with priority 2, and timeout of 1s.\n"
-//        << "Message 'E' has two pools: #1 with priority 10, and timeout of 1s,
-//        "
-//           "#2 with priority 2, and timeout of 1s.\n"
-//        << "Message 'B' has two subscribers for pool #1.\n"
-//        << "Message 'C' has one subscribers for pool #1, and two subscribres "
-//           "for pool #2.\n"
-//        << "Message 'E' has one subscriber for pool #1, and one subscriber for
-//        "
-//           "pool #2.\n"
-//        << "Subscriber B-1-1 and B-1-2 will handle 15 messages among them.\n"
-//        << "Subscriber C-1-1 will handle 12 messages.\n"
-//        << "Subscriber C-2-1 will sleep for 2s, causing timeout for all the "
-//           "messages. Those messages will be inserted again in the pool C-2, "
-//           "so C-2-2 will handle all 12 messages.\n"
-//        << "Subscriber C-2-1 will handle 12 messages among them.\n"
-//        << "Subscriber E-2-1 will handle 14 messages.\n"
-//        << "Subscriber E-1-2 will handle 14 messages.\n";
+    sleeping_loop _sleeping_loop(
+        m_id, _slepper, 300ms,
+        decltype(_subscriber_timeout)(_subscriber_timeout.count() / 4));
 
-//    return _stream.str();
-//  }
+    _sleeping_loop.start();
 
-//  bool operator()() {
-//    logger::set_info_level();
-//    using namespace async;
+    DEB(m_log, "waiting for the producer to notify");
+    {
+      unique_lock<mutex> _lock_producer(m_mutex_producer);
+      m_cond_producer.wait(_lock_producer);
+    }
+    _sleeping_loop.stop();
 
-//    test_base _test("messenger_006");
+    DEB(m_log, "last data produced = ", _data_produced);
 
-//    // publishers
-//    _test.add_publisher<'B'>(m_id, 500ms, publish_id{2}, value{15});
-//    _test.add_publisher<'C'>(m_id, 2s, publish_id{1}, value{12});
-//    _test.add_publisher<'E'>(m_id, 100ms, publish_id{732}, value{14});
+    DEB(m_log, "waiting for the consumer to notify");
+    unique_lock<mutex> _lock_consumer(m_mutex_consumer);
+    cv_status _status =
+        m_cond_consumer.wait_for(_lock_consumer, chrono::seconds(60));
+    DEB(m_log, "consumer notified");
 
-//    // pools
-//    _test.add_pool<'B'>(priority{priority::low}, 1s);
-//    _test.add_pool<'C'>(priority{priority::low_middle}, 1s);
-//    _test.add_pool<'C'>(priority{priority::low}, 1s);
-//    _test.add_pool<'E'>(priority{priority::low_middle}, 1s);
-//    _test.add_pool<'E'>(priority{priority::low}, 1s);
+    if (_status == cv_status::timeout) {
+      ERR(m_log, "it took more time than nowed for the consumer");
+      return false;
+    }
 
-//    // subscribers
-//    _test.add_subscriber<'B'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'B'>(pool_num{1}, sub_id{2});
+    if (_data_consumed != _data_produced) {
+      ERR(m_log, "data consumed = ", _data_consumed, ", but it should be ",
+          _data_produced);
+      return false;
+    }
 
-//    _test.add_subscriber<'C'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'C'>(pool_num{2}, sub_id{1}, 2s);
-//    _test.add_subscriber<'C'>(pool_num{2}, sub_id{2});
+    DEB(m_log, "data consumed = ", _data_consumed,
+        ", and is equal to data produced = ", _data_produced);
 
-//    _test.add_subscriber<'E'>(pool_num{1}, sub_id{1});
-//    _test.add_subscriber<'E'>(pool_num{2}, sub_id{1});
+    return true;
+  }
 
-//    bool _res = _test(1min);
+private:
+  log m_log{"messenger_006"};
+  std::mutex m_mutex_producer;
+  std::condition_variable m_cond_producer;
+  std::mutex m_mutex_consumer;
+  std::condition_variable m_cond_consumer;
+  number::id m_id;
+};
 
-//    // start test
-//    if (_res) {
-//      const updates &_updates = _test.get_updates();
-//      for (const update &_update : _updates) {
-//        INF(m_log, _update);
-//      }
-//    }
-//    return _res;
-//  }
+struct messenger_007 {
+  typedef msg_t<'R'> msg;
+  typedef async::sleeping_loop sleeping_loop;
+  typedef async::internal::handlers_t<msg> handlers;
 
-// private:
-//  logger::cerr<> m_log{"messenger_007"};
-//  number::id m_id;
-//};
+  static std::string desc() {
+    std::stringstream _stream;
+
+    _stream << "A 'sleeping_loop' sends " << m_max << " messages, at each "
+            << m_interval.count() << "ms, to a 'handlers' with timeout of "
+            << m_handlers_timeout.count()
+            << "s, with one handler that sleeps for " << m_handler_sleep.count()
+            << "ms.\n"
+            << "The amount of messages consumed must be equal to the produced";
+
+    return _stream.str();
+  }
+
+  bool operator()() {
+
+    logger::set_debug_level();
+
+    DEB(m_log, "capacity = ", m_handlers.capacity(),
+        ", occupied = ", m_handlers.occupied());
+
+    DEB(m_log, "adding consumer to the worker");
+    number::id _handlers = async::add_handlers<msg>(m_handlers_timeout);
+    async::add_handler<msg>(
+        _handlers, [this](std::shared_ptr<bool> p_bool, msg &&p_msg) -> void {
+          m_consumer(p_bool, std::move(p_msg));
+        });
+
+    producer _producer{_handlers, &m_cond_produced, &m_msg};
+    sleeping_loop _loop{m_id, _producer, m_sleeping_loop_timeout, m_interval};
+
+    DEB(m_log, "starting the producer loop");
+    _loop.start();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex_produced);
+      m_cond_produced.wait(_lock);
+    }
+
+    DEB(m_log, "stoping the producer loop");
+    _loop.stop();
+
+    {
+      std::unique_lock<std::mutex> _lock(m_mutex_handled);
+      m_cond_handled.wait(_lock);
+    }
+
+    DEB(m_log, "produced = ", m_msg.get_value(),
+        ", consumed = ", m_consumer.get_msg().get_value());
+    if (m_consumer.get_msg().get_value() != m_msg.get_value()) {
+      ERR(m_log, "Data value consumed should be equal to provided");
+      return false;
+    }
+
+    return true;
+  }
+
+private:
+  struct producer {
+    producer(const number::id &p_handlers, std::condition_variable *p_cond,
+             msg *p_msg)
+        : m_handlers(p_handlers), m_cond(p_cond), m_msg(p_msg) {}
+
+    void operator()(std::shared_ptr<bool>) {
+      if (m_msg->get_value() == m_max) {
+        m_cond->notify_one();
+        return;
+      }
+
+      ++(*m_msg);
+      msg _msg(m_msg->get_value());
+      DEB(m_log, "going to add ", _msg);
+
+      async::send<msg>(_msg);
+      //      DEB(m_log, "added msg ", _msg, "; capacity = ",
+      //      m_handlers->capacity(),
+      //          ", occupied = ", m_handlers->occupied());
+    }
+
+  private:
+    const number::id m_handlers;
+    std::condition_variable *m_cond;
+    msg *m_msg;
+
+    logger::cerr<> m_log{"producer"};
+  };
+
+  struct consumer {
+    consumer(std::condition_variable *p_cond) : m_cond(p_cond) {}
+    void operator()(std::shared_ptr<bool>, msg &&p_msg) {
+
+      m_msg = std::move(p_msg);
+
+      DEB(m_log, "handling msg ", m_msg);
+
+      if (m_msg.get_value() == m_max) {
+        DEB(m_log, "Last msg handled = ", m_msg);
+        m_cond->notify_one();
+        return;
+      }
+
+      DEB(m_log, "worker is going to sleep");
+      std::this_thread::sleep_for(m_handler_sleep);
+      DEB(m_log, "worker is waking up");
+    }
+    const msg &get_msg() const { return m_msg; }
+
+  private:
+    msg m_msg;
+    std::condition_variable *m_cond;
+    logger::cerr<> m_log{"consumer"};
+  };
+
+  logger::cerr<> m_log{"messenger_007"};
+  number::id m_id;
+  std::condition_variable m_cond_produced;
+  std::mutex m_mutex_produced;
+  std::condition_variable m_cond_handled;
+  std::mutex m_mutex_handled;
+  consumer m_consumer{&m_cond_handled};
+  msg m_msg{0};
+  handlers m_handlers{m_id, m_handlers_timeout};
+  static const value m_max{10};
+  static const std::chrono::milliseconds m_interval;
+  static const std::chrono::seconds m_handlers_timeout;
+  static const std::chrono::milliseconds m_handler_sleep;
+  static const std::chrono::seconds m_sleeping_loop_timeout;
+};
+
+const std::chrono::milliseconds messenger_007::m_interval{150};
+const std::chrono::seconds messenger_007::m_handlers_timeout{2};
+const std::chrono::milliseconds messenger_007::m_handler_sleep{300};
+const std::chrono::seconds messenger_007::m_sleeping_loop_timeout{1};
 
 int main(int argc, char **argv) {
   logger::set_debug_level();
@@ -696,6 +793,6 @@ int main(int argc, char **argv) {
   run_test(_tester, messenger_003);
   run_test(_tester, messenger_004);
   run_test(_tester, messenger_005);
-  //  run_test(_tester, messenger_006);
-  //  run_test(_tester, messenger_007);
+  run_test(_tester, messenger_006);
+  run_test(_tester, messenger_007);
 }

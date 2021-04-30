@@ -189,7 +189,7 @@ private:
   handlers m_handlers{m_id, m_handlers_timeout};
   producer m_producer{&m_handlers, &m_cond_produced, &m_msg};
   sleeping_loop m_loop{m_id, m_producer, m_sleeping_loop_timeout, m_interval};
-  static const value m_max{50};
+  static const value m_max{10};
   static const std::chrono::milliseconds m_interval;
   static const std::chrono::seconds m_handlers_timeout;
   static const std::chrono::milliseconds m_handler_sleep;
@@ -346,7 +346,7 @@ private:
   handlers m_handlers{m_id, m_handlers_timeout};
   producer m_producer{&m_handlers, &m_cond_produced};
   static std::vector<consumer> m_consumers;
-  static const value m_max{50};
+  static const value m_max{10};
   static const std::chrono::milliseconds m_interval;
   static const std::chrono::seconds m_handlers_timeout;
   static const std::chrono::milliseconds m_handler_sleep;
