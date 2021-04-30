@@ -22,7 +22,7 @@ template <typename> struct is_tuple { const static bool value{false}; };
 
 /// \brief Type trait that identifies if a type is a tuple
 template <typename... T> struct is_tuple<std::tuple<T...>> {
-  const static bool value{true};
+    const static bool value{true};
 };
 
 } // namespace type

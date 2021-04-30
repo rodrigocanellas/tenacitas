@@ -17,11 +17,11 @@ namespace message {
 /// \brief Application can exit in a gracefully way
 struct exit_app {
 
-  /// \brief Output operator
-  friend std::ostream &operator<<(std::ostream &p_out, const exit_app &) {
-    p_out << "exit_app";
-    return p_out;
-  }
+    /// \brief Output operator
+    friend std::ostream &operator<<(std::ostream &p_out, const exit_app &) {
+        p_out << "exit_app";
+        return p_out;
+    }
 };
 
 } // namespace message

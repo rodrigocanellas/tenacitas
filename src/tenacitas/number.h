@@ -28,9 +28,9 @@ namespace number {
 ///
 /// \tparam t_num_type is the type of number
 template <typename t_num_type> inline uint16_t max_str_length() {
-  return (
-      static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
-      1);
+    return (
+        static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
+        1);
 }
 
 /// \brief Type of alingnment when formating numbers
@@ -51,11 +51,11 @@ enum class align : char { left = 'l', right = 'd' };
 template <typename t_num_type>
 inline std::string format(t_num_type p_num, char p_fill = '0',
                           align p_align = align::right) {
-  std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left)
-          << std::setfill(p_fill) << std::setw(max_str_length<t_num_type>())
-          << p_num;
-  return _stream.str();
+    std::stringstream _stream;
+    _stream << (p_align == align::right ? std::right : std::left)
+            << std::setfill(p_fill) << std::setw(max_str_length<t_num_type>())
+            << p_num;
+    return _stream.str();
 }
 
 /// \brief Specialization for uint8_t of \p tenacitas::number::format
@@ -69,11 +69,11 @@ inline std::string format(t_num_type p_num, char p_fill = '0',
 /// center of the string
 inline std::string format(uint8_t p_num, char p_fill = '0',
                           align p_align = align::right) {
-  std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left)
-          << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
-          << static_cast<uint16_t>(p_num);
-  return _stream.str();
+    std::stringstream _stream;
+    _stream << (p_align == align::right ? std::right : std::left)
+            << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
+            << static_cast<uint16_t>(p_num);
+    return _stream.str();
 }
 
 /// \brief Specialization for int8_t of \p tenacitas::number::format
@@ -87,11 +87,11 @@ inline std::string format(uint8_t p_num, char p_fill = '0',
 /// center of the string
 inline std::string format(int8_t p_num, char p_fill = '0',
                           align p_align = align::right) {
-  std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left)
-          << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
-          << static_cast<int16_t>(p_num);
-  return _stream.str();
+    std::stringstream _stream;
+    _stream << (p_align == align::right ? std::right : std::left)
+            << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
+            << static_cast<int16_t>(p_num);
+    return _stream.str();
 }
 
 /// \brief Specialization for uint8_t of \p tenacitas::number::format
@@ -106,71 +106,71 @@ inline std::string format(int8_t p_num, char p_fill = '0',
 template <typename t_num_type>
 inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
                           align p_align = align::right) {
-  std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left)
-          << std::setfill(p_fill) << std::setw(p_size) << p_num;
-  return _stream.str();
+    std::stringstream _stream;
+    _stream << (p_align == align::right ? std::right : std::left)
+            << std::setfill(p_fill) << std::setw(p_size) << p_num;
+    return _stream.str();
 }
 
 /// \brief Generates a unique (sort of) identifier
 struct id {
 
-  /// \brief
-  id() : m_value(calendar::now<>::microsecs()) {}
+    /// \brief
+    id() : m_value(calendar::now<>::microsecs()) {}
 
-  id(const id &) = default;
-  id(id &&) = default;
-  id &operator=(const id &) = default;
-  id &operator=(id &&) = default;
+    id(const id &) = default;
+    id(id &&) = default;
+    id &operator=(const id &) = default;
+    id &operator=(id &&) = default;
 
-  /// \brief
-  inline bool operator==(const id &p_uuid) const {
-    return m_value == p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator==(const id &p_uuid) const {
+        return m_value == p_uuid.m_value;
+    }
 
-  /// \brief
-  inline bool operator!=(const id &p_uuid) const {
-    return m_value != p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator!=(const id &p_uuid) const {
+        return m_value != p_uuid.m_value;
+    }
 
-  /// \brief
-  inline bool operator>(const id &p_uuid) const {
-    return m_value > p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator>(const id &p_uuid) const {
+        return m_value > p_uuid.m_value;
+    }
 
-  /// \brief
-  inline bool operator<(const id &p_uuid) const {
-    return m_value < p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator<(const id &p_uuid) const {
+        return m_value < p_uuid.m_value;
+    }
 
-  /// \brief
-  inline bool operator>=(const id &p_uuid) const {
-    return m_value >= p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator>=(const id &p_uuid) const {
+        return m_value >= p_uuid.m_value;
+    }
 
-  /// \brief
-  inline bool operator<=(const id &p_uuid) const {
-    return m_value <= p_uuid.m_value;
-  }
+    /// \brief
+    inline bool operator<=(const id &p_uuid) const {
+        return m_value <= p_uuid.m_value;
+    }
 
-  /// \brief
-  friend std::ostream &operator<<(std::ostream &p_out, const id &p_uuid) {
-    p_out << p_uuid.str();
-    return p_out;
-  }
+    /// \brief
+    friend std::ostream &operator<<(std::ostream &p_out, const id &p_uuid) {
+        p_out << p_uuid.str();
+        return p_out;
+    }
 
-  /// \brief
-  inline operator std::string() const { return str(); }
+    /// \brief
+    inline operator std::string() const { return str(); }
 
-  /// \brief
-  inline std::string str() const {
-    std::string _str{std::to_string(m_value)};
-    return _str.substr(_str.size() - 4);
-  }
+    /// \brief
+    inline std::string str() const {
+        std::string _str{std::to_string(m_value)};
+        return _str.substr(_str.size() - 4);
+    }
 
-private:
-private:
-  uint64_t m_value;
+  private:
+  private:
+    uint64_t m_value;
 };
 
 } // namespace number

@@ -42,170 +42,174 @@ using namespace tenacitas::type;
 
 struct sleeping_loop {
 
-  /// \brief Signature of the function that will be called in each round of the
-  /// loop
-  typedef std::function<void(ptr<bool>)> function;
+    /// \brief Signature of the function that will be called in each round of
+    /// the loop
+    typedef std::function<void(ptr<bool>)> function;
 
-  sleeping_loop() = delete;
+    sleeping_loop() = delete;
 
-  sleeping_loop(const sleeping_loop &) = delete;
-  sleeping_loop &operator=(const sleeping_loop &) = delete;
+    sleeping_loop(const sleeping_loop &) = delete;
+    sleeping_loop &operator=(const sleeping_loop &) = delete;
 
-  sleeping_loop(sleeping_loop &&p_loop) {
-    bool _stopped = p_loop.m_stopped;
+    sleeping_loop(sleeping_loop &&p_loop) {
+        bool _stopped = p_loop.m_stopped;
 
-    m_owner = std::move(p_loop.m_owner);
-    m_function = std::move(p_loop.m_function);
-    m_timeout = std::move(p_loop.m_timeout);
-    m_interval = std::move(p_loop.m_interval);
-    m_stopped = false;
+        m_owner = std::move(p_loop.m_owner);
+        m_function = std::move(p_loop.m_function);
+        m_timeout = std::move(p_loop.m_timeout);
+        m_interval = std::move(p_loop.m_interval);
+        m_stopped = false;
 
-    if (!_stopped) {
-      start();
-    }
-  }
-
-  sleeping_loop &operator=(sleeping_loop &&p_loop) {
-    if (this != &p_loop) {
-
-      bool _stopped = p_loop.m_stopped;
-
-      m_owner = std::move(p_loop.m_owner);
-      m_function = std::move(p_loop.m_function);
-      m_timeout = std::move(p_loop.m_timeout);
-      m_interval = std::move(p_loop.m_interval);
-      m_stopped = false;
-
-      if (!_stopped) {
-        start();
-      }
-    }
-    return *this;
-  }
-
-  template <typename t_timeout, typename t_interval>
-  sleeping_loop(const number::id &p_owner, function p_function,
-                t_timeout p_timeout, t_interval p_interval)
-      : m_owner(p_owner), m_function(p_function),
-        m_timeout(calendar::convert<internal::timeout>(p_timeout)),
-        m_interval(calendar::convert<internal::interval>(p_interval)) {}
-
-  void start() {
-    if (!m_stopped) {
-      return;
-    }
-    m_stopped = false;
-
-    DEB(m_log, m_owner, ':', m_id, " - starting loop thread");
-    m_thread = std::thread([this]() { loop(); });
-  }
-
-  /// \brief Stops the loop, if it was started
-  void stop() {
-
-    if (m_stopped) {
-      DEB(m_log, m_owner, ':', m_id, " - not stopping because it is stopped");
-      return;
-    }
-    DEB(m_log, m_owner, ':', m_id, " - stopping");
-    m_stopped = true;
-    m_cond.notify_one();
-
-    if (m_thread.get_id() == std::thread::id()) {
-      DEB(m_log, m_owner, ':', m_id,
-          " - not joining because m_thread.get_id() == std::thread::id()");
-      return;
-    }
-    DEB(m_log, m_owner, ':', m_id, " - m_thread.get_id() != std::thread::id()");
-
-    if (!m_thread.joinable()) {
-      DEB(m_log, m_owner, ':', m_id,
-          " - not joining because m_thread is not joinable");
-      return;
-    }
-    DEB(m_log, m_owner, ':', m_id, " - m_thread.joinable()");
-
-    {
-      std::lock_guard<std::mutex> _lock(m_mutex_join);
-      m_thread.join();
-    }
-    DEB(m_log, m_owner, ':', m_id, " - leaving stop");
-  }
-
-  inline bool is_stopped() const { return m_stopped; }
-
-private:
-  void loop() {
-    DEB(m_log, m_owner, ':', m_id,
-        " - entering loop, m_timeout = ", m_timeout.count());
-
-    while (true) {
-      if (m_stopped) {
-        DEB(m_log, m_owner, ':', m_id, " - stop");
-        break;
-      }
-
-      DEB(m_log, m_owner, ':', m_id, " - calling handler");
-
-      if (!internal::execute(m_timeout, [this](ptr<bool> p_stop) -> void {
-            m_function(p_stop);
-          })) {
-        WAR(m_log, m_owner, ':', m_id, " - timeout");
-      }
-
-      if (m_stopped) {
-        DEB(m_log, m_owner, ':', m_id, " - stop");
-        break;
-      }
-
-      DEB(m_log, m_owner, ':', m_id, " - waiting for ", m_interval.count(),
-          "ms to elaps, or a stop order");
-      {
-        std::unique_lock<std::mutex> _lock(m_mutex_interval);
-        if ((m_cond.wait_for(_lock, m_interval) ==
-             std::cv_status::no_timeout) &&
-            (m_stopped)) {
-          DEB(m_log, m_owner, ':', m_id, " - ordered to stop");
-          break;
+        if (!_stopped) {
+            start();
         }
-      }
-      DEB(m_log, m_owner, ':', m_id, " - ", m_interval.count(), "ms elapsed");
     }
-    DEB(m_log, m_owner, ':', m_id, " - leaving loop");
-  }
 
-private:
-  /// \brief Identifier of the object that owns this object
-  number::id m_owner;
+    sleeping_loop &operator=(sleeping_loop &&p_loop) {
+        if (this != &p_loop) {
 
-  /// \brief Function that will be called in each round of the loop
-  function m_function;
+            bool _stopped = p_loop.m_stopped;
 
-  /// \brief Maximum time that \p m_function will have to execute
-  internal::timeout m_timeout;
+            m_owner = std::move(p_loop.m_owner);
+            m_function = std::move(p_loop.m_function);
+            m_timeout = std::move(p_loop.m_timeout);
+            m_interval = std::move(p_loop.m_interval);
+            m_stopped = false;
 
-  internal::interval m_interval;
+            if (!_stopped) {
+                start();
+            }
+        }
+        return *this;
+    }
 
-  /// \brief Identifier of this object, used for debugging purposes
-  number::id m_id;
+    template <typename t_timeout, typename t_interval>
+    sleeping_loop(const number::id &p_owner, function p_function,
+                  t_timeout p_timeout, t_interval p_interval)
+        : m_owner(p_owner), m_function(p_function),
+          m_timeout(calendar::convert<internal::timeout>(p_timeout)),
+          m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
-  /// \brief Indicates that the loop must stop
-  std::atomic<bool> m_stopped{true};
+    void start() {
+        if (!m_stopped) {
+            return;
+        }
+        m_stopped = false;
 
-  /// \brief Thread where the \p loop method will run
-  std::thread m_thread;
+        DEB(m_log, m_owner, ':', m_id, " - starting loop thread");
+        m_thread = std::thread([this]() { loop(); });
+    }
 
-  /// \brief Logger
-  logger::cerr<> m_log{"sleeping_loop"};
+    /// \brief Stops the loop, if it was started
+    void stop() {
 
-  /// \brief Protects joining the thread
-  std::mutex m_mutex_join;
+        if (m_stopped) {
+            DEB(m_log, m_owner, ':', m_id,
+                " - not stopping because it is stopped");
+            return;
+        }
+        DEB(m_log, m_owner, ':', m_id, " - stopping");
+        m_stopped = true;
+        m_cond.notify_one();
 
-  std::mutex m_mutex_interval;
+        if (m_thread.get_id() == std::thread::id()) {
+            DEB(m_log, m_owner, ':', m_id,
+                " - not joining because m_thread.get_id() == "
+                "std::thread::id()");
+            return;
+        }
+        DEB(m_log, m_owner, ':', m_id,
+            " - m_thread.get_id() != std::thread::id()");
 
-  std::condition_variable m_cond;
+        if (!m_thread.joinable()) {
+            DEB(m_log, m_owner, ':', m_id,
+                " - not joining because m_thread is not joinable");
+            return;
+        }
+        DEB(m_log, m_owner, ':', m_id, " - m_thread.joinable()");
 
-  //  std::mutex m_mutex_stop;
+        {
+            std::lock_guard<std::mutex> _lock(m_mutex_join);
+            m_thread.join();
+        }
+        DEB(m_log, m_owner, ':', m_id, " - leaving stop");
+    }
+
+    inline bool is_stopped() const { return m_stopped; }
+
+  private:
+    void loop() {
+        DEB(m_log, m_owner, ':', m_id,
+            " - entering loop, m_timeout = ", m_timeout.count());
+
+        while (true) {
+            if (m_stopped) {
+                DEB(m_log, m_owner, ':', m_id, " - stop");
+                break;
+            }
+
+            DEB(m_log, m_owner, ':', m_id, " - calling handler");
+
+            if (!internal::execute(m_timeout, [this](ptr<bool> p_stop) -> void {
+                    m_function(p_stop);
+                })) {
+                WAR(m_log, m_owner, ':', m_id, " - timeout");
+            }
+
+            if (m_stopped) {
+                DEB(m_log, m_owner, ':', m_id, " - stop");
+                break;
+            }
+
+            DEB(m_log, m_owner, ':', m_id, " - waiting for ",
+                m_interval.count(), "ms to elaps, or a stop order");
+            {
+                std::unique_lock<std::mutex> _lock(m_mutex_interval);
+                if ((m_cond.wait_for(_lock, m_interval) ==
+                     std::cv_status::no_timeout) &&
+                    (m_stopped)) {
+                    DEB(m_log, m_owner, ':', m_id, " - ordered to stop");
+                    break;
+                }
+            }
+            DEB(m_log, m_owner, ':', m_id, " - ", m_interval.count(),
+                "ms elapsed");
+        }
+        DEB(m_log, m_owner, ':', m_id, " - leaving loop");
+    }
+
+  private:
+    /// \brief Identifier of the object that owns this object
+    number::id m_owner;
+
+    /// \brief Function that will be called in each round of the loop
+    function m_function;
+
+    /// \brief Maximum time that \p m_function will have to execute
+    internal::timeout m_timeout;
+
+    internal::interval m_interval;
+
+    /// \brief Identifier of this object, used for debugging purposes
+    number::id m_id;
+
+    /// \brief Indicates that the loop must stop
+    std::atomic<bool> m_stopped{true};
+
+    /// \brief Thread where the \p loop method will run
+    std::thread m_thread;
+
+    /// \brief Logger
+    logger::cerr<> m_log{"sleeping_loop"};
+
+    /// \brief Protects joining the thread
+    std::mutex m_mutex_join;
+
+    std::mutex m_mutex_interval;
+
+    std::condition_variable m_cond;
+
+    //  std::mutex m_mutex_stop;
 };
 
 // #########################################
@@ -230,7 +234,7 @@ template <typename t_msg, typename t_time>
 static inline number::id
 add_handlers(const t_time &p_timeout,
              const priority &p_priority = priority::middle) {
-  return internal::messenger_t<t_msg>::add_handlers(p_timeout, p_priority);
+    return internal::messenger_t<t_msg>::add_handlers(p_timeout, p_priority);
 }
 
 /// \brief Adds a queue to receive messages to be handled
@@ -252,8 +256,8 @@ template <typename t_msg, typename t_time>
 static inline number::id
 add_handlers(handler_t<t_msg> &&p_handler, const t_time &p_timeout,
              const priority &p_priority = priority::middle) {
-  return internal::messenger_t<t_msg>::add_handlers(std::move(p_handler),
-                                                    p_timeout, p_priority);
+    return internal::messenger_t<t_msg>::add_handlers(std::move(p_handler),
+                                                      p_timeout, p_priority);
 }
 
 /// \brief Defines the priority of a message queue
@@ -269,7 +273,7 @@ add_handlers(handler_t<t_msg> &&p_handler, const t_time &p_timeout,
 template <typename t_msg>
 static inline void set_priority(const number::id &p_handlers,
                                 priority p_priority) {
-  internal::messenger_t<t_msg>::set_priority(p_handlers, p_priority);
+    internal::messenger_t<t_msg>::set_priority(p_handlers, p_priority);
 }
 
 /// \brief Retrieves the priority of a message queue
@@ -284,7 +288,7 @@ static inline void set_priority(const number::id &p_handlers,
 template <typename t_msg>
 static inline std::optional<priority>
 get_priority(const number::id &p_handlers) {
-  return internal::messenger_t<t_msg>::get_priority(p_handlers);
+    return internal::messenger_t<t_msg>::get_priority(p_handlers);
 }
 
 /// \brief Sends a message to all the queues associated to a message type
@@ -293,7 +297,7 @@ get_priority(const number::id &p_handlers) {
 ///
 /// \param p_msg is the message to be copied to all the queues
 template <typename t_msg> static inline void send(const t_msg &p_msg) {
-  internal::messenger_t<t_msg>::send(p_msg);
+    internal::messenger_t<t_msg>::send(p_msg);
 }
 
 /// \brief Adds a handler to a queue
@@ -310,24 +314,24 @@ template <typename t_msg> static inline void send(const t_msg &p_msg) {
 template <typename t_msg>
 static inline void add_handler(const number::id &p_handlers,
                                handler_t<t_msg> &&p_handler) {
-  internal::messenger_t<t_msg>::add_handler(p_handlers, std::move(p_handler));
+    internal::messenger_t<t_msg>::add_handler(p_handlers, std::move(p_handler));
 }
 
 template <typename t_msg>
 static inline void add_handler(const number::id &p_handlers,
                                uint16_t p_num_workers,
                                std::function<handler_t<t_msg>()> p_factory) {
-  internal::messenger_t<t_msg>::add_handler(p_handlers, p_num_workers,
-                                            p_factory);
+    internal::messenger_t<t_msg>::add_handler(p_handlers, p_num_workers,
+                                              p_factory);
 }
 
 template <typename t_msg, typename t_time>
 static inline const number::id
 add_handler(handler_t<t_msg> &&p_handler, t_time p_timeout,
             const priority &p_priority = priority::middle) {
-  number::id _id = add_handlers<t_msg>(p_timeout, p_priority);
-  internal::messenger_t<t_msg>::add_handler(_id, std::move(p_handler));
-  return _id;
+    number::id _id = add_handlers<t_msg>(p_timeout, p_priority);
+    internal::messenger_t<t_msg>::add_handler(_id, std::move(p_handler));
+    return _id;
 }
 
 /// \brief Traverse the groups of handlers
@@ -340,7 +344,7 @@ static inline void
 traverse(std::function<void(const number::id &, const priority &,
                             const std::chrono::milliseconds &)>
              p_visitor) {
-  internal::messenger_t<t_msg>::traverse(p_visitor);
+    internal::messenger_t<t_msg>::traverse(p_visitor);
 }
 
 } // namespace async

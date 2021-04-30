@@ -31,75 +31,79 @@ typedef uint32_t value;
 // data message
 template <message_id id = 'A'> struct msg_t {
 
-  explicit msg_t(value p_value = 0)
-      : m_counter(p_value), m_up(up()), m_down(down()), m_d(2.5 * m_counter) {}
-
-  msg_t(const msg_t &p_msg)
-      : m_counter(p_msg.m_counter), m_up(p_msg.m_up), m_down(p_msg.m_down),
-        m_d(p_msg.m_d) {}
-
-  msg_t(msg_t &&p_msg)
-      : m_counter(p_msg.m_counter), m_up(std::move(p_msg.m_up)),
-        m_down(std::move(p_msg.m_down)), m_d(p_msg.m_d) {}
-
-  msg_t &operator=(const msg_t &p_msg) {
-    if (this != &p_msg) {
-      m_counter = p_msg.m_counter;
-      m_up = p_msg.m_up;
-      m_down = p_msg.m_down;
-      m_d = p_msg.m_d;
+    explicit msg_t(value p_value = 0)
+        : m_counter(p_value), m_up(up()), m_down(down()), m_d(2.5 * m_counter) {
     }
-    return *this;
-  }
 
-  msg_t &operator=(msg_t &&p_msg) {
-    if (this != &p_msg) {
-      m_counter = p_msg.m_counter;
-      m_up = std::move(p_msg.m_up);
-      m_down = std::move(p_msg.m_down);
-      m_d = p_msg.m_d;
+    msg_t(const msg_t &p_msg)
+        : m_counter(p_msg.m_counter), m_up(p_msg.m_up), m_down(p_msg.m_down),
+          m_d(p_msg.m_d) {}
+
+    msg_t(msg_t &&p_msg)
+        : m_counter(p_msg.m_counter), m_up(std::move(p_msg.m_up)),
+          m_down(std::move(p_msg.m_down)), m_d(p_msg.m_d) {}
+
+    msg_t &operator=(const msg_t &p_msg) {
+        if (this != &p_msg) {
+            m_counter = p_msg.m_counter;
+            m_up = p_msg.m_up;
+            m_down = p_msg.m_down;
+            m_d = p_msg.m_d;
+        }
+        return *this;
     }
-    return *this;
-  }
 
-  inline bool operator==(const msg_t &p_msg) const {
-    return m_counter == p_msg.m_counter;
-  }
+    msg_t &operator=(msg_t &&p_msg) {
+        if (this != &p_msg) {
+            m_counter = p_msg.m_counter;
+            m_up = std::move(p_msg.m_up);
+            m_down = std::move(p_msg.m_down);
+            m_d = p_msg.m_d;
+        }
+        return *this;
+    }
 
-  inline bool operator!=(const msg_t &p_msg) const {
-    return m_counter != p_msg.m_counter;
-  }
+    inline bool operator==(const msg_t &p_msg) const {
+        return m_counter == p_msg.m_counter;
+    }
 
-  friend std::ostream &operator<<(std::ostream &p_out, const msg_t &p_msg) {
-    p_out << "[" << id << "," << number::format<value>(p_msg.m_counter) << ","
-          << p_msg.m_up << "," << p_msg.m_down << "," << p_msg.m_d << "]";
-    return p_out;
-  }
+    inline bool operator!=(const msg_t &p_msg) const {
+        return m_counter != p_msg.m_counter;
+    }
 
-  inline value get_value() const { return m_counter; }
+    friend std::ostream &operator<<(std::ostream &p_out, const msg_t &p_msg) {
+        p_out << "[" << id << "," << number::format<value>(p_msg.m_counter)
+              << "," << p_msg.m_up << "," << p_msg.m_down << "," << p_msg.m_d
+              << "]";
+        return p_out;
+    }
 
-  msg_t &operator++() {
-    ++m_counter;
-    m_up = up();
-    m_down = down();
-    m_d = 2.5 * m_counter;
-    return *this;
-  }
+    inline value get_value() const { return m_counter; }
 
-private:
-  inline std::string up() {
-    return number::format<value>(std::numeric_limits<value>::min() + m_counter);
-  }
+    msg_t &operator++() {
+        ++m_counter;
+        m_up = up();
+        m_down = down();
+        m_d = 2.5 * m_counter;
+        return *this;
+    }
 
-  inline std::string down() {
-    return number::format<value>(std::numeric_limits<value>::max() - m_counter);
-  }
+  private:
+    inline std::string up() {
+        return number::format<value>(std::numeric_limits<value>::min() +
+                                     m_counter);
+    }
 
-private:
-  value m_counter{0};
-  std::string m_up;
-  std::string m_down;
-  double m_d;
+    inline std::string down() {
+        return number::format<value>(std::numeric_limits<value>::max() -
+                                     m_counter);
+    }
+
+  private:
+    value m_counter{0};
+    std::string m_up;
+    std::string m_down;
+    double m_d;
 };
 
 typedef msg_t<'A'> msg_a;
