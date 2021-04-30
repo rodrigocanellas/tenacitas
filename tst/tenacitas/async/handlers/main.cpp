@@ -12,6 +12,7 @@
 #include <tenacitas/logger.h>
 #include <tenacitas/number.h>
 #include <tenacitas/tester.h>
+#include <tenacitas/type.h>
 #include <tst/tenacitas/async/msg.h>
 
 using namespace tenacitas;
@@ -30,41 +31,35 @@ struct handlers_000 {
     bool operator()() {
         logger::set_debug_level();
 
-        DEB(m_log, "starting");
+        logger::cerr<> _log{"handlers_000"};
+        number::id _id;
 
-        handlers _handlers(m_id, 3s);
+        DEB(_log, "starting");
 
-        DEB(m_log, "adding handler");
+        handlers _handlers(_id, 3s);
 
-        _handlers.add_handler(consumer());
+        DEB(_log, "adding handler");
 
-        DEB(m_log, "capacity = ", _handlers.capacity(),
+        auto _consumer = [&_log](type ::ptr<bool>, data &&p_data) {
+            INF(_log, "value = ", p_data);
+        };
+
+        _handlers.add_handler(_consumer);
+
+        DEB(_log, "capacity = ", _handlers.capacity(),
             ", occupied = ", _handlers.occupied());
 
         _handlers.add_data(data(19));
 
-        DEB(m_log, "capacity = ", _handlers.capacity(),
+        DEB(_log, "capacity = ", _handlers.capacity(),
             ", occupied = ", _handlers.occupied());
 
-        DEB(m_log, "sleeping");
+        DEB(_log, "sleeping");
         std::this_thread::sleep_for(1s);
-        DEB(m_log, "waking up");
+        DEB(_log, "waking up");
 
         return true;
     }
-
-  private:
-    struct consumer {
-        void operator()(std::shared_ptr<bool>, data &&p_value) {
-            INF(m_log, "value = ", p_value);
-        }
-
-      private:
-        logger::cerr<> m_log{"consumer"};
-    };
-
-    logger::cerr<> m_log{"handlers_000"};
-    number::id m_id;
 };
 
 struct handlers_001 {
@@ -88,39 +83,52 @@ struct handlers_001 {
 
     bool operator()() {
 
+        logger::cerr<> _log{"handlers_001"};
+        number::id _id;
+        std::condition_variable _cond_produced;
+        std::mutex _mutex_produced;
+        std::condition_variable _cond_handled;
+        std::mutex _mutex_handled;
+
+        msg _msg{0};
+        handlers _handlers{_id, m_handlers_timeout};
+        producer _producer{&_handlers, &_cond_produced, &_msg, m_max};
+        sleeping_loop _loop{_id, _producer, m_sleeping_loop_timeout,
+                            m_interval};
+
         logger::set_debug_level();
 
-        DEB(m_log, "capacity = ", m_handlers.capacity(),
-            ", occupied = ", m_handlers.occupied());
+        DEB(_log, "capacity = ", _handlers.capacity(),
+            ", occupied = ", _handlers.occupied());
 
-        consumer _consumer{&m_cond_handled};
+        consumer _consumer{&_cond_handled, m_max, m_handler_sleep};
 
-        DEB(m_log, "adding consumer to the worker");
-        m_handlers.add_handler(
+        DEB(_log, "adding consumer to the worker");
+        _handlers.add_handler(
             [&_consumer](std::shared_ptr<bool> p_bool, msg &&p_msg) -> void {
                 _consumer(p_bool, std::move(p_msg));
             });
 
-        DEB(m_log, "starting the producer loop");
-        m_loop.start();
+        DEB(_log, "starting the producer loop");
+        _loop.start();
 
         {
-            std::unique_lock<std::mutex> _lock(m_mutex_produced);
-            m_cond_produced.wait(_lock);
+            std::unique_lock<std::mutex> _lock(_mutex_produced);
+            _cond_produced.wait(_lock);
         }
 
-        DEB(m_log, "stoping the producer loop");
-        m_loop.stop();
+        DEB(_log, "stoping the producer loop");
+        _loop.stop();
 
         {
-            std::unique_lock<std::mutex> _lock(m_mutex_handled);
-            m_cond_handled.wait(_lock);
+            std::unique_lock<std::mutex> _lock(_mutex_handled);
+            _cond_handled.wait(_lock);
         }
 
-        DEB(m_log, "produced = ", m_msg.get_value(),
+        DEB(_log, "produced = ", _msg.get_value(),
             ", consumed = ", _consumer.get_msg().get_value());
-        if (_consumer.get_msg().get_value() != m_msg.get_value()) {
-            ERR(m_log, "Data value consumed should be equal to provided");
+        if (_consumer.get_msg().get_value() != _msg.get_value()) {
+            ERR(_log, "Data value consumed should be equal to provided");
             return false;
         }
 
@@ -130,8 +138,9 @@ struct handlers_001 {
   private:
     struct producer {
         producer(handlers *p_handlers, std::condition_variable *p_cond,
-                 msg *p_msg)
-            : m_handlers(p_handlers), m_cond(p_cond), m_msg(p_msg) {}
+                 msg *p_msg, value p_max)
+            : m_handlers(p_handlers), m_cond(p_cond), m_msg(p_msg),
+              m_max(p_max) {}
 
         void operator()(std::shared_ptr<bool>) {
             if (m_msg->get_value() == m_max) {
@@ -153,12 +162,15 @@ struct handlers_001 {
         handlers *m_handlers;
         std::condition_variable *m_cond;
         msg *m_msg;
+        value m_max;
 
         logger::cerr<> m_log{"producer"};
     };
 
     struct consumer {
-        consumer(std::condition_variable *p_cond) : m_cond(p_cond) {}
+        consumer(std::condition_variable *p_cond, value p_max,
+                 std::chrono::milliseconds p_handler_sleep)
+            : m_cond(p_cond), m_max(p_max), m_handler_sleep(p_handler_sleep) {}
         void operator()(std::shared_ptr<bool>, msg &&p_msg) {
 
             m_msg = std::move(p_msg);
@@ -178,29 +190,19 @@ struct handlers_001 {
         const msg &get_msg() const { return m_msg; }
 
       private:
-        msg m_msg;
         std::condition_variable *m_cond;
+        value m_max;
+        std::chrono::milliseconds m_handler_sleep;
+
+        msg m_msg;
         logger::cerr<> m_log{"consumer"};
     };
-
-    logger::cerr<> m_log{"handlers_001"};
-    number::id m_id;
-    std::condition_variable m_cond_produced;
-    std::mutex m_mutex_produced;
-    std::condition_variable m_cond_handled;
-    std::mutex m_mutex_handled;
-
-    msg m_msg{0};
-    handlers m_handlers{m_id, m_handlers_timeout};
-    producer m_producer{&m_handlers, &m_cond_produced, &m_msg};
-    sleeping_loop m_loop{m_id, m_producer, m_sleeping_loop_timeout, m_interval};
     static const value m_max{10};
     static const std::chrono::milliseconds m_interval;
     static const std::chrono::seconds m_handlers_timeout;
     static const std::chrono::milliseconds m_handler_sleep;
     static const std::chrono::seconds m_sleeping_loop_timeout;
 };
-
 const std::chrono::milliseconds handlers_001::m_interval{150};
 const std::chrono::seconds handlers_001::m_handlers_timeout{2};
 const std::chrono::milliseconds handlers_001::m_handler_sleep{300};
