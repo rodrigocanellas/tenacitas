@@ -443,6 +443,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     ///
     /// \param p_data is a t_data to be added
     void add(const t_data &p_data) override {
+        DEB(m_log, "adding ", p_data);
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (!full()) {
             m_write->m_data = p_data;
@@ -458,6 +459,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     ///
     /// \param p_data is a t_data to be added
     void add(t_data &&p_data) override {
+        DEB(m_log, "adding ", p_data);
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (!full()) {
             m_write->m_data = p_data;
@@ -688,41 +690,10 @@ template <typename t_data> class handlers_t {
 
     handlers_t(handlers_t &&) = delete;
 
-    //    handlers_t(handlers_t &&p_handlers)
-    //        : m_owner(std::move(p_handlers.m_owner)),
-    //          m_timeout(std::move(p_handlers.m_timeout)),
-    //          m_priority(std::move(p_handlers.m_priority)),
-    //          m_queue(std::move(p_handlers.m_queue)),
-    //          m_loops(std::move(p_handlers.m_loops)),
-    //          m_stopped(p_handlers.m_stopped.load()),
-    //          m_queued_data(std::move(p_handlers.m_queued_data)) {
-    //    }
-
     /// \brief Copy assignemnt not allowed
     handlers_t &operator=(const handlers_t &) = delete;
 
     handlers_t &operator=(handlers_t &&) = delete;
-
-    //    handlers_t &operator=(handlers_t &&p_handlers) {
-    //        if (this != &p_handlers) {
-    //            m_owner = std::move(p_handlers.m_owner);
-    //            m_timeout = std::move(p_handlers.m_timeout);
-    //            m_priority = std::move(p_handlers.m_priority);
-    //            m_queue = std::move(p_handlers.m_queue);
-    //            m_id = std::move(p_handlers.m_id);
-    //            for (std::thread &_th : m_loops) {
-    //                if (_th.joinable()) {
-    //                    DEB(m_log, "joining...");
-    //                    _th.join();
-    //                    DEB(m_log, "...joined");
-    //                }
-    //                m_loops = std::move(p_handlers.m_loops);
-    //            }
-    //            m_stopped = std::move(p_handlers.m_stopped);
-    //            m_queued_data = std::move(p_handlers.m_queued_data);
-    //        }
-    //        return *this;
-    //    }
 
     ~handlers_t() {
         DEB(m_log, m_owner, ':', m_id, " - entering");
