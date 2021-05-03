@@ -20,6 +20,246 @@ using namespace tenacitas;
 using namespace tenacitas::async;
 using namespace std::chrono_literals;
 
+template <message_id msg_id> struct test {
+
+    typedef msg_t<msg_id> msg;
+    typedef async::internal::handlers_t<msg> handlers;
+    typedef async::sleeping_loop sleeping_loop;
+
+    test(std::string &&p_name, std::vector<value> &&p_max_msg_per_sender,
+         std::vector<std::chrono::milliseconds> &&p_interval_per_sender,
+         std::vector<std::chrono::milliseconds> &&p_timeout_per_sender,
+         std::chrono::milliseconds p_handlers_timeout,
+         std::vector<std::chrono::milliseconds> &&p_sleep_per_handler)
+        : m_name(std::move(p_name)), m_num_handlers(0),
+          m_max_msg_per_sender(std::move(p_max_msg_per_sender)),
+          m_interval_per_sender(std::move(p_interval_per_sender)),
+          m_timeout_per_sender(std::move(p_timeout_per_sender)),
+          m_total_msgs(0), m_num_senders(0),
+          m_handlers_timeout(p_handlers_timeout),
+          m_sleep_per_handler(std::move(p_sleep_per_handler)) {
+
+        if (m_max_msg_per_sender.size() != m_interval_per_sender.size()) {
+            throw std::runtime_error(
+                "num max msgs per sender != num interval per sender");
+        }
+
+        if (m_max_msg_per_sender.size() != m_timeout_per_sender.size()) {
+            throw std::runtime_error(
+                "num max msgs per sender != num timeout per sender");
+        }
+
+        if (m_interval_per_sender.size() != m_timeout_per_sender.size()) {
+            throw std::runtime_error(
+                "num max interval per sender != num timeout per sender");
+        }
+        m_num_senders = m_interval_per_sender.size();
+
+        m_num_handlers = m_sleep_per_handler.size();
+
+        total_msgs();
+    }
+
+    bool operator()() {
+
+        logger::cerr<> _log{"handlers_004"};
+        //        logger::set_debug_level();
+        _log.set_debug_level();
+        number::id _id;
+        std::condition_variable _cond_produced;
+        std::mutex _mutex_produced;
+        handlers _handlers{_id, m_handlers_timeout};
+
+        INF(_log, "creating the handlers");
+        std::vector<type::ptr<handler>> _handler_list;
+        for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+            _handler_list.push_back(
+                std::make_shared<handler>("c" + std::to_string(_i)), &_handlers,
+                m_handlers_timeout, m_sleep_per_handler[_i]);
+        }
+
+        INF(_log, "creating and starting the producers loops");
+        std::vector<sleeping_loop> _loops;
+        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
+            _loops.push_back({_id, sender{_i, &_handlers, &_cond_produced},
+                              m_max_msg_per_sender[_i],
+                              m_timeout_per_sender[_i],
+                              m_interval_per_sender[_i]});
+            DEB(_log, "starting sender p", _i);
+            _loops.back().start();
+        }
+
+        INF(_log, "adding each handler to the handlers group");
+        for (type::ptr<handler> &_handler : _handler_list) {
+            _handlers.add_handler(
+                [&, _handler](type::ptr<bool> p_bool, msg &&p_msg) -> void {
+                    (*_handler)(p_bool, std::move(p_msg));
+                });
+        }
+
+        INF(_log, "checking if all the messages were sent");
+        {
+            bool _first{true};
+            uint16_t _num_notifications{0};
+            std::unique_lock<std::mutex> _lock(_mutex_produced);
+            _cond_produced.wait(_lock, [&]() -> bool {
+                if (_first) {
+                    DEB(_log, "first notification");
+                    _first = false;
+                    return false;
+                }
+
+                DEB(_log, "not first notification");
+
+                ++_num_notifications;
+                if (_num_notifications == m_num_senders) {
+                    DEB(_log, "all producers notified");
+                    return true;
+                }
+                DEB(_log, _num_notifications, " producers notified, ",
+                    m_num_senders, " expected");
+                return false;
+            });
+        }
+
+        INF(_log, "stoping the senders");
+        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
+            _loops[_i].stop();
+        }
+
+        INF(_log, "waiting for all the consumers, until all the messages are "
+                  "consumed");
+        uint16_t _handled{0};
+
+        while (true) {
+            _handled = 0;
+            for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+                DEB(_log, "consumer ", _handler_list[_i]->get_id(), ": ",
+                    _handler_list[_i]->get_num());
+                _handled += _handler_list[_i]->get_num();
+            }
+
+            if (_handled >= m_total_msgs) {
+                break;
+            }
+            DEB(_log, "still waiting... produced: ", m_total_msgs,
+                ", total handled: ", _handled);
+            std::this_thread::sleep_for(200ms);
+        }
+
+        INF(_log, "reporting results");
+        {
+            DEB(_log, "amount sent = ", m_total_msgs);
+            for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+                DEB(_log, *_handler_list[_i]);
+            }
+            DEB(_log, "handled: ", _handled);
+        }
+
+        return (m_total_msgs == _handled);
+    }
+
+  private:
+    void total_msgs() {
+        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
+            m_total_msgs += m_max_msg_per_sender[_i];
+        }
+    }
+
+    struct handler {
+        handler(std::string &&p_id, handlers *p_handlers,
+                std::chrono::milliseconds p_timeout,
+                std::chrono::milliseconds p_sleep)
+            : m_id(p_id), m_handlers(p_handlers), m_timeout(p_timeout),
+              m_sleep(p_sleep) {}
+        void operator()(std::shared_ptr<bool> p_bool, msg &&p_msg) {
+            m_log.set_debug_level();
+            std::this_thread::sleep_for(m_sleep);
+            if (*p_bool) {
+                m_handlers->add_data(p_msg);
+            }
+            ++m_num;
+            m_msg = std::move(p_msg);
+            DEB(m_log, "handling msg|", m_id, "|", m_msg, "|", m_num);
+        }
+
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const handler &p_handler) {
+            p_out << '(' << p_handler.get_id() << ',' << p_handler.m_msg << ','
+                  << p_handler.get_num() << ')';
+            return p_out;
+        }
+
+        inline const std::string &get_id() const { return m_id; }
+        inline uint16_t get_num() const { return m_num; }
+
+      private:
+        std::string m_id;
+        handlers *m_handlers;
+        const std::chrono::milliseconds m_timeout;
+        const std::chrono::milliseconds m_sleep;
+        uint16_t m_num{0};
+        msg m_msg;
+        logger::cerr<> m_log{"handler"};
+    };
+
+    struct sender {
+        sender(uint16_t p_idx, handlers *p_handlers,
+               std::condition_variable *p_cond, uint16_t p_max_per_sender)
+            : m_idx('p' + std::to_string(p_idx)), m_handlers(p_handlers),
+              m_cond(p_cond), m_max_per_sender(p_max_per_sender),
+              m_msg(p_idx * m_max_per_sender),
+              m_start(p_idx * m_max_per_sender),
+              m_finish((p_idx * m_max_per_sender + m_max_per_sender) - 1),
+              m_log("producer p" + std::to_string(p_idx)) {
+            m_log.set_debug_level();
+            DEB(m_log, m_idx, ": start value = ", m_start,
+                ", finish value = ", m_finish, ", msg start = ", m_msg);
+        }
+
+        void operator()(std::shared_ptr<bool>) {
+            m_log.set_debug_level();
+            DEB(m_log, m_idx, " current ", m_msg);
+
+            if (m_msg.get_value() == (m_finish + 1)) {
+                DEB(m_log, m_idx, " produced ", m_max_per_sender,
+                    " messages: ", m_start, " -> ", m_finish);
+                m_cond->notify_one();
+                return;
+            }
+
+            m_handlers->add_data(m_msg);
+            ++m_msg;
+            DEB(m_log, m_idx, " next msg to be added ", m_msg);
+        }
+
+      private:
+        std::string m_idx;
+        handlers *m_handlers;
+        std::condition_variable *m_cond;
+        const uint16_t m_max_per_sender;
+
+        msg m_msg;
+        value m_start;
+        value m_finish;
+
+        logger::cerr<> m_log;
+    };
+
+  private:
+    std::string m_name;
+
+    uint16_t m_num_senders;
+    const std::vector<value> m_max_msg_per_sender;
+    const std::vector<std::chrono::milliseconds> m_interval_per_sender;
+    const std::vector<std::chrono::milliseconds> m_timeout_per_sender;
+    uint16_t m_total_msgs;
+
+    uint16_t m_num_handlers;
+    const std::chrono::milliseconds m_handlers_timeout;
+    const std::vector<std::chrono::milliseconds> m_sleep_per_handler;
+};
+
 struct handlers_000 {
     typedef msg_t<'A'> data;
     typedef async::internal::handlers_t<data> handlers;
@@ -185,7 +425,7 @@ struct handlers_002 {
         std::stringstream _stream;
         _stream << "Produces " << m_max
                 << " messages, and waits for all to be consumed by "
-                << m_mum_consumers << " consumers";
+                << m_mum_handler_list << " consumers";
 
         return _stream.str();
     }
@@ -197,19 +437,17 @@ struct handlers_002 {
         number::id _id;
         std::condition_variable _cond_produced;
         std::mutex _mutex_produced;
-        //        std::condition_variable _cond_handled;
-        //        std::mutex _mutex_handled;
         handlers _handlers{_id, m_handlers_timeout};
         producer _producer{&_handlers, &_cond_produced};
 
         DEB(_log, "id = ", _id);
 
-        std::vector<consumer> _consumers;
-        for (uint16_t _i = 0; _i < m_mum_consumers; ++_i) {
-            _consumers.push_back({"c" + std::to_string(_i)});
+        std::vector<consumer> _handler_list;
+        for (uint16_t _i = 0; _i < m_mum_handler_list; ++_i) {
+            _handler_list.push_back({"c" + std::to_string(_i)});
         }
 
-        for (consumer &_consumer : _consumers) {
+        for (consumer &_consumer : _handler_list) {
             DEB(_log, "adding consumer ", _consumer.get_id());
             _handlers.add_handler([&_consumer](std::shared_ptr<bool> p_bool,
                                                msg &&p_msg) -> void {
@@ -237,7 +475,7 @@ struct handlers_002 {
         {
             while (true) {
 
-                for (const consumer &_consumer : _consumers) {
+                for (const consumer &_consumer : _handler_list) {
                     _num += _consumer.get_num();
                 }
 
@@ -252,7 +490,7 @@ struct handlers_002 {
 
         {
             std::stringstream _stream;
-            for (const consumer &_consumer : _consumers) {
+            for (const consumer &_consumer : _handler_list) {
                 _stream << _consumer << " ";
             }
 
@@ -325,7 +563,7 @@ struct handlers_002 {
 
   private:
     static const value m_max{3000};
-    static const uint16_t m_mum_consumers{12};
+    static const uint16_t m_mum_handler_list{12};
     static const std::chrono::milliseconds m_interval;
     static const std::chrono::seconds m_handlers_timeout;
     static const std::chrono::milliseconds m_handler_sleep;
@@ -349,7 +587,7 @@ struct handlers_003 {
         _stream
             << "Produces " << m_max
             << " messages, and waits for all to be consumed by "
-            << m_mum_consumers << " consumers.\n"
+            << m_mum_handler_list << " consumers.\n"
             << "At each " << m_num_msgs_to_cause_timeout
             << " messages, every consumer will cause a timeout, the message "
                "will be added again to the pool, and will eventually be "
@@ -367,9 +605,9 @@ struct handlers_003 {
 
         number::id _id;
         handlers _handlers{_id, m_handlers_timeout};
-        std::vector<consumer> _consumers;
-        for (uint16_t _i = 0; _i < m_mum_consumers; ++_i) {
-            _consumers.push_back(
+        std::vector<consumer> _handler_list;
+        for (uint16_t _i = 0; _i < m_mum_handler_list; ++_i) {
+            _handler_list.push_back(
                 {"c" + std::to_string(_i), m_handlers_timeout, &_handlers});
         }
         msg _msg{0};
@@ -378,7 +616,7 @@ struct handlers_003 {
 
         producer _producer{&_handlers, &_cond_produced};
 
-        for (consumer &_consumer : _consumers) {
+        for (consumer &_consumer : _handler_list) {
             DEB(_log, "adding consumer ", _consumer.get_id());
             _handlers.add_handler([&_consumer](std::shared_ptr<bool> p_bool,
                                                msg &&p_msg) -> void {
@@ -418,7 +656,7 @@ struct handlers_003 {
         while (true) {
             _consumed = 0;
             _num_timeouts = 0;
-            for (const consumer &_consumer : _consumers) {
+            for (const consumer &_consumer : _handler_list) {
                 _consumed += _consumer.get_num();
                 _num_timeouts += _consumer.get_num_timeouts();
             }
@@ -433,7 +671,7 @@ struct handlers_003 {
                 ", consumed = ", _consumed, ", num timeouts = ", _num_timeouts);
             std::this_thread::sleep_for(200ms);
         }
-        for (const consumer &_consumer : _consumers) {
+        for (const consumer &_consumer : _handler_list) {
             DEB(_log, _consumer);
         }
 
@@ -535,7 +773,7 @@ struct handlers_003 {
         logger::cerr<> m_log{"consumer"};
     };
 
-    static const uint16_t m_mum_consumers{12};
+    static const uint16_t m_mum_handler_list{12};
     static const value m_max{3000};
     static const std::chrono::milliseconds m_handlers_timeout;
     static const uint16_t m_num_msgs_to_cause_timeout{8};
@@ -557,10 +795,10 @@ struct handlers_004 {
 
     static std::string desc() {
         std::stringstream _stream;
-        _stream << m_num_producers << " producers produce "
-                << m_max_per_producer
+        _stream << m_num_senders << " producers produce "
+                << m_max_msg_per_sender
                 << " messages each, and waits for all to be consumed by "
-                << m_num_consumers << " consumers";
+                << m_num_handlers << " consumers";
 
         return _stream.str();
     }
@@ -578,15 +816,15 @@ struct handlers_004 {
         DEB(_log, "id = ", _id);
 
         DEB(_log, "creating the consumers");
-        std::vector<type::ptr<consumer>> _consumers;
-        for (uint16_t _i = 0; _i < m_num_consumers; ++_i) {
-            _consumers.push_back(
+        std::vector<type::ptr<consumer>> _handler_list;
+        for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+            _handler_list.push_back(
                 std::make_shared<consumer>("c" + std::to_string(_i)));
         }
 
         DEB(_log, "creating and starting the producers loops");
         std::vector<sleeping_loop> _loops;
-        for (uint16_t _i = 0; _i < m_num_producers; ++_i) {
+        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
             _loops.push_back({_id, producer{_i, &_handlers, &_cond_produced},
                               m_sleeping_loop_timeout, m_interval});
             DEB(_log, "starting producer p", _i);
@@ -594,7 +832,7 @@ struct handlers_004 {
         }
 
         DEB(_log, "adding each consumer to the consumers group");
-        for (type::ptr<consumer> &_consumer : _consumers) {
+        for (type::ptr<consumer> &_consumer : _handler_list) {
             _handlers.add_handler(
                 [&, _consumer](type::ptr<bool> p_bool, msg &&p_msg) -> void {
                     (*_consumer)(p_bool, std::move(p_msg));
@@ -616,18 +854,18 @@ struct handlers_004 {
                 DEB(_log, "not first notification");
 
                 ++_num_notifications;
-                if (_num_notifications == m_num_producers) {
+                if (_num_notifications == m_num_senders) {
                     DEB(_log, "all producers notified");
                     return true;
                 }
                 DEB(_log, _num_notifications, " producers notified, ",
-                    m_num_producers, " expected");
+                    m_num_senders, " expected");
                 return false;
             });
         }
 
         DEB(_log, "stoping the producers loops");
-        for (uint16_t _i = 0; _i < m_num_producers; ++_i) {
+        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
             _loops[_i].stop();
         }
 
@@ -638,17 +876,17 @@ struct handlers_004 {
 
             while (true) {
                 _consumed = 0;
-                for (uint16_t _i = 0; _i < m_num_consumers; ++_i) {
-                    DEB(_log, "consumer ", _consumers[_i]->get_id(), ": ",
-                        _consumers[_i]->get_num());
-                    _consumed += _consumers[_i]->get_num();
+                for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+                    DEB(_log, "consumer ", _handler_list[_i]->get_id(), ": ",
+                        _handler_list[_i]->get_num());
+                    _consumed += _handler_list[_i]->get_num();
                 }
 
-                if (_consumed >= m_num_producers * m_max_per_producer) {
+                if (_consumed >= m_num_senders * m_max_msg_per_sender) {
                     break;
                 }
                 DEB(_log, "still waiting... produced: ",
-                    m_num_producers * m_max_per_producer,
+                    m_num_senders * m_max_msg_per_sender,
                     ", total consumed: ", _consumed);
                 std::this_thread::sleep_for(200ms);
             }
@@ -656,14 +894,14 @@ struct handlers_004 {
 
         DEB(_log, "reporting results");
         {
-            DEB(_log, "amount added = ", m_num_producers * m_max_per_producer);
-            for (uint16_t _i = 0; _i < m_num_consumers; ++_i) {
-                DEB(_log, *_consumers[_i]);
+            DEB(_log, "amount added = ", m_num_senders * m_max_msg_per_sender);
+            for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+                DEB(_log, *_handler_list[_i]);
             }
             DEB(_log, "consumed: ", _consumed);
         }
 
-        return (m_num_producers * m_max_per_producer == _consumed);
+        return (m_num_senders * m_max_msg_per_sender == _consumed);
     }
 
   private:
@@ -699,9 +937,10 @@ struct handlers_004 {
         producer(uint16_t p_idx, handlers *p_handlers,
                  std::condition_variable *p_cond)
             : m_idx('p' + std::to_string(p_idx)), m_handlers(p_handlers),
-              m_cond(p_cond), m_msg(p_idx * m_max_per_producer),
-              m_start(p_idx * m_max_per_producer),
-              m_finish((p_idx * m_max_per_producer + m_max_per_producer) - 1),
+              m_cond(p_cond), m_msg(p_idx * m_max_msg_per_sender),
+              m_start(p_idx * m_max_msg_per_sender),
+              m_finish((p_idx * m_max_msg_per_sender + m_max_msg_per_sender) -
+                       1),
               m_log("producer p" + std::to_string(p_idx)) {
             m_log.set_debug_level();
             DEB(m_log, m_idx, ": start value = ", m_start,
@@ -713,7 +952,7 @@ struct handlers_004 {
             DEB(m_log, m_idx, " current ", m_msg);
 
             if (m_msg.get_value() == (m_finish + 1)) {
-                DEB(m_log, m_idx, " produced ", m_max_per_producer,
+                DEB(m_log, m_idx, " produced ", m_max_msg_per_sender,
                     " messages: ", m_start, " -> ", m_finish);
                 m_cond->notify_one();
                 return;
@@ -737,18 +976,18 @@ struct handlers_004 {
     };
 
   private:
-    static const uint16_t m_num_consumers;
-    static const uint16_t m_num_producers;
-    static const value m_max_per_producer;
+    static const uint16_t m_num_handlers;
+    static const uint16_t m_num_senders;
+    static const value m_max_msg_per_sender;
     static const std::chrono::milliseconds m_interval;
     static const std::chrono::seconds m_handlers_timeout;
     //    static const std::chrono::milliseconds m_handler_sleep;
     static const std::chrono::seconds m_sleeping_loop_timeout;
 };
 
-const uint16_t handlers_004::m_num_consumers{2};
-const uint16_t handlers_004::m_num_producers{2};
-const value handlers_004::m_max_per_producer{3};
+const uint16_t handlers_004::m_num_handlers{2};
+const uint16_t handlers_004::m_num_senders{2};
+const value handlers_004::m_max_msg_per_sender{3};
 const std::chrono::milliseconds handlers_004::m_interval{150};
 const std::chrono::seconds handlers_004::m_handlers_timeout{2};
 // const std::chrono::milliseconds handlers_004::m_handler_sleep{300};
