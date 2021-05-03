@@ -55,12 +55,14 @@ struct sleeping_loop {
         bool _stopped = p_loop.m_stopped;
 
         m_owner = std::move(p_loop.m_owner);
-        m_function = std::move(p_loop.m_function);
+        m_function = p_loop.m_function;
         m_timeout = std::move(p_loop.m_timeout);
         m_interval = std::move(p_loop.m_interval);
-        m_stopped = false;
+        m_stopped = true;
 
         if (!_stopped) {
+            DEB(m_log, "right side not stopped");
+            p_loop.stop();
             start();
         }
     }
@@ -71,12 +73,14 @@ struct sleeping_loop {
             bool _stopped = p_loop.m_stopped;
 
             m_owner = std::move(p_loop.m_owner);
-            m_function = std::move(p_loop.m_function);
+            m_function = p_loop.m_function;
             m_timeout = std::move(p_loop.m_timeout);
             m_interval = std::move(p_loop.m_interval);
-            m_stopped = false;
+            m_stopped = true;
 
             if (!_stopped) {
+                DEB(m_log, "right side not stopped");
+                p_loop.stop();
                 start();
             }
         }

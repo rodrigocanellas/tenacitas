@@ -88,6 +88,14 @@ template <message_id id = 'A'> struct msg_t {
         return *this;
     }
 
+    msg_t &operator++(int) {
+        m_counter++;
+        m_up = up();
+        m_down = down();
+        m_d = 2.5 * m_counter;
+        return *this;
+    }
+
   private:
     inline std::string up() {
         return number::format<value>(std::numeric_limits<value>::min() +

@@ -279,8 +279,10 @@ template <> struct executer_t<void> {
 
         ptr<bool> _stop{std::make_shared<bool>(false)};
 
-        std::thread _th([&p_function, _stop, &_cond]() -> void {
+        std::thread _th([this, &p_function, _stop, &_cond]() -> void {
+            DEB(m_log, "about to execute");
             p_function(_stop);
+            DEB(m_log, "execution returned");
             _cond.notify_one();
         });
 
@@ -453,9 +455,10 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
             insert(m_write->m_prev, p_data);
         }
         ++m_amount;
+        DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
     }
 
-    /// \brief Movs a t_data object to the queue
+    /// \brief Moves a t_data object to the queue
     ///
     /// \param p_data is a t_data to be added
     void add(t_data &&p_data) override {
@@ -469,6 +472,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
             insert(m_write->m_prev, std::move(p_data));
         }
         ++m_amount;
+        DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
     }
 
     /// \brief Gets the first t_data obect added to the queue, if there is one
