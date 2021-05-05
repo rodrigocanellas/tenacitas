@@ -31,17 +31,23 @@ template <message_id msg_id> struct test_t {
 
     test_t(std::string &&p_name, values &&p_max_msg_per_sender,
            times &&p_interval_per_sender, time p_handlers_timeout,
-           times &&p_sleep_per_handler)
+           times &&p_sleep_per_handler, values &&p_timeout_at_each)
         : m_name(std::move(p_name)),
           m_max_msg_per_sender(std::move(p_max_msg_per_sender)),
           m_interval_per_sender(std::move(p_interval_per_sender)),
           m_handlers_timeout(p_handlers_timeout),
-          m_sleep_per_handler(std::move(p_sleep_per_handler)), m_num_senders(0),
+          m_sleep_per_handler(std::move(p_sleep_per_handler)),
+          m_timeout_at_each(p_timeout_at_each), m_num_senders(0),
           m_num_handlers(0), m_total_msgs(0) {
 
         if (m_max_msg_per_sender.size() != m_interval_per_sender.size()) {
             throw std::runtime_error(
                 "num max msgs per sender != num interval per sender");
+        }
+
+        if (m_timeout_at_each.size() != m_sleep_per_handler.size()) {
+            throw std::runtime_error(
+                "num timeout per handler != num sleep per handler");
         }
 
         m_num_senders = m_interval_per_sender.size();
@@ -99,13 +105,13 @@ template <message_id msg_id> struct test_t {
             DEB(_log, _handled, " messages handled");
         });
 
-        INF(_log, "creating the handlers");
+        INF(_log, "creating the msg handlers");
         std::vector<type::ptr<handler>> _handler_list;
         for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 std::string("c" + std::to_string(_i)), &_msg_handlers,
-                &_handled_handlers, m_handlers_timeout,
-                m_sleep_per_handler[_i]));
+                &_handled_handlers, m_handlers_timeout, m_sleep_per_handler[_i],
+                m_timeout_at_each[_i]));
         }
 
         INF(_log, "adding each handler to the handlers group");
@@ -184,15 +190,26 @@ template <message_id msg_id> struct test_t {
         handler(std::string &&p_id, msg_handlers *p_handlers,
                 handled_handlers *p_handled_handlers,
                 std::chrono::milliseconds p_timeout,
-                std::chrono::milliseconds p_sleep)
+                std::chrono::milliseconds p_sleep,
+                uint16_t p_cause_timeout_at_each = 0)
             : m_id(p_id), m_msg_handlers(p_handlers),
               m_handled_handlers(p_handled_handlers), m_timeout(p_timeout),
-              m_sleep(p_sleep) {}
+              m_sleep(p_sleep),
+              m_cause_timeout_at_each(p_cause_timeout_at_each) {}
         void operator()(std::shared_ptr<bool> p_bool, msg &&p_msg) {
             m_log.set_debug_level();
             std::this_thread::sleep_for(m_sleep);
+            if (m_cause_timeout_at_each &&
+                ((m_num % m_cause_timeout_at_each) == 0)) {
+                DEB(m_log, m_id, "causing timeout for msg number ", m_num,
+                    " as it a timeout must occurr at each ",
+                    m_cause_timeout_at_each, " messages");
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(m_timeout.count() * 2));
+            }
             if (*p_bool) {
                 m_msg_handlers->add_data(p_msg);
+                return;
             }
             ++m_num;
             m_msg = std::move(p_msg);
@@ -216,6 +233,7 @@ template <message_id msg_id> struct test_t {
         handled_handlers *m_handled_handlers;
         const time m_timeout;
         const time m_sleep;
+        const uint16_t m_cause_timeout_at_each;
         uint16_t m_num{0};
         msg m_msg;
         logger::cerr<> m_log{"handler"};
@@ -270,6 +288,7 @@ template <message_id msg_id> struct test_t {
     const times m_interval_per_sender;
     const std::chrono::milliseconds m_handlers_timeout;
     const times m_sleep_per_handler;
+    const values m_timeout_at_each;
 
     uint16_t m_num_senders;
     uint16_t m_num_handlers;
@@ -345,10 +364,12 @@ struct handlers_001 {
         test::times _interval_per_sender{test::time{m_interval}};
         test::time _handlers_timeout{test::time{m_handlers_timeout}};
         test::times _sleep_per_handler{test::time{m_handler_sleep}};
+        test::values _timeout_at_each{value{0}};
 
         test _test(std::move(_name), std::move(_max_msg_per_sender),
                    std::move(_interval_per_sender),
-                   std::move(_handlers_timeout), std::move(_sleep_per_handler));
+                   std::move(_handlers_timeout), std::move(_sleep_per_handler),
+                   std::move(_timeout_at_each));
 
         return _test();
     }
