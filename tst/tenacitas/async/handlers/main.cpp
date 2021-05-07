@@ -20,7 +20,11 @@ using namespace tenacitas;
 using namespace tenacitas::async;
 using namespace std::chrono_literals;
 
-template <message_id msg_id> struct test_t {
+template <message_id msg_id, uint8_t test_number, uint16_t num_senders,
+          uint16_t msgs_per_sender, uint16_t interval_per_sender,
+          uint16_t num_handlers, uint16_t handlers_timeout,
+          uint16_t timeout_at_each>
+struct test_t {
 
     typedef msg_t<msg_id> msg;
     typedef async::internal::handlers_t<msg> msg_handlers;
@@ -29,63 +33,18 @@ template <message_id msg_id> struct test_t {
     typedef std::chrono::milliseconds time;
     typedef std::vector<time> times;
 
-    test_t() = delete;
-
-    test_t(std::string &&p_name, const values &p_max_msg_per_sender,
-           const times &p_interval_per_sender, uint16_t p_num_handlers,
-           time p_handlers_timeout, uint16_t p_timeout_at_each = 0)
-        : m_name(std::move(p_name)), m_max_msg_per_sender(p_max_msg_per_sender),
-          m_interval_per_sender(p_interval_per_sender),
-          m_num_handlers(p_num_handlers),
-          m_handlers_timeout(p_handlers_timeout),
-
-          m_timeout_at_each(p_timeout_at_each), m_num_senders(0),
-          m_total_msgs(0) {
-
-        if (m_max_msg_per_sender.size() != m_interval_per_sender.size()) {
-            throw std::runtime_error(
-                "num max msgs per sender != num interval per sender");
-        }
-
-        m_num_senders = m_interval_per_sender.size();
-
-        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
-            m_total_msgs += m_max_msg_per_sender[_i];
-        }
-    }
-
-    std::string desc() {
-        std::stringstream _stream;
-
-        _stream << m_num_senders << " senders:\n";
-        for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
-            _stream << "\t(#" << number::format(_i) << " : "
-                    << number::format(m_max_msg_per_sender[_i]) << "msgs : "
-                    << number::format(m_interval_per_sender[_i].count())
-                    << "ms)\n";
-        }
-        _stream << m_num_handlers << " handlers, with timeout of "
-                << m_handlers_timeout.count() << "ms, sleeping for "
-                << m_handlers_timeout.count() / 2 << "ms";
-
-        if (m_timeout_at_each) {
-            _stream << ", timeout at each " << m_timeout_at_each << " messages";
-        }
-
-        _stream << std::endl;
-
-        return _stream.str();
-    }
+    test_t()
+        : m_name("handlers_" + number::format(test_number)),
+          m_total_msgs(num_senders * msgs_per_sender) {}
 
     bool operator()() {
 
-        logger::cerr<> _log{"handlers_004"};
-        //        logger::set_debug_level();
+        logger::cerr<> _log{m_name.c_str()};
         _log.set_debug_level();
         number::id _id;
         std::condition_variable _cond_produced;
         std::mutex _mutex_produced;
-        msg_handlers _msg_handlers{_id, m_handlers_timeout};
+        msg_handlers _msg_handlers{_id, time{handlers_timeout}};
 
         std::condition_variable _cond_handled;
         std::mutex _mutex_handled;
@@ -95,11 +54,12 @@ template <message_id msg_id> struct test_t {
 
         INF(_log, "creating and starting the producers loops");
         std::vector<sleeping_loop> _loops;
-        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
-            _loops.push_back({_id,
-                              sender{_i, &_msg_handlers, &_cond_produced,
-                                     m_max_msg_per_sender[_i]},
-                              1000ms, m_interval_per_sender[_i]});
+        for (uint16_t _i = 0; _i < num_senders; ++_i) {
+
+            _loops.push_back(
+                {_id,
+                 sender(_i, &_msg_handlers, &_cond_produced, msgs_per_sender),
+                 1000ms, time{interval_per_sender}});
             DEB(_log, "starting sender p", _i);
             _loops.back().start();
         }
@@ -125,12 +85,13 @@ template <message_id msg_id> struct test_t {
 
         INF(_log, "creating the msg handlers");
         std::vector<type::ptr<handler>> _handler_list;
-        for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+        for (uint16_t _i = 0; _i < num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 std::string("c" + std::to_string(_i)), &_msg_handlers,
-
-                &_handled_handlers, m_handlers_timeout, m_timeout_at_each));
+                &_handled_handlers, time{handlers_timeout}, timeout_at_each));
         }
+
+        uint64_t _start = calendar::now<>::microsecs();
 
         INF(_log, "adding each handler to the handlers group");
         for (type::ptr<handler> &_handler : _handler_list) {
@@ -153,18 +114,18 @@ template <message_id msg_id> struct test_t {
                 }
 
                 ++_num_notifications;
-                if (_num_notifications == m_num_senders) {
+                if (_num_notifications == num_senders) {
                     DEB(_log, "all senders have notified");
                     return true;
                 }
                 DEB(_log, _num_notifications, " producers notified, ",
-                    m_num_senders, " expected");
+                    num_senders, " expected");
                 return false;
             });
         }
 
         INF(_log, "stoping the senders");
-        for (uint16_t _i = 0; _i < m_num_senders; ++_i) {
+        for (uint16_t _i = 0; _i < num_senders; ++_i) {
             _loops[_i].stop();
         }
 
@@ -182,38 +143,43 @@ template <message_id msg_id> struct test_t {
             });
         }
 
+        uint64_t _finish = calendar::now<>::microsecs();
+
         INF(_log, "reporting results");
         {
             DEB(_log, "amount sent = ", m_total_msgs);
-            for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
+            for (uint16_t _i = 0; _i < num_handlers; ++_i) {
                 DEB(_log, *_handler_list[_i]);
             }
             DEB(_log, "handled: ", _handled);
         }
 
+        INF(_log, "TIME: ", _finish - _start, "us - ",
+            static_cast<double>(_finish - _start) / 1000, "ms - ",
+            static_cast<double>(_finish - _start) / 1000000, "s");
+
         return (m_total_msgs == _handled);
     }
 
-    static std::string description(const value &p_max, uint16_t p_interval,
-                                   uint16_t p_handlers_timeout,
-                                   uint16_t p_num_handlers,
-                                   uint16_t p_handler_sleep,
-                                   uint16_t p_timeout_at_each) {
+    static std::string description() {
         std::stringstream _stream;
 
-        _stream << "A sender sends " << p_max << " messages, at each "
-                << p_interval << "ms, to a 'handlers' with timeout of "
-                << p_handlers_timeout << "ms, with " << p_num_handlers
-                << " handler(s), each one sleeps for " << p_handler_sleep
-                << "ms.";
-        if (p_timeout_at_each) {
-            _stream << " At each " << p_timeout_at_each
-                    << " messages, each handler will cause a timeout.";
+        _stream << num_senders << " sender(s), sending " << msgs_per_sender
+                << " messages each, so " << num_senders * msgs_per_sender
+                << " messages will be sent, at " << interval_per_sender
+                << "ms.\n"
+                << "There are " << num_handlers
+                << " handler(s), each with timeout of " << handlers_timeout
+                << "ms, and sleeping for " << handlers_timeout / 2
+                << "ms, to simulate actual work";
+        if (timeout_at_each) {
+            _stream << ", and at each " << timeout_at_each
+                    << " messages, each handler will cause a timeout";
         }
 
-        _stream
-            << "\n"
-            << "The amount of messages consumed must be equal to the produced";
+        _stream << ".\n"
+                << "The amount of messages consumed must be equal to the "
+                   "produced.";
 
         return _stream.str();
     }
@@ -283,12 +249,13 @@ template <message_id msg_id> struct test_t {
 
     struct sender {
         sender(uint16_t p_idx, msg_handlers *p_handlers,
-               std::condition_variable *p_cond, uint16_t p_max_per_sender)
+               std::condition_variable *p_cond, uint16_t p_num_msg_per_sender)
             : m_idx('p' + std::to_string(p_idx)), m_handlers(p_handlers),
-              m_cond(p_cond), m_max_per_sender(p_max_per_sender),
-              m_msg(p_idx * m_max_per_sender),
-              m_start(p_idx * m_max_per_sender),
-              m_finish((p_idx * m_max_per_sender + m_max_per_sender) - 1),
+              m_cond(p_cond), m_num_msg_per_sender(p_num_msg_per_sender),
+              m_msg(p_idx * m_num_msg_per_sender),
+              m_start(p_idx * m_num_msg_per_sender),
+              m_finish((p_idx * m_num_msg_per_sender + m_num_msg_per_sender) -
+                       1),
               m_log("producer p" + std::to_string(p_idx)) {
             m_log.set_debug_level();
             DEB(m_log, m_idx, ": start value = ", m_start,
@@ -297,25 +264,24 @@ template <message_id msg_id> struct test_t {
 
         void operator()(std::shared_ptr<bool>) {
             m_log.set_debug_level();
-            DEB(m_log, m_idx, " current ", m_msg);
 
             if (m_msg.get_value() == (m_finish + 1)) {
-                DEB(m_log, m_idx, " produced ", m_max_per_sender,
+                DEB(m_log, m_idx, " produced ", m_num_msg_per_sender,
                     " messages: ", m_start, " -> ", m_finish);
                 m_cond->notify_one();
                 return;
             }
 
+            DEB(m_log, m_idx, " sending ", m_msg);
             m_handlers->add_data(m_msg);
             ++m_msg;
-            DEB(m_log, m_idx, " next msg to be added ", m_msg);
         }
 
       private:
         std::string m_idx;
         msg_handlers *m_handlers;
         std::condition_variable *m_cond;
-        const uint16_t m_max_per_sender;
+        const uint16_t m_num_msg_per_sender;
 
         msg m_msg;
         value m_start;
@@ -326,13 +292,13 @@ template <message_id msg_id> struct test_t {
 
   private:
     const std::string m_name;
-    const values m_max_msg_per_sender;
-    const times m_interval_per_sender;
-    const uint16_t m_num_handlers;
-    const time m_handlers_timeout;
-    const uint16_t m_timeout_at_each;
+    //    const uint16_t m_num_senders;
+    //    const uint16_t m_num_msg_per_sender;
+    //    const time m_interval_per_sender;
+    //    const uint16_t m_num_handlers;
+    //    const time m_handlers_timeout;
+    //    const uint16_t m_timeout_at_each;
 
-    uint16_t m_num_senders;
     uint16_t m_total_msgs;
 };
 
@@ -379,118 +345,26 @@ struct handlers_000 {
     }
 };
 
-template <message_id msg_id>
-static std::string
-description(const typename test_t<msg_id>::values &p_max_msg_per_sender,
-            const typename test_t<msg_id>::times &p_interval_per_sender,
-            uint16_t p_num_handlers,
-            typename test_t<msg_id>::time p_handlers_timeout,
-            uint16_t p_timeout_at_each) {
-
-    std::stringstream _stream;
-
-    _stream << "\n" << p_max_msg_per_sender.size() << " sender(s):\n";
-    _stream << "     # | num msgs |  interval (ms)\n"
-            << "---------------------------------\n";
-    for (uint16_t _i = 0; _i < p_max_msg_per_sender.size(); ++_i) {
-        _stream << number::format<uint16_t>(_i + 1, ' ') << "  |"
-                << number::format(p_max_msg_per_sender[_i], ' ') << "     |"
-                << number::format<uint16_t>(p_interval_per_sender[_i].count(),
-                                            ' ')
-                << "\n";
-    }
-
-    uint16_t _total_msgs{0};
-    {
-        uint16_t _num_senders = p_interval_per_sender.size();
-        for (uint16_t _i = 0; _i < _num_senders; ++_i) {
-            _total_msgs += p_max_msg_per_sender[_i];
-        }
-    }
-
-    _stream << "\n"
-            << p_num_handlers << " handler(s), with timeout of "
-            << p_handlers_timeout.count() << "ms, sleeping for "
-            << p_handlers_timeout.count() / 2 << "ms, handling " << _total_msgs
-            << " messages";
-
-    if (p_timeout_at_each) {
-        _stream << ", timeout at each " << p_timeout_at_each << " messages";
-    }
-
-    _stream << std::endl;
-
-    return _stream.str();
-}
-
 struct handlers_001 {
-    typedef msg_t<'B'> msg;
-    typedef async::sleeping_loop sleeping_loop;
-    typedef async::internal::handlers_t<msg> handlers;
-    typedef test_t<msg::id> test;
+    typedef test_t<'B' /* msg id */, 1 /* test id */, 1 /* num senders */,
+                   10 /* msgs per sender */, 150 /* sender interval (ms) */,
+                   1 /* num handlers */,
+                   2000 /* timeout for each handler (ms) */,
+                   0 /* handler timeout at each */>
+        test;
 
-    static std::string desc() {
-        return description<msg::id>(m_max_msg_per_sender, m_interval_per_sender,
-                                    m_num_handlers, m_handlers_timeout,
-                                    m_timeout_at_each);
-    }
+    static std::string desc() { return test::description(); }
 
     bool operator()() {
-
-        test _test{"handlers_001", m_max_msg_per_sender, m_interval_per_sender,
-                   m_num_handlers, m_handlers_timeout,   m_timeout_at_each};
+        test _test;
         return _test();
     }
-
-  private:
-    static const test::values m_max_msg_per_sender;
-    static const test::times m_interval_per_sender;
-    static const uint16_t m_num_handlers{1};
-    static const test::time m_handlers_timeout;
-    static const uint16_t m_timeout_at_each{0};
 };
-
-const handlers_001::test::values handlers_001::m_max_msg_per_sender{value{10}};
-const handlers_001::test::times handlers_001::m_interval_per_sender{
-    handlers_001::test::time{150}};
-const handlers_001::test::time handlers_001::m_handlers_timeout{2000};
-
-struct handlers_002 {
-    typedef msg_t<'B'> msg;
-    typedef async::sleeping_loop sleeping_loop;
-    typedef async::internal::handlers_t<msg> handlers;
-    typedef test_t<msg::id> test;
-
-    static std::string desc() {
-        return description<msg::id>(m_max_msg_per_sender, m_interval_per_sender,
-                                    m_num_handlers, m_handlers_timeout,
-                                    m_timeout_at_each);
-    }
-
-    bool operator()() {
-
-        test _test{"handlers_002", m_max_msg_per_sender, m_interval_per_sender,
-                   m_num_handlers, m_handlers_timeout,   m_timeout_at_each};
-        return _test();
-    }
-
-  private:
-    static const test::values m_max_msg_per_sender;
-    static const test::times m_interval_per_sender;
-    static const uint16_t m_num_handlers{1};
-    static const test::time m_handlers_timeout;
-    static const uint16_t m_timeout_at_each{3};
-};
-
-const handlers_002::test::values handlers_002::m_max_msg_per_sender{value{15}};
-const handlers_002::test::times handlers_002::m_interval_per_sender{
-    handlers_002::test::time{150}};
-const handlers_002::test::time handlers_002::m_handlers_timeout{2000};
 
 int main(int argc, char **argv) {
     //  logger::set_debug_level();
     tester::test<> _test(argc, argv);
     run_test(_test, handlers_000);
     run_test(_test, handlers_001);
-    run_test(_test, handlers_002);
+    //    run_test(_test, handlers_002);
 }
