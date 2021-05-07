@@ -38,6 +38,7 @@ template <message_id msg_id> struct test_t {
           m_interval_per_sender(p_interval_per_sender),
           m_num_handlers(p_num_handlers),
           m_handlers_timeout(p_handlers_timeout),
+
           m_timeout_at_each(p_timeout_at_each), m_num_senders(0),
           m_total_msgs(0) {
 
@@ -127,6 +128,7 @@ template <message_id msg_id> struct test_t {
         for (uint16_t _i = 0; _i < m_num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 std::string("c" + std::to_string(_i)), &_msg_handlers,
+
                 &_handled_handlers, m_handlers_timeout, m_timeout_at_each));
         }
 
@@ -190,6 +192,30 @@ template <message_id msg_id> struct test_t {
         }
 
         return (m_total_msgs == _handled);
+    }
+
+    static std::string description(const value &p_max, uint16_t p_interval,
+                                   uint16_t p_handlers_timeout,
+                                   uint16_t p_num_handlers,
+                                   uint16_t p_handler_sleep,
+                                   uint16_t p_timeout_at_each) {
+        std::stringstream _stream;
+
+        _stream << "A sender sends " << p_max << " messages, at each "
+                << p_interval << "ms, to a 'handlers' with timeout of "
+                << p_handlers_timeout << "ms, with " << p_num_handlers
+                << " handler(s), each one sleeps for " << p_handler_sleep
+                << "ms.";
+        if (p_timeout_at_each) {
+            _stream << " At each " << p_timeout_at_each
+                    << " messages, each handler will cause a timeout.";
+        }
+
+        _stream
+            << "\n"
+            << "The amount of messages consumed must be equal to the produced";
+
+        return _stream.str();
     }
 
   private:
@@ -304,7 +330,6 @@ template <message_id msg_id> struct test_t {
     const times m_interval_per_sender;
     const uint16_t m_num_handlers;
     const time m_handlers_timeout;
-
     const uint16_t m_timeout_at_each;
 
     uint16_t m_num_senders;
