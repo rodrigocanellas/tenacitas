@@ -29,7 +29,9 @@ typedef uint16_t publish_id;
 typedef uint32_t value;
 
 // data message
-template <message_id id = 'A'> struct msg_t {
+template <message_id msg_id = 'A'> struct msg_t {
+
+    static const message_id id{msg_id};
 
     explicit msg_t(value p_value = 0)
         : m_counter(p_value), m_up(up()), m_down(down()), m_d(2.5 * m_counter) {
