@@ -22,14 +22,14 @@
 
 using namespace tenacitas;
 
-typedef char message_id;
+typedef uint8_t message_id;
 typedef uint16_t pool_num;
 typedef uint16_t sub_id;
 typedef uint16_t publish_id;
 typedef uint32_t value;
 
 // data message
-template <message_id msg_id = 'A'> struct msg_t {
+template <message_id msg_id = 0> struct msg_t {
 
     static const message_id id{msg_id};
 
@@ -74,9 +74,9 @@ template <message_id msg_id = 'A'> struct msg_t {
     }
 
     friend std::ostream &operator<<(std::ostream &p_out, const msg_t &p_msg) {
-        p_out << "[" << id << "," << number::format<value>(p_msg.m_counter)
-              << "," << p_msg.m_up << "," << p_msg.m_down << "," << p_msg.m_d
-              << "]";
+        p_out << "[" << static_cast<uint16_t>(id) << ","
+              << number::format<value>(p_msg.m_counter) << "," << p_msg.m_up
+              << "," << p_msg.m_down << "," << p_msg.m_d << "]";
         return p_out;
     }
 
