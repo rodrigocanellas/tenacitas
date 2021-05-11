@@ -42,6 +42,9 @@ struct test_t {
         //        logger::set_debug_level();
         number::id _id;
 
+        std::mutex _mutex_counter_handled;
+        std::mutex _mutex_counter_sent;
+
         std::condition_variable _cond_sent;
         std::mutex _mutex_sent;
         sent_handlers _sent_handlers{_id, std::chrono::seconds(2)};
@@ -73,8 +76,10 @@ struct test_t {
                 DEB(_log, "all handled notified");
                 return;
             }
-
-            ++_handled;
+            {
+                std::lock_guard<std::mutex> _lock(_mutex_counter_handled);
+                ++_handled;
+            }
 
             if (_handled >= m_total_msgs) {
                 INF(_log, "all messages handled, notifying");
@@ -93,7 +98,10 @@ struct test_t {
                 return;
             }
 
-            ++_sent;
+            {
+                std::lock_guard<std::mutex> _lock(_mutex_counter_sent);
+                ++_sent;
+            }
 
             if (_sent >= m_total_msgs) {
                 INF(_log, "all messages sent, notifying");
@@ -124,16 +132,8 @@ struct test_t {
 
         INF(_log, "checking if all the messages were sent");
         {
-            bool _first{true};
-
             std::unique_lock<std::mutex> _lock(_mutex_sent);
             _cond_sent.wait(_lock, [&]() -> bool {
-                if (_first) {
-                    DEB(_log, "first sender notification");
-                    _first = false;
-                    return false;
-                }
-
                 if (_sent >= m_total_msgs) {
                     DEB(_log, "all senders have notified");
                     return true;
@@ -154,19 +154,13 @@ struct test_t {
         INF(_log, "waiting for all the handlers, until all the messages are "
                   "handled");
         {
-            bool _first{true};
             std::unique_lock<std::mutex> _lock(_mutex_handled);
             _cond_handled.wait(_lock, [&]() -> bool {
-                if (_first) {
-                    DEB(_log, "first handler notification");
-                    _first = false;
-                    return false;
-                }
-                if (_handled == m_total_msgs) {
+                if (_handled >= m_total_msgs) {
                     INF(_log, "all ", m_total_msgs, " msgs handled");
                     return true;
                 }
-                DEB(_log, _handled, " handled msgs so far");
+                INF(_log, _handled, " handled msgs so far");
                 return false;
             });
         }
@@ -320,8 +314,13 @@ struct test_t {
         }
 
         void operator()(std::shared_ptr<bool>) {
+            if (m_notified) {
+                INF(m_log, m_idx, " already notified");
+                return;
+            }
 
             if ((m_msg.get_value() == (m_finish + 1))) {
+                m_notified = true;
 
                 INF(m_log, m_idx, " sent ", m_num_msg_per_sender,
                     " messages: ", m_start, " -> ", m_finish);
