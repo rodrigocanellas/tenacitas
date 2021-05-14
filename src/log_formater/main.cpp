@@ -412,7 +412,7 @@ struct log_formater {
     const char m_separator = {'|'};
 };
 
-int main(int argc, char **argv) {
+     int main(int argc, char **argv) {
 
     log_formater _log_formater;
     _log_formater(argc, argv);

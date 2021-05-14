@@ -1,7 +1,7 @@
 
 QT -= core
 TEMPLATE = app
-TARGET = tenacitas.async.tst.handlers
+TARGET = tenacitas.async.tst.handlers_111
 CONFIG+=test
 include (../../../../../common.pri)
 

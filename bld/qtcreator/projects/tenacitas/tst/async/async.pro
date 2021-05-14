@@ -1,7 +1,6 @@
 SUBDIRS = \
   circular_unlimited_size_queue \
   sleeping_loop \
-  handlers/handlers_000.pro  \
   handlers/handlers_001.pro  \
   handlers/handlers_002.pro  \
   handlers/handlers_003.pro  \
@@ -120,7 +119,8 @@ SUBDIRS = \
   handlers/handlers_116.pro  \
   handlers/handlers_117.pro  \
   handlers/handlers_118.pro  \
-  handlers/handlers_119.pro
+  handlers/handlers_119.pro  \
+  handlers/handlers_120.pro
 
 #  \
 #  messenger

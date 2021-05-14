@@ -74,7 +74,7 @@ template <bool use = true> struct options {
     ///#include <tenacitas/program.h>
     ///
     ///
-    ///  int main() {
+    ///       int main() {
     ///    try {
     ///
     ///      using namespace tenacitas::program;

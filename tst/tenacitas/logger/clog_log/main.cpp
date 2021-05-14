@@ -38,7 +38,7 @@ struct clog_how_to {
     logger::clog<> m_log{"clog_how_to "};
 };
 
-int main(int argc, char **argv) {
+     int main(int argc, char **argv) {
     logger::set_debug_level();
 
     tester::test _tester(argc, argv);

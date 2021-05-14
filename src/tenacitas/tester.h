@@ -64,7 +64,7 @@ namespace tester {
 ///  static std::string desc() { return "an eror test"; }
 ///};
 ///
-/// int main(int argc, char **argv) {
+///      int main(int argc, char **argv) {
 ///  try {
 ///    tester::test _tester(argc, argv);
 ///
