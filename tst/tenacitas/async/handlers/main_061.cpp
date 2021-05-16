@@ -26,7 +26,7 @@ struct test_061 {
     }
 };
 
-int main(int argc, char **argv) {
+  int main(int argc, char **argv) {
     logger::set_info_level();
     tester::test<> _test(argc, argv);
     run_test(_test, test_061);

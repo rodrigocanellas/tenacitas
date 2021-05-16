@@ -162,7 +162,7 @@ struct cerr_log_how_to {
 //  logger::cerr m_log{"cerr_log_multi"};
 //};
 
-     int main(int argc, char **argv) {
+       int main(int argc, char **argv) {
     logger::set_debug_level();
     tester::test<> _tester(argc, argv);
     run_test(_tester, cerr_log_how_to);

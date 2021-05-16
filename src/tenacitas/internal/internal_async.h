@@ -160,7 +160,7 @@ template <typename t_ret> struct executer_t {
         }
 
         *_stop = true;
-        _th.detach();
+        _th.join();
         return {};
     }
 
@@ -187,7 +187,7 @@ template <typename t_ret> struct executer_t {
         }
 
         *_stop = true;
-        _th.detach();
+        _th.join();
         return {};
     }
 
@@ -212,7 +212,7 @@ template <typename t_ret> struct executer_t {
         }
 
         *_stop = true;
-        _th.detach();
+        _th.join();
         return {};
     }
 };
@@ -242,7 +242,7 @@ template <> struct executer_t<void> {
         }
 
         *_stop = true;
-        _th.detach();
+        _th.join();
         return false;
     }
 
@@ -256,19 +256,25 @@ template <> struct executer_t<void> {
 
         DEB(m_log, "param = ", p_param);
 
-        std::thread _th([&p_function, _stop, &_cond, &p_param]() -> void {
-            p_function(_stop, std::move(p_param));
-            _cond.notify_one();
-        });
+        std::thread _th(
+            [this, &p_function, &_stop, &_cond, &p_param]() -> void {
+                p_function(_stop, std::move(p_param));
+                DEB(m_log, "about to notify for ", p_param);
+                _cond.notify_one();
+            });
 
         std::unique_lock<std::mutex> _lock{_mutex};
         if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+            DEB(m_log, "no timeout for ", p_param);
             _th.join();
+            DEB(m_log, "returning true for ", p_param);
             return true;
         }
 
+        DEB(m_log, "timeout for ", p_param, " setting p_stop to true");
         *_stop = true;
-        _th.detach();
+        _th.join();
+        DEB(m_log, "returning false for ", p_param);
         return false;
     }
 
@@ -293,7 +299,7 @@ template <> struct executer_t<void> {
         }
 
         *_stop = true;
-        _th.detach();
+        _th.join();
         return false;
     }
 
@@ -364,8 +370,8 @@ template <typename t_data> struct queue_t {
     virtual void add(t_data &&p_data) = 0;
     virtual std::optional<t_data> get() = 0;
     virtual void traverse(std ::function<void(const t_data &)>) const = 0;
-    virtual bool full() const = 0;
-    virtual bool empty() const = 0;
+    virtual bool full() = 0;
+    virtual bool empty() = 0;
     virtual size_t capacity() const = 0;
     virtual size_t occupied() const = 0;
 
@@ -446,15 +452,17 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     /// \param p_data is a t_data to be added
     void add(const t_data &p_data) override {
         DEB(m_log, "adding ", p_data);
-        std::lock_guard<std::mutex> _lock(m_mutex);
-        if (!full()) {
-            m_write->m_data = p_data;
-            m_write = m_write->m_next;
-        } else {
-
-            insert(m_write->m_prev, p_data);
+        {
+            std::lock_guard<std::mutex> _lock(m_mutex);
+            bool _full = full();
+            if (!_full) {
+                m_write->m_data = p_data;
+                m_write = m_write->m_next;
+            } else {
+                insert(m_write->m_prev, p_data);
+            }
+            ++m_amount;
         }
-        ++m_amount;
         DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
     }
 
@@ -463,15 +471,18 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     /// \param p_data is a t_data to be added
     void add(t_data &&p_data) override {
         DEB(m_log, "adding ", p_data);
-        std::lock_guard<std::mutex> _lock(m_mutex);
-        if (!full()) {
-            m_write->m_data = p_data;
-            m_write = m_write->m_next;
-        } else {
+        {
 
-            insert(m_write->m_prev, std::move(p_data));
+            std::lock_guard<std::mutex> _lock(m_mutex);
+            bool _full = full();
+            if (!_full) {
+                m_write->m_data = p_data;
+                m_write = m_write->m_next;
+            } else {
+                insert(m_write->m_prev, std::move(p_data));
+            }
+            ++m_amount;
         }
-        ++m_amount;
         DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
     }
 
@@ -479,9 +490,9 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     ///
     /// \return a t_data object, if there was any to be retrieved
     std::optional<t_data> get() override {
+
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (empty()) {
-
             return {};
         }
 
@@ -492,10 +503,16 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     }
 
     /// \brief Informs if the queue is full
-    inline bool full() const override { return m_amount == this->m_size; }
+    inline bool full() override {
+        //        std::lock_guard<std::mutex> _lock(m_mutex);
+        return m_amount == this->m_size;
+    }
 
     /// \brief Informs if the queue is empty
-    inline bool empty() const override { return m_amount == 0; }
+    inline bool empty() override {
+        //        std::lock_guard<std::mutex> _lock(m_mutex);
+        return m_amount == 0;
+    }
 
     /// \brief Informs the total capacity of the queue
     inline size_t capacity() const override { return this->m_size; }
@@ -808,14 +825,6 @@ template <typename t_data> class handlers_t {
         return m_id == p_handlers.m_id;
     }
 
-    /// \return Returns if the queue o \p t_data is empty
-    inline void empty_queue() {
-        DEB(this->m_log, this->m_owner, ':', this->m_id, " - empty queue");
-        while (!m_queue.empty()) {
-            m_cond.notify_all();
-        }
-    }
-
   private:
     /// \brief Type of group of loops
     typedef typename std::vector<std::thread> loops;
@@ -882,6 +891,14 @@ template <typename t_data> class handlers_t {
                 DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
                     " - no data available");
             }
+        }
+    }
+
+    /// \brief
+    inline void empty_queue() {
+        DEB(this->m_log, this->m_owner, ':', this->m_id, " - empty queue");
+        while (!m_queue.empty()) {
+            m_cond.notify_all();
         }
     }
 

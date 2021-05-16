@@ -21,7 +21,7 @@ static std::string desc() { return test::description(); }
 
 bool operator()() { test _test; return _test(); } };
 
-  int main(int argc, char **argv) {
+    int main(int argc, char **argv) {
     logger::set_info_level();
     tester::test<> _test(argc, argv);
     run_test(_test, test_026);

@@ -38,7 +38,7 @@ struct test_t {
     bool operator()() {
 
         logger::cerr<> _log{m_name.c_str()};
-        _log.set_info_level();
+        _log.set_debug_level();
         //        logger::set_debug_level();
         number::id _id;
 
@@ -55,14 +55,14 @@ struct test_t {
 
         msg_handlers _msg_handlers{_id, time{handlers_timeout}};
 
-        DEB(_log, "total messages to be sent: ", m_total_msgs);
+        INF(_log, "total messages to be sent: ", m_total_msgs);
 
         INF(_log, "creating handlers for handled messages");
         uint16_t _handled{0};
         bool _all_handled_notified{false};
         _handled_handlers.add_handler([&](type::ptr<bool>, handled &&) -> void {
             if (_all_handled_notified) {
-                INF(_log, "all handled notified");
+                DEB(_log, "all handled notified");
                 return;
             }
             {
@@ -76,10 +76,10 @@ struct test_t {
                 _cond_handled.notify_one();
                 return;
             }
-            INF(_log, _handled, " messages handled");
+            DEB(_log, _handled, " messages handled");
         });
 
-        INF(_log, "creating handlers for messages sent");
+        INF(_log, "creating handlers for sent messages");
         uint16_t _sent{0};
         bool _all_sent_notified{false};
         _sent_handlers.add_handler([&](type::ptr<bool>, sent &&) -> void {
@@ -93,12 +93,12 @@ struct test_t {
             }
 
             if (_sent >= m_total_msgs) {
-                INF(_log, "all messages sent, notifying");
+                INF(_log, "all ", _sent, " messages sent; notifying");
                 _all_sent_notified = true;
                 _cond_sent.notify_one();
                 return;
             }
-            INF(_log, _sent, " messages sent");
+            DEB(_log, _sent, " messages sent");
         });
 
         INF(_log, "creating the msg handlers");
@@ -122,10 +122,10 @@ struct test_t {
         INF(_log, "creating and starting the senders");
         std::vector<sleeping_loop> _loops;
         for (uint16_t _i = 0; _i < num_senders; ++_i) {
-            _loops.push_back({_id,
-                              sender(_i, &_msg_handlers, &_sent_handlers,
-                                     &_cond_sent, msgs_per_sender),
-                              60000ms, time{interval_per_sender}});
+            _loops.push_back(
+                {_id,
+                 sender(_i, &_msg_handlers, &_sent_handlers, msgs_per_sender),
+                 600ms, time{interval_per_sender}});
             DEB(_log, "starting sender p", _i);
             _loops.back().start();
         }
@@ -135,7 +135,7 @@ struct test_t {
             std::unique_lock<std::mutex> _lock(_mutex_sent);
             _cond_sent.wait(_lock, [&]() -> bool {
                 if (_sent >= m_total_msgs) {
-                    DEB(_log, "all senders have notified");
+                    INF(_log, "all senders have notified");
                     return true;
                 }
                 DEB(_log, _sent, " msgs sent so far");
@@ -147,7 +147,7 @@ struct test_t {
         for (uint16_t _i = 0; _i < num_senders; ++_i) {
             _loops[_i].stop();
         }
-        INF(_log, "capacity: ", _msg_handlers.capacity(),
+        DEB(_log, "capacity: ", _msg_handlers.capacity(),
             ", added: ", _msg_handlers.amount_added(),
             ", occupied: ", _msg_handlers.occupied());
 
@@ -160,7 +160,7 @@ struct test_t {
                     INF(_log, "all ", m_total_msgs, " msgs handled");
                     return true;
                 }
-                INF(_log, _handled, " handled msgs so far");
+                DEB(_log, _handled, " handled msgs so far");
                 return false;
             });
         }
@@ -169,11 +169,11 @@ struct test_t {
 
         INF(_log, "reporting results");
         {
-            DEB(_log, "amount sent = ", m_total_msgs);
+            INF(_log, "amount sent = ", m_total_msgs);
             for (uint16_t _i = 0; _i < num_handlers; ++_i) {
                 DEB(_log, *_handler_list[_i]);
             }
-            INF(_log, "handled: ", _handled);
+            DEB(_log, "handled: ", _handled);
         }
 
         {
@@ -247,29 +247,39 @@ struct test_t {
               m_num_max_timeouts(p_num_max_timeouts),
               m_sleep(m_timeout.count() / 2),
               m_cause_timeout_at_each(p_cause_timeout_at_each),
-              m_to_timeout(m_timeout.count() * 2), m_log("handler_" + m_id) {}
-        void operator()(std::shared_ptr<bool> p_bool, msg &&p_msg) {
-            //            m_log.set_info_level();
+              m_to_timeout(m_timeout.count() * 2), m_log("handler_" + m_id) {
+            m_log.set_debug_level();
+            DEB(m_log, m_id, " # timeouts: ", m_max_msgs_timeout);
+        }
 
-            if (m_num && m_cause_timeout_at_each &&
-                ((m_num % m_cause_timeout_at_each) == 0) &&
+        void operator()(std::shared_ptr<bool> p_bool, msg &&p_msg) {
+            DEB(m_log, m_id, " incoming ", p_msg, '|', m_num);
+            if (m_cause_timeout_at_each && m_num_aux &&
+                ((m_num_aux % m_cause_timeout_at_each) == 0) &&
                 (m_timeout_counter < m_num_max_timeouts)) {
                 ++m_timeout_counter;
-                INF(m_log, m_id, " causing timeout for msg number ", m_num,
-                    " as a timeout must occurr at each ",
-                    m_cause_timeout_at_each, " messages");
+                ++m_num_aux;
+                DEB(m_log, m_id, " timeouting ", p_msg, '|', m_num_aux);
                 std::this_thread::sleep_for(m_to_timeout);
             }
+            DEB(m_log, m_id, " continuing to handle ", p_msg,
+                ", and p_bool is ", *p_bool);
+            if (!p_bool) {
+                ERR(m_log, m_id, " p_bool not set for ", p_msg, "!!!");
+                throw std::runtime_error("p_bool not set!!");
+            }
             if (*p_bool) {
+                DEB(m_log, m_id, " adding ", p_msg, '|', m_num);
                 m_msg_handlers->add_data(p_msg);
                 return;
             }
+            DEB(m_log, m_id, " continuing to handle ", p_msg);
             std::this_thread::sleep_for(m_sleep);
             ++m_num;
+            ++m_num_aux;
             m_msg = std::move(p_msg);
-            DEB(m_log, m_id, " adding handled");
             m_handled_handlers->add_data(handled{});
-            INF(m_log, m_id, " handling ", m_msg, '|', m_num);
+            DEB(m_log, m_id, " handling ", m_msg, '|', m_num);
         }
 
         friend std::ostream &operator<<(std::ostream &p_out,
@@ -292,6 +302,7 @@ struct test_t {
         const uint16_t m_cause_timeout_at_each{0};
         const time m_to_timeout;
         uint16_t m_num{0};
+        uint16_t m_num_aux{0};
         msg m_msg;
         uint16_t m_timeout_counter{0};
         logger::cerr<> m_log;
@@ -299,35 +310,37 @@ struct test_t {
 
     struct sender {
         sender(uint16_t p_idx, msg_handlers *p_handlers,
-               sent_handlers *p_sent_handlers, std::condition_variable *p_cond,
-               uint16_t p_num_msg_per_sender)
+               sent_handlers *p_sent_handlers, uint16_t p_num_msg_per_sender)
             : m_idx('s' + std::to_string(p_idx)), m_handlers(p_handlers),
-              m_sent_handlers(p_sent_handlers), m_cond(p_cond),
+              m_sent_handlers(p_sent_handlers),
               m_num_msg_per_sender(p_num_msg_per_sender),
               m_msg(p_idx * m_num_msg_per_sender),
               m_start(p_idx * m_num_msg_per_sender),
               m_finish((p_idx * m_num_msg_per_sender + m_num_msg_per_sender) -
                        1),
               m_log("sender_" + m_idx) {
-            INF(m_log, m_idx, ": start value = ", m_start,
+            m_log.set_debug_level();
+            DEB(m_log, m_idx, ": start value = ", m_start,
                 ", finish value = ", m_finish);
         }
 
         void operator()(std::shared_ptr<bool>) {
-            if (m_notified) {
-                INF(m_log, m_idx, " already notified");
+            m_log.set_debug_level();
+
+            if (m_all_notified) {
+                DEB(m_log, m_idx, " already notified");
                 return;
             }
 
-            if ((m_msg.get_value() == (m_finish + 1))) {
-                m_notified = true;
+            if ((m_msg.get_value() >= (m_finish + 1))) {
+                m_all_notified = true;
 
-                INF(m_log, m_idx, " sent ", m_num_msg_per_sender,
+                DEB(m_log, m_idx, " sent ", m_num_msg_per_sender,
                     " messages: ", m_start, " -> ", m_finish);
                 return;
             }
 
-            INF(m_log, m_idx, " sending ", m_msg);
+            DEB(m_log, m_idx, " sending ", m_msg);
             m_handlers->add_data(m_msg);
             m_sent_handlers->add_data(sent{});
             ++m_msg;
@@ -337,14 +350,13 @@ struct test_t {
         std::string m_idx;
         msg_handlers *m_handlers;
         sent_handlers *m_sent_handlers;
-        std::condition_variable *m_cond;
         const uint16_t m_num_msg_per_sender;
 
         msg m_msg;
         value m_start;
         value m_finish;
 
-        bool m_notified{false};
+        bool m_all_notified{false};
 
         logger::cerr<> m_log;
     };
@@ -354,5 +366,6 @@ struct test_t {
     //    uint16_t m_total_msgs;
 
     static constexpr uint16_t m_total_msgs{num_senders * msgs_per_sender};
-    static constexpr uint16_t m_max_msgs_timeout{m_total_msgs * 30 / 100};
+    static constexpr uint16_t m_max_msgs_timeout{m_total_msgs / num_handlers *
+                                                 30 / 100};
 };

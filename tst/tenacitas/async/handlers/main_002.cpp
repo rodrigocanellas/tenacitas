@@ -10,18 +10,23 @@
 
 #include <tst/tenacitas/async/handlers/test_base.h>
 
-struct test_002{
-    typedef test_t<2/* msg id */, 1/* num senders */, 
-10/* msgs per sender */, 150 /* sender interval (ms) */,
-1/* num handlers */,
-400 /* timeout for each handler (ms) */,
-3/* handler timeout at each */> test;
+struct test_002 {
+    typedef test_t<2 /* msg id */, 1 /* num senders */,
+                   10 /* msgs per sender */, 150 /* sender interval (ms) */,
+                   1 /* num handlers */,
+                   400 /* timeout for each handler (ms) */,
+                   3 /* handler timeout at each */>
+        test;
 
-static std::string desc() { return test::description(); }
+    static std::string desc() { return test::description(); }
 
-bool operator()() { test _test; return _test(); } };
+    bool operator()() {
+        test _test;
+        return _test();
+    }
+};
 
-  int main(int argc, char **argv) {
+int main(int argc, char **argv) {
     logger::set_info_level();
     tester::test<> _test(argc, argv);
     run_test(_test, test_002);
