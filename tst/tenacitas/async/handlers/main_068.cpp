@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include <tst/tenacitas/async/handlers/test_base.h>
+#include <tst/tenacitas/async/test_base.h>
 
 struct test_068{
     typedef test_t<68/* msg id */, 50/* num senders */, 

@@ -120,25 +120,9 @@ SUBDIRS = \
   handlers/handlers_117.pro  \
   handlers/handlers_118.pro  \
   handlers/handlers_119.pro  \
-  handlers/handlers_120.pro
+  handlers/handlers_120.pro  \
+  messenger
 
-#  \
-#  messenger
-
-#    loop \
-
-
-
-#\
-
-
-
-
-#    executer  \
-#    worker \
-#    dispatcher \
-#    performance \
-#    writer \
 
 
 TEMPLATE = subdirs

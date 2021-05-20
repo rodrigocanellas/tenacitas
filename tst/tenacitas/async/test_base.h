@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstdint>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <string>
 
@@ -23,7 +24,8 @@ using namespace std::chrono_literals;
 
 template <message_id msg_id, uint16_t num_senders, uint16_t msgs_per_sender,
           uint16_t interval_per_sender, uint16_t num_handlers,
-          uint16_t handlers_timeout, uint16_t timeout_at_each>
+          uint16_t handlers_timeout, uint16_t timeout_at_each,
+          uint16_t handler_sleep = handlers_timeout / 2>
 struct test_t {
 
     typedef msg_t<msg_id> msg;
@@ -31,7 +33,7 @@ struct test_t {
     typedef async::sleeping_loop sleeping_loop;
     typedef std::vector<uint16_t> values;
     typedef std::chrono::milliseconds time;
-    typedef std::vector<time> times;
+    //    typedef std::vector<time> times;
 
     test_t() : m_name("handlers_" + number::format(msg_id)) {}
 
@@ -106,7 +108,7 @@ struct test_t {
         for (uint16_t _i = 0; _i < num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 _i, &_msg_handlers, &_handled_handlers, time{handlers_timeout},
-                m_max_msgs_timeout, timeout_at_each));
+                time{handler_sleep}, m_max_msgs_timeout, timeout_at_each));
         }
 
         uint64_t _start = calendar::now<>::microsecs();
@@ -202,7 +204,7 @@ struct test_t {
                 << "ms.\n"
                 << "There are " << num_handlers
                 << " handler(s), each with timeout of " << handlers_timeout
-                << "ms, and sleeping for " << handlers_timeout / 2
+                << "ms, and sleeping for " << handler_sleep
                 << "ms, to simulate actual work";
         if (timeout_at_each) {
             _stream
@@ -240,12 +242,11 @@ struct test_t {
         handler(uint16_t p_id, msg_handlers *p_handlers,
                 handled_handlers *p_handled_handlers,
                 std::chrono::milliseconds p_timeout,
-                uint16_t p_num_max_timeouts,
+                std::chrono::milliseconds p_sleep, uint16_t p_num_max_timeouts,
                 uint16_t p_cause_timeout_at_each = 0)
             : m_id('h' + std::to_string(p_id)), m_msg_handlers(p_handlers),
               m_handled_handlers(p_handled_handlers), m_timeout(p_timeout),
-              m_num_max_timeouts(p_num_max_timeouts),
-              m_sleep(m_timeout.count() / 2),
+              m_num_max_timeouts(p_num_max_timeouts), m_sleep(p_sleep),
               m_cause_timeout_at_each(p_cause_timeout_at_each),
               m_to_timeout(m_timeout.count() * 2), m_log("handler_" + m_id) {
             m_log.set_debug_level();
