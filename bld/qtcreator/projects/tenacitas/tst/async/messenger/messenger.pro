@@ -8,6 +8,7 @@ SOURCES += \
   $$test_src_dir/tst/tenacitas/async/messenger/main.cpp
 
 HEADERS += \
-  $$test_src_dir/tst/tenacitas/async/msg.h \
-  $$test_src_dir/tst/tenacitas/async/messenger/test_base.h
+  $$test_src_dir/tst/tenacitas/async/msg.h  \
+  $$test_src_dir/tst/tenacitas/async/test_base.h
+
 

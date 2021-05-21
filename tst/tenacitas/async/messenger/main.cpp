@@ -791,6 +791,13 @@ const std::chrono::seconds messenger_007::m_handlers_timeout{2};
 const std::chrono::milliseconds messenger_007::m_handler_sleep{300};
 const std::chrono::seconds messenger_007::m_sleeping_loop_timeout{1};
 
+struct messenger_008 {
+
+    static std::string desc() { return ""; }
+
+    bool operator()() { return true; }
+};
+
 int main(int argc, char **argv) {
     logger::set_debug_level();
     tester::test _tester(argc, argv);
@@ -803,4 +810,5 @@ int main(int argc, char **argv) {
     run_test(_tester, messenger_005);
     run_test(_tester, messenger_006);
     run_test(_tester, messenger_007);
+    run_test(_tester, messenger_008);
 }
