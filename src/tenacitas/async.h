@@ -88,11 +88,14 @@ struct sleeping_loop {
     }
 
     template <typename t_timeout, typename t_interval>
-    sleeping_loop(const number::id &p_owner, function p_function,
-                  t_timeout p_timeout, t_interval p_interval)
-        : m_owner(p_owner), m_function(p_function),
-          m_timeout(calendar::convert<internal::timeout>(p_timeout)),
-          m_interval(calendar::convert<internal::interval>(p_interval)) {}
+    sleeping_loop(const number::id &p_owner,
+                  function p_function,
+                  t_timeout p_timeout,
+                  t_interval p_interval)
+        : m_owner(p_owner)
+        , m_function(p_function)
+        , m_timeout(calendar::convert<internal::timeout>(p_timeout))
+        , m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
     void start() {
         if (!m_stopped) {
@@ -141,7 +144,7 @@ struct sleeping_loop {
 
     inline bool is_stopped() const { return m_stopped; }
 
-  private:
+private:
     void loop() {
         DEB(m_log, m_owner, ':', m_id,
             " - entering loop, m_timeout = ", m_timeout.count());
@@ -182,7 +185,7 @@ struct sleeping_loop {
         DEB(m_log, m_owner, ':', m_id, " - leaving loop");
     }
 
-  private:
+private:
     /// \brief Identifier of the object that owns this object
     number::id m_owner;
 
@@ -198,13 +201,13 @@ struct sleeping_loop {
     number::id m_id;
 
     /// \brief Indicates that the loop must stop
-    std::atomic<bool> m_stopped{true};
+    std::atomic<bool> m_stopped {true};
 
     /// \brief Thread where the \p loop method will run
     std::thread m_thread;
 
     /// \brief Logger
-    logger::cerr<> m_log{"sleeping_loop"};
+    logger::cerr<> m_log {"sleeping_loop"};
 
     /// \brief Protects joining the thread
     std::mutex m_mutex_join;
@@ -236,7 +239,7 @@ using handler_t = std::function<void(ptr<bool>, t_msg &&)>;
 /// will have to complete its work.
 template <typename t_msg, typename t_time>
 static inline number::id
-add_handlers(const t_time &p_timeout,
+add_handling(const t_time &p_timeout,
              const priority &p_priority = priority::middle) {
     return internal::messenger_t<t_msg>::add_handlers(p_timeout, p_priority);
 }
@@ -258,7 +261,8 @@ add_handlers(const t_time &p_timeout,
 /// will have to complete its work.
 template <typename t_msg, typename t_time>
 static inline number::id
-add_handlers(handler_t<t_msg> &&p_handler, const t_time &p_timeout,
+add_handling(handler_t<t_msg> &&p_handler,
+             const t_time &p_timeout,
              const priority &p_priority = priority::middle) {
     return internal::messenger_t<t_msg>::add_handlers(std::move(p_handler),
                                                       p_timeout, p_priority);
@@ -300,7 +304,8 @@ get_priority(const number::id &p_handlers) {
 /// \tparam t_msg is the type of message to be added to the queue
 ///
 /// \param p_msg is the message to be copied to all the queues
-template <typename t_msg> static inline void send(const t_msg &p_msg) {
+template <typename t_msg>
+static inline void send(const t_msg &p_msg) {
     internal::messenger_t<t_msg>::send(p_msg);
 }
 
@@ -331,9 +336,10 @@ static inline void add_handler(const number::id &p_handlers,
 
 template <typename t_msg, typename t_time>
 static inline const number::id
-add_handler(handler_t<t_msg> &&p_handler, t_time p_timeout,
+add_handler(handler_t<t_msg> &&p_handler,
+            t_time p_timeout,
             const priority &p_priority = priority::middle) {
-    number::id _id = add_handlers<t_msg>(p_timeout, p_priority);
+    number::id _id = add_handling<t_msg>(p_timeout, p_priority);
     internal::messenger_t<t_msg>::add_handler(_id, std::move(p_handler));
     return _id;
 }
@@ -345,9 +351,9 @@ add_handler(handler_t<t_msg> &&p_handler, t_time p_timeout,
 /// operator()(const number::id&, const priority &, const t_time&) \endcode
 template <typename t_msg>
 static inline void
-traverse(std::function<void(const number::id &, const priority &,
-                            const std::chrono::milliseconds &)>
-             p_visitor) {
+traverse(std::function<void(const number::id &,
+                            const priority &,
+                            const std::chrono::milliseconds &)> p_visitor) {
     internal::messenger_t<t_msg>::traverse(p_visitor);
 }
 

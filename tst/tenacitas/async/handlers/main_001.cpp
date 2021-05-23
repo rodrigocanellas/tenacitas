@@ -12,13 +12,14 @@
 
 struct test_001 {
     typedef test_t<1 /* msg id */, 1 /* num senders */,
-                   10 /* msgs per sender */, 150 /* sender interval (ms) */,
-                   1 /* num handlers */,
-                   400 /* timeout for each handler (ms) */,
-                   0 /* handler timeout at each */>
+        10 /* msgs per sender */, 150 /* sender interval (ms) */,
+        1 /* num handlers */, 400 /* timeout for each handler (ms) */,
+        0 /* handler timeout at each */>
         test;
 
-    static std::string desc() { return test::description(); }
+    static std::string desc() {
+        return test::description();
+    }
 
     bool operator()() {
         test _test;
@@ -26,7 +27,7 @@ struct test_001 {
     }
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     logger::set_info_level();
     tester::test<> _test(argc, argv);
     run_test(_test, test_001);
