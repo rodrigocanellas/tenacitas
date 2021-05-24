@@ -8,11 +8,13 @@
 #include <iostream>
 #include <string>
 
-#include <tst/tenacitas/async/test_base.h>
+#include <tst/tenacitas/async/handlers/test_base.h>
 
 struct test_120 {
-    typedef test_t<120 /* msg id */, 50 /* num senders */,
-                   200 /* msgs per sender */, 150 /* sender interval (ms) */,
+    typedef test_t<120 /* msg id */,
+                   50 /* num senders */,
+                   200 /* msgs per sender */,
+                   150 /* sender interval (ms) */,
                    50 /* num handlers */,
                    400 /* timeout for each handler (ms) */,
                    3 /* handler timeout at each */>

@@ -22,9 +22,13 @@ using namespace tenacitas;
 using namespace tenacitas::async;
 using namespace std::chrono_literals;
 
-template <message_id msg_id, uint16_t num_senders, uint16_t msgs_per_sender,
-          uint16_t interval_per_sender, uint16_t num_handlers,
-          uint16_t handlers_timeout, uint16_t timeout_at_each,
+template <message_id msg_id,
+          uint16_t num_senders,
+          uint16_t msgs_per_sender,
+          uint16_t interval_per_sender,
+          uint16_t num_handlers,
+          uint16_t handlers_timeout,
+          uint16_t timeout_at_each,
           uint16_t handler_sleep = handlers_timeout / 2>
 struct test_t {
 
@@ -35,11 +39,12 @@ struct test_t {
     typedef std::chrono::milliseconds time;
     //    typedef std::vector<time> times;
 
-    test_t() : m_name("handlers_" + number::format(msg_id)) {}
+    test_t()
+        : m_name("handlers_" + number::format(msg_id)) {}
 
     bool operator()() {
 
-        logger::cerr<> _log{m_name.c_str()};
+        logger::cerr<> _log {m_name.c_str()};
         _log.set_debug_level();
         //        logger::set_debug_level();
         number::id _id;
@@ -49,19 +54,19 @@ struct test_t {
 
         std::condition_variable _cond_sent;
         std::mutex _mutex_sent;
-        sent_handlers _sent_handlers{_id, std::chrono::seconds(2)};
+        sent_handlers _sent_handlers {_id, std::chrono::seconds(2)};
 
         std::condition_variable _cond_handled;
         std::mutex _mutex_handled;
-        handled_handlers _handled_handlers{_id, std::chrono::seconds(2)};
+        handled_handlers _handled_handlers {_id, std::chrono::seconds(2)};
 
-        msg_handlers _msg_handlers{_id, time{handlers_timeout}};
+        msg_handlers _msg_handlers {_id, time {handlers_timeout}};
 
         INF(_log, "total messages to be sent: ", m_total_msgs);
 
         INF(_log, "creating handlers for handled messages");
-        uint16_t _handled{0};
-        bool _all_handled_notified{false};
+        uint16_t _handled {0};
+        bool _all_handled_notified {false};
         _handled_handlers.add_handler([&](type::ptr<bool>, handled &&) -> void {
             if (_all_handled_notified) {
                 DEB(_log, "all handled notified");
@@ -82,8 +87,8 @@ struct test_t {
         });
 
         INF(_log, "creating handlers for sent messages");
-        uint16_t _sent{0};
-        bool _all_sent_notified{false};
+        uint16_t _sent {0};
+        bool _all_sent_notified {false};
         _sent_handlers.add_handler([&](type::ptr<bool>, sent &&) -> void {
             if (_all_sent_notified) {
                 return;
@@ -107,8 +112,8 @@ struct test_t {
         std::vector<type::ptr<handler>> _handler_list;
         for (uint16_t _i = 0; _i < num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
-                _i, &_msg_handlers, &_handled_handlers, time{handlers_timeout},
-                time{handler_sleep}, m_max_msgs_timeout, timeout_at_each));
+                _i, &_msg_handlers, &_handled_handlers, time {handlers_timeout},
+                time {handler_sleep}, m_max_msgs_timeout, timeout_at_each));
         }
 
         uint64_t _start = calendar::now<>::microsecs();
@@ -127,7 +132,7 @@ struct test_t {
             _loops.push_back(
                 {_id,
                  sender(_i, &_msg_handlers, &_sent_handlers, msgs_per_sender),
-                 600ms, time{interval_per_sender}});
+                 600ms, time {interval_per_sender}});
             DEB(_log, "starting sender p", _i);
             _loops.back().start();
         }
@@ -220,7 +225,7 @@ struct test_t {
         return _stream.str();
     }
 
-  private:
+private:
     struct handled {
         friend std::ostream &operator<<(std::ostream &p_out, const handled &) {
             p_out << "handled";
@@ -239,16 +244,22 @@ struct test_t {
     typedef async::internal::handlers_t<sent> sent_handlers;
 
     struct handler {
-        handler(uint16_t p_id, msg_handlers *p_handlers,
+        handler(uint16_t p_id,
+                msg_handlers *p_handlers,
                 handled_handlers *p_handled_handlers,
                 std::chrono::milliseconds p_timeout,
-                std::chrono::milliseconds p_sleep, uint16_t p_num_max_timeouts,
+                std::chrono::milliseconds p_sleep,
+                uint16_t p_num_max_timeouts,
                 uint16_t p_cause_timeout_at_each = 0)
-            : m_id('h' + std::to_string(p_id)), m_msg_handlers(p_handlers),
-              m_handled_handlers(p_handled_handlers), m_timeout(p_timeout),
-              m_num_max_timeouts(p_num_max_timeouts), m_sleep(p_sleep),
-              m_cause_timeout_at_each(p_cause_timeout_at_each),
-              m_to_timeout(m_timeout.count() * 2), m_log("handler_" + m_id) {
+            : m_id('h' + std::to_string(p_id))
+            , m_msg_handlers(p_handlers)
+            , m_handled_handlers(p_handled_handlers)
+            , m_timeout(p_timeout)
+            , m_num_max_timeouts(p_num_max_timeouts)
+            , m_sleep(p_sleep)
+            , m_cause_timeout_at_each(p_cause_timeout_at_each)
+            , m_to_timeout(m_timeout.count() * 2)
+            , m_log("handler_" + m_id) {
             m_log.set_debug_level();
             DEB(m_log, m_id, " # timeouts: ", m_max_msgs_timeout);
         }
@@ -279,7 +290,7 @@ struct test_t {
             ++m_num;
             ++m_num_aux;
             m_msg = std::move(p_msg);
-            m_handled_handlers->add_data(handled{});
+            m_handled_handlers->add_data(handled {});
             DEB(m_log, m_id, " handling ", m_msg, '|', m_num);
         }
 
@@ -293,33 +304,36 @@ struct test_t {
         inline const std::string &get_id() const { return m_id; }
         //        inline uint16_t get_num() const { return m_num; }
 
-      private:
+    private:
         std::string m_id;
         msg_handlers *m_msg_handlers;
         handled_handlers *m_handled_handlers;
         const time m_timeout;
-        const uint16_t m_num_max_timeouts{0};
+        const uint16_t m_num_max_timeouts {0};
         const time m_sleep;
-        const uint16_t m_cause_timeout_at_each{0};
+        const uint16_t m_cause_timeout_at_each {0};
         const time m_to_timeout;
-        uint16_t m_num{0};
-        uint16_t m_num_aux{0};
+        uint16_t m_num {0};
+        uint16_t m_num_aux {0};
         msg m_msg;
-        uint16_t m_timeout_counter{0};
+        uint16_t m_timeout_counter {0};
         logger::cerr<> m_log;
     };
 
     struct sender {
-        sender(uint16_t p_idx, msg_handlers *p_handlers,
-               sent_handlers *p_sent_handlers, uint16_t p_num_msg_per_sender)
-            : m_idx('s' + std::to_string(p_idx)), m_handlers(p_handlers),
-              m_sent_handlers(p_sent_handlers),
-              m_num_msg_per_sender(p_num_msg_per_sender),
-              m_msg(p_idx * m_num_msg_per_sender),
-              m_start(p_idx * m_num_msg_per_sender),
-              m_finish((p_idx * m_num_msg_per_sender + m_num_msg_per_sender) -
-                       1),
-              m_log("sender_" + m_idx) {
+        sender(uint16_t p_idx,
+               msg_handlers *p_handlers,
+               sent_handlers *p_sent_handlers,
+               uint16_t p_num_msg_per_sender)
+            : m_idx('s' + std::to_string(p_idx))
+            , m_handlers(p_handlers)
+            , m_sent_handlers(p_sent_handlers)
+            , m_num_msg_per_sender(p_num_msg_per_sender)
+            , m_msg(p_idx * m_num_msg_per_sender)
+            , m_start(p_idx * m_num_msg_per_sender)
+            , m_finish((p_idx * m_num_msg_per_sender + m_num_msg_per_sender) -
+                       1)
+            , m_log("sender_" + m_idx) {
             m_log.set_debug_level();
             DEB(m_log, m_idx, ": start value = ", m_start,
                 ", finish value = ", m_finish);
@@ -343,11 +357,11 @@ struct test_t {
 
             DEB(m_log, m_idx, " sending ", m_msg);
             m_handlers->add_data(m_msg);
-            m_sent_handlers->add_data(sent{});
+            m_sent_handlers->add_data(sent {});
             ++m_msg;
         }
 
-      private:
+    private:
         std::string m_idx;
         msg_handlers *m_handlers;
         sent_handlers *m_sent_handlers;
@@ -357,16 +371,16 @@ struct test_t {
         value m_start;
         value m_finish;
 
-        bool m_all_notified{false};
+        bool m_all_notified {false};
 
         logger::cerr<> m_log;
     };
 
-  private:
+private:
     const std::string m_name;
     //    uint16_t m_total_msgs;
 
-    static constexpr uint16_t m_total_msgs{num_senders * msgs_per_sender};
-    static constexpr uint16_t m_max_msgs_timeout{m_total_msgs / num_handlers *
-                                                 30 / 100};
+    static constexpr uint16_t m_total_msgs {num_senders * msgs_per_sender};
+    static constexpr uint16_t m_max_msgs_timeout {m_total_msgs / num_handlers *
+                                                  30 / 100};
 };
