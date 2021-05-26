@@ -295,7 +295,7 @@ private:
                 async::add_handler<msg>(
                     _handling_id,
                     [&_handler](type::ptr<bool> p_bool, msg &&p_msg) -> void {
-                        (*_handler(p_bool, std::move(p_msg)));
+                        (*_handler)(p_bool, std::move(p_msg));
                     });
             }
         }
@@ -406,7 +406,7 @@ private:
         INF(m_log, "reporting results");
         {
             INF(m_log, "amount sent = ", m_total_msgs);
-            for (typename handlers::const_interator _ite = m_handlers.begin();
+            for (typename handlers::const_iterator _ite = m_handlers.begin();
                  _ite != m_handlers.end(); ++_ite) {
                 DEB(m_log, *(*_ite));
             }
@@ -451,18 +451,41 @@ template <message_id msg_id>
 typename test_t<msg_id>::senders_definitions
     test_t<msg_id>::m_senders_definitions;
 
-struct messenger_999 {
+struct messenger_100 {
     static std::string desc() { return ""; }
 
     bool operator()() {
-        /*
-handling_test<33> _ht33(....);
-handling_test<55> _ht55(....);
-return _ht33() && _ht55();
 
-*/
+        typedef test_t<100> test;
 
-        return true;
+        test::handlings_definitions _handlings_definitions;
+        test::senders_definitions _senders_definitions;
+
+        {
+            // defining handlers
+            test::handlers_definitions _handlers_definitions;
+            _handlers_definitions.push_back({1, 100ms, 0});
+
+            // defining handling
+            test::handling_definition _handling_definition {
+                300ms, std::move(_handlers_definitions)};
+
+            // adding handling to messenger
+            _handlings_definitions.push_back(std::move(_handling_definition));
+
+            // defining sender
+            test::sender_definition _sender_definition {5, 1s};
+
+            // defining senders
+            _senders_definitions.push_back(std::move(_sender_definition));
+        }
+
+        test::set_definitions(std::move(_handlings_definitions),
+                              std::move(_senders_definitions));
+
+        test _test;
+
+        return _test();
     }
 };
 
@@ -1269,7 +1292,7 @@ struct messenger_008 {
 };
 
 int main(int argc, char **argv) {
-    logger::set_debug_level();
+    logger::set_info_level();
     tester::test _tester(argc, argv);
 
     //    run_test(_tester, messenger_000);
@@ -1281,4 +1304,5 @@ int main(int argc, char **argv) {
     run_test(_tester, messenger_006);
     //    run_test(_tester, messenger_007);
     run_test(_tester, messenger_008);
+    run_test(_tester, messenger_100);
 }
