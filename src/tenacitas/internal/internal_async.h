@@ -267,6 +267,7 @@ struct executer_t<void> {
 
         std::thread _th(
             [this, &p_function, &_stop, &_cond, &p_param]() -> void {
+                DEB(m_log, "about to call function for ", p_param);
                 p_function(_stop, std::move(p_param));
                 DEB(m_log, "about to notify for ", p_param);
                 _cond.notify_one();
