@@ -78,7 +78,8 @@ namespace tester {
 ///}
 ///
 /// \endcode
-template <bool use = true> struct test {
+template <bool use = true>
+struct test {
 
     /// \brief Constructor
     /// If '--desc' is passed, \p operator() will print a description of the
@@ -94,7 +95,9 @@ template <bool use = true> struct test {
     /// \details
     ///
     /// \details the user prints should use \p cerr
-    test(int argc, char **argv) noexcept : m_argc(argc), m_argv(argv) {
+    test(int argc, char **argv) noexcept
+        : m_argc(argc)
+        , m_argv(argv) {
         m_pgm_name = m_argv[0];
 
         try {
@@ -163,6 +166,7 @@ template <bool use = true> struct test {
         using namespace std;
         try {
             if (m_print_desc) {
+                cout << string(p_test_name.size(), '-') << '\n';
                 cout << p_test_name << ": " << t_test_class::desc() << "\n"
                      << endl;
                 return;
@@ -185,7 +189,7 @@ template <bool use = true> struct test {
         }
     }
 
-  private:
+private:
     /// \brief Executes the test
     /// \tparam t_test_class must implement:
     /// \code
@@ -193,7 +197,8 @@ template <bool use = true> struct test {
     ///
     /// static std::string desc()
     /// \endcode
-    template <typename t_test_class> void exec(const std::string p_test_name) {
+    template <typename t_test_class>
+    void exec(const std::string p_test_name) {
         using namespace std;
         bool result = false;
         try {
@@ -246,7 +251,7 @@ template <bool use = true> struct test {
             << endl;
     }
 
-  private:
+private:
     /// \brief Name of the test program
     std::string m_pgm_name;
 
