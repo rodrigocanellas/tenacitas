@@ -22,14 +22,14 @@
 #include <tenacitas/number.h>
 #include <tenacitas/tester.h>
 #include <tenacitas/type.h>
-#include <tst/tenacitas/async/msg.h>
+#include <tst/tenacitas/async/event.h>
 
 using namespace tenacitas;
 using namespace std::chrono_literals;
 
-template <message_id msg_id>
+template <event_id evt_id>
 struct test_t {
-    typedef msg_t<msg_id> msg;
+    typedef event_t<evt_id> event;
 
     typedef async::sleeping_loop sleeping_loop;
     typedef std::vector<uint16_t> values;
@@ -63,7 +63,7 @@ struct test_t {
     typedef std::vector<handling_definition> handlings_definitions;
 
     struct sender_definition {
-        uint16_t num_msgs;
+        uint16_t num_events;
         std::chrono::milliseconds interval;
     };
 
@@ -77,19 +77,19 @@ struct test_t {
 
     bool operator()() {
 
-        //        m_log.set_debug_level();
+        m_log.set_debug_level();
 
         for (const sender_definition &_sender_def : m_senders_definitions) {
-            m_total_msgs += _sender_def.num_msgs;
+            m_total_events += _sender_def.num_events;
         }
 
-        DEB(m_log, "total messages to be sent: ", m_total_msgs);
+        DEB(m_log, "total events to be sent: ", m_total_events);
 
-        create_handlers_for_work_messages();
+        create_handlers_for_work_events();
 
-        creating_handlers_for_handled_messages();
+        creating_handlers_for_handled_events();
 
-        create_handlers_for_sent_messages();
+        create_handlers_for_sent_events();
 
         uint64_t _start = calendar::now<>::microsecs();
 
@@ -103,14 +103,14 @@ struct test_t {
 
         report_results(_start, _finish);
 
-        return (m_total_msgs == m_handled);
+        return (m_total_events == m_handled);
     }
 
     static std::string description() {
         std::stringstream _stream;
 
         _stream << '\n'
-                << "msg " << static_cast<uint16_t>(msg_id) << "\n\t"
+                << "event " << static_cast<uint16_t>(evt_id) << "\n\t"
                 << m_handlings_definitions.size() << " handling(s)" << '\n';
 
         uint16_t _handling_idx {0};
@@ -129,7 +129,7 @@ struct test_t {
                 _stream << "\t\t\thandler " << _handler_idx;
                 if (_h->timeout_at_each) {
                     _stream << " timeout at each " << _h->timeout_at_each
-                            << " messages ";
+                            << " events ";
                 } else {
                     _stream << " with no timeout";
                 }
@@ -144,7 +144,7 @@ struct test_t {
                  m_senders_definitions.begin();
              _ss != m_senders_definitions.end(); ++_ss) {
             _stream << "\t  sender " << _sender_idx
-                    << ": # msgs: " << _ss->num_msgs
+                    << ": # events: " << _ss->num_events
                     << ", interval: " << _ss->interval.count() << "ms\n";
             ++_sender_idx;
         }
@@ -182,8 +182,8 @@ private:
             //            m_log.set_debug_level();
         }
 
-        void operator()(std::shared_ptr<bool> p_bool, msg &&p_msg) {
-            //            m_log.set_debug_level();
+        void operator()(std::shared_ptr<bool> p_bool, event &&p_msg) {
+            m_log.set_debug_level();
             DEB(m_log, m_id, " incoming ", p_msg, '|', m_num);
             if (m_cause_timeout_at_each && m_num_aux &&
                 ((m_num_aux % m_cause_timeout_at_each) == 0) &&
@@ -201,7 +201,7 @@ private:
             }
             if (*p_bool) {
                 DEB(m_log, m_id, " adding ", p_msg, '|', m_num);
-                async::send<msg>(p_msg);
+                async::send<event>(p_msg);
                 return;
             }
             DEB(m_log, m_id, " continuing to handle ", p_msg);
@@ -233,19 +233,18 @@ private:
         const time m_to_timeout;
         uint16_t m_num {0};
         uint16_t m_num_aux {0};
-        msg m_msg;
+        event m_msg;
         uint16_t m_timeout_counter {0};
         logger::cerr<> m_log;
     };
 
     struct sender {
-        sender(uint16_t p_idx, uint16_t p_num_msg_per_sender)
+        sender(uint16_t p_idx, value p_start, uint16_t p_num_msg_per_sender)
             : m_idx('s' + std::to_string(p_idx))
             , m_num_msg_per_sender(p_num_msg_per_sender)
-            , m_msg(p_idx * m_num_msg_per_sender)
-            , m_start(p_idx * m_num_msg_per_sender)
-            , m_finish((p_idx * m_num_msg_per_sender + m_num_msg_per_sender) -
-                       1)
+            , m_event(p_start)
+            , m_start(p_start)
+            , m_finish(p_start + m_num_msg_per_sender - 1)
             , m_log("sender_" + m_idx) {
             //            m_log.set_debug_level();
             INF(m_log, m_idx, ": start value = ", m_start,
@@ -253,32 +252,32 @@ private:
         }
 
         void operator()(std::shared_ptr<bool>) {
-            //            m_log.set_debug_level();
+            m_log.set_debug_level();
 
             if (m_all_notified) {
                 DEB(m_log, m_idx, " already notified");
                 return;
             }
 
-            if ((m_msg.get_value() >= (m_finish + 1))) {
+            if ((m_event.get_value() >= (m_finish + 1))) {
                 m_all_notified = true;
 
                 DEB(m_log, m_idx, " sent ", m_num_msg_per_sender,
-                    " messages: ", m_start, " -> ", m_finish);
+                    " events: ", m_start, " -> ", m_finish);
                 return;
             }
 
-            DEB(m_log, m_idx, " sending ", m_msg);
-            async::send<msg>(m_msg);
+            DEB(m_log, m_idx, " sending ", m_event);
+            async::send<event>(m_event);
             async::send<sent>(sent {});
-            ++m_msg;
+            ++m_event;
         }
 
     private:
         std::string m_idx;
         const uint16_t m_num_msg_per_sender;
 
-        msg m_msg;
+        event m_event;
         value m_start;
         value m_finish;
 
@@ -291,12 +290,12 @@ private:
     typedef std::vector<type::ptr<handler>> handlers;
 
 private:
-    void create_handlers_for_work_messages() {
-        INF(m_log, "creating handlers for work messages");
+    void create_handlers_for_work_events() {
+        INF(m_log, "creating handlers for work events");
         for (const handling_definition &_handling_def :
              m_handlings_definitions) {
             number::id _handling_id =
-                async::add_handling<msg>(_handling_def.timeout);
+                async::add_handling<event>(_handling_def.timeout);
 
             uint16_t _handler_id {0};
             for (const handler_definition &_handler_def :
@@ -308,17 +307,18 @@ private:
 
                 m_handlers.push_back(_handler);
 
-                async::add_handler<msg>(
-                    _handling_id,
-                    [&, _handler](type::ptr<bool> p_bool, msg &&p_msg) -> void {
-                        (*_handler)(p_bool, std::move(p_msg));
-                    });
+                async::add_handler<event>(_handling_id,
+                                          [&, _handler](type::ptr<bool> p_bool,
+                                                        event &&p_msg) -> void {
+                                              (*_handler)(p_bool,
+                                                          std::move(p_msg));
+                                          });
             }
         }
     }
 
-    void creating_handlers_for_handled_messages() {
-        INF(m_log, "creating handlers for handled messages");
+    void creating_handlers_for_handled_events() {
+        INF(m_log, "creating handlers for handled events");
         bool _all_handled_notified {false};
         async::add_handler<handled>(
             [&](type::ptr<bool>, handled &&) -> void {
@@ -331,19 +331,19 @@ private:
                     ++m_handled;
                 }
 
-                if (m_handled >= m_total_msgs) {
-                    DEB(m_log, "all messages handled, notifying");
+                if (m_handled >= m_total_events) {
+                    DEB(m_log, "all events handled, notifying");
                     _all_handled_notified = true;
                     m_cond_handled.notify_one();
                     return;
                 }
-                DEB(m_log, m_handled, " messages handled");
+                DEB(m_log, m_handled, " events handled");
             },
             2s);
     }
 
-    void create_handlers_for_sent_messages() {
-        INF(m_log, "creating handlers for sent messages");
+    void create_handlers_for_sent_events() {
+        INF(m_log, "creating handlers for sent events");
 
         bool _all_sent_notified {false};
         async::add_handler<sent>(
@@ -357,13 +357,13 @@ private:
                     ++m_sent;
                 }
 
-                if (m_sent >= m_total_msgs) {
-                    DEB(m_log, "all ", m_sent, " messages sent; notifying");
+                if (m_sent >= m_total_events) {
+                    DEB(m_log, "all ", m_sent, " events sent; notifying");
                     _all_sent_notified = true;
                     m_cond_sent.notify_one();
                     return;
                 }
-                DEB(m_log, m_sent, " messages sent");
+                DEB(m_log, m_sent, " events sent");
             },
             1s);
     }
@@ -372,21 +372,28 @@ private:
         INF(m_log, "creating and starting the senders");
 
         uint16_t _i {0};
+        value _start {0};
         for (const sender_definition &_sender_def : m_senders_definitions) {
             DEB(m_log, "starting sender p", _i);
-            m_loops.push_back({m_id, sender {_i++, _sender_def.num_msgs}, 600ms,
-                               _sender_def.interval});
+            m_loops.push_back({m_id,
+                               sender {_i++, _start, _sender_def.num_events},
+                               600ms, _sender_def.interval});
+            _start = _start + _sender_def.num_events;
+        }
 
-            m_loops.back().start();
+        for (loops::iterator _loop = m_loops.begin(); _loop != m_loops.end();
+             ++_loop) {
+            _loop->start();
         }
     }
 
     void wait_for_all_senders() {
-        INF(m_log, "checking if all the messages were sent");
+        m_log.set_debug_level();
+        INF(m_log, "checking if all the events were sent");
 
         std::unique_lock<std::mutex> _lock(m_mutex_sent);
         m_cond_sent.wait(_lock, [&]() -> bool {
-            if (m_sent >= m_total_msgs) {
+            if (m_sent >= m_total_events) {
                 DEB(m_log, "all senders have notified");
                 return true;
             }
@@ -403,13 +410,13 @@ private:
 
     void wait_for_all_the_handlers() {
 
-        INF(m_log, "waiting for all the handlers, until all the messages are "
+        INF(m_log, "waiting for all the handlers, until all the events are "
                    "handled");
         {
             std::unique_lock<std::mutex> _lock(m_mutex_handled);
             m_cond_handled.wait(_lock, [&]() -> bool {
-                if (m_handled >= m_total_msgs) {
-                    DEB(m_log, "all ", m_total_msgs, " msgs handled");
+                if (m_handled >= m_total_events) {
+                    DEB(m_log, "all ", m_total_events, " msgs handled");
                     return true;
                 }
                 DEB(m_log, m_handled, " handled msgs so far");
@@ -420,28 +427,26 @@ private:
 
     void report_results(uint64_t p_start, uint64_t p_finish) {
         std::stringstream _stream;
-        _stream << "\nRESULTS for msg " << static_cast<uint16_t>(msg_id)
-                << ": \n"
-                << "\tamount to be sent = " << m_total_msgs << '\n'
-                << "\tamount sent = " << m_sent << '\n'
-                << "\tamount handled =  " << m_handled << '\n'
-                << "\tdistribution: \n";
+        _stream << "RESULTS for msg " << static_cast<uint16_t>(evt_id) << ": "
+                << "amount to be sent = " << m_total_events
+                << ", amount sent = " << m_sent
+                << ", amount handled =  " << m_handled << "; distribution: ";
 
         for (typename handlers::const_iterator _ite = m_handlers.begin();
              _ite != m_handlers.end(); ++_ite) {
-            _stream << "\t\t" << *(*_ite) << '\n';
+            _stream << *(*_ite) << ",";
         }
         double _micro = p_finish - p_start;
         double _milli = _micro / 1000;
         double _sec = _milli / 1000;
         double _min = _sec / 60;
-        _stream << "\tTIMES: " << _micro << "us, " << _milli << "ms, " << _sec
+        _stream << "; TIMES: " << _micro << "us, " << _milli << "ms, " << _sec
                 << "s, " << _min << "m";
         INF(m_log, _stream.str());
     }
 
 private:
-    uint16_t m_total_msgs {0};
+    uint16_t m_total_events {0};
 
     logger::cerr<> m_log {m_name.c_str()};
     number::id m_id;
@@ -466,54 +471,53 @@ private:
     static senders_definitions m_senders_definitions;
 };
 
-template <message_id msg_id>
-std::string test_t<msg_id>::m_name {"test_" + number::format(msg_id)};
+template <event_id evt_id>
+std::string test_t<evt_id>::m_name {"test_" + number::format(evt_id)};
 
-template <message_id msg_id>
-typename test_t<msg_id>::handlings_definitions
-    test_t<msg_id>::m_handlings_definitions;
+template <event_id evt_id>
+typename test_t<evt_id>::handlings_definitions
+    test_t<evt_id>::m_handlings_definitions;
 
-template <message_id msg_id>
-typename test_t<msg_id>::senders_definitions
-    test_t<msg_id>::m_senders_definitions;
+template <event_id evt_id>
+typename test_t<evt_id>::senders_definitions
+    test_t<evt_id>::m_senders_definitions;
 
+// 1 event, 1 handling, 1 handler, no timeout, 1 sender
 struct test_000 {
-    typedef test_t<100> test;
+    typedef test_t<0> test;
     static std::string desc() {
         set();
         return test::description();
     }
 
     bool operator()() {
-
         test _test;
-
         return _test();
     }
 
 private:
     static void set() {
+        // defining handlings
         test::handlings_definitions _handlings_definitions;
-        test::senders_definitions _senders_definitions;
 
-        // defining handling
         test::handling_definition _handling_definition {300ms, 100ms};
         _handling_definition.add_handler({0});
 
-        // adding handling to messenger
+        // adding handling to dispatcher
         _handlings_definitions.push_back(std::move(_handling_definition));
 
         // defining senders
-        _senders_definitions.push_back({5, 100ms});
+        test::senders_definitions _senders_definitions;
+        _senders_definitions.push_back({20, 100ms});
 
         test::set_definitions(std::move(_handlings_definitions),
                               std::move(_senders_definitions));
     }
 };
 
+// 1 event, 1 handling, 1 handler, no timeout, 2 senders
 struct test_001 {
-    typedef test_t<101> test;
-
+    typedef test_t<0> test;
     static std::string desc() {
         set();
         return test::description();
@@ -521,87 +525,27 @@ struct test_001 {
 
     bool operator()() {
         test _test;
-
         return _test();
     }
 
 private:
     static void set() {
-
+        // defining handlings
         test::handlings_definitions _handlings_definitions;
-        test::senders_definitions _senders_definitions;
 
-        // defining handling
         test::handling_definition _handling_definition {300ms, 100ms};
         _handling_definition.add_handler({0});
-        _handling_definition.add_handler({0});
 
-        // adding handling to messenger
+        // adding handling to dispatcher
         _handlings_definitions.push_back(std::move(_handling_definition));
 
         // defining senders
-        _senders_definitions.push_back({5, 100ms});
+        test::senders_definitions _senders_definitions;
+        _senders_definitions.push_back({20, 100ms});
+        _senders_definitions.push_back({15, 300ms});
 
         test::set_definitions(std::move(_handlings_definitions),
                               std::move(_senders_definitions));
-    }
-};
-
-struct test_002 {
-    typedef test_t<102> test_2;
-    typedef test_t<103> test_3;
-
-    static std::string desc() {
-        set();
-        return test_2::description() + "\n\n" + test_3::description();
-    }
-
-    bool operator()() {
-        test_2 _test_2;
-        test_3 _test_3;
-
-        return _test_2() && _test_3();
-    }
-
-private:
-    static void set() {
-
-        {
-            test_2::handlings_definitions _handlings_definitions;
-            test_2::senders_definitions _senders_definitions;
-
-            // defining handling
-            test_2::handling_definition _handling_definition {300ms, 100ms};
-            _handling_definition.add_handler({0});
-            _handling_definition.add_handler({0});
-
-            // adding handling to messenger
-            _handlings_definitions.push_back(std::move(_handling_definition));
-
-            // defining senders
-            _senders_definitions.push_back({5, 100ms});
-
-            test_2::set_definitions(std::move(_handlings_definitions),
-                                    std::move(_senders_definitions));
-        }
-
-        {
-            test_3::handlings_definitions _handlings_definitions;
-            test_3::senders_definitions _senders_definitions;
-
-            // defining handling
-            test_3::handling_definition _handling_definition {300ms, 250ms};
-            _handling_definition.add_handler({0});
-
-            // adding handling to messenger
-            _handlings_definitions.push_back(std::move(_handling_definition));
-
-            // defining senders
-            _senders_definitions.push_back({5, 100ms});
-
-            test_3::set_definitions(std::move(_handlings_definitions),
-                                    std::move(_senders_definitions));
-        }
     }
 };
 
@@ -611,5 +555,4 @@ int main(int argc, char **argv) {
 
     run_test(_tester, test_000);
     run_test(_tester, test_001);
-    run_test(_tester, test_002);
 }

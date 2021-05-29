@@ -121,7 +121,7 @@ SUBDIRS = \
   handlers/handlers_118.pro  \
   handlers/handlers_119.pro  \
   handlers/handlers_120.pro  \
-  messenger
+  dispatcher
 
 
 
