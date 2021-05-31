@@ -15,6 +15,8 @@
 
 #include <tenacitas/calendar.h>
 
+using namespace std::chrono_literals;
+
 /// \brief master namespace
 namespace tenacitas {
 
@@ -27,7 +29,8 @@ namespace number {
 /// <tt>max_str_length<uint32_t>()</tt> is 10
 ///
 /// \tparam t_num_type is the type of number
-template <typename t_num_type> inline uint16_t max_str_length() {
+template <typename t_num_type>
+inline uint16_t max_str_length() {
     return (
         static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
         1);
@@ -49,8 +52,8 @@ enum class align : char { left = 'l', right = 'd' };
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
 template <typename t_num_type>
-inline std::string format(t_num_type p_num, char p_fill = '0',
-                          align p_align = align::right) {
+inline std::string
+format(t_num_type p_num, char p_fill = '0', align p_align = align::right) {
     std::stringstream _stream;
     _stream << (p_align == align::right ? std::right : std::left)
             << std::setfill(p_fill) << std::setw(max_str_length<t_num_type>())
@@ -67,8 +70,8 @@ inline std::string format(t_num_type p_num, char p_fill = '0',
 ///
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
-inline std::string format(uint8_t p_num, char p_fill = '0',
-                          align p_align = align::right) {
+inline std::string
+format(uint8_t p_num, char p_fill = '0', align p_align = align::right) {
     std::stringstream _stream;
     _stream << (p_align == align::right ? std::right : std::left)
             << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
@@ -85,8 +88,8 @@ inline std::string format(uint8_t p_num, char p_fill = '0',
 ///
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
-inline std::string format(int8_t p_num, char p_fill = '0',
-                          align p_align = align::right) {
+inline std::string
+format(int8_t p_num, char p_fill = '0', align p_align = align::right) {
     std::stringstream _stream;
     _stream << (p_align == align::right ? std::right : std::left)
             << std::setfill(p_fill) << std::setw(max_str_length<uint8_t>())
@@ -104,7 +107,9 @@ inline std::string format(int8_t p_num, char p_fill = '0',
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
 template <typename t_num_type>
-inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
+inline std::string format(t_num_type p_num,
+                          uint8_t p_size,
+                          char p_fill = '0',
                           align p_align = align::right) {
     std::stringstream _stream;
     _stream << (p_align == align::right ? std::right : std::left)
@@ -116,7 +121,10 @@ inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
 struct id {
 
     /// \brief
-    id() : m_value(calendar::now<>::microsecs()) {}
+    id() {
+        std::this_thread::sleep_for(50ms);
+        m_value = calendar::now<>::microsecs();
+    }
 
     id(const id &) = default;
     id(id &&) = default;
@@ -164,13 +172,12 @@ struct id {
 
     /// \brief
     inline std::string str() const {
-        std::string _str{std::to_string(m_value)};
+        std::string _str {std::to_string(m_value)};
         return _str.substr(_str.size() - 4);
     }
 
-  private:
-  private:
-    uint64_t m_value;
+private:
+    uint64_t m_value {0};
 };
 
 } // namespace number

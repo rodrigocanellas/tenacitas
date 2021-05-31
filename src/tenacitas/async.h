@@ -37,80 +37,8 @@ namespace async {
 
 using namespace tenacitas::type;
 
+/// \brief
 typedef uint8_t priority;
-
-///// \brief Priority of handling an event
-// struct priority {
-//    priority() {}
-
-//    priority(priority p_priority)
-//        : m_value(p_priority.m_value) {}
-
-//    priority(priority &&p_priority)
-//        : m_value(p_priority.m_value) {}
-
-//    ~priority() = default;
-
-//    friend std::ostream &operator<<(std::ostream &p_out, priority p_priority)
-//    {
-//        p_out << static_cast<uint16_t>(p_priority.m_value);
-//        return p_out;
-//    }
-
-//    bool operator<(priority p_priority) const {
-//        return m_value < p_priority.m_value;
-//    }
-
-//    bool operator>(priority p_priority) const {
-//        return m_value > p_priority.m_value;
-//    }
-
-//    bool operator==(priority p_priority) const {
-//        return m_value == p_priority.m_value;
-//    }
-
-//    bool operator!=(priority p_priority) const {
-//        return m_value != p_priority.m_value;
-//    }
-
-//    priority &operator=(priority p_priority) {
-//        m_value = p_priority.m_value;
-//        return *this;
-//    }
-//    priority &operator=(priority &&p_priority) {
-//        m_value = p_priority.m_value;
-//        return *this;
-//    }
-
-//    static const priority lowest;
-
-//    static const priority very_low;
-
-//    static const priority low;
-
-//    static const priority middle;
-
-//    static const priority high;
-
-//    static const priority very_high;
-
-//    static const priority highest;
-
-// private:
-//    explicit priority(uint8_t p_value)
-//        : m_value(p_value) {}
-
-// private:
-//    uint8_t m_value {1};
-//};
-
-// const priority priority::lowest {1};
-// const priority priority::very_low {45};
-// const priority priority::low {90};
-// const priority priority::middle {135};
-// const priority priority::high {180};
-// const priority priority::very_high {225};
-// const priority priority::highest {255};
 
 namespace internal {
 /// \brief Type of time used to define timeout
@@ -268,22 +196,22 @@ struct executer_t<void> {
             [this, &p_function, &_stop, &_cond, &p_param]() -> void {
                 DEB(m_log, "about to call function for ", p_param);
                 p_function(_stop, std::move(p_param));
-                DEB(m_log, "about to notify for ", p_param);
+                DEB(m_log, "about to notify");
                 _cond.notify_one();
             });
 
         std::unique_lock<std::mutex> _lock {_mutex};
         if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            DEB(m_log, "no timeout for ", p_param);
+            DEB(m_log, "no timeout");
             _th.join();
-            DEB(m_log, "returning true for ", p_param);
+            DEB(m_log, "returning true");
             return true;
         }
 
-        DEB(m_log, "timeout for ", p_param, " setting p_stop to true");
+        DEB(m_log, "timeout, setting p_stop to true");
         *_stop = true;
         _th.join();
-        DEB(m_log, "returning false for ", p_param);
+        DEB(m_log, "returning false");
         return false;
     }
 
@@ -392,7 +320,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     /// \brief Constructor
     ///
     /// \param p_size the number of initial slots in the queue
-    circular_unlimited_size_queue_t(size_t p_size = 10)
+    circular_unlimited_size_queue_t(size_t p_size = 1)
         : internal::queue_t<t_data>() {
         m_root = create_node();
         node_ptr _p = m_root;
@@ -685,11 +613,11 @@ public:
     template <typename t_time>
     handling_t(const number::id &p_owner,
                t_time p_timeout,
-               priority p_priority = 120)
+               priority p_priority = 125)
         : m_owner(p_owner)
         , m_timeout(calendar::convert<timeout>(p_timeout))
         , m_priority(p_priority)
-        , m_queue(10) {}
+        , m_queue(1) {}
 
     /// \brief Copy constructor not allowed
     handling_t(const handling_t &) = delete;
@@ -991,10 +919,10 @@ struct dispatcher_t {
     /// \param p_timeout is the value of timeout for all the handler
     /// functions
     template <typename t_time>
-    static inline number::id add_handlers(const t_time &p_timeout,
+    static inline number::id add_handling(const t_time &p_timeout,
                                           priority p_priority = 125) {
         std::lock_guard<std::mutex> _lock(m_mutex);
-        m_list.push_back(std::make_unique<handlers>(event_id_t<t_event>::value,
+        m_list.push_back(std::make_unique<handling>(event_id_t<t_event>::value,
                                                     p_timeout, p_priority));
         number::id _id = m_list.back()->get_id();
         //    DEB(m_log, evt_id_t<t_event>::value)
@@ -1019,10 +947,10 @@ struct dispatcher_t {
     ///
     /// \return p_id identifier of this group of handlers
     template <typename t_time>
-    static number::id add_handlers(handler &&p_handler,
+    static number::id add_handling(handler &&p_handler,
                                    t_time p_timeout,
                                    priority p_priority = 125) {
-        number::id _id = add_handlers(p_timeout, p_priority);
+        number::id _id = add_handling(p_timeout, p_priority);
         add_handler(_id, std::move(p_handler));
         return _id;
     }
@@ -1063,10 +991,10 @@ struct dispatcher_t {
     ///
     /// \param p_event is the event to be handled
     static void send(const t_event &p_event) {
-        for (handlers_ptr &_handlers : m_list) {
+        for (handling_ptr &_handling_ptr : m_list) {
             DEB(m_log, get_id(), " - sending ", p_event, " to pool ",
-                _handlers->get_id());
-            _handlers->add_data(p_event);
+                _handling_ptr->get_id());
+            _handling_ptr->add_data(p_event);
         }
     }
 
@@ -1075,12 +1003,14 @@ struct dispatcher_t {
     /// \param p_id is the identifier of the group of handlers
     ///
     /// \param p_handler is the handler function to be added
-    static void add_handler(const number::id &p_id, handler &&p_handler) {
-        auto _ite = find(p_id);
+    static void add_handler(const number::id &p_handling_id,
+                            handler &&p_handler) {
+        auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
-        if (_ite != _end) {
-            DEB(m_log, get_id(), " - adding another handler for ", p_id);
-            (*_ite)->add_handler(std::move(p_handler));
+        if (_handling_ite != _end) {
+            DEB(m_log, get_id(), " - adding another handler for ",
+                p_handling_id);
+            (*_handling_ite)->add_handler(std::move(p_handler));
         }
     }
 
@@ -1093,12 +1023,12 @@ struct dispatcher_t {
     /// to be added
     ///
     /// \param p_factory is a function that creates handler function
-    static void add_handler(const number::id &p_id,
+    static void add_handler(const number::id &p_handling_id,
                             uint16_t p_num_workers,
                             std::function<handler()> p_factory) {
-        iterator _ite = find(p_id);
-        if (_ite != m_list.end()) {
-            (*_ite)->add_handler(p_num_workers, p_factory);
+        iterator _handling_ite = find(p_handling_id);
+        if (_handling_ite != m_list.end()) {
+            (*_handling_ite)->add_handler(p_num_workers, p_factory);
         }
     }
 
@@ -1110,10 +1040,10 @@ struct dispatcher_t {
     traverse(std::function<void(const number::id &,
                                 priority,
                                 const std::chrono::milliseconds &)> p_visitor) {
-        for (const handlers_ptr &_handlers : m_list) {
-            p_visitor(
-                _handlers->get_id(), _handlers->get_priority(),
-                _handlers->template get_timeout<std::chrono::milliseconds>());
+        for (const handling_ptr &_handling_ptr : m_list) {
+            p_visitor(_handling_ptr->get_id(), _handling_ptr->get_priority(),
+                      _handling_ptr
+                          ->template get_timeout<std::chrono::milliseconds>());
         }
     }
 
@@ -1149,8 +1079,8 @@ struct dispatcher_t {
     /// handlers to be handled
     static void wait() {
         DEB(m_log, event_id_t<t_event>::value, "  - starting to wait");
-        for (handlers_ptr &_handlers : m_list) {
-            _handlers->empty_queue();
+        for (handling_ptr &_handling_ptr : m_list) {
+            _handling_ptr->empty_queue();
         }
         DEB(m_log, event_id_t<t_event>::value, "  - finished waiting");
     }
@@ -1158,16 +1088,16 @@ struct dispatcher_t {
     static number::id get_id() { return event_id_t<t_event>::value; }
 
 private:
-    /// \brief Alias for the group of handlers for this event
-    typedef internal::handling_t<t_event> handlers;
+    /// \brief Alias for a handling for this event
+    typedef internal::handling_t<t_event> handling;
 
-    typedef std::unique_ptr<handlers> handlers_ptr;
+    typedef std::unique_ptr<handling> handling_ptr;
 
-    /// \brief List of handlers
-    typedef std::list<handlers_ptr> handlers_list;
+    /// \brief List of handlings
+    typedef std::list<handling_ptr> handling_list;
 
     /// \brief Iterator for the list of handlers
-    typedef typename handlers_list::iterator iterator;
+    typedef typename handling_list::iterator iterator;
 
 private:
     /// \brief Finds a group of handlers based on a
@@ -1176,7 +1106,7 @@ private:
     /// \return an iterator to the group of handlers, of
     /// m_list.end() if not
     static iterator find(const number::id &p_id) {
-        auto _cmp = [&p_id](const handlers_ptr &p_handlers) -> bool {
+        auto _cmp = [&p_id](const handling_ptr &p_handlers) -> bool {
             return p_id == p_handlers->get_id();
         };
         return std::find_if(m_list.begin(), m_list.end(), _cmp);
@@ -1185,7 +1115,7 @@ private:
     /// \brief Inserts a group of handlers to the list
     ///
     /// \param p_handlers is the group of handlers to be added
-    static inline void insert(handlers_ptr &&p_handlers) {
+    static inline void insert(handling_ptr &&p_handlers) {
         std::lock_guard<std::mutex> _lock(m_mutex);
         m_list.push_back(std::move(p_handlers));
         //    m_list.back().start();
@@ -1196,14 +1126,14 @@ private:
     static inline void sort() {
         //    std::sort(m_list.begin(), m_list.end());
         m_list.sort(
-            [](const handlers_ptr &p_i1, const handlers_ptr &p_i2) -> bool {
+            [](const handling_ptr &p_i1, const handling_ptr &p_i2) -> bool {
                 return (*p_i1) < (*p_i2);
             });
     }
 
 private:
     /// \brief The list of group of handlers
-    static handlers_list m_list;
+    static handling_list m_list;
 
     /// \brief Logger
     static logger::cerr<> m_log;
@@ -1214,7 +1144,7 @@ private:
 
 /// \brief
 template <typename t_data>
-typename dispatcher_t<t_data>::handlers_list dispatcher_t<t_data>::m_list;
+typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
 
 template <typename t_data>
 logger::cerr<> dispatcher_t<t_data>::m_log {"messenger"};
@@ -1424,7 +1354,7 @@ using handler_t = std::function<void(ptr<bool>, t_event &&)>;
 template <typename t_event, typename t_time>
 static inline number::id add_handling(const t_time &p_timeout,
                                       priority p_priority = 125) {
-    return internal::dispatcher_t<t_event>::add_handlers(p_timeout, p_priority);
+    return internal::dispatcher_t<t_event>::add_handling(p_timeout, p_priority);
 }
 
 /// \brief Adds a queue to receive events to be handled
@@ -1446,7 +1376,7 @@ template <typename t_event, typename t_time>
 static inline number::id add_handling(handler_t<t_event> &&p_handler,
                                       const t_time &p_timeout,
                                       priority p_priority = 125) {
-    return internal::dispatcher_t<t_event>::add_handlers(std::move(p_handler),
+    return internal::dispatcher_t<t_event>::add_handling(std::move(p_handler),
                                                          p_timeout, p_priority);
 }
 
@@ -1510,10 +1440,10 @@ static inline void add_handler(const number::id &p_handlers,
 }
 
 template <typename t_event>
-static inline void add_handler(const number::id &p_handlers,
+static inline void add_handler(const number::id &p_handling,
                                uint16_t p_num_workers,
                                std::function<handler_t<t_event>()> p_factory) {
-    internal::dispatcher_t<t_event>::add_handler(p_handlers, p_num_workers,
+    internal::dispatcher_t<t_event>::add_handler(p_handling, p_num_workers,
                                                  p_factory);
 }
 
