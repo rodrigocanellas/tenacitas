@@ -23,9 +23,10 @@
 #include <thread>
 
 #include <tenacitas/async.h>
+#include <tenacitas/event.h>
 #include <tenacitas/logger.h>
-#include <tenacitas/message.h>
 #include <tenacitas/number.h>
+#include <tenacitas/type.h>
 
 using namespace std::chrono_literals;
 
@@ -36,7 +37,8 @@ namespace tenacitas {
 namespace program {
 
 /// \brief Class to parse program options
-template <bool use = true> struct options {
+template <bool use = true>
+struct options {
     /// \brief name of an option
     typedef std::string name;
 
@@ -135,7 +137,8 @@ template <bool use = true> struct options {
     /// \endcode
     ///
     /// \throws std::runtime_error
-    void parse(int p_argc, char **p_argv,
+    void parse(int p_argc,
+               char **p_argv,
                std::initializer_list<name> &&p_mandatory = {}) {
         int _last = p_argc - 1;
         int _i = 1;
@@ -255,7 +258,7 @@ template <bool use = true> struct options {
         return p_out;
     }
 
-  private:
+private:
     /// \brief Checks if a string is the start of an option
     /// An option must be preceded with '--'
     ///
@@ -266,7 +269,7 @@ template <bool use = true> struct options {
         return ((p_str[0] == '-') && (p_str[1] == '-'));
     }
 
-  private:
+private:
     /// \brief The type enum defines the type of the option
     enum class type : char { single = 's', boolean = 'b', set = 't' };
 
@@ -284,7 +287,7 @@ template <bool use = true> struct options {
     /// \brief map type for the options that have a set of values associated
     typedef std::map<name, values> sets;
 
-  private:
+private:
     /// \brief Parses a set of options
     ///
     /// \brief p_name is the name of the option
@@ -337,7 +340,7 @@ template <bool use = true> struct options {
         return p_index;
     }
 
-  private:
+private:
     /// \brief Booleans options
     booleans m_booleans;
 
@@ -350,10 +353,8 @@ template <bool use = true> struct options {
 
 /// \brief Entry point for an application
 /// This class allows asynchronously execution of a function, which must use
-/// tenacitas::async::messenger_t<tenacitas::message::exit_app> to send a
-/// tenacitas::message::exit_app or
-/// tenacitas::async::messenger_t<tenacitas::message::halt_app> to send a
-/// tenacitas::message::halt_app to end the application
+/// tenacitas::async::dispatch<tenacitas::events::exit_app>() to send a
+/// tenacitas::events::exit_app to end the application
 struct application {
 
     /// \brief Default constructor not allowed
@@ -374,10 +375,10 @@ struct application {
     /// \brief Constructor
     ///
     /// \tparam t_time is the type of type used to define how long will the
-    /// application will sleep after receive a tenacitas::message::exit_app
+    /// application will sleep after receive a tenacitas::events::exit_app
     ///
     /// \param p_wait how long will the
-    /// application will sleep after receive a tenacitas::message::exit_app
+    /// application will sleep after receive a tenacitas::events::exit_app
     ///
     /// \param p_function function to be executed asynchronously
     template <typename t_time>
@@ -386,30 +387,17 @@ struct application {
         using namespace std::chrono;
 
         m_wait = (duration_cast<milliseconds>(p_wait));
-        //    async::id _exit_pool_id{"exit_pool"};
 
-        //    async::add_queue<message::exit_app>(_exit_pool_id,
-        //    async::priority::lowest,
-        //                                        milliseconds(m_wait.count() +
-        //                                        2000));
-        //    async::add_handler<message::exit_app>(
-        //        _exit_pool_id, [this](const message::exit_app &p_exit_app) ->
-        //        void
-        //        {
-        //          on_exit_app(p_exit_app);
-        //        });
-
-        auto _handler = [this](const message::exit_app &p_exit_app) -> void {
-            on_exit_app(p_exit_app);
+        auto _handler = [this](type::ptr<bool> p_bool,
+                               event::exit_app &&p_event) {
+            handle(p_bool, std::move(p_event));
         };
 
-        //    number::id _exit_pool_id = async::add_handlers<message::exit_app>(
-        //        async::priority::highest, _handler,
-        //        milliseconds(m_wait.count() + 2000));
+        async::add_handler<event::exit_app>(_handler, 1s, async::priority {0});
 
         DEB(m_log, "starting application");
 
-        std::thread _thread(p_function);
+        m_thread = std::thread(p_function);
 
         {
             DEB(m_log, "waiting...");
@@ -421,14 +409,16 @@ struct application {
 
         std::this_thread::sleep_for(m_wait);
 
-        _thread.join();
+        m_thread.join();
     }
 
-    ~application() { DEB(m_log, "destructor"); }
+    ~application() {
+        DEB(m_log, "destructor");
+        exit(0);
+    }
 
-  private:
-    /// \brief Handler for the tenacitas::message::exit_app
-    void on_exit_app(const message::exit_app &) {
+private:
+    void handle(type::ptr<bool>, event::exit_app &&) {
         if (m_on_exit_handled) {
             WAR(m_log, "on_exit already handled");
             return;
@@ -436,9 +426,9 @@ struct application {
         DEB(m_log, "on exit");
         m_on_exit_handled = true;
         m_cond.notify_one();
-    }
+    };
 
-  private:
+private:
     /// \brief Controls application ending
     std::condition_variable m_cond;
 
@@ -446,14 +436,16 @@ struct application {
     std::mutex m_mutex;
 
     /// \brief How long will the application will sleep after receive a
-    /// tenacitas::message::exit_app
+    /// tenacitas::events::exit_app
     std::chrono::milliseconds m_wait;
 
-    /// \brief Indicates that a tenacitas::message::exit_app was already handled
-    bool m_on_exit_handled{false};
+    std::thread m_thread;
+
+    /// \brief Indicates that a tenacitas::events::exit_app was already handled
+    bool m_on_exit_handled {false};
 
     /// \brief Logger
-    logger::cerr<> m_log{"application"};
+    logger::cerr<> m_log {"application"};
 };
 
 } // namespace program

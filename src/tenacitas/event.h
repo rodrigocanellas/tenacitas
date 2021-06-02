@@ -1,5 +1,5 @@
-#ifndef TENACITAS_MESSAGE_H
-#define TENACITAS_MESSAGE_H
+#ifndef TENACITAS_EVENTS_H
+#define TENACITAS_EVENTS_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,10 +9,8 @@
 #include <chrono>
 #include <iostream>
 
-#include <tenacitas/number.h>
-
 namespace tenacitas {
-namespace message {
+namespace event {
 
 /// \brief Application can exit in a gracefully way
 struct exit_app {
@@ -24,6 +22,6 @@ struct exit_app {
     }
 };
 
-} // namespace message
+} // namespace event
 } // namespace tenacitas
 #endif

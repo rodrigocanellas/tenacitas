@@ -6,9 +6,8 @@
 #include <iostream>
 
 #include <tenacitas/async.h>
+#include <tenacitas/event.h>
 #include <tenacitas/logger.h>
-#include <tenacitas/macros.h>
-#include <tenacitas/message.h>
 #include <tenacitas/number.h>
 #include <tenacitas/program.h>
 #include <tenacitas/tester.h>
@@ -17,80 +16,92 @@ using namespace tenacitas;
 using namespace std::chrono_literals;
 
 struct exit_000 {
-  static std::string desc() { return "Tests 'application' exit"; }
+    static std::string desc() { return "Tests 'application' exit"; }
 
-  bool operator()() {
-    logger::set_debug_level();
+    bool operator()() {
+        logger::set_debug_level();
 
-    logger::cerr<> _log{"main"};
+        //  _log.set_debug_level();
 
-    //  _log.set_debug_level();
+        auto _function = [this](type::ptr<bool>) -> void {
+            if (m_counter > m_max) {
+                DEB(m_log, "about to publish 'exit_app'");
+                async::dispatch(event::exit_app());
+            } else {
+                DEB(m_log, m_counter++);
+            }
+        };
 
-    const uint16_t _max{10};
-    uint16_t _counter{0};
-    auto _function = [&_counter, &_log]() -> void {
-      if (_counter > _max) {
-        DEB(_log, "about to publish 'exit_app'");
-        async::send(message::exit_app());
-      } else {
-        DEB(_log, _counter++);
-      }
-    };
+        async::sleeping_loop _loop(m_id, _function, 200ms, 1s);
 
-    async::sleeping_loop_t<void> _loop(m_id, 200ms, 1s, _function);
+        async::add_handler<event::exit_app>(
+            [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
+                _loop.stop();
+            },
+            1s, async::priority {255});
 
-    program::application _app(2s, [&_loop]() { _loop.start(); });
+        program::application _app(2s, [&_loop]() { _loop.start(); });
 
-    return true;
-  }
+        return true;
+    }
 
 private:
-  number::id m_id;
+    number::id m_id;
+    logger::cerr<> m_log {"main"};
+    uint16_t m_counter {0};
+    const uint16_t m_max {5};
 };
 
 struct exit_001 {
-  static std::string desc() {
-    return "Tests 'application' exit, with 'function' taking too long to "
-           "finish";
-  }
+    static std::string desc() {
+        return "Tests 'application' exit, with 'function' taking too long to "
+               "finish";
+    }
 
-  bool operator()() {
-    logger::set_debug_level();
+    bool operator()() {
+        logger::set_debug_level();
 
-    logger::cerr<> _log{"main"};
+        auto _function = [this](type::ptr<bool> p_bool) -> void {
+            if (m_counter > m_max) {
 
-    //  _log.set_debug_level();
+                DEB(m_log, "about to publish 'exit_app'");
+                async::dispatch(event::exit_app());
+                DEB(m_log, "sleeping...");
+                std::this_thread::sleep_for(5s);
+                if (p_bool && *p_bool) {
+                    return;
+                }
+                DEB(m_log, "waking up...");
+            } else {
+                DEB(m_log, m_counter++);
+            }
+        };
 
-    const uint16_t _max{10};
-    uint16_t _counter{0};
-    auto _function = [&_counter, &_log]() -> void {
-      if (_counter > _max) {
+        async::sleeping_loop _loop(m_id, _function, 200ms, 1s);
 
-        DEB(_log, "about to publish 'exit_app'");
-        async::send(message::exit_app());
-        DEB(_log, "sleeping...");
-        std::this_thread::sleep_for(5s);
-        DEB(_log, "waking up...");
-      } else {
-        DEB(_log, _counter++);
-      }
-    };
+        async::add_handler<event::exit_app>(
+            [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
+                _loop.stop();
+            },
+            1s, async::priority {255});
 
-    async::sleeping_loop_t<void> _loop(m_id, 200ms, 1s, _function);
+        program::application _app(2s, [&_loop]() { _loop.start(); });
 
-    program::application _app(2s, [&_loop]() { _loop.start(); });
-
-    return true;
-  }
+        return true;
+    }
 
 private:
-  number::id m_id;
+    number::id m_id;
+    logger::cerr<> m_log {"main"};
+
+    const uint16_t m_max {5};
+    uint16_t m_counter {0};
 };
 
 int main(int argc, char **argv) {
-  logger::set_debug_level();
+    logger::set_debug_level();
 
-  tester::test _test(argc, argv);
-  run_test(_test, exit_000);
-  run_test(_test, exit_001);
+    tester::test _test(argc, argv);
+    run_test(_test, exit_000);
+    run_test(_test, exit_001);
 }

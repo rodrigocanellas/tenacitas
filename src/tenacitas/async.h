@@ -897,7 +897,7 @@ number::id event_id_t<t_event>::value;
 /// definition of priority, and what should be done if a handler
 /// times out
 ///
-/// \tparam is the type of event this messenger distributes
+/// \tparam is the type of event this dispatcher distributes
 template <typename t_event>
 struct dispatcher_t {
     /// \brief Type of handler
@@ -905,7 +905,7 @@ struct dispatcher_t {
 
     ~dispatcher_t() = default;
 
-    /// \brief Adds a group of handlers to the messenger, which will
+    /// \brief Adds a group of handlers to the dispatcher, which will
     /// handle a event in a specific way
     ///
     /// \tparam t_time is the type of time used to define the
@@ -930,7 +930,7 @@ struct dispatcher_t {
         return _id;
     }
 
-    /// \brief Adds a group of handlers to the messenger, which will
+    /// \brief Adds a group of handlers to the dispatcher, which will
     /// handle a event in a specific way, and adds a handler
     /// function to the group of handlers
     ///
@@ -1147,7 +1147,7 @@ template <typename t_data>
 typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
 
 template <typename t_data>
-logger::cerr<> dispatcher_t<t_data>::m_log {"messenger"};
+logger::cerr<> dispatcher_t<t_data>::m_log {"dispatcher"};
 
 template <typename t_data>
 std::mutex dispatcher_t<t_data>::m_mutex;

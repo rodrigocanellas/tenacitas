@@ -2,6 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
   logger \
-  async
-
-#  program \
+  async \
+  program

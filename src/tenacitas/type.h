@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <type_traits>
+#include <utility>
 
 /// \brief master namespace
 namespace tenacitas {
@@ -15,14 +16,24 @@ namespace tenacitas {
 /// \brief type traits
 namespace type {
 
-template <typename t> using ptr = std::shared_ptr<t>;
+template <typename t>
+using ptr = std::shared_ptr<t>;
+
+template <typename t_type, typename... t_params>
+ptr<t_type> create(t_params &&... p_params) {
+    return std::make_shared<t_type>(std::forward<t_params>(p_params)...);
+}
 
 /// \brief Type trait that identifies if a type is not a tuple
-template <typename> struct is_tuple { const static bool value{false}; };
+template <typename>
+struct is_tuple {
+    const static bool value {false};
+};
 
 /// \brief Type trait that identifies if a type is a tuple
-template <typename... T> struct is_tuple<std::tuple<T...>> {
-    const static bool value{true};
+template <typename... T>
+struct is_tuple<std::tuple<T...>> {
+    const static bool value {true};
 };
 
 } // namespace type
