@@ -992,7 +992,7 @@ struct dispatcher_t {
     /// \param p_event is the event to be handled
     static void send(const t_event &p_event) {
         for (handling_ptr &_handling_ptr : m_list) {
-            DEB(m_log, get_id(), " - sending ", p_event, " to pool ",
+            INF(m_log, get_id(), " - sending ", p_event, " to pool ",
                 _handling_ptr->get_id());
             _handling_ptr->add_data(p_event);
         }
@@ -1417,7 +1417,7 @@ get_priority(const number::id &p_handlers) {
 ///
 /// \param p_event is the event to be copied to all the queues
 template <typename t_event>
-static inline void send(const t_event &p_event) {
+static inline void dispatch(const t_event &p_event) {
     internal::dispatcher_t<t_event>::send(p_event);
 }
 
