@@ -25,10 +25,10 @@ struct exit_000 {
 
         auto _function = [this](type::ptr<bool>) -> void {
             if (m_counter > m_max) {
-                DEB(m_log, "about to publish 'exit_app'");
+                DEB("about to publish 'exit_app'");
                 async::dispatch(event::exit_app());
             } else {
-                DEB(m_log, m_counter++);
+                DEB(m_counter++);
             }
         };
 
@@ -47,7 +47,7 @@ struct exit_000 {
 
 private:
     number::id m_id;
-    logger::cerr<> m_log {"main"};
+
     uint16_t m_counter {0};
     const uint16_t m_max {5};
 };
@@ -64,16 +64,16 @@ struct exit_001 {
         auto _function = [this](type::ptr<bool> p_bool) -> void {
             if (m_counter > m_max) {
 
-                DEB(m_log, "about to publish 'exit_app'");
+                DEB("about to publish 'exit_app'");
                 async::dispatch(event::exit_app());
-                DEB(m_log, "sleeping...");
+                DEB("sleeping...");
                 std::this_thread::sleep_for(5s);
                 if (p_bool && *p_bool) {
                     return;
                 }
-                DEB(m_log, "waking up...");
+                DEB("waking up...");
             } else {
-                DEB(m_log, m_counter++);
+                DEB(m_counter++);
             }
         };
 
@@ -92,7 +92,6 @@ struct exit_001 {
 
 private:
     number::id m_id;
-    logger::cerr<> m_log {"main"};
 
     const uint16_t m_max {5};
     uint16_t m_counter {0};

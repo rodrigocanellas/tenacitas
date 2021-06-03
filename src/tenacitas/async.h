@@ -190,28 +190,28 @@ struct executer_t<void> {
 
         ptr<bool> _stop {std::make_shared<bool>(false)};
 
-        DEB(m_log, "param = ", p_param);
+        DEB("param = ", p_param);
 
         std::thread _th(
             [this, &p_function, &_stop, &_cond, &p_param]() -> void {
-                DEB(m_log, "about to call function for ", p_param);
+                DEB("about to call function for ", p_param);
                 p_function(_stop, std::move(p_param));
-                DEB(m_log, "about to notify");
+                DEB("about to notify");
                 _cond.notify_one();
             });
 
         std::unique_lock<std::mutex> _lock {_mutex};
         if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            DEB(m_log, "no timeout");
+            DEB("no timeout");
             _th.join();
-            DEB(m_log, "returning true");
+            DEB("returning true");
             return true;
         }
 
-        DEB(m_log, "timeout, setting p_stop to true");
+        DEB("timeout, setting p_stop to true");
         *_stop = true;
         _th.join();
-        DEB(m_log, "returning false");
+        DEB("returning false");
         return false;
     }
 
@@ -222,10 +222,10 @@ struct executer_t<void> {
 
         ptr<bool> _stop {std::make_shared<bool>(false)};
 
-        std::thread _th([this, &p_function, _stop, &_cond]() -> void {
-            DEB(m_log, "about to execute");
+        std::thread _th([&p_function, _stop, &_cond]() -> void {
+            DEB("about to execute");
             p_function(_stop);
-            DEB(m_log, "execution returned");
+            DEB("execution returned");
             _cond.notify_one();
         });
 
@@ -239,9 +239,6 @@ struct executer_t<void> {
         _th.join();
         return false;
     }
-
-private:
-    logger::cerr<> m_log {"executer"};
 };
 
 template <typename t_time, typename t_function, typename... t_params>
@@ -379,7 +376,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
     ///
     /// \param p_data is a t_data to be added
     void add(const t_data &p_data) override {
-        DEB(m_log, "adding ", p_data);
+        DEB("adding ", p_data);
         {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
@@ -391,14 +388,14 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
             }
             ++m_amount;
         }
-        DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
+        DEB("capacity = ", capacity(), ", occupied = ", occupied());
     }
 
     /// \brief Moves a t_data object to the queue
     ///
     /// \param p_data is a t_data to be added
     void add(t_data &&p_data) override {
-        DEB(m_log, "adding ", p_data);
+        DEB("adding ", p_data);
         {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
@@ -410,7 +407,7 @@ struct circular_unlimited_size_queue_t : public internal::queue_t<t_data> {
             }
             ++m_amount;
         }
-        DEB(m_log, "capacity = ", capacity(), ", occupied = ", occupied());
+        DEB("capacity = ", capacity(), ", occupied = ", occupied());
     }
 
     std::pair<bool, t_data> get() override {
@@ -579,8 +576,6 @@ private:
 
     /// \brief Controls insertion
     std::mutex m_mutex;
-
-    logger::cerr<> m_log {"queue"};
 };
 
 /// \brief A group of functions that compete to handle a data added
@@ -630,9 +625,9 @@ public:
     handling_t &operator=(handling_t &&) = delete;
 
     ~handling_t() {
-        DEB(m_log, m_owner, ':', m_id, " - entering");
+        DEB(m_owner, ':', m_id, " - entering");
         stop();
-        DEB(m_log, m_owner, ':', m_id, " - leaving");
+        DEB(m_owner, ':', m_id, " - leaving");
     }
 
     /// \brief Adds data to be passed to a handler
@@ -641,7 +636,7 @@ public:
     ///
     /// \return \p true if it was added, \p false otherwise
     bool add_data(const t_event &p_data) {
-        DEB(m_log, m_owner, ':', m_id, " - adding ", p_data);
+        DEB(m_owner, ':', m_id, " - adding ", p_data);
         m_queue.add(p_data);
         m_cond.notify_all();
         {
@@ -752,7 +747,7 @@ private:
 private:
     void handler_loop(handler &&p_handler) {
         number::id _loop_id;
-        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+        DEB(m_owner, ':', m_id, ':', _loop_id,
             " - entering loop, m_timeout = ", this->m_timeout.count());
 
         while (true) {
@@ -760,22 +755,21 @@ private:
                 std::unique_lock<std::mutex> _lock(m_mutex);
                 m_cond.wait(_lock, [this, _loop_id]() -> bool {
                     if (m_stopped) {
-                        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
-                            " - stopped");
+                        DEB(m_owner, ':', m_id, ':', _loop_id, " - stopped");
                         return true;
                     }
                     if (!m_queue.empty()) {
-                        DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
+                        DEB(m_owner, ':', m_id, ':', _loop_id,
                             " - there is data");
                         return true;
                     }
-                    DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - waiting");
+                    DEB(m_owner, ':', m_id, ':', _loop_id, " - waiting");
                     return false;
                 });
             }
 
             if (m_stopped) {
-                DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - stop");
+                DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
                 break;
             }
 
@@ -785,35 +779,33 @@ private:
             std::pair<bool, t_event> _maybe_data {m_queue.get()};
 
             if (this->m_stopped) {
-                DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - stop");
+                DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
                 break;
             }
 
             if (_maybe_data.first) {
                 t_event _data {std::move(_maybe_data.second)};
 
-                DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
-                    " - data = ", _data);
+                DEB(m_owner, ':', m_id, ':', _loop_id, " - data = ", _data);
 
                 if (this->m_stopped) {
-                    DEB(m_log, m_owner, ':', m_id, ':', _loop_id, " - stop");
+                    DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
                     break;
                 }
 
                 if (!execute(m_timeout, p_handler, std::move(_data))) {
-                    WAR(m_log, m_owner, ':', m_id, ':', _loop_id, " - timeout ",
+                    WAR(m_owner, ':', m_id, ':', _loop_id, " - timeout ",
                         _data);
                 }
             } else {
-                DEB(m_log, m_owner, ':', m_id, ':', _loop_id,
-                    " - no data available");
+                DEB(m_owner, ':', m_id, ':', _loop_id, " - no data available");
             }
         }
     }
 
     /// \brief
     inline void empty_queue() {
-        DEB(this->m_log, this->m_owner, ':', this->m_id, " - empty queue");
+        DEB(this->m_owner, ':', this->m_id, " - empty queue");
         while (!m_queue.empty()) {
             m_cond.notify_all();
         }
@@ -822,12 +814,11 @@ private:
     /// \brief Sets this group of handles to stop
     inline void stop() {
         if (m_stopped) {
-            DEB(m_log, m_owner, ':', m_id,
-                " - not stopping because it is stopped");
+            DEB(m_owner, ':', m_id, " - not stopping because it is stopped");
             return;
         }
 
-        DEB(m_log, m_owner, ':', m_id, " - stoping");
+        DEB(m_owner, ':', m_id, " - stoping");
 
         //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
         m_stopped = true;
@@ -878,9 +869,6 @@ private:
 
     /// \brief Controls access to the data produced
     std::condition_variable m_cond;
-
-    /// \brief Logger
-    logger::cerr<> m_log {"handlers"};
 };
 
 template <typename t_event>
@@ -925,7 +913,7 @@ struct dispatcher_t {
         m_list.push_back(std::make_unique<handling>(event_id_t<t_event>::value,
                                                     p_timeout, p_priority));
         number::id _id = m_list.back()->get_id();
-        //    DEB(m_log, evt_id_t<t_event>::value)
+        //    DEB(evt_id_t<t_event>::value)
         sort();
         return _id;
     }
@@ -992,7 +980,7 @@ struct dispatcher_t {
     /// \param p_event is the event to be handled
     static void send(const t_event &p_event) {
         for (handling_ptr &_handling_ptr : m_list) {
-            INF(m_log, get_id(), " - sending ", p_event, " to pool ",
+            INF(get_id(), " - sending ", p_event, " to pool ",
                 _handling_ptr->get_id());
             _handling_ptr->add_data(p_event);
         }
@@ -1008,8 +996,7 @@ struct dispatcher_t {
         auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
         if (_handling_ite != _end) {
-            DEB(m_log, get_id(), " - adding another handler for ",
-                p_handling_id);
+            DEB(get_id(), " - adding another handler for ", p_handling_id);
             (*_handling_ite)->add_handler(std::move(p_handler));
         }
     }
@@ -1078,11 +1065,11 @@ struct dispatcher_t {
     /// \brief Waits for all the events in all the groups of
     /// handlers to be handled
     static void wait() {
-        DEB(m_log, event_id_t<t_event>::value, "  - starting to wait");
+        DEB(event_id_t<t_event>::value, "  - starting to wait");
         for (handling_ptr &_handling_ptr : m_list) {
             _handling_ptr->empty_queue();
         }
-        DEB(m_log, event_id_t<t_event>::value, "  - finished waiting");
+        DEB(event_id_t<t_event>::value, "  - finished waiting");
     }
 
     static number::id get_id() { return event_id_t<t_event>::value; }
@@ -1135,9 +1122,6 @@ private:
     /// \brief The list of group of handlers
     static handling_list m_list;
 
-    /// \brief Logger
-    static logger::cerr<> m_log;
-
     /// \brief Access control
     static std::mutex m_mutex;
 };
@@ -1145,9 +1129,6 @@ private:
 /// \brief
 template <typename t_data>
 typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
-
-template <typename t_data>
-logger::cerr<> dispatcher_t<t_data>::m_log {"dispatcher"};
 
 template <typename t_data>
 std::mutex dispatcher_t<t_data>::m_mutex;
@@ -1175,7 +1156,7 @@ struct sleeping_loop {
         m_stopped = true;
 
         if (!_stopped) {
-            DEB(m_log, "right side not stopped");
+            DEB("right side not stopped");
             p_loop.stop();
             start();
         }
@@ -1193,7 +1174,7 @@ struct sleeping_loop {
             m_stopped = true;
 
             if (!_stopped) {
-                DEB(m_log, "right side not stopped");
+                DEB("right side not stopped");
                 p_loop.stop();
                 start();
             }
@@ -1217,7 +1198,7 @@ struct sleeping_loop {
         }
         m_stopped = false;
 
-        DEB(m_log, m_owner, ':', m_id, " - starting loop thread");
+        DEB(m_owner, ':', m_id, " - starting loop thread");
         m_thread = std::thread([this]() { loop(); });
     }
 
@@ -1225,78 +1206,75 @@ struct sleeping_loop {
     void stop() {
 
         if (m_stopped) {
-            DEB(m_log, m_owner, ':', m_id,
-                " - not stopping because it is stopped");
+            DEB(m_owner, ':', m_id, " - not stopping because it is stopped");
             return;
         }
-        DEB(m_log, m_owner, ':', m_id, " - stopping");
+        DEB(m_owner, ':', m_id, " - stopping");
         m_stopped = true;
         m_cond.notify_one();
 
         if (m_thread.get_id() == std::thread::id()) {
-            DEB(m_log, m_owner, ':', m_id,
+            DEB(m_owner, ':', m_id,
                 " - not joining because m_thread.get_id() == "
                 "std::thread::id()");
             return;
         }
-        DEB(m_log, m_owner, ':', m_id,
-            " - m_thread.get_id() != std::thread::id()");
+        DEB(m_owner, ':', m_id, " - m_thread.get_id() != std::thread::id()");
 
         if (!m_thread.joinable()) {
-            DEB(m_log, m_owner, ':', m_id,
+            DEB(m_owner, ':', m_id,
                 " - not joining because m_thread is not joinable");
             return;
         }
-        DEB(m_log, m_owner, ':', m_id, " - m_thread.joinable()");
+        DEB(m_owner, ':', m_id, " - m_thread.joinable()");
 
         {
             std::lock_guard<std::mutex> _lock(m_mutex_join);
             m_thread.join();
         }
-        DEB(m_log, m_owner, ':', m_id, " - leaving stop");
+        DEB(m_owner, ':', m_id, " - leaving stop");
     }
 
     inline bool is_stopped() const { return m_stopped; }
 
 private:
     void loop() {
-        DEB(m_log, m_owner, ':', m_id,
+        DEB(m_owner, ':', m_id,
             " - entering loop, m_timeout = ", m_timeout.count());
 
         while (true) {
             if (m_stopped) {
-                DEB(m_log, m_owner, ':', m_id, " - stop");
+                DEB(m_owner, ':', m_id, " - stop");
                 break;
             }
 
-            DEB(m_log, m_owner, ':', m_id, " - calling handler");
+            DEB(m_owner, ':', m_id, " - calling handler");
 
             if (!internal::execute(m_timeout, [this](ptr<bool> p_stop) -> void {
                     m_function(p_stop);
                 })) {
-                WAR(m_log, m_owner, ':', m_id, " - timeout");
+                WAR(m_owner, ':', m_id, " - timeout");
             }
 
             if (m_stopped) {
-                DEB(m_log, m_owner, ':', m_id, " - stop");
+                DEB(m_owner, ':', m_id, " - stop");
                 break;
             }
 
-            DEB(m_log, m_owner, ':', m_id, " - waiting for ",
-                m_interval.count(), "ms to elaps, or a stop order");
+            DEB(m_owner, ':', m_id, " - waiting for ", m_interval.count(),
+                "ms to elaps, or a stop order");
             {
                 std::unique_lock<std::mutex> _lock(m_mutex_interval);
                 if ((m_cond.wait_for(_lock, m_interval) ==
                      std::cv_status::no_timeout) &&
                     (m_stopped)) {
-                    DEB(m_log, m_owner, ':', m_id, " - ordered to stop");
+                    DEB(m_owner, ':', m_id, " - ordered to stop");
                     break;
                 }
             }
-            DEB(m_log, m_owner, ':', m_id, " - ", m_interval.count(),
-                "ms elapsed");
+            DEB(m_owner, ':', m_id, " - ", m_interval.count(), "ms elapsed");
         }
-        DEB(m_log, m_owner, ':', m_id, " - leaving loop");
+        DEB(m_owner, ':', m_id, " - leaving loop");
     }
 
 private:
@@ -1319,9 +1297,6 @@ private:
 
     /// \brief Thread where the \p loop method will run
     std::thread m_thread;
-
-    /// \brief Logger
-    logger::cerr<> m_log {"sleeping_loop"};
 
     /// \brief Protects joining the thread
     std::mutex m_mutex_join;

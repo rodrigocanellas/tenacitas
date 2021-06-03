@@ -83,7 +83,7 @@ struct test_t {
 
         m_total_handled = m_total_sent * m_handlings_definitions.size();
 
-        INF(m_log, "total events to be sent: ", m_total_sent,
+        INF("total events to be sent: ", m_total_sent,
             ", total events to be handled: ", m_total_handled);
 
         create_handlers_for_work_events();
@@ -180,29 +180,28 @@ private:
             , m_num_max_timeouts(3)
             , m_sleep(p_sleep)
             , m_cause_timeout_at_each(p_cause_timeout_at_each)
-            , m_to_timeout(m_timeout.count() * 2)
-            , m_log("handler_" + m_id) {
+            , m_to_timeout(m_timeout.count() * 2) {
             //                         m_log.set_info_level();
         }
 
         void operator()(std::shared_ptr<bool> p_bool, event &&p_event) {
             // m_log.set_debug_level();
-            DEB(m_log, m_id, " incoming ", p_event, '|', m_num);
+            DEB(m_id, " incoming ", p_event, '|', m_num);
             if (m_cause_timeout_at_each && m_num_aux &&
                 ((m_num_aux % m_cause_timeout_at_each) == 0) &&
                 (m_timeout_counter < m_num_max_timeouts)) {
                 ++m_timeout_counter;
                 ++m_num_aux;
-                INF(m_log, m_id, " timeouting ", p_event, '|', m_num_aux);
+                INF(m_id, " timeouting ", p_event, '|', m_num_aux);
                 std::this_thread::sleep_for(m_to_timeout);
             }
             if (!p_bool) {
-                ERR(m_log, m_id, " p_bool not set for ", p_event, "!!!");
+                ERR(m_id, " p_bool not set for ", p_event, "!!!");
                 throw std::runtime_error("p_bool not set!!");
             }
             if (*p_bool) {
-                DEB(m_log, m_id, "p_bool is ", *p_bool, ", adding ", p_event,
-                    '|', m_num);
+                DEB(m_id, "p_bool is ", *p_bool, ", adding ", p_event, '|',
+                    m_num);
                 async::dispatch<event>(p_event);
                 return;
             }
@@ -211,7 +210,7 @@ private:
             ++m_num_aux;
             m_event = std::move(p_event);
             async::dispatch<handled>(handled {});
-            INF(m_log, m_id, " handling ", m_event, '|', m_num);
+            INF(m_id, " handling ", m_event, '|', m_num);
         }
 
         friend std::ostream &operator<<(std::ostream &p_out,
@@ -235,7 +234,6 @@ private:
         uint16_t m_num_aux {0};
         event m_event;
         uint16_t m_timeout_counter {0};
-        logger::cerr<> m_log;
     };
 
     struct sender {
@@ -245,10 +243,9 @@ private:
             , m_num_event_per_sender(p_num_event_per_sender)
             , m_event(p_start)
             , m_start(p_start)
-            , m_finish(p_start + m_num_event_per_sender - 1)
-            , m_log("sender_" + m_idx) {
+            , m_finish(p_start + m_num_event_per_sender - 1) {
             //            m_log.set_info_level();
-            INF(m_log, m_idx, ": start value = ", m_start,
+            INF(m_idx, ": start value = ", m_start,
                 ", finish value = ", m_finish);
         }
 
@@ -256,7 +253,7 @@ private:
             // m_log.set_debug_level();
 
             if (m_all_notified) {
-                DEB(m_log, m_idx, " already notified");
+                DEB(m_idx, " already notified");
                 //                async::dispatch<event>(m_event);
                 return;
             }
@@ -264,13 +261,13 @@ private:
             if ((m_event.get_value() >= (m_finish + 1))) {
                 m_all_notified = true;
 
-                INF(m_log, m_idx, " sent ", m_num_event_per_sender,
+                INF(m_idx, " sent ", m_num_event_per_sender,
                     " events: ", m_start, " -> ", m_finish);
                 //                async::send<event>(m_event);
                 return;
             }
 
-            INF(m_log, m_idx, " sending ", m_event);
+            INF(m_idx, " sending ", m_event);
             async::dispatch<event>(m_event);
             async::dispatch<sent>(sent {});
             ++m_event;
@@ -285,8 +282,6 @@ private:
         value m_finish;
 
         bool m_all_notified {false};
-
-        logger::cerr<> m_log;
     };
 
     typedef std::vector<sleeping_loop> loops;
@@ -294,7 +289,7 @@ private:
 
 private:
     void create_handlers_for_work_events() {
-        INF(m_log, "creating handlers for work events");
+        INF("creating handlers for work events");
         for (const handling_definition &_handling_def :
              m_handlings_definitions) {
             number::id _handling_id =
@@ -321,7 +316,7 @@ private:
     }
 
     void creating_handlers_for_handled_events() {
-        INF(m_log, "creating handlers for handled events");
+        INF("creating handlers for handled events");
 
         m_all_handled_notified = false;
 
@@ -329,69 +324,69 @@ private:
             [this](type::ptr<bool>, handled &&) -> void {
                 std::lock_guard<std::mutex> _lock(m_mutex_counter_handled);
                 if (m_all_handled_notified) {
-                    DEB(m_log, "all handled notified");
+                    DEB("all handled notified");
                     return;
                 }
 
                 ++m_handled;
 
                 if (m_handled >= m_total_handled) {
-                    DEB(m_log, "all events handled, notifying");
+                    DEB("all events handled, notifying");
                     m_all_handled_notified = true;
                     m_cond_handled.notify_one();
                     return;
                 }
-                DEB(m_log, m_handled, " events handled");
+                DEB(m_handled, " events handled");
             },
             2s);
     }
 
     void create_handlers_for_sent_events() {
-        INF(m_log, "creating handlers for sent events");
+        INF("creating handlers for sent events");
 
         m_all_sent_notified = false;
-        DEB(m_log, "m_all_sent_notified = ", m_all_sent_notified ? 'T' : 'F');
+        DEB("m_all_sent_notified = ", m_all_sent_notified ? 'T' : 'F');
 
         async::add_handler<sent>(
             [this](type::ptr<bool>, sent &&) -> void {
                 std::lock_guard<std::mutex> _lock(m_mutex_counter_sent);
-                DEB(m_log, "entering with m_sent = ", m_sent,
+                DEB("entering with m_sent = ", m_sent,
                     ", and m_all_sent_notified = ",
                     m_all_sent_notified ? 'T' : 'F');
                 if (m_all_sent_notified) {
-                    DEB(m_log, "m_all_sent_notified = ",
+                    DEB("m_all_sent_notified = ",
                         m_all_sent_notified ? 'T' : 'F');
                     return;
                 }
 
-                DEB(m_log, "before incrementing m_sent is ", m_sent,
+                DEB("before incrementing m_sent is ", m_sent,
                     ", and m_all_sent_notified is ",
                     m_all_sent_notified ? 'T' : 'F');
                 ++m_sent;
-                DEB(m_log, "after incrementing m_sent now is ", m_sent,
+                DEB("after incrementing m_sent now is ", m_sent,
                     ", and m_all_sent_notified is ",
                     m_all_sent_notified ? 'T' : 'F');
 
                 if (m_sent >= m_total_sent) {
                     m_all_sent_notified = true;
-                    DEB(m_log, "all ", m_sent,
+                    DEB("all ", m_sent,
                         " events sent; notifying and m_all_sent_notified is ",
                         m_all_sent_notified ? 'T' : 'F');
                     m_cond_sent.notify_one();
                     return;
                 }
-                DEB(m_log, m_sent, " events sent");
+                DEB(m_sent, " events sent");
             },
             1s);
     }
 
     void create_and_start_senders() {
-        INF(m_log, "creating and starting the senders");
+        INF("creating and starting the senders");
 
         uint16_t _i {0};
         value _start {0};
         for (const sender_definition &_sender_def : m_senders_definitions) {
-            DEB(m_log, "starting sender s", _i);
+            DEB("starting sender s", _i);
             m_loops.push_back({m_id,
                                sender {_i++, _start, _sender_def.num_events},
                                600ms, _sender_def.interval});
@@ -406,15 +401,15 @@ private:
 
     void wait_for_all_senders() {
         // m_log.set_debug_level();
-        INF(m_log, "checking if all the events were sent");
+        INF("checking if all the events were sent");
 
         std::unique_lock<std::mutex> _lock(m_mutex_sent);
         m_cond_sent.wait(_lock, [&]() -> bool {
             if (m_sent >= m_total_sent) {
-                DEB(m_log, "all senders have notified");
+                DEB("all senders have notified");
                 return true;
             }
-            DEB(m_log, m_sent, " events sent so far");
+            DEB(m_sent, " events sent so far");
             return false;
         });
 
@@ -422,7 +417,7 @@ private:
     }
 
     void stop_senders() {
-        DEB(m_log, "stoping the senders");
+        DEB("stoping the senders");
         for (std::vector<sleeping_loop>::iterator _ite = m_loops.begin();
              _ite != m_loops.end(); ++_ite) {
             _ite->stop();
@@ -430,16 +425,16 @@ private:
     }
 
     void wait_for_all_the_handlers() {
-        INF(m_log, "waiting for all the handlers, until all the events are "
-                   "handled");
+        INF("waiting for all the handlers, until all the events are "
+            "handled");
         {
             std::unique_lock<std::mutex> _lock(m_mutex_handled);
             m_cond_handled.wait(_lock, [&]() -> bool {
                 if (m_handled >= m_total_handled) {
-                    DEB(m_log, "all ", m_total_handled, " events handled");
+                    DEB("all ", m_total_handled, " events handled");
                     return true;
                 }
-                DEB(m_log, m_handled, " handled events so far");
+                DEB(m_handled, " handled events so far");
                 return false;
             });
         }
@@ -463,14 +458,13 @@ private:
         double _min = _sec / 60;
         _stream << "; TIMES: " << _micro << "us, " << _milli << "ms, " << _sec
                 << "s, " << _min << "m";
-        INF(m_log, _stream.str());
+        INF(_stream.str());
     }
 
 private:
     uint16_t m_total_sent {0};
     uint16_t m_total_handled {0};
 
-    logger::cerr<> m_log {m_name.c_str()};
     number::id m_id;
 
     std::mutex m_mutex_counter_handled;

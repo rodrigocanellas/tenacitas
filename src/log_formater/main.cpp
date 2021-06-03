@@ -39,24 +39,24 @@ struct log_formater {
             m_in.close();
             m_in.open(m_name_in);
             if (m_in.bad()) {
-                ERR(m_log, "error reseting position in input file");
+                ERR("error reseting position in input file");
                 return;
             }
 
             output();
 
         } catch (std::exception &_ex) {
-            FAT(m_log, _ex.what());
+            FAT(_ex.what());
         }
     }
 
-  private:
+private:
     typedef std::function<void(const std::string &p_line,
                                std::string::size_type p_1,
                                std::string::size_type p_2)>
         parse_field;
 
-  private:
+private:
     void output() {
         std::string _line;
         if (find_first_separator(_line) == std::string::npos) {
@@ -74,7 +74,7 @@ struct log_formater {
         auto _timestamp = [this](const std::string &p_line,
                                  std::string::size_type p_1,
                                  std::string::size_type p_2) -> void {
-            std::string _timestamp_str{&p_line[p_1], &p_line[p_2]};
+            std::string _timestamp_str {&p_line[p_1], &p_line[p_2]};
             auto _timestamp_num = std::stoull(_timestamp_str);
             m_out << calendar::now<>::iso8601_microsecs(_timestamp_num)
                   << m_separator;
@@ -237,31 +237,34 @@ struct log_formater {
     bool next_line(std::string &p_line) {
         std::getline(m_in, p_line);
         if (m_in.eof()) {
-            DEB(m_log, "eof");
+            DEB("eof");
             return true;
         }
         if (!m_in) {
-            ERR(m_log, "error reading input file");
+            ERR("error reading input file");
             return false;
         }
         return true;
     }
 
-    bool parse_line(const std::string &p_line, parse_field p_level,
+    bool parse_line(const std::string &p_line,
+                    parse_field p_level,
                     parse_field p_timestamp, /*parse_field p_this,*/
-                    parse_field p_class_name, parse_field p_function_name,
-                    parse_field p_thread_id, parse_field p_line_number,
+                    parse_field p_class_name,
+                    parse_field p_function_name,
+                    parse_field p_thread_id,
+                    parse_field p_line_number,
                     parse_field p_msg) {
 
         using namespace std;
-        string::size_type _p1{0};
+        string::size_type _p1 {0};
         string::size_type _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
             if (p_line[0] == '#') {
                 // last line
                 return true;
             }
-            ERR(m_log, "log level separator not found");
+            ERR("log level separator not found");
             return false;
         }
         p_level(p_line, _p1, _p2);
@@ -269,7 +272,7 @@ struct log_formater {
         _p1 = ++_p2;
         _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
-            ERR(m_log, "timestamp separator not found");
+            ERR("timestamp separator not found");
             return false;
         }
         p_timestamp(p_line, _p1, _p2);
@@ -277,7 +280,7 @@ struct log_formater {
         //    _p1 = ++_p2;
         //    _p2 = p_line.find(m_separator, _p1);
         //    if (_p2 == string::npos) {
-        //      ERR(m_log, "this separator not found");
+        //      ERR( "this separator not found");
         //      return false;
         //    }
         //    p_this(p_line, _p1, _p2);
@@ -285,7 +288,7 @@ struct log_formater {
         _p1 = ++_p2;
         _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
-            ERR(m_log, "class name separator not found");
+            ERR("class name separator not found");
             return false;
         }
         p_class_name(p_line, _p1, _p2);
@@ -293,7 +296,7 @@ struct log_formater {
         _p1 = ++_p2;
         _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
-            ERR(m_log, "function separator not found");
+            ERR("function separator not found");
             return false;
         }
         p_function_name(p_line, _p1, _p2);
@@ -301,7 +304,7 @@ struct log_formater {
         _p1 = ++_p2;
         _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
-            ERR(m_log, "thread id separator not found");
+            ERR("thread id separator not found");
             return false;
         }
         p_thread_id(p_line, _p1, _p2);
@@ -309,7 +312,7 @@ struct log_formater {
         _p1 = ++_p2;
         _p2 = p_line.find(m_separator, _p1);
         if (_p2 == string::npos) {
-            ERR(m_log, "line numner separator not found");
+            ERR("line numner separator not found");
             return false;
         }
         p_line_number(p_line, _p1, _p2);
@@ -321,29 +324,29 @@ struct log_formater {
     }
 
     std::string::size_type find_first_separator(std::string &p_line) {
-        bool _pipe_found{false};
-        std::string::size_type _pos{0};
+        bool _pipe_found {false};
+        std::string::size_type _pos {0};
         while (true) {
             _pos = 0;
             if (m_in.eof()) {
-                INF(m_log, "end of input file");
+                INF("end of input file");
                 break;
             }
             std::getline(m_in, p_line);
             if (m_in.bad()) {
-                ERR(m_log, "error reading input file");
+                ERR("error reading input file");
                 break;
             }
 
             _pos = p_line.find('|');
             if (_pos != std::string::npos) {
-                DEB(m_log, "pipe found");
+                DEB("pipe found");
                 _pipe_found = true;
                 break;
             }
         }
         if (!_pipe_found) {
-            ERR(m_log, "first pipe not found");
+            ERR("first pipe not found");
             return std::string::npos;
         }
 
@@ -368,13 +371,13 @@ struct log_formater {
     bool open_in(program::options<> &p_options) {
         std::optional<std::string> _p = p_options.get_single_param("in");
         if (!_p) {
-            ERR(m_log, "error in parameter 'in'");
+            ERR("error in parameter 'in'");
             return false;
         }
         m_name_in = std::move(*_p);
         m_in.open(m_name_in);
         if (m_in.bad()) {
-            ERR(m_log, "error opening file '", m_name_in, "'");
+            ERR("error opening file '", m_name_in, "'");
             return false;
         }
         return true;
@@ -383,36 +386,35 @@ struct log_formater {
     bool open_out(program::options<> &p_options) {
         std::optional<std::string> _p = p_options.get_single_param("out");
         if (!_p) {
-            ERR(m_log, "error in parameter 'out'");
+            ERR("error in parameter 'out'");
             return false;
         }
-        const std::string _name_out{std::move(*_p)};
+        const std::string _name_out {std::move(*_p)};
         m_out.open(_name_out);
         if (m_out.bad()) {
-            ERR(m_log, "error opening file '", _name_out, "'");
+            ERR("error opening file '", _name_out, "'");
             return false;
         }
         return true;
     }
 
-  private:
-    logger::cerr<> m_log{"log_formater"};
+private:
     std::ifstream m_in;
     std::ofstream m_out;
     std::string m_name_in;
 
-    uint8_t m_max_class_name{0};
-    uint8_t m_max_function_name{0};
+    uint8_t m_max_class_name {0};
+    uint8_t m_max_function_name {0};
 
-    uint8_t m_max_line_number{0};
+    uint8_t m_max_line_number {0};
 
     //  const uint8_t m_this_size{4};
-    const uint8_t m_thread_id_size{4};
+    const uint8_t m_thread_id_size {4};
 
     const char m_separator = {'|'};
 };
 
-       int main(int argc, char **argv) {
+int main(int argc, char **argv) {
 
     log_formater _log_formater;
     _log_formater(argc, argv);

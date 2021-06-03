@@ -17,12 +17,12 @@ struct cerr_log_how_to {
 
         try {
 
-            m_log.debug(__FILE__, __LINE__, "hello! ", 309);
-            m_log.debug(__FILE__, __LINE__, "how are you doing? ", 3.14);
-            m_log.info(__FILE__, __LINE__, "fine!! ", 'W');
-            m_log.info(__FILE__, __LINE__, "and you?");
-            m_log.warn(__FILE__, __LINE__, "great! got a new job!! ", 6987.58f);
-            m_log.warn(__FILE__, __LINE__, "nice!! ", 10);
+            DEB("hello! ", 309);
+            DEB(__FILE__, __LINE__, "how are you doing? ", 3.14);
+            INF("fine!! ", 'W');
+            INF("and you?");
+            WAR("great! got a new job!! ", 6987.58f);
+            WAR("nice!! ", 10);
             return true;
         } catch (std::exception &_ex) {
             std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
@@ -32,7 +32,7 @@ struct cerr_log_how_to {
     }
 
     static std::string desc() { return "Simple 'cerr' log usage"; }
-    logger::cerr<> m_log{"cerr_log_how_to"};
+    // logger::cerr<> m_log{"cerr_log_how_to"};
 };
 
 // struct cerr_log_single {
@@ -162,7 +162,9 @@ struct cerr_log_how_to {
 //  logger::cerr m_log{"cerr_log_multi"};
 //};
 
-       int main(int argc, char **argv) {
+int main(int argc, char **argv) {
+
+    logger::set_writer_cerr();
     logger::set_debug_level();
     tester::test<> _tester(argc, argv);
     run_test(_tester, cerr_log_how_to);

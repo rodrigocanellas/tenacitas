@@ -395,17 +395,17 @@ struct application {
 
         async::add_handler<event::exit_app>(_handler, 1s, async::priority {0});
 
-        DEB(m_log, "starting application");
+        DEB("starting application");
 
         m_thread = std::thread(p_function);
 
         {
-            DEB(m_log, "waiting...");
+            DEB("waiting...");
             unique_lock<mutex> _lock(m_mutex);
             m_cond.wait(_lock);
         }
 
-        DEB(m_log, "notified");
+        DEB("notified");
 
         std::this_thread::sleep_for(m_wait);
 
@@ -413,17 +413,17 @@ struct application {
     }
 
     ~application() {
-        DEB(m_log, "destructor");
+        DEB("destructor");
         exit(0);
     }
 
 private:
     void handle(type::ptr<bool>, event::exit_app &&) {
         if (m_on_exit_handled) {
-            WAR(m_log, "on_exit already handled");
+            WAR("on_exit already handled");
             return;
         }
-        DEB(m_log, "on exit");
+        DEB("on exit");
         m_on_exit_handled = true;
         m_cond.notify_one();
     };
@@ -443,9 +443,6 @@ private:
 
     /// \brief Indicates that a tenacitas::events::exit_app was already handled
     bool m_on_exit_handled {false};
-
-    /// \brief Logger
-    logger::cerr<> m_log {"application"};
 };
 
 } // namespace program
