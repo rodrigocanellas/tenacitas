@@ -1145,6 +1145,7 @@ struct sleeping_loop {
 
     sleeping_loop(const sleeping_loop &) = delete;
     sleeping_loop &operator=(const sleeping_loop &) = delete;
+    ~sleeping_loop() { stop(); }
 
     sleeping_loop(sleeping_loop &&p_loop) {
         bool _stopped = p_loop.m_stopped;

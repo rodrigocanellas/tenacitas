@@ -14,6 +14,5 @@ HEADERS += \
 
 
 SUBDIRS += \
-  tst
-#  \
-#  exp
+  tst \
+  exp

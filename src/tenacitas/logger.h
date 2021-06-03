@@ -28,7 +28,7 @@ namespace tenacitas {
 /// \brief logger classes
 namespace logger {
 
-enum class media : char { cout = 'o', cerr = 'e', clog = 'l' };
+// enum class media : char { cout = 'o', cerr = 'e', clog = 'l' };
 
 // dummy log implementations
 #ifndef TENACITAS_LOG
