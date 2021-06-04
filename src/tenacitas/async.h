@@ -70,7 +70,7 @@ struct executer_traits_t<void> {
 template <typename t_ret>
 struct executer_t {
     template <typename t_time, typename t_function, typename... t_params>
-    std::optional<t_ret> operator()(t_time p_timeout,
+    std::optional<t_ret> operator()(t_time &p_timeout,
                                     t_function p_function,
                                     std::tuple<t_params...> &&p_tuple) {
         std::mutex _mutex;
@@ -156,7 +156,7 @@ template <>
 struct executer_t<void> {
     template <typename t_time, typename t_function, typename... t_params>
     bool operator()(t_time p_timeout,
-                    t_function p_function,
+                    t_function &p_function,
                     std::tuple<t_params...> &&p_tuple) {
         std::mutex _mutex;
         std::condition_variable _cond;
@@ -184,7 +184,7 @@ struct executer_t<void> {
 
     template <typename t_time, typename t_function, typename t_param>
     bool
-    operator()(t_time p_timeout, t_function p_function, t_param &&p_param) {
+    operator()(t_time p_timeout, t_function &p_function, t_param &&p_param) {
         std::mutex _mutex;
         std::condition_variable _cond;
 
@@ -216,7 +216,7 @@ struct executer_t<void> {
     }
 
     template <typename t_time, typename t_function>
-    bool operator()(t_time p_timeout, t_function p_function) {
+    bool operator()(t_time p_timeout, t_function &p_function) {
         std::mutex _mutex;
         std::condition_variable _cond;
 
@@ -252,13 +252,13 @@ execute(t_time p_timeout,
 
     executer_t<type> _executer;
 
-    return _executer(p_timeout, p_function, std::move(p_tuple));
+    return _executer(p_timeout, &p_function, std::move(p_tuple));
 }
 
 template <typename t_time, typename t_function, typename t_param>
 typename executer_traits_t<
     std::invoke_result_t<t_function, ptr<bool>, t_param>>::result
-execute(t_time p_timeout, t_function p_function, t_param &&p_param) {
+execute(t_time p_timeout, t_function &p_function, t_param &&p_param) {
     typedef typename executer_traits_t<
         std::invoke_result_t<t_function, ptr<bool>, t_param>>::type type;
 
@@ -269,7 +269,7 @@ execute(t_time p_timeout, t_function p_function, t_param &&p_param) {
 
 template <typename t_time, typename t_function>
 typename executer_traits_t<std::invoke_result_t<t_function, ptr<bool>>>::result
-execute(t_time p_timeout, t_function p_function) {
+execute(t_time p_timeout, t_function &p_function) {
     typedef typename executer_traits_t<
         std::invoke_result_t<t_function, ptr<bool>>>::type type;
 
@@ -1251,9 +1251,14 @@ private:
 
             DEB(m_owner, ':', m_id, " - calling handler");
 
-            if (!internal::execute(m_timeout, [this](ptr<bool> p_stop) -> void {
-                    m_function(p_stop);
-                })) {
+            //            if (!internal::execute(m_timeout, [this](ptr<bool>
+            //            p_stop) -> void {
+            //                    m_function(p_stop);
+            //                })) {
+            //                WAR(m_owner, ':', m_id, " - timeout");
+            //            }
+
+            if (!internal::execute(m_timeout, m_function)) {
                 WAR(m_owner, ':', m_id, " - timeout");
             }
 

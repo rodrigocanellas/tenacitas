@@ -21,9 +21,11 @@ using namespace std::chrono_literals;
 
 // message to be sent
 struct temperature {
-    explicit temperature(float p_value = 0.0) : value(p_value) {}
+    explicit temperature(float p_value = 0.0)
+        : value(p_value) {}
 
-    friend std::ostream& operator<<(std::ostream& p_out, const temperature& p_temperature) {
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const temperature &p_temperature) {
         p_out << p_temperature.value;
         return p_out;
     }
@@ -33,18 +35,16 @@ struct temperature {
 
 // simulates a temperature sensor generating values
 struct temperature_sensor {
-    temperature_sensor(uint16_t p_max) :
-        m_max(p_max),
-        m_temperature_generator(
-            m_id,
-            [this](type::ptr<bool>) { generator(); },
-            m_timeout,
-            m_interval) {}
+    temperature_sensor(uint16_t p_max)
+        : m_max(p_max)
+        , m_temperature_generator(
+              m_id,
+              [this](type::ptr<bool>) { generator(); },
+              m_timeout,
+              m_interval) {}
 
     // starts to generate temperatures
-    void start() {
-        m_temperature_generator.start();
-    }
+    void start() { m_temperature_generator.start(); }
 
 private:
     // type for the asynchronous loop that will call the 'generator' method
@@ -94,11 +94,16 @@ private:
 };
 
 struct temperature_handler {
-    temperature_handler(uint16_t p_max, uint16_t* p_counter_received, std::condition_variable* p_cond) :
-        m_max(p_max), m_counter_received(p_counter_received), m_cond(p_cond) {}
+    temperature_handler(uint16_t p_max,
+                        uint16_t *p_counter_received,
+                        std::condition_variable *p_cond)
+        : m_max(p_max)
+        , m_counter_received(p_counter_received)
+        , m_cond(p_cond) {}
 
-    void operator()(type::ptr<bool>, temperature&& p_temperature) {
-        std::cout << ++(*m_counter_received) << " - " << p_temperature << std::endl;
+    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+        std::cout << ++(*m_counter_received) << " - " << ++(*m_counter) << " - "
+                  << ++m_counter_1 << " - " << p_temperature << std::endl;
         std::this_thread::sleep_for(1s);
 
         if ((*m_counter_received) >= m_max) {
@@ -108,8 +113,10 @@ struct temperature_handler {
 
 private:
     uint16_t m_max {0};
-    uint16_t* m_counter_received;
-    std::condition_variable* m_cond;
+    uint16_t *m_counter_received;
+    std::condition_variable *m_cond;
+    type::ptr<uint16_t> m_counter {type::create<uint16_t>(0)};
+    uint16_t m_counter_1 {0};
 };
 
 int main() {
@@ -123,19 +130,10 @@ int main() {
     // counter of temperatures received
     uint16_t _counter_received {0};
 
-    //    // function that will handle temperatures sent
-    //    auto _temperature_handler = [&_counter_received, &_cond](type::ptr<bool>, temperature&& p_temperature) -> void {
-    //        std::cout << ++_counter_received << " - " << p_temperature << std::endl;
-    //        std::this_thread::sleep_for(1s);
-
-    //        if (_counter_received >= _max) {
-    //            _cond.notify_one();
-    //        }
-    //    };
-
     // adding the function that will handle temperatures to an unamed queue of
     // temperature handlers; 2s is the time _temperature_handler has to execute
-    async::add_handler<temperature>(temperature_handler {_max, &_counter_received, &_cond}, 2s);
+    async::add_handler<temperature>(
+        temperature_handler {_max, &_counter_received, &_cond}, 2s);
 
     // declaring the temperature sensor
     temperature_sensor _sensor {_max};
