@@ -13,12 +13,14 @@
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief type traits
+/// \brief some type traits and wrappers
 namespace type {
 
+/// \brief A shorter name for std::shared_ptr
 template <typename t>
 using ptr = std::shared_ptr<t>;
 
+/// \brief A shorter name for std::make_shared
 template <typename t_type, typename... t_params>
 ptr<t_type> create(t_params &&... p_params) {
     return std::make_shared<t_type>(std::forward<t_params>(p_params)...);

@@ -6,13 +6,13 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <chrono>
 #include <cmath>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <thread>
-#include <chrono>
 
 #include <tenacitas/calendar.h>
 
@@ -21,7 +21,8 @@ using namespace std::chrono_literals;
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief manipulates numbers, like formating
+/// \brief manipulates numbers, like formating, and creation of a, hopefully,
+/// unique identifier
 namespace number {
 
 /// \brief Maximum number of characters needed to represent a type of number

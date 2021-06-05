@@ -33,26 +33,31 @@ using namespace std::chrono_literals;
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief manipulates program related issues
+/// \brief manipulates program related issues, like options and application,
+/// which allows asyncrhonous program execution
 namespace program {
 
 /// \brief Class to parse program options
+///
+/// \tparam use makes tenacitas::tester::test to be compiled only if actually
+/// used
 template <bool use = true>
-struct options {
+struct options_t {
     /// \brief name of an option
     typedef std::string name;
 
     /// \brief value of an option
     typedef std::string value;
 
-    // TODO update program::options example
     /// \brief parse parses the options passed to a program
+    ///
     /// \param p_argc number of options
     /// \param p_argv vector of strings with the options
     /// \param p_mandatory set of options that are mandatory
     ///
     /// \details an option must be preceded with '--', like '--file-name
     ///  abc.txt'.
+    ///
     /// There are 3 types of parameter:
     /// \p boolean, where the parameter has no value, like '--print-log'
     ///
@@ -61,80 +66,6 @@ struct options {
     ///
     /// \p set, where the paramter has a set of values, like '--tests { test1
     /// test2 test3 }
-    ///
-    ///
-    /// \code
-    ///#include <iomanip>
-    ///#include <iostream>
-    ///#include <iterator>
-    ///#include <map>
-    ///#include <sstream>
-    ///#include <string>
-    ///#include <utility>
-    ///#include <vector>
-    ///
-    ///#include <tenacitas/program.h>
-    ///
-    ///
-    ///         int main() {
-    ///    try {
-    ///
-    ///      using namespace tenacitas::program;
-    ///      using namespace std;
-    ///
-    ///      const char *argv[] = {"pgm-name", "--set_1",    "{",
-    ///                             "v0",       "v1",         "}",
-    ///                             "--bool_1", "--single_1", "single_value_1"};
-    ///      const int argc = 9;
-    ///
-    ///      options _pgm_options;
-    ///
-    ///      _pgm_options.parse(argc, (char **)argv, {"bool_1"});
-    ///
-    ///      cerr << "options: " << _pgm_options << endl;
-    ///
-    ///      optional<bool> _bool = _pgm_options.get_bool_param("bool_1");
-    ///      if (_bool) {
-    ///        cerr << "bool param = " << _bool.value() << endl;
-    ///      } else {
-    ///        cerr << "ERROR! no value for paramenter 'bool_1' was found" <<
-    ///        endl;
-    ///      }
-    ///
-    ///      optional<options::value> _single =
-    ///        _pgm_options.get_single_param("single_1");
-    ///      if (_single) {
-    ///        cerr << "single param = " << _single.value() << endl;
-    ///      } else {
-    ///        cerr << "ERROR! no value for paramenter 'single_1' was found" <<
-    ///        endl;
-    ///      }
-    ///
-    ///      optional<list<options::value>> _set =
-    ///      _pgm_options.get_set_param("set_1"); if (_set) {
-    ///        if (_set.value().size() != 2) {
-    ///          cerr << "ERROR! number of values in set parameter should be 2,
-    ///          but it "
-    ///                  "is "
-    ///               << _set.value().size() << endl;
-    ///        } else {
-    ///          cerr << "set param 'set_1' = ";
-    ///          for (options::value _value : _set.value()) {
-    ///            cerr << _value << " ";
-    ///          }
-    ///          cerr << endl;
-    ///        }
-    ///      } else {
-    ///        cerr << "ERROR! no set of values found for parameter 'set_1'" <<
-    ///        endl;
-    ///      }
-    ///    } catch (std::exception &_ex) {
-    ///      cerr << "ERROR! '" << _ex.what() << "'" << endl;
-    ///    }
-    ///
-    ///    return 0;
-    ///  }
-    /// \endcode
     ///
     /// \throws std::runtime_error
     void parse(int p_argc,
@@ -235,21 +166,21 @@ struct options {
 
     /// \brief Output operator
     friend std::ostream &operator<<(std::ostream &p_out,
-                                    const options &p_options) {
-        for (const options::name &_boolean : p_options.m_booleans) {
+                                    const options_t &p_options) {
+        for (const options_t::name &_boolean : p_options.m_booleans) {
             p_out << "[" << _boolean << "] ";
         }
 
-        for (options::singles ::const_iterator _ite =
+        for (options_t::singles ::const_iterator _ite =
                  p_options.m_singles.begin();
              _ite != p_options.m_singles.end(); ++_ite) {
             p_out << "[" << _ite->first << "," << _ite->second << "] ";
         }
 
-        for (options::sets::const_iterator _ite = p_options.m_sets.begin();
+        for (options_t::sets::const_iterator _ite = p_options.m_sets.begin();
              _ite != p_options.m_sets.end(); ++_ite) {
             p_out << "[" << _ite->first << " { ";
-            for (const options::value &_value : _ite->second) {
+            for (const options_t::value &_value : _ite->second) {
                 p_out << _value << " ";
             }
             p_out << "} ]";
@@ -327,9 +258,7 @@ private:
             }
             ++p_index;
         }
-        // && (p_argv[p_index][0] != '}')) {
-        //    _values.push_back(p_argv[p_index]);
-        //  }
+
         if (p_index > p_last) {
             throw std::runtime_error("option '" + p_name +
                                      "' is a set, but '}' was not found");
@@ -352,9 +281,10 @@ private:
 };
 
 /// \brief Entry point for an application
+///
 /// This class allows asynchronously execution of a function, which must use
-/// tenacitas::async::dispatch<tenacitas::events::exit_app>() to send a
-/// tenacitas::events::exit_app to end the application
+/// tenacitas::async::dispatch<tenacitas::event::exit_app>() function to send a
+/// tenacitas::event::exit_app to end the application
 struct application {
 
     /// \brief Default constructor not allowed
@@ -375,10 +305,10 @@ struct application {
     /// \brief Constructor
     ///
     /// \tparam t_time is the type of type used to define how long will the
-    /// application will sleep after receive a tenacitas::events::exit_app
+    /// application will sleep after receive a tenacitas::event::exit_app
     ///
     /// \param p_wait how long will the
-    /// application will sleep after receive a tenacitas::events::exit_app
+    /// application will sleep after receive a tenacitas::event::exit_app
     ///
     /// \param p_function function to be executed asynchronously
     template <typename t_time>
@@ -393,7 +323,12 @@ struct application {
             handle(p_bool, std::move(p_event));
         };
 
-        async::add_handler<event::exit_app>(_handler, 1s, async::priority {0});
+        uint32_t _timeout = static_cast<uint32_t>(m_wait.count() * 0.7);
+
+        async::add_handler<event::exit_app>(
+            _handler,
+            std::chrono::milliseconds(_timeout == 0 ? 1000 : _timeout),
+            async::priority {0});
 
         DEB("starting application");
 
@@ -418,6 +353,7 @@ struct application {
     }
 
 private:
+    /// \brief Handler of the tenacitas::event::exit_app event
     void handle(type::ptr<bool>, event::exit_app &&) {
         if (m_on_exit_handled) {
             WAR("on_exit already handled");
@@ -436,12 +372,12 @@ private:
     std::mutex m_mutex;
 
     /// \brief How long will the application will sleep after receive a
-    /// tenacitas::events::exit_app
+    /// tenacitas::event::exit_app
     std::chrono::milliseconds m_wait;
 
     std::thread m_thread;
 
-    /// \brief Indicates that a tenacitas::events::exit_app was already handled
+    /// \brief Indicates that a ::exit_app was already handled
     bool m_on_exit_handled {false};
 };
 

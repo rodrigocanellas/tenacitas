@@ -1,16 +1,11 @@
-
-
-
-CONFIG -= qt
+QT -= core
 TEMPLATE = app
-CONFIG += test
-TARGET = tenacitas.program.tst.options000
-
+TARGET = tenacitas.program.exp.application_000
+CONFIG+=example
 include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/tst/tenacitas/program/options000/main.cpp
-
+  $$exp_src_dir/tenacitas/program/application_000/main.cpp
 
 
 

@@ -32,6 +32,9 @@ namespace tester {
 
 /// \brief The test struct executes tests implemented in classes
 ///
+/// \tparam use makes tenacitas::tester::test to be compiled only if actually
+/// used
+///
 /// \code
 /// #include <iostream>
 /// #include <string>
@@ -64,7 +67,7 @@ namespace tester {
 ///  static std::string desc() { return "an eror test"; }
 ///};
 ///
-///        int main(int argc, char **argv) {
+///  int main(int argc, char **argv) {
 ///  try {
 ///    tester::test _tester(argc, argv);
 ///
@@ -86,15 +89,11 @@ struct test {
     /// tests.
     /// If '--exec' is passed, \p operator() will execute the tests
     /// If '--exec { <test-name-1> <test-name-2> ... }' is passed, \p operator()
-    /// will execute the tests will execute tests  defined between '{' and '}'
+    /// will execute the tests between '{' and '}'
     ///
     /// \param argc number of strings in \p argv
     ///
     /// \param argv parameters passed to the program
-    ///
-    /// \details
-    ///
-    /// \details the user prints should use \p cerr
     test(int argc, char **argv) noexcept
         : m_argc(argc)
         , m_argv(argv) {
@@ -102,7 +101,7 @@ struct test {
 
         try {
 
-            program::options _options;
+            program::options_t _options;
 
             _options.parse(m_argc, m_argv);
 
@@ -111,11 +110,11 @@ struct test {
             } else if (_options.get_bool_param("desc")) {
                 m_print_desc = true;
             } else {
-                std::optional<std::list<program::options<>::value>> _maybe =
+                std::optional<std::list<program::options_t<>::value>> _maybe =
                     _options.get_set_param("exec");
                 if (_maybe) {
                     m_execute_tests = true;
-                    std::list<program::options<>::value> _tests_to_exec =
+                    std::list<program::options_t<>::value> _tests_to_exec =
                         std::move(*_maybe);
                     m_tests_to_exec.insert(_tests_to_exec.begin(),
                                            _tests_to_exec.end());

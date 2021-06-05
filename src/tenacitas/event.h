@@ -9,7 +9,11 @@
 #include <chrono>
 #include <iostream>
 
+/// \brief master namespace
 namespace tenacitas {
+
+/// \brief events used in \p tenacitas namespaces by namespace \p
+/// tenacitas::async
 namespace event {
 
 /// \brief Application can exit in a gracefully way
@@ -23,5 +27,7 @@ struct exit_app {
 };
 
 } // namespace event
+
 } // namespace tenacitas
+
 #endif

@@ -25,7 +25,8 @@
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief logger classes
+/// \brief thread-safe, with log level definition, log class, with functions to
+/// control where the log is written
 namespace logger {
 
 // dummy log implementation
@@ -91,6 +92,7 @@ void set_writer_clog() {}
     #define LOG_SEP(separator) \
         tenacitas::logger::internal::g_logger.set_separator(separator)
 
+/// \brief internal types, objects and functions
 namespace internal {
 
 /// \brief Defines the possible log levels
@@ -105,6 +107,8 @@ enum class level : int8_t {
 };
 
 /// \brief Translates a \p level into a const char *
+///
+/// \param p_level is the the level to be transalated to const char *
 inline const char *level2str(level p_level) {
     static const char *_tra = "TRA";
     static const char *_deb = "DEB";
@@ -133,6 +137,9 @@ inline const char *level2str(level p_level) {
 }
 
 /// \brief Output operator for \p level
+///
+/// \param p_out is the output stream
+/// \param p_level is the level to be written to p_out
 inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
     p_out << level2str(p_level);
     return p_out;
@@ -140,17 +147,13 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
 
 /// \brief Guarantees thread safe writing of log messages
 /// A log message has the format:
-/// log-level|timestamp|class-name|function-name|thread-id|line-number|contents
+/// log-level|timestamp|file-name|thread-id|line-number|contents
 ///
-/// \details log-level is DEB, INF, WAR, ERR or FAT; timestamp is a EPOCH number
-/// in microsecs; class-name is the name of the class which is loggin;
-/// function-name is the name of the function that is logging; thread-id is the
-/// id of the thread that is logging; line-number is the number of the line
-/// where the log is being written; contents are the log message specific
-/// contents
-///
-/// \tparam use exists to make \p log to be compiled only it is really used
-
+/// \details \p log-level is TRA, DEB, INF, WAR, ERR or FAT; \p timestamp is a
+/// EPOCH number in microsecs; \p file-name is the name of the file where the
+/// message is being writen; \p thread-id is the id of the thread that is
+/// logging; \p line-number is the number of the line that is logging; contents
+/// are the log message specific contents
 class log {
 public:
     /// \brief Responsible for actually writing the log message
@@ -178,6 +181,10 @@ public:
     /// \brief Delete operator not allowed
     void operator delete(void *) = delete;
 
+    /// \brief Defines the function responsible for actually writing the message
+    ///
+    /// \tparam p_writer the function responsible for actually writing the
+    /// message
     inline void set_writer(writer p_writer) { m_writer = p_writer; }
 
     /// \brief Defines the separator to be used in the log messages
@@ -196,11 +203,11 @@ public:
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
     /// The log message will only be printed if the current log level is \p
-    /// level::debug \tparam t_params are the types of the values to be logged
+    /// level::trace
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -216,11 +223,11 @@ public:
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
     /// The log message will only be printed if the current log level is \p
-    /// level::debug \tparam t_params are the types of the values to be logged
+    /// level::debug or \p level::trace
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -236,11 +243,11 @@ public:
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
     /// The log message will only be printed if the current log level is \p
-    /// level::info \tparam t_params are the types of the values to be logged
+    /// level::info, \p level::debug or \p level::trace
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -256,11 +263,11 @@ public:
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
     /// The log message will only be printed if the current log level is \p
-    /// level::warn \tparam t_params are the types of the values to be logged
+    /// level::warn, \p level::info, \p level::debug or \p level::trace
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -275,11 +282,11 @@ public:
     /// Each parameter must implement the \code std::ostream &
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
-    /// Error log messages are allways written.
+    /// \p level::error messages are allways logged
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -290,15 +297,15 @@ public:
         write(level::error, p_file, p_line, p_params...);
     }
 
-    /// \brief Llogs message with \p fatal severity
+    /// \brief Logs message with \p fatal severity
     /// Each parameter must implement the \code std::ostream &
     /// operator<<(const t &)\endcode operator, where \p t is the type of the
     /// parameter.
-    /// Fatal log messages are allways written.
+    /// \p level::fatal messages are allways logged
     ///
     /// \tparam t_params are the types of the values to be logged.
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -318,7 +325,7 @@ private:
     ///
     /// \param p_level is the severity level of the message
     ///
-    /// \param p_file is the name of the function that is logging
+    /// \param p_file is the name of the file that is logging
     ///
     /// \param p_line is the line where the logging is done
     ///
@@ -366,8 +373,6 @@ private:
 
     /// \brief Appends a double to the buffer
     ///
-    /// \param p_append will append the double to the buffer
-    ///
     /// \param p_t is the double to be appended to the buffer
     void format(std::ostream &p_stream, const double &p_t) {
         p_stream << std::setprecision(std::numeric_limits<double>::max_digits10)
@@ -375,8 +380,6 @@ private:
     }
 
     /// \brief Appends a float to the buffer
-    ///
-    /// \param p_append will append the float to the buffer
     ///
     /// \param p_t is the float to be appended to the buffer
     void format(std::ostream &p_stream, const float &p_t) {
@@ -386,12 +389,10 @@ private:
 
     /// \brief Appends a bool to the buffer
     ///
-    /// \param p_append will append the bool to the buffer
-    ///
     /// \param p_t is the bool to be appended to the buffer
     void format(std::ostream &p_stream, const bool &p_t) {
         const char *_true = "true";
-        const char *_false = "true";
+        const char *_false = "false";
         p_stream << (p_t ? _true : _false);
     }
 
@@ -400,8 +401,6 @@ private:
     /// \param t_first is the type of the first field of the pair
     ///
     /// \param t_second is the type of the second field of the pair
-    ///
-    /// \param p_append will append the pair to the buffer
     ///
     /// \param p_pair is the pair to be appended to the buffer
     template <typename t_first, typename t_second>
@@ -414,11 +413,6 @@ private:
         p_stream << ')';
     }
 
-    /// \brief Appends a thread id to the buffer
-    ///
-    /// \param p_append will append the thread id to the buffer
-    ///
-    /// \param p_id is the thread id to be appended to the buffer
     /// \brief Copies a tuple fields into a string
     template <class TupType, size_t... I>
     void to_str(std::ostream &p_stream,
@@ -448,11 +442,16 @@ private:
     /// \brief Used to separate parts of the log message
     char m_separator {'|'};
 
+    /// \brief Function that actually writes the log message
+    ///
+    /// The default implementation writes the \p std::cerr
     writer m_writer {[](std::string &&p_str) -> void { std::cerr << p_str; }};
 };
 
+/// \brief Definition of the global level
 level log::g_level {level::warn};
 
+/// \brief Definition of the globl log object
 log g_logger;
 
 } // namespace internal
@@ -466,19 +465,27 @@ void set_info_level() { internal::log::g_level = internal::level::info; }
 /// \brief Sets the global log level as 'warn'
 void set_warn_level() { internal::log::g_level = internal::level::warn; }
 
+/// \brief Defines that log messages will be written to \p std::cerr
 void set_writer_cerr() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cerr << p_str; });
 }
 
+/// \brief Defines that log messages will be written to \p std::cout
 void set_writer_cout() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cout << p_str; });
 }
 
+/// \brief Defines that log messages will be written to \p std::clog
 void set_writer_clog() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::clog << p_str; });
+}
+
+/// \brief Defines the function used to write the log messages
+void set_writer(std::function<void(std::string &&)> p_writer) {
+    internal::g_logger.set_writer(p_writer);
 }
 #endif
 

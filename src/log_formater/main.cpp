@@ -354,7 +354,7 @@ private:
     }
 
     bool open_files(int argc, char **argv) {
-        program::options<> _options;
+        program::options_t<> _options;
         _options.parse(argc, argv, {"in", "out"});
 
         if (!open_in(_options)) {
@@ -368,7 +368,7 @@ private:
         return true;
     }
 
-    bool open_in(program::options<> &p_options) {
+    bool open_in(program::options_t<> &p_options) {
         std::optional<std::string> _p = p_options.get_single_param("in");
         if (!_p) {
             ERR("error in parameter 'in'");
@@ -383,7 +383,7 @@ private:
         return true;
     }
 
-    bool open_out(program::options<> &p_options) {
+    bool open_out(program::options_t<> &p_options) {
         std::optional<std::string> _p = p_options.get_single_param("out");
         if (!_p) {
             ERR("error in parameter 'out'");
