@@ -33,7 +33,7 @@ struct test_t {
 
     typedef event_t<evt_id> event;
     typedef async::internal::handling_t<event> event_handlings;
-    typedef async::sleeping_loop sleeping_loop;
+    typedef async::sleeping_loop_t<> sleeping_loop;
     typedef std::vector<uint16_t> values;
     typedef std::chrono::milliseconds time;
     //    typedef std::vector<time> times;
@@ -52,13 +52,13 @@ struct test_t {
 
         std::condition_variable _cond_sent;
         std::mutex _mutex_sent;
-        sent_handlers _sent_handlers {_id, std::chrono::seconds(2)};
+        sent_handlers _sent_handlers {std::chrono::seconds(2)};
 
         std::condition_variable _cond_handled;
         std::mutex _mutex_handled;
-        handled_handlers _handled_handlers {_id, std::chrono::seconds(2)};
+        handled_handlers _handled_handlers {std::chrono::seconds(2)};
 
-        event_handlings _event_handlings {_id, time {handlers_timeout}};
+        event_handlings _event_handlings {time {handlers_timeout}};
 
         INF("total events to be sent: ", m_total_events);
 
@@ -128,8 +128,7 @@ struct test_t {
         INF("creating and starting the senders");
         std::vector<sleeping_loop> _loops;
         for (uint16_t _i = 0; _i < num_senders; ++_i) {
-            _loops.push_back({_id,
-                              sender(_i, &_event_handlings, &_sent_handlers,
+            _loops.push_back({sender(_i, &_event_handlings, &_sent_handlers,
                                      events_per_sender),
                               600s, time {interval_per_sender}});
             DEB("starting sender p", _i);

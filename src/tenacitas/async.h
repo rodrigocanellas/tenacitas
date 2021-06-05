@@ -40,6 +40,12 @@ using namespace tenacitas::type;
 /// \brief
 typedef uint8_t priority;
 
+/// \brief Identifier of a handling
+typedef number::id handling_id;
+
+template <typename t_event>
+using handler_t = std::function<void(ptr<bool>, t_event &&)>;
+
 namespace internal {
 /// \brief Type of time used to define timeout
 typedef std::chrono::milliseconds timeout;
@@ -70,7 +76,7 @@ struct executer_traits_t<void> {
 template <typename t_ret>
 struct executer_t {
     template <typename t_time, typename t_function, typename... t_params>
-    std::optional<t_ret> operator()(t_time &p_timeout,
+    std::optional<t_ret> operator()(t_time p_timeout,
                                     t_function p_function,
                                     std::tuple<t_params...> &&p_tuple) {
         std::mutex _mutex;
@@ -156,7 +162,7 @@ template <>
 struct executer_t<void> {
     template <typename t_time, typename t_function, typename... t_params>
     bool operator()(t_time p_timeout,
-                    t_function &p_function,
+                    t_function p_function,
                     std::tuple<t_params...> &&p_tuple) {
         std::mutex _mutex;
         std::condition_variable _cond;
@@ -184,7 +190,7 @@ struct executer_t<void> {
 
     template <typename t_time, typename t_function, typename t_param>
     bool
-    operator()(t_time p_timeout, t_function &p_function, t_param &&p_param) {
+    operator()(t_time p_timeout, t_function p_function, t_param &&p_param) {
         std::mutex _mutex;
         std::condition_variable _cond;
 
@@ -216,7 +222,7 @@ struct executer_t<void> {
     }
 
     template <typename t_time, typename t_function>
-    bool operator()(t_time p_timeout, t_function &p_function) {
+    bool operator()(t_time p_timeout, t_function p_function) {
         std::mutex _mutex;
         std::condition_variable _cond;
 
@@ -258,7 +264,7 @@ execute(t_time p_timeout,
 template <typename t_time, typename t_function, typename t_param>
 typename executer_traits_t<
     std::invoke_result_t<t_function, ptr<bool>, t_param>>::result
-execute(t_time p_timeout, t_function &p_function, t_param &&p_param) {
+execute(t_time p_timeout, t_function p_function, t_param &&p_param) {
     typedef typename executer_traits_t<
         std::invoke_result_t<t_function, ptr<bool>, t_param>>::type type;
 
@@ -269,7 +275,7 @@ execute(t_time p_timeout, t_function &p_function, t_param &&p_param) {
 
 template <typename t_time, typename t_function>
 typename executer_traits_t<std::invoke_result_t<t_function, ptr<bool>>>::result
-execute(t_time p_timeout, t_function &p_function) {
+execute(t_time p_timeout, t_function p_function) {
     typedef typename executer_traits_t<
         std::invoke_result_t<t_function, ptr<bool>>>::type type;
 
@@ -586,7 +592,7 @@ template <typename t_event>
 class handling_t {
 public:
     /// \brief Type of function that will handle the data
-    typedef std::function<void(ptr<bool>, t_event &&)> handler;
+    typedef handler_t<t_event> handler;
 
 public:
     /// \brief Default constructor not allowed
@@ -606,11 +612,8 @@ public:
     /// functions
     ///
     template <typename t_time>
-    handling_t(const number::id &p_owner,
-               t_time p_timeout,
-               priority p_priority = 125)
-        : m_owner(p_owner)
-        , m_timeout(calendar::convert<timeout>(p_timeout))
+    handling_t(t_time p_timeout, priority p_priority = 125)
+        : m_timeout(calendar::convert<timeout>(p_timeout))
         , m_priority(p_priority)
         , m_queue(1) {}
 
@@ -625,9 +628,9 @@ public:
     handling_t &operator=(handling_t &&) = delete;
 
     ~handling_t() {
-        DEB(m_owner, ':', m_id, " - entering");
+        DEB(m_id, " - entering");
         stop();
-        DEB(m_owner, ':', m_id, " - leaving");
+        DEB(m_id, " - leaving");
     }
 
     /// \brief Adds data to be passed to a handler
@@ -636,7 +639,7 @@ public:
     ///
     /// \return \p true if it was added, \p false otherwise
     bool add_data(const t_event &p_data) {
-        DEB(m_owner, ':', m_id, " - adding ", p_data);
+        DEB(m_id, " - adding ", p_data);
         m_queue.add(p_data);
         m_cond.notify_all();
         {
@@ -692,11 +695,8 @@ public:
         return calendar::convert<t_time>(m_timeout);
     }
 
-    /// \return The tenacitas::async::id of this group of handlers
-    inline const number::id &get_owner() const { return m_owner; }
-
-    /// \return The tenacitas::async::id of this group of handlers
-    inline const number::id &get_id() const { return m_id; }
+    /// \return The identifier of this handling
+    inline const handling_id &get_id() const { return m_id; }
 
     /// \return The tenacitas::async::priority of this group of
     /// handlers
@@ -747,7 +747,7 @@ private:
 private:
     void handler_loop(handler &&p_handler) {
         number::id _loop_id;
-        DEB(m_owner, ':', m_id, ':', _loop_id,
+        DEB(m_id, ':', _loop_id,
             " - entering loop, m_timeout = ", this->m_timeout.count());
 
         while (true) {
@@ -755,21 +755,20 @@ private:
                 std::unique_lock<std::mutex> _lock(m_mutex);
                 m_cond.wait(_lock, [this, _loop_id]() -> bool {
                     if (m_stopped) {
-                        DEB(m_owner, ':', m_id, ':', _loop_id, " - stopped");
+                        DEB(m_id, ':', _loop_id, " - stopped");
                         return true;
                     }
                     if (!m_queue.empty()) {
-                        DEB(m_owner, ':', m_id, ':', _loop_id,
-                            " - there is data");
+                        DEB(m_id, ':', _loop_id, " - there is data");
                         return true;
                     }
-                    DEB(m_owner, ':', m_id, ':', _loop_id, " - waiting");
+                    DEB(m_id, ':', _loop_id, " - waiting");
                     return false;
                 });
             }
 
             if (m_stopped) {
-                DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
+                DEB(m_id, ':', _loop_id, " - stop");
                 break;
             }
 
@@ -779,33 +778,35 @@ private:
             std::pair<bool, t_event> _maybe_data {m_queue.get()};
 
             if (this->m_stopped) {
-                DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
+                DEB(m_id, ':', _loop_id, " - stop");
                 break;
             }
 
             if (_maybe_data.first) {
                 t_event _data {std::move(_maybe_data.second)};
 
-                DEB(m_owner, ':', m_id, ':', _loop_id, " - data = ", _data);
+                DEB(m_id, ':', _loop_id, " - data = ", _data);
 
                 if (this->m_stopped) {
-                    DEB(m_owner, ':', m_id, ':', _loop_id, " - stop");
+                    DEB(m_id, ':', _loop_id, " - stop");
                     break;
                 }
 
-                if (!execute(m_timeout, p_handler, std::move(_data))) {
-                    WAR(m_owner, ':', m_id, ':', _loop_id, " - timeout ",
-                        _data);
+                if (!execute(
+                        m_timeout,
+                        [&p_handler](type::ptr<bool> p_bool, t_event &&p_event)
+                            -> void { p_handler(p_bool, std::move(p_event)); },
+                        std::move(_data))) {
+                    WAR(m_id, ':', _loop_id, " - timeout ", _data);
                 }
             } else {
-                DEB(m_owner, ':', m_id, ':', _loop_id, " - no data available");
+                DEB(m_id, ':', _loop_id, " - no data available");
             }
         }
     }
 
     /// \brief
     inline void empty_queue() {
-        DEB(this->m_owner, ':', this->m_id, " - empty queue");
         while (!m_queue.empty()) {
             m_cond.notify_all();
         }
@@ -814,13 +815,12 @@ private:
     /// \brief Sets this group of handles to stop
     inline void stop() {
         if (m_stopped) {
-            DEB(m_owner, ':', m_id, " - not stopping because it is stopped");
+            DEB(m_id, " - not stopping because it is stopped");
             return;
         }
 
-        DEB(m_owner, ':', m_id, " - stoping");
+        DEB(m_id, " - stoping");
 
-        //      std::unique_lock<std::mutex> _lock(m_mutex_stop);
         m_stopped = true;
         m_cond.notify_all();
         for (std::thread &_thread : m_loops) {
@@ -832,8 +832,6 @@ private:
     }
 
 private:
-    number::id m_owner;
-
     /// \brief Maximum amount of time a handler has to complete
     timeout m_timeout;
 
@@ -844,8 +842,8 @@ private:
     /// compete for handling
     queue m_queue;
 
-    /// \brief Identifier of this group of handlers
-    number::id m_id;
+    /// \brief Identifier of this handling
+    handling_id m_id;
 
     /// \brief Asynchronous loops, where the handlers are running
     loops m_loops;
@@ -859,10 +857,6 @@ private:
     /// \brief Controls access to the \p m_loops while inserting a
     /// new \p handler
     std::mutex m_add_handler;
-
-    /// \brief Controls access to attributes while the worker is
-    /// stopping
-    //  std::mutex m_mutex_stop;
 
     /// \brief Controls access to inserting data
     std::mutex m_mutex;
@@ -889,7 +883,7 @@ number::id event_id_t<t_event>::value;
 template <typename t_event>
 struct dispatcher_t {
     /// \brief Type of handler
-    typedef std::function<void(ptr<bool>, t_event &&)> handler;
+    typedef handler_t<t_event> handler;
 
     ~dispatcher_t() = default;
 
@@ -907,13 +901,11 @@ struct dispatcher_t {
     /// \param p_timeout is the value of timeout for all the handler
     /// functions
     template <typename t_time>
-    static inline number::id add_handling(const t_time &p_timeout,
-                                          priority p_priority = 125) {
+    static inline handling_id add_handling(const t_time &p_timeout,
+                                           priority p_priority = 125) {
         std::lock_guard<std::mutex> _lock(m_mutex);
-        m_list.push_back(std::make_unique<handling>(event_id_t<t_event>::value,
-                                                    p_timeout, p_priority));
-        number::id _id = m_list.back()->get_id();
-        //    DEB(evt_id_t<t_event>::value)
+        m_list.push_back(std::make_unique<handling>(p_timeout, p_priority));
+        handling_id _id = m_list.back()->get_id();
         sort();
         return _id;
     }
@@ -935,10 +927,10 @@ struct dispatcher_t {
     ///
     /// \return p_id identifier of this group of handlers
     template <typename t_time>
-    static number::id add_handling(handler &&p_handler,
-                                   t_time p_timeout,
-                                   priority p_priority = 125) {
-        number::id _id = add_handling(p_timeout, p_priority);
+    static handling_id add_handling(handler &&p_handler,
+                                    t_time p_timeout,
+                                    priority p_priority = 125) {
+        handling_id _id = add_handling(p_timeout, p_priority);
         add_handler(_id, std::move(p_handler));
         return _id;
     }
@@ -949,7 +941,7 @@ struct dispatcher_t {
     ///
     /// \param p_priority is the priority to be set for the group of
     /// handlers
-    static void set_priority(const number::id &p_id, priority p_priority) {
+    static void set_priority(const handling_id &p_id, priority p_priority) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             (*_ite)->set_priority(p_priority);
@@ -964,7 +956,7 @@ struct dispatcher_t {
     ///
     /// \return the priority of the group of handlers, if \p p_id
     /// exists
-    static std::optional<priority> get_priority(const number::id &p_id) {
+    static std::optional<priority> get_priority(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return {(*_ite)->get_priority()};
@@ -991,7 +983,7 @@ struct dispatcher_t {
     /// \param p_id is the identifier of the group of handlers
     ///
     /// \param p_handler is the handler function to be added
-    static void add_handler(const number::id &p_handling_id,
+    static void add_handler(const handling_id &p_handling_id,
                             handler &&p_handler) {
         auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
@@ -1010,7 +1002,7 @@ struct dispatcher_t {
     /// to be added
     ///
     /// \param p_factory is a function that creates handler function
-    static void add_handler(const number::id &p_handling_id,
+    static void add_handler(const handling_id &p_handling_id,
                             uint16_t p_num_workers,
                             std::function<handler()> p_factory) {
         iterator _handling_ite = find(p_handling_id);
@@ -1024,7 +1016,7 @@ struct dispatcher_t {
     /// \param p_visitor is a function that will be called for each
     /// group of handlers.
     static void
-    traverse(std::function<void(const number::id &,
+    traverse(std::function<void(const handling_id &,
                                 priority,
                                 const std::chrono::milliseconds &)> p_visitor) {
         for (const handling_ptr &_handling_ptr : m_list) {
@@ -1040,7 +1032,7 @@ struct dispatcher_t {
     /// \param p_id is the identifier of the group of handlers
     ////
     /// \return the size of the event queue
-    static size_t size(const number::id &p_id) {
+    static size_t size(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return (*_ite)->get_size();
@@ -1054,7 +1046,7 @@ struct dispatcher_t {
     /// \param p_id is the identifier of the group of handlers
     ////
     /// \return the number of occupied positions
-    static size_t occupied(const number::id &p_id) {
+    static size_t occupied(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return (*_ite)->get_occupied();
@@ -1072,7 +1064,7 @@ struct dispatcher_t {
         DEB(event_id_t<t_event>::value, "  - finished waiting");
     }
 
-    static number::id get_id() { return event_id_t<t_event>::value; }
+    static handling_id get_id() { return event_id_t<t_event>::value; }
 
 private:
     /// \brief Alias for a handling for this event
@@ -1087,12 +1079,11 @@ private:
     typedef typename handling_list::iterator iterator;
 
 private:
-    /// \brief Finds a group of handlers based on a
-    /// tenacitas::async::id
+    /// \brief Finds a group of handlers based on a handling_id
     ///
     /// \return an iterator to the group of handlers, of
     /// m_list.end() if not
-    static iterator find(const number::id &p_id) {
+    static iterator find(const handling_id &p_id) {
         auto _cmp = [&p_id](const handling_ptr &p_handlers) -> bool {
             return p_id == p_handlers->get_id();
         };
@@ -1135,22 +1126,22 @@ std::mutex dispatcher_t<t_data>::m_mutex;
 
 } // namespace internal
 
-struct sleeping_loop {
+template <bool use = true>
+struct sleeping_loop_t {
 
     /// \brief Signature of the function that will be called in each round of
     /// the loop
     typedef std::function<void(ptr<bool>)> function;
 
-    sleeping_loop() = delete;
+    sleeping_loop_t() = delete;
 
-    sleeping_loop(const sleeping_loop &) = delete;
-    sleeping_loop &operator=(const sleeping_loop &) = delete;
-    ~sleeping_loop() { stop(); }
+    sleeping_loop_t(const sleeping_loop_t &) = delete;
+    sleeping_loop_t &operator=(const sleeping_loop_t &) = delete;
+    ~sleeping_loop_t() { stop(); }
 
-    sleeping_loop(sleeping_loop &&p_loop) {
+    sleeping_loop_t(sleeping_loop_t &&p_loop) {
         bool _stopped = p_loop.m_stopped;
 
-        m_owner = std::move(p_loop.m_owner);
         m_function = p_loop.m_function;
         m_timeout = std::move(p_loop.m_timeout);
         m_interval = std::move(p_loop.m_interval);
@@ -1163,12 +1154,11 @@ struct sleeping_loop {
         }
     }
 
-    sleeping_loop &operator=(sleeping_loop &&p_loop) {
+    sleeping_loop_t &operator=(sleeping_loop_t &&p_loop) {
         if (this != &p_loop) {
 
             bool _stopped = p_loop.m_stopped;
 
-            m_owner = std::move(p_loop.m_owner);
             m_function = p_loop.m_function;
             m_timeout = std::move(p_loop.m_timeout);
             m_interval = std::move(p_loop.m_interval);
@@ -1184,12 +1174,10 @@ struct sleeping_loop {
     }
 
     template <typename t_timeout, typename t_interval>
-    sleeping_loop(const number::id &p_owner,
-                  function p_function,
-                  t_timeout p_timeout,
-                  t_interval p_interval)
-        : m_owner(p_owner)
-        , m_function(p_function)
+    sleeping_loop_t(function p_function,
+                    t_timeout p_timeout,
+                    t_interval p_interval)
+        : m_function(p_function)
         , m_timeout(calendar::convert<internal::timeout>(p_timeout))
         , m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
@@ -1199,7 +1187,7 @@ struct sleeping_loop {
         }
         m_stopped = false;
 
-        DEB(m_owner, ':', m_id, " - starting loop thread");
+        DEB(m_id, " - starting loop thread");
         m_thread = std::thread([this]() { loop(); });
     }
 
@@ -1207,92 +1195,83 @@ struct sleeping_loop {
     void stop() {
 
         if (m_stopped) {
-            DEB(m_owner, ':', m_id, " - not stopping because it is stopped");
+            DEB(m_id, " - not stopping because it is stopped");
             return;
         }
-        DEB(m_owner, ':', m_id, " - stopping");
+        DEB(m_id, " - stopping");
         m_stopped = true;
         m_cond.notify_one();
 
         if (m_thread.get_id() == std::thread::id()) {
-            DEB(m_owner, ':', m_id,
-                " - not joining because m_thread.get_id() == "
-                "std::thread::id()");
+            DEB(m_id, " - not joining because m_thread.get_id() == "
+                      "std::thread::id()");
             return;
         }
-        DEB(m_owner, ':', m_id, " - m_thread.get_id() != std::thread::id()");
+        DEB(m_id, " - m_thread.get_id() != std::thread::id()");
 
         if (!m_thread.joinable()) {
-            DEB(m_owner, ':', m_id,
-                " - not joining because m_thread is not joinable");
+            DEB(m_id, " - not joining because m_thread is not joinable");
             return;
         }
-        DEB(m_owner, ':', m_id, " - m_thread.joinable()");
+        DEB(m_id, " - m_thread.joinable()");
 
         {
             std::lock_guard<std::mutex> _lock(m_mutex_join);
             m_thread.join();
         }
-        DEB(m_owner, ':', m_id, " - leaving stop");
+        DEB(m_id, " - leaving stop");
     }
 
     inline bool is_stopped() const { return m_stopped; }
 
 private:
     void loop() {
-        DEB(m_owner, ':', m_id,
-            " - entering loop, m_timeout = ", m_timeout.count());
+        DEB(m_id, " - entering loop, m_timeout = ", m_timeout.count());
 
         while (true) {
             if (m_stopped) {
-                DEB(m_owner, ':', m_id, " - stop");
+                DEB(m_id, " - stop");
                 break;
             }
 
-            DEB(m_owner, ':', m_id, " - calling handler");
+            DEB(m_id, " - calling handler");
 
-            //            if (!internal::execute(m_timeout, [this](ptr<bool>
-            //            p_stop) -> void {
-            //                    m_function(p_stop);
-            //                })) {
-            //                WAR(m_owner, ':', m_id, " - timeout");
-            //            }
-
-            if (!internal::execute(m_timeout, m_function)) {
-                WAR(m_owner, ':', m_id, " - timeout");
+            if (!internal::execute(m_timeout,
+                                   [this](type::ptr<bool> p_bool) -> void {
+                                       m_function(p_bool);
+                                   })) {
+                WAR(m_id, " - timeout");
             }
 
             if (m_stopped) {
-                DEB(m_owner, ':', m_id, " - stop");
+                DEB(m_id, " - stop");
                 break;
             }
 
-            DEB(m_owner, ':', m_id, " - waiting for ", m_interval.count(),
+            DEB(m_id, " - waiting for ", m_interval.count(),
                 "ms to elaps, or a stop order");
             {
                 std::unique_lock<std::mutex> _lock(m_mutex_interval);
                 if ((m_cond.wait_for(_lock, m_interval) ==
                      std::cv_status::no_timeout) &&
                     (m_stopped)) {
-                    DEB(m_owner, ':', m_id, " - ordered to stop");
+                    DEB(m_id, " - ordered to stop");
                     break;
                 }
             }
-            DEB(m_owner, ':', m_id, " - ", m_interval.count(), "ms elapsed");
+            DEB(m_id, " - ", m_interval.count(), "ms elapsed");
         }
-        DEB(m_owner, ':', m_id, " - leaving loop");
+        DEB(m_id, " - leaving loop");
     }
 
 private:
-    /// \brief Identifier of the object that owns this object
-    number::id m_owner;
-
     /// \brief Function that will be called in each round of the loop
     function m_function;
 
     /// \brief Maximum time that \p m_function will have to execute
     internal::timeout m_timeout;
 
+    /// \brief Interval for calling m_function
     internal::interval m_interval;
 
     /// \brief Identifier of this object, used for debugging purposes
@@ -1316,9 +1295,6 @@ private:
 
 // #########################################
 
-template <typename t_event>
-using handler_t = std::function<void(ptr<bool>, t_event &&)>;
-
 /// \brief Adds a queue to receive events to be handled
 ///
 /// \tparam t_event is the type of event to be added to the queue
@@ -1333,8 +1309,8 @@ using handler_t = std::function<void(ptr<bool>, t_event &&)>;
 /// \param p_timeout is the maximum amount of time that the handler function
 /// will have to complete its work.
 template <typename t_event, typename t_time>
-static inline number::id add_handling(const t_time &p_timeout,
-                                      priority p_priority = 125) {
+static inline handling_id add_handling(const t_time &p_timeout,
+                                       priority p_priority = 125) {
     return internal::dispatcher_t<t_event>::add_handling(p_timeout, p_priority);
 }
 
@@ -1354,9 +1330,9 @@ static inline number::id add_handling(const t_time &p_timeout,
 /// \param p_timeout is the maximum amount of time that the handler function
 /// will have to complete its work.
 template <typename t_event, typename t_time>
-static inline number::id add_handling(handler_t<t_event> &&p_handler,
-                                      const t_time &p_timeout,
-                                      priority p_priority = 125) {
+static inline handling_id add_handling(handler_t<t_event> &&p_handler,
+                                       const t_time &p_timeout,
+                                       priority p_priority = 125) {
     return internal::dispatcher_t<t_event>::add_handling(std::move(p_handler),
                                                          p_timeout, p_priority);
 }
@@ -1372,9 +1348,9 @@ static inline number::id add_handling(handler_t<t_event> &&p_handler,
 /// \param p_priority is the priority of the queue. This defines the order that
 /// the event will be placed in the queue.
 template <typename t_event>
-static inline void set_priority(const number::id &p_handlers,
+static inline void set_priority(const handling_id &p_handling,
                                 priority p_priority) {
-    internal::dispatcher_t<t_event>::set_priority(p_handlers, p_priority);
+    internal::dispatcher_t<t_event>::set_priority(p_handling, p_priority);
 }
 
 /// \brief Retrieves the priority of a event queue
@@ -1388,8 +1364,8 @@ static inline void set_priority(const number::id &p_handlers,
 /// \return The priority of the queue
 template <typename t_event>
 static inline std::optional<priority>
-get_priority(const number::id &p_handlers) {
-    return internal::dispatcher_t<t_event>::get_priority(p_handlers);
+get_priority(const handling_id &p_handling) {
+    return internal::dispatcher_t<t_event>::get_priority(p_handling);
 }
 
 /// \brief Sends a event to all the queues associated to a event type
@@ -1414,14 +1390,14 @@ static inline void dispatch(const t_event &p_event) {
 /// \param p_handler is the function that will handle a event added to the
 /// queue
 template <typename t_event>
-static inline void add_handler(const number::id &p_handlers,
+static inline void add_handler(const handling_id &p_handling,
                                handler_t<t_event> &&p_handler) {
-    internal::dispatcher_t<t_event>::add_handler(p_handlers,
+    internal::dispatcher_t<t_event>::add_handler(p_handling,
                                                  std::move(p_handler));
 }
 
 template <typename t_event>
-static inline void add_handler(const number::id &p_handling,
+static inline void add_handler(const handling_id &p_handling,
                                uint16_t p_num_workers,
                                std::function<handler_t<t_event>()> p_factory) {
     internal::dispatcher_t<t_event>::add_handler(p_handling, p_num_workers,
@@ -1429,9 +1405,9 @@ static inline void add_handler(const number::id &p_handling,
 }
 
 template <typename t_event, typename t_time>
-static inline const number::id add_handler(handler_t<t_event> &&p_handler,
-                                           t_time p_timeout,
-                                           priority p_priority = 125) {
+static inline handling_id add_handler(handler_t<t_event> &&p_handler,
+                                      t_time p_timeout,
+                                      priority p_priority = 125) {
     number::id _id = add_handling<t_event>(p_timeout, p_priority);
     internal::dispatcher_t<t_event>::add_handler(_id, std::move(p_handler));
     return _id;
@@ -1444,7 +1420,7 @@ static inline const number::id add_handler(handler_t<t_event> &&p_handler,
 /// operator()(const number::id&, const priority &, const t_time&) \endcode
 template <typename t_event>
 static inline void
-traverse(std::function<void(const number::id &,
+traverse(std::function<void(const handling_id &,
                             const priority &,
                             const std::chrono::milliseconds &)> p_visitor) {
     internal::dispatcher_t<t_event>::traverse(p_visitor);

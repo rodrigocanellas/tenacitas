@@ -31,7 +31,7 @@ template <event_id evt_id>
 struct test_t {
     typedef event_t<evt_id> event;
 
-    typedef async::sleeping_loop sleeping_loop;
+    typedef async::sleeping_loop_t<> sleeping_loop;
     typedef std::vector<uint16_t> values;
     typedef std::chrono::milliseconds time;
 
@@ -387,8 +387,7 @@ private:
         value _start {0};
         for (const sender_definition &_sender_def : m_senders_definitions) {
             DEB("starting sender s", _i);
-            m_loops.push_back({m_id,
-                               sender {_i++, _start, _sender_def.num_events},
+            m_loops.push_back({sender {_i++, _start, _sender_def.num_events},
                                600ms, _sender_def.interval});
             _start = _start + _sender_def.num_events;
         }
@@ -464,8 +463,6 @@ private:
 private:
     uint16_t m_total_sent {0};
     uint16_t m_total_handled {0};
-
-    number::id m_id;
 
     std::mutex m_mutex_counter_handled;
     std::mutex m_mutex_counter_sent;

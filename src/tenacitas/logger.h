@@ -28,9 +28,7 @@ namespace tenacitas {
 /// \brief logger classes
 namespace logger {
 
-// enum class media : char { cout = 'o', cerr = 'e', clog = 'l' };
-
-// dummy log implementations
+// dummy log implementation
 #ifndef TENACITAS_LOG
 
 void set_debug_level() {}
@@ -60,32 +58,38 @@ void set_writer_clog() {}
     #define FAT(p_params...) \
         {}
 
+    /// \brief Defines the character to separate the fields in a log message
+    #define LOG_SEP(separator) \
+        {}
+
 #else
 
-    /// \brief Wraps to the debug log function
-    #define DEB(p_params...)                                                 \
-        tenacitas::logger::internal::global_logger.debug(__FILE__, __LINE__, \
-                                                         p_params)
+    /// \brief Wrapper to the debug log function
+    #define DEB(p_params...)                                            \
+        tenacitas::logger::internal::g_logger.debug(__FILE__, __LINE__, \
+                                                    p_params)
 
-    /// \brief Wraps to the info log function
-    #define INF(p_params...)                                                \
-        tenacitas::logger::internal::global_logger.info(__FILE__, __LINE__, \
-                                                        p_params)
+    /// \brief Wrapper to the info log function
+    #define INF(p_params...) \
+        tenacitas::logger::internal::g_logger.info(__FILE__, __LINE__, p_params)
 
-    /// \brief Wraps to the warn log function
-    #define WAR(p_params...)                                                \
-        tenacitas::logger::internal::global_logger.warn(__FILE__, __LINE__, \
-                                                        p_params)
+    /// \brief Wrapper to the warn log function
+    #define WAR(p_params...) \
+        tenacitas::logger::internal::g_logger.warn(__FILE__, __LINE__, p_params)
 
-    /// \brief Wraps to the error log function
-    #define ERR(p_params...)                                                 \
-        tenacitas::logger::internal::global_logger.error(__FILE__, __LINE__, \
-                                                         p_params)
+    /// \brief Wrapper to the error log function
+    #define ERR(p_params...)                                            \
+        tenacitas::logger::internal::g_logger.error(__FILE__, __LINE__, \
+                                                    p_params)
 
-    /// \brief Wraps to the fatal log function
-    #define FAT(p_params...)                                                 \
-        tenacitas::logger::internal::global_logger.fatal(__FILE__, __LINE__, \
-                                                         p_params)
+    /// \brief Wrapper to the fatal log function
+    #define FAT(p_params...)                                            \
+        tenacitas::logger::internal::g_logger.fatal(__FILE__, __LINE__, \
+                                                    p_params)
+
+    /// \brief Defines the character to separate the fields in a log message
+    #define LOG_SEP(separator) \
+        tenacitas::logger::internal::g_logger.set_separator(separator)
 
 namespace internal {
 
@@ -100,34 +104,6 @@ enum class level : int8_t {
     fatal = 5
 };
 
-/// \brief Output operator for \p level
-inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
-
-    switch (p_level) {
-    case level::trace:
-        p_out << "TRA";
-        break;
-    case level::debug:
-        p_out << "DEB";
-        break;
-    case level::info:
-        p_out << "INF";
-        break;
-    case level::warn:
-        p_out << "WAR";
-        break;
-    case level::error:
-        p_out << "ERR";
-        break;
-    case level::fatal:
-        p_out << "FAT";
-        break;
-    default:
-        p_out << "-N-";
-    }
-    return p_out;
-}
-
 /// \brief Translates a \p level into a const char *
 inline const char *level2str(level p_level) {
     static const char *_tra = "TRA";
@@ -136,7 +112,7 @@ inline const char *level2str(level p_level) {
     static const char *_war = "WAR";
     static const char *_err = "ERR";
     static const char *_fat = "FAT";
-    static const char *_n_ = "-N_";
+    static const char *_n_ = "***";
 
     switch (p_level) {
     case level::trace:
@@ -156,14 +132,10 @@ inline const char *level2str(level p_level) {
     }
 }
 
-/// \brief Global log level
-level global_level {level::warn};
-
-/// \brief Checks if a log is allowed, based on the global level
-///
-/// \brief p_level is the level which one wants to use for logging
-bool can_log(internal::level p_level) {
-    return p_level >= internal::global_level;
+/// \brief Output operator for \p level
+inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
+    p_out << level2str(p_level);
+    return p_out;
 }
 
 /// \brief Guarantees thread safe writing of log messages
@@ -188,17 +160,23 @@ public:
     /// \brief Default contructor not allowed
     log() = default;
 
-    /// \brief Copy constructor
+    /// \brief Copy constructor not allowed
     log(const log &) = delete;
 
-    /// \brief Move constructor
+    /// \brief Move constructor not allowed
     log(log &&) = delete;
 
-    /// \brief Copy assignment
+    /// \brief Copy assignment not allowed
     log &operator=(const log &) = delete;
 
-    /// \brief Move assignment
+    /// \brief Move assignment not allowed
     log &operator=(log &&) = delete;
+
+    /// \brief New operator not allowed
+    void *operator new(size_t) = delete;
+
+    /// \brief Delete operator not allowed
+    void operator delete(void *) = delete;
 
     inline void set_writer(writer p_writer) { m_writer = p_writer; }
 
@@ -350,7 +328,7 @@ private:
                const char *p_file,
                uint16_t p_line,
                const t_params &... p_params) {
-        if (internal::can_log(p_level)) {
+        if (p_level >= g_level) {
 
             std::stringstream _stream;
 
@@ -459,6 +437,10 @@ private:
         to_str(p_stream, _tup, std::make_index_sequence<sizeof...(T)>());
     }
 
+public:
+    /// \brief Global log level
+    static level g_level;
+
 private:
     /// \brief Allows a thread safe writing to the log writer
     std::mutex m_mutex;
@@ -469,31 +451,33 @@ private:
     writer m_writer {[](std::string &&p_str) -> void { std::cerr << p_str; }};
 };
 
-log global_logger;
+level log::g_level {level::warn};
+
+log g_logger;
 
 } // namespace internal
 
 /// \brief Sets the global log level as 'debug'
-void set_debug_level() { internal::global_level = internal::level::debug; }
+void set_debug_level() { internal::log::g_level = internal::level::debug; }
 
 /// \brief Sets the global log level as 'info'
-void set_info_level() { internal::global_level = internal::level::info; }
+void set_info_level() { internal::log::g_level = internal::level::info; }
 
 /// \brief Sets the global log level as 'warn'
-void set_warn_level() { internal::global_level = internal::level::warn; }
+void set_warn_level() { internal::log::g_level = internal::level::warn; }
 
 void set_writer_cerr() {
-    internal::global_logger.set_writer(
+    internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cerr << p_str; });
 }
 
 void set_writer_cout() {
-    internal::global_logger.set_writer(
+    internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cout << p_str; });
 }
 
 void set_writer_clog() {
-    internal::global_logger.set_writer(
+    internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::clog << p_str; });
 }
 #endif

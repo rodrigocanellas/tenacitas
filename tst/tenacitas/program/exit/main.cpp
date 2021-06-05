@@ -32,7 +32,7 @@ struct exit_000 {
             }
         };
 
-        async::sleeping_loop _loop(m_id, _function, 200ms, 1s);
+        async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
         async::add_handler<event::exit_app>(
             [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
@@ -46,8 +46,6 @@ struct exit_000 {
     }
 
 private:
-    number::id m_id;
-
     uint16_t m_counter {0};
     const uint16_t m_max {5};
 };
@@ -77,7 +75,7 @@ struct exit_001 {
             }
         };
 
-        async::sleeping_loop _loop(m_id, _function, 200ms, 1s);
+        async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
         async::add_handler<event::exit_app>(
             [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
@@ -91,8 +89,6 @@ struct exit_001 {
     }
 
 private:
-    number::id m_id;
-
     const uint16_t m_max {5};
     uint16_t m_counter {0};
 };
