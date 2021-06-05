@@ -1,6 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  async
-#  \
-#  program
+  async \
+  program

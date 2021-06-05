@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example messenger_001
+/// \example messenger_002
 
 #include <chrono>
 #include <condition_variable>
@@ -18,7 +18,7 @@
 using namespace tenacitas;
 using namespace std::chrono_literals;
 
-// event to be dispatched
+// message to be sent
 struct temperature {
     explicit temperature(float p_value = 0.0)
         : value(p_value) {}
@@ -32,17 +32,25 @@ struct temperature {
     float value {0.0};
 };
 
-// simulates a temperature sensor generating 'temperature' events
+// event dispatched every time a temperature_handler handles a temperature event
+struct temperature_handled {
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const temperature_handled &) {
+        p_out << "temperature_handled";
+        return p_out;
+    }
+};
+
+// simulates a temperature sensor generating values
 struct temperature_sensor {
-    // p_max is the max number of 'temperature' events to be dispatched
     temperature_sensor(uint16_t p_max)
         : m_max(p_max)
         , m_temperature_generator(
-              [this](type::ptr<bool>) { generator(); }, m_timeout, m_interval) {
+              [this](type::ptr<bool> p_bool) { generator(p_bool); },
+              m_timeout,
+              m_interval) {}
 
-    }
-
-    // starts to dispatch 'temperature' events
+    // starts to generate temperatures
     void start() { m_temperature_generator.start(); }
 
 private:
@@ -50,9 +58,9 @@ private:
     typedef async::sleeping_loop_t<> temperature_generator;
 
 private:
-    // function to be executed inside the sleeping loop, that will dispatch the
-    // 'temperature' events
-    void generator() {
+    // function to be executed inside the sleeping loop, that will generate the
+    // temperatures
+    void generator(type::ptr<bool>) {
         if (m_counter >= m_max) {
             if (!m_reported) {
                 std::cout << "all temperatures generated" << std::endl;
@@ -66,12 +74,12 @@ private:
     }
 
 private:
-    // max number of 'temperature' events to be dispatched
-    const uint16_t m_max;
-
     // counter which will be incremented by the function executed in the
     // sleeping loop
     uint16_t m_counter {0};
+
+    // max number of temperatures value of the counter
+    const uint16_t m_max;
 
     // temperature to be sent
     float m_temperature = 23.1;
@@ -88,58 +96,6 @@ private:
     // to avoid writing more than one time that all the temperatures were
     // generated
     bool m_reported {false};
-};
-
-// thread-safe std::cout printer
-struct printer {
-
-    void operator()(char p_id,
-                    uint16_t p_counter,
-                    const temperature &p_temperature) {
-        std::lock_guard<std::mutex> _lock(m_mutex);
-        std::cout << '[' << p_id << ',' << p_counter << "," << p_temperature
-                  << ']' << std::endl;
-    }
-
-private:
-    std::mutex m_mutex;
-};
-
-// event dispatched every time a temperature_handler handles a temperature event
-struct temperature_handled {
-    friend std::ostream &operator<<(std::ostream &p_out,
-                                    const temperature_handled &) {
-        p_out << "temperature_handled";
-        return p_out;
-    }
-};
-
-// handles a 'temperature' event
-struct temperature_handler {
-
-    // p_id allows to distinguish between handlers
-    // p_printer is used to print the id of the handler and temperature handled
-    // p_sleep allows to define that a handler takes more time to consume a
-    // temperature than other
-    explicit temperature_handler(char p_id,
-                                 printer &p_printer,
-                                 std::chrono::milliseconds p_sleep)
-        : m_id(p_id)
-        , m_printer(p_printer)
-        , m_sleep(p_sleep) {}
-
-    void operator()(type::ptr<bool>, temperature &&p_temperature) {
-        std::this_thread::sleep_for(m_sleep);
-        ++m_counter;
-        async::dispatch(temperature_handled {});
-        m_printer(m_id, m_counter, p_temperature);
-    }
-
-private:
-    char m_id;
-    printer &m_printer;
-    std::chrono::milliseconds m_sleep;
-    uint16_t m_counter {0};
 };
 
 //  waits for the number of temperature_handled events equals the maximum number
@@ -175,6 +131,49 @@ private:
     std::mutex m_mutex;
 };
 
+// thread-safe std::cout printer
+struct printer {
+
+    void operator()(char p_id,
+                    uint16_t p_counter,
+                    const temperature &p_temperature) {
+        std::lock_guard<std::mutex> _lock(m_mutex);
+        std::cout << '[' << p_id << ',' << p_counter << "," << p_temperature
+                  << ']' << std::endl;
+    }
+
+private:
+    std::mutex m_mutex;
+};
+
+// handler of the temperature sent by the sensor
+struct temperature_handler {
+
+    // p_id allows to distinguish between handlers
+    // p_printer is used to print the id of the handler and temperature handled
+    // p_sleep allows to define that a handler takes more time to consume a
+    // temperature than other
+    explicit temperature_handler(char p_id,
+                                 printer &p_printer,
+                                 std::chrono::milliseconds p_sleep)
+        : m_id(p_id)
+        , m_printer(p_printer)
+        , m_sleep(p_sleep) {}
+
+    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+        std::this_thread::sleep_for(m_sleep);
+        ++m_counter;
+        async::dispatch(temperature_handled {});
+        m_printer(m_id, m_counter, p_temperature);
+    }
+
+private:
+    char m_id;
+    printer &m_printer;
+    std::chrono::milliseconds m_sleep;
+    uint16_t m_counter {0};
+};
+
 int main() {
 
     // number of temperatures to be generated
@@ -183,14 +182,20 @@ int main() {
     // thread-safe printer
     printer _printer;
 
-    // adds a handler, that will sleep 250ms, to a handling, and save the id of
-    // this handling
+    // adds a handler, that will sleep for 250ms, to a handling, and saves the
+    // id of this handling
     async::handling_id _handling_id = async::add_handler<temperature>(
         temperature_handler {'A', _printer, 250ms}, 2s);
 
-    // adds another handler, that will sleep 1250ms, to _handlers_id
+    // adds another handler, which will sleepfor 1250ms, to _handling_id, so
+    // _handler_1 and _handler_2 will compete with each other to handle
+    // temperature messages, in the handling _handling_id
     async::add_handler<temperature>(
         _handling_id, temperature_handler {'B', _printer, 1250ms});
+
+    // add handler that will sleep for 750ms to another handling
+    async::add_handler<temperature>(temperature_handler {'C', _printer, 750ms},
+                                    2s);
 
     // declaring the temperature sensor
     temperature_sensor _sensor {_max};
@@ -198,7 +203,9 @@ int main() {
     // starting the sensor
     _sensor.start();
 
-    // waits for all the temperature events to be handled
-    wait _wait(_max);
+    // waits for all the temperature events to be handled; as there are two
+    // hanlings, the total number of temperature events are twice as the number
+    // of temperture events despatched
+    wait _wait(2 * _max);
     _wait();
 }
