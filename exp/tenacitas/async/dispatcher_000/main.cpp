@@ -99,8 +99,8 @@ struct all_handled {
 };
 
 // handles a 'temperature' event
-struct temperature_handler {
-    temperature_handler(uint16_t p_max)
+struct temperature_handler_0 {
+    temperature_handler_0(uint16_t p_max)
         : m_max(p_max) {}
     void operator()(type::ptr<bool>, temperature &&p_temperature) {
         std::cout << ++m_counter << " - " << p_temperature << std::endl;
@@ -126,7 +126,7 @@ int main() {
 
     // adding the function that will handle temperatures to an unamed queue of
     // temperature handlers; 2s is the time _temperature_handler has to execute
-    async::add_handler<temperature>(temperature_handler {_max}, 2s);
+    async::add_handler<temperature>(temperature_handler_0 {_max}, 2s);
 
     // declaring the temperature sensor
     temperature_sensor _sensor {_max};

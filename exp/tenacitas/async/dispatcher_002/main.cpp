@@ -141,36 +141,68 @@ struct printer {
         std::cout << '[' << p_id << ',' << p_counter << "," << p_temperature
                   << ']' << std::endl;
     }
+    void operator()(std::string &&p_str) {
+        std::lock_guard<std::mutex> _lock(m_mutex);
+        std::cout << p_str;
+    }
 
 private:
     std::mutex m_mutex;
 };
 
 // handler of the temperature sent by the sensor
-struct temperature_handler {
+struct temperature_handler_0 {
 
     // p_id allows to distinguish between handlers
     // p_printer is used to print the id of the handler and temperature handled
     // p_sleep allows to define that a handler takes more time to consume a
     // temperature than other
-    explicit temperature_handler(char p_id,
-                                 printer &p_printer,
-                                 std::chrono::milliseconds p_sleep)
+    explicit temperature_handler_0(const char *p_id, printer &p_printer)
         : m_id(p_id)
-        , m_printer(p_printer)
-        , m_sleep(p_sleep) {}
+        , m_printer(p_printer) {}
 
     void operator()(type::ptr<bool>, temperature &&p_temperature) {
         std::this_thread::sleep_for(m_sleep);
         ++m_counter;
         async::dispatch(temperature_handled {});
-        m_printer(m_id, m_counter, p_temperature);
+        std::stringstream _stream;
+        _stream << '[' << m_id << ',' << m_counter << ',' << p_temperature
+                << ']' << std::endl;
+        m_printer(_stream.str());
     }
 
 private:
-    char m_id;
+    std::string m_id;
     printer &m_printer;
-    std::chrono::milliseconds m_sleep;
+    std::chrono::milliseconds m_sleep {250ms};
+    uint16_t m_counter {0};
+};
+
+// handles a 'temperature' event
+struct temperature_handler_1 {
+
+    // p_id allows to distinguish between handlers
+    // p_printer is used to print the id of the handler and temperature handled
+    // p_sleep allows to define that a handler takes more time to consume a
+    // temperature than other
+    explicit temperature_handler_1(const char *p_id, printer &p_printer)
+        : m_id(p_id)
+        , m_printer(p_printer) {}
+
+    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+        std::this_thread::sleep_for(m_sleep);
+        ++m_counter;
+        async::dispatch(temperature_handled {});
+        std::stringstream _stream;
+        _stream << "{   " << m_id << ',' << m_counter << ',' << p_temperature
+                << "   }" << std::endl;
+        m_printer(_stream.str());
+    }
+
+private:
+    std::string m_id;
+    printer &m_printer;
+    std::chrono::milliseconds m_sleep {1250ms};
     uint16_t m_counter {0};
 };
 
@@ -185,17 +217,16 @@ int main() {
     // adds a handler, that will sleep for 250ms, to a handling, and saves the
     // id of this handling
     async::handling_id _handling_id = async::add_handler<temperature>(
-        temperature_handler {'A', _printer, 250ms}, 2s);
+        temperature_handler_0 {"0a", _printer}, 2s);
 
-    // adds another handler, which will sleepfor 1250ms, to _handling_id, so
-    // _handler_1 and _handler_2 will compete with each other to handle
-    // temperature messages, in the handling _handling_id
-    async::add_handler<temperature>(
-        _handling_id, temperature_handler {'B', _printer, 1250ms});
+    // adds another handler to _handling_id, so _handler_1 and _handler_2 will
+    // compete with each other to handle temperature messages, in the handling
+    // _handling_id
+    async::add_handler<temperature>(_handling_id,
+                                    temperature_handler_0 {"0b", _printer});
 
-    // add handler that will sleep for 750ms to another handling
-    async::add_handler<temperature>(temperature_handler {'C', _printer, 750ms},
-                                    2s);
+    // add handler that will sleep for 1250ms to another handling
+    async::add_handler<temperature>(temperature_handler_1 {"1a", _printer}, 2s);
 
     // declaring the temperature sensor
     temperature_sensor _sensor {_max};
