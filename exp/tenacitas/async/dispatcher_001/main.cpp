@@ -3,8 +3,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example messenger_001
-
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>

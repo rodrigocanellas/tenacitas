@@ -6,6 +6,11 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+/// \example dispatcher_000/main.cpp
+/// \example dispatcher_001/main.cpp
+/// \example dispatcher_002/main.cpp
+/// \example sleeping_loop_000/main.cpp
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -30,7 +35,72 @@ using namespace std::chrono_literals;
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief support for async (asynchronous) programming
+/** \brief support for async (asynchronous) programming
+ *
+ *The UML below shows the basic structure of the \p async namespace
+ *\startuml
+ *hide empty members
+ *allow_mixing
+ *skinparam linetype ortho
+ *hide empty members
+ *allow_mixing
+ *skinparam linetype ortho
+ *
+ *
+ *class handling_t <t_event>
+ *class handler_t <t_event>
+ *class dispatcher_t <t_event>
+ *
+ *dispatcher_t *-- "*" handling_t
+ *handling_t *-- "*" handler_t
+ *
+ *handling_t *-- timeout
+ *handling_t *-- priority
+ *\enduml
+ *
+ *The central concept is an \p t_event. A \p t_event is a struct that contains
+ *data about an interesting event in the application. It can be, for example, a
+ *incoming message from a network connection, or a user menu choice.
+ *
+ *A \p handler_t is a function class that will handle a \p t_event. We can see
+ *in the \p tenacitas::async::handler_t signature that it also receives a
+ *<tt>std::share_ptr<bool></tt> object. Through this pointer a \p handler_t
+ *function may be informed that its execution took more time than specified, so
+ *that it can make the decision to stop running.
+ *
+ *A \p handling_t defines a type of handling for a \p t_event, and can group as
+ *many \p handler_t objects as necessary. For example, a user menu choice can
+ *generate a log message, a message sent to a remote program, and to change the
+ *color of widget in the user interface. Each one of this actions is a \p
+ *handling_t. Besides, it is possible to define one handler for the logging
+ *handling, five handlers to the network message handling, and two for the
+ *widget color changing. When the user makes its menu choice, the five \p
+ *handler_t objects in the message network \p handling_t will "fight each other"
+ *to get the \p t_event to handle.
+ *
+ *Each \p handling_t defines a timeout applies to all its \p handler_t objects,
+ *and it is possible to define a tenacitas::async::priority for a \p handling_t,
+ *so that the higher priority will receive a \p t_event before the others \p
+ *handling_t.
+ *
+ *The \p dispatcher_t class is responsible for managing the creation of \p
+ *handling_t objects, adding \p handler_t objects to a \p handling_t, and
+ *dispatching \p t_event objects to the \p handing_t.
+ *
+ *In order to make it easier to deal with these classes, the \p async namespace
+ *implements a set of functions: tenacitas::async::add_handling,
+ *tenacitas::async::add_hander, tenacitas::async::set_priority and
+ *tenacitas::async::dispatch, with some variations.
+ *
+ *The \p sleeping_loop_t allows a function to be executed in a defined
+ *interval. It is usefull, among others, to dispatch \p t_event, in order to
+ *simulate an actual event generation and handling.
+ *
+ *Please, look at the \p Examples section for examples on how to use these
+ *functions and classes.
+ *
+
+ */
 namespace async {
 
 // for type::ptr

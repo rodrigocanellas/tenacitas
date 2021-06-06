@@ -3,8 +3,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example application_000
-
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
@@ -111,8 +109,8 @@ struct temperature_handler_0 {
     // p_sleep allows to define that a handler takes more time to consume a
     // temperature than other
     explicit temperature_handler_0(char p_id,
-                                 printer &p_printer,
-                                 std::chrono::milliseconds p_sleep)
+                                   printer &p_printer,
+                                   std::chrono::milliseconds p_sleep)
         : m_id(p_id)
         , m_printer(p_printer)
         , m_sleep(p_sleep) {}
@@ -169,8 +167,8 @@ void app() {
         _handling_id, temperature_handler_0 {'B', _printer, 1250ms});
 
     // add handler that will sleep for 750ms to another handling
-    async::add_handler<temperature>(temperature_handler_0 {'C', _printer, 750ms},
-                                    2s);
+    async::add_handler<temperature>(
+        temperature_handler_0 {'C', _printer, 750ms}, 2s);
 
     {
         // declaring the temperature sensor

@@ -1,0 +1,6 @@
+<map id="tenacitas::tester::test::test" name="tenacitas::tester::test::test">
+<area shape="rect" id="node1" title="Constructor If &#39;–desc&#39; is passed, operator() will print a description of the tests...." alt="" coords="5,71,141,112"/>
+<area shape="rect" id="node2" href="$structtenacitas_1_1program_1_1options__t.html#ac98b5fc41d615dfd6a024112c5613e69" title="Retrieves the bool parameter, if possible." alt="" coords="189,5,392,47"/>
+<area shape="rect" id="node3" href="$structtenacitas_1_1program_1_1options__t.html#aacf2ff4670daac21f90c30b13385a342" title="Retrieves the values of a parameter." alt="" coords="193,71,388,112"/>
+<area shape="rect" id="node4" href="$structtenacitas_1_1program_1_1options__t.html#a0a58833e2c5f798c3612fabfa0f378ed" title="parse parses the options passed to a program" alt="" coords="218,136,363,177"/>
+</map>

@@ -3,8 +3,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example sleeping_loop_000
-
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>

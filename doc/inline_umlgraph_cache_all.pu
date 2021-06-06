@@ -1,0 +1,19 @@
+@startuml inline_umlgraph_1.png
+hide empty members
+allow_mixing
+skinparam linetype ortho
+hide empty members
+allow_mixing
+skinparam linetype ortho
+
+
+class handling_t <t_event>
+class handler_t <t_event>
+class dispatcher_t <t_event>
+
+dispatcher_t *-- "*" handling_t
+handling_t *-- "*" handler_t
+
+handling_t *-- timeout
+handling_t *-- priority
+@enduml

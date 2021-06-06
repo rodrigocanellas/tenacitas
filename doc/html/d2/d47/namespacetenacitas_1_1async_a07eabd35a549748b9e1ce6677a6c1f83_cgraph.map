@@ -1,0 +1,4 @@
+<map id="tenacitas::async::add_handler" name="tenacitas::async::add_handler">
+<area shape="rect" id="node1" title="Adds a handling to receive events to be handled, and adds a handler to it It is possible to add many ..." alt="" coords="5,29,165,71"/>
+<area shape="rect" id="node2" href="$d2/d47/namespacetenacitas_1_1async.html#af62292f456fd7ad1a8abf1f27498402e" title="Adds a handler to a handling It is possible to add many handlers to the same handling...." alt="" coords="213,29,373,71"/>
+</map>

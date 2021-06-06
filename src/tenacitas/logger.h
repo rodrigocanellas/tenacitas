@@ -25,45 +25,11 @@
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief thread-safe, with log level definition, log class, with functions to
-/// control where the log is written
+/// \brief thread-safe log class, with log level definition and with functions
+/// to control where the log is written
 namespace logger {
 
-// dummy log implementation
-#ifndef TENACITAS_LOG
-
-void set_debug_level() {}
-void set_info_level() {}
-void set_warn_level() {}
-void set_writer_cerr() {}
-void set_writer_cout() {}
-void set_writer_clog() {}
-
-    /// \brief Wraps to the debug log function
-    #define DEB(p_params...) \
-        {}
-
-    /// \brief Wraps to the info log function
-    #define INF(p_params...) \
-        {}
-
-    /// \brief Wraps to the warn log function
-    #define WAR(p_params...) \
-        {}
-
-    /// \brief Wraps to the error log function
-    #define ERR(p_params...) \
-        {}
-
-    /// \brief Wraps to the fatal log function
-    #define FAT(p_params...) \
-        {}
-
-    /// \brief Defines the character to separate the fields in a log message
-    #define LOG_SEP(separator) \
-        {}
-
-#else
+#ifdef TENACITAS_LOG
 
     /// \brief Wrapper to the debug log function
     #define DEB(p_params...)                                            \
@@ -145,7 +111,7 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
     return p_out;
 }
 
-/// \brief Guarantees thread safe writing of log messages
+/// \brief Thread safe writing of log messages
 /// A log message has the format:
 /// log-level|timestamp|file-name|thread-id|line-number|contents
 ///
@@ -199,9 +165,7 @@ public:
     inline char get_separator() const { return m_separator; }
 
     /// \brief Logs message with \p trace severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// The log message will only be printed if the current log level is \p
     /// level::trace
     ///
@@ -219,9 +183,7 @@ public:
     }
 
     /// \brief Logs message with \p debug severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// The log message will only be printed if the current log level is \p
     /// level::debug or \p level::trace
     ///
@@ -239,9 +201,7 @@ public:
     }
 
     /// \brief Logs message with \p info severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// The log message will only be printed if the current log level is \p
     /// level::info, \p level::debug or \p level::trace
     ///
@@ -259,9 +219,7 @@ public:
     }
 
     /// \brief Logs message with \p warn severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// The log message will only be printed if the current log level is \p
     /// level::warn, \p level::info, \p level::debug or \p level::trace
     ///
@@ -279,9 +237,7 @@ public:
     }
 
     /// \brief Logs message with \p error severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// \p level::error messages are allways logged
     ///
     /// \tparam t_params are the types of the values to be logged.
@@ -298,9 +254,7 @@ public:
     }
 
     /// \brief Logs message with \p fatal severity
-    /// Each parameter must implement the \code std::ostream &
-    /// operator<<(const t &)\endcode operator, where \p t is the type of the
-    /// parameter.
+    /// Each parameter must implement the output operator.
     /// \p level::fatal messages are allways logged
     ///
     /// \tparam t_params are the types of the values to be logged.
@@ -320,8 +274,7 @@ private:
     /// \brief Actually writes the message
     ///
     /// \tparam t_params are the types of the values to be logged, and each
-    /// parameter must implement the \code std::ostream & operator<<(const t
-    /// &)\endcode operator, where \p t is the type of the parameter
+    /// parameter must implement the output operator
     ///
     /// \param p_level is the severity level of the message
     ///
@@ -456,6 +409,9 @@ log g_logger;
 
 } // namespace internal
 
+/// \brief Sets the global log level as 'trace'
+void set_trace_level() { internal::log::g_level = internal::level::trace; }
+
 /// \brief Sets the global log level as 'debug'
 void set_debug_level() { internal::log::g_level = internal::level::debug; }
 
@@ -487,10 +443,45 @@ void set_writer_clog() {
 void set_writer(std::function<void(std::string &&)> p_writer) {
     internal::g_logger.set_writer(p_writer);
 }
+
+#else
+    // dummy log implementation
+
+    /// \brief Wraps to the debug log function
+    #define DEB(p_params...) \
+        {}
+
+    /// \brief Wraps to the info log function
+    #define INF(p_params...) \
+        {}
+
+    /// \brief Wraps to the warn log function
+    #define WAR(p_params...) \
+        {}
+
+    /// \brief Wraps to the error log function
+    #define ERR(p_params...) \
+        {}
+
+    /// \brief Wraps to the fatal log function
+    #define FAT(p_params...) \
+        {}
+
+    /// \brief Defines the character to separate the fields in a log
+    /// message
+    #define LOG_SEP(separator) \
+        {}
+
+void set_debug_level() {}
+void set_info_level() {}
+void set_warn_level() {}
+void set_writer_cerr() {}
+void set_writer_cout() {}
+void set_writer_clog() {}
+
 #endif
 
 } // namespace logger
-
 } // namespace tenacitas
 
-#endif
+#endif // TENACITAS_LOGGER_H

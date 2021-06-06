@@ -6,6 +6,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+/// \example application_000/main.cpp
+/// \example options_000/main.cpp
+
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
@@ -33,8 +36,17 @@ using namespace std::chrono_literals;
 /// \brief master namespace
 namespace tenacitas {
 
-/// \brief manipulates program related issues, like options and application,
-/// which allows asyncrhonous program execution
+/** \brief manipulates program related issues
+*
+* \p options_t intends to make it easy to retrieve the options passed options to
+a program.
+*
+* \p application is used in conjunction with tenacitas::event and
+*tenacitas::async to allow creation of asynchronous application
+*
+* Please, look the \p Example section for examples on how to use \p application
+* and tenacitas::async functions
+*/
 namespace program {
 
 /// \brief Class to parse program options
