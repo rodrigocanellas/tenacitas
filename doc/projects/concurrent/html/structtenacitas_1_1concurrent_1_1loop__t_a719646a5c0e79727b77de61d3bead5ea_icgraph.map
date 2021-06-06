@@ -1,6 +1,0 @@
-<map id="tenacitas::concurrent::loop_t::get_timeout" name="tenacitas::concurrent::loop_t::get_timeout">
-<area shape="rect" id="node2" href="$structtenacitas_1_1concurrent_1_1async__loop__t.html#a0094b6a7b31b0326a2f3f225faf412ef" title="get_timeout " alt="" coords="197,101,380,142"/>
-<area shape="rect" id="node3" href="$structtenacitas_1_1concurrent_1_1sleeping__loop__t.html#aed09e90eac40f9a0b705125793d4f162" title="get_timeout " alt="" coords="429,5,576,61"/>
-<area shape="rect" id="node4" href="$classtenacitas_1_1concurrent_1_1thread__pool__t.html#ae9f34b526247168a01d6054660fa1d8a" title="move constructor " alt="" coords="428,86,577,157"/>
-<area shape="rect" id="node5" href="$classtenacitas_1_1concurrent_1_1thread__pool__t.html#a33a2aafe7d1bdbd754a74495ddaedcd6" title="move assignment " alt="" coords="428,181,577,251"/>
-</map>

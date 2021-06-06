@@ -1,2 +1,24 @@
-BasedOnStyle: Mozilla
-IndentWidth: 2
+﻿---
+BasedOnStyle: LLVM
+AccessModifierOffset: '-4'
+AlignAfterOpenBracket: Align
+AlignConsecutiveMacros: 'true'
+AlignConsecutiveAssignments: 'false'
+AlignConsecutiveDeclarations: 'false'
+AlignEscapedNewlines: Left
+AlwaysBreakTemplateDeclarations: 'Yes'
+BinPackArguments: 'true'
+BinPackParameters: 'false'
+BreakConstructorInitializers: BeforeComma
+BreakStringLiterals: 'true'
+ColumnLimit: '80'
+IndentCaseLabels: 'false'
+IndentPPDirectives: BeforeHash
+IndentWidth: '4'
+SortIncludes: 'true'
+SortUsingDeclarations: 'true'
+SpaceAfterTemplateKeyword: 'true'
+SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeCpp11BracedList: 'true'
+
+...

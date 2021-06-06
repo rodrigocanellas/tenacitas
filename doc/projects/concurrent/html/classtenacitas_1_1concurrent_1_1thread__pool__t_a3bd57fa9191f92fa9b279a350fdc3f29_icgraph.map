@@ -1,6 +1,0 @@
-<map id="tenacitas::concurrent::thread_pool_t::add_work" name="tenacitas::concurrent::thread_pool_t::add_work">
-<area shape="rect" id="node2" href="$classtenacitas_1_1concurrent_1_1dispatcher__t.html#a1e00aa184fa26c72506e4e605e8363e9" title="adds a group of work_t objects to handle t_msg objects " alt="" coords="225,5,391,47"/>
-<area shape="rect" id="node3" href="$classtenacitas_1_1concurrent_1_1thread__pool__t.html#ae9f34b526247168a01d6054660fa1d8a" title="move constructor " alt="" coords="233,71,383,141"/>
-<area shape="rect" id="node4" href="$classtenacitas_1_1concurrent_1_1thread__pool__t.html#a33a2aafe7d1bdbd754a74495ddaedcd6" title="move assignment " alt="" coords="233,165,383,236"/>
-<area shape="rect" id="node5" href="$classtenacitas_1_1concurrent_1_1thread__pool__t.html#a53c3b921613df41f37a61df9f0fe9369" title="interrupt stops the thread_pool " alt="" coords="227,261,389,317"/>
-</map>

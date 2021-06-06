@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['tenacitas',['tenacitas',['../namespacetenacitas.html',1,'']]],
-  ['timestamp',['timestamp',['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html',1,'tenacitas::calendar::gregorian::timestamp'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a141538f8213fd7c2ef01b2ec09b9864a',1,'tenacitas::calendar::gregorian::timestamp::timestamp()=default'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a33dab6b515b472cbdce7bf5eed08f8e2',1,'tenacitas::calendar::gregorian::timestamp::timestamp(year p_year, month p_month, day p_day, hour p_hour=hour::_00, minute p_minute=minute::_00, second p_second=second::_00)'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a0d7b2899a43c53545fe33c1f837b0e30',1,'tenacitas::calendar::gregorian::timestamp::timestamp(const timestamp &amp;p_timestamp)'],['../structtenacitas_1_1calendar_1_1gregorian_1_1timestamp.html#a25262dc93906df9c0b224f4dbd24f08c',1,'tenacitas::calendar::gregorian::timestamp::timestamp(timestamp &amp;&amp;p_timestamp)']]]
-];
