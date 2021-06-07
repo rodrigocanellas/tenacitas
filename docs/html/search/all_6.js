@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['handler_41',['handler',['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a69bdbaa32815c5aa79b1d2e1f3b65ea8',1,'tenacitas::async::internal::handling_t::handler()'],['../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#a05bd3822d4e8c701d8597f3b62badf3a',1,'tenacitas::async::internal::dispatcher_t::handler()']]],
-  ['handler_5ft_42',['handler_t',['../d2/d47/namespacetenacitas_1_1async.html#a973a7296ac73ea2d8ffc34bef99ec051',1,'tenacitas::async']]],
-  ['handling_5fid_43',['handling_id',['../d2/d47/namespacetenacitas_1_1async.html#afd9788b46a41bbab7d198b4a3acb96dc',1,'tenacitas::async']]],
-  ['handling_5ft_44',['handling_t',['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html',1,'tenacitas::async::internal::handling_t&lt; t_event &gt;'],['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a123dcce4e61a447a53c6f202ab1212aa',1,'tenacitas::async::internal::handling_t::handling_t()=delete'],['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a41e55710da82227ae1ea7719d42c2df0',1,'tenacitas::async::internal::handling_t::handling_t(t_time p_timeout, priority p_priority=125)'],['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a8939729df9015a375df4a7820819a728',1,'tenacitas::async::internal::handling_t::handling_t(const handling_t &amp;)=delete'],['../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a76efbe99847ef7fe17174f64cd8a9d32',1,'tenacitas::async::internal::handling_t::handling_t(handling_t &amp;&amp;)=delete']]],
-  ['hours_45',['hours',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a27ae0e79acd73ef873a853a0e0fb33f7',1,'tenacitas::calendar::now']]]
+  ['handler_5ft_15',['handler_t',['../d2/d47/namespacetenacitas_1_1async.html#a973a7296ac73ea2d8ffc34bef99ec051',1,'tenacitas::async']]],
+  ['handling_5fid_16',['handling_id',['../d2/d47/namespacetenacitas_1_1async.html#afd9788b46a41bbab7d198b4a3acb96dc',1,'tenacitas::async']]],
+  ['hours_17',['hours',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a27ae0e79acd73ef873a853a0e0fb33f7',1,'tenacitas::calendar::now']]]
 ];

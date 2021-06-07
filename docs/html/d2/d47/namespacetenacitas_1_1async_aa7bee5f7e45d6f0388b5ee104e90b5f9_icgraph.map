@@ -1,4 +1,0 @@
-<map id="tenacitas::async::add_handling" name="tenacitas::async::add_handling">
-<area shape="rect" id="node1" title="Adds a handling to receive events to be handled." alt="" coords="259,29,419,71"/>
-<area shape="rect" id="node2" href="$db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#af5624296b24cccfa4f4d6761166b05bd" title="Adds a handling to the dispatcher, which will handle a event in a specific way, and adds a handler to..." alt="" coords="5,29,211,71"/>
-</map>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['wait_119',['wait',['../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#a9457bc3fa2015e047ddc7e62a226ac2c',1,'tenacitas::async::internal::dispatcher_t']]],
-  ['war_120',['WAR',['../d1/d8c/logger_8h.html#a4b8335dfc85685180f94dd54b0923d94',1,'logger.h']]]
+  ['_7esleeping_5floop_5ft_58',['~sleeping_loop_t',['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a3e022b9306721afab4161990e1c46c6d',1,'tenacitas::async::sleeping_loop_t']]]
 ];

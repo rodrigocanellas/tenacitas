@@ -20,10 +20,10 @@ var async_8h =
     [ "add_handling", "de/d91/async_8h.html#aa7bee5f7e45d6f0388b5ee104e90b5f9", null ],
     [ "add_handling", "de/d91/async_8h.html#ab67d6fb57c3c44a2b80b8f503b65026f", null ],
     [ "dispatch", "de/d91/async_8h.html#acf557eac6e09aadf3529d314c1700395", null ],
+    [ "dispatch", "de/d91/async_8h.html#af154436f403cff51528137c7c88a6172", null ],
     [ "execute", "de/d91/async_8h.html#a54e84d0162fcffda51b904c5d74c6397", null ],
     [ "execute", "de/d91/async_8h.html#a94a308dcbf32761731f735a801c4b11b", null ],
     [ "execute", "de/d91/async_8h.html#a1391f9bf8dbf51280c470530aa4e2ad3", null ],
     [ "get_priority", "de/d91/async_8h.html#add3d255e98a13e3c88c20ada003eb065", null ],
-    [ "set_priority", "de/d91/async_8h.html#ab3632a58874ba27d41ccacd14b2b7de2", null ],
-    [ "traverse", "de/d91/async_8h.html#ab1d5161253b55b343b70d7900145014a", null ]
+    [ "set_priority", "de/d91/async_8h.html#ab3632a58874ba27d41ccacd14b2b7de2", null ]
 ];

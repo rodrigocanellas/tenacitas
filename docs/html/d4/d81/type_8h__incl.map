@@ -1,6 +1,6 @@
-<map id="tenacitas/src/tenacitas/type.h" name="tenacitas/src/tenacitas/type.h">
-<area shape="rect" id="node1" title=" " alt="" coords="69,5,238,47"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,95,83,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="107,95,199,121"/>
-<area shape="rect" id="node4" title=" " alt="" coords="223,95,283,121"/>
+<map id="type.h" name="type.h">
+<area shape="rect" id="node1" title=" " alt="" coords="122,5,185,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,83,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="107,80,199,107"/>
+<area shape="rect" id="node4" title=" " alt="" coords="223,80,283,107"/>
 </map>

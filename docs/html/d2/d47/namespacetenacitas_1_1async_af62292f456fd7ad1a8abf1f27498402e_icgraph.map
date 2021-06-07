@@ -1,5 +1,0 @@
-<map id="tenacitas::async::add_handler" name="tenacitas::async::add_handler">
-<area shape="rect" id="node1" title="Adds a handler to a handling It is possible to add many handlers to the same handling...." alt="" coords="259,39,419,80"/>
-<area shape="rect" id="node2" href="$dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#ae7b4a8b475ffa71dd45bcddf722b9185" title="Adds a bunch of handler functions." alt="" coords="15,5,201,47"/>
-<area shape="rect" id="node3" href="$db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#af5624296b24cccfa4f4d6761166b05bd" title="Adds a handling to the dispatcher, which will handle a event in a specific way, and adds a handler to..." alt="" coords="5,71,211,112"/>
-</map>

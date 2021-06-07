@@ -1,5 +1,5 @@
-<map id="tenacitas/src/tenacitas/event.h" name="tenacitas/src/tenacitas/event.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,175,47"/>
-<area shape="rect" id="node2" href="$d1/dea/program_8h.html" title=" " alt="" coords="5,95,175,136"/>
-<area shape="rect" id="node3" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="5,184,175,225"/>
+<map id="event.h" name="event.h">
+<area shape="rect" id="node1" title=" " alt="" coords="15,5,85,32"/>
+<area shape="rect" id="node2" href="$d1/dea/program_8h.html" title=" " alt="" coords="5,80,95,107"/>
+<area shape="rect" id="node3" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="15,155,85,181"/>
 </map>
