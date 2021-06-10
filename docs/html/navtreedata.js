@@ -22,7 +22,7 @@ for the JavaScript code in this file
 */
 var NAVTREE =
 [
-  [ "tenacitas", "index.html", [
+  [ "tenacitas.lib", "index.html", [
     [ "Introduction", "index.html#introduction", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
