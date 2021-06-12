@@ -72,6 +72,9 @@ enum class level : int8_t {
     fatal = 5
 };
 
+/// \brief Global log level
+static level g_level {level::warn};
+
 /// \brief Translates a \p level into a const char *
 ///
 /// \param p_level is the the level to be transalated to const char *
@@ -288,7 +291,7 @@ private:
                const char *p_file,
                uint16_t p_line,
                const t_params &... p_params) {
-        if (p_level >= g_level) {
+        if (p_level >= internal::g_level) {
 
             std::stringstream _stream;
 
@@ -385,8 +388,11 @@ private:
     }
 
 public:
-    /// \brief Global log level
-    static level g_level;
+    //    /// \brief Global log level
+    //    static level g_level;
+
+    //    /// \brief Definition of the globl log object
+    //    static log g_logger;
 
 private:
     /// \brief Allows a thread safe writing to the log writer
@@ -401,50 +407,63 @@ private:
     writer m_writer {[](std::string &&p_str) -> void { std::cerr << p_str; }};
 };
 
-/// \brief Definition of the global level
-level log::g_level {level::warn};
-
 /// \brief Definition of the globl log object
-log g_logger;
+static log g_logger;
 
 } // namespace internal
 
-/// \brief Sets the global log level as 'trace'
-void set_trace_level() { internal::log::g_level = internal::level::trace; }
+///// \brief Sets the global log level as 'trace'
+inline void set_trace_level() { internal::g_level = internal::level::trace; }
 
 /// \brief Sets the global log level as 'debug'
-void set_debug_level() { internal::log::g_level = internal::level::debug; }
+inline void set_debug_level() { internal::g_level = internal::level::debug; }
 
 /// \brief Sets the global log level as 'info'
-void set_info_level() { internal::log::g_level = internal::level::info; }
+inline void set_info_level() { internal::g_level = internal::level::info; }
 
 /// \brief Sets the global log level as 'warn'
-void set_warn_level() { internal::log::g_level = internal::level::warn; }
+inline void set_warn_level() { internal::g_level = internal::level::warn; }
 
 /// \brief Defines that log messages will be written to \p std::cerr
-void set_writer_cerr() {
+inline void set_writer_cerr() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cerr << p_str; });
 }
 
 /// \brief Defines that log messages will be written to \p std::cout
-void set_writer_cout() {
+inline void set_writer_cout() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::cout << p_str; });
 }
 
 /// \brief Defines that log messages will be written to \p std::clog
-void set_writer_clog() {
+inline void set_writer_clog() {
     internal::g_logger.set_writer(
         [](std::string &&p_str) -> void { std::clog << p_str; });
 }
 
 /// \brief Defines the function used to write the log messages
-void set_writer(std::function<void(std::string &&)> p_writer) {
+inline void set_writer(std::function<void(std::string &&)> p_writer) {
     internal::g_logger.set_writer(p_writer);
 }
 
+} // namespace logger
+} // namespace tenacitas
+
+    ///// \brief Definition of the global level
+    // tenacitas::logger::internal::level tenacitas::logger::internal::g_level {
+    //    level::warn};
+
+    // tenacitas::logger::internal::log tenacitas::logger::internal::g_logger;
+
 #else
+/// \brief master namespace
+namespace tenacitas {
+
+/// \brief thread-safe log class, with log level definition and with functions
+/// to control where the log is written
+namespace logger {
+
     // dummy log implementation
 
     /// \brief Wraps to the debug log function
@@ -479,9 +498,9 @@ void set_writer_cerr() {}
 void set_writer_cout() {}
 void set_writer_clog() {}
 
-#endif
-
 } // namespace logger
 } // namespace tenacitas
+
+#endif
 
 #endif // TENACITAS_LOGGER_H
