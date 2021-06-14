@@ -22,14 +22,14 @@
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/type.h>
 
+
+#ifdef TENACITAS_LOG
 /// \brief master namespace
 namespace tenacitas {
 
 /// \brief thread-safe log class, with log level definition and with functions
 /// to control where the log is written
 namespace logger {
-
-#ifdef TENACITAS_LOG
 
     /// \brief Wrapper to the debug log function
     #define DEB(p_params...)                                            \
