@@ -18,18 +18,11 @@
 #include <sstream>
 #include <thread>
 
-#include <tenacitas.lib/calendar.h>
-#include <tenacitas.lib/number.h>
-#include <tenacitas.lib/type.h>
-
-
 #ifdef TENACITAS_LOG
-/// \brief master namespace
-namespace tenacitas {
 
-/// \brief thread-safe log class, with log level definition and with functions
-/// to control where the log is written
-namespace logger {
+    #include <tenacitas.lib/calendar.h>
+    #include <tenacitas.lib/number.h>
+    #include <tenacitas.lib/type.h>
 
     /// \brief Wrapper to the debug log function
     #define DEB(p_params...)                                            \
@@ -57,6 +50,13 @@ namespace logger {
     /// \brief Defines the character to separate the fields in a log message
     #define LOG_SEP(separator) \
         tenacitas::logger::internal::g_logger.set_separator(separator)
+
+/// \brief master namespace
+namespace tenacitas {
+
+/// \brief thread-safe log class, with log level definition and with functions
+/// to control where the log is written
+namespace logger {
 
 /// \brief internal types, objects and functions
 namespace internal {
@@ -182,7 +182,11 @@ public:
     template <typename... t_params>
     inline void
     trace(const char *p_file, uint16_t p_line, const t_params &... p_params) {
+        //        #ifdef TENACITAS_LOG
         write(level::trace, p_file, p_line, p_params...);
+        //            #else
+        //        #unsued(p_file)
+        //            #endif
     }
 
     /// \brief Logs message with \p debug severity
@@ -457,6 +461,34 @@ inline void set_writer(std::function<void(std::string &&)> p_writer) {
     // tenacitas::logger::internal::log tenacitas::logger::internal::g_logger;
 
 #else
+
+    // dummy log implementation
+
+    /// \brief Wraps to the debug log function
+    #define DEB(p_params...) \
+        { tenacitas::logger::xpto(std::cout, p_params); }
+
+    /// \brief Wraps to the info log function
+    #define INF(p_params...) \
+        { tenacitas::logger::xpto(std::cout, p_params); }
+
+    /// \brief Wraps to the warn log function
+    #define WAR(p_params...) \
+        { tenacitas::logger::xpto(std::cout, p_params); }
+
+    /// \brief Wraps to the error log function
+    #define ERR(p_params...) \
+        { tenacitas::logger::xpto(std::cout, p_params); }
+
+    /// \brief Wraps to the fatal log function
+    #define FAT(p_params...) \
+        { tenacitas::logger::xpto(std::cout, p_params); }
+
+    /// \brief Defines the character to separate the fields in a log
+    /// message
+    #define LOG_SEP(separator) \
+        {}
+
 /// \brief master namespace
 namespace tenacitas {
 
@@ -464,39 +496,27 @@ namespace tenacitas {
 /// to control where the log is written
 namespace logger {
 
-    // dummy log implementation
+template <typename... t_params>
+inline void xpto([[maybe_unused]] std::ostream &p_out,
+                 [[maybe_unused]] t_params &&... p_params) {
+    //    trash(p_out, p_params...);
+}
 
-    /// \brief Wraps to the debug log function
-    #define DEB(p_params...) \
-        {}
+// template <typename t_param, typename... t_params>
+// inline void trash(std::ostream &p_out, t_param p1, t_params... p2) {
+//    trash(p_out, p1);
+//    trash(p_out, p2...);
+//}
 
-    /// \brief Wraps to the info log function
-    #define INF(p_params...) \
-        {}
+// template <typename t_param>
+// inline void trash(std::ostream &, t_param) {}
 
-    /// \brief Wraps to the warn log function
-    #define WAR(p_params...) \
-        {}
-
-    /// \brief Wraps to the error log function
-    #define ERR(p_params...) \
-        {}
-
-    /// \brief Wraps to the fatal log function
-    #define FAT(p_params...) \
-        {}
-
-    /// \brief Defines the character to separate the fields in a log
-    /// message
-    #define LOG_SEP(separator) \
-        {}
-
-void set_debug_level() {}
-void set_info_level() {}
-void set_warn_level() {}
-void set_writer_cerr() {}
-void set_writer_cout() {}
-void set_writer_clog() {}
+inline void set_debug_level() {}
+inline void set_info_level() {}
+inline void set_warn_level() {}
+inline void set_writer_cerr() {}
+inline void set_writer_cout() {}
+inline void set_writer_clog() {}
 
 } // namespace logger
 } // namespace tenacitas
