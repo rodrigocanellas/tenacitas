@@ -1113,7 +1113,7 @@ struct dispatcher_t {
     //
     // \return a \p handling_id, identinfying the handling
     template <typename t_time>
-    static inline handling_id add_handling(const t_time &p_timeout,
+    static inline handling_id add_handling(t_time p_timeout = 5s,
                                            priority p_priority = 125) {
         std::lock_guard<std::mutex> _lock(m_mutex);
         m_list.push_back(std::make_unique<handling>(p_timeout, p_priority));
@@ -1139,7 +1139,7 @@ struct dispatcher_t {
     // \return a \p handling_id, identinfying the handling
     template <typename t_time>
     static handling_id add_handling(handler &&p_handler,
-                                    t_time p_timeout,
+                                    t_time p_timeout = 5s,
                                     priority p_priority = 125) {
         handling_id _id = add_handling(p_timeout, p_priority);
         add_handler(_id, std::move(p_handler));
@@ -1539,7 +1539,7 @@ private:
 ///
 /// \return the handling id of the handling added
 template <typename t_event, typename t_time>
-static inline handling_id add_handling(const t_time &p_timeout,
+static inline handling_id add_handling(t_time p_timeout = 5s,
                                        priority p_priority = 125) {
     return internal::dispatcher_t<t_event>::add_handling(p_timeout, p_priority);
 }
@@ -1561,7 +1561,7 @@ static inline handling_id add_handling(const t_time &p_timeout,
 /// \return the handling id of the handling added
 template <typename t_event, typename t_time>
 static inline handling_id add_handling(handler_t<t_event> &&p_handler,
-                                       const t_time &p_timeout,
+                                       t_time p_timeout = 5s,
                                        priority p_priority = 125) {
     return internal::dispatcher_t<t_event>::add_handling(std::move(p_handler),
                                                          p_timeout, p_priority);

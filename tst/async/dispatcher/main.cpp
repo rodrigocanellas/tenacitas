@@ -298,7 +298,7 @@ private:
             uint16_t _handler_id {0};
             for (const handler_definition &_handler_def :
                  _handling_def.handlers_defs) {
-                type::ptr<handler> _handler {std::make_shared<handler>(
+                type::ptr<handler> _handler {type::create<handler>(
                     _handling_id, _handler_id++, _handling_def.timeout,
                     _handling_def.sleep, _handler_def.timeout_at_each)};
 
