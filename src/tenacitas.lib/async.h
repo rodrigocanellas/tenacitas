@@ -1308,11 +1308,11 @@ private:
         sort();
     }
 
-    // \brief Sorts the list of handlings
+    // \brief Sorts the list of handlings in descending priority order
     static inline void sort() {
         m_list.sort(
             [](const handling_ptr &p_i1, const handling_ptr &p_i2) -> bool {
-                return (*p_i1) < (*p_i2);
+                return (p_i1->get_priority() > p_i2->get_priority());
             });
     }
 
@@ -1350,6 +1350,20 @@ struct sleeping_loop_t {
     /// to interrupt its execution
     typedef std::function<void(ptr<bool> p_bool)> function;
 
+    /// \brief Constructor
+    ///
+    /// \tparam t_timeout is the type of time used to define the timeout fot the
+    /// function periodically called
+    ///
+    /// \tparam t_interval is the type of time used to define the amount of time
+    /// that the function will be called
+    template <typename t_timeout, typename t_interval>
+    sleeping_loop_t(function p_function,
+                    t_timeout p_timeout,
+                    t_interval p_interval)
+        : m_function(p_function)
+        , m_timeout(calendar::convert<internal::timeout>(p_timeout))
+        , m_interval(calendar::convert<internal::interval>(p_interval)) {}
     sleeping_loop_t() = delete;
 
     sleeping_loop_t(const sleeping_loop_t &) = delete;
@@ -1395,21 +1409,6 @@ struct sleeping_loop_t {
         }
         return *this;
     }
-
-    /// \brief Constructor
-    ///
-    /// \tparam t_timeout is the type of time used to define the timeout fot the
-    /// function periodically called
-    ///
-    /// \tparam t_interval is the type of time used to define the amount of time
-    /// that the function will be called
-    template <typename t_timeout, typename t_interval>
-    sleeping_loop_t(function p_function,
-                    t_timeout p_timeout,
-                    t_interval p_interval)
-        : m_function(p_function)
-        , m_timeout(calendar::convert<internal::timeout>(p_timeout))
-        , m_interval(calendar::convert<internal::interval>(p_interval)) {}
 
     /// \brief Starts calling the function periodically
     void start() {
