@@ -1,13 +1,11 @@
+QT -= core
 TEMPLATE = app
+TARGET = tenacitas.async.tst.executer
+CONFIG+=test
+include (../../../tenacitas.lib.pri)
 
-CONFIG -= qt
 
-CONFIG += test
-
-TARGET = tenacitas.concurrent.tst.executer
-
-include (../../../../../common.pri)
 
 SOURCES += \
-  $$test_src_dir/concurrent/executer/main.cpp
+  $$tst_code_dir/tst/async/executer/main.cpp
 

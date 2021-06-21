@@ -23,6 +23,7 @@
 #include <optional>
 #include <set>
 #include <thread>
+#include <utility>
 #include <vector>
 
 #include <tenacitas.lib/calendar.h>
@@ -131,6 +132,98 @@ typedef number::id handling_id;
 template <typename t_event>
 using handler_t = std::function<void(ptr<bool> p_bool, t_event &&p_event)>;
 
+/// \brief Synchronous execution, but with timeout control
+///
+/// \tparam t_ret
+///
+/// \tparam t_time
+///
+/// \tparam t_function
+///
+/// \tparam t_params...
+///
+/// \param p_timeout
+///
+/// \param p_function
+///
+/// \param p_param...
+///
+/// \return
+template <typename t_ret,
+          typename t_time,
+          typename t_function,
+          typename... t_params>
+std::optional<t_ret>
+execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    ptr<bool> _stop {std::make_shared<bool>(false)};
+
+    t_ret _ret;
+
+    std::thread _th([&]() -> void {
+        _ret = p_function(_stop, std::forward<t_params>(p_params...)...);
+
+        _cond.notify_one();
+    });
+
+    std::unique_lock<std::mutex> _lock {_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+        DEB("no timeout");
+        _th.join();
+        return {std::move(_ret)};
+    }
+
+    DEB("timeout");
+    *_stop = true;
+    _th.join();
+    return {};
+}
+
+/// \brief Synchronous execution, but with timeout control
+///
+/// \tparam t_time
+///
+/// \tparam t_function
+///
+/// \tparam t_params...
+///
+/// \param p_timeout
+///
+/// \param p_function
+///
+/// \param p_param...
+///
+/// \return
+template <typename t_time, typename t_function, typename... t_params>
+bool execute(t_time p_timeout,
+             t_function &p_function,
+             t_params &&... p_params) {
+    std::mutex _mutex;
+    std::condition_variable _cond;
+
+    ptr<bool> _stop {std::make_shared<bool>(false)};
+
+    std::thread _th([&]() -> void {
+        p_function(_stop, std::forward<t_params>(p_params)...);
+
+        _cond.notify_one();
+    });
+
+    std::unique_lock<std::mutex> _lock {_mutex};
+    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+        DEB("no timeout");
+        _th.join();
+        return true;
+    }
+
+    DEB("timeout");
+    *_stop = true;
+    _th.join();
+    return false;
+}
+
 // \brief internal classes, objects and function
 namespace internal {
 
@@ -139,401 +232,6 @@ typedef std::chrono::milliseconds timeout;
 
 // \brief Type of time used to define interval
 typedef std::chrono::milliseconds interval;
-
-// \brief Defines the return values types for a synchronous execution, with
-// timeout control, of a function that actually returns a value
-//
-// \tparam t_type is the type the return value
-template <typename t_type>
-struct executer_traits_t {
-    // \brief returned by the executed function
-    typedef t_type type;
-
-    // \brief result of the time controlled execution of the
-    // function
-    typedef std::optional<type> result;
-};
-
-// \brief Defines the return values types for a synchronous execution, with
-// timeout control, of a function that does not returns a value
-template <>
-struct executer_traits_t<void> {
-    /// \brief returned by the executed function
-    typedef void type;
-
-    /// \brief result of the time controlled execution of the
-    /// function
-    typedef bool result;
-};
-
-// \brief Executes synchronously a function that returns a value, but with
-// timeout control
-//
-// \tparam t_ret is the type the return value
-template <typename t_ret>
-struct executer_t {
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \tparam t_params are the types of the parameters to \p p_function
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \param p_tuple is a tuple with the arguments to \p p_function
-    //
-    // \return a return value if it was possible to execute the function in the
-    // time defined; an empty std::optional otherwise
-    template <typename t_time, typename t_function, typename... t_params>
-    std::optional<t_ret> operator()(t_time p_timeout,
-                                    t_function p_function,
-                                    std::tuple<t_params...> &&p_tuple) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        std::tuple<ptr<bool>, t_params...> _tuple =
-            std::tuple_cat(std::make_tuple(_stop), std::move(p_tuple));
-
-        t_ret _ret;
-
-        std::thread _th([&p_function, &_cond, &_ret, &_tuple]() -> void {
-            _ret = std::apply(p_function, std::move(_tuple));
-            _cond.notify_one();
-        });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            _th.join();
-            return {_ret};
-        }
-
-        *_stop = true;
-        _th.join();
-        return {};
-    }
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \tparam t_param is the type of the parameter to \p p_function
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \param p_param is the argument to \p p_function
-    //
-    // \return a return value if it was possible to execute the function in the
-    // time defined; an empty std::optional otherwise
-    template <typename t_time, typename t_function, typename t_param>
-    std::optional<t_ret>
-    operator()(t_time p_timeout, t_function p_function, t_param &&p_param) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        t_ret _ret;
-
-        std::thread _th(
-            [&p_function, _stop, &_cond, &_ret, &p_param]() -> void {
-                _ret = p_function(_stop, std::move(p_param));
-                _cond.notify_one();
-            });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            _th.join();
-            return {_ret};
-        }
-
-        *_stop = true;
-        _th.join();
-        return {};
-    }
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \return a return value if it was possible to execute the function in the
-    // time defined; an empty std::optional otherwise
-    template <typename t_time, typename t_function>
-    std::optional<t_ret> operator()(t_time p_timeout, t_function p_function) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        t_ret _ret;
-
-        std::thread _th([&p_function, _stop, &_cond, &_ret]() -> void {
-            _ret = p_function(_stop);
-            _cond.notify_one();
-        });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            _th.join();
-            return {_ret};
-        }
-
-        *_stop = true;
-        _th.join();
-        return {};
-    }
-};
-
-// \brief Executes synchronously a function that does not return a value, but
-// with timeout control
-template <>
-struct executer_t<void> {
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \tparam t_params are the types of the parameters to \p p_function
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \param p_tuple is a tuple with the arguments to \p p_function
-    //
-    // \return \p true if it was possible to execute the function in the time
-    // defined; \p false otherwise
-    template <typename t_time, typename t_function, typename... t_params>
-    bool operator()(t_time p_timeout,
-                    t_function p_function,
-                    std::tuple<t_params...> &&p_tuple) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        std::tuple<ptr<bool>, t_params...> _tuple =
-            std::tuple_cat(std::make_tuple(_stop), std::move(p_tuple));
-
-        std::thread _th([&p_function, &_cond, &_tuple]() -> void {
-            std::apply(p_function, std::move(_tuple));
-            _cond.notify_one();
-        });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            _th.join();
-            return true;
-        }
-
-        *_stop = true;
-        _th.join();
-        return false;
-    }
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \tparam t_param is the type of the parameter to \p p_function
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \param p_param is the argument to \p p_function
-    //
-    // \return \p true if it was possible to execute the function in the time
-    // defined; \p false otherwise
-    template <typename t_time, typename t_function, typename t_param>
-    bool
-    operator()(t_time p_timeout, t_function p_function, t_param &&p_param) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        DEB("param = ", p_param);
-
-        std::thread _th(
-            [this, &p_function, &_stop, &_cond, &p_param]() -> void {
-                DEB("about to call function for ", p_param);
-                p_function(_stop, std::move(p_param));
-                DEB("about to notify");
-                _cond.notify_one();
-            });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            DEB("no timeout");
-            _th.join();
-            DEB("returning true");
-            return true;
-        }
-
-        DEB("timeout, setting p_stop to true");
-        *_stop = true;
-        _th.join();
-        DEB("returning false");
-        return false;
-    }
-
-    // \brief Executes a function synchronously, but with timeout control
-    //
-    // \tparam t_time type of time used to define the timeout for the function
-    // execution
-    //
-    // \tparam t_function is the funcion to be executed
-    //
-    // \param p_timeout is the value of the timeout
-    //
-    // \param p_function is the function to be executed
-    //
-    // \return \p true if it was possible to execute the function in the time
-    // defined; \p false otherwise
-    template <typename t_time, typename t_function>
-    bool operator()(t_time p_timeout, t_function p_function) {
-        std::mutex _mutex;
-        std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
-
-        std::thread _th([&p_function, _stop, &_cond]() -> void {
-            DEB("about to execute");
-            p_function(_stop);
-            DEB("execution returned");
-            _cond.notify_one();
-        });
-
-        std::unique_lock<std::mutex> _lock {_mutex};
-        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            _th.join();
-            return true;
-        }
-
-        *_stop = true;
-        _th.join();
-        return false;
-    }
-};
-
-// \brief Executes a function synchronously, but with timeout control
-//
-// \tparam t_time type of time used to define the timeout for the function
-// execution
-//
-// \tparam t_function is the funcion to be executed
-//
-// \tparam t_params are the types of the parameters to \p p_function
-//
-// \param p_timeout is the value of the timeout
-//
-// \param p_function is the function to be executed
-//
-// \param p_tuple is a tuple with the arguments to \p p_function
-//
-// \return if \p t_function returns, \p std::optional<type>, where if \p
-// p_function timesout, the optional is empty, and if \p p_function does nor
-// timeout, it contains the value; if \p t_function does not return \p bool,
-// where \p false if \p p_function timesout, and \p true \p p_function does not
-// timeout
-template <typename t_time, typename t_function, typename... t_params>
-typename executer_traits_t<
-    std::invoke_result_t<t_function, ptr<bool>, t_params...>>::result
-execute(t_time p_timeout,
-        t_function p_function,
-        std::tuple<t_params...> &&p_tuple) {
-    typedef typename executer_traits_t<
-        std::invoke_result_t<t_function, ptr<bool>, t_params...>>::type type;
-
-    executer_t<type> _executer;
-
-    return _executer(p_timeout, &p_function, std::move(p_tuple));
-}
-
-// \brief Executes a function synchronously, but with timeout control
-//
-// \tparam t_time type of time used to define the timeout for the function
-// execution
-//
-// \tparam t_function is the funcion to be executed
-//
-// \tparam t_param is the type of the parameter to \p p_function
-//
-// \param p_timeout is the value of the timeout
-//
-// \param p_function is the function to be executed
-//
-// \param p_param is argument to \p p_function
-//
-// \return if \p t_function returns, \p std::optional<type>, where if \p
-// p_function timesout, the optional is empty, and if \p p_function does nor
-// timeout, it contains the value; if \p t_function does not return \p bool,
-// where \p false if \p p_function timesout, and \p true \p p_function does not
-// timeout
-template <typename t_time, typename t_function, typename t_param>
-typename executer_traits_t<
-    std::invoke_result_t<t_function, ptr<bool>, t_param>>::result
-execute(t_time p_timeout, t_function p_function, t_param &&p_param) {
-    typedef typename executer_traits_t<
-        std::invoke_result_t<t_function, ptr<bool>, t_param>>::type type;
-
-    executer_t<type> _executer;
-
-    return _executer(p_timeout, p_function, std::move(p_param));
-}
-
-// \brief Executes a function synchronously, but with timeout control
-//
-// \tparam t_time type of time used to define the timeout for the function
-// execution
-//
-// \tparam t_function is the funcion to be executed
-//
-// \param p_timeout is the value of the timeout
-//
-// \param p_function is the function to be executed
-//
-// \return if \p t_function returns, \p std::optional<type>, where if \p
-// p_function timesout, the optional is empty, and if \p p_function does nor
-// timeout, it contains the value; if \p t_function does not return \p bool,
-// where \p false if \p p_function timesout, and \p true \p p_function does not
-// timeout
-template <typename t_time, typename t_function>
-typename executer_traits_t<std::invoke_result_t<t_function, ptr<bool>>>::result
-execute(t_time p_timeout, t_function p_function) {
-    typedef typename executer_traits_t<
-        std::invoke_result_t<t_function, ptr<bool>>>::type type;
-
-    executer_t<type> _executer;
-
-    return _executer(p_timeout, p_function);
-}
 
 // \brief Implements a circular queue which size is increased if it
 // becomes full
@@ -1003,11 +701,7 @@ private:
                     break;
                 }
 
-                if (!execute(
-                        m_timeout,
-                        [&p_handler](type::ptr<bool> p_bool, t_event &&p_event)
-                            -> void { p_handler(p_bool, std::move(p_event)); },
-                        std::move(_data))) {
+                if (!execute(m_timeout, p_handler, std::move(_data))) {
                     WAR(m_id, ':', _loop_id, "timeout ", _data);
                 }
             } else {
@@ -1468,10 +1162,7 @@ private:
 
             DEB("calling handler");
 
-            if (!internal::execute(m_timeout,
-                                   [this](type::ptr<bool> p_bool) -> void {
-                                       m_function(p_bool);
-                                   })) {
+            if (!execute(m_timeout, m_function)) {
                 WAR("timeout");
             }
 
