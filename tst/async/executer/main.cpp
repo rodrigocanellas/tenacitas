@@ -8,7 +8,9 @@ using namespace tenacitas;
 using namespace std::chrono_literals;
 
 struct executer_000 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with one parameter, no returning, with no timeout";
+    }
     bool operator()() {
 
         auto _function = [](type::ptr<bool>, int &&p_i) -> void {
@@ -21,7 +23,9 @@ struct executer_000 {
 };
 
 struct executer_001 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with one parameter, no returning, with timeout";
+    }
     bool operator()() {
 
         auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> void {
@@ -39,7 +43,9 @@ struct executer_001 {
 };
 
 struct executer_002 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with no parameter, no returning, with no timeout";
+    }
     bool operator()() {
 
         auto _function = [](type::ptr<bool>) -> void { DEB("hello"); };
@@ -49,7 +55,10 @@ struct executer_002 {
 };
 
 struct executer_003 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with no parameter, no returning, with timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool> p_bool) -> void {
@@ -66,7 +75,10 @@ struct executer_003 {
 };
 
 struct executer_004 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with 3 parameters, no returning, with no timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool>, int p_i, std::string &&p_str,
@@ -81,7 +93,10 @@ struct executer_004 {
 };
 
 struct executer_005 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with 3 parameters, no returning, with timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool> p_bool, int p_i,
@@ -102,7 +117,10 @@ struct executer_005 {
 
 // ----
 struct executer_006 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with one parameter, with returning, with no timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool>, int16_t &&p_i) -> int16_t {
@@ -130,7 +148,10 @@ struct executer_006 {
 };
 
 struct executer_007 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with one parameter, with returning, with timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> int16_t {
@@ -158,7 +179,10 @@ struct executer_007 {
 };
 
 struct executer_008 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with no parameter, with returning, with no timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool>) -> int16_t {
@@ -181,7 +205,10 @@ struct executer_008 {
 };
 
 struct executer_009 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with no parameter, with returning, with timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool> p_bool) -> int16_t {
@@ -203,7 +230,10 @@ struct executer_009 {
 };
 
 struct executer_010 {
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "Function with 2 parameters, with returning, with no timeout";
+    }
+
     bool operator()() {
 
         auto _function = [](type::ptr<bool>, int16_t p_i, float p_f) -> float {
@@ -224,6 +254,33 @@ struct executer_010 {
     }
 };
 
+struct executer_011 {
+    static std::string desc() {
+        return "Function with 2 parameters, with returning, with timeout";
+    }
+
+    bool operator()() {
+
+        auto _function = [](type::ptr<bool> p_bool, int16_t p_i,
+                            float p_f) -> float {
+            std::this_thread::sleep_for(1s);
+            if (*p_bool) {
+                WAR("timeout");
+                return -1;
+            }
+            return p_f * p_i;
+        };
+
+        std::optional<float> _maybe = async::execute(200ms, _function, 4, -2.5);
+        if (_maybe) {
+            ERR("function should timeout, but it has not, and returned ",
+                *_maybe);
+            return false;
+        }
+        return true;
+    }
+};
+
 int main(int argc, char **argv) {
     logger::set_trace_level();
     tester::test _tester(argc, argv);
@@ -239,4 +296,5 @@ int main(int argc, char **argv) {
     run_test(_tester, executer_008);
     run_test(_tester, executer_009);
     run_test(_tester, executer_010);
+    run_test(_tester, executer_011);
 }

@@ -181,7 +181,7 @@ struct executer_t {
         t_ret _ret;
 
         std::thread _th([&]() -> void {
-            _ret = p_function(_stop, std::forward<t_params>(p_params...)...);
+            _ret = p_function(_stop, std::forward<t_params>(p_params)...);
             TRA("ret = ", _ret);
 
             _cond.notify_one();
