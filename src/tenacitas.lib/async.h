@@ -134,94 +134,141 @@ using handler_t = std::function<void(ptr<bool> p_bool, t_event &&p_event)>;
 
 /// \brief Synchronous execution, but with timeout control
 ///
-/// \tparam t_ret
+/// \tparam t_ret type that the function to be executed returns
 ///
-/// \tparam t_time
+/// \tparam t_time type of the time used to specify timeout
 ///
-/// \tparam t_function
+/// \tparam t_function function to be executed. It must have this signature:
+/// <tt>std::function<t_ret(tenacitas::type::ptr<bool> p_bool, t_params...
+/// p_params)></tt>. The \p p_bool is how \p execute will let the function know
+/// that it has exceed the time limit for its execution. The function should
+/// between its instructions to check for \p p_bool, to check if it should stop
+/// executing.
 ///
-/// \tparam t_params...
+/// \tparam t_params... type of the parameters to the function
 ///
-/// \param p_timeout
+/// \param p_timeout maximum amount of time that the function has to finish its
+/// execution. It must be one of the types defined in <tt>std::chrono</tt>
 ///
-/// \param p_function
+/// \param p_function function to execute in \p p_timeout time, with the
+/// signature described above.
 ///
-/// \param p_param...
+/// \param p_param... arguments to \p p_function
 ///
-/// \return
-template <typename t_ret,
-          typename t_time,
-          typename t_function,
-          typename... t_params>
-std::optional<t_ret>
-execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
+/// \return if \p p_function executed in less than \p p_timeout, a valid \p
+/// t_ret value; or an empty std::optional, otherwise.
 
-    ptr<bool> _stop {std::make_shared<bool>(false)};
+template <typename t_ret>
+struct executer_t {
+    template <typename t_time, typename t_function, typename... t_params>
+    std::optional<t_ret> operator()(t_time p_timeout,
+                                    t_function &p_function,
+                                    t_params &&... p_params) {
+        std::mutex _mutex;
+        std::condition_variable _cond;
 
-    t_ret _ret;
+        ptr<bool> _stop {std::make_shared<bool>(false)};
 
-    std::thread _th([&]() -> void {
-        _ret = p_function(_stop, std::forward<t_params>(p_params...)...);
+        t_ret _ret;
 
-        _cond.notify_one();
-    });
+        std::thread _th([&]() -> void {
+            _ret = p_function(_stop, std::forward<t_params>(p_params...)...);
+            TRA("ret = ", _ret);
 
-    std::unique_lock<std::mutex> _lock {_mutex};
-    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-        DEB("no timeout");
+            _cond.notify_one();
+        });
+
+        std::unique_lock<std::mutex> _lock {_mutex};
+        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+            DEB("no timeout");
+            TRA("ret = ", _ret);
+            _th.join();
+            return {std::move(_ret)};
+        }
+
+        DEB("timeout");
+        *_stop = true;
         _th.join();
-        return {std::move(_ret)};
+        return {};
     }
-
-    DEB("timeout");
-    *_stop = true;
-    _th.join();
-    return {};
-}
+};
 
 /// \brief Synchronous execution, but with timeout control
 ///
-/// \tparam t_time
+/// \tparam t_time type of the time used to specify timeout
 ///
-/// \tparam t_function
+/// \tparam t_function function to be executed. It must have this signature:
+/// <tt>std::function<void(tenacitas::type::ptr<bool> p_bool, t_params...
+/// p_params)></tt>. The \p p_bool is how \p execute will let the function know
+/// that it has exceed the time limit for its execution. The function should
+/// between its instructions to check for \p p_bool, to check if it should stop
+/// executing.
 ///
-/// \tparam t_params...
+/// \tparam t_params... type of the parameters to the function
 ///
-/// \param p_timeout
+/// \param p_timeout maximum amount of time that the function has to finish its
+/// execution. It must be one of the types defined in <tt>std::chrono</tt>
 ///
-/// \param p_function
+/// \param p_function function to execute in \p p_timeout time, with the
+/// signature described above.
 ///
-/// \param p_param...
+/// \param p_param... arguments to \p p_function
 ///
-/// \return
-template <typename t_time, typename t_function, typename... t_params>
-bool execute(t_time p_timeout,
-             t_function &p_function,
-             t_params &&... p_params) {
-    std::mutex _mutex;
-    std::condition_variable _cond;
+/// \return \p true if \p p_function executed in less than \p p_timeout, or \p
+/// false otherwise.
 
-    ptr<bool> _stop {std::make_shared<bool>(false)};
+template <>
+struct executer_t<void> {
+    template <typename t_time, typename t_function, typename... t_params>
+    bool operator()(t_time p_timeout,
+                    t_function &p_function,
+                    t_params &&... p_params) {
+        std::mutex _mutex;
+        std::condition_variable _cond;
 
-    std::thread _th([&]() -> void {
-        p_function(_stop, std::forward<t_params>(p_params)...);
+        ptr<bool> _stop {std::make_shared<bool>(false)};
 
-        _cond.notify_one();
-    });
+        std::thread _th([&]() -> void {
+            p_function(_stop, std::forward<t_params>(p_params)...);
 
-    std::unique_lock<std::mutex> _lock {_mutex};
-    if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-        DEB("no timeout");
+            _cond.notify_one();
+        });
+
+        std::unique_lock<std::mutex> _lock {_mutex};
+        if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
+            DEB("no timeout");
+            _th.join();
+            return true;
+        }
+
+        DEB("timeout");
+        *_stop = true;
         _th.join();
-        return true;
+        return false;
     }
+};
 
-    DEB("timeout");
-    *_stop = true;
-    _th.join();
-    return false;
+template <typename t_ret>
+struct result_traits {
+    typedef std::optional<t_ret> result;
+};
+
+template <>
+struct result_traits<void> {
+    typedef bool result;
+};
+
+template <typename t_time, typename t_function, typename... t_params>
+typename result_traits<
+    std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result
+execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
+
+    typedef executer_t<
+        std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>
+        executer;
+    executer _executer;
+    return _executer(p_timeout, p_function,
+                     std::forward<t_params>(p_params)...);
 }
 
 // \brief internal classes, objects and function
@@ -336,8 +383,8 @@ struct circular_unlimited_size_queue_t {
 
     // \brief Tries to get a t_data object from the queue
     //
-    // \return {true, a valid t_data}, if it was possible to get; {false, ---}
-    // if it was not possible
+    // \return {true, a valid t_data}, if it was possible to get; {false,
+    // ---} if it was not possible
     std::pair<bool, t_data> get() {
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (empty()) {
@@ -501,7 +548,8 @@ private:
     std::mutex m_mutex;
 };
 
-// \brief A group of functions that compete to handle an evnt added to a queue
+// \brief A group of functions that compete to handle an evnt added to a
+// queue
 //
 // \param t_data type of data to be processed
 template <typename t_event>
@@ -523,8 +571,8 @@ public:
     // \param p_timeout is the value of timeout for all the handler
     // functions
     //
-    // \param p_priority is the priority of this handling among other handlings
-    // of t_event
+    // \param p_priority is the priority of this handling among other
+    // handlings of t_event
     template <typename t_time>
     handling_t(t_time p_timeout, priority p_priority = 125)
         : m_timeout(calendar::convert<timeout>(p_timeout))
@@ -745,8 +793,8 @@ private:
     // \brief Priority of this handling
     priority m_priority;
 
-    // \brief Queue where \p t_event objectg will be inserted for the handlers
-    // to compete for handling
+    // \brief Queue where \p t_event objectg will be inserted for the
+    // handlers to compete for handling
     queue m_queue;
 
     // \brief Identifier of this handling
@@ -817,7 +865,8 @@ struct dispatcher_t {
     }
 
     // \brief Adds a handling to the dispatcher, which will
-    // handle a event in a specific way, and adds a \p handler to this handling
+    // handle a event in a specific way, and adds a \p handler to this
+    // handling
     //
     // \tparam t_time is the type of time used to define the
     // timeout for all the handler functions. It must be one of the
@@ -867,8 +916,8 @@ struct dispatcher_t {
     }
 
     // \brief Sends an event yo be handled
-    // This event will be copied to all the handlings, and one of the handler
-    // functions in each handlig will handle the event
+    // This event will be copied to all the handlings, and one of the
+    // handler functions in each handlig will handle the event
     //
     // \param p_event is the event to be handled
     static void send(const t_event &p_event) {

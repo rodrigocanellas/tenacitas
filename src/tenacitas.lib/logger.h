@@ -25,6 +25,11 @@
     #include <tenacitas.lib/type.h>
 
     /// \brief Wrapper to the debug log function
+    #define TRA(p_params...)                                             \
+        tenacitas::logger::internal::get_log().trace(__FILE__, __LINE__, \
+                                                     p_params)
+
+    /// \brief Wrapper to the debug log function
     #define DEB(p_params...)                                             \
         tenacitas::logger::internal::get_log().debug(__FILE__, __LINE__, \
                                                      p_params)
@@ -174,7 +179,9 @@ public:
     template <typename... t_params>
     inline void
     trace(const char *p_file, uint16_t p_line, const t_params &... p_params) {
-        write(level::trace, p_file, p_line, p_params...);
+        if (level::trace >= g_level) {
+            write(level::trace, p_file, p_line, p_params...);
+        }
     }
 
     /// \brief Logs message with \p debug severity
@@ -192,7 +199,9 @@ public:
     template <typename... t_params>
     inline void
     debug(const char *p_file, uint16_t p_line, const t_params &... p_params) {
-        write(level::debug, p_file, p_line, p_params...);
+        if (level::debug >= g_level) {
+            write(level::debug, p_file, p_line, p_params...);
+        }
     }
 
     /// \brief Logs message with \p info severity
@@ -210,7 +219,9 @@ public:
     template <typename... t_params>
     inline void
     info(const char *p_file, uint16_t p_line, const t_params &... p_params) {
-        write(level::info, p_file, p_line, p_params...);
+        if (level::info >= g_level) {
+            write(level::info, p_file, p_line, p_params...);
+        }
     }
 
     /// \brief Logs message with \p warn severity
@@ -228,7 +239,9 @@ public:
     template <typename... t_params>
     inline void
     warn(const char *p_file, uint16_t p_line, const t_params &... p_params) {
-        write(level::warn, p_file, p_line, p_params...);
+        if (level::warn >= g_level) {
+            write(level::warn, p_file, p_line, p_params...);
+        }
     }
 
     /// \brief Logs message with \p error severity
@@ -265,10 +278,10 @@ public:
         write(level::fatal, p_file, p_line, p_params...);
     }
 
-    void set_trace() { g_level = level::trace; }
-    void set_debug() { g_level = level::debug; }
-    void set_info() { g_level = level::info; }
-    void set_warn() { g_level = level::warn; }
+    inline void set_trace() { g_level = level::trace; }
+    inline void set_debug() { g_level = level::debug; }
+    inline void set_info() { g_level = level::info; }
+    inline void set_warn() { g_level = level::warn; }
 
 private:
     /// \brief Actually writes the message
@@ -288,21 +301,19 @@ private:
                const char *p_file,
                uint16_t p_line,
                const t_params &... p_params) {
-        if (p_level >= g_level) {
 
-            std::stringstream _stream;
+        std::stringstream _stream;
 
-            _stream << p_level << m_separator << calendar::now<>::microsecs()
-                    << m_separator
-                    << std::filesystem::path(p_file).filename().string()
-                    << m_separator << std::this_thread::get_id() << m_separator
-                    << p_line << m_separator;
-            format(_stream, p_params...);
-            _stream << '\n';
+        _stream << p_level << m_separator
+                << calendar::now<>::iso8601_microsecs() << m_separator
+                << std::filesystem::path(p_file).filename().string()
+                << m_separator << std::this_thread::get_id() << m_separator
+                << p_line << m_separator;
+        format(_stream, p_params...);
+        _stream << '\n';
 
-            std::lock_guard<std::mutex> _lock(m_mutex);
-            m_writer(_stream.str());
-        }
+        std::lock_guard<std::mutex> _lock(m_mutex);
+        m_writer(_stream.str());
     }
 
     /// \brief Compile time recursion to solve the variadic template parameter
@@ -450,6 +461,10 @@ inline void set_writer(std::function<void(std::string &&)> p_writer) {
 #else
 
     // dummy log implementation
+
+    /// \brief Wraps to the debug log function
+    #define TRA(p_params...) \
+        { tenacitas::logger::dummy(std::cout, p_params); }
 
     /// \brief Wraps to the debug log function
     #define DEB(p_params...) \
