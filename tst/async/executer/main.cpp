@@ -17,19 +17,6 @@ struct executer_000 {
         int _i {4};
 
         return async::execute(200ms, _function, std::move(_i));
-        /*
-main.cpp:19:16: error: no matching function for call to 'execute'
-async.h:261:1: note: candidate template ignored:
-substitution failure [with
-t_time = std::chrono::duration<long, std::ratio<1, 1000>>,
-t_function = (lambda at
-/home/rodrigo/development/tenacitas.lib/tst/async/executer/main.cpp:14:26),
-t_params = <int>]:
-no type named 'type' in
-'std::invoke_result<(lambda at
-/home/rodrigo/development/tenacitas.lib/tst/async/executer/main.cpp:14:26),
-int>'
-*/
     }
 };
 
@@ -40,7 +27,7 @@ struct executer_001 {
         auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
-                DEB("hello");
+                WAR("TIMEOUT");
             } else {
                 DEB("i = ", p_i);
             }
@@ -68,7 +55,7 @@ struct executer_003 {
         auto _function = [](type::ptr<bool> p_bool) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
-                DEB("TIMEOUT");
+                WAR("TIMEOUT");
             } else {
                 DEB("hello");
             }
@@ -101,7 +88,7 @@ struct executer_005 {
                             std::string &&p_str, const char *p_char) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
-                DEB("TIMEOUT");
+                WAR("TIMEOUT");
             } else {
                 DEB(p_i, ',', p_str, ',', p_char);
             }
@@ -113,6 +100,7 @@ struct executer_005 {
     }
 };
 
+// ----
 struct executer_006 {
     static std::string desc() { return ""; }
     bool operator()() {
@@ -141,6 +129,101 @@ struct executer_006 {
     }
 };
 
+struct executer_007 {
+    static std::string desc() { return ""; }
+    bool operator()() {
+
+        auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> int16_t {
+            std::this_thread::sleep_for(1s);
+            if (p_bool) {
+                WAR("timeout");
+                return -1;
+            } else {
+                int16_t _res = p_i * 2;
+                TRA("i = ", p_i, ", res = ", _res);
+                return _res;
+            }
+        };
+        int _i {4};
+
+        std::optional<int16_t> _maybe =
+            async::execute(200ms, _function, std::move(_i));
+
+        if (_maybe) {
+            ERR("function returned ", *_maybe, ", but it should not");
+            return false;
+        }
+        return true;
+    }
+};
+
+struct executer_008 {
+    static std::string desc() { return ""; }
+    bool operator()() {
+
+        auto _function = [](type::ptr<bool>) -> int16_t {
+            DEB("hello");
+            return 94;
+        };
+
+        std::optional<int16_t> _maybe = async::execute(200ms, _function);
+        if (!_maybe) {
+            ERR("function timedout, but it should not");
+            return false;
+        }
+        int16_t _value = *_maybe;
+        if (_value != 94) {
+            ERR("value returned should be 94, but it is ", _value);
+            return false;
+        }
+        return true;
+    }
+};
+
+struct executer_009 {
+    static std::string desc() { return ""; }
+    bool operator()() {
+
+        auto _function = [](type::ptr<bool> p_bool) -> int16_t {
+            std::this_thread::sleep_for(1s);
+            if (p_bool) {
+                WAR("TIMEOUT");
+                return -1;
+            }
+            return 53;
+        };
+
+        std::optional<int16_t> _maybe = async::execute(200ms, _function);
+        if (_maybe) {
+            ERR("function not timedout, as expected, and returned ", *_maybe);
+            return false;
+        }
+        return true;
+    }
+};
+
+struct executer_010 {
+    static std::string desc() { return ""; }
+    bool operator()() {
+
+        auto _function = [](type::ptr<bool>, int16_t p_i, float p_f) -> float {
+            return p_f * p_i;
+        };
+
+        std::optional<float> _maybe = async::execute(200ms, _function, 4, -2.5);
+        if (!_maybe) {
+            ERR("function timeout, when it should not");
+            return false;
+        }
+        float _value = *_maybe;
+        if (_value != static_cast<float>(-10)) {
+            ERR("value should be ", static_cast<float>(-10), ", but it is ",
+                _value);
+        }
+        return true;
+    }
+};
+
 int main(int argc, char **argv) {
     logger::set_trace_level();
     tester::test _tester(argc, argv);
@@ -152,4 +235,8 @@ int main(int argc, char **argv) {
     run_test(_tester, executer_004);
     run_test(_tester, executer_005);
     run_test(_tester, executer_006);
+    run_test(_tester, executer_007);
+    run_test(_tester, executer_008);
+    run_test(_tester, executer_009);
+    run_test(_tester, executer_010);
 }
