@@ -10,6 +10,7 @@
 /// \example dispatcher_001/main.cpp
 /// \example dispatcher_002/main.cpp
 /// \example sleeping_loop_000/main.cpp
+/// \example executer_000/main.cpp
 
 #include <algorithm>
 #include <atomic>
@@ -1103,8 +1104,6 @@ std::mutex dispatcher_t<t_data>::m_mutex;
 ///
 /// However, if \p p_function's return is \p void, then \p execute returns a \p
 /// bool, which is \p true if no timeout occurrs; or \p false otherwise.
-///
-/// \example
 template <typename t_time, typename t_function, typename... t_params>
 typename internal::result_traits<
     std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result

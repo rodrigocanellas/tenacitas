@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['secs_41',['secs',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a4ecd61d1af7ec83a50bc14239bfb29d6',1,'tenacitas::calendar::now']]],
-  ['set_5fpriority_42',['set_priority',['../d2/d47/namespacetenacitas_1_1async.html#ab3632a58874ba27d41ccacd14b2b7de2',1,'tenacitas::async']]],
-  ['sleeping_5floop_5ft_43',['sleeping_loop_t',['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html',1,'tenacitas::async::sleeping_loop_t&lt; use &gt;'],['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aecfd192f097fb4c8cebbe67977a0b644',1,'tenacitas::async::sleeping_loop_t::sleeping_loop_t(sleeping_loop_t &amp;&amp;p_loop)'],['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a649b6d51d9fc6de2c0b08f87761063ac',1,'tenacitas::async::sleeping_loop_t::sleeping_loop_t(function p_function, t_timeout p_timeout, t_interval p_interval)']]],
-  ['start_44',['start',['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682',1,'tenacitas::async::sleeping_loop_t']]],
-  ['stop_45',['stop',['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aba2b6254ee8147498339ea3932b0830d',1,'tenacitas::async::sleeping_loop_t']]]
+  ['result_84',['result',['../dc/d4c/structtenacitas_1_1async_1_1internal_1_1result__traits.html#a18faa3ea8b676aa860309d95ff93a409',1,'tenacitas::async::internal::result_traits::result()'],['../d6/d00/structtenacitas_1_1async_1_1internal_1_1result__traits_3_01void_01_4.html#aeb7f1f33014d16db6412075df484a0aa',1,'tenacitas::async::internal::result_traits&lt; void &gt;::result()']]],
+  ['result_5ftraits_85',['result_traits',['../dc/d4c/structtenacitas_1_1async_1_1internal_1_1result__traits.html',1,'tenacitas::async::internal']]],
+  ['result_5ftraits_3c_20void_20_3e_86',['result_traits&lt; void &gt;',['../d6/d00/structtenacitas_1_1async_1_1internal_1_1result__traits_3_01void_01_4.html',1,'tenacitas::async::internal']]],
+  ['right_87',['right',['../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d',1,'tenacitas::number']]],
+  ['run_88',['run',['../dc/d40/structtenacitas_1_1tester_1_1test.html#a7de9615c3265f29312f4caa2a39779e2',1,'tenacitas::tester::test']]],
+  ['run_5ftest_89',['run_test',['../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb',1,'tester.h']]]
 ];

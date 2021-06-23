@@ -1,8 +1,7 @@
-<map id="calendar.h" name="calendar.h">
-<area shape="rect" id="node1" title=" " alt="" coords="73,5,162,32"/>
-<area shape="rect" id="node2" href="$de/d91/async_8h.html" title=" " alt="" coords="81,229,153,256"/>
-<area shape="rect" id="node5" href="$d1/d8c/logger_8h.html" title=" " alt="" coords="5,155,80,181"/>
-<area shape="rect" id="node6" href="$d3/d22/number_8h.html" title=" " alt="" coords="155,80,237,107"/>
-<area shape="rect" id="node3" href="$d1/dea/program_8h.html" title=" " alt="" coords="73,304,162,331"/>
-<area shape="rect" id="node4" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="82,379,153,405"/>
+<map id="tenacitas.lib/src/tenacitas.lib/calendar.h" name="tenacitas.lib/src/tenacitas.lib/calendar.h">
+<area shape="rect" id="node1" title=" " alt="" coords="76,5,285,47"/>
+<area shape="rect" id="node2" href="$de/d91/async_8h.html" title=" " alt="" coords="5,184,215,225"/>
+<area shape="rect" id="node5" href="$d3/d22/number_8h.html" title=" " alt="" coords="148,95,357,136"/>
+<area shape="rect" id="node3" href="$d1/dea/program_8h.html" title=" " alt="" coords="76,273,285,315"/>
+<area shape="rect" id="node4" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="76,363,285,404"/>
 </map>

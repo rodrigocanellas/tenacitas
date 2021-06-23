@@ -104,8 +104,10 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"><td class="memItemLeft" align="right" valign="top"><a id="a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> : char </td></tr>
-<tr class="memdesc:a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of alingnment when formating numbers. <br /></td></tr>
+<tr class="memitem:a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> : char { <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a811882fecd5c7618d7099ebbd39ea254">align::left</a> = 'l', 
+<a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a> = 'd'
+ }</td></tr>
+<tr class="memdesc:a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of alingnment when formating numbers.  <a href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">More...</a><br /></td></tr>
 <tr class="separator:a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -115,23 +117,55 @@ Functions</h2></td></tr>
 <tr class="memdesc:ab86291cf708d9cc700e65c2e33d90fbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of characters needed to represent a type of number.  <a href="../../de/d06/namespacetenacitas_1_1number.html#ab86291cf708d9cc700e65c2e33d90fbc">More...</a><br /></td></tr>
 <tr class="separator:ab86291cf708d9cc700e65c2e33d90fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8aeb1e6e43ca4334b0825b2cd4bfa461"><td class="memTemplParams" colspan="2">template&lt;typename t_num_type &gt; </td></tr>
-<tr class="memitem:a8aeb1e6e43ca4334b0825b2cd4bfa461"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461">format</a> (t_num_type p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=align::right)</td></tr>
+<tr class="memitem:a8aeb1e6e43ca4334b0825b2cd4bfa461"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461">format</a> (t_num_type p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=<a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>)</td></tr>
 <tr class="memdesc:a8aeb1e6e43ca4334b0825b2cd4bfa461"><td class="mdescLeft">&#160;</td><td class="mdescRight">Formats a number with the maximum characters necessary to represent the number to string, filled with <code>p_fill</code> and aligned with <code>p_align</code>.  <a href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461">More...</a><br /></td></tr>
 <tr class="separator:a8aeb1e6e43ca4334b0825b2cd4bfa461"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a482c679d8e0b7758f022d2e25612a6af"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a482c679d8e0b7758f022d2e25612a6af">format</a> (uint8_t p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=align::right)</td></tr>
+<tr class="memitem:a482c679d8e0b7758f022d2e25612a6af"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a482c679d8e0b7758f022d2e25612a6af">format</a> (uint8_t p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=<a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>)</td></tr>
 <tr class="memdesc:a482c679d8e0b7758f022d2e25612a6af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization for uint8_t of <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461" title="Formats a number with the maximum characters necessary to represent the number to string,...">tenacitas::number::format</a></code>.  <a href="../../de/d06/namespacetenacitas_1_1number.html#a482c679d8e0b7758f022d2e25612a6af">More...</a><br /></td></tr>
 <tr class="separator:a482c679d8e0b7758f022d2e25612a6af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba8a3e1dd739b5a84abaca96e4f52d7e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#aba8a3e1dd739b5a84abaca96e4f52d7e">format</a> (int8_t p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=align::right)</td></tr>
+<tr class="memitem:aba8a3e1dd739b5a84abaca96e4f52d7e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#aba8a3e1dd739b5a84abaca96e4f52d7e">format</a> (int8_t p_num, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=<a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>)</td></tr>
 <tr class="memdesc:aba8a3e1dd739b5a84abaca96e4f52d7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization for int8_t of <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461" title="Formats a number with the maximum characters necessary to represent the number to string,...">tenacitas::number::format</a></code>.  <a href="../../de/d06/namespacetenacitas_1_1number.html#aba8a3e1dd739b5a84abaca96e4f52d7e">More...</a><br /></td></tr>
 <tr class="separator:aba8a3e1dd739b5a84abaca96e4f52d7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abab35fbb2ffb948227be239b8fc63524"><td class="memTemplParams" colspan="2">template&lt;typename t_num_type &gt; </td></tr>
-<tr class="memitem:abab35fbb2ffb948227be239b8fc63524"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#abab35fbb2ffb948227be239b8fc63524">format</a> (t_num_type p_num, uint8_t p_size, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=align::right)</td></tr>
+<tr class="memitem:abab35fbb2ffb948227be239b8fc63524"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#abab35fbb2ffb948227be239b8fc63524">format</a> (t_num_type p_num, uint8_t p_size, char p_fill='0', <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a> p_align=<a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>)</td></tr>
 <tr class="memdesc:abab35fbb2ffb948227be239b8fc63524"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialization for uint8_t of <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a8aeb1e6e43ca4334b0825b2cd4bfa461" title="Formats a number with the maximum characters necessary to represent the number to string,...">tenacitas::number::format</a></code>.  <a href="../../de/d06/namespacetenacitas_1_1number.html#abab35fbb2ffb948227be239b8fc63524">More...</a><br /></td></tr>
 <tr class="separator:abab35fbb2ffb948227be239b8fc63524"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>manipulates numbers, like formating, and creation of a, hopefully, unique identifier </p>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a13bb7dbf7f1a057bef1c5ed1ad1f8eb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">&#9670;&nbsp;</a></span>align</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">tenacitas::number::align</a> : char</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Type of alingnment when formating numbers. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a811882fecd5c7618d7099ebbd39ea254"></a>left&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d"></a>right&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d22/number_8h_source.html#l00042">42</a> of file <a class="el" href="../../d3/d22/number_8h_source.html">number.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;: <span class="keywordtype">char</span> { <a class="code" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a811882fecd5c7618d7099ebbd39ea254">left</a> = <span class="charliteral">&#39;l&#39;</span>, <a class="code" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">right</a> = <span class="charliteral">&#39;d&#39;</span> };</div>
+</div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="aba8a3e1dd739b5a84abaca96e4f52d7e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aba8a3e1dd739b5a84abaca96e4f52d7e">&#9670;&nbsp;</a></span>format() <span class="overload">[1/4]</span></h2>
 
@@ -157,7 +191,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a>&#160;</td>
-          <td class="paramname"><em>p_align</em> = <code>align::right</code>&#160;</td>
+          <td class="paramname"><em>p_align</em> = <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -191,8 +225,6 @@ Functions</h2></td></tr>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d3/d22/number_8h_source.html#l00058">format()</a>.</p>
-
 </div>
 </div>
 <a id="a8aeb1e6e43ca4334b0825b2cd4bfa461"></a>
@@ -222,7 +254,7 @@ template&lt;typename t_num_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a>&#160;</td>
-          <td class="paramname"><em>p_align</em> = <code>align::right</code>&#160;</td>
+          <td class="paramname"><em>p_align</em> = <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -262,10 +294,6 @@ template&lt;typename t_num_type &gt; </div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d3/d22/number_8h_source.html#l00058">format()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d3/d22/number_8h_source.html#l00058">format()</a>.</p>
-
 </div>
 </div>
 <a id="abab35fbb2ffb948227be239b8fc63524"></a>
@@ -301,7 +329,7 @@ template&lt;typename t_num_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a>&#160;</td>
-          <td class="paramname"><em>p_align</em> = <code>align::right</code>&#160;</td>
+          <td class="paramname"><em>p_align</em> = <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -334,8 +362,6 @@ template&lt;typename t_num_type &gt; </div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d3/d22/number_8h_source.html#l00058">format()</a>.</p>
-
 </div>
 </div>
 <a id="a482c679d8e0b7758f022d2e25612a6af"></a>
@@ -363,7 +389,7 @@ template&lt;typename t_num_type &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9">align</a>&#160;</td>
-          <td class="paramname"><em>p_align</em> = <code>align::right</code>&#160;</td>
+          <td class="paramname"><em>p_align</em> = <code><a class="el" href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">align::right</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -397,8 +423,6 @@ template&lt;typename t_num_type &gt; </div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d3/d22/number_8h_source.html#l00058">format()</a>.</p>
-
 </div>
 </div>
 <a id="ab86291cf708d9cc700e65c2e33d90fbc"></a>
@@ -442,14 +466,12 @@ template&lt;typename t_num_type &gt; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        1);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d3/d22/number_8h_source.html#l00035">max_str_length()</a>.</p>
-
-<p class="reference">Referenced by <a class="el" href="../../d3/d22/number_8h_source.html#l00035">max_str_length()</a>.</p>
-
 </div>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="anamespacetenacitas_1_1number_html_a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d"><div class="ttname"><a href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a7c4f29407893c334a6cb7a87bf045c0d">tenacitas::number::align::right</a></div><div class="ttdeci">@ right</div></div>
+<div class="ttc" id="anamespacetenacitas_1_1number_html_a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a811882fecd5c7618d7099ebbd39ea254"><div class="ttname"><a href="../../de/d06/namespacetenacitas_1_1number.html#a13bb7dbf7f1a057bef1c5ed1ad1f8eb9a811882fecd5c7618d7099ebbd39ea254">tenacitas::number::align::left</a></div><div class="ttdeci">@ left</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
