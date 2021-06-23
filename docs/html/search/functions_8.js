@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['operator_20delete_99',['operator delete',['../db/d71/structtenacitas_1_1program_1_1application.html#a880594f8680b5c0e4a04966b50a68f2f',1,'tenacitas::program::application']]],
-  ['operator_20new_100',['operator new',['../db/d71/structtenacitas_1_1program_1_1application.html#a1fc8e7957716dd40b3273d92168086c1',1,'tenacitas::program::application']]],
-  ['operator_3d_101',['operator=',['../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a7fe6245526408d5e0e2c72d3ad40bd5d',1,'tenacitas::async::sleeping_loop_t::operator=()'],['../db/d71/structtenacitas_1_1program_1_1application.html#a8b8dadf4c9a7bb80f2d5481b7ef71c9b',1,'tenacitas::program::application::operator=(const application &amp;)=delete'],['../db/d71/structtenacitas_1_1program_1_1application.html#a8493ba2ca20dd431bb4d0bcd69443547',1,'tenacitas::program::application::operator=(application &amp;&amp;)=delete'],['../dc/d40/structtenacitas_1_1tester_1_1test.html#a513d49498cf3f10ef195bd15afdb49f3',1,'tenacitas::tester::test::operator=(const test &amp;)=delete'],['../dc/d40/structtenacitas_1_1tester_1_1test.html#a8cd1d979cdfb3fd1292da42397b11d21',1,'tenacitas::tester::test::operator=(test &amp;&amp;)=delete']]]
+  ['max_5fstr_5flength_199',['max_str_length',['../de/d06/namespacetenacitas_1_1number.html#ab86291cf708d9cc700e65c2e33d90fbc',1,'tenacitas::number']]],
+  ['microsecs_200',['microsecs',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#af0dd54a4a17ee018f4d2686e1c9b65f8',1,'tenacitas::calendar::now']]],
+  ['millisecs_201',['millisecs',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a930c6e53c1b49c94def46bb1fe49fe67',1,'tenacitas::calendar::now']]],
+  ['minutes_202',['minutes',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a02fca6afbb9a30b4795a017a75e5349a',1,'tenacitas::calendar::now']]],
+  ['months_203',['months',['../dc/df9/structtenacitas_1_1calendar_1_1now.html#a4279df7c772d386e883c18dfcd84e607',1,'tenacitas::calendar::now']]]
 ];

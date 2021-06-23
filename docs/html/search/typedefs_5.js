@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['result_247',['result',['../d6/d51/structtenacitas_1_1async_1_1internal_1_1executer__traits__t.html#a8ed0d21792b1950e1e62122f22daea39',1,'tenacitas::async::internal::executer_traits_t::result()'],['../da/dab/structtenacitas_1_1async_1_1internal_1_1executer__traits__t_3_01void_01_4.html#ae7cf0a11a11fca1c933b0bd0a5ee4960',1,'tenacitas::async::internal::executer_traits_t&lt; void &gt;::result()']]]
+  ['result_250',['result',['../dc/d4c/structtenacitas_1_1async_1_1internal_1_1result__traits.html#a18faa3ea8b676aa860309d95ff93a409',1,'tenacitas::async::internal::result_traits::result()'],['../d6/d00/structtenacitas_1_1async_1_1internal_1_1result__traits_3_01void_01_4.html#aeb7f1f33014d16db6412075df484a0aa',1,'tenacitas::async::internal::result_traits&lt; void &gt;::result()']]]
 ];

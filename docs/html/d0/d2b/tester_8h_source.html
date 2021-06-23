@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: tester.h Source File</title>
+<title>tenacitas.lib: tenacitas.lib/src/tenacitas.lib/tester.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -88,20 +88,20 @@ $(document).ready(function(){initNavTree('d0/d2b/tester_8h_source.html','../../'
 <div class="title">tester.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef TENACITAS_TESTER_H</span></div>
+<a href="../../d0/d2b/tester_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef TENACITAS_TESTER_H</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define TENACITAS_TESTER_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/program.h&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/dea/program_8h.html">tenacitas.lib/program.h</a>&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../da/dd0/namespacetenacitas.html">tenacitas</a> {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="../../dd/d95/namespacetenacitas_1_1tester.html">   17</a></span>&#160;<span class="keyword">namespace </span>tester {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#define run_test(tester, test) tester.run&lt;test&gt;(#test)</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">   31</a></span>&#160;<span class="preprocessor">#define run_test(tester, test) tester.run&lt;test&gt;(#test)</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> use = true&gt;</div>
 <div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="../../dc/d40/structtenacitas_1_1tester_1_1test.html">   85</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../dc/d40/structtenacitas_1_1tester_1_1test.html">test</a> {</div>
@@ -257,8 +257,9 @@ $(document).ready(function(){initNavTree('d0/d2b/tester_8h_source.html','../../'
 </div><!-- doc-content -->
 <div class="ttc" id="astructtenacitas_1_1tester_1_1test_html_a513d49498cf3f10ef195bd15afdb49f3"><div class="ttname"><a href="../../dc/d40/structtenacitas_1_1tester_1_1test.html#a513d49498cf3f10ef195bd15afdb49f3">tenacitas::tester::test::operator=</a></div><div class="ttdeci">test &amp; operator=(const test &amp;)=delete</div><div class="ttdoc">Copy assignment not allowed.</div></div>
 <div class="ttc" id="astructtenacitas_1_1tester_1_1test_html_a264eafac668dce2557017c6182eefa87"><div class="ttname"><a href="../../dc/d40/structtenacitas_1_1tester_1_1test.html#a264eafac668dce2557017c6182eefa87">tenacitas::tester::test::test</a></div><div class="ttdeci">test(int argc, char **argv) noexcept</div><div class="ttdoc">Constructor If '–desc' is passed, operator() will print a description of the tests....</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d2b/tester_8h_source.html#l00097">tester.h:97</a></div></div>
+<div class="ttc" id="aprogram_8h_html"><div class="ttname"><a href="../../d1/dea/program_8h.html">program.h</a></div></div>
 <div class="ttc" id="astructtenacitas_1_1tester_1_1test_html_a7de9615c3265f29312f4caa2a39779e2"><div class="ttname"><a href="../../dc/d40/structtenacitas_1_1tester_1_1test.html#a7de9615c3265f29312f4caa2a39779e2">tenacitas::tester::test::run</a></div><div class="ttdeci">void run(const std::string &amp;p_test_name) noexcept</div><div class="ttdoc">Executes the test If the test passes, the message &quot;SUCCESS for &lt;name&gt;&quot; will be printed; if the test d...</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d2b/tester_8h_source.html#l00164">tester.h:164</a></div></div>
-<div class="ttc" id="anamespacetenacitas_html"><div class="ttname"><a href="../../da/dd0/namespacetenacitas.html">tenacitas</a></div><div class="ttdoc">master namespace</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00036">async.h:36</a></div></div>
+<div class="ttc" id="anamespacetenacitas_html"><div class="ttname"><a href="../../da/dd0/namespacetenacitas.html">tenacitas</a></div><div class="ttdoc">master namespace</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00038">async.h:38</a></div></div>
 <div class="ttc" id="astructtenacitas_1_1program_1_1options__t_html_ac98b5fc41d615dfd6a024112c5613e69"><div class="ttname"><a href="../../d8/d0a/structtenacitas_1_1program_1_1options__t.html#ac98b5fc41d615dfd6a024112c5613e69">tenacitas::program::options_t::get_bool_param</a></div><div class="ttdeci">std::optional&lt; bool &gt; get_bool_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the bool parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/dea/program_8h_source.html#l00135">program.h:135</a></div></div>
 <div class="ttc" id="astructtenacitas_1_1tester_1_1test_html_a42bae3174633470e7bf806aa2df1f2ae"><div class="ttname"><a href="../../dc/d40/structtenacitas_1_1tester_1_1test.html#a42bae3174633470e7bf806aa2df1f2ae">tenacitas::tester::test::test</a></div><div class="ttdeci">test()=delete</div><div class="ttdoc">Default constructor not allowed.</div></div>
 <div class="ttc" id="astructtenacitas_1_1program_1_1options__t_html_aacf2ff4670daac21f90c30b13385a342"><div class="ttname"><a href="../../d8/d0a/structtenacitas_1_1program_1_1options__t.html#aacf2ff4670daac21f90c30b13385a342">tenacitas::program::options_t::get_set_param</a></div><div class="ttdeci">std::optional&lt; std::list&lt; value &gt; &gt; get_set_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the values of a parameter.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/dea/program_8h_source.html#l00167">program.h:167</a></div></div>
@@ -268,7 +269,7 @@ $(document).ready(function(){initNavTree('d0/d2b/tester_8h_source.html','../../'
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_e876e8b8cccec87558d556731fab364a.html">tenacitas.lib</a></li><li class="navelem"><b>tester.h</b></li>
+    <li class="navelem"><a class="el" href="../../dir_dc324369d9f895eb57cf38b0a3664aef.html">tenacitas.lib</a></li><li class="navelem"><a class="el" href="../../dir_bec74da74b19373a01cf5234aab28132.html">src</a></li><li class="navelem"><a class="el" href="../../dir_1e3d83132f9c539ce95783ffb8fc2136.html">tenacitas.lib</a></li><li class="navelem"><a class="el" href="../../d0/d2b/tester_8h.html">tester.h</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="../../doxygen.png" alt="doxygen"/></a> 1.8.17 </li>

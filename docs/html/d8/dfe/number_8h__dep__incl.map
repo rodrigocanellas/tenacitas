@@ -1,7 +1,6 @@
-<map id="number.h" name="number.h">
-<area shape="rect" id="node1" title=" " alt="" coords="6,5,89,32"/>
-<area shape="rect" id="node2" href="$de/d91/async_8h.html" title=" " alt="" coords="23,155,95,181"/>
-<area shape="rect" id="node3" href="$d1/dea/program_8h.html" title=" " alt="" coords="15,229,104,256"/>
-<area shape="rect" id="node5" href="$d1/d8c/logger_8h.html" title=" " alt="" coords="85,80,159,107"/>
-<area shape="rect" id="node4" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="24,304,95,331"/>
+<map id="tenacitas.lib/src/tenacitas.lib/number.h" name="tenacitas.lib/src/tenacitas.lib/number.h">
+<area shape="rect" id="node1" title=" " alt="" coords="76,5,285,47"/>
+<area shape="rect" id="node2" href="$de/d91/async_8h.html" title=" " alt="" coords="5,95,215,136"/>
+<area shape="rect" id="node3" href="$d1/dea/program_8h.html" title=" " alt="" coords="76,184,285,225"/>
+<area shape="rect" id="node4" href="$d0/d2b/tester_8h.html" title=" " alt="" coords="76,273,285,315"/>
 </map>
