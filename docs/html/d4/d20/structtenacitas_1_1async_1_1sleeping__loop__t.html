@@ -148,7 +148,7 @@ struct tenacitas::async::sleeping_loop_t&lt; use &gt;</h3>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="../../d1/d4a/application_000_2main_8cpp-example.html#_a2">application_000/main.cpp</a>, <a class="el" href="../../d1/dd5/dispatcher_000_2main_8cpp-example.html#_a1">dispatcher_000/main.cpp</a>, <a class="el" href="../../dd/d41/dispatcher_001_2main_8cpp-example.html#_a1">dispatcher_001/main.cpp</a>, <a class="el" href="../../d7/d4c/dispatcher_002_2main_8cpp-example.html#_a1">dispatcher_002/main.cpp</a>, and <a class="el" href="../../dd/d2d/sleeping_loop_000_2main_8cpp-example.html#_a0">sleeping_loop_000/main.cpp</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01125">1125</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01129">1129</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="abf848a7df7eacaee3f9b9877f8d6a4b7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abf848a7df7eacaee3f9b9877f8d6a4b7">&#9670;&nbsp;</a></span>function</h2>
@@ -172,7 +172,7 @@ template&lt;bool use = true&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01136">1136</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01140">1140</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -230,10 +230,10 @@ template&lt;typename t_timeout , typename t_interval &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01146">1146</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;        : m_function(p_function)</div>
-<div class="line"><a name="l01150"></a><span class="lineno"> 1150</span>&#160;        , m_timeout(calendar::convert&lt;internal::timeout&gt;(p_timeout))</div>
-<div class="line"><a name="l01151"></a><span class="lineno"> 1151</span>&#160;        , m_interval(calendar::convert&lt;internal::interval&gt;(p_interval)) {}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01150">1150</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01153"></a><span class="lineno"> 1153</span>&#160;        : m_function(p_function)</div>
+<div class="line"><a name="l01154"></a><span class="lineno"> 1154</span>&#160;        , m_timeout(calendar::convert&lt;internal::timeout&gt;(p_timeout))</div>
+<div class="line"><a name="l01155"></a><span class="lineno"> 1155</span>&#160;        , m_interval(calendar::convert&lt;internal::interval&gt;(p_interval)) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -319,8 +319,8 @@ template&lt;bool use = true&gt; </div>
 
 <p>Destrutor The loops stops calling the function. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01160">1160</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01160"></a><span class="lineno"> 1160</span>&#160;{ <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aba2b6254ee8147498339ea3932b0830d">stop</a>(); }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01164">1164</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;{ <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aba2b6254ee8147498339ea3932b0830d">stop</a>(); }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -352,21 +352,21 @@ template&lt;bool use = true&gt; </div>
 
 <p>Move consructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01163">1163</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01163"></a><span class="lineno"> 1163</span>&#160;                                              {</div>
-<div class="line"><a name="l01164"></a><span class="lineno"> 1164</span>&#160;        <span class="keywordtype">bool</span> _stopped = p_loop.m_stopped;</div>
-<div class="line"><a name="l01165"></a><span class="lineno"> 1165</span>&#160; </div>
-<div class="line"><a name="l01166"></a><span class="lineno"> 1166</span>&#160;        m_function = p_loop.m_function;</div>
-<div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;        m_timeout = std::move(p_loop.m_timeout);</div>
-<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;        m_interval = std::move(p_loop.m_interval);</div>
-<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160;        m_stopped = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160; </div>
-<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;        <span class="keywordflow">if</span> (!_stopped) {</div>
-<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;right side not stopped&quot;</span>);</div>
-<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;            p_loop.stop();</div>
-<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160;            <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">start</a>();</div>
-<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;        }</div>
-<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;    }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01167">1167</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01167"></a><span class="lineno"> 1167</span>&#160;                                              {</div>
+<div class="line"><a name="l01168"></a><span class="lineno"> 1168</span>&#160;        <span class="keywordtype">bool</span> _stopped = p_loop.m_stopped;</div>
+<div class="line"><a name="l01169"></a><span class="lineno"> 1169</span>&#160; </div>
+<div class="line"><a name="l01170"></a><span class="lineno"> 1170</span>&#160;        m_function = p_loop.m_function;</div>
+<div class="line"><a name="l01171"></a><span class="lineno"> 1171</span>&#160;        m_timeout = std::move(p_loop.m_timeout);</div>
+<div class="line"><a name="l01172"></a><span class="lineno"> 1172</span>&#160;        m_interval = std::move(p_loop.m_interval);</div>
+<div class="line"><a name="l01173"></a><span class="lineno"> 1173</span>&#160;        m_stopped = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01174"></a><span class="lineno"> 1174</span>&#160; </div>
+<div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;        <span class="keywordflow">if</span> (!_stopped) {</div>
+<div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;right side not stopped&quot;</span>);</div>
+<div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;            p_loop.stop();</div>
+<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;            <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">start</a>();</div>
+<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;        }</div>
+<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -400,8 +400,8 @@ template&lt;bool use = true&gt; </div>
 
 <p>Retrieves if the loop was stopped. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01241">1241</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;{ <span class="keywordflow">return</span> m_stopped; }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01245">1245</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01245"></a><span class="lineno"> 1245</span>&#160;{ <span class="keywordflow">return</span> m_stopped; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -461,25 +461,25 @@ template&lt;bool use = true&gt; </div>
 
 <p>Move assignment. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01179">1179</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;                                                         {</div>
-<div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;        <span class="keywordflow">if</span> (<span class="keyword">this</span> != &amp;p_loop) {</div>
-<div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160; </div>
-<div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;            <span class="keywordtype">bool</span> _stopped = p_loop.m_stopped;</div>
-<div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160; </div>
-<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;            m_function = p_loop.m_function;</div>
-<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160;            m_timeout = std::move(p_loop.m_timeout);</div>
-<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;            m_interval = std::move(p_loop.m_interval);</div>
-<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160;            m_stopped = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160; </div>
-<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            <span class="keywordflow">if</span> (!_stopped) {</div>
-<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;                <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;right side not stopped&quot;</span>);</div>
-<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;                p_loop.stop();</div>
-<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;                <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">start</a>();</div>
-<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;            }</div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;        }</div>
-<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;    }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01183">1183</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01183"></a><span class="lineno"> 1183</span>&#160;                                                         {</div>
+<div class="line"><a name="l01184"></a><span class="lineno"> 1184</span>&#160;        <span class="keywordflow">if</span> (<span class="keyword">this</span> != &amp;p_loop) {</div>
+<div class="line"><a name="l01185"></a><span class="lineno"> 1185</span>&#160; </div>
+<div class="line"><a name="l01186"></a><span class="lineno"> 1186</span>&#160;            <span class="keywordtype">bool</span> _stopped = p_loop.m_stopped;</div>
+<div class="line"><a name="l01187"></a><span class="lineno"> 1187</span>&#160; </div>
+<div class="line"><a name="l01188"></a><span class="lineno"> 1188</span>&#160;            m_function = p_loop.m_function;</div>
+<div class="line"><a name="l01189"></a><span class="lineno"> 1189</span>&#160;            m_timeout = std::move(p_loop.m_timeout);</div>
+<div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160;            m_interval = std::move(p_loop.m_interval);</div>
+<div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;            m_stopped = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160; </div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;            <span class="keywordflow">if</span> (!_stopped) {</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;                <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;right side not stopped&quot;</span>);</div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;                p_loop.stop();</div>
+<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;                <a class="code" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">start</a>();</div>
+<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;            }</div>
+<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;        }</div>
+<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -512,16 +512,16 @@ template&lt;bool use = true&gt; </div>
 
 <p>Starts calling the function periodically. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01199">1199</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;                 {</div>
-<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;        <span class="keywordflow">if</span> (!m_stopped) {</div>
-<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;        }</div>
-<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;        m_stopped = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160; </div>
-<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;starting loop thread&quot;</span>);</div>
-<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;        m_thread = std::thread([<span class="keyword">this</span>]() { loop(); });</div>
-<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;    }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01203">1203</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;                 {</div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;        <span class="keywordflow">if</span> (!m_stopped) {</div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;        }</div>
+<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;        m_stopped = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160; </div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;starting loop thread&quot;</span>);</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;        m_thread = std::thread([<span class="keyword">this</span>]() { loop(); });</div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -554,36 +554,36 @@ template&lt;bool use = true&gt; </div>
 
 <p>Stops the loop, if it was started. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01210">1210</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;                {</div>
-<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160; </div>
-<div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;        <span class="keywordflow">if</span> (m_stopped) {</div>
-<div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not stopping because it is stopped&quot;</span>);</div>
-<div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;        }</div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;stopping&quot;</span>);</div>
-<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;        m_stopped = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;        m_cond.notify_one();</div>
-<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160; </div>
-<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;        <span class="keywordflow">if</span> (m_thread.get_id() == std::thread::id()) {</div>
-<div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not joining because m_thread.get_id() == &quot;</span></div>
-<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;                <span class="stringliteral">&quot;std::thread::id()&quot;</span>);</div>
-<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;        }</div>
-<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;m_thread.get_id() != std::thread::id()&quot;</span>);</div>
-<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160; </div>
-<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;        <span class="keywordflow">if</span> (!m_thread.joinable()) {</div>
-<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not joining because m_thread is not joinable&quot;</span>);</div>
-<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160;        }</div>
-<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;m_thread.joinable()&quot;</span>);</div>
-<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160; </div>
-<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;        {</div>
-<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;            std::lock_guard&lt;std::mutex&gt; _lock(m_mutex_join);</div>
-<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;            m_thread.join();</div>
-<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160;        }</div>
-<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;leaving stop&quot;</span>);</div>
-<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;    }</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01214">1214</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;                {</div>
+<div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160; </div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;        <span class="keywordflow">if</span> (m_stopped) {</div>
+<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not stopping because it is stopped&quot;</span>);</div>
+<div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;        }</div>
+<div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;stopping&quot;</span>);</div>
+<div class="line"><a name="l01221"></a><span class="lineno"> 1221</span>&#160;        m_stopped = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l01222"></a><span class="lineno"> 1222</span>&#160;        m_cond.notify_one();</div>
+<div class="line"><a name="l01223"></a><span class="lineno"> 1223</span>&#160; </div>
+<div class="line"><a name="l01224"></a><span class="lineno"> 1224</span>&#160;        <span class="keywordflow">if</span> (m_thread.get_id() == std::thread::id()) {</div>
+<div class="line"><a name="l01225"></a><span class="lineno"> 1225</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not joining because m_thread.get_id() == &quot;</span></div>
+<div class="line"><a name="l01226"></a><span class="lineno"> 1226</span>&#160;                <span class="stringliteral">&quot;std::thread::id()&quot;</span>);</div>
+<div class="line"><a name="l01227"></a><span class="lineno"> 1227</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01228"></a><span class="lineno"> 1228</span>&#160;        }</div>
+<div class="line"><a name="l01229"></a><span class="lineno"> 1229</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;m_thread.get_id() != std::thread::id()&quot;</span>);</div>
+<div class="line"><a name="l01230"></a><span class="lineno"> 1230</span>&#160; </div>
+<div class="line"><a name="l01231"></a><span class="lineno"> 1231</span>&#160;        <span class="keywordflow">if</span> (!m_thread.joinable()) {</div>
+<div class="line"><a name="l01232"></a><span class="lineno"> 1232</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;not joining because m_thread is not joinable&quot;</span>);</div>
+<div class="line"><a name="l01233"></a><span class="lineno"> 1233</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01234"></a><span class="lineno"> 1234</span>&#160;        }</div>
+<div class="line"><a name="l01235"></a><span class="lineno"> 1235</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;m_thread.joinable()&quot;</span>);</div>
+<div class="line"><a name="l01236"></a><span class="lineno"> 1236</span>&#160; </div>
+<div class="line"><a name="l01237"></a><span class="lineno"> 1237</span>&#160;        {</div>
+<div class="line"><a name="l01238"></a><span class="lineno"> 1238</span>&#160;            std::lock_guard&lt;std::mutex&gt; _lock(m_mutex_join);</div>
+<div class="line"><a name="l01239"></a><span class="lineno"> 1239</span>&#160;            m_thread.join();</div>
+<div class="line"><a name="l01240"></a><span class="lineno"> 1240</span>&#160;        }</div>
+<div class="line"><a name="l01241"></a><span class="lineno"> 1241</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;leaving stop&quot;</span>);</div>
+<div class="line"><a name="l01242"></a><span class="lineno"> 1242</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -594,9 +594,9 @@ template&lt;bool use = true&gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructtenacitas_1_1async_1_1sleeping__loop__t_html_a6985e3c1990b9dd2e93928b348eb7682"><div class="ttname"><a href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">tenacitas::async::sleeping_loop_t::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01199">async.h:1199</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1async_1_1sleeping__loop__t_html_a6985e3c1990b9dd2e93928b348eb7682"><div class="ttname"><a href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#a6985e3c1990b9dd2e93928b348eb7682">tenacitas::async::sleeping_loop_t::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01203">async.h:1203</a></div></div>
 <div class="ttc" id="alogger_8h_html_a76bb3c6d2a34d01b1b35e3673bf226ee"><div class="ttname"><a href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a></div><div class="ttdeci">#define DEB(p_params...)</div><div class="ttdoc">Wraps to the debug log function.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d8c/logger_8h_source.html#l00470">logger.h:470</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1async_1_1sleeping__loop__t_html_aba2b6254ee8147498339ea3932b0830d"><div class="ttname"><a href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aba2b6254ee8147498339ea3932b0830d">tenacitas::async::sleeping_loop_t::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the loop, if it was started.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01210">async.h:1210</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1async_1_1sleeping__loop__t_html_aba2b6254ee8147498339ea3932b0830d"><div class="ttname"><a href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#aba2b6254ee8147498339ea3932b0830d">tenacitas::async::sleeping_loop_t::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the loop, if it was started.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01214">async.h:1214</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

@@ -258,6 +258,8 @@ struct executer_t<void> {
     }
 };
 
+} // namespace internal
+
 template <typename t_ret>
 struct result_traits {
     typedef std::optional<t_ret> result;
@@ -267,6 +269,62 @@ template <>
 struct result_traits<void> {
     typedef bool result;
 };
+
+/// \brief Synchronous function with collaborative timeout control
+///
+/// \tparam t_time type of time used to define timeout. It must be one of the
+/// defined in std::chrono, such as std::chrono::seconds
+///
+/// \tparam t_function is the type of function that will be executed
+/// synchronously. It must have this signature:
+///
+/// \code
+/// return-type operator()(std::shared_ptr<bool>, params-type...)
+/// \endcode
+///
+/// Where \p return-type is the type returned by the function. It can \p void,
+/// or any other type or class.
+///
+/// Where <tt>std::shared_ptr<bool></tt> is a pointer to \p bool that will
+/// become \p true if the function being executed exceeds the time limit to
+/// execute. It is how the \p execute function tells the function being executed
+/// that a timeout occurred. So, the function being executed should, as much as
+/// possible, during its execution, to check for the value of this pointer. If
+/// it becomes \p true, the function must return, as its execution is no longer
+/// necessary, neither its return, if any, is expected.
+///
+/// Where params-type is a variadic number of parameters, if any, as the
+/// function being executed needs.
+///
+/// \param p_timeout is the amount of time the function being executed has to
+/// finish its execution
+///
+/// \param p_function is the function being executed, with the signature
+/// described above
+///
+/// \param p_params are the parameters expected by \p p_function, if any
+///
+/// \return If \p p_function returns, say a \p int16_t, \p execute returns
+/// std::optional<int16_t>, which will contain a \p int16_t if \p p_function
+/// executes in less than \p p_timeout time, i.e., no timeout occurrs; otherwise
+/// no value is returned in the std::optional.
+///
+/// However, if \p p_function's return is \p void, then \p execute returns a \p
+/// bool, which is \p true if no timeout occurrs; or \p false otherwise.
+template <typename t_time, typename t_function, typename... t_params>
+typename result_traits<
+    std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result
+execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
+
+    typedef internal::executer_t<
+        std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>
+        executer;
+    executer _executer;
+    return _executer(p_timeout, p_function,
+                     std::forward<t_params>(p_params)...);
+}
+
+namespace internal {
 
 // \brief Implements a circular queue which size is increased if it
 // becomes full
@@ -1062,60 +1120,6 @@ template <typename t_data>
 std::mutex dispatcher_t<t_data>::m_mutex;
 
 } // namespace internal
-
-/// \brief Synchronous function with collaborative timeout control
-///
-/// \tparam t_time type of time used to define timeout. It must be one of the
-/// defined in std::chrono, such as std::chrono::seconds
-///
-/// \tparam t_function is the type of function that will be executed
-/// synchronously. It must have this signature:
-///
-/// \code
-/// return-type operator()(std::shared_ptr<bool>, params-type...)
-/// \endcode
-///
-/// Where \p return-type is the type returned by the function. It can \p void,
-/// or any other type or class.
-///
-/// Where <tt>std::shared_ptr<bool></tt> is a pointer to \p bool that will
-/// become \p true if the function being executed exceeds the time limit to
-/// execute. It is how the \p execute function tells the function being executed
-/// that a timeout occurred. So, the function being executed should, as much as
-/// possible, during its execution, to check for the value of this pointer. If
-/// it becomes \p true, the function must return, as its execution is no longer
-/// necessary, neither its return, if any, is expected.
-///
-/// Where params-type is a variadic number of parameters, if any, as the
-/// function being executed needs.
-///
-/// \param p_timeout is the amount of time the function being executed has to
-/// finish its execution
-///
-/// \param p_function is the function being executed, with the signature
-/// described above
-///
-/// \param p_params are the parameters expected by \p p_function, if any
-///
-/// \return If \p p_function returns, say a \p int16_t, \p execute returns
-/// std::optional<int16_t>, which will contain a \p int16_t if \p p_function
-/// executes in less than \p p_timeout time, i.e., no timeout occurrs; otherwise
-/// no value is returned in the std::optional.
-///
-/// However, if \p p_function's return is \p void, then \p execute returns a \p
-/// bool, which is \p true if no timeout occurrs; or \p false otherwise.
-template <typename t_time, typename t_function, typename... t_params>
-typename internal::result_traits<
-    std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result
-execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
-
-    typedef internal::executer_t<
-        std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>
-        executer;
-    executer _executer;
-    return _executer(p_timeout, p_function,
-                     std::forward<t_params>(p_params)...);
-}
 
 /// \brief Periodically executes a function
 ///
