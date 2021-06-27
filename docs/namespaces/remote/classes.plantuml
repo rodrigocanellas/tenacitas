@@ -1,0 +1,49 @@
+@startuml
+
+hide empty members
+allow_mixing
+skinparam linetype ortho
+
+namespace remote {
+
+
+
+enum protocol {
+   tcp,
+   udp
+}
+
+enum address {
+   ipv4,
+   ipv6
+}
+class endpoint<address> 
+
+
+class client<address, protocol> {
+   + connect(ent.endpoint) : connection
+}
+
+class server<address,protocol> {
+  + server(endpoint)
+  + incoming() : connection
+}
+
+class connection<protocol> {
+  + read():string
+  + write(string)
+}
+
+ client *-up-  endpoint
+ server *-  endpoint
+ client *-left-  connection
+ server *-- "*"  connection
+address -[hidden]-> protocol
+
+
+}
+
+
+
+
+@enduml
