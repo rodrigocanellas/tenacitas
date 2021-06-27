@@ -190,13 +190,12 @@ struct executer_t {
 
         std::unique_lock<std::mutex> _lock {_mutex};
         if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            DEB("no timeout");
-            TRA("ret = ", _ret);
+            TRA("no timeout, ret = ", _ret);
             _th.join();
             return {std::move(_ret)};
         }
 
-        DEB("timeout");
+        TRA("timeout");
         *_stop = true;
         _th.join();
         return {};
@@ -246,12 +245,12 @@ struct executer_t<void> {
 
         std::unique_lock<std::mutex> _lock {_mutex};
         if (_cond.wait_for(_lock, p_timeout) != std::cv_status::timeout) {
-            DEB("no timeout");
+            TRA("no timeout");
             _th.join();
             return true;
         }
 
-        DEB("timeout");
+        TRA("timeout");
         *_stop = true;
         _th.join();
         return false;
@@ -393,7 +392,7 @@ struct circular_unlimited_size_queue_t {
     //
     // \param p_data is a t_data to be added
     void add(const t_data &p_data) {
-        DEB("adding ", p_data);
+        TRA("adding ", p_data);
         {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
@@ -405,14 +404,14 @@ struct circular_unlimited_size_queue_t {
             }
             ++m_amount;
         }
-        DEB("capacity = ", capacity(), ", occupied = ", occupied());
+        TRA("capacity = ", capacity(), ", occupied = ", occupied());
     }
 
     // \brief Moves a t_data object to the queue
     //
     // \param p_data is a t_data to be added
     void add(t_data &&p_data) {
-        DEB("adding ", p_data);
+        TRA("adding ", p_data);
         {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
@@ -424,7 +423,7 @@ struct circular_unlimited_size_queue_t {
             }
             ++m_amount;
         }
-        DEB("capacity = ", capacity(), ", occupied = ", occupied());
+        TRA("capacity = ", capacity(), ", occupied = ", occupied());
     }
 
     // \brief Tries to get a t_data object from the queue
@@ -639,9 +638,9 @@ public:
 
     // \brief Destructor
     ~handling_t() {
-        DEB(m_id, "entering");
+        TRA(m_id, " - entering");
         stop();
-        DEB(m_id, "leaving");
+        TRA(m_id, " - leaving");
     }
 
     // \brief Adds a event to be handled
@@ -650,7 +649,7 @@ public:
     //
     // \return \p true if it was added, \p false otherwise
     bool add_data(const t_event &p_event) {
-        DEB(m_id, "adding ", p_event);
+        TRA(m_id, " - adding ", p_event);
         m_queue.add(p_event);
         m_cond.notify_all();
         {
@@ -753,53 +752,53 @@ private:
     // \param p_handler is a \p handler which will handle the events
     void handler_loop(handler &&p_handler) {
         number::id _loop_id;
-        DEB(m_id, ':', _loop_id,
-            "entering loop, m_timeout = ", this->m_timeout.count());
+        TRA(m_id, ':', _loop_id,
+            " - entering loop, m_timeout = ", this->m_timeout.count());
 
         while (true) {
             {
                 std::unique_lock<std::mutex> _lock(m_mutex);
                 m_cond.wait(_lock, [this, _loop_id]() -> bool {
                     if (m_stopped) {
-                        DEB(m_id, ':', _loop_id, "stopped");
+                        TRA(m_id, ':', _loop_id, " - stopped");
                         return true;
                     }
                     if (!m_queue.empty()) {
-                        DEB(m_id, ':', _loop_id, "there is data");
+                        TRA(m_id, ':', _loop_id, " - there is data");
                         return true;
                     }
-                    DEB(m_id, ':', _loop_id, "waiting");
+                    TRA(m_id, ':', _loop_id, " - waiting");
                     return false;
                 });
             }
 
             if (m_stopped) {
-                DEB(m_id, ':', _loop_id, "stop");
+                TRA(m_id, ':', _loop_id, " - stop");
                 break;
             }
 
             std::pair<bool, t_event> _maybe_data {m_queue.get()};
 
             if (this->m_stopped) {
-                DEB(m_id, ':', _loop_id, "stop");
+                TRA(m_id, ':', _loop_id, " - stop");
                 break;
             }
 
             if (_maybe_data.first) {
                 t_event _data {std::move(_maybe_data.second)};
 
-                DEB(m_id, ':', _loop_id, "data = ", _data);
+                TRA(m_id, ':', _loop_id, " - data = ", _data);
 
                 if (this->m_stopped) {
-                    DEB(m_id, ':', _loop_id, "stop");
+                    TRA(m_id, ':', _loop_id, " - stop");
                     break;
                 }
 
                 if (!execute(m_timeout, p_handler, std::move(_data))) {
-                    WAR(m_id, ':', _loop_id, "timeout ", _data);
+                    WAR(m_id, ':', _loop_id, " - timeout ", _data);
                 }
             } else {
-                DEB(m_id, ':', _loop_id, "no data available");
+                TRA(m_id, ':', _loop_id, " - no data available");
             }
         }
     }
@@ -816,11 +815,11 @@ private:
     // \brief Stops this handling
     inline void stop() {
         if (m_stopped) {
-            DEB(m_id, "not stopping because it is stopped");
+            TRA(m_id, " - not stopping because it is stopped");
             return;
         }
 
-        DEB(m_id, "stoping");
+        TRA(m_id, " - stoping");
 
         m_stopped = true;
         m_cond.notify_all();
@@ -984,7 +983,7 @@ struct dispatcher_t {
         auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
         if (_handling_ite != _end) {
-            DEB(get_id(), " - adding another handler for ", p_handling_id);
+            TRA(get_id(), " - adding another handler for ", p_handling_id);
             (*_handling_ite)->add_handler(std::move(p_handler));
         }
     }
@@ -1053,11 +1052,11 @@ struct dispatcher_t {
     //
     // TODO test it
     static void wait() {
-        DEB(event_id_t<t_event>::value, "  - starting to wait");
+        TRA(event_id_t<t_event>::value, " - starting to wait");
         for (handling_ptr &_handling_ptr : m_list) {
             _handling_ptr->empty_queue();
         }
-        DEB(event_id_t<t_event>::value, "  - finished waiting");
+        TRA(event_id_t<t_event>::value, " - finished waiting");
     }
 
     // \brief Retrieves the id associated to \p t_event
@@ -1173,7 +1172,7 @@ struct sleeping_loop_t {
         m_stopped = true;
 
         if (!_stopped) {
-            DEB("right side not stopped");
+            TRA("right side not stopped");
             p_loop.stop();
             start();
         }
@@ -1191,7 +1190,7 @@ struct sleeping_loop_t {
             m_stopped = true;
 
             if (!_stopped) {
-                DEB("right side not stopped");
+                TRA("right side not stopped");
                 p_loop.stop();
                 start();
             }
@@ -1206,7 +1205,7 @@ struct sleeping_loop_t {
         }
         m_stopped = false;
 
-        DEB("starting loop thread");
+        TRA("starting loop thread");
         m_thread = std::thread([this]() { loop(); });
     }
 
@@ -1214,31 +1213,31 @@ struct sleeping_loop_t {
     void stop() {
 
         if (m_stopped) {
-            DEB("not stopping because it is stopped");
+            TRA("not stopping because it is stopped");
             return;
         }
-        DEB("stopping");
+        TRA("stopping");
         m_stopped = true;
         m_cond.notify_one();
 
         if (m_thread.get_id() == std::thread::id()) {
-            DEB("not joining because m_thread.get_id() == "
+            TRA("not joining because m_thread.get_id() == "
                 "std::thread::id()");
             return;
         }
-        DEB("m_thread.get_id() != std::thread::id()");
+        TRA("m_thread.get_id() != std::thread::id()");
 
         if (!m_thread.joinable()) {
-            DEB("not joining because m_thread is not joinable");
+            TRA("not joining because m_thread is not joinable");
             return;
         }
-        DEB("m_thread.joinable()");
+        TRA("m_thread.joinable()");
 
         {
             std::lock_guard<std::mutex> _lock(m_mutex_join);
             m_thread.join();
         }
-        DEB("leaving stop");
+        TRA("leaving stop");
     }
 
     /// \brief Retrieves if the loop was stopped
@@ -1247,39 +1246,39 @@ struct sleeping_loop_t {
 private:
     /// \brief Loop where the function will be called
     void loop() {
-        DEB("entering loop, m_timeout = ", m_timeout.count());
+        TRA("entering loop, m_timeout = ", m_timeout.count());
 
         while (true) {
             if (m_stopped) {
-                DEB("stop");
+                TRA("stop");
                 break;
             }
 
-            DEB("calling handler");
+            TRA("calling handler");
 
             if (!execute(m_timeout, m_function)) {
                 WAR("timeout");
             }
 
             if (m_stopped) {
-                DEB("stop");
+                TRA("stop");
                 break;
             }
 
-            DEB("waiting for ", m_interval.count(),
-                "ms to elaps, or a stop order");
+            TRA("waiting for ", m_interval.count(),
+                " ms to elaps, or a stop order");
             {
                 std::unique_lock<std::mutex> _lock(m_mutex_interval);
                 if ((m_cond.wait_for(_lock, m_interval) ==
                      std::cv_status::no_timeout) &&
                     (m_stopped)) {
-                    DEB("ordered to stop");
+                    TRA("ordered to stop");
                     break;
                 }
             }
-            DEB("", m_interval.count(), "ms elapsed");
+            TRA(m_interval.count(), " ms elapsed");
         }
-        DEB("leaving loop");
+        TRA("leaving loop");
     }
 
 private:

@@ -413,7 +413,7 @@ private:
 
 /// \brief Definition of the globl log object
 
-log &get_log() {
+static log &get_log() {
     static log _logger;
     return _logger;
 }
