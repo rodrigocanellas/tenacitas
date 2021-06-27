@@ -968,7 +968,7 @@ struct dispatcher_t {
     // \param p_event is the event to be handled
     static void send(const t_event &p_event) {
         for (handling_ptr &_handling_ptr : m_list) {
-            INF(get_id(), "sending ", p_event, " to pool ",
+            INF(get_id(), " - sending ", p_event, " to pool ",
                 _handling_ptr->get_id());
             _handling_ptr->add_data(p_event);
         }
@@ -984,7 +984,7 @@ struct dispatcher_t {
         auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
         if (_handling_ite != _end) {
-            DEB(get_id(), "adding another handler for ", p_handling_id);
+            DEB(get_id(), " - adding another handler for ", p_handling_id);
             (*_handling_ite)->add_handler(std::move(p_handler));
         }
     }

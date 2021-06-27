@@ -229,7 +229,7 @@ template&lt;typename t_event &gt; </div>
 <div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;        <span class="keyword">auto</span> _handling_ite = find(p_handling_id);</div>
 <div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;        <span class="keyword">auto</span> _end = m_list.end();</div>
 <div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;        <span class="keywordflow">if</span> (_handling_ite != _end) {</div>
-<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<a class="code" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#ab816c8c25fead67e07295b332eedccf9">get_id</a>(), <span class="stringliteral">&quot;adding another handler for &quot;</span>, p_handling_id);</div>
+<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<a class="code" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#ab816c8c25fead67e07295b332eedccf9">get_id</a>(), <span class="stringliteral">&quot; - adding another handler for &quot;</span>, p_handling_id);</div>
 <div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;            (*_handling_ite)-&gt;add_handler(std::move(p_handler));</div>
 <div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;        }</div>
 <div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;    }</div>
@@ -527,7 +527,7 @@ template&lt;typename t_event &gt; </div>
 <p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00969">969</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 <div class="fragment"><div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160;                                             {</div>
 <div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;        <span class="keywordflow">for</span> (handling_ptr &amp;_handling_ptr : m_list) {</div>
-<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a01150241a31cd209639b24a5fe2a9245">INF</a>(<a class="code" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#ab816c8c25fead67e07295b332eedccf9">get_id</a>(), <span class="stringliteral">&quot;sending &quot;</span>, p_event, <span class="stringliteral">&quot; to pool &quot;</span>,</div>
+<div class="line"><a name="l00971"></a><span class="lineno">  971</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a01150241a31cd209639b24a5fe2a9245">INF</a>(<a class="code" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html#ab816c8c25fead67e07295b332eedccf9">get_id</a>(), <span class="stringliteral">&quot; - sending &quot;</span>, p_event, <span class="stringliteral">&quot; to pool &quot;</span>,</div>
 <div class="line"><a name="l00972"></a><span class="lineno">  972</span>&#160;                _handling_ptr-&gt;get_id());</div>
 <div class="line"><a name="l00973"></a><span class="lineno">  973</span>&#160;            _handling_ptr-&gt;add_data(p_event);</div>
 <div class="line"><a name="l00974"></a><span class="lineno">  974</span>&#160;        }</div>
