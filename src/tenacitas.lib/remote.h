@@ -255,6 +255,20 @@ struct endpoint<address::IPV4> {
     IpV4 ip;
 };
 
+struct incoming {
+    template <typename t_string>
+    incoming(t_string &&p_str)
+        : msg(std::forward(p_str)) {}
+
+    friend std::ostream &operator<<(std ::ostream &p_out,
+                                    const incoming &p_incoming) {
+        p_out << p_incoming.msg;
+        return p_out
+    }
+
+    std::string msg;
+};
+
 } // namespace remote
 } // namespace tenacitas
 
