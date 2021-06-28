@@ -3,5 +3,5 @@ TEMPLATE = subdirs
 SUBDIRS += \
   logger \
   async \
-  program \
+  program
 

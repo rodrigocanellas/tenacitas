@@ -3,7 +3,8 @@ SUBDIRS = \
   sleeping_loop \
   handlers  \
   dispatcher \
-  executer
+  executer  \
+  reader
 
 
 
