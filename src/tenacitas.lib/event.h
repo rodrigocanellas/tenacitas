@@ -26,8 +26,30 @@ struct exit_app {
     }
 };
 
-} // namespace event
+template <typename t_data>
+struct new_data {
 
+    new_data() = default;
+
+    new_data(t_data &&p_data)
+        : data(std::move(p_data)) {}
+
+    friend std::ostream &operator<<(std::ostream &p_out, const new_data &) {
+        p_out << "new_data";
+        return p_out;
+    }
+
+    t_data data;
+};
+
+struct done_reading {
+    friend std::ostream &operator<<(std::ostream &p_out, const done_reading &) {
+        p_out << "done_reading ";
+        return p_out;
+    }
+};
+
+} // namespace event
 } // namespace tenacitas
 
 #endif
