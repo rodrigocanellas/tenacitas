@@ -28,7 +28,6 @@
 #include <vector>
 
 #include <tenacitas.lib/calendar.h>
-
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/type.h>
@@ -1480,35 +1479,60 @@ static inline handling_id add_handler(handler_t<t_event> &&p_handler,
     return _id;
 }
 
-/// \brief
-template <typename t_data>
-struct data_read {
-
-    data_read() = default;
-
-    data_read(t_data &&p_data)
-        : data(std::move(p_data)) {}
-
-    friend std::ostream &operator<<(std::ostream &p_out, const data_read &) {
-        p_out << "new_data";
-        return p_out;
-    }
-
-    t_data data;
-};
-
-/// \brief
-struct all_data_read {
-    friend std::ostream &operator<<(std::ostream &p_out,
-                                    const all_data_read &) {
-        p_out << "done_reading ";
-        return p_out;
-    }
-};
-
 /// \brief Asynchronous reader
+///
+/// \tparam t_data is the type of data read
 template <typename t_data>
 struct reader_t {
+
+    /// \brief Event dispatched every time a \p t_data object is read
+    struct data_read {
+        data_read() = default;
+
+        data_read(t_data &&p_data)
+            : value(std::move(p_data)) {}
+
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const data_read &) {
+            p_out << "data_read";
+            return p_out;
+        }
+
+        /// \brief data read
+        t_data value;
+    };
+
+    /// \brief Event dispatched when all data was read
+    struct all_data_read {
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const all_data_read &) {
+            p_out << "all_data_read";
+            return p_out;
+        }
+    };
+
+    /// \brief Event dispatched when an error occurr while reading
+    struct error_reading {
+
+        error_reading() = default;
+
+        error_reading(const char *p_what)
+            : what(p_what) {}
+
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const error_reading &) {
+            p_out << "error_reading ";
+            return p_out;
+        }
+
+        /// \brief error description
+        std::string what;
+    };
+
+    /// \brief Syncrhonous reader
+    ///
+    /// \return a t_data object if there is one; or an empty std::optional, if
+    /// there is no more data to be read
     typedef std::function<std::optional<t_data>()> sync_reader;
 
     /// \brief Creates an asynchronous reader
@@ -1517,7 +1541,8 @@ struct reader_t {
     reader_t(sync_reader p_reader)
         : m_reader(p_reader) {}
 
-    /// \brief Destructor stops reading
+    /// \brief Destructor
+    /// Makes the reader to stop reading
     ~reader_t() {
         TRA("entering destructor");
         stop();
@@ -1525,7 +1550,11 @@ struct reader_t {
     }
 
     /// \brief Starts reading
-    /// Each new \p t_data read, a data_read<t_data> event is dispatched
+    ///
+    /// Each new \p t_data read, a \p data_read event is dispatched
+    /// When there is more data to be read, when \p sync_reader returns an empty
+    /// std::optional<t_data> object, a \p all_data_read event is dispatched
+    /// If an error occurrs, a \p error_reading event is dispatched
     void start() {
         if (!m_stopped) {
             WAR("not starting because it is not stopped");
@@ -1534,27 +1563,31 @@ struct reader_t {
 
         TRA("entering");
         m_thread = std::thread([this]() -> void {
-            m_stopped = false;
-            TRA("starting");
-            while (true) {
-                if (m_stopped) {
-                    TRA("stopping");
-                    break;
+            try {
+                m_stopped = false;
+                TRA("starting");
+                while (true) {
+                    if (m_stopped) {
+                        TRA("stopping");
+                        break;
+                    }
+                    std::optional<t_data> _maybe {m_reader()};
+                    if (m_stopped) {
+                        TRA("stopping");
+                        break;
+                    }
+                    if (!_maybe) {
+                        TRA("nothing was read");
+                        break;
+                    }
+                    TRA("something was read");
+                    dispatch(data_read {std::move(*_maybe)});
                 }
-                std::optional<t_data> _maybe {m_reader()};
-                if (m_stopped) {
-                    TRA("stopping");
-                    break;
-                }
-                if (!_maybe) {
-                    TRA("nothing was read");
-                    break;
-                }
-                TRA("something was read");
-                dispatch(data_read<t_data> {std::move(*_maybe)});
+                TRA("leaving thread loop");
+                dispatch(all_data_read {});
+            } catch (std::exception &ex) {
+                dispatch(error_reading(ex.what()));
             }
-            TRA("leaving thread loop");
-            dispatch(all_data_read {});
         });
         TRA("leaving");
     }
@@ -1573,7 +1606,11 @@ struct reader_t {
             };
             if (!execute(3s, _function)) {
                 WAR("detaching reading thread");
-                m_thread.detach();
+                try {
+                    m_thread.detach();
+                } catch (std::exception &_ex) {
+                    ERR("error detaching sync_reader: '", _ex.what(), '\'');
+                }
             }
         }
         TRA("leaving stop");
