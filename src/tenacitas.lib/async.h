@@ -28,7 +28,7 @@
 #include <vector>
 
 #include <tenacitas.lib/calendar.h>
-#include <tenacitas.lib/event.h>
+
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/type.h>
@@ -1480,6 +1480,32 @@ static inline handling_id add_handler(handler_t<t_event> &&p_handler,
     return _id;
 }
 
+/// \brief
+template <typename t_data>
+struct data_read {
+
+    data_read() = default;
+
+    data_read(t_data &&p_data)
+        : data(std::move(p_data)) {}
+
+    friend std::ostream &operator<<(std::ostream &p_out, const data_read &) {
+        p_out << "new_data";
+        return p_out;
+    }
+
+    t_data data;
+};
+
+/// \brief
+struct all_data_read {
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const all_data_read &) {
+        p_out << "done_reading ";
+        return p_out;
+    }
+};
+
 /// \brief Asynchronous reader
 template <typename t_data>
 struct reader_t {
@@ -1487,15 +1513,11 @@ struct reader_t {
 
     /// \brief Creates an asynchronous reader
     ///
-    /// \tparam t_time type of time used to set the timeout
-    ///
     /// \param p_reader the synchronous reader
-    ///
-    /// \param p_timeout timeout value
-
     reader_t(sync_reader p_reader)
         : m_reader(p_reader) {}
 
+    /// \brief Destructor stops reading
     ~reader_t() {
         TRA("entering destructor");
         stop();
@@ -1503,7 +1525,7 @@ struct reader_t {
     }
 
     /// \brief Starts reading
-    /// Each new \p t_data read, a event::new_data<t_data> event is dispatched
+    /// Each new \p t_data read, a data_read<t_data> event is dispatched
     void start() {
         if (!m_stopped) {
             WAR("not starting because it is not stopped");
@@ -1529,10 +1551,10 @@ struct reader_t {
                     break;
                 }
                 TRA("something was read");
-                dispatch(event::new_data<t_data> {std::move(*_maybe)});
+                dispatch(data_read<t_data> {std::move(*_maybe)});
             }
             TRA("leaving thread loop");
-            dispatch(event::done_reading {});
+            dispatch(all_data_read {});
         });
         TRA("leaving");
     }

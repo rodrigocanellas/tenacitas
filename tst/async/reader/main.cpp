@@ -6,14 +6,14 @@
 
 #include <tenacitas.lib/async.h>
 #include <tenacitas.lib/calendar.h>
-#include <tenacitas.lib/event.h>
+
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/tester.h>
 
 using namespace tenacitas;
 
 struct reader_000 {
-    typedef event::new_data<uint64_t> new_data;
+    typedef async::data_read<uint64_t> new_data;
 
     static std::string desc() {
         return "A reader that reads 500 numbers from a vector, and a single "
@@ -39,8 +39,8 @@ struct reader_000 {
             },
             150ms);
 
-        async::add_handler<event::done_reading>(
-            [this](std::shared_ptr<bool>, event::done_reading &&) -> void {
+        async::add_handler<async::all_data_read>(
+            [this](std::shared_ptr<bool>, async::all_data_read &&) -> void {
                 INF("handling done_reading");
                 m_all_read = true;
             },
@@ -84,7 +84,7 @@ private:
         m_read_ite = m_source.begin();
     }
 
-    void handler(std::shared_ptr<bool>, event::new_data<uint64_t> &&p_data) {
+    void handler(std::shared_ptr<bool>, async::data_read<uint64_t> &&p_data) {
         INF("value handled: ", p_data.data);
         m_read.push_back(p_data.data);
     }
