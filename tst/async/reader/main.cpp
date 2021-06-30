@@ -15,7 +15,12 @@ using namespace tenacitas;
 struct reader_000 {
     typedef event::new_data<uint64_t> new_data;
 
-    static std::string desc() { return ""; }
+    static std::string desc() {
+        return "A reader that reads 500 numbers from a vector, and a single "
+               "handling with one handler ";
+    }
+
+    ~reader_000() { TRA("leaving"); }
 
     bool operator()() {
 
@@ -57,7 +62,11 @@ struct reader_000 {
             }
         }
 
-        return equal();
+        bool _equal = equal();
+
+        DEB("equal = ", _equal);
+
+        return _equal;
     }
 
 private:
@@ -102,12 +111,14 @@ private:
             return false;
         }
         for (values::size_type _i = 0; _i < _source_size; ++_i) {
-            DEB("source[", _i, "] = ", m_source[_i], ", m_read[", _i,
+            DEB("source[", _i, "] = ", m_source[_i], ", read[", _i,
                 "] = ", m_read[_i]);
             if (m_source[_i] != m_read[_i]) {
+                DEB("leaving equal with false");
                 return false;
             }
         }
+        DEB("leaving equal with true");
         return true;
     }
 
@@ -118,7 +129,7 @@ private:
     values::size_type m_handled {0};
     bool m_all_read {false};
     bool m_all_handled {false};
-    static constexpr values::size_type m_num_values {10};
+    static constexpr values::size_type m_num_values {500};
 };
 
 int main(int argc, char **argv) {
@@ -126,4 +137,6 @@ int main(int argc, char **argv) {
     tester::test _test(argc, argv);
 
     run_test(_test, reader_000);
+
+    TRA("leaving");
 }

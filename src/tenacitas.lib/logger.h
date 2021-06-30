@@ -502,6 +502,7 @@ template <typename... t_params>
 inline void dummy([[maybe_unused]] std::ostream &p_out,
                   [[maybe_unused]] t_params &&... p_params) {}
 
+inline void set_trace_level() {}
 inline void set_debug_level() {}
 inline void set_info_level() {}
 inline void set_warn_level() {}
