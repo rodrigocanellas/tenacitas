@@ -1583,8 +1583,12 @@ struct reader_t {
                     TRA("something was read");
                     dispatch(data_read {std::move(*_maybe)});
                 }
-                TRA("leaving thread loop");
-                dispatch(all_data_read {});
+                if (!m_stopped) {
+                    TRA("leaving thread loop because all data was read");
+                    dispatch(all_data_read {});
+                }
+                TRA("leaving thread loop because it was stopped");
+
             } catch (std::exception &ex) {
                 dispatch(error_reading(ex.what()));
             }
