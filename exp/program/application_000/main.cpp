@@ -13,7 +13,7 @@
 #include <thread>
 
 #include <tenacitas.lib/async.h>
-#include <tenacitas.lib/event.h>
+
 
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/program.h>
@@ -44,9 +44,9 @@ struct temperature_sensor {
               m_timeout,
               m_interval) {
 
-        async::add_handler<event::exit_app>(
-            [this](type::ptr<bool>, event::exit_app &&) -> void { stop(); }, 1s,
-            async::priority {255});
+        async::add_handler<program::exit_app>(
+            [this](type::ptr<bool>, program::exit_app &&) -> void { stop(); },
+            1s, async::priority {255});
     }
 
     // starts to generate temperatures
@@ -133,8 +133,8 @@ void app() {
     std::condition_variable _cond;
     std::mutex _mutex;
 
-    async::add_handler<event::exit_app>(
-        [&_cond](type::ptr<bool>, event::exit_app &&) -> void {
+    async::add_handler<program::exit_app>(
+        [&_cond](type::ptr<bool>, program::exit_app &&) -> void {
             _cond.notify_one();
         },
         100ms);
@@ -149,7 +149,7 @@ void app() {
             }
             _cond.notify_one();
         }
-        async::dispatch(event::exit_app());
+        async::dispatch(program::exit_app());
     });
 
     // thread-safe printer

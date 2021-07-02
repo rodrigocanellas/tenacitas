@@ -128,11 +128,11 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Entry point for an application. </p>
-<p>This class allows asynchronously execution of a function, which must use <a class="el" href="../../d2/d47/namespacetenacitas_1_1async.html#acf557eac6e09aadf3529d314c1700395" title="Dispatches an event to all handlings associated to the event.">tenacitas::async::dispatch&lt;tenacitas::event::exit_app&gt;()</a> function to send a <a class="el" href="../../d6/d65/structtenacitas_1_1event_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::event::exit_app</a> to end the application </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="../../d1/d4a/application_000_2main_8cpp-example.html#_a5">application_000/main.cpp</a>.</dd>
+<p>This class allows asynchronously execution of a function, which must use <a class="el" href="../../d2/d47/namespacetenacitas_1_1async.html#acf557eac6e09aadf3529d314c1700395" title="Dispatches an event to all handlings associated to the event.">tenacitas::async::dispatch&lt;tenacitas::program::exit_app&gt;()</a> function to send a <a class="el" href="../../dd/d4b/structtenacitas_1_1program_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::program::exit_app</a> to end the application </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="../../d1/d4a/application_000_2main_8cpp-example.html#_a5">application_000/main.cpp</a>, and <a class="el" href="../../d0/d1c/reader_000_2main_8cpp-example.html#_a4">reader_000/main.cpp</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00300">300</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00310">310</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5a8230e02c57517962848819f690eefa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5a8230e02c57517962848819f690eefa">&#9670;&nbsp;</a></span>application() <span class="overload">[1/4]</span></h2>
@@ -256,53 +256,52 @@ template&lt;typename t_time &gt; </div>
 <p>Constructor. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">t_time</td><td>is the type of type used to define how long will the application will sleep after receive a <a class="el" href="../../d6/d65/structtenacitas_1_1event_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::event::exit_app</a></td></tr>
+    <tr><td class="paramname">t_time</td><td>is the type of type used to define how long will the application will sleep after receive a <a class="el" href="../../dd/d4b/structtenacitas_1_1program_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::program::exit_app</a></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p_wait</td><td>how long will the application will sleep after receive a <a class="el" href="../../d6/d65/structtenacitas_1_1event_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::event::exit_app</a></td></tr>
+    <tr><td class="paramname">p_wait</td><td>how long will the application will sleep after receive a <a class="el" href="../../dd/d4b/structtenacitas_1_1program_1_1exit__app.html" title="Application can exit in a gracefully way.">tenacitas::program::exit_app</a></td></tr>
     <tr><td class="paramname">p_function</td><td>function to be executed asynchronously </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00327">327</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                                               {</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        <span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        <span class="keyword">using namespace </span>std::chrono;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        m_wait = (duration_cast&lt;milliseconds&gt;(p_wait));</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160; </div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <span class="keyword">auto</span> _handler = [<span class="keyword">this</span>](type::ptr&lt;bool&gt; p_bool,</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                               event::exit_app &amp;&amp;p_event) {</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;            handle(p_bool, std::move(p_event));</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        };</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        uint32_t _timeout = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(m_wait.count() * 0.7);</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        async::add_handler&lt;event::exit_app&gt;(</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;            _handler,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;            std::chrono::milliseconds(_timeout == 0 ? 1000 : _timeout),</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#ab455882711d143796508b86fb06805e1">async::priority</a> {0});</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160; </div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;starting application&quot;</span>);</div>
+<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00337">337</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;                                                               {</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        <span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="keyword">using namespace </span>std::chrono;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        m_wait = (duration_cast&lt;milliseconds&gt;(p_wait));</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <span class="keyword">auto</span> _handler = [<span class="keyword">this</span>](type::ptr&lt;bool&gt; p_bool, exit_app &amp;&amp;p_event) {</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;            handle(p_bool, std::move(p_event));</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        };</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160; </div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        m_thread = std::thread(p_function);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        uint32_t _timeout = <span class="keyword">static_cast&lt;</span>uint32_t<span class="keyword">&gt;</span>(m_wait.count() * 0.7);</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160; </div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        {</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;waiting...&quot;</span>);</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            unique_lock&lt;mutex&gt; _lock(m_mutex);</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            m_cond.wait(_lock);</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        }</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160; </div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;notified&quot;</span>);</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        std::this_thread::sleep_for(m_wait);</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        m_thread.join();</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    }</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        async::add_handler&lt;exit_app&gt;(</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            _handler,</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            std::chrono::milliseconds(_timeout == 0 ? 1000 : _timeout),</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#ab455882711d143796508b86fb06805e1">async::priority</a> {0});</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160; </div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;starting application&quot;</span>);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        m_thread = std::thread(p_function);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        {</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;waiting...&quot;</span>);</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            unique_lock&lt;mutex&gt; _lock(m_mutex);</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            m_cond.wait(_lock);</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        }</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;notified&quot;</span>);</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        std::this_thread::sleep_for(m_wait);</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160; </div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        m_thread.join();</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -331,11 +330,11 @@ template&lt;typename t_time &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00362">362</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                   {</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;destructor&quot;</span>);</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        exit(0);</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    }</div>
+<p class="definition">Definition at line <a class="el" href="../../d1/dea/program_8h_source.html#l00371">371</a> of file <a class="el" href="../../d1/dea/program_8h_source.html">program.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;                   {</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(<span class="stringliteral">&quot;destructor&quot;</span>);</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        exit(0);</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    }</div>
 </div><!-- fragment -->
 <p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
 
@@ -459,7 +458,7 @@ template&lt;typename t_time &gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespacetenacitas_1_1async_html_ab455882711d143796508b86fb06805e1"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#ab455882711d143796508b86fb06805e1">tenacitas::async::priority</a></div><div class="ttdeci">uint8_t priority</div><div class="ttdoc">Defines the priority of a handling for an event among other handlings of that event.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00113">async.h:113</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1async_html_ab455882711d143796508b86fb06805e1"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#ab455882711d143796508b86fb06805e1">tenacitas::async::priority</a></div><div class="ttdeci">uint8_t priority</div><div class="ttdoc">Defines the priority of a handling for an event among other handlings of that event.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00114">async.h:114</a></div></div>
 <div class="ttc" id="alogger_8h_html_a76bb3c6d2a34d01b1b35e3673bf226ee"><div class="ttname"><a href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a></div><div class="ttdeci">#define DEB(p_params...)</div><div class="ttdoc">Wraps to the debug log function.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d8c/logger_8h_source.html#l00470">logger.h:470</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

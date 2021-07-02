@@ -11,6 +11,7 @@
 /// \example dispatcher_002/main.cpp
 /// \example sleeping_loop_000/main.cpp
 /// \example executer_000/main.cpp
+/// \example reader_000/main.cpp
 
 #include <algorithm>
 #include <atomic>
@@ -38,71 +39,71 @@ using namespace std::chrono_literals;
 namespace tenacitas {
 
 /** \brief support for async (asynchronous) programming
- *
- *The UML below shows the basic structure of the \p async namespace
- *\startuml
- *hide empty members
- *allow_mixing
- *skinparam linetype ortho
- *hide empty members
- *allow_mixing
- *skinparam linetype ortho
- *
- *
- *class handling_t <t_event>
- *class handler_t <t_event>
- *class dispatcher_t <t_event>
- *
- *dispatcher_t *-- "*" handling_t
- *handling_t *-- "*" handler_t
- *
- *handling_t *-- timeout
- *handling_t *-- priority
- *\enduml
- *
- *The central concept is an \p t_event. A \p t_event is a struct that contains
- *data about an interesting event in the application. It can be, for example, a
- *incoming message from a network connection, or a user menu choice.
- *
- *A \p handler_t is a function class that will handle a \p t_event. We can see
- *in the \p tenacitas::async::handler_t signature that it also receives a
- *<tt>std::share_ptr<bool></tt> object. Through this pointer a \p handler_t
- *function may be informed that its execution took more time than specified, so
- *that it can make the decision to stop running.
- *
- *A \p handling_t defines a type of handling for a \p t_event, and can group as
- *many \p handler_t objects as necessary. For example, a user menu choice can
- *generate a log message, a message sent to a remote program, and to change the
- *color of widget in the user interface. Each one of this actions is a \p
- *handling_t. Besides, it is possible to define one handler for the logging
- *handling, five handlers to the network message handling, and two for the
- *widget color changing. When the user makes its menu choice, the five \p
- *handler_t objects in the message network \p handling_t will "fight each other"
- *to get the \p t_event to handle.
- *
- *Each \p handling_t defines a timeout applies to all its \p handler_t objects,
- *and it is possible to define a tenacitas::async::priority for a \p handling_t,
- *so that the higher priority will receive a \p t_event before the others \p
- *handling_t.
- *
- *The \p dispatcher_t class is responsible for managing the creation of \p
- *handling_t objects, adding \p handler_t objects to a \p handling_t, and
- *dispatching \p t_event objects to the \p handing_t.
- *
- *In order to make it easier to deal with these classes, the \p async namespace
- *implements a set of functions: tenacitas::async::add_handling,
- *tenacitas::async::add_handler, tenacitas::async::set_priority and
- *tenacitas::async::dispatch, with some variations.
- *
- *The \p sleeping_loop_t allows a function to be executed in a defined
- *interval. It is usefull, among others, to dispatch \p t_event, in order to
- *simulate an actual event generation and handling.
- *
- *Please, look at the \p Examples section for examples on how to use these
- *functions and classes.
- *
+*
+*The UML below shows the basic structure of the \p async namespace
+*\startuml
+*hide empty members
+*allow_mixing
+*skinparam linetype ortho
+*hide empty members
+*allow_mixing
+*skinparam linetype ortho
+*
+*
+*class handling_t <t_event>
+*class handler_t <t_event>
+*class dispatcher_t <t_event>
+*
+*dispatcher_t *-- "*" handling_t
+*handling_t *-- "*" handler_t
+*
+*handling_t *-- timeout
+*handling_t *-- priority
+*\enduml
+*
+*The central concept is an \p t_event. A \p t_event is a struct that contains
+*data about an interesting event in the application. It can be, for example, a
+*incoming message from a network connection, or a user menu choice.
+*
+*A \p handler_t is a function class that will handle a \p t_event. We can see
+*in the \p tenacitas::async::handler_t signature that it also receives a
+*<tt>std::share_ptr<bool></tt> object. Through this pointer a \p handler_t
+*function may be informed that its execution took more time than specified, so
+*that it can make the decision to stop running.
+*
+*A \p handling_t defines a type of handling for a \p t_event, and can group as
+*many \p handler_t objects as necessary. For example, a user menu choice can
+*generate a log message, a message sent to a remote program, and to change the
+*color of widget in the user interface. Each one of this actions is a \p
+*handling_t. Besides, it is possible to define one handler for the logging
+*handling, five handlers to the network message handling, and two for the
+*widget color changing. When the user makes its menu choice, the five \p
+*handler_t objects in the message network \p handling_t will "fight each other"
+*to get the \p t_event to handle.
+*
+*Each \p handling_t defines a timeout applies to all its \p handler_t objects,
+*and it is possible to define a tenacitas::async::priority for a \p handling_t,
+*so that the higher priority will receive a \p t_event before the others \p
+*handling_t.
+*
+*The \p dispatcher_t class is responsible for managing the creation of \p
+*handling_t objects, adding \p handler_t objects to a \p handling_t, and
+*dispatching \p t_event objects to the \p handing_t.
+*
+*In order to make it easier to deal with these classes, the \p async namespace
+*implements a set of functions: tenacitas::async::add_handling,
+*tenacitas::async::add_handler, tenacitas::async::set_priority and
+*tenacitas::async::dispatch, with some variations.
+*
+*The \p sleeping_loop_t allows a function to be executed in a defined
+*interval. It is usefull, among others, to dispatch \p t_event, in order to
+*simulate an actual event generation and handling.
+*
+*Please, look at the \p Examples section for examples on how to use these
+*functions and classes.
+*
 
- */
+*/
 namespace async {
 
 // for type::ptr
@@ -314,7 +315,6 @@ template <typename t_time, typename t_function, typename... t_params>
 typename result_traits<
     std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result
 execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
-
     typedef internal::executer_t<
         std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>
         executer;
@@ -639,6 +639,7 @@ public:
     // \brief Destructor
     ~handling_t() {
         TRA(m_id, " - entering");
+        //        empty_queue();
         stop();
         TRA(m_id, " - leaving");
     }
@@ -771,7 +772,7 @@ private:
                     return false;
                 });
             }
-
+            TRA("left condition");
             if (m_stopped) {
                 TRA(m_id, ':', _loop_id, " - stop");
                 break;
@@ -884,7 +885,7 @@ struct dispatcher_t {
     // \brief Type of handler
     typedef handler_t<t_event> handler;
 
-    ~dispatcher_t() = default;
+    ~dispatcher_t() { TRA("destructor"); }
 
     // \brief Adds a handling to the dispatcher, which will
     // handle a event in a specific way
@@ -900,8 +901,7 @@ struct dispatcher_t {
     //
     // \return a \p handling_id, identinfying the handling
     template <typename t_time>
-    static inline handling_id add_handling(t_time p_timeout = 5s,
-                                           priority p_priority = 125) {
+    handling_id add_handling(t_time p_timeout = 5s, priority p_priority = 125) {
         std::lock_guard<std::mutex> _lock(m_mutex);
         m_list.push_back(std::make_unique<handling>(p_timeout, p_priority));
         handling_id _id = m_list.back()->get_id();
@@ -926,9 +926,9 @@ struct dispatcher_t {
     //
     // \return a \p handling_id, identinfying the handling
     template <typename t_time>
-    static handling_id add_handling(handler &&p_handler,
-                                    t_time p_timeout = 5s,
-                                    priority p_priority = 125) {
+    handling_id add_handling(handler &&p_handler,
+                             t_time p_timeout = 5s,
+                             priority p_priority = 125) {
         handling_id _id = add_handling(p_timeout, p_priority);
         add_handler(_id, std::move(p_handler));
         return _id;
@@ -939,7 +939,7 @@ struct dispatcher_t {
     // \param p_id is the identifier of the handling
     //
     // \param p_priority is the priority to be set for the handling
-    static void set_priority(const handling_id &p_id, priority p_priority) {
+    void set_priority(const handling_id &p_id, priority p_priority) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             (*_ite)->set_priority(p_priority);
@@ -952,7 +952,7 @@ struct dispatcher_t {
     // \param p_id is the identifier of the handling
     //
     // \return the priority of the handling, if \p p_id exists
-    static std::optional<priority> get_priority(const handling_id &p_id) {
+    std::optional<priority> get_priority(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return {(*_ite)->get_priority()};
@@ -965,9 +965,9 @@ struct dispatcher_t {
     // handler functions in each handlig will handle the event
     //
     // \param p_event is the event to be handled
-    static void send(const t_event &p_event) {
+    void send(const t_event &p_event) {
         for (handling_ptr &_handling_ptr : m_list) {
-            INF(get_id(), " - sending ", p_event, " to pool ",
+            TRA(get_id(), " - sending ", p_event, " to pool ",
                 _handling_ptr->get_id());
             _handling_ptr->add_data(p_event);
         }
@@ -978,8 +978,7 @@ struct dispatcher_t {
     // \param p_id is the identifier of the handling
     //
     // \param p_handler is the handler function to be added
-    static void add_handler(const handling_id &p_handling_id,
-                            handler &&p_handler) {
+    void add_handler(const handling_id &p_handling_id, handler &&p_handler) {
         auto _handling_ite = find(p_handling_id);
         auto _end = m_list.end();
         if (_handling_ite != _end) {
@@ -996,9 +995,9 @@ struct dispatcher_t {
     // to be added
     //
     // \param p_factory is a function that creates handler function
-    static void add_handler(const handling_id &p_handling_id,
-                            uint16_t p_num_workers,
-                            std::function<handler()> p_factory) {
+    void add_handler(const handling_id &p_handling_id,
+                     uint16_t p_num_workers,
+                     std::function<handler()> p_factory) {
         iterator _handling_ite = find(p_handling_id);
         if (_handling_ite != m_list.end()) {
             (*_handling_ite)->add_handler(p_num_workers, p_factory);
@@ -1009,7 +1008,7 @@ struct dispatcher_t {
     //
     // \param p_visitor is a function that will be called for each
     // handling.
-    static void
+    void
     traverse(std::function<void(const handling_id &,
                                 priority,
                                 const std::chrono::milliseconds &)> p_visitor) {
@@ -1025,7 +1024,7 @@ struct dispatcher_t {
     // \param p_id is the identifier of the handling
     ///
     // \return the size of the event queue
-    static size_t size(const handling_id &p_id) {
+    size_t size(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return (*_ite)->get_size();
@@ -1039,7 +1038,7 @@ struct dispatcher_t {
     // \param p_id is the identifier of the handling
     ///
     // \return the number of occupied positions
-    static size_t occupied(const handling_id &p_id) {
+    size_t occupied(const handling_id &p_id) {
         iterator _ite = find(p_id);
         if (_ite != m_list.end()) {
             return (*_ite)->get_occupied();
@@ -1051,7 +1050,7 @@ struct dispatcher_t {
     // handled
     //
     // TODO test it
-    static void wait() {
+    void wait() {
         TRA(event_id_t<t_event>::value, " - starting to wait");
         for (handling_ptr &_handling_ptr : m_list) {
             _handling_ptr->empty_queue();
@@ -1060,7 +1059,7 @@ struct dispatcher_t {
     }
 
     // \brief Retrieves the id associated to \p t_event
-    static number::id get_id() { return event_id_t<t_event>::value; }
+    number::id get_id() { return event_id_t<t_event>::value; }
 
 private:
     // \brief Alias for a handling for this event
@@ -1079,7 +1078,7 @@ private:
     // \brief Finds a handling based on a handling_id
     //
     // \return an iterator to the handling, or m_list.end() if not
-    static iterator find(const handling_id &p_id) {
+    iterator find(const handling_id &p_id) {
         auto _cmp = [&p_id](const handling_ptr &p_handling) -> bool {
             return p_id == p_handling->get_id();
         };
@@ -1089,7 +1088,7 @@ private:
     // \brief Inserts a handling to the list
     //
     // \param p_handling is the handling to be added
-    static inline void insert(handling_ptr &&p_handling) {
+    inline void insert(handling_ptr &&p_handling) {
         std::lock_guard<std::mutex> _lock(m_mutex);
         m_list.push_back(std::move(p_handling));
         //    m_list.back().start();
@@ -1097,7 +1096,7 @@ private:
     }
 
     // \brief Sorts the list of handlings in descending priority order
-    static inline void sort() {
+    inline void sort() {
         m_list.sort(
             [](const handling_ptr &p_i1, const handling_ptr &p_i2) -> bool {
                 return (p_i1->get_priority() > p_i2->get_priority());
@@ -1106,17 +1105,23 @@ private:
 
 private:
     // \brief The list of handling
-    static handling_list m_list;
+    handling_list m_list;
 
     // \brief Access control
-    static std::mutex m_mutex;
+    std::mutex m_mutex;
 };
 
-template <typename t_data>
-typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
+// template <typename t_data>
+// typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
+
+// template <typename t_data>
+// std::mutex dispatcher_t<t_data>::m_mutex;
 
 template <typename t_data>
-std::mutex dispatcher_t<t_data>::m_mutex;
+dispatcher_t<t_data> &get_dispatcher() {
+    static dispatcher_t<t_data> _dispatcher;
+    return _dispatcher;
+}
 
 } // namespace internal
 
@@ -1126,7 +1131,6 @@ std::mutex dispatcher_t<t_data>::m_mutex;
 /// used
 template <bool use = true>
 struct sleeping_loop_t {
-
     /// \brief Signature of the function that will be called in each round of
     /// the loop
     ///
@@ -1181,7 +1185,6 @@ struct sleeping_loop_t {
     /// \brief Move assignment
     sleeping_loop_t &operator=(sleeping_loop_t &&p_loop) {
         if (this != &p_loop) {
-
             bool _stopped = p_loop.m_stopped;
 
             m_function = p_loop.m_function;
@@ -1211,7 +1214,6 @@ struct sleeping_loop_t {
 
     /// \brief Stops the loop, if it was started
     void stop() {
-
         if (m_stopped) {
             TRA("not stopping because it is stopped");
             return;
@@ -1325,7 +1327,8 @@ private:
 template <typename t_event, typename t_time>
 static inline handling_id add_handling(t_time p_timeout = 5s,
                                        priority p_priority = 125) {
-    return internal::dispatcher_t<t_event>::add_handling(p_timeout, p_priority);
+    return internal::get_dispatcher<t_event>().add_handling(p_timeout,
+                                                            p_priority);
 }
 
 /// \brief Adds a handling to receive events to be handled, and adds a handler
@@ -1347,8 +1350,8 @@ template <typename t_event, typename t_time>
 static inline handling_id add_handling(handler_t<t_event> &&p_handler,
                                        t_time p_timeout = 5s,
                                        priority p_priority = 125) {
-    return internal::dispatcher_t<t_event>::add_handling(std::move(p_handler),
-                                                         p_timeout, p_priority);
+    return internal::get_dispatcher<t_event>().add_handling(
+        std::move(p_handler), p_timeout, p_priority);
 }
 
 /// \brief Defines the priority of a handling
@@ -1365,7 +1368,7 @@ static inline handling_id add_handling(handler_t<t_event> &&p_handler,
 template <typename t_event>
 static inline void set_priority(const handling_id &p_handling,
                                 priority p_priority) {
-    internal::dispatcher_t<t_event>::set_priority(p_handling, p_priority);
+    internal::get_dispatcher<t_event>().set_priority(p_handling, p_priority);
 }
 
 /// \brief Retrieves the priority of a handling
@@ -1381,7 +1384,7 @@ static inline void set_priority(const handling_id &p_handling,
 template <typename t_event>
 static inline std::optional<priority>
 get_priority(const handling_id &p_handling) {
-    return internal::dispatcher_t<t_event>::get_priority(p_handling);
+    return internal::get_dispatcher<t_event>().get_priority(p_handling);
 }
 
 /// \brief Dispatches an event to all handlings associated to the event
@@ -1391,7 +1394,7 @@ get_priority(const handling_id &p_handling) {
 /// \param p_event is the event to be copied to all handlings
 template <typename t_event>
 static inline void dispatch(const t_event &p_event) {
-    internal::dispatcher_t<t_event>::send(p_event);
+    internal::get_dispatcher<t_event>().send(p_event);
 }
 
 /// \brief Dispatches an event to all handlings associated to the event
@@ -1401,7 +1404,7 @@ static inline void dispatch(const t_event &p_event) {
 /// \param p_event is the event to be copied to all handlings
 template <typename t_event>
 static inline void dispatch(t_event &&p_event) {
-    internal::dispatcher_t<t_event>::send(p_event);
+    internal::get_dispatcher<t_event>().send(p_event);
 }
 
 /// \brief Adds a handler to a handling
@@ -1419,8 +1422,8 @@ static inline void dispatch(t_event &&p_event) {
 template <typename t_event>
 static inline void add_handler(const handling_id &p_handling,
                                handler_t<t_event> &&p_handler) {
-    internal::dispatcher_t<t_event>::add_handler(p_handling,
-                                                 std::move(p_handler));
+    internal::get_dispatcher<t_event>().add_handler(p_handling,
+                                                    std::move(p_handler));
 }
 
 /// \brief Adds a bunch of handlers to a handling
@@ -1441,8 +1444,8 @@ template <typename t_event>
 static inline void add_handler(const handling_id &p_handling,
                                uint16_t p_num_workers,
                                std::function<handler_t<t_event>()> p_factory) {
-    internal::dispatcher_t<t_event>::add_handler(p_handling, p_num_workers,
-                                                 p_factory);
+    internal::get_dispatcher<t_event>().add_handler(p_handling, p_num_workers,
+                                                    p_factory);
 }
 
 /// \brief Adds a handling to receive events to be handled, and adds a handler
@@ -1473,9 +1476,162 @@ static inline handling_id add_handler(handler_t<t_event> &&p_handler,
                                       t_time p_timeout,
                                       priority p_priority = 125) {
     number::id _id = add_handling<t_event>(p_timeout, p_priority);
-    internal::dispatcher_t<t_event>::add_handler(_id, std::move(p_handler));
+    internal::get_dispatcher<t_event>().add_handler(_id, std::move(p_handler));
     return _id;
 }
+
+/// \brief Asynchronous reader
+///
+/// \tparam t_data is the type of data read
+template <typename t_data>
+struct reader_t {
+
+    /// \brief Event dispatched every time a \p t_data object is read
+    struct data_read {
+        data_read() = default;
+
+        data_read(t_data &&p_data)
+            : value(std::move(p_data)) {}
+
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const data_read &) {
+            p_out << "data_read";
+            return p_out;
+        }
+
+        /// \brief data read
+        t_data value;
+    };
+
+    /// \brief Event dispatched when all data was read
+    struct all_data_read {
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const all_data_read &) {
+            p_out << "all_data_read";
+            return p_out;
+        }
+    };
+
+    /// \brief Event dispatched when an error occurr while reading
+    struct error_reading {
+
+        error_reading() = default;
+
+        error_reading(const char *p_what)
+            : what(p_what) {}
+
+        friend std::ostream &operator<<(std::ostream &p_out,
+                                        const error_reading &) {
+            p_out << "error_reading ";
+            return p_out;
+        }
+
+        /// \brief error description
+        std::string what;
+    };
+
+    /// \brief Syncrhonous reader
+    ///
+    /// \return a t_data object if there is one; or an empty std::optional, if
+    /// there is no more data to be read
+    typedef std::function<std::optional<t_data>()> sync_reader;
+
+    /// \brief Creates an asynchronous reader
+    ///
+    /// \param p_reader the synchronous reader
+    reader_t(sync_reader &&p_reader)
+        : m_reader(std::move(p_reader)) {}
+
+    /// \brief Destructor
+    /// Makes the reader to stop reading
+    ~reader_t() {
+        TRA("entering destructor");
+        stop();
+        TRA("leaving destructor");
+    }
+
+    /// \brief Starts reading
+    ///
+    /// Each new \p t_data read, a \p data_read event is dispatched
+    /// When there is more data to be read, when \p sync_reader returns an empty
+    /// std::optional<t_data> object, a \p all_data_read event is dispatched
+    /// If an error occurrs, a \p error_reading event is dispatched
+    void start() {
+        if (!m_stopped) {
+            WAR("not starting because it is not stopped");
+            return;
+        }
+
+        TRA("entering");
+        m_thread = std::thread([this]() -> void {
+            try {
+                m_stopped = false;
+                TRA("starting");
+                while (true) {
+                    if (m_stopped) {
+                        TRA("stopping");
+                        break;
+                    }
+                    std::optional<t_data> _maybe {m_reader()};
+                    if (m_stopped) {
+                        TRA("stopping");
+                        break;
+                    }
+                    if (!_maybe) {
+                        TRA("nothing was read");
+                        break;
+                    }
+                    TRA("something was read");
+                    dispatch(data_read {std::move(*_maybe)});
+                }
+                if (!m_stopped) {
+                    TRA("leaving thread loop because all data was read");
+                    dispatch(all_data_read {});
+                }
+                TRA("leaving thread loop because it was stopped");
+
+            } catch (std::exception &ex) {
+                dispatch(error_reading(ex.what()));
+            }
+        });
+        TRA("leaving");
+    }
+
+    /// \brief Stops reading
+    void stop() {
+        TRA("entering stop");
+        if (m_stopped) {
+            WAR("not stopping because it was not started");
+            return;
+        }
+        m_stopped = true;
+        if (m_thread.joinable()) {
+            auto _function = [this](type::ptr<bool>) -> void {
+                m_thread.join();
+            };
+            if (!execute(3s, _function)) {
+                WAR("detaching reading thread");
+                try {
+                    m_thread.detach();
+                } catch (std::exception &_ex) {
+                    ERR("error detaching sync_reader: '", _ex.what(), '\'');
+                }
+            }
+        }
+        TRA("leaving stop");
+    }
+
+private:
+    /// \brief Actual reader object, that will retrieve a \p t_data from some
+    /// source
+    sync_reader m_reader;
+
+    /// \brief Indicates if the asynchronous reading is active
+    std::atomic_bool m_stopped {true};
+
+    /// \brief Thread where the reading is being executed
+    std::thread m_thread;
+};
 
 } // namespace async
 } // namespace tenacitas

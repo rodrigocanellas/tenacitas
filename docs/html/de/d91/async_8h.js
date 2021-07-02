@@ -9,6 +9,10 @@ var async_8h =
     [ "event_id_t", "d1/d98/structtenacitas_1_1async_1_1internal_1_1event__id__t.html", "d1/d98/structtenacitas_1_1async_1_1internal_1_1event__id__t" ],
     [ "dispatcher_t", "db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html", "db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t" ],
     [ "sleeping_loop_t", "d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html", "d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t" ],
+    [ "reader_t", "d5/d47/structtenacitas_1_1async_1_1reader__t.html", "d5/d47/structtenacitas_1_1async_1_1reader__t" ],
+    [ "data_read", "de/df9/structtenacitas_1_1async_1_1reader__t_1_1data__read.html", "de/df9/structtenacitas_1_1async_1_1reader__t_1_1data__read" ],
+    [ "all_data_read", "d1/d3f/structtenacitas_1_1async_1_1reader__t_1_1all__data__read.html", "d1/d3f/structtenacitas_1_1async_1_1reader__t_1_1all__data__read" ],
+    [ "error_reading", "d9/d58/structtenacitas_1_1async_1_1reader__t_1_1error__reading.html", "d9/d58/structtenacitas_1_1async_1_1reader__t_1_1error__reading" ],
     [ "handler_t", "de/d91/async_8h.html#a973a7296ac73ea2d8ffc34bef99ec051", null ],
     [ "handling_id", "de/d91/async_8h.html#afd9788b46a41bbab7d198b4a3acb96dc", null ],
     [ "interval", "de/d91/async_8h.html#ab60fead4adbc7193409abff55fafdcca", null ],
@@ -22,6 +26,7 @@ var async_8h =
     [ "dispatch", "de/d91/async_8h.html#acf557eac6e09aadf3529d314c1700395", null ],
     [ "dispatch", "de/d91/async_8h.html#af154436f403cff51528137c7c88a6172", null ],
     [ "execute", "de/d91/async_8h.html#a6cb161571211b45f0dd04a5fd9da8197", null ],
+    [ "get_dispatcher", "de/d91/async_8h.html#a0f2b0af3fa04f75030930c65ebd22414", null ],
     [ "get_priority", "de/d91/async_8h.html#add3d255e98a13e3c88c20ada003eb065", null ],
     [ "set_priority", "de/d91/async_8h.html#ab3632a58874ba27d41ccacd14b2b7de2", null ]
 ];

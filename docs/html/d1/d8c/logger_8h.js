@@ -10,6 +10,7 @@ var logger_8h =
     [ "dummy", "d1/d8c/logger_8h.html#a11ad0bab60854236138545013aea40fa", null ],
     [ "set_debug_level", "d1/d8c/logger_8h.html#a52c07103dbf6907575f8fc0c97dcd99f", null ],
     [ "set_info_level", "d1/d8c/logger_8h.html#acbf320faf76f4819d0a5729fc0ec906f", null ],
+    [ "set_trace_level", "d1/d8c/logger_8h.html#ae3e577cb84e021d2c35bb570cf7174c5", null ],
     [ "set_warn_level", "d1/d8c/logger_8h.html#abb8c024955401ca66a961910dc02b55a", null ],
     [ "set_writer_cerr", "d1/d8c/logger_8h.html#a9dba3258a2cdd7210cce08ba5c45f808", null ],
     [ "set_writer_clog", "d1/d8c/logger_8h.html#a0df75ac8e53a313e40bd3657967b8d83", null ],

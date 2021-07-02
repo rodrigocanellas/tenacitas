@@ -15,8 +15,7 @@ HEADERS += \
     $$src_code_dir/tenacitas.lib/calendar.h \
     $$src_code_dir/tenacitas.lib/tester.h  \
     $$src_code_dir/tenacitas.lib/logger.h  \
-    $$src_code_dir/tenacitas.lib/async.h \
-    $$src_code_dir/tenacitas.lib/event.h
+    $$src_code_dir/tenacitas.lib/async.h
 
 
 SUBDIRS += \

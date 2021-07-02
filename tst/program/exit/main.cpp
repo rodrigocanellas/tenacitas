@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include <tenacitas.lib/async.h>
-#include <tenacitas.lib/event.h>
+
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/program.h>
@@ -26,7 +26,7 @@ struct exit_000 {
         auto _function = [this](type::ptr<bool>) -> void {
             if (m_counter > m_max) {
                 DEB("about to publish 'exit_app'");
-                async::dispatch(event::exit_app());
+                async::dispatch(program::exit_app());
             } else {
                 DEB(m_counter++);
             }
@@ -34,8 +34,8 @@ struct exit_000 {
 
         async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
-        async::add_handler<event::exit_app>(
-            [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
+        async::add_handler<program::exit_app>(
+            [&_loop](type::ptr<bool>, program::exit_app &&) -> void {
                 _loop.stop();
             },
             1s, async::priority {255});
@@ -63,7 +63,7 @@ struct exit_001 {
             if (m_counter > m_max) {
 
                 DEB("about to publish 'exit_app'");
-                async::dispatch(event::exit_app());
+                async::dispatch(program::exit_app());
                 DEB("sleeping...");
                 std::this_thread::sleep_for(5s);
                 if (p_bool && *p_bool) {
@@ -77,8 +77,8 @@ struct exit_001 {
 
         async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
-        async::add_handler<event::exit_app>(
-            [&_loop](type::ptr<bool>, event::exit_app &&) -> void {
+        async::add_handler<program::exit_app>(
+            [&_loop](type::ptr<bool>, program::exit_app &&) -> void {
                 _loop.stop();
             },
             1s, async::priority {255});
