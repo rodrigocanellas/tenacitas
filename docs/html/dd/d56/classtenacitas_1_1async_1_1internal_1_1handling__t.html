@@ -157,7 +157,7 @@ Public Member Functions</h2></td></tr>
 class tenacitas::async::internal::handling_t&lt; t_event &gt;</h3>
 
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00602">602</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00601">601</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a69bdbaa32815c5aa79b1d2e1f3b65ea8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a69bdbaa32815c5aa79b1d2e1f3b65ea8">&#9670;&nbsp;</a></span>handler</h2>
@@ -173,7 +173,7 @@ template&lt;typename t_event &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00605">605</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00604">604</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -243,10 +243,10 @@ template&lt;typename t_time &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00623">623</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        : m_timeout(calendar::convert&lt;timeout&gt;(p_timeout))</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        , m_priority(p_priority)</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;        , m_queue(1) {}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00622">622</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;        : m_timeout(calendar::convert&lt;timeout&gt;(p_timeout))</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;        , m_priority(p_priority)</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;        , m_queue(1) {}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -331,14 +331,15 @@ template&lt;typename t_event &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00641">641</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;                  {</div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(m_id, <span class="stringliteral">&quot;entering&quot;</span>);</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00640">640</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                  {</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#af3e6badf1e7e274455634208439971a2">TRA</a>(m_id, <span class="stringliteral">&quot; - entering&quot;</span>);</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        <span class="comment">//        empty_queue();</span></div>
 <div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;        stop();</div>
-<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(m_id, <span class="stringliteral">&quot;leaving&quot;</span>);</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#af3e6badf1e7e274455634208439971a2">TRA</a>(m_id, <span class="stringliteral">&quot; - leaving&quot;</span>);</div>
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    }</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
+<p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00466">TRA</a>.</p>
 
 </div>
 </div>
@@ -371,7 +372,7 @@ template&lt;typename t_event &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00652">652</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 <div class="fragment"><div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                                          {</div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a>(m_id, <span class="stringliteral">&quot;adding &quot;</span>, p_event);</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;        <a class="code" href="../../d1/d8c/logger_8h.html#af3e6badf1e7e274455634208439971a2">TRA</a>(m_id, <span class="stringliteral">&quot; - adding &quot;</span>, p_event);</div>
 <div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;        m_queue.<a class="code" href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#a469780e52a57c0a66a952b4d509df12a">add</a>(p_event);</div>
 <div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;        m_cond.notify_all();</div>
 <div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;        {</div>
@@ -381,7 +382,7 @@ template&lt;typename t_event &gt; </div>
 <div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;    }</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00470">DEB</a>.</p>
+<p class="reference">References <a class="el" href="../../d1/d8c/logger_8h_source.html#l00466">TRA</a>.</p>
 
 </div>
 </div>
@@ -465,7 +466,7 @@ template&lt;typename t_event &gt; </div>
 <div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        }</div>
 <div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;    }</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../de/d91/async_8h_source.html#l01473">tenacitas::async::add_handler()</a>.</p>
+<p class="reference">References <a class="el" href="../../de/d91/async_8h_source.html#l01475">tenacitas::async::add_handler()</a>.</p>
 
 </div>
 </div>
@@ -967,10 +968,10 @@ template&lt;typename t_event &gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_abdd05288565ceb73f2cd454200c97ca9"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#abdd05288565ceb73f2cd454200c97ca9">tenacitas::async::internal::circular_unlimited_size_queue_t::capacity</a></div><div class="ttdeci">size_t capacity() const</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00453">async.h:453</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_a469780e52a57c0a66a952b4d509df12a"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#a469780e52a57c0a66a952b4d509df12a">tenacitas::async::internal::circular_unlimited_size_queue_t::add</a></div><div class="ttdeci">void add(const t_data &amp;p_data)</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00395">async.h:395</a></div></div>
-<div class="ttc" id="alogger_8h_html_a76bb3c6d2a34d01b1b35e3673bf226ee"><div class="ttname"><a href="../../d1/d8c/logger_8h.html#a76bb3c6d2a34d01b1b35e3673bf226ee">DEB</a></div><div class="ttdeci">#define DEB(p_params...)</div><div class="ttdoc">Wraps to the debug log function.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d8c/logger_8h_source.html#l00470">logger.h:470</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_aecc861ee0cf085f7a60e46b63875ddf4"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#aecc861ee0cf085f7a60e46b63875ddf4">tenacitas::async::internal::circular_unlimited_size_queue_t::occupied</a></div><div class="ttdeci">size_t occupied() const</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00457">async.h:457</a></div></div>
+<div class="ttc" id="alogger_8h_html_af3e6badf1e7e274455634208439971a2"><div class="ttname"><a href="../../d1/d8c/logger_8h.html#af3e6badf1e7e274455634208439971a2">TRA</a></div><div class="ttdeci">#define TRA(p_params...)</div><div class="ttdoc">Wraps to the debug log function.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d8c/logger_8h_source.html#l00466">logger.h:466</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_abdd05288565ceb73f2cd454200c97ca9"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#abdd05288565ceb73f2cd454200c97ca9">tenacitas::async::internal::circular_unlimited_size_queue_t::capacity</a></div><div class="ttdeci">size_t capacity() const</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00452">async.h:452</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_a469780e52a57c0a66a952b4d509df12a"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#a469780e52a57c0a66a952b4d509df12a">tenacitas::async::internal::circular_unlimited_size_queue_t::add</a></div><div class="ttdeci">void add(const t_data &amp;p_data)</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00394">async.h:394</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t_html_aecc861ee0cf085f7a60e46b63875ddf4"><div class="ttname"><a href="../../dc/d3d/structtenacitas_1_1async_1_1internal_1_1circular__unlimited__size__queue__t.html#aecc861ee0cf085f7a60e46b63875ddf4">tenacitas::async::internal::circular_unlimited_size_queue_t::occupied</a></div><div class="ttdeci">size_t occupied() const</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00456">async.h:456</a></div></div>
 <div class="ttc" id="aclasstenacitas_1_1async_1_1internal_1_1handling__t_html_a1c6c413127a2c6a110942d936c508de3"><div class="ttname"><a href="../../dd/d56/classtenacitas_1_1async_1_1internal_1_1handling__t.html#a1c6c413127a2c6a110942d936c508de3">tenacitas::async::internal::handling_t::add_handler</a></div><div class="ttdeci">void add_handler(handler &amp;&amp;p_handler)</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l00669">async.h:669</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

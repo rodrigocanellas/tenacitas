@@ -1539,8 +1539,8 @@ struct reader_t {
     /// \brief Creates an asynchronous reader
     ///
     /// \param p_reader the synchronous reader
-    reader_t(sync_reader p_reader)
-        : m_reader(p_reader) {}
+    reader_t(sync_reader &&p_reader)
+        : m_reader(std::move(p_reader)) {}
 
     /// \brief Destructor
     /// Makes the reader to stop reading

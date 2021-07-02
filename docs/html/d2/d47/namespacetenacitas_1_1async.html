@@ -104,6 +104,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/structtenacitas_1_1async_1_1reader__t.html">reader_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous reader.  <a href="../../d5/d47/structtenacitas_1_1async_1_1reader__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d54/structtenacitas_1_1async_1_1result__traits.html">result_traits</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/da7/structtenacitas_1_1async_1_1result__traits_3_01void_01_4.html">result_traits&lt; void &gt;</a></td></tr>
@@ -211,7 +214,7 @@ template&lt;typename t_event &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00134">134</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00135">135</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -229,7 +232,7 @@ template&lt;typename t_event &gt; </div>
 
 <p>Identifier of a handling It is simply a, hopefully, unique number. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00117">117</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00118">118</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +250,7 @@ template&lt;typename t_event &gt; </div>
 
 <p>Defines the priority of a handling for an event among other handlings of that event. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00113">113</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00114">114</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -304,14 +307,12 @@ template&lt;typename t_event &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01421">1421</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01422"></a><span class="lineno"> 1422</span>&#160;                                                               {</div>
-<div class="line"><a name="l01423"></a><span class="lineno"> 1423</span>&#160;    <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#a07eabd35a549748b9e1ce6677a6c1f83">internal::dispatcher_t&lt;t_event&gt;::add_handler</a>(p_handling,</div>
-<div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;                                                 std::move(p_handler));</div>
-<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01423">1423</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01424"></a><span class="lineno"> 1424</span>&#160;                                                               {</div>
+<div class="line"><a name="l01425"></a><span class="lineno"> 1425</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().add_handler(p_handling,</div>
+<div class="line"><a name="l01426"></a><span class="lineno"> 1426</span>&#160;                                                    std::move(p_handler));</div>
+<div class="line"><a name="l01427"></a><span class="lineno"> 1427</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../de/d91/async_8h_source.html#l01473">add_handler()</a>.</p>
-
 </div>
 </div>
 <a id="af3a716a9115f34a7916a80ef6a2e3f2a"></a>
@@ -373,14 +374,12 @@ template&lt;typename t_event &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01442">1442</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01444"></a><span class="lineno"> 1444</span>&#160;                                                                            {</div>
-<div class="line"><a name="l01445"></a><span class="lineno"> 1445</span>&#160;    <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#a07eabd35a549748b9e1ce6677a6c1f83">internal::dispatcher_t&lt;t_event&gt;::add_handler</a>(p_handling, p_num_workers,</div>
-<div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160;                                                 p_factory);</div>
-<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01444">1444</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01446"></a><span class="lineno"> 1446</span>&#160;                                                                            {</div>
+<div class="line"><a name="l01447"></a><span class="lineno"> 1447</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().add_handler(p_handling, p_num_workers,</div>
+<div class="line"><a name="l01448"></a><span class="lineno"> 1448</span>&#160;                                                    p_factory);</div>
+<div class="line"><a name="l01449"></a><span class="lineno"> 1449</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../de/d91/async_8h_source.html#l01473">add_handler()</a>.</p>
-
 </div>
 </div>
 <a id="a07eabd35a549748b9e1ce6677a6c1f83"></a>
@@ -445,14 +444,14 @@ template&lt;typename t_event , typename t_time &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the handling id of the handling added </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01473">1473</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01475"></a><span class="lineno"> 1475</span>&#160;                                                                 {</div>
-<div class="line"><a name="l01476"></a><span class="lineno"> 1476</span>&#160;    number::id _id = add_handling&lt;t_event&gt;(p_timeout, p_priority);</div>
-<div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;    <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#a07eabd35a549748b9e1ce6677a6c1f83">internal::dispatcher_t&lt;t_event&gt;::add_handler</a>(_id, std::move(p_handler));</div>
-<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;    <span class="keywordflow">return</span> _id;</div>
-<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01475">1475</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01477"></a><span class="lineno"> 1477</span>&#160;                                                                 {</div>
+<div class="line"><a name="l01478"></a><span class="lineno"> 1478</span>&#160;    number::id _id = add_handling&lt;t_event&gt;(p_timeout, p_priority);</div>
+<div class="line"><a name="l01479"></a><span class="lineno"> 1479</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().add_handler(_id, std::move(p_handler));</div>
+<div class="line"><a name="l01480"></a><span class="lineno"> 1480</span>&#160;    <span class="keywordflow">return</span> _id;</div>
+<div class="line"><a name="l01481"></a><span class="lineno"> 1481</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l00682">tenacitas::async::internal::handling_t&lt; t_event &gt;::add_handler()</a>, <a class="el" href="../../de/d91/async_8h_source.html#l01421">add_handler()</a>, and <a class="el" href="../../de/d91/async_8h_source.html#l00930">tenacitas::async::internal::dispatcher_t&lt; t_event &gt;::add_handling()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l00682">tenacitas::async::internal::handling_t&lt; t_event &gt;::add_handler()</a>, and <a class="el" href="../../de/d91/async_8h_source.html#l00929">tenacitas::async::internal::dispatcher_t&lt; t_event &gt;::add_handling()</a>.</p>
 
 </div>
 </div>
@@ -516,13 +515,13 @@ template&lt;typename t_event , typename t_time &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the handling id of the handling added </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01348">1348</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01350"></a><span class="lineno"> 1350</span>&#160;                                                                  {</div>
-<div class="line"><a name="l01351"></a><span class="lineno"> 1351</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#a6ecfadacca57fa3b8b198a38a4fa3f64">internal::dispatcher_t&lt;t_event&gt;::add_handling</a>(std::move(p_handler),</div>
-<div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;                                                         p_timeout, p_priority);</div>
-<div class="line"><a name="l01353"></a><span class="lineno"> 1353</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01350">1350</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01352"></a><span class="lineno"> 1352</span>&#160;                                                                  {</div>
+<div class="line"><a name="l01353"></a><span class="lineno"> 1353</span>&#160;    <span class="keywordflow">return</span> internal::get_dispatcher&lt;t_event&gt;().add_handling(</div>
+<div class="line"><a name="l01354"></a><span class="lineno"> 1354</span>&#160;        std::move(p_handler), p_timeout, p_priority);</div>
+<div class="line"><a name="l01355"></a><span class="lineno"> 1355</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l00930">tenacitas::async::internal::dispatcher_t&lt; t_event &gt;::add_handling()</a>, and <a class="el" href="../../de/d91/async_8h_source.html#l01327">add_handling()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l00929">tenacitas::async::internal::dispatcher_t&lt; t_event &gt;::add_handling()</a>.</p>
 
 </div>
 </div>
@@ -579,13 +578,12 @@ template&lt;typename t_event , typename t_time &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the handling id of the handling added </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01327">1327</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01328"></a><span class="lineno"> 1328</span>&#160;                                                                  {</div>
-<div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#a6ecfadacca57fa3b8b198a38a4fa3f64">internal::dispatcher_t&lt;t_event&gt;::add_handling</a>(p_timeout, p_priority);</div>
-<div class="line"><a name="l01330"></a><span class="lineno"> 1330</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01328">1328</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01329"></a><span class="lineno"> 1329</span>&#160;                                                                  {</div>
+<div class="line"><a name="l01330"></a><span class="lineno"> 1330</span>&#160;    <span class="keywordflow">return</span> internal::get_dispatcher&lt;t_event&gt;().add_handling(p_timeout,</div>
+<div class="line"><a name="l01331"></a><span class="lineno"> 1331</span>&#160;                                                            p_priority);</div>
+<div class="line"><a name="l01332"></a><span class="lineno"> 1332</span>&#160;}</div>
 </div><!-- fragment -->
-<p class="reference">References <a class="el" href="../../de/d91/async_8h_source.html#l01348">add_handling()</a>.</p>
-
 </div>
 </div>
 <a id="acf557eac6e09aadf3529d314c1700395"></a>
@@ -627,13 +625,13 @@ template&lt;typename t_event &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="../../d1/d4a/application_000_2main_8cpp-example.html#a3">application_000/main.cpp</a>, <a class="el" href="../../d1/dd5/dispatcher_000_2main_8cpp-example.html#a2">dispatcher_000/main.cpp</a>, <a class="el" href="../../dd/d41/dispatcher_001_2main_8cpp-example.html#a2">dispatcher_001/main.cpp</a>, and <a class="el" href="../../d7/d4c/dispatcher_002_2main_8cpp-example.html#a2">dispatcher_002/main.cpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="../../d1/d4a/application_000_2main_8cpp-example.html#a3">application_000/main.cpp</a>, <a class="el" href="../../d1/dd5/dispatcher_000_2main_8cpp-example.html#a2">dispatcher_000/main.cpp</a>, <a class="el" href="../../dd/d41/dispatcher_001_2main_8cpp-example.html#a2">dispatcher_001/main.cpp</a>, <a class="el" href="../../d7/d4c/dispatcher_002_2main_8cpp-example.html#a2">dispatcher_002/main.cpp</a>, and <a class="el" href="../../d0/d1c/reader_000_2main_8cpp-example.html#a2">reader_000/main.cpp</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01394">1394</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01394"></a><span class="lineno"> 1394</span>&#160;                                                    {</div>
-<div class="line"><a name="l01395"></a><span class="lineno"> 1395</span>&#160;    internal::dispatcher_t&lt;t_event&gt;::send(p_event);</div>
-<div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01396">1396</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01396"></a><span class="lineno"> 1396</span>&#160;                                                    {</div>
+<div class="line"><a name="l01397"></a><span class="lineno"> 1397</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().send(p_event);</div>
+<div class="line"><a name="l01398"></a><span class="lineno"> 1398</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -677,11 +675,13 @@ template&lt;typename t_event &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01404">1404</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01404"></a><span class="lineno"> 1404</span>&#160;                                               {</div>
-<div class="line"><a name="l01405"></a><span class="lineno"> 1405</span>&#160;    internal::dispatcher_t&lt;t_event&gt;::send(p_event);</div>
-<div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01406">1406</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01406"></a><span class="lineno"> 1406</span>&#160;                                               {</div>
+<div class="line"><a name="l01407"></a><span class="lineno"> 1407</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().send(p_event);</div>
+<div class="line"><a name="l01408"></a><span class="lineno"> 1408</span>&#160;}</div>
 </div><!-- fragment -->
+<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l01559">tenacitas::async::reader_t&lt; t_data &gt;::start()</a>.</p>
+
 </div>
 </div>
 <a id="a6cb161571211b45f0dd04a5fd9da8197"></a>
@@ -745,15 +745,16 @@ template&lt;typename t_time , typename t_function , typename... t_params&gt; </d
 
 <p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00317">317</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 <div class="fragment"><div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                                                                           {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keyword">typedef</span> internal::executer_t&lt;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        std::invoke_result_t&lt;t_function, type::ptr&lt;bool&gt;, t_params...&gt;&gt;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        executer;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    executer _executer;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">return</span> _executer(p_timeout, p_function,</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;                     std::forward&lt;t_params&gt;(p_params)...);</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;}</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">typedef</span> internal::executer_t&lt;</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        std::invoke_result_t&lt;t_function, type::ptr&lt;bool&gt;, t_params...&gt;&gt;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        executer;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    executer _executer;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordflow">return</span> _executer(p_timeout, p_function,</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                     std::forward&lt;t_params&gt;(p_params)...);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;}</div>
 </div><!-- fragment -->
+<p class="reference">Referenced by <a class="el" href="../../de/d91/async_8h_source.html#l01601">tenacitas::async::reader_t&lt; t_data &gt;::stop()</a>.</p>
+
 </div>
 </div>
 <a id="add3d255e98a13e3c88c20ada003eb065"></a>
@@ -797,10 +798,10 @@ template&lt;typename t_event &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The priority of the queue, if a handling with <code>handling_id</code> was found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01384">1384</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01384"></a><span class="lineno"> 1384</span>&#160;                                            {</div>
-<div class="line"><a name="l01385"></a><span class="lineno"> 1385</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#add3d255e98a13e3c88c20ada003eb065">internal::dispatcher_t&lt;t_event&gt;::get_priority</a>(p_handling);</div>
-<div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01386">1386</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01386"></a><span class="lineno"> 1386</span>&#160;                                            {</div>
+<div class="line"><a name="l01387"></a><span class="lineno"> 1387</span>&#160;    <span class="keywordflow">return</span> internal::get_dispatcher&lt;t_event&gt;().get_priority(p_handling);</div>
+<div class="line"><a name="l01388"></a><span class="lineno"> 1388</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -856,19 +857,15 @@ template&lt;typename t_event &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01367">1367</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l01368"></a><span class="lineno"> 1368</span>&#160;                                                     {</div>
-<div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160;    <a class="code" href="../../d2/d47/namespacetenacitas_1_1async.html#ab3632a58874ba27d41ccacd14b2b7de2">internal::dispatcher_t&lt;t_event&gt;::set_priority</a>(p_handling, p_priority);</div>
-<div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;}</div>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01369">1369</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160;                                                     {</div>
+<div class="line"><a name="l01371"></a><span class="lineno"> 1371</span>&#160;    internal::get_dispatcher&lt;t_event&gt;().set_priority(p_handling, p_priority);</div>
+<div class="line"><a name="l01372"></a><span class="lineno"> 1372</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="anamespacetenacitas_1_1async_html_ab3632a58874ba27d41ccacd14b2b7de2"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#ab3632a58874ba27d41ccacd14b2b7de2">tenacitas::async::set_priority</a></div><div class="ttdeci">static void set_priority(const handling_id &amp;p_handling, priority p_priority)</div><div class="ttdoc">Defines the priority of a handling.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01367">async.h:1367</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1async_html_add3d255e98a13e3c88c20ada003eb065"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#add3d255e98a13e3c88c20ada003eb065">tenacitas::async::get_priority</a></div><div class="ttdeci">static std::optional&lt; priority &gt; get_priority(const handling_id &amp;p_handling)</div><div class="ttdoc">Retrieves the priority of a handling The priority of the handling defines the order in which a event ...</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01384">async.h:1384</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1async_html_a07eabd35a549748b9e1ce6677a6c1f83"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#a07eabd35a549748b9e1ce6677a6c1f83">tenacitas::async::add_handler</a></div><div class="ttdeci">static handling_id add_handler(handler_t&lt; t_event &gt; &amp;&amp;p_handler, t_time p_timeout, priority p_priority=125)</div><div class="ttdoc">Adds a handling to receive events to be handled, and adds a handler to it.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01473">async.h:1473</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1async_html_a6ecfadacca57fa3b8b198a38a4fa3f64"><div class="ttname"><a href="../../d2/d47/namespacetenacitas_1_1async.html#a6ecfadacca57fa3b8b198a38a4fa3f64">tenacitas::async::add_handling</a></div><div class="ttdeci">static handling_id add_handling(handler_t&lt; t_event &gt; &amp;&amp;p_handler, t_time p_timeout=5s, priority p_priority=125)</div><div class="ttdoc">Adds a handling to receive events to be handled, and adds a handler.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d91/async_8h_source.html#l01348">async.h:1348</a></div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
