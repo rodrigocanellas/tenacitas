@@ -11,6 +11,7 @@
 /// \example dispatcher_002/main.cpp
 /// \example sleeping_loop_000/main.cpp
 /// \example executer_000/main.cpp
+/// \example reader_000/main.cpp
 
 #include <algorithm>
 #include <atomic>
@@ -1600,7 +1601,7 @@ struct reader_t {
     void stop() {
         TRA("entering stop");
         if (m_stopped) {
-            WAR("not starting because it was not started");
+            WAR("not stopping because it was not started");
             return;
         }
         m_stopped = true;
