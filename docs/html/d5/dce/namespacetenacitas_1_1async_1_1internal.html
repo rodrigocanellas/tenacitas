@@ -86,7 +86,8 @@ $(document).ready(function(){initNavTree('d5/dce/namespacetenacitas_1_1async_1_1
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">tenacitas::async::internal Namespace Reference</div>  </div>
 </div><!--header-->
@@ -115,6 +116,12 @@ Typedefs</h2></td></tr>
 <tr class="separator:acc2b0c44351f8913565ffcb6c6de0ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab60fead4adbc7193409abff55fafdcca"><td class="memItemLeft" align="right" valign="top">typedef std::chrono::milliseconds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dce/namespacetenacitas_1_1async_1_1internal.html#ab60fead4adbc7193409abff55fafdcca">interval</a></td></tr>
 <tr class="separator:ab60fead4adbc7193409abff55fafdcca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a0f2b0af3fa04f75030930c65ebd22414"><td class="memTemplParams" colspan="2">template&lt;typename t_data &gt; </td></tr>
+<tr class="memitem:a0f2b0af3fa04f75030930c65ebd22414"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html">dispatcher_t</a>&lt; t_data &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d5/dce/namespacetenacitas_1_1async_1_1internal.html#a0f2b0af3fa04f75030930c65ebd22414">get_dispatcher</a> ()</td></tr>
+<tr class="separator:a0f2b0af3fa04f75030930c65ebd22414"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="ab60fead4adbc7193409abff55fafdcca"></a>
@@ -129,7 +136,7 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00143">143</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00144">144</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
 </div>
 </div>
@@ -145,8 +152,34 @@ Typedefs</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00140">140</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l00141">141</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
 
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a0f2b0af3fa04f75030930c65ebd22414"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f2b0af3fa04f75030930c65ebd22414">&#9670;&nbsp;</a></span>get_dispatcher()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename t_data &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../db/dc3/structtenacitas_1_1async_1_1internal_1_1dispatcher__t.html">dispatcher_t</a>&lt;t_data&gt;&amp; tenacitas::async::internal::get_dispatcher </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../de/d91/async_8h_source.html#l01121">1121</a> of file <a class="el" href="../../de/d91/async_8h_source.html">async.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l01121"></a><span class="lineno"> 1121</span>&#160;                                       {</div>
+<div class="line"><a name="l01122"></a><span class="lineno"> 1122</span>&#160;    <span class="keyword">static</span> dispatcher_t&lt;t_data&gt; _dispatcher;</div>
+<div class="line"><a name="l01123"></a><span class="lineno"> 1123</span>&#160;    <span class="keywordflow">return</span> _dispatcher;</div>
+<div class="line"><a name="l01124"></a><span class="lineno"> 1124</span>&#160;}</div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->

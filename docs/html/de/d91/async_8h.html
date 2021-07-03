@@ -184,6 +184,18 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html">tenacitas::async::sleeping_loop_t&lt; use &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Periodically executes a function.  <a href="../../d4/d20/structtenacitas_1_1async_1_1sleeping__loop__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d47/structtenacitas_1_1async_1_1reader__t.html">tenacitas::async::reader_t&lt; t_data &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asynchronous reader.  <a href="../../d5/d47/structtenacitas_1_1async_1_1reader__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/df9/structtenacitas_1_1async_1_1reader__t_1_1data__read.html">tenacitas::async::reader_t&lt; t_data &gt;::data_read</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event dispatched every time a <code>t_data</code> object is read.  <a href="../../de/df9/structtenacitas_1_1async_1_1reader__t_1_1data__read.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d3f/structtenacitas_1_1async_1_1reader__t_1_1all__data__read.html">tenacitas::async::reader_t&lt; t_data &gt;::all_data_read</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event dispatched when all data was read.  <a href="../../d1/d3f/structtenacitas_1_1async_1_1reader__t_1_1all__data__read.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d58/structtenacitas_1_1async_1_1reader__t_1_1error__reading.html">tenacitas::async::reader_t&lt; t_data &gt;::error_reading</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event dispatched when an error occurr while reading.  <a href="../../d9/d58/structtenacitas_1_1async_1_1reader__t_1_1error__reading.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
@@ -219,6 +231,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a6cb161571211b45f0dd04a5fd9da8197"><td class="memTemplItemLeft" align="right" valign="top">result_traits&lt; std::invoke_result_t&lt; t_function, type::ptr&lt; bool &gt;, t_params... &gt; &gt;::result&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d47/namespacetenacitas_1_1async.html#a6cb161571211b45f0dd04a5fd9da8197">tenacitas::async::execute</a> (t_time p_timeout, t_function &amp;p_function, t_params &amp;&amp;... p_params)</td></tr>
 <tr class="memdesc:a6cb161571211b45f0dd04a5fd9da8197"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronous function with collaborative timeout control.  <a href="../../d2/d47/namespacetenacitas_1_1async.html#a6cb161571211b45f0dd04a5fd9da8197">More...</a><br /></td></tr>
 <tr class="separator:a6cb161571211b45f0dd04a5fd9da8197"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f2b0af3fa04f75030930c65ebd22414"><td class="memTemplParams" colspan="2">template&lt;typename t_data &gt; </td></tr>
+<tr class="memitem:a0f2b0af3fa04f75030930c65ebd22414"><td class="memTemplItemLeft" align="right" valign="top">dispatcher_t&lt; t_data &gt; &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d5/dce/namespacetenacitas_1_1async_1_1internal.html#a0f2b0af3fa04f75030930c65ebd22414">tenacitas::async::internal::get_dispatcher</a> ()</td></tr>
+<tr class="separator:a0f2b0af3fa04f75030930c65ebd22414"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4185a0c87c30f4b39b0ee86fd66dc07b"><td class="memTemplParams" colspan="2">template&lt;typename t_event , typename t_time &gt; </td></tr>
 <tr class="memitem:a4185a0c87c30f4b39b0ee86fd66dc07b"><td class="memTemplItemLeft" align="right" valign="top">static handling_id&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d47/namespacetenacitas_1_1async.html#a4185a0c87c30f4b39b0ee86fd66dc07b">tenacitas::async::add_handling</a> (t_time p_timeout=5s, priority p_priority=125)</td></tr>
 <tr class="memdesc:a4185a0c87c30f4b39b0ee86fd66dc07b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a handling to receive events to be handled.  <a href="../../d2/d47/namespacetenacitas_1_1async.html#a4185a0c87c30f4b39b0ee86fd66dc07b">More...</a><br /></td></tr>

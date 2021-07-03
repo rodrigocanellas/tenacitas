@@ -201,9 +201,10 @@ private:
         using namespace std;
         bool result = false;
         try {
+            t_test_class _test_obj;
             cerr << "\n############ -> " << p_test_name << " - "
                  << t_test_class::desc() << endl;
-            result = t_test_class()();
+            result = _test_obj();
             cout << (result ? "SUCCESS" : "FAIL") << " for " << p_test_name
                  << endl;
         } catch (exception &_ex) {

@@ -26,7 +26,7 @@
 #include <thread>
 
 #include <tenacitas.lib/async.h>
-#include <tenacitas.lib/event.h>
+
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/type.h>
@@ -292,11 +292,21 @@ private:
     sets m_sets;
 };
 
+/// \brief Application can exit in a gracefully way
+struct exit_app {
+
+    /// \brief Output operator
+    friend std::ostream &operator<<(std::ostream &p_out, const exit_app &) {
+        p_out << "exit_app";
+        return p_out;
+    }
+};
+
 /// \brief Entry point for an application
 ///
 /// This class allows asynchronously execution of a function, which must use
-/// tenacitas::async::dispatch<tenacitas::event::exit_app>() function to send a
-/// tenacitas::event::exit_app to end the application
+/// tenacitas::async::dispatch<tenacitas::program::exit_app>() function to send
+/// a tenacitas::program::exit_app to end the application
 struct application {
 
     /// \brief Default constructor not allowed
@@ -317,10 +327,10 @@ struct application {
     /// \brief Constructor
     ///
     /// \tparam t_time is the type of type used to define how long will the
-    /// application will sleep after receive a tenacitas::event::exit_app
+    /// application will sleep after receive a tenacitas::program::exit_app
     ///
     /// \param p_wait how long will the
-    /// application will sleep after receive a tenacitas::event::exit_app
+    /// application will sleep after receive a tenacitas::program::exit_app
     ///
     /// \param p_function function to be executed asynchronously
     template <typename t_time>
@@ -330,14 +340,13 @@ struct application {
 
         m_wait = (duration_cast<milliseconds>(p_wait));
 
-        auto _handler = [this](type::ptr<bool> p_bool,
-                               event::exit_app &&p_event) {
+        auto _handler = [this](type::ptr<bool> p_bool, exit_app &&p_event) {
             handle(p_bool, std::move(p_event));
         };
 
         uint32_t _timeout = static_cast<uint32_t>(m_wait.count() * 0.7);
 
-        async::add_handler<event::exit_app>(
+        async::add_handler<exit_app>(
             _handler,
             std::chrono::milliseconds(_timeout == 0 ? 1000 : _timeout),
             async::priority {0});
@@ -365,8 +374,8 @@ struct application {
     }
 
 private:
-    /// \brief Handler of the tenacitas::event::exit_app event
-    void handle(type::ptr<bool>, event::exit_app &&) {
+    /// \brief Handler of the tenacitas::program::exit_app event
+    void handle(type::ptr<bool>, exit_app &&) {
         if (m_on_exit_handled) {
             WAR("on_exit already handled");
             return;
@@ -384,7 +393,7 @@ private:
     std::mutex m_mutex;
 
     /// \brief How long will the application will sleep after receive a
-    /// tenacitas::event::exit_app
+    /// tenacitas::program::exit_app
     std::chrono::milliseconds m_wait;
 
     std::thread m_thread;
