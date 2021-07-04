@@ -199,9 +199,9 @@ struct reader_001 {
                       _handler3.get_values());
     }
 
-private:
     typedef std::vector<uint64_t> values;
 
+private:
     struct handler {
 
         void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
@@ -386,9 +386,9 @@ struct reader_002 {
                equals_b(_handler_b1, _handler_b2);
     }
 
-private:
     typedef std::vector<uint64_t> values;
 
+private:
     struct handler_a {
 
         void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
