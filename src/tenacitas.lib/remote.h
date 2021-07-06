@@ -80,6 +80,9 @@ struct passive_connector;
 template <protocol protocol_type>
 struct active_connector;
 
+template <protocol protocol_type>
+struct writer;
+
 #ifdef POSIX
     #include <arpa/inet.h>
     #include <netdb.h>
@@ -91,6 +94,26 @@ struct active_connector;
     #ifndef INADDR_NONE
         #define INADDR_NONE 0xFFFFFFFF
     #endif
+
+template <>
+struct writer<protocol::TCP> {
+    void operator()(int p_socket, const std::string &p_str) {
+        write(p_socket, p_str.c_str(), p_str.size());
+    }
+    void operator()(int p_socket, const char *p_str) {
+        write(p_socket, p_str, strlen(p_str));
+    }
+};
+
+template <>
+struct writer<protocol::UDP> {
+    void operator()(int p_socket, const std::string &p_str) {
+        write(p_socket, p_str.c_str(), p_str.size());
+    }
+    void operator()(int p_socket, const char *p_str) {
+        write(p_socket, p_str, strlen(p_str));
+    }
+};
 
 template <uint16_t buffer_size>
 struct reader<protocol::UDP, reading::RECORD, buffer_size> {
@@ -146,7 +169,7 @@ struct reader<protocol::TCP, reading::RECORD, buffer_size> {
 
 template <uint16_t buffer_size>
 struct reader<protocol::TCP, reading::STREAM, buffer_size> {
-    void tcp_reader_stream(int p_socket) {
+    void operator()(int p_socket) {
         uint16_t _amount_read {0};
         char _buf[buffer_size + 1];
 
@@ -463,14 +486,14 @@ struct client {
     typedef typename connector::connection connection;
 
     template <typename t_host, typename t_service>
-    bool connect(t_host p_host, t_service p_service) {
+    std::optional<connection> connect(t_host p_host, t_service p_service) {
         connector _connector;
         std::optional<connection> _maybe = _connector(p_host, p_service);
         if (_maybe) {
             m_connection = std::move(*_maybe);
-            return true;
+            return {m_connection};
         }
-        return false;
+        return {};
     }
 
 private:
