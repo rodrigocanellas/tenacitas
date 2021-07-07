@@ -33,6 +33,7 @@ struct test {
             reader _reader;
 
             _writer(_conn, "hello!!");
+
             std::optional<message> _maybe_read {_reader(_conn)};
             if (_maybe_read) {
                 message _msg {std::move(*_maybe_read)};

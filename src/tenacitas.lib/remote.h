@@ -31,6 +31,8 @@ struct message {
     message(const char *p_str)
         : str(p_str) {}
 
+    message() = default;
+
     std::string str;
 };
 
@@ -98,9 +100,11 @@ struct writer;
 template <>
 struct writer<protocol::TCP> {
     void operator()(int p_socket, const std::string &p_str) {
+        TRA("writing ", p_str, " to socket ", p_socket);
         write(p_socket, p_str.c_str(), p_str.size());
     }
     void operator()(int p_socket, const char *p_str) {
+        TRA("writing ", p_str, " to socket ", p_socket);
         write(p_socket, p_str, strlen(p_str));
     }
 };
@@ -410,6 +414,7 @@ struct passive_connector<protocol::UDP> {
 
 template <typename t_connection>
 struct new_connection {
+    new_connection() = default;
     new_connection(t_connection &&p_connection)
         : connection(std::move(p_connection)) {}
 
