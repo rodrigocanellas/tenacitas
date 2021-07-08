@@ -24,7 +24,11 @@ namespace tenacitas {
 /// \brief
 namespace remote {
 
-struct message {
+template <typename t_data>
+struct message;
+
+template <>
+struct message<std::string> {
     message(std::string &&p_str)
         : str(std ::move(p_str)) {}
 
@@ -36,12 +40,14 @@ struct message {
     std::string str;
 };
 
-enum class reading : char { RECORD = 'r', STREAM = 's' };
+enum class reading : char { AT_MOST = 'f', DELIMITED = 'd', STREAM = 's' };
 std::ostream &operator<<(std::ostream &p_out, const reading &p_reading) {
-    if (p_reading == reading::RECORD) {
-        p_out << "record";
+    if (p_reading == reading::AT_MOST) {
+        p_out << "fixed size";
     } else if (p_reading == reading::STREAM) {
         p_out << "stream";
+    } else if (p_reading == reading::DELIMITED) {
+        p_out << "delimited";
     }
     return p_out;
 }
@@ -73,7 +79,7 @@ const char *protocol2str(protocol p_protocol) {
     return g_never;
 }
 
-template <protocol protocol_type, reading reading_type, uint16_t buffer_size>
+template <typename t_data, reading reading_type, uint16_t buffer_size>
 struct reader;
 
 template <protocol protocol_type>
@@ -97,102 +103,170 @@ struct writer;
         #define INADDR_NONE 0xFFFFFFFF
     #endif
 
+static constexpr uint16_t MAX_WRITES_ATTEMPT {5};
+static constexpr uint16_t MAX_READS_ATTEMPT {5};
+
+bool internal_writer(int p_socket,
+                     const char *p_str,
+                     size_t p_len,
+                     uint16_t p_attempt = 0) {
+    if (p_attempt >= MAX_WRITES_ATTEMPT) {
+        return false;
+    }
+    size_t _left {p_len};
+    ssize_t _written {0};
+    const char *_aux = p_str;
+
+    while (_left > 0) {
+        _written = write(p_socket, _aux, _left);
+        if (_written <= 0) {
+            if (_written < 0 && errno == EINTR) {
+                _written = 0;
+                return internal_writer(p_socket, p_str, p_len, ++p_attempt);
+            } else {
+                return false;
+            }
+        }
+        _left -= _written;
+        _aux += _written;
+    }
+    return true;
+}
+
 template <>
 struct writer<protocol::TCP> {
-    void operator()(int p_socket, const std::string &p_str) {
+    bool operator()(int p_socket, const std::string &p_str) {
         TRA("writing ", p_str, " to socket ", p_socket);
-        write(p_socket, p_str.c_str(), p_str.size());
+        return internal_writer(p_socket, p_str.c_str(), p_str.size());
     }
-    void operator()(int p_socket, const char *p_str) {
+
+    bool operator()(int p_socket, const char *p_str) {
         TRA("writing ", p_str, " to socket ", p_socket);
-        write(p_socket, p_str, strlen(p_str));
+        return internal_writer(p_socket, p_str, strlen(p_str));
     }
 };
 
 template <>
 struct writer<protocol::UDP> {
-    void operator()(int p_socket, const std::string &p_str) {
-        write(p_socket, p_str.c_str(), p_str.size());
+    bool operator()(int p_socket, const std::string &p_str) {
+        return internal_writer(p_socket, p_str.c_str(), p_str.size());
     }
-    void operator()(int p_socket, const char *p_str) {
-        write(p_socket, p_str, strlen(p_str));
+    bool operator()(int p_socket, const char *p_str) {
+        return internal_writer(p_socket, p_str, strlen(p_str));
     }
 };
 
-template <uint16_t buffer_size>
-struct reader<protocol::UDP, reading::RECORD, buffer_size> {
-    std::optional<message> operator()(int p_socket) {
+template <typename t_data>
+std::optional<message<t_data>>
+read_at_most(int p_socket, char *p_buf, size_t p_len, uint16_t p_attempt = 0) {
+    if (p_attempt >= MAX_READS_ATTEMPT) {
+        return {};
+    }
 
-        std::string _buf {buffer_size};
-        if (read(p_socket, &_buf[0], buffer_size) < 0) {
-            async::dispatch(async::reader_t<message>::error_reading {});
+    ssize_t _read {0};
+    size_t _left {p_len};
+    char *_aux = p_buf;
+
+    while (_left > 0) {
+        _read = read(p_socket, _aux, _left);
+        if (_read < 0) {
+            if (errno == EINTR) {
+                return read_at_most<t_data>(p_socket, p_buf, p_len,
+                                            ++p_attempt);
+            }
             return {};
+        } else if (_read == 0) {
+            break;
         }
-        return {message {std::move(_buf)}};
+        TRA("read ", _aux);
+        _left -= _read;
+        _aux += _read;
+    }
+    return {message<t_data> {t_data {p_buf, _aux}}};
+}
+
+template <typename t_data>
+std::optional<message<t_data>> read_delimeter(int p_socket,
+                                              char *p_buf,
+                                              size_t p_len,
+                                              char p_delimeter,
+                                              uint16_t p_attempt = 0) {
+    if (p_attempt >= MAX_READS_ATTEMPT) {
+        return {};
+    }
+
+    ssize_t _read {0};
+    size_t _left {p_len};
+    char *_aux = p_buf;
+
+    while (_left > 0) {
+        _read = read(p_socket, _aux, _left);
+        if (_read < 0) {
+            if (errno == EINTR) {
+                return read_delimeter<t_data>(p_socket, p_buf, p_len,
+                                              ++p_attempt);
+            }
+            return {};
+        } else if (_read == 0) {
+            break;
+        }
+        TRA("read ", _aux);
+        _left -= _read;
+        _aux += _read;
+        if ((*(_aux - 1)) == p_delimeter) {
+            TRA("(*(_aux - 1)) == ", (*(_aux - 1)));
+            --_aux;
+            ++_left;
+            break;
+        }
+    }
+    return {message<t_data> {std::string {p_buf, _aux}}};
+}
+
+template <typename t_data, uint16_t buffer_size>
+void read_stream(
+    int p_socket,
+    std::function<void(int p_socket, message<t_data> &&)> p_handler) {
+
+    char _buf[buffer_size + 1];
+    while (true) {
+        memset(_buf, '\0', buffer_size);
+
+        std::optional<message<t_data>> _maybe =
+            read_at_most<t_data>(p_socket, _buf, buffer_size);
+        if (_maybe) {
+            p_handler(p_socket, std::move(*_maybe));
+        }
+    }
+}
+
+template <typename t_data, uint16_t buffer_size>
+struct reader<t_data, reading::AT_MOST, buffer_size> {
+
+    std::optional<message<t_data>> operator()(int p_socket) {
+        char _buf[buffer_size + 1];
+        memset(_buf, '\0', buffer_size);
+        return read_at_most(p_socket, _buf, buffer_size);
     }
 };
 
-template <uint16_t buffer_size>
-struct reader<protocol::TCP, reading::RECORD, buffer_size> {
-    std::optional<message> operator()(int p_socket) {
-        uint16_t _total_read {0};
-
-        char _result[buffer_size + 1];
-        memset(_result, '\0', buffer_size);
-
+template <typename t_data, uint16_t buffer_size>
+struct reader<t_data, reading::DELIMITED, buffer_size> {
+    std::optional<message<t_data>> operator()(int p_socket, char p_char) {
         char _buf[buffer_size + 1];
-
-        while (true) {
-            memset(_buf, '\0', buffer_size);
-            uint16_t _amount_read = read(p_socket, _result, buffer_size);
-
-            if (_amount_read == 0) {
-                break;
-            }
-
-            if (_amount_read < 0) {
-                async::dispatch(async::reader_t<message>::error_reading {});
-                return {};
-            }
-
-            if ((_total_read + _amount_read) > buffer_size) {
-                async::dispatch(async::reader_t<message>::error_reading {});
-                return {};
-            }
-
-            std::copy(&_buf[0], &_buf[strlen(_buf)], &_result[_total_read]);
-            _total_read += _amount_read;
-
-            if (_total_read == buffer_size) {
-                break;
-            }
-        }
-        return {message {_result}};
+        memset(_buf, '\0', buffer_size);
+        return read_delimeter(p_socket, _buf, buffer_size, p_char);
     }
 };
 
-template <uint16_t buffer_size>
-struct reader<protocol::TCP, reading::STREAM, buffer_size> {
-    void operator()(int p_socket) {
-        uint16_t _amount_read {0};
+template <typename t_data, uint16_t buffer_size>
+struct reader<t_data, reading::STREAM, buffer_size> {
+    void operator()(
+        int p_socket,
+        std::function<void(int p_socket, message<t_data> &&)> p_handler) {
         char _buf[buffer_size + 1];
-
-        while (true) {
-
-            memset(_buf, '\0', buffer_size);
-            _amount_read = read(p_socket, _buf, buffer_size);
-
-            if (_amount_read == 0) {
-                async::dispatch(async::reader_t<message>::all_data_read {});
-                break;
-            }
-            if (_amount_read < 0) {
-                async::dispatch(async::reader_t<message>::error_reading {});
-                break;
-            }
-            async::dispatch(
-                async::reader_t<message>::data_read {std::string {_buf}});
-        }
+        memset(_buf, '\0', buffer_size);
+        return read_stream<buffer_size>(p_socket, p_handler);
     }
 };
 
@@ -411,6 +485,11 @@ struct passive_connector<protocol::UDP> {
 };
 
 #endif // POSIX
+
+struct new_text_msg {
+
+    message<std::string> msg;
+};
 
 template <typename t_connection>
 struct new_connection {

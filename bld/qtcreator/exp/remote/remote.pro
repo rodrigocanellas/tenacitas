@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-  async \
-  program \
-  remote
+ server_000 \
+ client_000
+

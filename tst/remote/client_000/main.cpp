@@ -14,7 +14,7 @@ struct test {
             typedef client<remote::protocol::TCP> client;
             typedef client::connection connection;
             typedef remote::writer<remote::protocol::TCP> writer;
-            typedef remote::reader<remote::protocol::TCP,
+            typedef remote::reader<std::string, remote::protocol::TCP,
                                    remote::reading::RECORD, 2 * 1024>
                 reader;
 
@@ -32,12 +32,21 @@ struct test {
             writer _writer;
             reader _reader;
 
-            _writer(_conn, "hello!!");
+            std::string _str;
+            std::cout << "-> ";
+            std::cin >> _str;
 
-            std::optional<message> _maybe_read {_reader(_conn)};
+            _writer(_conn, _str);
+
+            std::optional<message<std::string>> _maybe_read {
+                _reader(_conn, '!')};
             if (_maybe_read) {
                 message _msg {std::move(*_maybe_read)};
                 INF("read: '", _msg.str, '\'');
+                std::string _actual_written {_str.begin(), --_str.end()};
+                DEB("actual written = '", _actual_written, ", actual read = '",
+                    _msg.str, '\'');
+                return (_msg.str == _actual_written);
             }
 
         } catch (std::exception &_ex) {

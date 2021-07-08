@@ -15,39 +15,25 @@ struct test {
             typedef remote::server<remote::protocol::TCP> server;
             typedef server::connection connection;
             typedef remote::new_connection<connection> new_connection;
-            typedef remote::reader<remote::protocol::TCP,
-                                   remote::reading::STREAM, 2 * 1024>
+            typedef remote::reader<std::string, remote::reading::STREAM,
+                                   2 * 1024>
                 reader;
-            typedef remote::message message;
+            typedef remote::message<std::string> message;
 
             typedef remote::writer<remote::protocol::TCP> writer;
-
-            writer _writer;
 
             reader _reader;
 
             auto _new_connection_handler =
                 [&](std::shared_ptr<bool>,
                     new_connection &&p_new_connection) -> void {
-                async::add_handler<async::reader_t<message>::data_read>(
-                    [&](std::shared_ptr<bool>,
-                        async::reader_t<message>::data_read &&p_message)
-                        -> void {
-                        _writer(p_new_connection.connection,
-                                p_message.value.str);
-                    },
-                    1s
+                auto _handler = [&](connection p_connection,
+                                    message &&p_msg) -> void {
+                    writer _writer;
+                    _writer(p_connection, p_msg.str);
+                };
 
-                );
-
-                _reader(p_new_connection.connection);
-                //                if (_maybe) {
-                //                    message _msg {std::move(*_maybe)};
-                //                    INF("read: '", _msg.str, '\'');
-
-                //                    _writer(p_new_connection.connection,
-                //                    _msg.str);
-                //                }
+                _reader(p_new_connection.connection, _handler);
             };
 
             async::add_handler<new_connection>(_new_connection_handler, 15min);
