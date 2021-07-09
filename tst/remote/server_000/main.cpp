@@ -4,6 +4,15 @@
 #include <tenacitas.lib/remote.h>
 #include <tenacitas.lib/tester.h>
 
+#ifdef POSIX
+    #include <arpa/inet.h>
+    #include <netdb.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+    #include <sys/types.h>
+    #include <unistd.h>
+#endif
+
 using namespace tenacitas;
 
 struct test {
@@ -15,12 +24,11 @@ struct test {
             typedef remote::server<remote::protocol::TCP> server;
             typedef server::connection connection;
             typedef remote::new_connection<connection> new_connection;
-            typedef remote::reader<std::string, remote::reading::STREAM,
-                                   2 * 1024>
+            typedef remote::message<char> message;
+            typedef remote::reader<message::type, remote::reading::CONTINUOUS>
                 reader;
-            typedef remote::message<std::string> message;
 
-            typedef remote::writer<remote::protocol::TCP> writer;
+            typedef remote::writer<connection, message::type> writer;
 
             reader _reader;
 
@@ -30,7 +38,7 @@ struct test {
                 auto _handler = [&](connection p_connection,
                                     message &&p_msg) -> void {
                     writer _writer;
-                    _writer(p_connection, p_msg.str);
+                    _writer(p_connection, p_msg);
                 };
 
                 _reader(p_new_connection.connection, _handler);

@@ -13,9 +13,10 @@ struct test {
         try {
             typedef client<remote::protocol::TCP> client;
             typedef client::connection connection;
-            typedef remote::writer<remote::protocol::TCP> writer;
-            typedef remote::reader<std::string, remote::protocol::TCP,
-                                   remote::reading::RECORD, 2 * 1024>
+            typedef message<char> message;
+            typedef remote::writer<connection, message::type> writer;
+
+            typedef remote::reader<message::type, remote::reading::AT_MOST>
                 reader;
 
             client _client;
@@ -29,24 +30,30 @@ struct test {
             INF("connected to localhost:15678");
             connection _conn {*_maybe_conn};
 
-            writer _writer;
             reader _reader;
+            writer _writer;
 
-            std::string _str;
-            std::cout << "-> ";
-            std::cin >> _str;
+            std::cout << "Enter text, no space, or -1 to stop\n\n";
 
-            _writer(_conn, _str);
+            while (true) {
+                std::string _str;
+                std::cout << "-> ";
+                std::cin >> _str;
 
-            std::optional<message<std::string>> _maybe_read {
-                _reader(_conn, '!')};
-            if (_maybe_read) {
-                message _msg {std::move(*_maybe_read)};
-                INF("read: '", _msg.str, '\'');
-                std::string _actual_written {_str.begin(), --_str.end()};
-                DEB("actual written = '", _actual_written, ", actual read = '",
-                    _msg.str, '\'');
-                return (_msg.str == _actual_written);
+                if (_str == "-1") {
+                    break;
+                }
+
+                _writer(_conn, _str);
+
+                std::optional<message> _maybe = _reader(_conn);
+                if (!_maybe) {
+                    break;
+                }
+
+                INF("echoed '", _maybe.value(), '\'');
+
+                std::cout << '\n';
             }
 
         } catch (std::exception &_ex) {
