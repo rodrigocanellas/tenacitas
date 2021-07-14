@@ -799,12 +799,12 @@ private:
                 break;
             }
 
-            std::pair<bool, t_event> _maybe_data {m_queue.get()};
+            //            std::pair<bool, t_event> _maybe_data {m_queue.get()};
 
-            if (this->m_stopped) {
-                TRA(m_id, ':', _loop_id, " - stop");
-                break;
-            }
+            //            if (this->m_stopped) {
+            //                TRA(m_id, ':', _loop_id, " - stop");
+            //                break;
+            //            }
 
             consume(_loop_id, p_handler);
         }
@@ -1003,9 +1003,10 @@ struct dispatcher_t {
     // handler functions in each handlig will handle the event
     //
     // \param p_event is the event to be handled
-    void send(const t_event &p_event) {
+    void dispatch(const t_event &p_event) {
+        TRA(m_list.size(), " handlings for event '", p_event, "'");
         for (handling_ptr &_handling_ptr : m_list) {
-            TRA(get_id(), " - sending ", p_event, " to pool ",
+            TRA(get_id(), " - dispatching ", p_event, " to pool ",
                 _handling_ptr->get_id());
             _handling_ptr->add_data(p_event);
         }
@@ -1432,7 +1433,7 @@ get_priority(const handling_id &p_handling) {
 /// \param p_event is the event to be copied to all handlings
 template <typename t_event>
 static inline void dispatch(const t_event &p_event) {
-    internal::get_dispatcher<t_event>().send(p_event);
+    internal::get_dispatcher<t_event>().dispatch(p_event);
 }
 
 /// \brief Dispatches an event to all handlings associated to the event
@@ -1442,7 +1443,7 @@ static inline void dispatch(const t_event &p_event) {
 /// \param p_event is the event to be copied to all handlings
 template <typename t_event>
 static inline void dispatch(t_event &&p_event) {
-    internal::get_dispatcher<t_event>().send(p_event);
+    internal::get_dispatcher<t_event>().dispatch(p_event);
 }
 
 /// \brief Adds a handler to a handling

@@ -120,33 +120,37 @@ enum class reading : char {
     DELIMITED = 'd',
     CONTINUOUS = 'c'
 };
-std::ostream &operator<<(std::ostream &p_out, const reading &p_reading) {
-    if (p_reading == reading::AT_MOST) {
-        p_out << "fixed size";
-    } else if (p_reading == reading::CONTINUOUS) {
-        p_out << "stream";
-    } else if (p_reading == reading::DELIMITED) {
-        p_out << "delimited";
-    } else if (p_reading == reading::EXACTLY) {
-        p_out << "exactly";
-    }
 
-    return p_out;
-}
+// inline std::ostream &operator<<(std::ostream &p_out, const reading
+// &p_reading) {
+//    if (p_reading == reading::AT_MOST) {
+//        p_out << "fixed size";
+//    } else if (p_reading == reading::CONTINUOUS) {
+//        p_out << "stream";
+//    } else if (p_reading == reading::DELIMITED) {
+//        p_out << "delimited";
+//    } else if (p_reading == reading::EXACTLY) {
+//        p_out << "exactly";
+//    }
+
+//    return p_out;
+//}
 
 enum class protocol : uint16_t { TCP = 0, UDP, BLUETOOTH };
-std::ostream &operator<<(std::ostream &p_out, const protocol &p_protocol) {
-    if (p_protocol == protocol::BLUETOOTH) {
-        p_out << "bluetooth";
-    } else if (p_protocol == protocol::TCP) {
-        p_out << "tcp";
-    } else if (p_protocol == protocol::UDP) {
-        p_out << "udp";
-    }
-    return p_out;
-}
 
-const char *protocol2str(protocol p_protocol) {
+// inline std::ostream &operator<<(std::ostream &p_out,
+//                                const protocol &p_protocol) {
+//    if (p_protocol == protocol::BLUETOOTH) {
+//        p_out << "bluetooth";
+//    } else if (p_protocol == protocol::TCP) {
+//        p_out << "tcp";
+//    } else if (p_protocol == protocol::UDP) {
+//        p_out << "udp";
+//    }
+//    return p_out;
+//}
+
+inline const char *protocol2str(protocol p_protocol) {
     static constexpr char g_bluetooth[] = "bluetooth";
     static constexpr char g_tcp[] = "tcp";
     static constexpr char g_udp[] = "udp";
@@ -185,67 +189,210 @@ struct active_connector;
         #define INADDR_NONE 0xFFFFFFFF
     #endif
 
-static constexpr uint16_t MAX_WRITES_ATTEMPT {5};
-static constexpr uint16_t MAX_READS_ATTEMPT {5};
+struct os {
 
-bool write_buffer(int p_socket,
-                  const char *p_str,
-                  size_t p_len,
-                  uint16_t p_attempt = 0) {
-    if (p_attempt >= MAX_WRITES_ATTEMPT) {
-        return false;
-    }
-    size_t _left {p_len};
-    ssize_t _written {0};
-    const char *_aux = p_str;
+    static constexpr uint16_t MAX_WRITES_ATTEMPT {5};
+    static constexpr uint16_t MAX_READS_ATTEMPT {5};
 
-    while (_left > 0) {
-        _written = write(p_socket, _aux, _left);
-        if (_written < 0) {
-            if (errno == EINTR) {
-                return write_buffer(p_socket, p_str, p_len, ++p_attempt);
-            }
+    static bool write_buffer(int p_socket,
+                             const char *p_str,
+                             size_t p_len,
+                             uint16_t p_attempt = 0) {
+        if (p_attempt >= MAX_WRITES_ATTEMPT) {
             return false;
         }
-        _left -= _written;
-        _aux += _written;
-    }
-    return true;
-}
+        size_t _left {p_len};
+        ssize_t _written {0};
+        const char *_aux = p_str;
 
-ssize_t
-read_buffer(int p_socket, char *p_buf, size_t p_len, uint16_t p_attempt = 0) {
-    if (p_attempt >= MAX_READS_ATTEMPT) {
-        ERR("maximum read attempts");
-        return -1;
-    }
-
-    ssize_t _read {0};
-    size_t _left {p_len};
-    char *_aux = p_buf;
-
-    while (_left > 0) {
-        TRA("about to read");
-        _read = read(p_socket, _aux, _left);
-        TRA("read ", _read, " bytes");
-        if (_read < 0) {
-            if (errno == EINTR) {
-                return read_buffer(p_socket, p_buf, p_len, ++p_attempt);
+        while (_left > 0) {
+            _written = write(p_socket, _aux, _left);
+            if (_written < 0) {
+                if (errno == EINTR) {
+                    return write_buffer(p_socket, p_str, p_len, ++p_attempt);
+                }
+                return false;
             }
-            return -1;
-        } else if (_read == 0) {
-            if (_left != 0) {
-                ERR("reading interrupt");
-                return -1;
-            }
-            break;
+            _left -= _written;
+            _aux += _written;
         }
-        TRA("read '", _aux, '\'');
-        _left -= _read;
-        _aux += _read;
+        return true;
     }
-    return static_cast<size_t>(_aux - p_buf);
-}
+
+    static ssize_t read_buffer(int p_socket,
+                               char *p_buf,
+                               size_t p_len,
+                               uint16_t p_attempt = 0) {
+        if (p_attempt >= MAX_READS_ATTEMPT) {
+            ERR("maximum read attempts");
+            return -1;
+        }
+
+        ssize_t _read {0};
+        size_t _left {p_len};
+        char *_aux = p_buf;
+
+        while (_left > 0) {
+            TRA("about to read");
+            _read = read(p_socket, _aux, _left);
+            TRA("read ", _read, " bytes");
+            if (_read < 0) {
+                if (errno == EINTR) {
+                    return read_buffer(p_socket, p_buf, p_len, ++p_attempt);
+                }
+                return -1;
+            } else if (_read == 0) {
+                if (_left != 0) {
+                    ERR("reading interrupt");
+                    return -1;
+                }
+                break;
+            }
+            TRA("read '", _aux, '\'');
+            _left -= _read;
+            _aux += _read;
+        }
+        return static_cast<size_t>(_aux - p_buf);
+    }
+
+    template <typename t_number>
+    static struct sockaddr_in calculate_port(const char * /*p_protocol_str*/,
+                                             t_number p_port) {
+        struct sockaddr_in _in;
+        memset(&_in, 0, sizeof(_in));
+        _in.sin_family = AF_INET;
+        _in.sin_addr.s_addr = INADDR_ANY;
+
+        _in.sin_port = htons(ntohs(static_cast<unsigned short>(p_port)));
+        if (_in.sin_port == 0) {
+            std::string _str {"could not map '" + std::to_string(p_port) +
+                              "' to a valid port"};
+            ERR(_str);
+            throw std::runtime_error(_str);
+        }
+        return _in;
+    }
+
+    static struct sockaddr_in calculate_port(const char *p_protocol_str,
+                                             const char *p_service) {
+        struct servent *_se = nullptr;
+        _se = getservbyname(p_service, p_protocol_str);
+        if (!_se) {
+            std::string _str {"could not map '" + std::string(p_service) +
+                              "' to a valid port"};
+            ERR(_str);
+            throw std::runtime_error(_str);
+        }
+
+        struct sockaddr_in _in;
+        memset(&_in, 0, sizeof(_in));
+        _in.sin_family = AF_INET;
+        _in.sin_addr.s_addr = INADDR_ANY;
+        _in.sin_port = htons(ntohs(static_cast<unsigned short>(_se->s_port)));
+        return _in;
+    }
+
+    static int calculate_protocol_entry(const char *p_protocol_str) {
+        struct protoent *_pe = getprotobyname(p_protocol_str);
+        if (_pe == nullptr) {
+            std::string _str {"could not map " +
+                              std::string(protocol2str(protocol::TCP)) +
+                              " to a valid protocol number"};
+            ERR(_str);
+            throw std::runtime_error(_str);
+        }
+        return _pe->p_proto;
+    }
+
+    template <protocol protocol_type>
+    static int calculate_socket_type() {
+        if (protocol_type == protocol::UDP) {
+            return SOCK_DGRAM;
+        }
+        if (protocol_type == protocol::TCP) {
+            return SOCK_STREAM;
+        }
+        std::string _str {"could not calculate a valid protocol type for " +
+                          std::string(protocol2str(protocol_type))};
+        ERR(_str);
+        throw std::runtime_error(_str);
+    }
+
+    static int allocate_socket(int p_socket_type, int p_protocol_type) {
+        return socket(PF_INET, p_socket_type, p_protocol_type);
+    }
+
+    static void bind_socket_to_port(int p_socket, struct sockaddr_in *p_port) {
+        if (bind(p_socket, (struct sockaddr *)p_port,
+                 sizeof(struct sockaddr_in)) < 0) {
+            std::string _str {"could not bind socket"};
+            ERR(_str);
+            throw std::runtime_error(_str);
+        }
+    }
+
+    template <typename t_host>
+    static void calculate_host(struct sockaddr_in &p_addr, t_host p_host) {
+
+        struct hostent *_he = gethostbyname(p_host);
+        if (_he) {
+            memcpy(&p_addr.sin_addr, _he->h_addr_list[0], _he->h_length);
+        } else {
+            p_addr.sin_addr.s_addr = inet_addr(p_host);
+            if (p_addr.sin_addr.s_addr == INADDR_NONE) {
+                std::stringstream _stream;
+                _stream << "it was not possibe to translate " << p_host
+                        << " into a IP addredd";
+                std::string _str {_stream.str()};
+                ERR(_str);
+                throw std::runtime_error(_str);
+            }
+        }
+    }
+
+    template <protocol protocol_type, typename t_service>
+    static int create_socket(t_service p_service) {
+        const char *_protocol_str = protocol2str(protocol_type);
+
+        struct sockaddr_in _in = calculate_port(_protocol_str, p_service);
+
+        int _protocol_entry = calculate_protocol_entry(_protocol_str);
+
+        int _socket_type = calculate_socket_type<protocol_type>();
+
+        int _socket = allocate_socket(_socket_type, _protocol_entry);
+
+        bind_socket_to_port(_socket, &_in);
+
+        return _socket;
+    }
+
+    template <protocol protocol_type, typename t_host, typename t_service>
+    static int create_socket(t_host p_host, t_service p_service) {
+        const char *_protocol_str = protocol2str(protocol_type);
+
+        struct sockaddr_in _in = calculate_port(_protocol_str, p_service);
+
+        calculate_host(_in, p_host);
+
+        int _protocol_entry = calculate_protocol_entry(_protocol_str);
+
+        int _socket_type = calculate_socket_type<protocol_type>();
+
+        int _socket = allocate_socket(_socket_type, _protocol_entry);
+
+        if (connect(_socket, (struct sockaddr *)&_in, sizeof(_in)) < 0) {
+            std::stringstream _stream;
+            _stream << "it was not possible to connect to " << p_host << ","
+                    << p_service;
+            const std::string _str {_stream.str()};
+            ERR(_str);
+            throw std::runtime_error(_str);
+        }
+
+        return _socket;
+    }
+};
 
 template <typename t_connection, typename t_data, size_t size>
 struct reader<t_connection, t_data, reading::AT_MOST, size> {
@@ -272,7 +419,7 @@ struct reader<t_connection, t_data, reading::EXACTLY, size> {
     std::optional<message<t_data>> operator()(t_connection p_socket) {
         char _buf[size + 1];
         memset(_buf, '\0', size);
-        ssize_t _amount = read_buffer(p_socket, _buf, size);
+        ssize_t _amount = os::read_buffer(p_socket, _buf, size);
         if (_amount == -1) {
             ERR("error reading");
             return {};
@@ -347,144 +494,6 @@ struct reader<t_connection, t_data, reading::CONTINUOUS, size> {
     }
 };
 
-template <typename t_number>
-struct sockaddr_in calculate_port(const char * /*p_protocol_str*/,
-                                  t_number p_port) {
-    struct sockaddr_in _in;
-    memset(&_in, 0, sizeof(_in));
-    _in.sin_family = AF_INET;
-    _in.sin_addr.s_addr = INADDR_ANY;
-
-    _in.sin_port = htons(ntohs(static_cast<unsigned short>(p_port)));
-    if (_in.sin_port == 0) {
-        std::string _str {"could not map '" + std::to_string(p_port) +
-                          "' to a valid port"};
-        ERR(_str);
-        throw std::runtime_error(_str);
-    }
-    return _in;
-}
-
-struct sockaddr_in calculate_port(const char *p_protocol_str,
-                                  const char *p_service) {
-    struct servent *_se = nullptr;
-    _se = getservbyname(p_service, p_protocol_str);
-    if (!_se) {
-        std::string _str {"could not map '" + std::string(p_service) +
-                          "' to a valid port"};
-        ERR(_str);
-        throw std::runtime_error(_str);
-    }
-
-    struct sockaddr_in _in;
-    memset(&_in, 0, sizeof(_in));
-    _in.sin_family = AF_INET;
-    _in.sin_addr.s_addr = INADDR_ANY;
-    _in.sin_port = htons(ntohs(static_cast<unsigned short>(_se->s_port)));
-    return _in;
-}
-
-int calculate_protocol_entry(const char *p_protocol_str) {
-    struct protoent *_pe = getprotobyname(p_protocol_str);
-    if (_pe == nullptr) {
-        std::string _str {"could not map " +
-                          std::string(protocol2str(protocol::TCP)) +
-                          " to a valid protocol number"};
-        ERR(_str);
-        throw std::runtime_error(_str);
-    }
-    return _pe->p_proto;
-}
-
-template <protocol protocol_type>
-int calculate_socket_type() {
-    if (protocol_type == protocol::UDP) {
-        return SOCK_DGRAM;
-    }
-    if (protocol_type == protocol::TCP) {
-        return SOCK_STREAM;
-    }
-    std::string _str {"could not calculate a valid protocol type for " +
-                      std::string(protocol2str(protocol_type))};
-    ERR(_str);
-    throw std::runtime_error(_str);
-}
-
-int allocate_socket(int p_socket_type, int p_protocol_type) {
-    return socket(PF_INET, p_socket_type, p_protocol_type);
-}
-
-void bind_socket_to_port(int p_socket, struct sockaddr_in *p_port) {
-    if (bind(p_socket, (struct sockaddr *)p_port, sizeof(struct sockaddr_in)) <
-        0) {
-        std::string _str {"could not bind socket"};
-        ERR(_str);
-        throw std::runtime_error(_str);
-    }
-}
-
-template <typename t_host>
-void calculate_host(struct sockaddr_in &p_addr, t_host p_host) {
-
-    struct hostent *_he = gethostbyname(p_host);
-    if (_he) {
-        memcpy(&p_addr.sin_addr, _he->h_addr_list[0], _he->h_length);
-    } else {
-        p_addr.sin_addr.s_addr = inet_addr(p_host);
-        if (p_addr.sin_addr.s_addr == INADDR_NONE) {
-            std::stringstream _stream;
-            _stream << "it was not possibe to translate " << p_host
-                    << " into a IP addredd";
-            std::string _str {_stream.str()};
-            ERR(_str);
-            throw std::runtime_error(_str);
-        }
-    }
-}
-
-template <protocol protocol_type, typename t_service>
-int create_socket(t_service p_service) {
-    const char *_protocol_str = protocol2str(protocol_type);
-
-    struct sockaddr_in _in = calculate_port(_protocol_str, p_service);
-
-    int _protocol_entry = calculate_protocol_entry(_protocol_str);
-
-    int _socket_type = calculate_socket_type<protocol_type>();
-
-    int _socket = allocate_socket(_socket_type, _protocol_entry);
-
-    bind_socket_to_port(_socket, &_in);
-
-    return _socket;
-}
-
-template <protocol protocol_type, typename t_host, typename t_service>
-int create_socket(t_host p_host, t_service p_service) {
-    const char *_protocol_str = protocol2str(protocol_type);
-
-    struct sockaddr_in _in = calculate_port(_protocol_str, p_service);
-
-    calculate_host(_in, p_host);
-
-    int _protocol_entry = calculate_protocol_entry(_protocol_str);
-
-    int _socket_type = calculate_socket_type<protocol_type>();
-
-    int _socket = allocate_socket(_socket_type, _protocol_entry);
-
-    if (connect(_socket, (struct sockaddr *)&_in, sizeof(_in)) < 0) {
-        std::stringstream _stream;
-        _stream << "it was not possible to connect to " << p_host << ","
-                << p_service;
-        const std::string _str {_stream.str()};
-        ERR(_str);
-        throw std::runtime_error(_str);
-    }
-
-    return _socket;
-}
-
 template <>
 struct active_connector<protocol::TCP> {
     typedef int connection;
@@ -492,7 +501,7 @@ struct active_connector<protocol::TCP> {
     template <typename t_host, typename t_service>
     std::optional<connection> operator()(t_host p_host, t_service p_service) {
         try {
-            return {create_socket<protocol::TCP>(p_host, p_service)};
+            return {os::create_socket<protocol::TCP>(p_host, p_service)};
         } catch (std::exception &_ex) {
             FAT(_ex.what());
         }
@@ -507,7 +516,7 @@ struct active_connector<protocol::UDP> {
     template <typename t_host, typename t_service>
     std::optional<connection> operator()(t_host p_host, t_service p_service) {
         try {
-            return {create_socket<protocol::UDP>(p_host, p_service)};
+            return {os::create_socket<protocol::UDP>(p_host, p_service)};
         } catch (std::exception &_ex) {
             FAT(_ex.what());
         }
@@ -523,7 +532,7 @@ struct passive_connector<protocol::TCP> {
     template <typename t_service>
     passive_connector(t_service p_service) {
 
-        m_master_socket = create_socket<protocol::TCP>(p_service);
+        m_master_socket = os::create_socket<protocol::TCP>(p_service);
 
         if (listen(m_master_socket, 64) < 0) {
             std::string _str {"error seting the socket to listen"};
@@ -572,19 +581,68 @@ struct writer {
     bool operator()(t_connection p_connection,
                     const message<t_char_type> &p_msg) {
         TRA("writing '", p_msg, "' to socket ", p_connection);
-        return write_buffer(p_connection, p_msg, p_msg.size());
+        return os::write_buffer(p_connection, p_msg, p_msg.size());
     }
 };
 
-// struct new_text_msg {
+template <typename t_char>
+struct msg_received {
+    msg_received() = default;
 
-//    message<char> msg;
-//};
+    msg_received(message<t_char> &&p_msg)
+        : msg(std::move(p_msg)) {
+        TRA("msg received constructor: '", msg, '\'');
+    }
+
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const msg_received &p_msg_received) {
+        p_out << "msg received '" << p_msg_received.msg << '\'';
+        return p_out;
+    }
+
+    message<t_char> msg;
+};
+
+template <typename t_char>
+struct msg_to_send {
+    msg_to_send() = default;
+
+    msg_to_send(message<t_char> &&p_msg)
+        : msg(std::move(p_msg)) {
+        TRA("msg to send constructor: '", msg, '\'');
+    }
+
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const msg_to_send &p_msg_to_send) {
+        p_out << "msg to send '" << p_msg_to_send.msg << '\'';
+        return p_out;
+    }
+
+    message<t_char> msg;
+};
+
+template <typename t_connection, typename t_char>
+struct msg_to_send_handler {
+    msg_to_send_handler(t_connection p_connection)
+        : m_connection(p_connection) {
+        TRA("msg_to_send_handler constructor");
+    }
+
+    void operator()(std::shared_ptr<bool>,
+                    msg_to_send<t_char> &&p_msg_to_send) {
+        TRA("msg to send = '", p_msg_to_send.msg, '\'');
+        m_write(m_connection, message {p_msg_to_send.msg});
+    }
+
+private:
+    t_connection m_connection;
+    writer<t_connection, t_char> m_write;
+};
 
 template <typename t_connection>
 struct new_connection {
     new_connection() { TRA("new connection constructor"); }
-    new_connection(t_connection &&p_connection)
+    new_connection(t_connection p_connection)
         : connection(std::move(p_connection)) {}
 
     friend std::ostream &operator<<(std::ostream &p_out,
@@ -596,29 +654,143 @@ struct new_connection {
     t_connection connection;
 };
 
-// template <typename t_connection, typename t_message_handler>
-// struct new_connection_handler {
+template <typename t_connection,
+          typename t_char,
+          reading reading_type,
+          size_t size>
+struct new_client_connection_handler {
+    new_client_connection_handler() {
+        TRA("new connection handler constructor");
+    }
 
-//  new_connection_handler(t_message_handler &&p_message_handler)
-//      : m_message_handler(std::move(p_message_handler)) {}
+    void operator()(std::shared_ptr<bool>,
+                    new_connection<t_connection> &&p_new_connection) {
 
-//  void operator()(std::shared_ptr<bool> /*p_timeout*/,
-//                  new_connection<t_connection> &&p_new_connection) {
-//    m_message_handler(p_new_connection.connection);
-//  }
+        m_connection = p_new_connection.connection;
 
-// private:
-//  t_message_handler m_message_handler;
-//};
+        TRA("new connection!");
 
-template <protocol protocol_type>
+        bool _stopped {true};
+
+        _stopped = false;
+        reader<t_connection, t_char, reading_type, size> _read;
+        TRA("entering read loop");
+        while (true) {
+            TRA("wating for read to return");
+            std::optional<message<t_char>> _maybe = _read(m_connection);
+            TRA("read returned");
+            if (_stopped) {
+                TRA("stopped!");
+                break;
+            }
+            if (!_maybe) {
+                ERR("error reading from server");
+                break;
+            }
+            TRA("msg read from the server");
+            async::dispatch(msg_received {std::move(*_maybe)});
+        }
+    }
+
+private:
+    t_connection m_connection;
+};
+
+template <typename t_connection,
+          typename t_char,
+          reading reading_type,
+          size_t size>
+struct new_server_connection_handler {
+
+    new_server_connection_handler(
+        std::function<void(message<t_char> &&)> p_msg_handler)
+        : m_msg_handler(p_msg_handler) {}
+
+    void operator()(std::shared_ptr<bool>,
+                    new_connection<t_connection> &&p_new_connection) {
+        typedef reader<t_connection, t_char, reading_type, size> reader;
+        typedef message<char> message;
+
+        INF("new connection established");
+        reader _read;
+        //  writer _write;
+
+        t_connection _connection = p_new_connection.connection;
+
+        //        async::sleeping_loop_t<> _timestamp(
+        //            [&](std::shared_ptr<bool>) -> void {
+        //                async::dispatch(remote::msg_to_send<char>(
+        //                    message {"2" + calendar::now<>::iso8601_secs()}));
+        //            },
+        //            1s, 15s);
+
+        //        async::sleeping_loop_t<> _wrong_cmd(
+        //            [&](std::shared_ptr<bool>) -> void {
+        //                async::dispatch(remote::msg_to_send(
+        //                    message {"9wrong-cmd-" +
+        //                    calendar::now<>::iso8601_secs()}));
+        //            },
+        //            1s, 5s);
+
+        //        _timestamp.start();
+        //        _wrong_cmd.start();
+
+        //        async::add_handler<new_user<t_char>>(new_user_handler
+        //        {/*_connection*/}, 4s);
+
+        try {
+            while (true) {
+                std::optional<message> _maybe = _read(_connection);
+                if (!_maybe) {
+                    INF("no more data to read");
+                    break;
+                }
+
+                message _msg {std::move(*_maybe)};
+
+                m_msg_handler(std::move(_msg));
+
+                //                switch (_msg[0]) {
+                //                case '1': {
+                //                    async::dispatch(
+                //                        new_user {std::string {&_msg[1],
+                //                        &_msg[_msg.size()]}});
+                //                } break;
+                //                default:
+                //                    ERR("request ", _msg[0], " not
+                //                    recognized");
+                //                }
+            }
+        } catch (std::exception &_ex) {
+            ERR(_ex.what());
+        }
+        //        _timestamp.stop();
+        //        _wrong_cmd.stop();
+    }
+
+private:
+    std::function<void(message<t_char> &&)> m_msg_handler;
+};
+
+template <protocol protocol_type,
+          typename t_char,
+          reading reading_type,
+          size_t size = 8 * 1024>
 struct server {
 
     typedef passive_connector<protocol_type> connector;
     typedef typename connector::connection connection;
 
+    typedef new_server_connection_handler<connection,
+                                          t_char,
+                                          reading_type,
+                                          size>
+        new_connection_handler;
+
     template <typename t_service>
-    void start_sync(t_service p_service) noexcept(false) {
+    void start_sync(
+        t_service p_service,
+        std::function<void(message<t_char> &&)> p_msg_handler) noexcept(false) {
 
         try {
             passive_connector<protocol_type> _connector(p_service);
@@ -627,9 +799,18 @@ struct server {
             while (true) {
                 std::optional<connection> _maybe = _connector();
                 if (_maybe) {
-                    INF("connection established");
-                    async::dispatch(
-                        new_connection<connection> {std::move(*_maybe)});
+                    DEB("connection established");
+
+                    async::add_handler<new_connection<connection>>(
+                        new_connection_handler {p_msg_handler}, 0min);
+
+                    connection _connection {std::move(*_maybe)};
+                    async::dispatch(new_connection<connection> {_connection});
+
+                    TRA("adding msg to send handler");
+                    async::add_handler<msg_to_send<char>>(
+                        msg_to_send_handler<connection, char> {_connection},
+                        3s);
                 }
             }
 
@@ -637,28 +818,47 @@ struct server {
             ERR(_ex.what());
         }
     }
-
-private:
 };
 
-template <protocol protocol_type>
+template <protocol protocol_type,
+          typename t_char,
+          reading reading_type = reading::AT_MOST,
+          size_t buffer_size = 8 * 1024>
 struct client {
     typedef active_connector<protocol_type> connector;
     typedef typename connector::connection connection;
+    typedef new_client_connection_handler<connection,
+                                          t_char,
+                                          reading_type,
+                                          buffer_size>
+        new_connection_handler;
 
     template <typename t_host, typename t_service>
-    std::optional<connection> connect(t_host p_host, t_service p_service) {
+    bool connect(t_host p_host, t_service p_service) {
         connector _connector;
         std::optional<connection> _maybe = _connector(p_host, p_service);
         if (_maybe) {
-            m_connection = std::move(*_maybe);
-            return {m_connection};
-        }
-        return {};
-    }
+            TRA("connected to  ", p_host, ':', p_service);
+            connection _connection = std::move(*_maybe);
+            TRA("adding handler to new connection");
+            async::add_handler<new_connection<connection>>(
+                new_connection_handler {}, 0s);
 
-private:
-    connection m_connection;
+            TRA("adding msg to send handler");
+            async::add_handler<msg_to_send<t_char>>(
+                msg_to_send_handler<connection, t_char> {_connection}, 3s);
+
+            TRA("dispatching new connection");
+            async::dispatch(new_connection {std::move(_connection)});
+
+            std::this_thread::sleep_for(2s);
+
+            TRA("leaving");
+            return true;
+        }
+        ERR("it was not possible to connect to ", p_host, ':', p_service);
+        return false;
+    }
 };
 
 } // namespace remote
