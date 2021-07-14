@@ -175,10 +175,13 @@ struct executer_t {
     std::optional<t_ret> operator()(t_time p_timeout,
                                     t_function &p_function,
                                     t_params &&... p_params) {
+        ptr<bool> _stop {std::make_shared<bool>(false)};
+
+        if (p_timeout.count() == 0) {
+            return {p_function(_stop, std::forward<t_params>(p_params)...)};
+        }
         std::mutex _mutex;
         std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
 
         t_ret _ret;
 
@@ -233,10 +236,15 @@ struct executer_t<void> {
     bool operator()(t_time p_timeout,
                     t_function &p_function,
                     t_params &&... p_params) {
+        ptr<bool> _stop {std::make_shared<bool>(false)};
+
+        if (p_timeout.count() == 0) {
+            p_function(_stop, std::forward<t_params>(p_params)...);
+            return true;
+        }
+
         std::mutex _mutex;
         std::condition_variable _cond;
-
-        ptr<bool> _stop {std::make_shared<bool>(false)};
 
         std::thread _th([&]() -> void {
             p_function(_stop, std::forward<t_params>(p_params)...);
@@ -756,6 +764,19 @@ private:
         TRA(m_id, ':', _loop_id,
             " - entering loop, m_timeout = ", this->m_timeout.count());
 
+        {
+            while (true) {
+                if (m_queue.empty()) {
+                    TRA("no data");
+                    break;
+                }
+                TRA("there is data");
+                if (!consume(_loop_id, p_handler)) {
+                    break;
+                }
+            }
+        }
+
         while (true) {
             {
                 std::unique_lock<std::mutex> _lock(m_mutex);
@@ -785,33 +806,50 @@ private:
                 break;
             }
 
-            if (_maybe_data.first) {
-                t_event _data {std::move(_maybe_data.second)};
+            consume(_loop_id, p_handler);
+        }
+    }
 
-                TRA(m_id, ':', _loop_id, " - data = ", _data);
+    bool consume(number::id p_loop_id, handler &p_handler) {
+        std::pair<bool, t_event> _maybe_data {m_queue.get()};
 
-                if (this->m_stopped) {
-                    TRA(m_id, ':', _loop_id, " - stop");
-                    break;
-                }
+        if (this->m_stopped) {
+            TRA(m_id, ':', p_loop_id, " - stop");
+            return false;
+        }
 
-                if (!execute(m_timeout, p_handler, std::move(_data))) {
-                    WAR(m_id, ':', _loop_id, " - timeout ", _data);
-                }
-            } else {
-                TRA(m_id, ':', _loop_id, " - no data available");
+        if (_maybe_data.first) {
+            t_event _data {std::move(_maybe_data.second)};
+
+            TRA(m_id, ':', p_loop_id, " - data = ", _data);
+
+            if (this->m_stopped) {
+                TRA(m_id, ':', p_loop_id, " - stop");
+                return false;
             }
+
+            if (!execute(m_timeout, p_handler, std::move(_data))) {
+                WAR(m_id, ':', p_loop_id, " - timeout ", _data);
+            }
+        } else {
+            TRA(m_id, ':', p_loop_id, " - no data available");
         }
+
+        return true;
     }
 
-    // \brief Empties the queue of the events not handled yet
-    //
-    // TODO test it
-    inline void empty_queue() {
-        while (!m_queue.empty()) {
-            m_cond.notify_all();
-        }
-    }
+    //    // \brief Empties the queue of the events not handled yet
+    //    //
+    //    // TODO test it
+    //    inline void empty_queue() {
+    //        while (true)) {
+    //                if (m_queue.empty()){break;}
+    //                TRA("there is data");
+    //            if (!consume()) {
+    //                break;
+    //            }
+    //        }
+    //    }
 
     // \brief Stops this handling
     inline void stop() {
@@ -1521,8 +1559,8 @@ struct reader_t {
             : what(p_what) {}
 
         friend std::ostream &operator<<(std::ostream &p_out,
-                                        const error_reading &) {
-            p_out << "error_reading ";
+                                        const error_reading &p_error_reading) {
+            p_out << "error_reading '" << p_error_reading.what << '\'';
             return p_out;
         }
 

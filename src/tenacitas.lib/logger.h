@@ -304,8 +304,8 @@ private:
 
         std::stringstream _stream;
 
-        _stream << p_level << m_separator << calendar::now<>::microsecs()
-                << m_separator
+        _stream << p_level << m_separator
+                << calendar::now<>::iso8601_microsecs() << m_separator
                 << std::filesystem::path(p_file).filename().string()
                 << m_separator << std::this_thread::get_id() << m_separator
                 << p_line << m_separator;

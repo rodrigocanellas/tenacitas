@@ -32,13 +32,13 @@ struct message {
 
     typedef typename std::vector<type>::const_iterator const_iterator;
 
-    //    typedef typename std::vector<type>::const_iterator iterator;
-
     message() = default;
 
     message(message &&p_msg) = default;
+    message &operator=(message &&p_msg) = default;
 
     message(const message &p_msg) = default;
+    message &operator=(const message &p_msg) = default;
 
     inline message(const char *p_buf, size_t p_size)
         : m_buf(reinterpret_cast<const type *>(p_buf),
@@ -51,7 +51,7 @@ struct message {
     inline message(const std::string &p_str)
         : message(p_str.c_str(), p_str.size()) {}
 
-    friend std::ostream &operator<<(std::ostream &p_out, const message &p_msg) {
+    friend std::ostream &p(std::ostream &p_out, const message &p_msg) {
         for (message::const_iterator _ite = p_msg.begin(); _ite != p_msg.end();
              ++_ite) {
             p_out << static_cast<char>(*_ite);
@@ -63,7 +63,7 @@ struct message {
         return reinterpret_cast<const char *>(&m_buf[0]);
     }
 
-    inline size_t length() const { return m_buf.size(); }
+    inline size_t size() const { return m_buf.size(); }
 
     const std::vector<type> &get() const { return m_buf; }
 
@@ -84,12 +84,12 @@ struct message {
     //        throw std::out_of_range(_error);
     //    }
 
-    type operator[](size_t p_index) {
-        if (p_index < length()) {
+    const type &operator[](size_t p_index) {
+        if (p_index <= size()) {
             return m_buf[p_index];
         }
         std::string _error {std::to_string(p_index) + " is greater than " +
-                            std::to_string(length())};
+                            std::to_string(size())};
         ERR(_error);
         throw std::out_of_range(_error);
     }
@@ -161,7 +161,10 @@ const char *protocol2str(protocol p_protocol) {
     return g_never;
 }
 
-template <typename t_data, reading reading_type, size_t size = 4 * 1024>
+template <typename t_connection,
+          typename t_data,
+          reading reading_type,
+          size_t size = 4 * 1024>
 struct reader;
 
 template <protocol protocol_type>
@@ -244,10 +247,10 @@ read_buffer(int p_socket, char *p_buf, size_t p_len, uint16_t p_attempt = 0) {
     return static_cast<size_t>(_aux - p_buf);
 }
 
-template <typename t_data, size_t size>
-struct reader<t_data, reading::AT_MOST, size> {
+template <typename t_connection, typename t_data, size_t size>
+struct reader<t_connection, t_data, reading::AT_MOST, size> {
 
-    std::optional<message<t_data>> operator()(int p_socket) {
+    std::optional<message<t_data>> operator()(t_connection p_socket) {
         char _buf[size + 1];
         memset(_buf, '\0', size);
         ssize_t _amount = read(p_socket, _buf, size);
@@ -255,14 +258,18 @@ struct reader<t_data, reading::AT_MOST, size> {
             ERR("error reading");
             return {};
         }
+        if (_amount == 0) {
+            INF("nothing read");
+            return {};
+        }
         return {message<t_data> {&_buf[0], &_buf[_amount]}};
     }
 };
 
-template <typename t_data, size_t size>
-struct reader<t_data, reading::EXACTLY, size> {
+template <typename t_connection, typename t_data, size_t size>
+struct reader<t_connection, t_data, reading::EXACTLY, size> {
 
-    std::optional<message<t_data>> operator()(int p_socket) {
+    std::optional<message<t_data>> operator()(t_connection p_socket) {
         char _buf[size + 1];
         memset(_buf, '\0', size);
         ssize_t _amount = read_buffer(p_socket, _buf, size);
@@ -270,18 +277,23 @@ struct reader<t_data, reading::EXACTLY, size> {
             ERR("error reading");
             return {};
         }
+        if (_amount == 0) {
+            INF("nothing read");
+            return {};
+        }
         if (_amount != size) {
-            ERR("read ", _amount, ", but ", size, " was expectd");
+            ERR("read ", _amount, ", but ", size, " was expected");
             return {};
         }
         return {message<t_data> {&_buf[0], &_buf[_amount]}};
     }
 };
 
-template <typename t_data, size_t size>
-struct reader<t_data, reading::DELIMITED, size> {
-    std::optional<message<t_data>>
-    operator()(int p_socket, char *p_delimeter, size_t p_delimeter_size) {
+template <typename t_connection, typename t_data, size_t size>
+struct reader<t_connection, t_data, reading::DELIMITED, size> {
+    std::optional<message<t_data>> operator()(t_connection p_socket,
+                                              char *p_delimeter,
+                                              size_t p_delimeter_size) {
         message<t_data> _msg;
         char _buf[size + 1];
         while (true) {
@@ -292,8 +304,8 @@ struct reader<t_data, reading::DELIMITED, size> {
                 break;
             }
             if (_amount == 0) {
-                WAR("reading interrupted");
-                break;
+                INF("nothing read");
+                return {};
             }
             TRA("read '", _buf, "', checking for delimeter");
             if (std::find_end(&_buf[0], &_buf[_amount], &p_delimeter[0],
@@ -311,10 +323,10 @@ struct reader<t_data, reading::DELIMITED, size> {
     }
 };
 
-template <typename t_data, size_t size>
-struct reader<t_data, reading::CONTINUOUS, size> {
+template <typename t_connection, typename t_data, size_t size>
+struct reader<t_connection, t_data, reading::CONTINUOUS, size> {
     void operator()(
-        int p_socket,
+        t_connection p_socket,
         std::function<void(int p_socket, message<t_data> &&)> p_handler) {
 
         char _buf[size + 1];
@@ -326,7 +338,7 @@ struct reader<t_data, reading::CONTINUOUS, size> {
                 break;
             }
             if (_amount == 0) {
-                WAR("reading interrupted");
+                INF("nothing read");
                 break;
             }
             TRA("read '", _buf, "', calling handler");
@@ -560,7 +572,7 @@ struct writer {
     bool operator()(t_connection p_connection,
                     const message<t_char_type> &p_msg) {
         TRA("writing '", p_msg, "' to socket ", p_connection);
-        return write_buffer(p_connection, p_msg, p_msg.length());
+        return write_buffer(p_connection, p_msg, p_msg.size());
     }
 };
 
@@ -571,33 +583,33 @@ struct writer {
 
 template <typename t_connection>
 struct new_connection {
-    new_connection() = default;
+    new_connection() { TRA("new connection constructor"); }
     new_connection(t_connection &&p_connection)
         : connection(std::move(p_connection)) {}
 
     friend std::ostream &operator<<(std::ostream &p_out,
                                     const new_connection &) {
-        p_out << "new connection";
+        p_out << "'new connection'";
         return p_out;
     }
 
     t_connection connection;
 };
 
-template <typename t_connection, typename t_message_handler>
-struct new_connection_handler {
+// template <typename t_connection, typename t_message_handler>
+// struct new_connection_handler {
 
-    new_connection_handler(t_message_handler &&p_message_handler)
-        : m_message_handler(std::move(p_message_handler)) {}
+//  new_connection_handler(t_message_handler &&p_message_handler)
+//      : m_message_handler(std::move(p_message_handler)) {}
 
-    void operator()(std::shared_ptr<bool> /*p_timeout*/,
-                    new_connection<t_connection> &&p_new_connection) {
-        m_message_handler(p_new_connection.connection);
-    }
+//  void operator()(std::shared_ptr<bool> /*p_timeout*/,
+//                  new_connection<t_connection> &&p_new_connection) {
+//    m_message_handler(p_new_connection.connection);
+//  }
 
-private:
-    t_message_handler m_message_handler;
-};
+// private:
+//  t_message_handler m_message_handler;
+//};
 
 template <protocol protocol_type>
 struct server {
@@ -605,24 +617,11 @@ struct server {
     typedef passive_connector<protocol_type> connector;
     typedef typename connector::connection connection;
 
-    //    template <typename t_time>
-    //    server(uint16_t p_num_handlers,
-    //           t_message_handler_factory &p_message_handler_factory,
-    //           t_time p_timeout) {
-    //        async::handling_id _handling_id =
-    //            async::add_handling<new_connection<connection>>(p_timeout);
-    //        for (uint16_t _i = 0; _i < p_num_handlers; ++_i) {
-    //            async::add_handler(
-    //                _handling_id,
-    //                new_connection_handler<connection, message_handler> {
-    //                    p_message_handler_factory()});
-    //        }
-    //    }
-
     template <typename t_service>
     void start_sync(t_service p_service) noexcept(false) {
-        passive_connector<protocol_type> _connector(p_service);
+
         try {
+            passive_connector<protocol_type> _connector(p_service);
             TRA("starting sync");
 
             while (true) {

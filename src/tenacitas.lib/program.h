@@ -344,6 +344,8 @@ struct application {
             handle(p_bool, std::move(p_event));
         };
 
+        TRA("original wait = ", m_wait.count());
+
         uint32_t _timeout = static_cast<uint32_t>(m_wait.count() * 0.7);
 
         async::add_handler<exit_app>(
