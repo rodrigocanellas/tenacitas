@@ -65,7 +65,7 @@ struct test_t {
         INF("creating handlers for handled events");
         uint16_t _handled {0};
         bool _all_handled_notified {false};
-        _handled_handlers.add_handler([&](type::ptr<bool>, handled &&) -> void {
+        _handled_handlers.add_handler([&](type::sptr<bool>, handled &&) -> void {
             if (_all_handled_notified) {
                 DEB("all handled notified");
                 return;
@@ -87,7 +87,7 @@ struct test_t {
         INF("creating handlers for sent events");
         uint16_t _sent {0};
         bool _all_sent_notified {false};
-        _sent_handlers.add_handler([&](type::ptr<bool>, sent &&) -> void {
+        _sent_handlers.add_handler([&](type::sptr<bool>, sent &&) -> void {
             if (_all_sent_notified) {
                 return;
             }
@@ -107,7 +107,7 @@ struct test_t {
         });
 
         INF("creating the event handlers");
-        std::vector<type::ptr<handler>> _handler_list;
+        std::vector<type::sptr<handler>> _handler_list;
         for (uint16_t _i = 0; _i < num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 _i, &_event_handlings, &_handled_handlers,
@@ -118,9 +118,9 @@ struct test_t {
         uint64_t _start = calendar::now<>::microsecs();
 
         INF("adding each handler to the handlers group");
-        for (type::ptr<handler> &_handler : _handler_list) {
+        for (type::sptr<handler> &_handler : _handler_list) {
             _event_handlings.add_handler(
-                [&, _handler](type::ptr<bool> p_bool, event &&p_event) -> void {
+                [&, _handler](type::sptr<bool> p_bool, event &&p_event) -> void {
                     (*_handler)(p_bool, std::move(p_event));
                 });
         }
@@ -278,7 +278,7 @@ private:
             }
             if (*p_bool) {
                 DEB(m_id, " adding ", p_event, '|', m_num);
-                m_event_handlings->add_data(p_event);
+                m_event_handlings->add_event(p_event);
                 return;
             }
             DEB(m_id, " continuing to handle ", p_event);
@@ -286,7 +286,7 @@ private:
             ++m_num;
             ++m_num_aux;
             m_event = std::move(p_event);
-            m_handled_handlers->add_data(handled {});
+            m_handled_handlers->add_event(handled {});
             DEB(m_id, " handling ", m_event, '|', m_num);
         }
 
@@ -350,8 +350,8 @@ private:
             }
 
             DEB(m_idx, " sending ", m_event);
-            m_handlers->add_data(m_event);
-            m_sent_handlers->add_data(sent {});
+            m_handlers->add_event(m_event);
+            m_sent_handlers->add_event(sent {});
             ++m_event;
         }
 

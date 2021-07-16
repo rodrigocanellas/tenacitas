@@ -39,7 +39,7 @@ struct temperature_sensor {
     temperature_sensor(uint16_t p_max)
         : m_max(p_max)
         , m_temperature_generator(
-              [this](type::ptr<bool>) { generator(); }, m_timeout, m_interval) {
+              [this](type::sptr<bool>) { generator(); }, m_timeout, m_interval) {
     }
 
     // starts to dispatch 'temperature' events
@@ -102,7 +102,7 @@ struct all_handled {
 struct temperature_handler_0 {
     temperature_handler_0(uint16_t p_max)
         : m_max(p_max) {}
-    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+    void operator()(type::sptr<bool>, temperature &&p_temperature) {
         std::cout << ++m_counter << " - " << p_temperature << std::endl;
         std::this_thread::sleep_for(1s);
 
@@ -137,7 +137,7 @@ int main() {
     // handles the all_handled event, dispatched when all the temperatures were
     // handled, and notifies that the program may finish
     async::add_handler<all_handled>(
-        [&](type::ptr<bool>, all_handled &&) -> void {
+        [&](type::sptr<bool>, all_handled &&) -> void {
             std::cout << "all temperatures handled" << std::endl;
             _cond.notify_one();
             return;

@@ -40,12 +40,12 @@ struct temperature {
 struct temperature_sensor {
     temperature_sensor()
         : m_temperature_generator(
-              [this](type::ptr<bool> p_bool) { generator(p_bool); },
+              [this](type::sptr<bool> p_bool) { generator(p_bool); },
               m_timeout,
               m_interval) {
 
         async::add_handler<program::exit_app>(
-            [this](type::ptr<bool>, program::exit_app &&) -> void { stop(); },
+            [this](type::sptr<bool>, program::exit_app &&) -> void { stop(); },
             1s, async::priority {255});
     }
 
@@ -61,7 +61,7 @@ private:
 private:
     // function to be executed inside the sleeping loop, that will generate the
     // temperatures
-    void generator(type::ptr<bool>) {
+    void generator(type::sptr<bool>) {
         m_temperature += 0.2;
         async::dispatch(temperature {m_temperature});
     }
@@ -115,7 +115,7 @@ struct temperature_handler_0 {
         , m_printer(p_printer)
         , m_sleep(p_sleep) {}
 
-    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+    void operator()(type::sptr<bool>, temperature &&p_temperature) {
         std::this_thread::sleep_for(m_sleep);
         ++m_counter;
         m_printer(m_id, m_counter, p_temperature);
@@ -134,7 +134,7 @@ void app() {
     std::mutex _mutex;
 
     async::add_handler<program::exit_app>(
-        [&_cond](type::ptr<bool>, program::exit_app &&) -> void {
+        [&_cond](type::sptr<bool>, program::exit_app &&) -> void {
             _cond.notify_one();
         },
         100ms);

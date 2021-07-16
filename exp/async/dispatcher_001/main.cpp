@@ -36,7 +36,7 @@ struct temperature_sensor {
     temperature_sensor(uint16_t p_max)
         : m_max(p_max)
         , m_temperature_generator(
-              [this](type::ptr<bool>) { generator(); }, m_timeout, m_interval) {
+              [this](type::sptr<bool>) { generator(); }, m_timeout, m_interval) {
 
     }
 
@@ -120,7 +120,7 @@ struct temperature_handler_0 {
         : m_id(p_id)
         , m_printer(p_printer) {}
 
-    void operator()(type::ptr<bool>, temperature &&p_temperature) {
+    void operator()(type::sptr<bool>, temperature &&p_temperature) {
         std::this_thread::sleep_for(m_sleep);
         ++m_counter;
         async::dispatch(temperature_handled {});
@@ -145,7 +145,7 @@ struct wait {
     wait(uint16_t p_max)
         : m_max(p_max) {
         async::add_handler<temperature_handled>(
-            [this](type::ptr<bool> p_bool, temperature_handled &&p_event)
+            [this](type::sptr<bool> p_bool, temperature_handled &&p_event)
                 -> void { handler(p_bool, std::move(p_event)); },
             100ms);
     }
@@ -157,7 +157,7 @@ struct wait {
     }
 
 private:
-    void handler(type::ptr<bool>, temperature_handled &&) {
+    void handler(type::sptr<bool>, temperature_handled &&) {
         ++m_counter;
         if (m_counter >= m_max) {
             m_cond.notify_one();

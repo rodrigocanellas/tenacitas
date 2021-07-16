@@ -41,7 +41,7 @@ int main() {
 
     // function to be executed inside the sleeping loop
     std::function<void(type::ptr<bool>)> _function =
-        [&_counter, &_cond](type::ptr<bool>) -> void {
+        [&_counter, &_cond](type::sptr<bool>) -> void {
         if (_counter >= _max) {
             _cond.notify_one();
         } else {

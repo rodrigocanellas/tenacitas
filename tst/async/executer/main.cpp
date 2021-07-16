@@ -13,7 +13,7 @@ struct executer_000 {
     }
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>, int &&p_i) -> void {
+        auto _function = [](type::sptr<bool>, int &&p_i) -> void {
             TRA("i = ", p_i);
         };
         int _i {4};
@@ -28,7 +28,7 @@ struct executer_001 {
     }
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> void {
+        auto _function = [](type::sptr<bool> p_bool, int &&p_i) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
                 WAR("TIMEOUT");
@@ -48,7 +48,7 @@ struct executer_002 {
     }
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>) -> void { DEB("hello"); };
+        auto _function = [](type::sptr<bool>) -> void { DEB("hello"); };
 
         return async::execute(200ms, _function);
     }
@@ -61,7 +61,7 @@ struct executer_003 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool) -> void {
+        auto _function = [](type::sptr<bool> p_bool) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
                 WAR("TIMEOUT");
@@ -81,7 +81,7 @@ struct executer_004 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>, int p_i, std::string &&p_str,
+        auto _function = [](type::sptr<bool>, int p_i, std::string &&p_str,
                             const char *p_char) -> void {
             DEB(p_i, ',', p_str, ',', p_char);
         };
@@ -99,7 +99,7 @@ struct executer_005 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool, int p_i,
+        auto _function = [](type::sptr<bool> p_bool, int p_i,
                             std::string &&p_str, const char *p_char) -> void {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
@@ -123,7 +123,7 @@ struct executer_006 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>, int16_t &&p_i) -> int16_t {
+        auto _function = [](type::sptr<bool>, int16_t &&p_i) -> int16_t {
             const int16_t _res = 2 * p_i;
             TRA("i = ", p_i, ", _res = ", _res);
             return _res;
@@ -154,7 +154,7 @@ struct executer_007 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> int16_t {
+        auto _function = [](type::sptr<bool> p_bool, int &&p_i) -> int16_t {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
                 WAR("timeout");
@@ -185,7 +185,7 @@ struct executer_008 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>) -> int16_t {
+        auto _function = [](type::sptr<bool>) -> int16_t {
             DEB("hello");
             return 94;
         };
@@ -211,7 +211,7 @@ struct executer_009 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool) -> int16_t {
+        auto _function = [](type::sptr<bool> p_bool) -> int16_t {
             std::this_thread::sleep_for(1s);
             if (p_bool) {
                 WAR("TIMEOUT");
@@ -236,7 +236,7 @@ struct executer_010 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool>, int16_t p_i, float p_f) -> float {
+        auto _function = [](type::sptr<bool>, int16_t p_i, float p_f) -> float {
             return p_f * p_i;
         };
 
@@ -261,7 +261,7 @@ struct executer_011 {
 
     bool operator()() {
 
-        auto _function = [](type::ptr<bool> p_bool, int16_t p_i,
+        auto _function = [](type::sptr<bool> p_bool, int16_t p_i,
                             float p_f) -> float {
             std::this_thread::sleep_for(1s);
             if (*p_bool) {

@@ -180,12 +180,10 @@ private:
             , m_num_max_timeouts(3)
             , m_sleep(p_sleep)
             , m_cause_timeout_at_each(p_cause_timeout_at_each)
-            , m_to_timeout(m_timeout.count() * 2) {
-            //                         m_log.set_info_level();
-        }
+            , m_to_timeout(m_timeout.count() * 2) {}
 
-        void operator()(std::shared_ptr<bool> p_bool, event &&p_event) {
-            // m_log.set_debug_level();
+        void operator()(type::sptr<const bool> p_bool,
+                        type::sptr<const event> &&p_event) {
             DEB(m_id, " incoming ", p_event, '|', m_num);
             if (m_cause_timeout_at_each && m_num_aux &&
                 ((m_num_aux % m_cause_timeout_at_each) == 0) &&
@@ -202,7 +200,7 @@ private:
             if (*p_bool) {
                 DEB(m_id, "p_bool is ", *p_bool, ", adding ", p_event, '|',
                     m_num);
-                async::dispatch<event>(p_event);
+                async::dispatch<event>(*p_event);
                 return;
             }
             std::this_thread::sleep_for(m_sleep);
@@ -232,7 +230,7 @@ private:
         const time m_to_timeout;
         uint16_t m_num {0};
         uint16_t m_num_aux {0};
-        event m_event;
+        type::sptr<const event> m_event;
         uint16_t m_timeout_counter {0};
     };
 
@@ -285,7 +283,7 @@ private:
     };
 
     typedef std::vector<sleeping_loop> loops;
-    typedef std::vector<type::ptr<handler>> handlers;
+    typedef std::vector<type::sptr<handler>> handlers;
 
 private:
     void create_handlers_for_work_events() {
@@ -298,18 +296,18 @@ private:
             uint16_t _handler_id {0};
             for (const handler_definition &_handler_def :
                  _handling_def.handlers_defs) {
-                type::ptr<handler> _handler {type::create<handler>(
+                type::sptr<handler> _handler {type::make_sptr<handler>(
                     _handling_id, _handler_id++, _handling_def.timeout,
                     _handling_def.sleep, _handler_def.timeout_at_each)};
 
                 m_handlers.push_back(_handler);
 
-                async::add_handler<event>(_handling_id,
-                                          [_handler](type::ptr<bool> p_bool,
-                                                     event &&p_event) -> void {
-                                              (*_handler)(p_bool,
-                                                          std::move(p_event));
-                                          });
+                async::add_handler<event>(
+                    _handling_id,
+                    [_handler](type::sptr<const bool> p_bool,
+                               type::sptr<const event> &&p_event) -> void {
+                        (*_handler)(p_bool, std::move(p_event));
+                    });
             }
             std::this_thread::sleep_for(100ms);
         }
@@ -321,7 +319,8 @@ private:
         m_all_handled_notified = false;
 
         async::add_handler<handled>(
-            [this](type::ptr<bool>, handled &&) -> void {
+            [this](type::sptr<const bool>,
+                   type::sptr<const handled> &&) -> void {
                 std::lock_guard<std::mutex> _lock(m_mutex_counter_handled);
                 if (m_all_handled_notified) {
                     DEB("all handled notified");
@@ -348,7 +347,7 @@ private:
         DEB("m_all_sent_notified = ", m_all_sent_notified ? 'T' : 'F');
 
         async::add_handler<sent>(
-            [this](type::ptr<bool>, sent &&) -> void {
+            [this](type::sptr<const bool>, type::sptr<const sent> &&) -> void {
                 std::lock_guard<std::mutex> _lock(m_mutex_counter_sent);
                 DEB("entering with m_sent = ", m_sent,
                     ", and m_all_sent_notified = ",
