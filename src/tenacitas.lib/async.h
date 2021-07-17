@@ -813,7 +813,7 @@ private:
                 TRA(m_id, ':', _loop_id, " there is an event to be handled");
 
                 if (!execute(m_timeout, p_handler, std::move(_event))) {
-                    WAR(m_id, ':', _loop_id, " - timeout ", _event);
+                    WAR(m_id, ':', _loop_id, " - timeout ", *_event);
                 }
             } else {
                 TRA(m_id, ':', _loop_id, " - no event to be handled");
