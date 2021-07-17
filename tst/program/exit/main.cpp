@@ -13,6 +13,7 @@
 #include <tenacitas.lib/tester.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 struct exit_000 {
@@ -23,7 +24,7 @@ struct exit_000 {
 
         //  _log.set_debug_level();
 
-        auto _function = [this](type::ptr<bool>) -> void {
+        auto _function = [this](type::sptr<bool>) -> void {
             if (m_counter > m_max) {
                 DEB("about to publish 'exit_app'");
                 async::dispatch(program::exit_app());
@@ -35,9 +36,8 @@ struct exit_000 {
         async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
         async::add_handler<program::exit_app>(
-            [&_loop](type::ptr<bool>, program::exit_app &&) -> void {
-                _loop.stop();
-            },
+            [&_loop](sptr<const bool>, sptr<const program::exit_app> &&)
+                -> void { _loop.stop(); },
             1s, async::priority {255});
 
         program::application _app(2s, [&_loop]() { _loop.start(); });
@@ -59,7 +59,7 @@ struct exit_001 {
     bool operator()() {
         logger::set_debug_level();
 
-        auto _function = [this](type::ptr<bool> p_bool) -> void {
+        auto _function = [this](type::sptr<bool> p_bool) -> void {
             if (m_counter > m_max) {
 
                 DEB("about to publish 'exit_app'");
@@ -78,9 +78,8 @@ struct exit_001 {
         async::sleeping_loop_t<> _loop(_function, 200ms, 1s);
 
         async::add_handler<program::exit_app>(
-            [&_loop](type::ptr<bool>, program::exit_app &&) -> void {
-                _loop.stop();
-            },
+            [&_loop](sptr<const bool>, sptr<const program::exit_app> &&)
+                -> void { _loop.stop(); },
             1s, async::priority {255});
 
         program::application _app(2s, [&_loop]() { _loop.start(); });

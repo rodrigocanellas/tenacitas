@@ -18,7 +18,7 @@ using namespace std::chrono_literals;
 
 void executer_000() {
 
-    auto _function = [](type::ptr<bool>, int &&p_i) -> void {
+    auto _function = [](type::sptr<bool>, int &&p_i) -> void {
         std::cout << "i = " << p_i << '\n';
     };
     int _i {4};
@@ -30,7 +30,7 @@ void executer_000() {
 
 void executer_001() {
 
-    auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> void {
+    auto _function = [](type::sptr<bool> p_bool, int &&p_i) -> void {
         std::this_thread::sleep_for(1s);
         if (p_bool) {
             std::cout << "TIMEOUT\n";
@@ -47,14 +47,14 @@ void executer_001() {
 
 void executer_002() {
 
-    auto _function = [](type::ptr<bool>) -> void { DEB("hello"); };
+    auto _function = [](type::sptr<bool>) -> void { DEB("hello"); };
 
     std::cout << (async::execute(200ms, _function) ? "true" : "false") << '\n';
 }
 
 void executer_003() {
 
-    auto _function = [](type::ptr<bool> p_bool) -> void {
+    auto _function = [](type::sptr<bool> p_bool) -> void {
         std::this_thread::sleep_for(1s);
         if (p_bool) {
             std::cout << "TIMEOUT\n";
@@ -68,7 +68,7 @@ void executer_003() {
 
 void executer_004() {
 
-    auto _function = [](type::ptr<bool>, int p_i, std::string &&p_str,
+    auto _function = [](type::sptr<bool>, int p_i, std::string &&p_str,
                         const char *p_char) -> void {
         DEB(p_i, ',', p_str, ',', p_char);
     };
@@ -84,7 +84,7 @@ void executer_004() {
 
 void executer_005() {
 
-    auto _function = [](type::ptr<bool> p_bool, int p_i, std::string &&p_str,
+    auto _function = [](type::sptr<bool> p_bool, int p_i, std::string &&p_str,
                         const char *p_char) -> void {
         std::this_thread::sleep_for(1s);
         if (p_bool) {
@@ -107,7 +107,7 @@ void executer_005() {
 
 void executer_006() {
 
-    auto _function = [](type::ptr<bool>, int16_t &&p_i) -> int16_t {
+    auto _function = [](type::sptr<bool>, int16_t &&p_i) -> int16_t {
         const int16_t _res = 2 * p_i;
         std::cout << "i = " << p_i << ", _res = " << _res << '\n';
         return _res;
@@ -131,7 +131,7 @@ void executer_006() {
 
 void executer_007() {
 
-    auto _function = [](type::ptr<bool> p_bool, int &&p_i) -> int16_t {
+    auto _function = [](type::sptr<bool> p_bool, int &&p_i) -> int16_t {
         std::this_thread::sleep_for(1s);
         if (p_bool) {
             std::cout << "timeout\n";
@@ -156,7 +156,7 @@ void executer_007() {
 
 void executer_008() {
 
-    auto _function = [](type::ptr<bool>) -> int16_t {
+    auto _function = [](type::sptr<bool>) -> int16_t {
         std::cout << "hello\n";
         return 94;
     };
@@ -176,7 +176,7 @@ void executer_008() {
 
 void executer_009() {
 
-    auto _function = [](type::ptr<bool> p_bool) -> int16_t {
+    auto _function = [](type::sptr<bool> p_bool) -> int16_t {
         std::this_thread::sleep_for(1s);
         if (p_bool) {
             std::cout << "TIMEOUT\n";
@@ -195,7 +195,7 @@ void executer_009() {
 
 void executer_010() {
 
-    auto _function = [](type::ptr<bool>, int16_t p_i, float p_f) -> float {
+    auto _function = [](type::sptr<bool>, int16_t p_i, float p_f) -> float {
         return p_f * p_i;
     };
 
@@ -213,7 +213,7 @@ void executer_010() {
 
 void executer_011() {
 
-    auto _function = [](type::ptr<bool> p_bool, int16_t p_i,
+    auto _function = [](type::sptr<bool> p_bool, int16_t p_i,
                         float p_f) -> float {
         std::this_thread::sleep_for(1s);
         if (*p_bool) {

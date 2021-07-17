@@ -35,8 +35,10 @@
 
 #include <tenacitas.lib/async.h>
 #include <tenacitas.lib/program.h>
+#include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 // type for the account number
@@ -106,9 +108,9 @@ struct sum_transactions {
         : m_accounts(p_accounts) {}
 
     // handles a transaction read
-    void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
-        account_number _account_number = std::get<0>(p_data.value);
-        transaction_value _transaction_value = std::get<1>(p_data.value);
+    void operator()(sptr<const bool>, sptr<const reader::data_read> &&p_data) {
+        account_number _account_number = std::get<0>(p_data->value);
+        transaction_value _transaction_value = std::get<1>(p_data->value);
         accounts_sum::iterator _ite = m_accounts->find(_account_number);
         if (_ite == m_accounts->end()) {
             m_accounts->insert({_account_number, _transaction_value});
@@ -131,17 +133,17 @@ struct biggest_day {
         : m_accounts(p_accounts) {}
 
     // handles a transaction read
-    void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
-        account_number _account_number = std::get<0>(p_data.value);
+    void operator()(sptr<const bool>, sptr<const reader::data_read> &&p_data) {
+        account_number _account_number = std::get<0>(p_data->value);
         accounts_by_day::iterator _ite = m_accounts->find(_account_number);
         if (_ite == m_accounts->end()) {
             m_accounts->insert(
                 {_account_number,
-                 {std::get<2>(p_data.value), std::get<1>(p_data.value)}});
+                 {std::get<2>(p_data->value), std::get<1>(p_data->value)}});
         } else {
-            transaction_value _transaction_value = std::get<1>(p_data.value);
+            transaction_value _transaction_value = std::get<1>(p_data->value);
             if (_transaction_value > _ite->second.second) {
-                _ite->second.first = std::get<2>(p_data.value);
+                _ite->second.first = std::get<2>(p_data->value);
                 _ite->second.second = _transaction_value;
             }
         }
@@ -179,7 +181,7 @@ void Main() {
     // creates a handling for when all transactions are read that notifies the
     // condition variable
     async::add_handler<reader::all_data_read>(
-        [&](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+        [&](sptr<const bool>, sptr<const reader::all_data_read> &&) -> void {
             _cond.notify_one();
         },
         1s);

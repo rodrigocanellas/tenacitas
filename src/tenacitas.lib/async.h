@@ -132,7 +132,8 @@ typedef number::id handling_id;
 ///
 /// \param p_event is the event to be handled
 template <typename t_event>
-using handler_t = std::function<void(ptr<bool> p_bool, t_event &&p_event)>;
+using handler_t =
+    std::function<void(sptr<const bool> p_bool, sptr<const t_event> &&p_event)>;
 
 // \brief internal classes, objects and function
 namespace internal {
@@ -168,7 +169,6 @@ typedef std::chrono::milliseconds interval;
 ///
 /// \return if \p p_function executed in less than \p p_timeout, a valid \p
 /// t_ret value; or an empty std::optional, otherwise.
-
 template <typename t_ret>
 struct executer_t {
     template <typename t_time, typename t_function, typename... t_params>
@@ -178,7 +178,7 @@ struct executer_t {
         std::mutex _mutex;
         std::condition_variable _cond;
 
-        ptr<bool> _stop {std::make_shared<bool>(false)};
+        sptr<bool> _stop {std::make_shared<bool>(false)};
 
         t_ret _ret;
 
@@ -236,7 +236,7 @@ struct executer_t<void> {
         std::mutex _mutex;
         std::condition_variable _cond;
 
-        ptr<bool> _stop {std::make_shared<bool>(false)};
+        sptr<bool> _stop {std::make_shared<bool>(false)};
 
         std::thread _th([&]() -> void {
             p_function(_stop, std::forward<t_params>(p_params)...);
@@ -313,10 +313,10 @@ struct result_traits<void> {
 /// bool, which is \p true if no timeout occurrs; or \p false otherwise.
 template <typename t_time, typename t_function, typename... t_params>
 typename result_traits<
-    std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>::result
+    std::invoke_result_t<t_function, type::sptr<bool>, t_params...>>::result
 execute(t_time p_timeout, t_function &p_function, t_params &&... p_params) {
     typedef internal::executer_t<
-        std::invoke_result_t<t_function, type::ptr<bool>, t_params...>>
+        std::invoke_result_t<t_function, type::sptr<bool>, t_params...>>
         executer;
     executer _executer;
     return _executer(p_timeout, p_function,
@@ -382,10 +382,10 @@ struct circular_unlimited_size_queue_t {
     void traverse(std::function<void(const t_data &)> p_visitor) const {
         node_ptr _p = m_root;
         while (_p && (_p->m_next != m_root)) {
-            p_visitor(_p->m_data);
+            p_visitor(*(_p->m_data));
             _p = _p->m_next;
         }
-        p_visitor(_p->m_data);
+        p_visitor(*(_p->m_data));
     }
 
     // \brief Adds a t_data object to the queue
@@ -397,7 +397,9 @@ struct circular_unlimited_size_queue_t {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
             if (!_full) {
-                m_write->m_data = p_data;
+                //                m_write->m_data = make_sptr<const
+                //                t_data>(*p_data);
+                m_write->m_data = sptr<const t_data> {new t_data(p_data)};
                 m_write = m_write->m_next;
             } else {
                 insert(m_write->m_prev, p_data);
@@ -416,7 +418,9 @@ struct circular_unlimited_size_queue_t {
             std::lock_guard<std::mutex> _lock(m_mutex);
             bool _full = full();
             if (!_full) {
-                m_write->m_data = p_data;
+                //                m_write->m_data = make_sptr<const
+                //                t_data>(*p_data);
+                m_write->m_data = sptr<const t_data> {new t_data(p_data)};
                 m_write = m_write->m_next;
             } else {
                 insert(m_write->m_prev, std::move(p_data));
@@ -428,18 +432,18 @@ struct circular_unlimited_size_queue_t {
 
     // \brief Tries to get a t_data object from the queue
     //
-    // \return {true, a valid t_data}, if it was possible to get; {false,
-    // ---} if it was not possible
-    std::pair<bool, t_data> get() {
+    // \return valid t_data pointer, if it was possible to get; a nullptr if it
+    // was not possible
+    sptr<const t_data> get() {
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (empty()) {
-            return {false, t_data()};
+            return nullptr;
         }
 
-        t_data _data(m_read->m_data);
+        sptr<const t_data> _data(m_read->m_data);
         m_read = m_read->m_next;
         --m_amount;
-        return {true, std::move(_data)};
+        return _data;
     }
 
     // \brief Informs if the queue is full
@@ -459,7 +463,7 @@ private:
     // \brief Node of the linked list used to implement the queue
     struct node {
         // \brief Type of pointer
-        typedef std::shared_ptr<node> ptr;
+        typedef sptr<node> ptr;
 
         node() = default;
 
@@ -477,16 +481,16 @@ private:
         //
         // \param p_data is a t_data to be moved into the node
         node(t_data &&p_data)
-            : m_data(std::move(p_data)) {}
+            : m_data(make_sptr<t_data>(std::move(p_data))) {}
 
         // \brief Constructor
         //
         // \param p_data is a t_data to be copied into the node
         node(const t_data &p_data)
-            : m_data(p_data) {}
+            : m_data(make_sptr<t_data>(p_data)) {}
 
         // \brief data in the node
-        t_data m_data;
+        sptr<const t_data> m_data;
 
         // \brief next node
         ptr m_next;
@@ -507,7 +511,7 @@ private:
     //
     // \return the new node
     node_ptr insert(node_ptr p_node, const t_data &p_data) {
-        node_ptr _new_node = create_node(std::move(p_data));
+        node_ptr _new_node = create_node(p_data);
 
         _new_node->m_next = p_node->m_next;
         _new_node->m_prev = p_node;
@@ -565,7 +569,7 @@ private:
     //
     // \return the new node
     node_ptr create_node(t_data &&p_data) {
-        node_ptr _p(std::make_shared<node>(std::move(p_data)));
+        node_ptr _p(make_sptr<node>(std::move(p_data)));
         _p->m_next = _p;
         _p->m_prev = _p;
         return _p;
@@ -593,10 +597,10 @@ private:
     std::mutex m_mutex;
 };
 
-// \brief A group of functions that compete to handle an evnt added to a
+// \brief A group of functions that compete to handle an event added to a
 // queue
 //
-// \param t_data type of data to be processed
+// \param t_event type of event to be processed
 template <typename t_event>
 class handling_t {
 public:
@@ -649,9 +653,25 @@ public:
     // \param p_event is the event to be handled
     //
     // \return \p true if it was added, \p false otherwise
-    bool add_data(const t_event &p_event) {
+    bool add_event(const t_event &p_event) {
         TRA(m_id, " - adding ", p_event);
         m_queue.add(p_event);
+        m_cond.notify_all();
+        {
+            std::lock_guard<std::mutex> _lock(m_mutex);
+            ++m_queued_data;
+        }
+        return true;
+    }
+
+    // \brief Adds a event to be handled
+    //
+    // \param p_event is the event to be handled
+    //
+    // \return \p true if it was added, \p false otherwise
+    bool add_event(t_event &&p_event) {
+        TRA(m_id, " - adding ", p_event);
+        m_queue.add(std::move(p_event));
         m_cond.notify_all();
         {
             std::lock_guard<std::mutex> _lock(m_mutex);
@@ -676,12 +696,16 @@ public:
 
     // \brief Adds a bunch of handler functions
     //
-    // \param p_num_workers defines the number of handlers to be added
+    // \tparam t_number is the type of number used to define the amount of
+    // handlers to be added
+    //
+    // \param p_num_handler defines the number of handlers to be added
     //
     // \param p_factory is a function that creates handlers
-    void add_handler(uint16_t p_num_workers,
+    template <typename t_number>
+    void add_handler(t_number p_num_handlers,
                      std::function<handler()> p_factory) {
-        for (uint16_t _i = 0; _i < p_num_workers; ++_i) {
+        for (t_number _i = 0; _i < p_num_handlers; ++_i) {
             add_handler(p_factory());
         }
     }
@@ -778,28 +802,21 @@ private:
                 break;
             }
 
-            std::pair<bool, t_event> _maybe_data {m_queue.get()};
+            sptr<const t_event> _event {m_queue.get()};
 
             if (this->m_stopped) {
                 TRA(m_id, ':', _loop_id, " - stop");
                 break;
             }
 
-            if (_maybe_data.first) {
-                t_event _data {std::move(_maybe_data.second)};
+            if (_event) {
+                TRA(m_id, ':', _loop_id, " there is an event to be handled");
 
-                TRA(m_id, ':', _loop_id, " - data = ", _data);
-
-                if (this->m_stopped) {
-                    TRA(m_id, ':', _loop_id, " - stop");
-                    break;
-                }
-
-                if (!execute(m_timeout, p_handler, std::move(_data))) {
-                    WAR(m_id, ':', _loop_id, " - timeout ", _data);
+                if (!execute(m_timeout, p_handler, std::move(_event))) {
+                    WAR(m_id, ':', _loop_id, " - timeout ", *_event);
                 }
             } else {
-                TRA(m_id, ':', _loop_id, " - no data available");
+                TRA(m_id, ':', _loop_id, " - no event to be handled");
             }
         }
     }
@@ -807,9 +824,24 @@ private:
     // \brief Empties the queue of the events not handled yet
     //
     // TODO test it
-    inline void empty_queue() {
-        while (!m_queue.empty()) {
-            m_cond.notify_all();
+    inline void empty_queue(number::id p_loop_id, handler &p_handler) {
+        while (true) {
+            sptr<const t_event> _event {m_queue.get()};
+
+            if (!_event) {
+                break;
+            }
+
+            if (this->m_stopped) {
+                TRA(m_id, ':', p_loop_id, " - stop");
+                break;
+            }
+
+            TRA(m_id, ':', p_loop_id, " there is an event to be handled");
+
+            if (!execute(m_timeout, p_handler, std::move(_event))) {
+                WAR(m_id, ':', p_loop_id, " - timeout ", _event);
+            }
         }
     }
 
@@ -969,7 +1001,20 @@ struct dispatcher_t {
         for (handling_ptr &_handling_ptr : m_list) {
             TRA(get_id(), " - sending ", p_event, " to pool ",
                 _handling_ptr->get_id());
-            _handling_ptr->add_data(p_event);
+            _handling_ptr->add_event(p_event);
+        }
+    }
+
+    // \brief Sends an event yo be handled
+    // This event will be copied to all the handlings, and one of the
+    // handler functions in each handlig will handle the event
+    //
+    // \param p_event is the event to be handled
+    void send(t_event &&p_event) {
+        for (handling_ptr &_handling_ptr : m_list) {
+            TRA(get_id(), " - sending ", p_event, " to pool ",
+                _handling_ptr->get_id());
+            _handling_ptr->add_event(std::move(p_event));
         }
     }
 
@@ -1022,7 +1067,7 @@ struct dispatcher_t {
     // \brief Retrieves the size of the queue of events for a handling
     //
     // \param p_id is the identifier of the handling
-    ///
+    //
     // \return the size of the event queue
     size_t size(const handling_id &p_id) {
         iterator _ite = find(p_id);
@@ -1111,15 +1156,10 @@ private:
     std::mutex m_mutex;
 };
 
-// template <typename t_data>
-// typename dispatcher_t<t_data>::handling_list dispatcher_t<t_data>::m_list;
-
-// template <typename t_data>
-// std::mutex dispatcher_t<t_data>::m_mutex;
-
-template <typename t_data>
-dispatcher_t<t_data> &get_dispatcher() {
-    static dispatcher_t<t_data> _dispatcher;
+// \brief Retrieves the single dispatcher for an event type
+template <typename t_event>
+dispatcher_t<t_event> &get_dispatcher() {
+    static dispatcher_t<t_event> _dispatcher;
     return _dispatcher;
 }
 
@@ -1140,7 +1180,7 @@ struct sleeping_loop_t {
     /// should, as most as possible, between its instructions, to check for the
     /// value o \p p_bool, in order to continue to the following instruction, or
     /// to interrupt its execution
-    typedef std::function<void(ptr<bool> p_bool)> function;
+    typedef std::function<void(sptr<bool> p_bool)> function;
 
     /// \brief Constructor
     ///
@@ -1606,7 +1646,7 @@ struct reader_t {
         }
         m_stopped = true;
         if (m_thread.joinable()) {
-            auto _function = [this](type::ptr<bool>) -> void {
+            auto _function = [this](type::sptr<bool>) -> void {
                 m_thread.join();
             };
             if (!execute(3s, _function)) {

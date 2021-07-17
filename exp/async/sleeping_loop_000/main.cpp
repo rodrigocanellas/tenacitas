@@ -14,6 +14,7 @@
 #include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 int main() {
@@ -40,8 +41,8 @@ int main() {
     std::mutex _mutex;
 
     // function to be executed inside the sleeping loop
-    std::function<void(type::ptr<bool>)> _function =
-        [&_counter, &_cond](type::ptr<bool>) -> void {
+    std::function<void(sptr<const bool>)> _function =
+        [&_counter, &_cond](sptr<const bool>) -> void {
         if (_counter >= _max) {
             _cond.notify_one();
         } else {

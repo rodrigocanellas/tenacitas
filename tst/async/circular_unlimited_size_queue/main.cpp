@@ -11,10 +11,11 @@
 
 #include <tenacitas.lib/async.h>
 #include <tenacitas.lib/logger.h>
-
 #include <tenacitas.lib/tester.h>
+#include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 
 typedef std::pair<int16_t, double> data;
 
@@ -57,10 +58,9 @@ struct consumer {
             if ((m_stop) && (m_queue.empty())) {
                 break;
             }
-            std::pair<bool, std::tuple<int16_t, double>> _maybe(m_queue.get());
-            if (_maybe.first) {
-                std::tuple<int16_t, double> _data {std::move(_maybe.second)};
-                DEB("getting ", _data);
+            sptr<const data> _data(m_queue.get());
+            if (_data) {
+                DEB("getting ", *_data);
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(950));
         }
@@ -79,14 +79,13 @@ struct queue_000 {
         queue _queue(20);
         _queue.add({9, -4.32});
         _queue.traverse([](const data &p_data) -> void { DEB(p_data); });
-        std::pair<bool, data> _maybe = _queue.get();
-        if (_maybe.first) {
-            data _value {std::move(_maybe.second)};
-            if (_value != data(9, -4.32)) {
-                ERR("Expected [9, -4.32], but got ", _value);
+        sptr<const data> _data = _queue.get();
+        if (_data) {
+            if (*_data != data(9, -4.32)) {
+                ERR("Expected [9, -4.32], but got ", *_data);
                 return false;
             }
-            INF("got ", _value);
+            INF("got ", *_data);
             if (!_queue.empty()) {
                 ERR("Queue should be empty, but it is not");
                 return false;
@@ -97,8 +96,7 @@ struct queue_000 {
 
     static std::string desc() {
         return "Simple test, inserting and getting a element, and testing if "
-               "the "
-               "queue becomes empty";
+               "the queue becomes empty";
     }
 };
 
@@ -305,14 +303,13 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 1
-        std::pair<bool, data> _maybe = _q.get();
-        if (!_maybe.first) {
+        sptr<const data> _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        data _data = std::move(_maybe.second);
-        if (_data != data {10, 3.14}) {
+        if (*_data != data {10, 3.14}) {
             ERR("data should be ", data {10, 3.14}, ", but it is ", _data);
             return false;
         }
@@ -350,19 +347,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 2
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {-29, 0.93}) {
-            ERR("data should be ", data {-29, 0.93}, ", but it is ", _data);
+        if (*_data != data {-29, 0.93}) {
+            ERR("data should be ", data {-29, 0.93}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -395,19 +391,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 3
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {801, -4.328}) {
-            ERR("data should be ", data {801, -4.328}, ", but it is ", _data);
+        if (*_data != data {801, -4.328}) {
+            ERR("data should be ", data {801, -4.328}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -424,19 +419,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 4
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {8, 1024.95}) {
-            ERR("data should be ", data {8, 1024.95}, ", but it is ", _data);
+        if (*_data != data {8, 1024.95}) {
+            ERR("data should be ", data {8, 1024.95}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -453,19 +447,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 5
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {-4, -783.23}) {
-            ERR("data should be ", data {-4, -783.23}, ", but it is ", _data);
+        if (*_data != data {-4, -783.23}) {
+            ERR("data should be ", data {-4, -783.23}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -482,19 +475,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 6
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {18, 333.33}) {
-            ERR("data should be ", data {18, 333.33}, ", but it is ", _data);
+        if (*_data != data {18, 333.33}) {
+            ERR("data should be ", data {18, 333.33}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -511,19 +503,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 7
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {455, 12.88}) {
-            ERR("data should be ", data {455, 12.88}, ", but it is ", _data);
+        if (*_data != data {455, 12.88}) {
+            ERR("data should be ", data {455, 12.88}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -540,19 +531,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 8
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {-1, -2.3}) {
-            ERR("data should be ", data {-1, -2.3}, ", but it is ", _data);
+        if (*_data != data {-1, -2.3}) {
+            ERR("data should be ", data {-1, -2.3}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -569,19 +559,18 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading # 9
-        _maybe = _q.get();
-        if (!_maybe.first) {
+        _data = _q.get();
+        if (!_data) {
             ERR("no data read, when it should");
             return false;
         }
 
-        _data = std::move(_maybe.second);
-        if (_data != data {23, 4.021}) {
-            ERR("data should be ", data {23, 4.021}, ", but it is ", _data);
+        if (*_data != data {23, 4.021}) {
+            ERR("data should be ", data {23, 4.021}, ", but it is ", *_data);
             return false;
         }
 
-        DEB("data = ", _data);
+        DEB("data = ", *_data);
 
         if (_q.capacity() != 7) {
             ERR("capacity should be 7, but it is ", _q.capacity());
@@ -598,9 +587,9 @@ struct queue_003 {
         _q.traverse(_printer);
 
         // reading from an empty queue
-        _maybe = _q.get();
+        _data = _q.get();
 
-        if (_maybe.first) {
+        if (_data) {
             ERR("read data from an empty queue");
             return false;
         }

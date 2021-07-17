@@ -340,7 +340,8 @@ struct application {
 
         m_wait = (duration_cast<milliseconds>(p_wait));
 
-        auto _handler = [this](type::ptr<bool> p_bool, exit_app &&p_event) {
+        auto _handler = [this](type::sptr<const bool> p_bool,
+                               type::sptr<const exit_app> &&p_event) {
             handle(p_bool, std::move(p_event));
         };
 
@@ -375,7 +376,7 @@ struct application {
 
 private:
     /// \brief Handler of the tenacitas::program::exit_app event
-    void handle(type::ptr<bool>, exit_app &&) {
+    void handle(type::sptr<const bool>, type::sptr<const exit_app> &&) {
         if (m_on_exit_handled) {
             WAR("on_exit already handled");
             return;
