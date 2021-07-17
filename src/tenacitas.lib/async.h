@@ -432,9 +432,8 @@ struct circular_unlimited_size_queue_t {
 
     // \brief Tries to get a t_data object from the queue
     //
-    // \return {true, a valid t_data}, if it was possible to get; {false,
-    // ---} if it was not possible
-    //    std::pair<bool, t_data> get() {
+    // \return valid t_data pointer, if it was possible to get; a nullptr if it
+    // was not possible
     sptr<const t_data> get() {
         std::lock_guard<std::mutex> _lock(m_mutex);
         if (empty()) {

@@ -19,6 +19,7 @@
 
 using namespace tenacitas;
 using namespace tenacitas::async;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 template <event_id evt_id,
@@ -65,49 +66,51 @@ struct test_t {
         INF("creating handlers for handled events");
         uint16_t _handled {0};
         bool _all_handled_notified {false};
-        _handled_handlers.add_handler([&](type::sptr<bool>, handled &&) -> void {
-            if (_all_handled_notified) {
-                DEB("all handled notified");
-                return;
-            }
-            {
-                std::lock_guard<std::mutex> _lock(_mutex_counter_handled);
-                ++_handled;
-            }
+        _handled_handlers.add_handler(
+            [&](sptr<const bool>, sptr<const handled> &&) -> void {
+                if (_all_handled_notified) {
+                    DEB("all handled notified");
+                    return;
+                }
+                {
+                    std::lock_guard<std::mutex> _lock(_mutex_counter_handled);
+                    ++_handled;
+                }
 
-            if (_handled >= m_total_events) {
-                INF("all events handled, notifying");
-                _all_handled_notified = true;
-                _cond_handled.notify_one();
-                return;
-            }
-            DEB(_handled, " events handled");
-        });
+                if (_handled >= m_total_events) {
+                    INF("all events handled, notifying");
+                    _all_handled_notified = true;
+                    _cond_handled.notify_one();
+                    return;
+                }
+                DEB(_handled, " events handled");
+            });
 
         INF("creating handlers for sent events");
         uint16_t _sent {0};
         bool _all_sent_notified {false};
-        _sent_handlers.add_handler([&](type::sptr<bool>, sent &&) -> void {
-            if (_all_sent_notified) {
-                return;
-            }
+        _sent_handlers.add_handler(
+            [&](sptr<const bool>, sptr<const sent> &&) -> void {
+                if (_all_sent_notified) {
+                    return;
+                }
 
-            {
-                std::lock_guard<std::mutex> _lock(_mutex_counter_sent);
-                ++_sent;
-            }
+                {
+                    std::lock_guard<std::mutex> _lock(_mutex_counter_sent);
+                    ++_sent;
+                }
 
-            if (_sent >= m_total_events) {
-                INF("all ", _sent, " events sent; notifying");
-                _all_sent_notified = true;
-                _cond_sent.notify_one();
-                return;
-            }
-            DEB(_sent, " events sent");
-        });
+                if (_sent >= m_total_events) {
+                    INF("all ", _sent, " events sent; notifying");
+                    _all_sent_notified = true;
+                    _cond_sent.notify_one();
+                    return;
+                }
+                DEB(_sent, " events sent");
+            });
 
         INF("creating the event handlers");
-        std::vector<type::sptr<handler>> _handler_list;
+        std::vector<sptr<handler>> _handler_list;
         for (uint16_t _i = 0; _i < num_handlers; ++_i) {
             _handler_list.push_back(std::make_shared<handler>(
                 _i, &_event_handlings, &_handled_handlers,
@@ -118,9 +121,10 @@ struct test_t {
         uint64_t _start = calendar::now<>::microsecs();
 
         INF("adding each handler to the handlers group");
-        for (type::sptr<handler> &_handler : _handler_list) {
+        for (sptr<handler> &_handler : _handler_list) {
             _event_handlings.add_handler(
-                [&, _handler](type::sptr<bool> p_bool, event &&p_event) -> void {
+                [&, _handler](sptr<const bool> p_bool,
+                              sptr<const event> &&p_event) -> void {
                     (*_handler)(p_bool, std::move(p_event));
                 });
         }
@@ -152,6 +156,7 @@ struct test_t {
         for (uint16_t _i = 0; _i < num_senders; ++_i) {
             _loops[_i].stop();
         }
+
         DEB("capacity: ", _event_handlings.capacity(),
             ", added: ", _event_handlings.amount_added(),
             ", occupied: ", _event_handlings.occupied());
@@ -260,32 +265,32 @@ private:
             DEB(m_id, " # timeouts: ", m_max_events_timeout);
         }
 
-        void operator()(std::shared_ptr<bool> p_bool, event &&p_event) {
-            DEB(m_id, " incoming ", p_event, '|', m_num);
+        void operator()(sptr<const bool> p_bool, sptr<const event> &&p_event) {
+            DEB(m_id, " incoming ", *p_event, '|', m_num);
             if (m_cause_timeout_at_each && m_num_aux &&
                 ((m_num_aux % m_cause_timeout_at_each) == 0) &&
                 (m_timeout_counter < m_num_max_timeouts)) {
                 ++m_timeout_counter;
                 ++m_num_aux;
-                DEB(m_id, " timeouting ", p_event, '|', m_num_aux);
+                DEB(m_id, " timeouting ", *p_event, '|', m_num_aux);
                 std::this_thread::sleep_for(m_to_timeout);
             }
-            DEB(m_id, " continuing to handle ", p_event, ", and p_bool is ",
+            DEB(m_id, " continuing to handle ", *p_event, ", and p_bool is ",
                 *p_bool);
             if (!p_bool) {
-                ERR(m_id, " p_bool not set for ", p_event, "!!!");
+                ERR(m_id, " p_bool not set for ", *p_event, "!!!");
                 throw std::runtime_error("p_bool not set!!");
             }
             if (*p_bool) {
-                DEB(m_id, " adding ", p_event, '|', m_num);
-                m_event_handlings->add_event(p_event);
+                DEB(m_id, " adding ", *p_event, '|', m_num);
+                m_event_handlings->add_event(*p_event);
                 return;
             }
-            DEB(m_id, " continuing to handle ", p_event);
+            DEB(m_id, " continuing to handle ", *p_event);
             std::this_thread::sleep_for(m_sleep);
             ++m_num;
             ++m_num_aux;
-            m_event = std::move(p_event);
+            m_event = std::move(*p_event);
             m_handled_handlers->add_event(handled {});
             DEB(m_id, " handling ", m_event, '|', m_num);
         }
@@ -334,7 +339,7 @@ private:
                 ", finish value = ", m_finish);
         }
 
-        void operator()(std::shared_ptr<bool>) {
+        void operator()(sptr<const bool>) {
 
             if (m_all_notified) {
                 DEB(m_idx, " already notified");

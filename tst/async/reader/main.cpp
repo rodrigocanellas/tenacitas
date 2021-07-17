@@ -7,11 +7,12 @@
 
 #include <tenacitas.lib/async.h>
 #include <tenacitas.lib/calendar.h>
-
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/tester.h>
+#include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 
 struct reader_000 {
     typedef async::reader_t<uint64_t> reader;
@@ -26,9 +27,10 @@ struct reader_000 {
     bool operator()() {
 
         async::add_handler<reader::data_read>(
-            [this](std::shared_ptr<bool>, reader::data_read &&p_data) -> void {
-                m_read.push_back(p_data.value);
-                DEB("handled ", p_data.value,
+            [this](sptr<const bool>,
+                   sptr<const reader::data_read> &&p_data) -> void {
+                m_read.push_back(p_data->value);
+                DEB("handled ", p_data->value,
                     ", m_read.size() = ", m_read.size());
                 if (m_handled == (m_num_values - 1)) {
                     DEB("all handled");
@@ -41,7 +43,8 @@ struct reader_000 {
             150ms);
 
         async::add_handler<reader::all_data_read>(
-            [this](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+            [this](sptr<const bool>,
+                   sptr<const reader::all_data_read> &&) -> void {
                 INF("handling done_reading");
                 m_all_read = true;
             },
@@ -85,7 +88,7 @@ private:
         m_read_ite = m_source.begin();
     }
 
-    void handler(std::shared_ptr<bool>, reader::data_read &&p_data) {
+    void handler(sptr<const bool>, reader::data_read &&p_data) {
         INF("value handled: ", p_data.value);
         m_read.push_back(p_data.value);
     }
@@ -136,6 +139,7 @@ private:
 struct reader_001 {
 
     typedef async::reader_t<uint64_t> reader;
+    typedef std::vector<uint64_t> values;
 
     static std::string desc() {
         return "A reader that reads " + std::to_string(m_num_values) +
@@ -150,25 +154,26 @@ struct reader_001 {
         handler _handler3;
 
         async::handling_id _handling = async::add_handler<reader::data_read>(
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler1(p_bool, std::move(p_data)); },
             100ms);
 
         async::add_handler<reader::data_read>(
             _handling,
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler2(p_bool, std::move(p_data)); });
 
         async::add_handler<reader::data_read>(
             _handling,
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler3(p_bool, std::move(p_data)); });
 
         async::reader_t<uint64_t> _read(
             [this]() -> std::optional<uint64_t> { return this->read(); });
 
         async::add_handler<reader::all_data_read>(
-            [this](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+            [this](sptr<const bool>,
+                   sptr<const reader::all_data_read> &&) -> void {
                 INF("handling done_reading");
                 m_all_read = true;
             },
@@ -200,12 +205,11 @@ struct reader_001 {
     }
 
 private:
-    typedef std::vector<uint64_t> values;
-
     struct handler {
 
-        void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
-            m_values.push_back(p_data.value);
+        void operator()(sptr<const bool>,
+                        sptr<const reader::data_read> &&p_data) {
+            m_values.push_back(p_data->value);
         }
 
         uint64_t amount() const { return m_values.size(); }
@@ -296,6 +300,7 @@ private:
 struct reader_002 {
 
     typedef async::reader_t<uint64_t> reader;
+    typedef std::vector<uint64_t> values;
 
     static std::string desc() {
         return "A reader that reads " + std::to_string(m_num_values) +
@@ -311,45 +316,47 @@ struct reader_002 {
         handler_a _handler_a3;
 
         async::handling_id _handling_a = async::add_handler<reader::data_read>(
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler_a1(p_bool, std::move(p_data)); },
             100ms);
 
         async::add_handler<reader::data_read>(
             _handling_a,
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler_a2(p_bool, std::move(p_data)); });
 
         async::add_handler<reader::data_read>(
             _handling_a,
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler_a3(p_bool, std::move(p_data)); });
 
         handler_b _handler_b1;
         handler_b _handler_b2;
 
         async::handling_id _handling_b = async::add_handler<reader::data_read>(
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler_b1(p_bool, std::move(p_data)); },
             100ms);
 
         async::add_handler<reader::data_read>(
             _handling_b,
-            [&](std::shared_ptr<bool> p_bool, reader::data_read &&p_data)
+            [&](sptr<const bool> p_bool, sptr<const reader::data_read> &&p_data)
                 -> void { _handler_b2(p_bool, std::move(p_data)); });
 
         async::reader_t<uint64_t> _read(
             [this]() -> std::optional<uint64_t> { return this->read(); });
 
         async::add_handler<reader::all_data_read>(
-            [this](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+            [this](sptr<const bool>,
+                   sptr<const reader::all_data_read> &&) -> void {
                 INF("handling done_reading");
                 m_all_read = true;
             },
             50ms);
 
         async::add_handler<reader::all_data_read>(
-            [this](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+            [this](sptr<const bool>,
+                   sptr<const reader::all_data_read> &&) -> void {
                 INF("handling done_reading");
                 m_all_read = true;
             },
@@ -387,12 +394,11 @@ struct reader_002 {
     }
 
 private:
-    typedef std::vector<uint64_t> values;
-
     struct handler_a {
 
-        void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
-            m_values.push_back(p_data.value);
+        void operator()(sptr<const bool>,
+                        sptr<const reader::data_read> &&p_data) {
+            m_values.push_back(p_data->value);
         }
 
         uint64_t amount() const { return m_values.size(); }
@@ -415,8 +421,9 @@ private:
 
     struct handler_b {
 
-        void operator()(std::shared_ptr<bool>, reader::data_read &&p_data) {
-            m_values.push_back(2 * p_data.value);
+        void operator()(sptr<const bool>,
+                        sptr<const reader::data_read> &&p_data) {
+            m_values.push_back(2 * p_data->value);
         }
 
         uint64_t amount() const { return m_values.size(); }
@@ -557,15 +564,17 @@ struct reader_003 {
         });
 
         async::add_handler<reader::data_read>(
-            [](std::shared_ptr<bool>, reader::data_read &&p_data) -> void {
-                ERR("data ", p_data.value, " read, when there should be none");
+            [](sptr<const bool>,
+               sptr<const reader::data_read> &&p_data) -> void {
+                ERR("data ", p_data->value, " read, when there should be none");
                 throw std::runtime_error("data read when it should be none");
             },
             100ms);
 
         bool _done {false};
         async::add_handler<reader::all_data_read>(
-            [&](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+            [&](sptr<const bool>,
+                sptr<const reader::all_data_read> &&) -> void {
                 INF("all data read");
                 _done = true;
             },

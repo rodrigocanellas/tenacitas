@@ -16,8 +16,10 @@
 #include <tenacitas.lib/async.h>
 #include <tenacitas.lib/logger.h>
 #include <tenacitas.lib/program.h>
+#include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 // synchronoulsy waits for the user to input a number
@@ -45,14 +47,14 @@ void Main() {
 
     // handles a int16_t value the user entered
     async::add_handler<reader::data_read>(
-        [](std::shared_ptr<bool>, reader::data_read &&p_data) -> void {
-            std::cout << "! " << p_data.value << std::endl;
+        [](sptr<const bool>, sptr<const reader::data_read> &&p_data) -> void {
+            std::cout << "! " << p_data->value << std::endl;
         },
         100ms);
 
     // handles the event that says there is no more data
     async::add_handler<reader::all_data_read>(
-        [&](std::shared_ptr<bool>, reader::all_data_read &&) -> void {
+        [&](sptr<const bool>, sptr<const reader::all_data_read> &&) -> void {
             DEB("no more data");
             _cond.notify_one();
         },

@@ -14,6 +14,7 @@
 #include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 // event to be dispatched
@@ -35,10 +36,9 @@ struct temperature_sensor {
     // p_max is the max number of 'temperature' events to be dispatched
     temperature_sensor(uint16_t p_max)
         : m_max(p_max)
-        , m_temperature_generator(
-              [this](type::sptr<bool>) { generator(); }, m_timeout, m_interval) {
-
-    }
+        , m_temperature_generator([this](type::sptr<bool>) { generator(); },
+                                  m_timeout,
+                                  m_interval) {}
 
     // starts to dispatch 'temperature' events
     void start() { m_temperature_generator.start(); }
@@ -120,13 +120,13 @@ struct temperature_handler_0 {
         : m_id(p_id)
         , m_printer(p_printer) {}
 
-    void operator()(type::sptr<bool>, temperature &&p_temperature) {
+    void operator()(sptr<const bool>, sptr<const temperature> &&p_temperature) {
         std::this_thread::sleep_for(m_sleep);
         ++m_counter;
         async::dispatch(temperature_handled {});
 
         std::stringstream _stream;
-        _stream << '[' << m_id << ',' << m_counter << ',' << p_temperature
+        _stream << '[' << m_id << ',' << m_counter << ',' << *p_temperature
                 << ']' << std::endl;
         m_printer(_stream.str());
     }
@@ -145,8 +145,10 @@ struct wait {
     wait(uint16_t p_max)
         : m_max(p_max) {
         async::add_handler<temperature_handled>(
-            [this](type::sptr<bool> p_bool, temperature_handled &&p_event)
-                -> void { handler(p_bool, std::move(p_event)); },
+            [this](sptr<const bool> p_bool,
+                   sptr<const temperature_handled> &&p_event) -> void {
+                handler(p_bool, std::move(p_event));
+            },
             100ms);
     }
 
@@ -157,7 +159,7 @@ struct wait {
     }
 
 private:
-    void handler(type::sptr<bool>, temperature_handled &&) {
+    void handler(sptr<const bool>, sptr<const temperature_handled> &&) {
         ++m_counter;
         if (m_counter >= m_max) {
             m_cond.notify_one();

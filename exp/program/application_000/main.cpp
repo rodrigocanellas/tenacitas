@@ -14,12 +14,12 @@
 
 #include <tenacitas.lib/async.h>
 
-
 #include <tenacitas.lib/number.h>
 #include <tenacitas.lib/program.h>
 #include <tenacitas.lib/type.h>
 
 using namespace tenacitas;
+using namespace tenacitas::type;
 using namespace std::chrono_literals;
 
 // message to be sent
@@ -45,7 +45,9 @@ struct temperature_sensor {
               m_interval) {
 
         async::add_handler<program::exit_app>(
-            [this](type::sptr<bool>, program::exit_app &&) -> void { stop(); },
+            [this](sptr<const bool>, sptr<const program::exit_app> &&) -> void {
+                stop();
+            },
             1s, async::priority {255});
     }
 
@@ -85,8 +87,9 @@ struct printer {
 
     printer() = default;
     printer(const printer &) {}
-    void
-    operator()(char p_id, uint16_t p_counter, const temperature p_temperature) {
+    void operator()(char p_id,
+                    uint16_t p_counter,
+                    const temperature &p_temperature) {
         std::lock_guard<std::mutex> _lock(m_mutex);
         std::cout << '[' << p_id << ',' << p_counter << "," << p_temperature
                   << ']' << std::endl;
@@ -115,10 +118,10 @@ struct temperature_handler_0 {
         , m_printer(p_printer)
         , m_sleep(p_sleep) {}
 
-    void operator()(type::sptr<bool>, temperature &&p_temperature) {
+    void operator()(sptr<const bool>, sptr<const temperature> &&p_temperature) {
         std::this_thread::sleep_for(m_sleep);
         ++m_counter;
-        m_printer(m_id, m_counter, p_temperature);
+        m_printer(m_id, m_counter, *p_temperature);
     }
 
 private:
@@ -134,7 +137,7 @@ void app() {
     std::mutex _mutex;
 
     async::add_handler<program::exit_app>(
-        [&_cond](type::sptr<bool>, program::exit_app &&) -> void {
+        [&_cond](sptr<const bool>, sptr<const program::exit_app> &&) -> void {
             _cond.notify_one();
         },
         100ms);
