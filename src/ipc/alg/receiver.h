@@ -19,7 +19,7 @@
 #include <tenacitas/lib/socket/evt/events.h>
 #include <tenacitas/lib/socket/typ/types.h>
 
-namespace tenacitas::lib::src::socket::alg {
+namespace tenacitas::lib::socket::alg {
 
 namespace internal {
 
@@ -388,6 +388,6 @@ private:
 //  const uint8_t m_max_read_retries;
 //};
 
-} // namespace tenacitas::lib::src::socket::alg
+} // namespace tenacitas::lib::socket::alg
 
 #endif

@@ -29,8 +29,9 @@
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
-// using namespace tenacitas::lib::src::async::test;
+// using namespace tenacitas::lib::async::test;
 
+namespace evt {
 struct ev_0 {
 
   ev_0(uint16_t p_value = 0) : value(p_value) {}
@@ -54,17 +55,17 @@ struct ev_1 {
 
   char value{0};
 };
+} // namespace evt
 
-namespace tenacitas::lib::tst::async::alg {
+namespace alg {
 struct test_000 {
   test_000() { TNCT_LOG_TST("creating test_000"); }
   ~test_000() { TNCT_LOG_TST("destroying test_000"); }
   static std::string desc() { return "Declaring a 'Dispatcher' "; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_000");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
     TNCT_LOG_TST("finishing test_000");
     return true;
   }
@@ -78,18 +79,17 @@ struct test_001 {
            "waiting all to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_001");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
-    _dispatcher->subscribe<ev_0>([](auto p_event) {
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
 
-      _dispatcher->publish<ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
 
     } catch (std::exception &_ex) {
       TNCT_LOG_TST("finishing test_001 with false");
@@ -109,17 +109,16 @@ struct test_002 {
            "for it to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
-    _dispatcher->subscribe<ev_0>([](auto p_event) {
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
-      _dispatcher->publish<ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
 
       std::this_thread::sleep_for(3s);
 
@@ -137,28 +136,28 @@ struct test_003 {
   test_003() { TNCT_LOG_TST("creating test_003"); }
   ~test_003() { TNCT_LOG_TST("destroying test_003"); }
   static std::string desc() {
-    return "'Dispatcher' as a local object, publishing 1 event ev_0, 1 event "
-           "ev_1 and waiting for them to be handled";
+    return "'Dispatcher' as a local object, publishing 1 event evt::ev_0, 1 "
+           "event "
+           "evt::ev_1 and waiting for them to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
 
-    _dispatcher->subscribe<ev_0>([](auto p_event) {
+    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
-    _dispatcher->subscribe<ev_1>([](auto p_event) {
+    _dispatcher->subscribe<evt::ev_1>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
-      _dispatcher->publish<ev_0>(static_cast<uint16_t>(22));
-      _dispatcher->publish<ev_1>('z');
+      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<evt::ev_1>('z');
 
       std::this_thread::sleep_for(3s);
 
@@ -176,24 +175,24 @@ struct test_004 {
   test_004() { TNCT_LOG_TST("creating test_004"); }
   ~test_004() { TNCT_LOG_TST("destroying test_004"); }
   static std::string desc() {
-    return "'Dispatcher' as a local object, creating a publishing for ev_0, "
+    return "'Dispatcher' as a local object, creating a publishing for "
+           "evt::ev_0, "
            "publishing 1 event, and waiting for it to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
 
-    auto _publishing_id{_dispatcher->add_queue<ev_0>()};
+    auto _publishing_id{_dispatcher->add_queue<evt::ev_0>()};
 
-    _dispatcher->subscribe<ev_0>(_publishing_id, [](auto p_event) {
+    _dispatcher->subscribe<evt::ev_0>(_publishing_id, [](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
-      _dispatcher->publish<ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
 
       std::this_thread::sleep_for(3s);
 
@@ -211,32 +210,33 @@ struct test_005 {
   test_005() { TNCT_LOG_TST("creating test_005"); }
   ~test_005() { TNCT_LOG_TST("destroying test_005"); }
   static std::string desc() {
-    return "'Dispatcher' as a local object, creating publishing for ev_0, "
-           "publishing for ev_1, publishing 1 event ev_0, 1 event ev_1 and "
+    return "'Dispatcher' as a local object, creating publishing for evt::ev_0, "
+           "publishing for evt::ev_1, publishing 1 event evt::ev_0, 1 event "
+           "evt::ev_1 "
+           "and "
            "waiting for them to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
 
-    auto _publishing_id_0{_dispatcher->add_queue<ev_0>()};
-    auto _publishing_id_1{_dispatcher->add_queue<ev_1>()};
+    auto _publishing_id_0{_dispatcher->add_queue<evt::ev_0>()};
+    auto _publishing_id_1{_dispatcher->add_queue<evt::ev_1>()};
 
-    _dispatcher->subscribe<ev_0>(_publishing_id_0, [](auto p_event) {
+    _dispatcher->subscribe<evt::ev_0>(_publishing_id_0, [](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
-    _dispatcher->subscribe<ev_1>(_publishing_id_1, [](auto p_event) {
+    _dispatcher->subscribe<evt::ev_1>(_publishing_id_1, [](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
-      _dispatcher->publish<ev_0>(static_cast<uint16_t>(22));
-      _dispatcher->publish<ev_1>('z');
+      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<evt::ev_1>('z');
 
       std::this_thread::sleep_for(3s);
 
@@ -256,17 +256,16 @@ struct test_corner_000 {
            "waiting all to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
-    src::async::alg::dispatcher::ptr _dispatcher =
-        src::async::alg::dispatcher::create();
-    _dispatcher->subscribe<ev_0>([](auto p_event) {
+  bool operator()(const program::alg::options &) {
+    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
       for (uint16_t _i = 0; _i < 3; ++_i) {
-        _dispatcher->publish<ev_0>(_i);
+        _dispatcher->publish<evt::ev_0>(_i);
       }
 
       //      std::this_thread::sleep_for(100ms);
@@ -286,16 +285,16 @@ struct test_corner_001 {
            "waiting all to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
-    m_dispatcher->subscribe<ev_0>([](auto p_event) {
+    m_dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
       for (uint16_t _i = 0; _i < 200; ++_i) {
-        m_dispatcher->publish<ev_0>(_i);
+        m_dispatcher->publish<evt::ev_0>(_i);
       }
 
       std::this_thread::sleep_for(100ms);
@@ -309,28 +308,27 @@ struct test_corner_001 {
   }
 
 private:
-  src::async::alg::dispatcher::ptr m_dispatcher{
-      src::async::alg::dispatcher::create()};
+  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
 };
 
-src::async::alg::dispatcher::ptr s_dispatcher_test_corner_002{
-    src::async::alg::dispatcher::create()};
+async::alg::dispatcher::ptr s_dispatcher_test_corner_002{
+    async::alg::dispatcher::create()};
 struct test_corner_002 {
   static std::string desc() {
     return "'Dispatcher' as a global object, publishing 200 events, but not "
            "waiting all to be handled";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
-    s_dispatcher_test_corner_002->subscribe<ev_0>([](auto p_event) {
+    s_dispatcher_test_corner_002->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
     });
 
     try {
       for (uint16_t _i = 0; _i < 200; ++_i) {
-        s_dispatcher_test_corner_002->publish<ev_0>(_i);
+        s_dispatcher_test_corner_002->publish<evt::ev_0>(_i);
       }
 
       std::this_thread::sleep_for(100ms);
@@ -357,10 +355,9 @@ struct test_dispatcher {
     return _stream.str();
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
-      src::async::alg::dispatcher::ptr _dispatcher{
-          src::async::alg::dispatcher::create()};
+      async::alg::dispatcher::ptr _dispatcher{async::alg::dispatcher::create()};
 
       cfg::options _options{m_argc, m_argv};
 
@@ -382,29 +379,28 @@ private:
 
 int test_dispatcher::m_argc;
 char **test_dispatcher::m_argv;
-
-} // namespace tenacitas::lib::tst::async::alg
+} // namespace alg
 int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  src::log::alg::set_trace_level();
-  src::log::alg::set_max_file_name_lenght(20);
+  log::alg::set_trace_level();
+  log::alg::set_max_file_name_lenght(20);
 
-  src::program::alg::options _options;
+  program::alg::options _options;
 
-  tst::async::alg::test_dispatcher::setup(argc, argv);
+  alg::test_dispatcher::setup(argc, argv);
 
-  src::test::alg::tester _tester(argc, argv);
+  test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, tst::async::alg::test_dispatcher);
-  run_test(_tester, tst::async::alg::test_000);
-  run_test(_tester, tst::async::alg::test_001);
-  run_test(_tester, tst::async::alg::test_002);
-  run_test(_tester, tst::async::alg::test_003);
-  run_test(_tester, tst::async::alg::test_004);
-  run_test(_tester, tst::async::alg::test_005);
-  run_test(_tester, tst::async::alg::test_corner_000);
-  run_test(_tester, tst::async::alg::test_corner_001);
-  run_test(_tester, tst::async::alg::test_corner_002);
+  run_test(_tester, alg::test_dispatcher);
+  run_test(_tester, alg::test_000);
+  run_test(_tester, alg::test_001);
+  run_test(_tester, alg::test_002);
+  run_test(_tester, alg::test_003);
+  run_test(_tester, alg::test_004);
+  run_test(_tester, alg::test_005);
+  run_test(_tester, alg::test_corner_000);
+  run_test(_tester, alg::test_corner_001);
+  run_test(_tester, alg::test_corner_002);
 }

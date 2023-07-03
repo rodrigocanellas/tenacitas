@@ -43,7 +43,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::src::socket::alg {
+namespace tenacitas::lib::socket::alg {
 
 template <typ::link, typ::flow> struct passive_connector_t;
 
@@ -294,6 +294,6 @@ private:
   std::condition_variable m_cond_start;
 };
 
-} // namespace tenacitas::lib::src::socket::alg
+} // namespace tenacitas::lib::socket::alg
 
 #endif

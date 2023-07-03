@@ -21,12 +21,12 @@
 
 using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tst::async::bus {
+namespace bus {
 
 // pressure_generator
 struct pressure_generator {
 
-  pressure_generator(src::async::alg::dispatcher::ptr p_dispatcher,
+  pressure_generator(async::alg::dispatcher::ptr p_dispatcher,
                      typ::pressure p_initial, typ::generator p_generator)
       : m_dispatcher(p_dispatcher), m_pressure(p_initial),
         m_generator(p_generator) {}
@@ -40,7 +40,7 @@ struct pressure_generator {
 
   void start() {
     if (!m_ticker) {
-      m_ticker = std::make_unique<src::async::alg::sleeping_loop>(
+      m_ticker = std::make_unique<async::alg::sleeping_loop>(
           [this]() -> void { (*this)(); }, m_generator.interval);
     }
     m_ticker->start();
@@ -74,11 +74,11 @@ private:
   }
 
 private:
-  src::async::alg::dispatcher::ptr m_dispatcher;
+  async::alg::dispatcher::ptr m_dispatcher;
 
   typ::pressure m_pressure;
 
-  std::unique_ptr<src::async::alg::sleeping_loop> m_ticker;
+  std::unique_ptr<async::alg::sleeping_loop> m_ticker;
   typ::amount m_counter{0};
   typ::device_id m_device;
 
@@ -92,8 +92,7 @@ using storager = std::function<std::optional<typ::test_id>(
     typ::publishings_results &&p_publishings)>;
 
 struct pressure_tester {
-  pressure_tester(src::async::alg::dispatcher::ptr p_dispatcher,
-                  storager p_storager,
+  pressure_tester(async::alg::dispatcher::ptr p_dispatcher, storager p_storager,
                   const typ::generators_definitions &p_generator_definition,
                   const typ::publishings_definitions &p_publishing_definition)
       : m_dispatcher(p_dispatcher), m_storager(p_storager) {
@@ -159,7 +158,7 @@ struct pressure_tester {
 
 private:
   void add_publishing(uint16_t p_num_subscribers,
-                      src::calendar::cpt::convertible_to_ms auto p_sleep) {
+                      calendar::cpt::convertible_to_ms auto p_sleep) {
     auto _queue_id = m_dispatcher->add_queue<evt::pressure_generated>();
     m_summary.total_handled_expected += m_summary.total_sent_expected;
     TNCT_LOG_TST("p_num_subscribers = ", p_num_subscribers,
@@ -168,7 +167,7 @@ private:
     for (uint16_t _i = 0; _i < p_num_subscribers; ++_i) {
       ++m_num_subscribers;
 
-      src::number::typ::id _subscriber_id;
+      number::typ::id _subscriber_id;
 
       m_publishings_results[_queue_id] =
           typ::publishing_results{p_sleep, typ::subscribers_results{}};
@@ -204,7 +203,7 @@ private:
 
   void add_generator(typ::time p_interval, typ::pressure p_initial,
                      typ::amount p_amount) {
-    typ::generator _generator{src::number::typ::id{}, p_amount, p_interval};
+    typ::generator _generator{number::typ::id{}, p_amount, p_interval};
     m_generators.push_back(_generator);
     m_pressure_generators.push_back({m_dispatcher, p_initial, _generator});
     m_summary.total_sent_expected += p_amount;
@@ -303,7 +302,7 @@ private:
   void report_summary() { TNCT_LOG_INF("summary: ", m_summary); }
 
 private:
-  src::async::alg::dispatcher::ptr m_dispatcher;
+  async::alg::dispatcher::ptr m_dispatcher;
   storager m_storager;
   pressure_generators m_pressure_generators;
   typ::generators m_generators;
@@ -322,7 +321,7 @@ private:
 struct processor {
   processor(storager &&p_sto) : m_sto(p_sto) {}
 
-  bool operator()(src::async::alg::dispatcher::ptr p_dispatcher,
+  bool operator()(async::alg::dispatcher::ptr p_dispatcher,
                   const typ::generators_definitions &p_generator,
                   const typ::publishings_definitions &p_publishing) {
     TNCT_LOG_TST("generators definitions: ", p_generator);
@@ -337,6 +336,6 @@ private:
   storager m_sto;
 };
 
-} // namespace tenacitas::lib::tst::async::bus
+} // namespace bus
 
 #endif // BUS_H

@@ -18,16 +18,16 @@
 #include <vector>
 
 #include <tenacitas.lib/src/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/communication/alg/channel.h>
 #include <tenacitas.lib/src/communication/alg/message.h>
 #include <tenacitas.lib/src/communication/cpt/concepts.h>
 #include <tenacitas.lib/src/communication/evt/new_connection.h>
 #include <tenacitas.lib/src/communication/evt/send_timeout.h>
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/number/typ/id.h>
 
-using namespace tenacitas::lib::src;
+using namespace tenacitas::lib;
 using namespace std::chrono_literals;
 
 struct event_a {
@@ -71,8 +71,8 @@ int main() {
   {
     constexpr communication::typ::channel_id _channel_id{12};
     using channel = communication::alg::channel<_channel_id, std::string, io_s,
-                                            std::tuple<serializer_a_s>,
-                                            std::tuple<deserializer_a_s>>;
+                                                std::tuple<serializer_a_s>,
+                                                std::tuple<deserializer_a_s>>;
 
     _dispatcher->subscribe<communication::evt::send_timeout<std::string>>(
         [](auto p_event) {

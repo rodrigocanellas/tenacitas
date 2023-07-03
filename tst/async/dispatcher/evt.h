@@ -13,7 +13,7 @@
 #include <tenacitas.lib/src/number/typ/uuid.h>
 #include <tenacitas.lib/tst/async/dispatcher/typ.h>
 
-namespace tenacitas::lib::tst::async::evt {
+namespace evt {
 
 struct pressure_generated {
   pressure_generated() = default;
@@ -21,7 +21,7 @@ struct pressure_generated {
   pressure_generated(pressure_generated &&) = default;
   pressure_generated &operator=(const pressure_generated &) = default;
   pressure_generated &operator=(pressure_generated &&) = default;
-  explicit pressure_generated(src::number::typ::id p_generator,
+  explicit pressure_generated(number::typ::id p_generator,
                               typ::pressure p_value = 1.5)
       : m_generator(p_generator), m_pressure(p_value) {}
 
@@ -36,7 +36,7 @@ struct pressure_generated {
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const pressure_generated &p_pressure) {
     p_out << "'generated (" << p_pressure.m_generator << ','
-          << src::number::alg::format(p_pressure.m_pressure) << ")'";
+          << number::alg::format(p_pressure.m_pressure) << ")'";
     return p_out;
   }
 
@@ -61,13 +61,13 @@ struct pressure_generated {
   }
 
 private:
-  src::number::typ::id m_generator;
+  number::typ::id m_generator;
   typ::pressure m_pressure{0};
 };
 
 struct pressure_sent {
   pressure_sent() = default;
-  pressure_sent(src::number::typ::id p_generator) : m_generator(p_generator) {}
+  pressure_sent(number::typ::id p_generator) : m_generator(p_generator) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const pressure_sent &p_pressure_sent) {
@@ -76,14 +76,13 @@ struct pressure_sent {
   }
 
 private:
-  src::number::typ::id m_generator;
+  number::typ::id m_generator;
 };
 
 struct pressure_handled {
   pressure_handled() = default;
 
-  pressure_handled(src::async::typ::queue_id p_queue,
-                   src::number::typ::id p_subscriber)
+  pressure_handled(async::typ::queue_id p_queue, number::typ::id p_subscriber)
       : queue(p_queue), subscriber(p_subscriber) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -93,11 +92,11 @@ struct pressure_handled {
     return p_out;
   }
 
-  src::async::typ::queue_id queue;
+  async::typ::queue_id queue;
 
-  src::number::typ::id subscriber;
+  number::typ::id subscriber;
 };
 
-} // namespace tenacitas::lib::tst::async::evt
+} // namespace evt
 
 #endif // EVT_H

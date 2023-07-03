@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <iostream>
 
-namespace tenacitas::lib::src::log::typ {
+namespace tenacitas::lib::log::typ {
 /// \brief Defines the possible log levels
 enum class level : int8_t {
   test = -2,
@@ -56,6 +56,6 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
   return p_out;
 }
 
-} // namespace tenacitas::lib::src::log::typ
+} // namespace tenacitas::lib::log::typ
 
 #endif

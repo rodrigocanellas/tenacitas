@@ -19,15 +19,16 @@
 #include <tenacitas.lib/src/test/alg/tester.h>
 
 using namespace std::chrono_literals;
+using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tst::async::alg {
+namespace alg {
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
-    using loop = src::async::alg::sleeping_loop;
+    using loop = async::alg::sleeping_loop;
 
     auto _operation = []() -> void { TNCT_LOG_DEB("loop1"); };
 
@@ -38,7 +39,7 @@ struct sleeping_loop_000 {
 };
 
 struct sleeping_loop_001 {
-  using loop = src::async::alg::sleeping_loop;
+  using loop = async::alg::sleeping_loop;
 
   typedef uint16_t value;
 
@@ -51,7 +52,7 @@ struct sleeping_loop_001 {
     return _stream.str();
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
     operation1 _op(&m_cond);
 
@@ -108,7 +109,7 @@ private:
   static constexpr std::chrono::milliseconds m_sleep{200};
 };
 
-} // namespace tenacitas::lib::tst::async::alg
+} // namespace alg
 // struct sleeping_loop_002 {
 //    static std::string desc() { return ""; }
 
@@ -191,10 +192,10 @@ private:
 int main(int argc, char **argv) {
   using namespace tenacitas::lib;
 
-  src::log::alg::set_debug_level();
+  log::alg::set_debug_level();
 
-  src::test::alg::tester<> _tester(argc, argv);
+  test::alg::tester<> _tester(argc, argv);
 
-  run_test(_tester, tst::async::alg::sleeping_loop_000);
-  run_test(_tester, tst::async::alg::sleeping_loop_001);
+  run_test(_tester, alg::sleeping_loop_000);
+  run_test(_tester, alg::sleeping_loop_001);
 }

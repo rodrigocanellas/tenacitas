@@ -23,7 +23,7 @@
 #include <tenacitas.lib/src/communication/internal/evt/send_msg.h>
 #include <tenacitas.lib/src/traits/alg/tuple.h>
 
-namespace tenacitas::lib::src::communication::internal::alg {
+namespace tenacitas::lib::communication::internal::alg {
 
 template <communication::typ::channel_id t_channel_id, cpt::message t_message,
           cpt::io<t_message> t_io, cpt::serializers<t_message> t_serializers>
@@ -117,6 +117,6 @@ private:
   t_io &m_io;
   t_serializers m_serializers;
 };
-} // namespace tenacitas::lib::src::communication::internal::alg
+} // namespace tenacitas::lib::communication::internal::alg
 
 #endif

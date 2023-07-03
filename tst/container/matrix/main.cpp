@@ -15,15 +15,17 @@
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/test/alg/tester.h>
 
-namespace tenacitas::lib::tst::container::alg {
+using namespace tenacitas::lib;
+
+namespace alg {
 
 struct test_000 {
   static std::string desc() {
     return "simple square matrix creation and element access";
   }
 
-  bool operator()(const src::program::alg::options &) {
-    using namespace src::container::typ;
+  bool operator()(const program::alg::options &) {
+    using namespace container::typ;
 
     matrix<uint16_t, char> _matrix(3, 3, 'z');
 
@@ -44,8 +46,8 @@ struct test_001 {
     return "create square matrix, modify and element access";
   }
 
-  bool operator()(const src::program::alg::options &) {
-    using namespace src::container::typ;
+  bool operator()(const program::alg::options &) {
+    using namespace container::typ;
 
     matrix<uint16_t, char> _matrix(3, 3, 'z');
 
@@ -77,8 +79,8 @@ struct test_002 {
     return "create non square matrix creation, fill it, and element access";
   }
 
-  bool operator()(const src::program::alg::options &) {
-    using namespace src::container::typ;
+  bool operator()(const program::alg::options &) {
+    using namespace container::typ;
 
     matrix<uint16_t, int16_t> _matrix(3, 4, -1);
 
@@ -116,8 +118,8 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "test filling horizontally"; }
 
-  bool operator()(const src::program::alg::options &) {
-    using namespace src::container::typ;
+  bool operator()(const program::alg::options &) {
+    using namespace container::typ;
     matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
@@ -137,8 +139,8 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "test filling vertically"; }
 
-  bool operator()(const src::program::alg::options &) {
-    using namespace src::container::typ;
+  bool operator()(const program::alg::options &) {
+    using namespace container::typ;
     matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
@@ -155,14 +157,14 @@ struct test_004 {
   }
 };
 
-} // namespace tenacitas::lib::tst::container::alg
+} // namespace alg
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
-  lib::src::test::alg::tester _tester(argc, argv);
-  run_test(_tester, lib::tst::container::alg::test_000);
-  run_test(_tester, lib::tst::container::alg::test_001);
-  run_test(_tester, lib::tst::container::alg::test_002);
-  run_test(_tester, lib::tst::container::alg::test_003);
-  run_test(_tester, lib::tst::container::alg::test_004);
+  lib::test::alg::tester _tester(argc, argv);
+  run_test(_tester, alg::test_000);
+  run_test(_tester, alg::test_001);
+  run_test(_tester, alg::test_002);
+  run_test(_tester, alg::test_003);
+  run_test(_tester, alg::test_004);
 }

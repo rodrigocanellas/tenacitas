@@ -12,7 +12,7 @@
 
 #include <tenacitas.lib/src/number/typ/id.h>
 
-namespace tenacitas::lib::src::async::typ {
+namespace tenacitas::lib::async::typ {
 /// \brief Defines the priority of an event publishing among other publishings for
 /// that event. The smallest the value, the lowest the priority
 enum class priority : uint8_t {
@@ -53,6 +53,6 @@ inline std::ostream &operator<<(std::ostream &p_out, priority p_priority) {
   return p_out;
 }
 
-} // namespace tenacitas::lib::src::async::typ
+} // namespace tenacitas::lib::async::typ
 
 #endif

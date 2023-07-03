@@ -13,7 +13,7 @@
 
 #include <sqlite3.h>
 
-namespace tenacitas::lib::tst::async::sto {
+namespace sto {
 
 /*
 BEGIN TRANSACTION;
@@ -50,8 +50,6 @@ CREATE TABLE IF NOT EXISTS "generators" (
 );
 COMMIT;
 */
-
-namespace {} // namespace
 
 struct saver {
   saver(const cfg::options &p_cfg) : m_sqlite_name(p_cfg.get_sqlite_file()) {}
@@ -234,7 +232,7 @@ private:
     }
   }
 
-  void save_subscribers(src::async::typ::queue_id p_publishing_id,
+  void save_subscribers(async::typ::queue_id p_publishing_id,
                         const typ::subscribers_results &p_subscribers) {
     for (const typ::subscribers_results::value_type &_value : p_subscribers) {
       std::stringstream _stream;
@@ -262,7 +260,7 @@ private:
 
   void save_publishings(const typ::publishings_results &p_publishings) {
     for (const typ::publishings_results::value_type &_value : p_publishings) {
-      src::async::typ::queue_id _publishing_id = _value.first;
+      async::typ::queue_id _publishing_id = _value.first;
       std::stringstream _stream;
       _stream << "insert into publishings (test_id, typ::publishing_id, sleep) "
                  "values ("
@@ -309,6 +307,6 @@ private:
   typ::test_id m_test_id{0};
 }; // namespace sto
 
-} // namespace tenacitas::lib::tst::async::sto
+} // namespace sto
 
 #endif // STO_H

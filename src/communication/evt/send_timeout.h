@@ -12,7 +12,7 @@
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
 #include <tenacitas.lib/src/communication/typ/connection_id.h>
 
-namespace tenacitas::lib::src::communication::evt {
+namespace tenacitas::lib::communication::evt {
 
 template <cpt::message t_message> struct send_timeout {
   send_timeout() = default;
@@ -32,6 +32,6 @@ template <cpt::message t_message> struct send_timeout {
   t_message message;
 };
 
-} // namespace tenacitas::lib::src::communication::evt
+} // namespace tenacitas::lib::communication::evt
 
 #endif

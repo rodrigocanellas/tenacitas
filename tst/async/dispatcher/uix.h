@@ -25,11 +25,11 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::tst::async::uix {
+namespace uix {
 
 bool start(const cfg::options &p_options,
-           src::async::alg::dispatcher::ptr p_dispatcher,
-           std::function<bool(src::async::alg::dispatcher::ptr,
+           async::alg::dispatcher::ptr p_dispatcher,
+           std::function<bool(async::alg::dispatcher::ptr,
                               const typ::generators_definitions &,
                               const typ::publishings_definitions &)>
                p_bus) {
@@ -89,6 +89,6 @@ bool start(const cfg::options &p_options,
   return true;
 }
 
-} // namespace tenacitas::lib::tst::async::uix
+} // namespace uix
 
 #endif // UIX_H

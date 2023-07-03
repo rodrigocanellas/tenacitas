@@ -20,10 +20,12 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::tst::async::typ {
+using namespace tenacitas::lib;
+
+namespace typ {
 
 using test_id = uint32_t;
-using device_id = src::number::typ::id;
+using device_id = number::typ::id;
 using pressure = float;
 
 using total = uint32_t;
@@ -129,7 +131,7 @@ struct publishings_definitions {
 
 struct generator {
   generator() = default;
-  generator(src::number::typ::id p_id, amount p_generated, time p_interval)
+  generator(number::typ::id p_id, amount p_generated, time p_interval)
       : id(p_id), to_generate(p_generated), interval(p_interval) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -140,14 +142,14 @@ struct generator {
     return p_out;
   }
 
-  src::number::typ::id id;
+  number::typ::id id;
   amount to_generate{0};
   time interval{0ms};
 };
 
 using generators = std::list<generator>;
 
-using subscribers_results = std::map<src::number::typ::id, total>;
+using subscribers_results = std::map<number::typ::id, total>;
 
 struct publishing_results {
   publishing_results() = default;
@@ -160,6 +162,6 @@ struct publishing_results {
 
 using publishings_results = std::map<size_t, publishing_results>;
 
-} // namespace tenacitas::lib::tst::async::typ
+} // namespace typ
 
 #endif // DAT_H

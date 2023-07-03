@@ -9,7 +9,7 @@
 #include <exception>
 #include <optional>
 
-namespace tenacitas::lib::src::math::alg {
+namespace tenacitas::lib::math::alg {
 
 template <typename t_ret, typename t_val>
 std::optional<t_ret> factorial(t_val p_val) {
@@ -23,5 +23,5 @@ std::optional<t_ret> factorial(t_val p_val) {
   return {ret};
 }
 
-} // namespace tenacitas::lib::src::math::alg
+} // namespace tenacitas::lib::math::alg
 #endif

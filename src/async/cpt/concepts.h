@@ -12,7 +12,7 @@
 #include <functional>
 #include <iostream>
 
-namespace tenacitas::lib::src::async::cpt {
+namespace tenacitas::lib::async::cpt {
 
 // template <class t>
 // concept printable = requires(std::ostream &os, t p_t) {
@@ -26,6 +26,6 @@ concept event = requires(t p_t) {
   std::move_constructible<t>;
 };
 
-} // namespace tenacitas::lib::src::async::cpt
+} // namespace tenacitas::lib::async::cpt
 
 #endif

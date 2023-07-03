@@ -28,7 +28,7 @@ using namespace std;
 int main() {
   try {
 
-    using namespace tenacitas::lib::src::program;
+    using namespace tenacitas::lib::program;
     using namespace std;
 
     const char *argv[] = {"pgm-name", "--set_1",    "{",

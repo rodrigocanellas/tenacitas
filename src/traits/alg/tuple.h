@@ -9,7 +9,7 @@
 #include <tuple>
 
 /// \brief master namespace
-namespace tenacitas::lib::src::traits::alg {
+namespace tenacitas::lib::traits::alg {
 
 /// \brief Type trait that identifies if a type is not a tuple
 template <typename> struct is_tuple : std::false_type {};
@@ -35,6 +35,6 @@ struct index<t, std::tuple<u, t_types...>> {
 template <typename t, typename... t_types>
 constexpr std::size_t index_v = index<t, t_types...>::value;
 
-} // namespace tenacitas::lib::src::traits::alg
+} // namespace tenacitas::lib::traits::alg
 
 #endif // TUPLE_H

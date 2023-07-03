@@ -15,7 +15,6 @@
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::tst::async::typ {
 struct a {
   int i{-3};
   friend std::ostream &operator<<(std::ostream &p_out, const a &p_a) {
@@ -42,15 +41,12 @@ struct d {
   }
 };
 
-} // namespace tenacitas::lib::tst::async::typ
-
-namespace tenacitas::lib::tst::async::alg {
 struct test002 {
   static std::string desc() {
     return "causes a compiler error due to unsatisfied 'printable' concept";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
     // UNCOMENT THE LINES BELOW TO SEE A COMPILER ERROR BECAUSE 'b' does not
     // implement <<
@@ -58,12 +54,11 @@ struct test002 {
     return true;
   }
 };
-} // namespace tenacitas::lib::tst::async::alg
 
 int main(int argc, char **argv) {
 
-  src::log::alg::set_debug_level();
-  src::test::alg::tester _tester(argc, argv);
+  log::alg::set_debug_level();
+  test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, tst::async::alg::test002);
+  run_test(_tester, test002);
 }

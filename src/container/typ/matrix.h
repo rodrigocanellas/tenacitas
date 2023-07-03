@@ -10,7 +10,7 @@
 #include <iostream>
 #include <memory>
 
-namespace tenacitas::lib::src::container::typ {
+namespace tenacitas::lib::container::typ {
 
 template <typename t_int, typename t_data> struct matrix {
   matrix() = default;
@@ -86,6 +86,6 @@ private:
   std::unique_ptr<t_data> m_vec;
 };
 
-} // namespace tenacitas::lib::src::container::typ
+} // namespace tenacitas::lib::container::typ
 
 #endif

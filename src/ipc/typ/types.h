@@ -24,7 +24,7 @@
 #include <tenacitas/lib/async/typ/message.h>
 #include <tenacitas/lib/number/typ/id.h>
 
-namespace tenacitas::lib::src::socket::typ {
+namespace tenacitas::lib::socket::typ {
 
 enum class link : uint8_t { UNIX, IPV4, IPV6, BLUETOOTH };
 
@@ -174,6 +174,6 @@ struct read_traits<message_size::DELIMITED, t_buffer_size> {
 //  using buffer = typ::buffer<t_buffer_size>;
 //};
 
-} // namespace tenacitas::lib::src::socket::typ
+} // namespace tenacitas::lib::socket::typ
 
 #endif

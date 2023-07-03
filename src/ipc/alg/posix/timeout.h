@@ -15,7 +15,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::src::socket::alg {
+namespace tenacitas::lib::socket::alg {
 
 /// \brief Checks if an operation on a socket is avaiable within a certain time
 /// \return tenacitas::lib::socket::typ::status::ERROR_TIMEOUT if not
@@ -48,6 +48,6 @@ inline typ::status timeout(int p_socket, t_time p_time) {
   }
 }
 
-} // namespace tenacitas::lib::src::socket::alg
+} // namespace tenacitas::lib::socket::alg
 
 #endif

@@ -11,10 +11,12 @@
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/test/alg/tester.h>
 
-namespace tenacitas::lib::tst::log::alg {
+using namespace tenacitas::lib;
+
+namespace alg {
 
 struct cerr_log_how_to {
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
       TNCT_LOG_DEB("hello! ", 309);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
@@ -38,9 +40,9 @@ struct cerr_log_how_to {
 };
 
 struct clog_how_to {
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
-      using namespace tenacitas::lib::src;
+
       TNCT_LOG_DEB("teste de clog para debug ", -345, ' ', 19023, ' ', 'W', ' ',
                    3.1415);
       TNCT_LOG_INF("teste de clog para debug ", -345, ' ', 19023, ' ', 'W', ' ',
@@ -64,7 +66,7 @@ struct clog_how_to {
 };
 
 struct cout_log_how_to {
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
@@ -85,7 +87,7 @@ struct cout_log_how_to {
 struct cout_log_print_tuple {
   static std::string desc() { return "Prints a tuple"; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
       std::tuple<int16_t, float> _tuple{-3, 3.14};
 
@@ -102,9 +104,9 @@ struct cout_log_print_tuple {
 struct file_log {
   static std::string desc() { return "Testing logging into a file."; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
-      src::log::alg::set_file_writer("test_logger", 150);
+      log::alg::set_file_writer("test_logger", 150);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
       TNCT_LOG_INF("and you?");
@@ -117,19 +119,19 @@ struct file_log {
     return false;
   }
 };
-} // namespace tenacitas::lib::tst::log::alg
+} // namespace alg
 
 int main(int argc, char **argv) {
 
   using namespace tenacitas;
 
-  lib::src::log::alg::set_writer_cerr();
-  lib::src::log::alg::set_debug_level();
-  lib::src::test::alg::tester _tester(argc, argv);
+  lib::log::alg::set_writer_cerr();
+  lib::log::alg::set_debug_level();
+  lib::test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, lib::tst::log::alg::cout_log_how_to);
-  run_test(_tester, lib::tst::log::alg::cout_log_print_tuple);
-  run_test(_tester, lib::tst::log::alg::clog_how_to);
-  run_test(_tester, lib::tst::log::alg::cerr_log_how_to);
-  run_test(_tester, lib::tst::log::alg::file_log);
+  run_test(_tester, alg::cout_log_how_to);
+  run_test(_tester, alg::cout_log_print_tuple);
+  run_test(_tester, alg::clog_how_to);
+  run_test(_tester, alg::cerr_log_how_to);
+  run_test(_tester, alg::file_log);
 }

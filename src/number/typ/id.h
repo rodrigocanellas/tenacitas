@@ -21,7 +21,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::src::number::typ {
+namespace tenacitas::lib::number::typ {
 
 template <cpt::id t_id> t_id create() {
   return static_cast<t_id>(
@@ -104,6 +104,6 @@ private:
   size_t m_value{0};
 };
 
-} // namespace tenacitas::lib::src::number::typ
+} // namespace tenacitas::lib::number::typ
 
 #endif

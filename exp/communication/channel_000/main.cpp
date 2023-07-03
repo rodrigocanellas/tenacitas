@@ -18,16 +18,16 @@
 #include <vector>
 
 #include <tenacitas.lib/src/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/communication/alg/channel.h>
 #include <tenacitas.lib/src/communication/alg/message.h>
 #include <tenacitas.lib/src/communication/cpt/concepts.h>
 #include <tenacitas.lib/src/communication/evt/new_connection.h>
 #include <tenacitas.lib/src/communication/evt/send_timeout.h>
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/number/typ/id.h>
 
-using namespace tenacitas::lib::src;
+using namespace tenacitas::lib;
 using namespace std::chrono_literals;
 
 using fixed_message = std::array<std::byte, 2>;
@@ -72,7 +72,7 @@ int main() {
     constexpr communication::typ::channel_id _channel_id{12};
     using channel =
         communication::alg::channel<_channel_id, fixed_message, io_f,
-                                std::tuple<serializer_a_f>, std::tuple<>>;
+                                    std::tuple<serializer_a_f>, std::tuple<>>;
 
     _dispatcher->subscribe<communication::evt::send_timeout<fixed_message>>(
         [](auto p_event) {

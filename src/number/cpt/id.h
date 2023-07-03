@@ -8,12 +8,12 @@
 
 #include <concepts>
 
-namespace tenacitas::lib::src::number::cpt {
+namespace tenacitas::lib::number::cpt {
 
 template <typename t>
 concept id =
     std::unsigned_integral<std::remove_const_t<std::remove_reference_t<t>>>;
 
-} // namespace tenacitas::lib::src::number::cpt
+} // namespace tenacitas::lib::number::cpt
 
 #endif

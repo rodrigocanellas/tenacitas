@@ -22,7 +22,7 @@
 #include <tenacitas.lib/src/traits/alg/traits.h>
 
 /// \brief master namespace
-namespace tenacitas::lib::src::log::alg {
+namespace tenacitas::lib::log::alg {
 
 /// \brief internal types, objects and functions
 namespace internal {
@@ -429,5 +429,5 @@ typename wrapper<use>::writer wrapper<use>::m_writer{
 template <bool use> typ::level wrapper<use>::g_level{typ::level::warn};
 
 } // namespace internal
-} // namespace tenacitas::lib::src::log::alg
+} // namespace tenacitas::lib::log::alg
 #endif

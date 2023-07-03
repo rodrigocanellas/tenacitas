@@ -22,7 +22,7 @@
 #include <tenacitas.lib/src/conversions/typ/result.h>
 #include <tenacitas.lib/src/conversions/typ/separator.h>
 
-namespace tenacitas::lib::src::conversions::alg::internal {
+namespace tenacitas::lib::conversions::alg::internal {
 
 template <typename t_int> struct next_int;
 
@@ -719,6 +719,6 @@ std::pair<std::unique_ptr<std::string>, t_to> to_integer(
 //  }
 //  return {nullptr, _result};
 //}
-} // namespace tenacitas::lib::src::conversions::alg::internal
+} // namespace tenacitas::lib::conversions::alg::internal
 
 #endif

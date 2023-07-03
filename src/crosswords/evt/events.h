@@ -12,7 +12,7 @@
 #include <tenacitas.lib/src/async/alg/dispatcher.h>
 #include <tenacitas.lib/src/crosswords/typ/grid.h>
 
-namespace tenacitas::lib::src::crosswords::evt {
+namespace tenacitas::lib::crosswords::evt {
 
 /// \brief Published when a new grid be assembled
 struct new_grid_to_organize {
@@ -74,6 +74,6 @@ struct new_attempt {
   uint64_t number{0};
 };
 
-} // namespace tenacitas::lib::src::crosswords::evt
+} // namespace tenacitas::lib::crosswords::evt
 
 #endif

@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <iostream>
 
-namespace tenacitas::lib::src::conversions::typ {
+namespace tenacitas::lib::conversions::typ {
 enum class base : uint8_t { b2 = 2, b8 = 8, b10 = 10, b16 = 16 };
 
 std::ostream &operator<<(std::ostream &p_out, const base &p_base) {
@@ -31,6 +31,6 @@ std::ostream &operator<<(std::ostream &p_out, const base &p_base) {
   return p_out;
 }
 
-} // namespace tenacitas::lib::src::conversions::typ
+} // namespace tenacitas::lib::conversions::typ
 
 #endif

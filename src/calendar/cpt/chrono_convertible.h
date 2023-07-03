@@ -10,7 +10,7 @@
 #include <concepts>
 #include <iostream>
 
-namespace tenacitas::lib::src::calendar::cpt {
+namespace tenacitas::lib::calendar::cpt {
 
 template <typename t_to, typename t_from>
 concept chrono_convertible = requires(t_from p_time) {
@@ -25,6 +25,6 @@ template <typename t_from>
 concept convertible_to_ns =
     chrono_convertible<std::chrono::nanoseconds, t_from>;
 
-} // namespace tenacitas::lib::src::calendar::cpt
+} // namespace tenacitas::lib::calendar::cpt
 
 #endif

@@ -23,7 +23,7 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-  using namespace tenacitas::lib::src::program;
+  using namespace tenacitas::lib::program;
 
   try {
     alg::options _pgm_options;

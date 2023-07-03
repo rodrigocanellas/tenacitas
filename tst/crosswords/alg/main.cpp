@@ -16,7 +16,8 @@
 #include <tenacitas.lib/src/program/alg/options.h>
 #include <tenacitas.lib/src/test/alg/tester.h>
 
-namespace tenacitas::lib::tst::crosswords::alg {
+using namespace tenacitas::lib;
+namespace alg {
 
 template <typename t_first, typename t_second>
 std::string print(const std::vector<std::pair<t_first, t_second>> &p_vector) {
@@ -34,19 +35,18 @@ struct test_000 {
     return "organizing 'entries' with one entry in a 'grid' not big enough";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
     try {
-      src::crosswords::typ::entries _entries{{"open", "expl 1"}};
+      crosswords::typ::entries _entries{{"open", "expl 1"}};
 
-      src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+      crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-      src::crosswords::typ::permutation _permutation;
+      crosswords::typ::permutation _permutation;
       _permutation.push_back(_begin);
 
-      src::crosswords::typ::grid _grid(_permutation,
-                                       src::crosswords::typ::index{2},
-                                       src::crosswords::typ::index{3});
+      crosswords::typ::grid _grid(_permutation, crosswords::typ::index{2},
+                                  crosswords::typ::index{3});
 
     } catch (std::exception &_ex) {
       TNCT_LOG_TST(_ex.what());
@@ -63,22 +63,20 @@ struct test_001 {
     return "organizing 'entries' with one entry in a 'grid'";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{8});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{8});
 
-    src::crosswords::bus::internal::first_word_positioner
-        _first_word_positioner;
+    crosswords::bus::internal::first_word_positioner _first_word_positioner;
 
     bool _stop{false};
 
@@ -88,8 +86,7 @@ struct test_001 {
 
     auto _layout{_grid.begin()};
 
-    return (_layout->get_orientation() ==
-            src::crosswords::typ::orientation::hori) &&
+    return (_layout->get_orientation() == crosswords::typ::orientation::hori) &&
            (_layout->get_row() == 0) && (_layout->get_col() == 0) &&
            _grid.organized();
   }
@@ -100,20 +97,20 @@ struct test_003 {
     return "Find intersection between 'open' and 'never'";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
     bool _stop{false};
-    auto _vector = src::crosswords::bus::internal::find_intersections(
-        _stop, "open", "never");
+    auto _vector =
+        crosswords::bus::internal::find_intersections(_stop, "open", "never");
     if (_vector.empty()) {
       TNCT_LOG_ERR("intersect not found");
       return false;
     }
 
     TNCT_LOG_TST("intersect found: ", print(_vector));
-    return (_vector[0] == src::crosswords::typ::coordinate{1, 2}) &&
-           (_vector[1] == src::crosswords::typ::coordinate{3, 2}) &&
-           (_vector[2] == src::crosswords::typ::coordinate{0, 3});
+    return (_vector[0] == crosswords::typ::coordinate{1, 2}) &&
+           (_vector[1] == crosswords::typ::coordinate{3, 2}) &&
+           (_vector[2] == crosswords::typ::coordinate{0, 3});
   }
 };
 
@@ -122,11 +119,11 @@ struct test_004 {
     return "Do not find intersection between 'open' and 'black'";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
     bool _stop{false};
-    auto _vector = src::crosswords::bus::internal::find_intersections(
-        _stop, "open", "black");
+    auto _vector =
+        crosswords::bus::internal::find_intersections(_stop, "open", "black");
     if (!_vector.empty()) {
       TNCT_LOG_ERR("intersect found: ", print(_vector));
       return false;
@@ -141,17 +138,17 @@ struct test_005 {
     return "Find intersection between 'open' and 'old'";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
     bool _stop{false};
-    auto _vector = src::crosswords::bus::internal::find_intersections(
-        _stop, "open", "old");
+    auto _vector =
+        crosswords::bus::internal::find_intersections(_stop, "open", "old");
     if (_vector.empty()) {
       TNCT_LOG_ERR("intersect not found");
       return false;
     }
     TNCT_LOG_TST("intersect found: ", print(_vector));
-    return (_vector[0] == src::crosswords::typ::coordinate{0, 0});
+    return (_vector[0] == crosswords::typ::coordinate{0, 0});
   }
 };
 
@@ -160,17 +157,17 @@ struct test_006 {
     return "Find intersection between 'open' and 'abcn'";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
     bool _stop{false};
-    auto _vector = src::crosswords::bus::internal::find_intersections(
-        _stop, "open", "abcn");
+    auto _vector =
+        crosswords::bus::internal::find_intersections(_stop, "open", "abcn");
     if (_vector.empty()) {
       TNCT_LOG_ERR("intersect not found");
       return false;
     }
     TNCT_LOG_TST("intersect found: ", print(_vector));
-    return (_vector[0] == src::crosswords::typ::coordinate{3, 3});
+    return (_vector[0] == crosswords::typ::coordinate{3, 3});
   }
 };
 
@@ -180,31 +177,28 @@ struct test_007 {
            "it reaches maximum number of cols";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{5},
-                                     src::crosswords::typ::index{11});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{5},
+                                crosswords::typ::index{11});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{1},
-              src::crosswords::typ::index{8},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(_grid.begin(), crosswords::typ::index{1},
+              crosswords::typ::index{8}, crosswords::typ::orientation::vert);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_horizontally(
+    return !crosswords::bus::internal::position_horizontally(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -215,31 +209,28 @@ struct test_007a {
            "first letter will be before column 0";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{5},
-                                     src::crosswords::typ::index{11});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{5},
+                                crosswords::typ::index{11});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(_grid.begin(), crosswords::typ::index{0},
+              crosswords::typ::index{0}, crosswords::typ::orientation::vert);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_horizontally(
+    return !crosswords::bus::internal::position_horizontally(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -250,35 +241,32 @@ struct test_008 {
            "because a position it would occupy it is occupied";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"open", "expl 1"}, {"never", "expl 2"}, {"extra", "expl 3"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
     _permutation.push_back(std::next(_begin, 2));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{5},
-                                     src::crosswords::typ::index{11});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{5},
+                                crosswords::typ::index{11});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{1},
-              src::crosswords::typ::orientation::vert);
-    _grid.set(std::next(_grid.begin(), 2), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{2},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(_grid.begin(), crosswords::typ::index{0},
+              crosswords::typ::index{1}, crosswords::typ::orientation::vert);
+    _grid.set(std::next(_grid.begin(), 2), crosswords::typ::index{0},
+              crosswords::typ::index{2}, crosswords::typ::orientation::vert);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_horizontally(
+    return !crosswords::bus::internal::position_horizontally(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -288,31 +276,28 @@ struct test_009 {
     return "Check that the word 'never' can be positioned horizontally";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{7},
-                                     src::crosswords::typ::index{11});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{7},
+                                crosswords::typ::index{11});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{4},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(_grid.begin(), crosswords::typ::index{0},
+              crosswords::typ::index{4}, crosswords::typ::orientation::vert);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    if (!src::crosswords::bus::internal::position_horizontally(
+    if (!crosswords::bus::internal::position_horizontally(
             _grid, {1, 2}, _grid.begin(), _layout)) {
       TNCT_LOG_ERR('\'', _layout->get_word(),
                    "' was not positioned, but it should have");
@@ -330,31 +315,28 @@ struct test_010 {
            "because it reaches maximum number of rows";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{5});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{5});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{8},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(_grid.begin(), crosswords::typ::index{8},
+              crosswords::typ::index{0}, crosswords::typ::orientation::hori);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_vertically(
+    return !crosswords::bus::internal::position_vertically(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -365,31 +347,28 @@ struct test_010a {
            "because its first letter would be before 0";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{5});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{5});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{1},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(_grid.begin(), crosswords::typ::index{0},
+              crosswords::typ::index{1}, crosswords::typ::orientation::hori);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_vertically(
+    return !crosswords::bus::internal::position_vertically(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -400,35 +379,32 @@ struct test_011 {
            "because a position it would occupy it is occupied";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"open", "expl 1"}, {"never", "expl 2"}, {"extra", "expl 3"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
     _permutation.push_back(std::next(_begin, 2));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{5});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{5});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{1},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::hori);
-    _grid.set(std::next(_grid.begin(), 2), src::crosswords::typ::index{2},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(_grid.begin(), crosswords::typ::index{1},
+              crosswords::typ::index{0}, crosswords::typ::orientation::hori);
+    _grid.set(std::next(_grid.begin(), 2), crosswords::typ::index{2},
+              crosswords::typ::index{0}, crosswords::typ::orientation::hori);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    return !src::crosswords::bus::internal::position_vertically(
+    return !crosswords::bus::internal::position_vertically(
         _grid, {1, 2}, _grid.begin(), _layout);
   }
 };
@@ -438,31 +414,28 @@ struct test_012 {
     return "Check that that word 'never' can be positioned vertically";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"open", "expl 1"},
-                                           {"never", "expl 2"}};
+    crosswords::typ::entries _entries{{"open", "expl 1"}, {"never", "expl 2"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{5});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{5});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{1},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(_grid.begin(), crosswords::typ::index{1},
+              crosswords::typ::index{0}, crosswords::typ::orientation::hori);
 
     TNCT_LOG_TST(_grid);
 
-    src::crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
+    crosswords::typ::grid::layout_ite _layout = std::next(_grid.begin());
 
-    if (!src::crosswords::bus::internal::position_vertically(
+    if (!crosswords::bus::internal::position_vertically(
             _grid, {1, 2}, _grid.begin(), _layout)) {
       TNCT_LOG_ERR('\'', _layout->get_word(),
                    "' was not positioned, but it should have");
@@ -479,37 +452,33 @@ struct test_013 {
            "with a positioned word";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"open", "expl 1"}, {"never", "expl 2"}, {"extra", "dummy"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
     _permutation.push_back(std::next(_begin, 2));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{11},
-                                     src::crosswords::typ::index{5});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{11},
+                                crosswords::typ::index{5});
 
-    src::crosswords::bus::internal::first_word_positioner
-        _first_word_positioner;
+    crosswords::bus::internal::first_word_positioner _first_word_positioner;
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{1},
-              src::crosswords::typ::index{0},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(_grid.begin(), crosswords::typ::index{1},
+              crosswords::typ::index{0}, crosswords::typ::orientation::hori);
 
-    _grid.set(std::next(_grid.begin(), 2), src::crosswords::typ::index{1},
-              src::crosswords::typ::index{2},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(std::next(_grid.begin(), 2), crosswords::typ::index{1},
+              crosswords::typ::index{2}, crosswords::typ::orientation::vert);
 
     TNCT_LOG_TST(_grid);
     bool _stop{false};
-    if (!src::crosswords::bus::internal::position(_stop, _grid, _grid.begin(),
-                                                  std::next(_grid.begin()))) {
+    if (!crosswords::bus::internal::position(_stop, _grid, _grid.begin(),
+                                             std::next(_grid.begin()))) {
       TNCT_LOG_ERR('\'', std::next(_grid.begin(), 1)->get_word(),
                    "' was not positioned, but it should have");
       return false;
@@ -527,34 +496,31 @@ struct test_014 {
            "with a positioned word";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"open", "expl 1"}, {"never", "expl 2"}, {"extra", "dummy"}};
 
-    src::crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
+    crosswords::typ::entries::const_entry_ite _begin{_entries.begin()};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_begin);
     _permutation.push_back(std::next(_begin));
     _permutation.push_back(std::next(_begin, 2));
 
-    src::crosswords::typ::grid _grid(_permutation,
-                                     src::crosswords::typ::index{5},
-                                     src::crosswords::typ::index{11});
+    crosswords::typ::grid _grid(_permutation, crosswords::typ::index{5},
+                                crosswords::typ::index{11});
 
-    _grid.set(_grid.begin(), src::crosswords::typ::index{0},
-              src::crosswords::typ::index{1},
-              src::crosswords::typ::orientation::vert);
+    _grid.set(_grid.begin(), crosswords::typ::index{0},
+              crosswords::typ::index{1}, crosswords::typ::orientation::vert);
 
-    _grid.set(std::next(_grid.begin(), 2), src::crosswords::typ::index{2},
-              src::crosswords::typ::index{1},
-              src::crosswords::typ::orientation::hori);
+    _grid.set(std::next(_grid.begin(), 2), crosswords::typ::index{2},
+              crosswords::typ::index{1}, crosswords::typ::orientation::hori);
 
     TNCT_LOG_TST(_grid);
     bool _stop{false};
-    if (!src::crosswords::bus::internal::position(_stop, _grid, _grid.begin(),
-                                                  std::next(_grid.begin()))) {
+    if (!crosswords::bus::internal::position(_stop, _grid, _grid.begin(),
+                                             std::next(_grid.begin()))) {
       TNCT_LOG_ERR('\'', std::next(_grid.begin(), 1)->get_word(),
                    "' was not positioned, but it should have");
       return false;
@@ -569,22 +535,21 @@ struct test_014 {
 struct test_015 {
   static std::string desc() { return "Organizes a simple grid"; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"mouth", "expl 1"}, {"open", "expl 2"}, {"never", "expl 3"}};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_entries.begin());
     _permutation.push_back(std::next(_entries.begin()));
     _permutation.push_back(std::next(_entries.begin(), 2));
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{11},
-        src::crosswords::typ::index{11})};
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
     if (_organize(_grid)) {
       TNCT_LOG_TST(*_grid);
       return true;
@@ -596,24 +561,22 @@ struct test_015 {
 struct test_016 {
   static std::string desc() { return "Fails to organizes grid not "; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"mouth", "expl 1"},
-                                           {"never", "expl 3"}};
+    crosswords::typ::entries _entries{{"mouth", "expl 1"}, {"never", "expl 3"}};
 
     TNCT_LOG_TST(_entries);
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_entries.begin());
     _permutation.push_back(std::next(_entries.begin()));
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{11},
-        src::crosswords::typ::index{11})};
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
       TNCT_LOG_TST("It was not possible to organize the grid, as expected");
@@ -629,36 +592,34 @@ struct test_017 {
     return "Organizes grid that will require the first word to be repositioned";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"mouth", "expl 1"},
-                                           {"xoxxxxxx", "expl 2"}};
+    crosswords::typ::entries _entries{{"mouth", "expl 1"},
+                                      {"xoxxxxxx", "expl 2"}};
 
-    src::crosswords::typ::permutation _permutation;
+    crosswords::typ::permutation _permutation;
     _permutation.push_back(_entries.begin());
     _permutation.push_back(std::next(_entries.begin()));
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{5},
-        src::crosswords::typ::index{8})};
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{5}, crosswords::typ::index{8})};
 
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
 
     if (_organize(_grid)) {
       TNCT_LOG_TST(*_grid);
 
-      src::crosswords::typ::grid::const_layout_ite _first = _grid->begin();
-      src::crosswords::typ::grid::const_layout_ite _second =
+      crosswords::typ::grid::const_layout_ite _first = _grid->begin();
+      crosswords::typ::grid::const_layout_ite _second =
           std::next(_grid->begin());
 
       return (_first->get_row() == 0) && (_first->get_col() == 1) &&
              (_first->get_orientation() ==
-              src::crosswords::typ::orientation::vert) &&
+              crosswords::typ::orientation::vert) &&
              (_second->get_row() == 1) && (_second->get_col() == 0) &&
-             (_second->get_orientation() ==
-              src::crosswords::typ::orientation::hori);
+             (_second->get_orientation() == crosswords::typ::orientation::hori);
     }
     return false;
   }
@@ -669,69 +630,67 @@ struct test_018 {
     return "Fails to organize because first two words do not intersect";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
-                                           {"debute", "expl debute"},
-                                           {"regis", "expl regis"},
-                                           {"gases", "expl gases"},
-                                           {"exumar", "expl exumar"},
-                                           {"dias", "expl dias"},
-                                           {"pai", "expl pai"},
-                                           {"lesante", "expl lesante"},
-                                           {"afunilar", "expl afunilar"},
-                                           {"ma", "expl ma"},
-                                           {"afunilar", "expl afunilar"},
-                                           {"atoba", "expl atoba"},
-                                           {"ot", "expl ot"},
-                                           {"viravira", "expl viravira"},
-                                           {"sideral", "expl sideral"},
-                                           {"gim", "expl gim"},
-                                           {"oval", "expl oval"},
-                                           {"rapina", "expl rapina"},
-                                           {"lados", "expl lados"},
-                                           {"rotor", "expl rotor"},
-                                           {"aresta", "aresta"},
-                                           {"poxa", "expl poxa"},
+    crosswords::typ::entries _entries{{"chat", "expl chat"},
+                                      {"debute", "expl debute"},
+                                      {"regis", "expl regis"},
+                                      {"gases", "expl gases"},
+                                      {"exumar", "expl exumar"},
+                                      {"dias", "expl dias"},
+                                      {"pai", "expl pai"},
+                                      {"lesante", "expl lesante"},
+                                      {"afunilar", "expl afunilar"},
+                                      {"ma", "expl ma"},
+                                      {"afunilar", "expl afunilar"},
+                                      {"atoba", "expl atoba"},
+                                      {"ot", "expl ot"},
+                                      {"viravira", "expl viravira"},
+                                      {"sideral", "expl sideral"},
+                                      {"gim", "expl gim"},
+                                      {"oval", "expl oval"},
+                                      {"rapina", "expl rapina"},
+                                      {"lados", "expl lados"},
+                                      {"rotor", "expl rotor"},
+                                      {"aresta", "aresta"},
+                                      {"poxa", "expl poxa"},
 
-                                           {"crepom", "expl crepom"},
-                                           {"hexa", "expl hexa"},
-                                           {"aguipa ", "expl aguipa"},
-                                           {"tim", "expl tim"},
-                                           {"salutar", "expl salutar"},
-                                           {"renovar", "expl renovar"},
-                                           {"eg", "expl eg"},
-                                           {"badalar", "expl badalar"},
-                                           {"usina", "expl usina"},
-                                           {"teatro", "expl teatro"},
-                                           {"esse", "expl esse"},
-                                           {"sola", "expl sola"},
-                                           {"avivar", "expl avivar"},
-                                           {"idade", "expl idade"},
-                                           {"farelos", "expl farelos"},
-                                           {"st", "expl st"},
-                                           {"sibliar", "expl sibliar"},
-                                           {"pop", "expl pop"},
-                                           {"agito", "expl agito"},
-                                           {"inox", "expl inox"},
-                                           {"tamara", "expl tamara"}
+                                      {"crepom", "expl crepom"},
+                                      {"hexa", "expl hexa"},
+                                      {"aguipa ", "expl aguipa"},
+                                      {"tim", "expl tim"},
+                                      {"salutar", "expl salutar"},
+                                      {"renovar", "expl renovar"},
+                                      {"eg", "expl eg"},
+                                      {"badalar", "expl badalar"},
+                                      {"usina", "expl usina"},
+                                      {"teatro", "expl teatro"},
+                                      {"esse", "expl esse"},
+                                      {"sola", "expl sola"},
+                                      {"avivar", "expl avivar"},
+                                      {"idade", "expl idade"},
+                                      {"farelos", "expl farelos"},
+                                      {"st", "expl st"},
+                                      {"sibliar", "expl sibliar"},
+                                      {"pop", "expl pop"},
+                                      {"agito", "expl agito"},
+                                      {"inox", "expl inox"},
+                                      {"tamara", "expl tamara"}
 
     };
 
-    src::crosswords::typ::permutation _permutation;
-    for (src::crosswords::typ::entries::const_entry_ite _entry =
-             _entries.begin();
+    crosswords::typ::permutation _permutation;
+    for (crosswords::typ::entries::const_entry_ite _entry = _entries.begin();
          _entry != _entries.end(); ++_entry) {
       _permutation.push_back(_entry);
     }
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{11},
-        src::crosswords::typ::index{11})};
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
 
@@ -754,10 +713,10 @@ struct test_019 {
            "change first word position";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"chat", "expl chat"},
         {"crepom", "expl crepom"},
         {"debute", "expl debute"}
@@ -806,19 +765,17 @@ struct test_019 {
 
     };
 
-    src::crosswords::typ::permutation _permutation;
-    for (src::crosswords::typ::entries::const_entry_ite _entry =
-             _entries.begin();
+    crosswords::typ::permutation _permutation;
+    for (crosswords::typ::entries::const_entry_ite _entry = _entries.begin();
          _entry != _entries.end(); ++_entry) {
       _permutation.push_back(_entry);
     }
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{11},
-        src::crosswords::typ::index{11})};
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
 
@@ -836,61 +793,61 @@ struct test_020 {
     return "Sorts 'entries' by size, from longest to shortest";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
-                                           {"crepom", "expl crepom"},
-                                           {"debute", "expl debute"},
-                                           {"regis", "expl regis"},
-                                           {"gases", "expl gases"},
-                                           {"exumar", "expl exumar"},
-                                           {"dias", "expl dias"},
-                                           {"pai", "expl pai"},
-                                           {"lesante", "expl lesante"},
-                                           {"ma", "expl ma"},
-                                           {"afunilar", "expl afunilar"},
-                                           {"atoba", "expl atoba"},
-                                           {"ot", "expl ot"},
-                                           {"viravira", "expl viravira"},
-                                           {"sideral", "expl sideral"},
-                                           {"gim", "expl gim"},
-                                           {"oval", "expl oval"},
-                                           {"rapina", "expl rapina"},
-                                           {"lados", "expl lados"},
-                                           {"rotor", "expl rotor"},
-                                           {"aresta", "aresta"},
-                                           {"poxa", "expl poxa"},
-                                           {"hexa", "expl hexa"},
-                                           {"aguipa", "expl aguipa"},
-                                           {"tim", "expl tim"},
-                                           {"salutar", "expl salutar"},
-                                           {"renovar", "expl renovar"},
-                                           {"eg", "expl eg"},
-                                           {"badalar", "expl badalar"},
-                                           {"usina", "expl usina"},
-                                           {"teatro", "expl teatro"},
-                                           {"esse", "expl esse"},
-                                           {"sola", "expl sola"},
-                                           {"avivar", "expl avivar"},
-                                           {"idade", "expl idade"},
-                                           {"farelos", "expl farelos"},
-                                           {"st", "expl st"},
-                                           {"sibliar", "expl sibliar"},
-                                           {"pop", "expl pop"},
-                                           {"agito", "expl agito"},
-                                           {"inox", "expl inox"},
-                                           {"tamara", "expl tamara"}
+    crosswords::typ::entries _entries{{"chat", "expl chat"},
+                                      {"crepom", "expl crepom"},
+                                      {"debute", "expl debute"},
+                                      {"regis", "expl regis"},
+                                      {"gases", "expl gases"},
+                                      {"exumar", "expl exumar"},
+                                      {"dias", "expl dias"},
+                                      {"pai", "expl pai"},
+                                      {"lesante", "expl lesante"},
+                                      {"ma", "expl ma"},
+                                      {"afunilar", "expl afunilar"},
+                                      {"atoba", "expl atoba"},
+                                      {"ot", "expl ot"},
+                                      {"viravira", "expl viravira"},
+                                      {"sideral", "expl sideral"},
+                                      {"gim", "expl gim"},
+                                      {"oval", "expl oval"},
+                                      {"rapina", "expl rapina"},
+                                      {"lados", "expl lados"},
+                                      {"rotor", "expl rotor"},
+                                      {"aresta", "aresta"},
+                                      {"poxa", "expl poxa"},
+                                      {"hexa", "expl hexa"},
+                                      {"aguipa", "expl aguipa"},
+                                      {"tim", "expl tim"},
+                                      {"salutar", "expl salutar"},
+                                      {"renovar", "expl renovar"},
+                                      {"eg", "expl eg"},
+                                      {"badalar", "expl badalar"},
+                                      {"usina", "expl usina"},
+                                      {"teatro", "expl teatro"},
+                                      {"esse", "expl esse"},
+                                      {"sola", "expl sola"},
+                                      {"avivar", "expl avivar"},
+                                      {"idade", "expl idade"},
+                                      {"farelos", "expl farelos"},
+                                      {"st", "expl st"},
+                                      {"sibliar", "expl sibliar"},
+                                      {"pop", "expl pop"},
+                                      {"agito", "expl agito"},
+                                      {"inox", "expl inox"},
+                                      {"tamara", "expl tamara"}
 
     };
 
     TNCT_LOG_TST("entries = ", _entries);
 
-    src::crosswords::bus::internal::sort_entries(_entries);
+    crosswords::bus::internal::sort_entries(_entries);
 
     TNCT_LOG_TST("entries = ", _entries);
 
-    src::crosswords::typ::entries::const_entry_ite _entry = _entries.begin();
+    crosswords::typ::entries::const_entry_ite _entry = _entries.begin();
 
     if ((!check(_entry++, "eg")) || (!check(_entry++, "ma")) ||
         (!check(_entry++, "ot")) || (!check(_entry++, "st")) ||
@@ -920,8 +877,8 @@ struct test_020 {
   }
 
 private:
-  bool check(src::crosswords::typ::entries::const_entry_ite p_entry,
-             src::crosswords::typ::word &&p_word) {
+  bool check(crosswords::typ::entries::const_entry_ite p_entry,
+             crosswords::typ::word &&p_word) {
     if (p_entry->get_word() != p_word) {
       TNCT_LOG_ERR("should be '", p_word, "', but it is '", p_entry->get_word(),
                    '\'');
@@ -937,69 +894,67 @@ struct test_021 {
            "words do not intersect";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
-                                           {"crepom", "expl crepom"},
-                                           {"debute", "expl debute"},
-                                           {"regis", "expl regis"},
-                                           {"gases", "expl gases"},
-                                           {"exumar", "expl exumar"},
-                                           {"dias", "expl dias"},
-                                           {"pai", "expl pai"},
-                                           {"lesante", "expl lesante"},
-                                           {"ma", "expl ma"},
-                                           {"afunilar", "expl afunilar"},
-                                           {"atoba", "expl atoba"},
-                                           {"ot", "expl ot"},
-                                           {"viravira", "expl viravira"},
-                                           {"sideral", "expl sideral"},
-                                           {"gim", "expl gim"},
-                                           {"oval", "expl oval"},
-                                           {"rapina", "expl rapina"},
-                                           {"lados", "expl lados"},
-                                           {"rotor", "expl rotor"},
-                                           {"aresta", "aresta"},
-                                           {"poxa", "expl poxa"},
-                                           {"hexa", "expl hexa"},
-                                           {"aguipa", "expl aguipa"},
-                                           {"tim", "expl tim"},
-                                           {"salutar", "expl salutar"},
-                                           {"renovar", "expl renovar"},
-                                           {"eg", "expl eg"},
-                                           {"badalar", "expl badalar"},
-                                           {"usina", "expl usina"},
-                                           {"teatro", "expl teatro"},
-                                           {"esse", "expl esse"},
-                                           {"sola", "expl sola"},
-                                           {"avivar", "expl avivar"},
-                                           {"idade", "expl idade"},
-                                           {"farelos", "expl farelos"},
-                                           {"st", "expl st"},
-                                           {"sibliar", "expl sibliar"},
-                                           {"pop", "expl pop"},
-                                           {"agito", "expl agito"},
-                                           {"inox", "expl inox"},
-                                           {"tamara", "expl tamara"}
+    crosswords::typ::entries _entries{{"chat", "expl chat"},
+                                      {"crepom", "expl crepom"},
+                                      {"debute", "expl debute"},
+                                      {"regis", "expl regis"},
+                                      {"gases", "expl gases"},
+                                      {"exumar", "expl exumar"},
+                                      {"dias", "expl dias"},
+                                      {"pai", "expl pai"},
+                                      {"lesante", "expl lesante"},
+                                      {"ma", "expl ma"},
+                                      {"afunilar", "expl afunilar"},
+                                      {"atoba", "expl atoba"},
+                                      {"ot", "expl ot"},
+                                      {"viravira", "expl viravira"},
+                                      {"sideral", "expl sideral"},
+                                      {"gim", "expl gim"},
+                                      {"oval", "expl oval"},
+                                      {"rapina", "expl rapina"},
+                                      {"lados", "expl lados"},
+                                      {"rotor", "expl rotor"},
+                                      {"aresta", "aresta"},
+                                      {"poxa", "expl poxa"},
+                                      {"hexa", "expl hexa"},
+                                      {"aguipa", "expl aguipa"},
+                                      {"tim", "expl tim"},
+                                      {"salutar", "expl salutar"},
+                                      {"renovar", "expl renovar"},
+                                      {"eg", "expl eg"},
+                                      {"badalar", "expl badalar"},
+                                      {"usina", "expl usina"},
+                                      {"teatro", "expl teatro"},
+                                      {"esse", "expl esse"},
+                                      {"sola", "expl sola"},
+                                      {"avivar", "expl avivar"},
+                                      {"idade", "expl idade"},
+                                      {"farelos", "expl farelos"},
+                                      {"st", "expl st"},
+                                      {"sibliar", "expl sibliar"},
+                                      {"pop", "expl pop"},
+                                      {"agito", "expl agito"},
+                                      {"inox", "expl inox"},
+                                      {"tamara", "expl tamara"}
 
     };
 
-    src::crosswords::bus::internal::sort_entries(_entries);
+    crosswords::bus::internal::sort_entries(_entries);
 
-    src::crosswords::typ::permutation _permutation;
-    for (src::crosswords::typ::entries::const_entry_ite _entry =
-             _entries.begin();
+    crosswords::typ::permutation _permutation;
+    for (crosswords::typ::entries::const_entry_ite _entry = _entries.begin();
          _entry != _entries.end(); ++_entry) {
       _permutation.push_back(_entry);
     }
 
-    auto _grid{std::make_shared<src::crosswords::typ::grid>(
-        _permutation, src::crosswords::typ::index{11},
-        src::crosswords::typ::index{11})};
+    auto _grid{std::make_shared<crosswords::typ::grid>(
+        _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{src::async::alg::dispatcher::create()};
-    src::crosswords::bus::internal::organizer _organize;
+    auto _dispatcher{async::alg::dispatcher::create()};
+    crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
       TNCT_LOG_TST("Grid not organized, as expected", _grid);
@@ -1019,18 +974,16 @@ struct test_023 {
     return "Fail to solve grid with one word and one thread";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
+    crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 1)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 1)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1048,18 +1001,16 @@ struct test_024 {
     return "Fail to solve grid one word and 2 threads";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
+    crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 2)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 2)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1075,19 +1026,17 @@ struct test_024 {
 struct test_025 {
   static std::string desc() { return "Solve grid with two words and 1 thread"; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"viravira", "expl viravira"},
-                                           {"exumar", "expl exumar"}};
+    crosswords::typ::entries _entries{{"viravira", "expl viravira"},
+                                      {"exumar", "expl exumar"}};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 1)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 1)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1103,19 +1052,17 @@ struct test_025 {
 struct test_026 {
   static std::string desc() { return "Solve grid with two words and 2 thread"; }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{{"viravira", "expl viravira"},
-                                           {"exumar", "expl exumar"}};
+    crosswords::typ::entries _entries{{"viravira", "expl viravira"},
+                                      {"exumar", "expl exumar"}};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 2)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 2)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1134,10 +1081,10 @@ struct test_027 {
     // time: 0.31991967900000001
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    //    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
+    //    crosswords::typ::entries _entries{{"chat", "expl chat"},
     //                          {"crepom", "expl crepom"},
     //                          {"debute", "expl debute"},
     //                          {"regis", "expl regis"},
@@ -1180,7 +1127,7 @@ struct test_027 {
     //                          {"inox", "expl inox"},
     //                          {"tamara", "expl tamara"}};
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"viravira", "expl viravira"}, {"exumar", "expl exumar"},
         {"rapina", "expl rapina"},     {"tamara", "expl tamara"},
         {"teatro", "expl teatro"},     {"badalar", "expl badalar"},
@@ -1196,13 +1143,11 @@ struct test_027 {
     badalar
      * farelos viravira afunilar sibliar renovar lesante sideral salutar*/
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 2)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 2)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1222,10 +1167,10 @@ struct test_028 {
     // time: 0.251665574
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    //    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
+    //    crosswords::typ::entries _entries{{"chat", "expl chat"},
     //                          {"crepom", "expl crepom"},
     //                          {"debute", "expl debute"},
     //                          {"regis", "expl regis"},
@@ -1268,7 +1213,7 @@ struct test_028 {
     //                          {"inox", "expl inox"},
     //                          {"tamara", "expl tamara"}};
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
             {"viravira", "expl viravira"}, {"exumar", "expl exumar"},
             {"rapina", "expl rapina"},     {"tamara", "expl tamara"},
             {"teatro", "expl teatro"},     {"badalar", "expl badalar"},
@@ -1280,13 +1225,11 @@ struct test_028 {
             {"crepom", "expl crepom"},     {"debute", "expl debute"}/*,
         {"usina", "expl usina"}*/};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 20)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 20)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1305,10 +1248,10 @@ struct test_029 {
     return "Trying to solve a grid with 19 words and 20 threads ";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    //    src::crosswords::typ::entries _entries{{"chat", "expl chat"},
+    //    crosswords::typ::entries _entries{{"chat", "expl chat"},
     //                          {"crepom", "expl crepom"},
     //                          {"debute", "expl debute"},
     //                          {"regis", "expl regis"},
@@ -1351,7 +1294,7 @@ struct test_029 {
     //                          {"inox", "expl inox"},
     //                          {"tamara", "expl tamara"}};
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"viravira", "expl viravira"}, {"exumar", "expl exumar"},
         {"rapina", "expl rapina"},     {"tamara", "expl tamara"},
         {"teatro", "expl teatro"},     {"badalar", "expl badalar"},
@@ -1363,13 +1306,11 @@ struct test_029 {
         {"crepom", "expl crepom"},     {"debute", "expl debute"},
         {"usina", "expl usina"}};
 
-    src::crosswords::bus::assembler _solver(
-        src::async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        _solver.start(_entries, src::crosswords::typ::index{11},
-                      src::crosswords::typ::index{11}, 20)};
+    std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
+        _entries, crosswords::typ::index{11}, crosswords::typ::index{11}, 20)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1390,19 +1331,18 @@ struct test_030 {
   }
 
   test_030()
-      : m_dispatcher(src::async::alg::dispatcher::create()),
-        m_solver(m_dispatcher) {
+      : m_dispatcher(async::alg::dispatcher::create()), m_solver(m_dispatcher) {
     using namespace crosswords;
-    m_dispatcher->subscribe<src::crosswords::evt::new_attempt>(
+    m_dispatcher->subscribe<crosswords::evt::new_attempt>(
         [](auto p_event) -> void {
           TNCT_LOG_TST("attempt # ", p_event.number);
         });
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
         {"badalar", "expl badalar"},   {"farelos", "expl farelos"},
         {"lesante", "expl lesante"},   {"renovar", "expl renovar"},
@@ -1418,9 +1358,9 @@ struct test_030 {
         {"regis", "expl regis"}};
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        m_solver.start(_entries, src::crosswords::typ::index{11},
-                       src::crosswords::typ::index{11}, 50, 10000)};
+    std::shared_ptr<crosswords::typ::grid> _grid{
+        m_solver.start(_entries, crosswords::typ::index{11},
+                       crosswords::typ::index{11}, 50, 10000)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1434,9 +1374,8 @@ struct test_030 {
   }
 
 private:
-  src::async::alg::dispatcher::ptr m_dispatcher{
-      src::async::alg::dispatcher::create()};
-  src::crosswords::bus::assembler m_solver{m_dispatcher};
+  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
+  crosswords::bus::assembler m_solver{m_dispatcher};
 };
 
 struct test_031 {
@@ -1446,10 +1385,9 @@ struct test_031 {
   }
 
   test_031()
-      : m_dispatcher(src::async::alg::dispatcher::create()),
-        m_solver(m_dispatcher) {
+      : m_dispatcher(async::alg::dispatcher::create()), m_solver(m_dispatcher) {
     using namespace crosswords;
-    m_dispatcher->subscribe<src::crosswords::evt::new_attempt>(
+    m_dispatcher->subscribe<crosswords::evt::new_attempt>(
         [this](auto p_event) -> void {
           if (p_event.number == 5000) {
             TNCT_LOG_TST("p_event->number  = ", p_event.number);
@@ -1458,10 +1396,10 @@ struct test_031 {
         });
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     using namespace crosswords;
 
-    src::crosswords::typ::entries _entries{
+    crosswords::typ::entries _entries{
         {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
         {"badalar", "expl badalar"},   {"farelos", "expl farelos"},
         {"lesante", "expl lesante"},   {"renovar", "expl renovar"},
@@ -1477,9 +1415,9 @@ struct test_031 {
         {"regis", "expl regis"}};
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    std::shared_ptr<src::crosswords::typ::grid> _grid{
-        m_solver.start(_entries, src::crosswords::typ::index{11},
-                       src::crosswords::typ::index{11}, 50, 100000)};
+    std::shared_ptr<crosswords::typ::grid> _grid{
+        m_solver.start(_entries, crosswords::typ::index{11},
+                       crosswords::typ::index{11}, 50, 100000)};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST("time: ", diff.count());
@@ -1493,50 +1431,49 @@ struct test_031 {
   }
 
 private:
-  src::async::alg::dispatcher::ptr m_dispatcher{
-      src::async::alg::dispatcher::create()};
-  src::crosswords::bus::assembler m_solver{m_dispatcher};
+  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
+  crosswords::bus::assembler m_solver{m_dispatcher};
 };
-} // namespace tenacitas::lib::tst::crosswords::alg
+} // namespace alg
 int main(int argc, char **argv) {
 
   using namespace tenacitas;
 
-  lib::src::log::alg::set_debug_level();
+  lib::log::alg::set_debug_level();
   //  log::alg::set_file_writer("crosswords");
 
-  lib::src::test::alg::tester _tester(argc, argv);
+  lib::test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, lib::tst::crosswords::alg::test_000);
-  run_test(_tester, lib::tst::crosswords::alg::test_001);
-  run_test(_tester, lib::tst::crosswords::alg::test_003);
-  run_test(_tester, lib::tst::crosswords::alg::test_004);
-  run_test(_tester, lib::tst::crosswords::alg::test_005);
-  run_test(_tester, lib::tst::crosswords::alg::test_006);
-  run_test(_tester, lib::tst::crosswords::alg::test_007);
-  run_test(_tester, lib::tst::crosswords::alg::test_007a);
-  run_test(_tester, lib::tst::crosswords::alg::test_008);
-  run_test(_tester, lib::tst::crosswords::alg::test_009);
-  run_test(_tester, lib::tst::crosswords::alg::test_010);
-  run_test(_tester, lib::tst::crosswords::alg::test_010a);
-  run_test(_tester, lib::tst::crosswords::alg::test_011);
-  run_test(_tester, lib::tst::crosswords::alg::test_012);
-  run_test(_tester, lib::tst::crosswords::alg::test_013);
-  run_test(_tester, lib::tst::crosswords::alg::test_014);
-  run_test(_tester, lib::tst::crosswords::alg::test_015);
-  run_test(_tester, lib::tst::crosswords::alg::test_016);
-  run_test(_tester, lib::tst::crosswords::alg::test_017);
-  run_test(_tester, lib::tst::crosswords::alg::test_018);
-  run_test(_tester, lib::tst::crosswords::alg::test_019);
-  run_test(_tester, lib::tst::crosswords::alg::test_020);
-  run_test(_tester, lib::tst::crosswords::alg::test_021);
-  run_test(_tester, lib::tst::crosswords::alg::test_023);
-  run_test(_tester, lib::tst::crosswords::alg::test_024);
-  run_test(_tester, lib::tst::crosswords::alg::test_025);
-  run_test(_tester, lib::tst::crosswords::alg::test_026);
-  run_test(_tester, lib::tst::crosswords::alg::test_027);
-  run_test(_tester, lib::tst::crosswords::alg::test_028);
-  run_test(_tester, lib::tst::crosswords::alg::test_029);
-  run_test(_tester, lib::tst::crosswords::alg::test_030);
-  run_test(_tester, lib::tst::crosswords::alg::test_031);
+  run_test(_tester, alg::test_000);
+  run_test(_tester, alg::test_001);
+  run_test(_tester, alg::test_003);
+  run_test(_tester, alg::test_004);
+  run_test(_tester, alg::test_005);
+  run_test(_tester, alg::test_006);
+  run_test(_tester, alg::test_007);
+  run_test(_tester, alg::test_007a);
+  run_test(_tester, alg::test_008);
+  run_test(_tester, alg::test_009);
+  run_test(_tester, alg::test_010);
+  run_test(_tester, alg::test_010a);
+  run_test(_tester, alg::test_011);
+  run_test(_tester, alg::test_012);
+  run_test(_tester, alg::test_013);
+  run_test(_tester, alg::test_014);
+  run_test(_tester, alg::test_015);
+  run_test(_tester, alg::test_016);
+  run_test(_tester, alg::test_017);
+  run_test(_tester, alg::test_018);
+  run_test(_tester, alg::test_019);
+  run_test(_tester, alg::test_020);
+  run_test(_tester, alg::test_021);
+  run_test(_tester, alg::test_023);
+  run_test(_tester, alg::test_024);
+  run_test(_tester, alg::test_025);
+  run_test(_tester, alg::test_026);
+  run_test(_tester, alg::test_027);
+  run_test(_tester, alg::test_028);
+  run_test(_tester, alg::test_029);
+  run_test(_tester, alg::test_030);
+  run_test(_tester, alg::test_031);
 }

@@ -13,7 +13,7 @@
 
 #include <tenacitas.lib/src/conversions/alg/int.h>
 
-// namespace tenacitas::lib::src::conversions::alg {
+// namespace tenacitas::lib::conversions::alg {
 
 ///// \brief Basic type conversion template function
 // template <typename t_to, typename t_from>
@@ -26,6 +26,6 @@
 //           {}};
 // }
 
-//} // namespace tenacitas::lib::src::conversions::alg
+//} // namespace tenacitas::lib::conversions::alg
 
 #endif

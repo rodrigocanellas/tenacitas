@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-namespace tenacitas::lib::src::conversions::typ {
+namespace tenacitas::lib::conversions::typ {
 
 template <typename t_to>
 using result = std::pair<std::unique_ptr<std::string>, t_to>;

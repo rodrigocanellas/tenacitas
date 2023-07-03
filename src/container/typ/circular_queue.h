@@ -19,7 +19,7 @@
 #include <tenacitas.lib/src/number/typ/id.h>
 
 /// \brief master namespace
-namespace tenacitas::lib::src::container::typ {
+namespace tenacitas::lib::container::typ {
 
 // \brief Implements a circular queue which size is increased if it becomes
 // full
@@ -366,6 +366,6 @@ private:
   number::typ::id m_id;
 };
 
-} // namespace tenacitas::lib::src::container::typ
+} // namespace tenacitas::lib::container::typ
 
 #endif

@@ -18,7 +18,7 @@
 #include <tenacitas.lib/src/container/typ/circular_queue.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
 
-namespace tenacitas::lib::src::async::internal::typ {
+namespace tenacitas::lib::async::internal::typ {
 
 template <cpt::event t_event> class queue_t;
 
@@ -197,7 +197,7 @@ private:
   circular_queue m_queue;
 };
 
-} // namespace tenacitas::lib::src::async::internal::typ
+} // namespace tenacitas::lib::async::internal::typ
 
 // \brief Stops this publishing
 // void tenacitas::lib::async::internal::typ::queue::halt() {
@@ -242,7 +242,7 @@ private:
 //  }
 //}
 
-namespace tenacitas::lib::src::async::internal::typ {
+namespace tenacitas::lib::async::internal::typ {
 
 template <cpt::event t_event>
 queue::ptr queue::create(async::typ::priority p_priority) {
@@ -568,6 +568,6 @@ void queue_t<t_event>::empty_queue(
   }
 }
 
-} // namespace tenacitas::lib::src::async::internal::typ
+} // namespace tenacitas::lib::async::internal::typ
 
 #endif

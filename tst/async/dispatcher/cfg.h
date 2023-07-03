@@ -11,7 +11,7 @@
 #include <tenacitas.lib/src/program/alg/options.h>
 #include <tenacitas.lib/tst/async/dispatcher/typ.h>
 
-namespace tenacitas::lib::tst::async::cfg {
+namespace cfg {
 
 namespace {
 constexpr char total_generator_option[]{"total-generator"};
@@ -109,7 +109,7 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
 
 struct options {
   options(int p_argc, char **p_argv) {
-    src::program::alg::options _options;
+    program::alg::options _options;
     _options.parse(p_argc, p_argv,
                    {total_generator_option, amount_events_option,
                     amount_events_increment_option, interval_option,
@@ -177,8 +177,7 @@ struct options {
 
   std::string get_sqlite_file() const { return m_sqlite_file; }
 
-  typ::total_list
-  get_total_generator(const src::program::alg::options &p_options) {
+  typ::total_list get_total_generator(const program::alg::options &p_options) {
     try {
       std::vector<typ::total> _total_generators;
       {
@@ -198,8 +197,7 @@ struct options {
     }
   }
 
-  typ::amount_list
-  get_amount_events(const src::program::alg::options &p_options) {
+  typ::amount_list get_amount_events(const program::alg::options &p_options) {
     try {
       typ::amount_list _amount_events;
       {
@@ -220,7 +218,7 @@ struct options {
   }
 
   typ::amount_increment
-  get_amount_events_increment(const src::program::alg::options &p_options) {
+  get_amount_events_increment(const program::alg::options &p_options) {
     try {
       typ::amount_increment _amount_events_increment = 0;
       std::optional<std::string> _maybe =
@@ -235,7 +233,7 @@ struct options {
     }
   }
 
-  typ::time_list get_intervals(const src::program::alg::options &p_options) {
+  typ::time_list get_intervals(const program::alg::options &p_options) {
     try {
       typ::time_list _intervals;
       {
@@ -256,7 +254,7 @@ struct options {
   }
 
   typ::time_increment
-  get_interval_increment(const src::program::alg::options &p_options) {
+  get_interval_increment(const program::alg::options &p_options) {
     try {
       typ::time_increment _interval_increment;
       std::optional<std::string> _maybe =
@@ -274,7 +272,7 @@ struct options {
   }
 
   typ::total_list
-  get_total_publishings(const src::program::alg::options &p_options) {
+  get_total_publishings(const program::alg::options &p_options) {
     try {
       typ::total_list _total_publishings;
       {
@@ -295,7 +293,7 @@ struct options {
   }
 
   typ::amount_list
-  get_amount_subscribers(const src::program::alg::options &p_options) {
+  get_amount_subscribers(const program::alg::options &p_options) {
     try {
       typ::amount_list _amounts_subscribers;
       {
@@ -315,8 +313,8 @@ struct options {
     }
   }
 
-  typ::amount_increment get_amount_subscribers_increment(
-      const src::program::alg::options &p_options) {
+  typ::amount_increment
+  get_amount_subscribers_increment(const program::alg::options &p_options) {
     try {
       typ::amount_increment _amount_subscribers_increment = 0;
       std::optional<std::string> _maybe =
@@ -331,7 +329,7 @@ struct options {
     }
   }
 
-  typ::time_list get_sleeps(const src::program::alg::options &p_options) {
+  typ::time_list get_sleeps(const program::alg::options &p_options) {
     try {
       typ::time_list _sleeps;
       {
@@ -352,7 +350,7 @@ struct options {
   }
 
   typ::time_increment
-  get_sleep_increment(const src::program::alg::options &p_options) {
+  get_sleep_increment(const program::alg::options &p_options) {
     try {
       typ::time_increment _sleep_increment;
       std::optional<std::string> _maybe =
@@ -370,7 +368,7 @@ struct options {
     }
   }
 
-  std::string get_sqlite_file(const src::program::alg::options &p_options) {
+  std::string get_sqlite_file(const program::alg::options &p_options) {
     try {
       std::string _db_file;
       std::optional<std::string> _maybe =
@@ -411,6 +409,6 @@ private:
   std::string m_sqlite_file;
 };
 
-} // namespace tenacitas::lib::tst::async::cfg
+} // namespace cfg
 
 #endif // CFG_H

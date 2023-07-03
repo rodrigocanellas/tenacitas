@@ -12,7 +12,7 @@
 #include <tenacitas.lib/src/program/alg/options.h>
 
 /// \brief classes to help creating testing programs to test other classes
-namespace tenacitas::lib::src::test::alg {
+namespace tenacitas::lib::test::alg {
 
 /// \brief Runs a test
 ///
@@ -265,6 +265,6 @@ private:
   program::alg::options m_options;
 };
 
-} // namespace tenacitas::lib::src::test::alg
+} // namespace tenacitas::lib::test::alg
 
 #endif

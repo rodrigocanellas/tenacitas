@@ -11,21 +11,23 @@
 #include <tenacitas.lib/src/program/alg/options.h>
 #include <tenacitas.lib/src/test/alg/tester.h>
 
-namespace tenacitas::lib::tst::test::alg {
+using namespace tenacitas::lib;
+
+namespace alg {
 
 struct test_ok {
-  bool operator()(const src::program::alg::options &) { return true; }
+  bool operator()(const program::alg::options &) { return true; }
 
   static std::string desc() { return "an ok test"; }
 };
 
 struct test_fail {
-  bool operator()(const src::program::alg::options &) { return true; }
+  bool operator()(const program::alg::options &) { return true; }
   static std::string desc() { return "a fail test"; }
 };
 
 struct test_error {
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     try {
       throw std::runtime_error("test function raised an exception");
       return false;
@@ -37,15 +39,15 @@ struct test_error {
   static std::string desc() { return "an eror test"; }
 };
 
-} // namespace tenacitas::lib::tst::test::alg
+} // namespace alg
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
-    lib::src::test::alg::tester _test(argc, argv);
-    run_test(_test, lib::tst::test::alg::test_ok);
-    run_test(_test, lib::tst::test::alg::test_fail);
-    run_test(_test, lib::tst::test::alg::test_error);
+    lib::test::alg::tester _test(argc, argv);
+    run_test(_test, alg::test_ok);
+    run_test(_test, alg::test_fail);
+    run_test(_test, alg::test_error);
 
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;

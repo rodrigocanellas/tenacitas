@@ -14,16 +14,17 @@
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/test/alg/tester.h>
 
-namespace tenacitas::lib::tst::container::typ {
+using namespace tenacitas::lib;
+namespace typ {
 
 using data = std::pair<int16_t, double>;
 
 using data_ptr = std::shared_ptr<data>;
 
-using queue = src::container::typ::circular_queue_t<data_ptr>;
-} // namespace tenacitas::lib::tst::container::typ
+using queue = container::typ::circular_queue_t<data_ptr>;
+} // namespace typ
 
-namespace tenacitas::lib::tst::container::alg {
+namespace alg {
 struct producer {
   producer(typ::queue &p_queue) : m_queue(p_queue) {}
 
@@ -81,7 +82,7 @@ private:
 
 struct queue_000 {
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     typ::queue _queue(20);
     _queue.add(std::make_shared<typ::data>(typ::data{9, -4.32}));
     _queue.traverse([](std::shared_ptr<const typ::data> p_data) -> void {
@@ -114,7 +115,7 @@ struct queue_000 {
 
 struct queue_001 {
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
     typ::queue _queue(20);
     producer _producer(_queue);
@@ -143,7 +144,7 @@ struct queue_001 {
 
 struct queue_002 {
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
 
     typ::queue _queue(20);
     producer _producer(_queue);
@@ -184,7 +185,7 @@ struct queue_003 {
     return "Tests if the queue will expand as it becomes full";
   }
 
-  bool operator()(const src::program::alg::options &) {
+  bool operator()(const program::alg::options &) {
     auto _printer = [](std::shared_ptr<const typ::data> p_data) -> void {
       TNCT_LOG_TST(*p_data);
     };
@@ -681,13 +682,13 @@ struct queue_003 {
     return true;
   }
 };
-} // namespace tenacitas::lib::tst::container::alg
+} // namespace alg
 int main(int argc, char **argv) {
   using namespace tenacitas;
 
-  lib::src::test::alg::tester _tester(argc, argv);
-  run_test(_tester, lib::tst::container::alg::queue_000);
-  run_test(_tester, lib::tst::container::alg::queue_001);
-  run_test(_tester, lib::tst::container::alg::queue_002);
+  lib::test::alg::tester _tester(argc, argv);
+  run_test(_tester, alg::queue_000);
+  run_test(_tester, alg::queue_001);
+  run_test(_tester, alg::queue_002);
   // run_test(_tester, queue_003);
 }

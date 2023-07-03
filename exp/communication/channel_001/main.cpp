@@ -18,16 +18,16 @@
 #include <vector>
 
 #include <tenacitas.lib/src/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/communication/alg/channel.h>
 #include <tenacitas.lib/src/communication/alg/message.h>
 #include <tenacitas.lib/src/communication/cpt/concepts.h>
 #include <tenacitas.lib/src/communication/evt/new_connection.h>
 #include <tenacitas.lib/src/communication/evt/send_timeout.h>
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/number/typ/id.h>
 
-using namespace tenacitas::lib::src;
+using namespace tenacitas::lib;
 using namespace std::chrono_literals;
 
 using variable_message = std::vector<std::byte>;
@@ -86,7 +86,7 @@ int main() {
     using deserializers = std::tuple<deserializer_a_v>;
 
     using channel = communication::alg::channel<_channel_id, message, io,
-                                            serializers, deserializers>;
+                                                serializers, deserializers>;
 
     channel _channel(_dispatcher);
 

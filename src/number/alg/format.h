@@ -20,7 +20,7 @@ using namespace std::chrono_literals;
 
 /// \brief manipulates numbers, like formating, and creation of a, hopefully,
 /// unique identifier
-namespace tenacitas::lib::src::number::alg {
+namespace tenacitas::lib::number::alg {
 
 /// \brief Maximum number of characters needed to represent a type of number
 ///
@@ -116,6 +116,6 @@ inline std::string format(t_num_type p_num, uint8_t p_size, char p_fill = '0',
   return _stream.str();
 }
 
-} // namespace tenacitas::lib::src::number::alg
+} // namespace tenacitas::lib::number::alg
 
 #endif

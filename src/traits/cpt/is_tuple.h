@@ -10,7 +10,7 @@
 #include <tuple>
 
 /// \brief master namespace
-namespace tenacitas::lib::src::traits::cpt {
+namespace tenacitas::lib::traits::cpt {
 
 // \file Solution based on
 // https://stackoverflow.com/questions/68443804/c20-concept-to-check-tuple-like-types
@@ -35,6 +35,6 @@ concept tuple_like = !std::is_reference_v<t_tuple> && requires(t_tuple t) {
 }
 (std::make_index_sequence<std::tuple_size_v<t_tuple>>());
 
-} // namespace tenacitas::lib::src::traits::cpt
+} // namespace tenacitas::lib::traits::cpt
 
 #endif

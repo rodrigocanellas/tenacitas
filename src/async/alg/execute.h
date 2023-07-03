@@ -20,7 +20,7 @@
 #include <tenacitas.lib/src/log/alg/logger.h>
 
 /// \brief master namespace
-namespace tenacitas::lib::src::async::alg {
+namespace tenacitas::lib::async::alg {
 
 /// \brief Executes a function synchronoulsy with timeout control
 /// The function may or may not return, and may or may not receive parameters
@@ -113,6 +113,6 @@ execute(calendar::cpt::convertible_to_ns auto p_max_time,
   }
 }
 
-} // namespace tenacitas::lib::src::async::alg
+} // namespace tenacitas::lib::async::alg
 
 #endif
