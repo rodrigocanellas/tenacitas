@@ -9,7 +9,7 @@
 #include <utility>
 
 /// \brief master namespace
-namespace tenacitas::lib::traits::alg {
+namespace tenacitas::lib::src::traits::alg {
 
 /// \brief Type trait that identifies if a type is not a \p pair
 template <typename> struct is_pair { const static bool value{false}; };
@@ -22,6 +22,6 @@ template <typename... t> struct is_pair<std::pair<t...>> {
 /// \brief Alias for a \p is_pair value
 template <typename t> constexpr bool is_pair_v = is_pair<t>::value;
 
-} // namespace tenacitas::lib::traits::alg
+} // namespace tenacitas::lib::src::traits::alg
 
 #endif // PAIR_H

@@ -20,7 +20,7 @@
 #include <string>
 
 /// \brief Class that implement algorithms related to programs
-namespace tenacitas::lib::program::alg {
+namespace tenacitas::lib::src::program::alg {
 
 /// \brief Program options parser
 struct options {
@@ -377,6 +377,6 @@ int options::parse_set(name &&p_name, int p_last, char **p_argv, int p_index) {
 //  bool m_on_exit_handled{false};
 //};
 
-} // namespace tenacitas::lib::program::alg
+} // namespace tenacitas::lib::src::program::alg
 
 #endif

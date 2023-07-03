@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 
-namespace tenacitas::lib::async::typ {
+namespace tenacitas::lib::src::async::typ {
 
 using queue_id = size_t;
 
-} // namespace tenacitas::lib::async::typ
+} // namespace tenacitas::lib::src::async::typ
 #endif // EVENT_ID_H

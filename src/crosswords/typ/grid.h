@@ -22,7 +22,7 @@
 #include <tenacitas.lib/src/container/typ/matrix.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
 
-namespace tenacitas::lib::crosswords::typ {
+namespace tenacitas::lib::src::crosswords::typ {
 
 /// \brief Index in a grid
 using index = int16_t;
@@ -199,7 +199,7 @@ private:
 };
 
 /// \brief Defines which coordinates are occupied
-using occupied = lib::container::typ::matrix<index, word::value_type>;
+using occupied = lib::src::container::typ::matrix<index, word::value_type>;
 
 /// \brief Contains all the \p layout
 struct grid {
@@ -402,6 +402,6 @@ private:
   std::string m_horizontal_line;
 };
 
-} // namespace tenacitas::lib::crosswords::typ
+} // namespace tenacitas::lib::src::crosswords::typ
 
 #endif // CROSSWORDS_H

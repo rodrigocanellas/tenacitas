@@ -36,7 +36,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::socket::alg {
+namespace tenacitas::lib::src::socket::alg {
 
 template <typ::flow> struct connection_t;
 
@@ -220,6 +220,6 @@ private:
   std::chrono::milliseconds m_timeout_receive;
 };
 
-} // namespace tenacitas::lib::socket::alg
+} // namespace tenacitas::lib::src::socket::alg
 
 #endif

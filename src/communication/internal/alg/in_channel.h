@@ -28,7 +28,7 @@
 #include <tenacitas.lib/src/communication/internal/evt/send_msg.h>
 #include <tenacitas.lib/src/traits/alg/tuple.h>
 
-namespace tenacitas::lib::communication::internal::alg {
+namespace tenacitas::lib::src::communication::internal::alg {
 
 template <communication::typ::channel_id t_channel_id, cpt::message t_message,
           cpt::io<t_message> t_io,
@@ -142,6 +142,6 @@ private:
   async::alg::dispatcher::ptr m_local_dispatcher{
       async::alg::dispatcher::create()};
 };
-} // namespace tenacitas::lib::communication::internal::alg
+} // namespace tenacitas::lib::src::communication::internal::alg
 
 #endif

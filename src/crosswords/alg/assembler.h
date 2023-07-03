@@ -23,7 +23,7 @@
 #include <tenacitas.lib/src/math/alg/factorial.h>
 #include <tenacitas.lib/src/number/alg/format.h>
 
-namespace tenacitas::lib::crosswords::bus {
+namespace tenacitas::lib::src::crosswords::bus {
 
 namespace internal {
 
@@ -397,7 +397,7 @@ void sort_entries(typ::entries &p_entries) {
 
 /// \brief Tries to assemble a grid
 struct assembler {
-  assembler(lib::async::alg::dispatcher::ptr p_dispatcher)
+  assembler(lib::src::async::alg::dispatcher::ptr p_dispatcher)
       : m_dispatcher(p_dispatcher) {}
   assembler() = delete;
   assembler(const assembler &) = delete;
@@ -451,7 +451,7 @@ struct assembler {
     }
 
     auto _maybe{
-        lib::math::alg::factorial<uint64_t>(_entries.get_num_entries())};
+        lib::src::math::alg::factorial<uint64_t>(_entries.get_num_entries())};
 
     uint64_t _max_permutations{0};
 
@@ -486,7 +486,7 @@ struct assembler {
 
       typ::permutation _aux{_permutation.size()};
       std::reverse_copy(_permutation.begin(), _permutation.end(), _aux.begin());
-      TNCT_LOG_TRA(lib::number::alg::format(++m_permutation_counter), ": ",
+      TNCT_LOG_TRA(lib::src::number::alg::format(++m_permutation_counter), ": ",
                    _aux);
       m_dispatcher->publish<evt::new_attempt>(m_permutation_counter);
 
@@ -638,6 +638,6 @@ private:
   std::condition_variable m_cond_num_organizations_finished;
 };
 
-} // namespace tenacitas::lib::crosswords::bus
+} // namespace tenacitas::lib::src::crosswords::bus
 
 #endif // ORGANIZER_H

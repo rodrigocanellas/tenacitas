@@ -10,7 +10,7 @@
 #include <type_traits>
 
 /// \brief master namespace
-namespace tenacitas::lib::traits::alg {
+namespace tenacitas::lib::src::traits::alg {
 
 /// \brief Determines is a type is not a shared pointer
 template <typename t> struct is_shared_ptr : std::false_type {};
@@ -40,5 +40,5 @@ using is_smart_ptr = std::conditional_t<
 /// \brief Alias to determine if a type is shared or unique pointer
 template <typename T> constexpr bool is_smart_ptr_v = is_smart_ptr<T>::value;
 
-} // namespace tenacitas::lib::traits::alg
+} // namespace tenacitas::lib::src::traits::alg
 #endif // POINTER_H

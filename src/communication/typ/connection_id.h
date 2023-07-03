@@ -8,10 +8,10 @@
 
 #include <cstddef>
 
-namespace tenacitas::lib::communication::typ {
+namespace tenacitas::lib::src::communication::typ {
 
 using connection_id = size_t;
 
-} // namespace tenacitas::lib::communication::typ
+} // namespace tenacitas::lib::src::communication::typ
 
 #endif

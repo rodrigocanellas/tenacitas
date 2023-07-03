@@ -22,7 +22,7 @@
 using namespace std::chrono_literals;
 
 /// \brief master namespace
-namespace tenacitas::lib::async::alg {
+namespace tenacitas::lib::src::async::alg {
 
 /// \brief Periodically executes a function
 struct sleeping_loop {
@@ -222,6 +222,6 @@ void sleeping_loop::loop() {
   }
   TNCT_LOG_TRA("sleeping loop ", m_id, " - leaving loop");
 }
-} // namespace tenacitas::lib::async::alg
+} // namespace tenacitas::lib::src::async::alg
 
 #endif

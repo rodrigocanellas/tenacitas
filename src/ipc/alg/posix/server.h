@@ -18,7 +18,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::socket::alg {
+namespace tenacitas::lib::src::socket::alg {
 
 template <typ::link, typ::flow> struct server_t;
 
@@ -79,6 +79,6 @@ private:
   async::handler_t<evt::error_max_reading> m_error_max_reading_handler;
 };
 
-} // namespace tenacitas::lib::socket::alg
+} // namespace tenacitas::lib::src::socket::alg
 
 #endif

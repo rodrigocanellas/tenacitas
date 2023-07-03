@@ -10,12 +10,12 @@
 
 #include <tenacitas.lib/src/async/cpt/concepts.h>
 
-namespace tenacitas::lib::async::typ {
+namespace tenacitas::lib::src::async::typ {
 
 /// \brief Type of function that subscriber an event
 template <cpt::event t_event>
 using subscriber_t = std::function<void(t_event &&)>;
 
-} // namespace tenacitas::lib::async::typ
+} // namespace tenacitas::lib::src::async::typ
 
 #endif

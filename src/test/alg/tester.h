@@ -12,7 +12,7 @@
 #include <tenacitas.lib/src/program/alg/options.h>
 
 /// \brief classes to help creating testing programs to test other classes
-namespace tenacitas::lib::test::alg {
+namespace tenacitas::lib::src::test::alg {
 
 /// \brief Runs a test
 ///
@@ -40,7 +40,7 @@ namespace tenacitas::lib::test::alg {
 ///
 /// #include <tester/test.h>
 ///
-/// using namespace tenacitas::lib;
+/// using namespace tenacitas::lib::src;
 ///
 /// struct test_ok {
 ///   bool operator()(const program::alg::options &) { return true; }
@@ -265,6 +265,6 @@ private:
   program::alg::options m_options;
 };
 
-} // namespace tenacitas::lib::test::alg
+} // namespace tenacitas::lib::src::test::alg
 
 #endif

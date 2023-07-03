@@ -12,7 +12,7 @@
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
 #include <tenacitas.lib/src/communication/typ/connection_id.h>
 
-namespace tenacitas::lib::communication::internal::evt {
+namespace tenacitas::lib::src::communication::internal::evt {
 
 template <cpt::message t_message> struct send_msg {
 
@@ -27,6 +27,6 @@ template <cpt::message t_message> struct send_msg {
   t_message message;
 };
 
-} // namespace tenacitas::lib::communication::internal::evt
+} // namespace tenacitas::lib::src::communication::internal::evt
 
 #endif

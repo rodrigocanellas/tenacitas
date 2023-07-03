@@ -16,7 +16,7 @@
 #include <tenacitas/lib/socket/typ/types.h>
 #include <tenacitas/lib/log/alg/logger.h>
 
-namespace tenacitas::lib::socket::alg {
+namespace tenacitas::lib::src::socket::alg {
 
 struct writer {
   writer() = default;
@@ -48,6 +48,6 @@ struct writer {
 private:
   std::chrono::microseconds m_timeout{0ms};
 };
-} // namespace tenacitas::lib::socket::alg
+} // namespace tenacitas::lib::src::socket::alg
 
 #endif

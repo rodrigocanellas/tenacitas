@@ -18,7 +18,7 @@
 #include <tenacitas.lib/src/communication/typ/connection_id.h>
 #include <tenacitas.lib/src/traits/cpt/is_tuple.h>
 
-namespace tenacitas::lib::communication::cpt {
+namespace tenacitas::lib::src::communication::cpt {
 
 template <typename t>
 concept message = requires(t p_t) {
@@ -130,6 +130,6 @@ concept io = requires(t p_t) {
   { p_t.send_timeout } -> calendar::cpt::convertible_to_ms;
 };
 
-} // namespace tenacitas::lib::communication::cpt
+} // namespace tenacitas::lib::src::communication::cpt
 
 #endif

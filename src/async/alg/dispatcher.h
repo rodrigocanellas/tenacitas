@@ -38,7 +38,7 @@
 using namespace std::chrono_literals;
 
 /// \brief Classes to help asynchronous programming
-namespace tenacitas::lib::async::alg {
+namespace tenacitas::lib::src::async::alg {
 
 /** \brief Class that allows creation of queues for an event, creation of
 subscribers for an event, and publising of events
@@ -540,6 +540,6 @@ inline constexpr dispatcher::queues &dispatcher::get_queues() {
   return m_events[std::type_index(typeid(t_event))];
 }
 
-} // namespace tenacitas::lib::async::alg
+} // namespace tenacitas::lib::src::async::alg
 
 #endif

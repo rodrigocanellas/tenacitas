@@ -24,7 +24,7 @@ regex to transform it into
 
 */
 
-namespace tenacitas::lib::number::typ {
+namespace tenacitas::lib::src::number::typ {
 
 struct uuid {
   uuid() = default;
@@ -75,6 +75,6 @@ private:
   value m_value;
 };
 
-} // namespace tenacitas::lib::number::typ
+} // namespace tenacitas::lib::src::number::typ
 
 #endif // UUID_H

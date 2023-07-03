@@ -13,7 +13,7 @@
 #include <tenacitas.lib/src/communication/internal/alg/out_channel.h>
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
 
-namespace tenacitas::lib::communication::alg {
+namespace tenacitas::lib::src::communication::alg {
 
 /**
  * @brief channel
@@ -54,6 +54,6 @@ private:
   io m_io;
 };
 
-} // namespace tenacitas::lib::communication::alg
+} // namespace tenacitas::lib::src::communication::alg
 
 #endif

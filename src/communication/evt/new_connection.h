@@ -11,7 +11,7 @@
 #include <tenacitas.lib/src/communication/typ/channel_id.h>
 #include <tenacitas.lib/src/communication/typ/connection_id.h>
 
-namespace tenacitas::lib::communication::evt {
+namespace tenacitas::lib::src::communication::evt {
 
 template <typ::channel_id t_channel_id> struct new_connection {
   new_connection() = default;
@@ -35,6 +35,6 @@ template <typ::channel_id t_channel_id> struct new_connection {
   typ::connection_id connection_id;
 };
 
-} // namespace tenacitas::lib::communication::evt
+} // namespace tenacitas::lib::src::communication::evt
 
 #endif

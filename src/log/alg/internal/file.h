@@ -13,7 +13,7 @@
 #include <string>
 
 /// \brief master namespace
-namespace tenacitas::lib::log::alg {
+namespace tenacitas::lib::src::log::alg {
 
 /// \brief internal types, objects and functions
 namespace internal {
@@ -83,5 +83,5 @@ private:
   uint32_t m_current_size{0};
 };
 } // namespace internal
-} // namespace tenacitas::lib::log::alg
+} // namespace tenacitas::lib::src::log::alg
 #endif

@@ -38,7 +38,7 @@
 
 using namespace std::chrono_literals;
 
-namespace tenacitas::lib::socket::alg {
+namespace tenacitas::lib::src::socket::alg {
 
 template <typ::link, typ::flow> struct active_connector_t;
 
@@ -123,6 +123,6 @@ private:
       m_writer;
 };
 
-} // namespace tenacitas::lib::socket::alg
+} // namespace tenacitas::lib::src::socket::alg
 
 #endif

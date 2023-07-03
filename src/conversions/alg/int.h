@@ -13,7 +13,7 @@
 #include <tenacitas.lib/src/conversions/alg/internal/internal.h>
 #include <tenacitas.lib/src/conversions/typ/base.h>
 
-namespace tenacitas::lib::conversions::alg {
+namespace tenacitas::lib::src::conversions::alg {
 
 template <typename t_to, typ::base t_base = typ::base::b10>
 constexpr std::pair<std::unique_ptr<std::string>, t_to> cvt(const char *p_begin,
@@ -59,7 +59,7 @@ cvt(std::string_view p_from) {
   return cvt<t_to, t_base>(&p_from[0], &p_from[p_from.size()]);
 }
 
-} // namespace tenacitas::lib::conversions::alg
+} // namespace tenacitas::lib::src::conversions::alg
 
 //// template <> inline uint8_t cvt(const char *p_from) {
 ////   try {
@@ -924,7 +924,7 @@ cvt(std::string_view p_from) {
 
 ////#include <tenacitas.lib/src/traits/alg/traits.h>
 
-//// using namespace tenacitas::lib;
+//// using namespace tenacitas::lib::src;
 
 //// p_struct xpto {
 ////     xpto(const char *s) : p_str(s) {}
@@ -1109,5 +1109,5 @@ cvt(std::string_view p_from) {
 ////   cvt<t_iterator, t_types...>(++p_ite, p_values...);
 //// }
 
-////} // namespace tenacitas::lib::conversions::alg
+////} // namespace tenacitas::lib::src::conversions::alg
 #endif // CONVERT_H

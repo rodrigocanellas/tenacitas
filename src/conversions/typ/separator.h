@@ -6,9 +6,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-namespace tenacitas::lib::conversions::typ {
+namespace tenacitas::lib::src::conversions::typ {
 char thousands{','};
 char decimals{'.'};
-} // namespace tenacitas::lib::conversions::typ
+} // namespace tenacitas::lib::src::conversions::typ
 
 #endif

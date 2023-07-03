@@ -12,7 +12,7 @@
 
 #include <tenacitas.lib/src/communication/cpt/concepts.h>
 
-namespace tenacitas::lib::communication::alg {
+namespace tenacitas::lib::src::communication::alg {
 
 std::string msg2str(const cpt::message auto &p_message) {
   std::stringstream _stream;
@@ -55,6 +55,6 @@ std::vector<std::byte> > >' evaluated to false
 >, __gnu_cxx::__normal_iterator<const std::byte *, std::vector<std::byte> > >'
 evaluated to false
 */
-} // namespace tenacitas::lib::communication::alg
+} // namespace tenacitas::lib::src::communication::alg
 
 #endif

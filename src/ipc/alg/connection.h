@@ -11,7 +11,7 @@
 
 #include <tenacitas/lib/socket/typ/types.h>
 
-namespace tenacitas::lib::socket::alg {
+namespace tenacitas::lib::src::socket::alg {
 
 struct connection {
   using ptr = std::shared_ptr<connection>;
@@ -19,6 +19,6 @@ struct connection {
   virtual typ::status write(const std::byte *p_begin,
                             const std::byte *p_end) = 0;
 };
-} // namespace tenacitas::lib::socket::alg
+} // namespace tenacitas::lib::src::socket::alg
 
 #endif
