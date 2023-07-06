@@ -1,6 +1,9 @@
 # tenacitas.lib
 C++ header only libraries
 
+![alt text](https://github.com/rodrigocanellas/tenacitas.lib/doc/main/dependencies.png?raw=true)
+
+
 @startuml
 hide empty members
 async ..> async
