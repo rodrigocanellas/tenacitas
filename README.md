@@ -1,7 +1,7 @@
 # tenacitas.lib
 C++ header only libraries
 
-![alt text](https://github.com/rodrigocanellas/tenacitas.lib/doc/dependencies.png?raw=true)
+![plot](./doc/dependencies.png?raw=true)
 
 
 @startuml
