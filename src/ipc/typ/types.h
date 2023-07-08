@@ -19,10 +19,10 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas/lib/async/typ/channel_id.h>
-#include <tenacitas/lib/async/typ/connection_id.h>
-#include <tenacitas/lib/async/typ/message.h>
-#include <tenacitas/lib/number/typ/id.h>
+#include <tenacitas.lib/src/communication/cpt/message.h>
+#include <tenacitas.lib/src/communication/typ/channel_id.h>
+#include <tenacitas.lib/src/communication/typ/connection_id.h>
+#include <tenacitas.lib/src/number/typ/id.h>
 
 namespace tenacitas::lib::socket::typ {
 

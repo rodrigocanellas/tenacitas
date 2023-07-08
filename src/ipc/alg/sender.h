@@ -11,10 +11,10 @@
 #include <cstddef>
 #include <vector>
 
-#include <tenacitas/lib/async/alg/dispatcher.h>
-#include <tenacitas/lib/socket/evt/events.h>
-#include <tenacitas/lib/socket/typ/types.h>
-#include <tenacitas/lib/log/alg/logger.h>
+#include <tenacitas.lib/src/async/alg/dispatcher.h>
+#include <tenacitas.lib/src/ipc/evt/events.h>
+#include <tenacitas.lib/src/ipc/typ/types.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
 
 namespace tenacitas::lib::socket::alg {
 

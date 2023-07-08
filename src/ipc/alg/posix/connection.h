@@ -27,12 +27,12 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas/lib/async/alg/dispatcher.h>
-#include <tenacitas/lib/async/typ/message.h>
-#include <tenacitas/lib/log/alg/logger.h>
-#include <tenacitas/lib/number/typ/id.h>
-#include <tenacitas/lib/socket/alg/posix/timeout.h>
-#include <tenacitas/lib/socket/typ/types.h>
+#include <tenacitas.lib/src/async/alg/dispatcher.h>
+#include <tenacitas.lib/src/async/typ/message.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/number/typ/id.h>
+#include <tenacitas.lib/src/ipc/alg/posix/timeout.h>
+#include <tenacitas.lib/src/ipc/typ/types.h>
 
 using namespace std::chrono_literals;
 

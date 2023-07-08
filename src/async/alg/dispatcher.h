@@ -27,7 +27,7 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas.lib/src/async/cpt/concepts.h>
+#include <tenacitas.lib/src/async/cpt/event.h>
 #include <tenacitas.lib/src/async/internal/typ/queue.h>
 #include <tenacitas.lib/src/async/typ/priority.h>
 #include <tenacitas.lib/src/async/typ/queue_id.h>

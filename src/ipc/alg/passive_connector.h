@@ -7,7 +7,7 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #ifndef WIN32
-#include <tenacitas/lib/socket/bus/posix/passive_connector.h>
+#include <tenacitas.lib/src/ipc/bus/posix/passive_connector.h>
 #endif
 
 #endif

@@ -8,7 +8,7 @@
 
 #include <concepts>
 
-#include <tenacitas.lib/src/async/cpt/concepts.h>
+#include <tenacitas.lib/src/async/cpt/event.h>
 #include <tenacitas.lib/src/communication/cpt/message.h>
 
 namespace tenacitas::lib::communication::cpt {

@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 
-#include <tenacitas/lib/socket/typ/types.h>
+#include <tenacitas.lib/src/ipc/typ/types.h>
 
 namespace tenacitas::lib::socket::alg {
 

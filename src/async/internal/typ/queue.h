@@ -11,7 +11,7 @@
 #include <mutex>
 #include <typeindex>
 
-#include <tenacitas.lib/src/async/cpt/concepts.h>
+#include <tenacitas.lib/src/async/cpt/event.h>
 #include <tenacitas.lib/src/async/typ/priority.h>
 #include <tenacitas.lib/src/async/typ/queue_id.h>
 #include <tenacitas.lib/src/async/typ/subscriber.h>
