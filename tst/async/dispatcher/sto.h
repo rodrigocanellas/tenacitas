@@ -27,18 +27,18 @@ CREATE TABLE IF NOT EXISTS "tests" (
 );
 CREATE TABLE IF NOT EXISTS "subscribers" (
         "test_id"	INTEGER NOT NULL,
-        "typ::publishing_id"	INTEGER NOT NULL,
+        "publishing_id"	INTEGER NOT NULL,
         "subscriber_id"	INTEGER NOT NULL,
         "amount"	INTEGER NOT NULL,
-        FOREIGN KEY("test_id","typ::publishing_id") REFERENCES "publishings",
-        PRIMARY KEY("test_id","typ::publishing_id","subscriber_id")
+        FOREIGN KEY("test_id","publishing_id") REFERENCES "publishings",
+        PRIMARY KEY("test_id","publishing_id","subscriber_id")
 );
 CREATE TABLE IF NOT EXISTS "publishings" (
         "test_id"	INTEGER NOT NULL,
-        "typ::publishing_id"	INTEGER NOT NULL,
+        "publishing_id"	INTEGER NOT NULL,
         "sleep"	INTEGER NOT NULL,
         FOREIGN KEY("test_id") REFERENCES "tests"("test_id"),
-        PRIMARY KEY("test_id","typ::publishing_id")
+        PRIMARY KEY("test_id","publishing_id")
 );
 CREATE TABLE IF NOT EXISTS "generators" (
         "test_id"	INTEGER NOT NULL,
@@ -96,19 +96,19 @@ private:
         ");"
         "CREATE TABLE IF NOT EXISTS \"subscribers\" ("
         "\"test_id\"	INTEGER NOT NULL,"
-        "\"typ::publishing_id\"	INTEGER NOT NULL,"
+        "\"publishing_id\"	INTEGER NOT NULL,"
         "\"subscriber_id\"	INTEGER NOT NULL,"
         "\"amount\"	INTEGER NOT NULL,"
-        "FOREIGN KEY(\"test_id\",\"typ::publishing_id\") REFERENCES "
+        "FOREIGN KEY(\"test_id\",\"publishing_id\") REFERENCES "
         "\"publishings\","
-        "PRIMARY KEY(\"test_id\",\"typ::publishing_id\",\"subscriber_id\")"
+        "PRIMARY KEY(\"test_id\",\"publishing_id\",\"subscriber_id\")"
         ");"
         "CREATE TABLE IF NOT EXISTS \"publishings\" ("
         "\"test_id\"	INTEGER NOT NULL,"
-        "\"typ::publishing_id\"	INTEGER NOT NULL,"
+        "\"publishing_id\"	INTEGER NOT NULL,"
         "\"sleep\"	INTEGER NOT NULL,"
         "FOREIGN KEY(\"test_id\") REFERENCES \"tests\"(\"test_id\"),"
-        "PRIMARY KEY(\"test_id\",\"typ::publishing_id\")"
+        "PRIMARY KEY(\"test_id\",\"publishing_id\")"
         ");"
         "CREATE TABLE IF NOT EXISTS \"generators\" ("
         "\"test_id\"	INTEGER NOT NULL,"
@@ -236,7 +236,7 @@ private:
                         const typ::subscribers_results &p_subscribers) {
     for (const typ::subscribers_results::value_type &_value : p_subscribers) {
       std::stringstream _stream;
-      _stream << "insert into subscribers (test_id, typ::publishing_id, "
+      _stream << "insert into subscribers (test_id, publishing_id, "
                  "subscriber_id, "
                  "amount) values ("
               << m_test_id << ", " << p_publishing_id << ", " << _value.first
@@ -262,7 +262,7 @@ private:
     for (const typ::publishings_results::value_type &_value : p_publishings) {
       async::typ::queue_id _publishing_id = _value.first;
       std::stringstream _stream;
-      _stream << "insert into publishings (test_id, typ::publishing_id, sleep) "
+      _stream << "insert into publishings (test_id, publishing_id, sleep) "
                  "values ("
               << m_test_id << ", " << _publishing_id << ", "
               << _value.second.sleep.count() << "); ";

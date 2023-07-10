@@ -20,28 +20,46 @@
 
 namespace tenacitas::lib::async::internal::typ {
 
-template <cpt::event t_event> class queue_t;
+// template <cpt::event t_event> class queue_t;
 
 // A publishing for an event
-class queue {
-public:
-  using ptr = std::shared_ptr<queue>;
+template <cpt::event t_event> class event_queue {
 
 public:
-  queue() = delete;
+  event_queue() = delete;
 
-  template <cpt::event t_event>
-  static ptr create(async::typ::priority p_priority);
+  event_queue(async::typ::priority p_priority = async::typ::priority ::medium);
 
-  queue(const queue &) = delete;
-  queue(queue &&) = delete;
-  queue &operator=(const queue &) = delete;
-  queue &operator=(queue &&) = delete;
+  event_queue(const event_queue &) = delete;
 
-  virtual ~queue();
+  event_queue(event_queue &&p_queue) {
+    m_id = std::move(p_queue.m_id);
+    m_priority = std::move(p_queue.m_priority);
+    m_loops = std::move(p_queue.m_loops);
+    m_stopped = p_queue.m_stopped.load();
+    m_queued_data = std::move(p_queue.m_queued_data);
+    m_circular_queue = std::move(p_queue.m_circular_queue);
+  }
+
+  event_queue &operator=(const event_queue &) = delete;
+  event_queue &operator=(event_queue &&) = delete;
+
+  // Adds an event to the queue of events
+  bool add_event(const t_event &p_event);
+
+  // Adds a subscriber that will compete with the other existing subscribers for
+  // an event in the queue
+  void add_subscriber(async::typ::subscriber_t<t_event> p_subscriber);
+
+  // Adds a bunch of subscribers
+  void
+  add_subscriber(std::unsigned_integral auto p_num_subscribers,
+                 std::function<async::typ::subscriber_t<t_event>()> p_factory);
+
+  ~event_queue();
 
   // \brief Stops this publishing
-  void halt() {
+  void stop() {
     if (m_stopped) {
 #ifdef TENACITAS_LOG
       TNCT_LOG_TRA("publishing ", m_id,
@@ -84,7 +102,7 @@ public:
   }
 
   // Amount of events added
-  virtual size_t amount_added() const = 0;
+  size_t amount_added() const;
 
   // Informs if the publishing is stopped
   bool is_stopped() const;
@@ -96,31 +114,37 @@ public:
   void set_priority(async::typ::priority p_priority);
 
   // \return Returns the size of the queue of \p t_event
-  virtual size_t get_size() const = 0;
+  size_t get_size() const;
 
   // \return Returns the amount of \p t_event objects in the queue
-  virtual size_t get_occupied() const = 0;
+  size_t get_occupied() const;
 
   // publishing is ordered by tenacitas::lib::async::priority
-  constexpr bool operator<(const queue &p_publishing) const;
+  constexpr bool operator<(const event_queue &p_publishing) const;
 
   // publishing is ordered by tenacitas::lib::async::priority
-  constexpr bool operator>(const queue &p_publishing) const;
+  constexpr bool operator>(const event_queue &p_publishing) const;
 
   // publishing is compared by tenacitas::lib::async::async::typ::publishing_id
-  constexpr bool operator!=(const queue &p_publishing) const;
+  constexpr bool operator!=(const event_queue &p_publishing) const;
 
   // publishing is compared by tenacitas::lib::async::async::typ::publishing_id
-  constexpr bool operator==(const queue &p_publishing) const;
+  constexpr bool operator==(const event_queue &p_publishing) const;
 
-  virtual void report(std::ostringstream &p_out) const = 0;
+  void report(std::ostringstream &p_out) const;
 
 protected:
   // Group of loops that asynchronously call the subscribers
   using loops = std::vector<std::thread>;
 
+  // Queue used to store the events to be handled
+  using circular_queue = container::typ::circular_queue_t<t_event>;
+
 protected:
-  queue(async::typ::priority p_priority = async::typ::priority ::medium);
+  void subscriber_loop(async::typ::subscriber_t<t_event> p_subscriber);
+
+  void empty_queue(const std::thread::id &p_loop_id,
+                   async::typ::subscriber_t<t_event> p_subscriber);
 
 protected:
   // Identifier of this publishing
@@ -147,166 +171,80 @@ protected:
 
   // Controls access to the data produced
   std::condition_variable m_cond;
-};
 
-template <cpt::event t_event> class queue_t : public queue {
-public:
-  queue_t(async::typ::priority p_priority = async::typ::priority::medium);
-
-  ~queue_t() override {}
-
-  // Adds an event to the queue of events
-  bool add_event(const t_event &p_event);
-
-  // Adds a subscriber that will compete with the other existing subscribers for
-  // an event in the queue
-  void add_subscriber(async::typ::subscriber_t<t_event> p_subscriber);
-
-  // Adds a bunch of subscribers
-  void
-  add_subscriber(std::unsigned_integral auto p_num_subscribers,
-                 std::function<async::typ::subscriber_t<t_event>()> p_factory);
-
-  // Amount of events added
-  size_t amount_added() const override;
-
-  // \return Returns the size of the queue of \p t_event
-  size_t get_size() const override;
-
-  // \return Returns the amount of \p t_event objects in the queue
-  size_t get_occupied() const override;
-
-  void report(std::ostringstream &p_out) const override;
-
-private:
-  // Queue used to store the events to be handled
-  using circular_queue = container::typ::circular_queue_t<t_event>;
-
-private:
-  // Loop that gets events from the queue and passes to a subscriber
-  void subscriber_loop(async::typ::subscriber_t<t_event> p_subscriber);
-
-  // Empties the queue of the events not passed to subscribers
-  //
-  // \todo tenacitas:async::internal::publishing::empty_queue
-  void empty_queue(const std::thread::id &p_loop_id,
-                   async::typ::subscriber_t<t_event> p_subscriber);
-
-private:
-  // Queue of events
-  circular_queue m_queue;
+  circular_queue m_circular_queue;
 };
 
 } // namespace tenacitas::lib::async::internal::typ
 
-// \brief Stops this publishing
-// void tenacitas::lib::async::internal::typ::queue::halt() {
-//  if (m_stopped) {
-//#ifdef TENACITAS_LOG
-//    TNCT_LOG_TRA("publishing ", m_id, " - not stopping because it is
-//    stopped");
-//#endif
-//    std::lock_guard<std::mutex> _lock(m_mutex);
-//    m_cond.notify_all();
-//    return;
-//  }
-//#ifdef TENACITAS_LOG
-//  TNCT_LOG_TRA("publishing ", m_id, " -  notifying loops to stop");
-//#endif
-//  {
-//    std::lock_guard<std::mutex> _lock(m_mutex);
-//    m_stopped = true;
-//    m_cond.notify_all();
-//  }
-
-//  for (std::thread &_thread : m_loops) {
-//    if (_thread.joinable()) {
-//#ifdef TENACITAS_LOG
-//      TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
-//                   " - is joinable");
-//#endif
-//      _thread.join();
-
-//#ifdef TENACITAS_LOG
-//      TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
-//                   " - joined");
-//#endif
-//    }
-//#ifdef TENACITAS_LOG
-//    else {
-
-//      TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
-//                   " - is not joinable");
-//    }
-//#endif
-//  }
-//}
-
 namespace tenacitas::lib::async::internal::typ {
 
-template <cpt::event t_event>
-queue::ptr queue::create(async::typ::priority p_priority) {
-  try {
-    return ptr{new queue_t<t_event>(p_priority)};
-  } catch (std::exception &_ex) {
-#ifdef TENACITAS_LOG
-    TNCT_LOG_ERR("could not create publishing");
-#endif
-    return nullptr;
-  }
-}
-
-inline queue::~queue() {
+template <cpt::event t_event> inline event_queue<t_event>::~event_queue() {
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("publishing ", m_id, " - destructor");
 #endif
-  halt();
+  stop();
 }
 
-inline bool queue::is_stopped() const { return m_stopped; }
+template <cpt::event t_event>
+inline bool event_queue<t_event>::is_stopped() const {
+  return m_stopped;
+}
 
-inline async::typ::queue_id queue::get_id() const { return m_id; }
+template <cpt::event t_event>
+inline async::typ::queue_id event_queue<t_event>::get_id() const {
+  return m_id;
+}
 
-inline constexpr async::typ::priority queue::get_priority() const {
+template <cpt::event t_event>
+inline constexpr async::typ::priority
+event_queue<t_event>::get_priority() const {
   return m_priority;
 }
 
-inline void queue::set_priority(async::typ::priority p_priority) {
+template <cpt::event t_event>
+inline void
+event_queue<t_event>::set_priority(async::typ::priority p_priority) {
   m_priority = p_priority;
 }
 
-inline constexpr bool queue::operator<(const queue &p_publishing) const {
+template <cpt::event t_event>
+inline constexpr bool
+event_queue<t_event>::operator<(const event_queue &p_publishing) const {
   return m_priority < p_publishing.m_priority;
 }
 
-inline constexpr bool queue::operator>(const queue &p_publishing) const {
+template <cpt::event t_event>
+inline constexpr bool
+event_queue<t_event>::operator>(const event_queue &p_publishing) const {
   return m_priority > p_publishing.m_priority;
 }
 
-inline constexpr bool queue::operator!=(const queue &p_publishing) const {
+template <cpt::event t_event>
+inline constexpr bool
+event_queue<t_event>::operator!=(const event_queue &p_publishing) const {
   return m_id != p_publishing.m_id;
 }
 
-inline constexpr bool queue::operator==(const queue &p_publishing) const {
+template <cpt::event t_event>
+inline constexpr bool
+event_queue<t_event>::operator==(const event_queue &p_publishing) const {
   return m_id == p_publishing.m_id;
 }
 
-inline queue::queue(async::typ::priority p_priority)
+template <cpt::event t_event>
+inline event_queue<t_event>::event_queue(async::typ::priority p_priority)
     : m_id(reinterpret_cast<size_t>(&(*this))), m_priority(p_priority) {}
 
 template <cpt::event t_event>
-inline queue_t<t_event>::queue_t(async::typ::priority p_priority)
-    : queue(p_priority), m_queue(1) {}
-
-template <cpt::event t_event>
-bool queue_t<t_event>::add_event(const t_event &p_event) {
+bool event_queue<t_event>::add_event(const t_event &p_event) {
   try {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("event '", typeid(t_event).name(), "', publishing ", m_id,
-                 ", queue ", m_queue.get_id(), " - adding event ");
+                 ", queue ", m_circular_queue.get_id(), " - adding event ");
 #endif
 
-    m_queue.add(p_event);
+    m_circular_queue.add(p_event);
 
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_cond.notify_all();
@@ -326,7 +264,7 @@ bool queue_t<t_event>::add_event(const t_event &p_event) {
 
 template <cpt::event t_event>
 
-void queue_t<t_event>::add_subscriber(
+void event_queue<t_event>::add_subscriber(
     std::unsigned_integral auto p_num_subscribers,
     std::function<async::typ::subscriber_t<t_event>()> p_factory) {
   for (decltype(p_num_subscribers) _i = 0; _i < p_num_subscribers; ++_i) {
@@ -335,33 +273,34 @@ void queue_t<t_event>::add_subscriber(
 }
 
 template <cpt::event t_event>
-inline size_t queue_t<t_event>::amount_added() const {
-  return m_queue.capacity();
-}
-
-template <cpt::event t_event> inline size_t queue_t<t_event>::get_size() const {
-  return m_queue.capacity();
+inline size_t event_queue<t_event>::amount_added() const {
+  return m_circular_queue.capacity();
 }
 
 template <cpt::event t_event>
-inline size_t queue_t<t_event>::get_occupied() const {
-  return m_queue.occupied();
+inline size_t event_queue<t_event>::get_size() const {
+  return m_circular_queue.capacity();
 }
 
 template <cpt::event t_event>
-inline void queue_t<t_event>::report(std::ostringstream &p_out) const {
+inline size_t event_queue<t_event>::get_occupied() const {
+  return m_circular_queue.occupied();
+}
+
+template <cpt::event t_event>
+inline void event_queue<t_event>::report(std::ostringstream &p_out) const {
   p_out << "\tpublishing: " << m_id << '\n'
         << "\t\tnum subscribers: " << m_loops.size()
         << ", priority: " << m_priority << '\n';
 }
 
 template <cpt::event t_event>
-void queue_t<t_event>::add_subscriber(
+void event_queue<t_event>::add_subscriber(
     async::typ::subscriber_t<t_event> p_subscriber) {
   if (m_stopped) {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("event '", typeid(t_event).name(), "', publishing ", m_id,
-                 ", queue ", m_queue.get_id(),
+                 ", queue ", m_circular_queue.get_id(),
                  " - not adding subscriber because m_stopped = ", m_stopped);
 #endif
     return;
@@ -373,9 +312,9 @@ void queue_t<t_event>::add_subscriber(
 }
 
 template <cpt::event t_event>
-void queue_t<t_event>::subscriber_loop(
+void event_queue<t_event>::subscriber_loop(
     async::typ::subscriber_t<t_event> p_subscriber) {
-  auto _queue_id{m_queue.get_id()};
+  auto _queue_id{m_circular_queue.get_id()};
   auto _loop_id{std::this_thread::get_id()};
 
   if (!p_subscriber) {
@@ -415,7 +354,7 @@ void queue_t<t_event>::subscriber_loop(
         TNCT_LOG_TRA('(', typeid(t_event).name(), ',', m_id, ',', _queue_id,
                      ",", _subscriber_id, ',', _loop_id, ')',
                      " - entering condition, with m_stop = ", m_stopped,
-                     ", and m_queue.empty()? ", m_queue.empty());
+                     ", and m_queue.empty()? ", m_circular_queue.empty());
 #endif
         if (m_stopped) {
 #ifdef TENACITAS_LOG
@@ -424,7 +363,7 @@ void queue_t<t_event>::subscriber_loop(
 #endif
           return true;
         }
-        if (!m_queue.empty()) {
+        if (!m_circular_queue.empty()) {
 #ifdef TENACITAS_LOG
           TNCT_LOG_TRA('(', typeid(t_event).name(), ',', m_id, ',', _queue_id,
                        ",", _subscriber_id, ',', _loop_id, ')',
@@ -465,7 +404,7 @@ void queue_t<t_event>::subscriber_loop(
     TNCT_LOG_TRA("about to get the event from the queue");
 #endif
 
-    std::optional<t_event> _maybe{m_queue.get()};
+    std::optional<t_event> _maybe{m_circular_queue.get()};
     if (!_maybe.has_value()) {
 #ifdef TENACITAS_LOG
       TNCT_LOG_TRA('(', typeid(t_event).name(), ',', m_id, ',', _queue_id, ",",
@@ -533,11 +472,11 @@ void queue_t<t_event>::subscriber_loop(
 }
 
 template <cpt::event t_event>
-void queue_t<t_event>::empty_queue(
+void event_queue<t_event>::empty_queue(
     const std::thread::id &p_loop_id,
     async::typ::subscriber_t<t_event> p_subscriber) {
   while (true) {
-    std::optional<t_event> _maybe{m_queue.get()};
+    std::optional<t_event> _maybe{m_circular_queue.get()};
     if (!_maybe.has_value()) {
       break;
     }

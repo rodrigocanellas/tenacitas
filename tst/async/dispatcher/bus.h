@@ -16,6 +16,7 @@
 #include <tenacitas.lib/src/async/alg/sleeping_loop.h>
 #include <tenacitas.lib/src/calendar/cpt/chrono_convertible.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/tst/async/dispatcher/dispatcher.h>
 #include <tenacitas.lib/tst/async/dispatcher/evt.h>
 #include <tenacitas.lib/tst/async/dispatcher/typ.h>
 
@@ -26,8 +27,8 @@ namespace bus {
 // pressure_generator
 struct pressure_generator {
 
-  pressure_generator(async::alg::dispatcher::ptr p_dispatcher,
-                     typ::pressure p_initial, typ::generator p_generator)
+  pressure_generator(dispatcher::ptr p_dispatcher, typ::pressure p_initial,
+                     typ::generator p_generator)
       : m_dispatcher(p_dispatcher), m_pressure(p_initial),
         m_generator(p_generator) {}
 
@@ -74,7 +75,7 @@ private:
   }
 
 private:
-  async::alg::dispatcher::ptr m_dispatcher;
+  dispatcher::ptr m_dispatcher;
 
   typ::pressure m_pressure;
 
@@ -92,11 +93,11 @@ using storager = std::function<std::optional<typ::test_id>(
     typ::publishings_results &&p_publishings)>;
 
 struct pressure_tester {
-  pressure_tester(async::alg::dispatcher::ptr p_dispatcher, storager p_storager,
+  pressure_tester(dispatcher::ptr p_dispatcher, storager p_storager,
                   const typ::generators_definitions &p_generator_definition,
                   const typ::publishings_definitions &p_publishing_definition)
       : m_dispatcher(p_dispatcher), m_storager(p_storager) {
-    m_dispatcher->clear();
+    m_dispatcher->stop();
     m_summary = typ::summary{};
     setup_generators(p_generator_definition);
     setup_publishings(p_publishing_definition);
@@ -302,7 +303,7 @@ private:
   void report_summary() { TNCT_LOG_INF("summary: ", m_summary); }
 
 private:
-  async::alg::dispatcher::ptr m_dispatcher;
+  dispatcher::ptr m_dispatcher;
   storager m_storager;
   pressure_generators m_pressure_generators;
   typ::generators m_generators;
@@ -321,7 +322,7 @@ private:
 struct processor {
   processor(storager &&p_sto) : m_sto(p_sto) {}
 
-  bool operator()(async::alg::dispatcher::ptr p_dispatcher,
+  bool operator()(dispatcher::ptr p_dispatcher,
                   const typ::generators_definitions &p_generator,
                   const typ::publishings_definitions &p_publishing) {
     TNCT_LOG_TST("generators definitions: ", p_generator);
