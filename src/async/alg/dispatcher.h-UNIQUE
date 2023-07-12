@@ -110,7 +110,13 @@ template <cpt::event... t_events> struct dispatcher {
   using ptr = std::shared_ptr<dispatcher>;
 
   /// \brief \p dispatcher objects can only be created in the heap memory area
-  static ptr create() { return ptr(new dispatcher()); }
+  static ptr create() {
+    try {
+      return ptr(new dispatcher());
+    } catch (...) {
+      return nullptr;
+    }
+  }
 
   dispatcher(const dispatcher &) = delete;
   dispatcher(dispatcher &&) = delete;
@@ -271,17 +277,17 @@ private:
 private:
   using events = std::tuple<t_events...>;
 
-  using events_queues =
-      std::tuple<std::list<internal::typ::event_queue<t_events>>...>;
+  using events_queues = std::tuple<
+      std::list<std::unique_ptr<internal::typ::event_queue<t_events>>>...>;
 
   template <typename t_event>
   using event_queue = internal::typ::event_queue<t_event>;
 
-  //  template <typename t_event>
-  //  using event_queue_ptr = std::shared_ptr<event_queue<t_event>>;
+  template <typename t_event>
+  using event_queue_ptr = std::unique_ptr<event_queue<t_event>>;
 
   template <typename t_event>
-  using event_queues = std::list<event_queue<t_event>>;
+  using event_queues = std::list<event_queue_ptr<t_event>>;
 
   template <typename t_event>
   using event_queues_iterator = typename event_queues<t_event>::iterator;
@@ -306,12 +312,12 @@ private:
     TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queues");
 #endif
 
-    for (event_queue<event> &_event_queue : _event_queues) {
+    for (event_queue_ptr<event> &_event_queue : _event_queues) {
 #ifdef TENACITAS_LOG
       TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queue ",
-                   _event_queue.get_id());
+                   _event_queue->get_id());
 #endif
-      _event_queue.stop();
+      _event_queue->stop();
     }
   }
 
@@ -324,8 +330,8 @@ private:
     using event = std::tuple_element_t<t_idx, events>;
     event_queues<event> &_event_queues(std::get<t_idx>(m_events_queues));
 
-    for (event_queue<event> &_event_queue : _event_queues) {
-      _event_queue.clear();
+    for (event_queue_ptr<event> &_event_queue : _event_queues) {
+      _event_queue->clear();
     }
   }
   template <std::size_t... t_idxs>
@@ -349,15 +355,12 @@ typ::queue_id dispatcher<t_events...>::add_queue(typ::priority p_priority) {
 
   event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
 
-  //  event_queue<t_event> _event_queue{p_priority};
+  event_queue_ptr<t_event> _event_queue{
+      std::make_unique<event_queue<t_event>>(p_priority)};
 
-  //  typ::queue_id _queue_id{_event_queue.get_id()};
+  typ::queue_id _queue_id{_event_queue->get_id()};
 
-  //  _event_queues.push_back(std::move(_event_queue));
-
-  _event_queues.emplace_back(p_priority);
-
-  typ::queue_id _queue_id{_event_queues.back().get_id()};
+  _event_queues.push_back(std::move(_event_queue));
 
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("##### event '", typeid(t_event).name(), " - now has ",
@@ -375,7 +378,7 @@ void dispatcher<t_events...>::subscribe(
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
 
-  _ite->add_subscriber(p_subscriber);
+  (*_ite)->add_subscriber(p_subscriber);
 }
 
 template <cpt::event... t_events>
@@ -387,7 +390,7 @@ void dispatcher<t_events...>::subscribe(
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
 
-  _ite->add_subscriber(p_num_workers, p_factory);
+  (*_ite)->add_subscriber(p_num_workers, p_factory);
 }
 
 template <cpt::event... t_events> inline void dispatcher<t_events...>::clear() {
@@ -410,8 +413,8 @@ typ::queue_id
 dispatcher<t_events...>::subscribe(typ::subscriber_t<t_event> p_subscriber,
                                    typ::priority p_priority) {
   event_queues_iterator<t_event> _ite{internal_add_queue<t_event>(p_priority)};
-  _ite->add_subscriber(p_subscriber);
-  return _ite->get_id();
+  (*_ite)->add_subscriber(p_subscriber);
+  return (*_ite)->get_id();
 }
 
 template <cpt::event... t_events>
@@ -437,7 +440,7 @@ void dispatcher<t_events...>::publish_to_queue(typ::queue_id p_queue_id,
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
 
-  _ite->add_event(p_event);
+  (*_ite)->add_event(p_event);
 }
 
 template <cpt::event... t_events>
@@ -465,7 +468,7 @@ void dispatcher<t_events...>::set_priority(const typ::queue_id &p_queue_id,
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
 
-  _ite->set_priority(p_priority);
+  (*_ite)->set_priority(p_priority);
 }
 
 template <cpt::event... t_events>
@@ -474,7 +477,7 @@ typ::priority
 dispatcher<t_events...>::get_priority(const typ::queue_id &p_queue_id) {
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
-  return _ite->get_priority();
+  return (*_ite)->get_priority();
 }
 
 template <cpt::event... t_events>
@@ -483,7 +486,7 @@ size_t dispatcher<t_events...>::size(const typ::queue_id &p_queue_id) {
 
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
-  return _ite->get_size();
+  return (*_ite)->get_size();
 }
 
 template <cpt::event... t_events>
@@ -491,7 +494,7 @@ template <cpt::event t_event>
 size_t dispatcher<t_events...>::occupied(const typ::queue_id &p_queue_id) {
   event_queues_iterator<t_event> _ite{
       get_event_queues_iterator<t_event>(p_queue_id)};
-  return _ite->get_occupied();
+  return (*_ite)->get_occupied();
 }
 
 template <cpt::event... t_events>
@@ -502,8 +505,8 @@ bool dispatcher<t_events...>::internal_publish(const t_event &p_event) {
 #endif
 
   event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
-  for (event_queue<t_event> &_event_queue : _event_queues) {
-    _event_queue.add_event(p_event);
+  for (event_queue_ptr<t_event> &_event_queue : _event_queues) {
+    _event_queue->add_event(p_event);
   }
   return true;
 }
@@ -517,23 +520,19 @@ dispatcher<t_events...>::internal_add_queue(typ::priority p_priority) {
 
   event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
 
-  //  event_queue<t_event> _event_queue{p_priority};
+  event_queue_ptr<t_event> _event_queue{
+      std::make_unique<event_queue<t_event>>(p_priority)};
 
-  //  typ::queue_id _queue_id{_event_queue.get_id()};
+  typ::queue_id _queue_id{_event_queue->get_id()};
 
   //  std::pair<event_queues_iterator<t_event>, bool> _pair{
   //      _event_queues.insert(std::move(_event_queue))};
 
-  //  _event_queues.push_back(std::move(_event_queue));
-
-  _event_queues.emplace_back(p_priority);
-
-  //  typ::queue_id _queue_id{_event_queues.back().get_id()};
+  _event_queues.push_back(std::move(_event_queue));
 
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("##### event '", typeid(t_event).name(), " - now has ",
-               _event_queues.size(), " queues, the last is # ",
-               _event_queues.back().get_id());
+               _event_queues.size(), " queues, the last is # ", _queue_id);
 #endif
 
   return std::prev(_event_queues.end());
@@ -547,7 +546,7 @@ dispatcher<t_events...>::get_event_queues_iterator(typ::queue_id p_queue_id) {
 
   event_queues_iterator<t_event> _ite{std::find_if(
       _event_queues.begin(), _event_queues.end(),
-      [&](const auto &p_queue) { return p_queue.get_id() == p_queue_id; })};
+      [&](const auto &p_queue) { return p_queue->get_id() == p_queue_id; })};
 
   if (_ite == _event_queues.end()) {
     std::stringstream _stream;

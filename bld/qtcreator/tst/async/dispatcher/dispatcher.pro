@@ -1,7 +1,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.tst.async.dispatcher
+TARGET=tenacitas.lib.tst.async.dispatcher-OBJECT
 
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 

@@ -62,15 +62,14 @@ public:
   void stop() {
     if (m_stopped) {
 #ifdef TENACITAS_LOG
-      TNCT_LOG_TRA("publishing ", m_id,
-                   " - not stopping because it is stopped");
+      TNCT_LOG_TRA("queue ", m_id, " - not stopping because it is stopped");
 #endif
       std::lock_guard<std::mutex> _lock(m_mutex);
       m_cond.notify_all();
       return;
     }
 #ifdef TENACITAS_LOG
-    TNCT_LOG_TRA("publishing ", m_id, " -  notifying loops to stop");
+    TNCT_LOG_TRA("queue ", m_id, " -  notifying loops to stop");
 #endif
     {
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -81,24 +80,27 @@ public:
     for (std::thread &_thread : m_loops) {
       if (_thread.joinable()) {
 #ifdef TENACITAS_LOG
-        TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
+        TNCT_LOG_TRA("queue ", m_id, ", thread ", _thread.get_id(),
                      " - is joinable");
 #endif
         _thread.join();
 
 #ifdef TENACITAS_LOG
-        TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
+        TNCT_LOG_TRA("queue ", m_id, ", thread ", _thread.get_id(),
                      " - joined");
 #endif
       }
 #ifdef TENACITAS_LOG
       else {
 
-        TNCT_LOG_TRA("publishing ", m_id, ", thread ", _thread.get_id(),
+        TNCT_LOG_TRA("queue ", m_id, ", thread ", _thread.get_id(),
                      " - is not joinable");
       }
 #endif
     }
+#ifdef TENACITAS_LOG
+    TNCT_LOG_TRA("queue ", m_id, " - leaving stop()");
+#endif
   }
 
   // Amount of events added
@@ -132,6 +134,11 @@ public:
   constexpr bool operator==(const event_queue &p_publishing) const;
 
   void report(std::ostringstream &p_out) const;
+
+  void clear() {
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_circular_queue.clear();
+  }
 
 protected:
   // Group of loops that asynchronously call the subscribers
@@ -181,7 +188,7 @@ namespace tenacitas::lib::async::internal::typ {
 
 template <cpt::event t_event> inline event_queue<t_event>::~event_queue() {
 #ifdef TENACITAS_LOG
-  TNCT_LOG_TRA("publishing ", m_id, " - destructor");
+  TNCT_LOG_TRA("queue ", m_id, " - destructor");
 #endif
   stop();
 }
@@ -263,7 +270,6 @@ bool event_queue<t_event>::add_event(const t_event &p_event) {
 }
 
 template <cpt::event t_event>
-
 void event_queue<t_event>::add_subscriber(
     std::unsigned_integral auto p_num_subscribers,
     std::function<async::typ::subscriber_t<t_event>()> p_factory) {

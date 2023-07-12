@@ -349,15 +349,11 @@ typ::queue_id dispatcher<t_events...>::add_queue(typ::priority p_priority) {
 
   event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
 
-  //  event_queue<t_event> _event_queue{p_priority};
+  event_queue<t_event> _event_queue{p_priority};
 
-  //  typ::queue_id _queue_id{_event_queue.get_id()};
+  typ::queue_id _queue_id{_event_queue.get_id()};
 
-  //  _event_queues.push_back(std::move(_event_queue));
-
-  _event_queues.emplace_back(p_priority);
-
-  typ::queue_id _queue_id{_event_queues.back().get_id()};
+  _event_queues.push_back(std::move(_event_queue));
 
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("##### event '", typeid(t_event).name(), " - now has ",
@@ -517,23 +513,18 @@ dispatcher<t_events...>::internal_add_queue(typ::priority p_priority) {
 
   event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
 
-  //  event_queue<t_event> _event_queue{p_priority};
+  event_queue<t_event> _event_queue{p_priority};
 
-  //  typ::queue_id _queue_id{_event_queue.get_id()};
+  typ::queue_id _queue_id{_event_queue.get_id()};
 
   //  std::pair<event_queues_iterator<t_event>, bool> _pair{
   //      _event_queues.insert(std::move(_event_queue))};
 
-  //  _event_queues.push_back(std::move(_event_queue));
-
-  _event_queues.emplace_back(p_priority);
-
-  //  typ::queue_id _queue_id{_event_queues.back().get_id()};
+  _event_queues.push_back(std::move(_event_queue));
 
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("##### event '", typeid(t_event).name(), " - now has ",
-               _event_queues.size(), " queues, the last is # ",
-               _event_queues.back().get_id());
+               _event_queues.size(), " queues, the last is # ", _queue_id);
 #endif
 
   return std::prev(_event_queues.end());

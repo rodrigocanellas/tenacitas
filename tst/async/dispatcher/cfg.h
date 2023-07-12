@@ -140,6 +140,8 @@ struct options {
 
     m_sqlite_file = get_sqlite_file(_options);
 
+    TNCT_LOG_DEB("sql lite = ", m_sqlite_file);
+
     {
       for (const typ::time &_sleep : m_sleeps) {
         TNCT_LOG_INF("sleep = ", _sleep.count());

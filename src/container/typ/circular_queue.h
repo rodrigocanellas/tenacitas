@@ -180,7 +180,9 @@ template <typename t_data> struct circular_queue_t {
   // queue
   inline constexpr size_t occupied() const { return m_amount; }
 
-  inline number::typ::id get_id() const { return m_id; }
+  inline size_t get_id() const { return m_id; }
+
+  void clear() { m_root.reset(); }
 
 private:
   // \brief Node of the linked list used to implement the queue
