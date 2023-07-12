@@ -57,7 +57,6 @@ struct ev_1 {
 };
 } // namespace evt
 
-namespace alg {
 struct test_000 {
   test_000() { TNCT_LOG_TST("creating test_000"); }
   ~test_000() { TNCT_LOG_TST("destroying test_000"); }
@@ -379,28 +378,28 @@ private:
 
 int test_dispatcher::m_argc;
 char **test_dispatcher::m_argv;
-} // namespace alg
+
 int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  log::alg::set_trace_level();
+  log::alg::set_info_level();
   log::alg::set_max_file_name_lenght(20);
 
   program::alg::options _options;
 
-  alg::test_dispatcher::setup(argc, argv);
+  test_dispatcher::setup(argc, argv);
 
   test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::test_dispatcher);
-  run_test(_tester, alg::test_000);
-  run_test(_tester, alg::test_001);
-  run_test(_tester, alg::test_002);
-  run_test(_tester, alg::test_003);
-  run_test(_tester, alg::test_004);
-  run_test(_tester, alg::test_005);
-  run_test(_tester, alg::test_corner_000);
-  run_test(_tester, alg::test_corner_001);
-  run_test(_tester, alg::test_corner_002);
+  run_test(_tester, test_dispatcher);
+  run_test(_tester, test_000);
+  run_test(_tester, test_001);
+  run_test(_tester, test_002);
+  run_test(_tester, test_003);
+  run_test(_tester, test_004);
+  run_test(_tester, test_005);
+  run_test(_tester, test_corner_000);
+  run_test(_tester, test_corner_001);
+  run_test(_tester, test_corner_002);
 }

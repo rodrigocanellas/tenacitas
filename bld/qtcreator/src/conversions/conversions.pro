@@ -8,3 +8,4 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/src/conversions/typ/base.h \
         $$BASE_DIR/tenacitas.lib/src/conversions/typ/result.h \
         $$BASE_DIR/tenacitas.lib/src/conversions/typ/separator.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/alg/cvt.h \
