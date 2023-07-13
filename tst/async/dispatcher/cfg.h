@@ -68,7 +68,7 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
       << total_publishing_option << " {2, 6}'\n"
 
       << '\t' << amount_subscribers_option
-      << ": Amount of subscribers for each subscriber, like '--"
+      << ": Amount of subscribers for each publishing, like '--"
       << amount_subscribers_option << " {8, 12}'\n"
 
       << '\t' << amount_subscribers_increment_option
