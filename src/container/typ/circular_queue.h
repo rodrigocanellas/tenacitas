@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <condition_variable>
 #include <functional>
-#include <future>
+#include <list>
 #include <mutex>
 #include <optional>
 #include <thread>
@@ -27,6 +27,9 @@ namespace tenacitas::lib::container::typ {
 // \tparam t_data defines the types of the data contained in the
 // buffer. It must implement default constructor
 template <typename t_data> struct circular_queue_t {
+
+  circular_queue_t() = default;
+
   // \brief Constructor
   //
   // \param p_size the number of initial slots in the queue
@@ -55,7 +58,12 @@ template <typename t_data> struct circular_queue_t {
   circular_queue_t(const circular_queue_t &) = delete;
 
   // \brief Move constructor
-  circular_queue_t(circular_queue_t &&p_queue) {
+  circular_queue_t(circular_queue_t &&p_queue)
+      : m_list(std::move(p_queue.m_list)),
+        m_write_ite(std::move(p_queue.m_write_ite)),
+        m_read_ite(std::move(p_queue.m_read_ite)),
+        m_amount(std::move(p_queue.m_amount)) {
+
     m_root = p_queue.m_root;
     m_write = p_queue.m_write;
     m_read = p_queue.m_read;
@@ -72,6 +80,10 @@ template <typename t_data> struct circular_queue_t {
       m_write = p_queue.m_write;
       m_read = p_queue.m_read;
       m_amount = p_queue.m_amount;
+
+      m_list = std::move(p_queue.m_list);
+      m_write_ite = std::move(p_queue.m_write_ite);
+      m_read_ite = std::move(p_queue.m_read_ite);
     }
     return *this;
   }
@@ -102,14 +114,27 @@ template <typename t_data> struct circular_queue_t {
     {
       std::lock_guard<std::mutex> _lock(m_mutex);
 
-      if (!full()) {
-        m_write->m_data = std::forward<t_data>(p_data);
-        m_write = m_write->m_next;
-      } else {
-        if (!insert(m_write->m_prev, std::forward<t_data>(p_data))) {
-          throw("error inserting node");
-        }
+      if (m_list.empty()) {
+        m_list.push_back(std::forward<t_data>(p_data));
+        m_read = m_write = std::prev(m_list.end());
+        m_write_next = m_read;
+        m_read_prev = m_write;
+      } else if ((m_write == m_read) || (m_write_next == m_read_prev)) {
+        m_list.push_back(std::forward<t_data>(p_data));
+        m_write = std::prev(m_list.end());
+      } else if (m_read_prev == std::prev(m_read)) {
+        m_write = m_read_prev;
+        *m_write = std::forward<t_data>(p_data);
+        m_write_next = std::next(m_write);
       }
+      //      if (!full()) {
+      //        m_write->m_data = std::forward<t_data>(p_data);
+      //        m_write = m_write->m_next;
+      //      } else {
+      //        if (!insert(m_write->m_prev, std::forward<t_data>(p_data))) {
+      //          throw("error inserting node");
+      //        }
+      //      }
       ++m_amount;
     }
 #ifdef TENACITAS_LOG
@@ -150,20 +175,29 @@ template <typename t_data> struct circular_queue_t {
   // was not possible
   std::optional<t_data> get() {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    if (empty()) {
+
+    if (m_list.empty()) {
       return {};
     }
 
-    t_data _data{m_read->m_data};
+    t_data _data = *m_read_ite;
+    ++m_read_ite;
+    return _data;
 
-    m_read = m_read->m_next;
-    --m_amount;
-    return {_data};
+    //    if (empty()) {
+    //      return {};
+    //    }
+
+    //    t_data _data{m_read->m_data};
+
+    //    m_read = m_read->m_next;
+    //    --m_amount;
+    //    return {_data};
   }
 
   // \brief Informs if the queue is full
   inline constexpr bool full() const {
-    if (m_size == 0) {
+    if (m_list.empty()) {
       return false;
     }
 
@@ -183,6 +217,10 @@ template <typename t_data> struct circular_queue_t {
   inline number::typ::id get_id() const { return m_id; }
 
 private:
+  using list = std::list<t_data>;
+  using iterator = typename list::iterator;
+  using const_iterator = typename list::const_iterator;
+
   // \brief Node of the linked list used to implement the queue
   struct node {
     // \brief Type of pointer
@@ -364,6 +402,12 @@ private:
 
   // \brief for debug purposes
   number::typ::id m_id;
+
+  list m_list;
+  iterator m_write_ite;
+  iterator m_read_ite;
+  iterator m_write_next;
+  iterator m_read_prev;
 };
 
 } // namespace tenacitas::lib::container::typ
