@@ -17,6 +17,7 @@
 #include <vector>
 
 #include <tenacitas.lib/src/container/typ/matrix.h>
+#include <tenacitas.lib/src/crosswords/alg/dispatcher.h>
 #include <tenacitas.lib/src/crosswords/evt/events.h>
 #include <tenacitas.lib/src/crosswords/typ/grid.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
@@ -397,8 +398,7 @@ void sort_entries(typ::entries &p_entries) {
 
 /// \brief Tries to assemble a grid
 struct assembler {
-  assembler(lib::async::alg::dispatcher::ptr p_dispatcher)
-      : m_dispatcher(p_dispatcher) {}
+  assembler(alg::dispatcher::ptr p_dispatcher) : m_dispatcher(p_dispatcher) {}
   assembler() = delete;
   assembler(const assembler &) = delete;
   assembler(assembler &&) = delete;
@@ -624,7 +624,7 @@ private:
 
 private:
   uint8_t m_num_threads = 20;
-  async::alg::dispatcher::ptr m_dispatcher;
+  alg::dispatcher::ptr m_dispatcher;
   typ::entries m_entries;
   bool m_stop{false};
   uint64_t m_permutation_counter{0};

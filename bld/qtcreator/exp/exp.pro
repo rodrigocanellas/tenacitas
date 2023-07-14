@@ -3,6 +3,4 @@
 TEMPLATE=subdirs
 
 SUBDIRS = \
-        communication \
-        ipc \
         program

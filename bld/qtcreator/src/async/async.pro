@@ -13,7 +13,7 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/src/async/cpt/dispatcher.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/async/internal/typ/queue.h
+        $$BASE_DIR/tenacitas.lib/src/async/internal/typ/event_queue.h
 
 HEADERS += \
         $$BASE_DIR/tenacitas.lib/src/async/typ/priority.h \

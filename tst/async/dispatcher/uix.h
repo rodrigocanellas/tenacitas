@@ -20,6 +20,7 @@
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/program/alg/options.h>
 #include <tenacitas.lib/tst/async/dispatcher/cfg.h>
+#include <tenacitas.lib/tst/async/dispatcher/dispatcher.h>
 #include <tenacitas.lib/tst/async/dispatcher/evt.h>
 #include <tenacitas.lib/tst/async/dispatcher/typ.h>
 
@@ -27,9 +28,8 @@ using namespace std::chrono_literals;
 
 namespace uix {
 
-bool start(const cfg::options &p_options,
-           async::alg::dispatcher::ptr p_dispatcher,
-           std::function<bool(async::alg::dispatcher::ptr,
+bool start(const cfg::options &p_options, bus::dispatcher::ptr p_dispatcher,
+           std::function<bool(bus::dispatcher::ptr,
                               const typ::generators_definitions &,
                               const typ::publishings_definitions &)>
                p_bus) {
