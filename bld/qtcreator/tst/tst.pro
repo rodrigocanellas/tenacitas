@@ -1,9 +1,9 @@
 TEMPLATE=subdirs
 
 SUBDIRS = \
-	async  \
-	calendar  \
-	container  \
+        async    \
+        calendar  \
+        container  \
         conversions \
         crosswords \
         log \

@@ -67,7 +67,7 @@ template <typename t_data> struct circular_queue_t {
 
   // \brief Move assignment
   circular_queue_t &operator=(circular_queue_t &&p_queue) {
-    if (this != p_queue) {
+    if (this != &p_queue) {
       m_root = p_queue.m_root;
       m_write = p_queue.m_write;
       m_read = p_queue.m_read;
@@ -180,7 +180,9 @@ template <typename t_data> struct circular_queue_t {
   // queue
   inline constexpr size_t occupied() const { return m_amount; }
 
-  inline number::typ::id get_id() const { return m_id; }
+  inline size_t get_id() const { return m_id; }
+
+  void clear() { m_root.reset(); }
 
 private:
   // \brief Node of the linked list used to implement the queue

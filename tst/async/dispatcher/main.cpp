@@ -62,9 +62,11 @@ struct test_000 {
   ~test_000() { TNCT_LOG_TST("destroying test_000"); }
   static std::string desc() { return "Declaring a 'Dispatcher' "; }
 
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_000");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
     TNCT_LOG_TST("finishing test_000");
     return true;
   }
@@ -77,10 +79,10 @@ struct test_001 {
     return "'Dispatcher' as a local object, publishing 1 event, but not "
            "waiting all to be handled";
   }
-
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_001");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
@@ -103,6 +105,9 @@ struct test_001 {
 struct test_002 {
   test_002() { TNCT_LOG_TST("creating test_002"); }
   ~test_002() { TNCT_LOG_TST("destroying test_002"); }
+
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as a local object, publishing 1 event, and waiting "
            "for it to be handled";
@@ -110,7 +115,7 @@ struct test_002 {
 
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
@@ -134,6 +139,9 @@ struct test_002 {
 struct test_003 {
   test_003() { TNCT_LOG_TST("creating test_003"); }
   ~test_003() { TNCT_LOG_TST("destroying test_003"); }
+
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as a local object, publishing 1 event evt::ev_0, 1 "
            "event "
@@ -142,7 +150,7 @@ struct test_003 {
 
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
 
     _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
@@ -173,6 +181,9 @@ struct test_003 {
 struct test_004 {
   test_004() { TNCT_LOG_TST("creating test_004"); }
   ~test_004() { TNCT_LOG_TST("destroying test_004"); }
+
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as a local object, creating a publishing for "
            "evt::ev_0, "
@@ -181,7 +192,7 @@ struct test_004 {
 
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
 
     auto _publishing_id{_dispatcher->add_queue<evt::ev_0>()};
 
@@ -208,6 +219,9 @@ struct test_004 {
 struct test_005 {
   test_005() { TNCT_LOG_TST("creating test_005"); }
   ~test_005() { TNCT_LOG_TST("destroying test_005"); }
+
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as a local object, creating publishing for evt::ev_0, "
            "publishing for evt::ev_1, publishing 1 event evt::ev_0, 1 event "
@@ -218,7 +232,7 @@ struct test_005 {
 
   bool operator()(const program::alg::options &) {
     TNCT_LOG_TST("starting test_002");
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
 
     auto _publishing_id_0{_dispatcher->add_queue<evt::ev_0>()};
     auto _publishing_id_1{_dispatcher->add_queue<evt::ev_1>()};
@@ -250,13 +264,16 @@ struct test_005 {
 };
 
 struct test_corner_000 {
+
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as a local object, publishing 200 events, but not "
            "waiting all to be handled";
   }
 
   bool operator()(const program::alg::options &) {
-    async::alg::dispatcher::ptr _dispatcher = async::alg::dispatcher::create();
+    dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
@@ -279,6 +296,8 @@ struct test_corner_000 {
 };
 
 struct test_corner_001 {
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+
   static std::string desc() {
     return "'Dispatcher' as an attribute, publishing 200 events, but not "
            "waiting all to be handled";
@@ -307,11 +326,11 @@ struct test_corner_001 {
   }
 
 private:
-  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
+  dispatcher::ptr m_dispatcher{dispatcher::create()};
 };
 
-async::alg::dispatcher::ptr s_dispatcher_test_corner_002{
-    async::alg::dispatcher::create()};
+async::alg::dispatcher<evt::ev_0, evt::ev_1>::ptr s_dispatcher_test_corner_002{
+    async::alg::dispatcher<evt::ev_0, evt::ev_1>::create()};
 struct test_corner_002 {
   static std::string desc() {
     return "'Dispatcher' as a global object, publishing 200 events, but not "
@@ -342,6 +361,7 @@ struct test_corner_002 {
 };
 
 struct test_dispatcher {
+
   static void setup(int p_argc, char **p_argv) {
     m_argc = p_argc;
     m_argv = p_argv;
@@ -356,7 +376,7 @@ struct test_dispatcher {
 
   bool operator()(const program::alg::options &) {
     try {
-      async::alg::dispatcher::ptr _dispatcher{async::alg::dispatcher::create()};
+      bus::dispatcher::ptr _dispatcher{bus::dispatcher::create()};
 
       cfg::options _options{m_argc, m_argv};
 

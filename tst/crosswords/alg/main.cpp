@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <tenacitas.lib/src/crosswords/alg/assembler.h>
+#include <tenacitas.lib/src/crosswords/alg/dispatcher.h>
 #include <tenacitas.lib/src/crosswords/typ/grid.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/program/alg/options.h>
@@ -548,7 +549,7 @@ struct test_015 {
 
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
     if (_organize(_grid)) {
       TNCT_LOG_TST(*_grid);
@@ -575,7 +576,7 @@ struct test_016 {
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
@@ -605,7 +606,7 @@ struct test_017 {
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{5}, crosswords::typ::index{8})};
 
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
 
     if (_organize(_grid)) {
@@ -689,7 +690,7 @@ struct test_018 {
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
@@ -774,7 +775,7 @@ struct test_019 {
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
@@ -953,7 +954,7 @@ struct test_021 {
     auto _grid{std::make_shared<crosswords::typ::grid>(
         _permutation, crosswords::typ::index{11}, crosswords::typ::index{11})};
 
-    auto _dispatcher{async::alg::dispatcher::create()};
+    auto _dispatcher{crosswords::alg::dispatcher::create()};
     crosswords::bus::internal::organizer _organize;
 
     if (!_organize(_grid)) {
@@ -979,7 +980,7 @@ struct test_023 {
 
     crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1006,7 +1007,7 @@ struct test_024 {
 
     crosswords::typ::entries _entries{{"viravira", "expl viravira"}};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1032,7 +1033,7 @@ struct test_025 {
     crosswords::typ::entries _entries{{"viravira", "expl viravira"},
                                       {"exumar", "expl exumar"}};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1058,7 +1059,7 @@ struct test_026 {
     crosswords::typ::entries _entries{{"viravira", "expl viravira"},
                                       {"exumar", "expl exumar"}};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1143,7 +1144,7 @@ struct test_027 {
     badalar
      * farelos viravira afunilar sibliar renovar lesante sideral salutar*/
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1225,7 +1226,7 @@ struct test_028 {
             {"crepom", "expl crepom"},     {"debute", "expl debute"}/*,
         {"usina", "expl usina"}*/};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1306,7 +1307,7 @@ struct test_029 {
         {"crepom", "expl crepom"},     {"debute", "expl debute"},
         {"usina", "expl usina"}};
 
-    crosswords::bus::assembler _solver(async::alg::dispatcher::create());
+    crosswords::bus::assembler _solver(crosswords::alg::dispatcher::create());
 
     auto _start{std::chrono::high_resolution_clock::now()};
     std::shared_ptr<crosswords::typ::grid> _grid{_solver.start(
@@ -1331,7 +1332,8 @@ struct test_030 {
   }
 
   test_030()
-      : m_dispatcher(async::alg::dispatcher::create()), m_solver(m_dispatcher) {
+      : m_dispatcher(crosswords::alg::dispatcher::create()),
+        m_solver(m_dispatcher) {
     using namespace crosswords;
     m_dispatcher->subscribe<crosswords::evt::new_attempt>(
         [](auto p_event) -> void {
@@ -1374,7 +1376,8 @@ struct test_030 {
   }
 
 private:
-  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
+  crosswords::alg::dispatcher::ptr m_dispatcher{
+      crosswords::alg::dispatcher::create()};
   crosswords::bus::assembler m_solver{m_dispatcher};
 };
 
@@ -1385,7 +1388,8 @@ struct test_031 {
   }
 
   test_031()
-      : m_dispatcher(async::alg::dispatcher::create()), m_solver(m_dispatcher) {
+      : m_dispatcher(crosswords::alg::dispatcher::create()),
+        m_solver(m_dispatcher) {
     using namespace crosswords;
     m_dispatcher->subscribe<crosswords::evt::new_attempt>(
         [this](auto p_event) -> void {
@@ -1431,7 +1435,8 @@ struct test_031 {
   }
 
 private:
-  async::alg::dispatcher::ptr m_dispatcher{async::alg::dispatcher::create()};
+  crosswords::alg::dispatcher::ptr m_dispatcher{
+      crosswords::alg::dispatcher::create()};
   crosswords::bus::assembler m_solver{m_dispatcher};
 };
 } // namespace alg
