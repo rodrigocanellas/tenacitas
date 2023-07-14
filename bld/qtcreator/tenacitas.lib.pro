@@ -2,9 +2,9 @@
 TEMPLATE=subdirs
 
 SUBDIRS = \
-    tst   \
-    src
-#    exp \
+    tst \
+    src \
+    exp \
 
 
 

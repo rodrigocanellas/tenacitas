@@ -5,7 +5,6 @@ TEMPLATE=subdirs
 SUBDIRS = \
         async \
         calendar \
-        communication \
         container \
         conversions \
         crosswords \
