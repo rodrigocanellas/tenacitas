@@ -28,27 +28,9 @@ namespace tenacitas::lib::container::typ {
 // buffer. It must implement default constructor
 template <typename t_data> struct circular_queue_t {
 
-  circular_queue_t() = default;
+  using data = t_data;
 
-  // \brief Constructor
-  //
-  // \param p_size the number of initial slots in the queue
-  circular_queue_t(size_t p_size = 1) {
-    m_root = create_node(t_data{});
-    if (m_root == nullptr) {
-      throw std::runtime_error("error creating circular_queue root node");
-    }
-    node_ptr _p = m_root;
-    for (size_t _i = 0; _i < p_size; ++_i) {
-      _p = insert(_p);
-      if (_p == nullptr) {
-        throw std::runtime_error("error inserting node #" + std::to_string(_i));
-      }
-    }
-    //    this->m_size = p_size;
-    m_write = m_root;
-    m_read = m_root;
-  }
+  circular_queue_t() = default;
 
   //  circular_unlimited_size_queue_t() = default;
 
@@ -59,16 +41,9 @@ template <typename t_data> struct circular_queue_t {
 
   // \brief Move constructor
   circular_queue_t(circular_queue_t &&p_queue)
-      : m_list(std::move(p_queue.m_list)),
-        m_write_ite(std::move(p_queue.m_write_ite)),
-        m_read_ite(std::move(p_queue.m_read_ite)),
-        m_amount(std::move(p_queue.m_amount)) {
-
-    m_root = p_queue.m_root;
-    m_write = p_queue.m_write;
-    m_read = p_queue.m_read;
-    m_amount = p_queue.m_amount;
-  }
+      : m_list(std::move(p_queue.m_list)), m_write(std::move(p_queue.m_write)),
+        m_read(std::move(p_queue.m_read)),
+        m_amount(std::move(p_queue.m_amount)) {}
 
   // \brief Copy assignment not allowed
   circular_queue_t &operator=(const circular_queue_t &) = delete;
@@ -76,14 +51,11 @@ template <typename t_data> struct circular_queue_t {
   // \brief Move assignment
   circular_queue_t &operator=(circular_queue_t &&p_queue) {
     if (this != &p_queue) {
-      m_root = p_queue.m_root;
-      m_write = p_queue.m_write;
-      m_read = p_queue.m_read;
       m_amount = p_queue.m_amount;
 
       m_list = std::move(p_queue.m_list);
-      m_write_ite = std::move(p_queue.m_write_ite);
-      m_read_ite = std::move(p_queue.m_read_ite);
+      m_write = std::move(p_queue.m_write);
+      m_read = std::move(p_queue.m_read);
     }
     return *this;
   }
@@ -91,17 +63,45 @@ template <typename t_data> struct circular_queue_t {
   // \brief Traverses the queue
   //
   // \param p_function will be called for every data in the queue
-  void traverse(std::function<void(const t_data &)> p_visitor) const {
-    node_ptr _p = m_root;
-    while (_p && (_p->m_next != m_root)) {
-      if (_p->m_data) {
-        p_visitor(_p->m_data);
+  void traverse(std::function<void(const t_data &)> p_visitor) {
+
+    if (m_amount == 0) {
+      return;
+    }
+    auto _end{m_list.end()};
+    auto _begin{m_list.begin()};
+#ifdef TENACITAS_LOG
+    TNCT_LOG_DEB("read = ", std::distance(_begin, m_read),
+                 ", write = ", std::distance(_begin, m_write));
+#endif
+
+    auto _dist{std::distance(m_read, m_write)};
+
+    if (_dist < 0) {
+      for (const_iterator _ite = m_read; _ite != _end; ++_ite) {
+        p_visitor(*_ite);
       }
-      _p = _p->m_next;
+
+      for (const_iterator _ite = _begin; _ite != m_write; ++_ite) {
+        p_visitor(*_ite);
+      }
+
+    } else {
+      for (const_iterator _ite = m_read; _ite != m_write; ++_ite) {
+        p_visitor(*_ite);
+      }
     }
-    if (_p->m_data) {
-      p_visitor(_p->m_data);
-    }
+
+    //    auto _end{m_list.end()};
+    //    auto _begin{m_list.begin()};
+    //#ifdef TENACITAS_LOG
+    //    TNCT_LOG_DEB("read = ", std::distance(_begin, m_read),
+    //                 ", write = ", std::distance(_begin, m_write));
+    //#endif
+
+    //    for (const_iterator _ite = _begin; _ite != _end; ++_ite) {
+    //      p_visitor(*_ite);
+    //    }
   }
 
   // \brief Adds a t_data object to the queue
@@ -111,58 +111,90 @@ template <typename t_data> struct circular_queue_t {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("queue ", m_id, " - adding data");
 #endif
-    {
-      std::lock_guard<std::mutex> _lock(m_mutex);
 
-      if (m_list.empty()) {
-        m_list.push_back(std::forward<t_data>(p_data));
-        m_read = m_write = std::prev(m_list.end());
-        m_write_next = m_read;
-        m_read_prev = m_write;
-      } else if ((m_write == m_read) || (m_write_next == m_read_prev)) {
-        m_list.push_back(std::forward<t_data>(p_data));
-        m_write = std::prev(m_list.end());
-      } else if (m_read_prev == std::prev(m_read)) {
-        m_write = m_read_prev;
-        *m_write = std::forward<t_data>(p_data);
-        m_write_next = std::next(m_write);
-      }
-      //      if (!full()) {
-      //        m_write->m_data = std::forward<t_data>(p_data);
-      //        m_write = m_write->m_next;
-      //      } else {
-      //        if (!insert(m_write->m_prev, std::forward<t_data>(p_data))) {
-      //          throw("error inserting node");
-      //        }
-      //      }
+    std::lock_guard<std::recursive_mutex> _lock(m_mutex);
+
+    if (m_list.empty()) {
+      m_list.push_back(std::forward<t_data>(p_data));
+      m_read = m_list.begin();
+      m_write = m_list.end();
       ++m_amount;
+      return;
     }
+
+    auto _begin = m_list.begin();
+    auto _end = m_list.end();
+
+    if (m_write == _end) {
+      if (m_read == _begin) {
+        m_list.push_back(std::forward<t_data>(p_data));
+        m_write = m_list.end();
+        ++m_amount;
+      } else {
+        m_write = _begin;
+        add(std::forward<t_data>(p_data));
+      }
+      return;
+    }
+
+    if (m_write == m_read) {
+      m_write = m_list.insert(std::next(m_write), std::forward<t_data>(p_data));
+      ++m_write;
+      ++m_amount;
+      return;
+    }
+
+    *m_write = std::forward<t_data>(p_data);
+    ++m_write;
+    ++m_amount;
+
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("queue ", m_id, " - capacity = ", capacity(),
                  ", occupied = ", occupied());
 #endif
   }
 
-  // \brief Adds a t_data object to the queue
-  //
-  // \param p_data is a t_data to be added
   void add(const t_data &p_data) {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("queue ", m_id, " - adding data");
 #endif
-    {
-      std::lock_guard<std::mutex> _lock(m_mutex);
 
-      if (!full()) {
-        m_write->m_data = p_data;
-        m_write = m_write->m_next;
-      } else {
-        if (!insert(m_write->m_prev, p_data)) {
-          throw("error inserting node");
-        }
-      }
+    std::lock_guard<std::recursive_mutex> _lock(m_mutex);
+
+    if (m_list.empty()) {
+      m_list.push_back(p_data);
+      m_read = m_list.begin();
+      m_write = m_list.end();
       ++m_amount;
+      return;
     }
+
+    auto _begin = m_list.begin();
+    auto _end = m_list.end();
+
+    if (m_write == _end) {
+      if (m_read == _begin) {
+        m_list.push_back(p_data);
+        m_write = m_list.end();
+        ++m_amount;
+      } else {
+        m_write = _begin;
+        add(p_data);
+      }
+      return;
+    }
+
+    if (m_write == m_read) {
+      m_write = m_list.insert(std::next(m_write), p_data);
+      ++m_write;
+      ++m_amount;
+      return;
+    }
+
+    *m_write = p_data;
+    ++m_write;
+    ++m_amount;
+
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("queue ", m_id, " - capacity = ", capacity(),
                  ", occupied = ", occupied());
@@ -170,45 +202,34 @@ template <typename t_data> struct circular_queue_t {
   }
 
   // \brief Tries to get a t_data object from the queue
-  //
-  // \return valid t_data pointer, if it was possible to get; a nullptr if it
-  // was not possible
   std::optional<t_data> get() {
-    std::lock_guard<std::mutex> _lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> _lock(m_mutex);
 
-    if (m_list.empty()) {
+    if (m_amount == 0) {
       return {};
     }
 
-    t_data _data = *m_read_ite;
-    ++m_read_ite;
-    return _data;
+    auto _begin = m_list.begin();
 
-    //    if (empty()) {
-    //      return {};
-    //    }
+    if ((m_read == m_list.end()) && (m_write != _begin)) {
+      m_read = _begin;
+      return get();
+    }
 
-    //    t_data _data{m_read->m_data};
-
-    //    m_read = m_read->m_next;
-    //    --m_amount;
-    //    return {_data};
+    t_data _data = *m_read;
+    ++m_read;
+    --m_amount;
+    return {_data};
   }
 
   // \brief Informs if the queue is full
-  inline constexpr bool full() const {
-    if (m_list.empty()) {
-      return false;
-    }
-
-    return (m_amount == m_size);
-  }
+  inline constexpr bool full() const { return (m_amount == m_list.size()); }
 
   // \brief Informs if the queue is empty
   inline constexpr bool empty() const { return m_amount == 0; }
 
   // \brief Informs the total capacity of the queue
-  inline constexpr size_t capacity() const { return m_size; }
+  inline constexpr size_t capacity() const { return m_list.size(); }
 
   // \brief Informs the current number of slots occupied in the
   // queue
@@ -216,200 +237,26 @@ template <typename t_data> struct circular_queue_t {
 
   inline size_t get_id() const { return m_id; }
 
-  void clear() { m_root.reset(); }
+  void clear() { m_list.clear(); }
 
 private:
   using list = std::list<t_data>;
   using iterator = typename list::iterator;
   using const_iterator = typename list::const_iterator;
 
-  // \brief Node of the linked list used to implement the queue
-  struct node {
-    // \brief Type of pointer
-    typedef std::shared_ptr<node> ptr;
-
-    node() = default;
-
-    // \brief Copy constructor not allowed
-    node(const node &) = delete;
-
-    node(node &&) = default;
-
-    // \brief Copy assignment not allowed
-    node &operator=(const node &) = delete;
-
-    node &operator=(node &&) = default;
-
-    // \brief Constructor
-    //
-    // \param p_data is a t_data to be stored in the node
-    node(t_data &&p_data) : m_data(std::forward<t_data>(p_data)) {}
-
-    // \brief Constructor
-    //
-    // \param p_data is a t_data to be stored in the node
-    node(const t_data &p_data) : m_data(p_data) {}
-
-    // \brief data in the node
-    t_data m_data;
-
-    // \brief next node
-    ptr m_next;
-
-    // \brief previous node
-    ptr m_prev;
-  };
-
-  // \brief Alias for the pointer to a node
-  typedef typename node::ptr node_ptr;
-
 private:
-  // \brief Creates a new node, defining its data
-  //
-  // \param p_data is the data inside the new node
-  //
-  // \return the new node
-  node_ptr create_node(t_data &&p_data) {
-    node_ptr _p = nullptr;
-    try {
-      _p = std::make_shared<node>(std::forward<t_data>(p_data));
-      _p->m_next = _p;
-      _p->m_prev = _p;
-    } catch (std::exception &_ex) {
-      _p = nullptr;
-#ifdef TENACITAS_LOG
-      TNCT_LOG_ERR("error alocating new node: '", _ex.what(), '\'');
-#endif
-    }
-    return _p;
-  }
-
-  // \brief Creates a new node, defining its data
-  //
-  // \param p_data is the data inside the new node
-  //
-  // \return the new node
-  node_ptr create_node(const t_data &p_data) {
-    node_ptr _p = nullptr;
-    try {
-      _p = std::make_shared<node>(p_data);
-      _p->m_next = _p;
-      _p->m_prev = _p;
-    } catch (std::exception &_ex) {
-      _p = nullptr;
-#ifdef TENACITAS_LOG
-      TNCT_LOG_ERR("error alocating new node: '", _ex.what(), '\'');
-#endif
-    }
-    return _p;
-  }
-
-  node_ptr create_node() {
-    node_ptr _p = nullptr;
-    try {
-      _p = std::make_shared<node>();
-      _p->m_next = _p;
-      _p->m_prev = _p;
-    } catch (std::exception &_ex) {
-      _p = nullptr;
-#ifdef TENACITAS_LOG
-      TNCT_LOG_ERR("error alocating new node: '", _ex.what(), '\'');
-#endif
-    }
-    return _p;
-  }
-
-  // \brief Inserts a node in the list after a node
-  //
-  // \param p_node which the new node will be inserted in front of
-  //
-  // \param p_data data inserted in the new node
-  //
-  // \return the new node
-  node_ptr insert(node_ptr p_node, t_data &&p_data) {
-    node_ptr _new_node = create_node(std::forward<t_data>(p_data));
-
-    if (_new_node == nullptr) {
-      return nullptr;
-    }
-
-    _new_node->m_next = p_node->m_next;
-    _new_node->m_prev = p_node;
-
-    p_node->m_next->m_prev = _new_node;
-    p_node->m_next = _new_node;
-    ++this->m_size;
-    return _new_node;
-  }
-
-  // \brief Inserts a node in the list after a node
-  //
-  // \param p_node which the new node will be inserted in front of
-  //
-  // \param p_data data inserted in the new node
-  //
-  // \return the new node
-  node_ptr insert(node_ptr p_node, const t_data &p_data) {
-    node_ptr _new_node = create_node(p_data);
-
-    if (_new_node == nullptr) {
-      return nullptr;
-    }
-
-    _new_node->m_next = p_node->m_next;
-    _new_node->m_prev = p_node;
-
-    p_node->m_next->m_prev = _new_node;
-    p_node->m_next = _new_node;
-    ++this->m_size;
-    return _new_node;
-  }
-
-  node_ptr insert(node_ptr p_node) {
-    node_ptr _new_node = create_node();
-
-    if (_new_node == nullptr) {
-      return nullptr;
-    }
-
-    _new_node->m_next = p_node->m_next;
-    _new_node->m_prev = p_node;
-
-    p_node->m_next->m_prev = _new_node;
-    p_node->m_next = _new_node;
-    ++this->m_size;
-    return _new_node;
-  }
-
-private:
-  // \brief The first node of the queue
-  node_ptr m_root;
-
-  // \brief The node where the next write, i.e., new data
-  // insertion, should be done
-  node_ptr m_write;
-
-  // \brief The node where the next read, i.e., new data
-  // extraction, should be done
-  node_ptr m_read;
-
   // \brief Amount of nodes actually used
   size_t m_amount{0};
 
-  // \brief Amount of nodes in the queue
-  size_t m_size{0};
-
   // \brief Controls insertion
-  std::mutex m_mutex;
+  std::recursive_mutex m_mutex;
 
   // \brief for debug purposes
   number::typ::id m_id;
 
   list m_list;
-  iterator m_write_ite;
-  iterator m_read_ite;
-  iterator m_write_next;
-  iterator m_read_prev;
+  iterator m_write;
+  iterator m_read;
 };
 
 } // namespace tenacitas::lib::container::typ
