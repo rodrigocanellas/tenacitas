@@ -145,7 +145,7 @@ protected:
   using loops = std::vector<std::thread>;
 
   // Queue used to store the events to be handled
-  using circular_queue = container::typ::circular_queue_t<t_event>;
+  using circular_queue = container::typ::circular_queue<t_event>;
 
 protected:
   void subscriber_loop(async::typ::subscriber_t<t_event> p_subscriber);

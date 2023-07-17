@@ -16,7 +16,7 @@
 
 using namespace tenacitas::lib;
 
-using queue = container::typ::circular_queue_t<int16_t>;
+using queue = container::typ::circular_queue<int16_t>;
 
 // struct producer {
 //   producer(typ::queue &p_queue) : m_queue(p_queue) {}
@@ -645,6 +645,91 @@ struct queue_003 {
   }
 };
 
+struct queue_004 {
+  static std::string desc() { return "Corner case: add - get - get"; }
+
+  bool operator()(const program::alg::options &) {
+    auto _printer = [](const queue::data &p_data) -> void {
+      TNCT_LOG_TST(p_data);
+    };
+    queue _queue;
+
+    if (_queue.capacity() != 0) {
+      TNCT_LOG_ERR("capacity should be 0, but it is ", _queue.capacity());
+      return false;
+    }
+
+    if (_queue.occupied() != 0) {
+      TNCT_LOG_ERR("there should be 0 slots occupied, but there are ",
+                   _queue.occupied());
+      return false;
+    }
+
+    TNCT_LOG_TST("traversing queue with 0 slots, and no occupied");
+    _queue.traverse(_printer);
+
+    // addition # 1
+    _queue.add(10);
+    if (_queue.capacity() != 1) {
+      TNCT_LOG_ERR("capacity should be 1, but it is ", _queue.capacity());
+      return false;
+    }
+
+    if (_queue.occupied() != 1) {
+      TNCT_LOG_ERR("there should be 1 slot occupied, but there are ",
+                   _queue.occupied());
+      return false;
+    }
+
+    TNCT_LOG_TST("traversing queue with 1 slots, and one occupied");
+    _queue.traverse(_printer);
+
+    // reading # 1
+    queue::data _data;
+    {
+      std::optional<queue::data> _maybe{_queue.get()};
+      if (!_maybe.has_value()) {
+        TNCT_LOG_ERR("no data read, when it should");
+        return false;
+      }
+      _data = std::move(*_maybe);
+    }
+    if (_data != queue::data{10}) {
+      TNCT_LOG_ERR("data should be ", queue::data{10}, ", but it is ", _data);
+      return false;
+    }
+
+    TNCT_LOG_TST("data = ", _data);
+
+    if (_queue.capacity() != 1) {
+      TNCT_LOG_ERR("capacity should be 1, but it is ", _queue.capacity());
+      return false;
+    }
+
+    if (_queue.occupied() != 0) {
+      TNCT_LOG_ERR("there should be 0 slots occupied, but there are ",
+                   _queue.occupied());
+      return false;
+    }
+
+    TNCT_LOG_TST("traversing queue with 1 slots, and 0 occupied");
+    _queue.traverse(_printer);
+
+    // reading # 2
+    {
+      std::optional<queue::data> _maybe{_queue.get()};
+      if (_maybe.has_value()) {
+        _data = std::move(*_maybe);
+        TNCT_LOG_ERR("data ", _data, " read, when it should not");
+        return false;
+      }
+      TNCT_LOG_TST("no data read, as expected");
+    }
+
+    return true;
+  }
+};
+
 int main(int argc, char **argv) {
   using namespace tenacitas;
 
@@ -656,4 +741,5 @@ int main(int argc, char **argv) {
   //  run_test(_tester, alg::queue_001);
   //  run_test(_tester, alg::queue_002);
   run_test(_tester, queue_003);
+  run_test(_tester, queue_004);
 }
