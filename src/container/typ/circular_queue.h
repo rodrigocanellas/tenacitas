@@ -6,15 +6,11 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <algorithm>
 #include <concepts>
-#include <condition_variable>
 #include <functional>
 #include <list>
 #include <mutex>
 #include <optional>
-#include <thread>
-#include <utility>
 
 #include <tenacitas.lib/src/number/typ/id.h>
 
@@ -46,7 +42,7 @@ struct circular_queue {
 
   ~circular_queue() = default;
 
-  void traverse(std::function<void(const t_data &)> p_visitor);
+  void traverse(std::function<void(const t_data &)> p_visitor) const;
 
   void add(t_data &&p_data);
 
@@ -58,10 +54,13 @@ struct circular_queue {
 
   constexpr bool empty() const { return m_amount == 0; }
 
+  /// \brief amount of nodes in the queue
   constexpr size_t capacity() const { return m_list.size(); }
 
+  /// \brief amount of nodes that that have t_data objects
   constexpr size_t occupied() const { return m_amount; }
 
+  /// \brief returns an identifier used for debug purposes
   size_t get_id() const { return m_id; }
 
   void clear() {
@@ -79,14 +78,12 @@ private:
   size_t m_amount{0};
 
   list m_list;
-  iterator m_write;
-  iterator m_read;
+  iterator m_head;
+  iterator m_tail;
 
-  // \brief for debug purposes
   number::typ::id m_id;
 
-  // \brief Controls insertion
-  std::recursive_mutex m_mutex;
+  std::mutex m_mutex;
 };
 
 // #############################################################################
@@ -96,7 +93,7 @@ template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 circular_queue<t_data>::circular_queue(const circular_queue &p_queue)
     : m_amount(p_queue.m_amount), m_list(p_queue.m_list),
-      m_write(p_queue.m_write), m_read(p_queue.m_read) {}
+      m_head(p_queue.m_head), m_tail(p_queue.m_tail) {}
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
@@ -105,8 +102,8 @@ requires std::move_constructible<t_data> && std::copy_constructible<t_data>
   if (this != &p_queue) {
     m_amount = p_queue.m_amount;
     m_list = p_queue.m_list;
-    m_write = p_queue.m_write;
-    m_read = p_queue.m_read;
+    m_head = p_queue.m_head;
+    m_tail = p_queue.m_tail;
   }
   return *this;
 }
@@ -114,28 +111,25 @@ requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 void circular_queue<t_data>::traverse(
-    std::function<void(const t_data &)> p_visitor) {
+    std::function<void(const t_data &)> p_visitor) const {
 
   if (m_amount == 0) {
     return;
   }
-  auto _end{m_list.end()};
-  auto _begin{m_list.begin()};
 
-  auto _dist{std::distance(m_read, m_write)};
+  if (m_head == m_tail) {
+    p_visitor(*m_tail);
+    return;
+  }
 
-  if (_dist < 0) {
-    for (const_iterator _ite = m_read; _ite != _end; ++_ite) {
+  const_iterator _ite{m_tail};
+  while (_ite != m_head) {
+    if (_ite == m_list.end()) {
+      _ite = m_list.begin();
       p_visitor(*_ite);
-    }
-
-    for (const_iterator _ite = _begin; _ite != m_write; ++_ite) {
+    } else {
       p_visitor(*_ite);
-    }
-
-  } else {
-    for (const_iterator _ite = m_read; _ite != m_write; ++_ite) {
-      p_visitor(*_ite);
+      ++_ite;
     }
   }
 }
@@ -143,31 +137,25 @@ void circular_queue<t_data>::traverse(
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 void circular_queue<t_data>::add(t_data &&p_data) {
-
-  std::lock_guard<std::recursive_mutex> _lock(m_mutex);
+  std::lock_guard<std::mutex> _lock(m_mutex);
 
   if (m_list.empty()) {
-    m_list.push_back(std::forward<t_data>(p_data));
-    m_read = m_list.begin();
-    m_write = m_list.end();
+    m_list.emplace_back(std::move(p_data));
+    m_tail = m_head = m_list.begin();
     ++m_amount;
     return;
   }
 
-  if (m_write == m_list.end()) {
-    m_write = m_list.begin();
-    add(std::forward<t_data>(p_data));
-    return;
+  if (full()) {
+    m_head = m_list.emplace(std::next(m_head), std::move(p_data));
+  } else {
+    ++m_head;
+    if (m_head == m_list.end()) {
+      m_head = m_list.begin();
+    }
   }
 
-  if (m_write == m_read) {
-    m_list.insert(m_read, std::forward<t_data>(p_data));
-    ++m_amount;
-    return;
-  }
-
-  *m_write = std::forward<t_data>(p_data);
-  ++m_write;
+  *m_head = std::move(p_data);
   ++m_amount;
 }
 
@@ -175,52 +163,44 @@ template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 void circular_queue<t_data>::add(const t_data &p_data) {
 
-  std::lock_guard<std::recursive_mutex> _lock(m_mutex);
+  std::lock_guard<std::mutex> _lock(m_mutex);
 
   if (m_list.empty()) {
-    m_list.push_back(p_data);
-    m_read = m_list.begin();
-    m_write = m_list.end();
+    m_list.emplace_back(p_data);
+    m_tail = m_head = m_list.begin();
     ++m_amount;
     return;
   }
 
-  if (m_write == m_list.end()) {
-    m_write = m_list.begin();
-    add(p_data);
-    return;
+  if (full()) {
+    m_head = m_list.emplace(std::next(m_head), p_data);
+  } else {
+    ++m_head;
+    if (m_head == m_list.end()) {
+      m_head = m_list.begin();
+    }
   }
 
-  if (m_write == m_read) {
-    m_list.insert(m_read, p_data);
-    ++m_amount;
-    return;
-  }
-
-  *m_write = p_data;
-  ++m_write;
+  *m_head = p_data;
   ++m_amount;
 }
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
     std::optional<t_data> circular_queue<t_data>::get() {
-  std::lock_guard<std::recursive_mutex> _lock(m_mutex);
+  std::lock_guard<std::mutex> _lock(m_mutex);
 
-  if (m_amount == 0) {
+  if (m_list.empty() || (occupied() == 0)) {
     return {};
   }
 
-  auto _begin = m_list.begin();
-  if ((m_read == m_list.end()) && (m_write != _begin)) {
-    m_read = _begin;
-    return get();
-  }
-
-  t_data _data = *m_read;
-  ++m_read;
+  t_data _data = *m_tail;
+  ++m_tail;
   --m_amount;
-  return {_data};
+  if (m_tail == m_list.end()) {
+    m_tail = m_list.begin();
+  }
+  return _data;
 }
 
 } // namespace tenacitas::lib::container::typ
