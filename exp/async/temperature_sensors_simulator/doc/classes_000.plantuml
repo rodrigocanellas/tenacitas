@@ -1,0 +1,64 @@
+@startuml
+hide empty members
+allow_mixing
+skinparam linetype ortho
+skinparam ArrowColor  #000000
+
+
+
+namespace dat{
+  class temperature
+  class sensor_id
+}
+
+namespace evt {
+  class new_temperature
+  class add_sensor
+  class remove_sensor
+  class set_temperature
+
+  new_temperature *-- dat.temperature
+  new_temperature *-- dat.sensor_id
+  add_sensor *-- dat.sensor_id
+  remove_sensor *-- dat.sensor_id
+  set_temperature *-- dat.sensor_id
+  set_temperature *-- dat.temperature
+
+  new_temperature -[hidden]-> add_sensor
+  add_sensor -[hidden]->  remove_sensor
+  remove_sensor -[hidden]->  set_temperature
+}
+
+namespace per {
+  class sensors
+  class sensor
+
+  sensors *-left- "*" sensor
+  sensor *-- dat.sensor_id
+
+  sensor -[#green]-> evt.new_temperature
+  sensors -[#blue]-> evt.add_sensor
+  sensors -[#blue]-> evt.remove_sensor
+  sensors -[#blue]-> evt.set_temperature
+}
+
+namespace sto {
+   class db
+   db -[#blue]-> evt.add_sensor
+}
+
+namespace uix {
+ 
+  class sensor_manager
+
+  sensor_manager -[#blue]-> evt.new_temperature
+
+  sensor_manager -[#green]-> evt.remove_sensor
+  sensor_manager -[#green]-> evt.set_temperature
+  sensor_manager -[#green]-> evt.add_sensor
+}
+
+
+
+note "<color green>publishes\n<color blue>subscribes" as legend
+@enduml

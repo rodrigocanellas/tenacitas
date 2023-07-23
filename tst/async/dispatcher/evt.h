@@ -5,13 +5,13 @@
 #include <memory>
 #include <utility>
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/src/async/cpt/event.h>
-#include <tenacitas.lib/src/async/typ/queue_id.h>
-#include <tenacitas.lib/src/number/alg/format.h>
-#include <tenacitas.lib/src/number/typ/id.h>
-#include <tenacitas.lib/src/number/typ/uuid.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
+#include "typ.h"
+#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas/async/cpt/event.h>
+#include <tenacitas/async/typ/queue_id.h>
+#include <tenacitas/number/alg/format.h>
+#include <tenacitas/number/typ/id.h>
+#include <tenacitas/number/typ/uuid.h>
 
 namespace evt {
 

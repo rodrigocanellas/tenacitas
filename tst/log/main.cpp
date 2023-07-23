@@ -8,8 +8,8 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 

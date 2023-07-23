@@ -6,5 +6,5 @@ TARGET=tenacitas.lib.tst.test
 
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
-SOURCES = $$BASE_DIR/tenacitas.lib/tst/test/main.cpp
+SOURCES = $$TST_DIR/test/main.cpp
 

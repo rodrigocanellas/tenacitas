@@ -17,15 +17,15 @@
 #include <string>
 #include <utility>
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
-#include <tenacitas.lib/tst/async/dispatcher/bus.h>
-#include <tenacitas.lib/tst/async/dispatcher/cfg.h>
-#include <tenacitas.lib/tst/async/dispatcher/sto.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
-#include <tenacitas.lib/tst/async/dispatcher/uix.h>
+#include "bus.h"
+#include "cfg.h"
+#include "sto.h"
+#include "typ.h"
+#include "uix.h"
+#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/program/alg/options.h>
+#include <tenacitas/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

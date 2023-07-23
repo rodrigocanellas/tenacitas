@@ -14,9 +14,9 @@
 #include <string>
 #include <vector>
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/src/async/cpt/event.h>
-#include <tenacitas.lib/src/number/typ/id.h>
+#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas/async/cpt/event.h>
+#include <tenacitas/number/typ/id.h>
 
 using namespace std::chrono_literals;
 

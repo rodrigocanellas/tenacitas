@@ -3,4 +3,5 @@
 TEMPLATE=subdirs
 
 SUBDIRS = \
-        program
+        program \
+        async

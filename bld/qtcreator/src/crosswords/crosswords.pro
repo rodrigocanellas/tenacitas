@@ -5,11 +5,11 @@ include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/crosswords/alg/assembler.h \
-        $$BASE_DIR/tenacitas.lib/src/crosswords/alg/dispatcher.h
+        $$SRC_DIR/tenacitas/crosswords/alg/assembler.h \
+        $$SRC_DIR/tenacitas/crosswords/alg/dispatcher.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/crosswords/evt/events.h
+        $$SRC_DIR/tenacitas/crosswords/evt/events.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/crosswords/typ/grid.h
+        $$SRC_DIR/tenacitas/crosswords/typ/grid.h

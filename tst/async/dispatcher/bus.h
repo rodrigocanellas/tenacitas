@@ -12,13 +12,13 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/src/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/calendar/cpt/chrono_convertible.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/tst/async/dispatcher/dispatcher.h>
-#include <tenacitas.lib/tst/async/dispatcher/evt.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
+#include "dispatcher.h"
+#include "evt.h"
+#include "typ.h"
+#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas/async/alg/sleeping_loop.h>
+#include <tenacitas/calendar/cpt/chrono_convertible.h>
+#include <tenacitas/log/alg/logger.h>
 
 using namespace tenacitas::lib;
 

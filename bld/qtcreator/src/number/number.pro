@@ -2,8 +2,8 @@ TEMPLATE=aux
 
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/number/cpt/id.h \
-        $$BASE_DIR/tenacitas.lib/src/number/typ/id.h \
-        $$BASE_DIR/tenacitas.lib/src/number/typ/uuid.h \
-        $$BASE_DIR/tenacitas.lib/src/number/alg/format.h
+        $$SRC_DIR/tenacitas/number/cpt/id.h \
+        $$SRC_DIR/tenacitas/number/typ/id.h \
+        $$SRC_DIR/tenacitas/number/typ/uuid.h \
+        $$SRC_DIR/tenacitas/number/alg/format.h
 
