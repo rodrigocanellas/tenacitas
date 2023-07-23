@@ -13,8 +13,6 @@
 
 using namespace tenacitas::lib;
 
-namespace alg {
-
 struct test_ok {
   bool operator()(const program::alg::options &) { return true; }
 
@@ -39,15 +37,13 @@ struct test_error {
   static std::string desc() { return "an eror test"; }
 };
 
-} // namespace alg
-
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
     lib::test::alg::tester _test(argc, argv);
-    run_test(_test, alg::test_ok);
-    run_test(_test, alg::test_fail);
-    run_test(_test, alg::test_error);
+    run_test(_test, test_ok);
+    run_test(_test, test_fail);
+    run_test(_test, test_error);
 
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;

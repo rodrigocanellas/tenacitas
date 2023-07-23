@@ -12,7 +12,6 @@
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;
 
-namespace alg {
 struct executer_000 {
   static std::string desc() {
     return "Function with one parameter, no returning, with no timeout";
@@ -279,25 +278,25 @@ struct executer_011 {
     return true;
   }
 };
-} // namespace alg
+
 int main(int argc, char **argv) {
   using namespace tenacitas::lib;
 
   log::alg::set_trace_level();
   test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::executer_000);
-  run_test(_tester, alg::executer_001);
-  run_test(_tester, alg::executer_002);
-  run_test(_tester, alg::executer_003);
-  run_test(_tester, alg::executer_004);
-  run_test(_tester, alg::executer_005);
-  run_test(_tester, alg::executer_006);
-  run_test(_tester, alg::executer_007);
-  run_test(_tester, alg::executer_008);
-  run_test(_tester, alg::executer_009);
-  run_test(_tester, alg::executer_010);
-  run_test(_tester, alg::executer_011);
+  run_test(_tester, executer_000);
+  run_test(_tester, executer_001);
+  run_test(_tester, executer_002);
+  run_test(_tester, executer_003);
+  run_test(_tester, executer_004);
+  run_test(_tester, executer_005);
+  run_test(_tester, executer_006);
+  run_test(_tester, executer_007);
+  run_test(_tester, executer_008);
+  run_test(_tester, executer_009);
+  run_test(_tester, executer_010);
+  run_test(_tester, executer_011);
 
   //  std::this_thread::sleep_for(8s);
 }

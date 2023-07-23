@@ -106,12 +106,11 @@ template <typename t_to> struct from_decimal<t_to, typ::base::b16> {
 
     auto _is_valid = [](const char *p_begin, const char *p_end,
                         const char **p_c) -> std::unique_ptr<std::string> {
-      if (std::isdigit(**p_c) && ((**p_c) - '0' < 8)) {
-        return nullptr;
-      }
-      return std::make_unique<std::string>(std::string{**p_c} +
-                                           " is not an hexadecimal digit in " +
-                                           std::string{p_begin, p_end});
+      return (std::isxdigit(**p_c) ? nullptr
+                                   : std::make_unique<std::string>(
+                                         std::string{**p_c} +
+                                         " is not an hexadecimal digit in " +
+                                         std::string{p_begin, p_end}));
     };
 
     auto _multiplier = [&](const char *p_begin, const char *p_end,
@@ -141,16 +140,22 @@ private:
   uint8_t h2i(char p_c) {
     switch (p_c) {
     case 'A':
+    case 'a':
       return 10;
     case 'B':
+    case 'b':
       return 11;
     case 'C':
+    case 'c':
       return 12;
     case 'D':
+    case 'd':
       return 13;
     case 'E':
+    case 'e':
       return 14;
     case 'F':
+    case 'f':
       return 15;
     default:
       return (p_c - '0');

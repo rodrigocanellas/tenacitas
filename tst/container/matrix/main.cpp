@@ -17,8 +17,6 @@
 
 using namespace tenacitas::lib;
 
-namespace alg {
-
 struct test_000 {
   static std::string desc() {
     return "simple square matrix creation and element access";
@@ -157,14 +155,12 @@ struct test_004 {
   }
 };
 
-} // namespace alg
-
 int main(int argc, char **argv) {
   using namespace tenacitas;
   lib::test::alg::tester _tester(argc, argv);
-  run_test(_tester, alg::test_000);
-  run_test(_tester, alg::test_001);
-  run_test(_tester, alg::test_002);
-  run_test(_tester, alg::test_003);
-  run_test(_tester, alg::test_004);
+  run_test(_tester, test_000);
+  run_test(_tester, test_001);
+  run_test(_tester, test_002);
+  run_test(_tester, test_003);
+  run_test(_tester, test_004);
 }

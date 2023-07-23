@@ -21,7 +21,6 @@
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;
 
-namespace alg {
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
@@ -109,7 +108,6 @@ private:
   static constexpr std::chrono::milliseconds m_sleep{200};
 };
 
-} // namespace alg
 // struct sleeping_loop_002 {
 //    static std::string desc() { return ""; }
 
@@ -196,6 +194,6 @@ int main(int argc, char **argv) {
 
   test::alg::tester<> _tester(argc, argv);
 
-  run_test(_tester, alg::sleeping_loop_000);
-  run_test(_tester, alg::sleeping_loop_001);
+  run_test(_tester, sleeping_loop_000);
+  run_test(_tester, sleeping_loop_001);
 }

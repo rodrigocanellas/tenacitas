@@ -6,7 +6,7 @@
 #include <tenacitas/program/alg/options.h>
 #include <tenacitas/test/alg/tester.h>
 using namespace tenacitas::lib;
-namespace alg {
+
 struct test006 {
   static std::string desc() { return "test async::cpt::is_std_chrono OK"; }
 
@@ -44,8 +44,6 @@ private:
   }
 };
 
-} // namespace alg
-
 // struct test008 {
 //   static std::string desc() { return "test async::cpt::is_std_chrono OK"; }
 
@@ -71,8 +69,8 @@ int main(int argc, char **argv) {
 
   test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::test006);
-  run_test(_tester, alg::test007);
+  run_test(_tester, test006);
+  run_test(_tester, test007);
 
   return 0;
 }

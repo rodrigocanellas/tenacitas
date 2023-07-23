@@ -88,8 +88,6 @@
 
 using namespace tenacitas::lib;
 
-namespace alg {
-
 struct test0000 {
   static std::string desc() { return "factorial of 0"; }
   bool operator()(const program::alg::options &) {
@@ -123,14 +121,13 @@ struct test0001 {
     return true;
   }
 };
-} // namespace alg
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
 
   lib::log::alg::set_debug_level();
   lib::test::alg::tester _tester(argc, argv);
-  run_test(_tester, alg::test0000);
-  run_test(_tester, alg::test0001);
+  run_test(_tester, test0000);
+  run_test(_tester, test0001);
   //  run_test(_tester, test0002);
 }

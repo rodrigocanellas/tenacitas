@@ -13,8 +13,6 @@
 
 using namespace tenacitas::lib;
 
-namespace alg {
-
 struct cerr_log_how_to {
   bool operator()(const program::alg::options &) {
     try {
@@ -119,7 +117,6 @@ struct file_log {
     return false;
   }
 };
-} // namespace alg
 
 int main(int argc, char **argv) {
 
@@ -129,9 +126,9 @@ int main(int argc, char **argv) {
   lib::log::alg::set_debug_level();
   lib::test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::cout_log_how_to);
-  run_test(_tester, alg::cout_log_print_tuple);
-  run_test(_tester, alg::clog_how_to);
-  run_test(_tester, alg::cerr_log_how_to);
-  run_test(_tester, alg::file_log);
+  run_test(_tester, cout_log_how_to);
+  run_test(_tester, cout_log_print_tuple);
+  run_test(_tester, clog_how_to);
+  run_test(_tester, cerr_log_how_to);
+  run_test(_tester, file_log);
 }

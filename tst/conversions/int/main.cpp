@@ -41,7 +41,6 @@ struct b {};
 //  }
 //};
 
-namespace alg {
 template <typename t_int> struct test_unsigned_int_max {
   static std::string desc() {
     std::stringstream _stream;
@@ -469,50 +468,49 @@ template <> std::string test0038::str = "101";
 // causes a compile time error
 using test0039 = test_not_converted<39, int32_t, conversions::typ::base::b8>;
 template <> std::string test0039::str = "73";
-} // namespace alg
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
   lib::test::alg::tester _test(argc, argv);
 
   // run_test(_test, testNoConversion);
-  run_test(_test, alg::test0000);
-  run_test(_test, alg::test0001);
-  run_test(_test, alg::test0002);
-  run_test(_test, alg::test0003);
-  run_test(_test, alg::test0004);
-  run_test(_test, alg::test0005);
-  run_test(_test, alg::test0006);
-  run_test(_test, alg::test0007);
-  run_test(_test, alg::test0008);
-  run_test(_test, alg::test0009);
-  run_test(_test, alg::test0010);
-  run_test(_test, alg::test0011);
-  run_test(_test, alg::test0012);
-  run_test(_test, alg::test0013);
-  run_test(_test, alg::test0014);
-  run_test(_test, alg::test0015);
-  run_test(_test, alg::test0016);
-  run_test(_test, alg::test0017);
-  run_test(_test, alg::test0018);
-  run_test(_test, alg::test0019);
-  run_test(_test, alg::test0020);
-  run_test(_test, alg::test0021);
-  run_test(_test, alg::test0022);
-  run_test(_test, alg::test0023);
-  run_test(_test, alg::test0024);
-  run_test(_test, alg::test0025);
-  run_test(_test, alg::test0026);
-  run_test(_test, alg::test0027);
-  run_test(_test, alg::test0028);
-  run_test(_test, alg::test0029);
-  run_test(_test, alg::test0030);
-  run_test(_test, alg::test0031);
-  run_test(_test, alg::test0032);
-  run_test(_test, alg::test0033);
-  run_test(_test, alg::test0034);
-  run_test(_test, alg::test0035);
-  run_test(_test, alg::test0036);
+  run_test(_test, test0000);
+  run_test(_test, test0001);
+  run_test(_test, test0002);
+  run_test(_test, test0003);
+  run_test(_test, test0004);
+  run_test(_test, test0005);
+  run_test(_test, test0006);
+  run_test(_test, test0007);
+  run_test(_test, test0008);
+  run_test(_test, test0009);
+  run_test(_test, test0010);
+  run_test(_test, test0011);
+  run_test(_test, test0012);
+  run_test(_test, test0013);
+  run_test(_test, test0014);
+  run_test(_test, test0015);
+  run_test(_test, test0016);
+  run_test(_test, test0017);
+  run_test(_test, test0018);
+  run_test(_test, test0019);
+  run_test(_test, test0020);
+  run_test(_test, test0021);
+  run_test(_test, test0022);
+  run_test(_test, test0023);
+  run_test(_test, test0024);
+  run_test(_test, test0025);
+  run_test(_test, test0026);
+  run_test(_test, test0027);
+  run_test(_test, test0028);
+  run_test(_test, test0029);
+  run_test(_test, test0030);
+  run_test(_test, test0031);
+  run_test(_test, test0032);
+  run_test(_test, test0033);
+  run_test(_test, test0034);
+  run_test(_test, test0035);
+  run_test(_test, test0036);
 
   // the test below causes a compile time error
   //  run_test(_test, test0037);

@@ -18,7 +18,6 @@
 #include <tenacitas/test/alg/tester.h>
 
 using namespace tenacitas::lib;
-namespace alg {
 
 template <typename t_first, typename t_second>
 std::string print(const std::vector<std::pair<t_first, t_second>> &p_vector) {
@@ -1394,7 +1393,7 @@ struct test_031 {
     m_dispatcher->subscribe<crosswords::evt::new_attempt>(
         [this](auto p_event) -> void {
           if (p_event.number == 5000) {
-            TNCT_LOG_TST("p_event->number  = ", p_event.number);
+            TNCT_LOG_TST("number of attempts = ", p_event.number);
             m_solver.stop();
           }
         });
@@ -1439,7 +1438,7 @@ private:
       crosswords::alg::dispatcher::create()};
   crosswords::bus::assembler m_solver{m_dispatcher};
 };
-} // namespace alg
+
 int main(int argc, char **argv) {
 
   using namespace tenacitas;
@@ -1449,36 +1448,36 @@ int main(int argc, char **argv) {
 
   lib::test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::test_000);
-  run_test(_tester, alg::test_001);
-  run_test(_tester, alg::test_003);
-  run_test(_tester, alg::test_004);
-  run_test(_tester, alg::test_005);
-  run_test(_tester, alg::test_006);
-  run_test(_tester, alg::test_007);
-  run_test(_tester, alg::test_007a);
-  run_test(_tester, alg::test_008);
-  run_test(_tester, alg::test_009);
-  run_test(_tester, alg::test_010);
-  run_test(_tester, alg::test_010a);
-  run_test(_tester, alg::test_011);
-  run_test(_tester, alg::test_012);
-  run_test(_tester, alg::test_013);
-  run_test(_tester, alg::test_014);
-  run_test(_tester, alg::test_015);
-  run_test(_tester, alg::test_016);
-  run_test(_tester, alg::test_017);
-  run_test(_tester, alg::test_018);
-  run_test(_tester, alg::test_019);
-  run_test(_tester, alg::test_020);
-  run_test(_tester, alg::test_021);
-  run_test(_tester, alg::test_023);
-  run_test(_tester, alg::test_024);
-  run_test(_tester, alg::test_025);
-  run_test(_tester, alg::test_026);
-  run_test(_tester, alg::test_027);
-  run_test(_tester, alg::test_028);
-  run_test(_tester, alg::test_029);
-  run_test(_tester, alg::test_030);
-  run_test(_tester, alg::test_031);
+  run_test(_tester, test_000);
+  run_test(_tester, test_001);
+  run_test(_tester, test_003);
+  run_test(_tester, test_004);
+  run_test(_tester, test_005);
+  run_test(_tester, test_006);
+  run_test(_tester, test_007);
+  run_test(_tester, test_007a);
+  run_test(_tester, test_008);
+  run_test(_tester, test_009);
+  run_test(_tester, test_010);
+  run_test(_tester, test_010a);
+  run_test(_tester, test_011);
+  run_test(_tester, test_012);
+  run_test(_tester, test_013);
+  run_test(_tester, test_014);
+  run_test(_tester, test_015);
+  run_test(_tester, test_016);
+  run_test(_tester, test_017);
+  run_test(_tester, test_018);
+  run_test(_tester, test_019);
+  run_test(_tester, test_020);
+  run_test(_tester, test_021);
+  run_test(_tester, test_023);
+  run_test(_tester, test_024);
+  run_test(_tester, test_025);
+  run_test(_tester, test_026);
+  run_test(_tester, test_027);
+  run_test(_tester, test_028);
+  run_test(_tester, test_029);
+  run_test(_tester, test_030);
+  run_test(_tester, test_031);
 }
