@@ -3,5 +3,5 @@ TEMPLATE=aux
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/container/typ/circular_queue.h \
-        $$BASE_DIR/tenacitas.lib/src/container/typ/matrix.h
+        $$SRC_DIR/tenacitas/container/typ/circular_queue.h \
+        $$SRC_DIR/tenacitas/container/typ/matrix.h

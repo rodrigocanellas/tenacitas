@@ -3,8 +3,8 @@ TEMPLATE=aux
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/traits/alg/pair.h \
-        $$BASE_DIR/tenacitas.lib/src/traits/alg/pointer.h \
-        $$BASE_DIR/tenacitas.lib/src/traits/alg/traits.h \
-        $$BASE_DIR/tenacitas.lib/src/traits/alg/tuple.h \
-        $$BASE_DIR/tenacitas.lib/src/traits/cpt/is_tuple.h
+        $$SRC_DIR/tenacitas/traits/alg/pair.h \
+        $$SRC_DIR/tenacitas/traits/alg/pointer.h \
+        $$SRC_DIR/tenacitas/traits/alg/traits.h \
+        $$SRC_DIR/tenacitas/traits/alg/tuple.h \
+        $$SRC_DIR/tenacitas/traits/cpt/is_tuple.h

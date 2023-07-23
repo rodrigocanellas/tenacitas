@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
+#include "typ.h"
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/program/alg/options.h>
 
 namespace cfg {
 

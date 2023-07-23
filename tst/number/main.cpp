@@ -1,22 +1,12 @@
 
 #include <string>
 
-#include <tenacitas.lib/src/number/cpt/id.h>
-#include <tenacitas.lib/src/number/typ/id.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas/number/cpt/id.h>
+#include <tenacitas/number/typ/id.h>
+#include <tenacitas/program/alg/options.h>
+#include <tenacitas/test/alg/tester.h>
 
 using namespace tenacitas::lib;
-namespace alg {
-struct test000 {
-  static std::string desc() { return "'id' from a number"; }
-
-  bool operator()(const program::alg::options &) {
-    number::typ::id _id(54321);
-
-    return _id.str() == "4321";
-  }
-};
 
 struct test001 {
   static std::string desc() { return "id _i {4}, which does not compile"; }
@@ -66,10 +56,11 @@ struct test004 {
     return (_i == 4);
   }
 };
-} // namespace alg
+
 int main(int argc, char **argv) {
   using namespace tenacitas;
   lib::test::alg::tester _tester(argc, argv);
 
-  run_test(_tester, alg::test000);
+  run_test(_tester, test003);
+  run_test(_tester, test004);
 }

@@ -3,19 +3,19 @@ TEMPLATE=aux
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/async/alg/dispatcher.h \
-        $$BASE_DIR/tenacitas.lib/src/async/alg/dispatcher.h \
-        $$BASE_DIR/tenacitas.lib/src/async/alg/execute.h \
-        $$BASE_DIR/tenacitas.lib/src/async/alg/sleeping_loop.h
+        $$SRC_DIR/tenacitas/async/alg/dispatcher.h \
+        $$SRC_DIR/tenacitas/async/alg/dispatcher.h \
+        $$SRC_DIR/tenacitas/async/alg/execute.h \
+        $$SRC_DIR/tenacitas/async/alg/sleeping_loop.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/async/cpt/event.h \
-        $$BASE_DIR/tenacitas.lib/src/async/cpt/dispatcher.h
+        $$SRC_DIR/tenacitas/async/cpt/event.h \
+        $$SRC_DIR/tenacitas/async/cpt/dispatcher.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/async/internal/typ/event_queue.h
+        $$SRC_DIR/tenacitas/async/internal/typ/event_queue.h
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/src/async/typ/priority.h \
-        $$BASE_DIR/tenacitas.lib/src/async/typ/queue_id.h \
-        $$BASE_DIR/tenacitas.lib/src/async/typ/subscriber.h \
+        $$SRC_DIR/tenacitas/async/typ/priority.h \
+        $$SRC_DIR/tenacitas/async/typ/queue_id.h \
+        $$SRC_DIR/tenacitas/async/typ/subscriber.h \

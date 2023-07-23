@@ -16,13 +16,12 @@
 #include <string>
 #include <vector>
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/tst/async/dispatcher/cfg.h>
-#include <tenacitas.lib/tst/async/dispatcher/dispatcher.h>
-#include <tenacitas.lib/tst/async/dispatcher/evt.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
+#include "cfg.h"
+#include "dispatcher.h"
+#include "typ.h"
+#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/program/alg/options.h>
 
 using namespace std::chrono_literals;
 

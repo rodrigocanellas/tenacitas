@@ -6,6 +6,6 @@ TARGET=tenacitas.lib.tst.calendar.concepts
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
 
-SOURCES = $$BASE_DIR/tenacitas.lib/tst/calendar/concepts/main.cpp
+SOURCES = $$TST_DIR/calendar/concepts/main.cpp
 
 

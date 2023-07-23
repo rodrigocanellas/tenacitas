@@ -6,10 +6,10 @@
 #include <sstream>
 #include <string>
 
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/number/typ/id.h>
-#include <tenacitas.lib/tst/async/dispatcher/cfg.h>
-#include <tenacitas.lib/tst/async/dispatcher/typ.h>
+#include "cfg.h"
+#include "typ.h"
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/number/typ/id.h>
 
 #include <sqlite3.h>
 
@@ -239,8 +239,8 @@ private:
       _stream << "insert into subscribers (test_id, publishing_id, "
                  "subscriber_id, "
                  "amount) values ("
-              << m_test_id << ", " << p_publishing_id << ", " << _value.first
-              << ", " << _value.second << "); ";
+              << m_test_id << ", " << p_publishing_id << ", "
+              << _value.first.string() << ", " << _value.second << "); ";
       char *_err{nullptr};
       if ((sqlite3_exec(m_db, _stream.str().c_str(), nullptr, nullptr, &_err) ==
            SQLITE_OK) &&

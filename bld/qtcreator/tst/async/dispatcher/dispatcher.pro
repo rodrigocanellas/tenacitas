@@ -1,20 +1,20 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.tst.async.dispatcher-NAME
+TARGET=tenacitas.lib.tst.async.dispatcher
 
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS = \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/bus.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/dispatcher.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/cfg.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/evt.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/per.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/sto.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/typ.h \
-            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/uix.h
+            $$TST_DIR/async/dispatcher/bus.h \
+            $$TST_DIR/async/dispatcher/dispatcher.h \
+            $$TST_DIR/async/dispatcher/cfg.h \
+            $$TST_DIR/async/dispatcher/evt.h \
+            $$TST_DIR/async/dispatcher/per.h \
+            $$TST_DIR/async/dispatcher/sto.h \
+            $$TST_DIR/async/dispatcher/typ.h \
+            $$TST_DIR/async/dispatcher/uix.h
 
-SOURCES = $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/main.cpp
+SOURCES = $$TST_DIR/async/dispatcher/main.cpp
 
 LIBS+=-lsqlite3

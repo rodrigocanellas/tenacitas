@@ -10,12 +10,12 @@
 #include <string>
 #include <vector>
 
-#include <tenacitas.lib/src/crosswords/alg/assembler.h>
-#include <tenacitas.lib/src/crosswords/alg/dispatcher.h>
-#include <tenacitas.lib/src/crosswords/typ/grid.h>
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas/crosswords/alg/assembler.h>
+#include <tenacitas/crosswords/alg/dispatcher.h>
+#include <tenacitas/crosswords/typ/grid.h>
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/program/alg/options.h>
+#include <tenacitas/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 namespace alg {

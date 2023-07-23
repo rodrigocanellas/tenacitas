@@ -1,8 +1,8 @@
 #ifndef TENACITAS_TST_ASYNC_DISPATCHER_DISPATCHER_H
 #define TENACITAS_TST_ASYNC_DISPATCHER_DISPATCHER_H
 
-#include <tenacitas.lib/src/async/alg/dispatcher.h>
-#include <tenacitas.lib/tst/async/dispatcher/evt.h>
+#include "evt.h"
+#include <tenacitas/async/alg/dispatcher.h>
 
 namespace bus {
 

@@ -4,10 +4,10 @@
 #include <optional>
 #include <sstream>
 
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/math/alg/factorial.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas/log/alg/logger.h>
+#include <tenacitas/math/alg/factorial.h>
+#include <tenacitas/program/alg/options.h>
+#include <tenacitas/test/alg/tester.h>
 
 // struct test0000 {
 //   static std::string desc() {
