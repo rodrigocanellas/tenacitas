@@ -6,5 +6,5 @@ TARGET=tenacitas.lib.tst.log
 
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
-SOURCES = $$TST_DIR/log/main.cpp
+SOURCES = $$LIB_TST_DIR/log/main.cpp
 

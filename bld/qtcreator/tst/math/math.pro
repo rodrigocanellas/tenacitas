@@ -5,5 +5,5 @@ TARGET=tenacitas.lib.tst.math
 
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
-SOURCES = $$TST_DIR/math/main.cpp
+SOURCES = $$LIB_TST_DIR/math/main.cpp
 

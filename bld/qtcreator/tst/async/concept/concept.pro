@@ -5,5 +5,5 @@ TARGET=tenacitas.lib.tst.async.concept
 
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
-SOURCES = $$TST_DIR/async/concept/main.cpp
+SOURCES = $$LIB_TST_DIR/async/concept/main.cpp
 

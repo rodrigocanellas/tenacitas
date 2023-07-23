@@ -5,5 +5,5 @@ TARGET=tenacitas.lib.tst.crosswords.alg
 
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
-SOURCES = $$TST_DIR/crosswords/alg/main.cpp
+SOURCES = $$LIB_TST_DIR/crosswords/alg/main.cpp
 

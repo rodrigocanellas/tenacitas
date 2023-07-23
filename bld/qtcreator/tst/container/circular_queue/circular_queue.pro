@@ -6,6 +6,6 @@ TARGET=tenacitas.lib.tst.container.circular_queue
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
 
-SOURCES = $$TST_DIR/container/circular_queue/main.cpp
+SOURCES = $$LIB_TST_DIR/container/circular_queue/main.cpp
 
 
