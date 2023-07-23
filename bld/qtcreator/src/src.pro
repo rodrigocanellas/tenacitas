@@ -7,7 +7,6 @@ SUBDIRS = \
         calendar \
         container \
         conversions \
-        crosswords \
         ipc \
         log \
         math \
@@ -15,3 +14,5 @@ SUBDIRS = \
         program \
         test \
         traits \
+
+#        crosswords \

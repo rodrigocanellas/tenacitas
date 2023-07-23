@@ -12,8 +12,8 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas/async/alg/dispatcher.h>
-#include <tenacitas/async/alg/sleeping_loop.h>
+#include <tenacitas.lib/async/alg/dispatcher.h>
+#include <tenacitas.lib/async/alg/sleeping_loop.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

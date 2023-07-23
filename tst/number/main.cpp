@@ -1,10 +1,10 @@
 
 #include <string>
 
-#include <tenacitas/number/cpt/id.h>
-#include <tenacitas/number/typ/id.h>
-#include <tenacitas/program/alg/options.h>
-#include <tenacitas/test/alg/tester.h>
+#include <tenacitas.lib/number/cpt/id.h>
+#include <tenacitas.lib/number/typ/id.h>
+#include <tenacitas.lib/program/alg/options.h>
+#include <tenacitas.lib/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 

@@ -8,8 +8,8 @@
 #include <iostream>
 #include <string>
 
-#include <tenacitas/program/alg/options.h>
-#include <tenacitas/test/alg/tester.h>
+#include <tenacitas.lib/program/alg/options.h>
+#include <tenacitas.lib/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 

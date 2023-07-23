@@ -5,10 +5,11 @@ SUBDIRS = \
         calendar  \
         container  \
         conversions \
-        crosswords \
         log \
         math \
         number \
         test
+
+#        crosswords \
 
 

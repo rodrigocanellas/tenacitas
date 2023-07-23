@@ -19,9 +19,9 @@
 #include "cfg.h"
 #include "dispatcher.h"
 #include "typ.h"
-#include <tenacitas/async/alg/dispatcher.h>
-#include <tenacitas/log/alg/logger.h>
-#include <tenacitas/program/alg/options.h>
+#include <tenacitas.lib/async/alg/dispatcher.h>
+#include <tenacitas.lib/log/alg/logger.h>
+#include <tenacitas.lib/program/alg/options.h>
 
 using namespace std::chrono_literals;
 

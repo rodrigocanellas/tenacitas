@@ -21,7 +21,7 @@
 #include <utility>
 #include <vector>
 
-#include <tenacitas/program/alg/options.h>
+#include <tenacitas.lib/program/alg/options.h>
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 #define TENACITAS_TST_ASYNC_DISPATCHER_DISPATCHER_H
 
 #include "evt.h"
-#include <tenacitas/async/alg/dispatcher.h>
+#include <tenacitas.lib/async/alg/dispatcher.h>
 
 namespace bus {
 

@@ -22,10 +22,10 @@
 #include "sto.h"
 #include "typ.h"
 #include "uix.h"
-#include <tenacitas/async/alg/dispatcher.h>
-#include <tenacitas/log/alg/logger.h>
-#include <tenacitas/program/alg/options.h>
-#include <tenacitas/test/alg/tester.h>
+#include <tenacitas.lib/async/alg/dispatcher.h>
+#include <tenacitas.lib/log/alg/logger.h>
+#include <tenacitas.lib/program/alg/options.h>
+#include <tenacitas.lib/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

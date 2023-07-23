@@ -6,12 +6,12 @@
 #include <utility>
 
 #include "typ.h"
-#include <tenacitas/async/alg/dispatcher.h>
-#include <tenacitas/async/cpt/event.h>
-#include <tenacitas/async/typ/queue_id.h>
-#include <tenacitas/number/alg/format.h>
-#include <tenacitas/number/typ/id.h>
-#include <tenacitas/number/typ/uuid.h>
+#include <tenacitas.lib/async/alg/dispatcher.h>
+#include <tenacitas.lib/async/cpt/event.h>
+#include <tenacitas.lib/async/typ/queue_id.h>
+#include <tenacitas.lib/number/alg/format.h>
+#include <tenacitas.lib/number/typ/id.h>
+#include <tenacitas.lib/number/typ/uuid.h>
 
 namespace evt {
 

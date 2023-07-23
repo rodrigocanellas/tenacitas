@@ -8,12 +8,6 @@ async ..> number
 async ..> traits
 container ..> number
 conversions ..> conversions
-crosswords ..> async
-crosswords ..> container
-crosswords ..> crosswords
-crosswords ..> log
-crosswords ..> math
-crosswords ..> number
 log ..> log
 log ..> number
 log ..> traits
