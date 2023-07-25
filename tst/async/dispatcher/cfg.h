@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "typ.h"
-#include <tenacitas.lib/log/alg/logger.h>
-#include <tenacitas.lib/program/alg/options.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/program/alg/options.h>
 
 namespace cfg {
 

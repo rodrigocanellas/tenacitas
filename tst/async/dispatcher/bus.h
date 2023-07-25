@@ -15,10 +15,10 @@
 #include "dispatcher.h"
 #include "evt.h"
 #include "typ.h"
-#include <tenacitas.lib/async/alg/dispatcher.h>
-#include <tenacitas.lib/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/calendar/cpt/chrono_convertible.h>
-#include <tenacitas.lib/log/alg/logger.h>
+#include <tenacitas.lib/src/async/alg/dispatcher.h>
+#include <tenacitas.lib/src/async/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/calendar/cpt/chrono_convertible.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
 
 using namespace tenacitas::lib;
 

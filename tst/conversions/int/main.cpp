@@ -4,9 +4,9 @@
 #include <optional>
 #include <sstream>
 
-#include <tenacitas.lib/conversions/alg/cvt.h>
-#include <tenacitas.lib/program/alg/options.h>
-#include <tenacitas.lib/test/alg/tester.h>
+#include <tenacitas.lib/src/conversions/alg/cvt.h>
+#include <tenacitas.lib/src/program/alg/options.h>
+#include <tenacitas.lib/src/test/alg/tester.h>
 
 using namespace tenacitas::lib;
 

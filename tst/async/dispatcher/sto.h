@@ -8,8 +8,8 @@
 
 #include "cfg.h"
 #include "typ.h"
-#include <tenacitas.lib/log/alg/logger.h>
-#include <tenacitas.lib/number/typ/id.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/number/typ/id.h>
 
 #include <sqlite3.h>
 

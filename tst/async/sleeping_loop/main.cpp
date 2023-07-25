@@ -14,9 +14,9 @@
 #include <thread>
 #include <vector>
 
-#include <tenacitas.lib/async/alg/sleeping_loop.h>
-#include <tenacitas.lib/log/alg/logger.h>
-#include <tenacitas.lib/test/alg/tester.h>
+#include <tenacitas.lib/src/async/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/test/alg/tester.h>
 
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;

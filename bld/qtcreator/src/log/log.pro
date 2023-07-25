@@ -2,8 +2,8 @@ TEMPLATE=aux
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS += \
-        $$LIB_SRC_DIR/tenacitas.lib/log/alg/internal/file.h \
-        $$LIB_SRC_DIR/tenacitas.lib/log/alg/internal/wrapper.h \
-        $$LIB_SRC_DIR/tenacitas.lib/log/alg/logger.h \
-        $$LIB_SRC_DIR/tenacitas.lib/log/typ/level.h \
+        $$BASE_DIR/tenacitas.lib/src/log/alg/internal/file.h \
+        $$BASE_DIR/tenacitas.lib/src/log/alg/internal/wrapper.h \
+        $$BASE_DIR/tenacitas.lib/src/log/alg/logger.h \
+        $$BASE_DIR/tenacitas.lib/src/log/typ/level.h \
 

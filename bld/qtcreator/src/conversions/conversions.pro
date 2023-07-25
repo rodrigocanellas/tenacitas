@@ -3,9 +3,9 @@ TEMPLATE=aux
 include (../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS += \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/alg/int.h \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/alg/internal/internal.h \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/typ/base.h \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/typ/result.h \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/typ/separator.h \
-        $$LIB_SRC_DIR/tenacitas.lib/conversions/alg/cvt.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/alg/int.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/alg/internal/internal.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/typ/base.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/typ/result.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/typ/separator.h \
+        $$BASE_DIR/tenacitas.lib/src/conversions/alg/cvt.h \

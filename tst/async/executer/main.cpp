@@ -4,10 +4,10 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.lib/async/alg/execute.h>
-#include <tenacitas.lib/log/alg/logger.h>
-#include <tenacitas.lib/test/alg/tester.h>
-#include <tenacitas.lib/traits/alg/traits.h>
+#include <tenacitas.lib/src/async/alg/execute.h>
+#include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas.lib/src/traits/alg/traits.h>
 
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;
