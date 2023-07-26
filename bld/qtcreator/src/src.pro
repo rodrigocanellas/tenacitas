@@ -14,5 +14,5 @@ SUBDIRS = \
         program \
         test \
         traits \
+        translation
 
-#        crosswords \

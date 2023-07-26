@@ -6,6 +6,6 @@ TARGET=tenacitas.lib.tst.container.matrix
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
 
-SOURCES = $$LIB_TST_DIR/container/matrix/main.cpp
+SOURCES = $$BASE_DIR/tenacitas.lib/tst/container/matrix/main.cpp
 
 

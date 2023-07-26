@@ -8,7 +8,8 @@ SUBDIRS = \
         log \
         math \
         number \
-        test
+        test \
+        translation
 
 #        crosswords \
 

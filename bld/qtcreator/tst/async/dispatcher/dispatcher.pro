@@ -6,15 +6,15 @@ TARGET=tenacitas.lib.tst.async.dispatcher
 include (../../../../../../tenacitas.bld/qtcreator/common.pri)
 
 HEADERS = \
-            $$LIB_TST_DIR/async/dispatcher/bus.h \
-            $$LIB_TST_DIR/async/dispatcher/dispatcher.h \
-            $$LIB_TST_DIR/async/dispatcher/cfg.h \
-            $$LIB_TST_DIR/async/dispatcher/evt.h \
-            $$LIB_TST_DIR/async/dispatcher/per.h \
-            $$LIB_TST_DIR/async/dispatcher/sto.h \
-            $$LIB_TST_DIR/async/dispatcher/typ.h \
-            $$LIB_TST_DIR/async/dispatcher/uix.h
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/bus.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/dispatcher.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/cfg.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/evt.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/per.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/sto.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/typ.h \
+            $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/uix.h
 
-SOURCES = $$LIB_TST_DIR/async/dispatcher/main.cpp
+SOURCES = $$BASE_DIR/tenacitas.lib/tst/async/dispatcher/main.cpp
 
 LIBS+=-lsqlite3
