@@ -7,7 +7,6 @@ async ..> log
 async ..> number
 async ..> traits
 container ..> number
-conversions ..> 
 conversions ..> conversions
 log ..> log
 log ..> number
@@ -17,4 +16,6 @@ test ..> program
 traits ..> traits
 translation ..> log
 translation ..> translation
+user ..> number
+user ..> user
 @enduml
