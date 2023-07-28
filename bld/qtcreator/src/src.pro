@@ -14,5 +14,6 @@ SUBDIRS = \
         program \
         test \
         traits \
-        translation
+        translation \
+        user
 
