@@ -22,6 +22,10 @@ concept convertible_to_ms =
     chrono_convertible<std::chrono::milliseconds, t_from>;
 
 template <typename t_from>
+concept convertible_to_sec =
+    chrono_convertible<std::chrono::seconds, t_from>;
+
+template <typename t_from>
 concept convertible_to_ns =
     chrono_convertible<std::chrono::nanoseconds, t_from>;
 

@@ -365,6 +365,40 @@ struct test_008 {
   }
 };
 
+struct test_009 {
+  static std::string desc() {
+    return "Adds 1,000,000 strings of 4k to a circular-queue";
+  }
+  bool operator()(const program::alg::options &) {
+    try {
+      container::typ::circular_queue<std::string> queue;
+      std::string data(4 * 1024, 'z');
+
+      for (uint32_t i = 0; i < 1000000; ++i) {
+        queue.add(data);
+      }
+
+      uint32_t j{0};
+      while (!queue.empty()) {
+        std::optional<std::string> maybe{queue.get()};
+        if (!maybe) {
+          TNCT_LOG_ERR("error getting data # ", j);
+          return false;
+        }
+        TNCT_LOG_TST("data # ", j++, ": ", maybe.value());
+      }
+    } catch (std::exception &ex) {
+      TNCT_LOG_ERR(ex.what());
+      return false;
+    } catch (...) {
+      TNCT_LOG_ERR("unknown error");
+      return false;
+    }
+
+    return true;
+  }
+};
+
 int main(int argc, char **argv) {
   using namespace tenacitas;
 
@@ -381,4 +415,5 @@ int main(int argc, char **argv) {
   run_test(_tester, test_006);
   run_test(_tester, test_007);
   run_test(_tester, test_008);
+  run_test(_tester, test_009);
 }
