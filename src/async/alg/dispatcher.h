@@ -177,6 +177,11 @@ template <cpt::event... t_events> struct dispatcher {
   template <cpt::event t_event>
   size_t occupied_in_queue(const typ::queue_id &p_id);
 
+  template <cpt::event t_event> constexpr size_t amount_of_queues() const {
+    constexpr std::size_t _event_index{traits::alg::index_v<t_event, events>};
+    return std::get<_event_index>(m_events_queues).size();
+  }
+
   // \brief Waits for all the events in all the groups of  subscribers to be
   // handled
   //
@@ -329,6 +334,9 @@ typ::queue_id
 dispatcher<t_events...>::subscribe(typ::subscriber<t_event> p_subscriber,
                                    typ::priority p_priority) {
   event_queues_iterator<t_event> _ite{internal_add_queue<t_event>(p_priority)};
+#ifdef TENACITAS_LOG
+  TNCT_LOG_TRA("adding subscriber");
+#endif
   _ite->add_subscriber(p_subscriber);
   return _ite->get_id();
 }

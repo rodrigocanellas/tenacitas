@@ -263,6 +263,40 @@ struct test_005 {
   }
 };
 
+struct test_006 {
+  static std::string desc() {
+    return "Tests if the creation of event queue is correct";
+  }
+
+  bool operator()(const program::alg::options &) {
+
+    size_t _counter{0};
+
+    m_dispatcher->subscribe<e>(
+        [&](auto) { TNCT_LOG_TST("handling # ", _counter++); });
+
+    TNCT_LOG_TST("publishing");
+
+    m_dispatcher->publish<e>();
+
+    TNCT_LOG_TST("# amount event queues: ",
+                 m_dispatcher->amount_of_queues<e>());
+
+    TNCT_LOG_TST("sleeping");
+    std::this_thread::sleep_for(2s);
+    TNCT_LOG_TST("waking up");
+    return true;
+  }
+
+private:
+  struct e {};
+
+  using dispatcher = async::alg::dispatcher<e>;
+
+private:
+  dispatcher::ptr m_dispatcher{dispatcher::create()};
+};
+
 struct test_corner_000 {
 
   using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
@@ -403,8 +437,8 @@ int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  log::alg::set_info_level();
-  log::alg::set_max_file_name_lenght(20);
+  log::alg::set_trace_level();
+  log::alg::set_max_file_name_lenght(13);
 
   program::alg::options _options;
 
@@ -419,6 +453,7 @@ int main(int argc, char **argv) {
   run_test(_tester, test_003);
   run_test(_tester, test_004);
   run_test(_tester, test_005);
+  run_test(_tester, test_006);
   run_test(_tester, test_corner_000);
   run_test(_tester, test_corner_001);
   run_test(_tester, test_corner_002);

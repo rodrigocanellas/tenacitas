@@ -16,7 +16,11 @@
 #include <tenacitas.lib/src/async/typ/queue_id.h>
 #include <tenacitas.lib/src/async/typ/subscriber.h>
 #include <tenacitas.lib/src/container/typ/circular_queue.h>
+
+#ifdef TENACITAS_LOG
 #include <tenacitas.lib/src/log/alg/logger.h>
+#include <tenacitas.lib/src/number/alg/format.h>
+#endif
 
 namespace tenacitas::lib::async::internal::typ {
 
@@ -138,11 +142,12 @@ public:
   void trace(uint16_t p_line, std::string_view p_text,
              std::thread::id p_thread = std::this_thread::get_id()) {
 #ifdef TENACITAS_LOG
-    TNCT_LOG_TRA(p_line, " - E ", typeid(t_event).name(), ", Q {", this, ",",
-                 m_id, "}, C {", m_circular_queue.get_id(), ",",
-                 m_circular_queue.occupied(), "}, prio ", m_priority,
-                 ", loops ", &m_loops, ", stop ", m_stopped.load(), ", thread ",
-                 p_thread, " - ", p_text);
+    TNCT_LOG_TRA(number::alg::format(p_line, uint8_t{5}), " - E ",
+                 typeid(t_event).name(), ", Q {", this, ',', m_id, "}, C {",
+                 m_circular_queue.get_id(), ",", m_circular_queue.occupied(),
+                 "}, # L ", m_loops.size(), ", S? ",
+                 (m_stopped.load() ? 'T' : 'F'), ", T ", p_thread, " - ",
+                 p_text);
 #endif
   }
 
@@ -193,8 +198,9 @@ protected:
 namespace tenacitas::lib::async::internal::typ {
 
 template <cpt::event t_event> inline event_queue<t_event>::~event_queue() {
-  trace(__LINE__, "destructor");
+  trace(__LINE__, "entering destructor");
   stop();
+  trace(__LINE__, "leaving destructor");
 }
 
 template <cpt::event t_event>
@@ -273,6 +279,7 @@ template <cpt::event t_event>
 void event_queue<t_event>::add_subscriber(
     std::unsigned_integral auto p_num_subscribers,
     std::function<async::typ::subscriber<t_event>()> p_factory) {
+  trace(__LINE__, "adding many subscribers");
   for (decltype(p_num_subscribers) _i = 0; _i < p_num_subscribers; ++_i) {
     add_subscriber(p_factory());
   }
@@ -307,6 +314,9 @@ void event_queue<t_event>::add_subscriber(
     trace(__LINE__, "not adding subscriber because stopped");
     return;
   }
+
+  trace(__LINE__, "adding subscriber");
+
   std::lock_guard<std::mutex> _lock(m_add_subscriber);
 
   m_loops.push_back(std::thread(
