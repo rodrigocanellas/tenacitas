@@ -18,12 +18,14 @@ concept chrono_convertible = requires(t_from p_time) {
 };
 
 template <typename t_from>
+concept convertible_to_s = chrono_convertible<std::chrono::seconds, t_from>;
+
+template <typename t_from>
 concept convertible_to_ms =
     chrono_convertible<std::chrono::milliseconds, t_from>;
 
 template <typename t_from>
-concept convertible_to_sec =
-    chrono_convertible<std::chrono::seconds, t_from>;
+concept convertible_to_sec = chrono_convertible<std::chrono::seconds, t_from>;
 
 template <typename t_from>
 concept convertible_to_ns =

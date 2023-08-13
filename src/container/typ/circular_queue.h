@@ -65,7 +65,7 @@ struct circular_queue {
 
   void clear() {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_list.clear();
+    m_head = m_tail;
     m_amount = 0;
   }
 

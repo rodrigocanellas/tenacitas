@@ -116,9 +116,6 @@ template <cpt::event... t_events> struct dispatcher {
 
   ~dispatcher();
 
-  /// \brief Stops all the queues
-  void stop() { stop_all(std::make_index_sequence<sizeof...(t_events)>{}); }
-
   template <cpt::event t_event>
   typ::queue_id add_queue(typ::priority p_priority = typ::priority ::medium);
 
@@ -146,6 +143,8 @@ template <cpt::event... t_events> struct dispatcher {
 
   /// \brief Removes all queues of all events
   void clear();
+
+  template <cpt::event t_event> void clear();
 
   template <cpt::event t_event> bool publish(const t_event &p_event);
 
@@ -182,6 +181,12 @@ template <cpt::event... t_events> struct dispatcher {
     return std::get<_event_index>(m_events_queues).size();
   }
 
+  /// \brief Removes all events in all the queues of \p t_event
+  template <cpt::event t_event> void empty_queue();
+
+  /// \brief Removes all events in all the queues of \p t_event
+  template <cpt::event t_event> void empty_queue(typ::queue_id p_queue_id);
+
   // \brief Waits for all the events in all the groups of  subscribers to be
   // handled
   //
@@ -214,6 +219,9 @@ private:
   using event_queues_iterator = typename event_queues<t_event>::iterator;
 
 private:
+  /// \brief Stops all the queues
+  // void stop() { stop_all(std::make_index_sequence<sizeof...(t_events)>{}); }
+
   template <cpt::event t_event> event_queues<t_event> &get_event_queues();
 
   template <cpt::event t_event>
@@ -225,27 +233,29 @@ private:
   template <cpt::event t_event>
   event_queues_iterator<t_event> internal_add_queue(typ::priority p_priority);
 
-  template <std::size_t t_idx> void stop_each() {
-    using event = std::tuple_element_t<t_idx, events>;
-    event_queues<event> &_event_queues{std::get<t_idx>(m_events_queues)};
+  //  template <std::size_t t_idx> void stop_each() {
+  //    using event = std::tuple_element_t<t_idx, events>;
+  //    event_queues<event> &_event_queues{std::get<t_idx>(m_events_queues)};
 
-#ifdef TENACITAS_LOG
-    TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queues");
-#endif
+  //#ifdef TENACITAS_LOG
+  //    TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping
+  //    queues");
+  //#endif
 
-    for (event_queue<event> &_event_queue : _event_queues) {
-#ifdef TENACITAS_LOG
-      TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queue ",
-                   _event_queue.get_id());
-#endif
-      _event_queue.stop();
-    }
-  }
+  //    for (event_queue<event> &_event_queue : _event_queues) {
+  //#ifdef TENACITAS_LOG
+  //      TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queue
+  //      ",
+  //                   _event_queue.get_id());
+  //#endif
+  //      _event_queue.stop();
+  //    }
+  //  }
 
-  template <std::size_t... t_idxs>
-  void stop_all(std::index_sequence<t_idxs...>) {
-    (stop_each<t_idxs>(), ...);
-  }
+  //  template <std::size_t... t_idxs>
+  //  void stop_all(std::index_sequence<t_idxs...>) {
+  //    (stop_each<t_idxs>(), ...);
+  //  }
 
   template <std::size_t t_idx> void clear_each() {
     using event = std::tuple_element_t<t_idx, events>;
@@ -317,7 +327,28 @@ void dispatcher<t_events...>::subscribe(
 template <cpt::event... t_events> inline void dispatcher<t_events...>::clear() {
   std::lock_guard<std::mutex> _lock(m_mutex);
 
-  clear_all(std::make_index_sequence<sizeof...(t_events)>{});
+  auto _function{[](auto &p_event_queues) {
+    //        using event = std::tuple_element_t<t_idx, events>;
+    //    event_queues<event> &_event_queues(std::get<t_idx>(m_events_queues));
+
+    //    for (event_queue<event> &_event_queue : _event_queues) {
+    //      _event_queue.clear();
+    //    }
+
+    for (auto &_event_queue : p_event_queues) {
+      _event_queue.clear();
+    }
+  }};
+
+  traits::alg::traverse(_function, m_events_queues);
+  //  clear_all(std::make_index_sequence<sizeof...(t_events)>{});
+}
+
+template <cpt::event... t_events>
+template <cpt::event t_event>
+inline void dispatcher<t_events...>::clear() {
+  auto _idx{lib::traits::alg::index_v<t_event, t_events...>};
+  clear_each<_idx>();
 }
 
 template <cpt::event... t_events>
@@ -325,7 +356,7 @@ inline dispatcher<t_events...>::~dispatcher() {
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("destructor");
 #endif
-  stop();
+  // stop();
 }
 
 template <cpt::event... t_events>

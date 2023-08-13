@@ -97,7 +97,7 @@ struct pressure_tester {
                   const typ::generators_definitions &p_generator_definition,
                   const typ::publishings_definitions &p_publishing_definition)
       : m_dispatcher(p_dispatcher), m_storager(p_storager) {
-    m_dispatcher->stop();
+    m_dispatcher->clear();
     m_summary = typ::summary{};
     setup_generators(p_generator_definition);
     setup_publishings(p_publishing_definition);

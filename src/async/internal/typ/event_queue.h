@@ -119,6 +119,14 @@ public:
   // \return Returns the amount of \p t_event objects in the queue
   size_t get_occupied() const;
 
+  void clear() {
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_paused = true;
+    m_circular_queue.clear();
+    m_paused = false;
+    m_cond.notify_all();
+  }
+
   // publishing is ordered by tenacitas::lib::async::priority
   constexpr bool operator<(const event_queue &p_publishing) const;
 
@@ -177,6 +185,8 @@ protected:
 
   // Indicates if the dispatcher should continue to run
   std::atomic_bool m_stopped{false};
+
+  std::atomic_bool m_paused{false};
 
   // Amount of queued data
   size_t m_queued_data{0};
@@ -361,16 +371,16 @@ void event_queue<t_event>::subscriber_loop(
       std::unique_lock<std::mutex> _lock(m_mutex);
       m_cond.wait(_lock, [this, _subscriber_id, _loop_id, _queue_id]() -> bool {
         trace(__LINE__, "entering condition", _loop_id);
+        if (m_paused) {
+          trace(__LINE__, "stopped", _loop_id);
+          return false;
+        }
         if (m_stopped) {
           trace(__LINE__, "stopped", _loop_id);
           return true;
         }
         if (!m_circular_queue.empty()) {
           trace(__LINE__, "there is data", _loop_id);
-          return true;
-        }
-        if (m_stopped) {
-          trace(__LINE__, "stopped", _loop_id);
           return true;
         }
         trace(__LINE__, "waiting", _loop_id);
@@ -392,38 +402,9 @@ void event_queue<t_event>::subscriber_loop(
       trace(__LINE__, "no event in queue", _loop_id);
       continue;
     }
-
-    if (m_stopped) {
-      trace(__LINE__, "stopped", _loop_id);
-      break;
-    }
-
     t_event _event{std::move(*_maybe)};
-    trace(__LINE__, "got event", _loop_id);
-
-    if (m_stopped) {
-      trace(__LINE__, "stopped", _loop_id);
-      break;
-    }
-
-    trace(__LINE__, "event to be passed to a subscriber", _loop_id);
-
-    if (!p_subscriber) {
-      std::stringstream _stream;
-      _stream << "event " << typeid(t_event).name() << "<< queue {" << this
-              << "<<" << m_id << "}<< circular " << m_circular_queue.get_id()
-              << "<< queued_data = " << m_queued_data << "<< priority "
-              << m_priority << "<< loops = " << &m_loops
-              << "<< stopped = " << m_stopped.load() << "<< thread "
-              << std::this_thread::get_id() << " - "
-              << "invalid event subscriber";
-      const std::string _str{_stream.str()};
-      TNCT_LOG_FAT(_str);
-      throw std::runtime_error(_str);
-    }
 
     trace(__LINE__, "about to call subscriber", _loop_id);
-
     p_subscriber(std::move(_event));
 
     trace(__LINE__, "event handled", _loop_id);

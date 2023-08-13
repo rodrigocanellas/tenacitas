@@ -9,6 +9,7 @@ SUBDIRS = \
         math \
         number \
         test \
+        traits \
         translation
 
 #        crosswords \

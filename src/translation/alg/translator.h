@@ -6,17 +6,16 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <cstdint>
 #include <functional>
-#include <iostream>
-#include <map>
 #include <string>
+#include <string_view>
 
 #include <tenacitas.lib/src/translation/typ/types.h>
 
 namespace tenacitas::lib::translation::alg {
 
-using translate = std::function<std::string(const typ::entry&)>;
+using translate = std::function<std::string(const typ::entry &p_entry,
+                                            std::string_view p_default)>;
 
 } // namespace tenacitas::lib::translation::alg
 
