@@ -12,9 +12,20 @@
 
 namespace tenacitas::lib::container::typ {
 
-template <typename t_int, typename t_data> struct matrix {
-  matrix() = default;
-  matrix(const matrix &) = delete;
+template<typename t_int, typename t_data>
+struct matrix
+{
+    matrix() = default;
+    matrix(const matrix &p_matrix)
+        : m_num_rows(p_matrix.m_num_rows)
+        , m_num_cols(p_matrix.m_num_cols)
+        , m_initial(p_matrix.m_initial)
+        , m_vec(new t_data[m_num_cols * m_num_rows])
+    {
+        std::memcpy(m_vec.get(),p_matrix.m_vec.get(), m_num_rows * m_num_cols);
+//        std::copy(&p_matrix.m_vec[0], &p_matrix.m_vec[m_num_rows * m_num_cols], &m_vec[0]);
+    }
+
   matrix(matrix &&p_matrix)
       : m_num_rows(p_matrix.m_num_rows), m_num_cols(p_matrix.m_num_cols),
         m_initial(p_matrix.m_initial), m_vec(std::move(p_matrix.m_vec)) {}
@@ -27,7 +38,18 @@ template <typename t_int, typename t_data> struct matrix {
 
   ~matrix() = default;
 
-  matrix &operator=(const matrix &) = delete;
+  matrix &operator=(const matrix &p_matrix)
+  {
+    if (this != &p_matrix) {
+        m_initial = p_matrix.m_initial;
+        m_num_rows = p_matrix.m_num_rows;
+        m_num_cols = p_matrix.m_num_cols;
+        m_vec = std::unique_ptr<t_data>(new t_data[m_num_cols * m_num_rows]);
+        std::memcpy(m_vec.get(), p_matrix.m_vec.get(), m_num_rows * m_num_cols);
+    }
+    return *this;
+  }
+
   matrix &operator=(matrix &&p_matrix) {
     if (this != &p_matrix) {
       m_vec = std::move(p_matrix.m_vec);

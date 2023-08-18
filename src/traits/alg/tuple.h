@@ -41,18 +41,18 @@ constexpr std::size_t index_v = index<t, t_types...>::value;
 template <size_t t_idx, typename... t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse_each(std::tuple<t_function...> p_function,
-                                       std::tuple<t_data...> &p_data) {
+         t_data &>) void traverse(std::tuple<t_function...> p_function,
+                                  std::tuple<t_data...> &p_data) {
   std::get<t_idx>(p_function)(std::get<t_idx>(p_data));
 }
 
 template <size_t... t_idxs, typename... t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse_all(std::index_sequence<t_idxs...>,
-                                      std::tuple<t_function...> p_function,
-                                      std::tuple<t_data...> &p_data) {
-  (traverse_each<t_idxs>(p_function, p_data), ...);
+         t_data &>) void traverse(std::index_sequence<t_idxs...>,
+                                  std::tuple<t_function...> p_function,
+                                  std::tuple<t_data...> &p_data) {
+  (traverse<t_idxs>(p_function, p_data), ...);
 }
 
 template <typename... t_function, typename... t_data>
@@ -60,25 +60,24 @@ requires(... and std::is_invocable_r_v<
          void, t_function,
          t_data &>) void traverse(std::tuple<t_function...> p_function,
                                   std::tuple<t_data...> &p_data) {
-  traverse_all(std::make_index_sequence<sizeof...(t_data)>{}, p_function,
-               p_data);
+  traverse(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
 }
 
 template <size_t t_idx, typename t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
-         void, t_function, t_data &>) void traverse_each(t_function p_function,
-                                                         std::tuple<t_data...>
-                                                             &p_data) {
+         void, t_function, t_data &>) void traverse(t_function p_function,
+                                                    std::tuple<t_data...>
+                                                        &p_data) {
   p_function(std::get<t_idx>(p_data));
 }
 
 template <size_t... t_idxs, typename t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse_all(std::index_sequence<t_idxs...>,
-                                      t_function p_function,
-                                      std::tuple<t_data...> &p_data) {
-  (traverse_each<t_idxs>(p_function, p_data), ...);
+         t_data &>) void traverse(std::index_sequence<t_idxs...>,
+                                  t_function p_function,
+                                  std::tuple<t_data...> &p_data) {
+  (traverse<t_idxs>(p_function, p_data), ...);
 }
 
 template <typename t_function, typename... t_data>
@@ -86,8 +85,7 @@ requires(... and std::is_invocable_r_v<
          void, t_function, t_data &>) void traverse(t_function p_function,
                                                     std::tuple<t_data...>
                                                         &p_data) {
-  traverse_all(std::make_index_sequence<sizeof...(t_data)>{}, p_function,
-               p_data);
+  traverse(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
 }
 
 } // namespace tenacitas::lib::traits::alg

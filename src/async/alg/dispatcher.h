@@ -142,9 +142,33 @@ template <cpt::event... t_events> struct dispatcher {
                  std::function<async::typ::subscriber<t_event>()> p_factory);
 
   /// \brief Removes all queues of all events
-  void clear();
+  void clear() {
+    auto _function{[&](auto &_event_queues) {
+      for (auto &_event_queue : _event_queues) {
+        _event_queue.clear();
+      }
+    }};
+    traits::alg::traverse(_function, m_events_queues);
+  }
 
-  template <cpt::event t_event> void clear();
+  template <cpt::event t_event> void clear() {
+    constexpr auto _idx{lib::traits::alg::index_v<t_event, events>};
+    auto &_event_queues{std::get<_idx>(m_events_queues)};
+    for (auto &_event_queue : _event_queues) {
+      _event_queue.clear();
+    }
+  }
+
+  template <cpt::event t_event> void clear(typ::queue_id p_queue_id) {
+    constexpr auto _idx{lib::traits::alg::index_v<t_event, events>};
+    auto &_event_queues{std::get<_idx>(m_events_queues)};
+    for (auto &_event_queue : _event_queues) {
+      if (_event_queue.get_id() == p_queue_id) {
+        _event_queue.clear();
+        break;
+      }
+    }
+  }
 
   template <cpt::event t_event> bool publish(const t_event &p_event);
 
@@ -233,43 +257,19 @@ private:
   template <cpt::event t_event>
   event_queues_iterator<t_event> internal_add_queue(typ::priority p_priority);
 
-  //  template <std::size_t t_idx> void stop_each() {
+  //  template <std::size_t t_idx> void clear_each() {
   //    using event = std::tuple_element_t<t_idx, events>;
-  //    event_queues<event> &_event_queues{std::get<t_idx>(m_events_queues)};
-
-  //#ifdef TENACITAS_LOG
-  //    TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping
-  //    queues");
-  //#endif
+  //    event_queues<event> &_event_queues(std::get<t_idx>(m_events_queues));
 
   //    for (event_queue<event> &_event_queue : _event_queues) {
-  //#ifdef TENACITAS_LOG
-  //      TNCT_LOG_TRA("##### event '", typeid(event).name(), " - stopping queue
-  //      ",
-  //                   _event_queue.get_id());
-  //#endif
-  //      _event_queue.stop();
+  //      _event_queue.clear();
   //    }
   //  }
 
   //  template <std::size_t... t_idxs>
-  //  void stop_all(std::index_sequence<t_idxs...>) {
-  //    (stop_each<t_idxs>(), ...);
+  //  void clear_all(std::index_sequence<t_idxs...>) {
+  //    (clear_each<t_idxs>(), ...);
   //  }
-
-  template <std::size_t t_idx> void clear_each() {
-    using event = std::tuple_element_t<t_idx, events>;
-    event_queues<event> &_event_queues(std::get<t_idx>(m_events_queues));
-
-    for (event_queue<event> &_event_queue : _event_queues) {
-      _event_queue.clear();
-    }
-  }
-
-  template <std::size_t... t_idxs>
-  void clear_all(std::index_sequence<t_idxs...>) {
-    (clear_each<t_idxs>(), ...);
-  }
 
 private:
   events_queues m_events_queues;
@@ -324,32 +324,29 @@ void dispatcher<t_events...>::subscribe(
   _ite->add_subscriber(p_num_workers, p_factory);
 }
 
-template <cpt::event... t_events> inline void dispatcher<t_events...>::clear() {
-  std::lock_guard<std::mutex> _lock(m_mutex);
+// template <cpt::event... t_events> inline void
+// dispatcher<t_events...>::clear() {
+//   std::lock_guard<std::mutex> _lock(m_mutex);
 
-  auto _function{[](auto &p_event_queues) {
-    //        using event = std::tuple_element_t<t_idx, events>;
-    //    event_queues<event> &_event_queues(std::get<t_idx>(m_events_queues));
+//  auto _function{[](auto &p_event_queues) {
+//    for (auto &_event_queue : p_event_queues) {
+//      _event_queue.clear();
+//    }
+//  }};
 
-    //    for (event_queue<event> &_event_queue : _event_queues) {
-    //      _event_queue.clear();
-    //    }
+//  traits::alg::traverse(_function, m_events_queues);
+//}
 
-    for (auto &_event_queue : p_event_queues) {
-      _event_queue.clear();
-    }
-  }};
+// template <cpt::event... t_events>
+// template <cpt::event t_event>
+// inline void dispatcher<t_events...>::clear() {
+//   auto _idx{lib::traits::alg::index_v<t_event, t_events...>};
+//   clear_each<_idx>();
+// }
 
-  traits::alg::traverse(_function, m_events_queues);
-  //  clear_all(std::make_index_sequence<sizeof...(t_events)>{});
-}
-
-template <cpt::event... t_events>
-template <cpt::event t_event>
-inline void dispatcher<t_events...>::clear() {
-  auto _idx{lib::traits::alg::index_v<t_event, t_events...>};
-  clear_each<_idx>();
-}
+// template <cpt::event... t_events>
+// template <cpt::event t_event>
+// void dispatcher<t_events...>::clear(typ::queue_id /*p_queue_id*/) {}
 
 template <cpt::event... t_events>
 inline dispatcher<t_events...>::~dispatcher() {
