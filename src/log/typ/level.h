@@ -56,6 +56,8 @@ inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
   return p_out;
 }
 
+
+
 } // namespace tenacitas::lib::log::typ
 
 #endif

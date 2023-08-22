@@ -15,6 +15,9 @@ namespace tenacitas::lib::container::typ {
 template<typename t_int, typename t_data>
 struct matrix
 {
+    using index = t_int;
+    using data = t_data;
+
     matrix() = default;
     matrix(const matrix &p_matrix)
         : m_num_rows(p_matrix.m_num_rows)
