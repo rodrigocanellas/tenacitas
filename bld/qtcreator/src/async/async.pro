@@ -10,6 +10,8 @@ HEADERS += \
 
 HEADERS += \
         $$BASE_DIR/tenacitas.lib/src/async/cpt/event.h \
+        $$BASE_DIR/tenacitas.lib/src/async/cpt/publisher.h \
+        $$BASE_DIR/tenacitas.lib/src/async/cpt/subscriber.h \
         $$BASE_DIR/tenacitas.lib/src/async/cpt/dispatcher.h
 
 HEADERS += \

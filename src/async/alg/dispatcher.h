@@ -29,6 +29,8 @@
 #include <vector>
 
 #include <tenacitas.lib/src/async/cpt/event.h>
+#include <tenacitas.lib/src/async/cpt/publisher.h>
+#include <tenacitas.lib/src/async/cpt/subscriber.h>
 #include <tenacitas.lib/src/async/internal/typ/event_queue.h>
 #include <tenacitas.lib/src/async/typ/priority.h>
 #include <tenacitas.lib/src/async/typ/queue_id.h>
@@ -119,11 +121,11 @@ template <cpt::event... t_events> struct dispatcher {
   template <cpt::event t_event>
   typ::queue_id add_queue(typ::priority p_priority = typ::priority ::medium);
 
-  template <cpt::event t_event>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   typ::queue_id subscribe(typ::subscriber<t_event> p_subscriber,
                           typ::priority p_priority = typ::priority ::medium);
 
-  template <cpt::event t_event>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   void subscribe(const typ::queue_id &p_queue_id,
                  typ::subscriber<t_event> p_subscriber);
 
@@ -137,7 +139,7 @@ template <cpt::event... t_events> struct dispatcher {
   /// \param p_num_workers defines the number of subscribers to be added
   ///
   /// \param p_factory is a function that creates subscribers
-  template <cpt::event t_event>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   void subscribe(const typ::queue_id &p_queue_id, uint16_t p_num_workers,
                  std::function<async::typ::subscriber<t_event>()> p_factory);
 
@@ -153,7 +155,12 @@ template <cpt::event... t_events> struct dispatcher {
 
   template <cpt::event t_event> void clear() {
     constexpr auto _idx{lib::traits::alg::index_v<t_event, events>};
-    auto &_event_queues{std::get<_idx>(m_events_queues)};
+
+    static_assert(
+        _idx != -1,
+        "trying to clear an event queue of an event not defined in dispatcher");
+
+    auto &_event_queues{std::get<static_cast<size_t>(_idx)>(m_events_queues)};
     for (auto &_event_queue : _event_queues) {
       _event_queue.clear();
     }
@@ -161,7 +168,12 @@ template <cpt::event... t_events> struct dispatcher {
 
   template <cpt::event t_event> void clear(typ::queue_id p_queue_id) {
     constexpr auto _idx{lib::traits::alg::index_v<t_event, events>};
-    auto &_event_queues{std::get<_idx>(m_events_queues)};
+
+    static_assert(
+        _idx != -1,
+        "trying to clear an event queue of an event not defined in dispatcher");
+
+    auto &_event_queues{std::get<static_cast<size_t>(_idx)>(m_events_queues)};
     for (auto &_event_queue : _event_queues) {
       if (_event_queue.get_id() == p_queue_id) {
         _event_queue.clear();
@@ -170,12 +182,14 @@ template <cpt::event... t_events> struct dispatcher {
     }
   }
 
-  template <cpt::event t_event> bool publish(const t_event &p_event);
+  template <cpt::publisher t_publisher, cpt::event t_event>
+  bool publish(const t_event &p_event);
 
   template <cpt::event t_event>
   void publish_to_queue(typ::queue_id p_queue_id, const t_event &p_event);
 
-  template <cpt::event t_event, typename... t_params>
+  template <cpt::publisher t_publisher, cpt::event t_event,
+            typename... t_params>
   bool publish(t_params &&...p_params);
 
   template <cpt::event t_event>
@@ -201,8 +215,13 @@ template <cpt::event... t_events> struct dispatcher {
   size_t occupied_in_queue(const typ::queue_id &p_id);
 
   template <cpt::event t_event> constexpr size_t amount_of_queues() const {
-    constexpr std::size_t _event_index{traits::alg::index_v<t_event, events>};
-    return std::get<_event_index>(m_events_queues).size();
+    constexpr auto _index{traits::alg::index_v<t_event, events>};
+    static_assert(_index != -1,
+                  "trying to retrieve the amount of queues for an event not "
+                  "defined in  dispatcher");
+
+    const auto &_event_queues{std::get<_index>(m_events_queues)};
+    return _event_queues.size();
   }
 
   /// \brief Removes all events in all the queues of \p t_event
@@ -248,13 +267,14 @@ private:
 
   template <cpt::event t_event> event_queues<t_event> &get_event_queues();
 
-  template <cpt::event t_event>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   event_queues_iterator<t_event>
   get_event_queues_iterator(typ::queue_id p_queue_id);
 
-  template <cpt::event t_event> bool internal_publish(const t_event &p_event);
+  template <size_t t_event_queues_index, typename t_event>
+  bool internal_publish(const t_event &p_event);
 
-  template <cpt::event t_event>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   event_queues_iterator<t_event> internal_add_queue(typ::priority p_priority);
 
   //  template <std::size_t t_idx> void clear_each() {
@@ -302,26 +322,40 @@ typ::queue_id dispatcher<t_events...>::add_queue(typ::priority p_priority) {
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event>
+template <cpt::subscriber t_subscriber, cpt::event t_event>
 void dispatcher<t_events...>::subscribe(const typ::queue_id &p_queue_id,
                                         typ::subscriber<t_event> p_subscriber) {
 
   event_queues_iterator<t_event> _ite{
-      get_event_queues_iterator<t_event>(p_queue_id)};
+      get_event_queues_iterator<t_subscriber, t_event>(p_queue_id)};
 
   _ite->add_subscriber(p_subscriber);
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event>
+template <cpt::subscriber t_subscriber, cpt::event t_event>
 void dispatcher<t_events...>::subscribe(
     const typ::queue_id &p_queue_id, uint16_t p_num_workers,
     std::function<async::typ::subscriber<t_event>()> p_factory) {
 
   event_queues_iterator<t_event> _ite{
-      get_event_queues_iterator<t_event>(p_queue_id)};
+      get_event_queues_iterator<t_subscriber, t_event>(p_queue_id)};
 
   _ite->add_subscriber(p_num_workers, p_factory);
+}
+
+template <cpt::event... t_events>
+template <cpt::subscriber t_subscriber, cpt::event t_event>
+typ::queue_id
+dispatcher<t_events...>::subscribe(typ::subscriber<t_event> p_subscriber,
+                                   typ::priority p_priority) {
+  event_queues_iterator<t_event> _ite{
+      internal_add_queue<t_subscriber, t_event>(p_priority)};
+#ifdef TENACITAS_LOG
+  TNCT_LOG_TRA("adding subscriber");
+#endif
+  _ite->add_subscriber(p_subscriber);
+  return _ite->get_id();
 }
 
 // template <cpt::event... t_events> inline void
@@ -358,34 +392,6 @@ inline dispatcher<t_events...>::~dispatcher() {
 
 template <cpt::event... t_events>
 template <cpt::event t_event>
-typ::queue_id
-dispatcher<t_events...>::subscribe(typ::subscriber<t_event> p_subscriber,
-                                   typ::priority p_priority) {
-  event_queues_iterator<t_event> _ite{internal_add_queue<t_event>(p_priority)};
-#ifdef TENACITAS_LOG
-  TNCT_LOG_TRA("adding subscriber");
-#endif
-  _ite->add_subscriber(p_subscriber);
-  return _ite->get_id();
-}
-
-template <cpt::event... t_events>
-template <cpt::event t_event>
-bool dispatcher<t_events...>::publish(const t_event &p_event) {
-  try {
-#ifdef TENACITAS_LOG
-    TNCT_LOG_TRA("queue ", typeid(t_event).name());
-#endif
-    return internal_publish<t_event>(p_event);
-  } catch (std::exception &_ex) {
-    TNCT_LOG_ERR("error queue ", typeid(t_event).name(), ": '", _ex.what(),
-                 '\'');
-    return false;
-  }
-}
-
-template <cpt::event... t_events>
-template <cpt::event t_event>
 void dispatcher<t_events...>::publish_to_queue(typ::queue_id p_queue_id,
                                                const t_event &p_event) {
 
@@ -396,8 +402,42 @@ void dispatcher<t_events...>::publish_to_queue(typ::queue_id p_queue_id,
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event, typename... t_params>
+template <cpt::publisher t_publisher, cpt::event t_event>
+bool dispatcher<t_events...>::publish(const t_event &p_event) {
+  using events_published = typename t_publisher::events_published;
+
+  static_assert(traits::alg::index_v<t_event, events_published> != -1,
+                "trying to publish an event not in 'events_published' of the "
+                "class that wants to publish it");
+
+  constexpr auto _events_queues_index{traits::alg::index_v<t_event, events>};
+  static_assert(_events_queues_index != -1,
+                "trying to publish an event not defined in dispatcher");
+  try {
+#ifdef TENACITAS_LOG
+    TNCT_LOG_TRA("queue ", typeid(t_event).name());
+#endif
+    return internal_publish<_events_queues_index, t_event>(p_event);
+  } catch (std::exception &_ex) {
+    TNCT_LOG_ERR("error queue ", typeid(t_event).name(), ": '", _ex.what(),
+                 '\'');
+    return false;
+  }
+}
+
+template <cpt::event... t_events>
+template <cpt::publisher t_publisher, cpt::event t_event, typename... t_params>
 bool dispatcher<t_events...>::publish(t_params &&...p_params) {
+  using events_published = typename t_publisher::events_published;
+
+  static_assert(traits::alg::index_v<t_event, events_published> != -1,
+                "trying to publish an event not in 'events_published' of the "
+                "class that wants to publish it");
+
+  constexpr auto _events_queues_index{traits::alg::index_v<t_event, events>};
+  static_assert(_events_queues_index != -1,
+                "trying to publish an event not defined in dispatcher");
+
   try {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("creating event to publish");
@@ -406,7 +446,7 @@ bool dispatcher<t_events...>::publish(t_params &&...p_params) {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("event to publish: ", typeid(t_event).name());
 #endif
-    return internal_publish<t_event>(_event);
+    return internal_publish<_events_queues_index, t_event>(_event);
   } catch (std::exception &_ex) {
     TNCT_LOG_ERR("error queue event '", _ex.what(), '\'');
     return false;
@@ -451,13 +491,14 @@ dispatcher<t_events...>::occupied_in_queue(const typ::queue_id &p_queue_id) {
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event>
+template <size_t t_event_queues_index, typename t_event>
 bool dispatcher<t_events...>::internal_publish(const t_event &p_event) {
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("internal queue ", typeid(t_event).name());
 #endif
 
-  event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
+  event_queues<t_event> &_event_queues{
+      std::get<t_event_queues_index>(m_events_queues)};
   for (event_queue<t_event> &_event_queue : _event_queues) {
     _event_queue.add_event(p_event);
   }
@@ -465,13 +506,25 @@ bool dispatcher<t_events...>::internal_publish(const t_event &p_event) {
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event>
+template <cpt::subscriber t_subscriber, cpt::event t_event>
 dispatcher<t_events...>::event_queues_iterator<t_event>
 dispatcher<t_events...>::internal_add_queue(typ::priority p_priority) {
 
+  using events_subscribed = typename t_subscriber::events_subscribed;
+
+  static_assert(
+      traits::alg::index_v<t_event, events_subscribed> != -1,
+      "trying to subscrine to an event not in 'events_subscribed' of the "
+      "class that wants to subscribe for it");
+
+  constexpr auto _events_queues_index{traits::alg::index_v<t_event, events>};
+  static_assert(_events_queues_index != -1,
+                "trying to subscribe to an event not defined in dispatcher");
+
   std::lock_guard<std::mutex> _lock(m_mutex);
 
-  event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
+  event_queues<t_event> &_event_queues{
+      std::get<_events_queues_index>(m_events_queues)};
 
   event_queue<t_event> _event_queue{p_priority};
 
@@ -488,10 +541,22 @@ dispatcher<t_events...>::internal_add_queue(typ::priority p_priority) {
 }
 
 template <cpt::event... t_events>
-template <cpt::event t_event>
+template <cpt::subscriber t_subscriber, cpt::event t_event>
 dispatcher<t_events...>::event_queues_iterator<t_event>
 dispatcher<t_events...>::get_event_queues_iterator(typ::queue_id p_queue_id) {
-  event_queues<t_event> &_event_queues{get_event_queues<t_event>()};
+  using events_subscribed = typename t_subscriber::events_subscribed;
+
+  static_assert(
+      traits::alg::index_v<t_event, events_subscribed> != -1,
+      "trying to subscrine to an event not in 'events_subscribed' of the "
+      "class that wants to subscribe for it");
+
+  constexpr auto _events_queues_index{traits::alg::index_v<t_event, events>};
+  static_assert(_events_queues_index != -1,
+                "trying to subscribe to an event not defined in dispatcher");
+
+  event_queues<t_event> &_event_queues{
+      std::get<_events_queues_index>(m_events_queues)};
 
   event_queues_iterator<t_event> _ite{std::find_if(
       _event_queues.begin(), _event_queues.end(),
@@ -512,8 +577,13 @@ template <cpt::event... t_events>
 template <cpt::event t_event>
 dispatcher<t_events...>::event_queues<t_event> &
 dispatcher<t_events...>::get_event_queues() {
-  constexpr std::size_t _event_index{traits::alg::index_v<t_event, events>};
-  return std::get<_event_index>(m_events_queues);
+  constexpr auto _index{traits::alg::index_v<t_event, events>};
+  static_assert(
+      _index != -1,
+      "trying to get the queue list of an event not defined in dispatcher");
+
+  constexpr std::size_t _i{static_cast<std::size_t>(_index)};
+  return std::get<_i>(m_events_queues);
 }
 
 } // namespace tenacitas::lib::async::alg
