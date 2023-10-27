@@ -442,7 +442,7 @@ int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  log::alg::set_trace_level();
+  //  log::alg::set_trace_level();
   log::alg::set_max_file_name_lenght(13);
 
   program::alg::options _options;
