@@ -131,44 +131,55 @@ template <cpt::event... t_events> struct dispatcher {
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
-    event_queue_list<t_event> &_event_queues{
+    event_queue_list<t_event> &_event_queue_list{
         std::get<_event_index>(m_event_queue_list_tuple)};
 
     event_queue_list_iterator<t_event> _ite{
-        add_event_queue<t_event>(_event_queues, p_priority)};
+        add_event_queue<t_event>(_event_queue_list, p_priority)};
 
-    return _ite->get_id();
+    typ::queue_id _queue_id{_ite->get_id()};
+
+    sort_event_queue_list(_event_queue_list);
+
+    return _queue_id;
   }
 
   template <cpt::subscriber t_subscriber, cpt::event t_event>
   typ::queue_id subscribe(typ::subscriber<t_event> p_subscriber,
                           typ::priority p_priority = typ::priority ::medium) {
 
-    assert_event_defined_in_subscriber<t_event, t_subscriber>();
+    assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
+    event_queue_list<t_event> &_event_queue_list{
+        std::get<_event_index>(m_event_queue_list_tuple)};
+
     event_queue_list_iterator<t_event> _ite{
-        add_event_queue<_event_index, t_event>(p_priority)};
+        add_event_queue<t_event>(_event_queue_list, p_priority)};
+
+    typ::queue_id _queue_id{_ite->get_id()};
 
     _ite->add_subscriber(p_subscriber);
 
-    return _ite->get_id();
+    sort_event_queue_list<t_event>(_event_queue_list);
+
+    return _queue_id;
   }
 
   template <cpt::subscriber t_subscriber, cpt::event t_event>
   void subscribe(const typ::queue_id &p_queue_id,
                  typ::subscriber<t_event> p_subscriber) {
-    assert_event_defined_in_subscriber<t_event, t_subscriber>();
+    assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_index, t_event>(p_queue_id)};
+        find_event_queue<_event_index, t_event>(p_queue_id)};
 
     _ite->add_subscriber(p_subscriber);
   }
@@ -188,33 +199,46 @@ template <cpt::event... t_events> struct dispatcher {
                  std::unsigned_integral auto p_num_workers,
                  std::function<async::typ::subscriber<t_event>()> p_factory) {
 
-    assert_event_defined_in_subscriber<t_event, t_subscriber>();
+    assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_index, t_event>(p_queue_id)};
+        find_event_queue<_event_index, t_event>(p_queue_id)};
 
     _ite->add_subscriber(p_num_workers, p_factory);
   }
 
+  template <size_t t_idx = 0> void doit() {
+    if constexpr (t_idx >= std::tuple_size_v<events>) {
+      return;
+    } else {
+      std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[t_idx]);
+
+      std::get<t_idx>(m_event_queue_list_tuple).clear();
+
+      return doit<t_idx + 1>();
+    }
+  }
+
   /// \brief Removes all queues of all events
   void clear() {
-    typename event_queue_list_mutex::size_type _mutex_index{0};
-    auto _function{[&](auto &p_event_queue_list) {
-      for (auto &_event_queue : p_event_queue_list) {
-        std::lock_guard<std::mutex> _lock(
-            m_event_queue_list_mutex[_mutex_index++]);
-        _event_queue.clear();
-      }
-    }};
-    traits::alg::traverse(_function, m_event_queue_list_tuple);
+    //    typename event_queue_list_mutex::size_type _mutex_index{0};
+    //    auto _function{[&](auto &p_event_queue_list) {
+    //      for (auto &_event_queue : p_event_queue_list) {
+    //        std::lock_guard<std::mutex> _lock(
+    //            m_event_queue_list_mutex[_mutex_index++]);
+    //        _event_queue.clear();
+    //      }
+    //    }};
+    //    traits::alg::traverse(_function, m_event_queue_list_tuple);
+    doit<0>();
   }
 
   template <cpt::event t_event> void clear() {
-    constexpr auto _event_index{assert_event_defined_in_publisher()};
+    constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
@@ -243,7 +267,7 @@ template <cpt::event... t_events> struct dispatcher {
 
   template <cpt::publisher t_publisher, cpt::event t_event>
   bool publish(const t_event &p_event) {
-    assert_event_defined_in_publisher<t_event, t_publisher>();
+    assert_event_defined_in_publisher<t_publisher, t_event>();
 
     constexpr auto _events_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
@@ -263,14 +287,13 @@ template <cpt::event... t_events> struct dispatcher {
   template <cpt::publisher t_publisher, cpt::event t_event>
   void publish_to_queue(typ::queue_id p_queue_id, const t_event &p_event) {
 
-    assert_event_defined_in_publisher<t_event, t_publisher>();
+    assert_event_defined_in_publisher<t_publisher, t_event>();
 
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_queues_list_index, t_event>(
-            p_queue_id)};
+        find_event_queue<_event_queues_list_index, t_event>(p_queue_id)};
 
     _ite->add_event(p_event);
   }
@@ -278,7 +301,7 @@ template <cpt::event... t_events> struct dispatcher {
   template <cpt::publisher t_publisher, cpt::event t_event,
             typename... t_params>
   bool publish(t_params &&...p_params) {
-    assert_event_defined_in_publisher<t_event, t_publisher>();
+    assert_event_defined_in_publisher<t_publisher, t_event>();
 
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
@@ -302,7 +325,7 @@ template <cpt::event... t_events> struct dispatcher {
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_index, t_event>(p_queue_id)};
+        find_event_queue<_event_index, t_event>(p_queue_id)};
 
     _ite->set_priority(p_priority);
   }
@@ -313,8 +336,7 @@ template <cpt::event... t_events> struct dispatcher {
         assert_event_defined_in_dispatcher<t_event>()};
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_queues_list_index, t_event>(
-            p_queue_id)};
+        find_event_queue<_event_queues_list_index, t_event>(p_queue_id)};
 
     return _ite->get_priority();
   }
@@ -331,8 +353,7 @@ template <cpt::event... t_events> struct dispatcher {
         assert_event_defined_in_dispatcher<t_event>()};
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_queues_list_index, t_event>(
-            p_queue_id)};
+        find_event_queue<_event_queues_list_index, t_event>(p_queue_id)};
 
     return _ite->get_size();
   }
@@ -349,8 +370,7 @@ template <cpt::event... t_events> struct dispatcher {
         assert_event_defined_in_dispatcher<t_event>()};
 
     event_queue_list_iterator<t_event> _ite{
-        get_event_queue_list_iterator<_event_queues_list_index, t_event>(
-            p_queue_id)};
+        find_event_queue<_event_queues_list_index, t_event>(p_queue_id)};
 
     return _ite->get_occupied();
   }
@@ -414,24 +434,12 @@ private:
 
   template <size_t t_event_index, cpt::event t_event>
   event_queue_list_iterator<t_event>
-  get_event_queue_list_iterator(typ::queue_id p_queue_id) {
+  find_event_queue(typ::queue_id p_queue_id) {
 
     event_queue_list<t_event> &_event_queue_list{
         std::get<t_event_index>(m_event_queue_list_tuple)};
 
-    event_queue_list_iterator<t_event> _ite{std::find_if(
-        _event_queue_list.begin(), _event_queue_list.end(),
-        [&](const auto &p_queue) { return p_queue.get_id() == p_queue_id; })};
-
-    if (_ite == _event_queue_list.end()) {
-      std::stringstream _stream;
-      _stream << "event '" << typeid(t_event).name()
-              << "' - no queue found for queue id " << p_queue_id;
-      const std::string _str{_stream.str()};
-      TNCT_LOG_FAT(_str);
-      throw std::runtime_error(_str);
-    }
-    return _ite;
+    return find_event_queue(_event_queue_list, p_queue_id);
   }
 
   template <size_t t_event_queues_index, typename t_event>
@@ -448,17 +456,16 @@ private:
     return true;
   }
 
-  template <size_t t_event_index, cpt::event t_event>
-  event_queue_list_iterator<t_event> add_event_queue(typ::priority p_priority) {
+  template <cpt::event t_event>
+  event_queue_list_iterator<t_event>
+  add_event_queue(event_queue_list<t_event> &p_event_queue_list,
+                  typ::priority p_priority) {
 
     event_queue<t_event> _event_queue{p_priority};
 
-    event_queue_list<t_event> &_event_queue_list{
-        std::get<t_event_index>(m_event_queue_list_tuple)};
+    p_event_queue_list.push_back(std::move(_event_queue));
 
-    _event_queue_list.push_back(std::move(_event_queue));
-
-    return std::prev(_event_queue_list.end());
+    return std::prev(p_event_queue_list.end());
   }
 
   template <cpt::event t_event>
@@ -469,7 +476,7 @@ private:
     return static_cast<size_t>(_index);
   }
 
-  template <cpt::event t_event, cpt::subscriber t_subscriber>
+  template <cpt::subscriber t_subscriber, cpt::event t_event>
   static constexpr void assert_event_defined_in_subscriber() {
     using events_subscribed = typename t_subscriber::events_subscribed;
 
@@ -479,13 +486,49 @@ private:
         "class that wants to subscribe for it");
   }
 
-  template <cpt::event t_event, cpt::subscriber t_publisher>
+  template <cpt::publisher t_publisher, cpt::event t_event>
   constexpr void assert_event_defined_in_publisher() const {
     using events_published = typename t_publisher::events_published;
 
     static_assert(traits::alg::index_v<t_event, events_published> != -1,
                   "trying to publish an event not in 'events_published' of the "
                   "class that wants to publish it");
+  }
+
+  template <cpt::event t_event>
+  void sort_event_queue_list(event_queue_list<t_event> &p_event_queue_list) {
+    //    std::sort(p_event_queue_list.begin(), p_event_queue_list.end(),
+    //              [](const event_queue<t_event> &p_event_queue_left,
+    //                 const event_queue<t_event> &p_event_queue_right) {
+    //                return p_event_queue_left.get_priority() <
+    //                       p_event_queue_right.get_priority();
+    //              });
+    p_event_queue_list.sort(
+        [](const event_queue<t_event> &p_event_queue_left,
+           const event_queue<t_event> &p_event_queue_right) {
+          return p_event_queue_left.get_priority() <
+                 p_event_queue_right.get_priority();
+        });
+  }
+
+  template <cpt::event t_event>
+  event_queue_list_iterator<t_event>
+  find_event_queue(event_queue_list<t_event> &p_event_queue_list,
+                   typ::queue_id p_queue_id) {
+
+    event_queue_list_iterator<t_event> _ite{std::find_if(
+        p_event_queue_list.begin(), p_event_queue_list.end(),
+        [&](const auto &p_queue) { return p_queue.get_id() == p_queue_id; })};
+
+    if (_ite == p_event_queue_list.end()) {
+      std::stringstream _stream;
+      _stream << "event '" << typeid(t_event).name()
+              << "' - no queue found for queue id " << p_queue_id;
+      const std::string _str{_stream.str()};
+      TNCT_LOG_FAT(_str);
+      throw std::runtime_error(_str);
+    }
+    return _ite;
   }
 
 private:

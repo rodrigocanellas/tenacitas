@@ -92,7 +92,7 @@ private:
         "\"sent_done\"	INTEGER NOT NULL,"
         "\"handled_expected\"	INTEGER NOT NULL,"
         "\"handled_done\"	INTEGER NOT NULL,"
-        "\"total_time\"	INTEGER NOT NUL"
+        "\"total_time\"	INTEGER NOT NULL"
         ");"
         "CREATE TABLE IF NOT EXISTS \"subscribers\" ("
         "\"test_id\"	INTEGER NOT NULL,"

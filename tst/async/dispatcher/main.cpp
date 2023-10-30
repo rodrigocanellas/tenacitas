@@ -18,11 +18,11 @@
 #include <tuple>
 #include <utility>
 
-//#include "bus.h"
-//#include "cfg.h"
-//#include "sto.h"
-//#include "typ.h"
-//#include "uix.h"
+#include "bus.h"
+#include "cfg.h"
+#include "sto.h"
+#include "typ.h"
+#include "uix.h"
 #include <tenacitas.lib/src/async/alg/dispatcher.h>
 #include <tenacitas.lib/src/log/alg/logger.h>
 #include <tenacitas.lib/src/program/alg/options.h>
@@ -58,212 +58,237 @@ struct ev_1 {
 };
 } // namespace evt
 
-// struct test_000 {
-//   test_000() { TNCT_LOG_TST("creating test_000"); }
-//   ~test_000() { TNCT_LOG_TST("destroying test_000"); }
-//   static std::string desc() { return "Declaring a 'Dispatcher' "; }
+struct test_000 {
+  test_000() { TNCT_LOG_TST("creating test_000"); }
+  ~test_000() { TNCT_LOG_TST("destroying test_000"); }
+  static std::string desc() { return "Declaring a 'Dispatcher' "; }
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
 
-//  bool operator()(const program::alg::options &) {
-//    TNCT_LOG_TST("starting test_000");
-//    dispatcher::ptr _dispatcher = dispatcher::create();
-//    TNCT_LOG_TST("finishing test_000");
-//    return true;
-//  }
-//};
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_000");
+    dispatcher::ptr _dispatcher = dispatcher::create();
+    TNCT_LOG_TST("finishing test_000");
+    return true;
+  }
+};
 
-// struct test_001 {
-//   test_001() { TNCT_LOG_TST("creating test_001"); }
-//   ~test_001() { TNCT_LOG_TST("destroying test_001"); }
-//   static std::string desc() {
-//     return "'Dispatcher' as a local object, publishing 1 event, but not "
-//            "waiting all to be handled";
-//   }
-//   using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
-//   bool operator()(const program::alg::options &) {
-//     TNCT_LOG_TST("starting test_001");
-//     dispatcher::ptr _dispatcher = dispatcher::create();
-//     _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
-//       std::this_thread::sleep_for(50ms);
-//       TNCT_LOG_TST("event = ", p_event);
-//     });
+struct test_001 {
+  test_001() { TNCT_LOG_TST("creating test_001"); }
 
-//    try {
+  ~test_001() { TNCT_LOG_TST("destroying test_001"); }
 
-//      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
+  using events_subscribed = std::tuple<evt::ev_0>;
+  using events_published = std::tuple<evt::ev_0>;
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_TST("finishing test_001 with false");
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
-//    TNCT_LOG_TST("finishing test_001 with true");
-//    return true;
-//  }
-//};
+  static std::string desc() {
+    return "'Dispatcher' as a local object, publishing 1 event, but not "
+           "waiting all to be handled";
+  }
 
-// struct test_002 {
-//   test_002() { TNCT_LOG_TST("creating test_002"); }
-//   ~test_002() { TNCT_LOG_TST("destroying test_002"); }
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_001");
+    dispatcher::ptr _dispatcher = dispatcher::create();
+    _dispatcher->subscribe<test_001, evt::ev_0>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+    try {
 
-//  static std::string desc() {
-//    return "'Dispatcher' as a local object, publishing 1 event, and waiting "
-//           "for it to be handled";
-//  }
+      _dispatcher->publish<test_001, evt::ev_0>(static_cast<uint16_t>(22));
 
-//  bool operator()(const program::alg::options &) {
-//    TNCT_LOG_TST("starting test_002");
-//    dispatcher::ptr _dispatcher = dispatcher::create();
-//    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+    } catch (std::exception &_ex) {
+      TNCT_LOG_TST("finishing test_001 with false");
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
+    TNCT_LOG_TST("finishing test_001 with true");
+    return true;
+  }
+};
 
-//    try {
-//      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
+struct test_002 {
+  test_002() { TNCT_LOG_TST("creating test_002"); }
+  ~test_002() { TNCT_LOG_TST("destroying test_002"); }
 
-//      std::this_thread::sleep_for(3s);
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_TST("finishing test_001 with false");
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
-//    TNCT_LOG_TST("finishing test_001 with true");
-//    return true;
-//  }
-//};
+  using events_subscribed = std::tuple<evt::ev_0>;
+  using events_published = std::tuple<evt::ev_0>;
 
-// struct test_003 {
-//   test_003() { TNCT_LOG_TST("creating test_003"); }
-//   ~test_003() { TNCT_LOG_TST("destroying test_003"); }
+  static std::string desc() {
+    return "'Dispatcher' as a local object, publishing 1 event, and waiting "
+           "for it to be handled";
+  }
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_002");
+    dispatcher::ptr _dispatcher = dispatcher::create();
+    _dispatcher->subscribe<test_002, evt::ev_0>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//  static std::string desc() {
-//    return "'Dispatcher' as a local object, publishing 1 event evt::ev_0, 1 "
-//           "event "
-//           "evt::ev_1 and waiting for them to be handled";
-//  }
+    try {
+      _dispatcher->publish<test_002, evt::ev_0>(static_cast<uint16_t>(22));
 
-//  bool operator()(const program::alg::options &) {
-//    TNCT_LOG_TST("starting test_002");
-//    dispatcher::ptr _dispatcher = dispatcher::create();
+      std::this_thread::sleep_for(3s);
 
-//    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+    } catch (std::exception &_ex) {
+      TNCT_LOG_TST("finishing test_001 with false");
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
+    TNCT_LOG_TST("finishing test_001 with true");
+    return true;
+  }
+};
 
-//    _dispatcher->subscribe<evt::ev_1>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+struct test_003 {
+  test_003() { TNCT_LOG_TST("creating test_003"); }
+  ~test_003() { TNCT_LOG_TST("destroying test_003"); }
 
-//    try {
-//      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
-//      _dispatcher->publish<evt::ev_1>('z');
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
 
-//      std::this_thread::sleep_for(3s);
+  using events_subscribed = std::tuple<evt::ev_0, evt::ev_1>;
+  using events_published = std::tuple<evt::ev_0, evt::ev_1>;
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_TST("finishing test_001 with false");
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
-//    TNCT_LOG_TST("finishing test_001 with true");
-//    return true;
-//  }
-//};
+  static std::string desc() {
+    return "'Dispatcher' as a local object, publishing 1 event evt::ev_0, 1 "
+           "event "
+           "evt::ev_1 and waiting for them to be handled";
+  }
 
-// struct test_004 {
-//   test_004() { TNCT_LOG_TST("creating test_004"); }
-//   ~test_004() { TNCT_LOG_TST("destroying test_004"); }
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_002");
+    dispatcher::ptr _dispatcher = dispatcher::create();
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+    _dispatcher->subscribe<test_003, evt::ev_0>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//  static std::string desc() {
-//    return "'Dispatcher' as a local object, creating a publishing for "
-//           "evt::ev_0, "
-//           "publishing 1 event, and waiting for it to be handled";
-//  }
+    _dispatcher->subscribe<test_003, evt::ev_1>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//  bool operator()(const program::alg::options &) {
-//    TNCT_LOG_TST("starting test_002");
-//    dispatcher::ptr _dispatcher = dispatcher::create();
+    try {
+      _dispatcher->publish<test_003, evt::ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<test_003, evt::ev_1>('z');
 
-//    auto _publishing_id{_dispatcher->add_queue<evt::ev_0>()};
+      std::this_thread::sleep_for(3s);
 
-//    _dispatcher->subscribe<evt::ev_0>(_publishing_id, [](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+    } catch (std::exception &_ex) {
+      TNCT_LOG_TST("finishing test_001 with false");
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
+    TNCT_LOG_TST("finishing test_001 with true");
+    return true;
+  }
+};
 
-//    try {
-//      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
+struct test_004 {
+  test_004() { TNCT_LOG_TST("creating test_004"); }
+  ~test_004() { TNCT_LOG_TST("destroying test_004"); }
 
-//      std::this_thread::sleep_for(3s);
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_TST("finishing test_001 with false");
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
-//    TNCT_LOG_TST("finishing test_001 with true");
-//    return true;
-//  }
-//};
+  using events_subscribed = std::tuple<evt::ev_0>;
+  using events_published = std::tuple<evt::ev_0>;
 
-// struct test_005 {
-//   test_005() { TNCT_LOG_TST("creating test_005"); }
-//   ~test_005() { TNCT_LOG_TST("destroying test_005"); }
+  static std::string desc() {
+    return "'Dispatcher' as a local object, creating a publishing for "
+           "evt::ev_0, "
+           "publishing 1 event, and waiting for it to be handled";
+  }
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_002");
+    dispatcher::ptr _dispatcher = dispatcher::create();
 
-//  static std::string desc() {
-//    return "'Dispatcher' as a local object, creating publishing for evt::ev_0,
-//    "
-//           "publishing for evt::ev_1, publishing 1 event evt::ev_0, 1 event "
-//           "evt::ev_1 "
-//           "and "
-//           "waiting for them to be handled";
-//  }
+    auto _publishing_id{_dispatcher->add_queue<evt::ev_0>()};
 
-//  bool operator()(const program::alg::options &) {
-//    TNCT_LOG_TST("starting test_002");
-//    dispatcher::ptr _dispatcher = dispatcher::create();
+    _dispatcher->subscribe<test_004, evt::ev_0>(
+        _publishing_id, [](auto p_event) {
+          std::this_thread::sleep_for(50ms);
+          TNCT_LOG_TST("event = ", p_event);
+        });
 
-//    auto _publishing_id_0{_dispatcher->add_queue<evt::ev_0>()};
-//    auto _publishing_id_1{_dispatcher->add_queue<evt::ev_1>()};
+    try {
+      _dispatcher->publish<test_004, evt::ev_0>(static_cast<uint16_t>(22));
 
-//    _dispatcher->subscribe<evt::ev_0>(_publishing_id_0, [](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+      std::this_thread::sleep_for(3s);
 
-//    _dispatcher->subscribe<evt::ev_1>(_publishing_id_1, [](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+    } catch (std::exception &_ex) {
+      TNCT_LOG_TST("finishing test_001 with false");
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
+    TNCT_LOG_TST("finishing test_001 with true");
+    return true;
+  }
+};
 
-//    try {
-//      _dispatcher->publish<evt::ev_0>(static_cast<uint16_t>(22));
-//      _dispatcher->publish<evt::ev_1>('z');
+struct test_005 {
+  test_005() { TNCT_LOG_TST("creating test_005"); }
+  ~test_005() { TNCT_LOG_TST("destroying test_005"); }
 
-//      std::this_thread::sleep_for(3s);
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  using events_subscribed = std::tuple<evt::ev_0, evt::ev_1>;
+  using events_published = std::tuple<evt::ev_0, evt::ev_1>;
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_TST("finishing test_001 with false");
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
-//    TNCT_LOG_TST("finishing test_001 with true");
-//    return true;
-//  }
-//};
+  static std::string desc() {
+    return "'Dispatcher' as a local object, creating publishing for evt::ev_0, "
+           "publishing for evt::ev_1, publishing 1 event evt::ev_0, 1 event "
+           "evt::ev_1 "
+           "and "
+           "waiting for them to be handled";
+  }
+
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    TNCT_LOG_TST("starting test_002");
+    dispatcher::ptr _dispatcher = dispatcher::create();
+
+    auto _publishing_id_0{_dispatcher->add_queue<evt::ev_0>()};
+    auto _publishing_id_1{_dispatcher->add_queue<evt::ev_1>()};
+
+    _dispatcher->subscribe<test_005, evt::ev_0>(
+        _publishing_id_0, [](auto p_event) {
+          std::this_thread::sleep_for(50ms);
+          TNCT_LOG_TST("event = ", p_event);
+        });
+
+    _dispatcher->subscribe<test_005, evt::ev_1>(
+        _publishing_id_1, [](auto p_event) {
+          std::this_thread::sleep_for(50ms);
+          TNCT_LOG_TST("event = ", p_event);
+        });
+
+    try {
+      _dispatcher->publish<test_005, evt::ev_0>(static_cast<uint16_t>(22));
+      _dispatcher->publish<test_005, evt::ev_1>('z');
+
+      std::this_thread::sleep_for(3s);
+
+    } catch (std::exception &_ex) {
+      TNCT_LOG_TST("finishing test_001 with false");
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
+    TNCT_LOG_TST("finishing test_001 with true");
+    return true;
+  }
+};
 
 struct test_006 {
   static std::string desc() {
@@ -275,7 +300,7 @@ struct test_006 {
   using events_subscribed = std::tuple<e>;
 
   bool operator()(const program::alg::options &) {
-
+    log::alg::set_info_level();
     size_t _counter{0};
 
     m_dispatcher->subscribe<test_006, e>(
@@ -301,165 +326,174 @@ private:
   dispatcher::ptr m_dispatcher{dispatcher::create()};
 };
 
-// struct test_corner_000 {
+struct test_corner_000 {
 
-//  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+  using events_published = std::tuple<evt::ev_0>;
+  using events_subscribed = std::tuple<evt::ev_0>;
+  using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
 
-//  static std::string desc() {
-//    return "'Dispatcher' as a local object, publishing 200 events, but not "
-//           "waiting all to be handled";
-//  }
+  static std::string desc() {
+    return "'Dispatcher' as a local object, publishing 200 events, but not "
+           "waiting all to be handled";
+  }
 
-//  bool operator()(const program::alg::options &) {
-//    dispatcher::ptr _dispatcher = dispatcher::create();
-//    _dispatcher->subscribe<evt::ev_0>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    dispatcher::ptr _dispatcher = dispatcher::create();
+    _dispatcher->subscribe<test_corner_000, evt::ev_0>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//    try {
-//      for (uint16_t _i = 0; _i < 3; ++_i) {
-//        _dispatcher->publish<evt::ev_0>(_i);
-//      }
+    try {
+      for (uint16_t _i = 0; _i < 3; ++_i) {
+        _dispatcher->publish<test_corner_000, evt::ev_0>(_i);
+      }
 
-//      //      std::this_thread::sleep_for(100ms);
+      //      std::this_thread::sleep_for(100ms);
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
 
-//    return true;
-//  }
-//};
+    return true;
+  }
+};
 
-// struct test_corner_001 {
-//   using dispatcher = async::alg::dispatcher<evt::ev_0, evt::ev_1>;
+struct test_corner_001 {
+  using dispatcher = async::alg::dispatcher<evt::ev_0>;
+  using events_published = std::tuple<evt::ev_0>;
+  using events_subscribed = std::tuple<evt::ev_0>;
 
-//  static std::string desc() {
-//    return "'Dispatcher' as an attribute, publishing 200 events, but not "
-//           "waiting all to be handled";
-//  }
+  static std::string desc() {
+    return "'Dispatcher' as an attribute, publishing 200 events, but not "
+           "waiting all to be handled";
+  }
 
-//  bool operator()(const program::alg::options &) {
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    m_dispatcher->subscribe<test_corner_001, evt::ev_0>([](auto p_event) {
+      std::this_thread::sleep_for(50ms);
+      TNCT_LOG_TST("event = ", p_event);
+    });
 
-//    m_dispatcher->subscribe<evt::ev_0>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+    try {
+      for (uint16_t _i = 0; _i < 200; ++_i) {
+        m_dispatcher->publish<test_corner_001, evt::ev_0>(_i);
+      }
 
-//    try {
-//      for (uint16_t _i = 0; _i < 200; ++_i) {
-//        m_dispatcher->publish<evt::ev_0>(_i);
-//      }
+      std::this_thread::sleep_for(100ms);
 
-//      std::this_thread::sleep_for(100ms);
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
+    return true;
+  }
 
-//    return true;
-//  }
+private:
+  dispatcher::ptr m_dispatcher{dispatcher::create()};
+};
 
-// private:
-//   dispatcher::ptr m_dispatcher{dispatcher::create()};
-// };
+async::alg::dispatcher<evt::ev_0, evt::ev_1>::ptr s_dispatcher_test_corner_002{
+    async::alg::dispatcher<evt::ev_0, evt::ev_1>::create()};
 
-// async::alg::dispatcher<evt::ev_0, evt::ev_1>::ptr
-// s_dispatcher_test_corner_002{
-//     async::alg::dispatcher<evt::ev_0, evt::ev_1>::create()};
-// struct test_corner_002 {
-//   static std::string desc() {
-//     return "'Dispatcher' as a global object, publishing 200 events, but not "
-//            "waiting all to be handled";
-//   }
+struct test_corner_002 {
+  using events_published = std::tuple<evt::ev_0>;
+  using events_subscribed = std::tuple<evt::ev_0>;
 
-//  bool operator()(const program::alg::options &) {
+  static std::string desc() {
+    return "'Dispatcher' as a global object, publishing 200 events, but not "
+           "waiting all to be handled";
+  }
 
-//    s_dispatcher_test_corner_002->subscribe<evt::ev_0>([](auto p_event) {
-//      std::this_thread::sleep_for(50ms);
-//      TNCT_LOG_TST("event = ", p_event);
-//    });
+  bool operator()(const program::alg::options &) {
+    log::alg::set_info_level();
+    s_dispatcher_test_corner_002->subscribe<test_corner_002, evt::ev_0>(
+        [](auto p_event) {
+          std::this_thread::sleep_for(50ms);
+          TNCT_LOG_TST("event = ", p_event);
+        });
 
-//    try {
-//      for (uint16_t _i = 0; _i < 200; ++_i) {
-//        s_dispatcher_test_corner_002->publish<evt::ev_0>(_i);
-//      }
+    try {
+      for (uint16_t _i = 0; _i < 200; ++_i) {
+        s_dispatcher_test_corner_002->publish<test_corner_002, evt::ev_0>(_i);
+      }
 
-//      std::this_thread::sleep_for(100ms);
+      std::this_thread::sleep_for(100ms);
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_ERR(_ex.what());
-//      return false;
-//    }
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(_ex.what());
+      return false;
+    }
 
-//    return true;
-//  }
-//};
+    return true;
+  }
+};
 
-// struct test_dispatcher {
+struct test_dispatcher {
 
-//  static void setup(int p_argc, char **p_argv) {
-//    m_argc = p_argc;
-//    m_argv = p_argv;
-//  }
+  static void setup(int p_argc, char **p_argv) {
+    m_argc = p_argc;
+    m_argv = p_argv;
+  }
 
-//  static std::string desc() {
-//    std::stringstream _stream;
+  static std::string desc() {
+    std::stringstream _stream;
 
-//    cfg::help(m_argv[0], _stream);
-//    return _stream.str();
-//  }
+    cfg::help(m_argv[0], _stream);
+    return _stream.str();
+  }
 
-//  bool operator()(const program::alg::options &) {
-//    try {
-//      bus::dispatcher::ptr _dispatcher{bus::dispatcher::create()};
+  bool operator()(const program::alg::options &) {
+    log::alg::set_trace_level();
+    try {
+      bus::dispatcher::ptr _dispatcher{bus::dispatcher::create()};
 
-//      cfg::options _options{m_argc, m_argv};
+      cfg::options _options{m_argc, m_argv};
 
-//      sto::saver _save(_options);
+      sto::saver _save(_options);
 
-//      bus::processor _processor(std::move(_save));
-//      return uix::start(_options, _dispatcher, std::move(_processor));
+      bus::processor _processor(std::move(_save));
+      return uix::start(_options, _dispatcher, std::move(_processor));
 
-//    } catch (std::exception &_ex) {
-//      TNCT_LOG_ERR(_ex.what());
-//    }
-//    return false;
-//  }
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(_ex.what());
+    }
+    return false;
+  }
 
-// private:
-//   static int m_argc;
-//   static char **m_argv;
-// };
+private:
+  static int m_argc;
+  static char **m_argv;
+};
 
-// int test_dispatcher::m_argc;
-// char **test_dispatcher::m_argv;
+int test_dispatcher::m_argc;
+char **test_dispatcher::m_argv;
 
 int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  //  log::alg::set_trace_level();
   log::alg::set_max_file_name_lenght(13);
 
   program::alg::options _options;
 
-  //  test_dispatcher::setup(argc, argv);
+  test_dispatcher::setup(argc, argv);
 
   test::alg::tester _tester(argc, argv);
 
-  //  run_test(_tester, test_dispatcher);
-  //  run_test(_tester, test_000);
-  //  run_test(_tester, test_001);
-  //  run_test(_tester, test_002);
-  //  run_test(_tester, test_003);
-  //  run_test(_tester, test_004);
-  //  run_test(_tester, test_005);
+  run_test(_tester, test_dispatcher);
+  run_test(_tester, test_000);
+  run_test(_tester, test_001);
+  run_test(_tester, test_002);
+  run_test(_tester, test_003);
+  run_test(_tester, test_004);
+  run_test(_tester, test_005);
   run_test(_tester, test_006);
-  //  run_test(_tester, test_corner_000);
-  //  run_test(_tester, test_corner_001);
-  //  run_test(_tester, test_corner_002);
+  run_test(_tester, test_corner_000);
+  run_test(_tester, test_corner_001);
+  run_test(_tester, test_corner_002);
 }

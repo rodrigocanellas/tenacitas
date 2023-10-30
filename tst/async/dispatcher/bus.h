@@ -27,6 +27,9 @@ namespace bus {
 // pressure_generator
 struct pressure_generator {
 
+  using events_published =
+      std::tuple<evt::pressure_generated, evt::pressure_sent>;
+
   pressure_generator(dispatcher::ptr p_dispatcher, typ::pressure p_initial,
                      typ::generator p_generator)
       : m_dispatcher(p_dispatcher), m_pressure(p_initial),
@@ -66,11 +69,13 @@ private:
     m_pressure += 0.5;
     TNCT_LOG_TST("generator ", m_generator.id, " generating pressure #",
                  m_counter, " = ", m_pressure);
-    m_dispatcher->publish<evt::pressure_generated>(m_generator.id, m_pressure);
+    m_dispatcher->publish<pressure_generator, evt::pressure_generated>(
+        m_generator.id, m_pressure);
     TNCT_LOG_TST("evt::pressure_generated published by generator ",
                  m_generator.id, ", pressure #", m_counter, " = ", m_pressure);
 
-    m_dispatcher->publish<evt::pressure_sent>(m_generator.id);
+    m_dispatcher->publish<pressure_generator, evt::pressure_sent>(
+        m_generator.id);
     TNCT_LOG_TST("evt::pressure_sent published for generator ", m_generator.id);
   }
 
@@ -93,6 +98,12 @@ using storager = std::function<std::optional<typ::test_id>(
     typ::publishings_results &&p_publishings)>;
 
 struct pressure_tester {
+  using events_subscribed =
+      std::tuple<evt::pressure_generated, evt::pressure_sent,
+                 evt::pressure_handled>;
+
+  using events_published = std::tuple<evt::pressure_handled>;
+
   pressure_tester(dispatcher::ptr p_dispatcher, storager p_storager,
                   const typ::generators_definitions &p_generator_definition,
                   const typ::publishings_definitions &p_publishing_definition)
@@ -127,9 +138,8 @@ struct pressure_tester {
     {
       std::unique_lock<std::mutex> _lock(m_mutex);
       m_cond.wait(_lock, [&]() -> bool {
-        TNCT_LOG_TST("checking if finished");
         bool _finished = finished();
-        TNCT_LOG_TST("_finished = ", _finished);
+        TNCT_LOG_TST("finished? ", (_finished ? "yes" : "no"));
         return _finished;
       });
     }
@@ -162,8 +172,6 @@ private:
                       calendar::cpt::convertible_to_ms auto p_sleep) {
     auto _queue_id = m_dispatcher->add_queue<evt::pressure_generated>();
     m_summary.total_handled_expected += m_summary.total_sent_expected;
-    TNCT_LOG_TST("p_num_subscribers = ", p_num_subscribers,
-                 ", p_sleep = ", p_sleep.count());
 
     for (uint16_t _i = 0; _i < p_num_subscribers; ++_i) {
       ++m_num_subscribers;
@@ -174,7 +182,7 @@ private:
           typ::publishing_results{p_sleep, typ::subscribers_results{}};
 
       TNCT_LOG_TST("subscriber #", _i, " for pressure_generated");
-      m_dispatcher->subscribe<evt::pressure_generated>(
+      m_dispatcher->subscribe<pressure_tester, evt::pressure_generated>(
           _queue_id,
           [this, _queue_id, _subscriber_id, p_sleep](auto p_pressure) {
             TNCT_LOG_TST("publishing ", _queue_id, ", subscriber ",
@@ -192,8 +200,8 @@ private:
             TNCT_LOG_TST("publishing ", _queue_id, ", subscriber ",
                          _subscriber_id, ", pressure = ", p_pressure,
                          ", publishing 'pressure_handled'");
-            m_dispatcher->publish<evt::pressure_handled>(_queue_id,
-                                                         _subscriber_id);
+            m_dispatcher->publish<pressure_tester, evt::pressure_handled>(
+                _queue_id, _subscriber_id);
           });
     }
   }
@@ -229,7 +237,7 @@ private:
   void setup_publishings(const typ::publishings_definitions &p_publishing) {
 
     // subscriber for pressure sent
-    m_dispatcher->subscribe<evt::pressure_sent>(
+    m_dispatcher->subscribe<pressure_tester, evt::pressure_sent>(
         [this](evt::pressure_sent &&p_pressure_sent) -> void {
           std::lock_guard<std::mutex> _lock(m_pressure_sent_subscriber);
 
@@ -240,16 +248,17 @@ private:
         });
 
     // subscriber for pressure handled
-    m_dispatcher->subscribe<evt::pressure_handled>([&](auto p_handled) -> void {
-      std::lock_guard<std::mutex> _lock(m_pressure_handled_subscriber);
+    m_dispatcher->subscribe<pressure_tester, evt::pressure_handled>(
+        [&](auto p_handled) -> void {
+          std::lock_guard<std::mutex> _lock(m_pressure_handled_subscriber);
 
-      ++m_publishings_results[p_handled.queue]
-            .subscribers[p_handled.subscriber];
+          ++m_publishings_results[p_handled.queue]
+                .subscribers[p_handled.subscriber];
 
-      ++m_summary.total_handled;
-      TNCT_LOG_TST("handled so far: ", m_summary.total_handled);
-      m_cond.notify_all();
-    });
+          ++m_summary.total_handled;
+          TNCT_LOG_TST("handled so far: ", m_summary.total_handled);
+          m_cond.notify_all();
+        });
 
     m_publishings_results.clear();
     auto _current_amount_subscribers = p_publishing.m_amount_subscribers;

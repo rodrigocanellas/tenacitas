@@ -37,16 +37,12 @@ public:
   event_queue(const event_queue &) = delete;
 
   event_queue(event_queue &&p_queue) {
-    trace(__LINE__, "move start");
-
     m_id = std::move(p_queue.m_id);
     m_priority = std::move(p_queue.m_priority);
     m_loops = std::move(p_queue.m_loops);
     m_stopped = p_queue.m_stopped.load();
     m_queued_data = std::move(p_queue.m_queued_data);
     m_circular_queue = std::move(p_queue.m_circular_queue);
-
-    trace(__LINE__, "move end");
   }
 
   event_queue &operator=(const event_queue &) = delete;

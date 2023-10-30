@@ -19,7 +19,7 @@ constexpr char amount_events_option[]{"amount-events"};
 constexpr char amount_events_increment_option[]{"amount-events-increment"};
 constexpr char interval_option[]{"interval"};
 constexpr char interval_increment_option[]{"interval-increment"};
-constexpr char total_publishing_option[]{"total-publishing"};
+constexpr char total_queue_option[]{"total-queues"};
 constexpr char amount_subscribers_option[]{"amount-subscribers"};
 constexpr char amount_subscribers_increment_option[]{
     "amount-subscribers-increment"};
@@ -63,9 +63,9 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
       << " 80' the from the second generator, the interval for event "
          "generation will be 80ms greater than the previous one\n"
 
-      << '\t' << total_publishing_option
+      << '\t' << total_queue_option
       << ": list with numbers of events publishings, like '--"
-      << total_publishing_option << " {2, 6}'\n"
+      << total_queue_option << " {2, 6}'\n"
 
       << '\t' << amount_subscribers_option
       << ": Amount of subscribers for each publishing, like '--"
@@ -97,10 +97,10 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
       << ": SQLite file name where the results will be saved"
       << "\n\n\n"
 
-      << "Example: " << p_pgm_name
+      << "Example: " << p_pgm_name << " --exec { test_dispatcher } "
       << " --total-generator { 1 3 }  --amount-events { "
          "200 500 } --amount-events-increment 50 --interval { 300 150 } "
-         "--interval-increment 80 --total-publishing { 2 6 } "
+         "--interval-increment 80 --total-queues { 2 6 } "
          "--amount-subscribers { "
          "3 12 } --amount-subscribers-increment 8 --sleep { 400 250 } "
          "--sleep-increment 100 --sqlite-file db.sqlite"
@@ -113,7 +113,7 @@ struct options {
     _options.parse(p_argc, p_argv,
                    {total_generator_option, amount_events_option,
                     amount_events_increment_option, interval_option,
-                    interval_increment_option, total_publishing_option,
+                    interval_increment_option, total_queue_option,
                     amount_subscribers_option,
                     amount_subscribers_increment_option, sleep_option,
                     sleep_increment_option, sqlite_file});
@@ -128,7 +128,7 @@ struct options {
 
     m_interval_increment = get_interval_increment(_options);
 
-    m_total_publishings = get_total_publishings(_options);
+    m_total_queues = get_total_queues(_options);
 
     m_amounts_subscribers = get_amount_subscribers(_options);
 
@@ -141,12 +141,6 @@ struct options {
     m_sqlite_file = get_sqlite_file(_options);
 
     TNCT_LOG_DEB("sql lite = ", m_sqlite_file);
-
-    {
-      for (const typ::time &_sleep : m_sleeps) {
-        TNCT_LOG_INF("sleep = ", _sleep.count());
-      }
-    }
   }
 
   typ::total_list get_total_generators() const { return m_total_generators; }
@@ -163,7 +157,7 @@ struct options {
     return m_interval_increment;
   }
 
-  typ::total_list get_total_publishings() const { return m_total_publishings; }
+  typ::total_list get_total_publishings() const { return m_total_queues; }
 
   typ::amount_list get_amounts_subscribers() const {
     return m_amounts_subscribers;
@@ -273,13 +267,12 @@ struct options {
     }
   }
 
-  typ::total_list
-  get_total_publishings(const program::alg::options &p_options) {
+  typ::total_list get_total_queues(const program::alg::options &p_options) {
     try {
       typ::total_list _total_publishings;
       {
         std::optional<std::list<std::string>> _maybe =
-            p_options.get_set_param(total_publishing_option);
+            p_options.get_set_param(total_queue_option);
         if (_maybe) {
           std::list<std::string> _list{std::move(_maybe.value())};
           for (const std::string &_value : _list) {
@@ -398,7 +391,7 @@ private:
 
   typ::time_increment m_interval_increment;
 
-  typ::total_list m_total_publishings;
+  typ::total_list m_total_queues;
 
   typ::amount_list m_amounts_subscribers;
 
