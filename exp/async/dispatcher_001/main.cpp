@@ -43,6 +43,8 @@ using dispatcher = async::alg::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
+  using events_published = std::tuple<temperature>;
+
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
   //
@@ -71,7 +73,7 @@ private:
     }
     ++m_counter;
     m_temperature.value += 0.2;
-    m_dispatcher->publish<temperature>(m_temperature);
+    m_dispatcher->publish<temperature_sensor, temperature>(m_temperature);
   }
 
 private:
@@ -113,6 +115,8 @@ private:
 
 // handles a 'temperature' event
 struct temperature_subscriber_0 {
+  using events_published = std::tuple<temperature_handled>;
+
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
   //
@@ -129,7 +133,7 @@ struct temperature_subscriber_0 {
   void operator()(temperature &&p_temperature) {
     std::this_thread::sleep_for(m_sleep);
     ++m_counter;
-    m_dispatcher->publish<temperature_handled>();
+    m_dispatcher->publish<temperature_subscriber_0, temperature_handled>();
 
     std::stringstream _stream;
     _stream << '[' << m_id << ',' << m_counter << ',' << p_temperature << ']'
@@ -150,13 +154,15 @@ private:
 //  of temperature events
 struct wait {
 
+  using events_subscribed = std::tuple<temperature_handled>;
+
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
   //
   // p_max is the max number of 'temperature' events to be dispatched
   wait(dispatcher::ptr p_dispatcher, uint16_t p_max, printer &p_printer)
       : m_dispatcher(p_dispatcher), m_max(p_max), m_printer(p_printer) {
-    m_dispatcher->subscribe<temperature_handled>(
+    m_dispatcher->subscribe<wait, temperature_handled>(
         [this](auto p_event) -> void { subscriber(std::move(p_event)); });
   }
 
@@ -186,37 +192,42 @@ private:
   std::mutex m_mutex;
 };
 
-int main() {
+struct start {
+  using events_subscribed = std::tuple<temperature>;
 
-  // publisher/subscriber
-  dispatcher::ptr _dispatcher{dispatcher::create()};
+  void operator()() {
+    // publisher/subscriber
+    dispatcher::ptr _dispatcher{dispatcher::create()};
 
-  // number of temperatures to be generated
-  const uint16_t _max{25};
+    // number of temperatures to be generated
+    const uint16_t _max{25};
 
-  // thread-safe printer
-  printer _printer;
+    // thread-safe printer
+    printer _printer;
 
-  {
-    std::stringstream _stream;
-    _stream << _max << " events will be generated\n";
-    _printer(_stream.str());
+    {
+      std::stringstream _stream;
+      _stream << _max << " events will be generated\n";
+      _printer(_stream.str());
+    }
+
+    // adds a subscriber to a publishing, and save the id of this publishing
+    async::typ::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
+        temperature_subscriber_0{_dispatcher, "0a", _printer});
+
+    // adds another subscriber to the publishing
+    _dispatcher->subscribe<start, temperature>(
+        _queue_id, temperature_subscriber_0{_dispatcher, "0b", _printer});
+
+    // declaring the temperature sensor
+    temperature_sensor _sensor{_dispatcher, _max};
+
+    // starting the sensor
+    _sensor.start();
+
+    // waits for all the temperature events to be handled
+    wait(_dispatcher, _max, _printer)();
   }
+};
 
-  // adds a subscriber to a publishing, and save the id of this publishing
-  async::typ::queue_id _queue_id = _dispatcher->subscribe<temperature>(
-      temperature_subscriber_0{_dispatcher, "0a", _printer});
-
-  // adds another subscriber to the publishing
-  _dispatcher->subscribe<temperature>(
-      _queue_id, temperature_subscriber_0{_dispatcher, "0b", _printer});
-
-  // declaring the temperature sensor
-  temperature_sensor _sensor{_dispatcher, _max};
-
-  // starting the sensor
-  _sensor.start();
-
-  // waits for all the temperature events to be handled
-  wait(_dispatcher, _max, _printer)();
-}
+int main() {}

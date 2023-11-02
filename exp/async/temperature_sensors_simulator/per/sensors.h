@@ -19,14 +19,17 @@ using namespace std::chrono_literals;
 namespace temperature_sensors_simulator::per {
 
 struct sensors {
+  using events_subscribed =
+      std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
+
   sensors(alg::dispatcher::ptr p_dispatcher) : m_dispatcher(p_dispatcher) {
-    m_dispatcher->subscribe<evt::add_sensor>(
+    m_dispatcher->subscribe<sensors, evt::add_sensor>(
         [this](auto p_evt) { on_add_sensor(std::move(p_evt)); });
 
-    m_dispatcher->subscribe<evt::remove_sensor>(
+    m_dispatcher->subscribe<sensors, evt::remove_sensor>(
         [this](auto p_evt) { on_remove_sensor(std::move(p_evt)); });
 
-    m_dispatcher->subscribe<evt::set_temperature>(
+    m_dispatcher->subscribe<sensors, evt::set_temperature>(
         [this](auto p_evt) { on_set_temperature(std::move(p_evt)); });
   }
 

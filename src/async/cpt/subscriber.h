@@ -21,7 +21,8 @@ concept subscriber = requires(t p_t) {
     return ((event<typename std::tuple_element_t<
                  t_idx, typename t::events_subscribed>>)&&...);
   }
-  (std::make_index_sequence<std::tuple_size_v<typename t::events_published>>());
+  (std::make_index_sequence<
+      std::tuple_size_v<typename t::events_subscribed>>());
 };
 } // namespace tenacitas::lib::async::cpt
 

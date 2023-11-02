@@ -3,11 +3,15 @@
 
 #include <memory>
 #include <thread>
+#include <tuple>
 
 #include <QMainWindow>
 
 #include "../../alg/dispatcher.h"
+#include "../../evt/add_sensor.h"
 #include "../../evt/new_temperature.h"
+#include "../../evt/remove_sensor.h"
+#include "../../evt/set_temperature.h"
 
 using namespace tenacitas::lib;
 using namespace temperature_sensors_simulator;
@@ -22,6 +26,11 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
+  using events_subscribed = std::tuple<evt::new_temperature>;
+  using events_published =
+      std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
+
+public:
   MainWindow(alg::dispatcher::ptr p_dispatcher, QWidget *parent = nullptr);
   ~MainWindow();
 
@@ -32,7 +41,6 @@ private:
 private slots:
   void on_btnAddSensor_clicked();
   void on_btnDeleteSensor_clicked();
-
   void on_btnSetTemperature_clicked();
 
 private:

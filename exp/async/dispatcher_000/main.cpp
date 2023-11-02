@@ -43,6 +43,8 @@ using dispatcher = async::alg::dispatcher<temperature, all_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
+  using events_published = std::tuple<temperature>;
+
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
   //
@@ -73,7 +75,7 @@ private:
     }
     ++m_counter;
     m_temperature.value += 0.2;
-    m_dispatcher->publish<temperature>(m_temperature);
+    m_dispatcher->publish<temperature_sensor, temperature>(m_temperature);
   }
 
 private:
@@ -103,6 +105,8 @@ private:
 
 // subscriber for a 'temperature' event
 struct temperature_subscriber {
+  using events_published = std::tuple<all_handled>;
+
   temperature_subscriber(dispatcher::ptr p_dispatcher, uint16_t p_max)
       : m_dispatcher(p_dispatcher), m_max(p_max) {}
 
@@ -111,7 +115,7 @@ struct temperature_subscriber {
     std::this_thread::sleep_for(1s);
 
     if ((m_counter) >= m_max) {
-      m_dispatcher->publish<all_handled>();
+      m_dispatcher->publish<temperature_subscriber, all_handled>();
     }
   }
 
@@ -121,38 +125,44 @@ private:
   uint16_t m_counter{0};
 };
 
-int main() {
-  // publisher/subscriber
-  dispatcher::ptr _dispatcher{dispatcher::create()};
+struct start {
+  using events_subscribed = std::tuple<all_handled, temperature>;
+  void operator()() {
 
-  // condition variable and mutex to wait for the sleeping loop to finish
-  std::condition_variable _cond;
-  std::mutex _mutex;
+    // publisher/subscriber
+    dispatcher::ptr _dispatcher{dispatcher::create()};
 
-  // number of temperatures to be generated
-  const uint16_t _max{20};
+    // condition variable and mutex to wait for the sleeping loop to finish
+    std::condition_variable _cond;
+    std::mutex _mutex;
 
-  // adding the subscriber for temperatures sent to a publishing of
-  // temperature
-  _dispatcher->subscribe<temperature>(
-      temperature_subscriber{_dispatcher, _max});
+    // number of temperatures to be generated
+    const uint16_t _max{20};
 
-  // declaring the temperature sensor
-  temperature_sensor _sensor{_dispatcher, _max};
+    // adding the subscriber for temperatures sent to a publishing of
+    // temperature
+    _dispatcher->subscribe<start, temperature>(
+        temperature_subscriber{_dispatcher, _max});
 
-  // starting the sensor
-  _sensor.start();
+    // declaring the temperature sensor
+    temperature_sensor _sensor{_dispatcher, _max};
 
-  // subscriber for the all_handled event signals when all the temperatures
-  // were handled
-  _dispatcher->subscribe<all_handled>([&](auto) -> void {
-    std::cout << "all temperatures handled" << std::endl;
-    _cond.notify_one();
-    return;
-  });
+    // starting the sensor
+    _sensor.start();
 
-  // waits for the temperature subscriber to publish that the expected number of
-  // temperatures was generated
-  std::unique_lock<std::mutex> _lock(_mutex);
-  _cond.wait(_lock);
-}
+    // subscriber for the all_handled event signals when all the temperatures
+    // were handled
+    _dispatcher->subscribe<start, all_handled>([&](auto) -> void {
+      std::cout << "all temperatures handled" << std::endl;
+      _cond.notify_one();
+      return;
+    });
+
+    // waits for the temperature subscriber to publish that the expected number
+    // of temperatures was generated
+    std::unique_lock<std::mutex> _lock(_mutex);
+    _cond.wait(_lock);
+  }
+};
+
+int main() { start(); }

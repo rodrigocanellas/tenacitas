@@ -44,6 +44,8 @@ using dispatcher = async::alg::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating values
 struct temperature_sensor {
+  using events_published = std::tuple<temperature>;
+
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
   //
@@ -72,7 +74,7 @@ private:
     }
     ++m_counter;
     m_temperature.value += 0.2;
-    m_dispatcher->publish<temperature>(m_temperature);
+    m_dispatcher->publish<temperature_sensor, temperature>(m_temperature);
   }
 
 private:
@@ -124,6 +126,7 @@ private:
 //  waits for the number of temperature_handled events equals the maximum number
 //  of temperature events
 struct wait {
+  using events_subscribed = std::tuple<temperature_handled>;
 
   // p_dispatcher is responsible for publishing 'temperature' events to be
   // handled by object that subscribed for
@@ -131,7 +134,7 @@ struct wait {
   // p_max is the max number of 'temperature' events to be dispatched
   wait(dispatcher::ptr p_dispatcher, uint16_t p_max, printer &p_printer)
       : m_dispatcher(p_dispatcher), m_max(p_max), m_printer(p_printer) {
-    m_dispatcher->subscribe<temperature_handled>(
+    m_dispatcher->subscribe<wait, temperature_handled>(
         [this](auto &&p_event) -> void { subscriber(std::move(p_event)); });
   }
 
@@ -164,6 +167,7 @@ private:
 
 // subscriber of the temperature sent by the sensor
 struct temperature_subscriber_0 {
+  using events_published = std::tuple<temperature_handled>;
 
   // p_id allows to distinguish between subscribers
   // p_printer is used to print the id of the subscriber and temperature handled
@@ -176,7 +180,7 @@ struct temperature_subscriber_0 {
   void operator()(temperature &&p_temperature) {
     std::this_thread::sleep_for(m_sleep);
     ++m_counter;
-    m_dispatcher->publish<temperature_handled>();
+    m_dispatcher->publish<temperature_subscriber_0, temperature_handled>();
     std::stringstream _stream;
     _stream << '[' << m_id << ',' << m_counter << ',' << p_temperature << ']'
             << std::endl;
@@ -193,6 +197,7 @@ private:
 
 // handles a 'temperature' event
 struct temperature_subscriber_1 {
+  using events_published = std::tuple<temperature_handled>;
 
   // p_id allows to distinguish between subscribers
   // p_printer is used to print the id of the subscriber and temperature handled
@@ -205,7 +210,7 @@ struct temperature_subscriber_1 {
   void operator()(temperature &&p_temperature) {
     std::this_thread::sleep_for(m_sleep);
     ++m_counter;
-    m_dispatcher->publish<temperature_handled>();
+    m_dispatcher->publish<temperature_subscriber_1, temperature_handled>();
     std::stringstream _stream;
     _stream << "{   " << m_id << ',' << m_counter << ',' << p_temperature
             << "   }" << std::endl;
@@ -220,56 +225,61 @@ private:
   uint16_t m_counter{0};
 };
 
-int main() {
+struct start {
+  using events_subscribed = std::tuple<temperature>;
 
-  dispatcher::ptr _dispatcher{dispatcher::create()};
+  void operator()() {
+    dispatcher::ptr _dispatcher{dispatcher::create()};
 
-  // number of temperatures to be generated
-  const uint16_t _max{30};
+    // number of temperatures to be generated
+    const uint16_t _max{30};
 
-  // thread-safe printer
-  printer _printer;
+    // thread-safe printer
+    printer _printer;
 
-  {
-    std::stringstream _stream;
-    _stream << _max << " events will be generated\n";
-    _printer(_stream.str());
+    {
+      std::stringstream _stream;
+      _stream << _max << " events will be generated\n";
+      _printer(_stream.str());
+    }
+
+    // adds a subscriber to a queue, and saves the id of this queue
+    {
+      async::typ::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+
+      _dispatcher->subscribe<start, temperature>(
+          _queue_id, temperature_subscriber_0{_dispatcher,
+                                              std::string{"subscriber 1 to "} +
+                                                  std::to_string(_queue_id),
+                                              _printer});
+
+      // adds another subscriber to queue, so the two subscribers will
+      // compete with each other to handle temperature events
+      //    _dispatcher->subscribe<temperature>(
+      //        _queue_id, temperature_subscriber_0{_dispatcher,
+      //                                            std::string{"subscriber 2 to
+      //                                            "} +
+      //                                                std::to_string(_queue_id),
+      //                                            _printer});
+    }
+    {
+      async::typ::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+      // adds a subscriber to another queue
+      _dispatcher->subscribe<start, temperature>(temperature_subscriber_1{
+          _dispatcher, "subscriber 1 to queue " + std::to_string(_queue_id),
+          _printer});
+    }
+    // declaring the temperature sensor
+    temperature_sensor _sensor{_dispatcher, _max};
+
+    // starting the sensor
+    _sensor.start();
+
+    // waits for all the temperature events to be handled; as there are two
+    // publishings, the total number of temperature events are twice as the
+    // number of temperature events published
+    wait(_dispatcher, 2 * _max, _printer)();
   }
+};
 
-  // adds a subscriber to a queue, and saves the id of this queue
-  {
-    async::typ::queue_id _queue_id = _dispatcher->add_queue<temperature>();
-
-    _dispatcher->subscribe<temperature>(
-        _queue_id, temperature_subscriber_0{_dispatcher,
-                                            std::string{"subscriber 1 to "} +
-                                                std::to_string(_queue_id),
-                                            _printer});
-
-    // adds another subscriber to queue, so the two subscribers will
-    // compete with each other to handle temperature events
-    //    _dispatcher->subscribe<temperature>(
-    //        _queue_id, temperature_subscriber_0{_dispatcher,
-    //                                            std::string{"subscriber 2 to
-    //                                            "} +
-    //                                                std::to_string(_queue_id),
-    //                                            _printer});
-  }
-  {
-    async::typ::queue_id _queue_id = _dispatcher->add_queue<temperature>();
-    // adds a subscriber to another queue
-    _dispatcher->subscribe<temperature>(temperature_subscriber_1{
-        _dispatcher, "subscriber 1 to queue " + std::to_string(_queue_id),
-        _printer});
-  }
-  // declaring the temperature sensor
-  temperature_sensor _sensor{_dispatcher, _max};
-
-  // starting the sensor
-  _sensor.start();
-
-  // waits for all the temperature events to be handled; as there are two
-  // publishings, the total number of temperature events are twice as the
-  // number of temperature events published
-  wait(_dispatcher, 2 * _max, _printer)();
-}
+int main() {}

@@ -5,9 +5,6 @@
 
 #include "../../dat/sensor_id.h"
 #include "../../dat/temperature.h"
-#include "../../evt/add_sensor.h"
-#include "../../evt/remove_sensor.h"
-#include "../../evt/set_temperature.h"
 
 using namespace tenacitas::lib;
 using namespace temperature_sensors_simulator;
@@ -18,7 +15,7 @@ MainWindow::MainWindow(alg::dispatcher::ptr p_dispatcher, QWidget *parent)
 
   log::alg::set_info_level();
 
-  m_dispatcher->subscribe<evt::new_temperature>(
+  m_dispatcher->subscribe<MainWindow, evt::new_temperature>(
       [this](auto p_evt) { on_new_temperature(std::move(p_evt)); });
 }
 
@@ -58,7 +55,7 @@ void MainWindow::on_btnAddSensor_clicked() {
       ui->tblTemperatures->setItem(
           ui->tblTemperatures->rowCount() - 1, 0,
           new QTableWidgetItem(QString::number(static_cast<int>(_sensor_id))));
-      m_dispatcher->publish<evt::add_sensor>(_sensor_id);
+      m_dispatcher->publish<MainWindow, evt::add_sensor>(_sensor_id);
       ui->txtSensorToAdd->setText("");
     }
   }
@@ -73,7 +70,7 @@ void MainWindow::on_btnDeleteSensor_clicked() {
     int _row = findRow(_sensor_id);
     if (_row != -1) {
       ui->tblTemperatures->removeRow(_row);
-      m_dispatcher->publish<evt::remove_sensor>(_sensor_id);
+      m_dispatcher->publish<MainWindow, evt::remove_sensor>(_sensor_id);
     }
   }
 }
@@ -91,6 +88,7 @@ void MainWindow::on_btnSetTemperature_clicked() {
 
   std::lock_guard<std::mutex> _lock{m_mutex};
   if (findRow(_sensor_id) != -1) {
-    m_dispatcher->publish<evt::set_temperature>(_sensor_id, _temperature);
+    m_dispatcher->publish<MainWindow, evt::set_temperature>(_sensor_id,
+                                                            _temperature);
   }
 }

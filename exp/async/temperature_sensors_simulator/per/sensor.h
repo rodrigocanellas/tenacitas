@@ -2,6 +2,7 @@
 #define TEMPERATURE_SENSORS_SIMULATOR__PER__SENSOR_H
 
 #include <thread>
+#include <tuple>
 
 #include "../alg/dispatcher.h"
 #include "../dat/sensor_id.h"
@@ -15,6 +16,7 @@ using namespace tenacitas::lib;
 namespace temperature_sensors_simulator::per {
 
 struct sensor {
+  using events_published = std::tuple<evt::new_temperature>;
   sensor() = delete;
   sensor(const sensor &) = delete;
   sensor(sensor &) = delete;
@@ -33,8 +35,8 @@ struct sensor {
                 std::lock_guard<std::mutex> _lock(m_mutex);
                 m_current += m_increment;
               }
-              m_dispatcher->publish<evt::new_temperature>(m_sensor_id,
-                                                          m_current);
+              m_dispatcher->publish<sensor, evt::new_temperature>(m_sensor_id,
+                                                                  m_current);
             },
             p_interval) {}
 

@@ -211,18 +211,6 @@ template <cpt::event... t_events> struct dispatcher {
     _ite->add_subscriber(p_num_workers, p_factory);
   }
 
-  template <size_t t_idx = 0> void doit() {
-    if constexpr (t_idx >= std::tuple_size_v<events>) {
-      return;
-    } else {
-      std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[t_idx]);
-
-      std::get<t_idx>(m_event_queue_list_tuple).clear();
-
-      return doit<t_idx + 1>();
-    }
-  }
-
   /// \brief Removes all queues of all events
   void clear() {
     //    typename event_queue_list_mutex::size_type _mutex_index{0};
@@ -234,7 +222,7 @@ template <cpt::event... t_events> struct dispatcher {
     //      }
     //    }};
     //    traits::alg::traverse(_function, m_event_queue_list_tuple);
-    doit<0>();
+    clear<0>();
   }
 
   template <cpt::event t_event> void clear() {
@@ -429,6 +417,18 @@ private:
       std::array<std::mutex, std::tuple_size_v<events>>;
 
 private:
+  template <size_t t_idx = 0> void clear() {
+    if constexpr (t_idx >= std::tuple_size_v<events>) {
+      return;
+    } else {
+      std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[t_idx]);
+
+      std::get<t_idx>(m_event_queue_list_tuple).clear();
+
+      return clear<t_idx + 1>();
+    }
+  }
+
   /// \brief Stops all the queues
   // void stop() { stop_all(std::make_index_sequence<sizeof...(t_events)>{}); }
 
