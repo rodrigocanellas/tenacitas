@@ -1,19 +1,24 @@
+include (../../../../tenacitas.bld/qtcreator/common.pri)
 
+HEADERS += \
+        $$BASE_DIR_LIB/tenacitas.h
 
-TEMPLATE=subdirs
+#TEMPLATE=subdirs
 
-SUBDIRS = \
-        async \
-        calendar \
-        container \
-        conversions \
-        ipc \
-        log \
-        math \
-        number \
-        program \
-        test \
-        traits \
-        translation \
-        user
+#SUBDIRS = \
+#        tnct.lib
+
+#        async \
+#        calendar \
+#        container \
+#        conversions \
+#        ipc \
+#        log \
+#        math \
+#        number \
+#        program \
+#        test \
+#        traits \
+#        translation \
+#        user
 

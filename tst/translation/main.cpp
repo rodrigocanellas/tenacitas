@@ -8,18 +8,14 @@
 #include <sstream>
 #include <string>
 
-#include <tenacitas.lib/src/log/alg/logger.h>
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
-#include <tenacitas.lib/src/translation/alg/translator_from_file.h>
-#include <tenacitas.lib/src/translation/alg/translator_in_memory.h>
+#include <tenacitas.h>
 
 using namespace tenacitas::lib;
 
 struct from_memory {
-  bool operator()(const program::alg::options &) {
+  bool operator()(const tncta::program_options &) {
 
-    translation::alg::translator_in_memory _translator(
+    tncta::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -31,7 +27,7 @@ struct from_memory {
 };
 
 struct from_existing_file {
-  bool operator()(const program::alg::options &p_options) {
+  bool operator()(const tncta::program_options &p_options) {
     std::optional<std::string> _maybe{p_options.get_single_param("file_name")};
     if (!_maybe.has_value()) {
       TNCT_LOG_ERR("File name not provided");
@@ -39,7 +35,7 @@ struct from_existing_file {
     }
     std::string _file_name{std::move(_maybe.value())};
 
-    translation::alg::translator_from_file _translator;
+    tncta::translator_from_file _translator;
 
     if (!_translator.load(_file_name)) {
       return false;
@@ -54,8 +50,8 @@ struct from_existing_file {
 };
 
 struct from_non_existing_file {
-  bool operator()(const program::alg::options &) {
-    translation::alg::translator_from_file _translator;
+  bool operator()(const tncta::program_options &) {
+    tncta::translator_from_file _translator;
 
     return !_translator.load("file.dict");
   }
@@ -66,8 +62,8 @@ struct from_non_existing_file {
 };
 
 struct translate_non_existing_word {
-  bool operator()(const program::alg::options &) {
-    translation::alg::translator_in_memory _translator(
+  bool operator()(const tncta::program_options &) {
+    tncta::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -85,8 +81,8 @@ struct translate_non_existing_word {
 };
 
 struct translate_an_existing_word {
-  bool operator()(const program::alg::options &) {
-    translation::alg::translator_in_memory _translator(
+  bool operator()(const tncta::program_options &) {
+    tncta::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -103,9 +99,9 @@ struct translate_an_existing_word {
 
 int main(int argc, char **argv) {
 
-  log::alg::set_writer_cerr();
-  log::alg::set_debug_level();
-  test::alg::tester<> _test(argc, argv);
+  tncta::set_writer_cerr();
+  tncta::set_debug_level();
+  tncta::tester<> _test(argc, argv);
 
   run_test(_test, from_memory);
   run_test(_test, from_existing_file);
