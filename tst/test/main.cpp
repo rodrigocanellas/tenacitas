@@ -8,24 +8,23 @@
 #include <iostream>
 #include <string>
 
-#include <tenacitas.lib/src/program/alg/options.h>
-#include <tenacitas.lib/src/test/alg/tester.h>
+#include <tenacitas.h>
 
 using namespace tenacitas::lib;
 
 struct test_ok {
-  bool operator()(const program::alg::options &) { return true; }
+  bool operator()(const tncta::program_options &) { return true; }
 
   static std::string desc() { return "an ok test"; }
 };
 
 struct test_fail {
-  bool operator()(const program::alg::options &) { return true; }
+  bool operator()(const tncta::program_options &) { return true; }
   static std::string desc() { return "a fail test"; }
 };
 
 struct test_error {
-  bool operator()(const program::alg::options &) {
+  bool operator()(const tncta::program_options &) {
     try {
       throw std::runtime_error("test function raised an exception");
       return false;
@@ -40,7 +39,7 @@ struct test_error {
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
-    lib::test::alg::tester _test(argc, argv);
+    tncta::tester _test(argc, argv);
     run_test(_test, test_ok);
     run_test(_test, test_fail);
     run_test(_test, test_error);

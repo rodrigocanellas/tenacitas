@@ -1,16 +1,17 @@
 TEMPLATE=subdirs
 
 SUBDIRS = \
-        async    \
-        calendar  \
-        container  \
-        conversions \
         log \
-        math \
-        number \
+        factorial \
         test \
-        traits \
-        translation
+        tuple \
+        translation \
+	dispatcher \
+	executer \
+	sleeping_loop \
+	circular_queue \
+        matrix \
+        id
 
 #        crosswords \
 

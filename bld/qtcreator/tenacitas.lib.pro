@@ -4,7 +4,7 @@ TEMPLATE=subdirs
 SUBDIRS = \
     tst \
     src \
-    exp \
+    exp
 
 
 
