@@ -1,0 +1,4 @@
+<map id="tenacitas::lib::alg::sleeping_loop::stop" name="tenacitas::lib::alg::sleeping_loop::stop">
+<area shape="rect" id="node1" title="Stops the loop, if it was started." alt="" coords="283,5,439,47"/>
+<area shape="rect" id="node2" href="$dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#aaee8462abc38ac5f8491c38b33a1f404" title="Destructor The loops stops calling the function." alt="" coords="5,5,235,47"/>
+</map>

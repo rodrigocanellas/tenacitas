@@ -1,0 +1,31 @@
+\hypertarget{namespacetenacitas_1_1lib_1_1cpt_1_1internal}{}\doxysection{tenacitas\+::lib\+::cpt\+::internal Namespace Reference}
+\label{namespacetenacitas_1_1lib_1_1cpt_1_1internal}\index{tenacitas::lib::cpt::internal@{tenacitas::lib::cpt::internal}}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename t\+\_\+tuple , std\+::size\+\_\+t t\+\_\+idx$>$ }\\concept \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1cpt_1_1internal_a6c2820c402be15bcb37587e536c50a98}{has\+\_\+tuple\+\_\+element}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1cpt_1_1internal_a6c2820c402be15bcb37587e536c50a98}\label{namespacetenacitas_1_1lib_1_1cpt_1_1internal_a6c2820c402be15bcb37587e536c50a98}} 
+\index{tenacitas::lib::cpt::internal@{tenacitas::lib::cpt::internal}!has\_tuple\_element@{has\_tuple\_element}}
+\index{has\_tuple\_element@{has\_tuple\_element}!tenacitas::lib::cpt::internal@{tenacitas::lib::cpt::internal}}
+\doxysubsubsection{\texorpdfstring{has\_tuple\_element}{has\_tuple\_element}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+tuple , std\+::size\+\_\+t t\+\_\+idx$>$ \\
+concept tenacitas\+::lib\+::cpt\+::internal\+::has\+\_\+tuple\+\_\+element}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_a67f2395ecfd88d2745ee66a1570acdec}{requires}}(t\_tuple t) \{}
+\DoxyCodeLine{  \textcolor{keyword}{typename} std::tuple\_element\_t<t\_idx, std::remove\_const\_t<t\_tuple>>;}
+\DoxyCodeLine{  \{}
+\DoxyCodeLine{    get<t\_idx>(t)}
+\DoxyCodeLine{    \} -\/> std::convertible\_to<const std::tuple\_element\_t<t\_idx, t\_tuple> \&>;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 793 of file tenacitas.\+h.
+

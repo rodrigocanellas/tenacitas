@@ -1,0 +1,89 @@
+\hypertarget{namespacetenacitas_1_1lib_1_1alg_1_1internal}{}\doxysection{tenacitas\+::lib\+::alg\+::internal Namespace Reference}
+\label{namespacetenacitas_1_1lib_1_1alg_1_1internal}\index{tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__tuple}{is\+\_\+tuple}}
+\begin{DoxyCompactList}\small\item\em Type trait that identifies if an object is not a tuple. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__tuple_3_01std_1_1tuple_3_01t_8_8_8_01_4_01_4}{is\+\_\+tuple$<$ std\+::tuple$<$ t... $>$ $>$}}
+\begin{DoxyCompactList}\small\item\em Type trait that identifies if an object is a tuple. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1index}{index}}
+\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__pair}{is\+\_\+pair}}
+\begin{DoxyCompactList}\small\item\em Type trait that identifies if a type is not a {\ttfamily pair}. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__pair_3_01std_1_1pair_3_01t_8_8_8_01_4_01_4}{is\+\_\+pair$<$ std\+::pair$<$ t... $>$ $>$}}
+\begin{DoxyCompactList}\small\item\em Type trait that identifies if a type is a tuple. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__shared__ptr}{is\+\_\+shared\+\_\+ptr}}
+\begin{DoxyCompactList}\small\item\em Determines is a type is not a shared pointer. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__shared__ptr_3_01std_1_1shared__ptr_3_01t_01_4_01_4}{is\+\_\+shared\+\_\+ptr$<$ std\+::shared\+\_\+ptr$<$ t $>$ $>$}}
+\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__unique__ptr}{is\+\_\+unique\+\_\+ptr}}
+\begin{DoxyCompactList}\small\item\em Determines is a type is not a unique pointer. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__unique__ptr_3_01std_1_1unique__ptr_3_01t_01_4_01_4}{is\+\_\+unique\+\_\+ptr$<$ std\+::unique\+\_\+ptr$<$ t $>$ $>$}}
+\begin{DoxyCompactList}\small\item\em Determines is a type is a unique pointer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename t $>$ }\\using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_ac93bbe917c3e5c2c708e0f1d548e0fe1}{is\+\_\+smart\+\_\+ptr}} = std\+::conditional\+\_\+t$<$ \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__shared__ptr}{is\+\_\+shared\+\_\+ptr}}$<$ t $>$\+::value, std\+::true\+\_\+type, std\+::conditional\+\_\+t$<$ \mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__unique__ptr}{is\+\_\+unique\+\_\+ptr}}$<$ t $>$\+::value, std\+::true\+\_\+type, std\+::false\+\_\+type $>$ $>$
+\begin{DoxyCompactList}\small\item\em Determines if a type is a shared or unique pointer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename t\+\_\+num\+\_\+type $>$ }\\uint16\+\_\+t \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_a180f5b752ea680c45db146bc21b30fe1}{max\+\_\+str\+\_\+length}} ()
+\begin{DoxyCompactList}\small\item\em Maximum number of characters needed to represent a type of number. \end{DoxyCompactList}\item 
+{\footnotesize template$<$size\+\_\+t t\+\_\+idx, typename t\+\_\+type , cpt\+::tuple\+\_\+like t\+\_\+tuple$>$ }\\constexpr ssize\+\_\+t \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_aa4eb4cd6be03e580270f4166b99b2841}{idx}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1alg_1_1internal_ac93bbe917c3e5c2c708e0f1d548e0fe1}\label{namespacetenacitas_1_1lib_1_1alg_1_1internal_ac93bbe917c3e5c2c708e0f1d548e0fe1}} 
+\index{tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}!is\_smart\_ptr@{is\_smart\_ptr}}
+\index{is\_smart\_ptr@{is\_smart\_ptr}!tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}}
+\doxysubsubsection{\texorpdfstring{is\_smart\_ptr}{is\_smart\_ptr}}
+{\footnotesize\ttfamily template$<$typename t $>$ \\
+using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_ac93bbe917c3e5c2c708e0f1d548e0fe1}{tenacitas\+::lib\+::alg\+::internal\+::is\+\_\+smart\+\_\+ptr}} = typedef std\+::conditional\+\_\+t$<$\mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__shared__ptr}{is\+\_\+shared\+\_\+ptr}}$<$t$>$\+::value, std\+::true\+\_\+type, std\+::conditional\+\_\+t$<$\mbox{\hyperlink{structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__unique__ptr}{is\+\_\+unique\+\_\+ptr}}$<$t$>$\+::value, std\+::true\+\_\+type, std\+::false\+\_\+type$>$ $>$}
+
+
+
+Determines if a type is a shared or unique pointer. 
+
+
+
+Definition at line 864 of file tenacitas.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1alg_1_1internal_aa4eb4cd6be03e580270f4166b99b2841}\label{namespacetenacitas_1_1lib_1_1alg_1_1internal_aa4eb4cd6be03e580270f4166b99b2841}} 
+\index{tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}!idx@{idx}}
+\index{idx@{idx}!tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}}
+\doxysubsubsection{\texorpdfstring{idx()}{idx()}}
+{\footnotesize\ttfamily template$<$size\+\_\+t t\+\_\+idx, typename t\+\_\+type , cpt\+::tuple\+\_\+like t\+\_\+tuple$>$ \\
+constexpr ssize\+\_\+t tenacitas\+::lib\+::alg\+::internal\+::idx (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}}
+
+
+
+Definition at line 826 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1alg_1_1internal_a180f5b752ea680c45db146bc21b30fe1}\label{namespacetenacitas_1_1lib_1_1alg_1_1internal_a180f5b752ea680c45db146bc21b30fe1}} 
+\index{tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}!max\_str\_length@{max\_str\_length}}
+\index{max\_str\_length@{max\_str\_length}!tenacitas::lib::alg::internal@{tenacitas::lib::alg::internal}}
+\doxysubsubsection{\texorpdfstring{max\_str\_length()}{max\_str\_length()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+num\+\_\+type $>$ \\
+uint16\+\_\+t tenacitas\+::lib\+::alg\+::internal\+::max\+\_\+str\+\_\+length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Maximum number of characters needed to represent a type of number. 
+
+{\ttfamily \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_a180f5b752ea680c45db146bc21b30fe1}{internal\+::max\+\_\+str\+\_\+length$<$uint16\+\_\+t$>$()}}} is 5, while {\ttfamily \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1alg_1_1internal_a180f5b752ea680c45db146bc21b30fe1}{internal\+::max\+\_\+str\+\_\+length$<$uint32\+\_\+t$>$()}}} is 10
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+num\+\_\+type} & is the type of number \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 690 of file tenacitas.\+h.
+

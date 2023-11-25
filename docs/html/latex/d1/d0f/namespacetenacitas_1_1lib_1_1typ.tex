@@ -1,0 +1,200 @@
+\hypertarget{namespacetenacitas_1_1lib_1_1typ}{}\doxysection{tenacitas\+::lib\+::typ Namespace Reference}
+\label{namespacetenacitas_1_1lib_1_1typ}\index{tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_1_1internal}{internal}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1typ_1_1id}{id}}
+\begin{DoxyCompactList}\small\item\em creation of a unique identifier \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1typ_1_1uuid}{uuid}}
+\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1typ_1_1circular__queue}{circular\+\_\+queue}}
+\begin{DoxyCompactList}\small\item\em Implements a circular queue which size is increased if it becomes full. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtenacitas_1_1lib_1_1typ_1_1matrix}{matrix}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$cpt\+::event t\+\_\+event$>$ }\\using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a5fff5d5a1f4666907090329156ecde3d}{subscriber}} = std\+::function$<$ void(t\+\_\+event \&\&)$>$
+\begin{DoxyCompactList}\small\item\em Type of function that subscriber an event. \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a6577378f2c6497550fcec4fa7d921355}{queue\+\_\+id}} = size\+\_\+t
+\item 
+using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}{translation\+\_\+entry}} = uint32\+\_\+t
+\item 
+using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}{dictionary}} = std\+::map$<$ \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}{translation\+\_\+entry}}, std\+::string $>$
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923}{align}} \+: char \{ \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a811882fecd5c7618d7099ebbd39ea254}{left}} = \textquotesingle{}l\textquotesingle{}
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a7c4f29407893c334a6cb7a87bf045c0d}{right}} = \textquotesingle{}d\textquotesingle{}
+ \}
+\begin{DoxyCompactList}\small\item\em Type of alingnment when formating numbers. \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}{priority}} \+: uint8\+\_\+t \{ \newline
+\mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a21f25aaeda95888270706e909e7c919d}{lowest}} = 1
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ab7619bc8e14fe34d78820f979605ee8b}{very\+\_\+low}}
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a53cced8d281a1a0ace3cb6594daaa4f7}{low}}
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a075a3e36a0a52dcbc568c05788e8a713}{medium}}
+, \newline
+\mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a8d966b2253a917086c8604959e152243}{high}}
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8aaa4cea18ae7516f9a3c28d597055082f}{very\+\_\+high}}
+, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ade3706d29d1ad44cd7fdb9a5696491e2}{highest}}
+ \}
+\begin{DoxyCompactList}\small\item\em Defines the priority of an event publishing among other publishings for that event. The smallest the value, the lowest the priority. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::ostream \& \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_ac881ecfc7237f9f1c22aa31266bbbc6c}{operator$<$$<$}} (std\+::ostream \&p\+\_\+out, \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}{priority}} p\+\_\+priority)
+\begin{DoxyCompactList}\small\item\em Output operator for {\ttfamily priority}. \end{DoxyCompactList}\item 
+std\+::ostream \& \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a703067ac2ad7e8c0a93b0c27ffedbdad}{operator$<$$<$}} (std\+::ostream \&p\+\_\+out, const \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}{typ\+::dictionary}} \&p\+\_\+dictionary)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}\label{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!dictionary@{dictionary}}
+\index{dictionary@{dictionary}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{dictionary}{dictionary}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}{tenacitas\+::lib\+::typ\+::dictionary}} = typedef std\+::map$<$\mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}{translation\+\_\+entry}}, std\+::string$>$}
+
+
+
+Definition at line 3221 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a6577378f2c6497550fcec4fa7d921355}\label{namespacetenacitas_1_1lib_1_1typ_a6577378f2c6497550fcec4fa7d921355}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!queue\_id@{queue\_id}}
+\index{queue\_id@{queue\_id}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{queue\_id}{queue\_id}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a6577378f2c6497550fcec4fa7d921355}{tenacitas\+::lib\+::typ\+::queue\+\_\+id}} = typedef size\+\_\+t}
+
+
+
+Definition at line 1857 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a5fff5d5a1f4666907090329156ecde3d}\label{namespacetenacitas_1_1lib_1_1typ_a5fff5d5a1f4666907090329156ecde3d}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!subscriber@{subscriber}}
+\index{subscriber@{subscriber}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{subscriber}{subscriber}}
+{\footnotesize\ttfamily template$<$cpt\+::event t\+\_\+event$>$ \\
+using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a5fff5d5a1f4666907090329156ecde3d}{tenacitas\+::lib\+::typ\+::subscriber}} = typedef std\+::function$<$void(t\+\_\+event \&\&)$>$}
+
+
+
+Type of function that subscriber an event. 
+
+
+
+Definition at line 1813 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}\label{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!translation\_entry@{translation\_entry}}
+\index{translation\_entry@{translation\_entry}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{translation\_entry}{translation\_entry}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4d3028d01ee30a566fadeb0710d3a0ad}{tenacitas\+::lib\+::typ\+::translation\+\_\+entry}} = typedef uint32\+\_\+t}
+
+
+
+Definition at line 3219 of file tenacitas.\+h.
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923}\label{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!align@{align}}
+\index{align@{align}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{align}{align}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923}{tenacitas\+::lib\+::typ\+::align}} \+: char\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Type of alingnment when formating numbers. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{left@{left}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!left@{left}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a811882fecd5c7618d7099ebbd39ea254}\label{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a811882fecd5c7618d7099ebbd39ea254}} 
+left&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{right@{right}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!right@{right}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a7c4f29407893c334a6cb7a87bf045c0d}\label{namespacetenacitas_1_1lib_1_1typ_a4e8c35ace1165bfc941a1e9848eca923a7c4f29407893c334a6cb7a87bf045c0d}} 
+right&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 678 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!priority@{priority}}
+\index{priority@{priority}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{priority}{priority}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}{tenacitas\+::lib\+::typ\+::priority}} \+: uint8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Defines the priority of an event publishing among other publishings for that event. The smallest the value, the lowest the priority. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{lowest@{lowest}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!lowest@{lowest}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a21f25aaeda95888270706e909e7c919d}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a21f25aaeda95888270706e909e7c919d}} 
+lowest&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{very\_low@{very\_low}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!very\_low@{very\_low}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ab7619bc8e14fe34d78820f979605ee8b}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ab7619bc8e14fe34d78820f979605ee8b}} 
+very\+\_\+low&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{low@{low}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!low@{low}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a53cced8d281a1a0ace3cb6594daaa4f7}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a53cced8d281a1a0ace3cb6594daaa4f7}} 
+low&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{medium@{medium}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!medium@{medium}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a075a3e36a0a52dcbc568c05788e8a713}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a075a3e36a0a52dcbc568c05788e8a713}} 
+medium&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{high@{high}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!high@{high}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a8d966b2253a917086c8604959e152243}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8a8d966b2253a917086c8604959e152243}} 
+high&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{very\_high@{very\_high}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!very\_high@{very\_high}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8aaa4cea18ae7516f9a3c28d597055082f}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8aaa4cea18ae7516f9a3c28d597055082f}} 
+very\+\_\+high&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{highest@{highest}!tenacitas::lib::typ@{tenacitas::lib::typ}}\index{tenacitas::lib::typ@{tenacitas::lib::typ}!highest@{highest}}}\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ade3706d29d1ad44cd7fdb9a5696491e2}\label{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8ade3706d29d1ad44cd7fdb9a5696491e2}} 
+highest&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line 1817 of file tenacitas.\+h.
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_a703067ac2ad7e8c0a93b0c27ffedbdad}\label{namespacetenacitas_1_1lib_1_1typ_a703067ac2ad7e8c0a93b0c27ffedbdad}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::ostream\& tenacitas\+::lib\+::typ\+::operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{p\+\_\+out,  }\item[{const \mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a95c66fdb2c34d78dacb1b7128509a7ad}{typ\+::dictionary}} \&}]{p\+\_\+dictionary }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 3223 of file tenacitas.\+h.
+
+\mbox{\Hypertarget{namespacetenacitas_1_1lib_1_1typ_ac881ecfc7237f9f1c22aa31266bbbc6c}\label{namespacetenacitas_1_1lib_1_1typ_ac881ecfc7237f9f1c22aa31266bbbc6c}} 
+\index{tenacitas::lib::typ@{tenacitas::lib::typ}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!tenacitas::lib::typ@{tenacitas::lib::typ}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::ostream\& tenacitas\+::lib\+::typ\+::operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{p\+\_\+out,  }\item[{\mbox{\hyperlink{namespacetenacitas_1_1lib_1_1typ_a2eca6d7dd0e2805fc79d7b2d1316e9e8}{priority}}}]{p\+\_\+priority }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Output operator for {\ttfamily priority}. 
+
+
+
+Definition at line 1828 of file tenacitas.\+h.
+

@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['uuid_246',['uuid',['../d4/d4b/structtenacitas_1_1lib_1_1typ_1_1uuid.html#ada0c7514a3dd27ca8776b24827923378',1,'tenacitas::lib::typ::uuid::uuid()=default'],['../d4/d4b/structtenacitas_1_1lib_1_1typ_1_1uuid.html#ad88f1241b58e3331ac1a577f73f6700f',1,'tenacitas::lib::typ::uuid::uuid(const uuid &amp;)=default'],['../d4/d4b/structtenacitas_1_1lib_1_1typ_1_1uuid.html#a40ae814f34c0ddeaf7cb46837ca89e9a',1,'tenacitas::lib::typ::uuid::uuid(uuid &amp;)=default'],['../d4/d4b/structtenacitas_1_1lib_1_1typ_1_1uuid.html#afa9acd70916b68fc436e1cd64f064bf3',1,'tenacitas::lib::typ::uuid::uuid(std::array&lt; uint8_t, 16 &gt; &amp;&amp;p_value)'],['../d4/d4b/structtenacitas_1_1lib_1_1typ_1_1uuid.html#a0bc4fe6e749c1559e7fff32ae99a5e3b',1,'tenacitas::lib::typ::uuid::uuid(std::initializer_list&lt; uint8_t &gt; &amp;&amp;p_values)']]]
+];
