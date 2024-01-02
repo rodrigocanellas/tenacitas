@@ -3,7 +3,6 @@
 
 #include <list>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -109,7 +108,7 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
 
 struct options {
   options(int p_argc, char **p_argv) {
-    tncta::program_options _options;
+    tnctl::program_options_a _options;
     _options.parse(p_argc, p_argv,
                    {total_generator_option, amount_events_option,
                     amount_events_increment_option, interval_option,
@@ -173,7 +172,8 @@ struct options {
 
   std::string get_sqlite_file() const { return m_sqlite_file; }
 
-  typ::total_list get_total_generator(const tncta::program_options &p_options) {
+  typ::total_list
+  get_total_generator(const tnctl::program_options_a &p_options) {
     try {
       std::vector<typ::total> _total_generators;
       {
@@ -193,7 +193,8 @@ struct options {
     }
   }
 
-  typ::amount_list get_amount_events(const tncta::program_options &p_options) {
+  typ::amount_list
+  get_amount_events(const tnctl::program_options_a &p_options) {
     try {
       typ::amount_list _amount_events;
       {
@@ -214,7 +215,7 @@ struct options {
   }
 
   typ::amount_increment
-  get_amount_events_increment(const tncta::program_options &p_options) {
+  get_amount_events_increment(const tnctl::program_options_a &p_options) {
     try {
       typ::amount_increment _amount_events_increment = 0;
       std::optional<std::string> _maybe =
@@ -229,7 +230,7 @@ struct options {
     }
   }
 
-  typ::time_list get_intervals(const tncta::program_options &p_options) {
+  typ::time_list get_intervals(const tnctl::program_options_a &p_options) {
     try {
       typ::time_list _intervals;
       {
@@ -250,7 +251,7 @@ struct options {
   }
 
   typ::time_increment
-  get_interval_increment(const tncta::program_options &p_options) {
+  get_interval_increment(const tnctl::program_options_a &p_options) {
     try {
       typ::time_increment _interval_increment;
       std::optional<std::string> _maybe =
@@ -267,7 +268,7 @@ struct options {
     }
   }
 
-  typ::total_list get_total_queues(const tncta::program_options &p_options) {
+  typ::total_list get_total_queues(const tnctl::program_options_a &p_options) {
     try {
       typ::total_list _total_publishings;
       {
@@ -288,7 +289,7 @@ struct options {
   }
 
   typ::amount_list
-  get_amount_subscribers(const tncta::program_options &p_options) {
+  get_amount_subscribers(const tnctl::program_options_a &p_options) {
     try {
       typ::amount_list _amounts_subscribers;
       {
@@ -309,7 +310,7 @@ struct options {
   }
 
   typ::amount_increment
-  get_amount_subscribers_increment(const tncta::program_options &p_options) {
+  get_amount_subscribers_increment(const tnctl::program_options_a &p_options) {
     try {
       typ::amount_increment _amount_subscribers_increment = 0;
       std::optional<std::string> _maybe =
@@ -324,7 +325,7 @@ struct options {
     }
   }
 
-  typ::time_list get_sleeps(const tncta::program_options &p_options) {
+  typ::time_list get_sleeps(const tnctl::program_options_a &p_options) {
     try {
       typ::time_list _sleeps;
       {
@@ -345,7 +346,7 @@ struct options {
   }
 
   typ::time_increment
-  get_sleep_increment(const tncta::program_options &p_options) {
+  get_sleep_increment(const tnctl::program_options_a &p_options) {
     try {
       typ::time_increment _sleep_increment;
       std::optional<std::string> _maybe =
@@ -363,7 +364,7 @@ struct options {
     }
   }
 
-  std::string get_sqlite_file(const tncta::program_options &p_options) {
+  std::string get_sqlite_file(const tnctl::program_options_a &p_options) {
     try {
       std::string _db_file;
       std::optional<std::string> _maybe =

@@ -23,7 +23,7 @@ using namespace std::chrono_literals;
 #include "uix.h"
 
 int main(int argc, char **argv) {
-  //  tncta::set_trace_level();
+  //  tnctl::set_trace_level();
   try {
 
     alg::dispatcher::ptr _dispatcher{alg::dispatcher::create()};

@@ -36,37 +36,34 @@ using namespace std::chrono_literals;
 
 /// \brief Runs a test
 ///
-/// \param tester is an instance of tenacitas::alg::tester defined
+/// \param tester_a is an instance of tenacitas::tester_a defined
 /// below
 ///
 /// \param test is the name of a class that implements
 ///
 /// \code
-/// bool operator()(const tenacitas::lib::alg::program_options &)
+/// bool operator()(const tenacitas::lib::program_options_a &)
 ///
 /// static std::string desc()
 /// \endcode
 ///
 #define run_test(tester, test) tester.run<test>(#test)
-
 namespace tenacitas::lib {
 
-namespace alg {
-
 /// \brief Program options parser
-struct program_options {
+struct program_options_a {
   /// \brief name of an option
   typedef std::string name;
 
   /// \brief value of an option
   typedef std::string value;
 
-  program_options() = default;
-  ~program_options() = default;
-  program_options(const program_options &) = delete;
-  program_options(program_options &&) = delete;
-  program_options &operator=(const program_options &) = delete;
-  program_options &operator=(program_options &&) = delete;
+  program_options_a() = default;
+  ~program_options_a() = default;
+  program_options_a(const program_options_a &) = delete;
+  program_options_a(program_options_a &&) = delete;
+  program_options_a &operator=(const program_options_a &) = delete;
+  program_options_a &operator=(program_options_a &&) = delete;
   void *operator new(size_t) = delete;
 
   /// \brief parses the options passed to a program
@@ -181,21 +178,22 @@ struct program_options {
 
   /// \brief Output operator
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  const program_options &p_options) {
-    for (const program_options::name &_boolean : p_options.m_booleans) {
+                                  const program_options_a &p_options) {
+    for (const program_options_a::name &_boolean : p_options.m_booleans) {
       p_out << "[" << _boolean << "] ";
     }
 
-    for (program_options::singles ::const_iterator _ite =
+    for (program_options_a::singles ::const_iterator _ite =
              p_options.m_singles.begin();
          _ite != p_options.m_singles.end(); ++_ite) {
       p_out << "[" << _ite->first << "," << _ite->second << "] ";
     }
 
-    for (program_options::sets::const_iterator _ite = p_options.m_sets.begin();
+    for (program_options_a::sets::const_iterator _ite =
+             p_options.m_sets.begin();
          _ite != p_options.m_sets.end(); ++_ite) {
       p_out << "[" << _ite->first << " { ";
-      for (const program_options::value &_value : _ite->second) {
+      for (const program_options_a::value &_value : _ite->second) {
         p_out << _value << " ";
       }
       p_out << "} ]";
@@ -294,13 +292,9 @@ private:
   sets m_sets;
 };
 
-} // namespace alg
-
-namespace alg {
-
 /// \brief The test struct executes tests implemented in classes
 ///
-/// \tparam use makes tenacitas::alg::tester to be compiled only if
+/// \tparam use makes tenacitas::tester to be compiled only if
 /// actually used
 ///
 /// \code
@@ -312,18 +306,18 @@ namespace alg {
 /// using namespace tenacitas::lib::src;
 ///
 /// struct test_ok {
-///   bool operator()(const alg::program_options &) { return true; }
+///   bool operator()(const program_options &) { return true; }
 ///
 ///   static std::string desc() { return "an ok test"; }
 /// };
 ///
 /// struct test_fail {
-///   bool operator()(const alg::program_options &) { return true; }
+///   bool operator()(const program_options &) { return true; }
 ///   static std::string desc() { return "a fail test"; }
 /// };
 ///
 /// struct test_error {
-///  bool operator()(const alg::program_options &) {
+///  bool operator()(const program_options &) {
 ///    try {
 ///      throw std::runtime_error("test function raised an exception");
 ///      return false;
@@ -337,7 +331,7 @@ namespace alg {
 ///
 ///  int main(int argc, char **argv) {
 ///  try {
-///    test::alg::tester _tester(argc, argv);
+///    test::tester _tester(argc, argv);
 ///
 ///    run_test(_tester, test_ok);
 ///    run_test(_tester, test_fail);
@@ -349,7 +343,7 @@ namespace alg {
 ///}
 ///
 /// \endcode
-template <bool use = true> struct tester {
+template <bool use = true> struct tester_a {
   /// \brief Constructor
   /// If '--desc' is passed, \p operator() will print a description of the
   /// tests.
@@ -360,9 +354,9 @@ template <bool use = true> struct tester {
   /// \param argc number of strings in \p argv
   ///
   /// \param argv parameters passed to the program
-  tester(int argc, char **argv,
-         std::initializer_list<alg::program_options::name> &&p_mandatory =
-             {}) noexcept
+  tester_a(int argc, char **argv,
+           std::initializer_list<program_options_a::name> &&p_mandatory =
+               {}) noexcept
       : m_argc(argc), m_argv(argv) {
     m_pgm_name = m_argv[0];
 
@@ -374,11 +368,11 @@ template <bool use = true> struct tester {
       } else if (m_options.get_bool_param("desc")) {
         m_print_desc = true;
       } else {
-        std::optional<std::list<alg::program_options::value>> _maybe =
+        std::optional<std::list<program_options_a::value>> _maybe =
             m_options.get_set_param("exec");
         if (_maybe) {
           m_execute_tests = true;
-          std::list<alg::program_options::value> _tests_to_exec =
+          std::list<program_options_a::value> _tests_to_exec =
               std::move(*_maybe);
           m_tests_to_exec.insert(_tests_to_exec.begin(), _tests_to_exec.end());
         }
@@ -394,19 +388,19 @@ template <bool use = true> struct tester {
   }
 
   /// \brief Default constructor not allowed
-  tester() = delete;
+  tester_a() = delete;
 
   /// \brief Copy constructor not allowed
-  tester(const tester &) = delete;
+  tester_a(const tester_a &) = delete;
 
   /// \brief Copy constructor not allowed
-  tester(tester &&) = delete;
+  tester_a(tester_a &&) = delete;
 
   /// \brief Copy assignment not allowed
-  tester &operator=(const tester &) = delete;
+  tester_a &operator=(const tester_a &) = delete;
 
   /// \brief Move assignment not allowed
-  tester &operator=(tester &&) = delete;
+  tester_a &operator=(tester_a &&) = delete;
 
   /// \brief Executes the test
   ///  If the test passes, the message "SUCCESS for <name>" will be
@@ -416,7 +410,7 @@ template <bool use = true> struct tester {
   ///
   /// \tparam t_test_class must implement:
   /// \code
-  /// bool operator()(const alg::program_options &)
+  /// bool operator()(const program_options &)
   ///
   /// static std::string desc()
   /// \endcode
@@ -451,7 +445,7 @@ private:
   /// \brief Executes the test
   /// \tparam t_test_class must implement:
   /// \code
-  /// bool operator()(const alg::program_options &)
+  /// bool operator()(const program_options &)
   ///
   /// static std::string desc()
   /// \endcode
@@ -528,74 +522,67 @@ private:
   /// \brief Set of tests to execute
   std::set<std::string> m_tests_to_exec;
 
-  alg::program_options m_options;
+  program_options_a m_options;
 };
 
-} // namespace alg
-
-namespace cpt {
-
 template <typename t>
-concept id =
+concept id_c =
     std::unsigned_integral<std::remove_const_t<std::remove_reference_t<t>>>;
 
-}
-
-namespace typ {
-
 /// \brief creation of a unique identifier
-struct id {
+struct id_t {
   /// \brief Identifier based on a number
-  template <typename t_number> inline id(t_number p_value) : m_value(p_value) {}
+  template <typename t_number>
+  inline id_t(t_number p_value) : m_value(p_value) {}
 
   /// \brief Identifier based on a pointer value
   template <typename t_this>
-  id(t_this *p_this) : m_value(reinterpret_cast<decltype(m_value)>(p_this)) {}
+  id_t(t_this *p_this) : m_value(reinterpret_cast<decltype(m_value)>(p_this)) {}
 
   /// \brief Identifier self generated
-  id() {
+  id_t() {
     std::this_thread::sleep_for(5ns);
     m_value = static_cast<decltype(m_value)>(
         std::chrono::high_resolution_clock::now().time_since_epoch().count());
   }
 
-  id(const id &) = default;
-  id(id &&) = default;
-  id &operator=(const id &) = default;
-  id &operator=(id &&) = default;
+  id_t(const id_t &) = default;
+  id_t(id_t &&) = default;
+  id_t &operator=(const id_t &) = default;
+  id_t &operator=(id_t &&) = default;
 
   /// \brief
-  inline constexpr bool operator==(const id &p_uuid) const {
+  inline constexpr bool operator==(const id_t &p_uuid) const {
     return m_value == p_uuid.m_value;
   }
 
   /// \brief
-  inline constexpr bool operator!=(const id &p_uuid) const {
+  inline constexpr bool operator!=(const id_t &p_uuid) const {
     return m_value != p_uuid.m_value;
   }
 
   /// \brief
-  inline constexpr bool operator>(const id &p_uuid) const {
+  inline constexpr bool operator>(const id_t &p_uuid) const {
     return m_value > p_uuid.m_value;
   }
 
   /// \brief
-  inline constexpr bool operator<(const id &p_uuid) const {
+  inline constexpr bool operator<(const id_t &p_uuid) const {
     return m_value < p_uuid.m_value;
   }
 
   /// \brief
-  inline constexpr bool operator>=(const id &p_uuid) const {
+  inline constexpr bool operator>=(const id_t &p_uuid) const {
     return m_value >= p_uuid.m_value;
   }
 
   /// \brief
-  inline constexpr bool operator<=(const id &p_uuid) const {
+  inline constexpr bool operator<=(const id_t &p_uuid) const {
     return m_value <= p_uuid.m_value;
   }
 
   /// \brief Outputs the last 4 digits of the identifier
-  friend std::ostream &operator<<(std::ostream &p_out, const id &p_uuid) {
+  friend std::ostream &operator<<(std::ostream &p_out, const id_t &p_uuid) {
     p_out << p_uuid.string();
     return p_out;
   }
@@ -661,33 +648,17 @@ private:
   value m_value;
 };
 
-} // namespace typ
-
-namespace alg {
-
-template <cpt::id t_id> t_id create_id() {
-  std::this_thread::sleep_for(5ns);
-  return static_cast<t_id>(
-      std::chrono::high_resolution_clock::now().time_since_epoch().count());
-}
-
-} // namespace alg
-
-namespace typ {
 /// \brief Type of alingnment when formating numbers
-enum class align : char { left = 'l', right = 'd' };
-} // namespace typ
-
-namespace alg {
+enum class align_t : char { left = 'l', right = 'd' };
 
 namespace internal {
 /// \brief Maximum number of characters needed to represent a type of number
 ///
-/// <tt>internal::max_str_length<uint16_t>()</tt> is 5, while
-/// <tt>internal::max_str_length<uint32_t>()</tt> is 10
+/// <tt>internal::max_str_length_a<uint16_t>()</tt> is 5, while
+/// <tt>internal::max_str_length_a<uint32_t>()</tt> is 10
 ///
 /// \tparam t_num_type is the type of number
-template <typename t_num_type> inline uint16_t max_str_length() {
+template <typename t_num_type> inline uint16_t max_str_length_a() {
   return (
       static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
       1);
@@ -708,17 +679,17 @@ template <typename t_num_type> inline uint16_t max_str_length() {
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
 template <typename t_num_type>
-inline std::string format_number(t_num_type p_num, char p_fill = '0',
-                                 typ::align p_align = typ::align::right) {
+inline std::string format_number_a(t_num_type p_num, char p_fill = '0',
+                                   align_t p_align = align_t::right) {
   std::stringstream _stream;
-  _stream << (p_align == typ::align::right ? std::right : std::left)
-          << std::fixed << std::setfill(p_fill)
-          << std::setw(internal::max_str_length<t_num_type>()) << p_num;
+  _stream << (p_align == align_t::right ? std::right : std::left) << std::fixed
+          << std::setfill(p_fill)
+          << std::setw(internal::max_str_length_a<t_num_type>()) << p_num;
   return _stream.str();
 }
 
 /// \brief Specialization for uint8_t of \p
-/// tenacitas::lib::alg::format_number
+/// tenacitas::lib::format_number
 ///
 /// \param p_num is the value of the number to be formated
 ///
@@ -728,17 +699,17 @@ inline std::string format_number(t_num_type p_num, char p_fill = '0',
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
 inline std::string format_number(uint8_t p_num, char p_fill = '0',
-                                 typ::align p_align = typ::align::right) {
+                                 align_t p_align = align_t::right) {
   std::stringstream _stream;
-  _stream << (p_align == typ::align::right ? std::right : std::left)
-          << std::fixed << std::setfill(p_fill)
-          << std::setw(internal::max_str_length<uint8_t>())
+  _stream << (p_align == align_t::right ? std::right : std::left) << std::fixed
+          << std::setfill(p_fill)
+          << std::setw(internal::max_str_length_a<uint8_t>())
           << static_cast<uint16_t>(p_num);
   return _stream.str();
 }
 
 /// \brief Specialization for int8_t of \p
-/// tenacitas::lib::alg::format_number
+/// tenacitas::lib::format_number
 ///
 /// \param p_num is the value of the number to be formated
 ///
@@ -748,17 +719,17 @@ inline std::string format_number(uint8_t p_num, char p_fill = '0',
 /// \param p_align defines if \p p_num will be aligned at left, right, or
 /// center of the string
 inline std::string format_number(int8_t p_num, char p_fill = '0',
-                                 typ::align p_align = typ::align::right) {
+                                 align_t p_align = align_t::right) {
   std::stringstream _stream;
-  _stream << (p_align == typ::align::right ? std::right : std::left)
-          << std::fixed << std::setfill(p_fill)
-          << std::setw(internal::max_str_length<uint8_t>())
+  _stream << (p_align == align_t::right ? std::right : std::left) << std::fixed
+          << std::setfill(p_fill)
+          << std::setw(internal::max_str_length_a<uint8_t>())
           << static_cast<int16_t>(p_num);
   return _stream.str();
 }
 
 /// \brief Specialization for uint8_t of \p
-/// tenacitas::lib::alg::format_number
+/// tenacitas::lib::format_number
 ///
 /// \param p_num is the value of the number to be formated
 ///
@@ -770,27 +741,21 @@ inline std::string format_number(int8_t p_num, char p_fill = '0',
 template <typename t_num_type>
 inline std::string format_number(t_num_type p_num, uint8_t p_size,
                                  char p_fill = '0',
-                                 typ::align p_align = typ::align::right) {
+                                 align_t p_align = align_t::right) {
   std::stringstream _stream;
-  _stream << (p_align == typ::align::right ? std::right : std::left)
-          << std::fixed << std::setfill(p_fill)
+  _stream << (p_align == align_t::right ? std::right : std::left) << std::fixed
+          << std::setfill(p_fill)
           << std::setw(p_size)
-          //            << std::setprecision(internal::max_str_length<long
+          //            << std::setprecision(internal::max_str_length_a<long
           //            double>())
           << p_num;
   return _stream.str();
 }
 
-} // namespace alg
-
-namespace cpt {
-// \log_file Solution based on
-// https://stackoverflow.com/questions/68443804/c20-concept-to-check-tuple-like-types
-
 namespace internal {
 
 template <typename t_tuple, std::size_t t_idx>
-concept has_tuple_element = requires(t_tuple t) {
+concept has_tuple_element_c = requires(t_tuple t) {
   typename std::tuple_element_t<t_idx, std::remove_const_t<t_tuple>>;
   {
     get<t_idx>(t)
@@ -799,153 +764,126 @@ concept has_tuple_element = requires(t_tuple t) {
 
 } // namespace internal
 
+// \log_file Solution based on
+// https://stackoverflow.com/questions/68443804/c20-concept-to-check-tuple-like-types
 template <typename t_tuple>
-concept tuple_like = !std::is_reference_v<t_tuple> && requires(t_tuple t) {
+concept tuple_like_c = !std::is_reference_v<t_tuple> && requires(t_tuple t) {
   typename std::tuple_size<t_tuple>::type;
   requires std::derived_from<
       std::tuple_size<t_tuple>,
       std::integral_constant<std::size_t, std::tuple_size_v<t_tuple>>>;
 }
 &&[]<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-  return (internal::has_tuple_element<t_tuple, t_idx> && ...);
+  return (internal::has_tuple_element_c<t_tuple, t_idx> && ...);
 }
 (std::make_index_sequence<std::tuple_size_v<t_tuple>>());
 
-} // namespace cpt
-
-namespace alg {
-
 namespace internal {
-/// \brief Type trait that identifies if an object is not a tuple
-template <typename> struct is_tuple : std::false_type {};
 
-/// \brief Type trait that identifies if an object is a tuple
-template <typename... t> struct is_tuple<std::tuple<t...>> : std::true_type {};
-
-template <size_t t_idx, typename t_type, cpt::tuple_like t_tuple>
-constexpr ssize_t idx() {
+template <size_t t_idx, typename t_type, tuple_like_c t_tuple>
+constexpr ssize_t idx_a() {
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return -1;
   } else if constexpr (std::is_same_v<t_type,
                                       std::tuple_element_t<t_idx, t_tuple>>) {
     return static_cast<ssize_t>(t_idx);
   } else {
-    return idx<t_idx + 1, t_type, t_tuple>();
+    return idx_a<t_idx + 1, t_type, t_tuple>();
   }
 }
 
-template <typename t_type, cpt::tuple_like t_types> struct index {
-  static constexpr ssize_t value = idx<0, t_type, t_types>();
+} // namespace internal
+
+/// \brief Type trait that identifies if an object is not a tuple
+template <typename> struct is_tuple_r : std::false_type {};
+
+/// \brief Type trait that identifies if an object is a tuple
+template <typename... t>
+struct is_tuple_r<std::tuple<t...>> : std::true_type {};
+
+template <typename t_type, tuple_like_c t_types> struct index_r {
+  static constexpr ssize_t value = internal::idx_a<0, t_type, t_types>();
 };
 
 /// \brief Type trait that identifies if a type is not a \p pair
-template <typename> struct is_pair { const static bool value{false}; };
+template <typename> struct is_pair_r : std::false_type {};
 
 /// \brief Type trait that identifies if a type is a tuple
-template <typename... t> struct is_pair<std::pair<t...>> {
-  const static bool value{true};
-};
+template <typename... t> struct is_pair_r<std::pair<t...>> : std::true_type {};
 
 /// \brief Determines is a type is not a shared pointer
-template <typename t> struct is_shared_ptr : std::false_type {};
+template <typename t> struct is_shared_ptr_r : std::false_type {};
 
 template <typename t>
-struct is_shared_ptr<std::shared_ptr<t>> : std::true_type {};
+struct is_shared_ptr_r<std::shared_ptr<t>> : std::true_type {};
 
 /// \brief Determines is a type is not a unique pointer
-template <typename t> struct is_unique_ptr : std::false_type {};
+template <typename t> struct is_unique_ptr_r : std::false_type {};
 
 /// \brief Determines is a type is a unique pointer
 template <typename t>
-struct is_unique_ptr<std::unique_ptr<t>> : std::true_type {};
+struct is_unique_ptr_r<std::unique_ptr<t>> : std::true_type {};
 
 /// \brief Determines if a type is a shared or unique pointer
 template <typename t>
-using is_smart_ptr =
-    std::conditional_t<is_shared_ptr<t>::value, std::true_type,
-                       std::conditional_t<is_unique_ptr<t>::value,
+using is_smart_ptr_r =
+    std::conditional_t<is_shared_ptr_r<t>::value, std::true_type,
+                       std::conditional_t<is_unique_ptr_r<t>::value,
                                           std::true_type, std::false_type>>;
-
-} // namespace internal
-
-/// \brief Alias for a \p is_tuple value
-template <typename t> constexpr bool is_tuple_v = internal::is_tuple<t>::value;
-
-template <typename t_type, cpt::tuple_like t_types>
-constexpr ssize_t index_v = internal::index<t_type, t_types>::value;
 
 template <size_t t_idx, typename... t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse(std::tuple<t_function...> p_function,
-                                  std::tuple<t_data...> &p_data) {
+         t_data &>) void traverse_a(std::tuple<t_function...> p_function,
+                                    std::tuple<t_data...> &p_data) {
   std::get<t_idx>(p_function)(std::get<t_idx>(p_data));
 }
 
 template <size_t... t_idxs, typename... t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse(std::index_sequence<t_idxs...>,
-                                  std::tuple<t_function...> p_function,
-                                  std::tuple<t_data...> &p_data) {
-  (traverse<t_idxs>(p_function, p_data), ...);
+         t_data &>) void traverse_a(std::index_sequence<t_idxs...>,
+                                    std::tuple<t_function...> p_function,
+                                    std::tuple<t_data...> &p_data) {
+  (traverse_a<t_idxs>(p_function, p_data), ...);
 }
 
 template <typename... t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse(std::tuple<t_function...> p_function,
-                                  std::tuple<t_data...> &p_data) {
-  traverse(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
+         t_data &>) void traverse_a(std::tuple<t_function...> p_function,
+                                    std::tuple<t_data...> &p_data) {
+  traverse_a(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
 }
 
 template <size_t t_idx, typename t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
-         void, t_function, t_data &>) void traverse(t_function p_function,
-                                                    std::tuple<t_data...>
-                                                        &p_data) {
+         void, t_function, t_data &>) void traverse_a(t_function p_function,
+                                                      std::tuple<t_data...>
+                                                          &p_data) {
   p_function(std::get<t_idx>(p_data));
 }
 
 template <size_t... t_idxs, typename t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
          void, t_function,
-         t_data &>) void traverse(std::index_sequence<t_idxs...>,
-                                  t_function p_function,
-                                  std::tuple<t_data...> &p_data) {
-  (traverse<t_idxs>(p_function, p_data), ...);
+         t_data &>) void traverse_a(std::index_sequence<t_idxs...>,
+                                    t_function p_function,
+                                    std::tuple<t_data...> &p_data) {
+  (traverse_a<t_idxs>(p_function, p_data), ...);
 }
 
 template <typename t_function, typename... t_data>
 requires(... and std::is_invocable_r_v<
-         void, t_function, t_data &>) void traverse(t_function p_function,
-                                                    std::tuple<t_data...>
-                                                        &p_data) {
-  traverse(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
+         void, t_function, t_data &>) void traverse_a(t_function p_function,
+                                                      std::tuple<t_data...>
+                                                          &p_data) {
+  traverse_a(std::make_index_sequence<sizeof...(t_data)>{}, p_function, p_data);
 }
-
-/// \brief Alias for a \p is_pair value
-template <typename t> constexpr bool is_pair_v = internal::is_pair<t>::value;
-
-/// \brief Alias for a \p is_shared_ptr value
-template <typename t>
-constexpr bool is_shared_ptr_v = internal::is_shared_ptr<t>::value;
-
-/// \brief Alias for a \p is_unique_ptr value
-template <typename t>
-constexpr bool is_unique_ptr_v = internal::is_unique_ptr<t>::value;
-
-/// \brief Alias to determine if a type is shared or unique pointer
-template <typename T>
-constexpr bool is_smart_ptr_v = internal::is_smart_ptr<T>::value;
-
-} // namespace alg
 
 #ifdef TENACITAS_LOG
 
-namespace typ { /// \brief Defines the possible log levels
-
-enum class log_level : int8_t {
+enum class log_level_t : int8_t {
   test = -2,
   no_log = -1,
   trace = 0,
@@ -960,27 +898,27 @@ enum class log_level : int8_t {
 ///
 /// \param p_out is the output stream
 /// \param p_level is the level to be written to p_out
-inline std::ostream &operator<<(std::ostream &p_out, log_level p_level) {
+inline std::ostream &operator<<(std::ostream &p_out, log_level_t p_level) {
   switch (p_level) {
-  case log_level::test:
+  case log_level_t::test:
     p_out << "TST";
     break;
-  case log_level::trace:
+  case log_level_t::trace:
     p_out << "TRA";
     break;
-  case log_level::debug:
+  case log_level_t::debug:
     p_out << "DEB";
     break;
-  case log_level::info:
+  case log_level_t::info:
     p_out << "INF";
     break;
-  case log_level::warn:
+  case log_level_t::warn:
     p_out << "WAR";
     break;
-  case log_level::error:
+  case log_level_t::error:
     p_out << "ERR";
     break;
-  case log_level::fatal:
+  case log_level_t::fatal:
     p_out << "FAT";
     break;
   default:
@@ -989,9 +927,6 @@ inline std::ostream &operator<<(std::ostream &p_out, log_level p_level) {
 
   return p_out;
 }
-} // namespace typ
-
-namespace alg {
 
 namespace internal {
 
@@ -1007,26 +942,26 @@ static uint8_t max_log_file_name_lenght{15};
 /// is being writen; \p thread-id is the id of the thread that is logging; \p
 /// line-number is the number of the line that is logging; contents are the log
 /// message specific contents
-template <bool use = true> class log_wrapper {
+template <bool use = true> class log_wrapper_a {
 public:
   /// \brief Responsible for actually writing the log message
   typedef std::function<void(std::string &&)> writer;
 
 public:
   /// \brief Default contructor not allowed
-  log_wrapper() = default;
+  log_wrapper_a() = default;
 
   /// \brief Copy constructor not allowed
-  log_wrapper(const log_wrapper &) = delete;
+  log_wrapper_a(const log_wrapper_a &) = delete;
 
   /// \brief Move constructor not allowed
-  log_wrapper(log_wrapper &&) = delete;
+  log_wrapper_a(log_wrapper_a &&) = delete;
 
   /// \brief Copy assignment not allowed
-  log_wrapper &operator=(const log_wrapper &) = delete;
+  log_wrapper_a &operator=(const log_wrapper_a &) = delete;
 
   /// \brief Move assignment not allowed
-  log_wrapper &operator=(log_wrapper &&) = delete;
+  log_wrapper_a &operator=(log_wrapper_a &&) = delete;
 
   /// \brief New operator not allowed
   void *operator new(size_t) = delete;
@@ -1068,14 +1003,14 @@ public:
   template <typename... t_params>
   inline static void test(const char *p_log_file, uint16_t p_line,
                           t_params &&...p_params) {
-    write(typ::log_level::test, p_log_file, p_line,
+    write(log_level_t::test, p_log_file, p_line,
           std::forward<t_params>(p_params)...);
   }
 
   /// \brief Logs message with \p trace severity
   /// Each parameter must implement the output operator.
   /// The log message will only be printed if the current log level is \p
-  /// typ::level::trace
+  /// level::trace
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1087,8 +1022,8 @@ public:
   template <typename... t_params>
   inline static void trace(const char *p_log_file, uint16_t p_line,
                            t_params &&...p_params) {
-    if (typ::log_level::trace >= g_level) {
-      write(typ::log_level::trace, p_log_file, p_line,
+    if (log_level_t::trace >= g_level) {
+      write(log_level_t::trace, p_log_file, p_line,
             std::forward<t_params>(p_params)...);
     }
   }
@@ -1096,7 +1031,7 @@ public:
   /// \brief Logs message with \p debug severity
   /// Each parameter must implement the output operator.
   /// The log message will only be printed if the current log level is \p
-  /// typ::level::debug or \p typ::level::trace
+  /// level::debug or \p level::trace
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1108,8 +1043,8 @@ public:
   template <typename... t_params>
   inline static void debug(const char *p_log_file, uint16_t p_line,
                            t_params &&...p_params) {
-    if (typ::log_level::debug >= g_level) {
-      write(typ::log_level::debug, p_log_file, p_line,
+    if (log_level_t::debug >= g_level) {
+      write(log_level_t::debug, p_log_file, p_line,
             std::forward<t_params>(p_params)...);
     }
   }
@@ -1117,7 +1052,7 @@ public:
   /// \brief Logs message with \p info severity
   /// Each parameter must implement the output operator.
   /// The log message will only be printed if the current log level is \p
-  /// typ::level::info, \p typ::level::debug or \p typ::level::trace
+  /// level::info, \p level::debug or \p level::trace
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1129,8 +1064,8 @@ public:
   template <typename... t_params>
   inline static void info(const char *p_log_file, uint16_t p_line,
                           t_params &&...p_params) {
-    if (typ::log_level::info >= g_level) {
-      write(typ::log_level::info, p_log_file, p_line,
+    if (log_level_t::info >= g_level) {
+      write(log_level_t::info, p_log_file, p_line,
             std::forward<t_params>(p_params)...);
     }
   }
@@ -1138,8 +1073,8 @@ public:
   /// \brief Logs message with \p warn severity
   /// Each parameter must implement the output operator.
   /// The log message will only be printed if the current log level is \p
-  /// typ::level::warn, \p typ::level::info, \p typ::level::debug or \p
-  /// typ::level::trace
+  /// level::warn, \p level::info, \p level::debug or \p
+  /// level::trace
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1151,15 +1086,15 @@ public:
   template <typename... t_params>
   inline static void warn(const char *p_log_file, uint16_t p_line,
                           t_params &&...p_params) {
-    if (typ::log_level::warn >= g_level) {
-      write(typ::log_level::warn, p_log_file, p_line,
+    if (log_level_t::warn >= g_level) {
+      write(log_level_t::warn, p_log_file, p_line,
             std::forward<t_params>(p_params)...);
     }
   }
 
   /// \brief Logs message with \p error severity
   /// Each parameter must implement the output operator.
-  /// \p typ::level::error messages are allways logged
+  /// \p level::error messages are allways logged
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1171,13 +1106,13 @@ public:
   template <typename... t_params>
   inline static void error(const char *p_log_file, uint16_t p_line,
                            t_params &&...p_params) {
-    write(typ::log_level::error, p_log_file, p_line,
+    write(log_level_t::error, p_log_file, p_line,
           std::forward<t_params>(p_params)...);
   }
 
   /// \brief Logs message with \p fatal severity
   /// Each parameter must implement the output operator.
-  /// \p typ::level::fatal messages are allways logged
+  /// \p level::fatal messages are allways logged
   ///
   /// \tparam t_params are the types of the values to be logged.
   ///
@@ -1189,14 +1124,14 @@ public:
   template <typename... t_params>
   inline static void fatal(const char *p_log_file, uint16_t p_line,
                            t_params &&...p_params) {
-    write(typ::log_level::fatal, p_log_file, p_line,
+    write(log_level_t::fatal, p_log_file, p_line,
           std::forward<t_params>(p_params)...);
   }
 
-  inline static void set_trace() { g_level = typ::log_level::trace; }
-  inline static void set_debug() { g_level = typ::log_level::debug; }
-  inline static void set_info() { g_level = typ::log_level::info; }
-  inline static void set_warn() { g_level = typ::log_level::warn; }
+  inline static void set_trace() { g_level = log_level_t::trace; }
+  inline static void set_debug() { g_level = log_level_t::debug; }
+  inline static void set_info() { g_level = log_level_t::info; }
+  inline static void set_warn() { g_level = log_level_t::warn; }
 
 private:
   /// \brief Actually writes the message
@@ -1212,7 +1147,7 @@ private:
   ///
   /// \param p_params are the contens of the log message
   template <typename... t_params>
-  static void write(typ::log_level p_level, const char *p_log_file,
+  static void write(log_level_t p_level, const char *p_log_file,
                     uint16_t p_line, t_params &&...p_params) {
     std::stringstream _stream;
 
@@ -1228,16 +1163,15 @@ private:
              localtime(&_now_s));
 
     _stream << p_level << m_separator << _time_str << ','
-            << alg::format_number(
+            << format_number(
                    static_cast<uint32_t>(_now_us - (_now_s * 1000000)), 6, '0',
-                   typ::align::right)
+                   align_t::right)
             << m_separator
             //            << _now_us - (_now_s * 1000000) << m_separator
             << std::this_thread::get_id() << m_separator << std::setfill(' ')
             << std::left << std::setw(max_log_file_name_lenght)
             << std::filesystem::path(p_log_file).filename().string()
-            << m_separator << alg::format_number(p_line, uint8_t{5})
-            << m_separator;
+            << m_separator << format_number(p_line, uint8_t{5}) << m_separator;
 
     format(_stream, std::forward<t_params>(p_params)...);
     _stream << '\n';
@@ -1264,7 +1198,7 @@ private:
   /// parameter
   template <typename t>
   static void format(std::ostream &p_stream, const t &p_t) {
-    if constexpr (alg::is_tuple_v<std::decay_t<t>>) {
+    if constexpr (is_tuple_r<std::decay_t<t>>::value) {
       format(p_stream, '(');
       format<0>(p_stream, p_t);
       format(p_stream, ')');
@@ -1379,52 +1313,52 @@ private:
   static writer m_writer;
 
   /// \brief Current log level
-  static typ::log_level g_level;
+  static log_level_t g_level;
 };
 
-template <bool use> std::mutex log_wrapper<use>::m_mutex;
+template <bool use> std::mutex log_wrapper_a<use>::m_mutex;
 
 /// \brief Used to separate parts of the log message
-template <bool use> char log_wrapper<use>::m_separator{'|'};
+template <bool use> char log_wrapper_a<use>::m_separator{'|'};
 
 /// \brief Function that actually writes the log message
 ///
 /// The default implementation writes the \p std::cerr
 template <bool use>
-typename log_wrapper<use>::writer log_wrapper<use>::m_writer{
+typename log_wrapper_a<use>::writer log_wrapper_a<use>::m_writer{
     [](std::string &&p_str) -> void { std::cerr << p_str; }};
 
 /// \brief Current log level
-template <bool use>
-typ::log_level log_wrapper<use>::g_level{typ::log_level::warn};
+template <bool use> log_level_t log_wrapper_a<use>::g_level{log_level_t::warn};
 
 /// \brief Writes log messages to a log_file
 ///
 /// A maximum log_file size is defined, and when this size is exceeded, a new
 /// log_file is created
-struct log_file {
+struct log_file_a {
   /// \brief Constructor
   ///
-  /// \param p_log_file_name base log_file name, the actual log_file name is
+  /// \param p_log_file_name base log_file_a name, the actual log_file_a name is
   /// this name appended with a timestamp with microsecs precision
   ///
-  /// In this case, the maximum log_file size is 5MB
-  log_file(const std::string &p_log_file_name) : m_base_name(p_log_file_name) {
+  /// In this case, the maximum log_file_a size is 5MB
+  log_file_a(const std::string &p_log_file_name)
+      : m_base_name(p_log_file_name) {
     open_log_file();
   }
 
   /// \brief Constructor
   ///
-  /// \param p_log_file_name base log_file name, the actual log_file name is
+  /// \param p_log_file_name base log_file_a name, the actual log_file_a name is
   /// this name appended with a timestamp with microsecs precision
   ///
-  /// \param p_size_in_bytes is the maximum log_file size
-  log_file(const std::string &p_log_file_name, uint32_t p_size_in_bytes)
+  /// \param p_size_in_bytes is the maximum log_file_a size
+  log_file_a(const std::string &p_log_file_name, uint32_t p_size_in_bytes)
       : m_base_name(p_log_file_name), m_max_size(p_size_in_bytes) {
     open_log_file();
   }
 
-  /// \brief Writes a string to the log_file
+  /// \brief Writes a string to the log_file_a
   void operator()(std::string &&p_str) {
     auto _size = static_cast<decltype(m_max_size)>(p_str.size());
     if ((m_current_size + _size) > m_max_size) {
@@ -1463,99 +1397,89 @@ private:
 } // namespace internal
 
 ///// \brief Sets the global log level as 'trace'
-inline void set_trace_level() { internal::log_wrapper<>::set_trace(); }
+inline void set_trace_level() { internal::log_wrapper_a<>::set_trace(); }
 
 /// \brief Sets the global log level as 'debug'
-inline void set_debug_level() { internal::log_wrapper<>::set_debug(); }
+inline void set_debug_level() { internal::log_wrapper_a<>::set_debug(); }
 
 /// \brief Sets the global log level as 'info'
-inline void set_info_level() { internal::log_wrapper<>::set_info(); }
+inline void set_info_level() { internal::log_wrapper_a<>::set_info(); }
 
 /// \brief Sets the global log level as 'warn'
-inline void set_warn_level() { internal::log_wrapper<>::set_warn(); }
+inline void set_warn_level() { internal::log_wrapper_a<>::set_warn(); }
 
 /// \brief Defines that log messages will be written to \p std::cerr
 inline void set_writer_cerr() {
-  internal::log_wrapper<>::set_writer(
+  internal::log_wrapper_a<>::set_writer(
       [](std::string &&p_str) -> void { std::cerr << p_str; });
 }
 
 /// \brief Defines that log messages will be written to \p std::cout
 inline void set_writer_cout() {
-  internal::log_wrapper<>::set_writer(
+  internal::log_wrapper_a<>::set_writer(
       [](std::string &&p_str) -> void { std::cout << p_str; });
 }
 
 /// \brief Defines that log messages will be written to \p std::clog
 inline void set_writer_clog() {
-  internal::log_wrapper<>::set_writer(
+  internal::log_wrapper_a<>::set_writer(
       [](std::string &&p_str) -> void { std::clog << p_str; });
 }
 
 /// \brief Defines the function used to write the log messages
 inline void set_writer(std::function<void(std::string &&)> p_writer) {
-  internal::log_wrapper<>::set_writer(p_writer);
+  internal::log_wrapper_a<>::set_writer(p_writer);
 }
 
 inline void set_log_file_writer(const std::string &p_base_log_file_name,
                                 uint32_t p_max_log_file_size = 5 * 1024 *
                                                                1024) {
-  auto _log_file{std::make_shared<internal::log_file>(p_base_log_file_name,
-                                                      p_max_log_file_size)};
+  auto _log_file{std::make_shared<internal::log_file_a>(p_base_log_file_name,
+                                                        p_max_log_file_size)};
 
-  internal::log_wrapper<>::set_writer([_log_file](std::string &&p_str) -> void {
-    (*_log_file)(std::move(p_str));
-  });
+  internal::log_wrapper_a<>::set_writer(
+      [_log_file](std::string &&p_str) -> void {
+        (*_log_file)(std::move(p_str));
+      });
 }
 
 inline void set_max_log_file_name_lenght(uint8_t p_value) {
   internal::max_log_file_name_lenght = p_value;
 }
 
-} // namespace alg
-
 /// \brief log_wrapper to the test log function
 #define TNCT_LOG_TST(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::test(__FILE__, __LINE__,       \
-                                                     p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::test(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the trace log function
+/// \brief log_wrapper_a to the trace log function
 #define TNCT_LOG_TRA(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::trace(__FILE__, __LINE__,      \
-                                                      p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::trace(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the debug log function
+/// \brief log_wrapper_a to the debug log function
 #define TNCT_LOG_DEB(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::debug(__FILE__, __LINE__,      \
-                                                      p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::debug(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the info log function
+/// \brief log_wrapper_a to the info log function
 #define TNCT_LOG_INF(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::info(__FILE__, __LINE__,       \
-                                                     p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::info(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the warn log function
+/// \brief log_wrapper_a to the warn log function
 #define TNCT_LOG_WAR(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::warn(__FILE__, __LINE__,       \
-                                                     p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::warn(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the error log function
+/// \brief log_wrapper_a to the error log function
 #define TNCT_LOG_ERR(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::error(__FILE__, __LINE__,      \
-                                                      p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::error(__FILE__, __LINE__, p_params)
 
-/// \brief log_wrapper to the fatal log function
+/// \brief log_wrapper_a to the fatal log function
 #define TNCT_LOG_FAT(p_params...)                                              \
-  tenacitas::lib::alg::internal::log_wrapper<>::fatal(__FILE__, __LINE__,      \
-                                                      p_params)
+  tenacitas::lib::internal::log_wrapper_a<>::fatal(__FILE__, __LINE__, p_params)
 
 /// \brief Defines the character to separate the fields in a log message
 #define TNCT_LOG_SEP(separator)                                                \
-  tenacitas::lib::alg::internal::log_wrapper<>::set_separator(separator)
+  tenacitas::lib::internal::log_wrapper_a<>::set_separator(separator)
 
 #endif // TENACITAS_LOG
-
-namespace typ {
 
 /// \brief Implements a circular queue which size is increased if it becomes
 /// full
@@ -1566,20 +1490,20 @@ namespace typ {
 /// \tparam t_data defines the types of the data contained in the queue
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-struct circular_queue {
+struct circular_queue_t {
   using data = t_data;
 
-  circular_queue() = default;
+  circular_queue_t() = default;
 
-  circular_queue(const circular_queue &p_queue);
+  circular_queue_t(const circular_queue_t &p_queue);
 
-  circular_queue(circular_queue &&) = default;
+  circular_queue_t(circular_queue_t &&) = default;
 
-  circular_queue &operator=(const circular_queue &p_queue);
+  circular_queue_t &operator=(const circular_queue_t &p_queue);
 
-  circular_queue &operator=(circular_queue &&p_queue) = default;
+  circular_queue_t &operator=(circular_queue_t &&p_queue) = default;
 
-  ~circular_queue() = default;
+  ~circular_queue_t() = default;
 
   void traverse(std::function<void(const t_data &)> p_visitor) const;
 
@@ -1621,7 +1545,7 @@ private:
   iterator m_head;
   iterator m_tail;
 
-  typ::id m_id;
+  id_t m_id;
 
   std::mutex m_mutex;
 };
@@ -1631,14 +1555,14 @@ private:
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-circular_queue<t_data>::circular_queue(const circular_queue &p_queue)
+circular_queue_t<t_data>::circular_queue_t(const circular_queue_t &p_queue)
     : m_amount(p_queue.m_amount), m_list(p_queue.m_list),
       m_head(p_queue.m_head), m_tail(p_queue.m_tail) {}
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-    circular_queue<t_data>
-&circular_queue<t_data>::operator=(const circular_queue &p_queue) {
+    circular_queue_t<t_data>
+&circular_queue_t<t_data>::operator=(const circular_queue_t &p_queue) {
   if (this != &p_queue) {
     m_amount = p_queue.m_amount;
     m_list = p_queue.m_list;
@@ -1650,7 +1574,7 @@ requires std::move_constructible<t_data> && std::copy_constructible<t_data>
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-void circular_queue<t_data>::traverse(
+void circular_queue_t<t_data>::traverse(
     std::function<void(const t_data &)> p_visitor) const {
   if (m_amount == 0) {
     return;
@@ -1675,7 +1599,7 @@ void circular_queue<t_data>::traverse(
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-void circular_queue<t_data>::add(t_data &&p_data) {
+void circular_queue_t<t_data>::add(t_data &&p_data) {
   std::lock_guard<std::mutex> _lock(m_mutex);
 
   if (m_list.empty()) {
@@ -1700,7 +1624,7 @@ void circular_queue<t_data>::add(t_data &&p_data) {
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-void circular_queue<t_data>::add(const t_data &p_data) {
+void circular_queue_t<t_data>::add(const t_data &p_data) {
   std::lock_guard<std::mutex> _lock(m_mutex);
 
   if (m_list.empty()) {
@@ -1725,7 +1649,7 @@ void circular_queue<t_data>::add(const t_data &p_data) {
 
 template <typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-    std::optional<t_data> circular_queue<t_data>::get() {
+    std::optional<t_data> circular_queue_t<t_data>::get() {
   std::lock_guard<std::mutex> _lock(m_mutex);
 
   if (m_list.empty() || (occupied() == 0)) {
@@ -1741,33 +1665,30 @@ requires std::move_constructible<t_data> && std::copy_constructible<t_data>
   return _data;
 }
 
-} // namespace typ
-
-namespace cpt {
 template <typename t>
-concept event = std::default_initializable<t> && std::copy_constructible<t>;
+concept event_c = std::default_initializable<t> && std::copy_constructible<t>;
 
 template <typename t>
-concept publisher = requires(t p_t) {
+concept publisher_c = requires(t p_t) {
   typename t::events_published;
 
-  requires cpt::tuple_like<typename t::events_published> &&
+  requires tuple_like_c<typename t::events_published> &&
 
       []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return ((event<typename std::tuple_element_t<
+    return ((event_c<typename std::tuple_element_t<
                  t_idx, typename t::events_published>>)&&...);
   }
   (std::make_index_sequence<std::tuple_size_v<typename t::events_published>>());
 };
 
 template <typename t>
-concept subscriber = requires(t p_t) {
+concept subscriber_c = requires(t p_t) {
   typename t::events_subscribed;
 
-  requires cpt::tuple_like<typename t::events_subscribed> &&
+  requires tuple_like_c<typename t::events_subscribed> &&
 
       []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return ((event<typename std::tuple_element_t<
+    return ((event_c<typename std::tuple_element_t<
                  t_idx, typename t::events_subscribed>>)&&...);
   }
   (std::make_index_sequence<
@@ -1775,42 +1696,44 @@ concept subscriber = requires(t p_t) {
 };
 
 template <typename t, typename... t_events>
-concept dispatcher = requires(t p_t) {
+concept dispatcher_c = requires(t p_t) {
   typename t::events;
 
-  cpt::tuple_like<typename t::events>
+  typename t::ptr;
 
-      && // every type in t::events is a cpt::event
+  requires !std::copy_constructible<t> && !std::move_constructible<t> &&
+      !std::default_initializable<t>;
+
+  requires(is_shared_ptr_r<typename t::ptr>::value == true);
+
+  tuple_like_c<typename t::events>
+
+      && // every type in t::events is a event_c
 
           []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return (cpt::event<std::tuple_element<t_idx, typename t::events>> && ...);
+    return (event_c<std::tuple_element<t_idx, typename t::events>> && ...);
   }
-  (std::make_index_sequence<std::tuple_size_v<typename t::event>>())
+  (std::make_index_sequence<std::tuple_size_v<typename t::events>>())
 
-      && // every type in t_events is a cpt::event
+      && // every type in t_events is a event_c
 
           []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return (cpt::event<std::tuple_element<t_idx, std::tuple<t_events...>>> &&
-            ...);
+    return (event_c<std::tuple_element<t_idx, std::tuple<t_events...>>> && ...);
   }
   (std::make_index_sequence<std::tuple_size_v<std::tuple<t_events...>>>())
 
       && // every event in t_events exists in t::events
 
           []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return (alg::index_v<std::tuple_element_t<t_idx, std::tuple<t_events...>>,
-                         typename t::events> &&
+    return (index_r<std::tuple_element_t<t_idx, std::tuple<t_events...>>,
+                    typename t::events>::value &&
             ...);
   }
   (std::make_index_sequence<std::tuple_size_v<std::tuple<t_events...>>>());
 };
-} // namespace cpt
-
-namespace typ {
 
 /// \brief Type of function that subscriber an event
-template <cpt::event t_event>
-using subscriber = std::function<void(t_event &&)>;
+template <event_c t_event> using subscriber_a = std::function<void(t_event &&)>;
 
 /// \brief Defines the priority of an event publishing among other publishings
 /// for that event. The smallest the value, the lowest the priority
@@ -1854,20 +1777,20 @@ inline std::ostream &operator<<(std::ostream &p_out, priority p_priority) {
   }
   return p_out;
 }
-using queue_id = size_t;
+using queue_id_t = size_t;
 
 namespace internal {
 
 // A publishing for an event
-template <cpt::event t_event> class event_queue {
+template <event_c t_event> class event_queue_t {
 public:
-  event_queue() = delete;
+  event_queue_t() = delete;
 
-  event_queue(typ::priority p_priority = typ::priority::medium);
+  event_queue_t(priority p_priority = priority::medium);
 
-  event_queue(const event_queue &) = delete;
+  event_queue_t(const event_queue_t &) = delete;
 
-  event_queue(event_queue &&p_queue) {
+  event_queue_t(event_queue_t &&p_queue) {
     m_id = std::move(p_queue.m_id);
     m_priority = std::move(p_queue.m_priority);
     m_loops = std::move(p_queue.m_loops);
@@ -1876,21 +1799,21 @@ public:
     m_circular_queue = std::move(p_queue.m_circular_queue);
   }
 
-  event_queue &operator=(const event_queue &) = delete;
-  event_queue &operator=(event_queue &&) = delete;
+  event_queue_t &operator=(const event_queue_t &) = delete;
+  event_queue_t &operator=(event_queue_t &&) = delete;
 
   // Adds an event to the queue of events
   bool add_event(const t_event &p_event);
 
   // Adds a subscriber that will compete with the other existing subscribers for
   // an event in the queue
-  void add_subscriber(typ::subscriber<t_event> p_subscriber);
+  void add_subscriber(subscriber_a<t_event> p_subscriber);
 
   // Adds a bunch of subscribers
   void add_subscriber(std::unsigned_integral auto p_num_subscribers,
-                      std::function<typ::subscriber<t_event>()> p_factory);
+                      std::function<subscriber_a<t_event>()> p_factory);
 
-  ~event_queue();
+  ~event_queue_t();
 
   // \brief Stops this publishing
   void stop() {
@@ -1931,11 +1854,11 @@ public:
   // Informs if the publishing is stopped
   bool is_stopped() const;
 
-  typ::queue_id get_id() const;
+  queue_id_t get_id() const;
 
-  constexpr typ::priority get_priority() const;
+  constexpr priority get_priority() const;
 
-  void set_priority(typ::priority p_priority);
+  void set_priority(priority p_priority);
 
   // \return Returns the size of the queue of \p t_event
   size_t get_size() const;
@@ -1952,16 +1875,16 @@ public:
   }
 
   // publishing is ordered by tenacitas::lib::async::priority
-  constexpr bool operator<(const event_queue &p_publishing) const;
+  constexpr bool operator<(const event_queue_t &p_publishing) const;
 
   // publishing is ordered by tenacitas::lib::async::priority
-  constexpr bool operator>(const event_queue &p_publishing) const;
+  constexpr bool operator>(const event_queue_t &p_publishing) const;
 
-  // publishing is compared by tenacitas::lib::typ::publishing_id
-  constexpr bool operator!=(const event_queue &p_publishing) const;
+  // publishing is compared by tenacitas::lib::publishing_id
+  constexpr bool operator!=(const event_queue_t &p_publishing) const;
 
-  // publishing is compared by tenacitas::lib::typ::publishing_id
-  constexpr bool operator==(const event_queue &p_publishing) const;
+  // publishing is compared by tenacitas::lib::publishing_id
+  constexpr bool operator==(const event_queue_t &p_publishing) const;
 
   void report(std::ostringstream &p_out) const;
 
@@ -1975,7 +1898,7 @@ public:
              std::thread::id p_thread = std::this_thread::get_id()) {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA(
-        alg::format_number(p_line, uint8_t{5}), " - E ", typeid(t_event).name(),
+        format_number(p_line, uint8_t{5}), " - E ", typeid(t_event).name(),
         ", Q {", this, ',', m_id, "}, C {", m_circular_queue.get_id(), ",",
         m_circular_queue.occupied(), "}, # L ", m_loops.size(), ", S? ",
         (m_stopped.load() ? 'T' : 'F'), ", T ", p_thread, " - ", p_text);
@@ -1987,20 +1910,20 @@ protected:
   using loops = std::vector<std::thread>;
 
   // Queue used to store the events to be handled
-  using circular_queue = typ::circular_queue<t_event>;
+  using circular_queue = circular_queue_t<t_event>;
 
 protected:
-  void subscriber_loop(typ::subscriber<t_event> p_subscriber);
+  void subscriber_loop(subscriber_a<t_event> p_subscriber);
 
   void empty_queue(const std::thread::id &p_loop_id,
-                   typ::subscriber<t_event> p_subscriber);
+                   subscriber_a<t_event> p_subscriber);
 
 protected:
   // Identifier of this publishing
   size_t m_id;
 
   // Priority of this publishing
-  typ::priority m_priority;
+  priority m_priority;
 
   // Asynchronous loops, where events are retrieved from queue, and
   // subscribers are called
@@ -2026,64 +1949,64 @@ protected:
   circular_queue m_circular_queue;
 };
 
-template <cpt::event t_event> inline event_queue<t_event>::~event_queue() {
+template <event_c t_event> inline event_queue_t<t_event>::~event_queue_t() {
   trace(__LINE__, "entering destructor");
   stop();
   trace(__LINE__, "leaving destructor");
 }
 
-template <cpt::event t_event>
-inline bool event_queue<t_event>::is_stopped() const {
+template <event_c t_event>
+inline bool event_queue_t<t_event>::is_stopped() const {
   return m_stopped;
 }
 
-template <cpt::event t_event>
-inline typ::queue_id event_queue<t_event>::get_id() const {
+template <event_c t_event>
+inline queue_id_t event_queue_t<t_event>::get_id() const {
   return m_id;
 }
 
-template <cpt::event t_event>
-inline constexpr typ::priority event_queue<t_event>::get_priority() const {
+template <event_c t_event>
+inline constexpr priority event_queue_t<t_event>::get_priority() const {
   return m_priority;
 }
 
-template <cpt::event t_event>
-inline void event_queue<t_event>::set_priority(typ::priority p_priority) {
+template <event_c t_event>
+inline void event_queue_t<t_event>::set_priority(priority p_priority) {
   m_priority = p_priority;
 }
 
-template <cpt::event t_event>
+template <event_c t_event>
 inline constexpr bool
-event_queue<t_event>::operator<(const event_queue &p_publishing) const {
+event_queue_t<t_event>::operator<(const event_queue_t &p_publishing) const {
   return m_priority < p_publishing.m_priority;
 }
 
-template <cpt::event t_event>
+template <event_c t_event>
 inline constexpr bool
-event_queue<t_event>::operator>(const event_queue &p_publishing) const {
+event_queue_t<t_event>::operator>(const event_queue_t &p_publishing) const {
   return m_priority > p_publishing.m_priority;
 }
 
-template <cpt::event t_event>
+template <event_c t_event>
 inline constexpr bool
-event_queue<t_event>::operator!=(const event_queue &p_publishing) const {
+event_queue_t<t_event>::operator!=(const event_queue_t &p_publishing) const {
   return m_id != p_publishing.m_id;
 }
 
-template <cpt::event t_event>
+template <event_c t_event>
 inline constexpr bool
-event_queue<t_event>::operator==(const event_queue &p_publishing) const {
+event_queue_t<t_event>::operator==(const event_queue_t &p_publishing) const {
   return m_id == p_publishing.m_id;
 }
 
-template <cpt::event t_event>
-inline event_queue<t_event>::event_queue(typ::priority p_priority)
-    : m_id(alg::create_id<decltype(m_id)>()), m_priority(p_priority) {
+template <event_c t_event>
+inline event_queue_t<t_event>::event_queue_t(priority p_priority)
+    : m_id(id_t()), m_priority(p_priority) {
   trace(__LINE__, "creating queue");
 }
 
-template <cpt::event t_event>
-bool event_queue<t_event>::add_event(const t_event &p_event) {
+template <event_c t_event>
+bool event_queue_t<t_event>::add_event(const t_event &p_event) {
   try {
     trace(__LINE__, "adding event");
 
@@ -2102,41 +2025,41 @@ bool event_queue<t_event>::add_event(const t_event &p_event) {
   return false;
 }
 
-template <cpt::event t_event>
-void event_queue<t_event>::add_subscriber(
+template <event_c t_event>
+void event_queue_t<t_event>::add_subscriber(
     std::unsigned_integral auto p_num_subscribers,
-    std::function<typ::subscriber<t_event>()> p_factory) {
+    std::function<subscriber_a<t_event>()> p_factory) {
   trace(__LINE__, "adding many subscribers");
   for (decltype(p_num_subscribers) _i = 0; _i < p_num_subscribers; ++_i) {
     add_subscriber(p_factory());
   }
 }
 
-template <cpt::event t_event>
-inline size_t event_queue<t_event>::amount_added() const {
+template <event_c t_event>
+inline size_t event_queue_t<t_event>::amount_added() const {
   return m_circular_queue.capacity();
 }
 
-template <cpt::event t_event>
-inline size_t event_queue<t_event>::get_size() const {
+template <event_c t_event>
+inline size_t event_queue_t<t_event>::get_size() const {
   return m_circular_queue.capacity();
 }
 
-template <cpt::event t_event>
-inline size_t event_queue<t_event>::get_occupied() const {
+template <event_c t_event>
+inline size_t event_queue_t<t_event>::get_occupied() const {
   return m_circular_queue.occupied();
 }
 
-template <cpt::event t_event>
-inline void event_queue<t_event>::report(std::ostringstream &p_out) const {
+template <event_c t_event>
+inline void event_queue_t<t_event>::report(std::ostringstream &p_out) const {
   p_out << "\tpublishing: " << m_id << '\n'
         << "\t\tnum subscribers: " << m_loops.size()
         << ", priority: " << m_priority << '\n';
 }
 
-template <cpt::event t_event>
-void event_queue<t_event>::add_subscriber(
-    typ::subscriber<t_event> p_subscriber) {
+template <event_c t_event>
+void event_queue_t<t_event>::add_subscriber(
+    subscriber_a<t_event> p_subscriber) {
   if (m_stopped) {
     trace(__LINE__, "not adding subscriber because stopped");
     return;
@@ -2150,9 +2073,9 @@ void event_queue<t_event>::add_subscriber(
       [this, p_subscriber]() -> void { subscriber_loop(p_subscriber); }));
 }
 
-template <cpt::event t_event>
-void event_queue<t_event>::subscriber_loop(
-    typ::subscriber<t_event> p_subscriber) {
+template <event_c t_event>
+void event_queue_t<t_event>::subscriber_loop(
+    subscriber_a<t_event> p_subscriber) {
   auto _queue_id{m_circular_queue.get_id()};
   auto _loop_id{std::this_thread::get_id()};
 
@@ -2231,9 +2154,9 @@ void event_queue<t_event>::subscriber_loop(
   trace(__LINE__, "leaving subscriber's loop", _loop_id);
 }
 
-template <cpt::event t_event>
-void event_queue<t_event>::empty_queue(const std::thread::id &p_loop_id,
-                                       typ::subscriber<t_event> p_subscriber) {
+template <event_c t_event>
+void event_queue_t<t_event>::empty_queue(const std::thread::id &p_loop_id,
+                                         subscriber_a<t_event> p_subscriber) {
   trace(__LINE__, "entering empty_queue", p_loop_id);
   while (true) {
     std::optional<t_event> _maybe{m_circular_queue.get()};
@@ -2259,34 +2182,26 @@ void event_queue<t_event>::empty_queue(const std::thread::id &p_loop_id,
   }
 }
 } // namespace internal
-} // namespace typ
-
-namespace cpt {
 
 template <typename t_to, typename t_from>
-concept chrono_convertible = requires(t_from p_time) {
+concept chrono_convertible_c = requires(t_from p_time) {
   std::chrono::duration_cast<t_to>(p_time);
 };
 
 template <typename t_from>
-concept convertible_to_s = chrono_convertible<std::chrono::seconds, t_from>;
+concept convertible_to_milli_c =
+    chrono_convertible_c<std::chrono::milliseconds, t_from>;
 
 template <typename t_from>
-concept convertible_to_ms =
-    chrono_convertible<std::chrono::milliseconds, t_from>;
+concept convertible_to_sec_c =
+    chrono_convertible_c<std::chrono::seconds, t_from>;
 
 template <typename t_from>
-concept convertible_to_sec = chrono_convertible<std::chrono::seconds, t_from>;
+concept convertible_to_nano_c =
+    chrono_convertible_c<std::chrono::nanoseconds, t_from>;
 
-template <typename t_from>
-concept convertible_to_ns =
-    chrono_convertible<std::chrono::nanoseconds, t_from>;
-
-} // namespace cpt
-
-namespace alg {
 /// \brief Periodically executes a function
-struct sleeping_loop {
+struct sleeping_loop_a {
   /// \brief Signature of the function that will be called in each round of
   /// the loop
   using function = std::function<void()>;
@@ -2299,16 +2214,16 @@ struct sleeping_loop {
   /// \param p_function to be executed at a certain interval
   ///
   /// \param p_interval interval that \p p_function will be executed
-  template <cpt::convertible_to_ns t_interval>
-  sleeping_loop(function p_function, t_interval p_interval);
+  template <convertible_to_nano_c t_interval>
+  sleeping_loop_a(function p_function, t_interval p_interval);
 
-  sleeping_loop() = delete;
-  sleeping_loop(const sleeping_loop &) = delete;
-  sleeping_loop &operator=(const sleeping_loop &) = delete;
+  sleeping_loop_a() = delete;
+  sleeping_loop_a(const sleeping_loop_a &) = delete;
+  sleeping_loop_a &operator=(const sleeping_loop_a &) = delete;
 
   /// \brief Destructor
   /// The loops stops calling the function
-  ~sleeping_loop() {
+  ~sleeping_loop_a() {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("sleeping loop ", m_id, " - destructor");
 #endif
@@ -2342,10 +2257,10 @@ struct sleeping_loop {
   }
 
   /// \brief Move constructor
-  sleeping_loop(sleeping_loop &&p_loop);
+  sleeping_loop_a(sleeping_loop_a &&p_loop);
 
   /// \brief Move assignment
-  sleeping_loop &operator=(sleeping_loop &&p_loop) {
+  sleeping_loop_a &operator=(sleeping_loop_a &&p_loop) {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("sleeping loop ", m_id, " move assignment");
 #endif
@@ -2393,9 +2308,9 @@ struct sleeping_loop {
 
 private:
   /// \brief Helper move function
-  void move(sleeping_loop &&p_loop) {
+  void move(sleeping_loop_a &&p_loop) {
     bool _stopped = p_loop.is_stopped();
-    typ::id _other = p_loop.m_id;
+    id_t _other = p_loop.m_id;
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("sleeping loop ", m_id, " - moving ", _other, " which was",
                  (_stopped ? " " : " not "), "stopped");
@@ -2493,11 +2408,12 @@ private:
   std::condition_variable m_cond;
 
   /// \brief Identifier of the slepping_loop, to help debugging
-  typ::id m_id;
+  id_t m_id;
 };
 
-template <cpt::convertible_to_ns t_interval>
-inline sleeping_loop::sleeping_loop(function p_function, t_interval p_interval)
+template <convertible_to_nano_c t_interval>
+inline sleeping_loop_a::sleeping_loop_a(function p_function,
+                                        t_interval p_interval)
     : m_function(p_function),
       m_interval(std::chrono::duration_cast<decltype(m_interval)>(p_interval)) {
 #ifdef TENACITAS_LOG
@@ -2506,14 +2422,14 @@ inline sleeping_loop::sleeping_loop(function p_function, t_interval p_interval)
 #endif
 }
 
-inline sleeping_loop::sleeping_loop(sleeping_loop &&p_loop) {
+inline sleeping_loop_a::sleeping_loop_a(sleeping_loop_a &&p_loop) {
 #ifdef TENACITAS_LOG
   TNCT_LOG_TRA("sleeping loop ", m_id, " move constructor");
 #endif
   move(std::move(p_loop));
 }
 
-inline bool sleeping_loop::is_stopped() const { return m_stopped; }
+inline bool sleeping_loop_a::is_stopped() const { return m_stopped; }
 
 /// \brief Executes a function synchronoulsy with timeout control
 /// The function may or may not return, and may or may not receive parameters
@@ -2530,12 +2446,12 @@ inline bool sleeping_loop::is_stopped() const { return m_stopped; }
 /// time of execution, and can stop executing
 ///
 /// So, \p t_function should eventually call for <tt>p_timeout()</tt> to decide
-/// if it must continue to execute
+/// if it must continue to execute_a
 ///
 /// \tparam t_params possible parameters of t_function
 ///
 /// \param p_max_time is the maximum amount of time that \p p_function should
-/// take to execute
+/// take to execute_a
 ///
 /// \param p_function is a function with one of the signatures described above
 ///
@@ -2556,8 +2472,8 @@ inline std::conditional_t<
     // 'p_function' executes in less 'p_max_time', or empty otherwise
     std::optional<
         std::invoke_result_t<t_function, std::function<bool()>, t_params...>>>
-execute(cpt::convertible_to_ns auto p_max_time, t_function &p_function,
-        t_params &&...p_params) {
+execute_a(convertible_to_nano_c auto p_max_time, t_function &p_function,
+          t_params &&...p_params) {
   std::mutex _mutex;
   std::condition_variable _cond;
   bool _timeout{false};
@@ -2610,7 +2526,7 @@ subscribers for an event, and publising of events
 
 
 The UML below, written in www.plantuml.com, shows the conceptual structure of
-the \p dispatcher and other associated structures
+the \p dispatcher_a and other associated structures
 
 @startuml
 hide empty members
@@ -2618,17 +2534,17 @@ allow_mixing
 skinparam linetype ortho
 
 
-class dispatcher<t_event...>
+class dispatcher_a<t_event...>
 class queue<t_event>
 class subscriber
 class event
 
-dispatcher -[#green]->  event
-dispatcher -[#blue]->  event
+dispatcher_a -[#green]->  event
+dispatcher_a -[#blue]->  event
 queue *-- "*" event
 subscriber .right.>  "handles" event
 queue *-- priority
-dispatcher *-- "*" queue
+dispatcher_a *-- "*" queue
 
 note "<color green>publishes\n<color blue>subscribes" as legend
 @enduml
@@ -2638,7 +2554,7 @@ interesting event in the application. It can be, for example, a incoming message
 from a network connection, a user menu choice or a temperature coming from a
 sensor.
 
-A \p tenacitas::lib::typ::subscriber is a function object that will
+A \p tenacitas::lib::subscriber is a function object that will
 handle a \p t_event object.
 
 A \p queue is where \p event objects will be queued for subscibers objects to
@@ -2649,40 +2565,42 @@ interface.
 Besides, it is possible to define, for example, one single subscriber for the
 logging queue, five subscribers for the network message queue, and
 two for the widget color changing. When the user makes its menu choice, the five
-\p tenacitas::lib::typ::subscriber objects in the message network queue
+\p tenacitas::lib::subscriber objects in the message network queue
 will "fight each other" to get the event to handle; the same for the two \p
-tenacitas::lib::typ::subscriber in the color changing queue.
+tenacitas::lib::subscriber in the color changing queue.
 
 It is possible to define a priority between the queues, so that an event
 is delivered to the highest priority queue before the others.
 
-The \p dispatcher class is responsible for managing the creation of
-queue, adding \p tenacitas::lib::typ::subscriber to the queues, and
+The \p dispatcher_a class is responsible for managing the creation of
+queue, adding \p tenacitas::lib::subscriber to the queues, and
 publish event objects to the queues.
 
 Please, look at the \p Examples section for examples on how to use these
 functions and classes.
 */
-template <cpt::event... t_events> struct dispatcher {
+template <event_c... t_events> struct dispatcher_a {
 
-  using ptr = std::shared_ptr<dispatcher>;
+  using ptr = std::shared_ptr<dispatcher_a>;
 
-  static ptr create() { return ptr(new dispatcher()); }
+  using events = std::tuple<t_events...>;
 
-  dispatcher(const dispatcher &) = delete;
-  dispatcher(dispatcher &&) = delete;
-  dispatcher &operator=(const dispatcher &) = delete;
-  dispatcher &operator=(dispatcher &&) = delete;
+  static ptr create() { return ptr(new dispatcher_a()); }
 
-  ~dispatcher() {
+  dispatcher_a(const dispatcher_a &) = delete;
+  dispatcher_a(dispatcher_a &&) = delete;
+  dispatcher_a &operator=(const dispatcher_a &) = delete;
+  dispatcher_a &operator=(dispatcher_a &&) = delete;
+
+  ~dispatcher_a() {
 #ifdef TENACITAS_LOG
     TNCT_LOG_TRA("destructor");
 #endif
     // stop();
   }
 
-  template <cpt::event t_event>
-  typ::queue_id add_queue(typ::priority p_priority = typ::priority ::medium) {
+  template <event_c t_event>
+  queue_id_t add_queue(priority p_priority = priority ::medium) {
 
     constexpr size_t _event_index{
         assert_event_defined_in_dispatcher<t_event>()};
@@ -2695,16 +2613,16 @@ template <cpt::event... t_events> struct dispatcher {
     event_queue_list_iterator<t_event> _ite{
         add_event_queue<t_event>(_event_queue_list, p_priority)};
 
-    typ::queue_id _queue_id{_ite->get_id()};
+    queue_id_t _queue_id{_ite->get_id()};
 
     sort_event_queue_list(_event_queue_list);
 
     return _queue_id;
   }
 
-  template <cpt::subscriber t_subscriber, cpt::event t_event>
-  typ::queue_id subscribe(typ::subscriber<t_event> p_subscriber,
-                          typ::priority p_priority = typ::priority ::medium) {
+  template <subscriber_c t_subscriber, event_c t_event>
+  queue_id_t subscribe(subscriber_a<t_event> p_subscriber,
+                       priority p_priority = priority ::medium) {
 
     assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
@@ -2718,7 +2636,7 @@ template <cpt::event... t_events> struct dispatcher {
     event_queue_list_iterator<t_event> _ite{
         add_event_queue<t_event>(_event_queue_list, p_priority)};
 
-    typ::queue_id _queue_id{_ite->get_id()};
+    queue_id_t _queue_id{_ite->get_id()};
 
     _ite->add_subscriber(p_subscriber);
 
@@ -2727,9 +2645,9 @@ template <cpt::event... t_events> struct dispatcher {
     return _queue_id;
   }
 
-  template <cpt::subscriber t_subscriber, cpt::event t_event>
-  void subscribe(const typ::queue_id &p_queue_id,
-                 typ::subscriber<t_event> p_subscriber) {
+  template <subscriber_c t_subscriber, event_c t_event>
+  void subscribe(const queue_id_t &p_queue_id,
+                 subscriber_a<t_event> p_subscriber) {
     assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
@@ -2752,10 +2670,10 @@ template <cpt::event... t_events> struct dispatcher {
   /// \param p_num_workers defines the number of subscribers to be added
   ///
   /// \param p_factory is a function that creates subscribers
-  template <cpt::subscriber t_subscriber, cpt::event t_event>
-  void subscribe(const typ::queue_id &p_queue_id,
+  template <subscriber_c t_subscriber, event_c t_event>
+  void subscribe(const queue_id_t &p_queue_id,
                  std::unsigned_integral auto p_num_workers,
-                 std::function<typ::subscriber<t_event>()> p_factory) {
+                 std::function<subscriber_a<t_event>()> p_factory) {
 
     assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
@@ -2779,11 +2697,11 @@ template <cpt::event... t_events> struct dispatcher {
     //        _event_queue.clear();
     //      }
     //    }};
-    //    alg::traverse(_function, m_event_queue_list_tuple);
+    //    traverse(_function, m_event_queue_list_tuple);
     clear<0>();
   }
 
-  template <cpt::event t_event> void clear() {
+  template <event_c t_event> void clear() {
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
@@ -2796,9 +2714,9 @@ template <cpt::event... t_events> struct dispatcher {
     }
   }
 
-  template <cpt::event t_event> void clear(typ::queue_id p_queue_id) {
+  template <event_c t_event> void clear(queue_id_t p_queue_id) {
 
-    constexpr auto _event_index{lib::alg::index_v<t_event, events>};
+    constexpr auto _event_index{index_r<t_event, events>::value};
 
     event_queue_list<t_event> &_event_queue_list{
         std::get<_event_index>(m_event_queue_list_tuple)};
@@ -2811,7 +2729,7 @@ template <cpt::event... t_events> struct dispatcher {
     }
   }
 
-  template <cpt::publisher t_publisher, cpt::event t_event>
+  template <publisher_c t_publisher, event_c t_event>
   bool publish(const t_event &p_event) {
     assert_event_defined_in_publisher<t_publisher, t_event>();
 
@@ -2832,8 +2750,8 @@ template <cpt::event... t_events> struct dispatcher {
     }
   }
 
-  template <cpt::publisher t_publisher, cpt::event t_event>
-  void publish_to_queue(typ::queue_id p_queue_id, const t_event &p_event) {
+  template <publisher_c t_publisher, event_c t_event>
+  void publish_to_queue(queue_id_t p_queue_id, const t_event &p_event) {
 
     assert_event_defined_in_publisher<t_publisher, t_event>();
 
@@ -2846,8 +2764,7 @@ template <cpt::event... t_events> struct dispatcher {
     _ite->add_event(p_event);
   }
 
-  template <cpt::publisher t_publisher, cpt::event t_event,
-            typename... t_params>
+  template <publisher_c t_publisher, event_c t_event, typename... t_params>
   bool publish(t_params &&...p_params) {
     assert_event_defined_in_publisher<t_publisher, t_event>();
 
@@ -2868,8 +2785,8 @@ template <cpt::event... t_events> struct dispatcher {
     }
   }
 
-  template <cpt::event t_event>
-  void set_priority(const typ::queue_id &p_queue_id, typ::priority p_priority) {
+  template <event_c t_event>
+  void set_priority(const queue_id_t &p_queue_id, priority p_priority) {
     constexpr auto _event_index{assert_event_defined_in_dispatcher<t_event>()};
 
     std::lock_guard<std::mutex> _lock(m_event_queue_list_mutex[_event_index]);
@@ -2880,8 +2797,8 @@ template <cpt::event... t_events> struct dispatcher {
     _ite->set_priority(p_priority);
   }
 
-  template <cpt::event t_event>
-  typ::priority get_priority(const typ::queue_id &p_queue_id) {
+  template <event_c t_event>
+  priority get_priority(const queue_id_t &p_queue_id) {
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
 
@@ -2896,8 +2813,7 @@ template <cpt::event... t_events> struct dispatcher {
   /// \param p_id is the identifier of the queue
   ///
   /// \return the size of the event queue or 0 if no queue was found
-  template <cpt::event t_event>
-  size_t queue_size(const typ::queue_id &p_queue_id) {
+  template <event_c t_event> size_t queue_size(const queue_id_t &p_queue_id) {
 
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
@@ -2914,8 +2830,8 @@ template <cpt::event... t_events> struct dispatcher {
   /// \param p_id is the identifier of the queue
   ///
   /// \return the number of occupied positions or 0 if no queue was found
-  template <cpt::event t_event>
-  size_t occupied_in_queue(const typ::queue_id &p_queue_id) {
+  template <event_c t_event>
+  size_t occupied_in_queue(const queue_id_t &p_queue_id) {
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
 
@@ -2925,7 +2841,7 @@ template <cpt::event... t_events> struct dispatcher {
     return _ite->get_occupied();
   }
 
-  template <cpt::event t_event> size_t amount_of_queues() const {
+  template <event_c t_event> size_t amount_of_queues() const {
     constexpr auto _event_queues_list_index{
         assert_event_defined_in_dispatcher<t_event>()};
 
@@ -2936,10 +2852,10 @@ template <cpt::event... t_events> struct dispatcher {
   }
 
   //  /// \brief Removes all events in all the queues of \p t_event
-  //  template <cpt::event t_event> void empty_queue();
+  //  template <event_c t_event> void empty_queue();
 
   //  /// \brief Removes all events in all the queues of \p t_event
-  //  template <cpt::event t_event> void empty_queue(typ::queue_id p_queue_id);
+  //  template <event_c t_event> void empty_queue(queue_id p_queue_id);
 
   // \brief Waits for all the events in all the groups of  subscribers to be
   // handled
@@ -2951,29 +2867,27 @@ template <cpt::event... t_events> struct dispatcher {
   //                    _queue_ptr->empty_queue();
   //      }
   //    }
-  //        TNCT_LOG_TRA("dispatcher ", get_id(), " - finished waiting");
+  //        TNCT_LOG_TRA("dispatcher_a ", get_id(), " - finished waiting");
   //  }
 
 private:
-  dispatcher() = default;
+  dispatcher_a() = default;
 
 private:
-  using events = std::tuple<t_events...>;
-
   template <typename t_event>
-  using event_queue = typ::internal::event_queue<t_event>;
+  using event_queue = internal::event_queue_t<t_event>;
 
   template <typename t_event>
   using event_queue_list = std::list<event_queue<t_event>>;
 
   using event_queue_list_tuple =
-      std::tuple<std::list<typ::internal::event_queue<t_events>>...>;
+      std::tuple<std::list<internal::event_queue_t<t_events>>...>;
 
   template <typename t_event>
   using event_queue_list_iterator =
       typename event_queue_list<t_event>::iterator;
 
-  template <cpt::event t_event> struct event_mutex { std::mutex mutex; };
+  template <event_c t_event> struct event_mutex { std::mutex mutex; };
 
   using event_queue_list_mutex =
       std::array<std::mutex, std::tuple_size_v<events>>;
@@ -2994,9 +2908,8 @@ private:
   /// \brief Stops all the queues
   // void stop() { stop_all(std::make_index_sequence<sizeof...(t_events)>{}); }
 
-  template <size_t t_event_index, cpt::event t_event>
-  event_queue_list_iterator<t_event>
-  find_event_queue(typ::queue_id p_queue_id) {
+  template <size_t t_event_index, event_c t_event>
+  event_queue_list_iterator<t_event> find_event_queue(queue_id_t p_queue_id) {
 
     event_queue_list<t_event> &_event_queue_list{
         std::get<t_event_index>(m_event_queue_list_tuple)};
@@ -3018,10 +2931,10 @@ private:
     return true;
   }
 
-  template <cpt::event t_event>
+  template <event_c t_event>
   event_queue_list_iterator<t_event>
   add_event_queue(event_queue_list<t_event> &p_event_queue_list,
-                  typ::priority p_priority) {
+                  priority p_priority) {
 
     event_queue<t_event> _event_queue{p_priority};
 
@@ -3030,34 +2943,34 @@ private:
     return std::prev(p_event_queue_list.end());
   }
 
-  template <cpt::event t_event>
+  template <event_c t_event>
   static constexpr size_t assert_event_defined_in_dispatcher() {
-    constexpr auto _index{alg::index_v<t_event, events>};
+    constexpr auto _index{index_r<t_event, events>::value};
     static_assert(_index != -1,
                   "trying to subscribe to an event not defined in dispatcher");
     return static_cast<size_t>(_index);
   }
 
-  template <cpt::subscriber t_subscriber, cpt::event t_event>
+  template <subscriber_c t_subscriber, event_c t_event>
   static constexpr void assert_event_defined_in_subscriber() {
     using events_subscribed = typename t_subscriber::events_subscribed;
 
     static_assert(
-        alg::index_v<t_event, events_subscribed> != -1,
-        "trying to subscrine to an event not in 'events_subscribed' of the "
+        index_r<t_event, events_subscribed>::value != -1,
+        "trying to subscribe to an event not in 'events_subscribed' of the "
         "class that wants to subscribe for it");
   }
 
-  template <cpt::publisher t_publisher, cpt::event t_event>
+  template <publisher_c t_publisher, event_c t_event>
   constexpr void assert_event_defined_in_publisher() const {
     using events_published = typename t_publisher::events_published;
 
-    static_assert(alg::index_v<t_event, events_published> != -1,
+    static_assert(index_r<t_event, events_published>::value != -1,
                   "trying to publish an event not in 'events_published' of the "
                   "class that wants to publish it");
   }
 
-  template <cpt::event t_event>
+  template <event_c t_event>
   void sort_event_queue_list(event_queue_list<t_event> &p_event_queue_list) {
     //    std::sort(p_event_queue_list.begin(), p_event_queue_list.end(),
     //              [](const event_queue<t_event> &p_event_queue_left,
@@ -3073,10 +2986,10 @@ private:
         });
   }
 
-  template <cpt::event t_event>
+  template <event_c t_event>
   event_queue_list_iterator<t_event>
   find_event_queue(event_queue_list<t_event> &p_event_queue_list,
-                   typ::queue_id p_queue_id) {
+                   queue_id_t p_queue_id) {
 
     event_queue_list_iterator<t_event> _ite{std::find_if(
         p_event_queue_list.begin(), p_event_queue_list.end(),
@@ -3101,9 +3014,6 @@ private:
   event_queue_list_mutex m_event_queue_list_mutex;
 };
 
-} // namespace alg
-
-namespace alg {
 template <typename t_ret, typename t_val>
 std::optional<t_ret> factorial(t_val p_val) {
   t_ret ret = 1;
@@ -3114,16 +3024,13 @@ std::optional<t_ret> factorial(t_val p_val) {
 
   return {ret};
 }
-} // namespace alg
 
-namespace typ {
-
-template <typename t_int, typename t_data> struct matrix {
+template <typename t_int, typename t_data> struct matrix_a {
   using index = t_int;
   using data = t_data;
 
-  matrix() = default;
-  matrix(const matrix &p_matrix)
+  matrix_a() = default;
+  matrix_a(const matrix_a &p_matrix)
       : m_num_rows(p_matrix.m_num_rows), m_num_cols(p_matrix.m_num_cols),
         m_initial(p_matrix.m_initial),
         m_vec(new t_data[m_num_cols * m_num_rows]) {
@@ -3132,19 +3039,19 @@ template <typename t_int, typename t_data> struct matrix {
     //        m_num_cols], &m_vec[0]);
   }
 
-  matrix(matrix &&p_matrix)
+  matrix_a(matrix_a &&p_matrix)
       : m_num_rows(p_matrix.m_num_rows), m_num_cols(p_matrix.m_num_cols),
         m_initial(p_matrix.m_initial), m_vec(std::move(p_matrix.m_vec)) {}
 
-  matrix(t_int p_num_rows, t_int p_num_cols, t_data p_initial)
+  matrix_a(t_int p_num_rows, t_int p_num_cols, t_data p_initial)
       : m_num_rows(p_num_rows), m_num_cols(p_num_cols), m_initial(p_initial),
         m_vec(new t_data[m_num_cols * m_num_rows]) {
     reset();
   }
 
-  ~matrix() = default;
+  ~matrix_a() = default;
 
-  matrix &operator=(const matrix &p_matrix) {
+  matrix_a &operator=(const matrix_a &p_matrix) {
     if (this != &p_matrix) {
       m_initial = p_matrix.m_initial;
       m_num_rows = p_matrix.m_num_rows;
@@ -3155,7 +3062,7 @@ template <typename t_int, typename t_data> struct matrix {
     return *this;
   }
 
-  matrix &operator=(matrix &&p_matrix) {
+  matrix_a &operator=(matrix_a &&p_matrix) {
     if (this != &p_matrix) {
       m_vec = std::move(p_matrix.m_vec);
       m_initial = p_matrix.m_initial;
@@ -3165,7 +3072,8 @@ template <typename t_int, typename t_data> struct matrix {
     return *this;
   }
 
-  friend std::ostream &operator<<(std::ostream &p_out, const matrix &p_matrix) {
+  friend std::ostream &operator<<(std::ostream &p_out,
+                                  const matrix_a &p_matrix) {
     if (!p_matrix.m_vec) {
       return p_out;
     }
@@ -3212,47 +3120,41 @@ private:
   t_data m_initial;
   std::unique_ptr<t_data> m_vec;
 };
-} // namespace typ
 
-namespace typ {
+using translation_entry_t = uint32_t;
 
-using translation_entry = uint32_t;
-
-using dictionary = std::map<translation_entry, std::string>;
+using dictionary_t = std::map<translation_entry_t, std::string>;
 
 inline std::ostream &operator<<(std::ostream &p_out,
-                                const typ::dictionary &p_dictionary) {
-  for (const dictionary::value_type &p_value : p_dictionary) {
+                                const dictionary_t &p_dictionary) {
+  for (const dictionary_t::value_type &p_value : p_dictionary) {
     p_out << '(' << p_value.first << ',' << p_value.second << ')';
   }
   return p_out;
 }
 
-} // namespace typ
+using translate_a = std::function<std::string(
+    const translation_entry_t &p_entry, std::string_view p_default)>;
 
-namespace alg {
-using translate = std::function<std::string(
-    const typ::translation_entry &p_entry, std::string_view p_default)>;
+struct translator_from_file_a {
+  translator_from_file_a() = default;
+  translator_from_file_a(const translator_from_file_a &) = delete;
+  translator_from_file_a(translator_from_file_a &&) = delete;
+  ~translator_from_file_a() = default;
 
-struct translator_from_file {
-  translator_from_file() = default;
-  translator_from_file(const translator_from_file &) = delete;
-  translator_from_file(translator_from_file &&) = delete;
-  ~translator_from_file() = default;
-
-  translator_from_file &operator=(const translator_from_file &) = delete;
-  translator_from_file &operator=(translator_from_file &&) = delete;
+  translator_from_file_a &operator=(const translator_from_file_a &) = delete;
+  translator_from_file_a &operator=(translator_from_file_a &&) = delete;
 
   uint32_t inline size() const { return m_dictionary.size(); }
 
-  std::string inline get(typ::translation_entry p_word_id) {
+  std::string inline get(translation_entry_t p_word_id) {
     return m_dictionary[p_word_id];
   }
 
   bool load(const std::string &p_file_name) {
     const std::regex _regex{R"(^\s*(\d*)\s*\|(.*)$)"};
 
-    typ::dictionary _dictionary;
+    dictionary_t _dictionary;
 
     try {
       std::ifstream _file(p_file_name);
@@ -3292,9 +3194,8 @@ struct translator_from_file {
   }
 
   friend inline std::ostream &
-  operator<<(std::ostream &p_out, const translator_from_file &p_translator) {
-    for (const typ::dictionary::value_type &p_value :
-         p_translator.m_dictionary) {
+  operator<<(std::ostream &p_out, const translator_from_file_a &p_translator) {
+    for (const dictionary_t::value_type &p_value : p_translator.m_dictionary) {
       p_out << '(' << p_value.first << ',' << p_value.second << ')';
     }
 
@@ -3302,40 +3203,39 @@ struct translator_from_file {
   }
 
 private:
-  typ::dictionary m_dictionary;
+  dictionary_t m_dictionary;
 };
 
-struct translator_in_memory {
-  translator_in_memory() = default;
-  translator_in_memory(typ::dictionary &&p_dictionary)
+struct translator_in_memory_a {
+  translator_in_memory_a() = default;
+  translator_in_memory_a(dictionary_t &&p_dictionary)
       : m_dictionary(std::move(p_dictionary)) {}
-  translator_in_memory(const translator_in_memory &) = delete;
-  translator_in_memory(translator_in_memory &&) = delete;
-  ~translator_in_memory() = default;
+  translator_in_memory_a(const translator_in_memory_a &) = delete;
+  translator_in_memory_a(translator_in_memory_a &&) = delete;
+  ~translator_in_memory_a() = default;
 
-  translator_in_memory &operator=(const translator_in_memory &) = delete;
-  translator_in_memory &operator=(translator_in_memory &&) = delete;
+  translator_in_memory_a &operator=(const translator_in_memory_a &) = delete;
+  translator_in_memory_a &operator=(translator_in_memory_a &&) = delete;
 
   uint32_t inline size() const { return m_dictionary.size(); }
 
-  std::string inline get(typ::translation_entry p_word_id) {
+  inline std::string get(translation_entry_t p_word_id) {
     return m_dictionary[p_word_id];
   }
 
-  void inline add(typ::translation_entry p_entry, std::string_view p_str) {
+  void inline add(translation_entry_t p_entry, std::string_view p_str) {
     m_dictionary[p_entry] = p_str;
   }
 
-  void inline add(typ::dictionary &&p_dictionary) {
-    for (const typ::dictionary::value_type &_value : p_dictionary) {
+  void inline add(dictionary_t &&p_dictionary) {
+    for (const dictionary_t::value_type &_value : p_dictionary) {
       m_dictionary[_value.first] = _value.second;
     }
   }
 
   friend inline std::ostream &
-  operator<<(std::ostream &p_out, const translator_in_memory &p_translator) {
-    for (const typ::dictionary::value_type &p_value :
-         p_translator.m_dictionary) {
+  operator<<(std::ostream &p_out, const translator_in_memory_a &p_translator) {
+    for (const dictionary_t::value_type &p_value : p_translator.m_dictionary) {
       p_out << '(' << p_value.first << ',' << p_value.second << ')';
     }
 
@@ -3343,14 +3243,11 @@ struct translator_in_memory {
   }
 
 private:
-  typ::dictionary m_dictionary;
+  dictionary_t m_dictionary;
 };
-} // namespace alg
 
 } // namespace tenacitas::lib
 
-namespace tncta = tenacitas::lib::alg;
-namespace tnctt = tenacitas::lib::typ;
-namespace tnctc = tenacitas::lib::cpt;
+namespace tnctl = tenacitas::lib;
 
 #endif

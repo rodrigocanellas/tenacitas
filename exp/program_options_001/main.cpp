@@ -34,8 +34,8 @@ int main() {
                           "v0",       "v1",         "}",
                           "--bool_1", "--single_1", "single_value_1"};
     const int argc = 9;
-
-    tncta::program_options _pgm_options;
+    
+    tnctl::program_options_a _pgm_options;
 
     _pgm_options.parse(argc, (char **)argv, {"bool_1"});
 
@@ -47,16 +47,16 @@ int main() {
     } else {
       cerr << "ERROR! no value for paramenter 'bool_1' was found" << endl;
     }
-
-    optional<tncta::program_options::value> _single =
+    
+    optional<tnctl::program_options_a::value> _single =
         _pgm_options.get_single_param("single_1");
     if (_single) {
       cerr << "single param = " << _single.value() << endl;
     } else {
       cerr << "ERROR! no value for paramenter 'single_1' was found" << endl;
     }
-
-    optional<list<tncta::program_options::value>> _set =
+    
+    optional<list<tnctl::program_options_a::value>> _set =
         _pgm_options.get_set_param("set_1");
     if (_set) {
       if (_set.value().size() != 2) {
@@ -65,7 +65,7 @@ int main() {
              << _set.value().size() << endl;
       } else {
         cerr << "set param 'set_1' = ";
-        for (tncta::program_options::value &_value : _set.value()) {
+          for (tnctl::program_options_a::value &_value : _set.value()) {
           cerr << _value << " ";
         }
         cerr << endl;

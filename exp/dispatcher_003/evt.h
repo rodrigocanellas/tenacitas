@@ -16,7 +16,7 @@ struct pressure_generated {
   pressure_generated(pressure_generated &&) = default;
   pressure_generated &operator=(const pressure_generated &) = default;
   pressure_generated &operator=(pressure_generated &&) = default;
-  explicit pressure_generated(tnctt::id p_generator,
+  explicit pressure_generated(tnctl::id_t p_generator,
                               typ::pressure p_value = 1.5)
       : m_generator(p_generator), m_pressure(p_value) {}
 
@@ -31,7 +31,7 @@ struct pressure_generated {
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const pressure_generated &p_pressure) {
     p_out << "'generated (" << p_pressure.m_generator << ','
-          << tncta::format_number(p_pressure.m_pressure) << ")'";
+          << tnctl::format_number_a(p_pressure.m_pressure) << ")'";
     return p_out;
   }
 
@@ -56,13 +56,13 @@ struct pressure_generated {
   }
 
 private:
-  tnctt::id m_generator;
+  tnctl::id_t m_generator;
   typ::pressure m_pressure{0};
 };
 
 struct pressure_sent {
   pressure_sent() = default;
-  pressure_sent(tnctt::id p_generator) : m_generator(p_generator) {}
+  pressure_sent(tnctl::id_t p_generator) : m_generator(p_generator) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const pressure_sent &p_pressure_sent) {
@@ -71,13 +71,13 @@ struct pressure_sent {
   }
 
 private:
-  tnctt::id m_generator;
+  tnctl::id_t m_generator;
 };
 
 struct pressure_handled {
   pressure_handled() = default;
 
-  pressure_handled(tnctt::queue_id p_queue, tnctt::id p_subscriber)
+  pressure_handled(tnctl::queue_id_t p_queue, tnctl::id_t p_subscriber)
       : queue(p_queue), subscriber(p_subscriber) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -87,9 +87,9 @@ struct pressure_handled {
     return p_out;
   }
 
-  tnctt::queue_id queue;
+  tnctl::queue_id_t queue;
 
-  tnctt::id subscriber;
+  tnctl::id_t subscriber;
 };
 
 } // namespace evt

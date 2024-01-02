@@ -17,7 +17,7 @@ using namespace tenacitas::lib;
 struct tuple_000 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
     using container = std::tuple<char, int, float, std::string>;
     using function_char = std::function<void(char &)>;
     using function_int = std::function<void(int &)>;
@@ -41,7 +41,7 @@ struct tuple_000 {
     functions _functions{_function_char, _function_int, _function_float,
                          _function_string};
 
-    tncta::traverse(std::move(_functions), _container);
+    tnctl::traverse_a(std::move(_functions), _container);
 
     return true;
   }
@@ -50,7 +50,7 @@ struct tuple_000 {
 struct tuple_001 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
 
     auto _functions{std::make_tuple(
         [](char &p_char) { TNCT_LOG_TST("char: ", p_char); },
@@ -61,7 +61,7 @@ struct tuple_001 {
     auto _data = std::make_tuple('k', static_cast<int>(-19),
                                  static_cast<float>(8.014), std::string("bye"));
 
-    tncta::traverse(_functions, _data);
+    tnctl::traverse_a(_functions, _data);
 
     return true;
   }
@@ -70,14 +70,14 @@ struct tuple_001 {
 struct tuple_002 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
 
     auto _function{[](auto &p_value) { TNCT_LOG_TST("value: ", p_value); }};
 
     auto _data = std::make_tuple('k', static_cast<int>(-19),
                                  static_cast<float>(8.014), std::string("bye"));
 
-    tncta::traverse(_function, _data);
+    tnctl::traverse_a(_function, _data);
 
     return true;
   }
@@ -86,7 +86,7 @@ struct tuple_002 {
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
-    tncta::tester _test(argc, argv);
+    tnctl::tester_a _test(argc, argv);
     run_test(_test, tuple_000);
     run_test(_test, tuple_001);
     run_test(_test, tuple_002);

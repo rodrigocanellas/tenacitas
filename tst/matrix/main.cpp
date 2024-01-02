@@ -20,10 +20,9 @@ struct test_000 {
     return "simple square matrix creation and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tnctl::program_options_a &) {
 
-    matrix<uint16_t, char> _matrix(3, 3, 'z');
+    matrix_a<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
@@ -42,10 +41,9 @@ struct test_001 {
     return "create square matrix, modify and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tnctl::program_options_a &) {
 
-    matrix<uint16_t, char> _matrix(3, 3, 'z');
+    matrix_a<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
@@ -75,10 +73,9 @@ struct test_002 {
     return "create non square matrix creation, fill it, and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tnctl::program_options_a &) {
 
-    matrix<uint16_t, int16_t> _matrix(3, 4, -1);
+    matrix_a<uint16_t, int16_t> _matrix(3, 4, -1);
 
     TNCT_LOG_TST(_matrix);
 
@@ -114,9 +111,9 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "test filling horizontally"; }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
-    matrix<uint16_t, char> _m(11, 8, '-');
+  bool operator()(const tnctl::program_options_a &) {
+
+    matrix_a<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -135,9 +132,9 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "test filling vertically"; }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
-    matrix<uint16_t, char> _m(11, 8, '-');
+  bool operator()(const tnctl::program_options_a &) {
+
+    matrix_a<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -155,7 +152,7 @@ struct test_004 {
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
-  tncta::tester _tester(argc, argv);
+  tnctl::tester_a _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

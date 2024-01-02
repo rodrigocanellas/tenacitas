@@ -72,7 +72,7 @@ private:
   typ::sensor_id m_sensor_id;
   typ::temperature m_current;
   typ::temperature m_increment;
-  tncta::sleeping_loop m_sleeping_loop;
+  tnctl::sleeping_loop_a m_sleeping_loop;
   std::mutex m_mutex;
 };
 

@@ -25,7 +25,7 @@ using namespace std;
 int main(int argc, char **argv) {
 
   try {
-    tncta::program_options _pgm_options;
+        tnctl::program_options_a _pgm_options;
 
     _pgm_options.parse(argc, (char **)argv);
 

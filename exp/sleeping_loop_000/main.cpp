@@ -41,7 +41,7 @@ int main() {
   };
 
   // sleeping loop object
-  tncta::sleeping_loop _sleeping_loop(_function, _interval);
+  tnctl::sleeping_loop_a _sleeping_loop(_function, _interval);
 
   // starts the loop asynchronously
   _sleeping_loop.start();

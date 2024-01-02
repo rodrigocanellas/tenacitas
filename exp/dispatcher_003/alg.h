@@ -3,8 +3,6 @@
 
 #include <condition_variable>
 #include <cstdint>
-#include <iterator>
-#include <list>
 #include <map>
 #include <memory>
 #include <optional>
@@ -39,7 +37,7 @@ struct pressure_generator {
 
   void start() {
     if (!m_ticker) {
-      m_ticker = std::make_unique<tncta::sleeping_loop>(
+      m_ticker = std::make_unique<tnctl::sleeping_loop_a>(
           [this]() -> void { (*this)(); }, m_generator.interval);
     }
     m_ticker->start();
@@ -79,7 +77,7 @@ private:
 
   typ::pressure m_pressure;
 
-  std::unique_ptr<tncta::sleeping_loop> m_ticker;
+  std::unique_ptr<tnctl::sleeping_loop_a> m_ticker;
   typ::amount m_counter{0};
   typ::device_id m_device;
 
@@ -164,14 +162,14 @@ struct pressure_tester {
 
 private:
   void add_publishing(uint16_t p_num_subscribers,
-                      tnctc::convertible_to_ms auto p_sleep) {
+                      tnctl::convertible_to_milli_c auto p_sleep) {
     auto _queue_id = m_dispatcher->add_queue<evt::pressure_generated>();
     m_summary.total_handled_expected += m_summary.total_sent_expected;
 
     for (uint16_t _i = 0; _i < p_num_subscribers; ++_i) {
       ++m_num_subscribers;
 
-      tnctt::id _subscriber_id;
+      tnctl::id_t _subscriber_id;
 
       m_publishings_results[_queue_id] =
           typ::publishing_results{p_sleep, typ::subscribers_results{}};
@@ -207,7 +205,7 @@ private:
 
   void add_generator(typ::time p_interval, typ::pressure p_initial,
                      typ::amount p_amount) {
-    typ::generator _generator{tnctt::id{}, p_amount, p_interval};
+    typ::generator _generator{tnctl::id_t{}, p_amount, p_interval};
     m_generators.push_back(_generator);
     m_pressure_generators.push_back({m_dispatcher, p_initial, _generator});
     m_summary.total_sent_expected += p_amount;

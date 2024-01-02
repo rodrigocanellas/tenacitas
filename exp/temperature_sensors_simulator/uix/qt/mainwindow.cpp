@@ -12,7 +12,7 @@ MainWindow::MainWindow(alg::dispatcher::ptr p_dispatcher, QWidget *parent)
     : QMainWindow(parent), m_dispatcher(p_dispatcher), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  tncta::set_info_level();
+  tnctl::set_info_level();
 
   m_dispatcher->subscribe<MainWindow, evt::new_temperature>(
       [this](auto p_evt) { on_new_temperature(std::move(p_evt)); });

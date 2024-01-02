@@ -37,7 +37,7 @@ struct all_handled {
   }
 };
 
-using dispatcher = tncta::dispatcher<temperature, all_handled>;
+using dispatcher = tnctl::dispatcher_a<temperature, all_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -58,7 +58,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  using temperature_generator = tncta::sleeping_loop;
+    using temperature_generator = tnctl::sleeping_loop_a;
 
 private:
   // function to be executed inside the sleeping loop, that will publish the

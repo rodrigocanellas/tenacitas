@@ -37,7 +37,7 @@ struct temperature_handled {
   }
 };
 
-using dispatcher = tncta::dispatcher<temperature, temperature_handled>;
+using dispatcher = tnctl::dispatcher_a<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -56,7 +56,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  typedef tncta::sleeping_loop temperature_generator;
+    typedef tnctl::sleeping_loop_a temperature_generator;
 
 private:
   // function to be executed inside the sleeping loop, that will dispatch the
@@ -210,7 +210,7 @@ struct start {
     }
 
     // adds a subscriber to a publishing, and save the id of this publishing
-    tnctt::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
+    tnctl::queue_id_t _queue_id = _dispatcher->subscribe<start, temperature>(
         temperature_subscriber_0{_dispatcher, "0a", _printer});
 
     // adds another subscriber to the publishing

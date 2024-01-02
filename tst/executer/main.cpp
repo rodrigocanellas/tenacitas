@@ -12,13 +12,13 @@ struct executer_000 {
   static std::string desc() {
     return "Function with one parameter, no returning, with no timeout";
   }
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>, int &&p_i) -> void {
       TNCT_LOG_TRA("i = ", p_i);
     };
     int _i{4};
-
-    return tncta::execute(200ms, _function, std::move(_i));
+    
+    return tnctl::execute_a(200ms, _function, std::move(_i));
   }
 };
 
@@ -26,7 +26,7 @@ struct executer_001 {
   static std::string desc() {
     return "Function with one parameter, no returning, with timeout";
   }
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout, int &&p_i) -> void {
       std::this_thread::sleep_for(1s);
       if (p_timeout()) {
@@ -37,8 +37,8 @@ struct executer_001 {
     };
     int _i{4};
 
-    //    return !tncta::execute(200ms, _function, std::move(_i));
-    return !tncta::execute(200ms, _function, std::move(_i));
+    //    return !tnctl::execute(200ms, _function, std::move(_i));
+    return !tnctl::execute_a(200ms, _function, std::move(_i));
   }
 };
 
@@ -46,12 +46,12 @@ struct executer_002 {
   static std::string desc() {
     return "Function with no parameter, no returning, with no timeout";
   }
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>) -> void {
       TNCT_LOG_DEB("hello");
     };
-
-    return tncta::execute(200ms, _function);
+      
+      return tnctl::execute_a(200ms, _function);
   }
 };
 
@@ -59,8 +59,8 @@ struct executer_003 {
   static std::string desc() {
     return "Function with no parameter, no returning, with timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout) -> void {
       std::this_thread::sleep_for(1s);
       if (p_timeout()) {
@@ -69,8 +69,8 @@ struct executer_003 {
         TNCT_LOG_DEB("hello");
       }
     };
-
-    return !tncta::execute(200ms, _function);
+      
+      return !tnctl::execute_a(200ms, _function);
   }
 };
 
@@ -78,16 +78,16 @@ struct executer_004 {
   static std::string desc() {
     return "Function with 3 parameters, no returning, with no timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>, int p_i, std::string &&p_str,
                         const char *p_char) -> void {
       TNCT_LOG_DEB(p_i, ',', p_str, ',', p_char);
     };
 
     std::string _str{"hello"};
-
-    return tncta::execute(200ms, _function, 4, std::move(_str), "goodbye");
+    
+    return tnctl::execute_a(200ms, _function, 4, std::move(_str), "goodbye");
   }
 };
 
@@ -95,8 +95,8 @@ struct executer_005 {
   static std::string desc() {
     return "Function with 3 parameters, no returning, with timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout, int p_i,
                         std::string &&p_str, const char *p_char) -> void {
       std::this_thread::sleep_for(1s);
@@ -108,8 +108,8 @@ struct executer_005 {
     };
 
     std::string _str{"hello"};
-
-    return !tncta::execute(200ms, _function, 4, std::move(_str), "goodbye");
+    
+    return !tnctl::execute_a(200ms, _function, 4, std::move(_str), "goodbye");
   }
 };
 
@@ -117,8 +117,8 @@ struct executer_006 {
   static std::string desc() {
     return "Function with one parameter, with returning, with no timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>, int16_t &&p_i) -> int16_t {
       const int16_t _res = 2 * p_i;
       TNCT_LOG_TRA("i = ", p_i, ", _res = ", _res);
@@ -128,7 +128,7 @@ struct executer_006 {
     int _i{4};
 
     std::optional<int16_t> _ret =
-        tncta::execute(200ms, _function, std::move(_i));
+        tnctl::execute_a(200ms, _function, std::move(_i));
 
     if (!_ret) {
       TNCT_LOG_ERR("timeout, when it should not");
@@ -147,8 +147,8 @@ struct executer_007 {
   static std::string desc() {
     return "Function with one parameter, with returning, with timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout, int &&p_i) -> int16_t {
       std::this_thread::sleep_for(1s);
       if (p_timeout()) {
@@ -163,7 +163,7 @@ struct executer_007 {
     int _i{4};
 
     std::optional<int16_t> _maybe =
-        tncta::execute(200ms, _function, std::move(_i));
+        tnctl::execute_a(200ms, _function, std::move(_i));
 
     if (_maybe) {
       TNCT_LOG_ERR("function returned ", *_maybe, ", but it should not");
@@ -177,14 +177,14 @@ struct executer_008 {
   static std::string desc() {
     return "Function with no parameter, with returning, with no timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>) -> int16_t {
       TNCT_LOG_DEB("hello");
       return 94;
     };
-
-    std::optional<int16_t> _maybe = tncta::execute(200ms, _function);
+      
+      std::optional<int16_t> _maybe = tnctl::execute_a(200ms, _function);
     if (!_maybe) {
       TNCT_LOG_ERR("function timedout, but it should not");
       return false;
@@ -202,8 +202,8 @@ struct executer_009 {
   static std::string desc() {
     return "Function with no parameter, with returning, with timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout) -> int16_t {
       std::this_thread::sleep_for(1s);
       if (p_timeout()) {
@@ -212,8 +212,8 @@ struct executer_009 {
       }
       return 53;
     };
-
-    std::optional<int16_t> _maybe = tncta::execute(200ms, _function);
+      
+      std::optional<int16_t> _maybe = tnctl::execute_a(200ms, _function);
     if (_maybe) {
       TNCT_LOG_ERR("function not timedout, as expected, and returned ",
                    *_maybe);
@@ -227,12 +227,12 @@ struct executer_010 {
   static std::string desc() {
     return "Function with 2 parameters, with returning, with no timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()>, int16_t p_i,
                         float p_f) -> float { return p_f * p_i; };
-
-    std::optional<float> _maybe = tncta::execute(200ms, _function, 4, -2.5);
+      
+      std::optional<float> _maybe = tnctl::execute_a(200ms, _function, 4, -2.5);
     if (!_maybe) {
       TNCT_LOG_ERR("function timeout, when it should not");
       return false;
@@ -250,8 +250,8 @@ struct executer_011 {
   static std::string desc() {
     return "Function with 2 parameters, with returning, with timeout";
   }
-
-  bool operator()(const tncta::program_options &) {
+  
+  bool operator()(const tnctl::program_options_a &) {
     auto _function = [](std::function<bool()> p_timeout, int16_t p_i,
                         float p_f) -> float {
       std::this_thread::sleep_for(1s);
@@ -261,8 +261,8 @@ struct executer_011 {
       }
       return p_f * p_i;
     };
-
-    std::optional<float> _maybe = tncta::execute(200ms, _function, 4, -2.5);
+      
+      std::optional<float> _maybe = tnctl::execute_a(200ms, _function, 4, -2.5);
     if (_maybe) {
       TNCT_LOG_ERR("function should timeout, but it has not, and returned ",
                    *_maybe);
@@ -275,8 +275,8 @@ struct executer_011 {
 int main(int argc, char **argv) {
   using namespace tenacitas::lib;
 
-  tncta::set_trace_level();
-  tncta::tester _tester(argc, argv);
+  tnctl::set_trace_level();
+  tnctl::tester_a _tester(argc, argv);
 
   run_test(_tester, executer_000);
   run_test(_tester, executer_001);

@@ -54,10 +54,10 @@ struct test_000 {
   ~test_000() { TNCT_LOG_TST("destroying test_000"); }
   static std::string desc() { return "Declaring a 'Dispatcher' "; }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_000");
     dispatcher::ptr _dispatcher = dispatcher::create();
     TNCT_LOG_TST("finishing test_000");
@@ -78,9 +78,9 @@ struct test_001 {
            "waiting all to be handled";
   }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_001");
     dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<test_001, evt::ev_0>([](auto p_event) {
@@ -106,7 +106,7 @@ struct test_002 {
   test_002() { TNCT_LOG_TST("creating test_002"); }
   ~test_002() { TNCT_LOG_TST("destroying test_002"); }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
 
   using events_subscribed = std::tuple<evt::ev_0>;
   using events_published = std::tuple<evt::ev_0>;
@@ -115,9 +115,9 @@ struct test_002 {
     return "'Dispatcher' as a local object, publishing 1 event, and waiting "
            "for it to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_002");
     dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<test_002, evt::ev_0>([](auto p_event) {
@@ -144,7 +144,7 @@ struct test_003 {
   test_003() { TNCT_LOG_TST("creating test_003"); }
   ~test_003() { TNCT_LOG_TST("destroying test_003"); }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
 
   using events_subscribed = std::tuple<evt::ev_0, evt::ev_1>;
   using events_published = std::tuple<evt::ev_0, evt::ev_1>;
@@ -154,9 +154,9 @@ struct test_003 {
            "event "
            "evt::ev_1 and waiting for them to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_002");
     dispatcher::ptr _dispatcher = dispatcher::create();
 
@@ -190,7 +190,7 @@ struct test_004 {
   test_004() { TNCT_LOG_TST("creating test_004"); }
   ~test_004() { TNCT_LOG_TST("destroying test_004"); }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
 
   using events_subscribed = std::tuple<evt::ev_0>;
   using events_published = std::tuple<evt::ev_0>;
@@ -200,9 +200,9 @@ struct test_004 {
            "evt::ev_0, "
            "publishing 1 event, and waiting for it to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_002");
     dispatcher::ptr _dispatcher = dispatcher::create();
 
@@ -233,7 +233,7 @@ struct test_005 {
   test_005() { TNCT_LOG_TST("creating test_005"); }
   ~test_005() { TNCT_LOG_TST("destroying test_005"); }
 
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
   using events_subscribed = std::tuple<evt::ev_0, evt::ev_1>;
   using events_published = std::tuple<evt::ev_0, evt::ev_1>;
 
@@ -244,9 +244,9 @@ struct test_005 {
            "and "
            "waiting for them to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     TNCT_LOG_TST("starting test_002");
     dispatcher::ptr _dispatcher = dispatcher::create();
 
@@ -289,9 +289,9 @@ struct test_006 {
   struct e {};
   using events_published = std::tuple<e>;
   using events_subscribed = std::tuple<e>;
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     size_t _counter{0};
 
     m_dispatcher->subscribe<test_006, e>(
@@ -311,7 +311,7 @@ struct test_006 {
   }
 
 private:
-  using dispatcher = tncta::dispatcher<e>;
+  using dispatcher = tnctl::dispatcher_a<e>;
 
 private:
   dispatcher::ptr m_dispatcher{dispatcher::create()};
@@ -321,15 +321,15 @@ struct test_corner_000 {
 
   using events_published = std::tuple<evt::ev_0>;
   using events_subscribed = std::tuple<evt::ev_0>;
-  using dispatcher = tncta::dispatcher<evt::ev_0, evt::ev_1>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0, evt::ev_1>;
 
   static std::string desc() {
     return "'Dispatcher' as a local object, publishing 200 events, but not "
            "waiting all to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     dispatcher::ptr _dispatcher = dispatcher::create();
     _dispatcher->subscribe<test_corner_000, evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
@@ -353,7 +353,7 @@ struct test_corner_000 {
 };
 
 struct test_corner_001 {
-  using dispatcher = tncta::dispatcher<evt::ev_0>;
+  using dispatcher = tnctl::dispatcher_a<evt::ev_0>;
   using events_published = std::tuple<evt::ev_0>;
   using events_subscribed = std::tuple<evt::ev_0>;
 
@@ -361,9 +361,9 @@ struct test_corner_001 {
     return "'Dispatcher' as an attribute, publishing 200 events, but not "
            "waiting all to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     m_dispatcher->subscribe<test_corner_001, evt::ev_0>([](auto p_event) {
       std::this_thread::sleep_for(50ms);
       TNCT_LOG_TST("event = ", p_event);
@@ -388,8 +388,8 @@ private:
   dispatcher::ptr m_dispatcher{dispatcher::create()};
 };
 
-tncta::dispatcher<evt::ev_0, evt::ev_1>::ptr s_dispatcher_test_corner_002{
-    tncta::dispatcher<evt::ev_0, evt::ev_1>::create()};
+tnctl::dispatcher_a<evt::ev_0, evt::ev_1>::ptr s_dispatcher_test_corner_002{
+    tnctl::dispatcher_a<evt::ev_0, evt::ev_1>::create()};
 
 struct test_corner_002 {
   using events_published = std::tuple<evt::ev_0>;
@@ -399,9 +399,9 @@ struct test_corner_002 {
     return "'Dispatcher' as a global object, publishing 200 events, but not "
            "waiting all to be handled";
   }
-
-  bool operator()(const tncta::program_options &) {
-    tncta::set_info_level();
+  
+  bool operator()(const tnctl::program_options_a &) {
+    tnctl::set_info_level();
     s_dispatcher_test_corner_002->subscribe<test_corner_002, evt::ev_0>(
         [](auto p_event) {
           std::this_thread::sleep_for(50ms);
@@ -428,11 +428,11 @@ int main(int argc, char **argv) {
 
   using namespace tenacitas::lib;
 
-  tncta::set_max_log_file_name_lenght(13);
+  tnctl::set_max_log_file_name_lenght(13);
 
-  // tncta::program_options _options;
-
-  tncta::tester _tester(argc, argv);
+  // tnctl::program_options_a _options;
+  
+  tnctl::tester_a _tester(argc, argv);
 
   run_test(_tester, test_000);
   run_test(_tester, test_001);

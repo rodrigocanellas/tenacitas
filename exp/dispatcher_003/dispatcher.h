@@ -6,7 +6,7 @@
 
 namespace alg {
 
-using dispatcher = tncta::dispatcher<evt::pressure_generated,
+using dispatcher = tnctl::dispatcher_a<evt::pressure_generated,
                                      evt::pressure_sent, evt::pressure_handled>;
 
 }

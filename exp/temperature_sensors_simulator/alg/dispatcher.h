@@ -12,7 +12,7 @@
 
 namespace temperature_sensors_simulator::alg {
 
-using dispatcher = tncta::dispatcher<evt::add_sensor, evt::new_temperature,
+using dispatcher = tnctl::dispatcher_a<evt::add_sensor, evt::new_temperature,
                                      evt::remove_sensor, evt::set_temperature>;
 
 }

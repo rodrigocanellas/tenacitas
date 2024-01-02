@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 namespace typ {
 
 using test_id = uint32_t;
-using device_id = tnctt::id;
+using device_id = tnctl::id_t;
 using pressure = float;
 
 using total = uint32_t;
@@ -127,7 +127,7 @@ struct publishings_definitions {
 
 struct generator {
   generator() = default;
-  generator(tnctt::id p_id, amount p_generated, time p_interval)
+  generator(tnctl::id_t p_id, amount p_generated, time p_interval)
       : id(p_id), to_generate(p_generated), interval(p_interval) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -138,14 +138,14 @@ struct generator {
     return p_out;
   }
 
-  tnctt::id id;
+  tnctl::id_t id;
   amount to_generate{0};
   time interval{0ms};
 };
 
 using generators = std::list<generator>;
 
-using subscribers_results = std::map<tnctt::id, total>;
+using subscribers_results = std::map<tnctl::id_t, total>;
 
 struct publishing_results {
   publishing_results() = default;
