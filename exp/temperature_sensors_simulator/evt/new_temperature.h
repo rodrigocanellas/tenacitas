@@ -1,7 +1,6 @@
 #ifndef TEMPERATURE_SENSORS_SIMULATOR__EVT__NEW_TEMPERATURE_H
 #define TEMPERATURE_SENSORS_SIMULATOR__EVT__NEW_TEMPERATURE_H
 
-#include <cstdint>
 #include <iostream>
 
 #include "../typ/sensor_id.h"

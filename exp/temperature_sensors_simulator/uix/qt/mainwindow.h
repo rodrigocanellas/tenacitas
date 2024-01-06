@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <memory>
-#include <thread>
 #include <tuple>
 
 #include <QMainWindow>

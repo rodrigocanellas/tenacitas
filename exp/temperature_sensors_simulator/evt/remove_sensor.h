@@ -1,7 +1,6 @@
 #ifndef TEMPERATURE_SENSORS_SIMULATOR__EVT__REMOVE_SENSOR_H
 #define TEMPERATURE_SENSORS_SIMULATOR__EVT__REMOVE_SENSOR_H
 
-#include <cstdint>
 #include <iostream>
 
 #include "../typ/sensor_id.h"

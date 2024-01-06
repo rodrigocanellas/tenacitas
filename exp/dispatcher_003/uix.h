@@ -1,5 +1,5 @@
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_UIX_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_UIX_H
+#ifndef TNCT_TST_ASYNC_DISPATCHER_UIX_H
+#define TNCT_TST_ASYNC_DISPATCHER_UIX_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory

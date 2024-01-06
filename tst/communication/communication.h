@@ -2,7 +2,7 @@
 
 #include <tenacitas.h>
 
-namespace tenacitas::lib {
+namespace tnct::lib {
 
 enum class communication_status_t : uint8_t {
   NO_ERROR = 0,
@@ -59,10 +59,10 @@ struct connection_error_unidentified_e {
   connection_error_unidentified_e &
   operator=(connection_error_unidentified_e &&) = default;
 
-  connection_error_unidentified_e(tnctl::id_t p_connection_id)
+  connection_error_unidentified_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_writing_e {
@@ -78,10 +78,10 @@ struct connection_error_writing_e {
   connection_error_writing_e &
   operator=(connection_error_writing_e &&) = default;
 
-  connection_error_writing_e(tnctl::id_t p_connection_id)
+  connection_error_writing_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_reading_e {
@@ -97,10 +97,10 @@ struct connection_error_reading_e {
   connection_error_reading_e &
   operator=(connection_error_reading_e &&) = default;
 
-  connection_error_reading_e(tnctl::id_t p_connection_id)
+  connection_error_reading_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_timeout_writing_e {
@@ -118,10 +118,10 @@ struct connection_error_timeout_writing_e {
   connection_error_timeout_writing_e &
   operator=(connection_error_timeout_writing_e &&) = default;
 
-  connection_error_timeout_writing_e(tnctl::id_t p_connection_id)
+  connection_error_timeout_writing_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_timeout_reading_e {
@@ -139,10 +139,10 @@ struct connection_error_timeout_reading_e {
   connection_error_timeout_reading_e &
   operator=(connection_error_timeout_reading_e &&) = default;
 
-  connection_error_timeout_reading_e(tnctl::id_t p_connection_id)
+  connection_error_timeout_reading_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_connecting_e {
@@ -159,10 +159,10 @@ struct connection_error_connecting_e {
   connection_error_connecting_e &
   operator=(connection_error_connecting_e &&) = default;
 
-  connection_error_connecting_e(tnctl::id_t p_connection_id)
+  connection_error_connecting_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_error_timeout_connecting_e {
@@ -180,10 +180,10 @@ struct connection_error_timeout_connecting_e {
   connection_error_timeout_connecting_e &
   operator=(connection_error_timeout_connecting_e &&) = default;
 
-  connection_error_timeout_connecting_e(tnctl::id_t p_connection_id)
+  connection_error_timeout_connecting_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 struct connection_lost_e {
@@ -197,10 +197,10 @@ struct connection_lost_e {
 
   connection_lost_e &operator=(connection_lost_e &&) = default;
 
-  connection_lost_e(tnctl::id_t p_connection_id)
+  connection_lost_e(tld::id p_connection_id)
       : connection_id(p_connection_id) {}
 
-  tnctl::id_t connection_id;
+  tld::id connection_id;
 };
 
 template <typename t>
@@ -312,14 +312,14 @@ public:
     return p_connection.m_id != m_id;
   }
 
-  template <tnctl::convertible_to_milli_c t_timeout>
+  template <tlc::convertible_to_milli t_timeout>
   void set_write_timeout(t_timeout p_timeout) {
     m_write_timeout =
         std::chrono::duration_cast<std::chrono::milliseconds>(p_timeout);
     do_set_write_timeout(m_write_timeout);
   }
 
-  template <tnctl::convertible_to_milli_c t_timeout>
+  template <tlc::convertible_to_milli t_timeout>
   void set_read_timeout(t_timeout p_timeout) {
     m_read_timeout =
         std::chrono::duration_cast<std::chrono::milliseconds>(p_timeout);
@@ -374,7 +374,7 @@ public:
     return _status;
   }
 
-  tnctl::id_t id() const { return m_id; }
+  tld::id id() const { return m_id; }
 
 protected:
   virtual communication_status_t do_write(const uint8_t *, const uint8_t *) = 0;
@@ -383,10 +383,10 @@ protected:
   virtual void do_set_read_timeout(std::chrono::milliseconds) = 0;
 
 private:
-  void on_connection_lost(id_t /*p_connection_id*/) {}
+  void on_connection_lost(id /*p_connection_id*/) {}
 
 private:
-  tnctl::id_t m_id;
+  tld::id m_id;
   t_dispatcher::ptr m_dispatcher;
   std::chrono::milliseconds m_write_timeout{0ms};
   std::chrono::milliseconds m_read_timeout{0ms};
@@ -444,4 +444,4 @@ private:
 //   t_connection connection;
 // };
 
-} // namespace tenacitas::lib
+} // namespace tnct::lib

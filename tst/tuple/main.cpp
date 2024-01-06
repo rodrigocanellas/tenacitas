@@ -12,12 +12,12 @@
 
 #include <tenacitas.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct tuple_000 {
   static std::string desc() { return "Traverses a tuple"; }
-
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
     using container = std::tuple<char, int, float, std::string>;
     using function_char = std::function<void(char &)>;
     using function_int = std::function<void(int &)>;
@@ -49,8 +49,8 @@ struct tuple_000 {
 
 struct tuple_001 {
   static std::string desc() { return "Traverses a tuple"; }
-
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
 
     auto _functions{std::make_tuple(
         [](char &p_char) { TNCT_LOG_TST("char: ", p_char); },
@@ -69,8 +69,8 @@ struct tuple_001 {
 
 struct tuple_002 {
   static std::string desc() { return "Traverses a tuple"; }
-
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
 
     auto _function{[](auto &p_value) { TNCT_LOG_TST("value: ", p_value); }};
 
@@ -86,7 +86,7 @@ struct tuple_002 {
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
-    tnctl::tester_a _test(argc, argv);
+      tla::tester _test(argc, argv);
     run_test(_test, tuple_000);
     run_test(_test, tuple_001);
     run_test(_test, tuple_002);

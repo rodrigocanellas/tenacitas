@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/dispatcher.h>
 
 #include "../evt/add_sensor.h"
 #include "../evt/new_temperature.h"
@@ -12,7 +12,7 @@
 
 namespace temperature_sensors_simulator::alg {
 
-using dispatcher = tnctl::dispatcher_a<evt::add_sensor, evt::new_temperature,
-                                     evt::remove_sensor, evt::set_temperature>;
+using dispatcher = tla::dispatcher<evt::add_sensor, evt::new_temperature,
+                                   evt::remove_sensor, evt::set_temperature>;
 
 }

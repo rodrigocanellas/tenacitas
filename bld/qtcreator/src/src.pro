@@ -1,8 +1,5 @@
-include (../../../../tenacitas.bld/qtcreator/common.pri)
+TEMPLATE=subdirs
 
-HEADERS += $$BASE_DIR_LIB/tenacitas.h
-
-TEMPLATE=aux
-
-
+SUBDIRS= \
+        tnct
 

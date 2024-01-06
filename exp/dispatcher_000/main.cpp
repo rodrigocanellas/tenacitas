@@ -8,11 +8,11 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
-#include <functional>
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/dispatcher.h>
+#include <tnct/lib/alg/sleeping_loop.h>
 
 using namespace std::chrono_literals;
 
@@ -37,7 +37,7 @@ struct all_handled {
   }
 };
 
-using dispatcher = tnctl::dispatcher_a<temperature, all_handled>;
+using dispatcher = tla::dispatcher<temperature, all_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -58,7 +58,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-    using temperature_generator = tnctl::sleeping_loop_a;
+  using temperature_generator = tla::sleeping_loop;
 
 private:
   // function to be executed inside the sleeping loop, that will publish the
@@ -126,6 +126,7 @@ private:
 struct start {
   using events_subscribed = std::tuple<all_handled, temperature>;
   void operator()() {
+    std::cout << "starting" << std::endl;
 
     // publisher/subscriber
     dispatcher::ptr _dispatcher{dispatcher::create()};
@@ -145,9 +146,6 @@ struct start {
     // declaring the temperature sensor
     temperature_sensor _sensor{_dispatcher, _max};
 
-    // starting the sensor
-    _sensor.start();
-
     // subscriber for the all_handled event signals when all the temperatures
     // were handled
     _dispatcher->subscribe<start, all_handled>([&](auto) -> void {
@@ -156,6 +154,9 @@ struct start {
       return;
     });
 
+    // starting the sensor
+    _sensor.start();
+
     // waits for the temperature subscriber to publish that the expected number
     // of temperatures was generated
     std::unique_lock<std::mutex> _lock(_mutex);
@@ -163,4 +164,7 @@ struct start {
   }
 };
 
-int main() { start(); }
+int main() {
+  std::cout << "main" << std::endl;
+  start()();
+}

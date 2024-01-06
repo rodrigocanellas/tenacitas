@@ -10,21 +10,21 @@
 
 #include <tenacitas.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct test_ok {
-    bool operator()(const tnctl::program_options_a &) { return true; }
+    bool operator()(const tla::program_options &) { return true; }
 
   static std::string desc() { return "an ok test"; }
 };
 
 struct test_fail {
-  bool operator()(const tnctl::program_options_a &) { return true; }
+    bool operator()(const tla::program_options &) { return true; }
   static std::string desc() { return "a fail test"; }
 };
 
 struct test_error {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     try {
       throw std::runtime_error("test function raised an exception");
       return false;
@@ -39,7 +39,7 @@ struct test_error {
 int main(int argc, char **argv) {
   using namespace tenacitas;
   try {
-      tnctl::tester_a _test(argc, argv);
+      tla::tester _test(argc, argv);
     run_test(_test, test_ok);
     run_test(_test, test_fail);
     run_test(_test, test_error);

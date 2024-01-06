@@ -3,29 +3,16 @@
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
-#include <algorithm>
-#include <array>
-#include <cstdint>
-#include <cstring>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
 #include <iostream>
-#include <iterator>
-#include <map>
-#include <sstream>
-#include <string>
-#include <utility>
-#include <vector>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/program_options.h>
 
 using namespace std;
 
 int main(int argc, char **argv) {
 
   try {
-        tnctl::program_options_a _pgm_options;
+    tla::program_options _pgm_options;
 
     _pgm_options.parse(argc, (char **)argv);
 

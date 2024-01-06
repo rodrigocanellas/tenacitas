@@ -17,15 +17,15 @@
 #include <tenacitas.h>
 
 using namespace std::chrono_literals;
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
     
-    bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
         
-        using loop = tnctl::sleeping_loop_a;
+        using loop = tla::sleeping_loop;
 
     auto _operation = []() -> void { TNCT_LOG_DEB("loop1"); };
 
@@ -36,7 +36,7 @@ struct sleeping_loop_000 {
 };
 
 struct sleeping_loop_001 {
-    using loop = tnctl::sleeping_loop_a;
+    using loop = tla::sleeping_loop;
 
   typedef uint16_t value;
 
@@ -49,7 +49,7 @@ struct sleeping_loop_001 {
     return _stream.str();
   }
   
-  bool operator()(const tnctl::program_options_a &) {
+  bool operator()(const tla::program_options &) {
 
     operation1 _op(&m_cond);
 
@@ -109,7 +109,7 @@ private:
 // struct sleeping_loop_002 {
 //    static std::string desc() { return ""; }
 
-//    bool operator()(const tnctl::program_options_a &) {
+//    bool operator()(const tla::program_options_a &) {
 
 //        std::vector<sleeping_loop> _loops;
 
@@ -186,11 +186,11 @@ private:
 //};
 
 int main(int argc, char **argv) {
-  using namespace tenacitas::lib;
+  using namespace tnct::lib;
 
-  tnctl::set_debug_level();
+  tla::set_debug_level();
   
-  tnctl::tester_a<> _tester(argc, argv);
+  tla::tester<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);

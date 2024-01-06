@@ -13,14 +13,14 @@
 
 #include <tenacitas.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct test_000 {
   static std::string desc() {
     return "simple square matrix creation and element access";
   }
-
-  bool operator()(const tnctl::program_options_a &) {
+  
+  bool operator()(const tla::program_options &) {
 
     matrix_a<uint16_t, char> _matrix(3, 3, 'z');
 
@@ -40,8 +40,8 @@ struct test_001 {
   static std::string desc() {
     return "create square matrix, modify and element access";
   }
-
-  bool operator()(const tnctl::program_options_a &) {
+  
+  bool operator()(const tla::program_options &) {
 
     matrix_a<uint16_t, char> _matrix(3, 3, 'z');
 
@@ -72,8 +72,8 @@ struct test_002 {
   static std::string desc() {
     return "create non square matrix creation, fill it, and element access";
   }
-
-  bool operator()(const tnctl::program_options_a &) {
+  
+  bool operator()(const tla::program_options &) {
 
     matrix_a<uint16_t, int16_t> _matrix(3, 4, -1);
 
@@ -110,8 +110,8 @@ struct test_002 {
 
 struct test_003 {
   static std::string desc() { return "test filling horizontally"; }
-
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
 
     matrix_a<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
@@ -131,8 +131,8 @@ struct test_003 {
 
 struct test_004 {
   static std::string desc() { return "test filling vertically"; }
-
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
 
     matrix_a<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
@@ -152,7 +152,7 @@ struct test_004 {
 
 int main(int argc, char **argv) {
   using namespace tenacitas;
-  tnctl::tester_a _tester(argc, argv);
+    tla::tester _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

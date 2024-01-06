@@ -10,10 +10,10 @@
 
 #include <tenacitas.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct cerr_log_how_to {
-    bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     try {
       TNCT_LOG_DEB("hello! ", 309);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
@@ -37,7 +37,7 @@ struct cerr_log_how_to {
 };
 
 struct clog_how_to {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     try {
 
       TNCT_LOG_DEB("teste de clog para debug ", -345, ' ', 19023, ' ', 'W', ' ',
@@ -63,7 +63,7 @@ struct clog_how_to {
 };
 
 struct cout_log_how_to {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     try {
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
@@ -83,8 +83,8 @@ struct cout_log_how_to {
 
 struct cout_log_print_tuple {
   static std::string desc() { return "Prints a tuple"; }
-  
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
     try {
       std::tuple<int16_t, float> _tuple{-3, 3.14};
 
@@ -100,8 +100,8 @@ struct cout_log_print_tuple {
 
 struct file_log {
   static std::string desc() { return "Testing logging into a file."; }
-  
-  bool operator()(const tnctl::program_options_a &) {
+    
+    bool operator()(const tla::program_options &) {
     try {
       tnctl::set_log_file_writer("test_logger", 150);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
@@ -122,8 +122,8 @@ int main(int argc, char **argv) {
   using namespace tenacitas;
 
   tnctl::set_writer_cerr();
-  tnctl::set_debug_level();
-  tnctl::tester_a _tester(argc, argv);
+  tla::set_debug_level();
+  tla::tester _tester(argc, argv);
 
   run_test(_tester, cout_log_how_to);
   run_test(_tester, cout_log_print_tuple);

@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <iostream>
+#include <tnct/lib/alg/log.h>
 
 #include "../../typ/sensor_id.h"
 #include "../../typ/temperature.h"
@@ -12,7 +12,7 @@ MainWindow::MainWindow(alg::dispatcher::ptr p_dispatcher, QWidget *parent)
     : QMainWindow(parent), m_dispatcher(p_dispatcher), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
-  tnctl::set_info_level();
+  tla::set_info_level();
 
   m_dispatcher->subscribe<MainWindow, evt::new_temperature>(
       [this](auto p_evt) { on_new_temperature(std::move(p_evt)); });

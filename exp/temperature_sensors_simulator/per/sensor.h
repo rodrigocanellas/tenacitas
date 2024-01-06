@@ -1,7 +1,6 @@
 #ifndef TEMPERATURE_SENSORS_SIMULATOR__PER__SENSOR_H
 #define TEMPERATURE_SENSORS_SIMULATOR__PER__SENSOR_H
 
-#include <thread>
 #include <tuple>
 
 #include "../alg/dispatcher.h"
@@ -9,7 +8,7 @@
 #include "../typ/sensor_id.h"
 #include "../typ/temperature.h"
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/sleeping_loop.h>
 
 namespace temperature_sensors_simulator::per {
 
@@ -72,7 +71,7 @@ private:
   typ::sensor_id m_sensor_id;
   typ::temperature m_current;
   typ::temperature m_increment;
-  tnctl::sleeping_loop_a m_sleeping_loop;
+  tla::sleeping_loop m_sleeping_loop;
   std::mutex m_mutex;
 };
 

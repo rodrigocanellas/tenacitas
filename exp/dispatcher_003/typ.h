@@ -1,5 +1,5 @@
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_TYP_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_TYP_H
+#ifndef TNCT_TST_ASYNC_DISPATCHER_TYP_H
+#define TNCT_TST_ASYNC_DISPATCHER_TYP_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -11,17 +11,17 @@
 #include <iostream>
 #include <list>
 #include <map>
-#include <string>
 #include <vector>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/dat/id.h>
 
 using namespace std::chrono_literals;
 
 namespace typ {
 
 using test_id = uint32_t;
-using device_id = tnctl::id_t;
+using device_id = tld::id;
 using pressure = float;
 
 using total = uint32_t;
@@ -127,7 +127,7 @@ struct publishings_definitions {
 
 struct generator {
   generator() = default;
-  generator(tnctl::id_t p_id, amount p_generated, time p_interval)
+  generator(tld::id p_id, amount p_generated, time p_interval)
       : id(p_id), to_generate(p_generated), interval(p_interval) {}
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -138,14 +138,14 @@ struct generator {
     return p_out;
   }
 
-  tnctl::id_t id;
+  tld::id id;
   amount to_generate{0};
   time interval{0ms};
 };
 
 using generators = std::list<generator>;
 
-using subscribers_results = std::map<tnctl::id_t, total>;
+using subscribers_results = std::map<tld::id, total>;
 
 struct publishing_results {
   publishing_results() = default;

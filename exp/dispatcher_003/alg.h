@@ -1,10 +1,9 @@
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_BUS_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_BUS_H
+#ifndef TNCT_TST_ASYNC_DISPATCHER_BUS_H
+#define TNCT_TST_ASYNC_DISPATCHER_BUS_H
 
 #include <condition_variable>
 #include <cstdint>
 #include <map>
-#include <memory>
 #include <optional>
 #include <thread>
 #include <utility>
@@ -13,7 +12,9 @@
 #include "dispatcher.h"
 #include "evt.h"
 #include "typ.h"
-#include <tenacitas.h>
+#include <tnct/lib/alg/sleeping_loop.h>
+#include <tnct/lib/cpt/chrono_convertible.h>
+#include <tnct/lib/dat/id.h>
 
 namespace alg {
 
@@ -37,7 +38,7 @@ struct pressure_generator {
 
   void start() {
     if (!m_ticker) {
-      m_ticker = std::make_unique<tnctl::sleeping_loop_a>(
+      m_ticker = std::make_unique<tla::sleeping_loop>(
           [this]() -> void { (*this)(); }, m_generator.interval);
     }
     m_ticker->start();
@@ -77,7 +78,7 @@ private:
 
   typ::pressure m_pressure;
 
-  std::unique_ptr<tnctl::sleeping_loop_a> m_ticker;
+  std::unique_ptr<tla::sleeping_loop> m_ticker;
   typ::amount m_counter{0};
   typ::device_id m_device;
 
@@ -162,14 +163,14 @@ struct pressure_tester {
 
 private:
   void add_publishing(uint16_t p_num_subscribers,
-                      tnctl::convertible_to_milli_c auto p_sleep) {
+                      tlc::convertible_to_milli auto p_sleep) {
     auto _queue_id = m_dispatcher->add_queue<evt::pressure_generated>();
     m_summary.total_handled_expected += m_summary.total_sent_expected;
 
     for (uint16_t _i = 0; _i < p_num_subscribers; ++_i) {
       ++m_num_subscribers;
 
-      tnctl::id_t _subscriber_id;
+      tld::id _subscriber_id;
 
       m_publishings_results[_queue_id] =
           typ::publishing_results{p_sleep, typ::subscribers_results{}};
@@ -205,7 +206,7 @@ private:
 
   void add_generator(typ::time p_interval, typ::pressure p_initial,
                      typ::amount p_amount) {
-    typ::generator _generator{tnctl::id_t{}, p_amount, p_interval};
+    typ::generator _generator{tld::id{}, p_amount, p_interval};
     m_generators.push_back(_generator);
     m_pressure_generators.push_back({m_dispatcher, p_initial, _generator});
     m_summary.total_sent_expected += p_amount;

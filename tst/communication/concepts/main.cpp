@@ -33,7 +33,7 @@ struct dummy_e {
 };
 
 using dispatcher_a =
-    tnctl::dispatcher_a<tnctl::connection_error_unidentified_e,
+    tla::dispatcher<tnctl::connection_error_unidentified_e,
                         tnctl::connection_error_writing_e,
                         tnctl::connection_error_reading_e,
                         tnctl::connection_error_timeout_writing_e,

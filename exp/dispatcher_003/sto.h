@@ -1,5 +1,5 @@
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_STO_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_STO_H
+#ifndef TNCT_TST_ASYNC_DISPATCHER_STO_H
+#define TNCT_TST_ASYNC_DISPATCHER_STO_H
 
 #include <optional>
 #include <sstream>
@@ -7,7 +7,7 @@
 
 #include "cfg.h"
 #include "typ.h"
-#include <tenacitas.h>
+#include <tnct/lib/dat/queue_id.h>
 
 #include <sqlite3.h>
 
@@ -230,7 +230,7 @@ private:
     }
   }
 
-  void save_subscribers(tnctl::queue_id_t p_publishing_id,
+  void save_subscribers(tld::queue_id p_publishing_id,
                         const typ::subscribers_results &p_subscribers) {
     for (const typ::subscribers_results::value_type &_value : p_subscribers) {
       std::stringstream _stream;
@@ -258,7 +258,7 @@ private:
 
   void save_publishings(const typ::publishings_results &p_publishings) {
     for (const typ::publishings_results::value_type &_value : p_publishings) {
-      tnctl::queue_id_t _publishing_id = _value.first;
+      tld::queue_id _publishing_id = _value.first;
       std::stringstream _stream;
       _stream << "insert into publishings (test_id, publishing_id, sleep) "
                  "values ("

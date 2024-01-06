@@ -10,10 +10,10 @@
 
 #include <tenacitas.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct from_memory {
-    bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
 
     tnctl::translator_in_memory_a _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
@@ -27,7 +27,7 @@ struct from_memory {
 };
 
 struct from_existing_file {
-  bool operator()(const tnctl::program_options_a &p_options) {
+    bool operator()(const tla::program_options &p_options) {
     std::optional<std::string> _maybe{p_options.get_single_param("file_name")};
     if (!_maybe.has_value()) {
       TNCT_LOG_ERR("File name not provided");
@@ -50,7 +50,7 @@ struct from_existing_file {
 };
 
 struct from_non_existing_file {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     tnctl::translator_from_file_a _translator;
 
     return !_translator.load("file.dict");
@@ -62,7 +62,7 @@ struct from_non_existing_file {
 };
 
 struct translate_non_existing_word {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     tnctl::translator_in_memory_a _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
@@ -81,7 +81,7 @@ struct translate_non_existing_word {
 };
 
 struct translate_an_existing_word {
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     tnctl::translator_in_memory_a _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
@@ -100,8 +100,8 @@ struct translate_an_existing_word {
 int main(int argc, char **argv) {
 
   tnctl::set_writer_cerr();
-  tnctl::set_debug_level();
-  tnctl::tester_a<> _test(argc, argv);
+  tla::set_debug_level();
+  tla::tester<> _test(argc, argv);
 
   run_test(_test, from_memory);
   run_test(_test, from_existing_file);

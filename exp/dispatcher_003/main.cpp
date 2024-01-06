@@ -5,16 +5,9 @@
 
 /// \example dispatcher_000
 
-#include <chrono>
-#include <condition_variable>
-#include <cstdint>
-#include <functional>
 #include <iostream>
-#include <mutex>
 
-#include <tenacitas.h>
-
-using namespace std::chrono_literals;
+#include <tnct/lib/alg/dispatcher.h>
 
 #include "alg.h"
 #include "cfg.h"

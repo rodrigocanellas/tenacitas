@@ -11,7 +11,7 @@
 //     return "underflow when multiplying to a int64_t";
 //   }
 
-//  bool operator()(tnctl::program_options_a &) {
+//  bool operator()(tla::program_options_a &) {
 
 //    int64_t _v0{std::numeric_limits<int64_t>::min() + 10};
 
@@ -36,7 +36,7 @@
 //   static std::string desc() { return "overflow when multiplying to a
 //   int64_t"; }
 
-//  bool operator()(tnctl::program_options_a &) {
+//  bool operator()(tla::program_options_a &) {
 
 //    int64_t _v0{std::numeric_limits<int64_t>::max() - 10};
 
@@ -62,7 +62,7 @@
 //     return "overflow when multiplying to a uint64_t";
 //   }
 
-//  bool operator()(tnctl::program_options_a &) {
+//  bool operator()(tla::program_options_a &) {
 
 //    uint64_t _v0{std::numeric_limits<uint64_t>::max() - 10};
 
@@ -83,11 +83,11 @@
 //  }
 //};
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
 struct test0000 {
   static std::string desc() { return "factorial of 0"; }
-    bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     auto _maybe{tnctl::factorial<uint16_t>(0)};
     if (!_maybe) {
       TNCT_LOG_ERR("failed to calculate the factorial of 0");
@@ -104,7 +104,7 @@ struct test0000 {
 
 struct test0001 {
   static std::string desc() { return "factorial of 5"; }
-  bool operator()(const tnctl::program_options_a &) {
+    bool operator()(const tla::program_options &) {
     auto _maybe{tnctl::factorial<uint16_t>(5)};
     if (!_maybe) {
       TNCT_LOG_ERR("failed to calculate the factorial of 5");
@@ -122,8 +122,8 @@ struct test0001 {
 int main(int argc, char **argv) {
   using namespace tenacitas;
 
-  tnctl::set_debug_level();
-  tnctl::tester_a _tester(argc, argv);
+  tla::set_debug_level();
+  tla::tester _tester(argc, argv);
   run_test(_tester, test0000);
   run_test(_tester, test0001);
   //  run_test(_tester, test0002);
