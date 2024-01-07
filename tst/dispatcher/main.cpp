@@ -8,10 +8,10 @@
 #include <string>
 #include <tuple>
 
-#include <tnct/lib/alg/dispatcher.h>
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/dispatcher.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 namespace evt {
 struct ev_0 {
@@ -415,8 +415,6 @@ struct test_corner_002 {
 };
 
 int main(int argc, char **argv) {
-
-  using namespace tnct::lib;
 
   tla::set_max_log_file_name_lenght(13);
 

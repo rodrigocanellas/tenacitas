@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <tnct/lib/alg/log.h>
+#include <tenacitas.lib/src/alg/log.h>
 
 #include "../../typ/sensor_id.h"
 #include "../../typ/temperature.h"

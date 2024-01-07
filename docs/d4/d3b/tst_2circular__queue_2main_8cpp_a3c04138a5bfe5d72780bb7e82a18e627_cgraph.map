@@ -1,6 +1,6 @@
 <map id="main" name="main">
-<area shape="rect" id="node1" title=" " alt="" coords="5,46,60,73"/>
-<area shape="rect" id="node2" href="$d3/d88/namespacetnct_1_1lib_1_1alg.html#a3cd8381e383bb22da94cb564604c5841" title="Sets the global log level as &#39;debug&#39;." alt="" coords="147,5,273,47"/>
-<area shape="rect" id="node4" href="$d3/d88/namespacetnct_1_1lib_1_1alg.html#ad835cddbb4cfccfe3a940c23b7849118" title=" " alt="" coords="108,71,312,112"/>
-<area shape="rect" id="node3" href="$dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a7747affee0686e13aa597fd6c726ad89" title=" " alt="" coords="360,5,545,47"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,57,60,84"/>
+<area shape="rect" id="node2" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8af63561d18161e545afcd293cdd9f9f" title="Sets the global log level as &#39;debug&#39;." alt="" coords="132,13,268,54"/>
+<area shape="rect" id="node4" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a987773a643278dab602d4f32a54e9f40" title=" " alt="" coords="108,79,292,135"/>
+<area shape="rect" id="node3" href="$de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a8808a21f675184e3669b2f011bf1e5a4" title=" " alt="" coords="340,5,508,61"/>
 </map>

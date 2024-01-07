@@ -10,7 +10,8 @@ HEADERS = $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/alg.h \
           $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/dispatcher.h \
           $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/sto.h \
           $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/uix.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/typ.h
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/typ.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/evt.h
 
 
 LIBS+=-lsqlite3

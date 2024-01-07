@@ -1,52 +1,52 @@
 <map id="/home/rodrigo/development/tenacitas.lib/exp/dispatcher_001/main.cpp" name="/home/rodrigo/development/tenacitas.lib/exp/dispatcher_001/main.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="497,5,703,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="1664,459,1731,486"/>
-<area shape="rect" id="node3" title=" " alt="" coords="714,281,857,307"/>
-<area shape="rect" id="node4" title=" " alt="" coords="491,541,557,568"/>
-<area shape="rect" id="node5" title=" " alt="" coords="161,541,241,568"/>
-<area shape="rect" id="node6" title=" " alt="" coords="195,459,259,486"/>
-<area shape="rect" id="node7" href="$d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h.html" title=" " alt="" coords="1918,109,2093,136"/>
-<area shape="rect" id="node44" href="$d1/d6e/queue__id_8h.html" title=" " alt="" coords="2067,281,2234,307"/>
-<area shape="rect" id="node48" href="$dd/db8/sleeping__loop_8h.html" title=" " alt="" coords="933,273,1083,315"/>
-<area shape="rect" id="node8" title=" " alt="" coords="1613,191,1699,218"/>
-<area shape="rect" id="node9" title=" " alt="" coords="2219,459,2290,486"/>
-<area shape="rect" id="node10" title=" " alt="" coords="2315,459,2381,486"/>
-<area shape="rect" id="node11" title=" " alt="" coords="2657,459,2716,486"/>
-<area shape="rect" id="node12" title=" " alt="" coords="1723,191,1794,218"/>
-<area shape="rect" id="node13" title=" " alt="" coords="1819,191,1896,218"/>
-<area shape="rect" id="node14" title=" " alt="" coords="1168,541,1243,568"/>
-<area shape="rect" id="node15" title=" " alt="" coords="1921,191,2007,218"/>
-<area shape="rect" id="node16" title=" " alt="" coords="1551,541,1609,568"/>
-<area shape="rect" id="node17" title=" " alt="" coords="1755,459,1815,486"/>
-<area shape="rect" id="node18" href="$dd/d20/event_8h.html" title=" " alt="" coords="2337,370,2481,397"/>
-<area shape="rect" id="node20" href="$d1/d40/publisher_8h.html" title=" " alt="" coords="2435,281,2602,307"/>
-<area shape="rect" id="node24" href="$da/d9f/subscriber_8h.html" title=" " alt="" coords="2688,281,2861,307"/>
-<area shape="rect" id="node25" href="$df/d21/event__handler_8h.html" title=" " alt="" coords="1909,273,2043,315"/>
-<area shape="rect" id="node27" href="$d3/d9a/event__priority_8h.html" title=" " alt="" coords="384,363,517,404"/>
-<area shape="rect" id="node28" href="$d2/d4f/event__queue_8h.html" title=" " alt="" coords="1377,184,1524,225"/>
-<area shape="rect" id="node45" href="$d8/d38/tuple__index_8h.html" title=" " alt="" coords="2902,184,3029,225"/>
-<area shape="rect" id="node19" title=" " alt="" coords="2439,459,2519,486"/>
-<area shape="rect" id="node21" title=" " alt="" coords="2737,541,2791,568"/>
-<area shape="rect" id="node22" href="$dc/d25/tuple__like_8h.html" title=" " alt="" coords="2809,363,2937,404"/>
-<area shape="rect" id="node23" href="$dd/d04/has__tuple__element_8h.html" title=" " alt="" coords="2801,452,2964,493"/>
-<area shape="rect" id="node26" title=" " alt="" coords="2041,459,2127,486"/>
-<area shape="rect" id="node29" title=" " alt="" coords="1576,459,1640,486"/>
-<area shape="rect" id="node30" href="$d7/d7f/log_8h.html" title=" " alt="" coords="1229,281,1355,307"/>
-<area shape="rect" id="node41" href="$d3/d1e/circular__queue_8h.html" title=" " alt="" coords="2017,363,2161,404"/>
-<area shape="rect" id="node31" href="$dd/d3f/log__file_8h.html" title=" " alt="" coords="1695,363,1841,404"/>
-<area shape="rect" id="node33" href="$dd/d5c/log__wrapper_8h.html" title=" " alt="" coords="1261,363,1406,404"/>
-<area shape="rect" id="node38" href="$d5/d8d/max__log__file__name__lenght_8h.html" title=" " alt="" coords="525,452,739,493"/>
-<area shape="rect" id="node32" title=" " alt="" coords="1891,459,1965,486"/>
-<area shape="rect" id="node34" title=" " alt="" coords="915,459,1005,486"/>
-<area shape="rect" id="node35" title=" " alt="" coords="1025,541,1100,568"/>
-<area shape="rect" id="node36" href="$da/df1/format__number_8h.html" title=" " alt="" coords="1029,452,1168,493"/>
-<area shape="rect" id="node37" href="$d1/ddf/align_8h.html" title=" " alt="" coords="791,541,931,568"/>
-<area shape="rect" id="node39" href="$d1/d0f/log__level_8h.html" title=" " alt="" coords="334,459,501,486"/>
-<area shape="rect" id="node40" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="1395,459,1551,486"/>
-<area shape="rect" id="node42" title=" " alt="" coords="2152,459,2195,486"/>
-<area shape="rect" id="node43" title=" " alt="" coords="3132,459,3207,486"/>
-<area shape="rect" id="node46" href="$df/d5e/type__index_8h.html" title=" " alt="" coords="2951,273,3094,315"/>
-<area shape="rect" id="node47" title=" " alt="" coords="3063,370,3155,397"/>
-<area shape="rect" id="node49" title=" " alt="" coords="977,370,1039,397"/>
-<area shape="rect" id="node50" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="1532,363,1671,404"/>
+<area shape="rect" id="node1" title=" " alt="" coords="391,5,598,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="1597,481,1664,508"/>
+<area shape="rect" id="node3" title=" " alt="" coords="609,295,751,322"/>
+<area shape="rect" id="node4" title=" " alt="" coords="467,578,533,605"/>
+<area shape="rect" id="node5" title=" " alt="" coords="161,578,241,605"/>
+<area shape="rect" id="node6" title=" " alt="" coords="195,481,259,508"/>
+<area shape="rect" id="node7" href="$d7/db8/src_2alg_2dispatcher_8h.html" title=" " alt="" coords="1869,109,2019,151"/>
+<area shape="rect" id="node44" href="$d1/d6e/queue__id_8h.html" title=" " alt="" coords="2017,288,2167,329"/>
+<area shape="rect" id="node48" href="$dd/db8/sleeping__loop_8h.html" title=" " alt="" coords="827,288,976,329"/>
+<area shape="rect" id="node8" title=" " alt="" coords="1553,206,1639,233"/>
+<area shape="rect" id="node9" title=" " alt="" coords="2153,481,2223,508"/>
+<area shape="rect" id="node10" title=" " alt="" coords="2248,481,2315,508"/>
+<area shape="rect" id="node11" title=" " alt="" coords="2613,481,2672,508"/>
+<area shape="rect" id="node12" title=" " alt="" coords="1663,206,1734,233"/>
+<area shape="rect" id="node13" title=" " alt="" coords="1759,206,1836,233"/>
+<area shape="rect" id="node14" title=" " alt="" coords="1112,578,1187,605"/>
+<area shape="rect" id="node15" title=" " alt="" coords="1861,206,1947,233"/>
+<area shape="rect" id="node16" title=" " alt="" coords="1489,578,1548,605"/>
+<area shape="rect" id="node17" title=" " alt="" coords="1689,481,1749,508"/>
+<area shape="rect" id="node18" href="$dd/d20/event_8h.html" title=" " alt="" coords="2288,377,2437,419"/>
+<area shape="rect" id="node20" href="$d1/d40/publisher_8h.html" title=" " alt="" coords="2400,288,2549,329"/>
+<area shape="rect" id="node24" href="$da/d9f/subscriber_8h.html" title=" " alt="" coords="2659,288,2808,329"/>
+<area shape="rect" id="node25" href="$df/d21/event__handler_8h.html" title=" " alt="" coords="1842,288,1993,329"/>
+<area shape="rect" id="node27" href="$d3/d9a/event__priority_8h.html" title=" " alt="" coords="295,377,446,419"/>
+<area shape="rect" id="node28" href="$d2/d4f/event__queue_8h.html" title=" " alt="" coords="1283,199,1459,240"/>
+<area shape="rect" id="node45" href="$d8/d38/tuple__index_8h.html" title=" " alt="" coords="2855,199,3001,240"/>
+<area shape="rect" id="node19" title=" " alt="" coords="2393,481,2473,508"/>
+<area shape="rect" id="node21" title=" " alt="" coords="2691,578,2746,605"/>
+<area shape="rect" id="node22" href="$dc/d25/tuple__like_8h.html" title=" " alt="" coords="2765,377,2915,419"/>
+<area shape="rect" id="node23" href="$dd/d04/has__tuple__element_8h.html" title=" " alt="" coords="2756,474,2972,515"/>
+<area shape="rect" id="node26" title=" " alt="" coords="1974,481,2061,508"/>
+<area shape="rect" id="node29" title=" " alt="" coords="1509,481,1573,508"/>
+<area shape="rect" id="node30" href="$d7/d7f/log_8h.html" title=" " alt="" coords="1123,288,1272,329"/>
+<area shape="rect" id="node41" href="$d3/d1e/circular__queue_8h.html" title=" " alt="" coords="1961,377,2111,419"/>
+<area shape="rect" id="node31" href="$dd/d3f/log__file_8h.html" title=" " alt="" coords="1635,377,1784,419"/>
+<area shape="rect" id="node33" href="$dd/d5c/log__wrapper_8h.html" title=" " alt="" coords="1152,377,1323,419"/>
+<area shape="rect" id="node38" href="$d5/d8d/max__log__file__name__lenght_8h.html" title=" " alt="" coords="509,467,672,523"/>
+<area shape="rect" id="node32" title=" " alt="" coords="1825,481,1898,508"/>
+<area shape="rect" id="node34" title=" " alt="" coords="848,481,939,508"/>
+<area shape="rect" id="node35" title=" " alt="" coords="965,578,1040,605"/>
+<area shape="rect" id="node36" href="$da/df1/format__number_8h.html" title=" " alt="" coords="963,474,1112,515"/>
+<area shape="rect" id="node37" href="$d1/ddf/align_8h.html" title=" " alt="" coords="754,571,905,612"/>
+<area shape="rect" id="node39" href="$d1/d0f/log__level_8h.html" title=" " alt="" coords="334,474,485,515"/>
+<area shape="rect" id="node40" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="1339,474,1485,515"/>
+<area shape="rect" id="node42" title=" " alt="" coords="2085,481,2128,508"/>
+<area shape="rect" id="node43" title=" " alt="" coords="3109,481,3184,508"/>
+<area shape="rect" id="node46" href="$df/d5e/type__index_8h.html" title=" " alt="" coords="2913,288,3077,329"/>
+<area shape="rect" id="node47" title=" " alt="" coords="3041,385,3133,411"/>
+<area shape="rect" id="node49" title=" " alt="" coords="871,385,932,411"/>
+<area shape="rect" id="node50" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="1448,377,1611,419"/>
 </map>

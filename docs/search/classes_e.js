@@ -28,13 +28,13 @@ var searchData=
   ['test_5ferror_495',['test_error',['../d8/d6a/structtest__error.html',1,'']]],
   ['test_5ffail_496',['test_fail',['../d3/d2e/structtest__fail.html',1,'']]],
   ['test_5fok_497',['test_ok',['../df/de5/structtest__ok.html',1,'']]],
-  ['tester_498',['tester',['../d2/d38/structtnct_1_1lib_1_1alg_1_1tester.html',1,'tnct::lib::alg']]],
+  ['tester_498',['tester',['../d2/d9a/structtenacitas_1_1lib_1_1alg_1_1tester.html',1,'tenacitas::lib::alg']]],
   ['translate_5fan_5fexisting_5fword_499',['translate_an_existing_word',['../df/d17/structtranslate__an__existing__word.html',1,'']]],
   ['translate_5fnon_5fexisting_5fword_500',['translate_non_existing_word',['../d4/da4/structtranslate__non__existing__word.html',1,'']]],
-  ['translator_5ffrom_5ffile_501',['translator_from_file',['../db/d23/structtnct_1_1lib_1_1alg_1_1translator__from__file.html',1,'tnct::lib::alg']]],
-  ['translator_5fin_5fmemory_502',['translator_in_memory',['../dd/d6c/structtnct_1_1lib_1_1alg_1_1translator__in__memory.html',1,'tnct::lib::alg']]],
+  ['translator_5ffrom_5ffile_501',['translator_from_file',['../d0/da2/structtenacitas_1_1lib_1_1alg_1_1translator__from__file.html',1,'tenacitas::lib::alg']]],
+  ['translator_5fin_5fmemory_502',['translator_in_memory',['../df/def/structtenacitas_1_1lib_1_1alg_1_1translator__in__memory.html',1,'tenacitas::lib::alg']]],
   ['tuple_5f000_503',['tuple_000',['../d3/d98/structtuple__000.html',1,'']]],
   ['tuple_5f001_504',['tuple_001',['../d8/ddd/structtuple__001.html',1,'']]],
   ['tuple_5f002_505',['tuple_002',['../d4/d2e/structtuple__002.html',1,'']]],
-  ['tuple_5findex_506',['tuple_index',['../d1/dfd/structtnct_1_1lib_1_1tra_1_1tuple__index.html',1,'tnct::lib::tra']]]
+  ['tuple_5findex_506',['tuple_index',['../d9/ddb/structtenacitas_1_1lib_1_1tra_1_1tuple__index.html',1,'tenacitas::lib::tra']]]
 ];

@@ -4,9 +4,9 @@
 #include <iostream>
 
 #include "typ.h"
-#include <tnct/lib/dat/id.h>
-#include <tnct/lib/alg/format_number.h>
-#include <tnct/lib/dat/queue_id.h>
+#include <tenacitas.lib/src/alg/format_number.h>
+#include <tenacitas.lib/src/dat/id.h>
+#include <tenacitas.lib/src/dat/queue_id.h>
 
 namespace evt {
 
@@ -16,8 +16,7 @@ struct pressure_generated {
   pressure_generated(pressure_generated &&) = default;
   pressure_generated &operator=(const pressure_generated &) = default;
   pressure_generated &operator=(pressure_generated &&) = default;
-  explicit pressure_generated(tld::id p_generator,
-                              typ::pressure p_value = 1.5)
+  explicit pressure_generated(tld::id p_generator, typ::pressure p_value = 1.5)
       : m_generator(p_generator), m_pressure(p_value) {}
 
   inline bool operator==(const pressure_generated &p_pressure) const {
@@ -31,7 +30,7 @@ struct pressure_generated {
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const pressure_generated &p_pressure) {
     p_out << "'generated (" << p_pressure.m_generator << ','
-            << tla::format_number(p_pressure.m_pressure) << ")'";
+          << tla::format_number(p_pressure.m_pressure) << ")'";
     return p_out;
   }
 

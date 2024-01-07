@@ -8,10 +8,10 @@
 #include <string>
 #include <tuple>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
-#include <tnct/lib/alg/traverse_tuple.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/src/alg/traverse_tuple.h>
 
 struct tuple_000 {
   static std::string desc() { return "Traverses a tuple"; }

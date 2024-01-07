@@ -11,10 +11,10 @@
 #include <sstream>
 #include <thread>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/sleeping_loop.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 using namespace std::chrono_literals;
 
@@ -185,7 +185,7 @@ private:
 //};
 
 int main(int argc, char **argv) {
-  using namespace tnct::lib;
+  
 
   tla::set_debug_level();
 

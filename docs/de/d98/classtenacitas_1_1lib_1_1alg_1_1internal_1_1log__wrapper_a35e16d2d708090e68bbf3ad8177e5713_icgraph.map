@@ -1,0 +1,10 @@
+<map id="tenacitas::lib::alg::internal::log_wrapper::set_writer" name="tenacitas::lib::alg::internal::log_wrapper::set_writer">
+<area shape="rect" id="node1" title="Defines the function responsible for actually writing the message." alt="" coords="393,129,561,185"/>
+<area shape="rect" id="node2" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a4ad9dcfd174023fb867451087f072511" title=" " alt="" coords="196,5,345,47"/>
+<area shape="rect" id="node4" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a0ac406066582cd15b3a9c3c1f70e5bf3" title="Defines the function used to write the log messages." alt="" coords="203,71,338,112"/>
+<area shape="rect" id="node5" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a0f23c0360313f450af178e72f04bc104" title="Defines that log messages will be written to std::cerr." alt="" coords="203,136,338,177"/>
+<area shape="rect" id="node7" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#acab008f068ae8188bf9fa94f65fe42ab" title="Defines that log messages will be written to std::clog." alt="" coords="203,201,338,243"/>
+<area shape="rect" id="node8" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a3bc98ee0b257218c9842163c3c0b3237" title="Defines that log messages will be written to std::cout." alt="" coords="203,267,338,308"/>
+<area shape="rect" id="node3" href="$d0/d6d/structfile__log.html#a6b97a7b8440e004e846c72844905a2d7" title=" " alt="" coords="5,13,148,39"/>
+<area shape="rect" id="node6" href="$db/d34/tst_2log_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title=" " alt="" coords="49,143,104,170"/>
+</map>

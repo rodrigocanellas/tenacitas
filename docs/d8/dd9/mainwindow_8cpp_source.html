@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -75,18 +75,18 @@ $(function() {
 <a href="../../d8/dd9/mainwindow_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d53/mainwindow_8h.html">mainwindow.h</a>&quot;</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;ui_mainwindow.h&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/d7f/log_8h.html">tnct/lib/alg/log.h</a>&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/d7f/log_8h.html">tenacitas.lib/src/alg/log.h</a>&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;../../typ/sensor_id.h&quot;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;../../typ/temperature.h&quot;</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a>;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#a344e3b5f06e38693ffd4bca1f5f08229">   11</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#a344e3b5f06e38693ffd4bca1f5f08229">MainWindow::MainWindow</a>(<a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">alg::dispatcher::ptr</a> p_dispatcher, QWidget *parent)</div>
+<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#a344e3b5f06e38693ffd4bca1f5f08229">   11</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#a344e3b5f06e38693ffd4bca1f5f08229">MainWindow::MainWindow</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">alg::dispatcher::ptr</a> p_dispatcher, QWidget *parent)</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    : QMainWindow(parent), m_dispatcher(p_dispatcher), ui(new <a class="code" href="../../dc/df0/namespace_ui.html">Ui</a>::<a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>) {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  ui-&gt;setupUi(<span class="keyword">this</span>);</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <a class="code" href="../../d3/d88/namespacetnct_1_1lib_1_1alg.html#a73d3ccf7955d0f0cf79fbf698946f010">tla::set_info_level</a>();</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a4356611dd0bbb83c77da76edeacbe968">tla::set_info_level</a>();</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  m_dispatcher-&gt;subscribe&lt;<a class="code" href="../../d9/dc6/class_main_window.html#a344e3b5f06e38693ffd4bca1f5f08229">MainWindow</a>, evt::new_temperature&gt;(</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;      [<span class="keyword">this</span>](<span class="keyword">auto</span> p_evt) { on_new_temperature(std::move(p_evt)); });</div>
@@ -174,8 +174,8 @@ $(function() {
 <div class="ttc" id="anamespacetemperature__sensors__simulator_1_1typ_html_a1b07f3ad47513bd1a6d2428d15ed8134"><div class="ttname"><a href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a1b07f3ad47513bd1a6d2428d15ed8134">temperature_sensors_simulator::typ::sensor_id</a></div><div class="ttdeci">uint16_t sensor_id</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d8c/sensor__id_8h_source.html#l00008">sensor_id.h:8</a></div></div>
 <div class="ttc" id="anamespacetemperature__sensors__simulator_1_1typ_html_a54471b35e76483c57d1ebc5907ee09cf"><div class="ttname"><a href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a54471b35e76483c57d1ebc5907ee09cf">temperature_sensors_simulator::typ::temperature</a></div><div class="ttdeci">float temperature</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d91/temperature_8h_source.html#l00006">temperature.h:6</a></div></div>
 <div class="ttc" id="anamespacetemperature__sensors__simulator_html"><div class="ttname"><a href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d0/ddc/exp_2temperature__sensors__simulator_2alg_2dispatcher_8h_source.html#l00013">dispatcher.h:13</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1lib_1_1alg_html_a73d3ccf7955d0f0cf79fbf698946f010"><div class="ttname"><a href="../../d3/d88/namespacetnct_1_1lib_1_1alg.html#a73d3ccf7955d0f0cf79fbf698946f010">tnct::lib::alg::set_info_level</a></div><div class="ttdeci">void set_info_level()</div><div class="ttdoc">Sets the global log level as 'info'.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00022">log.h:22</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1dispatcher_html_ab5f26ac8d968288e3e2b6997cddf47cc"><div class="ttname"><a href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">tnct::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html_a4356611dd0bbb83c77da76edeacbe968"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a4356611dd0bbb83c77da76edeacbe968">tenacitas::lib::alg::set_info_level</a></div><div class="ttdeci">void set_info_level()</div><div class="ttdoc">Sets the global log level as 'info'.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00022">log.h:22</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_abfc62a29586fdb49fa3eecd158b5b825"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">tenacitas::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -5,16 +5,15 @@
 #include <cstdint>
 #include <map>
 #include <optional>
-#include <thread>
 #include <utility>
 #include <vector>
 
 #include "dispatcher.h"
 #include "evt.h"
 #include "typ.h"
-#include <tnct/lib/alg/sleeping_loop.h>
-#include <tnct/lib/cpt/chrono_convertible.h>
-#include <tnct/lib/dat/id.h>
+#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/cpt/chrono_convertible.h>
+#include <tenacitas.lib/src/dat/id.h>
 
 namespace alg {
 

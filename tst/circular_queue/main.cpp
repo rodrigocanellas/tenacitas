@@ -8,11 +8,11 @@
 #include <string>
 #include <utility>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/tester.h>
-#include <tnct/lib/dat/circular_queue.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/src/dat/circular_queue.h>
 
-using namespace tnct::lib;
+
 
 using queue = tld::circular_queue<int16_t>;
 

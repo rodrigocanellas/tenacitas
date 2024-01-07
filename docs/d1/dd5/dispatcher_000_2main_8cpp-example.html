@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -79,8 +79,8 @@ $(function() {
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;mutex&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h.html">tnct/lib/alg/dispatcher.h</a>&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tnct/lib/alg/sleeping_loop.h</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d7/db8/src_2alg_2dispatcher_8h.html">tenacitas.lib/src/alg/dispatcher.h</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/src/alg/sleeping_loop.h</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"> </div>
@@ -88,7 +88,7 @@ $(function() {
 <div class="line"><span class="keyword">struct </span><a name="_a0"></a><a class="code" href="../../d6/d98/structtemperature.html">temperature</a> {</div>
 <div class="line"> </div>
 <div class="line">  <a name="a1"></a><a class="code" href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a54471b35e76483c57d1ebc5907ee09cf">temperature</a>(<span class="keywordtype">float</span> p_value = 0.0) : value(p_value) {}</div>
-<div class="line">  <span class="keyword">friend</span> std::ostream &amp;<a name="a2"></a><a class="code" href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#a19bab275e72389957302f2ec5eaab5e6">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
+<div class="line">  <span class="keyword">friend</span> std::ostream &amp;<a name="a2"></a><a class="code" href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#a5add89035e957acfc93ff65a326f513f">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
 <div class="line">                                  <span class="keyword">const</span> <a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;p_temp) {</div>
 <div class="line">    p_out &lt;&lt; <span class="stringliteral">&quot;temperature = &quot;</span> &lt;&lt; p_temp.<a name="a3"></a><a class="code" href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">value</a>;</div>
 <div class="line"> </div>
@@ -99,13 +99,13 @@ $(function() {
 <div class="line"> </div>
 <div class="line"><span class="comment">// event published when all temperatures are received by the subscribers</span></div>
 <div class="line"><span class="keyword">struct </span><a name="_a4"></a><a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> {</div>
-<div class="line">  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#a19bab275e72389957302f2ec5eaab5e6">operator&lt;&lt;</a>(std::ostream &amp;p_out, <span class="keyword">const</span> <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> &amp;) {</div>
+<div class="line">  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#a5add89035e957acfc93ff65a326f513f">operator&lt;&lt;</a>(std::ostream &amp;p_out, <span class="keyword">const</span> <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> &amp;) {</div>
 <div class="line">    p_out &lt;&lt; <span class="stringliteral">&quot;all_handled&quot;</span>;</div>
 <div class="line">    <span class="keywordflow">return</span> p_out;</div>
 <div class="line">  }</div>
 <div class="line">};</div>
 <div class="line"> </div>
-<div class="line"><span class="keyword">using</span> <a name="_a5"></a><a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html">dispatcher</a> = <a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html">tla::dispatcher&lt;temperature, all_handled&gt;</a>;</div>
+<div class="line"><span class="keyword">using</span> <a name="_a5"></a><a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">dispatcher</a> = <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">tla::dispatcher&lt;temperature, all_handled&gt;</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// simulates a temperature sensor generating &#39;temperature&#39; events</span></div>
 <div class="line"><span class="keyword">struct </span><a name="_a6"></a><a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a> {</div>
@@ -115,7 +115,7 @@ $(function() {
 <div class="line">  <span class="comment">// handled by object that subscribed for</span></div>
 <div class="line">  <span class="comment">//</span></div>
 <div class="line">  <span class="comment">// p_max is the max number of &#39;temperature&#39; events to be published</span></div>
-<div class="line">  <a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a>(<a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
+<div class="line">  <a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
 <div class="line">      : m_dispatcher(p_dispatcher), m_max(p_max),</div>
 <div class="line">        m_temperature_generator([this]() { generator(); }, m_interval) {}</div>
 <div class="line"> </div>
@@ -126,7 +126,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line"><span class="keyword">private</span>:</div>
 <div class="line">  <span class="comment">// type for the asynchronous loop that will call the &#39;generator&#39; method</span></div>
-<div class="line">  <span class="keyword">using</span> temperature_generator = <a name="_a8"></a><a class="code" href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a>;</div>
+<div class="line">  <span class="keyword">using</span> temperature_generator = <a name="_a8"></a><a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">private</span>:</div>
 <div class="line">  <span class="comment">// function to be executed inside the sleeping loop, that will publish the</span></div>
@@ -146,7 +146,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line"><span class="keyword">private</span>:</div>
 <div class="line">  <span class="comment">// publish/subscriber</span></div>
-<div class="line">  <a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">dispatcher::ptr</a> m_dispatcher;</div>
+<div class="line">  <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> m_dispatcher;</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// counter which will be incremented by the function executed in the</span></div>
 <div class="line">  <span class="comment">// sleeping loop</span></div>
@@ -173,7 +173,7 @@ $(function() {
 <div class="line"><span class="keyword">struct </span><a name="_a9"></a><a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a> {</div>
 <div class="line">  <span class="keyword">using</span> events_published = std::tuple&lt;all_handled&gt;;</div>
 <div class="line"> </div>
-<div class="line">  <a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>(<a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
+<div class="line">  <a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
 <div class="line">      : m_dispatcher(p_dispatcher), m_max(p_max) {}</div>
 <div class="line"> </div>
 <div class="line">  <span class="keywordtype">void</span> operator()(<a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;&amp;p_temperature) {</div>
@@ -186,7 +186,7 @@ $(function() {
 <div class="line">  }</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">private</span>:</div>
-<div class="line">  <a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">dispatcher::ptr</a> m_dispatcher;</div>
+<div class="line">  <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> m_dispatcher;</div>
 <div class="line">  uint16_t m_max{0};</div>
 <div class="line">  uint16_t m_counter{0};</div>
 <div class="line">};</div>
@@ -197,7 +197,7 @@ $(function() {
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;starting&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// publisher/subscriber</span></div>
-<div class="line">    <a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">dispatcher::ptr</a> _dispatcher{<a name="a11"></a><a class="code" href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#af47e85ff040ea0c5bad9ff53cc39255d">dispatcher::create</a>()};</div>
+<div class="line">    <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> _dispatcher{<a name="a11"></a><a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#a68b974afe96da1f39bd34e1c28ffde86">dispatcher::create</a>()};</div>
 <div class="line"> </div>
 <div class="line">    <span class="comment">// condition variable and mutex to wait for the sleeping loop to finish</span></div>
 <div class="line">    std::condition_variable _cond;</div>
@@ -237,20 +237,20 @@ $(function() {
 <div class="line">  <a class="code" href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">start</a>()();</div>
 <div class="line">}</div>
 <div class="ttc" id="anamespacetemperature__sensors__simulator_1_1typ_html_a54471b35e76483c57d1ebc5907ee09cf"><div class="ttname"><a href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a54471b35e76483c57d1ebc5907ee09cf">temperature_sensors_simulator::typ::temperature</a></div><div class="ttdeci">float temperature</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d91/temperature_8h_source.html#l00006">temperature.h:6</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1lib_1_1dat_html_a19bab275e72389957302f2ec5eaab5e6"><div class="ttname"><a href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#a19bab275e72389957302f2ec5eaab5e6">tnct::lib::dat::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const dictionary&lt; t_index &gt; &amp;p_dictionary)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00019">dictionary.h:19</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1dat_html_a5add89035e957acfc93ff65a326f513f"><div class="ttname"><a href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#a5add89035e957acfc93ff65a326f513f">tenacitas::lib::dat::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const dictionary&lt; t_index &gt; &amp;p_dictionary)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00019">dictionary.h:19</a></div></div>
 <div class="ttc" id="anamespaceuix_html_a10d8a587e18b66a76068380f27f0b491"><div class="ttname"><a href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">uix::start</a></div><div class="ttdeci">bool start(const cfg::options &amp;p_options, alg::dispatcher::ptr p_dispatcher, std::function&lt; bool(alg::dispatcher::ptr, const typ::generators_definitions &amp;, const typ::publishings_definitions &amp;)&gt; p_bus)</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d92/uix_8h_source.html#l00028">uix.h:28</a></div></div>
 <div class="ttc" id="asleeping__loop_8h_html"><div class="ttname"><a href="../../dd/db8/sleeping__loop_8h.html">sleeping_loop.h</a></div></div>
-<div class="ttc" id="asrc_2tnct_2lib_2alg_2dispatcher_8h_html"><div class="ttname"><a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h.html">dispatcher.h</a></div></div>
+<div class="ttc" id="asrc_2alg_2dispatcher_8h_html"><div class="ttname"><a href="../../d7/db8/src_2alg_2dispatcher_8h.html">dispatcher.h</a></div></div>
 <div class="ttc" id="astructall__handled_html"><div class="ttname"><a href="../../d7/dbc/structall__handled.html">all_handled</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00033">main.cpp:33</a></div></div>
 <div class="ttc" id="astructstart_html"><div class="ttname"><a href="../../de/d5b/structstart.html">start</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00126">main.cpp:126</a></div></div>
 <div class="ttc" id="astructtemperature__sensor_html"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00043">main.cpp:43</a></div></div>
 <div class="ttc" id="astructtemperature__subscriber_html"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00105">main.cpp:105</a></div></div>
 <div class="ttc" id="astructtemperature_html"><div class="ttname"><a href="../../d6/d98/structtemperature.html">temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00020">main.cpp:20</a></div></div>
 <div class="ttc" id="astructtemperature_html_af34a3ecf1a96305f339aae370f97f78d"><div class="ttname"><a href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">temperature::value</a></div><div class="ttdeci">float value</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00029">main.cpp:29</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1dispatcher_html"><div class="ttname"><a href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html">tnct::lib::alg::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h_source.html#l00094">dispatcher.h:94</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1dispatcher_html_ab5f26ac8d968288e3e2b6997cddf47cc"><div class="ttname"><a href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#ab5f26ac8d968288e3e2b6997cddf47cc">tnct::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1dispatcher_html_af47e85ff040ea0c5bad9ff53cc39255d"><div class="ttname"><a href="../../d3/df3/structtnct_1_1lib_1_1alg_1_1dispatcher.html#af47e85ff040ea0c5bad9ff53cc39255d">tnct::lib::alg::dispatcher::create</a></div><div class="ttdeci">static ptr create()</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h_source.html#l00100">dispatcher.h:100</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html">tnct::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">tenacitas::lib::alg::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00094">dispatcher.h:94</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_a68b974afe96da1f39bd34e1c28ffde86"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#a68b974afe96da1f39bd34e1c28ffde86">tenacitas::lib::alg::dispatcher::create</a></div><div class="ttdeci">static ptr create()</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00100">dispatcher.h:100</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_abfc62a29586fdb49fa3eecd158b5b825"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">tenacitas::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tenacitas::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
 <div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->

@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "typ.h"
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
 
 namespace cfg {
 
@@ -30,7 +30,7 @@ constexpr char sqlite_file[]{"sqlite-file"};
 
 void help(const char *p_pgm_name, std::ostream &p_stream) {
   p_stream
-      << "This tests tnct::lib::async::tncta::dispatcher class. There "
+      << "This tests tenacitas::lib::async::tncta::dispatcher class. There "
          "will "
          "be "
          "generated as many combinations of the parameters provided.\n"

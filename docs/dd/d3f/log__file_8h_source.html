@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/src/tnct/lib/alg/internal/log_file.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/src/alg/internal/log_file.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_68a690a62630c42f62850558742f9149.html">lib</a></li><li class="navelem"><a class="el" href="../../dir_2e7fa4197be4717e18dc03bdb9f0b07c.html">alg</a></li><li class="navelem"><a class="el" href="../../dir_ed184a589c83af0ff65e6ae7d39c9b07.html">internal</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_b279a216c397ff0404c535bbf0b989ad.html">alg</a></li><li class="navelem"><a class="el" href="../../dir_887b9634a0fa21dc0ecec5190846c3a6.html">internal</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,8 +74,8 @@ $(function() {
 <div class="contents">
 <a href="../../dd/d3f/log__file_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_LIB_ALG_INTERNAL_LOG_FILE_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_LIB_ALG_INTERNAL_LOG_FILE_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_ALG_INTERNAL_LOG_FILE_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_ALG_INTERNAL_LOG_FILE_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;chrono&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;fstream&gt;</span></div>
@@ -83,19 +83,19 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="../../de/d07/namespacetnct_1_1lib_1_1alg_1_1internal.html">   15</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../de/d07/namespacetnct_1_1lib_1_1alg_1_1internal.html">tnct::lib::alg::internal</a> {</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html">   20</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html">log_file</a> {</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6fc0c082921c0c364c96de9799c2ad74">   27</a></span>&#160;  <a class="code" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6fc0c082921c0c364c96de9799c2ad74">log_file</a>(<span class="keyword">const</span> std::string &amp;p_log_file_name)</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="../../d7/d95/namespacetenacitas_1_1lib_1_1alg_1_1internal.html">   15</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d7/d95/namespacetenacitas_1_1lib_1_1alg_1_1internal.html">tenacitas::lib::alg::internal</a> {</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html">   20</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html">log_file</a> {</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a89dcb64678f4d112ea69d58e4e5e009a">   27</a></span>&#160;  <a class="code" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a89dcb64678f4d112ea69d58e4e5e009a">log_file</a>(<span class="keyword">const</span> std::string &amp;p_log_file_name)</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      : m_base_name(p_log_file_name) {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    open_log_file();</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6585e215d2c804ef605e4c951494c9a5">   38</a></span>&#160;  <a class="code" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6585e215d2c804ef605e4c951494c9a5">log_file</a>(<span class="keyword">const</span> std::string &amp;p_log_file_name, uint32_t p_size_in_bytes)</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#ae7903da95fac1a14358a0054fb605383">   38</a></span>&#160;  <a class="code" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#ae7903da95fac1a14358a0054fb605383">log_file</a>(<span class="keyword">const</span> std::string &amp;p_log_file_name, uint32_t p_size_in_bytes)</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      : m_base_name(p_log_file_name), m_max_size(p_size_in_bytes) {</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    open_log_file();</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  }</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#addb556f28d7d0316b8d2e73dd94f50f9">   44</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#addb556f28d7d0316b8d2e73dd94f50f9">operator()</a>(std::string &amp;&amp;p_str) {</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a145670a2a9332d74ba6d66bafdc8fae8">   44</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a145670a2a9332d74ba6d66bafdc8fae8">operator()</a>(std::string &amp;&amp;p_str) {</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">auto</span> _size = <span class="keyword">static_cast&lt;</span>decltype(m_max_size)<span class="keyword">&gt;</span>(p_str.size());</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">if</span> ((m_current_size + _size) &gt; m_max_size) {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      open_log_file();</div>
@@ -131,16 +131,16 @@ $(function() {
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  uint32_t m_current_size{0};</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;} <span class="comment">// namespace tnct::lib::alg::internal</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;} <span class="comment">// namespace tenacitas::lib::alg::internal</span></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d3/d88/namespacetnct_1_1lib_1_1alg.html">tla</a> = <a class="code" href="../../d3/d88/namespacetnct_1_1lib_1_1alg.html">tnct::lib::alg</a>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tla</a> = <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tenacitas::lib::alg</a>;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1lib_1_1alg_1_1internal_html"><div class="ttname"><a href="../../de/d07/namespacetnct_1_1lib_1_1alg_1_1internal.html">tnct::lib::alg::internal</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00015">log_file.h:15</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1lib_1_1alg_html"><div class="ttname"><a href="../../d3/d88/namespacetnct_1_1lib_1_1alg.html">tnct::lib::alg</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d42/src_2tnct_2lib_2alg_2dispatcher_8h_source.html#l00034">dispatcher.h:34</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1internal_1_1log__file_html"><div class="ttname"><a href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html">tnct::lib::alg::internal::log_file</a></div><div class="ttdoc">Writes log messages to a log_file.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00020">log_file.h:20</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1internal_1_1log__file_html_a6585e215d2c804ef605e4c951494c9a5"><div class="ttname"><a href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6585e215d2c804ef605e4c951494c9a5">tnct::lib::alg::internal::log_file::log_file</a></div><div class="ttdeci">log_file(const std::string &amp;p_log_file_name, uint32_t p_size_in_bytes)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00038">log_file.h:38</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1internal_1_1log__file_html_a6fc0c082921c0c364c96de9799c2ad74"><div class="ttname"><a href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6fc0c082921c0c364c96de9799c2ad74">tnct::lib::alg::internal::log_file::log_file</a></div><div class="ttdeci">log_file(const std::string &amp;p_log_file_name)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00027">log_file.h:27</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1internal_1_1log__file_html_addb556f28d7d0316b8d2e73dd94f50f9"><div class="ttname"><a href="../../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#addb556f28d7d0316b8d2e73dd94f50f9">tnct::lib::alg::internal::log_file::operator()</a></div><div class="ttdeci">void operator()(std::string &amp;&amp;p_str)</div><div class="ttdoc">Writes a string to the log_file.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00044">log_file.h:44</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_1_1internal_html"><div class="ttname"><a href="../../d7/d95/namespacetenacitas_1_1lib_1_1alg_1_1internal.html">tenacitas::lib::alg::internal</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00015">log_file.h:15</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tenacitas::lib::alg</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00034">dispatcher.h:34</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file_html"><div class="ttname"><a href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html">tenacitas::lib::alg::internal::log_file</a></div><div class="ttdoc">Writes log messages to a log_file.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00020">log_file.h:20</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file_html_a145670a2a9332d74ba6d66bafdc8fae8"><div class="ttname"><a href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a145670a2a9332d74ba6d66bafdc8fae8">tenacitas::lib::alg::internal::log_file::operator()</a></div><div class="ttdeci">void operator()(std::string &amp;&amp;p_str)</div><div class="ttdoc">Writes a string to the log_file.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00044">log_file.h:44</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file_html_a89dcb64678f4d112ea69d58e4e5e009a"><div class="ttname"><a href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#a89dcb64678f4d112ea69d58e4e5e009a">tenacitas::lib::alg::internal::log_file::log_file</a></div><div class="ttdeci">log_file(const std::string &amp;p_log_file_name)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00027">log_file.h:27</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file_html_ae7903da95fac1a14358a0054fb605383"><div class="ttname"><a href="../../d6/d2e/structtenacitas_1_1lib_1_1alg_1_1internal_1_1log__file.html#ae7903da95fac1a14358a0054fb605383">tenacitas::lib::alg::internal::log_file::log_file</a></div><div class="ttdeci">log_file(const std::string &amp;p_log_file_name, uint32_t p_size_in_bytes)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d3f/log__file_8h_source.html#l00038">log_file.h:38</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

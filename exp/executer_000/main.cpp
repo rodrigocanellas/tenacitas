@@ -3,15 +3,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example exec_sync/main.cpp
+/// \example executer_000/main.cpp
 
 #include <chrono>
 #include <cstdint>
 #include <functional>
 #include <iostream>
 
-#include <tnct/lib/alg/exec_sync.h>
-#include <tnct/lib/alg/log.h>
+#include <tenacitas.lib/src/alg/exec_sync.h>
+#include <tenacitas.lib/src/alg/log.h>
 
 using namespace std::chrono_literals;
 

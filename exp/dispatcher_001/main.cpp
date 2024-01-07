@@ -11,9 +11,9 @@
 #include <iostream>
 #include <mutex>
 
-#include <tnct/lib/alg/dispatcher.h>
-#include <tnct/lib/alg/sleeping_loop.h>
-#include <tnct/lib/dat/queue_id.h>
+#include <tenacitas.lib/src/alg/dispatcher.h>
+#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/dat/queue_id.h>
 
 using namespace std::chrono_literals;
 

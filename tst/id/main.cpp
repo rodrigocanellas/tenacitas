@@ -5,13 +5,13 @@
 
 #include <string>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
-#include <tnct/lib/cpt/id.h>
-#include <tnct/lib/dat/id.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/src/cpt/id.h>
+#include <tenacitas.lib/src/dat/id.h>
 
-using namespace tnct::lib;
+
 
 struct test001 {
   static std::string desc() { return "id _i {4}, which does not compile"; }

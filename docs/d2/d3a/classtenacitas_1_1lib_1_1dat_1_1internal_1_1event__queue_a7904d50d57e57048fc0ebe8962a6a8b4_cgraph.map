@@ -1,0 +1,7 @@
+<map id="tenacitas::lib::dat::internal::event_queue::stop" name="tenacitas::lib::dat::internal::event_queue::stop">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,213,112"/>
+<area shape="rect" id="node2" href="$d2/d3a/classtenacitas_1_1lib_1_1dat_1_1internal_1_1event__queue.html#a61de2a9cc28341efd7ab3358f9894184" title=" " alt="" coords="261,63,433,119"/>
+<area shape="rect" id="node3" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a093f3875da881423b8b745a27634b39b" title="Formats a number with the maximum characters necessary to represent the number to string,..." alt="" coords="509,5,644,47"/>
+<area shape="rect" id="node4" href="$db/d8e/structtenacitas_1_1lib_1_1dat_1_1circular__queue.html#a33da814f0812d715308886c1d09f32be" title="returns an identifier used for debug purposes" alt="" coords="490,71,663,112"/>
+<area shape="rect" id="node5" href="$db/d8e/structtenacitas_1_1lib_1_1dat_1_1circular__queue.html#a55e1fb9e45d173fe9d01417df2db01c8" title="amount of nodes that that have t_data objects" alt="" coords="481,136,672,177"/>
+</map>

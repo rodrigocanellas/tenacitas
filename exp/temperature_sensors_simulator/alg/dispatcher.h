@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tnct/lib/alg/dispatcher.h>
+#include <tenacitas.lib/src/alg/dispatcher.h>
 
 #include "../evt/add_sensor.h"
 #include "../evt/new_temperature.h"

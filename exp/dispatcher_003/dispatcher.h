@@ -2,7 +2,7 @@
 #define TNCT_TST_ASYNC_DISPATCHER_DISPATCHER_H
 
 #include "evt.h"
-#include <tnct/lib/alg/dispatcher.h>
+#include <tenacitas.lib/src/alg/dispatcher.h>
 
 namespace alg {
 

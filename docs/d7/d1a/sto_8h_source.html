@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -81,7 +81,7 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dd/dd0/cfg_8h.html">cfg.h</a>&quot;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d8/d57/typ_8h.html">typ.h</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/d6e/queue__id_8h.html">tnct/lib/dat/queue_id.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/d6e/queue__id_8h.html">tenacitas.lib/src/dat/queue_id.h</a>&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;sqlite3.h&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
@@ -304,7 +304,7 @@ $(function() {
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    }</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  }</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  <span class="keywordtype">void</span> save_subscribers(<a class="code" href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#ade25588c19c238a17553a0624b8917f7">tld::queue_id</a> p_publishing_id,</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;  <span class="keywordtype">void</span> save_subscribers(<a class="code" href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#ad17e52e21d0336a9f4372fdbd64a1c47">tld::queue_id</a> p_publishing_id,</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;                        <span class="keyword">const</span> <a class="code" href="../../da/d47/namespacetyp.html#a603e025ff3aa1b6d0a251130f90a8d25">typ::subscribers_results</a> &amp;p_subscribers) {</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> typ::subscribers_results::value_type &amp;_value : p_subscribers) {</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;      std::stringstream _stream;</div>
@@ -332,7 +332,7 @@ $(function() {
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <span class="keywordtype">void</span> save_publishings(<span class="keyword">const</span> <a class="code" href="../../da/d47/namespacetyp.html#a6165b9fbe5384bc4bb80394c2b8b0c5a">typ::publishings_results</a> &amp;p_publishings) {</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordflow">for</span> (<span class="keyword">const</span> typ::publishings_results::value_type &amp;_value : p_publishings) {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      <a class="code" href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#ade25588c19c238a17553a0624b8917f7">tld::queue_id</a> _publishing_id = _value.first;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;      <a class="code" href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#ad17e52e21d0336a9f4372fdbd64a1c47">tld::queue_id</a> _publishing_id = _value.first;</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;      std::stringstream _stream;</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;      _stream &lt;&lt; <span class="stringliteral">&quot;insert into publishings (test_id, publishing_id, sleep) &quot;</span></div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                 <span class="stringliteral">&quot;values (&quot;</span></div>
@@ -384,9 +384,9 @@ $(function() {
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// STO_H</span></div>
 <div class="ttc" id="acfg_8h_html"><div class="ttname"><a href="../../dd/dd0/cfg_8h.html">cfg.h</a></div></div>
 <div class="ttc" id="alog_8h_html_a666f94d55fd1bcb60013e7bfa1b7bd73"><div class="ttname"><a href="../../d7/d7f/log_8h.html#a666f94d55fd1bcb60013e7bfa1b7bd73">TNCT_LOG_TST</a></div><div class="ttdeci">#define TNCT_LOG_TST(p_params...)</div><div class="ttdoc">log_wrapper to the test log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00071">log.h:71</a></div></div>
-<div class="ttc" id="alog_8h_html_ab14f75a46d4d2318defe348f44df6eb9"><div class="ttname"><a href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(p_params...)</div><div class="ttdoc">log_wrapper to the error log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00091">log.h:91</a></div></div>
+<div class="ttc" id="alog_8h_html_ab14f75a46d4d2318defe348f44df6eb9"><div class="ttname"><a href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(p_params...)</div><div class="ttdoc">log_wrapper to the error log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00096">log.h:96</a></div></div>
 <div class="ttc" id="anamespacesto_html"><div class="ttname"><a href="../../d7/d48/namespacesto.html">sto</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d1a/sto_8h_source.html#l00014">sto.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1lib_1_1dat_html_ade25588c19c238a17553a0624b8917f7"><div class="ttname"><a href="../../d0/d73/namespacetnct_1_1lib_1_1dat.html#ade25588c19c238a17553a0624b8917f7">tnct::lib::dat::queue_id</a></div><div class="ttdeci">size_t queue_id</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d6e/queue__id_8h_source.html#l00013">queue_id.h:13</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1dat_html_ad17e52e21d0336a9f4372fdbd64a1c47"><div class="ttname"><a href="../../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#ad17e52e21d0336a9f4372fdbd64a1c47">tenacitas::lib::dat::queue_id</a></div><div class="ttdeci">size_t queue_id</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d6e/queue__id_8h_source.html#l00013">queue_id.h:13</a></div></div>
 <div class="ttc" id="anamespacetyp_html_a2ab590b16b7ad5cc44a082a435f9c406"><div class="ttname"><a href="../../da/d47/namespacetyp.html#a2ab590b16b7ad5cc44a082a435f9c406">typ::generators</a></div><div class="ttdeci">std::list&lt; generator &gt; generators</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d57/typ_8h_source.html#l00146">typ.h:146</a></div></div>
 <div class="ttc" id="anamespacetyp_html_a603e025ff3aa1b6d0a251130f90a8d25"><div class="ttname"><a href="../../da/d47/namespacetyp.html#a603e025ff3aa1b6d0a251130f90a8d25">typ::subscribers_results</a></div><div class="ttdeci">std::map&lt; tld::id, total &gt; subscribers_results</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d57/typ_8h_source.html#l00148">typ.h:148</a></div></div>
 <div class="ttc" id="anamespacetyp_html_a6165b9fbe5384bc4bb80394c2b8b0c5a"><div class="ttname"><a href="../../da/d47/namespacetyp.html#a6165b9fbe5384bc4bb80394c2b8b0c5a">typ::publishings_results</a></div><div class="ttdeci">std::map&lt; size_t, publishing_results &gt; publishings_results</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d57/typ_8h_source.html#l00159">typ.h:159</a></div></div>

@@ -3,10 +3,10 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tnct/lib/alg/factorial.h>
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/factorial.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 struct test0000 {
   static std::string desc() { return "factorial of 0"; }

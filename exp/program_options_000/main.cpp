@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <tnct/lib/alg/program_options.h>
+#include <tenacitas.lib/src/alg/program_options.h>
 
 using namespace std;
 

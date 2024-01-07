@@ -6,13 +6,13 @@
 #include <optional>
 #include <string>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
-#include <tnct/lib/alg/translator_from_file.h>
-#include <tnct/lib/alg/translator_in_memory.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/src/alg/translator_from_file.h>
+#include <tenacitas.lib/src/alg/translator_in_memory.h>
 
-using namespace tnct::lib;
+
 
 struct from_memory {
   bool operator()(const tla::program_options &) {

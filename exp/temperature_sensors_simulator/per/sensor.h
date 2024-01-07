@@ -8,7 +8,7 @@
 #include "../typ/sensor_id.h"
 #include "../typ/temperature.h"
 
-#include <tnct/lib/alg/sleeping_loop.h>
+#include <tenacitas.lib/src/alg/sleeping_loop.h>
 
 namespace temperature_sensors_simulator::per {
 

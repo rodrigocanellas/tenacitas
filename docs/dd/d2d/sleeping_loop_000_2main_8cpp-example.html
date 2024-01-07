@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -80,7 +80,7 @@ $(function() {
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;mutex&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tnct/lib/alg/sleeping_loop.h</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/src/alg/sleeping_loop.h</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"> </div>
@@ -111,10 +111,10 @@ $(function() {
 <div class="line">  };</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// sleeping loop object</span></div>
-<div class="line">  <a name="_a1"></a><a class="code" href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a> _sleeping_loop(_function, _interval);</div>
+<div class="line">  <a name="_a1"></a><a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a> _sleeping_loop(_function, _interval);</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// starts the loop asynchronously</span></div>
-<div class="line">  _sleeping_loop.<a name="a2"></a><a class="code" href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html#a76e80c4c3d50da7bc4d5a6c1fd0cdc35">start</a>();</div>
+<div class="line">  _sleeping_loop.<a name="a2"></a><a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#a9e159760c5b29a8eca126ed4520b28e0">start</a>();</div>
 <div class="line"> </div>
 <div class="line">  <span class="comment">// waits for the function to be executed inside the sleeping loop to notify</span></div>
 <div class="line">  <span class="comment">// that the counter reached the maximum value</span></div>
@@ -122,8 +122,8 @@ $(function() {
 <div class="line">  _cond.wait(_lock);</div>
 <div class="line">}</div>
 <div class="ttc" id="asleeping__loop_8h_html"><div class="ttname"><a href="../../dd/db8/sleeping__loop_8h.html">sleeping_loop.h</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html">tnct::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1sleeping__loop_html_a76e80c4c3d50da7bc4d5a6c1fd0cdc35"><div class="ttname"><a href="../../da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html#a76e80c4c3d50da7bc4d5a6c1fd0cdc35">tnct::lib::alg::sleeping_loop::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00089">sleeping_loop.h:89</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tenacitas::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html_a9e159760c5b29a8eca126ed4520b28e0"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#a9e159760c5b29a8eca126ed4520b28e0">tenacitas::lib::alg::sleeping_loop::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00089">sleeping_loop.h:89</a></div></div>
 <div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->

@@ -6,8 +6,8 @@
 #include <iostream>
 #include <string>
 
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 struct test_ok {
   bool operator()(const tla::program_options &) { return true; }

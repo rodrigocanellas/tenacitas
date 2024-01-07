@@ -13,8 +13,8 @@
 #include <map>
 #include <vector>
 
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/dat/id.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/dat/id.h>
 
 using namespace std::chrono_literals;
 

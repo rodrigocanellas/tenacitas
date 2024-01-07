@@ -7,9 +7,9 @@
 #include <string>
 #include <tuple>
 
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 struct cerr_log_how_to {
   bool operator()(const tla::program_options &) {

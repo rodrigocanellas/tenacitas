@@ -7,7 +7,7 @@
 
 #include "cfg.h"
 #include "typ.h"
-#include <tnct/lib/dat/queue_id.h>
+#include <tenacitas.lib/src/dat/queue_id.h>
 
 #include <sqlite3.h>
 

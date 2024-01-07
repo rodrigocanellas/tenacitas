@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <tnct/lib/alg/dispatcher.h>
+#include <tenacitas.lib/src/alg/dispatcher.h>
 
 #include "alg.h"
 #include "cfg.h"

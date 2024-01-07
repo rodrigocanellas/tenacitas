@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.1.1</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -75,7 +75,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tnct/lib/alg/program_options.h</a>&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tenacitas.lib/src/alg/program_options.h</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">using namespace </span>std;</div>
 <div class="line"> </div>
@@ -89,13 +89,13 @@ $(function() {
 <div class="line">                          <span class="stringliteral">&quot;--bool_1&quot;</span>, <span class="stringliteral">&quot;--single_1&quot;</span>, <span class="stringliteral">&quot;single_value_1&quot;</span>};</div>
 <div class="line">    <span class="keyword">const</span> <span class="keywordtype">int</span> argc = 9;</div>
 <div class="line"> </div>
-<div class="line">    <a name="_a1"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html">tla::program_options</a> _pgm_options;</div>
+<div class="line">    <a name="_a1"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tla::program_options</a> _pgm_options;</div>
 <div class="line"> </div>
-<div class="line">    _pgm_options.<a name="a2"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#ac7ef382e078f18b31a877b550b3ee2c7">parse</a>(argc, (<span class="keywordtype">char</span> **)argv, {<span class="stringliteral">&quot;bool_1&quot;</span>});</div>
+<div class="line">    _pgm_options.<a name="a2"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ab6161781c6ca13066a6d9709a233f58f">parse</a>(argc, (<span class="keywordtype">char</span> **)argv, {<span class="stringliteral">&quot;bool_1&quot;</span>});</div>
 <div class="line"> </div>
 <div class="line">    cerr &lt;&lt; <span class="stringliteral">&quot;options: &quot;</span> &lt;&lt; _pgm_options &lt;&lt; endl;</div>
 <div class="line"> </div>
-<div class="line">    optional&lt;bool&gt; _bool = _pgm_options.<a name="a3"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#aeb0fe935666d27d6738e1e1d09ca1762">get_bool_param</a>(<span class="stringliteral">&quot;bool_1&quot;</span>);</div>
+<div class="line">    optional&lt;bool&gt; _bool = _pgm_options.<a name="a3"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a580f1962375b106a117f847bc2dc090d">get_bool_param</a>(<span class="stringliteral">&quot;bool_1&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (_bool) {</div>
 <div class="line">      cerr &lt;&lt; <span class="stringliteral">&quot;bool param = &quot;</span> &lt;&lt; _bool.value() &lt;&lt; endl;</div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
@@ -103,7 +103,7 @@ $(function() {
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    optional&lt;tla::program_options::value&gt; _single =</div>
-<div class="line">        _pgm_options.<a name="a4"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#ad2b402170a9d9ad0f6bf30faacf5eeab">get_single_param</a>(<span class="stringliteral">&quot;single_1&quot;</span>);</div>
+<div class="line">        _pgm_options.<a name="a4"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a852624170fbcd561de1934763a1c93c3">get_single_param</a>(<span class="stringliteral">&quot;single_1&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (_single) {</div>
 <div class="line">      cerr &lt;&lt; <span class="stringliteral">&quot;single param = &quot;</span> &lt;&lt; _single.value() &lt;&lt; endl;</div>
 <div class="line">    } <span class="keywordflow">else</span> {</div>
@@ -111,7 +111,7 @@ $(function() {
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    optional&lt;list&lt;tla::program_options::value&gt;&gt; _set =</div>
-<div class="line">        _pgm_options.<a name="a5"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#a3d302922f5d3c1155cbff9140e632060">get_set_param</a>(<span class="stringliteral">&quot;set_1&quot;</span>);</div>
+<div class="line">        _pgm_options.<a name="a5"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ad8d5eeec1fbbf19162d8a4f632cf242f">get_set_param</a>(<span class="stringliteral">&quot;set_1&quot;</span>);</div>
 <div class="line">    <span class="keywordflow">if</span> (_set) {</div>
 <div class="line">      <span class="keywordflow">if</span> (_set.value().size() != 2) {</div>
 <div class="line">        cerr &lt;&lt; <span class="stringliteral">&quot;ERROR! number of values in set parameter should be 2, but it &quot;</span></div>
@@ -119,7 +119,7 @@ $(function() {
 <div class="line">             &lt;&lt; _set.value().size() &lt;&lt; endl;</div>
 <div class="line">      } <span class="keywordflow">else</span> {</div>
 <div class="line">        cerr &lt;&lt; <span class="stringliteral">&quot;set param &#39;set_1&#39; = &quot;</span>;</div>
-<div class="line">        <span class="keywordflow">for</span> (<a name="a6"></a><a class="code" href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#a0da179bd27249ec084b59be8952c29ae">tla::program_options::value</a> &amp;_value : _set.value()) {</div>
+<div class="line">        <span class="keywordflow">for</span> (<a name="a6"></a><a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a2b7d60991b7c63660c8b6a3c4d549e93">tla::program_options::value</a> &amp;_value : _set.value()) {</div>
 <div class="line">          cerr &lt;&lt; _value &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
 <div class="line">        }</div>
 <div class="line">        cerr &lt;&lt; endl;</div>
@@ -134,12 +134,12 @@ $(function() {
 <div class="line">  <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="aprogram__options_8h_html"><div class="ttname"><a href="../../d5/d5e/program__options_8h.html">program_options.h</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html">tnct::lib::alg::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html_a0da179bd27249ec084b59be8952c29ae"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#a0da179bd27249ec084b59be8952c29ae">tnct::lib::alg::program_options::value</a></div><div class="ttdeci">std::string value</div><div class="ttdoc">value of an option</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00026">program_options.h:26</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html_a3d302922f5d3c1155cbff9140e632060"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#a3d302922f5d3c1155cbff9140e632060">tnct::lib::alg::program_options::get_set_param</a></div><div class="ttdeci">std::optional&lt; std::list&lt; value &gt; &gt; get_set_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the values of a parameter.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00134">program_options.h:134</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html_ac7ef382e078f18b31a877b550b3ee2c7"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#ac7ef382e078f18b31a877b550b3ee2c7">tnct::lib::alg::program_options::parse</a></div><div class="ttdeci">void parse(int p_argc, char **p_argv, std::initializer_list&lt; name &gt; &amp;&amp;p_mandatory={})</div><div class="ttdoc">parses the options passed to a program</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00055">program_options.h:55</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html_ad2b402170a9d9ad0f6bf30faacf5eeab"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#ad2b402170a9d9ad0f6bf30faacf5eeab">tnct::lib::alg::program_options::get_single_param</a></div><div class="ttdeci">std::optional&lt; value &gt; get_single_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves a single parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00117">program_options.h:117</a></div></div>
-<div class="ttc" id="astructtnct_1_1lib_1_1alg_1_1program__options_html_aeb0fe935666d27d6738e1e1d09ca1762"><div class="ttname"><a href="../../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#aeb0fe935666d27d6738e1e1d09ca1762">tnct::lib::alg::program_options::get_bool_param</a></div><div class="ttdeci">std::optional&lt; bool &gt; get_bool_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the bool parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00102">program_options.h:102</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tenacitas::lib::alg::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_a2b7d60991b7c63660c8b6a3c4d549e93"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a2b7d60991b7c63660c8b6a3c4d549e93">tenacitas::lib::alg::program_options::value</a></div><div class="ttdeci">std::string value</div><div class="ttdoc">value of an option</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00026">program_options.h:26</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_a580f1962375b106a117f847bc2dc090d"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a580f1962375b106a117f847bc2dc090d">tenacitas::lib::alg::program_options::get_bool_param</a></div><div class="ttdeci">std::optional&lt; bool &gt; get_bool_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the bool parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00102">program_options.h:102</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_a852624170fbcd561de1934763a1c93c3"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a852624170fbcd561de1934763a1c93c3">tenacitas::lib::alg::program_options::get_single_param</a></div><div class="ttdeci">std::optional&lt; value &gt; get_single_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves a single parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00117">program_options.h:117</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_ab6161781c6ca13066a6d9709a233f58f"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ab6161781c6ca13066a6d9709a233f58f">tenacitas::lib::alg::program_options::parse</a></div><div class="ttdeci">void parse(int p_argc, char **p_argv, std::initializer_list&lt; name &gt; &amp;&amp;p_mandatory={})</div><div class="ttdoc">parses the options passed to a program</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00055">program_options.h:55</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_ad8d5eeec1fbbf19162d8a4f632cf242f"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ad8d5eeec1fbbf19162d8a4f632cf242f">tenacitas::lib::alg::program_options::get_set_param</a></div><div class="ttdeci">std::optional&lt; std::list&lt; value &gt; &gt; get_set_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the values of a parameter.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00134">program_options.h:134</a></div></div>
 <div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
 </div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->

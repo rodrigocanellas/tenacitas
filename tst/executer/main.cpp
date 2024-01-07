@@ -4,10 +4,10 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <string>
-#include <tnct/lib/alg/exec_sync.h>
-#include <tnct/lib/alg/log.h>
-#include <tnct/lib/alg/program_options.h>
-#include <tnct/lib/alg/tester.h>
+#include <tenacitas.lib/src/alg/exec_sync.h>
+#include <tenacitas.lib/src/alg/log.h>
+#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/src/alg/tester.h>
 
 using namespace std::chrono_literals;
 
@@ -276,7 +276,7 @@ struct executer_011 {
 };
 
 int main(int argc, char **argv) {
-  using namespace tnct::lib;
+  
 
   tla::set_trace_level();
   tla::tester _tester(argc, argv);

@@ -6,6 +6,6 @@ var searchData=
   ['total_5fhandled_5fexpected_810',['total_handled_expected',['../d9/d9c/structtyp_1_1summary.html#afe8e58fa7450e32a3035e78774cbf931',1,'typ::summary']]],
   ['total_5fsent_811',['total_sent',['../d9/d9c/structtyp_1_1summary.html#a1ca8c3b9d19998b12fab022f6d044506',1,'typ::summary']]],
   ['total_5fsent_5fexpected_812',['total_sent_expected',['../d9/d9c/structtyp_1_1summary.html#aa2513150a63520c7002192e92d671ade',1,'typ::summary']]],
-  ['tuple_5findex_5fv_813',['tuple_index_v',['../d6/d5a/namespacetnct_1_1lib_1_1tra.html#ad16513b8aac07e1a65899c2e4ed9f601',1,'tnct::lib::tra']]],
-  ['tuple_5flike_814',['tuple_like',['../d3/d59/namespacetnct_1_1lib_1_1cpt.html#a42d03379efd11106fed5d7ca265328a1',1,'tnct::lib::cpt']]]
+  ['tuple_5findex_5fv_813',['tuple_index_v',['../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a25a51b0d4f44d0ae047005ab46e26517',1,'tenacitas::lib::tra']]],
+  ['tuple_5flike_814',['tuple_like',['../d3/d69/namespacetenacitas_1_1lib_1_1cpt.html#a4934c10b96c54bbb104201ea87ef0598',1,'tenacitas::lib::cpt']]]
 ];

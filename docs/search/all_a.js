@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['name_185',['name',['../da/d1c/structtnct_1_1lib_1_1alg_1_1program__options.html#a33d5c82fbbc9eaeefb65ac9cf143e349',1,'tnct::lib::alg::program_options']]],
+  ['name_185',['name',['../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a549a85e830bb12f8b65bab1e53d29abb',1,'tenacitas::lib::alg::program_options']]],
   ['new_5ftemperature_186',['new_temperature',['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#afbb87320ca0f38c4ed9dd3efcb5e54d8',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature()=default'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#ad0827acad286b044e6d1828d6808f71d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(typ::sensor_id p_sensor_id, typ::temperature p_temperature)'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#a78985b62156ff5ebc61275db51adf59d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(const new_temperature &amp;)=default'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#ac9a553109a40809d9e0c7a924b09545d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(new_temperature &amp;&amp;)=default'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html',1,'temperature_sensors_simulator::evt::new_temperature']]],
   ['new_5ftemperature_2eh_187',['new_temperature.h',['../d7/d4a/new__temperature_8h.html',1,'']]],
-  ['no_5flog_188',['no_log',['../d0/d73/namespacetnct_1_1lib_1_1dat.html#ae8c6cd459055e1f7a2c05b351529d600aaea5bde16df000c5ec8699df8cfd0f28',1,'tnct::lib::dat']]]
+  ['no_5flog_188',['no_log',['../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#afe8fd31da40ebd78f3291837a63b11a4aaea5bde16df000c5ec8699df8cfd0f28',1,'tenacitas::lib::dat']]]
 ];
