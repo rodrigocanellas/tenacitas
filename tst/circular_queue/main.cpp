@@ -3,18 +3,18 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <chrono>
 #include <cstdint>
-#include <iostream>
 #include <optional>
 #include <string>
 #include <utility>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/tester.h>
+#include <tnct/lib/dat/circular_queue.h>
 
-using namespace tenacitas::lib;
+using namespace tnct::lib;
 
-using queue = tnctt::circular_queue<int16_t>;
+using queue = tld::circular_queue<int16_t>;
 
 bool check(const queue &p_queue, size_t p_occupied, size_t p_capacity) {
   if (p_queue.capacity() != p_capacity) {
@@ -91,7 +91,7 @@ struct test_000 {
     return "Tests if the queue is correctly created";
   }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -106,7 +106,7 @@ struct test_000 {
 struct test_001 {
   static std::string desc() { return "Adds -9 and gets it"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -129,7 +129,7 @@ struct test_001 {
 struct test_002 {
   static std::string desc() { return "Adds -9 and tries to get 38"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -152,7 +152,7 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "Adds -9 and 38 and gets one"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -179,7 +179,7 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "Adds -9 and 38 and gets two"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -210,7 +210,7 @@ struct test_004 {
 struct test_005 {
   static std::string desc() { return "Adds -9, 38, 4, gets one and adds 5"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -245,7 +245,7 @@ struct test_005 {
 struct test_006 {
   static std::string desc() { return "Adds -9, 38, 4, gets two and adds 5"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -284,7 +284,7 @@ struct test_006 {
 struct test_007 {
   static std::string desc() { return "Adds -9, 38, 4, gets three"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -323,7 +323,7 @@ struct test_007 {
 struct test_008 {
   static std::string desc() { return "Adds -9, 38, 4, gets three, adds 5"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -367,9 +367,9 @@ struct test_009 {
   static std::string desc() {
     return "Adds 1,000,000 strings of 4k to a circular-queue";
   }
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     try {
-      tnctt::circular_queue<std::string> queue;
+      tld::circular_queue<std::string> queue;
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < 1000000; ++i) {
@@ -398,12 +398,11 @@ struct test_009 {
 };
 
 int main(int argc, char **argv) {
-  using namespace tenacitas;
 
-  tncta::set_debug_level();
-  tncta::set_max_log_file_name_lenght(8);
+  tla::set_debug_level();
+  tla::set_max_log_file_name_lenght(8);
 
-  tncta::tester _tester(argc, argv);
+  tla::tester _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

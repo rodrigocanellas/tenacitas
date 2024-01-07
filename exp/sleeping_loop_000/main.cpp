@@ -10,7 +10,7 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/sleeping_loop.h>
 
 using namespace std::chrono_literals;
 
@@ -41,7 +41,7 @@ int main() {
   };
 
   // sleeping loop object
-  tncta::sleeping_loop _sleeping_loop(_function, _interval);
+  tla::sleeping_loop _sleeping_loop(_function, _interval);
 
   // starts the loop asynchronously
   _sleeping_loop.start();

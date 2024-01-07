@@ -6,13 +6,11 @@ SUBDIRS = \
         test \
         tuple \
         translation \
-	dispatcher \
-	executer \
-	sleeping_loop \
-	circular_queue \
+        dispatcher \
+        executer \
+        sleeping_loop \
+        circular_queue \
         matrix \
         id
-
-#        crosswords \
 
 

@@ -6,11 +6,12 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
-#include <functional>
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/dispatcher.h>
+#include <tnct/lib/alg/sleeping_loop.h>
+#include <tnct/lib/dat/queue_id.h>
 
 using namespace std::chrono_literals;
 
@@ -37,7 +38,7 @@ struct temperature_handled {
   }
 };
 
-using dispatcher = tncta::dispatcher<temperature, temperature_handled>;
+using dispatcher = tla::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -56,7 +57,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  typedef tncta::sleeping_loop temperature_generator;
+  typedef tla::sleeping_loop temperature_generator;
 
 private:
   // function to be executed inside the sleeping loop, that will dispatch the
@@ -210,7 +211,7 @@ struct start {
     }
 
     // adds a subscriber to a publishing, and save the id of this publishing
-    tnctt::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
+    tld::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
         temperature_subscriber_0{_dispatcher, "0a", _printer});
 
     // adds another subscriber to the publishing
@@ -228,4 +229,4 @@ struct start {
   }
 };
 
-int main() {}
+int main() { start()(); }

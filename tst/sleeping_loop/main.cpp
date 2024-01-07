@@ -4,28 +4,27 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <chrono>
-#include <cmath>
 #include <condition_variable>
 #include <cstdint>
-#include <functional>
 #include <iostream>
 #include <mutex>
 #include <sstream>
 #include <thread>
-#include <vector>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/sleeping_loop.h>
+#include <tnct/lib/alg/tester.h>
 
 using namespace std::chrono_literals;
-using namespace tenacitas::lib;
 
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
 
-    using loop = tncta::sleeping_loop;
+    using loop = tla::sleeping_loop;
 
     auto _operation = []() -> void { TNCT_LOG_DEB("loop1"); };
 
@@ -36,7 +35,7 @@ struct sleeping_loop_000 {
 };
 
 struct sleeping_loop_001 {
-  using loop = tncta::sleeping_loop;
+  using loop = tla::sleeping_loop;
 
   typedef uint16_t value;
 
@@ -49,7 +48,7 @@ struct sleeping_loop_001 {
     return _stream.str();
   }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
 
     operation1 _op(&m_cond);
 
@@ -109,7 +108,7 @@ private:
 // struct sleeping_loop_002 {
 //    static std::string desc() { return ""; }
 
-//    bool operator()(const tncta::program_options &) {
+//    bool operator()(const tla::program_options_a &) {
 
 //        std::vector<sleeping_loop> _loops;
 
@@ -126,7 +125,7 @@ private:
 
 //    typedef event_t<2> event;
 //    typedef async::internal::publishing_t<event> event_publishings;
-//    typedef tncta::sleeping_loop sleeping_loop;
+//    typedef tnctl::sleeping_loop sleeping_loop;
 //    // event sent each time a work event is sent
 
 //    typedef async::internal::publishing_t<sent> sent_subscribers;
@@ -186,11 +185,11 @@ private:
 //};
 
 int main(int argc, char **argv) {
-  using namespace tenacitas::lib;
+  using namespace tnct::lib;
 
-  tncta::set_debug_level();
+  tla::set_debug_level();
 
-  tncta::tester<> _tester(argc, argv);
+  tla::tester<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);

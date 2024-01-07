@@ -1,0 +1,308 @@
+\hypertarget{structtnct_1_1lib_1_1alg_1_1program__options}{}\doxysection{tnct\+::lib\+::alg\+::program\+\_\+options Struct Reference}
+\label{structtnct_1_1lib_1_1alg_1_1program__options}\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+
+
+Program options parser.  
+
+
+
+
+{\ttfamily \#include $<$program\+\_\+options.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} = std\+::string
+\begin{DoxyCompactList}\small\item\em name of an option \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{value}} = std\+::string
+\begin{DoxyCompactList}\small\item\em value of an option \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a2b56189346d29258a53d2eccbd02e502}{program\+\_\+options}} ()=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0a073a3b02563624b9a3ee6f457beab9}{$\sim$program\+\_\+options}} ()=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_addae1005daa6d4bf9c35e8ec0fab7a7a}{program\+\_\+options}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&)=delete
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_af84d2227a268195c47358b55e35f842b}{program\+\_\+options}} (\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&\&)=delete
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_ab0edc751b4879829b7355990630706df}{operator=}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&)=delete
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_adfa60e80f2ca447dfe57b454381301c1}{operator=}} (\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&\&)=delete
+\item 
+void $\ast$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a614bde53f3baeecd8b812c339ec5c3bf}{operator new}} (size\+\_\+t)=delete
+\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_ac7ef382e078f18b31a877b550b3ee2c7}{parse}} (int p\+\_\+argc, char $\ast$$\ast$p\+\_\+argv, std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} $>$ \&\&p\+\_\+mandatory=\{\})
+\begin{DoxyCompactList}\small\item\em parses the options passed to a program \end{DoxyCompactList}\item 
+std\+::optional$<$ bool $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_aeb0fe935666d27d6738e1e1d09ca1762}{get\+\_\+bool\+\_\+param}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&p\+\_\+name) const
+\begin{DoxyCompactList}\small\item\em Retrieves the bool parameter, if possible. \end{DoxyCompactList}\item 
+std\+::optional$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{value}} $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_ad2b402170a9d9ad0f6bf30faacf5eeab}{get\+\_\+single\+\_\+param}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&p\+\_\+name) const
+\begin{DoxyCompactList}\small\item\em Retrieves a single parameter, if possible. \end{DoxyCompactList}\item 
+std\+::optional$<$ std\+::list$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{value}} $>$ $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a3d302922f5d3c1155cbff9140e632060}{get\+\_\+set\+\_\+param}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&p\+\_\+name) const
+\begin{DoxyCompactList}\small\item\em Retrieves the values of a parameter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+std\+::ostream \& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a5803f688f5d7ff7f852fe78bca61be06}{operator$<$$<$}} (std\+::ostream \&p\+\_\+out, const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&p\+\_\+options)
+\begin{DoxyCompactList}\small\item\em Output operator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Program options parser. \begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}, \mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2tst_2test_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/tst/test/main.\+cpp}}, and \mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2tst_2tuple_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/tst/tuple/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 20 of file program\+\_\+options.\+h.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}\label{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!name@{name}}
+\index{name@{name}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{tnct\+::lib\+::alg\+::program\+\_\+options\+::name}} =  std\+::string}
+
+
+
+name of an option 
+
+
+
+Definition at line 23 of file program\+\_\+options.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}\label{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!value@{value}}
+\index{value@{value}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{value}{value}}
+{\footnotesize\ttfamily using \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{tnct\+::lib\+::alg\+::program\+\_\+options\+::value}} =  std\+::string}
+
+
+
+value of an option 
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 26 of file program\+\_\+options.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a2b56189346d29258a53d2eccbd02e502}\label{structtnct_1_1lib_1_1alg_1_1program__options_a2b56189346d29258a53d2eccbd02e502}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!program\_options@{program\_options}}
+\index{program\_options@{program\_options}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{program\_options()}{program\_options()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::program\+\_\+options\+::program\+\_\+options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a0a073a3b02563624b9a3ee6f457beab9}\label{structtnct_1_1lib_1_1alg_1_1program__options_a0a073a3b02563624b9a3ee6f457beab9}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!````~program\_options@{$\sim$program\_options}}
+\index{````~program\_options@{$\sim$program\_options}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{$\sim$program\_options()}{~program\_options()}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::program\+\_\+options\+::$\sim$program\+\_\+options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_addae1005daa6d4bf9c35e8ec0fab7a7a}\label{structtnct_1_1lib_1_1alg_1_1program__options_addae1005daa6d4bf9c35e8ec0fab7a7a}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!program\_options@{program\_options}}
+\index{program\_options@{program\_options}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{program\_options()}{program\_options()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::program\+\_\+options\+::program\+\_\+options (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_af84d2227a268195c47358b55e35f842b}\label{structtnct_1_1lib_1_1alg_1_1program__options_af84d2227a268195c47358b55e35f842b}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!program\_options@{program\_options}}
+\index{program\_options@{program\_options}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{program\_options()}{program\_options()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::program\+\_\+options\+::program\+\_\+options (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_aeb0fe935666d27d6738e1e1d09ca1762}\label{structtnct_1_1lib_1_1alg_1_1program__options_aeb0fe935666d27d6738e1e1d09ca1762}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!get\_bool\_param@{get\_bool\_param}}
+\index{get\_bool\_param@{get\_bool\_param}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{get\_bool\_param()}{get\_bool\_param()}}
+{\footnotesize\ttfamily std\+::optional$<$bool$>$ tnct\+::lib\+::alg\+::program\+\_\+options\+::get\+\_\+bool\+\_\+param (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&}]{p\+\_\+name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the bool parameter, if possible. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+name} & is the name of the parameter\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{true\} if it was possible to retrieve, and {\ttfamily p\+\_\+name} exists; \{\} otherwise 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 102 of file program\+\_\+options.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=300pt]{da/d1c/structtnct_1_1lib_1_1alg_1_1program__options_aeb0fe935666d27d6738e1e1d09ca1762_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a3d302922f5d3c1155cbff9140e632060}\label{structtnct_1_1lib_1_1alg_1_1program__options_a3d302922f5d3c1155cbff9140e632060}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!get\_set\_param@{get\_set\_param}}
+\index{get\_set\_param@{get\_set\_param}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{get\_set\_param()}{get\_set\_param()}}
+{\footnotesize\ttfamily std\+::optional$<$std\+::list$<$\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{value}}$>$ $>$ tnct\+::lib\+::alg\+::program\+\_\+options\+::get\+\_\+set\+\_\+param (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&}]{p\+\_\+name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the values of a parameter. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+name} & is the name of the parameter\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{list with the values\} if {\ttfamily p\+\_\+name} was found; \{\} if not 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 134 of file program\+\_\+options.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{da/d1c/structtnct_1_1lib_1_1alg_1_1program__options_a3d302922f5d3c1155cbff9140e632060_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_ad2b402170a9d9ad0f6bf30faacf5eeab}\label{structtnct_1_1lib_1_1alg_1_1program__options_ad2b402170a9d9ad0f6bf30faacf5eeab}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!get\_single\_param@{get\_single\_param}}
+\index{get\_single\_param@{get\_single\_param}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{get\_single\_param()}{get\_single\_param()}}
+{\footnotesize\ttfamily std\+::optional$<$\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{value}}$>$ tnct\+::lib\+::alg\+::program\+\_\+options\+::get\+\_\+single\+\_\+param (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} \&}]{p\+\_\+name }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves a single parameter, if possible. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+name} & is the name of the parameter\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\{$<$some-\/value$>$\} if {\ttfamily p\+\_\+name} was found; \{\} if not 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 117 of file program\+\_\+options.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{da/d1c/structtnct_1_1lib_1_1alg_1_1program__options_ad2b402170a9d9ad0f6bf30faacf5eeab_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a614bde53f3baeecd8b812c339ec5c3bf}\label{structtnct_1_1lib_1_1alg_1_1program__options_a614bde53f3baeecd8b812c339ec5c3bf}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!operator new@{operator new}}
+\index{operator new@{operator new}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{operator new()}{operator new()}}
+{\footnotesize\ttfamily void$\ast$ tnct\+::lib\+::alg\+::program\+\_\+options\+::operator new (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_ab0edc751b4879829b7355990630706df}\label{structtnct_1_1lib_1_1alg_1_1program__options_ab0edc751b4879829b7355990630706df}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}}\& tnct\+::lib\+::alg\+::program\+\_\+options\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_adfa60e80f2ca447dfe57b454381301c1}\label{structtnct_1_1lib_1_1alg_1_1program__options_adfa60e80f2ca447dfe57b454381301c1}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}}\& tnct\+::lib\+::alg\+::program\+\_\+options\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_ac7ef382e078f18b31a877b550b3ee2c7}\label{structtnct_1_1lib_1_1alg_1_1program__options_ac7ef382e078f18b31a877b550b3ee2c7}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!parse@{parse}}
+\index{parse@{parse}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::program\+\_\+options\+::parse (\begin{DoxyParamCaption}\item[{int}]{p\+\_\+argc,  }\item[{char $\ast$$\ast$}]{p\+\_\+argv,  }\item[{std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{name}} $>$ \&\&}]{p\+\_\+mandatory = {\ttfamily \{\}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+parses the options passed to a program 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+argc} & number of options \\
+\hline
+{\em p\+\_\+argv} & vector of strings with the options \\
+\hline
+{\em p\+\_\+mandatory} & set of options that are mandatory\\
+\hline
+\end{DoxyParams}
+an option must be preceded with \textquotesingle{}--\textquotesingle{}, like \textquotesingle{}--log\+\_\+file-\/name abc.\+txt\textquotesingle{}.
+
+There are 3 types of parameter\+: {\ttfamily boolean}, where the parameter has no value, like \textquotesingle{}--print-\/log\textquotesingle{}
+
+{\ttfamily single}, where the parameter has a single value, like \textquotesingle{}--log\+\_\+file-\/name abc.\+txt\textquotesingle{}
+
+{\ttfamily set}, where the parameter has a set of values, like \textquotesingle{}--tests \{ test1 test2 test3 \}
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & \\
+\hline
+\end{DoxyExceptions}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 55 of file program\+\_\+options.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{da/d1c/structtnct_1_1lib_1_1alg_1_1program__options_ac7ef382e078f18b31a877b550b3ee2c7_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1program__options_a5803f688f5d7ff7f852fe78bca61be06}\label{structtnct_1_1lib_1_1alg_1_1program__options_a5803f688f5d7ff7f852fe78bca61be06}} 
+\index{tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!tnct::lib::alg::program\_options@{tnct::lib::alg::program\_options}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{p\+\_\+out,  }\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}} \&}]{p\+\_\+options }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Output operator. 
+
+
+
+Definition at line 147 of file program\+\_\+options.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/alg/\mbox{\hyperlink{program__options_8h}{program\+\_\+options.\+h}}\end{DoxyCompactItemize}

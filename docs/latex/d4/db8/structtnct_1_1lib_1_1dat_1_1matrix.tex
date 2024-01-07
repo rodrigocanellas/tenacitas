@@ -1,0 +1,269 @@
+\hypertarget{structtnct_1_1lib_1_1dat_1_1matrix}{}\doxysection{tnct\+::lib\+::dat\+::matrix$<$ t\+\_\+int, t\+\_\+data $>$ Struct Template Reference}
+\label{structtnct_1_1lib_1_1dat_1_1matrix}\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+
+
+{\ttfamily \#include $<$matrix.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aaa19fe3790b771789cbd4cbf46842bea}{index}} = t\+\_\+int
+\item 
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aabc94446fb6ce73d62b49d82459b1dc0}{data}} = t\+\_\+data
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aa5c874743a263b7784513852cbb3eb74}{matrix}} ()=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a131d48775fe3b57d37626848c5a3d05f}{matrix}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \&p\+\_\+matrix)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_afcfd4410cacf668a588087a97be5b76f}{matrix}} (\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \&\&p\+\_\+matrix)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a40e48d24ef9043b82bd5564749c0b93d}{matrix}} (t\+\_\+int p\+\_\+num\+\_\+rows, t\+\_\+int p\+\_\+num\+\_\+cols, t\+\_\+data p\+\_\+initial)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a6bd057bf17c7919b9f4a6fa50c9d22d1}{$\sim$matrix}} ()=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a8d6c52b38ef90e9e265f23785f5a28e7}{operator=}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \&p\+\_\+matrix)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a1bc24fa087b07da6df64a06dc8fab063}{operator=}} (\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \&\&p\+\_\+matrix)
+\item 
+t\+\_\+data \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a9487b60d25ba4ab0e6bceaa16b49b39d}{operator()}} (t\+\_\+int p\+\_\+row, t\+\_\+int p\+\_\+col)
+\item 
+const t\+\_\+data \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aa4d2d140da6771bdbb06832f12c6777d}{operator()}} (t\+\_\+int p\+\_\+row, t\+\_\+int p\+\_\+col) const
+\item 
+t\+\_\+int \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_ae45affd0a3c75c927585db99107a413c}{get\+\_\+num\+\_\+rows}} () const
+\item 
+t\+\_\+int \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_a7cd1ba34ae7d4c7de8bb9317c4553ce5}{get\+\_\+num\+\_\+cols}} () const
+\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_abf68d10bee14646876f50d53d8c59847}{reset}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+std\+::ostream \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_ad5e50fb9f222acf9136352d05d013fcb}{operator$<$$<$}} (std\+::ostream \&p\+\_\+out, const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} \&p\+\_\+matrix)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data$>$\newline
+struct tnct\+::lib\+::dat\+::matrix$<$ t\+\_\+int, t\+\_\+data $>$}
+
+
+
+Definition at line 15 of file matrix.\+h.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_aabc94446fb6ce73d62b49d82459b1dc0}\label{structtnct_1_1lib_1_1dat_1_1matrix_aabc94446fb6ce73d62b49d82459b1dc0}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!data@{data}}
+\index{data@{data}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aabc94446fb6ce73d62b49d82459b1dc0}{data}} =  t\+\_\+data}
+
+
+
+Definition at line 17 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_aaa19fe3790b771789cbd4cbf46842bea}\label{structtnct_1_1lib_1_1dat_1_1matrix_aaa19fe3790b771789cbd4cbf46842bea}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!index@{index}}
+\index{index@{index}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{index}{index}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix_aaa19fe3790b771789cbd4cbf46842bea}{index}} =  t\+\_\+int}
+
+
+
+Definition at line 16 of file matrix.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_aa5c874743a263b7784513852cbb3eb74}\label{structtnct_1_1lib_1_1dat_1_1matrix_aa5c874743a263b7784513852cbb3eb74}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!matrix@{matrix}}
+\index{matrix@{matrix}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{matrix()}{matrix()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a131d48775fe3b57d37626848c5a3d05f}\label{structtnct_1_1lib_1_1dat_1_1matrix_a131d48775fe3b57d37626848c5a3d05f}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!matrix@{matrix}}
+\index{matrix@{matrix}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{matrix()}{matrix()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}$<$ t\+\_\+int, t\+\_\+data $>$ \&}]{p\+\_\+matrix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 20 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_afcfd4410cacf668a588087a97be5b76f}\label{structtnct_1_1lib_1_1dat_1_1matrix_afcfd4410cacf668a588087a97be5b76f}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!matrix@{matrix}}
+\index{matrix@{matrix}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{matrix()}{matrix()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}$<$ t\+\_\+int, t\+\_\+data $>$ \&\&}]{p\+\_\+matrix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 27 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a40e48d24ef9043b82bd5564749c0b93d}\label{structtnct_1_1lib_1_1dat_1_1matrix_a40e48d24ef9043b82bd5564749c0b93d}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!matrix@{matrix}}
+\index{matrix@{matrix}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{matrix()}{matrix()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} (\begin{DoxyParamCaption}\item[{t\+\_\+int}]{p\+\_\+num\+\_\+rows,  }\item[{t\+\_\+int}]{p\+\_\+num\+\_\+cols,  }\item[{t\+\_\+data}]{p\+\_\+initial }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 31 of file matrix.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/db8/structtnct_1_1lib_1_1dat_1_1matrix_a40e48d24ef9043b82bd5564749c0b93d_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a6bd057bf17c7919b9f4a6fa50c9d22d1}\label{structtnct_1_1lib_1_1dat_1_1matrix_a6bd057bf17c7919b9f4a6fa50c9d22d1}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!````~matrix@{$\sim$matrix}}
+\index{````~matrix@{$\sim$matrix}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{$\sim$matrix()}{~matrix()}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::$\sim$\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a7cd1ba34ae7d4c7de8bb9317c4553ce5}\label{structtnct_1_1lib_1_1dat_1_1matrix_a7cd1ba34ae7d4c7de8bb9317c4553ce5}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!get\_num\_cols@{get\_num\_cols}}
+\index{get\_num\_cols@{get\_num\_cols}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{get\_num\_cols()}{get\_num\_cols()}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+t\+\_\+int \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::get\+\_\+num\+\_\+cols (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 90 of file matrix.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/db8/structtnct_1_1lib_1_1dat_1_1matrix_a7cd1ba34ae7d4c7de8bb9317c4553ce5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_ae45affd0a3c75c927585db99107a413c}\label{structtnct_1_1lib_1_1dat_1_1matrix_ae45affd0a3c75c927585db99107a413c}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!get\_num\_rows@{get\_num\_rows}}
+\index{get\_num\_rows@{get\_num\_rows}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{get\_num\_rows()}{get\_num\_rows()}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+t\+\_\+int \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::get\+\_\+num\+\_\+rows (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 89 of file matrix.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d4/db8/structtnct_1_1lib_1_1dat_1_1matrix_ae45affd0a3c75c927585db99107a413c_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a9487b60d25ba4ab0e6bceaa16b49b39d}\label{structtnct_1_1lib_1_1dat_1_1matrix_a9487b60d25ba4ab0e6bceaa16b49b39d}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+t\+\_\+data\& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::operator() (\begin{DoxyParamCaption}\item[{t\+\_\+int}]{p\+\_\+row,  }\item[{t\+\_\+int}]{p\+\_\+col }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 75 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_aa4d2d140da6771bdbb06832f12c6777d}\label{structtnct_1_1lib_1_1dat_1_1matrix_aa4d2d140da6771bdbb06832f12c6777d}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+const t\+\_\+data\& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::operator() (\begin{DoxyParamCaption}\item[{t\+\_\+int}]{p\+\_\+row,  }\item[{t\+\_\+int}]{p\+\_\+col }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 82 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a8d6c52b38ef90e9e265f23785f5a28e7}\label{structtnct_1_1lib_1_1dat_1_1matrix_a8d6c52b38ef90e9e265f23785f5a28e7}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}\& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}$<$ t\+\_\+int, t\+\_\+data $>$ \&}]{p\+\_\+matrix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 39 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_a1bc24fa087b07da6df64a06dc8fab063}\label{structtnct_1_1lib_1_1dat_1_1matrix_a1bc24fa087b07da6df64a06dc8fab063}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}\& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}$<$ t\+\_\+int, t\+\_\+data $>$ \&\&}]{p\+\_\+matrix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 50 of file matrix.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_abf68d10bee14646876f50d53d8c59847}\label{structtnct_1_1lib_1_1dat_1_1matrix_abf68d10bee14646876f50d53d8c59847}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!reset@{reset}}
+\index{reset@{reset}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{tnct\+::lib\+::dat\+::matrix}}$<$ t\+\_\+int, t\+\_\+data $>$\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 92 of file matrix.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{d4/db8/structtnct_1_1lib_1_1dat_1_1matrix_abf68d10bee14646876f50d53d8c59847_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{d4/db8/structtnct_1_1lib_1_1dat_1_1matrix_abf68d10bee14646876f50d53d8c59847_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1matrix_ad5e50fb9f222acf9136352d05d013fcb}\label{structtnct_1_1lib_1_1dat_1_1matrix_ad5e50fb9f222acf9136352d05d013fcb}} 
+\index{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!tnct::lib::dat::matrix$<$ t\_int, t\_data $>$@{tnct::lib::dat::matrix$<$ t\_int, t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily template$<$std\+::unsigned\+\_\+integral t\+\_\+int, typename t\+\_\+data $>$ \\
+std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{p\+\_\+out,  }\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1matrix}{matrix}}$<$ t\+\_\+int, t\+\_\+data $>$ \&}]{p\+\_\+matrix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Definition at line 60 of file matrix.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/dat/\mbox{\hyperlink{matrix_8h}{matrix.\+h}}\end{DoxyCompactItemize}

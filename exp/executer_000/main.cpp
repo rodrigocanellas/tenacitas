@@ -4,13 +4,12 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <chrono>
-#include <condition_variable>
 #include <cstdint>
 #include <functional>
 #include <iostream>
-#include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/exec_sync.h>
+#include <tnct/lib/alg/log.h>
 
 using namespace std::chrono_literals;
 
@@ -21,7 +20,7 @@ void executer_000() {
   };
   int _i{4};
 
-  std::cout << (tncta::execute(200ms, _function, std::move(_i)) ? "true"
+  std::cout << (tla::exec_sync(200ms, _function, std::move(_i)) ? "true"
                                                                 : "false")
             << '\n';
 }
@@ -37,7 +36,7 @@ void executer_001() {
   };
   int _i{4};
 
-  std::cout << (tncta::execute(200ms, _function, std::move(_i)) ? "true"
+  std::cout << (tla::exec_sync(200ms, _function, std::move(_i)) ? "true"
                                                                 : "false")
             << '\n';
 }
@@ -46,7 +45,7 @@ void executer_002() {
 
   auto _function = [](std::function<bool()>) -> void { TNCT_LOG_DEB("hello"); };
 
-  std::cout << (tncta::execute(200ms, _function) ? "true" : "false") << '\n';
+  std::cout << (tla::exec_sync(200ms, _function) ? "true" : "false") << '\n';
 }
 
 void executer_003() {
@@ -59,7 +58,7 @@ void executer_003() {
     }
   };
 
-  std::cout << (tncta::execute(200ms, _function) ? "true" : "false") << '\n';
+  std::cout << (tla::exec_sync(200ms, _function) ? "true" : "false") << '\n';
 }
 
 void executer_004() {
@@ -71,7 +70,7 @@ void executer_004() {
 
   std::string _str{"hello"};
 
-  std::cout << (tncta::execute(200ms, _function, 4, std::move(_str), "goodbye")
+  std::cout << (tla::exec_sync(200ms, _function, 4, std::move(_str), "goodbye")
                     ? "true"
                     : "false")
             << '\n';
@@ -90,7 +89,7 @@ void executer_005() {
 
   std::string _str{"hello"};
 
-  std::cout << (tncta::execute(200ms, _function, 4, std::move(_str), "goodbye")
+  std::cout << (tla::exec_sync(200ms, _function, 4, std::move(_str), "goodbye")
                     ? "true"
                     : "false")
             << '\n';
@@ -109,7 +108,7 @@ void executer_006() {
   int _i{4};
 
   std::optional<int16_t> _maybe =
-      tncta::execute(200ms, _function, std::move(_i));
+      tla::exec_sync(200ms, _function, std::move(_i));
 
   if (!_maybe) {
     std::cout << "timeout, when it should not\n";
@@ -137,7 +136,7 @@ void executer_007() {
   int _i{4};
 
   std::optional<int16_t> _maybe =
-      tncta::execute(200ms, _function, std::move(_i));
+      tla::exec_sync(200ms, _function, std::move(_i));
 
   if (_maybe) {
     std::cout << "function returned " << *_maybe << ", but it should not"
@@ -153,7 +152,7 @@ void executer_008() {
     return 94;
   };
 
-  std::optional<int16_t> _maybe = tncta::execute(200ms, _function);
+  std::optional<int16_t> _maybe = tla::exec_sync(200ms, _function);
   if (!_maybe) {
     std::cout << "function timedout, but it should not\n";
     return;
@@ -175,7 +174,7 @@ void executer_009() {
     return 53;
   };
 
-  std::optional<int16_t> _maybe = tncta::execute(200ms, _function);
+  std::optional<int16_t> _maybe = tla::exec_sync(200ms, _function);
   if (_maybe) {
     std::cout << "function not timedout, as expected, and returned " << *_maybe
               << '\n';
@@ -189,7 +188,7 @@ void executer_010() {
     return p_f * p_i;
   };
 
-  std::optional<float> _maybe = tncta::execute(200ms, _function, 4, -2.5);
+  std::optional<float> _maybe = tla::exec_sync(200ms, _function, 4, -2.5);
   if (!_maybe) {
     std::cout << "function timeout, when it should not\n";
     return;
@@ -212,7 +211,7 @@ void executer_011() {
     return p_f * p_i;
   };
 
-  std::optional<float> _maybe = tncta::execute(200ms, _function, 4, -2.5);
+  std::optional<float> _maybe = tla::exec_sync(200ms, _function, 4, -2.5);
   if (_maybe) {
     std::cout << "function should timeout, but it has not, and returned "
               << *_maybe << '\n';

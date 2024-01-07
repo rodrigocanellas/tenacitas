@@ -6,11 +6,11 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>
-#include <functional>
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/dispatcher.h>
+#include <tnct/lib/alg/sleeping_loop.h>
 
 using namespace std::chrono_literals;
 
@@ -37,7 +37,7 @@ struct temperature_handled {
   }
 };
 
-using dispatcher = tncta::dispatcher<temperature, temperature_handled>;
+using dispatcher = tla::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating values
 struct temperature_sensor {
@@ -56,7 +56,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  typedef tncta::sleeping_loop temperature_generator;
+  typedef tla::sleeping_loop temperature_generator;
 
 private:
   // function to be executed inside the sleeping loop, that will generate the
@@ -242,7 +242,7 @@ struct start {
 
     // adds a subscriber to a queue, and saves the id of this queue
     {
-      tnctt::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+      tld::queue_id _queue_id = _dispatcher->add_queue<temperature>();
 
       _dispatcher->subscribe<start, temperature>(
           _queue_id, temperature_subscriber_0{_dispatcher,
@@ -260,7 +260,7 @@ struct start {
       //                                            _printer});
     }
     {
-      tnctt::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+      tld::queue_id _queue_id = _dispatcher->add_queue<temperature>();
       // adds a subscriber to another queue
       _dispatcher->subscribe<start, temperature>(temperature_subscriber_1{
           _dispatcher, "subscriber 1 to queue " + std::to_string(_queue_id),
@@ -279,4 +279,4 @@ struct start {
   }
 };
 
-int main() {}
+int main() { start()(); }

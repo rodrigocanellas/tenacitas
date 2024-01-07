@@ -1,0 +1,4 @@
+var searchData=
+[
+  ['new_5ftemperature_659',['new_temperature',['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#afbb87320ca0f38c4ed9dd3efcb5e54d8',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature()=default'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#ad0827acad286b044e6d1828d6808f71d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(typ::sensor_id p_sensor_id, typ::temperature p_temperature)'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#a78985b62156ff5ebc61275db51adf59d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(const new_temperature &amp;)=default'],['../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html#ac9a553109a40809d9e0c7a924b09545d',1,'temperature_sensors_simulator::evt::new_temperature::new_temperature(new_temperature &amp;&amp;)=default']]]
+];

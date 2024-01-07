@@ -3,27 +3,22 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <chrono>
 #include <cstdint>
-#include <iostream>
-#include <limits>
-#include <optional>
 #include <string>
-#include <utility>
 
-#include <tenacitas.h>
-
-using namespace tenacitas::lib;
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
+#include <tnct/lib/dat/matrix.h>
 
 struct test_000 {
   static std::string desc() {
     return "simple square matrix creation and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tla::program_options &) {
 
-    matrix<uint16_t, char> _matrix(3, 3, 'z');
+    tld::matrix<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
@@ -42,10 +37,9 @@ struct test_001 {
     return "create square matrix, modify and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tla::program_options &) {
 
-    matrix<uint16_t, char> _matrix(3, 3, 'z');
+    tld::matrix<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
@@ -75,10 +69,9 @@ struct test_002 {
     return "create non square matrix creation, fill it, and element access";
   }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
+  bool operator()(const tla::program_options &) {
 
-    matrix<uint16_t, int16_t> _matrix(3, 4, -1);
+    tld::matrix<uint16_t, int16_t> _matrix(3, 4, -1);
 
     TNCT_LOG_TST(_matrix);
 
@@ -114,9 +107,9 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "test filling horizontally"; }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
-    matrix<uint16_t, char> _m(11, 8, '-');
+  bool operator()(const tla::program_options &) {
+
+    tld::matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -135,9 +128,9 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "test filling vertically"; }
 
-  bool operator()(const tncta::program_options &) {
-    using namespace typ;
-    matrix<uint16_t, char> _m(11, 8, '-');
+  bool operator()(const tla::program_options &) {
+
+    tld::matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -154,8 +147,8 @@ struct test_004 {
 };
 
 int main(int argc, char **argv) {
-  using namespace tenacitas;
-  tncta::tester _tester(argc, argv);
+
+  tla::tester _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

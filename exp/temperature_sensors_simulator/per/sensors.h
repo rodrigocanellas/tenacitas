@@ -5,7 +5,6 @@
 #include <chrono>
 #include <memory>
 #include <set>
-#include <thread>
 
 #include "../alg/dispatcher.h"
 #include "../evt/add_sensor.h"

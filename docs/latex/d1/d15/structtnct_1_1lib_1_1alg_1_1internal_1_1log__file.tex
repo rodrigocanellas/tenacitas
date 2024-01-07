@@ -1,0 +1,94 @@
+\hypertarget{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{}\doxysection{tnct\+::lib\+::alg\+::internal\+::log\+\_\+file Struct Reference}
+\label{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}\index{tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}}
+
+
+Writes log messages to a \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}}.  
+
+
+
+
+{\ttfamily \#include $<$log\+\_\+file.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6fc0c082921c0c364c96de9799c2ad74}{log\+\_\+file}} (const std\+::string \&p\+\_\+log\+\_\+file\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6585e215d2c804ef605e4c951494c9a5}{log\+\_\+file}} (const std\+::string \&p\+\_\+log\+\_\+file\+\_\+name, uint32\+\_\+t p\+\_\+size\+\_\+in\+\_\+bytes)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_addb556f28d7d0316b8d2e73dd94f50f9}{operator()}} (std\+::string \&\&p\+\_\+str)
+\begin{DoxyCompactList}\small\item\em Writes a string to the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Writes log messages to a \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}}. 
+
+A maximum \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} size is defined, and when this size is exceeded, a new \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} is created 
+
+Definition at line 20 of file log\+\_\+file.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6fc0c082921c0c364c96de9799c2ad74}\label{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6fc0c082921c0c364c96de9799c2ad74}} 
+\index{tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}!log\_file@{log\_file}}
+\index{log\_file@{log\_file}!tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}}
+\doxysubsubsection{\texorpdfstring{log\_file()}{log\_file()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::internal\+::log\+\_\+file\+::log\+\_\+file (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{p\+\_\+log\+\_\+file\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file\+\_\+name} & base \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} name, the actual \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} name is this name appended with a timestamp with microsecs precision\\
+\hline
+\end{DoxyParams}
+In this case, the maximum \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} size is 5MB 
+
+Definition at line 27 of file log\+\_\+file.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6585e215d2c804ef605e4c951494c9a5}\label{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_a6585e215d2c804ef605e4c951494c9a5}} 
+\index{tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}!log\_file@{log\_file}}
+\index{log\_file@{log\_file}!tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}}
+\doxysubsubsection{\texorpdfstring{log\_file()}{log\_file()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily tnct\+::lib\+::alg\+::internal\+::log\+\_\+file\+::log\+\_\+file (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{p\+\_\+log\+\_\+file\+\_\+name,  }\item[{uint32\+\_\+t}]{p\+\_\+size\+\_\+in\+\_\+bytes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file\+\_\+name} & base \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} name, the actual \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} name is this name appended with a timestamp with microsecs precision\\
+\hline
+{\em p\+\_\+size\+\_\+in\+\_\+bytes} & is the maximum \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} size \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 38 of file log\+\_\+file.\+h.
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_addb556f28d7d0316b8d2e73dd94f50f9}\label{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file_addb556f28d7d0316b8d2e73dd94f50f9}} 
+\index{tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}!operator()@{operator()}}
+\index{operator()@{operator()}!tnct::lib::alg::internal::log\_file@{tnct::lib::alg::internal::log\_file}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::internal\+::log\+\_\+file\+::operator() (\begin{DoxyParamCaption}\item[{std\+::string \&\&}]{p\+\_\+str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Writes a string to the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}}. 
+
+
+
+Definition at line 44 of file log\+\_\+file.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/alg/internal/\mbox{\hyperlink{log__file_8h}{log\+\_\+file.\+h}}\end{DoxyCompactItemize}

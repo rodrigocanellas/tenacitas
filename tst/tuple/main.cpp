@@ -10,14 +10,15 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas.h>
-
-using namespace tenacitas::lib;
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
+#include <tnct/lib/alg/traverse_tuple.h>
 
 struct tuple_000 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
     using container = std::tuple<char, int, float, std::string>;
     using function_char = std::function<void(char &)>;
     using function_int = std::function<void(int &)>;
@@ -41,7 +42,7 @@ struct tuple_000 {
     functions _functions{_function_char, _function_int, _function_float,
                          _function_string};
 
-    tncta::traverse(std::move(_functions), _container);
+    tla::traverse_tuple(std::move(_functions), _container);
 
     return true;
   }
@@ -50,7 +51,7 @@ struct tuple_000 {
 struct tuple_001 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
 
     auto _functions{std::make_tuple(
         [](char &p_char) { TNCT_LOG_TST("char: ", p_char); },
@@ -61,7 +62,7 @@ struct tuple_001 {
     auto _data = std::make_tuple('k', static_cast<int>(-19),
                                  static_cast<float>(8.014), std::string("bye"));
 
-    tncta::traverse(_functions, _data);
+    tla::traverse_tuple(_functions, _data);
 
     return true;
   }
@@ -70,23 +71,23 @@ struct tuple_001 {
 struct tuple_002 {
   static std::string desc() { return "Traverses a tuple"; }
 
-  bool operator()(const tncta::program_options &) {
+  bool operator()(const tla::program_options &) {
 
     auto _function{[](auto &p_value) { TNCT_LOG_TST("value: ", p_value); }};
 
     auto _data = std::make_tuple('k', static_cast<int>(-19),
                                  static_cast<float>(8.014), std::string("bye"));
 
-    tncta::traverse(_function, _data);
+    tla::traverse_tuple(_function, _data);
 
     return true;
   }
 };
 
 int main(int argc, char **argv) {
-  using namespace tenacitas;
+
   try {
-    tncta::tester _test(argc, argv);
+    tla::tester _test(argc, argv);
     run_test(_test, tuple_000);
     run_test(_test, tuple_001);
     run_test(_test, tuple_002);

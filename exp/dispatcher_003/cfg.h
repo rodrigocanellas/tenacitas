@@ -1,14 +1,14 @@
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_CFG_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_CFG_H
+#ifndef TNCT_TST_ASYNC_DISPATCHER_CFG_H
+#define TNCT_TST_ASYNC_DISPATCHER_CFG_H
 
 #include <list>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include "typ.h"
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
 
 namespace cfg {
 
@@ -30,7 +30,7 @@ constexpr char sqlite_file[]{"sqlite-file"};
 
 void help(const char *p_pgm_name, std::ostream &p_stream) {
   p_stream
-      << "This tests tenacitas::lib::async::tncta::dispatcher class. There "
+      << "This tests tnct::lib::async::tncta::dispatcher class. There "
          "will "
          "be "
          "generated as many combinations of the parameters provided.\n"
@@ -109,7 +109,7 @@ void help(const char *p_pgm_name, std::ostream &p_stream) {
 
 struct options {
   options(int p_argc, char **p_argv) {
-    tncta::program_options _options;
+    tla::program_options _options;
     _options.parse(p_argc, p_argv,
                    {total_generator_option, amount_events_option,
                     amount_events_increment_option, interval_option,
@@ -173,7 +173,7 @@ struct options {
 
   std::string get_sqlite_file() const { return m_sqlite_file; }
 
-  typ::total_list get_total_generator(const tncta::program_options &p_options) {
+  typ::total_list get_total_generator(const tla::program_options &p_options) {
     try {
       std::vector<typ::total> _total_generators;
       {
@@ -193,7 +193,7 @@ struct options {
     }
   }
 
-  typ::amount_list get_amount_events(const tncta::program_options &p_options) {
+  typ::amount_list get_amount_events(const tla::program_options &p_options) {
     try {
       typ::amount_list _amount_events;
       {
@@ -214,7 +214,7 @@ struct options {
   }
 
   typ::amount_increment
-  get_amount_events_increment(const tncta::program_options &p_options) {
+  get_amount_events_increment(const tla::program_options &p_options) {
     try {
       typ::amount_increment _amount_events_increment = 0;
       std::optional<std::string> _maybe =
@@ -229,7 +229,7 @@ struct options {
     }
   }
 
-  typ::time_list get_intervals(const tncta::program_options &p_options) {
+  typ::time_list get_intervals(const tla::program_options &p_options) {
     try {
       typ::time_list _intervals;
       {
@@ -250,7 +250,7 @@ struct options {
   }
 
   typ::time_increment
-  get_interval_increment(const tncta::program_options &p_options) {
+  get_interval_increment(const tla::program_options &p_options) {
     try {
       typ::time_increment _interval_increment;
       std::optional<std::string> _maybe =
@@ -267,7 +267,7 @@ struct options {
     }
   }
 
-  typ::total_list get_total_queues(const tncta::program_options &p_options) {
+  typ::total_list get_total_queues(const tla::program_options &p_options) {
     try {
       typ::total_list _total_publishings;
       {
@@ -288,7 +288,7 @@ struct options {
   }
 
   typ::amount_list
-  get_amount_subscribers(const tncta::program_options &p_options) {
+  get_amount_subscribers(const tla::program_options &p_options) {
     try {
       typ::amount_list _amounts_subscribers;
       {
@@ -309,7 +309,7 @@ struct options {
   }
 
   typ::amount_increment
-  get_amount_subscribers_increment(const tncta::program_options &p_options) {
+  get_amount_subscribers_increment(const tla::program_options &p_options) {
     try {
       typ::amount_increment _amount_subscribers_increment = 0;
       std::optional<std::string> _maybe =
@@ -324,7 +324,7 @@ struct options {
     }
   }
 
-  typ::time_list get_sleeps(const tncta::program_options &p_options) {
+  typ::time_list get_sleeps(const tla::program_options &p_options) {
     try {
       typ::time_list _sleeps;
       {
@@ -345,7 +345,7 @@ struct options {
   }
 
   typ::time_increment
-  get_sleep_increment(const tncta::program_options &p_options) {
+  get_sleep_increment(const tla::program_options &p_options) {
     try {
       typ::time_increment _sleep_increment;
       std::optional<std::string> _maybe =
@@ -363,7 +363,7 @@ struct options {
     }
   }
 
-  std::string get_sqlite_file(const tncta::program_options &p_options) {
+  std::string get_sqlite_file(const tla::program_options &p_options) {
     try {
       std::string _db_file;
       std::optional<std::string> _maybe =
