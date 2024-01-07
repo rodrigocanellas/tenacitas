@@ -3,6 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+/// \example exec_sync/main.cpp
+
 #include <chrono>
 #include <cstdint>
 #include <functional>

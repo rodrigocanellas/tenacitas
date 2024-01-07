@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example temperature_sensors_simulator
+/// \example temperature_sensors_simulator/uix/qt/main.cpp
 
 #include "mainwindow.h"
 

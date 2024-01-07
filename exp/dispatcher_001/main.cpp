@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example sleeping_loop_001
+/// \example dispatcher_001/main.cpp
 
 #include <chrono>
 #include <condition_variable>

@@ -1,17 +1,17 @@
 <map id="/home/rodrigo/development/tenacitas.lib/src/tnct/lib/alg" name="/home/rodrigo/development/tenacitas.lib/src/tnct/lib/alg">
 <area shape="rect" id="node1" href="dir_3b7bed377e80b460bf470fb6dcee9c6b.html" title="cpt" alt="" coords="53,351,125,399"/>
 <area shape="rect" id="node2" href="dir_6f7aff4f646eb0ebb98b0cfbc1cd3268.html" title="tra" alt="" coords="80,447,152,495"/>
-<area shape="rect" id="edge9-headlabel" href="dir_000029_000037.html" title="2" alt="" coords="99,419,108,434"/>
-<area shape="rect" id="edge6-headlabel" href="dir_000037_000029.html" title="2" alt="" coords="97,412,107,426"/>
+<area shape="rect" id="edge9-headlabel" href="dir_000012_000018.html" title="2" alt="" coords="99,419,108,434"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000018_000012.html" title="2" alt="" coords="97,412,107,426"/>
 <area shape="rect" id="node3" href="dir_8a082ab18a237e2d716da0aa1baf5aaa.html" title="dat" alt="" coords="53,255,125,303"/>
-<area shape="rect" id="edge5-headlabel" href="dir_000034_000029.html" title="2" alt="" coords="93,325,102,340"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000028_000029.html" title="5" alt="" coords="60,323,69,338"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000028_000037.html" title="2" alt="" coords="139,426,148,441"/>
-<area shape="rect" id="edge3-headlabel" href="dir_000028_000034.html" title="11" alt="" coords="72,227,89,242"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000015_000012.html" title="2" alt="" coords="93,325,102,340"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000011_000012.html" title="5" alt="" coords="60,323,69,338"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000011_000018.html" title="2" alt="" coords="139,426,148,441"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000011_000015.html" title="11" alt="" coords="72,227,89,242"/>
 <area shape="rect" id="node5" href="dir_ed184a589c83af0ff65e6ae7d39c9b07.html" title="internal" alt="" coords="80,159,152,207"/>
-<area shape="rect" id="edge4-headlabel" href="dir_000028_000033.html" title="3" alt="" coords="120,133,129,148"/>
-<area shape="rect" id="edge7-headlabel" href="dir_000033_000037.html" title="1" alt="" coords="134,424,143,439"/>
-<area shape="rect" id="edge8-headlabel" href="dir_000033_000034.html" title="3" alt="" coords="104,232,114,247"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000011_000014.html" title="3" alt="" coords="120,133,129,148"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000014_000018.html" title="1" alt="" coords="134,424,143,439"/>
+<area shape="rect" id="edge8-headlabel" href="dir_000014_000015.html" title="3" alt="" coords="104,232,114,247"/>
 <area shape="rect" id="clust2" href="dir_2e7fa4197be4717e18dc03bdb9f0b07c.html" alt="" coords="69,52,163,217"/>
 <area shape="rect" id="clust1" href="dir_68a690a62630c42f62850558742f9149.html" title="lib" alt="" coords="16,16,189,505"/>
 </map>

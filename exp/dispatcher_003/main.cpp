@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example dispatcher_003
+/// \example dispatcher_003/main.cpp
 
 #include <iostream>
 

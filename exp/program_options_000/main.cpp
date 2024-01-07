@@ -3,6 +3,8 @@
 
 /// \author Rodrigo Canellas rodrigo.canellas@gmail.com
 
+/// \example program_options_000/main.cpp
+
 #include <iostream>
 
 #include <tnct/lib/alg/program_options.h>

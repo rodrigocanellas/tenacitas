@@ -1,0 +1,7 @@
+<map id="main" name="main">
+<area shape="rect" id="node1" title=" " alt="" coords="5,46,60,73"/>
+<area shape="rect" id="node2" href="$d3/d88/namespacetnct_1_1lib_1_1alg.html#a3cd8381e383bb22da94cb564604c5841" title="Sets the global log level as &#39;debug&#39;." alt="" coords="108,5,235,47"/>
+<area shape="rect" id="node4" href="$d3/d88/namespacetnct_1_1lib_1_1alg.html#a9629ccfa798d63bd3bd0fad1cf2e0a32" title="Defines that log messages will be written to std::cerr." alt="" coords="108,71,235,112"/>
+<area shape="rect" id="node3" href="$dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a7747affee0686e13aa597fd6c726ad89" title=" " alt="" coords="283,5,468,47"/>
+<area shape="rect" id="node5" href="$dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#ae1ed7d4a3111c9d7a50f42f50584d196" title="Defines the function responsible for actually writing the message." alt="" coords="284,71,467,112"/>
+</map>

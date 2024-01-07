@@ -3,6 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+/// \example dispatcher_002/main.cpp
+
 #include <chrono>
 #include <condition_variable>
 #include <cstdint>

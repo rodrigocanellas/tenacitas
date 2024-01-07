@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-/// \example dispatcher_000
+/// \example dispatcher_000/main.cpp
 
 #include <chrono>
 #include <condition_variable>
