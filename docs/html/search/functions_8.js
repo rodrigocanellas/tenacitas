@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['load_652',['load',['../db/d23/structtnct_1_1lib_1_1alg_1_1translator__from__file.html#abbc90ba3d24b981550f5fc7658b536c5',1,'tnct::lib::alg::translator_from_file']]],
+  ['log_5ffile_653',['log_file',['../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6fc0c082921c0c364c96de9799c2ad74',1,'tnct::lib::alg::internal::log_file::log_file(const std::string &amp;p_log_file_name)'],['../d1/d15/structtnct_1_1lib_1_1alg_1_1internal_1_1log__file.html#a6585e215d2c804ef605e4c951494c9a5',1,'tnct::lib::alg::internal::log_file::log_file(const std::string &amp;p_log_file_name, uint32_t p_size_in_bytes)']]],
+  ['log_5fwrapper_654',['log_wrapper',['../dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#af237a8505c06368291da40dd1ea0df87',1,'tnct::lib::alg::internal::log_wrapper::log_wrapper()=default'],['../dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a5a9e496c07c4e3308ff4b776cc49ea3a',1,'tnct::lib::alg::internal::log_wrapper::log_wrapper(const log_wrapper &amp;)=delete'],['../dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a6e37f5458fa2e93d5a82c89367ca6e7e',1,'tnct::lib::alg::internal::log_wrapper::log_wrapper(log_wrapper &amp;&amp;)=delete']]]
+];

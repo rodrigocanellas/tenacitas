@@ -10,7 +10,7 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/sleeping_loop.h>
 
 using namespace std::chrono_literals;
 

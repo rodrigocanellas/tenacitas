@@ -3,25 +3,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <algorithm>
-#include <chrono>
-#include <cmath>
-#include <condition_variable>
 #include <cstdint>
-#include <fstream>
-#include <iterator>
-#include <map>
-#include <mutex>
-#include <set>
-#include <sstream>
+#include <iostream>
 #include <string>
 #include <tuple>
-#include <utility>
 
-#include <tenacitas.h>
-
-using namespace std::chrono_literals;
-// using namespace tnct::lib::async::test;
+#include <tnct/lib/alg/dispatcher.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
 
 namespace evt {
 struct ev_0 {
@@ -55,7 +45,7 @@ struct test_000 {
   static std::string desc() { return "Declaring a 'Dispatcher' "; }
 
   using dispatcher = tla::dispatcher<evt::ev_0, evt::ev_1>;
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     TNCT_LOG_TST("starting test_000");
@@ -115,7 +105,7 @@ struct test_002 {
     return "'Dispatcher' as a local object, publishing 1 event, and waiting "
            "for it to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     TNCT_LOG_TST("starting test_002");
@@ -154,7 +144,7 @@ struct test_003 {
            "event "
            "evt::ev_1 and waiting for them to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     TNCT_LOG_TST("starting test_002");
@@ -200,7 +190,7 @@ struct test_004 {
            "evt::ev_0, "
            "publishing 1 event, and waiting for it to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     TNCT_LOG_TST("starting test_002");
@@ -244,7 +234,7 @@ struct test_005 {
            "and "
            "waiting for them to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     TNCT_LOG_TST("starting test_002");
@@ -289,7 +279,7 @@ struct test_006 {
   struct e {};
   using events_published = std::tuple<e>;
   using events_subscribed = std::tuple<e>;
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     size_t _counter{0};
@@ -327,7 +317,7 @@ struct test_corner_000 {
     return "'Dispatcher' as a local object, publishing 200 events, but not "
            "waiting all to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     dispatcher::ptr _dispatcher = dispatcher::create();
@@ -361,7 +351,7 @@ struct test_corner_001 {
     return "'Dispatcher' as an attribute, publishing 200 events, but not "
            "waiting all to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     m_dispatcher->subscribe<test_corner_001, evt::ev_0>([](auto p_event) {
@@ -399,7 +389,7 @@ struct test_corner_002 {
     return "'Dispatcher' as a global object, publishing 200 events, but not "
            "waiting all to be handled";
   }
-  
+
   bool operator()(const tla::program_options &) {
     tla::set_info_level();
     s_dispatcher_test_corner_002->subscribe<test_corner_002, evt::ev_0>(
@@ -431,7 +421,7 @@ int main(int argc, char **argv) {
   tla::set_max_log_file_name_lenght(13);
 
   // tla::program_options_a _options;
-  
+
   tla::tester _tester(argc, argv);
 
   run_test(_tester, test_000);

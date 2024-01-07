@@ -1,10 +1,11 @@
 
 #include <string>
 
-#include <alg/program_options.h>
-#include <alg/tester.h>
-#include <cpt/id.h>
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
+#include <tnct/lib/cpt/id.h>
+#include <tnct/lib/dat/id.h>
 
 using namespace tnct::lib;
 
@@ -58,7 +59,7 @@ struct test004 {
 };
 
 int main(int argc, char **argv) {
-  using namespace tenacitas;
+
   tla::tester _tester(argc, argv);
 
   run_test(_tester, test003);

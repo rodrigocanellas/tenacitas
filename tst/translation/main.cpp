@@ -3,19 +3,21 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <iostream>
 #include <optional>
-#include <sstream>
 #include <string>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
+#include <tnct/lib/alg/translator_from_file.h>
+#include <tnct/lib/alg/translator_in_memory.h>
 
 using namespace tnct::lib;
 
 struct from_memory {
-    bool operator()(const tla::program_options &) {
+  bool operator()(const tla::program_options &) {
 
-    tnctl::translator_in_memory_a _translator(
+    tla::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -27,7 +29,7 @@ struct from_memory {
 };
 
 struct from_existing_file {
-    bool operator()(const tla::program_options &p_options) {
+  bool operator()(const tla::program_options &p_options) {
     std::optional<std::string> _maybe{p_options.get_single_param("file_name")};
     if (!_maybe.has_value()) {
       TNCT_LOG_ERR("File name not provided");
@@ -35,7 +37,7 @@ struct from_existing_file {
     }
     std::string _file_name{std::move(_maybe.value())};
 
-    tnctl::translator_from_file_a _translator;
+    tla::translator_from_file _translator;
 
     if (!_translator.load(_file_name)) {
       return false;
@@ -46,12 +48,15 @@ struct from_existing_file {
     return true;
   }
 
-  static std::string desc() { return "Loads a dictonary from a valid file"; }
+  static std::string desc() {
+    return "Loads a dictonary from a valid file. It is necessary to pass the "
+           "parameter '--file_name' to the test with a valid dictionary.";
+  }
 };
 
 struct from_non_existing_file {
-    bool operator()(const tla::program_options &) {
-    tnctl::translator_from_file_a _translator;
+  bool operator()(const tla::program_options &) {
+    tla::translator_from_file _translator;
 
     return !_translator.load("file.dict");
   }
@@ -62,8 +67,8 @@ struct from_non_existing_file {
 };
 
 struct translate_non_existing_word {
-    bool operator()(const tla::program_options &) {
-    tnctl::translator_in_memory_a _translator(
+  bool operator()(const tla::program_options &) {
+    tla::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -81,8 +86,8 @@ struct translate_non_existing_word {
 };
 
 struct translate_an_existing_word {
-    bool operator()(const tla::program_options &) {
-    tnctl::translator_in_memory_a _translator(
+  bool operator()(const tla::program_options &) {
+    tla::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
     TNCT_LOG_TST("translations = ", _translator);
@@ -99,7 +104,7 @@ struct translate_an_existing_word {
 
 int main(int argc, char **argv) {
 
-  tnctl::set_writer_cerr();
+  tla::set_writer_cerr();
   tla::set_debug_level();
   tla::tester<> _test(argc, argv);
 

@@ -1,0 +1,339 @@
+\hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue}{}\doxysection{tnct\+::lib\+::dat\+::circular\+\_\+queue$<$ t\+\_\+data $>$ Struct Template Reference}
+\label{structtnct_1_1lib_1_1dat_1_1circular__queue}\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+
+
+Implements a circular queue which size is increased if it becomes full.  
+
+
+
+
+{\ttfamily \#include $<$circular\+\_\+queue.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a2b99301a3f822af3e43dfabec5ae1de0}{data}} = t\+\_\+data
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_ab064c037ca1280ec40fad68d7fa1dab7}{circular\+\_\+queue}} ()=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a382e16b709377f90b2332616d9c89140}{circular\+\_\+queue}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \&p\+\_\+queue)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_abe1c838b2772dc99de8d121200bc6237}{circular\+\_\+queue}} (\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \&\&)=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_abe8d70df59f794225e95b10df999dfc5}{operator=}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \&p\+\_\+queue)
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a6a17a6de115298963ec3c1f1c45b41fb}{operator=}} (\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} \&\&p\+\_\+queue)=default
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_aaec6531b979d4025b0fbd99f675fd068}{$\sim$circular\+\_\+queue}} ()=default
+\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a7f82a238d9859cfabb4222e6d18ff21b}{traverse}} (std\+::function$<$ void(const t\+\_\+data \&)$>$ p\+\_\+visitor) const
+\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a409c1fd2dc4b6d1dca2626b644b81df1}{add}} (t\+\_\+data \&\&p\+\_\+data)
+\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a3391c0701800a95adf247957beae95f7}{add}} (const t\+\_\+data \&p\+\_\+data)
+\item 
+std\+::optional$<$ t\+\_\+data $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a683a44e1156124df4171188cd972925b}{get}} ()
+\item 
+constexpr bool \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a4633c63268851efd6d16bebc3a49d5e5}{full}} () const
+\item 
+constexpr bool \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a78a4a6e03aa698759d912c648393a75f}{empty}} () const
+\item 
+constexpr size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a72f6ba0f1980fdc40b8acaa522b98a25}{capacity}} () const
+\begin{DoxyCompactList}\small\item\em amount of nodes in the queue \end{DoxyCompactList}\item 
+constexpr size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a1f4fbfff4b7bd3e61ab30634f7ae6cc7}{occupied}} () const
+\begin{DoxyCompactList}\small\item\em amount of nodes that that have t\+\_\+data objects \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a76f8c5df5f49d76948b9e1da8bb130f2}{get\+\_\+id}} () const
+\begin{DoxyCompactList}\small\item\em returns an identifier used for debug purposes \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a13b54b0402dae859cc2459ce02305d86}{clear}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename t\+\_\+data$>$\newline
+struct tnct\+::lib\+::dat\+::circular\+\_\+queue$<$ t\+\_\+data $>$}
+
+Implements a circular queue which size is increased if it becomes full. 
+
+The purpose is to avoid unnecessary memory allocations to create nodes in the queue by reusing nodes which data have been read
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+data} & defines the types of the data contained in the queue \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 27 of file circular\+\_\+queue.\+h.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a2b99301a3f822af3e43dfabec5ae1de0}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a2b99301a3f822af3e43dfabec5ae1de0}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!data@{data}}
+\index{data@{data}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+using \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue_a2b99301a3f822af3e43dfabec5ae1de0}{data}} =  t\+\_\+data}
+
+
+
+Definition at line 28 of file circular\+\_\+queue.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_ab064c037ca1280ec40fad68d7fa1dab7}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_ab064c037ca1280ec40fad68d7fa1dab7}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!circular\_queue@{circular\_queue}}
+\index{circular\_queue@{circular\_queue}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{circular\_queue()}{circular\_queue()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a382e16b709377f90b2332616d9c89140}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a382e16b709377f90b2332616d9c89140}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!circular\_queue@{circular\_queue}}
+\index{circular\_queue@{circular\_queue}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{circular\_queue()}{circular\_queue()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}$<$ t\+\_\+data $>$ \&}]{p\+\_\+queue }\end{DoxyParamCaption})}
+
+
+
+Definition at line 92 of file circular\+\_\+queue.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_abe1c838b2772dc99de8d121200bc6237}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_abe1c838b2772dc99de8d121200bc6237}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!circular\_queue@{circular\_queue}}
+\index{circular\_queue@{circular\_queue}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{circular\_queue()}{circular\_queue()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}$<$ t\+\_\+data $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_aaec6531b979d4025b0fbd99f675fd068}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_aaec6531b979d4025b0fbd99f675fd068}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!````~circular\_queue@{$\sim$circular\_queue}}
+\index{````~circular\_queue@{$\sim$circular\_queue}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{$\sim$circular\_queue()}{~circular\_queue()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::$\sim$\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a3391c0701800a95adf247957beae95f7}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a3391c0701800a95adf247957beae95f7}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!add@{add}}
+\index{add@{add}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::add (\begin{DoxyParamCaption}\item[{const t\+\_\+data \&}]{p\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 161 of file circular\+\_\+queue.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a409c1fd2dc4b6d1dca2626b644b81df1}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a409c1fd2dc4b6d1dca2626b644b81df1}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!add@{add}}
+\index{add@{add}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::add (\begin{DoxyParamCaption}\item[{t\+\_\+data \&\&}]{p\+\_\+data }\end{DoxyParamCaption})}
+
+
+
+Definition at line 136 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a409c1fd2dc4b6d1dca2626b644b81df1_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a72f6ba0f1980fdc40b8acaa522b98a25}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a72f6ba0f1980fdc40b8acaa522b98a25}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!capacity@{capacity}}
+\index{capacity@{capacity}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{capacity()}{capacity()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+constexpr size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}}
+
+
+
+amount of nodes in the queue 
+
+
+
+Definition at line 55 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a72f6ba0f1980fdc40b8acaa522b98a25_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a13b54b0402dae859cc2459ce02305d86}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a13b54b0402dae859cc2459ce02305d86}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!clear@{clear}}
+\index{clear@{clear}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 63 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a13b54b0402dae859cc2459ce02305d86_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a78a4a6e03aa698759d912c648393a75f}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a78a4a6e03aa698759d912c648393a75f}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!empty@{empty}}
+\index{empty@{empty}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{empty()}{empty()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+constexpr bool \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}}
+
+
+
+Definition at line 52 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a78a4a6e03aa698759d912c648393a75f_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a4633c63268851efd6d16bebc3a49d5e5}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a4633c63268851efd6d16bebc3a49d5e5}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!full@{full}}
+\index{full@{full}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{full()}{full()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+constexpr bool \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::full (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}}
+
+
+
+Definition at line 50 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a4633c63268851efd6d16bebc3a49d5e5_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a683a44e1156124df4171188cd972925b}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a683a44e1156124df4171188cd972925b}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!get@{get}}
+\index{get@{get}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ std\+::optional$<$ t\+\_\+data $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::get}
+
+
+
+Definition at line 186 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a683a44e1156124df4171188cd972925b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a76f8c5df5f49d76948b9e1da8bb130f2}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a76f8c5df5f49d76948b9e1da8bb130f2}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!get\_id@{get\_id}}
+\index{get\_id@{get\_id}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{get\_id()}{get\_id()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::get\+\_\+id (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+returns an identifier used for debug purposes 
+
+
+
+Definition at line 61 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a76f8c5df5f49d76948b9e1da8bb130f2_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a1f4fbfff4b7bd3e61ab30634f7ae6cc7}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a1f4fbfff4b7bd3e61ab30634f7ae6cc7}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!occupied@{occupied}}
+\index{occupied@{occupied}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{occupied()}{occupied()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+constexpr size\+\_\+t \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::occupied (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}}
+
+
+
+amount of nodes that that have t\+\_\+data objects 
+
+
+
+Definition at line 58 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a1f4fbfff4b7bd3e61ab30634f7ae6cc7_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a6a17a6de115298963ec3c1f1c45b41fb}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a6a17a6de115298963ec3c1f1c45b41fb}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}\& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}$<$ t\+\_\+data $>$ \&\&}]{p\+\_\+queue }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_abe8d70df59f794225e95b10df999dfc5}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_abe8d70df59f794225e95b10df999dfc5}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}$<$ t\+\_\+data $>$ \& \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{circular\+\_\+queue}}$<$ t\+\_\+data $>$ \&}]{p\+\_\+queue }\end{DoxyParamCaption})}
+
+
+
+Definition at line 99 of file circular\+\_\+queue.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1dat_1_1circular__queue_a7f82a238d9859cfabb4222e6d18ff21b}\label{structtnct_1_1lib_1_1dat_1_1circular__queue_a7f82a238d9859cfabb4222e6d18ff21b}} 
+\index{tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}!traverse@{traverse}}
+\index{traverse@{traverse}!tnct::lib::dat::circular\_queue$<$ t\_data $>$@{tnct::lib::dat::circular\_queue$<$ t\_data $>$}}
+\doxysubsubsection{\texorpdfstring{traverse()}{traverse()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+data $>$ \\
+requires std\+::move\+\_\+constructible$<$ t\+\_\+data $>$ \&\&std\+::copy\+\_\+constructible$<$ t\+\_\+data $>$ void \mbox{\hyperlink{structtnct_1_1lib_1_1dat_1_1circular__queue}{tnct\+::lib\+::dat\+::circular\+\_\+queue}}$<$ t\+\_\+data $>$\+::traverse (\begin{DoxyParamCaption}\item[{std\+::function$<$ void(const t\+\_\+data \&)$>$}]{p\+\_\+visitor }\end{DoxyParamCaption}) const}
+
+
+
+Definition at line 111 of file circular\+\_\+queue.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue_a7f82a238d9859cfabb4222e6d18ff21b_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/dat/\mbox{\hyperlink{circular__queue_8h}{circular\+\_\+queue.\+h}}\end{DoxyCompactItemize}

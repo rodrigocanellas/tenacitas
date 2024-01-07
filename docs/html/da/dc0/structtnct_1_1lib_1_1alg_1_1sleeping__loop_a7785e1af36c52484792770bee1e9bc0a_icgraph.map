@@ -1,0 +1,5 @@
+<map id="tnct::lib::alg::sleeping_loop::stop" name="tnct::lib::alg::sleeping_loop::stop">
+<area shape="rect" id="node1" title="Stops the loop, if it was started." alt="" coords="260,39,423,80"/>
+<area shape="rect" id="node2" href="$db/d2d/structtemperature__sensors__simulator_1_1per_1_1sensor.html#a4b4cff6ee57fc1b2840dc6540f222c0a" title=" " alt="" coords="5,5,212,47"/>
+<area shape="rect" id="node3" href="$da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html#a3826ebd0501bf5018729d2f10b2ceb50" title="Destructor The loops stops calling the function." alt="" coords="25,71,192,112"/>
+</map>

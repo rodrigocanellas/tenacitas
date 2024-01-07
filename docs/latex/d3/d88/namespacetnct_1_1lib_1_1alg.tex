@@ -1,0 +1,551 @@
+\hypertarget{namespacetnct_1_1lib_1_1alg}{}\doxysection{tnct\+::lib\+::alg Namespace Reference}
+\label{namespacetnct_1_1lib_1_1alg}\index{tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_1_1internal}{internal}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1dispatcher}{dispatcher}}
+\begin{DoxyCompactList}\small\item\em Class that allows creation of queues for an event, creation of subscribers for an event, and publising of events. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{program\+\_\+options}}
+\begin{DoxyCompactList}\small\item\em Program options parser. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1sleeping__loop}{sleeping\+\_\+loop}}
+\begin{DoxyCompactList}\small\item\em Periodically executes a function. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}
+\begin{DoxyCompactList}\small\item\em The test struct executes tests implemented in classes. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1translator__from__file}{translator\+\_\+from\+\_\+file}}
+\item 
+struct \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1translator__in__memory}{translator\+\_\+in\+\_\+memory}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename t\+\_\+function , typename... t\+\_\+params$>$ }\\std\+::conditional\+\_\+t$<$ std\+::is\+\_\+void\+\_\+v$<$ std\+::invoke\+\_\+result\+\_\+t$<$ t\+\_\+function, std\+::function$<$ bool()$>$, t\+\_\+params... $>$ $>$, bool, std\+::optional$<$ std\+::invoke\+\_\+result\+\_\+t$<$ t\+\_\+function, std\+::function$<$ bool()$>$, t\+\_\+params... $>$ $>$ $>$ \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a5d290cb619d40076f6accf9347f1ac27}{exec\+\_\+sync}} (tlc\+::convertible\+\_\+to\+\_\+nano auto p\+\_\+max\+\_\+time, t\+\_\+function \&p\+\_\+function, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Executes a function synchronoulsy with timeout control The function may or may not return, and may or may not receive parameters. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename t\+\_\+type $>$ }\\\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} std\+::floating\+\_\+point$<$ t\+\_\+type $>$ std\+::optional$<$ t\+\_\+type $>$ \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a054f6289222d36b69ddf69317afad485}{factorial}} (t\+\_\+type p\+\_\+val)
+\item 
+{\footnotesize template$<$typename t\+\_\+type $>$ }\\\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} std\+::integral$<$ t\+\_\+type $>$ std\+::optional$<$ t\+\_\+type $>$ \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a620258d454341cd738fa09ad70050159}{factorial}} (t\+\_\+type p\+\_\+val)
+\item 
+{\footnotesize template$<$typename t\+\_\+num\+\_\+type $>$ }\\std\+::string \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_aa95fd8c6a9887d0b0a576535cd2d3b30}{format\+\_\+number}} (t\+\_\+num\+\_\+type p\+\_\+num, char p\+\_\+fill=\textquotesingle{}0\textquotesingle{}, \mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}} p\+\_\+align=tld\+::align\+::right)
+\begin{DoxyCompactList}\small\item\em Formats a number with the maximum characters necessary to represent the number to string, filled with {\ttfamily p\+\_\+fill} and aligned with {\ttfamily p\+\_\+align}. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a0edabd7eb6054b79356daa609ffee4f9}{format\+\_\+number}} (uint8\+\_\+t p\+\_\+num, char p\+\_\+fill=\textquotesingle{}0\textquotesingle{}, \mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}} p\+\_\+align=tld\+::align\+::right)
+\begin{DoxyCompactList}\small\item\em Specialization for uint8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a19715352d3179a5760d3c1fe1e6243bf}{format\+\_\+number}} (int8\+\_\+t p\+\_\+num, char p\+\_\+fill=\textquotesingle{}0\textquotesingle{}, \mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}} p\+\_\+align=tld\+::align\+::right)
+\begin{DoxyCompactList}\small\item\em Specialization for int8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename t\+\_\+num\+\_\+type $>$ }\\std\+::string \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a694a69995f23d6bec2d4a94927e814ef}{format\+\_\+number}} (t\+\_\+num\+\_\+type p\+\_\+num, uint8\+\_\+t p\+\_\+size, char p\+\_\+fill=\textquotesingle{}0\textquotesingle{}, \mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}} p\+\_\+align=tld\+::align\+::right)
+\begin{DoxyCompactList}\small\item\em Specialization for uint8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a4f481282c5329c812c86b46b22956c91}{set\+\_\+trace\+\_\+level}} ()
+\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a3cd8381e383bb22da94cb564604c5841}{set\+\_\+debug\+\_\+level}} ()
+\begin{DoxyCompactList}\small\item\em Sets the global log level as \textquotesingle{}debug\textquotesingle{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a73d3ccf7955d0f0cf79fbf698946f010}{set\+\_\+info\+\_\+level}} ()
+\begin{DoxyCompactList}\small\item\em Sets the global log level as \textquotesingle{}info\textquotesingle{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a8956ff34edd57b81bed3b526e80d9d3e}{set\+\_\+warn\+\_\+level}} ()
+\begin{DoxyCompactList}\small\item\em Sets the global log level as \textquotesingle{}warn\textquotesingle{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a9629ccfa798d63bd3bd0fad1cf2e0a32}{set\+\_\+writer\+\_\+cerr}} ()
+\begin{DoxyCompactList}\small\item\em Defines that log messages will be written to {\ttfamily std\+::cerr}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a5aa0a0069943a84a10cf63337b1a5cad}{set\+\_\+writer\+\_\+cout}} ()
+\begin{DoxyCompactList}\small\item\em Defines that log messages will be written to {\ttfamily std\+::cout}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a54694d9000c622f7534d0cb1b0411988}{set\+\_\+writer\+\_\+clog}} ()
+\begin{DoxyCompactList}\small\item\em Defines that log messages will be written to {\ttfamily std\+::clog}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_ae45319254842d1e52ed5dee5a51f113b}{set\+\_\+writer}} (std\+::function$<$ void(std\+::string \&\&)$>$ p\+\_\+writer)
+\begin{DoxyCompactList}\small\item\em Defines the function used to write the log messages. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a8ff27f255727a7b98722d5422cac9e55}{set\+\_\+log\+\_\+file\+\_\+writer}} (const std\+::string \&p\+\_\+base\+\_\+log\+\_\+file\+\_\+name, uint32\+\_\+t p\+\_\+max\+\_\+log\+\_\+file\+\_\+size=5 $\ast$1024 $\ast$1024)
+\item 
+void \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_ad835cddbb4cfccfe3a940c23b7849118}{set\+\_\+max\+\_\+log\+\_\+file\+\_\+name\+\_\+lenght}} (uint8\+\_\+t p\+\_\+value)
+\item 
+{\footnotesize template$<$size\+\_\+t t\+\_\+idx, typename... t\+\_\+function, typename... t\+\_\+data$>$ }\\\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} (... and std\+::is\+\_\+invocable\+\_\+r\+\_\+v$<$ void, t\+\_\+function, t\+\_\+data \& $>$) void traverse\+\_\+tuple(std
+\item 
+{\footnotesize template$<$typename... t\+\_\+function, typename... t\+\_\+data$>$ }\\\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a498baf19737d0e58a0853b0a87cb4c84}{requires}} (... and std\+::is\+\_\+invocable\+\_\+r\+\_\+v$<$ void, t\+\_\+function, t\+\_\+data \& $>$) void traverse\+\_\+tuple(std
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::tuple$<$ t\+\_\+data... $>$ \& \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a2730cbdc7c48dc6627c9573fd99e897b}{p\+\_\+data}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyCopyright}{Copyright}
+This file is under GPL 3 license. Please read the {\ttfamily LICENSE} file at the root of {\ttfamily tenacitas} directory
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Rodrigo Canellas -\/ rodrigo.\+canellas at gmail.\+com 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a5d290cb619d40076f6accf9347f1ac27}\label{namespacetnct_1_1lib_1_1alg_a5d290cb619d40076f6accf9347f1ac27}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!exec\_sync@{exec\_sync}}
+\index{exec\_sync@{exec\_sync}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{exec\_sync()}{exec\_sync()}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+function , typename... t\+\_\+params$>$ \\
+std\+::conditional\+\_\+t$<$ std\+::is\+\_\+void\+\_\+v$<$ std\+::invoke\+\_\+result\+\_\+t$<$t\+\_\+function, std\+::function$<$bool()$>$, t\+\_\+params...$>$ $>$, bool, std\+::optional$<$ std\+::invoke\+\_\+result\+\_\+t$<$t\+\_\+function, std\+::function$<$bool()$>$, t\+\_\+params...$>$ $>$ $>$ tnct\+::lib\+::alg\+::exec\+\_\+sync (\begin{DoxyParamCaption}\item[{tlc\+::convertible\+\_\+to\+\_\+nano auto}]{p\+\_\+max\+\_\+time,  }\item[{t\+\_\+function \&}]{p\+\_\+function,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Executes a function synchronoulsy with timeout control The function may or may not return, and may or may not receive parameters. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+function} & the function to be executed. It may not return, as\\
+\hline
+\end{DoxyTemplParams}
+{\ttfamily void t\+\_\+function(std\+::function$<$bool()$>$ p\+\_\+timeout, t\+\_\+params... p\+\_\+params)} or it may return, as in
+
+{\ttfamily some-\/ret t\+\_\+function(std\+::function$<$bool()$>$ p\+\_\+timeout, t\+\_\+params... p\+\_\+params)}
+
+where {\ttfamily p\+\_\+timeout} informs that the function has exceeded the maximum time of execution, and can stop executing
+
+So, {\ttfamily t\+\_\+function} should eventually call for {\ttfamily p\+\_\+timeout()} to decide if it must continue to exec\+\_\+sync
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & possible parameters of t\+\_\+function\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+max\+\_\+time} & is the maximum amount of time that {\ttfamily p\+\_\+function} should take to exec\+\_\+sync\\
+\hline
+{\em p\+\_\+function} & is a function with one of the signatures described above\\
+\hline
+{\em p\+\_\+params} & are the possible arguments for {\ttfamily p\+\_\+function} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyAttention}{Attention}
+Please, take a look at {\ttfamily tenacitas.\+lib.\+async/exp/executer\+\_\+000/main.cpp} for examples 
+\end{DoxyAttention}
+
+
+Definition at line 58 of file exec\+\_\+sync.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a5d290cb619d40076f6accf9347f1ac27_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a054f6289222d36b69ddf69317afad485}\label{namespacetnct_1_1lib_1_1alg_a054f6289222d36b69ddf69317afad485}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!factorial@{factorial}}
+\index{factorial@{factorial}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{factorial()}{factorial()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+type $>$ \\
+\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} std\+::floating\+\_\+point$<$t\+\_\+type$>$ std\+::optional$<$t\+\_\+type$>$ tnct\+::lib\+::alg\+::factorial (\begin{DoxyParamCaption}\item[{t\+\_\+type}]{p\+\_\+val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 17 of file factorial.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a620258d454341cd738fa09ad70050159}\label{namespacetnct_1_1lib_1_1alg_a620258d454341cd738fa09ad70050159}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!factorial@{factorial}}
+\index{factorial@{factorial}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{factorial()}{factorial()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+type $>$ \\
+\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} std\+::integral$<$t\+\_\+type$>$ std\+::optional$<$t\+\_\+type$>$ tnct\+::lib\+::alg\+::factorial (\begin{DoxyParamCaption}\item[{t\+\_\+type}]{p\+\_\+val }\end{DoxyParamCaption})}
+
+
+
+Definition at line 32 of file factorial.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a19715352d3179a5760d3c1fe1e6243bf}\label{namespacetnct_1_1lib_1_1alg_a19715352d3179a5760d3c1fe1e6243bf}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!format\_number@{format\_number}}
+\index{format\_number@{format\_number}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{format\_number()}{format\_number()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily std\+::string tnct\+::lib\+::alg\+::format\+\_\+number (\begin{DoxyParamCaption}\item[{int8\+\_\+t}]{p\+\_\+num,  }\item[{char}]{p\+\_\+fill = {\ttfamily \textquotesingle{}0\textquotesingle{}},  }\item[{\mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}}}]{p\+\_\+align = {\ttfamily tld\+:\+:align\+:\+:right} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Specialization for int8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+num} & is the value of the number to be formated\\
+\hline
+{\em p\+\_\+fill} & is the char used to fill the parts of the string not filled with {\ttfamily p\+\_\+num} digits\\
+\hline
+{\em p\+\_\+align} & defines if {\ttfamily p\+\_\+num} will be aligned at left, right, or center of the string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 71 of file format\+\_\+number.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_aa95fd8c6a9887d0b0a576535cd2d3b30}\label{namespacetnct_1_1lib_1_1alg_aa95fd8c6a9887d0b0a576535cd2d3b30}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!format\_number@{format\_number}}
+\index{format\_number@{format\_number}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{format\_number()}{format\_number()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+num\+\_\+type $>$ \\
+std\+::string tnct\+::lib\+::alg\+::format\+\_\+number (\begin{DoxyParamCaption}\item[{t\+\_\+num\+\_\+type}]{p\+\_\+num,  }\item[{char}]{p\+\_\+fill = {\ttfamily \textquotesingle{}0\textquotesingle{}},  }\item[{\mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}}}]{p\+\_\+align = {\ttfamily tld\+:\+:align\+:\+:right} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Formats a number with the maximum characters necessary to represent the number to string, filled with {\ttfamily p\+\_\+fill} and aligned with {\ttfamily p\+\_\+align}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+num\+\_\+type} & is the type of the number to be formated\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+num} & is the value of the number to be formated\\
+\hline
+{\em p\+\_\+fill} & is the char used to fill the parts of the string not filled with {\ttfamily p\+\_\+num} digits\\
+\hline
+{\em p\+\_\+align} & defines if {\ttfamily p\+\_\+num} will be aligned at left, right, or center of the string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 32 of file format\+\_\+number.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/d88/namespacetnct_1_1lib_1_1alg_aa95fd8c6a9887d0b0a576535cd2d3b30_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a694a69995f23d6bec2d4a94927e814ef}\label{namespacetnct_1_1lib_1_1alg_a694a69995f23d6bec2d4a94927e814ef}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!format\_number@{format\_number}}
+\index{format\_number@{format\_number}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{format\_number()}{format\_number()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+num\+\_\+type $>$ \\
+std\+::string tnct\+::lib\+::alg\+::format\+\_\+number (\begin{DoxyParamCaption}\item[{t\+\_\+num\+\_\+type}]{p\+\_\+num,  }\item[{uint8\+\_\+t}]{p\+\_\+size,  }\item[{char}]{p\+\_\+fill = {\ttfamily \textquotesingle{}0\textquotesingle{}},  }\item[{\mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}}}]{p\+\_\+align = {\ttfamily tld\+:\+:align\+:\+:right} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Specialization for uint8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+num} & is the value of the number to be formated\\
+\hline
+{\em p\+\_\+fill} & is the char used to fill the parts of the string not filled with {\ttfamily p\+\_\+num} digits\\
+\hline
+{\em p\+\_\+align} & defines if {\ttfamily p\+\_\+num} will be aligned at left, right, or center of the string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 92 of file format\+\_\+number.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a0edabd7eb6054b79356daa609ffee4f9}\label{namespacetnct_1_1lib_1_1alg_a0edabd7eb6054b79356daa609ffee4f9}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!format\_number@{format\_number}}
+\index{format\_number@{format\_number}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{format\_number()}{format\_number()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily std\+::string tnct\+::lib\+::alg\+::format\+\_\+number (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{p\+\_\+num,  }\item[{char}]{p\+\_\+fill = {\ttfamily \textquotesingle{}0\textquotesingle{}},  }\item[{\mbox{\hyperlink{namespacetnct_1_1lib_1_1dat_ad3097763b733361388f7188063ce94fd}{tld\+::align}}}]{p\+\_\+align = {\ttfamily tld\+:\+:align\+:\+:right} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Specialization for uint8\+\_\+t of {\ttfamily tenacitas\+::lib\+::format\+\_\+number}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+num} & is the value of the number to be formated\\
+\hline
+{\em p\+\_\+fill} & is the char used to fill the parts of the string not filled with {\ttfamily p\+\_\+num} digits\\
+\hline
+{\em p\+\_\+align} & defines if {\ttfamily p\+\_\+num} will be aligned at left, right, or center of the string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 51 of file format\+\_\+number.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}\label{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!requires@{requires}}
+\index{requires@{requires}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$size\+\_\+t t\+\_\+idx, typename... t\+\_\+function, typename... t\+\_\+data$>$ \\
+tnct\+::lib\+::alg\+::requires (\begin{DoxyParamCaption}\item[{... and std\+::is\+\_\+invocable\+\_\+r\+\_\+v$<$ void, t\+\_\+function, t\+\_\+data \& $>$}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 16 of file traverse\+\_\+tuple.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a498baf19737d0e58a0853b0a87cb4c84}\label{namespacetnct_1_1lib_1_1alg_a498baf19737d0e58a0853b0a87cb4c84}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!requires@{requires}}
+\index{requires@{requires}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{requires()}{requires()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename... t\+\_\+function, typename... t\+\_\+data$>$ \\
+tnct\+::lib\+::alg\+::requires (\begin{DoxyParamCaption}\item[{... and std\+::is\+\_\+invocable\+\_\+r\+\_\+v$<$ void, t\+\_\+function, t\+\_\+data \& $>$}]{ }\end{DoxyParamCaption})}
+
+
+
+Definition at line 33 of file traverse\+\_\+tuple.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a3cd8381e383bb22da94cb564604c5841}\label{namespacetnct_1_1lib_1_1alg_a3cd8381e383bb22da94cb564604c5841}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_debug\_level@{set\_debug\_level}}
+\index{set\_debug\_level@{set\_debug\_level}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_debug\_level()}{set\_debug\_level()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+debug\+\_\+level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the global log level as \textquotesingle{}debug\textquotesingle{}. 
+
+
+
+Definition at line 19 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a3cd8381e383bb22da94cb564604c5841_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=252pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a3cd8381e383bb22da94cb564604c5841_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a73d3ccf7955d0f0cf79fbf698946f010}\label{namespacetnct_1_1lib_1_1alg_a73d3ccf7955d0f0cf79fbf698946f010}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_info\_level@{set\_info\_level}}
+\index{set\_info\_level@{set\_info\_level}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_info\_level()}{set\_info\_level()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+info\+\_\+level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the global log level as \textquotesingle{}info\textquotesingle{}. 
+
+
+
+Definition at line 22 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=339pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a73d3ccf7955d0f0cf79fbf698946f010_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a73d3ccf7955d0f0cf79fbf698946f010_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a8ff27f255727a7b98722d5422cac9e55}\label{namespacetnct_1_1lib_1_1alg_a8ff27f255727a7b98722d5422cac9e55}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_log\_file\_writer@{set\_log\_file\_writer}}
+\index{set\_log\_file\_writer@{set\_log\_file\_writer}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_log\_file\_writer()}{set\_log\_file\_writer()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+log\+\_\+file\+\_\+writer (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{p\+\_\+base\+\_\+log\+\_\+file\+\_\+name,  }\item[{uint32\+\_\+t}]{p\+\_\+max\+\_\+log\+\_\+file\+\_\+size = {\ttfamily 5~$\ast$~1024~$\ast$~1024} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 50 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a8ff27f255727a7b98722d5422cac9e55_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=318pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a8ff27f255727a7b98722d5422cac9e55_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_ad835cddbb4cfccfe3a940c23b7849118}\label{namespacetnct_1_1lib_1_1alg_ad835cddbb4cfccfe3a940c23b7849118}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_max\_log\_file\_name\_lenght@{set\_max\_log\_file\_name\_lenght}}
+\index{set\_max\_log\_file\_name\_lenght@{set\_max\_log\_file\_name\_lenght}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_max\_log\_file\_name\_lenght()}{set\_max\_log\_file\_name\_lenght()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+max\+\_\+log\+\_\+file\+\_\+name\+\_\+lenght (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{p\+\_\+value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 61 of file log.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=310pt]{d3/d88/namespacetnct_1_1lib_1_1alg_ad835cddbb4cfccfe3a940c23b7849118_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a4f481282c5329c812c86b46b22956c91}\label{namespacetnct_1_1lib_1_1alg_a4f481282c5329c812c86b46b22956c91}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_trace\_level@{set\_trace\_level}}
+\index{set\_trace\_level@{set\_trace\_level}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_trace\_level()}{set\_trace\_level()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+trace\+\_\+level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 16 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=345pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a4f481282c5329c812c86b46b22956c91_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=252pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a4f481282c5329c812c86b46b22956c91_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a8956ff34edd57b81bed3b526e80d9d3e}\label{namespacetnct_1_1lib_1_1alg_a8956ff34edd57b81bed3b526e80d9d3e}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_warn\_level@{set\_warn\_level}}
+\index{set\_warn\_level@{set\_warn\_level}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_warn\_level()}{set\_warn\_level()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+warn\+\_\+level (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the global log level as \textquotesingle{}warn\textquotesingle{}. 
+
+
+
+Definition at line 25 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a8956ff34edd57b81bed3b526e80d9d3e_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_ae45319254842d1e52ed5dee5a51f113b}\label{namespacetnct_1_1lib_1_1alg_ae45319254842d1e52ed5dee5a51f113b}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_writer@{set\_writer}}
+\index{set\_writer@{set\_writer}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_writer()}{set\_writer()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+writer (\begin{DoxyParamCaption}\item[{std\+::function$<$ void(std\+::string \&\&)$>$}]{p\+\_\+writer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Defines the function used to write the log messages. 
+
+
+
+Definition at line 46 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d3/d88/namespacetnct_1_1lib_1_1alg_ae45319254842d1e52ed5dee5a51f113b_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a9629ccfa798d63bd3bd0fad1cf2e0a32}\label{namespacetnct_1_1lib_1_1alg_a9629ccfa798d63bd3bd0fad1cf2e0a32}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_writer\_cerr@{set\_writer\_cerr}}
+\index{set\_writer\_cerr@{set\_writer\_cerr}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_writer\_cerr()}{set\_writer\_cerr()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+writer\+\_\+cerr (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Defines that log messages will be written to {\ttfamily std\+::cerr}. 
+
+
+
+Definition at line 28 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a9629ccfa798d63bd3bd0fad1cf2e0a32_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=252pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a9629ccfa798d63bd3bd0fad1cf2e0a32_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a54694d9000c622f7534d0cb1b0411988}\label{namespacetnct_1_1lib_1_1alg_a54694d9000c622f7534d0cb1b0411988}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_writer\_clog@{set\_writer\_clog}}
+\index{set\_writer\_clog@{set\_writer\_clog}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_writer\_clog()}{set\_writer\_clog()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+writer\+\_\+clog (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Defines that log messages will be written to {\ttfamily std\+::clog}. 
+
+
+
+Definition at line 40 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a54694d9000c622f7534d0cb1b0411988_cgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a5aa0a0069943a84a10cf63337b1a5cad}\label{namespacetnct_1_1lib_1_1alg_a5aa0a0069943a84a10cf63337b1a5cad}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!set\_writer\_cout@{set\_writer\_cout}}
+\index{set\_writer\_cout@{set\_writer\_cout}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{set\_writer\_cout()}{set\_writer\_cout()}}
+{\footnotesize\ttfamily void tnct\+::lib\+::alg\+::set\+\_\+writer\+\_\+cout (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Defines that log messages will be written to {\ttfamily std\+::cout}. 
+
+
+
+Definition at line 34 of file log.\+h.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=348pt]{d3/d88/namespacetnct_1_1lib_1_1alg_a5aa0a0069943a84a10cf63337b1a5cad_cgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1alg_a2730cbdc7c48dc6627c9573fd99e897b}\label{namespacetnct_1_1lib_1_1alg_a2730cbdc7c48dc6627c9573fd99e897b}} 
+\index{tnct::lib::alg@{tnct::lib::alg}!p\_data@{p\_data}}
+\index{p\_data@{p\_data}!tnct::lib::alg@{tnct::lib::alg}}
+\doxysubsubsection{\texorpdfstring{p\_data}{p\_data}}
+{\footnotesize\ttfamily std\+::tuple$<$ t\+\_\+data... $>$ \& tnct\+::lib\+::alg\+::p\+\_\+data}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{  p\_function(std::get<t\_idx>(\mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a2730cbdc7c48dc6627c9573fd99e897b}{p\_data}}))}
+
+\end{DoxyCode}
+
+
+Definition at line 44 of file traverse\+\_\+tuple.\+h.
+

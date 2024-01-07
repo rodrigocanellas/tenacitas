@@ -4,28 +4,27 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <chrono>
-#include <cmath>
 #include <condition_variable>
 #include <cstdint>
-#include <functional>
 #include <iostream>
 #include <mutex>
 #include <sstream>
 #include <thread>
-#include <vector>
 
-#include <tenacitas.h>
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/sleeping_loop.h>
+#include <tnct/lib/alg/tester.h>
 
 using namespace std::chrono_literals;
-using namespace tnct::lib;
 
 struct sleeping_loop_000 {
 
   static const std::string desc() { return "'sleeping_loop' creation test"; }
-    
-    bool operator()(const tla::program_options &) {
-        
-        using loop = tla::sleeping_loop;
+
+  bool operator()(const tla::program_options &) {
+
+    using loop = tla::sleeping_loop;
 
     auto _operation = []() -> void { TNCT_LOG_DEB("loop1"); };
 
@@ -36,7 +35,7 @@ struct sleeping_loop_000 {
 };
 
 struct sleeping_loop_001 {
-    using loop = tla::sleeping_loop;
+  using loop = tla::sleeping_loop;
 
   typedef uint16_t value;
 
@@ -48,7 +47,7 @@ struct sleeping_loop_001 {
             << "\nCounter should be " << m_amount;
     return _stream.str();
   }
-  
+
   bool operator()(const tla::program_options &) {
 
     operation1 _op(&m_cond);
@@ -189,7 +188,7 @@ int main(int argc, char **argv) {
   using namespace tnct::lib;
 
   tla::set_debug_level();
-  
+
   tla::tester<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);

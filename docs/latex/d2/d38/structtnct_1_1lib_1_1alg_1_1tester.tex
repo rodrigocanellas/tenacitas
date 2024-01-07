@@ -1,0 +1,211 @@
+\hypertarget{structtnct_1_1lib_1_1alg_1_1tester}{}\doxysection{tnct\+::lib\+::alg\+::tester$<$ use $>$ Struct Template Reference}
+\label{structtnct_1_1lib_1_1alg_1_1tester}\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+
+
+The test struct executes tests implemented in classes.  
+
+
+
+
+{\ttfamily \#include $<$tester.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_a9fbb57a5dd36a8d473ad6fcfd19c54ea}{tester}} (int argc, char $\ast$$\ast$argv, std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{program\+\_\+options\+::name}} $>$ \&\&p\+\_\+mandatory=\{\}) noexcept
+\begin{DoxyCompactList}\small\item\em Constructor If \textquotesingle{}--desc\textquotesingle{} is passed, {\ttfamily operator()} will print a description of the tests. If \textquotesingle{}--exec\textquotesingle{} is passed, {\ttfamily operator()} will execute the tests If \textquotesingle{}--exec \{ $<$test-\/name-\/1$>$ $<$test-\/name-\/2$>$ ... \}\textquotesingle{} is passed, {\ttfamily operator()} will execute the tests between \textquotesingle{}\{\textquotesingle{} and \textquotesingle{}\}\textquotesingle{}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_ad17e2cb07a5727b80e53f9262d8318db}{tester}} ()=delete
+\begin{DoxyCompactList}\small\item\em Default constructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_a6fa4df94fd6b2d898a556f73468c7e38}{tester}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy constructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_a2de736e2a5fd74a395f4ac1f64894de7}{tester}} (\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \&\&)=delete
+\begin{DoxyCompactList}\small\item\em Copy constructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_a7a16d98cd6e131a3968b5a17765a00ef}{operator=}} (const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy assignment not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_a75b8686de801cbb082eabd3e27e5d43a}{operator=}} (\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} \&\&)=delete
+\begin{DoxyCompactList}\small\item\em Move assignment not allowed. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename t\+\_\+test\+\_\+class $>$ }\\void \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester_afc056d14c523155ca8395841baf729c9}{run}} (const std\+::string \&p\+\_\+test\+\_\+name) noexcept
+\begin{DoxyCompactList}\small\item\em Executes the test If the test passes, the message \char`\"{}\+SUCCESS for $<$name$>$\char`\"{} will be printed; if the test does not pass, the message \char`\"{}\+FAIL for $<$name$>$\char`\"{} will be printed; if an error occurr while executing the test , the messae \char`\"{}\+ERROR for $<$name$>$ $<$desc$>$\char`\"{} will be printed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$bool use = true$>$\newline
+struct tnct\+::lib\+::alg\+::tester$<$ use $>$}
+
+The test struct executes tests implemented in classes. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em use} & makes tnct\+::tester to be compiled only if actually used\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{ \#include <iostream>}}
+\DoxyCodeLine{\textcolor{preprocessor}{ \#include <string>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{ \#include <tester/test.h>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{ \textcolor{keyword}{using namespace }tnct::lib::src;}
+\DoxyCodeLine{}
+\DoxyCodeLine{ \textcolor{keyword}{struct }\mbox{\hyperlink{structtest__ok}{test\_ok}} \{}
+\DoxyCodeLine{   \textcolor{keywordtype}{bool} operator()(\textcolor{keyword}{const} program\_options \&) \{ \textcolor{keywordflow}{return} \textcolor{keyword}{true}; \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{   \textcolor{keyword}{static} std::string desc() \{ \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}an ok test"{}}; \}}
+\DoxyCodeLine{ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{ \textcolor{keyword}{struct }\mbox{\hyperlink{structtest__fail}{test\_fail}} \{}
+\DoxyCodeLine{   \textcolor{keywordtype}{bool} operator()(\textcolor{keyword}{const} program\_options \&) \{ \textcolor{keywordflow}{return} \textcolor{keyword}{true}; \}}
+\DoxyCodeLine{   \textcolor{keyword}{static} std::string desc() \{ \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}a fail test"{}}; \}}
+\DoxyCodeLine{ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{ \textcolor{keyword}{struct }\mbox{\hyperlink{structtest__error}{test\_error}} \{}
+\DoxyCodeLine{  \textcolor{keywordtype}{bool} operator()(\textcolor{keyword}{const} program\_options \&) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{      \textcolor{keywordflow}{throw} std::runtime\_error(\textcolor{stringliteral}{"{}test function raised an exception"{}});}
+\DoxyCodeLine{      \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::exception \&\_ex) \{}
+\DoxyCodeLine{      std::cerr << \textcolor{stringliteral}{"{}'test\_error' raised '"{}} << \_ex.what() << \textcolor{stringliteral}{"{}'"{}} << std::endl;}
+\DoxyCodeLine{      \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{  \textcolor{keyword}{static} std::string desc() \{ \textcolor{keywordflow}{return} \textcolor{stringliteral}{"{}an eror test"{}}; \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordtype}{int} \mbox{\hyperlink{tst_2circular__queue_2main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}}(\textcolor{keywordtype}{int} argc, \textcolor{keywordtype}{char} **argv) \{}
+\DoxyCodeLine{  \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{    test::tester \_tester(argc, argv);}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \mbox{\hyperlink{tester_8h_a4276273718dfdc5d9cb265ef842f05cb}{run\_test}}(\_tester, \mbox{\hyperlink{structtest__ok}{test\_ok}});}
+\DoxyCodeLine{    \mbox{\hyperlink{tester_8h_a4276273718dfdc5d9cb265ef842f05cb}{run\_test}}(\_tester, \mbox{\hyperlink{structtest__fail}{test\_fail}});}
+\DoxyCodeLine{    \mbox{\hyperlink{tester_8h_a4276273718dfdc5d9cb265ef842f05cb}{run\_test}}(\_tester, \mbox{\hyperlink{structtest__error}{test\_error}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \} \textcolor{keywordflow}{catch} (std::exception \&\_ex) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}EXCEPTION: '"{}} << \_ex.what() << \textcolor{stringliteral}{"{}'"{}} << std::endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2tst_2test_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/tst/test/main.\+cpp}}, and \mbox{\hyperlink{_2home_2rodrigo_2development_2tenacitas_8lib_2tst_2tuple_2main_8cpp-example}{/home/rodrigo/development/tenacitas.\+lib/tst/tuple/main.\+cpp}}.\end{Desc}
+
+
+Definition at line 83 of file tester.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_a9fbb57a5dd36a8d473ad6fcfd19c54ea}\label{structtnct_1_1lib_1_1alg_1_1tester_a9fbb57a5dd36a8d473ad6fcfd19c54ea}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!tester@{tester}}
+\index{tester@{tester}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{tester()}{tester()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$$\ast$}]{argv,  }\item[{std\+::initializer\+\_\+list$<$ \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a33d5c82fbbc9eaeefb65ac9cf143e349}{program\+\_\+options\+::name}} $>$ \&\&}]{p\+\_\+mandatory = {\ttfamily \{\}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Constructor If \textquotesingle{}--desc\textquotesingle{} is passed, {\ttfamily operator()} will print a description of the tests. If \textquotesingle{}--exec\textquotesingle{} is passed, {\ttfamily operator()} will execute the tests If \textquotesingle{}--exec \{ $<$test-\/name-\/1$>$ $<$test-\/name-\/2$>$ ... \}\textquotesingle{} is passed, {\ttfamily operator()} will execute the tests between \textquotesingle{}\{\textquotesingle{} and \textquotesingle{}\}\textquotesingle{}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & number of strings in {\ttfamily argv} \\
+\hline
+{\em argv} & parameters passed to the program \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 94 of file tester.\+h.
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_ad17e2cb07a5727b80e53f9262d8318db}\label{structtnct_1_1lib_1_1alg_1_1tester_ad17e2cb07a5727b80e53f9262d8318db}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!tester@{tester}}
+\index{tester@{tester}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{tester()}{tester()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Default constructor not allowed. 
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_a6fa4df94fd6b2d898a556f73468c7e38}\label{structtnct_1_1lib_1_1alg_1_1tester_a6fa4df94fd6b2d898a556f73468c7e38}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!tester@{tester}}
+\index{tester@{tester}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{tester()}{tester()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}$<$ use $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy constructor not allowed. 
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_a2de736e2a5fd74a395f4ac1f64894de7}\label{structtnct_1_1lib_1_1alg_1_1tester_a2de736e2a5fd74a395f4ac1f64894de7}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!tester@{tester}}
+\index{tester@{tester}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{tester()}{tester()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}$<$ use $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy constructor not allowed. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_a7a16d98cd6e131a3968b5a17765a00ef}\label{structtnct_1_1lib_1_1alg_1_1tester_a7a16d98cd6e131a3968b5a17765a00ef}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}\& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}$<$ use $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy assignment not allowed. 
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_a75b8686de801cbb082eabd3e27e5d43a}\label{structtnct_1_1lib_1_1alg_1_1tester_a75b8686de801cbb082eabd3e27e5d43a}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}\& \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tester}}$<$ use $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Move assignment not allowed. 
+
+\mbox{\Hypertarget{structtnct_1_1lib_1_1alg_1_1tester_afc056d14c523155ca8395841baf729c9}\label{structtnct_1_1lib_1_1alg_1_1tester_afc056d14c523155ca8395841baf729c9}} 
+\index{tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}!run@{run}}
+\index{run@{run}!tnct::lib::alg::tester$<$ use $>$@{tnct::lib::alg::tester$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename t\+\_\+test\+\_\+class $>$ \\
+void \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1tester}{tnct\+::lib\+::alg\+::tester}}$<$ use $>$\+::run (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{p\+\_\+test\+\_\+name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Executes the test If the test passes, the message \char`\"{}\+SUCCESS for $<$name$>$\char`\"{} will be printed; if the test does not pass, the message \char`\"{}\+FAIL for $<$name$>$\char`\"{} will be printed; if an error occurr while executing the test , the messae \char`\"{}\+ERROR for $<$name$>$ $<$desc$>$\char`\"{} will be printed. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+test\+\_\+class} & must implement\+: 
+\begin{DoxyCode}{1}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} operator()(\textcolor{keyword}{const} program\_options \&)}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{static} std::string desc()}
+
+\end{DoxyCode}
+\\
+\hline
+\end{DoxyTemplParams}
+You can use the macro \textquotesingle{}run\+\_\+test\textquotesingle{} defined above, instead of calling this method 
+
+Definition at line 157 of file tester.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/alg/\mbox{\hyperlink{tester_8h}{tester.\+h}}\end{DoxyCompactItemize}

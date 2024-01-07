@@ -1,0 +1,4 @@
+<map id="tnct::lib::alg::set_writer_cout" name="tnct::lib::alg::set_writer_cout">
+<area shape="rect" id="node1" title="Defines that log messages will be written to std::cout." alt="" coords="5,5,132,47"/>
+<area shape="rect" id="node2" href="$dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#ae1ed7d4a3111c9d7a50f42f50584d196" title="Defines the function responsible for actually writing the message." alt="" coords="180,5,363,47"/>
+</map>

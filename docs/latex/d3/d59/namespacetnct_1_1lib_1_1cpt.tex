@@ -1,0 +1,225 @@
+\hypertarget{namespacetnct_1_1lib_1_1cpt}{}\doxysection{tnct\+::lib\+::cpt Namespace Reference}
+\label{namespacetnct_1_1lib_1_1cpt}\index{tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_1_1internal}{internal}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename t\+\_\+to , typename t\+\_\+from $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a08efd9901e9caabb52e83e6c7698f95e}{chrono\+\_\+convertible}}
+\item 
+{\footnotesize template$<$typename t\+\_\+from $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_aed55c423edf2caf20f3e0bfd23574c95}{convertible\+\_\+to\+\_\+milli}}
+\item 
+{\footnotesize template$<$typename t\+\_\+from $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a2db180798b9f67f2688cb31e845d37d4}{convertible\+\_\+to\+\_\+sec}} = \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a08efd9901e9caabb52e83e6c7698f95e}{chrono\+\_\+convertible}}$<$std\+::chrono\+::seconds, t\+\_\+from$>$
+\item 
+{\footnotesize template$<$typename t\+\_\+from $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a924c8aa0ca68316e69d7a8716ac47fa0}{convertible\+\_\+to\+\_\+nano}}
+\item 
+{\footnotesize template$<$typename t , typename... t\+\_\+events$>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a894bcda84a1115e67405e28fcadf3379}{dispatcher\+\_\+c}}
+\item 
+{\footnotesize template$<$typename t $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_ad2bcc0efa0f7ae0438891020b1b21575}{event}} = std\+::default\+\_\+initializable$<$t$>$ \&\& std\+::copy\+\_\+constructible$<$t$>$
+\item 
+{\footnotesize template$<$typename t $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a9686bbdfb5cda98ef10b0ecfed4d93b2}{id}}
+\item 
+{\footnotesize template$<$typename t $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a80a90177a1cf3426cb1946f34c8b75aa}{publisher}}
+\item 
+{\footnotesize template$<$typename t $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_aa7eaa9009afdeba2d0d9a977e821ac2c}{subscriber}}
+\item 
+{\footnotesize template$<$typename t\+\_\+tuple $>$ }\\concept \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a42d03379efd11106fed5d7ca265328a1}{tuple\+\_\+like}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\begin{DoxyCopyright}{Copyright}
+This file is under GPL 3 license. Please read the {\ttfamily LICENSE} file at the root of {\ttfamily tenacitas} directory
+\end{DoxyCopyright}
+\begin{DoxyAuthor}{Author}
+Rodrigo Canellas -\/ rodrigo.\+canellas at gmail.\+com 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a08efd9901e9caabb52e83e6c7698f95e}\label{namespacetnct_1_1lib_1_1cpt_a08efd9901e9caabb52e83e6c7698f95e}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!chrono\_convertible@{chrono\_convertible}}
+\index{chrono\_convertible@{chrono\_convertible}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{chrono\_convertible}{chrono\_convertible}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+to , typename t\+\_\+from $>$ \\
+concept tnct\+::lib\+::cpt\+::chrono\+\_\+convertible}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}}(t\_from p\_time) \{}
+\DoxyCodeLine{  std::chrono::duration\_cast<t\_to>(p\_time);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 15 of file chrono\+\_\+convertible.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_aed55c423edf2caf20f3e0bfd23574c95}\label{namespacetnct_1_1lib_1_1cpt_aed55c423edf2caf20f3e0bfd23574c95}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!convertible\_to\_milli@{convertible\_to\_milli}}
+\index{convertible\_to\_milli@{convertible\_to\_milli}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{convertible\_to\_milli}{convertible\_to\_milli}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+from $>$ \\
+concept tnct\+::lib\+::cpt\+::convertible\+\_\+to\+\_\+milli}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{    chrono\_convertible<std::chrono::milliseconds, t\_from>}
+
+\end{DoxyCode}
+
+
+Definition at line 20 of file chrono\+\_\+convertible.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a924c8aa0ca68316e69d7a8716ac47fa0}\label{namespacetnct_1_1lib_1_1cpt_a924c8aa0ca68316e69d7a8716ac47fa0}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!convertible\_to\_nano@{convertible\_to\_nano}}
+\index{convertible\_to\_nano@{convertible\_to\_nano}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{convertible\_to\_nano}{convertible\_to\_nano}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+from $>$ \\
+concept tnct\+::lib\+::cpt\+::convertible\+\_\+to\+\_\+nano}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{    chrono\_convertible<std::chrono::nanoseconds, t\_from>}
+
+\end{DoxyCode}
+
+
+Definition at line 27 of file chrono\+\_\+convertible.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a2db180798b9f67f2688cb31e845d37d4}\label{namespacetnct_1_1lib_1_1cpt_a2db180798b9f67f2688cb31e845d37d4}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!convertible\_to\_sec@{convertible\_to\_sec}}
+\index{convertible\_to\_sec@{convertible\_to\_sec}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{convertible\_to\_sec}{convertible\_to\_sec}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+from $>$ \\
+concept tnct\+::lib\+::cpt\+::convertible\+\_\+to\+\_\+sec = \mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_a08efd9901e9caabb52e83e6c7698f95e}{chrono\+\_\+convertible}}$<$std\+::chrono\+::seconds, t\+\_\+from$>$}
+
+
+
+Definition at line 24 of file chrono\+\_\+convertible.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a894bcda84a1115e67405e28fcadf3379}\label{namespacetnct_1_1lib_1_1cpt_a894bcda84a1115e67405e28fcadf3379}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!dispatcher\_c@{dispatcher\_c}}
+\index{dispatcher\_c@{dispatcher\_c}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{dispatcher\_c}{dispatcher\_c}}
+{\footnotesize\ttfamily template$<$typename t , typename... t\+\_\+events$>$ \\
+concept tnct\+::lib\+::cpt\+::dispatcher\+\_\+c}
+
+
+
+Definition at line 20 of file dispatcher.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_ad2bcc0efa0f7ae0438891020b1b21575}\label{namespacetnct_1_1lib_1_1cpt_ad2bcc0efa0f7ae0438891020b1b21575}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!event@{event}}
+\index{event@{event}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{event}{event}}
+{\footnotesize\ttfamily template$<$typename t $>$ \\
+concept tnct\+::lib\+::cpt\+::event = std\+::default\+\_\+initializable$<$t$>$ \&\& std\+::copy\+\_\+constructible$<$t$>$}
+
+
+
+Definition at line 14 of file event.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a9686bbdfb5cda98ef10b0ecfed4d93b2}\label{namespacetnct_1_1lib_1_1cpt_a9686bbdfb5cda98ef10b0ecfed4d93b2}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!id@{id}}
+\index{id@{id}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily template$<$typename t $>$ \\
+concept tnct\+::lib\+::cpt\+::id}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{    std::unsigned\_integral<std::remove\_const\_t<std::remove\_reference\_t<t>>>}
+
+\end{DoxyCode}
+
+
+Definition at line 14 of file id.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a80a90177a1cf3426cb1946f34c8b75aa}\label{namespacetnct_1_1lib_1_1cpt_a80a90177a1cf3426cb1946f34c8b75aa}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!publisher@{publisher}}
+\index{publisher@{publisher}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{publisher}{publisher}}
+{\footnotesize\ttfamily template$<$typename t $>$ \\
+concept tnct\+::lib\+::cpt\+::publisher}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}}(t p\_t) \{}
+\DoxyCodeLine{  \textcolor{keyword}{typename} t::events\_published;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} tuple\_like<typename t::events\_published> \&\&}
+\DoxyCodeLine{}
+\DoxyCodeLine{      []<std::size\_t... t\_idx>(std::index\_sequence<t\_idx...>) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} ((\mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_ad2bcc0efa0f7ae0438891020b1b21575}{event}}<\textcolor{keyword}{typename} std::tuple\_element\_t<}
+\DoxyCodeLine{                 t\_idx, \textcolor{keyword}{typename} t::events\_published>>)\&\&...);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{  (std::make\_index\_sequence<std::tuple\_size\_v<typename t::events\_published>>());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 18 of file publisher.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_aa7eaa9009afdeba2d0d9a977e821ac2c}\label{namespacetnct_1_1lib_1_1cpt_aa7eaa9009afdeba2d0d9a977e821ac2c}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!subscriber@{subscriber}}
+\index{subscriber@{subscriber}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{subscriber}{subscriber}}
+{\footnotesize\ttfamily template$<$typename t $>$ \\
+concept tnct\+::lib\+::cpt\+::subscriber}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}}(t p\_t) \{}
+\DoxyCodeLine{  \textcolor{keyword}{typename} t::events\_subscribed;}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} tuple\_like<typename t::events\_subscribed> \&\&}
+\DoxyCodeLine{}
+\DoxyCodeLine{      []<std::size\_t... t\_idx>(std::index\_sequence<t\_idx...>) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (}
+\DoxyCodeLine{        (\mbox{\hyperlink{namespacetnct_1_1lib_1_1cpt_ad2bcc0efa0f7ae0438891020b1b21575}{event}}<\textcolor{keyword}{typename} std::tuple\_element\_t<t\_idx,}
+\DoxyCodeLine{                                             \textcolor{keyword}{typename} t::events\_subscribed>>)}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \&\&...);}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{  (std::make\_index\_sequence<}
+\DoxyCodeLine{      std::tuple\_size\_v<typename t::events\_subscribed>>());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definition at line 18 of file subscriber.\+h.
+
+\mbox{\Hypertarget{namespacetnct_1_1lib_1_1cpt_a42d03379efd11106fed5d7ca265328a1}\label{namespacetnct_1_1lib_1_1cpt_a42d03379efd11106fed5d7ca265328a1}} 
+\index{tnct::lib::cpt@{tnct::lib::cpt}!tuple\_like@{tuple\_like}}
+\index{tuple\_like@{tuple\_like}!tnct::lib::cpt@{tnct::lib::cpt}}
+\doxysubsubsection{\texorpdfstring{tuple\_like}{tuple\_like}}
+{\footnotesize\ttfamily template$<$typename t\+\_\+tuple $>$ \\
+concept tnct\+::lib\+::cpt\+::tuple\+\_\+like}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= !std::is\_reference\_v<t\_tuple> \&\& \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}}(t\_tuple t) \{}
+\DoxyCodeLine{  \textcolor{keyword}{typename} std::tuple\_size<t\_tuple>::type;}
+\DoxyCodeLine{  \mbox{\hyperlink{namespacetnct_1_1lib_1_1alg_a7a7d6d79f21f1a74931d5d2bfc549545}{requires}} std::derived\_from<}
+\DoxyCodeLine{      std::tuple\_size<t\_tuple>,}
+\DoxyCodeLine{      std::integral\_constant<std::size\_t, std::tuple\_size\_v<t\_tuple>>>;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\&\&[]<std::size\_t... t\_idx>(std::index\_sequence<t\_idx...>) \{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} (tlc::internal::has\_tuple\_element<t\_tuple, t\_idx> \&\& ...);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{(std::make\_index\_sequence<std::tuple\_size\_v<t\_tuple>>())}
+
+\end{DoxyCode}
+
+
+Definition at line 19 of file tuple\+\_\+like.\+h.
+

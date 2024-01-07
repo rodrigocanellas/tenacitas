@@ -11,9 +11,6 @@ SUBDIRS = \
         sleeping_loop \
         circular_queue \
         matrix \
-        id \
-        communication
-
-#        crosswords \
+        id
 
 

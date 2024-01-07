@@ -16,7 +16,7 @@
 #include "uix.h"
 
 int main(int argc, char **argv) {
-  //  tnctl::set_trace_level();
+  //  tla::set_trace_level();
   try {
 
     alg::dispatcher::ptr _dispatcher{alg::dispatcher::create()};

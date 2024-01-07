@@ -4,16 +4,15 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <tuple>
 
-#include <tenacitas.h>
-
-using namespace tnct::lib;
+#include <tnct/lib/alg/log.h>
+#include <tnct/lib/alg/program_options.h>
+#include <tnct/lib/alg/tester.h>
 
 struct cerr_log_how_to {
-    bool operator()(const tla::program_options &) {
+  bool operator()(const tla::program_options &) {
     try {
       TNCT_LOG_DEB("hello! ", 309);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
@@ -37,7 +36,7 @@ struct cerr_log_how_to {
 };
 
 struct clog_how_to {
-    bool operator()(const tla::program_options &) {
+  bool operator()(const tla::program_options &) {
     try {
 
       TNCT_LOG_DEB("teste de clog para debug ", -345, ' ', 19023, ' ', 'W', ' ',
@@ -63,7 +62,7 @@ struct clog_how_to {
 };
 
 struct cout_log_how_to {
-    bool operator()(const tla::program_options &) {
+  bool operator()(const tla::program_options &) {
     try {
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
@@ -83,8 +82,8 @@ struct cout_log_how_to {
 
 struct cout_log_print_tuple {
   static std::string desc() { return "Prints a tuple"; }
-    
-    bool operator()(const tla::program_options &) {
+
+  bool operator()(const tla::program_options &) {
     try {
       std::tuple<int16_t, float> _tuple{-3, 3.14};
 
@@ -100,10 +99,10 @@ struct cout_log_print_tuple {
 
 struct file_log {
   static std::string desc() { return "Testing logging into a file."; }
-    
-    bool operator()(const tla::program_options &) {
+
+  bool operator()(const tla::program_options &) {
     try {
-      tnctl::set_log_file_writer("test_logger", 150);
+      tla::set_log_file_writer("test_logger", 150);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
       TNCT_LOG_INF("and you?");
@@ -119,9 +118,7 @@ struct file_log {
 
 int main(int argc, char **argv) {
 
-  using namespace tenacitas;
-
-  tnctl::set_writer_cerr();
+  tla::set_writer_cerr();
   tla::set_debug_level();
   tla::tester _tester(argc, argv);
 

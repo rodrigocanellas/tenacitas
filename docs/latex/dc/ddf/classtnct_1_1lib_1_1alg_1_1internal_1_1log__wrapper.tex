@@ -1,0 +1,534 @@
+\hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{}\doxysection{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper$<$ use $>$ Class Template Reference}
+\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+
+
+Thread safe writing of log messages to console (cerr/cout/clog) A log message has the format\+: log-\/level$\vert$timestamp$\vert$log\+\_\+file-\/name$\vert$thread-\/id$\vert$line-\/number$\vert$contents.  
+
+
+
+
+{\ttfamily \#include $<$log\+\_\+wrapper.\+h$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+typedef std\+::function$<$ void(std\+::string \&\&)$>$ \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}{writer}}
+\begin{DoxyCompactList}\small\item\em Responsible for actually writing the log message. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_af237a8505c06368291da40dd1ea0df87}{log\+\_\+wrapper}} ()=default
+\begin{DoxyCompactList}\small\item\em Default contructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a5a9e496c07c4e3308ff4b776cc49ea3a}{log\+\_\+wrapper}} (const \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy constructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6e37f5458fa2e93d5a82c89367ca6e7e}{log\+\_\+wrapper}} (\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \&\&)=delete
+\begin{DoxyCompactList}\small\item\em Move constructor not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \& \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a4d16b5460ed09850593d73a38bdd3193}{operator=}} (const \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \&)=delete
+\begin{DoxyCompactList}\small\item\em Copy assignment not allowed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \& \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a99fced64b487acdbaaea8b1b31b0c8a0}{operator=}} (\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} \&\&)=delete
+\begin{DoxyCompactList}\small\item\em Move assignment not allowed. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aab58afc8414b3e84ad737255e2e9debe}{operator new}} (size\+\_\+t)=delete
+\begin{DoxyCompactList}\small\item\em New operator not allowed. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6d2f46bf9aa96b7e35dc55edef7d10cb}{operator delete}} (void $\ast$)=delete
+\begin{DoxyCompactList}\small\item\em Delete operator not allowed. \end{DoxyCompactList}\item 
+char \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae73f0760d61ffb510aec06f04318a677}{get\+\_\+separator}} () const
+\begin{DoxyCompactList}\small\item\em Retrieves the separator used in the log messages. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae1ed7d4a3111c9d7a50f42f50584d196}{set\+\_\+writer}} (\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}{writer}} p\+\_\+writer)
+\begin{DoxyCompactList}\small\item\em Defines the function responsible for actually writing the message. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_acf8f698c594b19847433129d9489afd2}{set\+\_\+separator}} (char p\+\_\+separator)
+\begin{DoxyCompactList}\small\item\em Defines the separator to be used in the log messages Default is \textquotesingle{}$\vert$\textquotesingle{}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a9f003a069abba123bdc36245518728d8}{test}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily test} severity Each parameter must implement the output operator. The log message will only be allways, and it should only be used in tests. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aada421ff62188210fc2b9428ccbd2b06}{trace}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily trace} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::trace}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0a9615af2f216243ebef78508c9ba3ac}{debug}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily debug} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a227871d9f2fb7611f2c99197e51eb5f4}{info}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily info} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::info}, {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0ce7d5096cf8c52962a806093fca21e1}{warn}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily warn} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::warn}, {\ttfamily level\+::info}, {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_adf691f36efe7dacb0756e465882a0a1d}{error}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily error} severity Each parameter must implement the output operator. {\ttfamily level\+::error} messages are allways logged. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... t\+\_\+params$>$ }\\static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aeb161097a1f370a07943c8597e335475}{fatal}} (const char $\ast$p\+\_\+log\+\_\+file, uint16\+\_\+t p\+\_\+line, t\+\_\+params \&\&...p\+\_\+params)
+\begin{DoxyCompactList}\small\item\em Logs message with {\ttfamily fatal} severity Each parameter must implement the output operator. {\ttfamily level\+::fatal} messages are allways logged. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a1d2a23e03a63ca63797a6f82dcf938fd}{set\+\_\+trace}} ()
+\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a7747affee0686e13aa597fd6c726ad89}{set\+\_\+debug}} ()
+\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a3d4189b06e69d031673e941147c14497}{set\+\_\+info}} ()
+\item 
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a843e818ceea3c5ba596327f46677021b}{set\+\_\+warn}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$bool use = true$>$\newline
+class tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper$<$ use $>$}
+
+Thread safe writing of log messages to console (cerr/cout/clog) A log message has the format\+: log-\/level$\vert$timestamp$\vert$log\+\_\+file-\/name$\vert$thread-\/id$\vert$line-\/number$\vert$contents. 
+
+{\ttfamily log-\/level} is TNCT\+\_\+\+LOG\+\_\+\+TRA, TNCT\+\_\+\+LOG\+\_\+\+DEB, TNCT\+\_\+\+LOG\+\_\+\+INF, TNCT\+\_\+\+LOG\+\_\+\+WAR, TNCT\+\_\+\+LOG\+\_\+\+ERR or TNCT\+\_\+\+LOG\+\_\+\+FAT; {\ttfamily timestamp} is a EPOCH number in microsecs; {\ttfamily log\+\_\+file-\/name} is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} where the message is being writen; {\ttfamily thread-\/id} is the id of the thread that is logging; {\ttfamily line-\/number} is the number of the line that is logging; contents are the log message specific contents 
+
+Definition at line 44 of file log\+\_\+wrapper.\+h.
+
+
+
+\doxysubsection{Member Typedef Documentation}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!writer@{writer}}
+\index{writer@{writer}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{writer}{writer}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+typedef std\+::function$<$void(std\+::string \&\&)$>$ \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}{writer}}}
+
+
+
+Responsible for actually writing the log message. 
+
+
+
+Definition at line 47 of file log\+\_\+wrapper.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_af237a8505c06368291da40dd1ea0df87}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_af237a8505c06368291da40dd1ea0df87}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!log\_wrapper@{log\_wrapper}}
+\index{log\_wrapper@{log\_wrapper}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{log\_wrapper()}{log\_wrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default contructor not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a5a9e496c07c4e3308ff4b776cc49ea3a}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a5a9e496c07c4e3308ff4b776cc49ea3a}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!log\_wrapper@{log\_wrapper}}
+\index{log\_wrapper@{log\_wrapper}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{log\_wrapper()}{log\_wrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}$<$ use $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy constructor not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6e37f5458fa2e93d5a82c89367ca6e7e}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6e37f5458fa2e93d5a82c89367ca6e7e}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!log\_wrapper@{log\_wrapper}}
+\index{log\_wrapper@{log\_wrapper}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{log\_wrapper()}{log\_wrapper()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}} (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}$<$ use $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Move constructor not allowed. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0a9615af2f216243ebef78508c9ba3ac}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0a9615af2f216243ebef78508c9ba3ac}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!debug@{debug}}
+\index{debug@{debug}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{debug()}{debug()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::debug (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily debug} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 143 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_adf691f36efe7dacb0756e465882a0a1d}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_adf691f36efe7dacb0756e465882a0a1d}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!error@{error}}
+\index{error@{error}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{error()}{error()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::error (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily error} severity Each parameter must implement the output operator. {\ttfamily level\+::error} messages are allways logged. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 206 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aeb161097a1f370a07943c8597e335475}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aeb161097a1f370a07943c8597e335475}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!fatal@{fatal}}
+\index{fatal@{fatal}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{fatal()}{fatal()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::fatal (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily fatal} severity Each parameter must implement the output operator. {\ttfamily level\+::fatal} messages are allways logged. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 224 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae73f0760d61ffb510aec06f04318a677}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae73f0760d61ffb510aec06f04318a677}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!get\_separator@{get\_separator}}
+\index{get\_separator@{get\_separator}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{get\_separator()}{get\_separator()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+char \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::get\+\_\+separator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Retrieves the separator used in the log messages. 
+
+\begin{DoxyReturn}{Returns}
+the value of the separator 
+\end{DoxyReturn}
+
+
+Definition at line 88 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a227871d9f2fb7611f2c99197e51eb5f4}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a227871d9f2fb7611f2c99197e51eb5f4}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!info@{info}}
+\index{info@{info}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{info()}{info()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::info (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily info} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::info}, {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 164 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6d2f46bf9aa96b7e35dc55edef7d10cb}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a6d2f46bf9aa96b7e35dc55edef7d10cb}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!operator delete@{operator delete}}
+\index{operator delete@{operator delete}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator delete()}{operator delete()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::operator delete (\begin{DoxyParamCaption}\item[{void $\ast$}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Delete operator not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aab58afc8414b3e84ad737255e2e9debe}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aab58afc8414b3e84ad737255e2e9debe}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!operator new@{operator new}}
+\index{operator new@{operator new}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator new()}{operator new()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+void$\ast$ \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::operator new (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+New operator not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a4d16b5460ed09850593d73a38bdd3193}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a4d16b5460ed09850593d73a38bdd3193}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}\& \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}$<$ use $>$ \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Copy assignment not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a99fced64b487acdbaaea8b1b31b0c8a0}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a99fced64b487acdbaaea8b1b31b0c8a0}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}\& \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{log\+\_\+wrapper}}$<$ use $>$ \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+Move assignment not allowed. 
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a7747affee0686e13aa597fd6c726ad89}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a7747affee0686e13aa597fd6c726ad89}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_debug@{set\_debug}}
+\index{set\_debug@{set\_debug}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_debug()}{set\_debug()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+debug (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 231 of file log\+\_\+wrapper.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a7747affee0686e13aa597fd6c726ad89_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a3d4189b06e69d031673e941147c14497}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a3d4189b06e69d031673e941147c14497}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_info@{set\_info}}
+\index{set\_info@{set\_info}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_info()}{set\_info()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+info (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 232 of file log\+\_\+wrapper.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a3d4189b06e69d031673e941147c14497_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_acf8f698c594b19847433129d9489afd2}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_acf8f698c594b19847433129d9489afd2}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_separator@{set\_separator}}
+\index{set\_separator@{set\_separator}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_separator()}{set\_separator()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+separator (\begin{DoxyParamCaption}\item[{char}]{p\+\_\+separator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Defines the separator to be used in the log messages Default is \textquotesingle{}$\vert$\textquotesingle{}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+separator} & the value of the separator \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 81 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a1d2a23e03a63ca63797a6f82dcf938fd}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a1d2a23e03a63ca63797a6f82dcf938fd}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_trace@{set\_trace}}
+\index{set\_trace@{set\_trace}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_trace()}{set\_trace()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+trace (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 230 of file log\+\_\+wrapper.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a1d2a23e03a63ca63797a6f82dcf938fd_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a843e818ceea3c5ba596327f46677021b}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a843e818ceea3c5ba596327f46677021b}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_warn@{set\_warn}}
+\index{set\_warn@{set\_warn}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_warn()}{set\_warn()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+warn (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line 233 of file log\+\_\+wrapper.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a843e818ceea3c5ba596327f46677021b_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae1ed7d4a3111c9d7a50f42f50584d196}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae1ed7d4a3111c9d7a50f42f50584d196}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!set\_writer@{set\_writer}}
+\index{set\_writer@{set\_writer}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{set\_writer()}{set\_writer()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::set\+\_\+writer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ad23e82e634eb02c6d4d2233eafd44725}{writer}}}]{p\+\_\+writer }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Defines the function responsible for actually writing the message. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em p\+\_\+writer} & the function responsible for actually writing the message \\
+\hline
+\end{DoxyTemplParams}
+
+
+Definition at line 75 of file log\+\_\+wrapper.\+h.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{dc/ddf/classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_ae1ed7d4a3111c9d7a50f42f50584d196_icgraph}
+\end{center}
+\end{figure}
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a9f003a069abba123bdc36245518728d8}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a9f003a069abba123bdc36245518728d8}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!test@{test}}
+\index{test@{test}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{test()}{test()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::test (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily test} severity Each parameter must implement the output operator. The log message will only be allways, and it should only be used in tests. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 103 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aada421ff62188210fc2b9428ccbd2b06}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_aada421ff62188210fc2b9428ccbd2b06}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!trace@{trace}}
+\index{trace@{trace}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{trace()}{trace()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::trace (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily trace} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::trace}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 122 of file log\+\_\+wrapper.\+h.
+
+\mbox{\Hypertarget{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0ce7d5096cf8c52962a806093fca21e1}\label{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper_a0ce7d5096cf8c52962a806093fca21e1}} 
+\index{tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}!warn@{warn}}
+\index{warn@{warn}!tnct::lib::alg::internal::log\_wrapper$<$ use $>$@{tnct::lib::alg::internal::log\_wrapper$<$ use $>$}}
+\doxysubsubsection{\texorpdfstring{warn()}{warn()}}
+{\footnotesize\ttfamily template$<$bool use = true$>$ \\
+template$<$typename... t\+\_\+params$>$ \\
+static void \mbox{\hyperlink{classtnct_1_1lib_1_1alg_1_1internal_1_1log__wrapper}{tnct\+::lib\+::alg\+::internal\+::log\+\_\+wrapper}}$<$ use $>$\+::warn (\begin{DoxyParamCaption}\item[{const char $\ast$}]{p\+\_\+log\+\_\+file,  }\item[{uint16\+\_\+t}]{p\+\_\+line,  }\item[{t\+\_\+params \&\&...}]{p\+\_\+params }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Logs message with {\ttfamily warn} severity Each parameter must implement the output operator. The log message will only be printed if the current log level is {\ttfamily level\+::warn}, {\ttfamily level\+::info}, {\ttfamily level\+::debug} or {\ttfamily level\+::trace}. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em t\+\_\+params} & are the types of the values to be logged.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+log\+\_\+file} & is the name of the \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1internal_1_1log__file}{log\+\_\+file}} that is logging\\
+\hline
+{\em p\+\_\+line} & is the line where the logging is done\\
+\hline
+{\em p\+\_\+params} & are the contens of the log message \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 186 of file log\+\_\+wrapper.\+h.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/rodrigo/development/tenacitas.\+lib/src/tnct/lib/alg/internal/\mbox{\hyperlink{log__wrapper_8h}{log\+\_\+wrapper.\+h}}\end{DoxyCompactItemize}

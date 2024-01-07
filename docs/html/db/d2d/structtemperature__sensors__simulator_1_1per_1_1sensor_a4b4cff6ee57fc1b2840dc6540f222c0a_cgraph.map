@@ -1,0 +1,4 @@
+<map id="temperature_sensors_simulator::per::sensor::stop" name="temperature_sensors_simulator::per::sensor::stop">
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,212,47"/>
+<area shape="rect" id="node2" href="$da/dc0/structtnct_1_1lib_1_1alg_1_1sleeping__loop.html#a7785e1af36c52484792770bee1e9bc0a" title="Stops the loop, if it was started." alt="" coords="260,5,423,47"/>
+</map>

@@ -17,16 +17,16 @@
 namespace tnct::lib::alg {
 
 template <std::unsigned_integral t_index = uint32_t>
-struct translator_in_memory_a {
-  translator_in_memory_a() = default;
-  translator_in_memory_a(tld::dictionary<t_index> &&p_dictionary)
+struct translator_in_memory {
+  translator_in_memory() = default;
+  translator_in_memory(tld::dictionary<t_index> &&p_dictionary)
       : m_dictionary(std::move(p_dictionary)) {}
-  translator_in_memory_a(const translator_in_memory_a &) = delete;
-  translator_in_memory_a(translator_in_memory_a &&) = delete;
-  ~translator_in_memory_a() = default;
+  translator_in_memory(const translator_in_memory &) = delete;
+  translator_in_memory(translator_in_memory &&) = delete;
+  ~translator_in_memory() = default;
 
-  translator_in_memory_a &operator=(const translator_in_memory_a &) = delete;
-  translator_in_memory_a &operator=(translator_in_memory_a &&) = delete;
+  translator_in_memory &operator=(const translator_in_memory &) = delete;
+  translator_in_memory &operator=(translator_in_memory &&) = delete;
 
   uint32_t inline size() const { return m_dictionary.size(); }
 
@@ -43,7 +43,7 @@ struct translator_in_memory_a {
   }
 
   friend inline std::ostream &
-  operator<<(std::ostream &p_out, const translator_in_memory_a &p_translator) {
+  operator<<(std::ostream &p_out, const translator_in_memory &p_translator) {
     for (const auto &p_value : p_translator.m_dictionary) {
       p_out << '(' << p_value.first << ',' << p_value.second << ')';
     }
@@ -56,5 +56,7 @@ private:
 };
 
 } // namespace tnct::lib::alg
+
+namespace tla = tnct::lib::alg;
 
 #endif

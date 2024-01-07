@@ -1,0 +1,69 @@
+\hypertarget{_2home_2rodrigo_2development_2tenacitas_8lib_2exp_2program_options_001_2main_8cpp-example}{}\doxysection{/home/rodrigo/development/tenacitas.\+lib/exp/program\+\_\+options\+\_\+001/main.\+cpp}
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <\mbox{\hyperlink{program__options_8h}{tnct/lib/alg/program\_options.h}}>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int} \mbox{\hyperlink{tst_2circular__queue_2main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}}() \{}
+\DoxyCodeLine{  \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{using namespace }std;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{char} *argv[] = \{\textcolor{stringliteral}{"{}pgm-\/name"{}}, \textcolor{stringliteral}{"{}-\/-\/set\_1"{}},    \textcolor{stringliteral}{"{}\{"{}},}
+\DoxyCodeLine{                          \textcolor{stringliteral}{"{}v0"{}},       \textcolor{stringliteral}{"{}v1"{}},         \textcolor{stringliteral}{"{}\}"{}},}
+\DoxyCodeLine{                          \textcolor{stringliteral}{"{}-\/-\/bool\_1"{}}, \textcolor{stringliteral}{"{}-\/-\/single\_1"{}}, \textcolor{stringliteral}{"{}single\_value\_1"{}}\};}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{int} argc = 9;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options}{tla::program\_options}} \_pgm\_options;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \_pgm\_options.\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_ac7ef382e078f18b31a877b550b3ee2c7}{parse}}(argc, (\textcolor{keywordtype}{char} **)argv, \{\textcolor{stringliteral}{"{}bool\_1"{}}\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{    cerr << \textcolor{stringliteral}{"{}options: "{}} << \_pgm\_options << endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    optional<bool> \_bool = \_pgm\_options.\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_aeb0fe935666d27d6738e1e1d09ca1762}{get\_bool\_param}}(\textcolor{stringliteral}{"{}bool\_1"{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (\_bool) \{}
+\DoxyCodeLine{      cerr << \textcolor{stringliteral}{"{}bool param = "{}} << \_bool.value() << endl;}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{      cerr << \textcolor{stringliteral}{"{}ERROR! no value for paramenter 'bool\_1' was found"{}} << endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    optional<tla::program\_options::value> \_single =}
+\DoxyCodeLine{        \_pgm\_options.\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_ad2b402170a9d9ad0f6bf30faacf5eeab}{get\_single\_param}}(\textcolor{stringliteral}{"{}single\_1"{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (\_single) \{}
+\DoxyCodeLine{      cerr << \textcolor{stringliteral}{"{}single param = "{}} << \_single.value() << endl;}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{      cerr << \textcolor{stringliteral}{"{}ERROR! no value for paramenter 'single\_1' was found"{}} << endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    optional<list<tla::program\_options::value>> \_set =}
+\DoxyCodeLine{        \_pgm\_options.\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a3d302922f5d3c1155cbff9140e632060}{get\_set\_param}}(\textcolor{stringliteral}{"{}set\_1"{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (\_set) \{}
+\DoxyCodeLine{      \textcolor{keywordflow}{if} (\_set.value().size() != 2) \{}
+\DoxyCodeLine{        cerr << \textcolor{stringliteral}{"{}ERROR! number of values in set parameter should be 2, but it "{}}}
+\DoxyCodeLine{                \textcolor{stringliteral}{"{}is "{}}}
+\DoxyCodeLine{             << \_set.value().size() << endl;}
+\DoxyCodeLine{      \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{        cerr << \textcolor{stringliteral}{"{}set param 'set\_1' = "{}};}
+\DoxyCodeLine{        \textcolor{keywordflow}{for} (\mbox{\hyperlink{structtnct_1_1lib_1_1alg_1_1program__options_a0da179bd27249ec084b59be8952c29ae}{tla::program\_options::value}} \&\_value : \_set.value()) \{}
+\DoxyCodeLine{          cerr << \_value << \textcolor{stringliteral}{"{} "{}};}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{        cerr << endl;}
+\DoxyCodeLine{      \}}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{      cerr << \textcolor{stringliteral}{"{}ERROR! no set of values found for parameter 'set\_1'"{}} << endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{  \} \textcolor{keywordflow}{catch} (std::exception \&\_ex) \{}
+\DoxyCodeLine{    cerr << \textcolor{stringliteral}{"{}ERROR! '"{}} << \_ex.what() << \textcolor{stringliteral}{"{}'"{}} << endl;}
+\DoxyCodeLine{  \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{  \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCodeInclude}
+ 

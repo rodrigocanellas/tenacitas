@@ -12,7 +12,8 @@ HEADERS += $$BASE_DIR_LIB/tnct/lib/alg/program_options.h \
            $$BASE_DIR_LIB/tnct/lib/alg/factorial.h \
            $$BASE_DIR_LIB/tnct/lib/alg/log.h \
            $$BASE_DIR_LIB/tnct/lib/alg/translator_from_file.h \
-           $$BASE_DIR_LIB/tnct/lib/alg/translator_in_memory.h
+           $$BASE_DIR_LIB/tnct/lib/alg/translator_in_memory.h \
+           $$BASE_DIR_LIB/tnct/lib/alg/traverse_tuple.h
 
 TEMPLATE=aux
 
