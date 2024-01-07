@@ -1,6 +1,0 @@
-<map id="tenacitas::lib::typ::internal::event_queue::trace" name="tenacitas::lib::typ::internal::event_queue::trace">
-<area shape="rect" id="node1" title=" " alt="" coords="5,63,177,119"/>
-<area shape="rect" id="node2" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a79165878c8a4e1f2498e63f2bf9a3e5f" title="Formats a number with the maximum characters necessary to represent the number to string,..." alt="" coords="253,5,388,47"/>
-<area shape="rect" id="node3" href="$d6/d8d/structtenacitas_1_1lib_1_1typ_1_1circular__queue.html#ac2bf3c7be404e99d35b01b7680d9893a" title="returns an identifier used for debug purposes" alt="" coords="234,71,407,112"/>
-<area shape="rect" id="node4" href="$d6/d8d/structtenacitas_1_1lib_1_1typ_1_1circular__queue.html#a111b717cb1f52191c2fb0a21f211e28a" title="amount of nodes that that have t_data objects" alt="" coords="225,136,416,177"/>
-</map>

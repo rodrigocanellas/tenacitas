@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,100,124,127"/>
-<area shape="rect" id="node2" href="$d2/de0/structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__shared__ptr.html" title="Determines is a type is not a shared pointer." alt="" coords="172,5,323,61"/>
-<area shape="rect" id="node3" href="$dc/d21/structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__tuple.html" title="Type trait that identifies if an object is not a tuple." alt="" coords="178,85,317,141"/>
-<area shape="rect" id="node4" href="$da/d9c/structtenacitas_1_1lib_1_1alg_1_1internal_1_1is__unique__ptr.html" title="Determines is a type is not a unique pointer." alt="" coords="172,165,323,221"/>
-</map>
