@@ -5,12 +5,13 @@ bld - builder: files used to build libraries, tests, examples and programs
 con - container: vectors, lists, stack...
 dev - device: code that implements external devices, like robots
 docs - documents: files that document code
-dom - domain: data and functions that implement business logic
+dom - domain: functions that implement business logic
 exp - example: applications that exemplifies use of any other category
 fmt - formating: code responsible for formatting data
 lib - library: other categories assembled
 log - logger: code that logs execution messages
 mat - mathematics: a special place for math data and functions
+mod - model: business data 
 net - network: code for network programming
 per - pesistence: writes and reads data to permanent memory
 pgm - program: an executable
