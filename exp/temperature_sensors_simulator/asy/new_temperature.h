@@ -1,0 +1,35 @@
+#ifndef TEMPERATURE_SENSORS_SIMULATOR__EVT__NEW_TEMPERATURE_H
+#define TEMPERATURE_SENSORS_SIMULATOR__EVT__NEW_TEMPERATURE_H
+
+#include <iostream>
+
+#include <tenacitas.lib/exp/temperature_sensors_simulator/dom/dat/sensor_id.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/dom/dat/temperature.h>
+
+namespace temperature_sensors_simulator::asy {
+
+struct new_temperature {
+  new_temperature() = default;
+  explicit new_temperature(dom::sensor_id p_sensor_id,
+                           dom::temperature p_temperature)
+      : sensor_id(p_sensor_id), temperature(p_temperature) {}
+
+  new_temperature(const new_temperature &) = default;
+  new_temperature(new_temperature &&) = default;
+  new_temperature &operator=(const new_temperature &) = default;
+  new_temperature &operator=(new_temperature &&) = default;
+
+  friend std::ostream &operator<<(std::ostream &p_out,
+                                  const new_temperature &p_new_temperature) {
+    p_out << '(' << p_new_temperature.sensor_id << ','
+          << p_new_temperature.temperature << ')';
+    return p_out;
+  }
+
+  dom::sensor_id sensor_id;
+  dom::temperature temperature;
+};
+
+} // namespace temperature_sensors_simulator::asy
+
+#endif // NEW_TEMPERATURE_H

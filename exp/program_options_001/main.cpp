@@ -7,9 +7,10 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/sof/program_options.h>
 
 using namespace std;
+using namespace tenacitas::lib;
 
 int main() {
   try {
@@ -21,7 +22,7 @@ int main() {
                           "--bool_1", "--single_1", "single_value_1"};
     const int argc = 9;
 
-    tla::program_options _pgm_options;
+    sof::program_options _pgm_options;
 
     _pgm_options.parse(argc, (char **)argv, {"bool_1"});
 
@@ -34,7 +35,7 @@ int main() {
       cerr << "ERROR! no value for paramenter 'bool_1' was found" << endl;
     }
 
-    optional<tla::program_options::value> _single =
+    optional<sof::program_options::value> _single =
         _pgm_options.get_single_param("single_1");
     if (_single) {
       cerr << "single param = " << _single.value() << endl;
@@ -42,7 +43,7 @@ int main() {
       cerr << "ERROR! no value for paramenter 'single_1' was found" << endl;
     }
 
-    optional<list<tla::program_options::value>> _set =
+    optional<list<sof::program_options::value>> _set =
         _pgm_options.get_set_param("set_1");
     if (_set) {
       if (_set.value().size() != 2) {
@@ -51,7 +52,7 @@ int main() {
              << _set.value().size() << endl;
       } else {
         cerr << "set param 'set_1' = ";
-        for (tla::program_options::value &_value : _set.value()) {
+        for (sof::program_options::value &_value : _set.value()) {
           cerr << _value << " ";
         }
         cerr << endl;

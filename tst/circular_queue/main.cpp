@@ -8,13 +8,13 @@
 #include <string>
 #include <utility>
 
-#include <tenacitas.lib/src/alg/log.h>
-#include <tenacitas.lib/src/alg/tester.h>
-#include <tenacitas.lib/src/dat/circular_queue.h>
+#include <tenacitas.lib/con/circular_queue.h>
+#include <tenacitas.lib/log/log.h>
+#include <tenacitas.lib/sof/tester.h>
 
+using namespace tenacitas::lib;
 
-
-using queue = tld::circular_queue<int16_t>;
+using queue = con::circular_queue<int16_t>;
 
 bool check(const queue &p_queue, size_t p_occupied, size_t p_capacity) {
   if (p_queue.capacity() != p_capacity) {
@@ -91,7 +91,7 @@ struct test_000 {
     return "Tests if the queue is correctly created";
   }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -106,7 +106,7 @@ struct test_000 {
 struct test_001 {
   static std::string desc() { return "Adds -9 and gets it"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -129,7 +129,7 @@ struct test_001 {
 struct test_002 {
   static std::string desc() { return "Adds -9 and tries to get 38"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -152,7 +152,7 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "Adds -9 and 38 and gets one"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -179,7 +179,7 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "Adds -9 and 38 and gets two"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -210,7 +210,7 @@ struct test_004 {
 struct test_005 {
   static std::string desc() { return "Adds -9, 38, 4, gets one and adds 5"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -245,7 +245,7 @@ struct test_005 {
 struct test_006 {
   static std::string desc() { return "Adds -9, 38, 4, gets two and adds 5"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -284,7 +284,7 @@ struct test_006 {
 struct test_007 {
   static std::string desc() { return "Adds -9, 38, 4, gets three"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -323,7 +323,7 @@ struct test_007 {
 struct test_008 {
   static std::string desc() { return "Adds -9, 38, 4, gets three, adds 5"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     queue _queue;
 
     if (!check(_queue, 0, 0)) {
@@ -367,9 +367,9 @@ struct test_009 {
   static std::string desc() {
     return "Adds 1,000,000 strings of 4k to a circular-queue";
   }
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
-      tld::circular_queue<std::string> queue;
+      con::circular_queue<std::string> queue;
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < 1000000; ++i) {
@@ -399,10 +399,10 @@ struct test_009 {
 
 int main(int argc, char **argv) {
 
-  tla::set_debug_level();
-  tla::set_max_log_file_name_lenght(8);
+  log::set_debug_level();
+  log::set_max_log_file_name_lenght(8);
 
-  tla::tester _tester(argc, argv);
+  sof::tester _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

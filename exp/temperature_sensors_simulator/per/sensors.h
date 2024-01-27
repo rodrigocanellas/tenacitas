@@ -6,11 +6,11 @@
 #include <memory>
 #include <set>
 
-#include "../alg/dispatcher.h"
-#include "../evt/add_sensor.h"
-#include "../evt/remove_sensor.h"
-#include "../evt/set_temperature.h"
-#include "../per/sensor.h"
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/add_sensor.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/remove_sensor.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/set_temperature.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/per/sensor.h>
 
 using namespace std::chrono_literals;
 
@@ -18,16 +18,16 @@ namespace temperature_sensors_simulator::per {
 
 struct sensors {
   using events_subscribed =
-      std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
+      std::tuple<asy::add_sensor, asy::remove_sensor, asy::set_temperature>;
 
-  sensors(alg::dispatcher::ptr p_dispatcher) : m_dispatcher(p_dispatcher) {
-    m_dispatcher->subscribe<sensors, evt::add_sensor>(
+  sensors(asy::dispatcher::ptr p_dispatcher) : m_dispatcher(p_dispatcher) {
+    m_dispatcher->subscribe<sensors, asy::add_sensor>(
         [this](auto p_evt) { on_add_sensor(std::move(p_evt)); });
 
-    m_dispatcher->subscribe<sensors, evt::remove_sensor>(
+    m_dispatcher->subscribe<sensors, asy::remove_sensor>(
         [this](auto p_evt) { on_remove_sensor(std::move(p_evt)); });
 
-    m_dispatcher->subscribe<sensors, evt::set_temperature>(
+    m_dispatcher->subscribe<sensors, asy::set_temperature>(
         [this](auto p_evt) { on_set_temperature(std::move(p_evt)); });
   }
 
@@ -45,16 +45,16 @@ private:
   using const_iterator = collection::const_iterator;
 
 private:
-  void on_add_sensor(evt::add_sensor &&p_evt) {
+  void on_add_sensor(asy::add_sensor &&p_evt) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     auto _sensor = std::make_unique<sensor>(
-        m_dispatcher, 500ms, p_evt.sensor_id, typ::temperature{25.5},
-        typ::temperature{0.75});
+        m_dispatcher, 500ms, p_evt.sensor_id, dom::temperature{25.5},
+        dom::temperature{0.75});
     _sensor->start();
     m_collection.insert(std::move(_sensor));
   }
 
-  void on_remove_sensor(evt::remove_sensor &&p_evt) {
+  void on_remove_sensor(asy::remove_sensor &&p_evt) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     iterator _ite = find(p_evt.sensor_id);
     if (_ite != m_collection.end()) {
@@ -62,14 +62,14 @@ private:
     }
   }
 
-  void on_set_temperature(evt::set_temperature &&p_evt) {
+  void on_set_temperature(asy::set_temperature &&p_evt) {
     iterator _ite = find(p_evt.sensor_id);
     if (_ite != m_collection.end()) {
       (*_ite)->reset_temperature(p_evt.temperature);
     }
   }
 
-  iterator find(typ::sensor_id p_sensor_id) {
+  iterator find(dom::sensor_id p_sensor_id) {
     return std::find_if(m_collection.begin(), m_collection.end(),
                         [&](const sensor_ptr &p_sensor) {
                           return p_sensor->get_id() == p_sensor_id;
@@ -77,7 +77,7 @@ private:
   }
 
 private:
-  alg::dispatcher::ptr m_dispatcher;
+  asy::dispatcher::ptr m_dispatcher;
   collection m_collection;
   std::mutex m_mutex;
 };

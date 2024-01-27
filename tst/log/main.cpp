@@ -7,12 +7,14 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas.lib/src/alg/log.h>
-#include <tenacitas.lib/src/alg/program_options.h>
-#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/sof/program_options.h>
+#include <tenacitas.lib/sof/tester.h>
+#include <tenacitas.lib/log/log.h>
+
+using namespace tenacitas::lib;
 
 struct cerr_log_how_to {
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
       TNCT_LOG_DEB("hello! ", 309);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
@@ -36,7 +38,7 @@ struct cerr_log_how_to {
 };
 
 struct clog_how_to {
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
 
       TNCT_LOG_DEB("teste de clog para debug ", -345, ' ', 19023, ' ', 'W', ' ',
@@ -62,7 +64,7 @@ struct clog_how_to {
 };
 
 struct cout_log_how_to {
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
@@ -83,7 +85,7 @@ struct cout_log_how_to {
 struct cout_log_print_tuple {
   static std::string desc() { return "Prints a tuple"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
       std::tuple<int16_t, float> _tuple{-3, 3.14};
 
@@ -100,9 +102,9 @@ struct cout_log_print_tuple {
 struct file_log {
   static std::string desc() { return "Testing logging into a file."; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
-      tla::set_log_file_writer("test_logger", 150);
+      log::set_log_file_writer("test_logger", 150);
       TNCT_LOG_DEB("how are you doing? ", 3.14);
       TNCT_LOG_INF("fine!! ", 'W');
       TNCT_LOG_INF("and you?");
@@ -118,9 +120,9 @@ struct file_log {
 
 int main(int argc, char **argv) {
 
-  tla::set_writer_cerr();
-  tla::set_debug_level();
-  tla::tester _tester(argc, argv);
+  log::set_writer_cerr();
+  log::set_debug_level();
+  sof::tester _tester(argc, argv);
 
   run_test(_tester, cout_log_how_to);
   run_test(_tester, cout_log_print_tuple);

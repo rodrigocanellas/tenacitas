@@ -1,5 +1,5 @@
 
-include (../../../../../tenacitas.bld/qtcreator/common.pri)
+include (../../common.pri)
 
 HEADERS+=$$BASE_DIR/tenacitas.lib/tst/communication/communication.h
 

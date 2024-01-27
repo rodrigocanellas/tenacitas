@@ -3,7 +3,7 @@ TEMPLATE=app
 CONFIG+=test
 TARGET=tenacitas.lib.tst.id
 
-include (../../../../../tenacitas.bld/qtcreator/common.pri)
+include (../../common.pri)
 
 SOURCES = $$BASE_DIR/tenacitas.lib/tst/id/main.cpp
 

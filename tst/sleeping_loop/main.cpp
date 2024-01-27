@@ -11,20 +11,23 @@
 #include <sstream>
 #include <thread>
 
-#include <tenacitas.lib/src/alg/log.h>
-#include <tenacitas.lib/src/alg/program_options.h>
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
+#include <tenacitas.lib/log/log.h>
+#include <tenacitas.lib/sof/program_options.h>
+#include <tenacitas.lib/sof/tester.h>
 
 using namespace std::chrono_literals;
+using namespace tenacitas::lib;
 
 struct sleeping_loop_000 {
 
-  static const std::string desc() { return "'sleeping_loop' creation test"; }
+  static const std::string desc() {
+    return "'asy::sleeping_loop' creation test";
+  }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    using loop = tla::sleeping_loop;
+    using loop = asy::sleeping_loop;
 
     auto _operation = []() -> void { TNCT_LOG_DEB("loop1"); };
 
@@ -35,20 +38,20 @@ struct sleeping_loop_000 {
 };
 
 struct sleeping_loop_001 {
-  using loop = tla::sleeping_loop;
+  using loop = asy::sleeping_loop;
 
   typedef uint16_t value;
 
   static const std::string desc() {
     std::stringstream _stream;
-    _stream << "'sleeping_loop' with interval of " << m_interval_secs
+    _stream << "'asy::sleeping_loop' with interval of " << m_interval_secs
             << "s, increments a counter, and just prints."
 
             << "\nCounter should be " << m_amount;
     return _stream.str();
   }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
     operation1 _op(&m_cond);
 
@@ -108,9 +111,9 @@ private:
 // struct sleeping_loop_002 {
 //    static std::string desc() { return ""; }
 
-//    bool operator()(const tla::program_options_a &) {
+//    bool operator()(const sof::program_options_a &) {
 
-//        std::vector<sleeping_loop> _loops;
+//        std::vector<asy::sleeping_loop> _loops;
 
 //        return true;
 //    }
@@ -125,7 +128,7 @@ private:
 
 //    typedef event_t<2> event;
 //    typedef async::internal::publishing_t<event> event_publishings;
-//    typedef tnctl::sleeping_loop sleeping_loop;
+//    typedef tnctl::asy::sleeping_loop asy::sleeping_loop;
 //    // event sent each time a work event is sent
 
 //    typedef async::internal::publishing_t<sent> sent_subscribers;
@@ -185,11 +188,10 @@ private:
 //};
 
 int main(int argc, char **argv) {
-  
 
-  tla::set_debug_level();
+  log::set_debug_level();
 
-  tla::tester<> _tester(argc, argv);
+  sof::tester<> _tester(argc, argv);
 
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);

@@ -7,25 +7,25 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/src/alg/dispatcher.h>
+#include <tenacitas.lib/asy/dispatcher.h>
 
-#include "alg.h"
-#include "cfg.h"
-#include "dispatcher.h"
-#include "sto.h"
-#include "uix.h"
+#include <tenacitas.lib/exp/dispatcher_003/asy/asy.h>
+#include <tenacitas.lib/exp/dispatcher_003/cfg/cfg.h>
+#include <tenacitas.lib/exp/dispatcher_003/dom/fun.h>
+#include <tenacitas.lib/exp/dispatcher_003/per/per.h>
+#include <tenacitas.lib/exp/dispatcher_003/uix/uix.h>
 
 int main(int argc, char **argv) {
-  //  tla::set_trace_level();
+  // tenacitas::lib::log::set_trace_level();
   try {
 
-    alg::dispatcher::ptr _dispatcher{alg::dispatcher::create()};
+    asy::dispatcher::ptr _dispatcher{asy::dispatcher::create()};
 
     cfg::options _options{argc, argv};
 
-    sto::saver _save(_options);
+    per::saver _save(_options);
 
-    alg::processor _processor(std::move(_save));
+    dom::processor _processor(std::move(_save));
     return uix::start(_options, _dispatcher, std::move(_processor));
 
   } catch (std::exception &_ex) {

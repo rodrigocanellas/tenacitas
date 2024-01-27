@@ -11,11 +11,12 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.lib/src/alg/dispatcher.h>
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
-#include <tenacitas.lib/src/dat/queue_id.h>
+#include <tenacitas.lib/asy/dispatcher.h>
+#include <tenacitas.lib/asy/queue_id.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
 
 using namespace std::chrono_literals;
+using namespace tenacitas::lib;
 
 // event to be dispatched
 struct temperature {
@@ -40,7 +41,7 @@ struct temperature_handled {
   }
 };
 
-using dispatcher = tla::dispatcher<temperature, temperature_handled>;
+using dispatcher = asy::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -59,7 +60,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  typedef tla::sleeping_loop temperature_generator;
+  using temperature_generator = asy::sleeping_loop;
 
 private:
   // function to be executed inside the sleeping loop, that will dispatch the
@@ -213,7 +214,7 @@ struct start {
     }
 
     // adds a subscriber to a publishing, and save the id of this publishing
-    tld::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
+    asy::queue_id _queue_id = _dispatcher->subscribe<start, temperature>(
         temperature_subscriber_0{_dispatcher, "0a", _printer});
 
     // adds another subscriber to the publishing

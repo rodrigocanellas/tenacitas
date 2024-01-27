@@ -11,10 +11,12 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.lib/src/alg/dispatcher.h>
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/asy/dispatcher.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
 
 using namespace std::chrono_literals;
+
+using namespace tenacitas::lib;
 
 // type of value generated
 struct temperature {
@@ -37,7 +39,7 @@ struct all_handled {
   }
 };
 
-using dispatcher = tla::dispatcher<temperature, all_handled>;
+using dispatcher = asy::dispatcher<temperature, all_handled>;
 
 // simulates a temperature sensor generating 'temperature' events
 struct temperature_sensor {
@@ -58,7 +60,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  using temperature_generator = tla::sleeping_loop;
+  using temperature_generator = asy::sleeping_loop;
 
 private:
   // function to be executed inside the sleeping loop, that will publish the

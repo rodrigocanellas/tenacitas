@@ -12,9 +12,10 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
 
 using namespace std::chrono_literals;
+using namespace tenacitas::lib;
 
 int main() {
 
@@ -43,7 +44,7 @@ int main() {
   };
 
   // sleeping loop object
-  tla::sleeping_loop _sleeping_loop(_function, _interval);
+  asy::sleeping_loop _sleeping_loop(_function, _interval);
 
   // starts the loop asynchronously
   _sleeping_loop.start();

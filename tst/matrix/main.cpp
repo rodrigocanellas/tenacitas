@@ -6,45 +6,47 @@
 #include <cstdint>
 #include <string>
 
-#include <tenacitas.lib/src/alg/log.h>
-#include <tenacitas.lib/src/alg/program_options.h>
-#include <tenacitas.lib/src/alg/tester.h>
-#include <tenacitas.lib/src/dat/matrix.h>
+#include <tenacitas.lib/con/matrix.h>
+#include <tenacitas.lib/log/log.h>
+#include <tenacitas.lib/sof/program_options.h>
+#include <tenacitas.lib/sof/tester.h>
+
+using namespace tenacitas::lib;
 
 struct test_000 {
   static std::string desc() {
-    return "simple square matrix creation and element access";
+    return "simple square con::matrix creation and element access";
   }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    tld::matrix<uint16_t, char> _matrix(3, 3, 'z');
+    con::matrix<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
     if (_matrix(1, 2) != 'z') {
-      TNCT_LOG_ERR("matrix(1,2) should be 'z', but it is '", _matrix(1, 2),
+      TNCT_LOG_ERR("con::matrix(1,2) should be 'z', but it is '", _matrix(1, 2),
                    '\'');
       return false;
     }
-    TNCT_LOG_TST("matrix(1,2) is '", _matrix(1, 2), '\'');
+    TNCT_LOG_TST("con::matrix(1,2) is '", _matrix(1, 2), '\'');
     return true;
   }
 };
 
 struct test_001 {
   static std::string desc() {
-    return "create square matrix, modify and element access";
+    return "create square con::matrix, modify and element access";
   }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    tld::matrix<uint16_t, char> _matrix(3, 3, 'z');
+    con::matrix<uint16_t, char> _matrix(3, 3, 'z');
 
     TNCT_LOG_TST(_matrix);
 
     if (_matrix(1, 2) != 'z') {
-      TNCT_LOG_ERR("matrix(1,2) should be 'z', but it is '", _matrix(1, 2),
+      TNCT_LOG_ERR("con::matrix(1,2) should be 'z', but it is '", _matrix(1, 2),
                    '\'');
       return false;
     }
@@ -52,35 +54,36 @@ struct test_001 {
     _matrix(1, 2) = 'e';
 
     if (_matrix(1, 2) != 'e') {
-      TNCT_LOG_ERR("matrix(1,2) should be 'e', but it is '", _matrix(1, 2),
+      TNCT_LOG_ERR("con::matrix(1,2) should be 'e', but it is '", _matrix(1, 2),
                    '\'');
       return false;
     }
 
     TNCT_LOG_TST(_matrix);
 
-    TNCT_LOG_TST("matrix(1,2) is '", _matrix(1, 2), '\'');
+    TNCT_LOG_TST("con::matrix(1,2) is '", _matrix(1, 2), '\'');
     return true;
   }
 };
 
 struct test_002 {
   static std::string desc() {
-    return "create non square matrix creation, fill it, and element access";
+    return "create non square con::matrix creation, fill it, and element "
+           "access";
   }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    tld::matrix<uint16_t, int16_t> _matrix(3, 4, -1);
+    con::matrix<uint16_t, int16_t> _matrix(3, 4, -1);
 
     TNCT_LOG_TST(_matrix);
 
     if (_matrix(1, 2) != -1) {
-      TNCT_LOG_ERR("matrix(1,2) should be -1, but it is '", _matrix(1, 2),
+      TNCT_LOG_ERR("con::matrix(1,2) should be -1, but it is '", _matrix(1, 2),
                    '\'');
       return false;
     }
-    TNCT_LOG_TST("matrix(1,2) is '", _matrix(1, 2), '\'');
+    TNCT_LOG_TST("con::matrix(1,2) is '", _matrix(1, 2), '\'');
 
     uint16_t _i = 0;
     for (uint16_t _row = 0; _row < _matrix.get_num_rows(); ++_row) {
@@ -94,11 +97,12 @@ struct test_002 {
     TNCT_LOG_TST(_matrix);
 
     if (_matrix(1, 2) != 6) {
-      TNCT_LOG_ERR("matrix(1,2) should be 6, but it is '", _matrix(1, 2), '\'');
+      TNCT_LOG_ERR("con::matrix(1,2) should be 6, but it is '", _matrix(1, 2),
+                   '\'');
       return false;
     }
 
-    TNCT_LOG_TST("matrix(1,2) is '", _matrix(1, 2), '\'');
+    TNCT_LOG_TST("con::matrix(1,2) is '", _matrix(1, 2), '\'');
 
     return true;
   }
@@ -107,9 +111,9 @@ struct test_002 {
 struct test_003 {
   static std::string desc() { return "test filling horizontally"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    tld::matrix<uint16_t, char> _m(11, 8, '-');
+    con::matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -128,9 +132,9 @@ struct test_003 {
 struct test_004 {
   static std::string desc() { return "test filling vertically"; }
 
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
 
-    tld::matrix<uint16_t, char> _m(11, 8, '-');
+    con::matrix<uint16_t, char> _m(11, 8, '-');
     uint16_t _row{0};
     uint16_t _col{0};
     uint16_t _count{0};
@@ -148,7 +152,7 @@ struct test_004 {
 
 int main(int argc, char **argv) {
 
-  tla::tester _tester(argc, argv);
+  sof::tester _tester(argc, argv);
   run_test(_tester, test_000);
   run_test(_tester, test_001);
   run_test(_tester, test_002);

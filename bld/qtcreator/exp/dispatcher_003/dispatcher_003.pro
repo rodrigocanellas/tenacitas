@@ -2,16 +2,16 @@ QT -= core
 TEMPLATE = app
 TARGET = tenacitas.lib.exp.dispatcher_003
 CONFIG += example
-include (../../../../../tenacitas.bld/qtcreator/common.pri)
+QMAKE_CXXFLAGS += -DTENACITAS_LOG
+include (../../common.pri)
 SOURCES = $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/main.cpp
 
-HEADERS = $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/alg.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/cfg.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/dispatcher.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/sto.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/uix.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/typ.h \
-          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/evt.h
+HEADERS = $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/dom/fun.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/cfg/cfg.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/per/per.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/uix/uix.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/dom/dat.h \
+          $$BASE_DIR/tenacitas.lib/exp/dispatcher_003/asy/asy.h
 
 
 LIBS+=-lsqlite3

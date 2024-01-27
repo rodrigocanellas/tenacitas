@@ -1,5 +1,5 @@
 TEMPLATE=subdirs
-
+QMAKE_CXXFLAGS += -DTENACITAS_LOG
 SUBDIRS = \
         log \
         factorial \

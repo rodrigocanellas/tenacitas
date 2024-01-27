@@ -11,10 +11,11 @@
 #include <iostream>
 #include <mutex>
 
-#include <tenacitas.lib/src/alg/dispatcher.h>
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/asy/dispatcher.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
 
 using namespace std::chrono_literals;
+using namespace tenacitas::lib;
 
 // event to be dispatched
 struct temperature {
@@ -39,7 +40,7 @@ struct temperature_handled {
   }
 };
 
-using dispatcher = tla::dispatcher<temperature, temperature_handled>;
+using dispatcher = asy::dispatcher<temperature, temperature_handled>;
 
 // simulates a temperature sensor generating values
 struct temperature_sensor {
@@ -58,7 +59,7 @@ struct temperature_sensor {
 
 private:
   // type for the asynchronous loop that will call the 'generator' method
-  typedef tla::sleeping_loop temperature_generator;
+  using temperature_generator = asy::sleeping_loop;
 
 private:
   // function to be executed inside the sleeping loop, that will generate the
@@ -244,7 +245,7 @@ struct start {
 
     // adds a subscriber to a queue, and saves the id of this queue
     {
-      tld::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+      asy::queue_id _queue_id = _dispatcher->add_queue<temperature>();
 
       _dispatcher->subscribe<start, temperature>(
           _queue_id, temperature_subscriber_0{_dispatcher,
@@ -262,7 +263,7 @@ struct start {
       //                                            _printer});
     }
     {
-      tld::queue_id _queue_id = _dispatcher->add_queue<temperature>();
+      asy::queue_id _queue_id = _dispatcher->add_queue<temperature>();
       // adds a subscriber to another queue
       _dispatcher->subscribe<start, temperature>(temperature_subscriber_1{
           _dispatcher, "subscriber 1 to queue " + std::to_string(_queue_id),

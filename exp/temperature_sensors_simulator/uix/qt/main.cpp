@@ -9,15 +9,15 @@
 
 #include <QApplication>
 
-#include "../../alg/dispatcher.h"
-#include "../../per/sensors.h"
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/per/sensors.h>
 
 using namespace temperature_sensors_simulator;
 
 int main(int argc, char *argv[]) {
   using namespace temperature_sensors_simulator;
 
-  alg::dispatcher::ptr _dispatcher{alg::dispatcher::create()};
+  asy::dispatcher::ptr _dispatcher{asy::dispatcher::create()};
 
   per::sensors _sensors{_dispatcher};
 

@@ -7,14 +7,16 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/src/alg/program_options.h>
+#include <tenacitas.lib/sof/program_options.h>
+
+using namespace tenacitas::lib;
 
 using namespace std;
 
 int main(int argc, char **argv) {
 
   try {
-    tla::program_options _pgm_options;
+    sof::program_options _pgm_options;
 
     _pgm_options.parse(argc, (char **)argv);
 

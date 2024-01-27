@@ -1,0 +1,49 @@
+@startuml
+
+hide empty members
+product <|-- tst
+product <|-- pgm
+product <|-- exp
+product <|-- lib
+code <|-up- tst
+code <|-up- pgm
+code <|-up- exp
+code <|-up- lib
+
+code <|-- shu
+code <|-- sta
+code <|-- dom
+code <|-- uix
+code <|-- per
+code <|-- asy
+code <|-- net
+code <|-- dev
+code <|-- mat
+code <|-- fmt
+code <|-- log
+code <|-- con
+code <|-- tra
+code <|-- sof
+
+product ..> shu
+product ..> sta
+product ..> dom
+product ..> uix
+product ..> per
+product ..> asy
+product ..> net
+product ..> dev
+product ..> mat
+product ..> fmt
+product ..> log
+product ..> con
+product ..> tra
+product ..> sof
+
+bld ..> product
+
+class docs
+
+@enduml
+
+

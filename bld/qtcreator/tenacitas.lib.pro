@@ -1,9 +1,17 @@
+QMAKE_CXXFLAGS += -DTENACITAS_LOG
+
 TEMPLATE=subdirs
 
 SUBDIRS = \
-    src \
+    sof \
+    mat \
+    con \
+    asy \
+    sta \
     exp \
-    tst
-
+    tst \
+    log \
+    fmt \
+    tra
 
 

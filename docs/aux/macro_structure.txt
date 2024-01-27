@@ -1,0 +1,22 @@
+Code categories
+
+asy - asynchronous: code that supports asynchronous programming, like threads
+bld - builder: files used to build libraries, tests, examples and programs
+con - container: vectors, lists, stack...
+dev - device: code that implements external devices, like robots
+docs - documents: files that document code
+dom - domain: data and functions that implement business logic
+exp - example: applications that exemplifies use of any other category
+fmt - formating: code responsible for formatting data
+lib - library: other categories assembled
+log - logger: code that logs execution messages
+mat - mathematics: a special place for math data and functions
+net - network: code for network programming
+per - pesistence: writes and reads data to permanent memory
+pgm - program: an executable
+shu - shuffle (cipher/decipher)
+sof - software: code that is related to software itself, like 'program_options'
+sta - static: compile time code, like type traits and concepts
+tra - translation: code used to translate text
+tst - test: aplication used to test other categories
+uix - final (human) user experience

@@ -6,22 +6,24 @@
 #include <iostream>
 #include <string>
 
-#include <tenacitas.lib/src/alg/program_options.h>
-#include <tenacitas.lib/src/alg/tester.h>
+#include <tenacitas.lib/sof/program_options.h>
+#include <tenacitas.lib/sof/tester.h>
+
+using namespace tenacitas::lib;
 
 struct test_ok {
-  bool operator()(const tla::program_options &) { return true; }
+  bool operator()(const sof::program_options &) { return true; }
 
   static std::string desc() { return "an ok test"; }
 };
 
 struct test_fail {
-  bool operator()(const tla::program_options &) { return true; }
+  bool operator()(const sof::program_options &) { return true; }
   static std::string desc() { return "a fail test"; }
 };
 
 struct test_error {
-  bool operator()(const tla::program_options &) {
+  bool operator()(const sof::program_options &) {
     try {
       throw std::runtime_error("test function raised an exception");
       return false;
@@ -36,7 +38,7 @@ struct test_error {
 int main(int argc, char **argv) {
 
   try {
-    tla::tester _test(argc, argv);
+    sof::tester _test(argc, argv);
     run_test(_test, test_ok);
     run_test(_test, test_fail);
     run_test(_test, test_error);

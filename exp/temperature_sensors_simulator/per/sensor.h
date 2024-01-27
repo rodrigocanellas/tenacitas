@@ -3,17 +3,17 @@
 
 #include <tuple>
 
-#include "../alg/dispatcher.h"
-#include "../evt/new_temperature.h"
-#include "../typ/sensor_id.h"
-#include "../typ/temperature.h"
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/new_temperature.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/dom/dat/sensor_id.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/dom/dat/temperature.h>
 
-#include <tenacitas.lib/src/alg/sleeping_loop.h>
+#include <tenacitas.lib/asy/sleeping_loop.h>
 
 namespace temperature_sensors_simulator::per {
 
 struct sensor {
-  using events_published = std::tuple<evt::new_temperature>;
+  using events_published = std::tuple<asy::new_temperature>;
   sensor() = delete;
   sensor(const sensor &) = delete;
   sensor(sensor &) = delete;
@@ -21,9 +21,9 @@ struct sensor {
   sensor &operator=(sensor &) = delete;
 
   template <typename t_time>
-  sensor(alg::dispatcher::ptr p_dispatcher, t_time p_interval,
-         typ::sensor_id p_sensor_id, typ::temperature p_initial,
-         typ::temperature p_increment)
+  sensor(asy::dispatcher::ptr p_dispatcher, t_time p_interval,
+         dom::sensor_id p_sensor_id, dom::temperature p_initial,
+         dom::temperature p_increment)
       : m_dispatcher(p_dispatcher), m_sensor_id(p_sensor_id),
         m_current(p_initial), m_increment(p_increment),
         m_sleeping_loop(
@@ -32,7 +32,7 @@ struct sensor {
                 std::lock_guard<std::mutex> _lock(m_mutex);
                 m_current += m_increment;
               }
-              m_dispatcher->publish<sensor, evt::new_temperature>(m_sensor_id,
+              m_dispatcher->publish<sensor, asy::new_temperature>(m_sensor_id,
                                                                   m_current);
             },
             p_interval) {}
@@ -59,19 +59,19 @@ struct sensor {
     return m_sensor_id != p_sensor.m_sensor_id;
   }
 
-  void reset_temperature(typ::temperature p_temperature) {
+  void reset_temperature(dom::temperature p_temperature) {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_current = p_temperature;
   }
 
-  typ::sensor_id get_id() const { return m_sensor_id; }
+  dom::sensor_id get_id() const { return m_sensor_id; }
 
 private:
-  alg::dispatcher::ptr m_dispatcher;
-  typ::sensor_id m_sensor_id;
-  typ::temperature m_current;
-  typ::temperature m_increment;
-  tla::sleeping_loop m_sleeping_loop;
+  asy::dispatcher::ptr m_dispatcher;
+  dom::sensor_id m_sensor_id;
+  dom::temperature m_current;
+  dom::temperature m_increment;
+  tenacitas::lib::asy::sleeping_loop m_sleeping_loop;
   std::mutex m_mutex;
 };
 

@@ -5,11 +5,11 @@
 
 #include <QMainWindow>
 
-#include "../../alg/dispatcher.h"
-#include "../../evt/add_sensor.h"
-#include "../../evt/new_temperature.h"
-#include "../../evt/remove_sensor.h"
-#include "../../evt/set_temperature.h"
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/add_sensor.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/new_temperature.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/remove_sensor.h>
+#include <tenacitas.lib/exp/temperature_sensors_simulator/asy/set_temperature.h>
 
 using namespace temperature_sensors_simulator;
 
@@ -23,17 +23,17 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  using events_subscribed = std::tuple<evt::new_temperature>;
+  using events_subscribed = std::tuple<asy::new_temperature>;
   using events_published =
-      std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
+      std::tuple<asy::add_sensor, asy::remove_sensor, asy::set_temperature>;
 
 public:
-  MainWindow(alg::dispatcher::ptr p_dispatcher, QWidget *parent = nullptr);
+  MainWindow(asy::dispatcher::ptr p_dispatcher, QWidget *parent = nullptr);
   ~MainWindow();
 
 private:
-  void on_new_temperature(evt::new_temperature &&);
-  int findRow(typ::sensor_id) const;
+  void on_new_temperature(asy::new_temperature &&);
+  int findRow(dom::sensor_id) const;
 
 private slots:
   void on_btnAddSensor_clicked();
@@ -41,7 +41,7 @@ private slots:
   void on_btnSetTemperature_clicked();
 
 private:
-  alg::dispatcher::ptr m_dispatcher;
+  asy::dispatcher::ptr m_dispatcher;
   Ui::MainWindow *ui;
   std::mutex m_mutex;
 };
