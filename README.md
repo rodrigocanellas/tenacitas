@@ -6,7 +6,8 @@ The `tenacitas.lib` also has the goal of suggesting a general structure for soft
 
 The macro structured is presented by the UML like diagram below followed by a brief text explanation:
 
-@startuml
+<div hidden>
+@startuml macrostruct
 
 hide empty members
 product <|-- tst
@@ -54,6 +55,10 @@ class docs
 
 @enduml
 
+```
+</div>
+
+![](macrostruct.svg)
 
 *Code categories*
 
