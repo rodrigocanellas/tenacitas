@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.1</span>
+   &#160;<span id="projectnumber">0.1.2</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -81,188 +81,190 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/db8/src_2alg_2dispatcher_8h.html">tenacitas.lib/src/alg/dispatcher.h</a>&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/src/alg/sleeping_loop.h</a>&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../df/d5c/asy_2dispatcher_8h.html">tenacitas.lib/asy/dispatcher.h</a>&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/asy/sleeping_loop.h</a>&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// type of value generated</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html">   20</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d6/d98/structtemperature.html">temperature</a> {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">   22</a></span>&#160;  <a class="code" href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">temperature</a>(<span class="keywordtype">float</span> p_value = 0.0) : value(p_value) {}</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">   23</a></span>&#160;  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                                  <span class="keyword">const</span> <a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;p_temp) {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;temperature = &quot;</span> &lt;&lt; p_temp.<a class="code" href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">value</a>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">return</span> p_out;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  }</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">   29</a></span>&#160;  <span class="keywordtype">float</span> value{0.0};</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// event published when all temperatures are received by the subscribers</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d7/dbc/structall__handled.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> {</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">   34</a></span>&#160;  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">operator&lt;&lt;</a>(std::ostream &amp;p_out, <span class="keyword">const</span> <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> &amp;) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;all_handled&quot;</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> p_out;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#aaf0f5fb965b1d2de13fe169b04bad5cb">   40</a></span>&#160;<span class="keyword">using</span> <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">dispatcher</a> = <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">tla::dispatcher&lt;temperature, all_handled&gt;</a>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">// type of value generated</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html">   22</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d6/d98/structtemperature.html">temperature</a> {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">   24</a></span>&#160;  <a class="code" href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">temperature</a>(<span class="keywordtype">float</span> p_value = 0.0) : value(p_value) {}</div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">   25</a></span>&#160;  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                                  <span class="keyword">const</span> <a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;p_temp) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;temperature = &quot;</span> &lt;&lt; p_temp.<a class="code" href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">value</a>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordflow">return</span> p_out;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">   31</a></span>&#160;  <span class="keywordtype">float</span> value{0.0};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">// event published when all temperatures are received by the subscribers</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="../../d7/dbc/structall__handled.html">   35</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> {</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">   36</a></span>&#160;  <span class="keyword">friend</span> std::ostream &amp;<a class="code" href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">operator&lt;&lt;</a>(std::ostream &amp;p_out, <span class="keyword">const</span> <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a> &amp;) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;all_handled&quot;</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> p_out;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  }</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">// simulates a temperature sensor generating &#39;temperature&#39; events</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html">   43</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a> {</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">   44</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">events_published</a> = std::tuple&lt;temperature&gt;;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="comment">// p_dispatcher is responsible for publishing &#39;temperature&#39; events to be</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="comment">// handled by object that subscribed for</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">//</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// p_max is the max number of &#39;temperature&#39; events to be published</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">   50</a></span>&#160;  <a class="code" href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">temperature_sensor</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      : m_dispatcher(p_dispatcher), m_max(p_max),</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        m_temperature_generator([this]() { generator(); }, m_interval) {}</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// starts to publish &#39;temperature&#39; events</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">   55</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">start</a>() { m_temperature_generator.start(); }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#a6d4589a7c0cc73d20b8c26443c00b8b8">   57</a></span>&#160;  <span class="keyword">static</span> constexpr uint64_t <span class="keywordtype">id</span>{1669763461862};</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#adf170f4aebe95861877335ce85fb08db">   42</a></span>&#160;<span class="keyword">using</span> <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html">dispatcher</a> = <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html">asy::dispatcher&lt;temperature, all_handled&gt;</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">// simulates a temperature sensor generating &#39;temperature&#39; events</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html">   45</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a> {</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">   46</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">events_published</a> = std::tuple&lt;temperature&gt;;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">// p_dispatcher is responsible for publishing &#39;temperature&#39; events to be</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// handled by object that subscribed for</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">//</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">// p_max is the max number of &#39;temperature&#39; events to be published</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">   52</a></span>&#160;  <a class="code" href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">temperature_sensor</a>(<a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;      : m_dispatcher(p_dispatcher), m_max(p_max),</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        m_temperature_generator([this]() { generator(); }, m_interval) {}</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// starts to publish &#39;temperature&#39; events</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">   57</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">start</a>() { m_temperature_generator.start(); }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="comment">// type for the asynchronous loop that will call the &#39;generator&#39; method</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">using</span> temperature_generator = <a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a>;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="comment">// function to be executed inside the sleeping loop, that will publish the</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="comment">// &#39;temperature&#39; events</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keywordtype">void</span> generator() {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">if</span> (m_counter &gt;= m_max) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="keywordflow">if</span> (!m_reported) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;all temperatures generated&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        m_reported = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    ++m_counter;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    m_temperature.value += 0.2;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    m_dispatcher-&gt;publish&lt;<a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a>, <a class="code" href="../../d6/d98/structtemperature.html">temperature</a>&gt;(m_temperature);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="comment">// publish/subscriber</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> m_dispatcher;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="comment">// counter which will be incremented by the function executed in the</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="comment">// sleeping loop</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  uint16_t m_counter{0};</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="comment">// max number of &#39;temperature&#39; events to be published</span></div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">const</span> uint16_t m_max;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="comment">// temperature to be sent</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <a class="code" href="../../d6/d98/structtemperature.html">temperature</a> m_temperature{23.1};</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="comment">// interval of execution of the sleeping loop</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">const</span> std::chrono::milliseconds m_interval{500ms};</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="comment">// asynchronous loop that will generate temperature at each m_interval</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  temperature_generator m_temperature_generator;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="comment">// to avoid writing more than one time that all the temperatures were</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="comment">// generated</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordtype">bool</span> m_reported{<span class="keyword">false</span>};</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;};</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">// subscriber for a &#39;temperature&#39; event</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html">  105</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a> {</div>
-<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">  106</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">events_published</a> = std::tuple&lt;all_handled&gt;;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">  108</a></span>&#160;  <a class="code" href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">temperature_subscriber</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;      : m_dispatcher(p_dispatcher), m_max(p_max) {}</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">  111</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">operator()</a>(<a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;&amp;p_temperature) {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    std::cout &lt;&lt; ++m_counter &lt;&lt; <span class="stringliteral">&quot; - &quot;</span> &lt;&lt; p_temperature &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    std::this_thread::sleep_for(1s);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordflow">if</span> ((m_counter) &gt;= m_max) {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;      m_dispatcher-&gt;publish&lt;<a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>, <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a>&gt;();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> m_dispatcher;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  uint16_t m_max{0};</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  uint16_t m_counter{0};</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;};</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html">  126</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../de/d5b/structstart.html">start</a> {</div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">  127</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">events_subscribed</a> = std::tuple&lt;all_handled, temperature&gt;;</div>
-<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">  128</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">operator()</a>() {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;starting&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="comment">// publisher/subscriber</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">dispatcher::ptr</a> _dispatcher{<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#a68b974afe96da1f39bd34e1c28ffde86">dispatcher::create</a>()};</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="comment">// condition variable and mutex to wait for the sleeping loop to finish</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    std::condition_variable _cond;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    std::mutex _mutex;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="comment">// number of temperatures to be generated</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">const</span> uint16_t _max{20};</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="comment">// adding the subscriber for temperatures sent to a publishing of</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="comment">// temperature</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    _dispatcher-&gt;subscribe&lt;<a class="code" href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">start</a>, <a class="code" href="../../d6/d98/structtemperature.html">temperature</a>&gt;(</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>{_dispatcher, _max});</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="comment">// declaring the temperature sensor</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a> _sensor{_dispatcher, _max};</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="comment">// subscriber for the all_handled event signals when all the temperatures</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="comment">// were handled</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    _dispatcher-&gt;subscribe&lt;<a class="code" href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">start</a>, <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a>&gt;([&amp;](<span class="keyword">auto</span>) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      std::cout &lt;&lt; <span class="stringliteral">&quot;all temperatures handled&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      _cond.notify_one();</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    });</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// starting the sensor</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    _sensor.start();</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="comment">// waits for the temperature subscriber to publish that the expected number</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="comment">// of temperatures was generated</span></div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    std::unique_lock&lt;std::mutex&gt; _lock(_mutex);</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    _cond.wait(_lock);</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  }</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;};</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">  167</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>() {</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  std::cout &lt;&lt; <span class="stringliteral">&quot;main&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <a class="code" href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">start</a>()();</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
-<div class="ttc" id="anamespaceuix_html_a10d8a587e18b66a76068380f27f0b491"><div class="ttname"><a href="../../d5/d36/namespaceuix.html#a10d8a587e18b66a76068380f27f0b491">uix::start</a></div><div class="ttdeci">bool start(const cfg::options &amp;p_options, alg::dispatcher::ptr p_dispatcher, std::function&lt; bool(alg::dispatcher::ptr, const typ::generators_definitions &amp;, const typ::publishings_definitions &amp;)&gt; p_bus)</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d92/uix_8h_source.html#l00028">uix.h:28</a></div></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="../../d7/d54/structtemperature__sensor.html#a6d4589a7c0cc73d20b8c26443c00b8b8">   59</a></span>&#160;  <span class="keyword">static</span> constexpr uint64_t <span class="keywordtype">id</span>{1669763461862};</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="comment">// type for the asynchronous loop that will call the &#39;generator&#39; method</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">using</span> temperature_generator = asy::sleeping_loop;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// function to be executed inside the sleeping loop, that will publish the</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="comment">// &#39;temperature&#39; events</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keywordtype">void</span> generator() {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">if</span> (m_counter &gt;= m_max) {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keywordflow">if</span> (!m_reported) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        std::cout &lt;&lt; <span class="stringliteral">&quot;all temperatures generated&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        m_reported = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    ++m_counter;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    m_temperature.value += 0.2;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    m_dispatcher-&gt;publish&lt;<a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a>, <a class="code" href="../../d6/d98/structtemperature.html">temperature</a>&gt;(m_temperature);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="comment">// publish/subscriber</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">dispatcher::ptr</a> m_dispatcher;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="comment">// counter which will be incremented by the function executed in the</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="comment">// sleeping loop</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  uint16_t m_counter{0};</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="comment">// max number of &#39;temperature&#39; events to be published</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keyword">const</span> uint16_t m_max;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="comment">// temperature to be sent</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <a class="code" href="../../d6/d98/structtemperature.html">temperature</a> m_temperature{23.1};</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="comment">// interval of execution of the sleeping loop</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">const</span> std::chrono::milliseconds m_interval{500ms};</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="comment">// asynchronous loop that will generate temperature at each m_interval</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  temperature_generator m_temperature_generator;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="comment">// to avoid writing more than one time that all the temperatures were</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="comment">// generated</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordtype">bool</span> m_reported{<span class="keyword">false</span>};</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;};</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">// subscriber for a &#39;temperature&#39; event</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html">  107</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a> {</div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">  108</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">events_published</a> = std::tuple&lt;all_handled&gt;;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">  110</a></span>&#160;  <a class="code" href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">temperature_subscriber</a>(<a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">dispatcher::ptr</a> p_dispatcher, uint16_t p_max)</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      : m_dispatcher(p_dispatcher), m_max(p_max) {}</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">  113</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">operator()</a>(<a class="code" href="../../d6/d98/structtemperature.html">temperature</a> &amp;&amp;p_temperature) {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    std::cout &lt;&lt; ++m_counter &lt;&lt; <span class="stringliteral">&quot; - &quot;</span> &lt;&lt; p_temperature &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    std::this_thread::sleep_for(1s);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">if</span> ((m_counter) &gt;= m_max) {</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;      m_dispatcher-&gt;publish&lt;<a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>, <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a>&gt;();</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">dispatcher::ptr</a> m_dispatcher;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  uint16_t m_max{0};</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  uint16_t m_counter{0};</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;};</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html">  128</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../de/d5b/structstart.html">start</a> {</div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">  129</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">events_subscribed</a> = std::tuple&lt;all_handled, temperature&gt;;</div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">  130</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">operator()</a>() {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;starting&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="comment">// publisher/subscriber</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">dispatcher::ptr</a> _dispatcher{<a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a7198a6fcc742fb898255eec107d31094">dispatcher::create</a>()};</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="comment">// condition variable and mutex to wait for the sleeping loop to finish</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    std::condition_variable _cond;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    std::mutex _mutex;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="comment">// number of temperatures to be generated</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">const</span> uint16_t _max{20};</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    <span class="comment">// adding the subscriber for temperatures sent to a publishing of</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    <span class="comment">// temperature</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    _dispatcher-&gt;subscribe&lt;<a class="code" href="../../d5/d36/namespaceuix.html#aa2d356425ba87b725b911124ae7f9406">start</a>, <a class="code" href="../../d6/d98/structtemperature.html">temperature</a>&gt;(</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <a class="code" href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a>{_dispatcher, _max});</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="comment">// declaring the temperature sensor</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <a class="code" href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a> _sensor{_dispatcher, _max};</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="comment">// subscriber for the all_handled event signals when all the temperatures</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="comment">// were handled</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    _dispatcher-&gt;subscribe&lt;<a class="code" href="../../d5/d36/namespaceuix.html#aa2d356425ba87b725b911124ae7f9406">start</a>, <a class="code" href="../../d7/dbc/structall__handled.html">all_handled</a>&gt;([&amp;](<span class="keyword">auto</span>) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      std::cout &lt;&lt; <span class="stringliteral">&quot;all temperatures handled&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      _cond.notify_one();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    });</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="comment">// starting the sensor</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    _sensor.start();</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="comment">// waits for the temperature subscriber to publish that the expected number</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="comment">// of temperatures was generated</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    std::unique_lock&lt;std::mutex&gt; _lock(_mutex);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    _cond.wait(_lock);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;};</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">  169</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a>() {</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  std::cout &lt;&lt; <span class="stringliteral">&quot;main&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <a class="code" href="../../d5/d36/namespaceuix.html#aa2d356425ba87b725b911124ae7f9406">start</a>()();</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;}</div>
+<div class="ttc" id="aasy_2dispatcher_8h_html"><div class="ttname"><a href="../../df/d5c/asy_2dispatcher_8h.html">dispatcher.h</a></div></div>
+<div class="ttc" id="aexp_2dispatcher__000_2main_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00169">main.cpp:169</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_html"><div class="ttname"><a href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a></div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00035">dispatcher.h:35</a></div></div>
+<div class="ttc" id="anamespaceuix_html_aa2d356425ba87b725b911124ae7f9406"><div class="ttname"><a href="../../d5/d36/namespaceuix.html#aa2d356425ba87b725b911124ae7f9406">uix::start</a></div><div class="ttdeci">bool start(const cfg::options &amp;p_options, asy::dispatcher::ptr p_dispatcher, std::function&lt; bool(asy::dispatcher::ptr, const dom::generators_definitions &amp;, const dom::publishings_definitions &amp;)&gt; p_bus)</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d92/uix_8h_source.html#l00019">uix.h:19</a></div></div>
 <div class="ttc" id="asleeping__loop_8h_html"><div class="ttname"><a href="../../dd/db8/sleeping__loop_8h.html">sleeping_loop.h</a></div></div>
-<div class="ttc" id="asrc_2alg_2dispatcher_8h_html"><div class="ttname"><a href="../../d7/db8/src_2alg_2dispatcher_8h.html">dispatcher.h</a></div></div>
-<div class="ttc" id="astructall__handled_html"><div class="ttname"><a href="../../d7/dbc/structall__handled.html">all_handled</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00033">main.cpp:33</a></div></div>
-<div class="ttc" id="astructall__handled_html_ac6de11c71b2466ec6ac54320983540ed"><div class="ttname"><a href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">all_handled::operator&lt;&lt;</a></div><div class="ttdeci">friend std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const all_handled &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00034">main.cpp:34</a></div></div>
-<div class="ttc" id="astructstart_html"><div class="ttname"><a href="../../de/d5b/structstart.html">start</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00126">main.cpp:126</a></div></div>
-<div class="ttc" id="astructstart_html_aa07ef34b73fcab192ff6e9f7cc397158"><div class="ttname"><a href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">start::operator()</a></div><div class="ttdeci">void operator()()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00128">main.cpp:128</a></div></div>
-<div class="ttc" id="astructstart_html_aab7cfcc6705baa1e2a348fb0f6f3f9b9"><div class="ttname"><a href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">start::events_subscribed</a></div><div class="ttdeci">std::tuple&lt; all_handled, temperature &gt; events_subscribed</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00127">main.cpp:127</a></div></div>
-<div class="ttc" id="astructtemperature__sensor_html"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00043">main.cpp:43</a></div></div>
-<div class="ttc" id="astructtemperature__sensor_html_a787b85bc2129e72ed240a459ce713aba"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">temperature_sensor::temperature_sensor</a></div><div class="ttdeci">temperature_sensor(dispatcher::ptr p_dispatcher, uint16_t p_max)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00050">main.cpp:50</a></div></div>
-<div class="ttc" id="astructtemperature__sensor_html_aa41396631dc4cfb2b9c660960e711bc1"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">temperature_sensor::events_published</a></div><div class="ttdeci">std::tuple&lt; temperature &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00044">main.cpp:44</a></div></div>
-<div class="ttc" id="astructtemperature__sensor_html_ab2feb59dc84080d606db728edb7969fa"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">temperature_sensor::start</a></div><div class="ttdeci">void start()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00055">main.cpp:55</a></div></div>
-<div class="ttc" id="astructtemperature__subscriber_html"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00105">main.cpp:105</a></div></div>
-<div class="ttc" id="astructtemperature__subscriber_html_a687c9e1ab39866158e8503d853ca4bf1"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">temperature_subscriber::events_published</a></div><div class="ttdeci">std::tuple&lt; all_handled &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00106">main.cpp:106</a></div></div>
-<div class="ttc" id="astructtemperature__subscriber_html_aac79ae149f93ecea0ce8f2c96976a0db"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">temperature_subscriber::operator()</a></div><div class="ttdeci">void operator()(temperature &amp;&amp;p_temperature)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00111">main.cpp:111</a></div></div>
-<div class="ttc" id="astructtemperature__subscriber_html_afd7ccdd89314915972979f9bacfa7564"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">temperature_subscriber::temperature_subscriber</a></div><div class="ttdeci">temperature_subscriber(dispatcher::ptr p_dispatcher, uint16_t p_max)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00108">main.cpp:108</a></div></div>
-<div class="ttc" id="astructtemperature_html"><div class="ttname"><a href="../../d6/d98/structtemperature.html">temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00020">main.cpp:20</a></div></div>
-<div class="ttc" id="astructtemperature_html_a17bba4a61371780304e42b2cc907b477"><div class="ttname"><a href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">temperature::temperature</a></div><div class="ttdeci">temperature(float p_value=0.0)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00022">main.cpp:22</a></div></div>
-<div class="ttc" id="astructtemperature_html_ac3d2a9ab0a7809f15b158dd41cc9e664"><div class="ttname"><a href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">temperature::operator&lt;&lt;</a></div><div class="ttdeci">friend std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const temperature &amp;p_temp)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00023">main.cpp:23</a></div></div>
-<div class="ttc" id="astructtemperature_html_af34a3ecf1a96305f339aae370f97f78d"><div class="ttname"><a href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">temperature::value</a></div><div class="ttdeci">float value</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00029">main.cpp:29</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html">tenacitas::lib::alg::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00094">dispatcher.h:94</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_a68b974afe96da1f39bd34e1c28ffde86"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#a68b974afe96da1f39bd34e1c28ffde86">tenacitas::lib::alg::dispatcher::create</a></div><div class="ttdeci">static ptr create()</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00100">dispatcher.h:100</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_abfc62a29586fdb49fa3eecd158b5b825"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">tenacitas::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tenacitas::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
-<div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
+<div class="ttc" id="astructall__handled_html"><div class="ttname"><a href="../../d7/dbc/structall__handled.html">all_handled</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00035">main.cpp:35</a></div></div>
+<div class="ttc" id="astructall__handled_html_ac6de11c71b2466ec6ac54320983540ed"><div class="ttname"><a href="../../d7/dbc/structall__handled.html#ac6de11c71b2466ec6ac54320983540ed">all_handled::operator&lt;&lt;</a></div><div class="ttdeci">friend std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const all_handled &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00036">main.cpp:36</a></div></div>
+<div class="ttc" id="astructstart_html"><div class="ttname"><a href="../../de/d5b/structstart.html">start</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00128">main.cpp:128</a></div></div>
+<div class="ttc" id="astructstart_html_aa07ef34b73fcab192ff6e9f7cc397158"><div class="ttname"><a href="../../de/d5b/structstart.html#aa07ef34b73fcab192ff6e9f7cc397158">start::operator()</a></div><div class="ttdeci">void operator()()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00130">main.cpp:130</a></div></div>
+<div class="ttc" id="astructstart_html_aab7cfcc6705baa1e2a348fb0f6f3f9b9"><div class="ttname"><a href="../../de/d5b/structstart.html#aab7cfcc6705baa1e2a348fb0f6f3f9b9">start::events_subscribed</a></div><div class="ttdeci">std::tuple&lt; all_handled, temperature &gt; events_subscribed</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00129">main.cpp:129</a></div></div>
+<div class="ttc" id="astructtemperature__sensor_html"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html">temperature_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00045">main.cpp:45</a></div></div>
+<div class="ttc" id="astructtemperature__sensor_html_a787b85bc2129e72ed240a459ce713aba"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#a787b85bc2129e72ed240a459ce713aba">temperature_sensor::temperature_sensor</a></div><div class="ttdeci">temperature_sensor(dispatcher::ptr p_dispatcher, uint16_t p_max)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00052">main.cpp:52</a></div></div>
+<div class="ttc" id="astructtemperature__sensor_html_aa41396631dc4cfb2b9c660960e711bc1"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#aa41396631dc4cfb2b9c660960e711bc1">temperature_sensor::events_published</a></div><div class="ttdeci">std::tuple&lt; temperature &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00046">main.cpp:46</a></div></div>
+<div class="ttc" id="astructtemperature__sensor_html_ab2feb59dc84080d606db728edb7969fa"><div class="ttname"><a href="../../d7/d54/structtemperature__sensor.html#ab2feb59dc84080d606db728edb7969fa">temperature_sensor::start</a></div><div class="ttdeci">void start()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00057">main.cpp:57</a></div></div>
+<div class="ttc" id="astructtemperature__subscriber_html"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html">temperature_subscriber</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00107">main.cpp:107</a></div></div>
+<div class="ttc" id="astructtemperature__subscriber_html_a687c9e1ab39866158e8503d853ca4bf1"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#a687c9e1ab39866158e8503d853ca4bf1">temperature_subscriber::events_published</a></div><div class="ttdeci">std::tuple&lt; all_handled &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00108">main.cpp:108</a></div></div>
+<div class="ttc" id="astructtemperature__subscriber_html_aac79ae149f93ecea0ce8f2c96976a0db"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#aac79ae149f93ecea0ce8f2c96976a0db">temperature_subscriber::operator()</a></div><div class="ttdeci">void operator()(temperature &amp;&amp;p_temperature)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00113">main.cpp:113</a></div></div>
+<div class="ttc" id="astructtemperature__subscriber_html_afd7ccdd89314915972979f9bacfa7564"><div class="ttname"><a href="../../dc/d23/structtemperature__subscriber.html#afd7ccdd89314915972979f9bacfa7564">temperature_subscriber::temperature_subscriber</a></div><div class="ttdeci">temperature_subscriber(dispatcher::ptr p_dispatcher, uint16_t p_max)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00110">main.cpp:110</a></div></div>
+<div class="ttc" id="astructtemperature_html"><div class="ttname"><a href="../../d6/d98/structtemperature.html">temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00022">main.cpp:22</a></div></div>
+<div class="ttc" id="astructtemperature_html_a17bba4a61371780304e42b2cc907b477"><div class="ttname"><a href="../../d6/d98/structtemperature.html#a17bba4a61371780304e42b2cc907b477">temperature::temperature</a></div><div class="ttdeci">temperature(float p_value=0.0)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00024">main.cpp:24</a></div></div>
+<div class="ttc" id="astructtemperature_html_ac3d2a9ab0a7809f15b158dd41cc9e664"><div class="ttname"><a href="../../d6/d98/structtemperature.html#ac3d2a9ab0a7809f15b158dd41cc9e664">temperature::operator&lt;&lt;</a></div><div class="ttdeci">friend std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const temperature &amp;p_temp)</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00025">main.cpp:25</a></div></div>
+<div class="ttc" id="astructtemperature_html_af34a3ecf1a96305f339aae370f97f78d"><div class="ttname"><a href="../../d6/d98/structtemperature.html#af34a3ecf1a96305f339aae370f97f78d">temperature::value</a></div><div class="ttdeci">float value</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00031">main.cpp:31</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html">tenacitas::lib::asy::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00095">dispatcher.h:95</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html_a7198a6fcc742fb898255eec107d31094"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a7198a6fcc742fb898255eec107d31094">tenacitas::lib::asy::dispatcher::create</a></div><div class="ttdeci">static ptr create()</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00101">dispatcher.h:101</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html_a86c269d0a703f9c01d8d9954059d9b9b"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">tenacitas::lib::asy::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00097">dispatcher.h:97</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,7 +1,13 @@
-<map id="/home/rodrigo/development/tenacitas.lib/src/alg/sleeping_loop.h" name="/home/rodrigo/development/tenacitas.lib/src/alg/sleeping_loop.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,208,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="8,117,69,143"/>
-<area shape="rect" id="node3" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="93,109,256,151"/>
-<area shape="rect" id="node4" title=" " alt="" coords="92,199,159,225"/>
-<area shape="rect" id="node5" title=" " alt="" coords="183,199,263,225"/>
+<map id="/home/rodrigo/development/tenacitas.lib/asy/sleeping_loop.h" name="/home/rodrigo/development/tenacitas.lib/asy/sleeping_loop.h">
+<area shape="rect" id="node1" title=" " alt="" coords="84,5,323,47"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,102,92,129"/>
+<area shape="rect" id="node3" href="$df/db2/sof_2id_8h.html" title=" " alt="" coords="357,102,511,129"/>
+<area shape="rect" id="node11" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="116,95,291,136"/>
+<area shape="rect" id="node4" title=" " alt="" coords="149,184,215,211"/>
+<area shape="rect" id="node5" title=" " alt="" coords="240,184,311,211"/>
+<area shape="rect" id="node6" title=" " alt="" coords="335,184,402,211"/>
+<area shape="rect" id="node7" title=" " alt="" coords="426,184,485,211"/>
+<area shape="rect" id="node8" title=" " alt="" coords="509,184,589,211"/>
+<area shape="rect" id="node9" title=" " alt="" coords="613,184,671,211"/>
+<area shape="rect" id="node10" title=" " alt="" coords="695,184,759,211"/>
 </map>

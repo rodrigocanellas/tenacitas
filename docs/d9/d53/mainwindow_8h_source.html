@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.1</span>
+   &#160;<span id="projectnumber">0.1.2</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -79,11 +79,11 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;QMainWindow&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;../../alg/dispatcher.h&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;../../evt/add_sensor.h&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &quot;../../evt/new_temperature.h&quot;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;../../evt/remove_sensor.h&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;../../evt/set_temperature.h&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/d9d/exp_2temperature__sensors__simulator_2asy_2dispatcher_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/d6a/add__sensor_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/add_sensor.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/d4a/new__temperature_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/new_temperature.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d9/d14/remove__sensor_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/remove_sensor.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d6/d33/set__temperature_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/set_temperature.h</a>&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a>;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
@@ -97,17 +97,17 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  Q_OBJECT</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#a8afde9f47675cada2e350cb271d89a6c">   26</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d9/dc6/class_main_window.html#a8afde9f47675cada2e350cb271d89a6c">events_subscribed</a> = std::tuple&lt;evt::new_temperature&gt;;</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#a10f73f3867e425d0a9a448e632885057">   27</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d9/dc6/class_main_window.html#a10f73f3867e425d0a9a448e632885057">events_published</a> =</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      std::tuple&lt;evt::add_sensor, evt::remove_sensor, evt::set_temperature&gt;;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#ada845188007973fc4349418a19891322">   26</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d9/dc6/class_main_window.html#ada845188007973fc4349418a19891322">events_subscribed</a> = std::tuple&lt;asy::new_temperature&gt;;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#a1b2b40f031ed4333376c017b7b8dc478">   27</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d9/dc6/class_main_window.html#a1b2b40f031ed4333376c017b7b8dc478">events_published</a> =</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      std::tuple&lt;asy::add_sensor, asy::remove_sensor, asy::set_temperature&gt;;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>(<a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">alg::dispatcher::ptr</a> p_dispatcher, QWidget *parent = <span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>(<a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">asy::dispatcher::ptr</a> p_dispatcher, QWidget *parent = <span class="keyword">nullptr</span>);</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  ~<a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>();</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span> on_new_temperature(evt::new_temperature &amp;&amp;);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">int</span> findRow(<a class="code" href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a1b07f3ad47513bd1a6d2428d15ed8134">typ::sensor_id</a>) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordtype">void</span> on_new_temperature(asy::new_temperature &amp;&amp;);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">int</span> findRow(<a class="code" href="../../df/d3c/namespacetemperature__sensors__simulator_1_1dom.html#ad47ef375d9a7aa27cb6bbfb10236cb2f">dom::sensor_id</a>) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">private</span> slots:</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">void</span> on_btnAddSensor_clicked();</div>
@@ -115,18 +115,23 @@ $(function() {
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordtype">void</span> on_btnSetTemperature_clicked();</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">alg::dispatcher::ptr</a> m_dispatcher;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">asy::dispatcher::ptr</a> m_dispatcher;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  Ui::MainWindow *ui;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  std::mutex m_mutex;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;};</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// MAINWINDOW_H</span></div>
+<div class="ttc" id="aadd__sensor_8h_html"><div class="ttname"><a href="../../dd/d6a/add__sensor_8h.html">add_sensor.h</a></div></div>
 <div class="ttc" id="aclass_main_window_html"><div class="ttname"><a href="../../d9/dc6/class_main_window.html">MainWindow</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00022">mainwindow.h:22</a></div></div>
-<div class="ttc" id="aclass_main_window_html_a10f73f3867e425d0a9a448e632885057"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#a10f73f3867e425d0a9a448e632885057">MainWindow::events_published</a></div><div class="ttdeci">std::tuple&lt; evt::add_sensor, evt::remove_sensor, evt::set_temperature &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00027">mainwindow.h:28</a></div></div>
-<div class="ttc" id="aclass_main_window_html_a8afde9f47675cada2e350cb271d89a6c"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#a8afde9f47675cada2e350cb271d89a6c">MainWindow::events_subscribed</a></div><div class="ttdeci">std::tuple&lt; evt::new_temperature &gt; events_subscribed</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00026">mainwindow.h:26</a></div></div>
+<div class="ttc" id="aclass_main_window_html_a1b2b40f031ed4333376c017b7b8dc478"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#a1b2b40f031ed4333376c017b7b8dc478">MainWindow::events_published</a></div><div class="ttdeci">std::tuple&lt; asy::add_sensor, asy::remove_sensor, asy::set_temperature &gt; events_published</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00027">mainwindow.h:28</a></div></div>
+<div class="ttc" id="aclass_main_window_html_ada845188007973fc4349418a19891322"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#ada845188007973fc4349418a19891322">MainWindow::events_subscribed</a></div><div class="ttdeci">std::tuple&lt; asy::new_temperature &gt; events_subscribed</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00026">mainwindow.h:26</a></div></div>
+<div class="ttc" id="aexp_2temperature__sensors__simulator_2asy_2dispatcher_8h_html"><div class="ttname"><a href="../../d1/d9d/exp_2temperature__sensors__simulator_2asy_2dispatcher_8h.html">dispatcher.h</a></div></div>
 <div class="ttc" id="anamespace_ui_html"><div class="ttname"><a href="../../dc/df0/namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00017">mainwindow.h:17</a></div></div>
-<div class="ttc" id="anamespacetemperature__sensors__simulator_1_1typ_html_a1b07f3ad47513bd1a6d2428d15ed8134"><div class="ttname"><a href="../../d1/d84/namespacetemperature__sensors__simulator_1_1typ.html#a1b07f3ad47513bd1a6d2428d15ed8134">temperature_sensors_simulator::typ::sensor_id</a></div><div class="ttdeci">uint16_t sensor_id</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d8c/sensor__id_8h_source.html#l00008">sensor_id.h:8</a></div></div>
-<div class="ttc" id="anamespacetemperature__sensors__simulator_html"><div class="ttname"><a href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d0/ddc/exp_2temperature__sensors__simulator_2alg_2dispatcher_8h_source.html#l00013">dispatcher.h:13</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1dispatcher_html_abfc62a29586fdb49fa3eecd158b5b825"><div class="ttname"><a href="../../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#abfc62a29586fdb49fa3eecd158b5b825">tenacitas::lib::alg::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00096">dispatcher.h:96</a></div></div>
+<div class="ttc" id="anamespacetemperature__sensors__simulator_1_1dom_html_ad47ef375d9a7aa27cb6bbfb10236cb2f"><div class="ttname"><a href="../../df/d3c/namespacetemperature__sensors__simulator_1_1dom.html#ad47ef375d9a7aa27cb6bbfb10236cb2f">temperature_sensors_simulator::dom::sensor_id</a></div><div class="ttdeci">uint16_t sensor_id</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d8c/sensor__id_8h_source.html#l00008">sensor_id.h:8</a></div></div>
+<div class="ttc" id="anamespacetemperature__sensors__simulator_html"><div class="ttname"><a href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d6a/add__sensor_8h_source.html#l00008">add_sensor.h:8</a></div></div>
+<div class="ttc" id="anew__temperature_8h_html"><div class="ttname"><a href="../../d7/d4a/new__temperature_8h.html">new_temperature.h</a></div></div>
+<div class="ttc" id="aremove__sensor_8h_html"><div class="ttname"><a href="../../d9/d14/remove__sensor_8h.html">remove_sensor.h</a></div></div>
+<div class="ttc" id="aset__temperature_8h_html"><div class="ttname"><a href="../../d6/d33/set__temperature_8h.html">set_temperature.h</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html_a86c269d0a703f9c01d8d9954059d9b9b"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">tenacitas::lib::asy::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00097">dispatcher.h:97</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

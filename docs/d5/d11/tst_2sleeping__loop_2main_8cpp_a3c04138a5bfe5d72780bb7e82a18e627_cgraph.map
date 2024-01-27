@@ -1,5 +1,5 @@
 <map id="main" name="main">
 <area shape="rect" id="node1" title=" " alt="" coords="5,20,60,47"/>
-<area shape="rect" id="node2" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8af63561d18161e545afcd293cdd9f9f" title="Sets the global log level as &#39;debug&#39;." alt="" coords="108,13,244,54"/>
-<area shape="rect" id="node3" href="$de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a8808a21f675184e3669b2f011bf1e5a4" title=" " alt="" coords="292,5,460,61"/>
+<area shape="rect" id="node2" href="$d1/d23/namespacetenacitas_1_1lib_1_1log.html#ae7e751f1c30734728117f339620a9b30" title="Sets the global log level as &#39;debug&#39;." alt="" coords="108,13,244,54"/>
+<area shape="rect" id="node3" href="$d6/dc5/classtenacitas_1_1lib_1_1log_1_1internal_1_1log__wrapper.html#a61e9dc8eead0b6c8f62c8dc2b2ece2e3" title=" " alt="" coords="292,5,460,61"/>
 </map>

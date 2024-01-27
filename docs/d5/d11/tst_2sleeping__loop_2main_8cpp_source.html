@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.1</span>
+   &#160;<span id="projectnumber">0.1.2</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -82,210 +82,212 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/d7f/log_8h.html">tenacitas.lib/src/alg/log.h</a>&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tenacitas.lib/src/alg/program_options.h</a>&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/src/alg/sleeping_loop.h</a>&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d0/d2b/tester_8h.html">tenacitas.lib/src/alg/tester.h</a>&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/db8/sleeping__loop_8h.html">tenacitas.lib/asy/sleeping_loop.h</a>&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d7/d7f/log_8h.html">tenacitas.lib/log/log.h</a>&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tenacitas.lib/sof/program_options.h</a>&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d0/d2b/tester_8h.html">tenacitas.lib/sof/tester.h</a>&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">using namespace </span>std::chrono_literals;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html">   21</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a> {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">   23</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">desc</a>() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;&#39;sleeping_loop&#39; creation test&quot;</span>; }</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html#a18614e0b2e6afeacd7799d662a945754">   25</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d3/de2/structsleeping__loop__000.html#a18614e0b2e6afeacd7799d662a945754">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tla::program_options</a> &amp;) {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">using</span> loop = <a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">auto</span> _operation = []() -&gt; <span class="keywordtype">void</span> { <a class="code" href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a>(<span class="stringliteral">&quot;loop1&quot;</span>); };</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    loop _loop(_operation, 1s);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html">   37</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a> {</div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a08f361e1e59fde1f8d15780d06b74b09">   38</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">loop</a> = <a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tla::sleeping_loop</a>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a>;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html">   22</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a> {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">   24</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">desc</a>() {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&quot;&#39;asy::sleeping_loop&#39; creation test&quot;</span>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  }</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="../../d3/de2/structsleeping__loop__000.html#a1824a1c84cb76c3e48ddff405feeaf05">   28</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d3/de2/structsleeping__loop__000.html#a1824a1c84cb76c3e48ddff405feeaf05">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html">sof::program_options</a> &amp;) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">using</span> loop = asy::sleeping_loop;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">auto</span> _operation = []() -&gt; <span class="keywordtype">void</span> { <a class="code" href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a>(<span class="stringliteral">&quot;loop1&quot;</span>); };</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    loop _loop(_operation, 1s);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;};</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">   40</a></span>&#160;  <span class="keyword">typedef</span> uint16_t <a class="code" href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">value</a>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">   42</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">desc</a>() {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    std::stringstream _stream;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    _stream &lt;&lt; <span class="stringliteral">&quot;&#39;sleeping_loop&#39; with interval of &quot;</span> &lt;&lt; m_interval_secs</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;s, increments a counter, and just prints.&quot;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;\nCounter should be &quot;</span> &lt;&lt; m_amount;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#af341498a93645ad717f4cc795e2c46fa">   51</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d8/df7/structsleeping__loop__001.html#af341498a93645ad717f4cc795e2c46fa">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tla::program_options</a> &amp;) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    operation1 _op(&amp;m_cond);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">loop</a> _loop([&amp;_op]() { <span class="keywordflow">return</span> _op(); },</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;               std::chrono::seconds(m_interval_secs));</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html">   40</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a> {</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#ae81e26effab74ba40058d8fc7c19d9ed">   41</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../d8/df7/structsleeping__loop__001.html#ae81e26effab74ba40058d8fc7c19d9ed">loop</a> = asy::sleeping_loop;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">   43</a></span>&#160;  <span class="keyword">typedef</span> uint16_t <a class="code" href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">value</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">   45</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">desc</a>() {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    std::stringstream _stream;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    _stream &lt;&lt; <span class="stringliteral">&quot;&#39;asy::sleeping_loop&#39; with interval of &quot;</span> &lt;&lt; m_interval_secs</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;s, increments a counter, and just prints.&quot;</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;\nCounter should be &quot;</span> &lt;&lt; m_amount;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordflow">return</span> _stream.str();</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="../../d8/df7/structsleeping__loop__001.html#a108a527d8f228b7625d6aa4128a95ac8">   54</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d8/df7/structsleeping__loop__001.html#a108a527d8f228b7625d6aa4128a95ac8">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html">sof::program_options</a> &amp;) {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    operation1 _op(&amp;m_cond);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    _loop.<a class="code" href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#a9e159760c5b29a8eca126ed4520b28e0">start</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      std::unique_lock&lt;std::mutex&gt; _lock(m_mutex);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      m_cond.wait(_lock, [&amp;_op]() -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> _op.counter &gt;= m_amount; });</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    _loop.stop();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordflow">if</span> (_op.counter != m_amount) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <a class="code" href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a>(<span class="stringliteral">&quot;counter should be &quot;</span>, m_amount, <span class="stringliteral">&quot;, but it is &quot;</span>, _op.counter);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <a class="code" href="../../d7/d7f/log_8h.html#a87581b66a5c8e2801b6ecf1480b04637">TNCT_LOG_INF</a>(<span class="stringliteral">&quot;counter should be &quot;</span>, m_amount, <span class="stringliteral">&quot;, and it really is &quot;</span>,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                 _op.counter);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="../../d8/df7/structsleeping__loop__001.html#ae81e26effab74ba40058d8fc7c19d9ed">loop</a> _loop([&amp;_op]() { <span class="keywordflow">return</span> _op(); },</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;               std::chrono::seconds(m_interval_secs));</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    _loop.start();</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      std::unique_lock&lt;std::mutex&gt; _lock(m_mutex);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      m_cond.wait(_lock, [&amp;_op]() -&gt; <span class="keywordtype">bool</span> { <span class="keywordflow">return</span> _op.counter &gt;= m_amount; });</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    _loop.stop();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">if</span> (_op.counter != m_amount) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <a class="code" href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a>(<span class="stringliteral">&quot;counter should be &quot;</span>, m_amount, <span class="stringliteral">&quot;, but it is &quot;</span>, _op.counter);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <a class="code" href="../../d7/d7f/log_8h.html#a87581b66a5c8e2801b6ecf1480b04637">TNCT_LOG_INF</a>(<span class="stringliteral">&quot;counter should be &quot;</span>, m_amount, <span class="stringliteral">&quot;, and it really is &quot;</span>,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                 _op.counter);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keyword">struct </span>operation1 {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    operation1(std::condition_variable *p_cond) : m_cond(p_cond) {}</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> operator()() {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keywordflow">if</span> (counter &lt; m_amount) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        ++counter;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <a class="code" href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a>(<span class="stringliteral">&quot;counter = &quot;</span>, counter);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        std::this_thread::sleep_for(m_sleep);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        m_cond-&gt;notify_one();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    value counter{0};</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    std::condition_variable *m_cond;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  };</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  std::mutex m_mutex;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  std::condition_variable m_cond;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keyword">static</span> constexpr value m_interval_secs{1};</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keyword">static</span> constexpr value m_amount{14};</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keyword">static</span> constexpr std::chrono::milliseconds m_sleep{200};</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;};</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">// struct sleeping_loop_002 {</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">//    static std::string desc() { return &quot;&quot;; }</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keyword">struct </span>operation1 {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    operation1(std::condition_variable *p_cond) : m_cond(p_cond) {}</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> operator()() {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      <span class="keywordflow">if</span> (counter &lt; m_amount) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        ++counter;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <a class="code" href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a>(<span class="stringliteral">&quot;counter = &quot;</span>, counter);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        std::this_thread::sleep_for(m_sleep);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        m_cond-&gt;notify_one();</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      }</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    value counter{0};</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    std::condition_variable *m_cond;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  };</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  std::mutex m_mutex;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  std::condition_variable m_cond;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keyword">static</span> constexpr value m_interval_secs{1};</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">static</span> constexpr value m_amount{14};</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">static</span> constexpr std::chrono::milliseconds m_sleep{200};</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;};</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">//    bool operator()(const tla::program_options_a &amp;) {</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">//        std::vector&lt;sleeping_loop&gt; _loops;</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">//        return true;</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">//    }</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="comment">// struct sleeping_loop_002 {</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">//    static std::string desc() { return &quot;&quot;; }</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">//    bool operator()(const sof::program_options_a &amp;) {</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">//        std::vector&lt;asy::sleeping_loop&gt; _loops;</span></div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">// private:</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">//    struct sent {</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">//        friend std::ostream &amp;operator&lt;&lt;(std::ostream &amp;p_out, const sent &amp;) {</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">//            p_out &lt;&lt; &quot;sent&quot;;</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">//            return p_out;</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">//        }</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">//    };</span></div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">//    typedef event_t&lt;2&gt; event;</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">//    typedef async::internal::publishing_t&lt;event&gt; event_publishings;</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">//    typedef tnctl::sleeping_loop sleeping_loop;</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">//    // event sent each time a work event is sent</span></div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">//    typedef async::internal::publishing_t&lt;sent&gt; sent_subscribers;</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">//    struct sender {</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">//        sender(size_t p_idx,</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">//               event_publishings *p_subscribers,</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">//               sent_subscribers *p_sent_subscribers,</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">//               size_t p_num_event_per_sender)</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">//            : m_idx(&#39;s&#39; + std::to_string(p_idx))</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">//            , m_subscribers(p_subscribers)</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">//            , m_sent_subscribers(p_sent_subscribers)</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">//            , m_num_event_per_sender(p_num_event_per_sender)</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//            , m_event(std::make_shared&lt;event&gt;(p_idx * m_num_event_per_sender))</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">//            , m_start(p_idx * m_num_event_per_sender)</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">//            , m_finish(</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">//                  (p_idx * m_num_event_per_sender + m_num_event_per_sender) -</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">//                  1) {</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">//            TNCT_LOG_TST(m_idx, &quot;: start value = &quot;, m_start,</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">//                &quot;, finish value = &quot;, m_finish);</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="comment">//        }</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">//        void operator()(std::shared_ptr&lt;const bool&gt;) {</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="comment">//            if (m_all_notified) {</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">//                //                TNCT_LOG_TST(m_idx, &quot; already notified&quot;);</span></div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="comment">//                return;</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">//            }</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">//            if ((m_event-&gt;get_value() &gt;= (m_finish + 1))) {</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">//                m_all_notified = true;</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">//        return true;</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">//    }</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">// private:</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">//    struct sent {</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">//        friend std::ostream &amp;operator&lt;&lt;(std::ostream &amp;p_out, const sent &amp;) {</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">//            p_out &lt;&lt; &quot;sent&quot;;</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">//            return p_out;</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">//        }</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">//    };</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">//    typedef event_t&lt;2&gt; event;</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">//    typedef async::internal::publishing_t&lt;event&gt; event_publishings;</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="comment">//    typedef tnctl::asy::sleeping_loop asy::sleeping_loop;</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">//    // event sent each time a work event is sent</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">//    typedef async::internal::publishing_t&lt;sent&gt; sent_subscribers;</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">//    struct sender {</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">//        sender(size_t p_idx,</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">//               event_publishings *p_subscribers,</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">//               sent_subscribers *p_sent_subscribers,</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">//               size_t p_num_event_per_sender)</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">//            : m_idx(&#39;s&#39; + std::to_string(p_idx))</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//            , m_subscribers(p_subscribers)</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">//            , m_sent_subscribers(p_sent_subscribers)</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">//            , m_num_event_per_sender(p_num_event_per_sender)</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">//            , m_event(std::make_shared&lt;event&gt;(p_idx * m_num_event_per_sender))</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">//            , m_start(p_idx * m_num_event_per_sender)</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">//            , m_finish(</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">//                  (p_idx * m_num_event_per_sender + m_num_event_per_sender) -</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">//                  1) {</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="comment">//            TNCT_LOG_TST(m_idx, &quot;: start value = &quot;, m_start,</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">//                &quot;, finish value = &quot;, m_finish);</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">//        }</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">//        void operator()(std::shared_ptr&lt;const bool&gt;) {</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">//            if (m_all_notified) {</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">//                //                TNCT_LOG_TST(m_idx, &quot; already notified&quot;);</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">//                return;</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">//            }</span></div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">//                TNCT_LOG_TST(m_idx, &quot; sent &quot;, m_num_event_per_sender,</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">//                    &quot; events: &quot;, m_start, &quot; -&gt; &quot;, m_finish);</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">//                return;</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">//            }</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">//            TNCT_LOG_TST(m_idx, &quot; sending &quot;, *m_event);</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">//            m_subscribers-&gt;add_event(m_event);</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">//            m_sent_subscribers-&gt;add_event(std::make_shared&lt;sent&gt;());</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">//            ++(*m_event);</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">//        }</span></div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">//    private:</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">//        std::string m_idx;</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">//        event_publishings *m_subscribers;</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">//        sent_subscribers *m_sent_subscribers;</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">//        const size_t m_num_event_per_sender;</span></div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">//        std::shared_ptr&lt;event&gt; m_event;</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">//        value m_start;</span></div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="comment">//        value m_finish;</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">//        bool m_all_notified {false};</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">//    };</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment">//};</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
-<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="../../d5/d11/tst_2sleeping__loop_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">  187</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">//            if ((m_event-&gt;get_value() &gt;= (m_finish + 1))) {</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">//                m_all_notified = true;</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment">//                TNCT_LOG_TST(m_idx, &quot; sent &quot;, m_num_event_per_sender,</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">//                    &quot; events: &quot;, m_start, &quot; -&gt; &quot;, m_finish);</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">//                return;</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">//            }</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">//            TNCT_LOG_TST(m_idx, &quot; sending &quot;, *m_event);</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">//            m_subscribers-&gt;add_event(m_event);</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">//            m_sent_subscribers-&gt;add_event(std::make_shared&lt;sent&gt;());</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">//            ++(*m_event);</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">//        }</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">//    private:</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">//        std::string m_idx;</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">//        event_publishings *m_subscribers;</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">//        sent_subscribers *m_sent_subscribers;</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">//        const size_t m_num_event_per_sender;</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment">//        std::shared_ptr&lt;event&gt; m_event;</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">//        value m_start;</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">//        value m_finish;</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">//        bool m_all_notified {false};</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">//    };</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="comment">//};</span></div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;  <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8af63561d18161e545afcd293cdd9f9f">tla::set_debug_level</a>();</div>
+<div class="line"><a name="l00190"></a><span class="lineno"><a class="line" href="../../d5/d11/tst_2sleeping__loop_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">  190</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <a class="code" href="../../d2/d9a/structtenacitas_1_1lib_1_1alg_1_1tester.html">tla::tester&lt;&gt;</a> _tester(argc, argv);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;  <a class="code" href="../../d1/d23/namespacetenacitas_1_1lib_1_1log.html#ae7e751f1c30734728117f339620a9b30">log::set_debug_level</a>();</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <a class="code" href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">run_test</a>(_tester, <a class="code" href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a>);</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <a class="code" href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">run_test</a>(_tester, <a class="code" href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a>);</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;}</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;  <a class="code" href="../../d3/d04/structtenacitas_1_1lib_1_1sof_1_1tester.html">sof::tester&lt;&gt;</a> _tester(argc, argv);</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160; </div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  <a class="code" href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">run_test</a>(_tester, <a class="code" href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a>);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  <a class="code" href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">run_test</a>(_tester, <a class="code" href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a>);</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;}</div>
+<div class="ttc" id="aexp_2dispatcher__000_2main_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00169">main.cpp:169</a></div></div>
 <div class="ttc" id="alog_8h_html"><div class="ttname"><a href="../../d7/d7f/log_8h.html">log.h</a></div></div>
-<div class="ttc" id="alog_8h_html_a036221b5a7ea326fbca4bdab1e226334"><div class="ttname"><a href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a></div><div class="ttdeci">#define TNCT_LOG_DEB(p_params...)</div><div class="ttdoc">log_wrapper to the debug log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00081">log.h:81</a></div></div>
-<div class="ttc" id="alog_8h_html_a87581b66a5c8e2801b6ecf1480b04637"><div class="ttname"><a href="../../d7/d7f/log_8h.html#a87581b66a5c8e2801b6ecf1480b04637">TNCT_LOG_INF</a></div><div class="ttdeci">#define TNCT_LOG_INF(p_params...)</div><div class="ttdoc">log_wrapper to the info log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00086">log.h:86</a></div></div>
-<div class="ttc" id="alog_8h_html_ab14f75a46d4d2318defe348f44df6eb9"><div class="ttname"><a href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(p_params...)</div><div class="ttdoc">log_wrapper to the error log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00096">log.h:96</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html_a8af63561d18161e545afcd293cdd9f9f"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8af63561d18161e545afcd293cdd9f9f">tenacitas::lib::alg::set_debug_level</a></div><div class="ttdeci">void set_debug_level()</div><div class="ttdoc">Sets the global log level as 'debug'.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00019">log.h:19</a></div></div>
+<div class="ttc" id="alog_8h_html_a036221b5a7ea326fbca4bdab1e226334"><div class="ttname"><a href="../../d7/d7f/log_8h.html#a036221b5a7ea326fbca4bdab1e226334">TNCT_LOG_DEB</a></div><div class="ttdeci">#define TNCT_LOG_DEB(p_params...)</div><div class="ttdoc">log_wrapper to the debug log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00079">log.h:79</a></div></div>
+<div class="ttc" id="alog_8h_html_a87581b66a5c8e2801b6ecf1480b04637"><div class="ttname"><a href="../../d7/d7f/log_8h.html#a87581b66a5c8e2801b6ecf1480b04637">TNCT_LOG_INF</a></div><div class="ttdeci">#define TNCT_LOG_INF(p_params...)</div><div class="ttdoc">log_wrapper to the info log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00084">log.h:84</a></div></div>
+<div class="ttc" id="alog_8h_html_ab14f75a46d4d2318defe348f44df6eb9"><div class="ttname"><a href="../../d7/d7f/log_8h.html#ab14f75a46d4d2318defe348f44df6eb9">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(p_params...)</div><div class="ttdoc">log_wrapper to the error log function</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00094">log.h:94</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1log_html_ae7e751f1c30734728117f339620a9b30"><div class="ttname"><a href="../../d1/d23/namespacetenacitas_1_1lib_1_1log.html#ae7e751f1c30734728117f339620a9b30">tenacitas::lib::log::set_debug_level</a></div><div class="ttdeci">void set_debug_level()</div><div class="ttdoc">Sets the global log level as 'debug'.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d7f/log_8h_source.html#l00019">log.h:19</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_html"><div class="ttname"><a href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a></div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00035">dispatcher.h:35</a></div></div>
 <div class="ttc" id="aprogram__options_8h_html"><div class="ttname"><a href="../../d5/d5e/program__options_8h.html">program_options.h</a></div></div>
 <div class="ttc" id="asleeping__loop_8h_html"><div class="ttname"><a href="../../dd/db8/sleeping__loop_8h.html">sleeping_loop.h</a></div></div>
-<div class="ttc" id="astructsleeping__loop__000_html"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00021">main.cpp:21</a></div></div>
-<div class="ttc" id="astructsleeping__loop__000_html_a18614e0b2e6afeacd7799d662a945754"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html#a18614e0b2e6afeacd7799d662a945754">sleeping_loop_000::operator()</a></div><div class="ttdeci">bool operator()(const tla::program_options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00025">main.cpp:25</a></div></div>
-<div class="ttc" id="astructsleeping__loop__000_html_afc4548c7a3c1acba301e4fa70fa4415e"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">sleeping_loop_000::desc</a></div><div class="ttdeci">static const std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00023">main.cpp:23</a></div></div>
-<div class="ttc" id="astructsleeping__loop__001_html"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00037">main.cpp:37</a></div></div>
-<div class="ttc" id="astructsleeping__loop__001_html_a71df890a9821974d176d806c8630a2e2"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">sleeping_loop_001::desc</a></div><div class="ttdeci">static const std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00042">main.cpp:42</a></div></div>
-<div class="ttc" id="astructsleeping__loop__001_html_a81d9e0ad0bc23f425b455c8688617523"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">sleeping_loop_001::value</a></div><div class="ttdeci">uint16_t value</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00040">main.cpp:40</a></div></div>
-<div class="ttc" id="astructsleeping__loop__001_html_af341498a93645ad717f4cc795e2c46fa"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#af341498a93645ad717f4cc795e2c46fa">sleeping_loop_001::operator()</a></div><div class="ttdeci">bool operator()(const tla::program_options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00051">main.cpp:51</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tenacitas::lib::alg::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html">tenacitas::lib::alg::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00019">sleeping_loop.h:19</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1sleeping__loop_html_a9e159760c5b29a8eca126ed4520b28e0"><div class="ttname"><a href="../../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#a9e159760c5b29a8eca126ed4520b28e0">tenacitas::lib::alg::sleeping_loop::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00089">sleeping_loop.h:89</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1tester_html"><div class="ttname"><a href="../../d2/d9a/structtenacitas_1_1lib_1_1alg_1_1tester.html">tenacitas::lib::alg::tester</a></div><div class="ttdoc">The test struct executes tests implemented in classes.</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d2b/tester_8h_source.html#l00083">tester.h:83</a></div></div>
+<div class="ttc" id="astructsleeping__loop__000_html"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html">sleeping_loop_000</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00022">main.cpp:22</a></div></div>
+<div class="ttc" id="astructsleeping__loop__000_html_a1824a1c84cb76c3e48ddff405feeaf05"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html#a1824a1c84cb76c3e48ddff405feeaf05">sleeping_loop_000::operator()</a></div><div class="ttdeci">bool operator()(const sof::program_options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00028">main.cpp:28</a></div></div>
+<div class="ttc" id="astructsleeping__loop__000_html_afc4548c7a3c1acba301e4fa70fa4415e"><div class="ttname"><a href="../../d3/de2/structsleeping__loop__000.html#afc4548c7a3c1acba301e4fa70fa4415e">sleeping_loop_000::desc</a></div><div class="ttdeci">static const std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00024">main.cpp:24</a></div></div>
+<div class="ttc" id="astructsleeping__loop__001_html"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html">sleeping_loop_001</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00040">main.cpp:40</a></div></div>
+<div class="ttc" id="astructsleeping__loop__001_html_a108a527d8f228b7625d6aa4128a95ac8"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#a108a527d8f228b7625d6aa4128a95ac8">sleeping_loop_001::operator()</a></div><div class="ttdeci">bool operator()(const sof::program_options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00054">main.cpp:54</a></div></div>
+<div class="ttc" id="astructsleeping__loop__001_html_a71df890a9821974d176d806c8630a2e2"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#a71df890a9821974d176d806c8630a2e2">sleeping_loop_001::desc</a></div><div class="ttdeci">static const std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00045">main.cpp:45</a></div></div>
+<div class="ttc" id="astructsleeping__loop__001_html_a81d9e0ad0bc23f425b455c8688617523"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523">sleeping_loop_001::value</a></div><div class="ttdeci">uint16_t value</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00043">main.cpp:43</a></div></div>
+<div class="ttc" id="astructsleeping__loop__001_html_ae81e26effab74ba40058d8fc7c19d9ed"><div class="ttname"><a href="../../d8/df7/structsleeping__loop__001.html#ae81e26effab74ba40058d8fc7c19d9ed">sleeping_loop_001::loop</a></div><div class="ttdeci">asy::sleeping_loop loop</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d11/tst_2sleeping__loop_2main_8cpp_source.html#l00041">main.cpp:41</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1sof_1_1program__options_html"><div class="ttname"><a href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html">tenacitas::lib::sof::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1sof_1_1tester_html"><div class="ttname"><a href="../../d3/d04/structtenacitas_1_1lib_1_1sof_1_1tester.html">tenacitas::lib::sof::tester</a></div><div class="ttdoc">The test struct executes tests implemented in classes.</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d2b/tester_8h_source.html#l00083">tester.h:83</a></div></div>
 <div class="ttc" id="atester_8h_html"><div class="ttname"><a href="../../d0/d2b/tester_8h.html">tester.h</a></div></div>
 <div class="ttc" id="atester_8h_html_a4276273718dfdc5d9cb265ef842f05cb"><div class="ttname"><a href="../../d0/d2b/tester_8h.html#a4276273718dfdc5d9cb265ef842f05cb">run_test</a></div><div class="ttdeci">#define run_test(tester, test)</div><div class="ttdoc">Runs a test.</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d2b/tester_8h_source.html#l00029">tester.h:29</a></div></div>
-<div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

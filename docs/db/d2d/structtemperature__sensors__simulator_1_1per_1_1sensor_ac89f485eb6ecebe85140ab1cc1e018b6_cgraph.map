@@ -1,4 +1,4 @@
 <map id="temperature_sensors_simulator::per::sensor::start" name="temperature_sensors_simulator::per::sensor::start">
 <area shape="rect" id="node1" title=" " alt="" coords="5,5,176,61"/>
-<area shape="rect" id="node2" href="$dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#a9e159760c5b29a8eca126ed4520b28e0" title="Starts calling the function periodically." alt="" coords="224,13,383,54"/>
+<area shape="rect" id="node2" href="$d2/d6d/structtenacitas_1_1lib_1_1asy_1_1sleeping__loop.html#a06f56e1de21b1f528e7fb2b7ceda6578" title="Starts calling the function periodically." alt="" coords="224,13,383,54"/>
 </map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_5fsize_691',['queue_size',['../d6/d8c/structtenacitas_1_1lib_1_1alg_1_1dispatcher.html#a55b25bfbe6d8efe98064205c9a30a5b3',1,'tenacitas::lib::alg::dispatcher']]]
+  ['queue_5fsize_706',['queue_size',['../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a7544811bc06cefd10df48c9d8ef65906',1,'tenacitas::lib::asy::dispatcher']]]
 ];

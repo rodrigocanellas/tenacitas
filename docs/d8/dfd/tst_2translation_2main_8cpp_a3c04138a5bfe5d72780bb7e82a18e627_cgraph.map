@@ -1,7 +1,7 @@
 <map id="main" name="main">
 <area shape="rect" id="node1" title=" " alt="" coords="5,61,60,88"/>
-<area shape="rect" id="node2" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8af63561d18161e545afcd293cdd9f9f" title="Sets the global log level as &#39;debug&#39;." alt="" coords="108,17,244,58"/>
-<area shape="rect" id="node4" href="$d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a0f23c0360313f450af178e72f04bc104" title="Defines that log messages will be written to std::cerr." alt="" coords="109,86,243,127"/>
-<area shape="rect" id="node3" href="$de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a8808a21f675184e3669b2f011bf1e5a4" title=" " alt="" coords="292,5,460,61"/>
-<area shape="rect" id="node5" href="$de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a35e16d2d708090e68bbf3ad8177e5713" title="Defines the function responsible for actually writing the message." alt="" coords="292,85,460,141"/>
+<area shape="rect" id="node2" href="$d1/d23/namespacetenacitas_1_1lib_1_1log.html#ae7e751f1c30734728117f339620a9b30" title="Sets the global log level as &#39;debug&#39;." alt="" coords="108,17,244,58"/>
+<area shape="rect" id="node4" href="$d1/d23/namespacetenacitas_1_1lib_1_1log.html#ac2635a9e77c5122ae7163a1ca50c745c" title="Defines that log messages will be written to std::cerr." alt="" coords="109,86,243,127"/>
+<area shape="rect" id="node3" href="$d6/dc5/classtenacitas_1_1lib_1_1log_1_1internal_1_1log__wrapper.html#a61e9dc8eead0b6c8f62c8dc2b2ece2e3" title=" " alt="" coords="292,5,460,61"/>
+<area shape="rect" id="node5" href="$d6/dc5/classtenacitas_1_1lib_1_1log_1_1internal_1_1log__wrapper.html#a3df34e4ca85a7e4e37b38214b05e9ea1" title="Defines the function responsible for actually writing the message." alt="" coords="292,85,460,141"/>
 </map>

@@ -1,0 +1,5 @@
+<map id="tenacitas::lib::asy::sleeping_loop::stop" name="tenacitas::lib::asy::sleeping_loop::stop">
+<area shape="rect" id="node1" title="Stops the loop, if it was started." alt="" coords="283,39,439,80"/>
+<area shape="rect" id="node2" href="$db/d2d/structtemperature__sensors__simulator_1_1per_1_1sensor.html#a4b4cff6ee57fc1b2840dc6540f222c0a" title=" " alt="" coords="17,5,223,47"/>
+<area shape="rect" id="node3" href="$d2/d6d/structtenacitas_1_1lib_1_1asy_1_1sleeping__loop.html#af67ff48eb84b86c279f917ea41464135" title="Destructor The loops stops calling the function." alt="" coords="5,71,235,112"/>
+</map>

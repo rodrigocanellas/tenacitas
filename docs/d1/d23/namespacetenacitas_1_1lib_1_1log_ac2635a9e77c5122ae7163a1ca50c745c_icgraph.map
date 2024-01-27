@@ -1,0 +1,4 @@
+<map id="tenacitas::lib::log::set_writer_cerr" name="tenacitas::lib::log::set_writer_cerr">
+<area shape="rect" id="node1" title="Defines that log messages will be written to std::cerr." alt="" coords="108,5,243,47"/>
+<area shape="rect" id="node2" href="$db/d34/tst_2log_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title=" " alt="" coords="5,13,60,39"/>
+</map>

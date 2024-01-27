@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['info_862',['info',['../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#afe8fd31da40ebd78f3291837a63b11a4acaf9b6b99962bf5c2264824231d7a40c',1,'tenacitas::lib::dat']]]
+  ['info_879',['info',['../d1/d23/namespacetenacitas_1_1lib_1_1log.html#abbdae8fc8ed8bbe3c4f23def14d5450dacaf9b6b99962bf5c2264824231d7a40c',1,'tenacitas::lib::log']]]
 ];

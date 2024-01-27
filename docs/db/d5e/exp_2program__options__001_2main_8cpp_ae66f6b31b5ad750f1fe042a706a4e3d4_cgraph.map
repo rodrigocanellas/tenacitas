@@ -1,7 +1,7 @@
 <map id="main" name="main">
 <area shape="rect" id="node1" title=" " alt="" coords="5,140,60,167"/>
-<area shape="rect" id="node2" href="$dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a580f1962375b106a117f847bc2dc090d" title="Retrieves the bool parameter, if possible." alt="" coords="115,5,285,61"/>
-<area shape="rect" id="node3" href="$dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ad8d5eeec1fbbf19162d8a4f632cf242f" title="Retrieves the values of a parameter." alt="" coords="115,85,285,141"/>
-<area shape="rect" id="node4" href="$dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#a852624170fbcd561de1934763a1c93c3" title="Retrieves a single parameter, if possible." alt="" coords="115,165,285,221"/>
-<area shape="rect" id="node5" href="$dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ab6161781c6ca13066a6d9709a233f58f" title="parses the options passed to a program" alt="" coords="108,246,292,287"/>
+<area shape="rect" id="node2" href="$db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#a37c676e5933faa2a69857a671e35155e" title="Retrieves the bool parameter, if possible." alt="" coords="115,5,285,61"/>
+<area shape="rect" id="node3" href="$db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#a806cefbf0d464edbe3a5c16545df2397" title="Retrieves the values of a parameter." alt="" coords="115,85,285,141"/>
+<area shape="rect" id="node4" href="$db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#a50b7a302d16b751b3024157c6c7904e0" title="Retrieves a single parameter, if possible." alt="" coords="115,165,285,221"/>
+<area shape="rect" id="node5" href="$db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#abcb3d51892c834ed2c40e4ce61336aa5" title="parses the options passed to a program" alt="" coords="108,246,292,287"/>
 </map>

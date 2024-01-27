@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.1</span>
+   &#160;<span id="projectnumber">0.1.2</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -77,28 +77,31 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tenacitas.lib/src/alg/program_options.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d5/d5e/program__options_8h.html">tenacitas.lib/sof/program_options.h</a>&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a>;</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d2/d1b/exp_2program__options__000_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">   14</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">using namespace </span>std;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tla::program_options</a> _pgm_options;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    _pgm_options.<a class="code" href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ab6161781c6ca13066a6d9709a233f58f">parse</a>(argc, (<span class="keywordtype">char</span> **)argv);</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../d2/d1b/exp_2program__options__000_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">   16</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <a class="code" href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html">sof::program_options</a> _pgm_options;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;options: &quot;</span> &lt;&lt; _pgm_options &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    _pgm_options.<a class="code" href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#abcb3d51892c834ed2c40e4ce61336aa5">parse</a>(argc, (<span class="keywordtype">char</span> **)argv);</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  } <span class="keywordflow">catch</span> (std::exception &amp;_ex) {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;ERROR! &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  }</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;}</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;options: &quot;</span> &lt;&lt; _pgm_options &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  } <span class="keywordflow">catch</span> (std::exception &amp;_ex) {</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot;ERROR! &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
+<div class="ttc" id="aexp_2dispatcher__000_2main_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00169">main.cpp:169</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_html"><div class="ttname"><a href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a></div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00035">dispatcher.h:35</a></div></div>
 <div class="ttc" id="aprogram__options_8h_html"><div class="ttname"><a href="../../d5/d5e/program__options_8h.html">program_options.h</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html">tenacitas::lib::alg::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1alg_1_1program__options_html_ab6161781c6ca13066a6d9709a233f58f"><div class="ttname"><a href="../../dd/d09/structtenacitas_1_1lib_1_1alg_1_1program__options.html#ab6161781c6ca13066a6d9709a233f58f">tenacitas::lib::alg::program_options::parse</a></div><div class="ttdeci">void parse(int p_argc, char **p_argv, std::initializer_list&lt; name &gt; &amp;&amp;p_mandatory={})</div><div class="ttdoc">parses the options passed to a program</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00055">program_options.h:55</a></div></div>
-<div class="ttc" id="atst_2circular__queue_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d3b/tst_2circular__queue_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d3b/tst_2circular__queue_2main_8cpp_source.html#l00400">main.cpp:400</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1sof_1_1program__options_html"><div class="ttname"><a href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html">tenacitas::lib::sof::program_options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00020">program_options.h:20</a></div></div>
+<div class="ttc" id="astructtenacitas_1_1lib_1_1sof_1_1program__options_html_abcb3d51892c834ed2c40e4ce61336aa5"><div class="ttname"><a href="../../db/dae/structtenacitas_1_1lib_1_1sof_1_1program__options.html#abcb3d51892c834ed2c40e4ce61336aa5">tenacitas::lib::sof::program_options::parse</a></div><div class="ttdeci">void parse(int p_argc, char **p_argv, std::initializer_list&lt; name &gt; &amp;&amp;p_mandatory={})</div><div class="ttdoc">parses the options passed to a program</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d5e/program__options_8h_source.html#l00055">program_options.h:55</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

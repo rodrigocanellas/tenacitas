@@ -1,14 +1,15 @@
 var searchData=
 [
-  ['factorial_77',['factorial',['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a082d60cef30b4ce0e4e9b50d3d23114b',1,'tenacitas::lib::alg::factorial(t_type p_val)'],['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a7d998567642a657ccaa649e280b7ce2c',1,'tenacitas::lib::alg::factorial(t_type p_val)']]],
-  ['factorial_2eh_78',['factorial.h',['../d1/ded/factorial_8h.html',1,'']]],
-  ['fatal_79',['fatal',['../de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a10172c23014265991901a43c578a376a',1,'tenacitas::lib::alg::internal::log_wrapper::fatal()'],['../d7/dc4/namespacetenacitas_1_1lib_1_1dat.html#afe8fd31da40ebd78f3291837a63b11a4adf6402fd9ecc60f5a2159fdf45711cd4',1,'tenacitas::lib::dat::fatal()']]],
-  ['file_5flog_80',['file_log',['../d0/d6d/structfile__log.html',1,'']]],
-  ['format_5fnumber_81',['format_number',['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a093f3875da881423b8b745a27634b39b',1,'tenacitas::lib::alg::format_number(t_num_type p_num, char p_fill=&apos;0&apos;, tld::align p_align=tld::align::right)'],['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a95f663f91a49fdc81988a345e86c2f4f',1,'tenacitas::lib::alg::format_number(uint8_t p_num, char p_fill=&apos;0&apos;, tld::align p_align=tld::align::right)'],['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#ac50e45e3872f23b95ece7b2a9580d40d',1,'tenacitas::lib::alg::format_number(int8_t p_num, char p_fill=&apos;0&apos;, tld::align p_align=tld::align::right)'],['../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#ab9e0c3d6dc4b9988adb367a5e4322112',1,'tenacitas::lib::alg::format_number(t_num_type p_num, uint8_t p_size, char p_fill=&apos;0&apos;, tld::align p_align=tld::align::right)']]],
-  ['format_5fnumber_2eh_82',['format_number.h',['../da/df1/format__number_8h.html',1,'']]],
-  ['from_5fexisting_5ffile_83',['from_existing_file',['../d2/da7/structfrom__existing__file.html',1,'']]],
-  ['from_5fmemory_84',['from_memory',['../db/dd5/structfrom__memory.html',1,'']]],
-  ['from_5fnon_5fexisting_5ffile_85',['from_non_existing_file',['../d6/d24/structfrom__non__existing__file.html',1,'']]],
-  ['full_86',['full',['../db/d8e/structtenacitas_1_1lib_1_1dat_1_1circular__queue.html#ac8d14fde98cf3a3bab61251b432348a6',1,'tenacitas::lib::dat::circular_queue']]],
-  ['function_87',['function',['../dd/d86/structtenacitas_1_1lib_1_1alg_1_1sleeping__loop.html#ab45ac5d753385e1305b568f3cfcf62e1',1,'tenacitas::lib::alg::sleeping_loop']]]
+  ['factorial_78',['factorial',['../d7/d58/namespacetenacitas_1_1lib_1_1mat.html#a4f0c089449bbd5871bb86e677ef198da',1,'tenacitas::lib::mat::factorial(t_type p_val)'],['../d7/d58/namespacetenacitas_1_1lib_1_1mat.html#ac0a27f26ecc4740d32e2fbc1a2d503ef',1,'tenacitas::lib::mat::factorial(t_type p_val)']]],
+  ['factorial_2eh_79',['factorial.h',['../d1/ded/factorial_8h.html',1,'']]],
+  ['fatal_80',['fatal',['../d6/dc5/classtenacitas_1_1lib_1_1log_1_1internal_1_1log__wrapper.html#a8b10c259e6fe044dd11b6986fe9f76be',1,'tenacitas::lib::log::internal::log_wrapper::fatal()'],['../d1/d23/namespacetenacitas_1_1lib_1_1log.html#abbdae8fc8ed8bbe3c4f23def14d5450dadf6402fd9ecc60f5a2159fdf45711cd4',1,'tenacitas::lib::log::fatal()']]],
+  ['file_5flog_81',['file_log',['../d0/d6d/structfile__log.html',1,'']]],
+  ['format_5fnumber_82',['format_number',['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a7b25d9cf984f1d44a031b8a751c1f7ad',1,'tenacitas::lib::fmt::format_number(t_num_type p_num, uint8_t p_size, char p_fill=&apos;0&apos;, align p_align=align::right)'],['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a38ca7b96fad326101cc987b5e1cf1558',1,'tenacitas::lib::fmt::format_number(int8_t p_num, char p_fill=&apos;0&apos;, align p_align=align::right)'],['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a57615667b58ffd1c774877713cc72cb9',1,'tenacitas::lib::fmt::format_number(uint8_t p_num, char p_fill=&apos;0&apos;, align p_align=align::right)'],['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54',1,'tenacitas::lib::fmt::format_number(t_num_type p_num, char p_fill=&apos;0&apos;, align p_align=align::right)']]],
+  ['format_5fnumber_2eh_83',['format_number.h',['../da/df1/format__number_8h.html',1,'']]],
+  ['from_5fexisting_5ffile_84',['from_existing_file',['../d2/da7/structfrom__existing__file.html',1,'']]],
+  ['from_5fmemory_85',['from_memory',['../db/dd5/structfrom__memory.html',1,'']]],
+  ['from_5fnon_5fexisting_5ffile_86',['from_non_existing_file',['../d6/d24/structfrom__non__existing__file.html',1,'']]],
+  ['full_87',['full',['../d7/d5c/structtenacitas_1_1lib_1_1con_1_1circular__queue.html#a9cd397920641fc5e5a7d9469dd3d4940',1,'tenacitas::lib::con::circular_queue']]],
+  ['fun_2eh_88',['fun.h',['../dc/d5f/fun_8h.html',1,'']]],
+  ['function_89',['function',['../d2/d6d/structtenacitas_1_1lib_1_1asy_1_1sleeping__loop.html#a0328ce321eb1a64e76a2748b9c8d90a9',1,'tenacitas::lib::asy::sleeping_loop']]]
 ];

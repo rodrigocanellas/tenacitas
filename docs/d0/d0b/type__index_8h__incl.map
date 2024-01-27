@@ -1,12 +1,11 @@
-<map id="/home/rodrigo/development/tenacitas.lib/src/tra/internal/type_index.h" name="/home/rodrigo/development/tenacitas.lib/src/tra/internal/type_index.h">
+<map id="/home/rodrigo/development/tenacitas.lib/sta/internal/type_index.h" name="/home/rodrigo/development/tenacitas.lib/sta/internal/type_index.h">
 <area shape="rect" id="node1" title=" " alt="" coords="210,5,413,61"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,117,76,143"/>
 <area shape="rect" id="node3" title=" " alt="" coords="101,117,167,143"/>
-<area shape="rect" id="node4" title=" " alt="" coords="191,117,250,143"/>
-<area shape="rect" id="node5" title=" " alt="" coords="274,117,349,143"/>
-<area shape="rect" id="node6" title=" " alt="" coords="460,288,515,315"/>
-<area shape="rect" id="node7" title=" " alt="" coords="424,117,516,143"/>
-<area shape="rect" id="node8" href="$dc/d25/tuple__like_8h.html" title=" " alt="" coords="541,109,690,151"/>
-<area shape="rect" id="node9" title=" " alt="" coords="525,206,605,233"/>
-<area shape="rect" id="node10" href="$dd/d04/has__tuple__element_8h.html" title=" " alt="" coords="629,199,845,240"/>
+<area shape="rect" id="node4" title=" " alt="" coords="191,117,258,143"/>
+<area shape="rect" id="node5" title=" " alt="" coords="282,117,341,143"/>
+<area shape="rect" id="node6" title=" " alt="" coords="415,288,469,315"/>
+<area shape="rect" id="node7" title=" " alt="" coords="416,117,508,143"/>
+<area shape="rect" id="node8" href="$dc/d25/tuple__like_8h.html" title=" " alt="" coords="533,109,695,151"/>
+<area shape="rect" id="node9" href="$dd/d04/has__tuple__element_8h.html" title=" " alt="" coords="469,199,649,240"/>
 </map>

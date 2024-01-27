@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/src/alg/traverse_tuple.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/sta/traverse_tuple.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.1</span>
+   &#160;<span id="projectnumber">0.1.2</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_b279a216c397ff0404c535bbf0b989ad.html">alg</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_9755103b47ca2e747025b4404495b29c.html">sta</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -81,65 +81,65 @@ $(function() {
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tenacitas::lib::alg</a> {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a> {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> t_idx, <span class="keyword">typename</span>... t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">   16</a></span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">   16</a></span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(std::tuple&lt;t_function...&gt; p_function,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  std::get&lt;t_idx&gt;(p_function)(std::get&lt;t_idx&gt;(<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>));</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  std::get&lt;t_idx&gt;(p_function)(std::get&lt;t_idx&gt;(<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>));</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span>... t_idxs, <span class="keyword">typename</span>... t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(std::index_sequence&lt;t_idxs...&gt;,</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                        std::tuple&lt;t_function...&gt; p_function,</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  (traverse_tuple&lt;t_idxs&gt;(p_function, <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>), ...);</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  (traverse_tuple&lt;t_idxs&gt;(p_function, <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>), ...);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>... t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a66b6e6307da5dc00bfa320034917ddbf">   33</a></span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a1cc1ad8f091d2a5433d92b258b156712">   33</a></span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(std::tuple&lt;t_function...&gt; p_function,</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  traverse_tuple(std::make_index_sequence&lt;<span class="keyword">sizeof</span>...(t_data)&gt;{}, p_function,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                 <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                 <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> t_idx, <span class="keyword">typename</span> t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">   44</a></span>&#160;    void traverse_tuple(t_function p_function, std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  p_function(std::get&lt;t_idx&gt;(<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>));</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">   44</a></span>&#160;    void traverse_tuple(t_function p_function, std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  p_function(std::get&lt;t_idx&gt;(<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>));</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span>... t_idxs, <span class="keyword">typename</span> t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(std::index_sequence&lt;t_idxs...&gt;, t_function p_function,</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  (traverse_tuple&lt;t_idxs&gt;(p_function, <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>), ...);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                        std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  (traverse_tuple&lt;t_idxs&gt;(p_function, <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>), ...);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_function, <span class="keyword">typename</span>... t_data&gt;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(... and std::is_invocable_r_v&lt;void, t_function, t_data &amp;&gt;)</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(t_function p_function, std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> traverse_tuple(t_function p_function, std::tuple&lt;t_data...&gt; &amp;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>) {</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  traverse_tuple(std::make_index_sequence&lt;<span class="keyword">sizeof</span>...(t_data)&gt;{}, p_function,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                 <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">p_data</a>);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                 <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">p_data</a>);</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;} <span class="comment">// namespace tenacitas::lib::alg</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;} <span class="comment">// namespace tenacitas::lib::sta</span></div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tla</a> = <a class="code" href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tenacitas::lib::alg</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html">tenacitas::lib::alg</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/db8/src_2alg_2dispatcher_8h_source.html#l00034">dispatcher.h:34</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html_a8f3aca8e371b17ec3f9243aa4b370f2f"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#a8f3aca8e371b17ec3f9243aa4b370f2f">tenacitas::lib::alg::requires</a></div><div class="ttdeci">requires(... and std::is_invocable_r_v&lt; void, t_function, t_data &amp; &gt;) void traverse_tuple(std</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00016">traverse_tuple.h:16</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1alg_html_aa81c2763f4c77d768f872e43fe7b8561"><div class="ttname"><a href="../../d9/d95/namespacetenacitas_1_1lib_1_1alg.html#aa81c2763f4c77d768f872e43fe7b8561">tenacitas::lib::alg::p_data</a></div><div class="ttdeci">std::tuple&lt; t_data... &gt; &amp; p_data</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00044">traverse_tuple.h:44</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a499690d4daded7f2956493f2c18c9301"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a499690d4daded7f2956493f2c18c9301">tenacitas::lib::sta::p_data</a></div><div class="ttdeci">std::tuple&lt; t_data... &gt; &amp; p_data</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00044">traverse_tuple.h:44</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a582de410b0080d02ea52fd95d6b6aebf"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">tenacitas::lib::sta::requires</a></div><div class="ttdeci">requires(... and std::is_invocable_r_v&lt; void, t_function, t_data &amp; &gt;) void traverse_tuple(std</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00016">traverse_tuple.h:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

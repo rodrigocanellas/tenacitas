@@ -1,6 +1,10 @@
 <map id="/home/rodrigo/development/tenacitas.lib/tst/factorial" name="/home/rodrigo/development/tenacitas.lib/tst/factorial">
-<area shape="rect" id="node1" href="dir_90980d0351657c2a0e14f411eef9d33c.html" title="factorial" alt="" coords="27,52,103,100"/>
-<area shape="rect" id="node2" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="29,148,101,196"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000022_000008.html" title="4" alt="" coords="69,122,78,137"/>
-<area shape="rect" id="clust1" href="dir_ea912401392b0913f016ef767fa11b8d.html" title="tst" alt="" coords="16,16,115,111"/>
+<area shape="rect" id="node1" href="dir_90980d0351657c2a0e14f411eef9d33c.html" title="factorial" alt="" coords="99,52,175,100"/>
+<area shape="rect" id="node2" href="dir_0aef8ef4451d8488f048bae0463d622b.html" title="mat" alt="" coords="5,148,77,196"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000021_000041.html" title="1" alt="" coords="79,134,88,149"/>
+<area shape="rect" id="node3" href="dir_53ad7c2a965742bf244557ba99b70515.html" title="sof" alt="" coords="101,148,173,196"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000021_000042.html" title="2" alt="" coords="141,122,150,137"/>
+<area shape="rect" id="node4" href="dir_9381a7bbd03577d6d8720c7f35c94ffa.html" title="log" alt="" coords="197,148,269,196"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000021_000039.html" title="1" alt="" coords="198,122,207,136"/>
+<area shape="rect" id="clust1" href="dir_ea912401392b0913f016ef767fa11b8d.html" title="tst" alt="" coords="88,16,187,111"/>
 </map>
