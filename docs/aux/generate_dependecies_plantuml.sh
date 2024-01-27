@@ -16,7 +16,7 @@ find . \( -name "*.h" -o -name "*.cpp" \)| while read h; do
 done; 
 mkdir ../docs 2> /dev/null; 
 sort -u "$u" > /var/tmp/aux; 
-u0="docs/tenacitas.lib.plantuml"; 
+u0="docs/aux/tenacitas.lib.plantuml"; 
 echo "@startuml" > "$u0"; 
 echo "hide empty members" >> "$u0"; 
 cat /var/tmp/aux >> "$u0"; 

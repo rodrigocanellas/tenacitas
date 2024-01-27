@@ -54,7 +54,7 @@ uix - final (human) user experience
 
 The diagram below shows the dependencies within the library:
 
-![](docs/aux/tenacitas.lib.png)
+![](docs/aux/dependencies.png)
 
 ## External libray dependencies
 
