@@ -32,6 +32,8 @@ log - logger: code that logs execution messages
 
 mat - mathematics: a special place for math data and functions
 
+mod - model: business data 
+
 net - network: code for network programming
 
 per - pesistence: writes and reads data to permanent memory

@@ -40,6 +40,10 @@ per - pesistence: writes and reads data to permanent memory
 
 pgm - program: an executable
 
+rsc - resources: any file that does not contain code, like PNG files
+
+scr - script: files with script programs
+
 shu - shuffle (cipher/decipher)
 
 sof - software: code that is related to software itself, like 'program_options'
