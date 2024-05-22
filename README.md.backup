@@ -1,69 +1,42 @@
 # tenacitas.lib
-C++ header only libraries
-
-## Not only C++ code
-The `tenacitas.lib` also has the goal of suggesting a general structure for software development, which intends to make it easier to create highly decoupled artefacts.
-
-The macro structured is presented by the UML like diagram below followed by a brief text explanation:
-
-![](docs/aux/macro_structure.png)
-
-*Code categories*
-
-asy - asynchronous: code that supports asynchronous programming, like threads
-
-bld - builder: files used to build libraries, tests, examples and programs
-
-con - container: vectors, lists, stack...
-
-dev - device: code that implements external devices, like robots
-
-docs - documents: files that document code
-
-dom - domain: data and functions that implement business logic
-
-exp - example: applications that exemplifies use of any other category
-
-fmt - formating: code responsible for formatting data
-
-lib - library: other categories assembled
-
-log - logger: code that logs execution messages
-
-mat - mathematics: a special place for math data and functions
-
-mod - model: business data 
-
-net - network: code for network programming
-
-per - pesistence: writes and reads data to permanent memory
-
-pgm - program: an executable
-
-shu - shuffle (cipher/decipher)
-
-sof - software: code that is related to software itself, like 'program_options'
-
-sta - static: compile time code, like type traits and concepts
-
-tra - translation: code used to translate text
-
-tst - test: aplication used to test other categories
-
-uix - final (human) user experience
-
-## Internal library dependencies
-
-The diagram below shows the dependencies within the library:
-
-![](docs/aux/tenacitas.lib.png)
-
-## External libray dependencies
-
-You should have `libsqlite3.so` installed for the examples to run.
-
-## Dependencies to other repository 
-
-This repository depends on https://github.com/rodrigocanellas/tenacitas.bld, which must be cloned in a directory side by side with `tenecitas.lib`
+C++ 20 header only libraries
 
 
+`tenacitas.lib` is the result of my continuous study of C++ and Software Design.
+
+It is made up of the following `namespace`s:
+
+
+**async** - tries to make it easier to implement common asynchronous tasks, such as execute a function in a certain period of time (`sleeping_loop`), and a publisher/subscriber mechanism (`dispatcher`), mixed with a event queue, that allows to define multiple handlings for an event, each with multiple concurrent handlers, without searching for the event in any kind of container.
+
+**container** - a simple `matrix` and a `circular_queue` that expands as necessary.
+
+**generic** - commom classes for generic purposes, like `fmt` or `tester`
+
+**log** - another log class
+
+**math** - so far, a text-book `factorial` function
+
+**parser** - a `.ini` parser is the first class of this namespace
+
+**program** - classes related to a program, like `options`, a `exit` event and a `closer` classes , used with `async::dispatche` allows asynchronous console programs.
+
+**traits** - type traits and some very simple meta programming
+
+**translator** - I could not resist trying to implement a `translator` structure
+
+
+# using it
+As `tenacitas.lib` is a header only "library", there is no need to build it, all you need is to add the directory `...tenacitas.lib` to the include path of your compiler. In `gcc` it would be `-Isome-path/tenacitas.lib`
+
+# examples and tests
+The examples and tests are, for now, the best source of documentation. If you want to build them, you can use `QtCreator`(I am using version 13.0.1) and open the `tenacitas.lib/builder/qtcreator/tenacitas.lib.pro` file, or create a project file you like the most.
+
+# dependencies
+`tenacitas.lib` does not depend on any other software
+
+# contributions
+I would be most pleased to read you comments and suggestions, as long as they are presented in a polite way.
+
+# disclaimer
+This library is far from being ready to use in production, so if you want to use it you are on your own.
