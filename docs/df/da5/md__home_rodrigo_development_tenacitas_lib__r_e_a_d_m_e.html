@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -68,19 +68,33 @@ $(function() {
 <div class="title"><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>C++ header only libraries</p>
+<div class="textblock"><p>C++ 20 header only libraries</p>
+<p><code><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a></code> is the result of my continuous study of C++ and Software Design.</p>
+<p>It is made up of the following <code>namespace</code>s:</p>
+<p><b>async</b> - tries to make it easier to implement common asynchronous tasks, such as execute a function in a certain period of time (<code>sleeping_loop</code>), and a publisher/subscriber mechanism (<code>dispatcher</code>), mixed with a event queue, that allows to define multiple handlings for an event, each with multiple concurrent handlers, without searching for the event in any kind of container.</p>
+<p><b>container</b> - a simple <code>matrix</code> and a <code>circular_queue</code> that expands as necessary.</p>
+<p><b>generic</b> - commom classes for generic purposes, like <code>fmt</code> or <code>tester</code></p>
+<p><b>log</b> - another log class</p>
+<p><b>math</b> - so far, a text-book <code>factorial</code> function</p>
+<p><b>parser</b> - a <code>.ini</code> parser is the first class of this namespace</p>
+<p><b>program</b> - classes related to a program, like <code>options</code>, a <code>exit</code> event and a <code>closer</code> classes , used with <code>async::dispatche</code> allows asynchronous console programs.</p>
+<p><b>traits</b> - type traits and some very simple meta programming</p>
+<p><b>translator</b> - I could not resist trying to implement a <code>translator</code> structure</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
-Not only C++ code</h1>
-<p>The <code><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a></code> also has the goal of suggesting a general structure for software development, which intends to make it easier to create highly decoupled artefacts.</p>
-<p>The macro structured is presented by the UML like diagram below followed by a brief text explanation:</p>
-<p><em>Code categories</em></p>
-<p>asy - asynchronous: code that supports asynchronous programming, like threads bld - builder: files used to build libraries, tests, examples and programs con - container: vectors, lists, stack... dev - device: code that implements external devices, like robots docs - documents: files that document code dom - domain: data and functions that implement business logic exp - example: applications that exemplifies use of any other category fmt - formating: code responsible for formatting data lib - library: other categories assembled log - logger: code that logs execution messages mat - mathematics: a special place for math data and functions net - network: code for network programming per - pesistence: writes and reads data to permanent memory pgm - program: an executable shu - shuffle (cipher/decipher) sof - software: code that is related to software itself, like 'program_options' sta - static: compile time code, like type traits and concepts tra - translation: code used to translate text tst - test: aplication used to test other categories uix - final (human) user experience</p>
+using it</h1>
+<p>As <code><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a></code> is a header only "library", there is no need to build it, all you need is to add the directory <code>...<a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a></code> to the include path of your compiler. In <code>gcc</code> it would be <code>-Isome-path/tenacitas.lib</code></p>
 <h1><a class="anchor" id="autotoc_md2"></a>
-Library dependencies</h1>
-<p>The diagram below shows the dependencies within the library:</p>
+examples and tests</h1>
+<p>The examples and tests are, for now, the best source of documentation. If you want to build them, you can use <code>QtCreator</code>(I am using version 13.0.1) and open the <code><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a>/builder/qtcreator/tenacitas.lib.pro</code> file, or create a project file you like the most.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
-Other repository dependencies</h1>
-<p>This repository depends on <a href="https://github.com/rodrigocanellas/tenacitas.bld">https://github.com/rodrigocanellas/tenacitas.bld</a>, which must be cloned in a directory side by side with <code>tenecitas.lib</code> </p>
+dependencies</h1>
+<p><code><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas.lib</a></code> does not depend on any other software</p>
+<h1><a class="anchor" id="autotoc_md4"></a>
+contributions</h1>
+<p>I would be most pleased to read you comments and suggestions, as long as they are presented in a polite way.</p>
+<h1><a class="anchor" id="autotoc_md5"></a>
+disclaimer</h1>
+<p>This library is far from being ready to use in production, so if you want to use it you are on your own. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

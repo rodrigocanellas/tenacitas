@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/fmt/internal/max_str_length.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/generic/internal/max_str_length.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_7e9e3a9dba0f8bf2fb326009354b80c2.html">fmt</a></li><li class="navelem"><a class="el" href="../../dir_f4174fc578f654cacda7ce3130b947a9.html">internal</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_6646d5d5edc224bb18b97caffb429c3d.html">generic</a></li><li class="navelem"><a class="el" href="../../dir_f0b034b82d95eb1909c641ce502fd26b.html">internal</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,28 +74,28 @@ $(function() {
 <div class="contents">
 <a href="../../d8/d73/max__str__length_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_FMT_INTERNAL_MAX_STR_LENGHT_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_FMT_INTERNAL_MAX_STR_LENGHT_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_GENERIC_INTERNAL_MAX_STR_LENGHT_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_GENERIC_INTERNAL_MAX_STR_LENGHT_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;cmath&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html">   12</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html">tenacitas::lib::fmt::internal</a> {</div>
+<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html">   12</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html">tenacitas::lib::generic::internal</a> {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_num_type&gt;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a> std::integral&lt;t_num_type&gt; || std::floating_point&lt;t_num_type&gt;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html#a193f625a8d0817665002ef8ad67cb2fc">   22</a></span>&#160;<span class="keyword">inline</span> constexpr uint16_t <a class="code" href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html#a193f625a8d0817665002ef8ad67cb2fc">max_str_length</a>() {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">requires</a> std::integral&lt;t_num_type&gt; || std::floating_point&lt;t_num_type&gt;</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html#a8fb9faef055a3d3197f23a334de838c5">   22</a></span>&#160;<span class="keyword">inline</span> constexpr uint16_t <a class="code" href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html#a8fb9faef055a3d3197f23a334de838c5">max_str_length</a>() {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <span class="keywordflow">return</span> (</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      <span class="keyword">static_cast&lt;</span>uint16_t<span class="keyword">&gt;</span>(std::log10(std::pow(2, <span class="keyword">sizeof</span>(t_num_type) * 8))) +</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      1);</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;} <span class="comment">// namespace tenacitas::lib::fmt::internal</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;} <span class="comment">// namespace tenacitas::lib::generic::internal</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_1_1internal_html"><div class="ttname"><a href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html">tenacitas::lib::fmt::internal</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d73/max__str__length_8h_source.html#l00012">max_str_length.h:12</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_1_1internal_html_a193f625a8d0817665002ef8ad67cb2fc"><div class="ttname"><a href="../../d7/db1/namespacetenacitas_1_1lib_1_1fmt_1_1internal.html#a193f625a8d0817665002ef8ad67cb2fc">tenacitas::lib::fmt::internal::max_str_length</a></div><div class="ttdeci">requires std::integral&lt; t_num_type &gt; constexpr std::floating_point&lt; t_num_type &gt; uint16_t max_str_length()</div><div class="ttdoc">Maximum number of characters needed to represent a type of number.</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d73/max__str__length_8h_source.html#l00022">max_str_length.h:22</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a582de410b0080d02ea52fd95d6b6aebf"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">tenacitas::lib::sta::requires</a></div><div class="ttdeci">requires(... and std::is_invocable_r_v&lt; void, t_function, t_data &amp; &gt;) void traverse_tuple(std</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00016">traverse_tuple.h:16</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_1_1internal_html"><div class="ttname"><a href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html">tenacitas::lib::generic::internal</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d73/max__str__length_8h_source.html#l00012">max_str_length.h:12</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_1_1internal_html_a8fb9faef055a3d3197f23a334de838c5"><div class="ttname"><a href="../../d2/dd5/namespacetenacitas_1_1lib_1_1generic_1_1internal.html#a8fb9faef055a3d3197f23a334de838c5">tenacitas::lib::generic::internal::max_str_length</a></div><div class="ttdeci">requires std::integral&lt; t_num_type &gt; constexpr std::floating_point&lt; t_num_type &gt; uint16_t max_str_length()</div><div class="ttdoc">Maximum number of characters needed to represent a type of number.</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d73/max__str__length_8h_source.html#l00022">max_str_length.h:22</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html_a9760337c41e8cee8500253eb41c4b14e"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">tenacitas::lib::generic::requires</a></div><div class="ttdeci">requires(std::integral&lt; t_num_type &gt;||std::floating_point&lt; t_num_type &gt;) inline std</div><div class="ttdoc">Formats a number with the maximum characters necessary to represent the number to string,...</div><div class="ttdef"><b>Definition:</b> <a href="../../da/df1/format__number_8h_source.html#l00033">format_number.h:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

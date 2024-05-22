@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/sta/publisher.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/traits/publisher.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_9755103b47ca2e747025b4404495b29c.html">sta</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_8895ea8127241f78454aef1994a04607.html">traits</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,37 +74,37 @@ $(function() {
 <div class="contents">
 <a href="../../d1/d40/publisher_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_STA_PUBLISHER_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_STA_PUBLISHER_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_TRAITS_PUBLISHER_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_TRAITS_PUBLISHER_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/d20/event_8h.html">tenacitas.lib/sta/event.h</a>&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dc/d25/tuple__like_8h.html">tenacitas.lib/sta/tuple_like.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/d20/event_8h.html">tenacitas.lib/traits/event.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dc/d25/tuple__like_8h.html">tenacitas.lib/traits/tuple_like.h</a>&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html">tenacitas::lib::traits</a> {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a8469f34d111412f0e139cf8947cbb6df">   17</a></span>&#160;concept <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a8469f34d111412f0e139cf8947cbb6df">publisher</a> = <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a>(t p_t) {</div>
+<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a0bac15860bcd9778868ba819fc0829ee">   17</a></span>&#160;concept <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a0bac15860bcd9778868ba819fc0829ee">publisher</a> = <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a50f3c32732194e937d4878544395d9aa">requires</a>(t p_t) {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <span class="keyword">typename</span> t::events_published;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">requires</a> tuple_like&lt;typename t::events_published&gt; &amp;&amp;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a50f3c32732194e937d4878544395d9aa">requires</a> tuple_like&lt;typename t::events_published&gt; &amp;&amp;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      []&lt;std::size_t... t_idx&gt;(std::index_sequence&lt;t_idx...&gt;) {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordflow">return</span> ((<a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a76b13a34514cca8484b37d440095c277">event</a>&lt;<span class="keyword">typename</span> std::tuple_element_t&lt;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordflow">return</span> ((<a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">event</a>&lt;<span class="keyword">typename</span> std::tuple_element_t&lt;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                 t_idx, <span class="keyword">typename</span> t::events_published&gt;&gt;)&amp;&amp;...);</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  }</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  (std::make_index_sequence&lt;std::tuple_size_v&lt;typename t::events_published&gt;&gt;());</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;};</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;} <span class="comment">// namespace tenacitas::lib::sta</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;} <span class="comment">// namespace tenacitas::lib::traits</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aevent_8h_html"><div class="ttname"><a href="../../dd/d20/event_8h.html">event.h</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a582de410b0080d02ea52fd95d6b6aebf"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a582de410b0080d02ea52fd95d6b6aebf">tenacitas::lib::sta::requires</a></div><div class="ttdeci">requires(... and std::is_invocable_r_v&lt; void, t_function, t_data &amp; &gt;) void traverse_tuple(std</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/dfe/traverse__tuple_8h_source.html#l00016">traverse_tuple.h:16</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a76b13a34514cca8484b37d440095c277"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a76b13a34514cca8484b37d440095c277">tenacitas::lib::sta::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d20/event_8h_source.html#l00014">event.h:14</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a8469f34d111412f0e139cf8947cbb6df"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a8469f34d111412f0e139cf8947cbb6df">tenacitas::lib::sta::publisher</a></div><div class="ttdeci">concept publisher</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d40/publisher_8h_source.html#l00017">publisher.h:17</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html">tenacitas::lib::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a0bac15860bcd9778868ba819fc0829ee"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a0bac15860bcd9778868ba819fc0829ee">tenacitas::lib::traits::publisher</a></div><div class="ttdeci">concept publisher</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d40/publisher_8h_source.html#l00017">publisher.h:17</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a50f3c32732194e937d4878544395d9aa"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a50f3c32732194e937d4878544395d9aa">tenacitas::lib::traits::requires</a></div><div class="ttdeci">requires(visit_value_in_tuple&lt; t_func, t_tuple, t_idx &gt;) void tuple_traverse(t_func p_function</div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a650ce519690f252f0ef5b3c38666cb2c"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">tenacitas::lib::traits::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d20/event_8h_source.html#l00014">event.h:14</a></div></div>
 <div class="ttc" id="atuple__like_8h_html"><div class="ttname"><a href="../../dc/d25/tuple__like_8h.html">tuple_like.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

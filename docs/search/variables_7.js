@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['queue_818',['queue',['../d1/dcc/structasy_1_1pressure__handled.html#ac6b51df73a3400510b1157e8f12d3992',1,'asy::pressure_handled']]]
+  ['new_5foperator_860',['new_operator',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#ac0fa8410edd8f3bb56d1a3b837351166',1,'tenacitas::lib::traits']]],
+  ['no_5fnew_5foperator_861',['no_new_operator',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a278c833941ef37be1e4a1b356f11e4f9',1,'tenacitas::lib::traits']]]
 ];

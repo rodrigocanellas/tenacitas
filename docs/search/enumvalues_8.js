@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['right_885',['right',['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d',1,'tenacitas::lib::fmt']]]
+  ['ok_925',['OK',['../d2/d86/namespacetenacitas_1_1lib_1_1async.html#a4eef82b6d0c3bdc8996ddab48e124824ae0aa021e21dddbd6d8cecec71e9cf564',1,'tenacitas::lib::async']]]
 ];

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['chrono_5fconvertible_784',['chrono_convertible',['../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a5fae25264caf0aeff46fc188103cfda2',1,'tenacitas::lib::sta']]],
-  ['convertible_5fto_5fmilli_785',['convertible_to_milli',['../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a85fabd69b3eb336cce776d5e3c942e91',1,'tenacitas::lib::sta']]],
-  ['convertible_5fto_5fnano_786',['convertible_to_nano',['../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a71dd7cbb9ac098e9ddfadb4ac5790152',1,'tenacitas::lib::sta']]],
-  ['convertible_5fto_5fsec_787',['convertible_to_sec',['../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#ad1027681ba220cc8b232bb62009023e7',1,'tenacitas::lib::sta']]]
+  ['chrono_5fconvertible_842',['chrono_convertible',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a4743d6b14342125d8988f01fa946391a',1,'tenacitas::lib::traits']]],
+  ['convertible_5fto_5fmilli_843',['convertible_to_milli',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a4ab5635157a3300a0a7be0330c4f6030',1,'tenacitas::lib::traits']]],
+  ['convertible_5fto_5fnano_844',['convertible_to_nano',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#adc5c5208831682cedc6e070c64e90116',1,'tenacitas::lib::traits']]],
+  ['convertible_5fto_5fsec_845',['convertible_to_sec',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#af5e078093bf840a50767b00768dadda4',1,'tenacitas::lib::traits']]]
 ];

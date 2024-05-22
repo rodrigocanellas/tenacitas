@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['align_871',['align',['../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5',1,'tenacitas::lib::fmt']]]
+  ['align_907',['align',['../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2d',1,'tenacitas::lib::generic']]]
 ];

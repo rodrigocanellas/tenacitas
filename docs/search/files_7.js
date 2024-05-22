@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['log_2eh_562',['log.h',['../d7/d7f/log_8h.html',1,'']]],
-  ['log_5ffile_2eh_563',['log_file.h',['../dd/d3f/log__file_8h.html',1,'']]],
-  ['log_5flevel_2eh_564',['log_level.h',['../d1/d0f/log__level_8h.html',1,'']]],
-  ['log_5fwrapper_2eh_565',['log_wrapper.h',['../dd/d5c/log__wrapper_8h.html',1,'']]]
+  ['level_2eh_662',['level.h',['../de/d09/level_8h.html',1,'']]],
+  ['log_5fwriter_2eh_663',['log_writer.h',['../dc/d10/log__writer_8h.html',1,'']]],
+  ['logger_2eh_664',['logger.h',['../d8/d95/generic_2logger_8h.html',1,'(Global Namespace)'],['../d9/d1c/log_2internal_2logger_8h.html',1,'(Global Namespace)'],['../da/d67/traits_2logger_8h.html',1,'(Global Namespace)']]]
 ];

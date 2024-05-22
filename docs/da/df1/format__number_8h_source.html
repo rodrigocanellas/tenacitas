@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/fmt/format_number.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/generic/format_number.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_7e9e3a9dba0f8bf2fb326009354b80c2.html">fmt</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_6646d5d5edc224bb18b97caffb429c3d.html">generic</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,72 +74,63 @@ $(function() {
 <div class="contents">
 <a href="../../da/df1/format__number_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_FMT_FORMAT_NUMBER_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_FMT_FORMAT_NUMBER_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_GENERIC_FORMAT_NUMBER_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_GENERIC_FORMAT_NUMBER_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;cstdint&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;iomanip&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/ddf/align_8h.html">tenacitas.lib/fmt/align.h</a>&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d8/d73/max__str__length_8h.html">tenacitas.lib/fmt/internal/max_str_length.h</a>&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html">tenacitas::lib::fmt</a> {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_num_type&gt;</div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">   32</a></span>&#160;<span class="keyword">inline</span> std::string <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">format_number</a>(t_num_type p_num, <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                                 <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5">align</a> p_align = <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  std::stringstream _stream;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;          &lt;&lt; std::setfill(p_fill)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;          &lt;&lt; std::setw(internal::max_str_length&lt;t_num_type&gt;()) &lt;&lt; p_num;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a57615667b58ffd1c774877713cc72cb9">   51</a></span>&#160;<span class="keyword">inline</span> std::string <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">format_number</a>(uint8_t p_num, <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                                 <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5">align</a> p_align = <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  std::stringstream _stream;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          &lt;&lt; std::setfill(p_fill)</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          &lt;&lt; std::setw(internal::max_str_length&lt;uint8_t&gt;())</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          &lt;&lt; <span class="keyword">static_cast&lt;</span>uint16_t<span class="keyword">&gt;</span>(p_num);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a38ca7b96fad326101cc987b5e1cf1558">   71</a></span>&#160;<span class="keyword">inline</span> std::string <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">format_number</a>(int8_t p_num, <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                 <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5">align</a> p_align = <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  std::stringstream _stream;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;          &lt;&lt; std::setfill(p_fill)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          &lt;&lt; std::setw(internal::max_str_length&lt;uint8_t&gt;())</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          &lt;&lt; <span class="keyword">static_cast&lt;</span>int16_t<span class="keyword">&gt;</span>(p_num);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_num_type&gt;</div>
-<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#a7b25d9cf984f1d44a031b8a751c1f7ad">   92</a></span>&#160;<span class="keyword">inline</span> std::string <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">format_number</a>(t_num_type p_num, uint8_t p_size,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                                 <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                                 <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5">align</a> p_align = <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  std::stringstream _stream;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;          &lt;&lt; std::setfill(p_fill)</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;          &lt;&lt; std::setw(p_size)</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;          <span class="comment">//            &lt;&lt; std::setprecision(internal::max_str_length&lt;long</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;          <span class="comment">//            double&gt;())</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;          &lt;&lt; p_num;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;} <span class="comment">// namespace tenacitas::lib::fmt</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d1/ddf/align_8h.html">tenacitas.lib/generic/align.h</a>&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d8/d73/max__str__length_8h.html">tenacitas.lib/generic/internal/max_str_length.h</a>&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html">tenacitas::lib::generic</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_num_type&gt;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">   33</a></span>&#160;<a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">requires</a>(std::integral&lt;t_num_type&gt; || std::floating_point&lt;t_num_type&gt;)</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">inline</span> std::string format_max_number(t_num_type p_num, <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                                         <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2d">align</a> p_align = <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  std::stringstream _stream;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;          &lt;&lt; std::setfill(p_fill)</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;          &lt;&lt; std::setw(internal::max_str_length&lt;t_num_type&gt;())</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;          &lt;&lt; (std::is_same_v&lt;t_num_type, uint8_t&gt;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                  ? <span class="keyword">static_cast&lt;</span>uint16_t<span class="keyword">&gt;</span>(p_num)</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                  : (std::is_same_v&lt;int8_t, t_num_type&gt;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                         ? <span class="keyword">static_cast&lt;</span>int16_t<span class="keyword">&gt;</span>(p_num)</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                         : p_num));</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_num_type&gt;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">requires</a>(std::integral&lt;t_num_type&gt; || std::floating_point&lt;t_num_type&gt;)</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">inline</span> std::string</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    format_fix_number(t_num_type p_num, uint8_t p_width, <span class="keywordtype">char</span> p_fill = <span class="charliteral">&#39;0&#39;</span>,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                      <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2d">align</a> p_align = <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d">align::right</a>) {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  std::stringstream _stream;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  _stream &lt;&lt; (p_align == <a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d">align::right</a> ? std::right : std::left) &lt;&lt; std::fixed</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          &lt;&lt; std::setfill(p_fill) &lt;&lt; std::setw(p_width)</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          &lt;&lt; (std::is_same_v&lt;t_num_type, uint8_t&gt;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                  ? <span class="keyword">static_cast&lt;</span>uint16_t<span class="keyword">&gt;</span>(p_num)</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                  : (std::is_same_v&lt;int8_t, t_num_type&gt;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                         ? <span class="keyword">static_cast&lt;</span>int16_t<span class="keyword">&gt;</span>(p_num)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                         : p_num));</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">// namespace tenacitas::lib::generic</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aalign_8h_html"><div class="ttname"><a href="../../d1/ddf/align_8h.html">align.h</a></div></div>
 <div class="ttc" id="amax__str__length_8h_html"><div class="ttname"><a href="../../d8/d73/max__str__length_8h.html">max_str_length.h</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_html"><div class="ttname"><a href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html">tenacitas::lib::fmt</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00009">align.h:9</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_html_ab1187402b8990dc239bd09fe03e9a1f5"><div class="ttname"><a href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5">tenacitas::lib::fmt::align</a></div><div class="ttdeci">align</div><div class="ttdoc">Type of alingnment when formating numbers.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00011">align.h:11</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_html_ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d"><div class="ttname"><a href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#ab1187402b8990dc239bd09fe03e9a1f5a7c4f29407893c334a6cb7a87bf045c0d">tenacitas::lib::fmt::align::right</a></div><div class="ttdeci">@ right</div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1fmt_html_af76f60fe079461d736aa70c524d8cc54"><div class="ttname"><a href="../../d6/d48/namespacetenacitas_1_1lib_1_1fmt.html#af76f60fe079461d736aa70c524d8cc54">tenacitas::lib::fmt::format_number</a></div><div class="ttdeci">std::string format_number(t_num_type p_num, char p_fill='0', align p_align=align::right)</div><div class="ttdoc">Formats a number with the maximum characters necessary to represent the number to string,...</div><div class="ttdef"><b>Definition:</b> <a href="../../da/df1/format__number_8h_source.html#l00032">format_number.h:32</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html">tenacitas::lib::generic</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00009">align.h:9</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html_a7652aac0e5216cb5465eb0088c37fe2d"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2d">tenacitas::lib::generic::align</a></div><div class="ttdeci">align</div><div class="ttdoc">Type of alingnment when formating numbers.</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00011">align.h:11</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html_a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a7652aac0e5216cb5465eb0088c37fe2da7c4f29407893c334a6cb7a87bf045c0d">tenacitas::lib::generic::align::right</a></div><div class="ttdeci">@ right</div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html_a9760337c41e8cee8500253eb41c4b14e"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html#a9760337c41e8cee8500253eb41c4b14e">tenacitas::lib::generic::requires</a></div><div class="ttdeci">requires(std::integral&lt; t_num_type &gt;||std::floating_point&lt; t_num_type &gt;) inline std</div><div class="ttdoc">Formats a number with the maximum characters necessary to represent the number to string,...</div><div class="ttdef"><b>Definition:</b> <a href="../../da/df1/format__number_8h_source.html#l00033">format_number.h:33</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

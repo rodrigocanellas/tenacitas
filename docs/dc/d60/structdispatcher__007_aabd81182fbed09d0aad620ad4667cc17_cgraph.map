@@ -1,0 +1,6 @@
+<map id="dispatcher_007::operator()" name="dispatcher_007::operator()">
+<area shape="rect" id="node1" title=" " alt="" coords="5,78,200,105"/>
+<area shape="rect" id="node2" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#af787612f0558a8d35e5ff8a93cfd58a0" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="272,5,427,47"/>
+<area shape="rect" id="node3" href="$dd/d43/structtenacitas_1_1lib_1_1program_1_1options.html#a858359afcd8eca46b798820f7c6066ed" title="Retrieves a single parameter, if possible." alt="" coords="248,71,451,112"/>
+<area shape="rect" id="node4" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aeba9cf39c8640aebffd6752059201e09" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="272,136,427,177"/>
+</map>

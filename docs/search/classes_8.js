@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['mainwindow_455',['MainWindow',['../d9/dc6/class_main_window.html',1,'']]],
-  ['matrix_456',['matrix',['../d3/dc0/structtenacitas_1_1lib_1_1con_1_1matrix.html',1,'tenacitas::lib::con']]]
+  ['log_5f000_563',['log_000',['../df/d04/structlog__000.html',1,'']]],
+  ['logger_564',['logger',['../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html',1,'tenacitas::lib::log::internal']]]
 ];

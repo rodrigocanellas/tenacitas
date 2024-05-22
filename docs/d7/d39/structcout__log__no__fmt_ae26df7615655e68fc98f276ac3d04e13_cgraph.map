@@ -1,0 +1,11 @@
+<map id="cout_log_no_fmt::operator()" name="cout_log_no_fmt::operator()">
+<area shape="rect" id="node1" title=" " alt="" coords="5,246,208,273"/>
+<area shape="rect" id="node2" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#a5addf0aff968b3c637cc5d6db433f0c3" title="Logs message with deb severity Each parameter must implement the output operator. The log message wil..." alt="" coords="256,5,417,47"/>
+<area shape="rect" id="node3" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#af787612f0558a8d35e5ff8a93cfd58a0" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="259,71,414,112"/>
+<area shape="rect" id="node4" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#a00a1ffd5c813269dd9cc5437c5e6e4a6" title="Logs message with fat severity Each parameter must implement the output operator. level::fat messages..." alt="" coords="259,136,414,177"/>
+<area shape="rect" id="node5" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aece0356ca823ffd8ee6e4f52ccc90d84" title="Logs message with inf severity Each parameter must implement the output operator. The log message wil..." alt="" coords="259,201,414,243"/>
+<area shape="rect" id="node6" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aed1fa83dfcaede6eabb6e7b569d58d57" title=" " alt="" coords="268,267,405,323"/>
+<area shape="rect" id="node7" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#a3fefe1145bda2b59cead82ff46c71486" title="Logs message with tra severity Each parameter must implement the output operator. The log message wil..." alt="" coords="259,348,414,389"/>
+<area shape="rect" id="node8" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aeba9cf39c8640aebffd6752059201e09" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="259,413,414,455"/>
+<area shape="rect" id="node9" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#afd64a29c6f08352a752584425ede6b78" title="Logs message with war severity Each parameter must implement the output operator. The log message wil..." alt="" coords="256,479,417,520"/>
+</map>

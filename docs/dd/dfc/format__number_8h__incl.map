@@ -1,10 +1,11 @@
-<map id="/home/rodrigo/development/tenacitas.lib/fmt/format_number.h" name="/home/rodrigo/development/tenacitas.lib/fmt/format_number.h">
-<area shape="rect" id="node1" title=" " alt="" coords="107,5,310,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="218,199,285,225"/>
-<area shape="rect" id="node3" title=" " alt="" coords="27,117,102,143"/>
-<area shape="rect" id="node4" title=" " alt="" coords="126,117,201,143"/>
-<area shape="rect" id="node5" title=" " alt="" coords="225,117,283,143"/>
-<area shape="rect" id="node6" href="$d1/ddf/align_8h.html" title=" " alt="" coords="308,117,485,143"/>
-<area shape="rect" id="node7" href="$d8/d73/max__str__length_8h.html" title=" " alt="" coords="509,109,692,151"/>
-<area shape="rect" id="node8" title=" " alt="" coords="569,199,632,225"/>
+<map id="/home/rodrigo/development/tenacitas.lib/generic/format_number.h" name="/home/rodrigo/development/tenacitas.lib/generic/format_number.h">
+<area shape="rect" id="node1" title=" " alt="" coords="168,5,371,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="263,199,330,225"/>
+<area shape="rect" id="node3" title=" " alt="" coords="30,117,104,143"/>
+<area shape="rect" id="node4" title=" " alt="" coords="128,117,208,143"/>
+<area shape="rect" id="node5" title=" " alt="" coords="232,117,307,143"/>
+<area shape="rect" id="node6" title=" " alt="" coords="331,117,390,143"/>
+<area shape="rect" id="node7" href="$d1/ddf/align_8h.html" title=" " alt="" coords="414,109,568,151"/>
+<area shape="rect" id="node8" href="$d8/d73/max__str__length_8h.html" title=" " alt="" coords="593,109,786,151"/>
+<area shape="rect" id="node9" title=" " alt="" coords="658,199,721,225"/>
 </map>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['very_5fhigh_888',['very_high',['../df/d04/namespacetenacitas_1_1lib_1_1asy.html#a2fa345d37cce8069286c2e8986500d3baaa4cea18ae7516f9a3c28d597055082f',1,'tenacitas::lib::asy']]],
-  ['very_5flow_889',['very_low',['../df/d04/namespacetenacitas_1_1lib_1_1asy.html#a2fa345d37cce8069286c2e8986500d3bab7619bc8e14fe34d78820f979605ee8b',1,'tenacitas::lib::asy']]]
+  ['tra_927',['tra',['../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html#a976806ea3b812f339598e404b71aaf24acfac4e0dc47d98414cf373a2f09d28a1',1,'tenacitas::lib::log::internal']]],
+  ['tst_928',['tst',['../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html#a976806ea3b812f339598e404b71aaf24a9301c2a72c0f099d0313099f1cd54799',1,'tenacitas::lib::log::internal']]]
 ];

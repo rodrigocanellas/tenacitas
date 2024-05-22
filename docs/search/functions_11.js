@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['uuid_760',['uuid',['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html#ae248761d62899fb6c0a0a92e7c6f242f',1,'tenacitas::lib::sof::uuid::uuid()=default'],['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html#a41f6461685fae76b20edc8ed509813d7',1,'tenacitas::lib::sof::uuid::uuid(const uuid &amp;)=default'],['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html#a827fcf323a9f0e7ffc7aecc425c421b8',1,'tenacitas::lib::sof::uuid::uuid(uuid &amp;)=default'],['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html#a8901ce9f9b9e2c1154a995f2047a1702',1,'tenacitas::lib::sof::uuid::uuid(std::array&lt; uint8_t, 16 &gt; &amp;&amp;p_value)'],['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html#a76ee21d397f97278fc5a7bc7aa5d46d6',1,'tenacitas::lib::sof::uuid::uuid(std::initializer_list&lt; uint8_t &gt; &amp;&amp;p_values)']]]
+  ['war_829',['war',['../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#afd64a29c6f08352a752584425ede6b78',1,'tenacitas::lib::log::internal::logger::war()'],['../d0/dab/structtenacitas_1_1lib_1_1log_1_1no__logger.html#a6427d81da15cfc9dec4c3c0fbea322d9',1,'tenacitas::lib::log::no_logger::war()']]]
 ];

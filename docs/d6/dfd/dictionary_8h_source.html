@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/tra/dictionary.h Source File</title>
+<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/translator/dictionary.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_64ad897383da2e550f8882939df3287a.html">tra</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_c0b2abc27e504cad379d1b3dadec9c37.html">translator</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,34 +74,34 @@ $(function() {
 <div class="contents">
 <a href="../../d6/dfd/dictionary_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_TRA_DICTIONARY_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_TRA_DICTIONARY_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_TRANSLATOR_DICTIONARY_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_TRANSLATOR_DICTIONARY_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html">   13</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html">tenacitas::lib::tra</a> {</div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html">   13</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html">tenacitas::lib::translator</a> {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;std::<span class="keywordtype">unsigned</span>_<span class="keywordtype">int</span>egral t_index = u<span class="keywordtype">int</span>32_t&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a7503a61f9b69349b102a896f91405e5f">   16</a></span>&#160;<span class="keyword">using</span> <a class="code" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a7503a61f9b69349b102a896f91405e5f">dictionary</a> = std::map&lt;t_index, std::string&gt;;</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a927ff2a0461dba920d93cd3be8a4dfa1">   16</a></span>&#160;<span class="keyword">using</span> <a class="code" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a927ff2a0461dba920d93cd3be8a4dfa1">dictionary</a> = std::map&lt;t_index, std::string&gt;;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span> &lt;std::<span class="keywordtype">unsigned</span>_<span class="keywordtype">int</span>egral t_index = u<span class="keywordtype">int</span>32_t&gt;</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#aa6bf5bbba484b85c3136bc93146216a4">   19</a></span>&#160;<span class="keyword">inline</span> std::ostream &amp;<a class="code" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#aa6bf5bbba484b85c3136bc93146216a4">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                                <span class="keyword">const</span> <a class="code" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a7503a61f9b69349b102a896f91405e5f">dictionary&lt;t_index&gt;</a> &amp;p_dictionary) {</div>
+<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a99cd888684b4374c425d3b3a33e3f37c">   19</a></span>&#160;<span class="keyword">inline</span> std::ostream &amp;<a class="code" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a99cd888684b4374c425d3b3a33e3f37c">operator&lt;&lt;</a>(std::ostream &amp;p_out,</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                                <span class="keyword">const</span> <a class="code" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a927ff2a0461dba920d93cd3be8a4dfa1">dictionary&lt;t_index&gt;</a> &amp;p_dictionary) {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a7503a61f9b69349b102a896f91405e5f">dictionary&lt;t_index&gt;::value_type</a> &amp;p_value : p_dictionary) {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a927ff2a0461dba920d93cd3be8a4dfa1">dictionary&lt;t_index&gt;::value_type</a> &amp;p_value : p_dictionary) {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    p_out &lt;&lt; <span class="charliteral">&#39;(&#39;</span> &lt;&lt; p_value.first &lt;&lt; <span class="stringliteral">&quot; - &quot;</span> &lt;&lt; p_value.second &lt;&lt; <span class="stringliteral">&quot;) &quot;</span>;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  }</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keywordflow">return</span> p_out;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;} <span class="comment">// namespace tenacitas::lib::tra</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;} <span class="comment">// namespace tenacitas::lib::translator</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1tra_html"><div class="ttname"><a href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html">tenacitas::lib::tra</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00013">dictionary.h:13</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1tra_html_a7503a61f9b69349b102a896f91405e5f"><div class="ttname"><a href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#a7503a61f9b69349b102a896f91405e5f">tenacitas::lib::tra::dictionary</a></div><div class="ttdeci">std::map&lt; t_index, std::string &gt; dictionary</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00016">dictionary.h:16</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1tra_html_aa6bf5bbba484b85c3136bc93146216a4"><div class="ttname"><a href="../../dc/d34/namespacetenacitas_1_1lib_1_1tra.html#aa6bf5bbba484b85c3136bc93146216a4">tenacitas::lib::tra::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const dictionary&lt; t_index &gt; &amp;p_dictionary)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00019">dictionary.h:19</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1translator_html"><div class="ttname"><a href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html">tenacitas::lib::translator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00013">dictionary.h:13</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1translator_html_a927ff2a0461dba920d93cd3be8a4dfa1"><div class="ttname"><a href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a927ff2a0461dba920d93cd3be8a4dfa1">tenacitas::lib::translator::dictionary</a></div><div class="ttdeci">std::map&lt; t_index, std::string &gt; dictionary</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00016">dictionary.h:16</a></div></div>
+<div class="ttc" id="anamespacetenacitas_1_1lib_1_1translator_html_a99cd888684b4374c425d3b3a33e3f37c"><div class="ttname"><a href="../../d2/d46/namespacetenacitas_1_1lib_1_1translator.html#a99cd888684b4374c425d3b3a33e3f37c">tenacitas::lib::translator::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const dictionary&lt; t_index &gt; &amp;p_dictionary)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dfd/dictionary_8h_source.html#l00019">dictionary.h:19</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

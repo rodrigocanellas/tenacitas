@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.2</span>
+   &#160;<span id="projectnumber">0.1.3</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -70,39 +70,7 @@ $(function() {
 <div class="contents">
 <dl class="section copyright"><dt>Copyright</dt><dd>This file is under GPL 3 license. Please read the <code>LICENSE</code> file at the root of <code>tenacitas</code> directory</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rodrigo Canellas - rodrigo.canellas at gmail.com</dd></dl>
-<div class="fragment"><div class="line"> </div>
-<div class="line"> </div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="../../d9/d53/mainwindow_8h.html">mainwindow.h</a>&quot;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &lt;QApplication&gt;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d1/d9d/exp_2temperature__sensors__simulator_2asy_2dispatcher_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/asy/dispatcher.h</a>&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;<a class="code" href="../../d1/d9f/sensors_8h.html">tenacitas.lib/exp/temperature_sensors_simulator/per/sensors.h</a>&gt;</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keyword">using namespace </span><a class="code" href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a>;</div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]) {</div>
-<div class="line">  <span class="keyword">using namespace </span><a class="code" href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a>;</div>
-<div class="line"> </div>
-<div class="line">  <a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">asy::dispatcher::ptr</a> _dispatcher{<a name="a1"></a><a class="code" href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a7198a6fcc742fb898255eec107d31094">asy::dispatcher::create</a>()};</div>
-<div class="line"> </div>
-<div class="line">  per::sensors _sensors{_dispatcher};</div>
-<div class="line"> </div>
-<div class="line">  QApplication a(argc, argv);</div>
-<div class="line">  <a name="_a2"></a><a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a> w(_dispatcher);</div>
-<div class="line">  w.show();</div>
-<div class="line">  <span class="keywordflow">return</span> a.exec();</div>
-<div class="line">}</div>
-<div class="ttc" id="aclass_main_window_html"><div class="ttname"><a href="../../d9/dc6/class_main_window.html">MainWindow</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00022">mainwindow.h:22</a></div></div>
-<div class="ttc" id="aexp_2dispatcher__000_2main_8cpp_html_ae66f6b31b5ad750f1fe042a706a4e3d4"><div class="ttname"><a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a></div><div class="ttdeci">int main()</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/db6/exp_2dispatcher__000_2main_8cpp_source.html#l00169">main.cpp:169</a></div></div>
-<div class="ttc" id="aexp_2temperature__sensors__simulator_2asy_2dispatcher_8h_html"><div class="ttname"><a href="../../d1/d9d/exp_2temperature__sensors__simulator_2asy_2dispatcher_8h.html">dispatcher.h</a></div></div>
-<div class="ttc" id="amainwindow_8h_html"><div class="ttname"><a href="../../d9/d53/mainwindow_8h.html">mainwindow.h</a></div></div>
-<div class="ttc" id="anamespacetemperature__sensors__simulator_html"><div class="ttname"><a href="../../d7/ddf/namespacetemperature__sensors__simulator.html">temperature_sensors_simulator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d6a/add__sensor_8h_source.html#l00008">add_sensor.h:8</a></div></div>
-<div class="ttc" id="asensors_8h_html"><div class="ttname"><a href="../../d1/d9f/sensors_8h.html">sensors.h</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html_a7198a6fcc742fb898255eec107d31094"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a7198a6fcc742fb898255eec107d31094">tenacitas::lib::asy::dispatcher::create</a></div><div class="ttdeci">static ptr create()</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00101">dispatcher.h:101</a></div></div>
-<div class="ttc" id="astructtenacitas_1_1lib_1_1asy_1_1dispatcher_html_a86c269d0a703f9c01d8d9954059d9b9b"><div class="ttname"><a href="../../d2/d0d/structtenacitas_1_1lib_1_1asy_1_1dispatcher.html#a86c269d0a703f9c01d8d9954059d9b9b">tenacitas::lib::asy::dispatcher::ptr</a></div><div class="ttdeci">std::shared_ptr&lt; dispatcher &gt; ptr</div><div class="ttdef"><b>Definition:</b> <a href="../../df/d5c/asy_2dispatcher_8h_source.html#l00097">dispatcher.h:97</a></div></div>
-</div><!-- fragment --> </div><!-- contents -->
+<div class="fragment"></div><!-- fragment --> </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="../../doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1

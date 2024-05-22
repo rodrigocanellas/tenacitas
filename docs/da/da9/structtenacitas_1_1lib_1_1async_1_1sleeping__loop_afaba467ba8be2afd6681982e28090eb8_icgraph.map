@@ -1,0 +1,4 @@
+<map id="tenacitas::lib::async::sleeping_loop::stop" name="tenacitas::lib::async::sleeping_loop::stop">
+<area shape="rect" id="node1" title="Stops the loop, if it was started." alt="" coords="283,5,439,47"/>
+<area shape="rect" id="node2" href="$da/da9/structtenacitas_1_1lib_1_1async_1_1sleeping__loop.html#ad6fc359039dac760142d32f009c8dd3c" title="Destructor The loops stops calling the function." alt="" coords="5,5,235,47"/>
+</map>

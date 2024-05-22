@@ -1,0 +1,29 @@
+<map id="/home/rodrigo/development/tenacitas.lib/async/example/temperature_sensors_simulator" name="/home/rodrigo/development/tenacitas.lib/async/example/temperature_sensors_simulator">
+<area shape="rect" id="node2" href="dir_b88dcae42b293df4109df498ef17d9c9.html" title="asy" alt="" coords="99,159,171,207"/>
+<area shape="rect" id="node3" href="dir_68efbd3da329da6ee6f148399f2c9f29.html" title="evt" alt="" coords="160,255,232,303"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000003_000023.html" title="4" alt="" coords="173,227,183,242"/>
+<area shape="rect" id="node5" href="dir_ca871ba4504ed0e1cfe0356effd9064f.html" title="typ" alt="" coords="129,351,201,399"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000003_000025.html" title="6" alt="" coords="158,324,167,338"/>
+<area shape="rect" id="edge12-headlabel" href="dir_000023_000025.html" title="6" alt="" coords="182,329,191,343"/>
+<area shape="rect" id="node4" href="dir_501db43747470ad35c1c35dfdc7d830f.html" title="per" alt="" coords="221,159,293,207"/>
+<area shape="rect" id="edge8-headlabel" href="dir_000024_000023.html" title="4" alt="" coords="223,237,233,251"/>
+<area shape="rect" id="edge10-headlabel" href="dir_000024_000025.html" title="2" alt="" coords="215,338,225,353"/>
+<area shape="rect" id="node7" href="dir_6646d5d5edc224bb18b97caffb429c3d.html" title="generic" alt="" coords="395,255,467,303"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000024_000012.html" title="2" alt="" coords="378,234,387,249"/>
+<area shape="rect" id="node8" href="dir_8895ea8127241f78454aef1994a04607.html" title="traits" alt="" coords="395,351,467,399"/>
+<area shape="rect" id="edge9-headlabel" href="dir_000024_000005.html" title="6" alt="" coords="399,324,408,339"/>
+<area shape="rect" id="node6" href="dir_90bf783c16733536a5a1c58c5d7ad3d3.html" title="uix" alt="" coords="37,63,109,111"/>
+<area shape="rect" id="edge15-headlabel" href="dir_000008_000023.html" title="4" alt="" coords="204,230,213,244"/>
+<area shape="rect" id="edge13-headlabel" href="dir_000008_000024.html" title="1" alt="" coords="204,140,213,155"/>
+<area shape="rect" id="edge17-headlabel" href="dir_000008_000025.html" title="2" alt="" coords="145,323,155,338"/>
+<area shape="rect" id="edge14-headlabel" href="dir_000008_000012.html" title="1" alt="" coords="403,228,412,243"/>
+<area shape="rect" id="node9" href="dir_9381a7bbd03577d6d8720c7f35c94ffa.html" title="log" alt="" coords="431,447,503,495"/>
+<area shape="rect" id="edge16-headlabel" href="dir_000008_000014.html" title="1" alt="" coords="497,428,507,443"/>
+<area shape="rect" id="edge11-headlabel" href="dir_000012_000005.html" title="7" alt="" coords="425,325,435,339"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000005_000012.html" title="3" alt="" coords="427,314,436,329"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000005_000014.html" title="2" alt="" coords="445,419,455,434"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000014_000012.html" title="6" alt="" coords="451,315,460,330"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000014_000005.html" title="3" alt="" coords="443,412,452,426"/>
+<area shape="rect" id="clust2" href="dir_a2b10c89859450c360a085e7b902e881.html" alt="" coords="27,52,373,409"/>
+<area shape="rect" id="clust1" href="dir_eea837744dd57cf9e59cc5a840d1e721.html" title="example" alt="" coords="16,16,384,420"/>
+</map>

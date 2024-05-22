@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['error_875',['error',['../d1/d23/namespacetenacitas_1_1lib_1_1log.html#abbdae8fc8ed8bbe3c4f23def14d5450dacb5e100e5a9a3e7f6d1fd97512215282',1,'tenacitas::lib::log']]]
+  ['err_912',['err',['../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html#a976806ea3b812f339598e404b71aaf24a56bd7107802ebe56c6918992f0608ec6',1,'tenacitas::lib::log::internal']]]
 ];

@@ -1,0 +1,5 @@
+<map id="matrix_000::operator()" name="matrix_000::operator()">
+<area shape="rect" id="node1" title=" " alt="" coords="5,46,175,73"/>
+<area shape="rect" id="node2" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#af787612f0558a8d35e5ff8a93cfd58a0" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="223,5,377,47"/>
+<area shape="rect" id="node3" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aeba9cf39c8640aebffd6752059201e09" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="223,71,377,112"/>
+</map>

@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['sensor_2eh_579',['sensor.h',['../d5/d2e/sensor_8h.html',1,'']]],
-  ['sensor_5fid_2eh_580',['sensor_id.h',['../de/d8c/sensor__id_8h.html',1,'']]],
-  ['sensors_2eh_581',['sensors.h',['../d1/d9f/sensors_8h.html',1,'']]],
-  ['set_5ftemperature_2eh_582',['set_temperature.h',['../d6/d33/set__temperature_8h.html',1,'']]],
-  ['sleeping_5floop_2eh_583',['sleeping_loop.h',['../dd/db8/sleeping__loop_8h.html',1,'']]],
-  ['subscriber_2eh_584',['subscriber.h',['../da/d9f/subscriber_8h.html',1,'']]]
+  ['readme_2emd_677',['README.md',['../d9/dd6/_r_e_a_d_m_e_8md.html',1,'']]],
+  ['remove_5fsensor_2eh_678',['remove_sensor.h',['../d5/dc1/asy_2remove__sensor_8h.html',1,'(Global Namespace)'],['../de/df3/evt_2remove__sensor_8h.html',1,'(Global Namespace)']]],
+  ['result_2eh_679',['result.h',['../de/d93/result_8h.html',1,'']]]
 ];

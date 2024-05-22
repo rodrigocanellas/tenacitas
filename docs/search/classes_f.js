@@ -1,4 +1,26 @@
 var searchData=
 [
-  ['uuid_516',['uuid',['../dc/d27/structtenacitas_1_1lib_1_1sof_1_1uuid.html',1,'tenacitas::lib::sof']]]
+  ['test0000_584',['test0000',['../dd/d3e/structtest0000.html',1,'']]],
+  ['test0001_585',['test0001',['../dc/d73/structtest0001.html',1,'']]],
+  ['test_5f000_586',['test_000',['../dc/d42/structtest__000.html',1,'']]],
+  ['test_5f002_587',['test_002',['../d5/dea/structtest__002.html',1,'']]],
+  ['tester_588',['tester',['../df/dc2/structtenacitas_1_1lib_1_1generic_1_1tester.html',1,'tenacitas::lib::generic']]],
+  ['tester_5ferror_589',['tester_error',['../d0/dd7/structtester__error.html',1,'']]],
+  ['tester_5ffail_590',['tester_fail',['../da/d7b/structtester__fail.html',1,'']]],
+  ['tester_5fok_591',['tester_ok',['../d2/db1/structtester__ok.html',1,'']]],
+  ['to_5fcontainer_592',['to_container',['../d3/de7/structtenacitas_1_1lib_1_1traits_1_1to__container.html',1,'tenacitas::lib::traits']]],
+  ['translate_5fan_5fexisting_5fword_593',['translate_an_existing_word',['../df/d17/structtranslate__an__existing__word.html',1,'']]],
+  ['translate_5fnon_5fexisting_5fword_594',['translate_non_existing_word',['../d4/da4/structtranslate__non__existing__word.html',1,'']]],
+  ['translator_5ffrom_5ffile_595',['translator_from_file',['../db/dae/structtenacitas_1_1lib_1_1translator_1_1translator__from__file.html',1,'tenacitas::lib::translator']]],
+  ['translator_5fin_5fmemory_596',['translator_in_memory',['../d8/db8/structtenacitas_1_1lib_1_1translator_1_1translator__in__memory.html',1,'tenacitas::lib::translator']]],
+  ['tuple_5f000_597',['tuple_000',['../d3/d98/structtuple__000.html',1,'']]],
+  ['tuple_5f001_598',['tuple_001',['../d8/ddd/structtuple__001.html',1,'']]],
+  ['tuple_5f002_599',['tuple_002',['../d4/d2e/structtuple__002.html',1,'']]],
+  ['tuple_5f003_600',['tuple_003',['../db/da4/structtuple__003.html',1,'']]],
+  ['tuple_5f004_601',['tuple_004',['../d7/daf/structtuple__004.html',1,'']]],
+  ['tuple_5f005_602',['tuple_005',['../d3/ddc/structtuple__005.html',1,'']]],
+  ['tuple_5f006_603',['tuple_006',['../dc/d89/structtuple__006.html',1,'']]],
+  ['tuple_5fpair_5f000_604',['tuple_pair_000',['../d3/daf/structtuple__pair__000.html',1,'']]],
+  ['tuple_5fto_5fcontainer_605',['tuple_to_container',['../d1/dd4/structtenacitas_1_1lib_1_1traits_1_1tuple__to__container.html',1,'tenacitas::lib::traits']]],
+  ['tuple_5fto_5fcontainer_3c_20t_5fcontainer_2c_20std_3a_3atuple_3c_20ts_2e_2e_2e_20_3e_20_3e_606',['tuple_to_container&lt; t_container, std::tuple&lt; ts... &gt; &gt;',['../d7/d98/structtenacitas_1_1lib_1_1traits_1_1tuple__to__container_3_01t__container_00_01std_1_1tuple_3_01ts_8_8_8_01_4_01_4.html',1,'tenacitas::lib::traits']]]
 ];

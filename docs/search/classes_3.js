@@ -1,19 +1,13 @@
 var searchData=
 [
-  ['e_422',['e',['../da/da7/structtest__006_1_1e.html',1,'test_006']]],
-  ['ev_5f0_423',['ev_0',['../d9/da1/structevt_1_1ev__0.html',1,'evt']]],
-  ['ev_5f1_424',['ev_1',['../de/d20/structevt_1_1ev__1.html',1,'evt']]],
-  ['event_5fqueue_425',['event_queue',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html',1,'tenacitas::lib::asy::internal']]],
-  ['executer_5f000_426',['executer_000',['../dd/dde/structexecuter__000.html',1,'']]],
-  ['executer_5f001_427',['executer_001',['../d0/d93/structexecuter__001.html',1,'']]],
-  ['executer_5f002_428',['executer_002',['../df/d4e/structexecuter__002.html',1,'']]],
-  ['executer_5f003_429',['executer_003',['../da/d37/structexecuter__003.html',1,'']]],
-  ['executer_5f004_430',['executer_004',['../da/d95/structexecuter__004.html',1,'']]],
-  ['executer_5f005_431',['executer_005',['../dd/d3f/structexecuter__005.html',1,'']]],
-  ['executer_5f006_432',['executer_006',['../d2/d6d/structexecuter__006.html',1,'']]],
-  ['executer_5f007_433',['executer_007',['../d3/d92/structexecuter__007.html',1,'']]],
-  ['executer_5f008_434',['executer_008',['../d7/d0a/structexecuter__008.html',1,'']]],
-  ['executer_5f009_435',['executer_009',['../d3/d6d/structexecuter__009.html',1,'']]],
-  ['executer_5f010_436',['executer_010',['../d9/d25/structexecuter__010.html',1,'']]],
-  ['executer_5f011_437',['executer_011',['../dc/d15/structexecuter__011.html',1,'']]]
+  ['dispatcher_470',['dispatcher',['../d1/d7d/structtenacitas_1_1lib_1_1async_1_1dispatcher.html',1,'tenacitas::lib::async']]],
+  ['dispatcher_5f000_471',['dispatcher_000',['../d9/d80/structdispatcher__000.html',1,'']]],
+  ['dispatcher_5f001_472',['dispatcher_001',['../d5/dca/structdispatcher__001.html',1,'']]],
+  ['dispatcher_5f002_473',['dispatcher_002',['../d1/da4/structdispatcher__002.html',1,'']]],
+  ['dispatcher_5f003_474',['dispatcher_003',['../d3/da0/structdispatcher__003.html',1,'']]],
+  ['dispatcher_5f004_475',['dispatcher_004',['../df/dd4/structdispatcher__004.html',1,'']]],
+  ['dispatcher_5f005_476',['dispatcher_005',['../db/dd0/structdispatcher__005.html',1,'']]],
+  ['dispatcher_5f006_477',['dispatcher_006',['../d7/dd4/structdispatcher__006.html',1,'']]],
+  ['dispatcher_5f007_478',['dispatcher_007',['../dc/d60/structdispatcher__007.html',1,'']]],
+  ['dispatcher_5ftest_479',['dispatcher_test',['../dc/dab/structdispatcher__test.html',1,'']]]
 ];

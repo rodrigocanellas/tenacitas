@@ -1,22 +1,5 @@
 var searchData=
 [
-  ['m_5fadd_5fsubscriber_797',['m_add_subscriber',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#a08de042de34a015b4659bba3943939e1',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5famount_5fevents_798',['m_amount_events',['../d2/db2/structdom_1_1generators__definitions.html#a21965e1c13e04a161622d92c17904b8e',1,'dom::generators_definitions']]],
-  ['m_5famount_5fevents_5fincrement_799',['m_amount_events_increment',['../d2/db2/structdom_1_1generators__definitions.html#a547b1229eaab2397179be763a06eaed0',1,'dom::generators_definitions']]],
-  ['m_5famount_5fsubscribers_800',['m_amount_subscribers',['../de/dda/structdom_1_1publishings__definitions.html#a5a3ff71401cb8503009530090595d16b',1,'dom::publishings_definitions']]],
-  ['m_5famount_5fsubscribers_5fincrement_801',['m_amount_subscribers_increment',['../de/dda/structdom_1_1publishings__definitions.html#aed9d861f769578572272d73d56f0d28f',1,'dom::publishings_definitions']]],
-  ['m_5fcircular_5fqueue_802',['m_circular_queue',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#aef2fea1382602470e2a75982d1c744e1',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fcond_803',['m_cond',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#a65ce0333f5e814bbc0119c75cb7ed73c',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fevent_5fpriority_804',['m_event_priority',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#ae6c8ff9db0b7294b94d3959a6378bd34',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fid_805',['m_id',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#a933db4c972fdd15fc16aec69ac2ce7c1',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5finterval_806',['m_interval',['../d2/db2/structdom_1_1generators__definitions.html#ab4c40e98ecb1172caa280cb89c1f42ac',1,'dom::generators_definitions']]],
-  ['m_5finterval_5fincrement_807',['m_interval_increment',['../d2/db2/structdom_1_1generators__definitions.html#a3ba81ffb2ce4acc43c506878d2fc1c6f',1,'dom::generators_definitions']]],
-  ['m_5floops_808',['m_loops',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#af9d0d875aa716f7358e2db3fc4317252',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fmutex_809',['m_mutex',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#a763bd5b5dbfa856a9fd8df5faa20a61b',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fpaused_810',['m_paused',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#ac8a6907bc280574bb0c041e27c9b32e7',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fqueued_5fdata_811',['m_queued_data',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#aebaa214d48fb4d1edd8e070e250181d2',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5fsleep_812',['m_sleep',['../de/dda/structdom_1_1publishings__definitions.html#ac29beaec3a52b3a5afac3c58f0293d97',1,'dom::publishings_definitions']]],
-  ['m_5fsleep_5fincrement_813',['m_sleep_increment',['../de/dda/structdom_1_1publishings__definitions.html#adb7cb76073dbe54896483a57140b5c84',1,'dom::publishings_definitions']]],
-  ['m_5fstopped_814',['m_stopped',['../d0/d7b/classtenacitas_1_1lib_1_1asy_1_1internal_1_1event__queue.html#a7d666cf2afbe8b39a0613001b40a6524',1,'tenacitas::lib::asy::internal::event_queue']]],
-  ['m_5ftotal_815',['m_total',['../d2/db2/structdom_1_1generators__definitions.html#a0fffd7f20214ff29b9108f0836055fc7',1,'dom::generators_definitions::m_total()'],['../de/dda/structdom_1_1publishings__definitions.html#a4d11a98d9e13cae38d716c4aedb6e026',1,'dom::publishings_definitions::m_total()']]]
+  ['log_5fwriter_856',['log_writer',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#ac390fef1a4aced4aa967c820d412b736',1,'tenacitas::lib::traits']]],
+  ['logger_857',['logger',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a6fcd85a69cc106f98e36e843886dfd00',1,'tenacitas::lib::traits']]]
 ];

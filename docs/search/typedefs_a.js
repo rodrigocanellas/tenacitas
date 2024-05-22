@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['queue_856',['queue',['../d4/d3b/tst_2circular__queue_2main_8cpp.html#a56fa236a3588830c3b299238b23cb32f',1,'main.cpp']]],
-  ['queue_5fid_857',['queue_id',['../df/d04/namespacetenacitas_1_1lib_1_1asy.html#a744531e4fea71cd2b5d33ee0f0b98e55',1,'tenacitas::lib::asy']]]
+  ['properties_895',['properties',['../dc/d68/structtenacitas_1_1lib_1_1parser_1_1ini__file.html#a7ffe5a826cd68226924a1a4b1271ea8b',1,'tenacitas::lib::parser::ini_file']]],
+  ['ptr_896',['ptr',['../d2/d34/classtenacitas_1_1lib_1_1async_1_1internal_1_1handling.html#a8fa285cf37c31ef907e71fd7382bbe9a',1,'tenacitas::lib::async::internal::handling']]]
 ];
