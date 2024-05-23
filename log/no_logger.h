@@ -19,35 +19,29 @@ struct no_logger {
 
   void *operator new(size_t) = delete;
 
-  void tra(std::string_view,
-           std::source_location p = std::source_location::current());
+  void tra(std::string_view, std::source_location) {}
 
-  void deb(std::string_view,
-           std::source_location p = std::source_location::current());
+  void deb(std::string_view, std::source_location) {}
 
-  void inf(std::string_view,
-           std::source_location p = std::source_location::current());
+  void inf(std::string_view, std::source_location) {}
 
-  void war(std::string_view,
-           std::source_location p = std::source_location::current());
+  void war(std::string_view, std::source_location) {}
 
-  void err(std::string_view,
-           std::source_location p = std::source_location::current());
+  void err(std::string_view, std::source_location) {}
 
-  void fat(std::string_view,
-           std::source_location p = std::source_location::current());
+  void fat(std::string_view, std::source_location) {}
 
-  void set_tra();
+  void set_tra() {}
 
-  void set_deb();
+  void set_deb() {}
 
-  void set_inf();
+  void set_inf() {}
 
-  void set_war();
+  void set_war() {}
 
-  void save_level();
+  void save_level() {}
 
-  void restore_level();
+  void restore_level() {}
 
   bool can_tra() { return false; }
 
