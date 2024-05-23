@@ -59,6 +59,8 @@ handling "1" *-- "*" subscriber
 handling *-- handling_priority
 dispatcher *-- "*" handling
 handling *-- queue
+subscriber o-- dispatcher
+publisher o-- dispatcher
 
 note "<color green>publishes\n<color blue>subscribes" as legend
 @enduml
