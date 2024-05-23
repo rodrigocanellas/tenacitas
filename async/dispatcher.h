@@ -1,3 +1,4 @@
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
@@ -44,17 +45,19 @@ allow_mixing
 skinparam linetype ortho
 
 
-class dispatcher<t_event...>
+class dispatcher<t_events...>
+class handling<t_event>
 class queue<t_event>
 class subscriber
 class event
 
-dispatcher -[#green]->  event
-dispatcher -[#blue]->  event
+publisher -[#green]->  event
+subscriber -[#blue]->  event
 queue *-- "*" event
-subscriber .right.>  "handles" event
-queue *-- handling_priority
-dispatcher *-- "*" queue
+handling "1" *-- "*" subscriber
+handling *-- handling_priority
+dispatcher *-- "*" handling
+handling *-- queue
 
 note "<color green>publishes\n<color blue>subscribes" as legend
 @enduml
