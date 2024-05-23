@@ -13,7 +13,7 @@
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/logger.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/program/exit.h>
 #include <tenacitas.lib/traits/dispatcher.h>
 #include <tenacitas.lib/traits/logger.h>

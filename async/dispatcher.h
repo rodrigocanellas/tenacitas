@@ -20,6 +20,7 @@
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/traits/event.h>
 #include <tenacitas.lib/traits/is_tuple.h>
 #include <tenacitas.lib/traits/new_operator.h>
@@ -113,12 +114,7 @@ struct dispatcher {
   void operator delete(void *) = delete;
   void operator delete[](void *) = delete;
 
-  ~dispatcher() {
-#ifdef TENACITAS_LOG
-    m_logger.tra("destructor");
-#endif
-    // stop();
-  }
+  ~dispatcher() { TNCT_LOG_TRA(m_logger, "destructor"); }
 
   /// \brief
   ///
