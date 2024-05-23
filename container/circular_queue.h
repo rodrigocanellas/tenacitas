@@ -12,7 +12,7 @@
 #include <vector>
 
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/logger.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/traits/i_queue.h>
 #include <tenacitas.lib/traits/logger.h>
 

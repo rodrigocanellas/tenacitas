@@ -14,8 +14,7 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/generic/chrono_output.h \
         $$BASE_DIR/tenacitas.lib/generic/tuple_output.h \
         $$BASE_DIR/tenacitas.lib/generic/fmt.h \
-        $$BASE_DIR/tenacitas.lib/generic/fixed_size_string.h \
-        $$BASE_DIR/tenacitas.lib/generic/logger.h
+        $$BASE_DIR/tenacitas.lib/generic/fixed_size_string.h
 
 
 

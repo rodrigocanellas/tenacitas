@@ -19,7 +19,7 @@
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/logger.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/traits/event.h>
 #include <tenacitas.lib/traits/i_queue.h>
 #include <tenacitas.lib/traits/logger.h>

@@ -13,7 +13,7 @@
 #include <string_view>
 
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/logger.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/traits/chrono_convertible.h>
 #include <tenacitas.lib/traits/logger.h>
 

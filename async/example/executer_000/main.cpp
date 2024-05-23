@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include <tenacitas.lib/async/exec_sync.h>
-#include <tenacitas.lib/generic/logger.h>
+#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/log/cerr.h>
 
 using namespace tenacitas::lib;

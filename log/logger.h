@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_GENERIC_LOGGER_H
-#define TENACITAS_LIB_GENERIC_LOGGER_H
+#ifndef TENACITAS_LIB_LOG_LOGGER_H
+#define TENACITAS_LIB_LOG_LOGGER_H
 
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/traits/logger.h>
