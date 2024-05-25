@@ -10,12 +10,14 @@
 #include <optional>
 #include <string>
 
+#include <tenacitas.lib/traits/has_output_operator.h>
 #include <tenacitas.lib/traits/logger.h>
 
 namespace tenacitas::lib::traits {
 
 template <traits::logger t_logger, typename t_data>
-requires std::move_constructible<t_data> && std::copy_constructible<t_data>
+requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
+    has_output_operator<t_data>
 class i_queue {
 public:
   using data = t_data;

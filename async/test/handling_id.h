@@ -8,8 +8,8 @@
 
 #include <tenacitas.lib/async/handling_id.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/log/cerr.h>
+#include <tenacitas.lib/program/options.h>
 
 using namespace tenacitas::lib;
 
@@ -37,7 +37,7 @@ struct handling_id_001 {
 
     _log.tst(generic::fmt("id = ", _handling_id));
 
-    return _handling_id == "0123456789";
+    return _handling_id == "0123456789ABC";
   }
 };
 

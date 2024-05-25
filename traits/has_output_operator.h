@@ -3,16 +3,17 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_TRAITS_IS_QUEUE_H
-#define TENACITAS_LIB_TRAITS_IS_QUEUE_H
+#ifndef TENACITAS_LIB_TRAITS_HAS_OUTPUT_OPERATOR_H
+#define TENACITAS_LIB_TRAITS_HAS_OUTPUT_OPERATOR_H
 
-#include <tenacitas.lib/traits/queue.h>
+#include <iostream>
 
 namespace tenacitas::lib::traits {
 
-template <typename t_queue>
-concept is_queue = queue<t_queue, typename t_queue::data>;
+template <typename T>
+concept has_output_operator = requires(std::ostream &os, T value) {
+  { os << value } -> std::same_as<std::ostream &>;
+};
 
 } // namespace tenacitas::lib::traits
-
 #endif

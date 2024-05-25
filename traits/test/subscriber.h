@@ -13,8 +13,8 @@
 #define TENACITAS_LOG
 #endif
 
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/log/cerr.h>
+#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/traits/event.h>
 #include <tenacitas.lib/traits/subscriber.h>
 
@@ -23,9 +23,19 @@ using namespace std::chrono_literals;
 
 namespace subscriber_test {
 
-struct ev0 {};
+struct ev0 {
+  friend std::ostream &operator<<(std::ostream &p_out, const ev0 &) {
+    p_out << "ev0";
+    return p_out;
+  }
+};
 
-struct ev1 {};
+struct ev1 {
+  friend std::ostream &operator<<(std::ostream &p_out, const ev1 &) {
+    p_out << "ev1";
+    return p_out;
+  }
+};
 
 } // namespace subscriber_test
 

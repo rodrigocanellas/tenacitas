@@ -26,8 +26,10 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/traits/tuple_like.h \
         $$BASE_DIR/tenacitas.lib/traits/logger.h \
         $$BASE_DIR/tenacitas.lib/traits/pair_like.h \
-        $$BASE_DIR/tenacitas.lib/traits/is_queue.h \
         $$BASE_DIR/tenacitas.lib/traits/i_queue.h \
-        $$BASE_DIR/tenacitas.lib/traits/is_type_in_tuple.h
+        $$BASE_DIR/tenacitas.lib/traits/is_type_in_tuple.h \
+        $$BASE_DIR/tenacitas.lib/traits/has_output_operator.h
+
+
 
 

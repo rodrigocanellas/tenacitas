@@ -6,11 +6,11 @@
 #ifndef TENACITAS_LIB_ASYNC_HANDLING_ID_H
 #define TENACITAS_LIB_ASYNC_HANDLING_ID_H
 
-#include <tenacitas.lib/generic/fixed_size_string.h>
+#include <string>
 
 namespace tenacitas::lib::async {
 
-using handling_id = generic::fixed_size_string<15>;
+using handling_id = std::string;
 
 } // namespace tenacitas::lib::async
 

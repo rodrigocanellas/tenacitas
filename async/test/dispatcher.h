@@ -24,10 +24,10 @@
 #include <tenacitas.lib/async/sleeping_loop.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/generic/tester.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/parser/ini_file.h>
+#include <tenacitas.lib/program/options.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
@@ -332,7 +332,7 @@ struct dispatcher_007 {
 
   static std::string desc() {
     return "Executes test configured in a .ini file passed as the parameter "
-           "'-ini'. The configuration of the file can be found in the "
+           "'--ini'. The configuration of the file can be found in the "
            "'tenacitas.lib/test/async/dispatcher.h' file.";
   }
 
@@ -391,8 +391,7 @@ struct dispatcher_007 {
   bool operator()(const program::options &p_options) {
     logger _logger;
 
-    std::string _ini_file_name{
-        p_options.get_single_param("ini").value_or("")};
+    std::string _ini_file_name{p_options.get_single_param("ini").value_or("")};
     if (_ini_file_name.empty()) {
       _logger.err("parameter --ini expected");
       return false;

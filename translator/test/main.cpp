@@ -7,9 +7,9 @@
 #include <string>
 
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/generic/tester.h>
 #include <tenacitas.lib/log/cerr.h>
+#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/translator/translator_from_file.h>
 #include <tenacitas.lib/translator/translator_in_memory.h>
 
@@ -34,7 +34,7 @@ struct from_memory {
 struct from_existing_file {
   bool operator()(const program::options &p_options) {
     logger _log;
-    std::optional<std::string> _maybe{p_options.get_single_param("file_name")};
+    std::optional<std::string> _maybe{p_options.get_single_param("file-name")};
     if (!_maybe.has_value()) {
       _log.err("File name not provided");
       return false;
@@ -54,7 +54,7 @@ struct from_existing_file {
 
   static std::string desc() {
     return "Loads a dictonary from a valid file. It is necessary to pass the "
-           "parameter '--file_name' to the test with a valid dictionary.";
+           "parameter '--file-name' to the test with a valid dictionary.";
   }
 };
 
