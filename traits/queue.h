@@ -13,7 +13,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <tenacitas.lib/traits/i_queue.h>
 #include <tenacitas.lib/traits/logger.h>
 
 namespace tenacitas::lib::traits {
@@ -21,8 +20,7 @@ namespace tenacitas::lib::traits {
 template <typename t, typename t_logger, typename t_data>
 concept queue = requires(t p_t) {
   typename t::data;
-
-  std::is_base_of_v<i_queue<t_logger, t_data>, t>;
+  typename t::logger;
 
   traits::logger<t_logger>;
 
@@ -44,10 +42,9 @@ concept queue = requires(t p_t) {
 
   std::is_copy_assignable_v<t>;
 
-  // queue name, logger and initial size
+  // queue name and logger
   {t(std::declval<std::string_view>(),
-     std::declval<std::add_lvalue_reference_t<t_logger>>(),
-     std::declval<size_t>())};
+     std::declval<std::add_lvalue_reference_t<t_logger>>())};
 
   {
     p_t.push(std::move(std::declval<typename t::data>()))

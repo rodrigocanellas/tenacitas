@@ -43,17 +43,11 @@ template <traits::logger t_logger, traits::event t_event> struct handlings {
 
   ~handlings() = default;
 
-  /// \brief
-  ///
-  /// \attention you do not need to pass the 'p_queue_id' neither 'p_logger' in
-  /// 'p_params...' to create the 't_queue' std::unique_pointer object
-  template <typename t_subscriber, typename t_queue, typename... t_queue_params>
-  requires std::is_base_of_v<traits::i_queue<t_logger, t_event>, t_queue>
-  [[nodiscard]] result add_handling(const handling_id &p_handling_id,
-                                    t_subscriber &p_subscriber,
-                                    size_t p_num_handlers,
-                                    handling_priority p_handling_priority,
-                                    t_queue_params &&...p_params) {
+  template <typename t_subscriber>
+  [[nodiscard]] result
+  add_handling(const handling_id &p_handling_id, t_subscriber &p_subscriber,
+               size_t p_num_handlers, handling_priority p_handling_priority,
+               size_t p_queue_size) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     if (get_handling(p_handling_id) != m_container.end()) {
@@ -82,12 +76,10 @@ template <traits::logger t_logger, traits::event t_event> struct handlings {
       }
     }
 
-    handling_ptr _handling(
-        handling::template create<t_queue, t_queue_params...>(
-            p_handling_id, m_logger,
-            [&](auto &&p_event) { p_subscriber.handle(std::move(p_event)); },
-            p_num_handlers, p_handling_priority,
-            std::forward<t_queue_params>(p_params)...));
+    handling _handling(
+        p_handling_id, m_logger,
+        [&](auto &&p_event) { p_subscriber.handle(std::move(p_event)); },
+        p_num_handlers, p_handling_priority, p_queue_size);
 
     m_container.insert(
         {p_handling_priority,
@@ -164,13 +156,12 @@ template <traits::logger t_logger, traits::event t_event> struct handlings {
     std::lock_guard<std::mutex> _lock(m_mutex);
     iterator _ite(get_handling(p_handling_id));
     if (_ite != m_container.end()) {
-      handling_ptr _handling_ptr = std::move(_ite->second.first);
+      handling _handling = std::move(_ite->second.first);
       handler_id _handler_id = get_handler_id(_ite);
-      _handling_ptr->set_priority(p_handling_priority);
+      _handling.set_priority(p_handling_priority);
       m_container.erase(_ite);
-      m_container.insert(
-          {p_handling_priority,
-           std::make_pair(std::move(_handling_ptr), _handler_id)});
+      m_container.insert({p_handling_priority,
+                          std::make_pair(std::move(_handling), _handler_id)});
     }
   }
 
@@ -224,23 +215,21 @@ template <traits::logger t_logger, traits::event t_event> struct handlings {
 private:
   using handling = async::internal::handling<logger, event>;
 
-  using handling_ptr = typename handling::ptr;
-
   using handler_id = size_t;
 
-  using container = std::multimap<async::handling_priority,
-                                  std::pair<handling_ptr, handler_id>,
-                                  std::greater<async::handling_priority>>;
+  using container =
+      std::multimap<async::handling_priority, std::pair<handling, handler_id>,
+                    std::greater<async::handling_priority>>;
 
   using iterator = typename container::iterator;
 
   using const_iterator = typename container::const_iterator;
 
 private:
-  handling &get_handling(iterator p_ite) { return *(p_ite->second.first); }
+  handling &get_handling(iterator p_ite) { return p_ite->second.first; }
 
   const handling &get_handling(const_iterator p_ite) const {
-    return *(p_ite->second.first);
+    return p_ite->second.first;
   }
 
   iterator get_handling(const handling_id &p_handling_id) {
@@ -268,11 +257,11 @@ private:
   }
 
   handling &get_handling(container::value_type &p_value) {
-    return *(p_value.second.first);
+    return p_value.second.first;
   }
 
   const handling &get_handling(const container::value_type &p_value) const {
-    return *(p_value.second.first);
+    return p_value.second.first;
   }
 
   handler_id get_handler_id(const container::value_type &p_value) const {

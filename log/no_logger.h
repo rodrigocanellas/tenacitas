@@ -51,6 +51,7 @@ struct no_logger {
 
   bool can_war() { return false; }
 };
+
 } // namespace tenacitas::lib::log
 
 #endif

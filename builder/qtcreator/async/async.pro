@@ -16,4 +16,6 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/async/internal/handling.h \
         $$BASE_DIR/tenacitas.lib/async/internal/handlings.h \
         $$BASE_DIR/tenacitas.lib/async/internal/handler.h
+        # \
+        # $$BASE_DIR/tenacitas.lib/async/internal/handler_loop.h
 

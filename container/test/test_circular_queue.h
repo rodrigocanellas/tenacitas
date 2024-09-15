@@ -15,9 +15,9 @@
 
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/parser/ini_file.h>
+#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/traits/queue.h>
 
 using namespace tenacitas::lib;
@@ -87,7 +87,7 @@ struct circular_queue_test {
   static std::string desc() {
     return "Running tests configured in a ini file passed on parameter "
            "'--test-cfg'. You can choose a specific test define in the .ini "
-           "file by passing its name to '--run' paramenter, or just run all "
+           "file by passing its name to '--run' parameter, or just run all "
            "passing 'run' with no parameter";
   }
 

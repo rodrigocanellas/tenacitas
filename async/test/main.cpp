@@ -7,8 +7,9 @@
 #include <tenacitas.lib/async/test/handling.h>
 #include <tenacitas.lib/async/test/handling_id.h>
 #include <tenacitas.lib/async/test/handlings.h>
+// #include <tenacitas.lib/async/test/handler_loop_test.h>
 #include <tenacitas.lib/async/test/sleeping_loop.h>
-#include <tenacitas.lib/generic/tester.h>
+// #include <tenacitas.lib/generic/tester.h>
 
 int main(int argc, char **argv) {
 
@@ -54,6 +55,8 @@ int main(int argc, char **argv) {
   run_test(_tester, handling_id_005);
   run_test(_tester, handling_id_006);
   run_test(_tester, handling_id_007);
+
+  // run_test(_tester, handler_loop_000);
 
   return 0;
 }

@@ -118,30 +118,19 @@ struct dispatcher {
 
   ~dispatcher() { TNCT_LOG_TRA(m_logger, "destructor"); }
 
-  /// \brief
-  ///
-  /// \attention you do not need to pass the 'p_queue_id' neither 'p_logger' in
-  /// 'p_params...' to create the 't_queue' std::unique_pointer object
-  template <traits::subscriber t_subscriber, traits::event t_event,
-            template <typename, typename> typename t_queue =
-                container::circular_queue,
-            typename... t_queue_params>
-  requires std::is_base_of_v<traits::i_queue<logger, t_event>,
-                             t_queue<logger, t_event>>
-  [[nodiscard]] result subscribe(const handling_id &p_handling_id,
-                                 t_subscriber &p_subscriber,
-                                 handling_priority p_handling_priority,
-                                 size_t p_num_handlers,
-                                 t_queue_params &&...p_params) noexcept {
+  template <traits::subscriber t_subscriber, traits::event t_event>
+  [[nodiscard]] result
+  subscribe(const handling_id &p_handling_id, t_subscriber &p_subscriber,
+            handling_priority p_handling_priority, size_t p_num_handlers,
+            size_t p_queue_size = 100) noexcept {
     try {
       assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
       auto &_handlings(get_handlings<t_event>());
 
-      return _handlings
-          .template add_handling<t_subscriber, t_queue<logger, t_event>>(
-              p_handling_id, p_subscriber, p_num_handlers, p_handling_priority,
-              std::forward<t_queue_params>(p_params)...);
+      return _handlings.template add_handling<t_subscriber>(
+          p_handling_id, p_subscriber, p_num_handlers, p_handling_priority,
+          p_queue_size);
 
     } catch (std::exception &_ex) {
       m_logger.err(generic::fmt("ERROR: ", _ex.what()));
@@ -155,26 +144,18 @@ struct dispatcher {
   ///
   /// \attention you do not need to pass the 'p_queue_id' neither 'p_logger' in
   /// 'p_params...' to create the 't_queue' std::unique_pointer object
-  template <traits::subscriber t_subscriber, traits::event t_event,
-            template <typename, typename> typename t_queue =
-                container::circular_queue,
-            typename... t_queue_params>
-  requires std::is_base_of_v<traits::i_queue<logger, t_event>,
-                             t_queue<logger, t_event>>
-  [[nodiscard]] result subscribe(const handling_id &p_handling_id,
-                                 t_subscriber &p_subscriber,
-                                 size_t p_num_handlers,
-                                 t_queue_params &&...p_params) noexcept {
+  template <traits::subscriber t_subscriber, traits::event t_event>
+  [[nodiscard]] result
+  subscribe(const handling_id &p_handling_id, t_subscriber &p_subscriber,
+            size_t p_num_handlers, size_t p_queue_size = 100) noexcept {
     try {
       assert_event_defined_in_subscriber<t_subscriber, t_event>();
 
       auto &_handlings(get_handlings<t_event>());
 
-      return _handlings
-          .template add_handling<t_subscriber, t_queue<logger, t_event>>(
-              p_handling_id, p_subscriber, p_num_handlers,
-              handling_priority::medium,
-              std::forward<t_queue_params>(p_params)...);
+      return _handlings.template add_handling<t_subscriber>(
+          p_handling_id, p_subscriber, p_num_handlers,
+          handling_priority::medium, p_queue_size);
 
     } catch (std::exception &_ex) {
       m_logger.err(generic::fmt("ERROR: ", _ex.what()));

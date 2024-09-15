@@ -102,7 +102,7 @@ struct dispatcher_001 : public dispatcher_test {
     m_logger.tst("starting test_001");
     dispatcher _dispatcher(m_logger);
 
-    auto _result = _dispatcher.subscribe<subscriber, ev_1, queue>(
+    auto _result = _dispatcher.subscribe<subscriber, ev_1>(
         "1", m_subscriber, async::handling_priority::medium, 1);
     return _result == async::result::OK;
   }
@@ -150,14 +150,14 @@ struct dispatcher_003 : public dispatcher_test {
     m_logger.tst("starting test_001");
     dispatcher _dispatcher(m_logger);
 
-    auto _result_1(_dispatcher.subscribe<subscriber_a, ev_1, queue>(
+    auto _result_1(_dispatcher.subscribe<subscriber_a, ev_1>(
         "1", _subscriber_a, async::handling_priority::medium, 2));
     if (_result_1 != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result_1));
       return false;
     }
 
-    _result_1 = _dispatcher.subscribe<subscriber_b, ev_1, queue>(
+    _result_1 = _dispatcher.subscribe<subscriber_b, ev_1>(
         "2", _subscriber_b, async::handling_priority::medium, 2);
     if (_result_1 != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result_1));
@@ -199,7 +199,7 @@ struct dispatcher_004 : public dispatcher_test {
     _dispatcher.clear<ev_1>();
 
     subscriber_a _subscriber_a;
-    auto _result(_dispatcher.subscribe<subscriber_a, ev_1, queue>(
+    auto _result(_dispatcher.subscribe<subscriber_a, ev_1>(
         "1", _subscriber_a, async::handling_priority::medium, 1));
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
@@ -233,7 +233,7 @@ struct dispatcher_005 : dispatcher_test {
     async::handling_id _id("1");
 
     subscriber_a _subscriber_a;
-    auto _result(_dispatcher.subscribe<subscriber_a, ev_1, queue>(
+    auto _result(_dispatcher.subscribe<subscriber_a, ev_1>(
         _id, _subscriber_a, async::handling_priority::medium, 1));
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
@@ -333,7 +333,8 @@ struct dispatcher_007 {
   static std::string desc() {
     return "Executes test configured in a .ini file passed as the parameter "
            "'--ini'. The configuration of the file can be found in the "
-           "'tenacitas.lib/test/async/dispatcher.h' file.";
+           "'tenacitas.lib/async/test/dispatcher.h' file, inside "
+           "'dispatcher_007' class.";
   }
 
   /*
@@ -390,6 +391,7 @@ struct dispatcher_007 {
 
   bool operator()(const program::options &p_options) {
     logger _logger;
+    _logger.set_inf();
 
     std::string _ini_file_name{p_options.get_single_param("ini").value_or("")};
     if (_ini_file_name.empty()) {
@@ -419,17 +421,16 @@ struct dispatcher_007 {
       return false;
     }
 
-    auto _result(
-        _dispatcher.subscribe<event_handled_subscriber, event_handled, queue>(
-            "ev-handled", _event_handled_subscriber, 1));
+    auto _result(_dispatcher.subscribe<event_handled_subscriber, event_handled>(
+        "ev-handled", _event_handled_subscriber, 1));
     if (_result != async::result::OK) {
       _logger.err(generic::fmt(_result));
       return false;
     }
 
     size_t _amount_events_to_be_published(
-        calculate_amount_events_to_be_published(_publishers_cfg,
-                                                _handlings_cfg));
+        calculate_amount_of_events_to_be_published(_publishers_cfg,
+                                                   _handlings_cfg));
 
     for (auto &_publisher : _publishers) {
       _publisher.start();
@@ -845,7 +846,7 @@ private:
         switch (_i) {
         case 0: {
           std::get<0>(p_subscribers).sleep = p_handlings_cfg[_i].sleep;
-          _result = p_dispatcher.subscribe<subscriber<0>, new_event, queue>(
+          _result = p_dispatcher.subscribe<subscriber<0>, new_event>(
               _handling_id, std::get<0>(p_subscribers),
               async::handling_priority::medium,
               p_handlings_cfg[_i].num_subscribers);
@@ -856,7 +857,7 @@ private:
         } break;
         case 1: {
           std::get<1>(p_subscribers).sleep = p_handlings_cfg[_i].sleep;
-          _result = p_dispatcher.subscribe<subscriber<1>, new_event, queue>(
+          _result = p_dispatcher.subscribe<subscriber<1>, new_event>(
               _handling_id, std::get<1>(p_subscribers),
               async::handling_priority::medium,
               p_handlings_cfg[_i].num_subscribers);
@@ -867,7 +868,7 @@ private:
         } break;
         case 2: {
           std::get<2>(p_subscribers).sleep = p_handlings_cfg[_i].sleep;
-          _result = p_dispatcher.subscribe<subscriber<2>, new_event, queue>(
+          _result = p_dispatcher.subscribe<subscriber<2>, new_event>(
               _handling_id, std::get<2>(p_subscribers),
               async::handling_priority::medium,
               p_handlings_cfg[_i].num_subscribers);
@@ -878,7 +879,7 @@ private:
         } break;
         case 3: {
           std::get<3>(p_subscribers).sleep = p_handlings_cfg[_i].sleep;
-          _result = p_dispatcher.subscribe<subscriber<3>, new_event, queue>(
+          _result = p_dispatcher.subscribe<subscriber<3>, new_event>(
               _handling_id, std::get<3>(p_subscribers),
               async::handling_priority::medium,
               p_handlings_cfg[_i].num_subscribers);
@@ -889,7 +890,7 @@ private:
         } break;
         case 4: {
           std::get<4>(p_subscribers).sleep = p_handlings_cfg[_i].sleep;
-          _result = p_dispatcher.subscribe<subscriber<4>, new_event, queue>(
+          _result = p_dispatcher.subscribe<subscriber<4>, new_event>(
               _handling_id, std::get<4>(p_subscribers),
               async::handling_priority::medium,
               p_handlings_cfg[_i].num_subscribers);
@@ -928,7 +929,7 @@ private:
     return true;
   }
 
-  size_t calculate_amount_events_to_be_published(
+  size_t calculate_amount_of_events_to_be_published(
       const publishers_cfg &p_publishers_cfg,
       const handlings_cfg &p_handlings_cfg) {
     size_t _amount_events_to_be_published(0);

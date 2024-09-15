@@ -13,7 +13,7 @@
 
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/log/logger.h>
-#include <tenacitas.lib/traits/i_queue.h>
+#include <tenacitas.lib/log/no_logger.h>
 #include <tenacitas.lib/traits/logger.h>
 
 namespace tenacitas::lib::container {
@@ -26,33 +26,38 @@ namespace tenacitas::lib::container {
 ///
 /// \tparam t_data defines the types of the data contained in the queue
 template <traits::logger t_logger, typename t_data>
-requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-class circular_queue : public traits::i_queue<t_logger, t_data> {
+requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
+    std::is_default_constructible_v<t_data>
+class circular_queue final {
+public:
+  using data = t_data;
+  using logger = t_logger;
+
 public:
   circular_queue() = delete;
 
-  circular_queue(std::string_view p_id, t_logger &p_logger,
-                 size_t p_initial_size = 100)
-      : traits::i_queue<t_logger, t_data>(p_id, p_logger),
-        m_initial_size(p_initial_size == 0 ? 100 : p_initial_size),
-        m_incremental_size(((m_initial_size / 2) == 0 ? m_initial_size
-                                                      : (m_initial_size / 2))),
+  circular_queue(std::string_view p_id, t_logger &p_logger)
+      : circular_queue(p_id, p_logger, 100) {}
+
+  circular_queue(std::string_view p_id, t_logger &p_logger, size_t p_size)
+      : m_id(p_id), m_logger(p_logger), m_initial_size(p_size),
+        m_incremental_size(m_initial_size == 0 ? 50 : (m_initial_size / 2)),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
     TNCT_LOG_TRA(this->m_logger, "creating - ", brief_report());
   }
 
-  ~circular_queue() override {}
+  ~circular_queue() {}
 
   circular_queue(const circular_queue &p_queue)
-      : traits::i_queue<t_logger, t_data>(p_queue),
-        m_initial_size(p_queue.m_inital_size),
+      : m_id(p_queue.m_id), m_logger(p_queue.m_logger),
+        m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(p_queue.m_vector), m_head(p_queue.m_head),
         m_tail(p_queue.m_tail), m_occupied(p_queue.m_occupied) {}
 
   circular_queue(circular_queue &&p_queue)
-      : traits::i_queue<t_logger, t_data>(std::move(p_queue)),
+      : m_id(std::move(p_queue.m_id)), m_logger(p_queue.m_logger),
         m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(std::move(p_queue.m_vector)),
@@ -62,7 +67,7 @@ public:
   circular_queue &operator=(const circular_queue &p_queue) {
     if (this != &p_queue) {
       std::lock_guard<std::mutex> _lock(m_mutex);
-      traits::i_queue<t_logger, t_data>::operator=(p_queue);
+      m_id = p_queue.m_id;
       m_initial_size = p_queue.m_inital_size;
       m_incremental_size = p_queue.m_incremental_size;
       m_vector = p_queue.m_vector;
@@ -75,8 +80,9 @@ public:
 
   circular_queue &operator=(circular_queue &&p_queue) {
     if (this != &p_queue) {
-      traits::i_queue<t_logger, t_data>::operator=(std::move(p_queue));
-      m_initial_size = p_queue.m_inital_size;
+      std::lock_guard<std::mutex> _lock(m_mutex);
+      m_id = std::move(p_queue.m_id);
+      m_initial_size = p_queue.m_initial_size;
       m_incremental_size = p_queue.m_incremental_size;
       m_vector = std::move(p_queue.m_vector);
       m_head = p_queue.m_head;
@@ -115,7 +121,7 @@ public:
     return _out.str();
   }
 
-  void push(t_data &&p_data) override {
+  void push(t_data &&p_data) /* override */ {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger, "push - entering ", brief_report());
@@ -136,7 +142,7 @@ public:
     TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
   }
 
-  void push(const t_data &p_data) override {
+  void push(const t_data &p_data) /* override */ {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger, "push - entering: ", brief_report());
@@ -157,7 +163,7 @@ public:
     TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
   }
 
-  std::optional<t_data> pop() override {
+  std::optional<t_data> pop() /* override */ {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger, "pop - entering: ", brief_report());
@@ -180,17 +186,19 @@ public:
     return {_data};
   }
 
-  constexpr bool full() const override { return m_occupied == m_vector.size(); }
+  constexpr bool full() const /* override */ {
+    return m_occupied == m_vector.size();
+  }
 
-  constexpr bool empty() const override { return m_occupied == 0; }
+  constexpr bool empty() const /* override */ { return m_occupied == 0; }
 
-  constexpr size_t capacity() const override { return m_vector.size(); }
+  constexpr size_t capacity() const /* override */ { return m_vector.size(); }
 
-  constexpr size_t occupied() const override { return m_occupied; }
+  constexpr size_t occupied() const /* override */ { return m_occupied; }
 
-  const std::string &id() const override { return this->m_id; }
+  const std::string &id() const /* override */ { return this->m_id; }
 
-  void clear() override {
+  void clear() /* override */ {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_head = m_tail = 0;
     m_occupied = 0;
@@ -241,6 +249,9 @@ protected:
   }
 
 private:
+  std::string m_id;
+  logger &m_logger;
+
   size_t m_initial_size{0};
   size_t m_incremental_size{0};
   vector m_vector;

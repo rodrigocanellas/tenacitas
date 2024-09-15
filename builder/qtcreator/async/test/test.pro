@@ -15,6 +15,8 @@ HEADERS = \
           $$BASE_DIR/tenacitas.lib/async/test/handlings.h \
           $$BASE_DIR/tenacitas.lib/async/test/dispatcher.h \
           $$BASE_DIR/tenacitas.lib/async/test/handling_id.h
+          # \
+          # $$BASE_DIR/tenacitas.lib/async/test/handler_loop_test.h
 
 DISTFILES += \
     $$BASE_DIR/tenacitas.lib/async/test/cfg_000.ini

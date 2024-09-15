@@ -80,8 +80,8 @@ struct handlings_000 : public handlings_base {
     handlings_t<ev1> _eql(m_logger);
     subscriber_1 _sub_1(m_logger);
 
-    auto _result = _eql.add_handling<subscriber_1, queue<ev1>>(
-        "1", _sub_1, 0, async::handling_priority::medium);
+    auto _result = _eql.add_handling<subscriber_1>(
+        "1", _sub_1, 0, async::handling_priority::medium, 10);
 
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
@@ -89,8 +89,8 @@ struct handlings_000 : public handlings_base {
     }
 
     subscriber_2 _sub_2(m_logger);
-    _result = _eql.add_handling<subscriber_2, queue<ev1>>(
-        "2", _sub_2, 0, async::handling_priority::medium);
+    _result = _eql.add_handling<subscriber_2>(
+        "2", _sub_2, 0, async::handling_priority::medium, 10);
 
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
@@ -114,8 +114,8 @@ struct handlings_001 : public handlings_base {
     handlings_t<ev1> _ehl(m_logger);
     subscriber_1 _sub(m_logger);
 
-    auto _result(_ehl.add_handling<subscriber_1, queue<ev1>>(
-        "1", _sub, 1, async::handling_priority::medium));
+    auto _result(_ehl.add_handling<subscriber_1>(
+        "1", _sub, 1, async::handling_priority::medium, 10));
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
@@ -155,9 +155,9 @@ struct handlings_002 : public handlings_base {
 
     subscriber_a _sub_1(m_logger, _counter_1, _mutex_counter_1,
                         _cond_wait_finish, _map_1);
-    auto _result(_handlings.add_handling<subscriber_a, queue<ev1>>(
+    auto _result(_handlings.add_handling<subscriber_a>(
         _handling_id_1, _sub_1, m_num_handlers_1,
-        async::handling_priority::medium));
+        async::handling_priority::medium, 10));
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
@@ -171,9 +171,9 @@ struct handlings_002 : public handlings_base {
     subscriber_b _sub_2(m_logger, _counter_2, _mutex_counter_2,
                         _cond_wait_finish, _map_2);
 
-    _result = _handlings.add_handling<subscriber_b, queue<ev1>>(
+    _result = _handlings.add_handling<subscriber_b>(
         _handling_id_2, _sub_2, m_num_handlers_2,
-        async::handling_priority::medium);
+        async::handling_priority::medium, 10);
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
@@ -293,8 +293,8 @@ struct handlings_003 : public handlings_base {
 
     subscriber_1 _sub_1(m_logger);
 
-    auto _result(_handlings.add_handling<subscriber_1, queue<ev1>>(
-        "1", _sub_1, 1, async::handling_priority::medium));
+    auto _result(_handlings.add_handling<subscriber_1>(
+        "1", _sub_1, 1, async::handling_priority::medium, 10));
 
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
@@ -303,8 +303,8 @@ struct handlings_003 : public handlings_base {
 
     subscriber_2 _sub_2(m_logger);
 
-    _result = _handlings.add_handling<subscriber_2, queue<ev1>>(
-        "2", _sub_2, 1, async::handling_priority ::medium);
+    _result = _handlings.add_handling<subscriber_2>(
+        "2", _sub_2, 1, async::handling_priority::medium, 10);
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
@@ -335,16 +335,16 @@ struct handlings_004 : public handlings_base {
 
     subscriber_1 _sub(m_logger);
 
-    auto _result(_handlings.add_handling<subscriber_1, queue<ev1>>(
-        "1", _sub, 1, async::handling_priority::medium));
+    auto _result(_handlings.add_handling<subscriber_1>(
+        "1", _sub, 1, async::handling_priority::medium, 10));
 
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
     }
 
-    _result = _handlings.add_handling<subscriber_1, queue<ev1>>(
-        "2", _sub, 1, async::handling_priority::medium);
+    _result = _handlings.add_handling<subscriber_1>(
+        "2", _sub, 1, async::handling_priority::medium, 10);
     if (_result != async::result::HANDLER_USED) {
       m_logger.err(generic::fmt("error: ", _result));
       return false;
@@ -367,8 +367,8 @@ struct handlings_005 : public handlings_base {
 
     subscriber _sub(_num_call, m_logger);
 
-    _result = _handlings.add_handling<subscriber, queue<ev1>>(
-        "handling-000", _sub, 1, async::handling_priority::high);
+    _result = _handlings.add_handling<subscriber>(
+        "handling-000", _sub, 1, async::handling_priority::high, 10);
     if (_result != async::result::OK) {
       m_logger.err(generic::fmt(_result));
       return false;

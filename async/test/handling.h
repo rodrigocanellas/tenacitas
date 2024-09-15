@@ -14,9 +14,9 @@
 #include <tenacitas.lib/async/sleeping_loop.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
 #include <tenacitas.lib/generic/tester.h>
 #include <tenacitas.lib/log/cerr.h>
+#include <tenacitas.lib/program/options.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
@@ -57,16 +57,17 @@ struct handling_000 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium,
+        20);
 
-    auto _result(_handling->add_event(ev1()));
+    auto _result(_handling.add_event(ev1()));
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
     }
 
-    const auto _num_events(_handling->get_num_events());
+    const auto _num_events(_handling.get_num_events());
 
     m_logger.tst(generic::fmt("# events = ", _num_events));
 
@@ -81,10 +82,11 @@ struct handling_001 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium,
+        50);
 
-    const auto _is_stopped(_handling->is_stopped());
+    const auto _is_stopped(_handling.is_stopped());
 
     m_logger.tst(generic::fmt("is stopped = ", _is_stopped));
     return !_is_stopped;
@@ -98,11 +100,11 @@ struct handling_002 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
+    handling _handling(
         "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium,
-        200));
+        200);
 
-    auto _priority(_handling->get_priority());
+    auto _priority(_handling.get_priority());
 
     m_logger.tst(generic::fmt("priority = ", _priority));
 
@@ -118,10 +120,10 @@ struct handling_003 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::high));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::high, 30);
 
-    auto _priority(_handling->get_priority());
+    auto _priority(_handling.get_priority());
 
     m_logger.tst(generic::fmt("priority = ", _priority));
 
@@ -138,16 +140,16 @@ struct handling_004 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::high));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::high, 40);
 
-    auto _priority(_handling->get_priority());
+    auto _priority(_handling.get_priority());
 
     m_logger.tst(generic::fmt("original priority = ", _priority));
 
-    _handling->set_priority(async::handling_priority::lowest);
+    _handling.set_priority(async::handling_priority::lowest);
 
-    _priority = _handling->get_priority();
+    _priority = _handling.get_priority();
 
     m_logger.tst(generic::fmt("new priority = ", _priority));
 
@@ -162,11 +164,11 @@ struct handling_005 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
+    handling _handling(
         "dummy_abc", m_logger, [](auto &&) {}, 0,
-        async::handling_priority::medium));
+        async::handling_priority::medium, 40);
 
-    auto _handling_id(_handling->get_id());
+    auto _handling_id(_handling.get_id());
 
     m_logger.tst(generic::fmt("id = ", _handling_id));
 
@@ -182,22 +184,23 @@ struct handling_006 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 0, async::handling_priority::medium,
+        90);
 
-    auto _result(_handling->add_event(ev1()));
+    auto _result(_handling.add_event(ev1()));
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
     }
 
-    auto _num_events(_handling->get_num_events());
+    auto _num_events(_handling.get_num_events());
 
     m_logger.tst(generic::fmt("# events before = ", _num_events));
 
-    _handling->clear();
+    _handling.clear();
 
-    _num_events = _handling->get_num_events();
+    _num_events = _handling.get_num_events();
     m_logger.tst(generic::fmt("# events after = ", _num_events));
 
     return _num_events == 0;
@@ -211,10 +214,11 @@ struct handling_007 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium,
+        40);
 
-    auto _num_handlers(_handling->get_num_handlers());
+    auto _num_handlers(_handling.get_num_handlers());
 
     m_logger.tst(generic::fmt("# handlers = ", _num_handlers));
 
@@ -230,10 +234,11 @@ struct handling_008 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium,
+        50);
 
-    auto _is_stopped(_handling->is_stopped());
+    auto _is_stopped(_handling.is_stopped());
 
     m_logger.tst(generic::fmt("is stopped? ", _is_stopped));
     return !_is_stopped;
@@ -247,16 +252,17 @@ struct handling_009 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium,
+        30);
 
-    auto _is_stopped(_handling->is_stopped());
+    auto _is_stopped(_handling.is_stopped());
 
     m_logger.tst(generic::fmt("is stopped before? ", _is_stopped));
 
-    _handling->stop();
+    _handling.stop();
 
-    _is_stopped = _handling->is_stopped();
+    _is_stopped = _handling.is_stopped();
     m_logger.tst(generic::fmt("is stopped after? ", _is_stopped));
 
     return _is_stopped;
@@ -270,24 +276,25 @@ struct handling_010 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium));
+    handling _handling(
+        "h1", m_logger, [](auto &&) {}, 2, async::handling_priority::medium,
+        80);
 
-    _handling->stop();
+    _handling.stop();
 
-    auto _result(_handling->add_event(ev1()));
+    auto _result(_handling.add_event(ev1()));
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
     }
 
-    _result = _handling->add_event(ev1());
+    _result = _handling.add_event(ev1());
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
     }
 
-    auto _num_events(_handling->get_num_events());
+    auto _num_events(_handling.get_num_events());
 
     m_logger.tst(generic::fmt("# events = ", _num_events));
 
@@ -302,16 +309,16 @@ struct handling_011 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
+    handling _handling(
         "h1", m_logger, [&](auto &&) { m_logger.tst("event handled"); }, 1,
-        async::handling_priority::medium));
-    auto _result(_handling->add_event(ev1()));
+        async::handling_priority::medium, 30);
+    auto _result(_handling.add_event(ev1()));
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
     }
 
-    _result = _handling->add_event(ev1());
+    _result = _handling.add_event(ev1());
     if (_result != async::result::OK) {
       m_logger.err(generic ::fmt(_result));
       return false;
@@ -319,7 +326,7 @@ struct handling_011 : public handling_test {
 
     std::this_thread::sleep_for(200ms);
 
-    auto _num_events(_handling->get_num_events());
+    auto _num_events(_handling.get_num_events());
 
     m_logger.tst(generic::fmt("# events = ", _num_events));
 
@@ -335,15 +342,15 @@ struct handling_012 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    handling::ptr _handling(handling::create<queue>(
+    handling _handling(
         "h1", m_logger, [&](auto &&) { m_logger.tst("event handled"); }, 3,
-        async::handling_priority::medium));
+        async::handling_priority::medium, 90);
 
-    auto _num_handlers(_handling->get_num_handlers());
+    auto _num_handlers(_handling.get_num_handlers());
     m_logger.tst(generic::fmt("# handlers = ", _num_handlers));
 
-    _handling->increment_handlers(2);
-    _num_handlers = _handling->get_num_handlers();
+    _handling.increment_handlers(2);
+    _num_handlers = _handling.get_num_handlers();
     m_logger.tst(generic::fmt("# handlers = ", _num_handlers));
 
     return _num_handlers == 5;
@@ -390,19 +397,19 @@ struct handling_014 : public handling_test {
       std::this_thread::sleep_for(200ms);
     });
 
-    handling::ptr _handling(handling::create<queue>(
-        "h014", m_logger, _handler, 1, async::handling_priority::medium));
+    handling _handling("h014", m_logger, _handler, 1,
+                       async::handling_priority::medium, 40);
 
     async::result _result(async::result::OK);
     for (num_events _i = 0; _i < m_num_events; ++_i) {
-      _result = _handling->add_event(ev1(_i));
+      _result = _handling.add_event(ev1(_i));
       if (_result != async::result::OK) {
         m_logger.err(generic ::fmt(_result));
         return false;
       }
     }
 
-    _handling->increment_handlers(m_amount_handlers_to_add);
+    _handling.increment_handlers(m_amount_handlers_to_add);
 
     {
       std::unique_lock<std::mutex> _lock(_mutex_wait);
@@ -452,6 +459,8 @@ struct handling_015 : public handling_test {
   }
 
   bool operator()(const program::options &) {
+    m_logger.set_deb();
+
     std::mutex _mutex_wait;
     std::condition_variable _cond_wait;
 
@@ -465,13 +474,13 @@ struct handling_015 : public handling_test {
       std::this_thread::sleep_for(200ms);
     });
 
-    handling::ptr _handling(handling::create<queue>(
-        "h015", m_logger, _handler, 1, async::handling_priority::medium));
+    handling _handling("h015", m_logger, _handler, 1,
+                       async::handling_priority::medium, m_num_events * 2);
 
     num_events _i = 0;
     auto _result(async::result::OK);
-    for (; _i < m_num_events / 2; ++_i) {
-      _result = _handling->add_event(ev1(_i));
+    for (; _i < (m_num_events / 2); ++_i) {
+      _result = _handling.add_event(ev1(_i));
       if (_result != async::result::OK) {
         m_logger.err(generic ::fmt(_result));
         return false;
@@ -484,10 +493,10 @@ struct handling_015 : public handling_test {
 
     // m_logger.set_tra();
 
-    handling::ptr _handling_1(std::move(_handling));
+    handling _handling_1(std::move(_handling));
 
     for (num_events _j = _i; _j < m_num_events; ++_j) {
-      _result = _handling_1->add_event(ev1(_j));
+      _result = _handling_1.add_event(ev1(_j));
       if (_result != async::result::OK) {
         m_logger.err(generic ::fmt(_result));
         return false;
@@ -534,9 +543,8 @@ struct handling_016 : public handling_test {
       m_cond.notify_one();
     });
 
-    handling::ptr _handling(handling::create<queue>(
-        "h1", m_logger, _handler, 1, async::handling_priority::highest,
-        m_num_events + 10));
+    handling _handling("h1", m_logger, _handler, 1,
+                       async::handling_priority::highest, m_num_events + 10);
 
     sleeping_loop _sleeping_loop(
         m_logger,
@@ -545,7 +553,7 @@ struct handling_016 : public handling_test {
             ev1 _ev(_added);
             m_logger.tst(
                 generic::fmt("adding event # ", ++_added, ": '", _ev, '\''));
-            auto _result(_handling->add_event(std::move(_ev)));
+            auto _result(_handling.add_event(std::move(_ev)));
             if (_result != async::result::OK) {
               m_logger.err(generic ::fmt(_result));
             }
@@ -571,9 +579,9 @@ struct handling_016 : public handling_test {
             _sleeping_loop.stop();
           }
         }
-        m_logger.tst(generic::fmt(
-            "# events handled = ", _handled,
-            ", # events in queue = ", _handling->get_num_events()));
+        m_logger.tst(
+            generic::fmt("# events handled = ", _handled,
+                         ", # events in queue = ", _handling.get_num_events()));
         return false;
       });
     }
