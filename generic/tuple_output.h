@@ -29,7 +29,7 @@ requires(traits::tuple_like<t_tuple>) std::ostream &tuple2out(
     std::ostream &p_out, const t_tuple &p_tuple,
     const char p_left_delimeter = '(', const char p_right_delimeter = ')') {
   p_out << p_left_delimeter;
-  traits::tuple_traverse(
+  traits::tuple_type_traverse(
       [&]<size_t t_idx>(const t_tuple &p_t) {
         if constexpr (traits::is_tuple_v<
                           std::tuple_element_t<t_idx, t_tuple>>) {

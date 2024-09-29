@@ -33,8 +33,8 @@ struct circular_queue_001 {
     _logger.set_inf();
     try {
 
-      container::circular_queue<log::cerr, std::string> queue("q009", _logger,
-                                                              m_initial_size);
+      container::circular_queue<log::cerr, std::string, m_initial_size> queue(
+          "q009", _logger);
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < m_amount; ++i) {
@@ -72,7 +72,7 @@ struct circular_queue_003 {
   static std::string desc() { return "Move constructor"; }
 
   bool operator()(program::options &) {
-    using queue = container::circular_queue<log::cerr, int32_t>;
+    using queue = container::circular_queue<log::cerr, int32_t, 30>;
     log::cerr _logger;
     queue _queue_1("cq003", _logger);
 
@@ -88,7 +88,7 @@ struct circular_queue_test {
     return "Running tests configured in a ini file passed on parameter "
            "'--test-cfg'. You can choose a specific test define in the .ini "
            "file by passing its name to '--run' parameter, or just run all "
-           "passing 'run' with no parameter";
+           "passing '--run' with no parameter";
   }
 
   bool operator()(program::options &p_options) {
@@ -153,10 +153,8 @@ struct circular_queue_test {
         } else {
           steps _steps;
 
-          size_t _initial_size(0);
-
-          if (parse(_value_section.second, _initial_size, _steps, _logger)) {
-            if (!run(_value_section.first, _initial_size, _steps, _logger)) {
+          if (parse(_value_section.second, _steps, _logger)) {
+            if (!run(_value_section.first, _steps, _logger)) {
               _logger.tst(generic::fmt(_value_section.first, " FAIL"));
               _success = false;
             } else {
@@ -269,17 +267,17 @@ private:
     logger &m_logger;
   };
 
-  using queue = container::circular_queue<logger, int32_t>;
+  using queue = container::circular_queue<logger, int32_t, 8>;
 
   using step = step_type<queue::data>;
 
   using steps = std::vector<step>;
 
 private:
-  bool run(std::string_view p_queue_id, size_t p_initial_size,
-           const steps &p_steps, logger &p_logger) {
+  bool run(std::string_view p_queue_id, const steps &p_steps,
+           logger &p_logger) {
 
-    queue _queue(p_queue_id, p_logger, p_initial_size);
+    queue _queue(p_queue_id, p_logger);
 
     queue::data _data(-1);
 
@@ -303,17 +301,14 @@ private:
       } else {
         p_logger.tst(generic::fmt("step ", ++_step_counter));
       }
-      if ((_queue.capacity() != _step.capacity_expected) ||
-          (_queue.occupied() != _step.occupied_expected) ||
+      if ((_queue.occupied() != _step.occupied_expected) ||
           (_queue.head() != _step.head_expected) ||
           (_queue.tail() != _step.tail_expected)) {
         p_logger.err(generic::fmt(
-            "queue ", _queue.id(), " - capacity: expected ",
-            _step.capacity_expected, " got ", _queue.capacity(),
-            ", occupied: expected ", _step.occupied_expected, ", got ",
-            _queue.occupied(), ", head: expected ", _step.head_expected,
-            ", got ", _queue.head(), ", tail: expected ", _step.tail_expected,
-            ", got ", _queue.tail()));
+            "queue ", _queue.id(), ", occupied: expected ",
+            _step.occupied_expected, ", got ", _queue.occupied(),
+            ", head: expected ", _step.head_expected, ", got ", _queue.head(),
+            ", tail: expected ", _step.tail_expected, ", got ", _queue.tail()));
         return false;
       }
       for (decltype(_step.capacity_expected) _i = 0;
@@ -328,27 +323,23 @@ private:
     return true;
   }
 
-  bool parse(const ini_file::properties &p_properties, size_t &p_initial_size,
-             steps &p_steps, logger &p_logger) {
+  bool parse(const ini_file::properties &p_properties, steps &p_steps,
+             logger &p_logger) {
 
     for (const auto &_property : p_properties) {
-      if (_property.first == "InitialSize") {
-        p_initial_size = static_cast<size_t>(std::stoul(_property.second));
-      } else {
-        auto _key(_property.first);
-        const std::regex _regex(R"(Step_(\d*))");
-        std::smatch _base_match;
+      auto _key(_property.first);
+      const std::regex _regex(R"(Step_(\d*))");
+      std::smatch _base_match;
 
-        if (std::regex_match(_key, _base_match, _regex)) {
-          if (_base_match.size() == 2) {
-            auto _number = _base_match[1].str();
-            step _step(p_logger);
-            if (_step.parse(_property.second)) {
-              p_steps.push_back(std::move(_step));
-            } else {
-              p_logger.tst(generic::fmt("error parsing step '", _key, '\''));
-              return false;
-            }
+      if (std::regex_match(_key, _base_match, _regex)) {
+        if (_base_match.size() == 2) {
+          auto _number = _base_match[1].str();
+          step _step(p_logger);
+          if (_step.parse(_property.second)) {
+            p_steps.push_back(std::move(_step));
+          } else {
+            p_logger.tst(generic::fmt("error parsing step '", _key, '\''));
+            return false;
           }
         }
       }

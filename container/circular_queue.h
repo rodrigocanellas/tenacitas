@@ -14,6 +14,7 @@
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/log/no_logger.h>
+#include <tenacitas.lib/traits/has_output_operator.h>
 #include <tenacitas.lib/traits/logger.h>
 
 namespace tenacitas::lib::container {
@@ -25,9 +26,10 @@ namespace tenacitas::lib::container {
 /// the queue by reusing nodes which data have been read
 ///
 /// \tparam t_data defines the types of the data contained in the queue
-template <traits::logger t_logger, typename t_data>
+template <traits::logger t_logger, typename t_data, size_t t_initial_size>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
-    std::is_default_constructible_v<t_data>
+    std::is_default_constructible_v<t_data> &&
+    traits::has_output_operator<t_data>
 class circular_queue final {
 public:
   using data = t_data;
@@ -37,10 +39,7 @@ public:
   circular_queue() = delete;
 
   circular_queue(std::string_view p_id, t_logger &p_logger)
-      : circular_queue(p_id, p_logger, 100) {}
-
-  circular_queue(std::string_view p_id, t_logger &p_logger, size_t p_size)
-      : m_id(p_id), m_logger(p_logger), m_initial_size(p_size),
+      : m_id(p_id), m_logger(p_logger), m_initial_size(t_initial_size),
         m_incremental_size(m_initial_size == 0 ? 50 : (m_initial_size / 2)),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
@@ -121,7 +120,7 @@ public:
     return _out.str();
   }
 
-  void push(t_data &&p_data) /* override */ {
+  void push(t_data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger, "push - entering ", brief_report());
@@ -142,10 +141,11 @@ public:
     TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
   }
 
-  void push(const t_data &p_data) /* override */ {
+  void push(const t_data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, "push - entering: ", brief_report());
+    TNCT_LOG_TRA(this->m_logger, "push - entering with data = ", p_data, ": ",
+                 brief_report());
 
     if (full()) {
       enlarge();
@@ -163,7 +163,7 @@ public:
     TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
   }
 
-  std::optional<t_data> pop() /* override */ {
+  std::optional<t_data> pop() {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger, "pop - entering: ", brief_report());
@@ -186,19 +186,17 @@ public:
     return {_data};
   }
 
-  constexpr bool full() const /* override */ {
-    return m_occupied == m_vector.size();
-  }
+  constexpr bool full() const { return m_occupied == m_vector.size(); }
 
-  constexpr bool empty() const /* override */ { return m_occupied == 0; }
+  constexpr bool empty() const { return m_occupied == 0; }
 
-  constexpr size_t capacity() const /* override */ { return m_vector.size(); }
+  constexpr size_t capacity() const { return m_vector.size(); }
 
-  constexpr size_t occupied() const /* override */ { return m_occupied; }
+  constexpr size_t occupied() const { return m_occupied; }
 
-  const std::string &id() const /* override */ { return this->m_id; }
+  const std::string &id() const { return this->m_id; }
 
-  void clear() /* override */ {
+  void clear() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_head = m_tail = 0;
     m_occupied = 0;

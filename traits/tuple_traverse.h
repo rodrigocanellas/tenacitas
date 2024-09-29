@@ -20,21 +20,21 @@ concept visit_value_in_tuple = requires(t p_t) {
   requires tuple_like<t_tuple>;
 
   {
-    p_t.template operator()<t_idx>(std::declval<t_tuple &>())
+    p_t.template operator()<t_tuple, t_idx>(std::declval<t_tuple &>())
     } -> std::same_as<bool>;
 };
 
 template <typename t_func, tuple_like t_tuple, size_t t_idx = 0>
 requires(visit_value_in_tuple<t_func, t_tuple, t_idx>)
 
-    void tuple_traverse(t_func p_function, t_tuple &p_tuple) {
+    void tuple_value_traverse(t_func p_function, t_tuple &p_tuple) {
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return;
   } else {
-    if (!p_function.template operator()<t_idx>(p_tuple)) {
+    if (!p_function.template operator()<t_tuple, t_idx>(p_tuple)) {
       return;
     } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-      tuple_traverse<t_func, t_tuple, t_idx + 1>(p_function, p_tuple);
+      tuple_value_traverse<t_func, t_tuple, t_idx + 1>(p_function, p_tuple);
     }
   }
 }
@@ -51,13 +51,13 @@ concept visit_type_in_tuple = requires(t p_t) {
 template <tuple_like t_tuple, typename t_func, size_t t_idx = 0>
 requires(visit_type_in_tuple<t_func, t_tuple, t_idx>)
 
-    constexpr int16_t tuple_traverse(t_func p_function) {
+    constexpr int16_t tuple_type_traverse(t_func p_function) {
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return -1;
   } else if (!p_function.template operator()<t_tuple, t_idx>()) {
     return t_idx;
   } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-    return tuple_traverse<t_tuple, t_func, t_idx + 1>(p_function);
+    return tuple_type_traverse<t_tuple, t_func, t_idx + 1>(p_function);
   } else {
     return -1;
   }

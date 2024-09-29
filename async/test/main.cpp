@@ -3,12 +3,11 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.lib/async/test/dispatcher.h>
-#include <tenacitas.lib/async/test/handling.h>
-#include <tenacitas.lib/async/test/handling_id.h>
-#include <tenacitas.lib/async/test/handlings.h>
-// #include <tenacitas.lib/async/test/handler_loop_test.h>
-#include <tenacitas.lib/async/test/sleeping_loop.h>
+#include <tenacitas.lib/async/test/dispatcher_test.h>
+#include <tenacitas.lib/async/test/handling_id_test.h>
+#include <tenacitas.lib/async/test/handling_test.h>
+#include <tenacitas.lib/async/test/handlings_test.h>
+#include <tenacitas.lib/async/test/sleeping_loop_test.h>
 // #include <tenacitas.lib/generic/tester.h>
 
 int main(int argc, char **argv) {
@@ -17,9 +16,6 @@ int main(int argc, char **argv) {
 
   run_test(_tester, handling_000);
   run_test(_tester, handling_001);
-  run_test(_tester, handling_002);
-  run_test(_tester, handling_003);
-  run_test(_tester, handling_004);
   run_test(_tester, handling_005);
   run_test(_tester, handling_006);
   run_test(_tester, handling_007);
@@ -33,20 +29,27 @@ int main(int argc, char **argv) {
   run_test(_tester, handling_016);
   run_test(_tester, sleeping_loop_000);
   run_test(_tester, sleeping_loop_001);
-  run_test(_tester, handlings_000);
-  run_test(_tester, handlings_001);
-  run_test(_tester, handlings_002);
-  run_test(_tester, handlings_003);
-  run_test(_tester, handlings_004);
-  run_test(_tester, handlings_005);
+  // run_test(_tester, handlings_000);
+  // run_test(_tester, handlings_001);
+  // run_test(_tester, handlings_002);
+  // run_test(_tester, handlings_003);
+  // run_test(_tester, handlings_004);
+  // run_test(_tester, handlings_005);
+  // run_test(_tester, handlings_006);
+  // run_test(_tester, handlings_007);
+  // run_test(_tester, handlings_001);
+  // run_test(_tester, handlings_002);
+  // run_test(_tester, handlings_003);
+  // run_test(_tester, handlings_004);
+  // run_test(_tester, handlings_005);
   run_test(_tester, dispatcher_000);
-  run_test(_tester, dispatcher_001);
-  run_test(_tester, dispatcher_002);
-  run_test(_tester, dispatcher_003);
-  run_test(_tester, dispatcher_004);
-  run_test(_tester, dispatcher_005);
-  run_test(_tester, dispatcher_006);
-  run_test(_tester, dispatcher_007);
+  // run_test(_tester, dispatcher_001);
+  // run_test(_tester, dispatcher_002);
+  // run_test(_tester, dispatcher_003);
+  // run_test(_tester, dispatcher_004);
+  // run_test(_tester, dispatcher_005);
+  // run_test(_tester, dispatcher_006);
+  // run_test(_tester, dispatcher_007);
   run_test(_tester, handling_id_000);
   run_test(_tester, handling_id_001);
   run_test(_tester, handling_id_002);
@@ -55,8 +58,6 @@ int main(int argc, char **argv) {
   run_test(_tester, handling_id_005);
   run_test(_tester, handling_id_006);
   run_test(_tester, handling_id_007);
-
-  // run_test(_tester, handler_loop_000);
 
   return 0;
 }

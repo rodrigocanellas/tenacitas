@@ -9,28 +9,32 @@
 #include <cstddef>
 #include <optional>
 #include <string>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 
+#include <tenacitas.lib/traits/has_output_operator.h>
 #include <tenacitas.lib/traits/logger.h>
 
 namespace tenacitas::lib::traits {
 
 template <typename t, typename t_logger, typename t_data>
 concept queue = requires(t p_t) {
-  typename t::data;
   typename t::logger;
+  typename t::data;
 
-  traits::logger<t_logger>;
+  logger<typename t::logger>;
+
+  std::is_same_v<typename t::logger, t_logger>;
 
   std::is_same_v<typename t::data, t_data>;
 
-  std::is_copy_constructible_v<t_data>;
+  std::is_copy_constructible_v<typename t::data>;
 
-  std::is_move_constructible_v<t_data>;
+  std::is_move_constructible_v<typename t::data>;
 
-  std::is_default_constructible_v<t_data>;
+  std::is_default_constructible_v<typename t::data>;
+
+  has_output_operator<typename t::data>;
 
   std::is_copy_constructible_v<t>;
 
@@ -42,10 +46,9 @@ concept queue = requires(t p_t) {
 
   std::is_copy_assignable_v<t>;
 
-  // queue name and logger
+  // queue name, logger
   {t(std::declval<std::string_view>(),
      std::declval<std::add_lvalue_reference_t<t_logger>>())};
-
   {
     p_t.push(std::move(std::declval<typename t::data>()))
     } -> std::same_as<void>;

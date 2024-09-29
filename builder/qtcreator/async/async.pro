@@ -3,8 +3,9 @@ include (../common.pri)
 TEMPLATE=subdirs
 
 SUBDIRS=\
-    test \
-    example
+     test
+     # \
+    # example
 
 HEADERS += \
         $$BASE_DIR/tenacitas.lib/async/sleeping_loop.h \
@@ -15,7 +16,6 @@ HEADERS += \
         $$BASE_DIR/tenacitas.lib/async/result.h \
         $$BASE_DIR/tenacitas.lib/async/internal/handling.h \
         $$BASE_DIR/tenacitas.lib/async/internal/handlings.h \
-        $$BASE_DIR/tenacitas.lib/async/internal/handler.h
-        # \
-        # $$BASE_DIR/tenacitas.lib/async/internal/handler_loop.h
+        $$BASE_DIR/tenacitas.lib/async/internal/handler.h \
+
 

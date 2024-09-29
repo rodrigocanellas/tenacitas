@@ -3,9 +3,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <tenacitas.lib/container/test/circular_queue_test.h>
+#include <tenacitas.lib/container/test/matrix_test.h>
 #include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/container/test/matrix.h>
-#include <tenacitas.lib/container/test/test_circular_queue.h>
 
 using namespace tenacitas::lib;
 

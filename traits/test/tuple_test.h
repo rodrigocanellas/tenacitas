@@ -39,7 +39,7 @@ struct tuple_000 {
   bool operator()(const program::options &) {
     my_tuple _my_tuple;
 
-    traits::tuple_traverse(
+    traits::tuple_value_traverse(
         [&]<size_t t_idx>(my_tuple &) {
           std::cerr << "at index " << t_idx << " there is a "
                     << typeid(std::tuple_element_t<t_idx, my_tuple>).name()
@@ -59,7 +59,7 @@ struct tuple_001 {
 
   bool operator()(const program::options &) {
     my_tuple _my_tuple;
-    traits::tuple_traverse(
+    traits::tuple_value_traverse(
         [&]<size_t t_idx>(my_tuple &) {
           if (std::is_same_v<std::tuple_element_t<t_idx, my_tuple>, b>) {
             std::cerr << "'b' is at index " << t_idx << std::endl;
@@ -90,7 +90,7 @@ struct tuple_002 {
       return true;
     };
 
-    constexpr auto _idx(traits::tuple_traverse<my_tuple>(_f));
+    constexpr auto _idx(traits::tuple_type_traverse<my_tuple>(_f));
 
     std::cerr << "at index " << _idx << " there is a '"
               << typeid(std::tuple_element_t<_idx, my_tuple>).name() << '\''
@@ -145,7 +145,7 @@ struct tuple_006 {
       return true;
     });
 
-    traits::tuple_traverse<tuple_3>(_visitor);
+    traits::tuple_type_traverse<tuple_3>(_visitor);
 
     return true;
   }

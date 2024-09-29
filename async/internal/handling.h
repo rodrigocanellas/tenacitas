@@ -11,58 +11,60 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <typeindex>
+#include <vector>
 
 #include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/internal/handler.h>
 #include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/traits/event.h>
+#include <tenacitas.lib/traits/handler.h>
 #include <tenacitas.lib/traits/logger.h>
 #include <tenacitas.lib/traits/queue.h>
 
 namespace tenacitas::lib::async::internal {
 
-template <traits::logger t_logger, traits::event t_event> class handling {
+// class handling_base {
+// public:
+//   virtual const std::type_index &get_event_id() const = 0;
+
+//   virtual ~handling_base() {}
+
+//   template <traits::event t_event> result add_event(const t_event &) {
+//     return async::result::UNIDENTIFIED;
+//   }
+// };
+
+template <traits::logger t_logger, traits::event t_event,
+          traits::queue<t_logger, t_event> t_queue, traits::handler t_handler>
+class handling final /*: public handling_base*/ {
 public:
+  using logger = t_logger;
   using event = t_event;
-  using handler = async::internal::handler<event>;
+  using handler = t_handler;
+  using queue = t_queue;
 
   /// \brief Creates a handling for an event type
   ///
-  /// \param p_handling_id
   /// \param p_logger
   /// \param p_handler
-  /// \param p_num_handlers
-  /// \param p_handling_priority
-  /// \param size_t p_queue_size
-  handling(const handling_id &p_handling_id, t_logger &p_logger,
-           handler &&p_handler, size_t p_num_handlers,
-           handling_priority p_handling_priority, size_t p_queue_size)
+  handling(std::string_view p_handling_id, t_logger &p_logger,
+           handler &&p_handler)
       : m_logger(p_logger), m_handling_id(p_handling_id),
         m_handler(std::move(p_handler)),
-        m_handling_priority(p_handling_priority),
-        m_queue("queue-" + p_handling_id, p_logger, p_queue_size) {
-    TNCT_LOG_TRA(m_logger, trace(generic::fmt("creating handling with ",
-                                              p_num_handlers, " handlers")));
-
-    if (p_num_handlers > 0) {
-      increment_handlers(p_num_handlers);
-    }
-  }
+        m_queue("queue-" + m_handling_id, p_logger) {}
 
   handling(const handling &) = delete;
+
   handling(handling &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
         m_handler(std::move(p_handling.m_handler)),
-        m_handling_priority(std::move(p_handling.m_handling_priority)),
-        m_queue(p_handling.m_queue.id(), p_handling.m_logger, 0) {
+        m_queue(p_handling.m_queue.id(), p_handling.m_logger) {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();
 
-    m_queued_data = std::move(p_handling.m_queued_data);
+    m_queued_data.store(p_handling.m_queued_data);
     m_queue = std::move(p_handling.m_queue);
     if (!_right_handling_was_stopped) {
       increment_handlers(p_handling.get_num_handlers());
@@ -77,6 +79,8 @@ public:
 
   handling &operator=(const handling &) = delete;
   handling &operator=(handling &&) = delete;
+
+  const std::type_index &get_event_id() const { return m_event_id; }
 
   // Adds an event to the queue of events
   [[nodiscard]] result add_event(const event &p_event) {
@@ -99,9 +103,9 @@ public:
   }
 
   // Adds a bunch of event handlers
-  template <std::integral t_num_handlers>
+  template <std::unsigned_integral t_num_handlers>
   void increment_handlers(t_num_handlers p_num_handlers) {
-    if (p_num_handlers <= 0) {
+    if (p_num_handlers == 0) {
       return;
     }
 
@@ -145,7 +149,7 @@ public:
 
     {
       std::lock_guard<std::mutex> _lock(m_data_mutex);
-      m_stopped = true;
+      m_stopped.store(true);
       m_data_cond.notify_all();
     }
 
@@ -167,14 +171,6 @@ public:
   // Informs if the publishing is stopped
   constexpr bool is_stopped() const { return m_stopped; }
 
-  constexpr handling_priority get_priority() const {
-    return m_handling_priority;
-  }
-
-  void set_priority(handling_priority p_handling_priority) {
-    m_handling_priority = p_handling_priority;
-  }
-
   [[nodiscard]] constexpr size_t get_num_handlers() const {
     return m_handling_handlers.size();
   }
@@ -194,13 +190,12 @@ public:
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const handling &p_handling) {
-    p_out << " name " << typeid(event).name() << ", address " << &p_handling
-          << ", id " << p_handling.m_handling_id << ", priority "
-          << p_handling.m_handling_priority << ", queue { capacity "
+    p_out << "{name " << typeid(event).name() << ", address " << &p_handling
+          << ", id " << p_handling.m_handling_id << ", queue { capacity "
           << p_handling.m_queue.capacity() << ", occupied "
           << p_handling.m_queue.occupied() << " }"
           << ", stopped? " << (p_handling.m_stopped ? 'T' : 'F') << ", #loops "
-          << p_handling.m_loops.size();
+          << p_handling.m_loops.size() << '}';
     return p_out;
   }
 
@@ -212,8 +207,6 @@ public:
   }
 
 private:
-  using logger = t_logger;
-
   // Group of async_loops that asynchronously call the handlers
   using async_loops = std::vector<std::thread>;
 
@@ -326,16 +319,15 @@ private:
 
   handler m_handler;
 
-  // handling_priority of this publishing
-  handling_priority m_handling_priority;
+  queue m_queue;
 
-  container::circular_queue<logger, event> m_queue;
+  std::type_index m_event_id{std::type_index(typeid(event))};
 
   // Indicates if the dispatcher should continue to run
-  bool m_stopped{false};
+  std::atomic_bool m_stopped{false};
 
   // Amount of queued data
-  size_t m_queued_data{0};
+  std::atomic_size_t m_queued_data{0};
 
   handling_handlers m_handling_handlers;
 

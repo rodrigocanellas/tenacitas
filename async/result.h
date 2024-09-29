@@ -13,10 +13,12 @@ namespace tenacitas::lib::async {
 
 enum class result : std::uint8_t {
   OK = 0,
-  UNIDENTIFIED = 1,
-  HANDLING_EXISTS = 2,
-  HANDLING_DOES_NOT_EXIST = 3,
-  HANDLER_USED = 4
+  UNIDENTIFIED,
+  HANDLING_EXISTS,
+  HANDLING_DOES_NOT_EXIST,
+  HANDLER_USED,
+  ZERO_AMOUNT,
+  HANDLINGS_NOT_FOUND
 };
 
 static inline std::ostream &operator<<(std::ostream &p_out,
@@ -36,6 +38,12 @@ static inline std::ostream &operator<<(std::ostream &p_out,
     break;
   case result::HANDLER_USED:
     p_out << "handler used";
+    break;
+  case result::ZERO_AMOUNT:
+    p_out << "zero amount";
+    break;
+  case result::HANDLINGS_NOT_FOUND:
+    p_out << "handlings not found";
     break;
   }
   return p_out;
