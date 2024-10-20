@@ -6,26 +6,23 @@
 #ifndef TENACITAS_LIB_LOG_INTERNAL_LOGGER_H
 #define TENACITAS_LIB_LOG_INTERNAL_LOGGER_H
 
-#include <chrono>
 #include <cstddef>
-#include <cstdint>
 #include <cstring>
 #include <ctime>
-#include <filesystem>
 #include <iostream>
 #include <mutex>
 #include <source_location>
 #include <sstream>
-#include <thread>
 #include <utility>
 
-#include <tenacitas.lib/generic/align.h>
-#include <tenacitas.lib/generic/format_number.h>
-#include <tenacitas.lib/generic/tuple_output.h>
-#include <tenacitas.lib/log/internal/level.h>
-#include <tenacitas.lib/traits/is_pair.h>
-#include <tenacitas.lib/traits/is_tuple.h>
+#include <tenacitas.lib/format/align.h>
+#include <tenacitas.lib/format/format_number.h>
+#include <tenacitas.lib/log/level.h>
+#include <tenacitas.lib/log/line_header_formater.h>
+#include <tenacitas.lib/pair/is_pair.h>
 #include <tenacitas.lib/traits/log_writer.h>
+#include <tenacitas.lib/tuple/is_tuple.h>
+#include <tenacitas.lib/tuple/tuple_output.h>
 
 namespace tenacitas::lib::log::internal {
 
@@ -45,9 +42,22 @@ public:
   /// \brief Default contructor
   ///
   /// \p p_writer  Responsible for actually writing the log message
-  logger() = default;
+  logger(t_log_writer &&p_log_writer,
+         line_header_formater p_line_header_formater)
+      : m_writer(std::move(p_log_writer)),
+        m_line_header_formater(p_line_header_formater) {}
 
-  logger(t_log_writer &&p_log_writer) : m_writer(std::move(p_log_writer)) {}
+  logger()
+      : m_writer(t_log_writer()),
+        m_line_header_formater(default_line_header_formater) {}
+
+  logger(line_header_formater p_line_header_formater)
+      : m_writer(t_log_writer()),
+        m_line_header_formater(p_line_header_formater) {}
+
+  logger(t_log_writer &&p_log_writer)
+      : m_writer(std::move(p_log_writer)),
+        m_line_header_formater(default_line_header_formater) {}
 
   /// \brief Copy constructor not allowed
   logger(const logger &) = delete;
@@ -72,6 +82,11 @@ public:
 
   /// \brief Delete operator not allowed
   void operator delete[](void *) = delete;
+
+  void set_header_formater(line_header_formater p_line_header_formater) {
+    std::lock_guard<std::mutex> _lock(m_mutex);
+    m_line_header_formater = p_line_header_formater;
+  }
 
   /// \brief Defines the separator to be used in the log messages
   /// Default is '|'
@@ -213,47 +228,10 @@ public:
 private:
   void write(level p_level, std::string_view p_string,
              std::source_location &p_source_location) {
+
     std::stringstream _stream;
-
-    const double _now_microsecs =
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::system_clock::now().time_since_epoch())
-            .count();
-    const time_t _now_seconds{static_cast<time_t>(_now_microsecs / 1000000)};
-
-    // _time_str must have space enough for YYYY-MM-DD HH:MM:SS
-    char _time_str[4 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 2 + 1 + 1];
-    strftime(_time_str, sizeof _time_str, "%Y-%m-%d %H:%M:%S",
-             localtime(&_now_seconds));
-
-    auto _aux(std::filesystem::path(p_source_location.file_name())
-                  .filename()
-                  .string());
-
-    decltype(_aux) _file_name;
-
-    const size_t _max_file_name_size(35);
-
-    if (_aux.size() > _max_file_name_size) {
-      _file_name.append(&_aux[0], &_aux[_max_file_name_size - 3]);
-      _file_name.append("...");
-    } else {
-      _file_name = _aux;
-    }
-
-    _stream << p_level << m_separator << _time_str << ','
-            << generic::format_fix_number(
-                   static_cast<uint32_t>(_now_microsecs -
-                                         (_now_seconds * 1000000)),
-                   6, '0', tenacitas::lib::generic::align::right)
-            << m_separator << std::this_thread::get_id() << m_separator
-            << std::setfill(' ') << std::left << std::setw(_max_file_name_size)
-            << _file_name << m_separator
-            << generic::format_fix_number(p_source_location.line(), uint8_t{5})
-            // << m_separator << p_source_location.function_name()
-
-            << m_separator;
-    _stream << p_string << std::endl;
+    m_line_header_formater(_stream, p_level, p_source_location)
+        << p_string << std::endl;
 
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_writer(_stream.str());
@@ -264,6 +242,8 @@ private:
   ///
   /// The default implementation writes the \p std::cerr
   t_log_writer m_writer;
+
+  line_header_formater m_line_header_formater;
 
   /// \brief Allows a thread safe writing to the log writer
   std::mutex m_mutex;

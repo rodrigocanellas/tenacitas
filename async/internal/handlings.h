@@ -10,7 +10,7 @@
 
 #include <tenacitas.lib/async/handling_id.h>
 #include <tenacitas.lib/async/internal/handler.h>
-#include <tenacitas.lib/async/internal/handling.h>
+#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/traits/handling.h>
@@ -354,7 +354,7 @@ private:
 //   }
 
 // private:
-//   using handling = async::internal::handling<logger, event>;
+//   using handling = async::handling<logger, event>;
 
 //   using handler_id = size_t;
 

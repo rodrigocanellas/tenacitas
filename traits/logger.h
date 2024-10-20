@@ -9,52 +9,41 @@
 #include <source_location>
 #include <string_view>
 
-#include <tenacitas.lib/traits/new_operator.h>
+#include <tenacitas.lib/traits/has_new_operator.h>
 
 namespace tenacitas::lib::traits {
 
 template <typename t>
-concept logger = requires(t p_t) {
-  !std::copy_constructible<t>;
+concept logger = !std::copy_constructible<t> &&
 
-  !std::move_constructible<t>;
+                 !std::move_constructible<t> &&
 
-  no_new_operator<t>;
+                 !has_new_operator_v<t> &&
+
+                 requires(t p_t) {
 
   {
-    p_t.tra(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.tra(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.deb(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.deb(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.inf(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.inf(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.war(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.war(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.err(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.err(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.fat(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.fat(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   { p_t.set_tra() } -> std::same_as<void>;

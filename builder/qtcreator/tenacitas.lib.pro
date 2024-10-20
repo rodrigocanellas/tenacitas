@@ -6,12 +6,18 @@ SUBDIRS = \
     generic \
     # math \
     container \
-    async \
+    # async \
     traits \
     log \
     translator \
     parser \
-    program
+    program \
+    tuple \
+    pair \
+    time \
+    format \
+    test
+
 
 
 

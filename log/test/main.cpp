@@ -5,20 +5,34 @@
 
 #include <iostream>
 #include <string>
-#include <tuple>
-#include <utility>
+// #include <tuple>
+// #include <utility>
 
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/generic/tuple_output.h>
+#include <tenacitas.lib/format/fmt.h>
+#include <tenacitas.lib/tester/test.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/log/cout.h>
 #include <tenacitas.lib/log/file.h>
+#include <tenacitas.lib/program/options.h>
+#include <tenacitas.lib/tuple/tuple_output.h>
 
 using namespace std::chrono_literals;
 
 using namespace tenacitas::lib;
+
+struct basic_log {
+  static std::string desc() { return "basic log"; }
+
+  bool operator()(const program::options &) {
+    log::cout _logger;
+
+    _logger.set_tra();
+
+    _logger.tst("str");
+
+    return true;
+  }
+};
 
 struct cerr_log {
 
@@ -28,37 +42,37 @@ struct cerr_log {
       log::cerr _logger;
       _logger.set_tra();
 
-      _logger.tst(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tst(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple('z', 3.13, "hi"), ',',
                                std::make_pair(-938, "h"), ',', 3min, ',', 8s,
                                ',', 20ms, ',', 300us, ',', -9, ',', 28));
 
-      _logger.tra(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tra(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.deb(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.deb(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.inf(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.inf(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.war(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.war(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.err(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.err(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.fat(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.fat(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
@@ -79,37 +93,37 @@ struct cout_log {
     try {
       log::cout _logger;
       _logger.set_tra();
-      _logger.tst(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tst(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.tra(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tra(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.deb(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.deb(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.inf(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.inf(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.war(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.war(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.err(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.err(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.fat(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.fat(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
@@ -131,37 +145,37 @@ struct file_log {
     try {
       log::file _logger(log::file_logger_writer("./file_log_how_to"));
       _logger.set_tra();
-      _logger.tst(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tst(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.tra(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.tra(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.deb(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.deb(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.inf(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.inf(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.war(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.war(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.err(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.err(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
                                ',', 28));
-      _logger.fat(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+      _logger.fat(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                std::make_tuple<char, float>('z', 3.13), ',',
                                std::make_pair<int, std::string>(-938, "h"), ',',
                                3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
@@ -184,37 +198,37 @@ struct file_log_multiple_files {
           log::file_logger_writer("./file_log_more_than_one_file", 10 * 1024));
       _logger.set_tra();
       for (uint16_t _i = 0; _i < 100; ++_i) {
-        _logger.tst(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.tst(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.tra(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.tra(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.deb(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.deb(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.inf(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.inf(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.war(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.war(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.err(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.err(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
                                  -9, ',', 28, ',', _i));
-        _logger.fat(generic::fmt("hello!", ',', 309, ',', 'W', ',',
+        _logger.fat(format::fmt("hello!", ',', 309, ',', 'W', ',',
                                  std::make_tuple<char, float>('z', 3.13), ',',
                                  std::make_pair<int, std::string>(-938, "h"),
                                  ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
@@ -283,7 +297,7 @@ struct log_000 {
 
 int main(int argc, char **argv) {
 
-  generic::tester _tester(argc, argv);
+  generic::test _tester(argc, argv);
 
   run_test(_tester, cerr_log);
   run_test(_tester, cout_log);
@@ -291,4 +305,5 @@ int main(int argc, char **argv) {
   run_test(_tester, file_log_multiple_files);
   run_test(_tester, cout_log_no_fmt);
   run_test(_tester, log_000);
+  run_test(_tester, basic_log);
 }

@@ -18,10 +18,10 @@ using namespace std::chrono_literals;
 namespace tenacitas::lib::generic {
 
 /// \brief creation of a unique identifier
+///
+/// \tparam is a means to create two diferent 'id' classes, lile 'id<0>' is not
+/// the same as 'id<1'>.
 template <size_t t_diff> struct id {
-  /// \brief Identifier based on a number
-
-  inline id(std::unsigned_integral auto &&p_value) : m_value(p_value) {}
 
   /// \brief Identifier self generated
   id() {
@@ -34,6 +34,8 @@ template <size_t t_diff> struct id {
   id(id &&) = default;
   id &operator=(const id &) = default;
   id &operator=(id &&) = default;
+
+  ~id() = default;
 
   /// \brief
   inline constexpr bool operator==(const id &p_id) const {

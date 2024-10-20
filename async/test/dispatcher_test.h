@@ -15,7 +15,7 @@
 
 #include <tenacitas.lib/async/dispatcher.h>
 #include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/internal/handling.h>
+#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/sleeping_loop.h>
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
@@ -40,13 +40,15 @@ protected:
 
   struct handler_1a {
     using event = event_1;
-    void operator()(event &&) {}
+    void operator()(event && /*p_event*/) {
+      std::cout << "handler 1a" << std::endl;
+    }
   };
 
   using queue_1a = container::circular_queue<logger, event_1, 10>;
 
   using handling_1a =
-      async::internal::handling<logger, event_1, queue_1a, handler_1a>;
+      async::handling<logger, event_1, queue_1a, handler_1a>;
 
   struct handler_1b {
     using event = event_1;
@@ -56,7 +58,7 @@ protected:
   using queue_1b = container::circular_queue<logger, event_1, 100>;
 
   using handling_1b =
-      async::internal::handling<logger, event_1, queue_1b, handler_1b>;
+      async::handling<logger, event_1, queue_1b, handler_1b>;
 
   struct event_2 {
     friend std::ostream &operator<<(std::ostream &p_out, const event_2 &) {
@@ -72,7 +74,7 @@ protected:
   using queue_2a = container::circular_queue<logger, event_2, 10>;
 
   using handling_2a =
-      async::internal::handling<logger, event_2, queue_2a, handler_2a>;
+      async::handling<logger, event_2, queue_2a, handler_2a>;
 
 protected:
   logger m_logger;
@@ -83,27 +85,33 @@ struct dispatcher_000 : dispatcher_test {
   static std::string desc() { return ""; }
 
   bool operator()(const program::options &) {
-    using dispatcher =
-        async::dispatcher<logger, handling_1a, handling_1b, handling_2a>;
+    using dispatcher = async::dispatcher<logger, event_1>;
 
     m_logger.set_deb();
 
-    dispatcher _dispatcher{
-        m_logger,
-        handling_1a{"handling 1a", m_logger, handler_1a{}},
-        handling_1b{"handling 1b", m_logger, handler_1b{}},
-        handling_2a{"handling 2a", m_logger, handler_2a{}},
-    };
+    dispatcher _dispatcher{m_logger};
     async::result _result{async::result::OK};
-    // async::result _result{
-    //     _dispatcher.add_handling<event_1, queue_1a, handler_1a>("handling
-    //     1a",
-    //                                                             handler_1a{})};
+
+    m_handling_1a.increment_handlers(1U);
+
+    // auto _notifier{[this](const event_1 &p_event) {
+    //   return m_handling_1a.add_event(p_event);
+    // }};
+    // _dispatcher.add_handling<event_1>(_notifier);
+
+    // handling_1a _handling_1a{"handling_1a", m_logger, handler_1a{}};
+    _dispatcher.add_handling<event_1>(m_handling_1a);
+
     event_1 _event_1;
-    _result = _dispatcher.publish(_event_1);
+    _dispatcher.publish(_event_1);
+
+    std::this_thread::sleep_for(1s);
 
     return _result == async::result::OK;
   }
+
+private:
+  handling_1a m_handling_1a{"handling_1a", m_logger, handler_1a{}};
 };
 
 // struct dispatcher_test {
@@ -113,7 +121,8 @@ struct dispatcher_000 : dispatcher_test {
 
 //     ev_0(uint16_t p_value) : value(p_value) {}
 
-//     friend std::ostream &operator<<(std::ostream &p_out, const ev_0 &p_ev) {
+//     friend std::ostream &operator<<(std::ostream &p_out, const ev_0
+//     &p_ev) {
 //       p_out << "ev_0 = " << p_ev.value;
 //       return p_out;
 //     }
@@ -126,7 +135,8 @@ struct dispatcher_000 : dispatcher_test {
 //     ev_1() = default;
 //     ev_1(char p_value) : value(p_value) {}
 
-//     friend std::ostream &operator<<(std::ostream &p_out, const ev_1 &p_ev) {
+//     friend std::ostream &operator<<(std::ostream &p_out, const ev_1
+//     &p_ev) {
 //       p_out << "ev_1 = " << p_ev.value;
 //       return p_out;
 //     }
@@ -317,7 +327,8 @@ struct dispatcher_000 : dispatcher_test {
 //     auto _priority(_dispatcher.get_priority<ev_1>(_id));
 //     if (_priority != async::handling_priority::medium) {
 //       m_logger.err(generic::fmt("pririty should be ",
-//                                 async::handling_priority::medium, " but it is
+//                                 async::handling_priority::medium, " but
+//                                 it is
 //                                 ", _priority));
 //       return false;
 //     }
@@ -325,7 +336,8 @@ struct dispatcher_000 : dispatcher_test {
 //     _priority = _dispatcher.get_priority<ev_1>(_id);
 //     if (_priority != async::handling_priority::high) {
 //       m_logger.err(generic::fmt("pririty should be ",
-//                                 async::handling_priority::high, " but it is
+//                                 async::handling_priority::high, " but it
+//                                 is
 //                                 ", _priority));
 //       return false;
 //     }
@@ -343,7 +355,8 @@ struct dispatcher_000 : dispatcher_test {
 
 // struct dispatcher_006 : dispatcher_test {
 //   static std::string desc() {
-//     return "Checking if 'get_num_events' and 'get_num_handling_handlers' "
+//     return "Checking if 'get_num_events' and 'get_num_handling_handlers'
+//     "
 //            "'get_num_handlings' and 'clear' compile";
 //   }
 
@@ -357,7 +370,8 @@ struct dispatcher_000 : dispatcher_test {
 
 //     subscriber_a _subscriber_a;
 //     auto _result(
-//         _dispatcher.subscribe<subscriber_a, ev_1>(_id, _subscriber_a, 1));
+//         _dispatcher.subscribe<subscriber_a, ev_1>(_id, _subscriber_a,
+//         1));
 //     if (_result != async::result::OK) {
 //       m_logger.err(generic::fmt("error: ", _result));
 //       return false;
@@ -366,14 +380,16 @@ struct dispatcher_000 : dispatcher_test {
 //     auto _num_events(_dispatcher.get_num_events<ev_1>(_id));
 //     if (_num_events != 0) {
 //       m_logger.err(
-//           generic::fmt("num events should be 0, but it is ", _num_events));
+//           generic::fmt("num events should be 0, but it is ",
+//           _num_events));
 //       return false;
 //     }
 
 //     auto _num_handling_handlers(
 //         _dispatcher.get_num_handling_handlers<ev_1>(_id).value());
 //     if (_num_handling_handlers != 1) {
-//       m_logger.err(generic::fmt("num handling handlers should be 1, but it is
+//       m_logger.err(generic::fmt("num handling handlers should be 1, but
+//       it is
 //       ",
 //                                 _num_handling_handlers));
 //       return false;
@@ -406,7 +422,8 @@ struct dispatcher_000 : dispatcher_test {
 // struct dispatcher_007 {
 
 //   static std::string desc() {
-//     return "Executes test configured in a .ini file passed as the parameter "
+//     return "Executes test configured in a .ini file passed as the
+//     parameter "
 //            "'--ini'. The configuration of the file can be found in the "
 //            "'tenacitas.lib/async/test/dispatcher.h' file, inside "
 //            "'dispatcher_007' class.";
@@ -516,7 +533,8 @@ struct dispatcher_000 : dispatcher_test {
 //       _publisher.start();
 //     }
 
-//     _logger.tst(generic::fmt("waiting for ", _amount_events_to_be_published,
+//     _logger.tst(generic::fmt("waiting for ",
+//     _amount_events_to_be_published,
 //                              " events to be handled"));
 //     {
 //       std::unique_lock<std::mutex> _lock(_mutex);
@@ -533,7 +551,8 @@ struct dispatcher_000 : dispatcher_test {
 //       _amount_by_handling.emplace(_handling_cfg.id, 0);
 //     }
 
-//     for (const auto &_value : _amount_by_handling_by_subscriber.get_map()) {
+//     for (const auto &_value :
+//     _amount_by_handling_by_subscriber.get_map()) {
 //       auto _handling_id(_handlings_cfg[_value.first.first].id);
 //       _logger.tst(generic::fmt("handling ", _handling_id, " subscriber ",
 //                                _value.first.second, " handled ",
@@ -559,7 +578,8 @@ struct dispatcher_000 : dispatcher_test {
 //   };
 
 //   struct new_event {
-//     friend std::ostream &operator<<(std::ostream &p_out, const new_event &) {
+//     friend std::ostream &operator<<(std::ostream &p_out, const new_event
+//     &) {
 //       p_out << "new event";
 //       return p_out;
 //     }
@@ -581,7 +601,8 @@ struct dispatcher_000 : dispatcher_test {
 //     publisher_cfg(const publisher_cfg &) = delete;
 //     publisher_cfg(publisher_cfg &&) = default;
 //     publisher_cfg(std::string_view p_id, bool p_use,
-//                   std::chrono::milliseconds p_interval, size_t p_num_events)
+//                   std::chrono::milliseconds p_interval, size_t
+//                   p_num_events)
 //         : id(p_id), use(p_use), interval(p_interval),
 //         num_events(p_num_events) {
 //     }
@@ -590,10 +611,12 @@ struct dispatcher_000 : dispatcher_test {
 //     publisher_cfg &operator=(publisher_cfg &&) = default;
 
 //     friend std::ostream &operator<<(std::ostream &p_out,
-//                                     const publisher_cfg &p_publisher_cfg) {
+//                                     const publisher_cfg &p_publisher_cfg)
+//                                     {
 //       p_out << "id = " << p_publisher_cfg.id
 //             << ", interval (ms) = " << p_publisher_cfg.interval.count()
-//             << ", # events = " << p_publisher_cfg.num_events << ", used? "
+//             << ", # events = " << p_publisher_cfg.num_events << ", used?
+//             "
 //             << (p_publisher_cfg.use ? 'T' : 'F');
 //       return p_out;
 //     }
@@ -701,7 +724,8 @@ struct dispatcher_000 : dispatcher_test {
 
 //       ++m_count_events;
 //       if ((m_count_events % 10) == 0) {
-//         m_logger.tst(generic::fmt("publisher ", m_id, " published event # ",
+//         m_logger.tst(generic::fmt("publisher ", m_id, " published event #
+//         ",
 //                                   m_count_events));
 //       }
 //     }
@@ -723,7 +747,8 @@ struct dispatcher_000 : dispatcher_test {
 //   struct amount_by_subscriber {
 //     using map = std::map<std::pair<size_t, std::thread::id>, size_t>;
 
-//     void increment(size_t p_handling_id, const std::thread::id &p_subscriber)
+//     void increment(size_t p_handling_id, const std::thread::id
+//     &p_subscriber)
 //     {
 //       std::lock_guard<std::mutex> _lock(m_mutex);
 //       auto _ite(m_map.find(std::make_pair(p_handling_id, p_subscriber)));
@@ -773,7 +798,8 @@ struct dispatcher_000 : dispatcher_test {
 //     amount_by_subscriber &m_amount_by_subscriber;
 //   };
 
-//   using subscribers = std::tuple<subscriber<0>, subscriber<1>, subscriber<2>,
+//   using subscribers = std::tuple<subscriber<0>, subscriber<1>,
+//   subscriber<2>,
 //                                  subscriber<3>, subscriber<4>>;
 
 //   struct event_handled_subscriber {
@@ -782,7 +808,8 @@ struct dispatcher_000 : dispatcher_test {
 //     event_handled_subscriber(std::condition_variable &p_cond,
 //                              size_t &p_amount_events_handled, logger
 //                              &p_logger)
-//         : m_cond(p_cond), m_amount_events_handled(p_amount_events_handled),
+//         : m_cond(p_cond),
+//         m_amount_events_handled(p_amount_events_handled),
 //           m_logger(p_logger) {}
 
 //     void handle(event_handled &&) {
@@ -808,8 +835,8 @@ struct dispatcher_000 : dispatcher_test {
 //     std::optional<ini_file::sections> _maybe_sections(
 //         _ini_file.read(p_ini_file_name));
 //     if (!_maybe_sections) {
-//       p_logger.err(generic::fmt("error reading '", p_ini_file_name, '\''));
-//       return std::nullopt;
+//       p_logger.err(generic::fmt("error reading '", p_ini_file_name,
+//       '\'')); return std::nullopt;
 //     }
 
 //     ini_file::sections _sections(std::move(_maybe_sections.value()));
@@ -824,7 +851,8 @@ struct dispatcher_000 : dispatcher_test {
 //         if (_next_publisher == 5 /*_publishers_cfg.size()*/) {
 //           p_logger.err(
 //               generic::fmt("at most ", _publishers_cfg.size(),
-//                            " PUBLISHER sections are allowed in ini file"));
+//                            " PUBLISHER sections are allowed in ini
+//                            file"));
 //           return std::nullopt;
 //         }
 //         _publishers_cfg.push_back(read_publisher_cfg(_section_value));
@@ -833,7 +861,8 @@ struct dispatcher_000 : dispatcher_test {
 //         if (_next_handling == 5 /*_handlings_cfg.size()*/) {
 //           p_logger.err(
 //               generic::fmt("at most ", _handlings_cfg.size(),
-//                            " HANDLING sections are allowed in ini file"));
+//                            " HANDLING sections are allowed in ini
+//                            file"));
 //           return std::nullopt;
 //         }
 
@@ -851,7 +880,8 @@ struct dispatcher_000 : dispatcher_test {
 //   }
 
 //   handling_cfg
-//   read_handling_cfg(const ini_file::sections::value_type &p_section_value) {
+//   read_handling_cfg(const ini_file::sections::value_type
+//   &p_section_value) {
 //     handling_cfg _handling_cfg;
 //     _handling_cfg.id = p_section_value.first;
 //     for (const auto &_property : p_section_value.second) {
@@ -872,7 +902,8 @@ struct dispatcher_000 : dispatcher_test {
 //   }
 
 //   publisher_cfg
-//   read_publisher_cfg(const ini_file::sections::value_type &p_section_value) {
+//   read_publisher_cfg(const ini_file::sections::value_type
+//   &p_section_value) {
 //     publisher_cfg _publisher_cfg;
 //     _publisher_cfg.id = p_section_value.first;
 //     for (const auto &_property : p_section_value.second) {
@@ -893,7 +924,8 @@ struct dispatcher_000 : dispatcher_test {
 //   }
 
 //   void print_cfg(const publishers_cfg &p_publishers_cfg,
-//                  const handlings_cfg &p_handlings_cfg, logger &p_logger) {
+//                  const handlings_cfg &p_handlings_cfg, logger &p_logger)
+//                  {
 //     std::stringstream _stream;
 //     _stream << '\n';
 //     for (const auto &_publisher_cfg : p_publishers_cfg) {
@@ -910,8 +942,8 @@ struct dispatcher_000 : dispatcher_test {
 //   }
 
 //   void create_publishers(const publishers_cfg &p_publishers_cfg,
-//                          publishers &p_publishers, dispatcher &p_dispatcher,
-//                          logger &p_logger) {
+//                          publishers &p_publishers, dispatcher
+//                          &p_dispatcher, logger &p_logger) {
 //     for (const publisher_cfg &_publisher_cfg : p_publishers_cfg) {
 //       if (_publisher_cfg.use) {
 //         publisher _publisher(
@@ -995,8 +1027,8 @@ struct dispatcher_000 : dispatcher_test {
 
 //   bool configure(std::string_view p_ini_file_name, logger &p_logger,
 //                  subscribers &p_subscribers, publishers &p_publishers,
-//                  dispatcher &p_dispatcher, publishers_cfg &p_publishers_cfg,
-//                  handlings_cfg &p_handlings_cfg) {
+//                  dispatcher &p_dispatcher, publishers_cfg
+//                  &p_publishers_cfg, handlings_cfg &p_handlings_cfg) {
 //     auto _maybe(read_cfg(p_ini_file_name, p_logger));
 //     if (!_maybe) {
 //       return false;

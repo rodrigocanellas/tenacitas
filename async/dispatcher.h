@@ -8,14 +8,13 @@
 
 #include <cstring>
 #include <ctime>
-#include <memory>
+#include <functional>
+#include <iostream>
 #include <tuple>
-#include <typeindex>
-#include <utility>
 #include <vector>
 
 #include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/async/internal/handling.h>
+#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/log/logger.h>
@@ -29,6 +28,7 @@
 #include <tenacitas.lib/traits/subscriber.h>
 #include <tenacitas.lib/traits/tuple_like.h>
 #include <tenacitas.lib/traits/tuple_to_container.h>
+#include <tenacitas.lib/traits/tuple_transform.h>
 #include <tenacitas.lib/traits/tuple_traverse.h>
 
 namespace tenacitas::lib::async {
@@ -96,97 +96,88 @@ Please, look at the \p Examples section for examples on how to use these
 functions and classes.
 */
 
-template <traits::logger t_logger, traits::handling... t_handlings>
+template <traits::logger t_logger, traits::event... t_events>
 struct dispatcher {
+
 public:
   using logger = t_logger;
 
   dispatcher() = delete;
 
-  dispatcher(logger &p_logger, t_handlings &&...p_handlings)
-      : m_logger(p_logger),
-        m_handlings(std::forward<t_handlings>(p_handlings)...) {}
+  dispatcher(logger &p_logger) : m_logger(p_logger) {}
 
   dispatcher(const dispatcher &) = delete;
   dispatcher(dispatcher &&) = delete;
 
-  ~dispatcher() = default;
+  ~dispatcher() { TNCT_LOG_TRA(m_logger, "dispactcher destructor"); }
 
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&) = delete;
 
-  template <traits::event t_event>
-  async::result publish(const t_event &p_event) {
-    async::result _result{async::result::OK};
-    auto _visit_handlings =
-        [this, &p_event,
-         &_result]<traits::tuple_like t_tuple, size_t t_idx>(t_tuple &p_tuple) {
-          using handling_type = typename std::tuple_element_t<t_idx, t_tuple>;
-          using event_type = typename handling_type::event;
-          if constexpr (std::is_same_v<event_type, t_event>) {
-            async::result _result = std::get<t_idx>(p_tuple).add_event(p_event);
-            if (_result != async::result::OK) {
-              return false;
-            }
-          }
-          return true;
-        };
+  template <traits::event t_event> void publish(const t_event &p_event) {
+    constexpr size_t _idx{find_event_idx<t_event>()};
 
-    traits::tuple_value_traverse<decltype(_visit_handlings), handlings>(
-        _visit_handlings, m_handlings);
+    TNCT_LOG_DEB(m_logger, generic::fmt("idx = ", _idx));
 
-    return _result;
+    auto &_notifiers{get_notifiers<t_event>()};
+
+    for (auto &_notifier : _notifiers) {
+      _notifier(p_event);
+    }
   }
 
+  template <traits::event t_event, traits::handling t_handling>
+  void add_handling(t_handling &p_handling) {
+    // t_handling _handling{std::move(p_handling)};
+    notifier<t_event> _notifier = [&p_handling](const t_event &p_event) {
+      return p_handling.add_event(p_event);
+    };
+
+    get_notifiers<t_event>().push_back(_notifier);
+  }
+
+  // template <traits::handling t_handling, std::unsigned_integral t_amount>
+  // void increment_handlers(t_amount /*p_amount*/) {}
+
+private:
+  using events = std::tuple<t_events...>;
+
+  template <traits::event t_event>
+  using notifier = std::function<async::result(const t_event &)>;
+
+  template <traits::event t_event>
+  using notifiers = std::vector<notifier<t_event>>;
+
+  using events_notifiers =
+      typename traits::tuple_transform<events, notifiers>::type;
+
+private:
+  template <traits::event t_event> static constexpr size_t find_event_idx() {
+    auto _visit = []<traits::tuple_like t_tuple, size_t t_idx>() -> bool {
+      using event_type = std::tuple_element_t<t_idx, t_tuple>;
+      if constexpr (std::is_same_v<event_type, t_event>) {
+        return false;
+      } else {
+        // not found, keep looking
+        return true;
+      }
+    };
+
+    constexpr auto _idx{
+        traits::tuple_type_traverse<events, decltype(_visit)>(_visit)};
+    static_assert(_idx != -1, "event not found");
+    return static_cast<size_t>(_idx);
+  }
+
+  template <traits::event t_event> notifiers<t_event> &get_notifiers() {
+    constexpr auto _idx{find_event_idx<t_event>()};
+    return std::get<_idx>(m_events_notifiers);
+  }
+
+private:
   logger &m_logger;
-  using handlings = std::tuple<t_handlings...>;
-  handlings m_handlings;
 
-  // template <traits::event t_event, traits::queue<t_logger, t_event>
-  // t_queue,
-  //           traits::handler t_handler>
-  // [[nodiscard]] result add_handling(std::string_view p_handling_id,
-  //                                   t_handler &&p_handler) {
-  //   using handling = internal::handling<logger, t_event, t_queue,
-  //   t_handler>;
-
-  //   // handling_base *_ptr{
-  //   //     new handling(p_handling_id, m_logger, std::move(p_handler))};
-
-  //   // m_handling_base_container.push_back(handling_base_ptr(_ptr));
-
-  //   m_handling_base_container.push_back(std::make_unique<handling>(
-  //       p_handling_id, m_logger, std::move(p_handler)));
-
-  //   return result::OK;
-  // }
-
-  // template <traits::event t_event>
-  // [[nodiscard]] async::result publish(const t_event &p_event) {
-  //   async::result _result{async::result::OK};
-  //   for (auto &_ptr : m_handling_base_container) {
-  //     if (_ptr->get_event_id() == std::type_index(typeid(t_event))) {
-  //       TNCT_LOG_DEB(m_logger, "found match for event");
-  //       _result = _ptr->add_event(p_event);
-  //       if (_result != async::result::OK) {
-  //         TNCT_LOG_ERR(m_logger, _result);
-  //         return _result;
-  //       }
-  //     }
-  //   }
-  //   return _result;
-  // }
-
-  template <traits::handling t_handling, std::unsigned_integral t_amount>
-  void increment_handlers(t_amount /*p_amount*/) {}
-
-private:
-  // using handling_base = async::internal::handling_base;
-  // using handling_base_ptr = std::unique_ptr<handling_base>;
-  // using handling_base_container = std::vector<handling_base_ptr>;
-
-private:
-  // handling_base_container m_handling_base_container;
+  events_notifiers m_events_notifiers;
 };
 
 // template <traits::logger t_logger, traits::handlings... t_handlings>

@@ -11,7 +11,7 @@
 #include <optional>
 #include <vector>
 
-#include <tenacitas.lib/generic/fmt.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/log/no_logger.h>
 #include <tenacitas.lib/traits/has_output_operator.h>

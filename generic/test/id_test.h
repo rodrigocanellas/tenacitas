@@ -40,45 +40,46 @@ struct id_002 {
 };
 
 struct id_003 {
-  static std::string desc() {
-    return "id _i {std::numeric_limits<size_t>::max()}";
-  }
+  static std::string desc() { return "Simply prints a id"; }
 
   bool operator()(const program::options &) {
     using id_0 = generic::id<0>;
-    id_0 _i{std::numeric_limits<size_t>::max()};
+    id_0 _i;
 
-    return (_i == id_0(std::numeric_limits<size_t>::max()));
+    std::cout << _i << std::endl;
+
+    return true;
   }
 };
 
 struct id_004 {
-  static std::string desc() { return "id _i {uint16_t{4}}"; }
+  static std::string desc() { return "Test that id objects are not the same"; }
 
   bool operator()(const program::options &) {
-    using id_abc = generic::id<372>;
-    id_abc _i{uint16_t{4}};
+    using id_0 = generic::id<0>;
+    id_0 _i;
+    id_0 _j;
 
-    return (_i == id_abc(static_cast<uint8_t>(4)));
+    std::cout << "i = " << _i << ", and j = " << _j << std::endl;
+
+    return _i != _j;
   }
 };
 
 struct id_005 {
   static std::string desc() {
-    return "compiler error because id<2> can not be compared to id<921>";
+    return "Fails to compile when trying to compare id<0> and id<1>";
   }
 
   bool operator()(const program::options &) {
-    using id_2 = generic::id<2>;
-    using id_921 = generic::id<921>;
-    id_2 _i_2{uint16_t{4}};
-    id_921 _id_921(static_cast<uint8_t>(87));
+    using id_0 = generic::id<0>;
+    using id_1 = generic::id<1>;
+    id_0 _i;
+    id_1 _j;
 
-    // this causes a compiler error
-    // if (_i_2 == _id_921) {
-    //   return false;
-    // }
+    std::cout << "i = " << _i << ", and j = " << _j << std::endl;
 
+    //        return _i != _j; THIS FAILS TO COMPILE, AS IT SHOULD
     return true;
   }
 };

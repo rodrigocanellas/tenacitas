@@ -14,7 +14,7 @@
 #include <utility>
 
 #include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/generic/fmt.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/parser/ini_file.h>
 #include <tenacitas.lib/program/options.h>
@@ -45,10 +45,10 @@ struct circular_queue_001 {
       while (!queue.empty()) {
         std::optional<std::string> maybe{queue.pop()};
         if (!maybe) {
-          _logger.err(generic::fmt("error getting data # ", j));
+          _logger.err(format::fmt("error getting data # ", j));
           return false;
         }
-        _logger.tst(generic::fmt("capacity = ", queue.capacity(),
+        _logger.tst(format::fmt("capacity = ", queue.capacity(),
                                  ", occupied = ", queue.occupied(), ", data # ",
                                  j++));
       }
@@ -124,14 +124,14 @@ struct circular_queue_test {
       // reading sections from ini
       auto _maybe_sections(_ini_file.read(_ini_file_name));
       if (!_maybe_sections) {
-        _logger.tst(generic::fmt("Failed to read sections from ini file ",
+        _logger.tst(format::fmt("Failed to read sections from ini file ",
                                  _ini_file_name));
         return false;
       }
       auto _sections(std::move(_maybe_sections.value()));
       if (_sections.size() == 0) {
         _logger.tst(
-            generic::fmt("No sections read from ini file ", _ini_file_name));
+            format::fmt("No sections read from ini file ", _ini_file_name));
         return false;
       }
 
@@ -140,14 +140,14 @@ struct circular_queue_test {
       bool _run_all_tests(_tests_to_run.empty());
 
       for (const auto &_value_section : _sections) {
-        _logger.tst(generic::fmt("############ -> ", _value_section.first));
+        _logger.tst(format::fmt("############ -> ", _value_section.first));
 
         if (!_run_all_tests &&
             (std::find_if(_tests_to_run.begin(), _tests_to_run.end(),
                           [&](const std::string &p_test_name) {
                             return p_test_name == _value_section.first;
                           }) == _tests_to_run.end())) {
-          _logger.tst(generic::fmt("Test ", _value_section.first,
+          _logger.tst(format::fmt("Test ", _value_section.first,
                                    " is not in the parameter 'run' list"));
 
         } else {
@@ -155,18 +155,18 @@ struct circular_queue_test {
 
           if (parse(_value_section.second, _steps, _logger)) {
             if (!run(_value_section.first, _steps, _logger)) {
-              _logger.tst(generic::fmt(_value_section.first, " FAIL"));
+              _logger.tst(format::fmt(_value_section.first, " FAIL"));
               _success = false;
             } else {
-              _logger.tst(generic::fmt(_value_section.first, " SUCCESS"));
+              _logger.tst(format::fmt(_value_section.first, " SUCCESS"));
             }
           } else {
             _logger.err(
-                generic::fmt("error parsing section ", _value_section.first));
+                format::fmt("error parsing section ", _value_section.first));
             _success = false;
           }
         }
-        _logger.tst(generic::fmt("############ <- ", _value_section.first));
+        _logger.tst(format::fmt("############ <- ", _value_section.first));
       }
     } catch (std::exception *_ex) {
       _logger.err(_ex->what());
@@ -215,7 +215,7 @@ private:
       }
       auto _num_matches(_match.size());
       if (_num_matches != 9) {
-        m_logger.tst(generic::fmt("# matches in step ", p_step,
+        m_logger.tst(format::fmt("# matches in step ", p_step,
                                   " should be 9, but it is ", _num_matches));
         return false;
       }
@@ -245,7 +245,7 @@ private:
       }
 
       if (contents.size() != capacity_expected) {
-        m_logger.err(generic::fmt("capacity expected = ", capacity_expected,
+        m_logger.err(format::fmt("capacity expected = ", capacity_expected,
                                   ", but ", contents.size(),
                                   " items were found"));
         return false;
@@ -293,18 +293,18 @@ private:
         }
       }
       if (_step.repor == step::report::brief) {
-        p_logger.tst(generic::fmt("step ", ++_step_counter, ": ",
+        p_logger.tst(format::fmt("step ", ++_step_counter, ": ",
                                   _queue.brief_report()));
       } else if (_step.repor == step::report::full) {
         p_logger.tst(
-            generic::fmt("step ", ++_step_counter, ": ", _queue.full_report()));
+            format::fmt("step ", ++_step_counter, ": ", _queue.full_report()));
       } else {
-        p_logger.tst(generic::fmt("step ", ++_step_counter));
+        p_logger.tst(format::fmt("step ", ++_step_counter));
       }
       if ((_queue.occupied() != _step.occupied_expected) ||
           (_queue.head() != _step.head_expected) ||
           (_queue.tail() != _step.tail_expected)) {
-        p_logger.err(generic::fmt(
+        p_logger.err(format::fmt(
             "queue ", _queue.id(), ", occupied: expected ",
             _step.occupied_expected, ", got ", _queue.occupied(),
             ", head: expected ", _step.head_expected, ", got ", _queue.head(),
@@ -314,7 +314,7 @@ private:
       for (decltype(_step.capacity_expected) _i = 0;
            _i < _step.capacity_expected; ++_i) {
         if (_step.contents[_i] != _queue[_i]) {
-          p_logger.err(generic::fmt("content is ", _queue[_i], ", but ",
+          p_logger.err(format::fmt("content is ", _queue[_i], ", but ",
                                     _step.contents[_i], " was expected"));
           return false;
         }
@@ -338,7 +338,7 @@ private:
           if (_step.parse(_property.second)) {
             p_steps.push_back(std::move(_step));
           } else {
-            p_logger.tst(generic::fmt("error parsing step '", _key, '\''));
+            p_logger.tst(format::fmt("error parsing step '", _key, '\''));
             return false;
           }
         }

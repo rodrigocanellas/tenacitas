@@ -9,7 +9,7 @@
 #include <limits>
 #include <vector>
 
-#include <tenacitas.lib/async/internal/handling.h>
+#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/async/sleeping_loop.h>
 #include <tenacitas.lib/container/circular_queue.h>
@@ -64,7 +64,7 @@ struct handling_000 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
 
     handling _handling("handling_000", m_logger, handler{m_logger});
 
@@ -90,7 +90,7 @@ struct handling_001 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
 
     handling _handling("handling_001", m_logger, handler{m_logger});
 
@@ -108,7 +108,7 @@ struct handling_005 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
 
     handling _handling("handling_005", m_logger, handler{m_logger});
 
@@ -128,7 +128,7 @@ struct handling_006 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_006", m_logger, handler{m_logger});
 
     auto _result(_handling.add_event(ev1()));
@@ -157,7 +157,7 @@ struct handling_007 : public handling_test {
   }
 
   bool operator()(const program::options &) {
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_007", m_logger, handler{m_logger});
 
     _handling.increment_handlers(2U);
@@ -178,7 +178,7 @@ struct handling_008 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_008", m_logger, handler{m_logger});
 
     _handling.increment_handlers(2U);
@@ -198,7 +198,7 @@ struct handling_009 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_009", m_logger, handler{m_logger});
 
     _handling.increment_handlers(2U);
@@ -224,7 +224,7 @@ struct handling_010 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_010", m_logger, handler{m_logger});
 
     _handling.increment_handlers(2U);
@@ -259,7 +259,7 @@ struct handling_011 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
     handling _handling("handling_011", m_logger, handler{m_logger});
     _handling.increment_handlers(1U);
     auto _result(_handling.add_event(ev1()));
@@ -293,7 +293,7 @@ struct handling_012 : public handling_test {
 
   bool operator()(const program::options &) {
 
-    using handling = async::internal::handling<logger, ev1, queue, handler>;
+    using handling = async::handling<logger, ev1, queue, handler>;
 
     handling _handling("handling_012", m_logger, handler{m_logger});
     _handling.increment_handlers(3U);
@@ -350,7 +350,7 @@ struct handling_014 : public handling_test {
     });
 
     using handling =
-        async::internal::handling<logger, ev1, queue, handler_wrapper>;
+        async::handling<logger, ev1, queue, handler_wrapper>;
 
     handling _handling("handling_014", m_logger, handler_wrapper{_handler});
     _handling.increment_handlers(1U);
@@ -440,7 +440,7 @@ struct handling_015 : public handling_test {
       std::this_thread::sleep_for(200ms);
     });
     using handling =
-        async::internal::handling<logger, ev1, queue, handler_wrapper>;
+        async::handling<logger, ev1, queue, handler_wrapper>;
 
     handling _handling("handling_015", m_logger, handler_wrapper{_handler});
     _handling.increment_handlers(1U);
@@ -524,7 +524,7 @@ struct handling_016 : public handling_test {
     });
 
     using handling =
-        async::internal::handling<logger, ev1, queue, handler_wrapper>;
+        async::handling<logger, ev1, queue, handler_wrapper>;
 
     handling _handling("handling_016", m_logger, handler_wrapper{_handler});
     _handling.increment_handlers(1U);

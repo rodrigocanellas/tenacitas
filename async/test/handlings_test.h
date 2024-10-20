@@ -6,7 +6,7 @@
 #ifndef TENACITAS_LIB_ASYNC_TEST_HANDLINGS_H
 #define TENACITAS_LIB_ASYNC_TEST_HANDLINGS_H
 
-#include <tenacitas.lib/async/internal/handling.h>
+#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/internal/handlings.h>
 #include <tenacitas.lib/async/result.h>
 #include <tenacitas.lib/async/sleeping_loop.h>
@@ -22,7 +22,7 @@ using namespace std::placeholders;
 
 struct handlings_000 {
   static std::string desc() {
-    return "Simple 'async::internal::handlings' creation";
+    return "Simple 'async::handlings' creation";
   }
 
   bool operator()(const program::options &) {
@@ -32,7 +32,7 @@ struct handlings_000 {
     handling_1b _handling_1b{"handling_1b", _logger, handler_1b{}};
 
     using handlings =
-        async::internal::handlings<logger, event_1, handling_1a, handling_1b>;
+        async::handlings<logger, event_1, handling_1a, handling_1b>;
     handlings _handlings{std::move(_handling_1a), std::move(_handling_1b)};
 
     return true;
@@ -60,10 +60,10 @@ private:
   };
 
   using handling_1a =
-      async::internal::handling<logger, event_1, queue_1a, handler_1a>;
+      async::handling<logger, event_1, queue_1a, handler_1a>;
 
   using handling_1b =
-      async::internal::handling<logger, event_1, queue_1b, handler_1b>;
+      async::handling<logger, event_1, queue_1b, handler_1b>;
 };
 
 struct handlings_001 {
@@ -74,7 +74,7 @@ struct handlings_001 {
   bool operator()(const program::options &) {
     /// \attention THIS DOES NOT COMPILE, AS EXPECTED
     // using handlings =
-    //     async::internal::handlings<logger, event_1, handling_1, handling_2>;
+    //     async::handlings<logger, event_1, handling_1, handling_2>;
 
     return true;
   }
@@ -95,7 +95,7 @@ private:
   };
 
   using handling_1 =
-      async::internal::handling<logger, event_1, queue_1, handler_1>;
+      async::handling<logger, event_1, queue_1, handler_1>;
 
   struct event_2 {
     friend std::ostream &operator<<(std::ostream &p_out, const event_2 &) {
@@ -111,20 +111,20 @@ private:
   using queue_2 = container::circular_queue<logger, event_2, 200>;
 
   using handling_2 =
-      async::internal::handling<logger, event_2, queue_2, handler_2>;
+      async::handling<logger, event_2, queue_2, handler_2>;
 };
 
 struct handlings_002 {
   static std::string desc() {
     return "Not compiling because there there is a 'traits::handler' that is "
-           "associated to two differente 'async::internal::handlings'";
+           "associated to two differente 'async::handlings'";
   }
 
   bool operator()(const program::options &) {
     // logger _logger;
     // /// \attention THIS DOES NOT COMPILE, AS EXPECTED
     // using handlings =
-    //     async::internal::handlings<logger, event_1, handling_1a,
+    //     async::handlings<logger, event_1, handling_1a,
     //     handling_1b>;
 
     // handling_1a _handling_1a{"handling_1a", _logger, handler_1{}, 1,
@@ -155,12 +155,12 @@ private:
   using queue_1a = container::circular_queue<logger, event_1, 10>;
 
   using handling_1a =
-      async::internal::handling<logger, event_1, queue_1a, handler_1>;
+      async::handling<logger, event_1, queue_1a, handler_1>;
 
   using queue_1b = container::circular_queue<logger, event_1, 30>;
 
   using handling_1b =
-      async::internal::handling<logger, event_1, queue_1b, handler_1>;
+      async::handling<logger, event_1, queue_1b, handler_1>;
 };
 
 struct handlings_003 {
@@ -172,7 +172,7 @@ struct handlings_003 {
   bool operator()(const program::options &) {
     logger _logger;
 
-    using handlings = async::internal::handlings<logger, event_1, handling_1>;
+    using handlings = async::handlings<logger, event_1, handling_1>;
 
     handling_1 _handling_1{"handling_1", _logger, handler_1{}};
     _handling_1.increment_handlers(1U);
@@ -219,7 +219,7 @@ private:
   using queue_1 = container::circular_queue<logger, event_1, 10>;
 
   using handling_1 =
-      async::internal::handling<logger, event_1, queue_1, handler_1>;
+      async::handling<logger, event_1, queue_1, handler_1>;
 };
 
 struct handlings_004 {
@@ -233,7 +233,7 @@ struct handlings_004 {
   bool operator()(const program::options &) {
     logger _logger;
 
-    using handlings = async::internal::handlings<logger, event_1, handling_1>;
+    using handlings = async::handlings<logger, event_1, handling_1>;
 
     handling_1 _handling_1{"handling_1", _logger, handler_1{}};
     _handling_1.increment_handlers(1U);
@@ -305,7 +305,7 @@ private:
   using queue_1 = container::circular_queue<logger, event_1, 10>;
 
   using handling_1 =
-      async::internal::handling<logger, event_1, queue_1, handler_1>;
+      async::handling<logger, event_1, queue_1, handler_1>;
 };
 
 struct handlings_005 {
@@ -317,7 +317,7 @@ struct handlings_005 {
   bool operator()(const program::options &) {
     logger _logger;
 
-    using handlings = async::internal::handlings<logger, event_1, handling_1>;
+    using handlings = async::handlings<logger, event_1, handling_1>;
 
     int16_t _i{0};
     handling_1 _handling_1{"handling_1", _logger, handler_1{_logger, &_i}};
@@ -383,7 +383,7 @@ private:
   using queue_1 = container::circular_queue<logger, event_1, 10>;
 
   using handling_1 =
-      async::internal::handling<logger, event_1, queue_1, handler_1>;
+      async::handling<logger, event_1, queue_1, handler_1>;
 };
 
 struct handlings_006 {
@@ -395,7 +395,7 @@ struct handlings_006 {
   bool operator()(const program::options &) {
     logger _logger;
 
-    using handlings = async::internal::handlings<logger, event_1, handling_1>;
+    using handlings = async::handlings<logger, event_1, handling_1>;
 
     uint16_t _counter{0};
     handling_1 _handling_1{"handling_1", _logger, handler_1{_logger}};
@@ -472,7 +472,7 @@ private:
   using queue_1 = container::circular_queue<logger, event_1, 10>;
 
   using handling_1 =
-      async::internal::handling<logger, event_1, queue_1, handler_1>;
+      async::handling<logger, event_1, queue_1, handler_1>;
 };
 
 struct handlings_007 {
@@ -482,7 +482,7 @@ struct handlings_007 {
     logger _logger;
 
     using handlings =
-        async::internal::handlings<logger, event_1, handling_1a, handling_1b>;
+        async::handlings<logger, event_1, handling_1a, handling_1b>;
 
     handling_1a _handling_1a{"handling_1a", _logger, handler_1a{_logger}};
     handling_1b _handling_1b{"handling_1b", _logger, handler_1b{_logger}};
@@ -532,7 +532,7 @@ private:
   using queue_1a = container::circular_queue<logger, event_1, 10>;
 
   using handling_1a =
-      async::internal::handling<logger, event_1, queue_1a, handler_1a>;
+      async::handling<logger, event_1, queue_1a, handler_1a>;
 
   struct handler_1b {
     using event = event_1;
@@ -549,7 +549,7 @@ private:
   using queue_1b = container::circular_queue<logger, event_1, 30>;
 
   using handling_1b =
-      async::internal::handling<logger, event_1, queue_1b, handler_1b>;
+      async::handling<logger, event_1, queue_1b, handler_1b>;
 };
 // struct handlings_base {
 //   handlings_base() { m_logger.set_deb(); }
@@ -574,7 +574,7 @@ private:
 //   using queue = container::circular_queue<logger, t_event>;
 
 //   template <traits::event t_event>
-//   using handlings_t = async::internal::handlings<logger, t_event>;
+//   using handlings_t = async::handlings<logger, t_event>;
 
 //   struct subscriber_1 {
 //     using events_subscribed = std::tuple<ev1>;

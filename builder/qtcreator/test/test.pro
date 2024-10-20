@@ -1,11 +1,9 @@
+include (../common.pri)
+
+
 TEMPLATE=subdirs
 
-SUBDIRS = \
-        generic  \
-        log  \
-        traits \
-        container \
-        # math \
-        translator \
-        async \
-        ini_file
+SUBDIRS=test
+
+HEADERS += \
+        $$BASE_DIR/tenacitas.lib/tester/test.h

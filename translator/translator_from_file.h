@@ -11,7 +11,7 @@
 #include <regex>
 #include <string>
 
-#include <tenacitas.lib/generic/fmt.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/traits/logger.h>
 #include <tenacitas.lib/translator/dictionary.h>
 
@@ -44,7 +44,7 @@ struct translator_from_file {
       if (!_file.good()) {
 
         m_logger.err(
-            generic::fmt("translation file '", p_file_name, "' not found"));
+            format::fmt("translation file '", p_file_name, "' not found"));
 
         return false;
       }
@@ -70,7 +70,7 @@ struct translator_from_file {
 
     } catch (std::exception &_ex) {
 
-      m_logger.err(generic::fmt("Loading translation file '", p_file_name,
+      m_logger.err(format::fmt("Loading translation file '", p_file_name,
                                 "': '", _ex.what(), '\''));
     }
     return false;
