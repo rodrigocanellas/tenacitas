@@ -12,7 +12,7 @@
 #include <tenacitas.lib/async/internal/handler.h>
 #include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/generic/fmt.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/traits/handling.h>
 #include <tenacitas.lib/traits/logger.h>
 #include <tenacitas.lib/traits/queue.h>
@@ -51,7 +51,7 @@ struct handlings final {
     }
     constexpr int16_t _idx{find_handling<t_handling>()};
     if (_idx == -1) {
-      return result::HANDLING_DOES_NOT_EXIST;
+      return result::HANDLING_NOT_FOUND;
     }
 
     std::get<_idx>(m_tuple).increment_handlers(p_amount);
@@ -62,7 +62,7 @@ struct handlings final {
   [[nodiscard]] constexpr result get_num_handlers(size_t &p_num_handlers) {
     constexpr int16_t _idx{find_handling<t_handling>()};
     if (_idx == -1) {
-      return result::HANDLING_DOES_NOT_EXIST;
+      return result::HANDLING_NOT_FOUND;
     }
 
     p_num_handlers = std::get<_idx>(m_tuple).get_num_handlers();
@@ -73,7 +73,7 @@ struct handlings final {
   [[nodiscard]] constexpr result add_event(const t_event &p_event) {
     constexpr int16_t _idx{find_handling<t_handling>()};
     if (_idx == -1) {
-      return result::HANDLING_DOES_NOT_EXIST;
+      return result::HANDLING_NOT_FOUND;
     }
     return std::get<_idx>(m_tuple).add_event(p_event);
   }
@@ -81,7 +81,7 @@ struct handlings final {
   template <traits::handling t_handling> [[nodiscard]] constexpr result stop() {
     constexpr int16_t _idx{find_handling<t_handling>()};
     if (_idx == -1) {
-      return result::HANDLING_DOES_NOT_EXIST;
+      return result::HANDLING_NOT_FOUND;
     }
     std::get<_idx>(m_tuple).stop();
     return result::OK;
@@ -190,7 +190,7 @@ private:
 //     std::lock_guard<std::mutex> _lock(m_mutex);
 
 //     if (get_handling(p_handling_id) != m_container.end()) {
-//       m_logger.err(generic::fmt("not adding handling '", p_handling_id,
+//       m_logger.err(format::fmt("not adding handling '", p_handling_id,
 //                                 "' because it exists"));
 //       return result::HANDLING_EXISTS;
 //     }
@@ -202,14 +202,14 @@ private:
 //         std::hash<std::string>()(_subscriber_id_str);
 
 //     TNCT_LOG_TRA(m_logger,
-//                  generic::fmt("subscriber id str = ", _subscriber_id_str,
+//                  format::fmt("subscriber id str = ", _subscriber_id_str,
 //                               ", subscriber id hash =  ", _handler_id_hash,
 //                               ", for event ", typeid(event).name(),
 //                               " in handling ", p_handling_id));
 
 //     for (const auto &_value : m_container) {
 //       if (get_handler_id(_value) == _handler_id_hash) {
-//         m_logger.err(generic::fmt("handler already used in '",
+//         m_logger.err(format::fmt("handler already used in '",
 //                                   get_handling(_value).get_id(), '\''));
 //         return result::HANDLER_USED;
 //       }
@@ -232,7 +232,7 @@ private:
 //     for (auto &_value : m_container) {
 //       _result = get_handling(_value).add_event(p_event);
 //       if (_result != result::OK) {
-//         m_logger.err(generic::fmt("error ", _result,
+//         m_logger.err(format::fmt("error ", _result,
 //                                   " adding event for handling ",
 //                                   get_handling(_value).get_id()));
 //         return _result;
@@ -248,7 +248,7 @@ private:
 //       _result = get_handling(_value).add_event(
 //           event(std::forward<t_params>(p_params)...));
 //       if (_result != result::OK) {
-//         m_logger.err(generic::fmt("error ", _result,
+//         m_logger.err(format::fmt("error ", _result,
 //                                   " adding event for handling ",
 //                                   get_handling(_value).get_id()));
 //         return _result;

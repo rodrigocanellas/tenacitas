@@ -3,12 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_IS_TUPLE_H
-#define TENACITAS_LIB_TUPLE_IS_TUPLE_H
+#ifndef TENACITAS_LIB_TRAITS_IS_TUPLE_H
+#define TENACITAS_LIB_TRAITS_IS_TUPLE_H
 
 #include <tuple>
 
-namespace tenacitas::lib::tuple {
+namespace tenacitas::lib::traits {
 
 /// \brief Type trait that identifies if an object is not a tuple
 template <typename> struct is_tuple : std::false_type {};
@@ -18,6 +18,6 @@ template <typename... t> struct is_tuple<std::tuple<t...>> : std::true_type {};
 
 template <typename t> inline constexpr bool is_tuple_v = is_tuple<t>::value;
 
-} // namespace tenacitas::lib::tuple
+} // namespace tenacitas::lib::traits
 
 #endif

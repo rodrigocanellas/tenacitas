@@ -6,11 +6,11 @@
 #ifndef TENACITAS_LIB_ASYNC_HANDLING_ID_H
 #define TENACITAS_LIB_ASYNC_HANDLING_ID_H
 
-#include <string>
+#include <cstdint>
 
 namespace tenacitas::lib::async {
 
-using handling_id = std::string;
+using handling_id = uint16_t;
 
 } // namespace tenacitas::lib::async
 

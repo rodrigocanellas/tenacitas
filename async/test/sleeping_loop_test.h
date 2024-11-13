@@ -15,10 +15,10 @@
 #include <thread>
 
 #include <tenacitas.lib/async/sleeping_loop.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/generic/tester.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/log/cerr.h>
+#include <tenacitas.lib/program/options.h>
+#include <tenacitas.lib/tester/test.h>
 
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;
@@ -77,13 +77,13 @@ struct sleeping_loop_001 {
     _loop.stop();
 
     if (_op.counter != m_amount) {
-      _logger.err(generic::fmt("counter should be ", m_amount, ", but it is ",
-                               _op.counter));
+      _logger.err(format::fmt("counter should be ", m_amount, ", but it is ",
+                              _op.counter));
       return false;
     }
 
-    _logger.tst(generic::fmt("counter should be ", m_amount,
-                             ", and it really is ", _op.counter));
+    _logger.tst(format::fmt("counter should be ", m_amount,
+                            ", and it really is ", _op.counter));
 
     return true;
   }
@@ -98,7 +98,7 @@ private:
     void operator()() {
       if (counter < m_amount) {
         ++counter;
-        m_logger.deb(generic::fmt("counter = ", counter));
+        m_logger.deb(format::fmt("counter = ", counter));
         std::this_thread::sleep_for(m_sleep);
       } else {
         m_cond->notify_one();

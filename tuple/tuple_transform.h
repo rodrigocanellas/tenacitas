@@ -8,12 +8,12 @@
 
 #include <tuple>
 
-#include <tenacitas.lib/tuple/tuple_like.h>
+#include <tenacitas.lib/traits/tuple_like.h>
 
 namespace tenacitas::lib::tuple {
 
 // Base class for specialization
-template <tuple::tuple_like t_uple, template <typename> typename t_converter>
+template <traits::tuple_like t_uple, template <typename> typename t_converter>
 struct tuple_transform;
 
 /**

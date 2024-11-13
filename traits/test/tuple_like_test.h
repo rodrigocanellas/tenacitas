@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TEST_TUPLE_LIKE_TEST_H
-#define TENACITAS_LIB_TUPLE_TEST_TUPLE_LIKE_TEST_H
+#ifndef TENACITAS_LIB_TRAITS_TEST_TUPLE_LIKE_TEST_H
+#define TENACITAS_LIB_TRAITS_TEST_TUPLE_LIKE_TEST_H
 
 #include <iostream>
 #include <tuple>
@@ -12,13 +12,13 @@
 // tuple_like_002 actually causes a compile error
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/tuple_like.h>
+#include <tenacitas.lib/traits/tuple_like.h>
 
 using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tuple::test {
+namespace tenacitas::lib::traits::test {
 
-template <tuple::tuple_like t_tuple> void func(t_tuple &&p_tuple) {
+template <traits::tuple_like t_tuple> void func(t_tuple &&p_tuple) {
   std::cerr << "tuple<0>    = " << std::get<0>(p_tuple) << std::endl;
 }
 
@@ -70,6 +70,6 @@ struct tuple_like_002 {
   }
 };
 
-} // namespace tenacitas::lib::tuple::test
+} // namespace tenacitas::lib::traits::test
 
 #endif

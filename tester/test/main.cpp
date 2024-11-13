@@ -13,7 +13,7 @@ using namespace tenacitas::lib;
 
 int main(int argc, char **argv) {
   try {
-    generic::test _test(argc, argv);
+    tester::test _test(argc, argv);
     run_test(_test, tester_ok);
     run_test(_test, tester_fail);
     run_test(_test, tester_error);

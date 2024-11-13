@@ -3,23 +3,23 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TEST_IS_TUPLE_TEST_H
-#define TENACITAS_LIB_TUPLE_TEST_IS_TUPLE_TEST_H
+#ifndef TENACITAS_LIB_TRAITS_TEST_IS_TUPLE_TEST_H
+#define TENACITAS_LIB_TRAITS_TEST_IS_TUPLE_TEST_H
 
 #include <tuple>
 #include <vector>
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/is_tuple.h>
+#include <tenacitas.lib/traits/is_tuple.h>
 
 using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tuple::test {
+namespace tenacitas::lib::traits::test {
 
 struct is_tuple_000 {
   static std::string desc() { return "Checking if a 'int' is not a tuple"; }
 
-  bool operator()(const program::options &) { return !tuple::is_tuple_v<int>; }
+  bool operator()(const program::options &) { return !traits::is_tuple_v<int>; }
 };
 
 struct is_tuple_001 {
@@ -28,7 +28,7 @@ struct is_tuple_001 {
   }
 
   bool operator()(const program::options &) {
-    return tuple::is_tuple_v<std::tuple<>>;
+    return traits::is_tuple_v<std::tuple<>>;
   }
 };
 
@@ -38,7 +38,7 @@ struct is_tuple_002 {
   }
 
   bool operator()(const program::options &) {
-    return tuple::is_tuple_v<std::tuple<char>>;
+    return traits::is_tuple_v<std::tuple<char>>;
   }
 };
 
@@ -48,7 +48,7 @@ struct is_tuple_003 {
   }
 
   bool operator()(const program::options &) {
-    return tuple::is_tuple_v<std::tuple<char, std::string>>;
+    return traits::is_tuple_v<std::tuple<char, std::string>>;
   }
 };
 
@@ -58,7 +58,7 @@ struct is_tuple_004 {
   }
 
   bool operator()(const program::options &) {
-    return !tuple::is_tuple_v<std::vector<int>>;
+    return !traits::is_tuple_v<std::vector<int>>;
   }
 };
 
@@ -68,7 +68,7 @@ struct is_tuple_005 {
   }
 
   bool operator()(const program::options &) {
-    return !tuple::is_tuple_v<std::vector<std::tuple<double>>>;
+    return !traits::is_tuple_v<std::vector<std::tuple<double>>>;
   }
 };
 
@@ -78,10 +78,10 @@ struct is_tuple_006 {
   }
 
   bool operator()(const program::options &) {
-    return tuple::is_tuple_v<std::tuple<double, std::vector<char>>>;
+    return traits::is_tuple_v<std::tuple<double, std::vector<char>>>;
   }
 };
 
-} // namespace tenacitas::lib::tuple::test
+} // namespace tenacitas::lib::traits::test
 
 #endif

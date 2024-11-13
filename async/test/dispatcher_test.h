@@ -14,105 +14,341 @@
 #endif
 
 #include <tenacitas.lib/async/dispatcher.h>
+#include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/handling.h>
 #include <tenacitas.lib/async/sleeping_loop.h>
+
 #include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/tester.h>
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/parser/ini_file.h>
 #include <tenacitas.lib/program/options.h>
+#include <tenacitas.lib/traits/handler.h>
+#include <tenacitas.lib/traits/logger.h>
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
 
-struct dispatcher_test {
+using logger = log::cerr;
 
-protected:
-  using logger = log::cerr;
-
-  struct event_1 {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_1 &) {
-      return p_out;
-    }
-  };
-
-  struct handler_1a {
-    using event = event_1;
-    void operator()(event && /*p_event*/) {
-      std::cout << "handler 1a" << std::endl;
-    }
-  };
-
-  using queue_1a = container::circular_queue<logger, event_1, 10>;
-
-  using handling_1a =
-      async::handling<logger, event_1, queue_1a, handler_1a>;
-
-  struct handler_1b {
-    using event = event_1;
-    void operator()(event &&) {}
-  };
-
-  using queue_1b = container::circular_queue<logger, event_1, 100>;
-
-  using handling_1b =
-      async::handling<logger, event_1, queue_1b, handler_1b>;
-
-  struct event_2 {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_2 &) {
-      return p_out;
-    }
-  };
-
-  struct handler_2a {
-    using event = event_2;
-    void operator()(event &&) {}
-  };
-
-  using queue_2a = container::circular_queue<logger, event_2, 10>;
-
-  using handling_2a =
-      async::handling<logger, event_2, queue_2a, handler_2a>;
-
-protected:
-  logger m_logger;
-
-}; // namespace dispatcher_test
-
-struct dispatcher_000 : dispatcher_test {
-  static std::string desc() { return ""; }
-
-  bool operator()(const program::options &) {
-    using dispatcher = async::dispatcher<logger, event_1>;
-
-    m_logger.set_deb();
-
-    dispatcher _dispatcher{m_logger};
-    async::result _result{async::result::OK};
-
-    m_handling_1a.increment_handlers(1U);
-
-    // auto _notifier{[this](const event_1 &p_event) {
-    //   return m_handling_1a.add_event(p_event);
-    // }};
-    // _dispatcher.add_handling<event_1>(_notifier);
-
-    // handling_1a _handling_1a{"handling_1a", m_logger, handler_1a{}};
-    _dispatcher.add_handling<event_1>(m_handling_1a);
-
-    event_1 _event_1;
-    _dispatcher.publish(_event_1);
-
-    std::this_thread::sleep_for(1s);
-
-    return _result == async::result::OK;
+struct event_1 {
+  event_1(int16_t p_i = -9) : i(p_i) {}
+  friend std::ostream &operator<<(std::ostream &out, const event_1 &p_event) {
+    out << "i = " << p_event.i;
+    return out;
   }
 
-private:
-  handling_1a m_handling_1a{"handling_1a", m_logger, handler_1a{}};
+  int16_t i;
 };
+
+struct event_2 {
+  event_2(float p_f = 3.14f) : f(p_f) {}
+  friend std::ostream &operator<<(std::ostream &out, const event_2 &p_event) {
+    out << "f = " << p_event.f;
+    return out;
+  }
+
+  float f;
+};
+
+using queue_1 = container::circular_queue<logger, event_1, 10>;
+
+using queue_2 = container::circular_queue<logger, event_2, 5>;
+
+// using handling = async::handling<logger, event_1, queue, handler>;
+using dispatcher = async::dispatcher<logger, event_1, event_2>;
+
+struct dispatcher_000 {
+  static std::string desc() { return "Adding a handling and getting its id"; }
+
+  bool operator()(const program::options &) {
+    logger _logger;
+
+    dispatcher _dispatcher{_logger};
+
+    auto _handler{[this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
+
+    auto _handling_id_maybe{_dispatcher.subscribe<event_1, queue_1>(_handler)};
+
+    if (!_handling_id_maybe) {
+      return false;
+    }
+
+    auto _handling_id{_handling_id_maybe.value()};
+
+    TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
+
+    return _handling_id == 1;
+  }
+
+  void operator()(event_1 &&) {}
+
+private:
+};
+
+// struct dispatcher_001 {
+//   static std::string desc() {
+//     return "Checks the number of handlers in a handling";
+//   }
+
+//   bool operator()(const program::options &) {
+//     logger _logger;
+
+//     dispatcher _dispatcher{_logger};
+
+//     auto _handling_id_maybe{
+//         _dispatcher.subscribe<event_1, queue_1, handler>(handler{})};
+
+//     if (!_handling_id_maybe) {
+//       return false;
+//     }
+
+//     auto _handling_id{_handling_id_maybe.value()};
+
+//     TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
+
+//     auto _amount_handlers_maybe{
+//         _dispatcher.get_amount_handlers<event_1>(_handling_id)};
+
+//     if (!_amount_handlers_maybe) {
+//       TNCT_LOG_ERR(
+//           _logger,
+//           format::fmt(
+//               "not possible to get the amount of handlers for handling ",
+//               _handling_id));
+//     }
+
+//     auto _amount_handlers{_amount_handlers_maybe.value()};
+//     TNCT_LOG_TST(_logger,
+//                  format::fmt("amount of handlers = ", _amount_handlers));
+
+//     return _amount_handlers == 1;
+//   }
+
+// private:
+//   struct handler {
+//     using event = event_1;
+
+//     void operator()(event &&) {}
+//   };
+// };
+
+// struct dispatcher_002 {
+//   static std::string desc() {
+//     return "Checks the number of handlers in a handling after increasing";
+//   }
+
+//   bool operator()(const program::options &) {
+//     logger _logger;
+
+//     dispatcher _dispatcher{_logger};
+
+//     auto _handling_id_maybe{
+//         _dispatcher.subscribe<event_1, queue_1, handler>(handler{})};
+
+//     if (!_handling_id_maybe) {
+//       return false;
+//     }
+
+//     auto _handling_id{_handling_id_maybe.value()};
+
+//     TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
+
+//     auto _amount_handlers_maybe{
+//         _dispatcher.get_amount_handlers<event_1>(_handling_id)};
+
+//     if (!_amount_handlers_maybe) {
+//       TNCT_LOG_ERR(
+//           _logger,
+//           format::fmt(
+//               "not possible to get the amount of handlers for handling ",
+//               _handling_id));
+//     }
+
+//     auto _amount_handlers{_amount_handlers_maybe.value()};
+//     TNCT_LOG_TST(_logger,
+//                  format::fmt("amount of handlers = ", _amount_handlers));
+
+//     if (_amount_handlers != 1) {
+//       TNCT_LOG_ERR(_logger,
+//                    format::fmt("amount of handlers should be 1, but it is ",
+//                                _amount_handlers));
+//       return false;
+//     }
+
+//     if (!_dispatcher.increment_handlers<event_1>(_handling_id, 3)) {
+//       TNCT_LOG_ERR(_logger, format::fmt("error adding handlers to handling ",
+//                                         _handling_id));
+//       return false;
+//     }
+
+//     _amount_handlers_maybe =
+//         _dispatcher.get_amount_handlers<event_1>(_handling_id);
+
+//     if (!_amount_handlers_maybe) {
+//       TNCT_LOG_ERR(
+//           _logger,
+//           format::fmt(
+//               "not possible to get the amount of handlers for handling ",
+//               _handling_id));
+//     }
+//     _amount_handlers = _amount_handlers_maybe.value();
+//     TNCT_LOG_TST(_logger,
+//                  format::fmt("amount of handlers = ", _amount_handlers));
+
+//     if (_amount_handlers != 4) {
+//       TNCT_LOG_ERR(_logger,
+//                    format::fmt("amount of handlers should be 4, but it is ",
+//                                _amount_handlers));
+//       return false;
+//     }
+
+//     return true;
+//   }
+
+// private:
+//   struct handler {
+//     using event = event_1;
+
+//     void operator()(event &&) {}
+//   };
+// };
+
+struct dispatcher_003 {
+  static std::string desc() {
+    return "Trying to associate a handler to two handlings";
+  }
+
+  bool operator()(const program::options &) {
+    logger _logger;
+    try {
+      _logger.set_deb();
+
+      dispatcher _dispatcher{_logger};
+
+      auto _handler_a{
+          [this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
+
+      const auto _handler_id_a{
+          async::handler_id<event_1, decltype(_handler_a)>()};
+
+      TNCT_LOG_TST(_logger, format::fmt("_handler_id_a = ", _handler_id_a));
+
+      auto _handling_id_maybe{
+          _dispatcher.subscribe<event_1, queue_1>(_handler_a)};
+
+      if (!_handling_id_maybe) {
+        TNCT_LOG_ERR(_logger, "handling not created, but it should");
+        return false;
+      }
+
+      _handling_id_maybe = _dispatcher.subscribe<event_1, queue_1>(_handler_a);
+      if (_handling_id_maybe) {
+        TNCT_LOG_ERR(_logger, "handling created, but it should not have been");
+        return false;
+      }
+
+      return true;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(_logger, _ex.what());
+    }
+
+    return false;
+  }
+
+  void operator()(event_1 &&) {}
+
+  void operator()(event_2 &&) {}
+};
+
+// struct dispatcher_test {
+
+// protected:
+//   using logger = log::cerr;
+
+//   struct event_1 {
+//     friend std::ostream &operator<<(std::ostream &p_out, const event_1 &)
+//     {
+//       return p_out;
+//     }
+//   };
+
+//   struct handler_1a {
+//     using event = event_1;
+//     void operator()(event && /*p_event*/) {
+//       std::cout << "handler 1a" << std::endl;
+//     }
+//   };
+
+//   using queue_1a = container::circular_queue<logger, event_1, 10>;
+
+//   using handling_1a =
+//       async::handling<logger, event_1, queue_1a, handler_1a>;
+
+//   struct handler_1b {
+//     using event = event_1;
+//     void operator()(event &&) {}
+//   };
+
+//   using queue_1b = container::circular_queue<logger, event_1, 100>;
+
+//   using handling_1b =
+//       async::handling<logger, event_1, queue_1b, handler_1b>;
+
+//   struct event_2 {
+//     friend std::ostream &operator<<(std::ostream &p_out, const event_2 &)
+//     {
+//       return p_out;
+//     }
+//   };
+
+//   struct handler_2a {
+//     using event = event_2;
+//     void operator()(event &&) {}
+//   };
+
+//   using queue_2a = container::circular_queue<logger, event_2, 10>;
+
+//   using handling_2a =
+//       async::handling<logger, event_2, queue_2a, handler_2a>;
+
+// protected:
+//   logger m_logger;
+
+// }; // namespace dispatcher_test
+
+// struct dispatcher_000 : dispatcher_test {
+//   static std::string desc() { return ""; }
+
+//   bool operator()(const program::options &) {
+//     using dispatcher = async::dispatcher<logger, event_1>;
+
+//     m_logger.set_deb();
+
+//     dispatcher _dispatcher{m_logger};
+//     async::result _result{async::result::OK};
+
+//     m_handling_1a.increment_handlers(1U);
+
+//     // auto _notifier{[this](const event_1 &p_event) {
+//     //   return m_handling_1a.add_event(p_event);
+//     // }};
+//     // _dispatcher.add_handling<event_1>(_notifier);
+
+//     // handling_1a _handling_1a{"handling_1a", m_logger, handler_1a{}};
+//     _dispatcher.add_handling<event_1>(m_handling_1a);
+
+//     event_1 _event_1;
+//     _dispatcher.publish(_event_1);
+
+//     std::this_thread::sleep_for(1s);
+
+//     return _result == async::result::OK;
+//   }
+
+// private:
+//   handling_1a m_handling_1a{"handling_1a", m_logger, handler_1a{}};
+// };
 
 // struct dispatcher_test {
 

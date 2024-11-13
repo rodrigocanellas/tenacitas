@@ -111,7 +111,7 @@ struct translate_an_existing_word {
 
 int main(int argc, char **argv) {
 
-  generic::test<> _test(argc, argv);
+  tester::test<> _test(argc, argv);
 
   run_test(_test, from_memory);
   run_test(_test, from_existing_file);

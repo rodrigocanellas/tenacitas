@@ -11,12 +11,50 @@
 
 #include <tenacitas.lib/traits/has_new_operator.h>
 
+#define TNCT_LOG_TRA(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_tra()) {                                                    \
+      logger.tra(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_DEB(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_deb()) {                                                    \
+      logger.tra(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_INF(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_inf()) {                                                    \
+      logger.inf(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_WAR(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_war()) {                                                    \
+      logger.war(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_ERR(logger, msg) logger.err(msg);
+
+#define TNCT_LOG_FAT(logger, msg) logger.err(msg);
+
+#define TNCT_LOG_TST(logger, msg) logger.tst(msg);
+
 namespace tenacitas::lib::traits {
 
 template <typename t>
 concept logger = !std::copy_constructible<t> &&
 
                  !std::move_constructible<t> &&
+
+                 !std::is_copy_assignable_v<t> &&
+
+                 !std::is_move_assignable_v<t> &&
 
                  !has_new_operator_v<t> &&
 

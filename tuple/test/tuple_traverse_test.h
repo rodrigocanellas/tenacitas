@@ -10,7 +10,7 @@
 #include <tuple>
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/tuple_like.h>
+#include <tenacitas.lib/traits/tuple_like.h>
 #include <tenacitas.lib/tuple/tuple_traverse.h>
 
 using namespace tenacitas::lib;
@@ -29,7 +29,7 @@ struct tuple_traverse_000 {
 
     bool _ret{true};
 
-    auto _visit = [&_ret, &_char]<tuple::tuple_like t_tuple, size_t t_idx>(
+    auto _visit = [&_ret, &_char]<traits::tuple_like t_tuple, size_t t_idx>(
                       const t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -42,7 +42,7 @@ struct tuple_traverse_000 {
       return true;
     };
 
-    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
+    tuple::tuple_mutable_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
 
     return _ret;
   }
@@ -61,7 +61,7 @@ struct tuple_traverse_001 {
 
     bool _ret{true};
 
-    auto _visit = [&_ret, &_char]<tuple::tuple_like t_tuple, size_t t_idx>(
+    auto _visit = [&_ret, &_char]<traits::tuple_like t_tuple, size_t t_idx>(
                       t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -78,7 +78,7 @@ struct tuple_traverse_001 {
       return true;
     };
 
-    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
+    tuple::tuple_mutable_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
 
     return _ret;
   }
@@ -93,7 +93,7 @@ struct tuple_traverse_002 {
     using my_tuple = std::tuple<int, char, std::string, float>;
 
     auto _ret{true};
-    auto _visit = [&_ret]<tuple::tuple_like t_tuple, std ::size_t t_idx>() {
+    auto _visit = [&_ret]<traits::tuple_like t_tuple, std ::size_t t_idx>() {
       using element_type = std::tuple_element_t<t_idx, t_tuple>;
       if constexpr (t_idx == 0) {
         if constexpr (!std::is_same_v<element_type, int>) {
@@ -127,7 +127,7 @@ struct tuple_traverse_002 {
       return true;
     };
 
-    tuple::tuple_traverse<my_tuple>(_visit);
+    tuple::tuple_type_traverse<my_tuple>(_visit);
 
     return _ret;
   }

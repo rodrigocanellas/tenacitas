@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_GENERIC_TESTER_H
-#define TENACITAS_LIB_GENERIC_TESTER_H
+#ifndef TENACITAS_LIB_TESTER_TEST_H
+#define TENACITAS_LIB_TESTER_TEST_H
 
 #include <algorithm>
 #include <iostream>
@@ -28,7 +28,7 @@
 ///
 #define run_test(test, test_name) test.run<test_name>(#test_name)
 
-namespace tenacitas::lib::generic {
+namespace tenacitas::lib::tester {
 /// \brief The test struct executes tests implemented in classes
 ///
 /// \tparam use makes tnct::tester to be compiled only if
@@ -262,6 +262,6 @@ private:
   program::options m_options;
 };
 
-} // namespace tenacitas::lib::generic
+} // namespace tenacitas::lib::tester
 
 #endif

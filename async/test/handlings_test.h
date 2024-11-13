@@ -13,7 +13,7 @@
 #include <tenacitas.lib/container/circular_queue.h>
 #include <tenacitas.lib/generic/fmt.h>
 #include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/log/logger.h>
+
 #include <tenacitas.lib/program/options.h>
 
 using namespace tenacitas::lib;

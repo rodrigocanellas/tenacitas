@@ -6,8 +6,11 @@
 #ifndef TENACITAS_LIB_ASYNC_TEST_HANDLING_ID_H
 #define TENACITAS_LIB_ASYNC_TEST_HANDLING_ID_H
 
+#include <limits>
+
 #include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/generic/fmt.h>
+
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/log/cerr.h>
 #include <tenacitas.lib/program/options.h>
 
@@ -18,26 +21,27 @@ struct handling_id_000 {
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id("id 1");
+    async::handling_id _handling_id(1);
 
-    _log.tst(generic::fmt("id = ", _handling_id));
+    _log.tst(format::fmt("id = ", _handling_id));
 
-    return _handling_id == "id 1";
+    return _handling_id == 1;
   }
 };
 
 struct handling_id_001 {
   static std::string desc() {
-    return "Creating a async::handling_id with more than 10 chars";
+    return "Creating a async::handling_id with max possible value";
   }
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id("0123456789ABC");
+    async::handling_id _handling_id(
+        std::numeric_limits<async::handling_id>::max());
 
-    _log.tst(generic::fmt("id = ", _handling_id));
+    _log.tst(format::fmt("id = ", _handling_id));
 
-    return _handling_id == "0123456789ABC";
+    return _handling_id == std::numeric_limits<async::handling_id>::max();
   }
 };
 
@@ -49,32 +53,14 @@ struct handling_id_002 {
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id_1("012345");
-    async::handling_id _handling_id_2("012345");
+    async::handling_id _handling_id_1(5);
+    async::handling_id _handling_id_2(5);
 
     _log.tst(
-        generic::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
+        format::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
 
-    return (_handling_id_1 == "012345") && (_handling_id_2 == "012345") &&
+    return (_handling_id_1 == 5) && (_handling_id_2 == 5) &&
            (_handling_id_1 == _handling_id_2);
-  }
-};
-
-struct handling_id_003 {
-  static std::string desc() {
-    return "Comparing two async::handling_id with the diffent sizes";
-  }
-
-  bool operator()(const program::options &) {
-    log::cerr _log;
-    async::handling_id _handling_id_1("01234");
-    async::handling_id _handling_id_2("012345");
-
-    _log.tst(
-        generic::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
-
-    return (_handling_id_1 == "01234") && (_handling_id_2 == "012345") &&
-           (_handling_id_1 != _handling_id_2);
   }
 };
 
@@ -83,18 +69,18 @@ struct handling_id_004 {
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id_1("01234");
-    async::handling_id _handling_id_2("012345");
+    async::handling_id _handling_id_1(4);
+    async::handling_id _handling_id_2(5);
 
-    _log.tst(generic::fmt("BEFORE id 1 = ", _handling_id_1,
-                          ", id 2 = ", _handling_id_2));
+    _log.tst(format::fmt("BEFORE id 1 = ", _handling_id_1,
+                         ", id 2 = ", _handling_id_2));
 
     _handling_id_1 = _handling_id_2;
 
-    _log.tst(generic::fmt("AFTER id 1 = ", _handling_id_1,
-                          ", id 2 = ", _handling_id_2));
+    _log.tst(format::fmt("AFTER id 1 = ", _handling_id_1,
+                         ", id 2 = ", _handling_id_2));
 
-    return (_handling_id_1 == "012345") && (_handling_id_2 == "012345") &&
+    return (_handling_id_1 == 5) && (_handling_id_2 == 5) &&
            (_handling_id_1 == _handling_id_2);
   }
 };
@@ -104,18 +90,18 @@ struct handling_id_005 {
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id_1("01234");
-    async::handling_id _handling_id_2("012345");
+    async::handling_id _handling_id_1(4);
+    async::handling_id _handling_id_2(5);
 
-    _log.tst(generic::fmt("BEFORE id 1 = ", _handling_id_1,
-                          ", id 2 = ", _handling_id_2));
+    _log.tst(format::fmt("BEFORE id 1 = ", _handling_id_1,
+                         ", id 2 = ", _handling_id_2));
 
     _handling_id_1 = std::move(_handling_id_2);
 
-    _log.tst(generic::fmt("AFTER id 1 = ", _handling_id_1,
-                          ", id 2 = ", _handling_id_2));
+    _log.tst(format::fmt("AFTER id 1 = ", _handling_id_1,
+                         ", id 2 = ", _handling_id_2));
 
-    return (_handling_id_1 == "012345") && (_handling_id_2.size() == 0);
+    return (_handling_id_1 == 5);
   }
 };
 
@@ -126,28 +112,11 @@ struct handling_id_006 {
 
   bool operator()(const program::options &) {
     log::cerr _log;
-    async::handling_id _handling_id_1("ABC");
-    async::handling_id _handling_id_2("ABD");
+    async::handling_id _handling_id_1(2);
+    async::handling_id _handling_id_2(3);
 
     _log.tst(
-        generic::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
-
-    return (_handling_id_1 < _handling_id_2);
-  }
-};
-
-struct handling_id_007 {
-  static std::string desc() {
-    return "Less than in different size async::handling_id";
-  }
-
-  bool operator()(const program::options &) {
-    log::cerr _log;
-    async::handling_id _handling_id_1("ABCEF");
-    async::handling_id _handling_id_2("ABD");
-
-    _log.tst(
-        generic::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
+        format::fmt("id 1 = ", _handling_id_1, ", id 2 = ", _handling_id_2));
 
     return (_handling_id_1 < _handling_id_2);
   }

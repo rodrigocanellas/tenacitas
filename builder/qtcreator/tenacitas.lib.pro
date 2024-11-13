@@ -6,7 +6,7 @@ SUBDIRS = \
     generic \
     # math \
     container \
-    # async \
+    async \
     traits \
     log \
     translator \
@@ -16,7 +16,7 @@ SUBDIRS = \
     pair \
     time \
     format \
-    test
+    tester
 
 
 

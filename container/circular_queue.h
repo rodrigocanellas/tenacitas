@@ -12,7 +12,6 @@
 #include <vector>
 
 #include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/log/logger.h>
 #include <tenacitas.lib/log/no_logger.h>
 #include <tenacitas.lib/traits/has_output_operator.h>
 #include <tenacitas.lib/traits/logger.h>
@@ -43,7 +42,7 @@ public:
         m_incremental_size(m_initial_size == 0 ? 50 : (m_initial_size / 2)),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
-    TNCT_LOG_TRA(this->m_logger, "creating - ", brief_report());
+    TNCT_LOG_TRA(this->m_logger, format::fmt("creating - ", brief_report()));
   }
 
   ~circular_queue() {}
@@ -123,7 +122,8 @@ public:
   void push(t_data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, "push - entering ", brief_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("push - entering ", brief_report()));
 
     if (full()) {
       enlarge();
@@ -138,14 +138,15 @@ public:
     }
     ++m_occupied;
 
-    TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("push - leaving: ", brief_report()));
   }
 
   void push(const t_data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, "push - entering with data = ", p_data, ": ",
-                 brief_report());
+    TNCT_LOG_TRA(this->m_logger, format::fmt("push - entering with data = ",
+                                             p_data, ": ", brief_report()));
 
     if (full()) {
       enlarge();
@@ -160,13 +161,15 @@ public:
     }
     ++m_occupied;
 
-    TNCT_LOG_TRA(this->m_logger, "push - leaving: ", brief_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("push - leaving: ", brief_report()));
   }
 
   std::optional<t_data> pop() {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, "pop - entering: ", brief_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("pop - entering: ", brief_report()));
 
     if (empty()) {
       return std::nullopt;
@@ -181,7 +184,8 @@ public:
 
     --m_occupied;
 
-    TNCT_LOG_TRA(this->m_logger, "pop - leaving: ", brief_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("pop - leaving: ", brief_report()));
 
     return {_data};
   }
@@ -214,7 +218,8 @@ private:
 
 protected:
   void enlarge() {
-    TNCT_LOG_TRA(this->m_logger, "enlarging - entering ", full_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("enlarging - entering ", full_report()));
 
     vector _aux(m_vector.size() + m_incremental_size, t_data());
 
@@ -241,9 +246,10 @@ protected:
     }
 
     m_vector = std::move(_aux);
-    TNCT_LOG_TRA(this->m_logger, "enlarging - leaving ", full_report());
+    TNCT_LOG_TRA(this->m_logger,
+                 format::fmt("enlarging - leaving ", full_report()));
 
-    TNCT_LOG_INF(this->m_logger, "enlarged - ", brief_report());
+    TNCT_LOG_INF(this->m_logger, format::fmt("enlarged - ", brief_report()));
   }
 
 private:

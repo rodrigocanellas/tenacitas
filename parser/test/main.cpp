@@ -72,6 +72,6 @@ private:
 
 int main(int argc, char **argv) {
 
-  generic::test _test(argc, argv, {"ini"});
+  tester::test _test(argc, argv, {"ini"});
   run_test(_test, test_000);
 }

@@ -3,25 +3,25 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TUPLE_CONTAINS_TUPLE_H
-#define TENACITAS_LIB_TUPLE_TUPLE_CONTAINS_TUPLE_H
+#ifndef TENACITAS_LIB_TRAITS_TUPLE_CONTAINS_TUPLE_H
+#define TENACITAS_LIB_TRAITS_TUPLE_CONTAINS_TUPLE_H
 
 #include <tuple>
 
-#include <tenacitas.lib/tuple/is_type_in_tuple.h>
-#include <tenacitas.lib/tuple/tuple_like.h>
+#include <tenacitas.lib/traits/is_type_in_tuple.h>
+#include <tenacitas.lib/traits/tuple_like.h>
 
-namespace tenacitas::lib::tuple {
+namespace tenacitas::lib::traits {
 
 template <typename t_container_tuple, typename t_contained_tuple>
 concept tuple_contains_tuple = requires {
   requires
 
-      tuple::tuple_like<t_container_tuple>
+      traits::tuple_like<t_container_tuple>
 
       &&
 
-      tuple::tuple_like<t_contained_tuple>
+      traits::tuple_like<t_contained_tuple>
 
       &&
 
@@ -41,6 +41,6 @@ concept tuple_contains_tuple = requires {
   (std::make_index_sequence<std::tuple_size_v<t_contained_tuple>>());
 };
 
-} // namespace tenacitas::lib::tuple
+} // namespace tenacitas::lib::traits
 
 #endif

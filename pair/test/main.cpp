@@ -9,7 +9,7 @@
 using namespace tenacitas::lib;
 
 int main(int argc, char **argv) {
-  generic::test _tester(argc, argv);
+  tester::test _tester(argc, argv);
 
   run_test(_tester, pair::test::pair_output_000);
   run_test(_tester, pair::test::pair_output_001);

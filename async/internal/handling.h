@@ -7,100 +7,115 @@
 #define TENACITAS_LIB_ASYNC_INTERNAL_HANDLING_H
 
 #include <condition_variable>
-#include <functional>
 #include <mutex>
 #include <string>
 #include <string_view>
 #include <thread>
 #include <typeindex>
+#include <typeinfo>
 #include <vector>
 
+#include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_id.h>
 #include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/log/logger.h>
+
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/traits/event.h>
 #include <tenacitas.lib/traits/handler.h>
 #include <tenacitas.lib/traits/logger.h>
 #include <tenacitas.lib/traits/queue.h>
 
-namespace tenacitas::lib::async {
+namespace tenacitas::lib::async::internal {
 
-template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_logger, t_event> t_queue, traits::handler t_handler>
-class handling final {
+template <traits::logger t_logger, traits::event t_event> class handling {
 public:
   using logger = t_logger;
   using event = t_event;
-  using handler = t_handler;
+  using handler = async::handler<event>;
+
+  virtual ~handling() = default;
+
+  virtual void add_event(const t_event &p_event) = 0;
+
+  virtual void increment_handlers(size_t p_num_handlers) = 0;
+
+  virtual void stop() = 0;
+
+  virtual constexpr bool is_stopped() const = 0;
+
+  [[nodiscard]] virtual constexpr size_t get_amount_handlers() const = 0;
+
+  [[nodiscard]] virtual handling_id get_id() const = 0;
+
+  [[nodiscard]] virtual constexpr size_t get_num_events() const = 0;
+
+  [[nodiscard]] virtual size_t get_handler_id() const = 0;
+
+  virtual void clear() = 0;
+};
+
+template <traits::logger t_logger, traits::event t_event,
+          traits::queue<t_logger, t_event> t_queue>
+class handling_concrete final : public handling<t_logger, t_event> {
+public:
+  using logger = t_logger;
+  using event = t_event;
+  using handler = async::handler<event>;
   using queue = t_queue;
 
-  /// \brief Creates a handling for an event type
+  /// \brief Creates a handling_concrete for an event type
   ///
   /// \param p_logger
   /// \param p_handler
-  handling(std::string_view p_handling_id, t_logger &p_logger,
-           handler &&p_handler)
+  handling_concrete(handling_id p_handling_id, t_logger &p_logger,
+                    handler &&p_handler, size_t p_num_handlers = 1)
       : m_logger(p_logger), m_handling_id(p_handling_id),
         m_handler(std::move(p_handler)),
-        m_queue("queue-" + m_handling_id, p_logger) {}
+        m_queue("queue-" + m_handling_id, p_logger),
+        m_handler_id(handler_id<event, handler>()) {
+    TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", m_handler_id));
+    increment_handlers(p_num_handlers);
+  }
 
-  handling(const handling &) = delete;
+  handling_concrete(const handling_concrete &) = delete;
 
-  handling(handling &&p_handling)
+  handling_concrete(handling_concrete &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
         m_handler(std::move(p_handling.m_handler)),
-        m_queue(p_handling.m_queue.id(), p_handling.m_logger) {
+        m_queue(p_handling.m_queue.id(), p_handling.m_logger),
+        m_handler_id(p_handling.m_handler_id) {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();
 
     m_queued_data.store(p_handling.m_queued_data);
     m_queue = std::move(p_handling.m_queue);
     if (!_right_handling_was_stopped) {
-      increment_handlers(p_handling.get_num_handlers());
+      increment_handlers(p_handling.get_amount_handlers());
     }
   }
 
-  std::function<async::result(const event &)> get_notifier() {
-    auto _notifier = [this](const event &p_event) {
-      return add_event(p_event);
-    };
-  }
-
-  ~handling() {
+  ~handling_concrete() override {
     TNCT_LOG_TRA(m_logger, trace("entering destructor"));
     stop();
     TNCT_LOG_TRA(m_logger, trace("leaving destructor"));
   }
 
-  handling &operator=(const handling &) = default;
-  handling &operator=(handling &&) = default;
+  handling_concrete &operator=(const handling_concrete &) = default;
+  handling_concrete &operator=(handling_concrete &&) = default;
 
-  const std::type_index &get_event_id() const { return m_event_id; }
+  void add_event(const event &p_event) override {
 
-  // Adds an event to the queue of events
-  [[nodiscard]] result add_event(const event &p_event) {
-    try {
-      TNCT_LOG_TRA(m_logger, trace("adding event"));
+    TNCT_LOG_TRA(m_logger, trace("adding event"));
 
-      m_queue.push(p_event);
+    m_queue.push(p_event);
 
-      std::lock_guard<std::mutex> _lock(m_data_mutex);
-      m_data_cond.notify_all();
+    std::lock_guard<std::mutex> _lock(m_data_mutex);
+    m_data_cond.notify_all();
 
-      ++m_queued_data;
-
-      return result::OK;
-    } catch (std::exception &_ex) {
-      m_logger.err(
-          generic::fmt("error adding event: " + std::string(_ex.what())));
-    }
-    return result::UNIDENTIFIED;
+    ++m_queued_data;
   }
 
-  // Adds a bunch of event handlers
-  template <std::unsigned_integral t_num_handlers>
-  void increment_handlers(t_num_handlers p_num_handlers) {
+  void increment_handlers(size_t p_num_handlers) override {
     if (p_num_handlers == 0) {
       return;
     }
@@ -113,8 +128,8 @@ public:
 
     std::lock_guard<std::mutex> _lock(m_add_subscriber_mutex);
 
-    TNCT_LOG_TRA(m_logger, trace(generic::fmt("adding ", p_num_handlers,
-                                              " event handlers")));
+    TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
+                                             " event handlers")));
 
     for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i) {
       m_handling_handlers.push_back(m_handler);
@@ -125,7 +140,7 @@ public:
   }
 
   // \brief Stops this handling
-  void stop() {
+  void stop() override {
     TNCT_LOG_TRA(m_logger, trace("entering stop()"));
 
     // using loop_lockers = std::vector<std::lock_guard<std::mutex>>;
@@ -165,27 +180,29 @@ public:
   }
 
   // Informs if the publishing is stopped
-  constexpr bool is_stopped() const { return m_stopped; }
+  constexpr bool is_stopped() const override { return m_stopped; }
 
-  [[nodiscard]] constexpr size_t get_num_handlers() const {
+  [[nodiscard]] constexpr size_t get_amount_handlers() const override {
     return m_handling_handlers.size();
   }
 
-  [[nodiscard]] const handling_id &get_id() const { return m_handling_id; }
+  [[nodiscard]] handling_id get_id() const override { return m_handling_id; }
 
   // \return Returns the amount of \p t_event objects in the queue
-  [[nodiscard]] constexpr size_t get_num_events() const {
+  [[nodiscard]] constexpr size_t get_num_events() const override {
     return m_queue.occupied();
   }
 
-  void clear() {
+  void clear() override {
     std::lock_guard<std::mutex> _lock(m_data_mutex);
     m_queue.clear();
     m_data_cond.notify_all();
   }
 
+  [[nodiscard]] size_t get_handler_id() const override { return m_handler_id; }
+
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  const handling &p_handling) {
+                                  const handling_concrete &p_handling) {
     p_out << "{name " << typeid(event).name() << ", address " << &p_handling
           << ", id " << p_handling.m_handling_id << ", queue { capacity "
           << p_handling.m_queue.capacity() << ", occupied "
@@ -322,7 +339,7 @@ private:
 
   queue m_queue;
 
-  std::type_index m_event_id{std::type_index(typeid(event))};
+  std::size_t m_handler_id{0};
 
   // Indicates if the dispatcher should continue to run
   std::atomic_bool m_stopped{false};
@@ -346,6 +363,6 @@ private:
   std::condition_variable m_data_cond;
 };
 
-} // namespace tenacitas::lib::async
+} // namespace tenacitas::lib::async::internal
 
 #endif

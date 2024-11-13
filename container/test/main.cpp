@@ -11,7 +11,7 @@ using namespace tenacitas::lib;
 
 int main(int argc, char **argv) {
 
-  generic::test _tester(argc, argv);
+  tester::test _tester(argc, argv);
   run_test(_tester, circular_queue_001);
   run_test(_tester, circular_queue_003);
   run_test(_tester, circular_queue_test);

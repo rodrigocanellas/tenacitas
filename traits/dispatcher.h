@@ -9,9 +9,9 @@
 // #include <tuple>
 
 #include <tenacitas.lib/traits/event.h>
+#include <tenacitas.lib/traits/has_new_operator.h>
 #include <tenacitas.lib/traits/is_smart_ptr.h>
 #include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/new_operator.h>
 #include <tenacitas.lib/traits/tuple_like.h>
 
 namespace tenacitas::lib::traits {
@@ -26,7 +26,7 @@ concept dispatcher = requires(t p_t) {
 
   std::default_initializable<t>;
 
-  no_new_operator<t>;
+  !has_new_operator_v<t>;
 
   // t::events is a std::tuple
   tuple_like<typename t::events>;

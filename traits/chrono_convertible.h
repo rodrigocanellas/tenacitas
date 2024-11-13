@@ -3,12 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_TIME_CHRONO_CONVERTIBLE_H
-#define TENACITAS_LIB_TIME_CHRONO_CONVERTIBLE_H
+#ifndef TENACITAS_LIB_TRAITS_CHRONO_CONVERTIBLE_H
+#define TENACITAS_LIB_TRAITS_CHRONO_CONVERTIBLE_H
 
 #include <chrono>
 
-namespace tenacitas::lib::time {
+namespace tenacitas::lib::traits {
 
 template <typename t_to, typename t_from>
 concept chrono_convertible = requires(t_from p_time) {
@@ -26,6 +26,6 @@ template <typename t_from>
 concept convertible_to_nano =
     chrono_convertible<std::chrono::nanoseconds, t_from>;
 
-} // namespace tenacitas::lib::time
+} // namespace tenacitas::lib::traits
 
 #endif

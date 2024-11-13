@@ -3,17 +3,17 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
-#define TENACITAS_LIB_TUPLE_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
+#ifndef TENACITAS_LIB_TRAITS_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
+#define TENACITAS_LIB_TRAITS_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
 
 #include <tuple>
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/is_type_in_tuple.h>
+#include <tenacitas.lib/traits/is_type_in_tuple.h>
 
 using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tuple::test {
+namespace tenacitas::lib::traits::test {
 
 struct is_type_in_tuple_000 {
   static std::string desc() {
@@ -23,7 +23,7 @@ struct is_type_in_tuple_000 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _found{tuple::is_type_in_tuple<my_tuple, int>()};
+    auto _found{traits::is_type_in_tuple<my_tuple, int>()};
     if (!_found) {
       std::cerr << "ERROR! 'int' was not found, but it should have been "
                 << std::endl;
@@ -31,7 +31,7 @@ struct is_type_in_tuple_000 {
     }
     std::cerr << "'int' found, as expected" << std::endl;
 
-    _found = tuple::is_type_in_tuple<my_tuple, char>();
+    _found = traits::is_type_in_tuple<my_tuple, char>();
     if (!_found) {
       std::cerr << "ERROR! 'char' was not found, but it should have been "
                 << std::endl;
@@ -39,7 +39,7 @@ struct is_type_in_tuple_000 {
     }
     std::cerr << "'char' found, as expected" << std::endl;
 
-    _found = tuple::is_type_in_tuple<my_tuple, float>();
+    _found = traits::is_type_in_tuple<my_tuple, float>();
     if (!_found) {
       std::cerr << "ERROR! 'flaot' was not found, but it should have been "
                 << std::endl;
@@ -58,7 +58,7 @@ struct is_type_in_tuple_001 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _found{tuple::is_type_in_tuple<my_tuple, std::string>()};
+    auto _found{traits::is_type_in_tuple<my_tuple, std::string>()};
     if (_found) {
       std::cerr << "'std::string' should not be found, but is was" << std::endl;
       return false;
@@ -74,7 +74,7 @@ struct is_type_in_tuple_002 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<>;
 
-    auto _found{tuple::is_type_in_tuple<my_tuple, std::string>()};
+    auto _found{traits::is_type_in_tuple<my_tuple, std::string>()};
     if (_found) {
       std::cerr << "'std::string' should not be found, but is was" << std::endl;
       return false;
@@ -83,6 +83,6 @@ struct is_type_in_tuple_002 {
     return true;
   }
 };
-} // namespace tenacitas::lib::tuple::test
+} // namespace tenacitas::lib::traits::test
 
 #endif

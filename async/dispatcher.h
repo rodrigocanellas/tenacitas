@@ -10,26 +10,30 @@
 #include <ctime>
 #include <functional>
 #include <iostream>
+#include <map>
+#include <optional>
 #include <tuple>
 #include <vector>
 
+#include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/async/handling.h>
+#include <tenacitas.lib/async/handling_priority.h>
+#include <tenacitas.lib/async/internal/handling.h>
 #include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/log/logger.h>
+
+#include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/traits/event.h>
 #include <tenacitas.lib/traits/handling.h>
 #include <tenacitas.lib/traits/handlings.h>
+#include <tenacitas.lib/traits/has_new_operator.h>
 #include <tenacitas.lib/traits/is_tuple.h>
-#include <tenacitas.lib/traits/new_operator.h>
 #include <tenacitas.lib/traits/publisher.h>
 #include <tenacitas.lib/traits/queue.h>
 #include <tenacitas.lib/traits/subscriber.h>
+#include <tenacitas.lib/traits/tuple_find.h>
 #include <tenacitas.lib/traits/tuple_like.h>
-#include <tenacitas.lib/traits/tuple_to_container.h>
-#include <tenacitas.lib/traits/tuple_transform.h>
-#include <tenacitas.lib/traits/tuple_traverse.h>
+#include <tenacitas.lib/tuple/tuple_transform.h>
+#include <tenacitas.lib/tuple/tuple_traverse.h>
 
 namespace tenacitas::lib::async {
 
@@ -114,70 +118,242 @@ public:
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&) = delete;
 
-  template <traits::event t_event> void publish(const t_event &p_event) {
-    constexpr size_t _idx{find_event_idx<t_event>()};
+  // template <traits::event t_event> void publish(const t_event &p_event) {
+  //   constexpr size_t _idx{find_event_idx<t_event>()};
 
-    TNCT_LOG_DEB(m_logger, generic::fmt("idx = ", _idx));
+  //   TNCT_LOG_DEB(m_logger, format::fmt("idx = ", _idx));
 
-    auto &_notifiers{get_notifiers<t_event>()};
+  //   auto &_notifiers{get_notifiers<t_event>()};
 
-    for (auto &_notifier : _notifiers) {
-      _notifier(p_event);
+  //   for (auto &_notifier : _notifiers) {
+  //     _notifier(p_event);
+  //   }
+  // }
+
+  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+            traits::handler<t_event> t_handler>
+  [[nodiscard]] std::optional<handling_id>
+  subscribe(t_handler &&p_handler,
+            handling_priority p_handling_priority = handling_priority::medium) {
+    if (is_handler_already_being_used<t_event, t_handler>()) {
+      TNCT_LOG_ERR(
+          m_logger,
+          format::fmt("handler is already being used in a handling for event ",
+                      typeid(t_event).name()));
+
+      return std::nullopt;
     }
+
+    using handling_concrete =
+        internal::handling_concrete<t_logger, t_event, t_queue>;
+
+    try {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+
+      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
+          ++m_handling_id, m_logger, std::move(p_handler))};
+
+      get_handlings<t_event>().insert(
+          {p_handling_priority, std::move(_handling_ptr)});
+
+      return m_handling_id;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+
+    return std::nullopt;
   }
 
-  template <traits::event t_event, traits::handling t_handling>
-  void add_handling(t_handling &p_handling) {
-    // t_handling _handling{std::move(p_handling)};
-    notifier<t_event> _notifier = [&p_handling](const t_event &p_event) {
-      return p_handling.add_event(p_event);
-    };
+  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+            traits::handler<t_event> t_handler>
+  [[nodiscard]] std::optional<handling_id>
+  subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
+            size_t p_num_handlers) {
+    if (is_handler_already_being_used<t_event, t_handler>()) {
+      TNCT_LOG_ERR(
+          m_logger,
+          format::fmt("handler is already being used in a handling for event ",
+                      typeid(t_event).name()));
+      return std::nullopt;
+    }
 
-    get_notifiers<t_event>().push_back(_notifier);
+    using handling_concrete =
+        internal::handling_concrete<t_logger, t_event, t_queue>;
+
+    try {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+
+      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
+          ++m_handling_id, m_logger, std::move(p_handler), p_num_handlers)};
+
+      get_handlings<t_event>().insert(
+          {p_handling_priority, std::move(_handling_ptr)});
+
+      return m_handling_id;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+
+    return std::nullopt;
   }
 
-  // template <traits::handling t_handling, std::unsigned_integral t_amount>
-  // void increment_handlers(t_amount /*p_amount*/) {}
+  template <traits::event t_event>
+  [[nodiscard]] bool increment_handlers(handling_id p_handling_id,
+                                        size_t p_amount) {
+    try {
+      if (find_handling<t_event>(p_handling_id,
+                                 [&](handling<t_event> &p_handling) {
+                                   p_handling.increment_handlers(p_amount);
+                                 })) {
+        return true;
+      }
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+    return false;
+  }
+
+  template <traits::event t_event>
+  [[nodiscard]] std::optional<size_t>
+  get_amount_handlers(handling_id p_handling_id) const {
+    try {
+      size_t _amount{0};
+      if (find_handling<t_event>(p_handling_id,
+                                 [&](const handling<t_event> &p_handling) {
+                                   _amount = p_handling.get_amount_handlers();
+                                 })) {
+        return {_amount};
+      }
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+    return std::nullopt;
+  }
+
+  template <traits::event t_event>
+  [[nodiscard]] size_t get_amount_handlings() const {
+    auto &_handlings{get_handlings<t_event>()};
+    return static_cast<size_t>(_handlings.size());
+  }
 
 private:
   using events = std::tuple<t_events...>;
 
   template <traits::event t_event>
-  using notifier = std::function<async::result(const t_event &)>;
+  using handling = internal::handling<t_logger, t_event>;
 
   template <traits::event t_event>
-  using notifiers = std::vector<notifier<t_event>>;
+  using handling_ptr = std::unique_ptr<handling<t_event>>;
 
-  using events_notifiers =
-      typename traits::tuple_transform<events, notifiers>::type;
+  template <traits::event t_event>
+  using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
+
+  template <traits::event t_event>
+  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
+
+  template <traits::event t_event>
+  using handlings_ite = typename handlings<t_event>::iterator;
+
+  template <traits::event t_event>
+  using handlings_const_ite = typename handlings<t_event>::const_iterator;
+
+  using events_handlings =
+      typename tuple::tuple_transform<events, handlings>::type;
 
 private:
-  template <traits::event t_event> static constexpr size_t find_event_idx() {
-    auto _visit = []<traits::tuple_like t_tuple, size_t t_idx>() -> bool {
-      using event_type = std::tuple_element_t<t_idx, t_tuple>;
-      if constexpr (std::is_same_v<event_type, t_event>) {
-        return false;
-      } else {
-        // not found, keep looking
+  template <traits::event t_event, traits::handler<t_event> t_handler>
+  [[nodiscard]] bool is_handler_already_being_used() {
+
+    constexpr auto _idx{traits::tuple_find<events, t_event>()};
+
+    const handlings<t_event> &_handlings{
+        std::get<static_cast<size_t>(_idx)>(m_events_handlings)};
+
+    const size_t _handler_id{handler_id<t_event, t_handler>()};
+
+    TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", _handler_id));
+
+    // auto _cmp = {[&](const typename handlings<t_event>::value_type &p_value)
+    // {
+    //   return p_value.second->get_handler_id() == _handler_id;
+    // }};
+
+    // return std::find_if(_handlings.begin(), _handlings.end(), _cmp) !=
+    //        _handlings.end();
+
+    for (handlings_const_ite<t_event> _ite = _handlings.begin();
+         _ite != _handlings.end(); ++_ite) {
+      TNCT_LOG_TST(m_logger, format::fmt("_ite->second->get_handler_id()  = ",
+                                         _ite->second->get_handler_id()));
+      if (_ite->second->get_handler_id() == _handler_id) {
         return true;
       }
-    };
+    }
 
-    constexpr auto _idx{
-        traits::tuple_type_traverse<events, decltype(_visit)>(_visit)};
-    static_assert(_idx != -1, "event not found");
-    return static_cast<size_t>(_idx);
+    return false;
   }
 
-  template <traits::event t_event> notifiers<t_event> &get_notifiers() {
-    constexpr auto _idx{find_event_idx<t_event>()};
-    return std::get<_idx>(m_events_notifiers);
+  template <traits::event t_event> handlings<t_event> &get_handlings() {
+    constexpr auto _idx{traits::tuple_find<events, t_event>()};
+    static_assert(_idx != -1, "event not found in the tuple of events");
+    return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
+  }
+
+  template <traits::event t_event>
+  const handlings<t_event> &get_handlings() const {
+    constexpr auto _idx{traits::tuple_find<events, t_event>()};
+    static_assert(_idx != -1, "event not found in the tuple of events");
+    return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
+  }
+
+  template <traits::event t_event>
+  bool find_handling(handling_id p_handling_id,
+                     std::function<void(handling<t_event> &)> p_exec) {
+    handlings<t_event> &_handlings{get_handlings<t_event>()};
+
+    auto _match{[&](const typename handlings<t_event>::value_type &p_value) {
+      return p_value.second->get_id() == p_handling_id;
+    }};
+
+    auto _ite{std::find_if(_handlings.begin(), _handlings.end(), _match)};
+    if (_ite != _handlings.end()) {
+      p_exec(*(_ite->second));
+      return true;
+    }
+
+    TNCT_LOG_WAR(m_logger,
+                 format::fmt("Could not find handling id ", p_handling_id));
+    return false;
+  }
+
+  template <traits::event t_event>
+  bool
+  find_handling(handling_id p_handling_id,
+                std::function<void(const handling<t_event> &)> p_exec) const {
+    const handlings<t_event> &_handlings{get_handlings<t_event>()};
+
+    auto _match{[&](const typename handlings<t_event>::value_type &p_value) {
+      return p_value.second->get_id() == p_handling_id;
+    }};
+
+    auto _ite{std::find_if(_handlings.cbegin(), _handlings.cend(), _match)};
+    if (_ite != _handlings.cend()) {
+      p_exec(*(_ite->second));
+      return true;
+    }
+
+    TNCT_LOG_WAR(m_logger,
+                 format::fmt("Could not find handling id ", p_handling_id));
+    return false;
   }
 
 private:
   logger &m_logger;
 
-  events_notifiers m_events_notifiers;
+  events_handlings m_events_handlings;
+
+  handling_id m_handling_id{0};
+  std::mutex m_mutex;
 };
 
 // template <traits::logger t_logger, traits::handlings... t_handlings>
@@ -217,7 +393,7 @@ private:
 //           p_queue_size);
 
 //     } catch (std::exception &_ex) {
-//       m_logger.err(generic::fmt("ERROR: ", _ex.what()));
+//       m_logger.err(format::fmt("ERROR: ", _ex.what()));
 //     } catch (...) {
 //       m_logger.err("ERROR unidentified");
 //     }
@@ -243,7 +419,7 @@ private:
 //           handling_priority::medium, p_queue_size);
 
 //     } catch (std::exception &_ex) {
-//       m_logger.err(generic::fmt("ERROR: ", _ex.what()));
+//       m_logger.err(format::fmt("ERROR: ", _ex.what()));
 //     } catch (...) {
 //       m_logger.err("ERROR unidentified");
 //     }
@@ -259,12 +435,12 @@ private:
 
 //       auto _result(_handlings.add_event(p_event));
 //       if (_result != result::OK) {
-//         m_logger.err(generic::fmt(_result));
+//         m_logger.err(format::fmt(_result));
 //         return _result;
 //       }
 //       return result::OK;
 //     } catch (std::exception &_ex) {
-//       m_logger.err(generic::fmt("ERROR: ", _ex.what()));
+//       m_logger.err(format::fmt("ERROR: ", _ex.what()));
 //     } catch (...) {
 //       m_logger.err("ERROR unidentified");
 //     }
@@ -282,12 +458,12 @@ private:
 //       auto _result(
 //           _handling_list.add_event(std::forward<t_params>(p_params)...));
 //       if (_result != result::OK) {
-//         m_logger.err(generic::fmt(_result));
+//         m_logger.err(format::fmt(_result));
 //         return _result;
 //       }
 //       return result::OK;
 //     } catch (std::exception &_ex) {
-//       m_logger.err(generic::fmt("ERROR: ", _ex.what()));
+//       m_logger.err(format::fmt("ERROR: ", _ex.what()));
 //     } catch (...) {
 //       m_logger.err("ERROR unidentified");
 //     }

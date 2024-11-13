@@ -3,12 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_PAIR_PAIR_LIKE_H
-#define TENACITAS_LIB_PAIR_PAIR_LIKE_H
+#ifndef TENACITAS_LIB_TRAITS_PAIR_LIKE_H
+#define TENACITAS_LIB_TRAITS_PAIR_LIKE_H
 
 #include <utility>
 
-namespace tenacitas::lib::pair {
+namespace tenacitas::lib::traits {
 
 template <typename T>
 concept pair_like = requires {
@@ -17,5 +17,5 @@ concept pair_like = requires {
 }
 &&std::is_same_v<T, std::pair<typename T::first_type, typename T::second_type>>;
 
-} // namespace tenacitas::lib::pair
+} // namespace tenacitas::lib::traits
 #endif

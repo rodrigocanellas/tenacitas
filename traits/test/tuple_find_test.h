@@ -3,17 +3,17 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TEST_TUPLE_FIND_TEST_H
-#define TENACITAS_LIB_TUPLE_TEST_TUPLE_FIND_TEST_H
+#ifndef TENACITAS_LIB_TRATIS_TEST_TUPLE_FIND_TEST_H
+#define TENACITAS_LIB_TRATIS_TEST_TUPLE_FIND_TEST_H
 
 #include <tuple>
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/tuple_find.h>
+#include <tenacitas.lib/traits/tuple_find.h>
 
 using namespace tenacitas::lib;
 
-namespace tenacitas::lib::tuple::test {
+namespace tenacitas::lib::traits::test {
 
 struct tuple_find_000 {
   static std::string desc() {
@@ -23,29 +23,29 @@ struct tuple_find_000 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{tuple::tuple_find<my_tuple, int>()};
-    if (!_idx) {
-      std::cerr << "ERROR! idx should be 0, but it 'int' was not found "
+    auto _idx{traits::tuple_find<my_tuple, int>()};
+    if (_idx == -1) {
+      std::cerr << "ERROR! idx should be 0, but the 'int' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
 
-    _idx = tuple::tuple_find<my_tuple, char>();
-    if (!_idx) {
-      std::cerr << "ERROR! idx should be 1, but it 'char' was not found "
+    _idx = traits::tuple_find<my_tuple, char>();
+    if (_idx == -1) {
+      std::cerr << "ERROR! idx should be 1, but the 'char' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
 
-    _idx = tuple::tuple_find<my_tuple, float>();
-    if (!_idx) {
+    _idx = traits::tuple_find<my_tuple, float>();
+    if (_idx == -1) {
       std::cerr << "ERROR! idx should be 2, but it 'char' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
 
     return true;
   }
@@ -59,10 +59,10 @@ struct tuple_find_001 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{tuple::tuple_find<my_tuple, std::string>()};
-    if (_idx) {
-      std::cerr << "'std::string' should not be found, but is is "
-                << _idx.value() << std::endl;
+    auto _idx{traits::tuple_find<my_tuple, std::string>()};
+    if (_idx != -1) {
+      std::cerr << "'std::string' should not be found, but is is " << _idx
+                << std::endl;
       return false;
     }
     std::cerr << "'std::string' was not found, as it should" << std::endl;
@@ -76,16 +76,16 @@ struct tuple_find_002 {
   bool operator()(const program::options &) {
     using my_tuple = std::tuple<>;
 
-    auto _idx{tuple::tuple_find<my_tuple, std::string>()};
-    if (_idx) {
-      std::cerr << "'std::string' should not be found, but is is "
-                << _idx.value() << std::endl;
+    auto _idx{traits::tuple_find<my_tuple, std::string>()};
+    if (_idx != -1) {
+      std::cerr << "'std::string' should not be found, but is is " << _idx
+                << std::endl;
       return false;
     }
     std::cerr << "'std::string' was not found, as it should" << std::endl;
     return true;
   }
 };
-} // namespace tenacitas::lib::tuple::test
+} // namespace tenacitas::lib::traits::test
 
 #endif

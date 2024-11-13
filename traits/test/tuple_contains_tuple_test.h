@@ -3,22 +3,22 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_LIB_TUPLE_TEST_TUPLE_CONTAINS_TUPLE_TEST_H
-#define TENACITAS_LIB_TUPLE_TEST_TUPLE_CONTAINS_TUPLE_TEST_H
+#ifndef TENACITAS_LIB_TRAITS_TEST_TUPLE_CONTAINS_TUPLE_TEST_H
+#define TENACITAS_LIB_TRAITS_TEST_TUPLE_CONTAINS_TUPLE_TEST_H
 
 #include <tuple>
 
 #include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/tuple_contains_tuple.h>
-#include <tenacitas.lib/tuple/tuple_like.h>
+#include <tenacitas.lib/traits/tuple_contains_tuple.h>
+#include <tenacitas.lib/traits/tuple_like.h>
 
 using namespace tenacitas::lib;
 
-template <tuple::tuple_like t_container, tuple::tuple_like t_contained>
-requires tuple::tuple_contains_tuple<t_container, t_contained>
+template <traits::tuple_like t_container, traits::tuple_like t_contained>
+requires traits::tuple_contains_tuple<t_container, t_contained>
 void func() {}
 
-namespace tenacitas::lib::tuple::test {
+namespace tenacitas::lib::traits::test {
 
 struct tuple_contains_tuple_000 {
   static std::string desc() {
@@ -183,6 +183,6 @@ struct tuple_contains_tuple_007 {
   }
 };
 
-} // namespace tenacitas::lib::tuple::test
+} // namespace tenacitas::lib::traits::test
 
 #endif
