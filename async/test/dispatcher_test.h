@@ -16,6 +16,7 @@
 #include <tenacitas.lib/async/dispatcher.h>
 #include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_priority.h>
+#include <tenacitas.lib/async/internal/handler_id.h>
 #include <tenacitas.lib/async/sleeping_loop.h>
 
 #include <tenacitas.lib/container/circular_queue.h>
@@ -68,7 +69,9 @@ struct dispatcher_000 {
 
     auto _handler{[this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
 
-    auto _handling_id_maybe{_dispatcher.subscribe<event_1, queue_1>(_handler)};
+    auto _handling_id_maybe{
+        _dispatcher.subscribe<event_1, queue_1, decltype(_handler)>(
+            std::move(_handler))};
 
     if (!_handling_id_maybe) {
       return false;
@@ -230,19 +233,22 @@ struct dispatcher_003 {
           [this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
 
       const auto _handler_id_a{
-          async::handler_id<event_1, decltype(_handler_a)>()};
+          async::internal::handler_id<decltype(_handler_a)>()};
 
       TNCT_LOG_TST(_logger, format::fmt("_handler_id_a = ", _handler_id_a));
 
       auto _handling_id_maybe{
-          _dispatcher.subscribe<event_1, queue_1>(_handler_a)};
+          _dispatcher.subscribe<event_1, queue_1, decltype(_handler_a)>(
+              std::move(_handler_a))};
 
       if (!_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling not created, but it should");
         return false;
       }
 
-      _handling_id_maybe = _dispatcher.subscribe<event_1, queue_1>(_handler_a);
+      _handling_id_maybe =
+          _dispatcher.subscribe<event_1, queue_1, decltype(_handler_a)>(
+              std::move(_handler_a));
       if (_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling created, but it should not have been");
         return false;

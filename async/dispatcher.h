@@ -145,7 +145,7 @@ public:
     }
 
     using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue>;
+        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
 
     try {
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -178,7 +178,7 @@ public:
     }
 
     using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue>;
+        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
 
     try {
       std::lock_guard<std::mutex> _lock(m_mutex);
@@ -269,7 +269,7 @@ private:
     const handlings<t_event> &_handlings{
         std::get<static_cast<size_t>(_idx)>(m_events_handlings)};
 
-    const size_t _handler_id{handler_id<t_event, t_handler>()};
+    const size_t _handler_id{internal::handler_id<t_handler>()};
 
     TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", _handler_id));
 

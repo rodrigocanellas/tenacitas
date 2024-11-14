@@ -11,12 +11,12 @@
 #include <string>
 #include <string_view>
 #include <thread>
-#include <typeindex>
 #include <typeinfo>
 #include <vector>
 
 #include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_id.h>
+#include <tenacitas.lib/async/internal/handler_id.h>
 #include <tenacitas.lib/async/result.h>
 
 #include <tenacitas.lib/format/fmt.h>
@@ -55,12 +55,13 @@ public:
 };
 
 template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_logger, t_event> t_queue>
+          traits::queue<t_logger, t_event> t_queue,
+          traits::handler<t_event> t_handler>
 class handling_concrete final : public handling<t_logger, t_event> {
 public:
   using logger = t_logger;
   using event = t_event;
-  using handler = async::handler<event>;
+  using handler = t_handler;
   using queue = t_queue;
 
   /// \brief Creates a handling_concrete for an event type
@@ -72,7 +73,7 @@ public:
       : m_logger(p_logger), m_handling_id(p_handling_id),
         m_handler(std::move(p_handler)),
         m_queue("queue-" + m_handling_id, p_logger),
-        m_handler_id(handler_id<event, handler>()) {
+        m_handler_id(handler_id<handler>()) {
     TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
   }
