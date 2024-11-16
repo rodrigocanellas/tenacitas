@@ -12,7 +12,7 @@
 
 namespace tenacitas::lib::async::internal {
 
-template <typename t_handler> inline size_t handler_id() {
+template <traits::handler t_handler> inline size_t handler_id() {
   return std::type_index(typeid(t_handler)).hash_code();
 };
 

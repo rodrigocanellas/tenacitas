@@ -11,6 +11,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <typeindex>
 #include <typeinfo>
 #include <vector>
 
@@ -31,7 +32,6 @@ template <traits::logger t_logger, traits::event t_event> class handling {
 public:
   using logger = t_logger;
   using event = t_event;
-  using handler = async::handler<event>;
 
   virtual ~handling() = default;
 
@@ -55,26 +55,26 @@ public:
 };
 
 template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_logger, t_event> t_queue,
-          traits::handler<t_event> t_handler>
+          traits::queue<t_logger, t_event> t_queue, traits::handler t_handler>
 class handling_concrete final : public handling<t_logger, t_event> {
 public:
   using logger = t_logger;
   using event = t_event;
-  using handler = t_handler;
   using queue = t_queue;
+  using handler = t_handler;
 
   /// \brief Creates a handling_concrete for an event type
   ///
   /// \param p_logger
   /// \param p_handler
+
   handling_concrete(handling_id p_handling_id, t_logger &p_logger,
-                    handler &&p_handler, size_t p_num_handlers = 1)
+                    t_handler &&p_handler, size_t p_num_handlers = 1)
       : m_logger(p_logger), m_handling_id(p_handling_id),
         m_handler(std::move(p_handler)),
-        m_queue("queue-" + m_handling_id, p_logger),
-        m_handler_id(handler_id<handler>()) {
-    TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", m_handler_id));
+        m_queue("queue-" + std::to_string(m_handling_id), p_logger),
+        m_handler_id(handler_id<t_handler>()) {
+    TNCT_LOG_TRA(m_logger, format::fmt("m_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
   }
 
@@ -94,6 +94,8 @@ public:
       increment_handlers(p_handling.get_amount_handlers());
     }
   }
+
+  [[nodiscard]] size_t get_handler_id() const override { return m_handler_id; }
 
   ~handling_concrete() override {
     TNCT_LOG_TRA(m_logger, trace("entering destructor"));
@@ -199,8 +201,6 @@ public:
     m_queue.clear();
     m_data_cond.notify_all();
   }
-
-  [[nodiscard]] size_t get_handler_id() const override { return m_handler_id; }
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const handling_concrete &p_handling) {
@@ -340,7 +340,7 @@ private:
 
   queue m_queue;
 
-  std::size_t m_handler_id{0};
+  size_t m_handler_id{0};
 
   // Indicates if the dispatcher should continue to run
   std::atomic_bool m_stopped{false};

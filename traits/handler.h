@@ -6,19 +6,20 @@
 #ifndef TENACITAS_LIB_TRAITS_HANDLER_H
 #define TENACITAS_LIB_TRAITS_HANDLER_H
 
-// #include <type_traits>
+#include <type_traits>
 
 #include <tenacitas.lib/traits/event.h>
 
 namespace tenacitas::lib::traits {
 
-template <typename t, typename t_event>
+template <typename t>
 concept handler = requires(t p_t) {
+  typename t::event;
 
-  requires event<t_event>;
+  requires event<typename t::event>;
 
   {
-    p_t((std::declval<std::add_rvalue_reference_t<t_event>>()))
+    p_t((std::declval<std::add_rvalue_reference_t<typename t::event>>()))
     } -> std::same_as<void>;
 };
 

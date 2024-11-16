@@ -67,11 +67,8 @@ struct dispatcher_000 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _handler{[this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
-
     auto _handling_id_maybe{
-        _dispatcher.subscribe<event_1, queue_1, decltype(_handler)>(
-            std::move(_handler))};
+        _dispatcher.subscribe<event_1, queue_1, handler>(handler{})};
 
     if (!_handling_id_maybe) {
       return false;
@@ -87,6 +84,10 @@ struct dispatcher_000 {
   void operator()(event_1 &&) {}
 
 private:
+  struct handler {
+    using event = event_1;
+    void operator()(event &&) {}
+  };
 };
 
 // struct dispatcher_001 {
@@ -229,30 +230,23 @@ struct dispatcher_003 {
 
       dispatcher _dispatcher{_logger};
 
-      auto _handler_a{
-          [this](event_1 &&p_event) { (*this)(std::move(p_event)); }};
-
-      const auto _handler_id_a{
-          async::internal::handler_id<decltype(_handler_a)>()};
-
-      TNCT_LOG_TST(_logger, format::fmt("_handler_id_a = ", _handler_id_a));
-
       auto _handling_id_maybe{
-          _dispatcher.subscribe<event_1, queue_1, decltype(_handler_a)>(
-              std::move(_handler_a))};
+          _dispatcher.subscribe<event_1, queue_1, handler>(handler{})};
 
       if (!_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling not created, but it should");
         return false;
       }
 
+      TNCT_LOG_TST(_logger, "passed 1st subscribe");
       _handling_id_maybe =
-          _dispatcher.subscribe<event_1, queue_1, decltype(_handler_a)>(
-              std::move(_handler_a));
+          _dispatcher.subscribe<event_1, queue_1, handler>(handler{});
+
       if (_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling created, but it should not have been");
         return false;
       }
+      TNCT_LOG_TST(_logger, "passed 2nd subscribe");
 
       return true;
     } catch (std::exception &_ex) {
@@ -262,9 +256,11 @@ struct dispatcher_003 {
     return false;
   }
 
-  void operator()(event_1 &&) {}
-
-  void operator()(event_2 &&) {}
+private:
+  struct handler {
+    using event = event_1;
+    void operator()(event &&) {}
+  };
 };
 
 // struct dispatcher_test {

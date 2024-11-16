@@ -15,16 +15,14 @@
 #include <tuple>
 #include <vector>
 
-#include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_id.h>
 #include <tenacitas.lib/async/handling_priority.h>
+#include <tenacitas.lib/async/internal/handler_id.h>
 #include <tenacitas.lib/async/internal/handling.h>
-#include <tenacitas.lib/async/result.h>
 
 #include <tenacitas.lib/format/fmt.h>
 #include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/handling.h>
-#include <tenacitas.lib/traits/handlings.h>
+#include <tenacitas.lib/traits/handler.h>
 #include <tenacitas.lib/traits/has_new_operator.h>
 #include <tenacitas.lib/traits/is_tuple.h>
 #include <tenacitas.lib/traits/publisher.h>
@@ -131,16 +129,12 @@ public:
   // }
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
-            traits::handler<t_event> t_handler>
+            traits::handler t_handler>
   [[nodiscard]] std::optional<handling_id>
   subscribe(t_handler &&p_handler,
             handling_priority p_handling_priority = handling_priority::medium) {
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      TNCT_LOG_ERR(
-          m_logger,
-          format::fmt("handler is already being used in a handling for event ",
-                      typeid(t_event).name()));
 
+    if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
     }
 
@@ -165,15 +159,15 @@ public:
   }
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
-            traits::handler<t_event> t_handler>
+            traits::handler t_handler>
   [[nodiscard]] std::optional<handling_id>
   subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
             size_t p_num_handlers) {
+
+    TNCT_LOG_TST(m_logger, format::fmt("p_handler = ",
+                                       reinterpret_cast<void *>(&p_handler)));
+
     if (is_handler_already_being_used<t_event, t_handler>()) {
-      TNCT_LOG_ERR(
-          m_logger,
-          format::fmt("handler is already being used in a handling for event ",
-                      typeid(t_event).name()));
       return std::nullopt;
     }
 
@@ -261,31 +255,23 @@ private:
       typename tuple::tuple_transform<events, handlings>::type;
 
 private:
-  template <traits::event t_event, traits::handler<t_event> t_handler>
-  [[nodiscard]] bool is_handler_already_being_used() {
-
-    constexpr auto _idx{traits::tuple_find<events, t_event>()};
-
-    const handlings<t_event> &_handlings{
-        std::get<static_cast<size_t>(_idx)>(m_events_handlings)};
-
+  template <traits::event t_event, traits::handler t_handler>
+  [[nodiscard]] bool is_handler_already_being_used() const {
     const size_t _handler_id{internal::handler_id<t_handler>()};
 
-    TNCT_LOG_TST(m_logger, format::fmt("_handler_id = ", _handler_id));
+    TNCT_LOG_TST(m_logger, format::fmt("p_handler = ", _handler_id));
 
-    // auto _cmp = {[&](const typename handlings<t_event>::value_type &p_value)
-    // {
-    //   return p_value.second->get_handler_id() == _handler_id;
-    // }};
-
-    // return std::find_if(_handlings.begin(), _handlings.end(), _cmp) !=
-    //        _handlings.end();
+    const handlings<t_event> &_handlings{get_handlings<t_event>()};
 
     for (handlings_const_ite<t_event> _ite = _handlings.begin();
          _ite != _handlings.end(); ++_ite) {
-      TNCT_LOG_TST(m_logger, format::fmt("_ite->second->get_handler_id()  = ",
-                                         _ite->second->get_handler_id()));
       if (_ite->second->get_handler_id() == _handler_id) {
+        TNCT_LOG_ERR(
+            m_logger,
+            format::fmt(
+                "handler is already being used in a handling for event '",
+                typeid(t_event).name(), '\''));
+
         return true;
       }
     }
@@ -293,14 +279,15 @@ private:
     return false;
   }
 
-  template <traits::event t_event> handlings<t_event> &get_handlings() {
+  template <traits::event t_event>
+  [[nodiscard]] handlings<t_event> &get_handlings() {
     constexpr auto _idx{traits::tuple_find<events, t_event>()};
     static_assert(_idx != -1, "event not found in the tuple of events");
     return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
   }
 
   template <traits::event t_event>
-  const handlings<t_event> &get_handlings() const {
+  [[nodiscard]] const handlings<t_event> &get_handlings() const {
     constexpr auto _idx{traits::tuple_find<events, t_event>()};
     static_assert(_idx != -1, "event not found in the tuple of events");
     return std::get<static_cast<size_t>(_idx)>(m_events_handlings);

@@ -27,7 +27,6 @@ concept handling = requires(t p_t) {
   event<typename t::event>;
   queue<typename t::queue, typename t::logger, typename t::event>;
   logger<typename t::logger>;
-  handler<typename t::event, typename t::handler>;
 };
 
 template <typename t_event, typename t_handlings_tuple>

@@ -16,6 +16,9 @@ namespace tenacitas::lib::async {
 template <traits::event t_event>
 using handler = std::function<void(t_event &&)>;
 
+// template<traits::event t_event>
+// using handler = void (*)(t_event &&);
+
 } // namespace tenacitas::lib::async
 
 #endif

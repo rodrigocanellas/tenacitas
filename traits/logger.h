@@ -21,7 +21,7 @@
 #define TNCT_LOG_DEB(logger, msg)                                              \
   do {                                                                         \
     if (logger.can_deb()) {                                                    \
-      logger.tra(msg);                                                         \
+      logger.deb(msg);                                                         \
     }                                                                          \
   } while (0)
 
