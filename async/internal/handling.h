@@ -6,16 +6,15 @@
 #ifndef TENACITAS_LIB_ASYNC_INTERNAL_HANDLING_H
 #define TENACITAS_LIB_ASYNC_INTERNAL_HANDLING_H
 
+#include <array>
 #include <condition_variable>
 #include <mutex>
 #include <string>
 #include <string_view>
 #include <thread>
-#include <typeindex>
 #include <typeinfo>
 #include <vector>
 
-#include <tenacitas.lib/async/handler.h>
 #include <tenacitas.lib/async/handling_id.h>
 #include <tenacitas.lib/async/internal/handler_id.h>
 #include <tenacitas.lib/async/result.h>
@@ -28,11 +27,8 @@
 
 namespace tenacitas::lib::async::internal {
 
-template <traits::logger t_logger, traits::event t_event> class handling {
+template <traits::event t_event> class handling {
 public:
-  using logger = t_logger;
-  using event = t_event;
-
   virtual ~handling() = default;
 
   virtual void add_event(const t_event &p_event) = 0;
@@ -49,14 +45,15 @@ public:
 
   [[nodiscard]] virtual constexpr size_t get_num_events() const = 0;
 
-  [[nodiscard]] virtual size_t get_handler_id() const = 0;
+  [[nodiscard]] virtual internal::handler_id get_handler_id() const = 0;
 
   virtual void clear() = 0;
 };
 
 template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_logger, t_event> t_queue, traits::handler t_handler>
-class handling_concrete final : public handling<t_logger, t_event> {
+          traits::queue<t_logger, t_event> t_queue,
+          traits::handler<t_event> t_handler>
+class handling_concrete final : public handling<t_event> {
 public:
   using logger = t_logger;
   using event = t_event;
@@ -69,12 +66,11 @@ public:
   /// \param p_handler
 
   handling_concrete(handling_id p_handling_id, t_logger &p_logger,
-                    t_handler &&p_handler, size_t p_num_handlers = 1)
-      : m_logger(p_logger), m_handling_id(p_handling_id),
-        m_handler(std::move(p_handler)),
+                    handler &&p_handler, size_t p_num_handlers = 1)
+      : m_logger(p_logger), m_handling_id(p_handling_id), m_handler(p_handler),
         m_queue("queue-" + std::to_string(m_handling_id), p_logger),
-        m_handler_id(handler_id<t_handler>()) {
-    TNCT_LOG_TRA(m_logger, format::fmt("m_handler_id = ", m_handler_id));
+        m_handler_id(internal::get_handler_id<t_event, t_handler>()) {
+    TNCT_LOG_DEB(m_logger, format::fmt("m_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
   }
 
@@ -95,7 +91,9 @@ public:
     }
   }
 
-  [[nodiscard]] size_t get_handler_id() const override { return m_handler_id; }
+  [[nodiscard]] internal::handler_id get_handler_id() const override {
+    return m_handler_id;
+  }
 
   ~handling_concrete() override {
     TNCT_LOG_TRA(m_logger, trace("entering destructor"));
@@ -290,10 +288,6 @@ private:
 
       TNCT_LOG_TRA(m_logger, trace("about to call subscriber", _loop_id));
 
-      TNCT_LOG_DEB(m_logger, "sleeping...");
-      std::this_thread::sleep_for(std::chrono::seconds(2));
-      TNCT_LOG_DEB(m_logger, "waking up");
-
       m_handling_handlers[p_handling_handler_pos](std::move(_event));
 
       TNCT_LOG_TRA(m_logger, trace("event handled", _loop_id));
@@ -340,7 +334,8 @@ private:
 
   queue m_queue;
 
-  size_t m_handler_id{0};
+  // size_t m_handler_id{0};
+  internal::handler_id m_handler_id;
 
   // Indicates if the dispatcher should continue to run
   std::atomic_bool m_stopped{false};

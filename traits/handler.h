@@ -12,16 +12,19 @@
 
 namespace tenacitas::lib::traits {
 
-template <typename t>
-concept handler = requires(t p_t) {
-  typename t::event;
+template <typename t, typename t_event>
+concept handler = event<t_event> &&
+    std::invocable<t, std::add_rvalue_reference_t<std::remove_cv_t<t_event>>>;
 
-  requires event<typename t::event>;
+//     requires(t p_t) {
 
-  {
-    p_t((std::declval<std::add_rvalue_reference_t<typename t::event>>()))
-    } -> std::same_as<void>;
-};
+//   requires event<typename t::event>;
+
+//   {
+//     p_t((
+//         std::declval<std::add_rvalue_reference_t<std::remove_cv_t<t_event>>>()))
+//     } -> std::same_as<void>;
+// };
 
 } // namespace tenacitas::lib::traits
 

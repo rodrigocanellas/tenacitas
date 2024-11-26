@@ -111,25 +111,24 @@ public:
   dispatcher(const dispatcher &) = delete;
   dispatcher(dispatcher &&) = delete;
 
-  ~dispatcher() { TNCT_LOG_TRA(m_logger, "dispactcher destructor"); }
+  ~dispatcher() {
+    TNCT_LOG_TRA(m_logger, "dispactcher destructor");
+    stop();
+  }
 
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&) = delete;
 
-  // template <traits::event t_event> void publish(const t_event &p_event) {
-  //   constexpr size_t _idx{find_event_idx<t_event>()};
-
-  //   TNCT_LOG_DEB(m_logger, format::fmt("idx = ", _idx));
-
-  //   auto &_notifiers{get_notifiers<t_event>()};
-
-  //   for (auto &_notifier : _notifiers) {
-  //     _notifier(p_event);
-  //   }
-  // }
+  template <traits::event t_event> void publish(const t_event &p_event) {
+    try {
+      get_handlings<t_event>().add_event(p_event);
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+  }
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
-            traits::handler t_handler>
+            traits::handler<t_event> t_handler>
   [[nodiscard]] std::optional<handling_id>
   subscribe(t_handler &&p_handler,
             handling_priority p_handling_priority = handling_priority::medium) {
@@ -159,13 +158,10 @@ public:
   }
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
-            traits::handler t_handler>
+            traits::handler<t_event> t_handler>
   [[nodiscard]] std::optional<handling_id>
   subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
             size_t p_num_handlers) {
-
-    TNCT_LOG_TST(m_logger, format::fmt("p_handler = ",
-                                       reinterpret_cast<void *>(&p_handler)));
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -230,11 +226,66 @@ public:
     return static_cast<size_t>(_handlings.size());
   }
 
+  void stop() {
+    try {
+      auto _visit{[this]<traits::tuple_like t_tuple, size_t t_idx>() {
+        stop<std::tuple_element_t<t_idx, t_tuple>>();
+        return true;
+      }};
+
+      tuple::tuple_type_traverse<events, decltype(_visit)>(_visit);
+
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+  }
+
+  template <traits::event t_event> void stop() {
+    try {
+      handlings<t_event> &_handlings{get_handlings<t_event>()};
+
+      for (auto &_value : _handlings) {
+        _value.second->stop();
+      }
+
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+  }
+
+  template <traits::event t_event> void stop(handling_id p_handling_id) {
+    try {
+      auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
+
+      find_handling<t_event>(p_handling_id, _stopper);
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+  }
+
+  template <traits::event t_event>
+  [[nodiscard]] std::optional<bool>
+  is_stopped(handling_id p_handling_id) const {
+    try {
+      bool _is_stopped{false};
+      auto _stopper{[&](const handling<t_event> &p_handling) {
+        _is_stopped = p_handling.is_stopped();
+      }};
+
+      if (!find_handling<t_event>(p_handling_id, _stopper)) {
+        return std::nullopt;
+      }
+      return _is_stopped;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+    return std::nullopt;
+  }
+
 private:
   using events = std::tuple<t_events...>;
 
-  template <traits::event t_event>
-  using handling = internal::handling<t_logger, t_event>;
+  template <traits::event t_event> using handling = internal::handling<t_event>;
 
   template <traits::event t_event>
   using handling_ptr = std::unique_ptr<handling<t_event>>;
@@ -255,11 +306,15 @@ private:
       typename tuple::tuple_transform<events, handlings>::type;
 
 private:
-  template <traits::event t_event, traits::handler t_handler>
+  template <traits::event t_event, traits::handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const {
-    const size_t _handler_id{internal::handler_id<t_handler>()};
+    // const size_t _handler_id{
+    //     internal::handler_id<std::remove_cv_t<decltype(p_handler)>>()};
 
-    TNCT_LOG_TST(m_logger, format::fmt("p_handler = ", _handler_id));
+    internal::handler_id _handler_id{
+        internal::get_handler_id<t_event, t_handler>()};
+
+    TNCT_LOG_DEB(m_logger, format::fmt("handler id = ", _handler_id));
 
     const handlings<t_event> &_handlings{get_handlings<t_event>()};
 

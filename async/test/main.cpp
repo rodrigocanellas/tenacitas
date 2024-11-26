@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
   run_test(_test, handling_016);
   run_test(_test, sleeping_loop_000);
   run_test(_test, sleeping_loop_001);
-  // // run_test(_test, handlings_000);
+  // run_test(_test, handlings_000);
   // // run_test(_test, handlings_001);
   // // run_test(_test, handlings_002);
   // // run_test(_test, handlings_003);
@@ -91,12 +91,12 @@ int main(int argc, char **argv) {
   // // run_test(_test, handlings_004);
   // // run_test(_test, handlings_005);
   run_test(_test, dispatcher_000);
-  // run_test(_test, dispatcher_001);
-  // run_test(_test, dispatcher_002);
+  run_test(_test, dispatcher_001);
+  run_test(_test, dispatcher_002);
   run_test(_test, dispatcher_003);
-  // // run_test(_test, dispatcher_004);
-  // // run_test(_test, dispatcher_005);
-  // // run_test(_test, dispatcher_006);
+  run_test(_test, dispatcher_004);
+  run_test(_test, dispatcher_005);
+  run_test(_test, dispatcher_006);
   // // run_test(_test, dispatcher_007);
   run_test(_test, handling_id_000);
   run_test(_test, handling_id_001);
