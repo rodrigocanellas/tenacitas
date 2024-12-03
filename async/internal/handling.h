@@ -66,9 +66,10 @@ public:
   /// \param p_handler
 
   handling_concrete(handling_id p_handling_id, t_logger &p_logger,
-                    handler &&p_handler, size_t p_num_handlers = 1)
+                    handler &&p_handler, queue &&p_queue,
+                    size_t p_num_handlers = 1)
       : m_logger(p_logger), m_handling_id(p_handling_id), m_handler(p_handler),
-        m_queue("queue-" + std::to_string(m_handling_id), p_logger),
+        m_queue(std::move(p_queue)),
         m_handler_id(internal::get_handler_id<t_event, t_handler>()) {
     TNCT_LOG_DEB(m_logger, format::fmt("m_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
@@ -79,8 +80,7 @@ public:
   handling_concrete(handling_concrete &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
         m_handler(std::move(p_handling.m_handler)),
-        m_queue(p_handling.m_queue.id(), p_handling.m_logger),
-        m_handler_id(p_handling.m_handler_id) {
+        m_queue(p_handling.m_logger), m_handler_id(p_handling.m_handler_id) {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();
 

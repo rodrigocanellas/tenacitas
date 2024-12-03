@@ -34,9 +34,9 @@ concept tuple_contains_tuple = requires {
     return (
 
         (is_type_in_tuple<t_container_tuple,
-                          std::tuple_element_t<t_idx, t_contained_tuple>>())
+                          std::tuple_element_t<t_idx, t_contained_tuple>>)
 
-        && ...);
+        &&...);
   }
   (std::make_index_sequence<std::tuple_size_v<t_contained_tuple>>());
 };

@@ -37,8 +37,8 @@ public:
 public:
   circular_queue() = delete;
 
-  circular_queue(std::string_view p_id, t_logger &p_logger)
-      : m_id(p_id), m_logger(p_logger), m_initial_size(t_initial_size),
+  circular_queue(t_logger &p_logger)
+      : m_logger(p_logger), m_initial_size(t_initial_size),
         m_incremental_size(m_initial_size == 0 ? 50 : (m_initial_size / 2)),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
@@ -48,15 +48,13 @@ public:
   ~circular_queue() {}
 
   circular_queue(const circular_queue &p_queue)
-      : m_id(p_queue.m_id), m_logger(p_queue.m_logger),
-        m_initial_size(p_queue.m_initial_size),
+      : m_logger(p_queue.m_logger), m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(p_queue.m_vector), m_head(p_queue.m_head),
         m_tail(p_queue.m_tail), m_occupied(p_queue.m_occupied) {}
 
   circular_queue(circular_queue &&p_queue)
-      : m_id(std::move(p_queue.m_id)), m_logger(p_queue.m_logger),
-        m_initial_size(p_queue.m_initial_size),
+      : m_logger(p_queue.m_logger), m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(std::move(p_queue.m_vector)),
         m_head(std::move(p_queue.m_head)), m_tail(std::move(p_queue.m_tail)),
@@ -65,8 +63,7 @@ public:
   circular_queue &operator=(const circular_queue &p_queue) {
     if (this != &p_queue) {
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_id = p_queue.m_id;
-      m_initial_size = p_queue.m_inital_size;
+      m_initial_size = p_queue.m_initial_size;
       m_incremental_size = p_queue.m_incremental_size;
       m_vector = p_queue.m_vector;
       m_head = p_queue.m_head;
@@ -79,7 +76,6 @@ public:
   circular_queue &operator=(circular_queue &&p_queue) {
     if (this != &p_queue) {
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_id = std::move(p_queue.m_id);
       m_initial_size = p_queue.m_initial_size;
       m_incremental_size = p_queue.m_incremental_size;
       m_vector = std::move(p_queue.m_vector);
@@ -112,9 +108,8 @@ public:
 
   std::string brief_report() {
     std::stringstream _out;
-    _out << "id " << this->m_id << ", head = " << m_head
-         << ", tail = " << m_tail << ", occupied = " << occupied()
-         << ", capacity = " << capacity()
+    _out << "head = " << m_head << ", tail = " << m_tail
+         << ", occupied = " << occupied() << ", capacity = " << capacity()
          << ", increment = " << m_incremental_size;
     return _out.str();
   }
@@ -198,8 +193,6 @@ public:
 
   constexpr size_t occupied() const { return m_occupied; }
 
-  const std::string &id() const { return this->m_id; }
-
   void clear() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_head = m_tail = 0;
@@ -253,7 +246,6 @@ protected:
   }
 
 private:
-  std::string m_id;
   logger &m_logger;
 
   size_t m_initial_size{0};

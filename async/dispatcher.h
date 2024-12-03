@@ -25,6 +25,7 @@
 #include <tenacitas.lib/traits/handler.h>
 #include <tenacitas.lib/traits/has_new_operator.h>
 #include <tenacitas.lib/traits/is_tuple.h>
+#include <tenacitas.lib/traits/is_type_in_tuple.h>
 #include <tenacitas.lib/traits/publisher.h>
 #include <tenacitas.lib/traits/queue.h>
 #include <tenacitas.lib/traits/subscriber.h>
@@ -130,8 +131,10 @@ public:
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
   [[nodiscard]] std::optional<handling_id>
-  subscribe(t_handler &&p_handler,
+  subscribe(t_handler &&p_handler, t_queue &&p_queue,
             handling_priority p_handling_priority = handling_priority::medium) {
+    static_assert(traits::is_type_in_tuple<events, t_event>,
+                  "event is not in the 't_events...' of the dispatcher");
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -144,7 +147,7 @@ public:
       std::lock_guard<std::mutex> _lock(m_mutex);
 
       handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler))};
+          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue))};
 
       get_handlings<t_event>().insert(
           {p_handling_priority, std::move(_handling_ptr)});
@@ -161,7 +164,7 @@ public:
             traits::handler<t_event> t_handler>
   [[nodiscard]] std::optional<handling_id>
   subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
-            size_t p_num_handlers) {
+            t_queue &&p_queue, size_t p_num_handlers) {
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -174,7 +177,8 @@ public:
       std::lock_guard<std::mutex> _lock(m_mutex);
 
       handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), p_num_handlers)};
+          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
+          p_num_handlers)};
 
       get_handlings<t_event>().insert(
           {p_handling_priority, std::move(_handling_ptr)});
@@ -253,14 +257,22 @@ public:
     }
   }
 
-  template <traits::event t_event> void stop(handling_id p_handling_id) {
+  template <traits::event t_event>
+  [[nodiscard]] bool stop(handling_id p_handling_id) {
     try {
       auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
 
-      find_handling<t_event>(p_handling_id, _stopper);
+      if (!find_handling<t_event>(p_handling_id, _stopper)) {
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("Could not find handling ", p_handling_id,
+                                 " in event ", typeid(t_event).name()));
+        return false;
+      }
+      return true;
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
     }
+    return false;
   }
 
   template <traits::event t_event>
@@ -308,10 +320,8 @@ private:
 private:
   template <traits::event t_event, traits::handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const {
-    // const size_t _handler_id{
-    //     internal::handler_id<std::remove_cv_t<decltype(p_handler)>>()};
 
-    internal::handler_id _handler_id{
+    const internal::handler_id _handler_id{
         internal::get_handler_id<t_event, t_handler>()};
 
     TNCT_LOG_DEB(m_logger, format::fmt("handler id = ", _handler_id));
@@ -349,8 +359,9 @@ private:
   }
 
   template <traits::event t_event>
-  bool find_handling(handling_id p_handling_id,
-                     std::function<void(handling<t_event> &)> p_exec) {
+  [[nodiscard]] bool
+  find_handling(handling_id p_handling_id,
+                std::function<void(handling<t_event> &)> p_exec) {
     handlings<t_event> &_handlings{get_handlings<t_event>()};
 
     auto _match{[&](const typename handlings<t_event>::value_type &p_value) {

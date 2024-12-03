@@ -8,7 +8,6 @@
 
 #include <cstddef>
 #include <optional>
-#include <string>
 #include <type_traits>
 #include <utility>
 
@@ -32,7 +31,7 @@ concept queue = requires(t p_t) {
 
   std::is_move_constructible_v<typename t::data>;
 
-  std::is_default_constructible_v<typename t::data>;
+  !std::is_default_constructible_v<typename t::data>;
 
   has_output_operator<typename t::data>;
 
@@ -47,8 +46,7 @@ concept queue = requires(t p_t) {
   std::is_copy_assignable_v<t>;
 
   // queue name, logger
-  {t(std::declval<std::string_view>(),
-     std::declval<std::add_lvalue_reference_t<t_logger>>())};
+  {t(std::declval<std::add_lvalue_reference_t<t_logger>>())};
   {
     p_t.push(std::move(std::declval<typename t::data>()))
     } -> std::same_as<void>;
@@ -69,8 +67,6 @@ concept queue = requires(t p_t) {
   { p_t.occupied() } -> std::same_as<size_t>;
 
   { p_t.clear() } -> std::same_as<void>;
-
-  { p_t.id() } -> std::same_as<const std::string &>;
 };
 
 } // namespace tenacitas::lib::traits

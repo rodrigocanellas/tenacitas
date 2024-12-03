@@ -12,9 +12,8 @@
 namespace tenacitas::lib::traits {
 
 template <traits::tuple_like t_tuple, typename t_type>
-static constexpr bool is_type_in_tuple() {
-  return traits::tuple_find<t_tuple, t_type>() != -1;
-}
+static constexpr bool
+    is_type_in_tuple = traits::tuple_find<t_tuple, t_type>() != -1;
 
 } // namespace tenacitas::lib::traits
 

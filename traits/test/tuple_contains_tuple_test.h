@@ -75,7 +75,7 @@ struct tuple_contains_tuple_002 {
     // using tuple_1 = std::tuple<int, char, float>;
     // using tuple_2 = std::tuple<double>;
 
-    // this should compile because
+    // this should not compile because
     /*
 tuple_contains_tuple_test.h:80:5: No matching function for call to 'func'
 tuple_contains_tuple_test.h:20:6: candidate template ignored: constraints
