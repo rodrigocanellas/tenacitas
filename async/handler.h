@@ -8,7 +8,7 @@
 
 #include <functional>
 
-#include <tenacitas.lib/traits/event.h>
+#include "tenacitas.lib/traits/event.h"
 
 namespace tenacitas::lib::async {
 

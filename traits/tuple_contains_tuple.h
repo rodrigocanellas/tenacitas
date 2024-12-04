@@ -8,8 +8,8 @@
 
 #include <tuple>
 
-#include <tenacitas.lib/traits/is_type_in_tuple.h>
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/is_type_in_tuple.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

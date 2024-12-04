@@ -9,8 +9,8 @@
 
 #include <QApplication>
 
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/per/sensors.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/supplier.h>
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/per/sensors.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/supplier.h"
 
 using namespace temperature_sensors_simulator;
 

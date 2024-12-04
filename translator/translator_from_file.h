@@ -11,9 +11,9 @@
 #include <regex>
 #include <string>
 
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/translator/dictionary.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/translator/dictionary.h"
 
 namespace tenacitas::lib::translator {
 

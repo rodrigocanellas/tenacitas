@@ -9,8 +9,8 @@
 #include <iostream>
 #include <utility>
 
-#include <tenacitas.lib/pair/pair_output.h>
-#include <tenacitas.lib/program/options.h>
+#include "tenacitas.lib/pair/pair_output.h"
+#include "tenacitas.lib/program/options.h"
 
 using namespace tenacitas::lib;
 

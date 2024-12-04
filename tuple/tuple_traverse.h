@@ -9,9 +9,9 @@
 #include <cstddef>
 #include <tuple>
 
-#include <tenacitas.lib/traits/tuple_like.h>
-#include <tenacitas.lib/traits/visit_type_in_tuple.h>
-#include <tenacitas.lib/traits/visit_value_in_tuple.h>
+#include "tenacitas.lib/traits/tuple_like.h"
+#include "tenacitas.lib/traits/visit_type_in_tuple.h"
+#include "tenacitas.lib/traits/visit_value_in_tuple.h"
 
 namespace tenacitas::lib::tuple {
 

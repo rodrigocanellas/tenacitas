@@ -3,11 +3,11 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.lib/tuple/test/tuple_output_test.h>
-#include <tenacitas.lib/tuple/test/tuple_transform_test.h>
-#include <tenacitas.lib/tuple/test/tuple_traverse_test.h>
+#include "tenacitas.lib/tuple/test/tuple_output_test.h"
+#include "tenacitas.lib/tuple/test/tuple_transform_test.h"
+#include "tenacitas.lib/tuple/test/tuple_traverse_test.h"
 
-#include <tenacitas.lib/tester/test.h>
+#include "tenacitas.lib/tester/test.h"
 
 using namespace tenacitas::lib;
 

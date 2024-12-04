@@ -11,11 +11,11 @@
 #include <string>
 #include <utility>
 
-#include <tenacitas.lib/container/circular_queue_on_list.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/program_options.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/traits/queue.h>
+#include "tenacitas.lib/container/circular_queue_on_list.h"
+#include "tenacitas.lib/generic/fmt.h"
+#include "tenacitas.lib/generic/program_options.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/traits/queue.h"
 
 using namespace tenacitas::lib;
 

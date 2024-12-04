@@ -9,10 +9,10 @@
 #include <string>
 #include <string_view>
 
-#include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/log/cout.h>
-#include <tenacitas.lib/traits/queue.h>
+#include "tenacitas.lib/container/circular_queue.h"
+#include "tenacitas.lib/generic/tester.h"
+#include "tenacitas.lib/log/cout.h"
+#include "tenacitas.lib/traits/queue.h"
 
 using namespace tenacitas::lib;
 

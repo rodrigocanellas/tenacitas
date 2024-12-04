@@ -8,12 +8,12 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/async/event_handler.h>
-#include <tenacitas.lib/async/event_priority.h>
-#include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/sta/event.h>
-#include <tenacitas.lib/sta/is_pair.h>
-#include <tenacitas.lib/sta/queue.h>
+#include "tenacitas.lib/async/event_handler.h"
+#include "tenacitas.lib/async/event_priority.h"
+#include "tenacitas.lib/async/handling_id.h"
+#include "tenacitas.lib/sta/event.h"
+#include "tenacitas.lib/sta/is_pair.h"
+#include "tenacitas.lib/sta/queue.h"
 
 namespace tenacitas::lib::sta {
 

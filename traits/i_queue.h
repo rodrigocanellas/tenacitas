@@ -10,8 +10,8 @@
 #include <optional>
 #include <string>
 
-#include <tenacitas.lib/traits/has_output_operator.h>
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/traits/has_output_operator.h"
+#include "tenacitas.lib/traits/logger.h"
 
 namespace tenacitas::lib::traits {
 

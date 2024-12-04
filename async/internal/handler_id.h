@@ -8,8 +8,8 @@
 
 #include <typeinfo>
 
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/handler.h>
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/handler.h"
 
 namespace tenacitas::lib::async::internal {
 

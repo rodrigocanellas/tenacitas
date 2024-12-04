@@ -9,8 +9,8 @@
 #include <iostream>
 #include <sstream>
 
-#include <tenacitas.lib/pair/is_pair.h>
-#include <tenacitas.lib/traits/pair_like.h>
+#include "tenacitas.lib/pair/is_pair.h"
+#include "tenacitas.lib/traits/pair_like.h"
 
 namespace tenacitas::lib::pair {
 

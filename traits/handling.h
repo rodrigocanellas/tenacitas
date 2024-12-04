@@ -8,12 +8,12 @@
 
 #include <type_traits>
 
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/handler.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/queue.h>
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/handler.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/queue.h"
 
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

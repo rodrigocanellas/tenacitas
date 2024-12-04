@@ -9,15 +9,15 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/format/fmt.h>
+#include "tenacitas.lib/async/handling_priority.h"
+#include "tenacitas.lib/async/result.h"
+#include "tenacitas.lib/container/circular_queue.h"
+#include "tenacitas.lib/format/fmt.h"
 
-#include <tenacitas.lib/program/exit.h>
-#include <tenacitas.lib/traits/dispatcher.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/tuple_contains_tuple.h>
+#include "tenacitas.lib/program/exit.h"
+#include "tenacitas.lib/traits/dispatcher.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/tuple_contains_tuple.h"
 
 namespace tenacitas::lib::program {
 

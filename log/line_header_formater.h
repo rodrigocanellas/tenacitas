@@ -15,8 +15,8 @@
 #include <string>
 #include <thread>
 
-#include <tenacitas.lib/format/format_number.h>
-#include <tenacitas.lib/log/level.h>
+#include "tenacitas.lib/format/format_number.h"
+#include "tenacitas.lib/log/level.h"
 
 namespace tenacitas::lib::log {
 

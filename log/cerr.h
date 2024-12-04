@@ -8,7 +8,7 @@
 
 #include <string_view>
 
-#include <tenacitas.lib/log/internal/logger.h>
+#include "tenacitas.lib/log/internal/logger.h"
 
 namespace tenacitas::lib::log {
 

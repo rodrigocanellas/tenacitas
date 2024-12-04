@@ -6,7 +6,7 @@
 #ifndef TENACITAS_LIB_TRAITS_TUPLE_LIKE_H
 #define TENACITAS_LIB_TRAITS_TUPLE_LIKE_H
 
-#include <tenacitas.lib/traits/is_tuple.h>
+#include "tenacitas.lib/traits/is_tuple.h"
 
 namespace tenacitas::lib::traits {
 

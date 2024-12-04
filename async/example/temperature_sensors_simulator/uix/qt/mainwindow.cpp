@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/typ/sensor_id.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/typ/temperature.h>
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/log/cerr.h>
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/sensor_id.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/temperature.h"
+#include "tenacitas.lib/async/handling_priority.h"
+#include "tenacitas.lib/async/result.h"
+#include "tenacitas.lib/generic/fmt.h"
+#include "tenacitas.lib/log/cerr.h"
 
 using namespace temperature_sensors_simulator;
 using namespace tenacitas::lib;

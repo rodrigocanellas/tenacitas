@@ -15,14 +15,14 @@
 #include <sstream>
 #include <utility>
 
-#include <tenacitas.lib/format/align.h>
-#include <tenacitas.lib/format/format_number.h>
-#include <tenacitas.lib/log/level.h>
-#include <tenacitas.lib/log/line_header_formater.h>
-#include <tenacitas.lib/pair/is_pair.h>
-#include <tenacitas.lib/traits/log_writer.h>
-#include <tenacitas.lib/traits/is_tuple.h>
-#include <tenacitas.lib/tuple/tuple_output.h>
+#include "tenacitas.lib/format/align.h"
+#include "tenacitas.lib/format/format_number.h"
+#include "tenacitas.lib/log/level.h"
+#include "tenacitas.lib/log/line_header_formater.h"
+#include "tenacitas.lib/pair/is_pair.h"
+#include "tenacitas.lib/traits/log_writer.h"
+#include "tenacitas.lib/traits/is_tuple.h"
+#include "tenacitas.lib/tuple/tuple_output.h"
 
 namespace tenacitas::lib::log::internal {
 

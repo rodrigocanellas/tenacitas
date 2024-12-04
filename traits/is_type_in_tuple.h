@@ -6,8 +6,8 @@
 #ifndef TENACITAS_LIB_TRAITS_IS_TYPE_IN_TUPLE_H
 #define TENACITAS_LIB_TRAITS_IS_TYPE_IN_TUPLE_H
 
-#include <tenacitas.lib/traits/tuple_find.h>
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/tuple_find.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

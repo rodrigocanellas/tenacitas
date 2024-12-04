@@ -13,10 +13,10 @@
 #define TENACITAS_LOG
 #endif
 
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/subscriber.h>
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/subscriber.h"
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

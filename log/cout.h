@@ -6,7 +6,7 @@
 #ifndef TENACITAS_LIB_LOG_COUT_LOG_H
 #define TENACITAS_LIB_LOG_COUT_LOG_H
 
-#include <tenacitas.lib/log/internal/logger.h>
+#include "tenacitas.lib/log/internal/logger.h"
 
 namespace tenacitas::lib::log {
 

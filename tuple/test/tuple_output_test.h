@@ -11,9 +11,9 @@
 #include <string>
 #include <tuple>
 
-#include <tenacitas.lib/pair/pair_output.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tuple/tuple_output.h>
+#include "tenacitas.lib/pair/pair_output.h"
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/tuple/tuple_output.h"
 
 using namespace tenacitas::lib;
 

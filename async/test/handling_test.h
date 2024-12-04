@@ -8,16 +8,13 @@
 
 #include <limits>
 
-#include <tenacitas.lib/async/internal/handling.h>
-#include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/async/sleeping_loop.h>
+#include "tenacitas.lib/async/internal/handling.h"
+#include "tenacitas.lib/async/sleeping_loop.h"
 
-#include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/tester/test.h>
-#include <tenacitas.lib/traits/handling.h>
+#include "tenacitas.lib/container/circular_queue.h"
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/program/options.h"
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

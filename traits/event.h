@@ -6,7 +6,7 @@
 #ifndef TENACITAS_LIB_TRAITS_EVENT_H
 #define TENACITAS_LIB_TRAITS_EVENT_H
 
-#include <tenacitas.lib/traits/has_output_operator.h>
+#include "tenacitas.lib/traits/has_output_operator.h"
 
 namespace tenacitas::lib::traits {
 

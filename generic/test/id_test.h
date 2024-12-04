@@ -7,8 +7,8 @@
 #define TENACITAS_LIB_TEST_GENERIC_ID_H
 #include <string>
 
-#include <tenacitas.lib/generic/id.h>
-#include <tenacitas.lib/program/options.h>
+#include "tenacitas.lib/generic/id.h"
+#include "tenacitas.lib/program/options.h"
 
 using namespace tenacitas::lib;
 

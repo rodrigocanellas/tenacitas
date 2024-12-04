@@ -10,8 +10,8 @@
 #include <iostream>
 #include <sstream>
 
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/time/chrono_output.h>
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/time/chrono_output.h"
 
 using namespace tenacitas::lib;
 

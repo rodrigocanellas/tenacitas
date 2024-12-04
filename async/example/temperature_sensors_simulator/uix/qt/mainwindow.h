@@ -5,11 +5,11 @@
 
 #include <QMainWindow>
 
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/evt/add_sensor.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/evt/new_temperature.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/evt/remove_sensor.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/evt/set_temperature.h>
-#include <tenacitas.lib/async/example/temperature_sensors_simulator/supplier.h>
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/add_sensor.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/new_temperature.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/remove_sensor.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/set_temperature.h"
+#include "tenacitas.lib/async/example/temperature_sensors_simulator/supplier.h"
 
 using namespace temperature_sensors_simulator;
 

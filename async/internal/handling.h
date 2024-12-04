@@ -6,7 +6,6 @@
 #ifndef TENACITAS_LIB_ASYNC_INTERNAL_HANDLING_H
 #define TENACITAS_LIB_ASYNC_INTERNAL_HANDLING_H
 
-#include <array>
 #include <condition_variable>
 #include <mutex>
 #include <string>
@@ -15,15 +14,14 @@
 #include <typeinfo>
 #include <vector>
 
-#include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/async/internal/handler_id.h>
-#include <tenacitas.lib/async/result.h>
+#include "tenacitas.lib/async/handling_id.h"
+#include "tenacitas.lib/async/internal/handler_id.h"
 
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/handler.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/queue.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/handler.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/queue.h"
 
 namespace tenacitas::lib::async::internal {
 
@@ -71,7 +69,8 @@ public:
       : m_logger(p_logger), m_handling_id(p_handling_id), m_handler(p_handler),
         m_queue(std::move(p_queue)),
         m_handler_id(internal::get_handler_id<t_event, t_handler>()) {
-    TNCT_LOG_DEB(m_logger, format::fmt("m_handler_id = ", m_handler_id));
+    TNCT_LOG_DEB(m_logger, format::fmt("m_handling_id = ", m_handling_id,
+                                       ", m_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
   }
 

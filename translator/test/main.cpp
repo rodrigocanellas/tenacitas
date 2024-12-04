@@ -6,12 +6,12 @@
 #include <optional>
 #include <string>
 
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/tester/test.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/translator/translator_from_file.h>
-#include <tenacitas.lib/translator/translator_in_memory.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/tester/test.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/translator/translator_from_file.h"
+#include "tenacitas.lib/translator/translator_in_memory.h"
 
 using namespace tenacitas::lib;
 

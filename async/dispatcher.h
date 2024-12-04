@@ -15,24 +15,24 @@
 #include <tuple>
 #include <vector>
 
-#include <tenacitas.lib/async/handling_id.h>
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/internal/handler_id.h>
-#include <tenacitas.lib/async/internal/handling.h>
+#include "tenacitas.lib/async/handling_id.h"
+#include "tenacitas.lib/async/handling_priority.h"
+#include "tenacitas.lib/async/internal/handler_id.h"
+#include "tenacitas.lib/async/internal/handling.h"
 
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/handler.h>
-#include <tenacitas.lib/traits/has_new_operator.h>
-#include <tenacitas.lib/traits/is_tuple.h>
-#include <tenacitas.lib/traits/is_type_in_tuple.h>
-#include <tenacitas.lib/traits/publisher.h>
-#include <tenacitas.lib/traits/queue.h>
-#include <tenacitas.lib/traits/subscriber.h>
-#include <tenacitas.lib/traits/tuple_find.h>
-#include <tenacitas.lib/traits/tuple_like.h>
-#include <tenacitas.lib/tuple/tuple_transform.h>
-#include <tenacitas.lib/tuple/tuple_traverse.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/handler.h"
+#include "tenacitas.lib/traits/has_new_operator.h"
+#include "tenacitas.lib/traits/is_tuple.h"
+#include "tenacitas.lib/traits/is_type_in_tuple.h"
+#include "tenacitas.lib/traits/publisher.h"
+#include "tenacitas.lib/traits/queue.h"
+#include "tenacitas.lib/traits/subscriber.h"
+#include "tenacitas.lib/traits/tuple_find.h"
+#include "tenacitas.lib/traits/tuple_like.h"
+#include "tenacitas.lib/tuple/tuple_transform.h"
+#include "tenacitas.lib/tuple/tuple_traverse.h"
 
 namespace tenacitas::lib::async {
 
@@ -260,6 +260,7 @@ public:
   template <traits::event t_event>
   [[nodiscard]] bool stop(handling_id p_handling_id) {
     try {
+      TNCT_LOG_DEB(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
       auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
 
       if (!find_handling<t_event>(p_handling_id, _stopper)) {
@@ -353,6 +354,7 @@ private:
 
   template <traits::event t_event>
   [[nodiscard]] const handlings<t_event> &get_handlings() const {
+    TNCT_LOG_DEB(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
     constexpr auto _idx{traits::tuple_find<events, t_event>()};
     static_assert(_idx != -1, "event not found in the tuple of events");
     return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
@@ -386,7 +388,10 @@ private:
     const handlings<t_event> &_handlings{get_handlings<t_event>()};
 
     auto _match{[&](const typename handlings<t_event>::value_type &p_value) {
-      return p_value.second->get_id() == p_handling_id;
+      const auto _handling_id{p_value.second->get_id()};
+      TNCT_LOG_DEB(m_logger,
+                   format::fmt("p_value.second->get_id() = ", _handling_id));
+      return _handling_id == p_handling_id;
     }};
 
     auto _ite{std::find_if(_handlings.cbegin(), _handlings.cend(), _match)};

@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.lib/tester/test.h>
-#include <tenacitas.lib/pair/test/pair_output_test.h>
+#include "tenacitas.lib/tester/test.h"
+#include "tenacitas.lib/pair/test/pair_output_test.h"
 
 using namespace tenacitas::lib;
 

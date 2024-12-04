@@ -12,8 +12,8 @@
 #include <sstream>
 #include <string>
 
-#include <tenacitas.lib/format/align.h>
-#include <tenacitas.lib/format/max_str_length.h>
+#include "tenacitas.lib/format/align.h"
+#include "tenacitas.lib/format/max_str_length.h"
 
 namespace tenacitas::lib::format {
 

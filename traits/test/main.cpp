@@ -5,13 +5,13 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/traits/test/is_tuple_test.h>
-#include <tenacitas.lib/traits/test/is_type_in_tuple_test.h>
-#include <tenacitas.lib/traits/test/tuple_contains_tuple_test.h>
-#include <tenacitas.lib/traits/test/tuple_find_test.h>
-#include <tenacitas.lib/traits/test/tuple_like_test.h>
+#include "tenacitas.lib/traits/test/is_tuple_test.h"
+#include "tenacitas.lib/traits/test/is_type_in_tuple_test.h"
+#include "tenacitas.lib/traits/test/tuple_contains_tuple_test.h"
+#include "tenacitas.lib/traits/test/tuple_find_test.h"
+#include "tenacitas.lib/traits/test/tuple_like_test.h"
 
-#include <tenacitas.lib/tester/test.h>
+#include "tenacitas.lib/tester/test.h"
 
 using namespace tenacitas::lib;
 

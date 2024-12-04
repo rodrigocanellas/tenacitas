@@ -8,11 +8,11 @@
 
 // #include <tuple>
 
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/has_new_operator.h>
-#include <tenacitas.lib/traits/is_smart_ptr.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/has_new_operator.h"
+#include "tenacitas.lib/traits/is_smart_ptr.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

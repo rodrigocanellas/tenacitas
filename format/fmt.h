@@ -8,9 +8,9 @@
 
 #include <sstream>
 
-#include <tenacitas.lib/pair/pair_output.h>
-#include <tenacitas.lib/time/chrono_output.h>
-#include <tenacitas.lib/tuple/tuple_output.h>
+#include "tenacitas.lib/pair/pair_output.h"
+#include "tenacitas.lib/time/chrono_output.h"
+#include "tenacitas.lib/tuple/tuple_output.h"
 
 namespace tenacitas::lib::format {
 

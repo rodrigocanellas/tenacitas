@@ -13,18 +13,18 @@
 #define TENACITAS_LOG
 #endif
 
-#include <tenacitas.lib/async/dispatcher.h>
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/internal/handler_id.h>
-#include <tenacitas.lib/async/sleeping_loop.h>
+#include "tenacitas.lib/async/dispatcher.h"
+#include "tenacitas.lib/async/handling_priority.h"
+#include "tenacitas.lib/async/internal/handler_id.h"
+#include "tenacitas.lib/async/sleeping_loop.h"
 
-#include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/format/fmt.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/parser/ini_file.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/traits/handler.h>
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/container/circular_queue.h"
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/parser/ini_file.h"
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/traits/handler.h"
+#include "tenacitas.lib/traits/logger.h"
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;
@@ -338,7 +338,7 @@ struct dispatcher_005 {
         return false;
       }
 
-      auto _is_stopped_maybe{_dispatcher.is_stopped<event_1>(_handling_2)};
+      auto _is_stopped_maybe{_dispatcher.is_stopped<event_2>(_handling_2)};
       if (!_is_stopped_maybe) {
         TNCT_LOG_ERR(_logger, format::fmt("could not retrieve if handling ",
                                           _handling_2, " is stopped"));
@@ -346,13 +346,14 @@ struct dispatcher_005 {
       }
 
       auto _is_stopped{_is_stopped_maybe.value()};
-      if (_is_stopped) {
+      if (!_is_stopped) {
         TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_2,
-                                          " is stopped, but it should not be"));
+                                          " is not stopped, but it should be"));
         return false;
       }
-      TNCT_LOG_TST(_logger, format::fmt("handling ", _handling_2,
-                                        "'s condition is ", _is_stopped));
+      TNCT_LOG_TST(_logger,
+                   format::fmt("handling ", _handling_2, "'s condition is ",
+                               (_is_stopped ? "stopped" : "not stopped")));
 
       return true;
     } catch (std::exception &_ex) {
@@ -396,9 +397,10 @@ struct dispatcher_006 {
 
       auto _handling_id1b{_handling_id1b_maybe.value()};
 
-      TNCT_LOG_TST(_logger, format::fmt("_handling_1b= ", _handling_id1b));
+      TNCT_LOG_TST(_logger, format::fmt("_handling_1b = ", _handling_id1b));
 
-      auto _is_running{!_dispatcher.is_stopped<event_1>(_handling_id1a)};
+      auto _is_running{
+          !(_dispatcher.is_stopped<event_1>(_handling_id1a).value())};
 
       if (!_is_running) {
         TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1a,
@@ -406,7 +408,7 @@ struct dispatcher_006 {
         return false;
       }
 
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b);
+      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b).value();
       if (!_is_running) {
         TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1b,
                                           " is stopped, but it should not be"));
@@ -415,7 +417,7 @@ struct dispatcher_006 {
 
       _dispatcher.stop<event_1>();
 
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1a);
+      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1a).value();
 
       if (_is_running) {
         TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1a,
@@ -423,7 +425,7 @@ struct dispatcher_006 {
         return false;
       }
 
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b);
+      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b).value();
 
       if (_is_running) {
         TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1b,

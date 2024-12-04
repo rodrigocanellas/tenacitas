@@ -11,7 +11,7 @@
 #include <set>
 #include <string>
 
-#include <tenacitas.lib/program/options.h>
+#include "tenacitas.lib/program/options.h"
 
 /// \brief Runs a test
 ///

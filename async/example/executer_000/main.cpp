@@ -9,9 +9,9 @@
 #include <functional>
 #include <iostream>
 
-#include <tenacitas.lib/async/exec_sync.h>
+#include "tenacitas.lib/async/exec_sync.h"
 
-#include <tenacitas.lib/log/cerr.h>
+#include "tenacitas.lib/log/cerr.h"
 
 using namespace tenacitas::lib;
 

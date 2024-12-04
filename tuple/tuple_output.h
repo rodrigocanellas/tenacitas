@@ -10,9 +10,9 @@
 #include <sstream>
 #include <tuple>
 
-#include <tenacitas.lib/traits/is_tuple.h>
-#include <tenacitas.lib/traits/tuple_like.h>
-#include <tenacitas.lib/tuple/tuple_traverse.h>
+#include "tenacitas.lib/traits/is_tuple.h"
+#include "tenacitas.lib/traits/tuple_like.h"
+#include "tenacitas.lib/tuple/tuple_traverse.h"
 
 namespace tenacitas::lib::tuple {
 

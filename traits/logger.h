@@ -9,7 +9,7 @@
 #include <source_location>
 #include <string_view>
 
-#include <tenacitas.lib/traits/has_new_operator.h>
+#include "tenacitas.lib/traits/has_new_operator.h"
 
 #define TNCT_LOG_TRA(logger, msg)                                              \
   do {                                                                         \

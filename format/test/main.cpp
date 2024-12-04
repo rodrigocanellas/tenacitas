@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#include <tenacitas.lib/format/test/format_number_test.h>
-#include <tenacitas.lib/tester/test.h>
-#include <tenacitas.lib/program/options.h>
+#include "tenacitas.lib/format/test/format_number_test.h"
+#include "tenacitas.lib/tester/test.h"
+#include "tenacitas.lib/program/options.h"
 
 using namespace tenacitas::lib;
 

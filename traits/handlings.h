@@ -6,11 +6,11 @@
 #ifndef TENACITAS_LIB_TRAITS_HANDLINGS_H
 #define TENACITAS_LIB_TRAITS_HANDLINGS_H
 
-#include <tenacitas.lib/traits/event.h>
+#include "tenacitas.lib/traits/event.h"
 
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/traits/logger.h"
 
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

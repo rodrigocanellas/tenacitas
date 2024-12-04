@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::tuple {
 
@@ -29,7 +29,7 @@ struct tuple_transform;
 #include <tuple>
 #include <vector>
 
-#include <tenacitas.lib/tuple/tuple_transform.h>
+#include "tenacitas.lib/tuple/tuple_transform.h"
 
 using namespace tenacitas::lib;
 

@@ -8,7 +8,7 @@
 
 #include <type_traits>
 
-#include <tenacitas.lib/traits/event.h>
+#include "tenacitas.lib/traits/event.h"
 
 namespace tenacitas::lib::traits {
 

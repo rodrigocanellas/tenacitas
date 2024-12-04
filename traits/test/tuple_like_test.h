@@ -11,8 +11,8 @@
 // #include <vector> -- this must be uncommented in order to verify that test
 // tuple_like_002 actually causes a compile error
 
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 using namespace tenacitas::lib;
 
