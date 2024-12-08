@@ -122,7 +122,12 @@ public:
 
   template <traits::event t_event> void publish(const t_event &p_event) {
     try {
-      get_handlings<t_event>().add_event(p_event);
+      handlings<t_event> &_handlings{get_handlings<t_event>()};
+
+      for (auto &_value : _handlings) {
+        _value.second->add_event(p_event);
+      }
+
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
     }
@@ -346,18 +351,21 @@ private:
   }
 
   template <traits::event t_event>
-  [[nodiscard]] handlings<t_event> &get_handlings() {
+  [[nodiscard]] static constexpr size_t get_handlings_index() {
     constexpr auto _idx{traits::tuple_find<events, t_event>()};
     static_assert(_idx != -1, "event not found in the tuple of events");
-    return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
+    return static_cast<size_t>(_idx);
+  }
+
+  template <traits::event t_event>
+  [[nodiscard]] handlings<t_event> &get_handlings() {
+    return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
   template <traits::event t_event>
   [[nodiscard]] const handlings<t_event> &get_handlings() const {
     TNCT_LOG_DEB(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
-    constexpr auto _idx{traits::tuple_find<events, t_event>()};
-    static_assert(_idx != -1, "event not found in the tuple of events");
-    return std::get<static_cast<size_t>(_idx)>(m_events_handlings);
+    return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
   template <traits::event t_event>

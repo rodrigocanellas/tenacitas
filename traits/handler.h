@@ -14,7 +14,8 @@ namespace tenacitas::lib::traits {
 
 template <typename t, typename t_event>
 concept handler = event<t_event> &&
-    std::invocable<t, std::add_rvalue_reference_t<std::remove_cv_t<t_event>>>;
+    std::invocable<t,
+                   std::add_rvalue_reference_t<std::remove_cvref_t<t_event>>>;
 
 //     requires(t p_t) {
 

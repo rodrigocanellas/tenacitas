@@ -34,7 +34,7 @@ using logger = log::cerr;
 struct event_1 {
   event_1(int16_t p_i = -9) : i(p_i) {}
   friend std::ostream &operator<<(std::ostream &out, const event_1 &p_event) {
-    out << "i = " << p_event.i;
+    out << p_event.i;
     return out;
   }
 
@@ -44,7 +44,7 @@ struct event_1 {
 struct event_2 {
   event_2(float p_f = 3.14f) : f(p_f) {}
   friend std::ostream &operator<<(std::ostream &out, const event_2 &p_event) {
-    out << "f = " << p_event.f;
+    out << p_event.f;
     return out;
   }
 
@@ -436,6 +436,42 @@ struct dispatcher_006 {
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(_logger, _ex.what());
     }
+    return true;
+  }
+};
+
+struct dispatcher_007 {
+  static std::string desc() { return ""; }
+
+  bool operator()(const program::options &) {
+    try {
+      logger _logger;
+      dispatcher _dispatcher(_logger);
+
+      event_1 _event;
+
+      TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
+
+      auto _handler{[&](event_1 &&p_event) {
+        TNCT_LOG_TST(_logger, format::fmt("event 1 = ", p_event));
+        _event = p_event;
+      }};
+
+      auto _handling_1{
+          _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger})
+              .value()};
+
+      TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
+
+      _dispatcher.publish(event_1{53});
+
+      std::this_thread::sleep_for(100ms);
+
+      TNCT_LOG_TST(_logger, format::fmt("now event is ", _event));
+
+    } catch (...) {
+    }
+
     return true;
   }
 };

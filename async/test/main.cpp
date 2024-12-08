@@ -15,7 +15,7 @@
 // #include "tenacitas.lib/async/dispatcher.h"
 // #include "tenacitas.lib/async/handling.h"
 // #include "tenacitas.lib/container/circular_queue.h"
-#include "tenacitas.lib/log/cerr.h"
+
 #include "tenacitas.lib/tester/test.h"
 
 using namespace tenacitas::lib;
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
   run_test(_test, dispatcher_004);
   run_test(_test, dispatcher_005);
   run_test(_test, dispatcher_006);
-  // // run_test(_test, dispatcher_007);
+  run_test(_test, dispatcher_007);
   run_test(_test, handling_id_000);
   run_test(_test, handling_id_001);
   run_test(_test, handling_id_002);
