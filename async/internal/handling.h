@@ -69,7 +69,7 @@ public:
       : m_logger(p_logger), m_handling_id(p_handling_id), m_handler(p_handler),
         m_queue(std::move(p_queue)),
         m_handler_id(internal::get_handler_id<t_event, t_handler>()) {
-    TNCT_LOG_DEB(m_logger, format::fmt("m_handling_id = ", m_handling_id,
+    TNCT_LOG_TRA(m_logger, format::fmt("m_handling_id = ", m_handling_id,
                                        ", m_handler_id = ", m_handler_id));
     increment_handlers(p_num_handlers);
   }
