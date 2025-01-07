@@ -100,6 +100,7 @@ int main(int argc, char **argv) {
   run_test(_test, dispatcher_007);
   run_test(_test, dispatcher_008);
   run_test(_test, dispatcher_009);
+  run_test(_test, dispatcher_010);
   run_test(_test, handling_id_000);
   run_test(_test, handling_id_001);
   run_test(_test, handling_id_002);

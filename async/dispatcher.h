@@ -9,27 +9,20 @@
 #include <cstring>
 #include <ctime>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <optional>
 #include <tuple>
-#include <vector>
 
 #include "tenacitas.lib/async/handling_id.h"
 #include "tenacitas.lib/async/handling_priority.h"
 #include "tenacitas.lib/async/internal/handler_id.h"
 #include "tenacitas.lib/async/internal/handling.h"
-#include "tenacitas.lib/async/sleeping_loop.h"
 
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/event.h"
 #include "tenacitas.lib/traits/handler.h"
-#include "tenacitas.lib/traits/has_new_operator.h"
-#include "tenacitas.lib/traits/is_tuple.h"
 #include "tenacitas.lib/traits/is_type_in_tuple.h"
-#include "tenacitas.lib/traits/publisher.h"
 #include "tenacitas.lib/traits/queue.h"
-#include "tenacitas.lib/traits/subscriber.h"
 #include "tenacitas.lib/traits/tuple_find.h"
 #include "tenacitas.lib/traits/tuple_like.h"
 #include "tenacitas.lib/tuple/tuple_transform.h"
