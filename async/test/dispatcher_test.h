@@ -24,7 +24,6 @@
 #include "tenacitas.lib/parser/ini_file.h"
 #include "tenacitas.lib/program/options.h"
 #include "tenacitas.lib/traits/logger.h"
-#include "tenacitas.lib/traits/tuple_find.h"
 
 using namespace tenacitas::lib;
 using namespace std::chrono_literals;

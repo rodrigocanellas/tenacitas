@@ -11,7 +11,9 @@
 
 #include "tenacitas.lib/async/exec_sync.h"
 
+#include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/traits/logger.h"
 
 using namespace tenacitas::lib;
 
@@ -72,7 +74,7 @@ void executer_004() {
   log::cerr _log;
   auto _function = [&](std::function<bool()>, int p_i, std::string &&p_str,
                        const char *p_char) -> void {
-    TNCT_LOG_DEB(_log, p_i, ',', p_str, ',', p_char);
+    TNCT_LOG_DEB(_log, format::fmt(p_i, ',', p_str, ',', p_char));
   };
 
   std::string _str{"hello"};
