@@ -97,6 +97,7 @@ template <traits::logger t_logger, traits::event... t_events>
 struct dispatcher {
 
 public:
+  using events = std::tuple<t_events...>;
   using logger = t_logger;
 
   dispatcher() = delete;
@@ -210,6 +211,38 @@ public:
 
       get_handlings<t_event>().insert(
           {p_handling_priority, std::move(_handling_ptr)});
+
+      return m_handling_id;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+
+    return std::nullopt;
+  }
+
+  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+            traits::handler<t_event> t_handler>
+  [[nodiscard]] std::optional<handling_id>
+  subscribe(t_handler &&p_handler, t_queue &&p_queue, size_t p_num_handlers) {
+
+    event_in_events_tupĺe<t_event>();
+
+    if (is_handler_already_being_used<t_event, t_handler>()) {
+      return std::nullopt;
+    }
+
+    using handling_concrete =
+        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
+
+    try {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+
+      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
+          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
+          p_num_handlers)};
+
+      get_handlings<t_event>().insert(
+          {handling_priority::medium, std::move(_handling_ptr)});
 
       return m_handling_id;
     } catch (std::exception &_ex) {
@@ -377,8 +410,6 @@ public:
   }
 
 private:
-  using events = std::tuple<t_events...>;
-
   template <traits::event t_event> using handling = internal::handling<t_event>;
 
   template <traits::event t_event>

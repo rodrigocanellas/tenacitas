@@ -20,7 +20,6 @@ HEADERS += \
 
 HEADERS += \
     $$PRJ_DIR/eve/dispatcher.h \
-    $$PRJ_DIR/eve/configuration_defined.h \
     $$PRJ_DIR/eve/simulation_finished.h \
     $$PRJ_DIR/eve/simulation_a.h \
     $$PRJ_DIR/eve/simulation_b.h \
@@ -28,7 +27,7 @@ HEADERS += \
 
 HEADERS += \
     $$PRJ_DIR/bus/simulation_handler.h \
-    $$PRJ_DIR/bus/configuration_defined_handler.h
+    $$PRJ_DIR/bus/start_simulation.h
 
 HEADERS += \
     $$PRJ_DIR/typ/handler_id.h \

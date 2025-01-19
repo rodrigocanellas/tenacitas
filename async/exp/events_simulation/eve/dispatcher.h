@@ -7,7 +7,6 @@
 #define TENACITAS_LIB_ASYNC_EXP_EVE_DISPATCHER_H
 
 #include "tenacitas.lib/async/dispatcher.h"
-#include "tenacitas.lib/async/exp/events_simulation/eve/configuration_defined.h"
 #include "tenacitas.lib/async/exp/events_simulation/eve/simulation_a.h"
 #include "tenacitas.lib/async/exp/events_simulation/eve/simulation_b.h"
 #include "tenacitas.lib/async/exp/events_simulation/eve/simulation_c.h"
@@ -18,8 +17,7 @@ namespace tenacitas::lib::async::exp::events_simulation::eve {
 
 template <traits::logger t_logger>
 using dispatcher =
-    async::dispatcher<t_logger, eve::configuration_defined,
-                      eve::simulation_finished, eve::simulation_a,
+    async::dispatcher<t_logger, eve::simulation_finished, eve::simulation_a,
                       eve::simulation_b, eve::simulation_c>;
 
 }

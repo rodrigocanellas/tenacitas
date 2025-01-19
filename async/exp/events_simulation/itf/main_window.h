@@ -3,10 +3,9 @@
 
 #include <QMainWindow>
 
+#include "tenacitas.lib/async/exp/events_simulation/bus/start_simulation.h"
 #include "tenacitas.lib/async/exp/events_simulation/eve/dispatcher.h"
 #include "tenacitas.lib/log/cerr.h"
-
-#include "tenacitas.lib/async/exp/events_simulation/bus/configuration_defined_handler.h"
 
 using namespace tenacitas::lib;
 namespace prj = tenacitas::lib::async::exp::events_simulation;
@@ -33,10 +32,9 @@ private:
   Ui::main_window *ui;
   dispatcher &m_dispatcher;
   logger &m_logger;
+  prj::bus::start_simulation<logger, dispatcher> m_start_simulation{
+      m_logger, m_dispatcher};
   bool m_simulation_running{false};
-
-  prj::bus::configuration_defined_handler<logger>
-      m_configuration_defined_handler{m_logger};
 };
 
 #endif // MAIN_WINDOW_H

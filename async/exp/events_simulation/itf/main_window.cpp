@@ -11,7 +11,6 @@
 #include "tenacitas.lib/async/exp/events_simulation/cfg/handlings.h"
 #include "tenacitas.lib/async/exp/events_simulation/cfg/publishers.h"
 #include "tenacitas.lib/async/exp/events_simulation/cfg/reader.h"
-#include "tenacitas.lib/async/exp/events_simulation/eve/configuration_defined.h"
 #include "tenacitas.lib/async/exp/events_simulation/eve/simulation_finished.h"
 #include "tenacitas.lib/container/circular_queue.h"
 
@@ -38,20 +37,6 @@ main_window::main_window(dispatcher &p_dispatcher, logger &p_logger,
   if (!_maybe_handling_id) {
     TNCT_LOG_ERR(m_logger,
                  "could not create handling for event 'simulation_finished'");
-  }
-
-  using queue_configuration_defined =
-      container::circular_queue<logger, prj::eve::configuration_defined, 1>;
-
-  auto _configuration_defined_handler =
-      [&](prj::eve::configuration_defined &&p_event) {
-        m_configuration_defined_handler(std::move(p_event));
-      };
-  auto _maybe_tmp{m_dispatcher.subscribe<prj::eve::configuration_defined>(
-      std::move(_configuration_defined_handler),
-      queue_configuration_defined{m_logger})};
-  if (!_maybe_tmp) {
-    TNCT_LOG_ERR(m_logger, "error subscribing to 'configuration_defined'");
   }
 }
 
@@ -97,8 +82,7 @@ void main_window::on_btnConfiguration_clicked() {
     ui->lstCfg->addItem(QString{_stream.str().c_str()});
   }
 
-  m_simulation_running = true;
-
-  m_dispatcher.publish<prj::eve::configuration_defined>(
-      {std::move(_cfg_handlings), std::move(_cfg_publishers)});
+  if (m_start_simulation(_cfg_handlings, _cfg_publishers)) {
+    m_simulation_running = true;
+  }
 }

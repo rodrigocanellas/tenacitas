@@ -12,7 +12,7 @@ namespace tenacitas::lib::traits {
 
 template <typename t>
 concept event = std::default_initializable<t> && std::copy_constructible<t> &&
-    has_output_operator<t>;
+    std::move_constructible<t> && has_output_operator<t>;
 
 }
 

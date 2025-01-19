@@ -26,17 +26,32 @@ namespace tenacitas::lib::traits {
 //   return _ret;
 // }
 
-template <traits::tuple_like t_tuple, typename t_type, std::size_t t_idx = 0>
-static constexpr int16_t tuple_find() {
-  if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
-    return static_cast<int16_t>(-1);
+// template <traits::tuple_like t_tuple, typename t_type, std::size_t t_idx = 0>
+// static constexpr std::int16_t tuple_find() {
+//   if constexpr (std::tuple_size_v<t_tuple> == 0) {
+//     return -1;
+//   } else if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
+//     return static_cast<int16_t>(-1);
+//   } else if constexpr (std::is_same_v<std::tuple_element_t<t_idx, t_tuple>,
+//                                       t_type>) {
+//     return static_cast<int16_t>(t_idx);
+//   } else /*if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>)*/ {
+//     return tuple_find<t_tuple, t_type, t_idx + 1>();
+//   }
+//   return static_cast<std::int16_t>(-1);
+// }
+
+template <typename t_tuple, typename t_type, std::size_t t_idx = 0>
+static constexpr std::int16_t tuple_find() {
+  if constexpr (std::tuple_size_v<t_tuple> == 0 ||
+                t_idx >= std::tuple_size_v<t_tuple>) {
+    return static_cast<std::int16_t>(-1);
   } else if constexpr (std::is_same_v<std::tuple_element_t<t_idx, t_tuple>,
                                       t_type>) {
-    return static_cast<int16_t>(t_idx);
-  } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
+    return static_cast<std::int16_t>(t_idx);
+  } else {
     return tuple_find<t_tuple, t_type, t_idx + 1>();
   }
-  return static_cast<int16_t>(-1);
 }
 
 } // namespace tenacitas::lib::traits

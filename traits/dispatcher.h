@@ -8,80 +8,47 @@
 
 // #include <tuple>
 
-#include "tenacitas.lib/traits/event.h"
 #include "tenacitas.lib/traits/has_new_operator.h"
-#include "tenacitas.lib/traits/is_smart_ptr.h"
 #include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/tuple_contains_only_events.h"
+#include "tenacitas.lib/traits/tuple_contains_tuple.h"
 #include "tenacitas.lib/traits/tuple_like.h"
+#include "tenacitas.lib/traits/tuple_size_greather_or_equal.h"
 
 namespace tenacitas::lib::traits {
 
-template <typename t>
-concept dispatcher = requires(t p_t) {
+template <typename t, typename t_logger, typename... t_events>
+concept dispatcher = requires {
   typename t::events;
+  typename t::logger;
+}
+&&logger<typename t::logger>
 
-  !std::copy_constructible<t>;
+    // &&std::constructible_from<
+    //     std::add_lvalue_reference<std::remove_cv_t<t_logger>>>
 
-  !std::move_constructible<t>;
+    && !std::copy_constructible<t>
 
-  std::default_initializable<t>;
+    && !std::move_constructible<t>
 
-  !has_new_operator_v<t>;
+    && !std::is_copy_assignable_v<t>
 
-  // t::events is a std::tuple
-  tuple_like<typename t::events>;
+    && !std::is_move_assignable_v<t>
 
-  // every type in t::events is an event
-  []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-    return (event<std::tuple_element<t_idx, typename t::events>> && ...);
-  }
-  (std::make_index_sequence<std::tuple_size_v<typename t::events>>());
-};
+    && !has_new_operator_v<t>
+
+    && tuple_like<typename t::events>
+
+    && tuple_like<std::tuple<t_events...>>
+
+    && tuple_size_greather_or_equal<typename t::events, std::tuple<t_events...>>
+
+    && tuple_contains_only_events<typename t::events>
+
+    && tuple_contains_only_events<std::tuple<t_events...>>
+
+    && tuple_contains_tuple<typename t::events, std::tuple<t_events...>>;
 
 } // namespace tenacitas::lib::traits
-
-// template <typename t, typename t_logger, typename... t_events>
-// concept dispatcher = requires(t p_t) {
-//   typename t::events;
-//   typename t::logger;
-
-//   !std::copy_constructible<t>;
-
-//   !std::move_constructible<t>;
-
-//   std::default_initializable<t>;
-
-//   no_new_operator<t>;
-
-//   logger<typename t::logger>;
-
-//   // t::events is a std::tuple
-//   tuple_like<typename t::events>;
-
-//   // every type in t::events is an event
-//   []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-//     return (event<std::tuple_element<t_idx, typename t::events>> && ...);
-//   }
-//   (std::make_index_sequence<std::tuple_size_v<typename t::events>>());
-
-//   // every type in t_events is a event
-//   []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-//     return (event<std::tuple_element<t_idx, std::tuple<t_events...>>> &&
-//     ...);
-//   }
-//   (std::make_index_sequence<std::tuple_size_v<std::tuple<t_events...>>>());
-
-//   // every event in t_events exists in t::events
-//   (tuple_traverse<std::tuple<t_events...>>(
-//        []<std::tuple<t_events...>, size_t t_idx_1>() {
-//          return tuple_traverse<typename t::events>(
-//              []<typename t::events, size_t t_idx_2>() {
-//                // the traverse stops if the lambda returns false
-//                return !std::equal<
-//                    std::tuple_element_t<t_idx_1, std::tuple<t_events...>>,
-//                    std::tuple_element_t<t_idx_2, typename t::events>>;
-//              });
-//        }) != -1);
-// };
 
 #endif
