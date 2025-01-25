@@ -21,11 +21,11 @@ namespace tenacitas::lib::generic {
 ///
 /// \tparam is a means to create two diferent 'id' classes, lile 'id<0>' is not
 /// the same as 'id<1'>.
-template <size_t t_diff> struct id {
+template <typename t_what> struct id {
 
   /// \brief Identifier self generated
   id() {
-    std::this_thread::sleep_for(5ns);
+    std::this_thread::sleep_for(1ms);
     m_value = static_cast<decltype(m_value)>(
         std::chrono::high_resolution_clock::now().time_since_epoch().count());
   }
@@ -37,37 +37,30 @@ template <size_t t_diff> struct id {
 
   ~id() = default;
 
-  /// \brief
   inline constexpr bool operator==(const id &p_id) const {
     return m_value == p_id.m_value;
   }
 
-  /// \brief
   inline constexpr bool operator!=(const id &p_id) const {
     return m_value != p_id.m_value;
   }
 
-  /// \brief
   inline constexpr bool operator>(const id &p_id) const {
     return m_value > p_id.m_value;
   }
 
-  /// \brief
   inline constexpr bool operator<(const id &p_id) const {
     return m_value < p_id.m_value;
   }
 
-  /// \brief
   inline constexpr bool operator>=(const id &p_id) const {
     return m_value >= p_id.m_value;
   }
 
-  /// \brief
   inline constexpr bool operator<=(const id &p_id) const {
     return m_value <= p_id.m_value;
   }
 
-  /// \brief
   friend std::ostream &operator<<(std::ostream &p_out, const id &p_id) {
     p_out << std::to_string(p_id.m_value);
 

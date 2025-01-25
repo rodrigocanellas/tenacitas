@@ -43,9 +43,9 @@ template <traits::logger t_logger> struct sleeping_loop {
             std::chrono::duration_cast<decltype(m_interval)>(p_interval)) {
 
     TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
-                                        " - creating with function ",
-                                        &m_function, " and interval of ",
-                                        m_interval.count(), " nanosecs"));
+                                       " - creating with function ",
+                                       &m_function, " and interval of ",
+                                       m_interval.count(), " nanosecs"));
   }
 
   sleeping_loop() = delete;
@@ -62,25 +62,25 @@ template <traits::logger t_logger> struct sleeping_loop {
     if (m_thread.get_id() == std::thread::id()) {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
-                                " - not joining because m_thread.get_id() == "
-                                "std::thread::id()"));
+                               " - not joining because m_thread.get_id() == "
+                               "std::thread::id()"));
 
       return;
     }
     TNCT_LOG_TRA(m_logger,
                  format::fmt("sleeping loop ", m_id,
-                              " - m_thread.get_id() != std::thread::id()"));
+                             " - m_thread.get_id() != std::thread::id()"));
 
     if (!m_thread.joinable()) {
       TNCT_LOG_TRA(
           m_logger,
           format::fmt("sleeping loop ", m_id,
-                       " - not joining because m_thread is not joinable"));
+                      " - not joining because m_thread is not joinable"));
 
       return;
     }
-    TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
-                                        " - m_thread.joinable()"));
+    TNCT_LOG_TRA(m_logger,
+                 format::fmt("sleeping loop ", m_id, " - m_thread.joinable()"));
 
     {
       std::lock_guard<std::mutex> _lock(m_mutex_join);
@@ -117,13 +117,13 @@ m_stopped(false)*/
     if (!m_stopped) {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
-                                " - not starting because it is not stopped"));
+                               " - not starting because it is not stopped"));
       return;
     }
     m_stopped = false;
 
     TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
-                                        " - starting loop thread"));
+                                       " - starting loop thread"));
 
     m_thread = std::thread([this]() { loop(); });
   }
@@ -133,7 +133,7 @@ m_stopped(false)*/
     if (m_stopped) {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
-                                " - not stopping because it is stopped"));
+                               " - not stopping because it is stopped"));
 
       return;
     }
@@ -192,12 +192,12 @@ private:
       }
 
       TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
-                                          " - calling function ", &m_function));
+                                         " - calling function ", &m_function));
 
       m_function();
 
       TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - ",
-                                          &m_function, " called"));
+                                         &m_function, " called"));
 
       if (m_stopped) {
         TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - stop"));
@@ -206,8 +206,8 @@ private:
       }
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id, " - waiting for ",
-                                m_interval.count(),
-                                " microsecs to elaps, or a stop order"));
+                               m_interval.count(),
+                               " microsecs to elaps, or a stop order"));
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_interval);
@@ -215,13 +215,13 @@ private:
              std::cv_status::no_timeout) ||
             (m_stopped)) {
           TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
-                                              " - ordered to stop"));
+                                             " - ordered to stop"));
 
           break;
         }
       }
       TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - ",
-                                          m_interval.count(), " ms elapsed"));
+                                         m_interval.count(), " ms elapsed"));
     }
     TNCT_LOG_TRA(m_logger,
                  format::fmt("sleeping loop ", m_id, " - leaving loop"));

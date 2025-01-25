@@ -145,9 +145,29 @@ public:
     try {
       handlings<t_event> &_handlings{get_handlings<t_event>()};
 
+      const t_event _event{std::forward<t_event_params>(p_params)...};
+
       for (auto &_value : _handlings) {
-        _value.second->add_event(
-            t_event{std::forward<t_event_params>(p_params)...});
+
+        _value.second->add_event(_event);
+      }
+
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+  }
+
+  template <traits::event t_event> void publish() {
+
+    event_in_events_tupĺe<t_event>();
+
+    try {
+      handlings<t_event> &_handlings{get_handlings<t_event>()};
+
+      const t_event _event;
+
+      for (auto &_value : _handlings) {
+        _value.second->add_event(_event);
       }
 
     } catch (std::exception &_ex) {
