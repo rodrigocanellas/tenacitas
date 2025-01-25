@@ -77,6 +77,7 @@ int main(int argc, char **argv) {
   run_test(_test, handling_016);
   run_test(_test, sleeping_loop_000);
   run_test(_test, sleeping_loop_001);
+  run_test(_test, sleeping_loop_002);
   // run_test(_test, handlings_000);
   // // run_test(_test, handlings_001);
   // // run_test(_test, handlings_002);

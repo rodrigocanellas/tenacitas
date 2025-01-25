@@ -18,7 +18,6 @@
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/log/cerr.h"
 #include "tenacitas.lib/program/options.h"
-#include "tenacitas.lib/tester/test.h"
 
 using namespace std::chrono_literals;
 using namespace tenacitas::lib;
@@ -119,6 +118,40 @@ private:
   static constexpr value m_interval_secs{1};
   static constexpr value m_amount{14};
   static constexpr std::chrono::milliseconds m_sleep{200};
+};
+
+struct sleeping_loop_002 {
+  static std::string desc() { return "Tests move constructor"; }
+
+  bool operator()(const program::options &) {
+    using loop = async::sleeping_loop<logger>;
+
+    logger _logger;
+    _logger.set_tra();
+
+    int16_t _counter{0};
+
+    loop _loop1{
+        _logger,
+        [&_counter]() {
+          std::cout
+              << std::chrono::system_clock::now().time_since_epoch().count()
+              << ' ' << ++_counter << std::endl;
+        },
+        1s, "loop1"};
+
+    _loop1.start();
+
+    std::this_thread::sleep_for(4s);
+
+    std::cout << "move" << std::endl;
+
+    loop _loop2{std::move(_loop1)};
+
+    std::this_thread::sleep_for(6s);
+
+    return true;
+  }
 };
 
 #endif
