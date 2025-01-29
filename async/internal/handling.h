@@ -228,9 +228,9 @@ private:
   using handling_handler_pos = typename handling_handlers::size_type;
 
 private:
-  // Waits for an event to be available in the event queue, then remove and call
-  // the handler in \p p_handling_handler_pos in \p m_handling_handlers.
-  // It exits when \p m_stop is set.
+  // Waits for an event to be available in the event queue, then remove it and
+  // call the handler in \p p_handling_handler_pos in \p m_handling_handlers. It
+  // exits when \p m_stop is set.
   void handler_loop(handling_handler_pos p_handling_handler_pos) {
 
     // auto _queue_addr{&m_queue};

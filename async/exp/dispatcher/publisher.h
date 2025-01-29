@@ -3,23 +3,28 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_ASYNC_EXP_DISPATHER_PUBLISHER_H
-#define TENACITAS_LIB_ASYNC_EXP_DISPATHER_PUBLISHER_H
+#ifndef TENACITAS_LIB_ASYNC_EXP_DISPATCHER_PUBLISHER_H
+#define TENACITAS_LIB_ASYNC_EXP_DISPATCHER_PUBLISHER_H
 
+#include <chrono>
+#include <string_view>
+#include <vector>
+
+#include "tenacitas.lib/async/exp/dispatcher/event.h"
 #include "tenacitas.lib/async/exp/dispatcher/logger.h"
 #include "tenacitas.lib/async/sleeping_loop.h"
 #include "tenacitas.lib/traits/dispatcher.h"
-#include "tenacitas.lib/traits/event.h"
 
 namespace tenacitas::lib::async::exp {
 
-template <traits::event t_event,
-          traits::dispatcher<logger, t_event> t_dispacther>
+template <char t_event_id,
+          traits::dispatcher<logger, exp::event<t_event_id>> t_dispacther>
 struct publisher {
+  using event = exp::event<t_event_id>;
 
   publisher(t_dispacther &p_dispatcher, logger &p_logger,
             std::chrono::milliseconds p_interval, size_t p_total_events,
-            std::string p_id)
+            std::string_view p_id)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
         m_total_events(p_total_events), m_interval(p_interval), m_id(p_id),
         m_slepping_loop(
@@ -38,7 +43,8 @@ struct publisher {
   ~publisher() { m_slepping_loop.stop(); }
 
   void start() {
-    TNCT_LOG_TST(m_logger, format::fmt("starting pub ", m_id));
+    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+                                       "': starting publisher"));
     m_slepping_loop.start();
   }
 
@@ -47,14 +53,18 @@ struct publisher {
 private:
   void sleeping_function() {
     if (m_num_events >= m_total_events) {
-      TNCT_LOG_TST(m_logger, format::fmt("stoping ", m_id));
+      TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+                                         "': total of ", m_num_events, " of ",
+                                         m_total_events,
+                                         " published, stopping publisher"));
       m_slepping_loop.stop();
       return;
     }
-    // m_dispatcher.template publish<t_event>();
+    m_dispatcher.template publish<event>();
     ++m_num_events;
-    TNCT_LOG_TST(m_logger,
-                 format::fmt("publisher ", m_id, " event ", m_num_events));
+    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+                                       "': publishing event # ", m_num_events,
+                                       "/", m_total_events));
   }
 
 private:
@@ -65,11 +75,12 @@ private:
   std::chrono::milliseconds m_interval;
   std::string m_id{"not-assigned"};
   async::sleeping_loop<logger> m_slepping_loop;
+  const event m_event{};
 };
 
-template <traits::event t_event,
-          traits::dispatcher<logger, t_event> t_dispacther>
-using publishers = std::vector<publisher<t_event, t_dispacther>>;
+template <char t_event_id,
+          traits::dispatcher<logger, event<t_event_id>> t_dispacther>
+using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tenacitas::lib::async::exp
 

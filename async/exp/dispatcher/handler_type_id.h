@@ -3,15 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_LIB_ASYNC_EXP_DISPATCHER_LOGGER_H
-#define TENACITAS_LIB_ASYNC_EXP_DISPATCHER_LOGGER_H
+#ifndef TENACITAS_LIB_ASYNC_EXP_DISPATCHER_HANDLER_TYPE_ID_H
+#define TENACITAS_LIB_ASYNC_EXP_DISPATCHER_HANDLER_TYPE_ID_H
 
-#include "tenacitas.lib/log/cerr.h"
+#include <cstdint>
 
 namespace tenacitas::lib::async::exp {
 
-using logger = log::cerr;
-
+using handler_type_id = uint16_t;
 }
 
 #endif

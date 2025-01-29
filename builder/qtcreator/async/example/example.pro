@@ -5,8 +5,5 @@ SUBDIRS = \
         executer_000 \
         dispatcher
 
-
-
-
 # \
         # temperature_sensors_simulator

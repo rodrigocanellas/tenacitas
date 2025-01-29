@@ -177,7 +177,7 @@ public:
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
-  [[nodiscard]] std::optional<handling_id>
+  std::optional<handling_id>
   subscribe(t_handler &&p_handler, t_queue &&p_queue,
             handling_priority p_handling_priority = handling_priority::medium) {
 
@@ -209,7 +209,7 @@ public:
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
-  [[nodiscard]] std::optional<handling_id>
+  std::optional<handling_id>
   subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
             t_queue &&p_queue, size_t p_num_handlers) {
 
@@ -242,8 +242,8 @@ public:
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
-  [[nodiscard]] std::optional<handling_id>
-  subscribe(t_handler &&p_handler, t_queue &&p_queue, size_t p_num_handlers) {
+  std::optional<handling_id> subscribe(t_handler &&p_handler, t_queue &&p_queue,
+                                       size_t p_num_handlers) {
 
     event_in_events_tupĺe<t_event>();
 

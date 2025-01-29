@@ -216,6 +216,7 @@ private:
         if ((m_cond.wait_for(_lock, m_interval) ==
              std::cv_status::no_timeout) ||
             (m_stopped)) {
+
           TNCT_LOG_TRA(m_logger,
                        format::fmt("sleeping loop ", m_id,
                                    " - ordered to stop in ", &(*this)));

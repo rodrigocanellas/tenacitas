@@ -43,7 +43,7 @@ struct id_003 {
   static std::string desc() { return "Simply prints a id"; }
 
   bool operator()(const program::options &) {
-    using id_0 = generic::id<0>;
+    using id_0 = generic::id<int>;
     id_0 _i;
 
     std::cout << _i << std::endl;
@@ -56,7 +56,7 @@ struct id_004 {
   static std::string desc() { return "Test that id objects are not the same"; }
 
   bool operator()(const program::options &) {
-    using id_0 = generic::id<0>;
+    using id_0 = generic::id<int>;
     id_0 _i;
     id_0 _j;
 
@@ -72,8 +72,8 @@ struct id_005 {
   }
 
   bool operator()(const program::options &) {
-    using id_0 = generic::id<0>;
-    using id_1 = generic::id<1>;
+    using id_0 = generic::id<int>;
+    using id_1 = generic::id<std::string>;
     id_0 _i;
     id_1 _j;
 
