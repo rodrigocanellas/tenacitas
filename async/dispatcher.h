@@ -17,6 +17,7 @@
 #include "tenacitas.lib/async/handling_priority.h"
 #include "tenacitas.lib/async/internal/handler_id.h"
 #include "tenacitas.lib/async/internal/handling.h"
+#include "tenacitas.lib/async/result.h"
 
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/event.h"
@@ -121,9 +122,10 @@ public:
   void operator delete(void *) = delete;
   void operator delete[](void *) = delete;
 
-  template <traits::event t_event> void publish(const t_event &p_event) {
+  template <traits::event t_event>
+  [[nodiscard]] result publish(const t_event &p_event) noexcept {
 
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
 
     try {
       handlings<t_event> &_handlings{get_handlings<t_event>()};
@@ -134,13 +136,15 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERRROR_PUBLISHNG;
     }
+    return result::OK;
   }
 
   template <traits::event t_event, typename... t_event_params>
-  void publish(t_events &&...p_params) {
+  [[nodiscard]] result publish(t_event_params &&...p_params) noexcept {
 
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
 
     try {
       handlings<t_event> &_handlings{get_handlings<t_event>()};
@@ -148,40 +152,23 @@ public:
       const t_event _event{std::forward<t_event_params>(p_params)...};
 
       for (auto &_value : _handlings) {
-
         _value.second->add_event(_event);
       }
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERRROR_PUBLISHNG;
     }
-  }
-
-  template <traits::event t_event> void publish() {
-
-    event_in_events_tupĺe<t_event>();
-
-    try {
-      handlings<t_event> &_handlings{get_handlings<t_event>()};
-
-      const t_event _event;
-
-      for (auto &_value : _handlings) {
-        _value.second->add_event(_event);
-      }
-
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
+    return result::OK;
   }
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
-  std::optional<handling_id>
-  subscribe(t_handler &&p_handler, t_queue &&p_queue,
-            handling_priority p_handling_priority = handling_priority::medium) {
+  std::optional<handling_id> add_handling(
+      t_handler &&p_handler, t_queue &&p_queue,
+      handling_priority p_handling_priority = handling_priority::medium) {
 
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -210,10 +197,10 @@ public:
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
   std::optional<handling_id>
-  subscribe(t_handler &&p_handler, handling_priority p_handling_priority,
-            t_queue &&p_queue, size_t p_num_handlers) {
+  add_handling(t_handler &&p_handler, handling_priority p_handling_priority,
+               t_queue &&p_queue, size_t p_num_handlers) {
 
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -245,7 +232,7 @@ public:
   std::optional<handling_id> subscribe(t_handler &&p_handler, t_queue &&p_queue,
                                        size_t p_num_handlers) {
 
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
       return std::nullopt;
@@ -274,7 +261,7 @@ public:
 
   /// \brief Cleans all handlings of a certain event
   template <traits::event t_event> void clear() {
-    event_in_events_tupĺe<t_event>();
+    event_is_in_events_tupĺe<t_event>();
     try {
       handling<t_event> &_handlings{get_handlings<t_event>()};
       for (auto &_value : _handlings) {
@@ -287,8 +274,8 @@ public:
   }
 
   /// \brief Cleans all handlings of a certain handling for a certain event
-  template <traits::event t_event> bool clear(handling_id p_handling_id) {
-    event_in_events_tupĺe<t_event>();
+  template <traits::event t_event> result clear(handling_id p_handling_id) {
+    event_is_in_events_tupĺe<t_event>();
     try {
       TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
       auto _clear{[](handling<t_event> &p_handling) { p_handling.clear(); }};
@@ -297,16 +284,17 @@ public:
         TNCT_LOG_ERR(m_logger,
                      format::fmt("Could not find handling ", p_handling_id,
                                  " in event ", typeid(t_event).name()));
-        return false;
+        return result::HANDLING_NOT_FOUND;
       }
-      return true;
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_CLEARING;
     }
-    return false;
+
+    return result::OK;
   }
 
-  void clear() {
+  result clear() {
     try {
       auto _visit{[this]<traits::tuple_like t_tuple, size_t t_idx>() {
         clear<std::tuple_element_t<t_idx, t_tuple>>();
@@ -317,30 +305,34 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_CLEARING;
     }
+    return result::OK;
   }
 
   template <traits::event t_event>
-  [[nodiscard]] bool add_handlers(handling_id p_handling_id,
-                                  size_t p_amount = 1) {
-    event_in_events_tupĺe<t_event>();
+  [[nodiscard]] result add_handlers(handling_id p_handling_id,
+                                    size_t p_amount = 1) {
+    event_is_in_events_tupĺe<t_event>();
     try {
       if (find_handling<t_event>(p_handling_id,
                                  [&](handling<t_event> &p_handling) {
                                    p_handling.increment_handlers(p_amount);
                                  })) {
-        return true;
+        return result::HANDLING_NOT_FOUND;
       }
+
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_ADDING_HANDLER;
     }
-    return false;
+    return result::OK;
   }
 
   template <traits::event t_event>
   [[nodiscard]] std::optional<size_t>
-  get_amount_handlers(handling_id p_handling_id) const {
-    event_in_events_tupĺe<t_event>();
+  get_amount_handlers(handling_id p_handling_id) const noexcept {
+    event_is_in_events_tupĺe<t_event>();
     try {
       size_t _amount{0};
       if (find_handling<t_event>(p_handling_id,
@@ -356,13 +348,13 @@ public:
   }
 
   template <traits::event t_event>
-  [[nodiscard]] size_t get_amount_handlings() const {
-    event_in_events_tupĺe<t_event>();
+  [[nodiscard]] size_t get_amount_handlings() const noexcept {
+    event_is_in_events_tupĺe<t_event>();
     auto &_handlings{get_handlings<t_event>()};
     return static_cast<size_t>(_handlings.size());
   }
 
-  void stop() {
+  result stop() noexcept {
     try {
       auto _visit{[this]<traits::tuple_like t_tuple, size_t t_idx>() {
         stop<std::tuple_element_t<t_idx, t_tuple>>();
@@ -373,11 +365,13 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_STOPPING;
     }
+    return result::OK;
   }
 
-  template <traits::event t_event> void stop() {
-    event_in_events_tupĺe<t_event>();
+  template <traits::event t_event> result stop() noexcept {
+    event_is_in_events_tupĺe<t_event>();
     try {
       handlings<t_event> &_handlings{get_handlings<t_event>()};
 
@@ -387,12 +381,14 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_STOPPING;
     }
+    return result::OK;
   }
 
   template <traits::event t_event>
-  [[nodiscard]] bool stop(handling_id p_handling_id) {
-    event_in_events_tupĺe<t_event>();
+  [[nodiscard]] result stop(handling_id p_handling_id) noexcept {
+    event_is_in_events_tupĺe<t_event>();
     try {
       TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
       auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
@@ -401,13 +397,14 @@ public:
         TNCT_LOG_ERR(m_logger,
                      format::fmt("Could not find handling ", p_handling_id,
                                  " in event ", typeid(t_event).name()));
-        return false;
+        return result::HANDLING_NOT_FOUND;
       }
-      return true;
+
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
+      return result::ERROR_STOPPING;
     }
-    return false;
+    return result::OK;
   }
 
   template <traits::event t_event>
@@ -552,7 +549,7 @@ private:
   }
 
   template <traits::event t_event>
-  static constexpr void event_in_events_tupĺe() {
+  static constexpr void event_is_in_events_tupĺe() {
     static_assert(traits::is_type_in_tuple<events, t_event>,
                   "event is not in the 't_events...' of the dispatcher");
   }

@@ -12,6 +12,7 @@
 
 #include "tenacitas.lib/async/exp/dispatcher/event.h"
 #include "tenacitas.lib/async/exp/dispatcher/logger.h"
+#include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/async/sleeping_loop.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 
@@ -60,7 +61,11 @@ private:
       m_slepping_loop.stop();
       return;
     }
-    m_dispatcher.template publish<event>();
+    auto _result{m_dispatcher.template publish<event>()};
+    if (_result != result::OK) {
+      TNCT_LOG_ERR(m_logger, format::fmt("error: ", _result));
+      return;
+    }
     ++m_num_events;
     TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
                                        "': publishing event # ", m_num_events,

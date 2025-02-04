@@ -16,6 +16,7 @@
 
 #include "tenacitas.lib/async/handling_id.h"
 #include "tenacitas.lib/async/internal/handler_id.h"
+#include "tenacitas.lib/async/result.h"
 
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/event.h"

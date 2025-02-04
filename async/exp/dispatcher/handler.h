@@ -14,6 +14,7 @@
 #include "tenacitas.lib/async/exp/dispatcher/handler_type_id.h"
 #include "tenacitas.lib/async/exp/dispatcher/handling_id.h"
 #include "tenacitas.lib/async/exp/dispatcher/logger.h"
+#include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 
@@ -34,8 +35,15 @@ struct handler {
 
   void operator()(event &&p_event) {
     std::this_thread::sleep_for(m_sleep_to_simulate_work);
-    m_dispatcher.template publish<event_handled>(event_handled{
-        m_handling_id, t_event_id, t_type_id, std::this_thread::get_id()});
+
+    auto _result{m_dispatcher.template publish<event_handled>(event_handled{
+        m_handling_id, t_event_id, t_type_id, std::this_thread::get_id()})};
+
+    if (_result != result::OK) {
+      TNCT_LOG_ERR(m_logger, format::fmt("error: ", _result));
+      return;
+    }
+
     ++m_num_events;
     TNCT_LOG_TST(m_logger,
                  format::fmt('\'', p_event, "', handling ", m_handling_id,

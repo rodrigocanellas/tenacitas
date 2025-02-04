@@ -56,7 +56,7 @@ int main() {
   const size_t _total_to_be_handled{20};
   size_t _total_handled{0};
 
-  _dispatcher.subscribe<event_handled>(
+  _dispatcher.add_handling<event_handled>(
       [&](event_handled &&p_event) {
         TNCT_LOG_TST(_logger, format::fmt("event handled: ", p_event))
         ++_total_handled;

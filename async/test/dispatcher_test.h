@@ -8,13 +8,9 @@
 
 #include <iostream>
 #include <string>
-#include <tuple>
-
-#ifndef TENACITAS_LOG
-#define TENACITAS_LOG
-#endif
 
 #include "tenacitas.lib/async/dispatcher.h"
+#include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 
 #include "tenacitas.lib/container/circular_queue.h"
@@ -66,8 +62,8 @@ struct dispatcher_000 {
 
     auto _handler = [this](event_1 &&p_event) { (*this)(std::move(p_event)); };
 
-    auto _handling_id_maybe{
-        _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger})};
+    auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
+        std::move(_handler), queue_1{_logger})};
 
     if (!_handling_id_maybe) {
       return false;
@@ -96,8 +92,8 @@ struct dispatcher_001 {
 
     auto _handler{[](event_1 &&) {}};
 
-    auto _handling_id_maybe{
-        _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger})};
+    auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
+        std::move(_handler), queue_1{_logger})};
 
     if (!_handling_id_maybe) {
       return false;
@@ -145,7 +141,7 @@ struct dispatcher_002 {
     dispatcher _dispatcher{_logger};
 
     auto _handling_id_maybe{
-        _dispatcher.subscribe<event_1>([](event_1 &&) {}, queue_1{_logger})};
+        _dispatcher.add_handling<event_1>([](event_1 &&) {}, queue_1{_logger})};
 
     if (!_handling_id_maybe) {
       return false;
@@ -177,9 +173,11 @@ struct dispatcher_002 {
       return false;
     }
 
-    if (!_dispatcher.add_handlers<event_1>(_handling_id, 3)) {
+    auto _result{_dispatcher.add_handlers<event_1>(_handling_id, 3)};
+
+    if (_result != async::result::OK) {
       TNCT_LOG_ERR(_logger, format::fmt("error adding handlers to handling ",
-                                        _handling_id));
+                                        _handling_id, ": ", _result));
       return false;
     }
 
@@ -222,7 +220,7 @@ struct dispatcher_003 {
 
       auto _handler = [&](event_1 &&) {};
 
-      auto _handling_id_maybe{_dispatcher.subscribe<event_1>(
+      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
           std::move(_handler), queue_1{_logger})};
 
       if (!_handling_id_maybe) {
@@ -231,8 +229,8 @@ struct dispatcher_003 {
       }
 
       TNCT_LOG_TST(_logger, "passed 1st subscribe");
-      _handling_id_maybe =
-          _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger});
+      _handling_id_maybe = _dispatcher.add_handling<event_1>(
+          std::move(_handler), queue_1{_logger});
 
       if (_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling created, but it should not have been");
@@ -257,7 +255,7 @@ struct dispatcher_004 {
 
       auto _handler_1 = [&](event_1 &&) {};
 
-      auto _handling_id_maybe{_dispatcher.subscribe<event_1>(
+      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
           std::move(_handler_1), queue_1{_logger})};
 
       if (!_handling_id_maybe) {
@@ -304,7 +302,7 @@ struct dispatcher_005 {
 
       auto _handler_1 = [&](event_1 &&) {};
 
-      auto _handling_id_maybe{_dispatcher.subscribe<event_1>(
+      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
           std::move(_handler_1), queue_1{_logger})};
 
       if (!_handling_id_maybe) {
@@ -317,8 +315,8 @@ struct dispatcher_005 {
 
       auto _handler_2 = [&](event_2 &&) {};
 
-      _handling_id_maybe = _dispatcher.subscribe<event_2>(std::move(_handler_2),
-                                                          queue_2{_logger});
+      _handling_id_maybe = _dispatcher.add_handling<event_2>(
+          std::move(_handler_2), queue_2{_logger});
 
       if (!_handling_id_maybe) {
         TNCT_LOG_ERR(_logger, "handling 2 not created, but it should");
@@ -329,9 +327,11 @@ struct dispatcher_005 {
 
       TNCT_LOG_TST(_logger, format::fmt("_handling_2 = ", _handling_2));
 
-      if (!_dispatcher.stop<event_2>(_handling_2)) {
-        TNCT_LOG_ERR(_logger,
-                     format::fmt("could not stop handling ", _handling_2));
+      auto _result{_dispatcher.stop<event_2>(_handling_2)};
+
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt("could not stop handling ",
+                                          _handling_2, ": ", _result));
         return false;
       }
 
@@ -370,7 +370,7 @@ struct dispatcher_006 {
 
       auto _handler_1a = [&](event_1 &&) {};
 
-      auto _handling_id1a_maybe{_dispatcher.subscribe<event_1>(
+      auto _handling_id1a_maybe{_dispatcher.add_handling<event_1>(
           std::move(_handler_1a), queue_1{_logger})};
 
       if (!_handling_id1a_maybe) {
@@ -384,7 +384,7 @@ struct dispatcher_006 {
 
       auto _handler_1b = [&](event_1 &&) {};
 
-      auto _handling_id1b_maybe{_dispatcher.subscribe<event_1>(
+      auto _handling_id1b_maybe{_dispatcher.add_handling<event_1>(
           std::move(_handler_1b), queue_1{_logger})};
 
       if (!_handling_id1b_maybe) {
@@ -458,12 +458,17 @@ struct dispatcher_007 {
       }};
 
       auto _handling_1{
-          _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger})
+          _dispatcher
+              .add_handling<event_1>(std::move(_handler), queue_1{_logger})
               .value()};
 
       TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
 
-      _dispatcher.publish(event_1{53});
+      auto _result{_dispatcher.publish(event_1{53})};
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt(_result));
+        return false;
+      }
 
       std::this_thread::sleep_for(100ms);
 
@@ -498,12 +503,17 @@ struct dispatcher_008 {
       }};
 
       auto _handling_1{
-          _dispatcher.subscribe<event_1>(std::move(_handler), queue_1{_logger})
+          _dispatcher
+              .add_handling<event_1>(std::move(_handler), queue_1{_logger})
               .value()};
 
       TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
 
-      _dispatcher.publish<event_1>(53);
+      auto _result{_dispatcher.publish<event_1>(53)};
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt(_result));
+        return false;
+      }
 
       std::this_thread::sleep_for(100ms);
 
