@@ -9,15 +9,14 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <tenacitas.lib/async/handling_priority.h>
-#include <tenacitas.lib/async/result.h>
-#include <tenacitas.lib/container/circular_queue.h>
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/log/logger.h>
-#include <tenacitas.lib/program/exit.h>
-#include <tenacitas.lib/traits/dispatcher.h>
-#include <tenacitas.lib/traits/logger.h>
-#include <tenacitas.lib/traits/tuple_contains_tuple.h>
+#include "tenacitas.lib/async/handling_priority.h"
+#include "tenacitas.lib/async/result.h"
+#include "tenacitas.lib/format/fmt.h"
+
+#include "tenacitas.lib/program/exit.h"
+#include "tenacitas.lib/traits/dispatcher.h"
+#include "tenacitas.lib/traits/logger.h"
+#include "tenacitas.lib/traits/tuple_contains_tuple.h"
 
 namespace tenacitas::lib::program {
 
@@ -36,15 +35,15 @@ requires(traits::tuple_contains_tuple<typename t_dispatcher::events,
         5 /*queue_size*/));
 
     if (_result != async::result::OK) {
-      m_logger.err(generic::fmt(_result));
+      m_logger.err(format::fmt(_result));
     }
   }
 
   void operator()() {
-    TNCT_LOG_DEB(m_logger, "waiting")
+    TNCT_LOG_DEB(m_logger, "waiting");
     std::unique_lock<std::mutex> _lock(m_mutex);
     m_cond.wait(_lock, [&]() { return m_close == true; });
-    TNCT_LOG_DEB(m_logger, "done waiting")
+    TNCT_LOG_DEB(m_logger, "done waiting");
   }
 
   ~closer() {}

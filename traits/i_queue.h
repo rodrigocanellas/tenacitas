@@ -10,8 +10,8 @@
 #include <optional>
 #include <string>
 
-#include <tenacitas.lib/traits/has_output_operator.h>
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/traits/has_output_operator.h"
+#include "tenacitas.lib/traits/logger.h"
 
 namespace tenacitas::lib::traits {
 
@@ -23,7 +23,7 @@ public:
   using data = t_data;
   using logger = t_logger;
 
-  i_queue() = delete;
+  // i_queue() = default;
 
   // queue name, logger and initial size
   i_queue(std::string_view p_queue_id, logger &p_logger)

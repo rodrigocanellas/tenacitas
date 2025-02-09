@@ -9,52 +9,79 @@
 #include <source_location>
 #include <string_view>
 
-#include <tenacitas.lib/traits/new_operator.h>
+#include "tenacitas.lib/traits/has_new_operator.h"
+
+#define TNCT_LOG_TRA(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_tra()) {                                                    \
+      logger.tra(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_DEB(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_deb()) {                                                    \
+      logger.deb(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_INF(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_inf()) {                                                    \
+      logger.inf(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_WAR(logger, msg)                                              \
+  do {                                                                         \
+    if (logger.can_war()) {                                                    \
+      logger.war(msg);                                                         \
+    }                                                                          \
+  } while (0)
+
+#define TNCT_LOG_ERR(logger, msg) logger.err(msg);
+
+#define TNCT_LOG_FAT(logger, msg) logger.err(msg);
+
+#define TNCT_LOG_TST(logger, msg) logger.tst(msg);
 
 namespace tenacitas::lib::traits {
 
 template <typename t>
-concept logger = requires(t p_t) {
-  !std::copy_constructible<t>;
+concept logger = !std::copy_constructible<t> &&
 
-  !std::move_constructible<t>;
+                 !std::move_constructible<t> &&
 
-  no_new_operator<t>;
+                 !std::is_copy_assignable_v<t> &&
+
+                 !std::is_move_assignable_v<t> &&
+
+                 !has_new_operator_v<t> &&
+
+                 requires(t p_t) {
 
   {
-    p_t.tra(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.tra(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.deb(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.deb(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.inf(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.inf(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.war(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.war(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.err(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.err(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   {
-    p_t.fat(std::declval<std::string_view>(),
-            std::declval<std::source_location>() =
-                std::source_location::current())
+    p_t.fat(std::declval<std::string_view>(), std::source_location::current())
     } -> std::same_as<void>;
 
   { p_t.set_tra() } -> std::same_as<void>;

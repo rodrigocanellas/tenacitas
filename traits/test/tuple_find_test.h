@@ -1,0 +1,91 @@
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
+
+#ifndef TENACITAS_LIB_TRATIS_TEST_TUPLE_FIND_TEST_H
+#define TENACITAS_LIB_TRATIS_TEST_TUPLE_FIND_TEST_H
+
+#include <tuple>
+
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/traits/tuple_find.h"
+
+using namespace tenacitas::lib;
+
+namespace tenacitas::lib::traits::test {
+
+struct tuple_find_000 {
+  static std::string desc() {
+    return "Tries to find existing simple types in a std::tuple";
+  }
+
+  bool operator()(const program::options &) {
+    using my_tuple = std::tuple<int, char, float>;
+
+    auto _idx{traits::tuple_find<my_tuple, int>()};
+    if (_idx == -1) {
+      std::cerr << "ERROR! idx should be 0, but the 'int' was not found "
+                << std::endl;
+      return false;
+    }
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+
+    _idx = traits::tuple_find<my_tuple, char>();
+    if (_idx == -1) {
+      std::cerr << "ERROR! idx should be 1, but the 'char' was not found "
+                << std::endl;
+      return false;
+    }
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+
+    _idx = traits::tuple_find<my_tuple, float>();
+    if (_idx == -1) {
+      std::cerr << "ERROR! idx should be 2, but it 'char' was not found "
+                << std::endl;
+      return false;
+    }
+    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+
+    return true;
+  }
+};
+
+struct tuple_find_001 {
+  static std::string desc() {
+    return "Tries to find a non existing type in a std::tuple";
+  }
+
+  bool operator()(const program::options &) {
+    using my_tuple = std::tuple<int, char, float>;
+
+    auto _idx{traits::tuple_find<my_tuple, std::string>()};
+    if (_idx != -1) {
+      std::cerr << "'std::string' should not be found, but is is " << _idx
+                << std::endl;
+      return false;
+    }
+    std::cerr << "'std::string' was not found, as it should" << std::endl;
+    return true;
+  }
+};
+
+struct tuple_find_002 {
+  static std::string desc() { return "Tries to find a type in a std::tuple<>"; }
+
+  bool operator()(const program::options &) {
+    using my_tuple = std::tuple<>;
+
+    auto _idx{traits::tuple_find<my_tuple, std::string>()};
+    if (_idx != -1) {
+      std::cerr << "'std::string' should not be found, but is is " << _idx
+                << std::endl;
+      return false;
+    }
+    std::cerr << "'std::string' was not found, as it should" << std::endl;
+    return true;
+  }
+};
+} // namespace tenacitas::lib::traits::test
+
+#endif

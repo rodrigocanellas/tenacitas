@@ -8,8 +8,8 @@
 
 #include <tuple>
 
-#include <tenacitas.lib/traits/event.h>
-#include <tenacitas.lib/traits/tuple_like.h>
+#include "tenacitas.lib/traits/event.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
 

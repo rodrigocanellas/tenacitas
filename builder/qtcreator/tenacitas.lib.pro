@@ -11,7 +11,13 @@ SUBDIRS = \
     log \
     translator \
     parser \
-    program
+    program \
+    tuple \
+    pair \
+    time \
+    format \
+    tester
+
 
 
 

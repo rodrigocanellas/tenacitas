@@ -11,7 +11,7 @@
 #include <string>
 #include <string_view>
 
-#include <tenacitas.lib/log/internal/logger.h>
+#include "tenacitas.lib/log/internal/logger.h"
 
 using namespace std::chrono_literals;
 

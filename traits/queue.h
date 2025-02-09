@@ -8,31 +8,26 @@
 
 #include <cstddef>
 #include <optional>
-#include <string>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 
-#include <tenacitas.lib/traits/i_queue.h>
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/traits/has_output_operator.h"
 
 namespace tenacitas::lib::traits {
 
-template <typename t, typename t_logger, typename t_data>
+template <typename t, typename t_data>
 concept queue = requires(t p_t) {
   typename t::data;
 
-  std::is_base_of_v<i_queue<t_logger, t_data>, t>;
-
-  traits::logger<t_logger>;
-
   std::is_same_v<typename t::data, t_data>;
 
-  std::is_copy_constructible_v<t_data>;
+  std::is_copy_constructible_v<typename t::data>;
 
-  std::is_move_constructible_v<t_data>;
+  std::is_move_constructible_v<typename t::data>;
 
-  std::is_default_constructible_v<t_data>;
+  !std::is_default_constructible_v<typename t::data>;
+
+  has_output_operator<typename t::data>;
 
   std::is_copy_constructible_v<t>;
 
@@ -43,11 +38,6 @@ concept queue = requires(t p_t) {
   std::is_move_assignable_v<t>;
 
   std::is_copy_assignable_v<t>;
-
-  // queue name, logger and initial size
-  {t(std::declval<std::string_view>(),
-     std::declval<std::add_lvalue_reference_t<t_logger>>(),
-     std::declval<size_t>())};
 
   {
     p_t.push(std::move(std::declval<typename t::data>()))
@@ -69,8 +59,6 @@ concept queue = requires(t p_t) {
   { p_t.occupied() } -> std::same_as<size_t>;
 
   { p_t.clear() } -> std::same_as<void>;
-
-  { p_t.id() } -> std::same_as<const std::string &>;
 };
 
 } // namespace tenacitas::lib::traits

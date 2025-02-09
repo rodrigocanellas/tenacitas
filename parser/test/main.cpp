@@ -3,10 +3,10 @@
 #include <sstream>
 #include <string>
 
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/parser/ini_file.h>
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/tester/test.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/parser/ini_file.h"
 
 using namespace tenacitas::lib;
 
@@ -32,7 +32,7 @@ struct test_000 {
 
       if (_sections.value().empty()) {
         m_logger.err(
-            generic::fmt("no sections found in '", _ini_file_name, '\''));
+            format::fmt("no sections found in '", _ini_file_name, '\''));
         return false;
       }
 
@@ -72,6 +72,6 @@ private:
 
 int main(int argc, char **argv) {
 
-  generic::tester _test(argc, argv, {"ini"});
+  tester::test _test(argc, argv, {"ini"});
   run_test(_test, test_000);
 }

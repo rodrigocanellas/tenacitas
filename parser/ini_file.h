@@ -14,8 +14,8 @@
 #include <string>
 #include <string_view>
 
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/traits/logger.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/traits/logger.h"
 
 namespace tenacitas::lib::parser {
 
@@ -35,7 +35,7 @@ template <traits::logger t_logger> struct ini_file {
       std::ifstream _file(p_filename.data());
 
       if (!_file.is_open()) {
-        m_logger.err(generic::fmt("could not open '", p_filename, '\''));
+        m_logger.err(format::fmt("could not open '", p_filename, '\''));
         return std::nullopt;
       }
 
@@ -51,40 +51,40 @@ template <traits::logger t_logger> struct ini_file {
       for (std::string _line; std::getline(_file, _line);) {
         ++_line_number;
         m_logger.tra(
-            generic::fmt("line # ", _line_number, " = '", _line, '\''));
+            format::fmt("line # ", _line_number, " = '", _line, '\''));
         std::smatch _matches;
 
         std::regex_search(_line, _matches, _section_regex);
 
         if (_line[0] == '#') {
-          m_logger.tra(generic::fmt("line # ", _line_number, " is a comment"));
+          m_logger.tra(format::fmt("line # ", _line_number, " is a comment"));
           continue;
         }
 
         if (_matches.size() == 2) {
-          m_logger.tra(generic::fmt("line # ", _line_number,
+          m_logger.tra(format::fmt("line # ", _line_number,
                                     ", contains a section: '", _matches[1],
                                     '\''));
           if (!_section.empty()) {
-            m_logger.tra(generic::fmt("sections not empty: '", _section, '\''));
+            m_logger.tra(format::fmt("sections not empty: '", _section, '\''));
             _sections.insert({std::move(_section), std::move(_properties)});
             _section = section(_matches[1]);
             _properties = properties();
           } else {
             // first section
-            m_logger.tra(generic::fmt("first section"));
+            m_logger.tra(format::fmt("first section"));
             _section = _matches[1];
-            m_logger.tra(generic::fmt("sections now with: '", _section, '\''));
+            m_logger.tra(format::fmt("sections now with: '", _section, '\''));
           }
         } else {
           std::regex_search(_line, _matches, _property_regex);
           if (_matches.size() == 3) {
-            m_logger.tra(generic::fmt(
+            m_logger.tra(format::fmt(
                 "line # ", _line_number, " contains a property: property = '",
                 _matches[1], "', value = '", _matches[2], "'"));
             _properties.insert({_matches[1].str(), _matches[2].str()});
           } else {
-            m_logger.tra(generic::fmt("line # ", _line_number, " '", _line,
+            m_logger.tra(format::fmt("line # ", _line_number, " '", _line,
                                       "' does not contain a section or value"));
           }
         }
@@ -94,7 +94,7 @@ template <traits::logger t_logger> struct ini_file {
       }
 
     } catch (std::exception &_ex) {
-      m_logger.err(generic::fmt("ERROR reading INI file '", p_filename, "': '",
+      m_logger.err(format::fmt("ERROR reading INI file '", p_filename, "': '",
                                 _ex.what(), '\''));
       return std::nullopt;
     }

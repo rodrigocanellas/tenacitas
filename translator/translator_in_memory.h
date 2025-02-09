@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <string>
 
-#include <tenacitas.lib/translator/dictionary.h>
+#include "tenacitas.lib/translator/dictionary.h"
 
 namespace tenacitas::lib::translator {
 

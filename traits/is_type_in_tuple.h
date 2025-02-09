@@ -6,22 +6,15 @@
 #ifndef TENACITAS_LIB_TRAITS_IS_TYPE_IN_TUPLE_H
 #define TENACITAS_LIB_TRAITS_IS_TYPE_IN_TUPLE_H
 
-#include <tuple>
-#include <type_traits>
+#include "tenacitas.lib/traits/tuple_find.h"
+#include "tenacitas.lib/traits/tuple_like.h"
 
 namespace tenacitas::lib::traits {
-template <typename T, typename Tuple> struct is_type_in_tuple;
 
-template <typename T>
-struct is_type_in_tuple<T, std::tuple<>> : std::false_type {};
-
-template <typename T, typename U, typename... Us>
-struct is_type_in_tuple<T, std::tuple<U, Us...>>
-    : std::conditional_t<std::is_same_v<T, U>, std::true_type,
-                         is_type_in_tuple<T, std::tuple<Us...>>> {};
-
-template <typename T, typename Tuple>
-inline constexpr bool is_type_in_tuple_v = is_type_in_tuple<T, Tuple>::value;
+template <traits::tuple_like t_tuple, typename t_type>
+static constexpr bool
+    is_type_in_tuple = traits::tuple_find<t_tuple, t_type>() != -1;
 
 } // namespace tenacitas::lib::traits
+
 #endif

@@ -6,12 +6,12 @@
 #include <optional>
 #include <string>
 
-#include <tenacitas.lib/generic/fmt.h>
-#include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/log/cerr.h>
-#include <tenacitas.lib/program/options.h>
-#include <tenacitas.lib/translator/translator_from_file.h>
-#include <tenacitas.lib/translator/translator_in_memory.h>
+#include "tenacitas.lib/format/fmt.h"
+#include "tenacitas.lib/tester/test.h"
+#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/program/options.h"
+#include "tenacitas.lib/translator/translator_from_file.h"
+#include "tenacitas.lib/translator/translator_in_memory.h"
 
 using namespace tenacitas::lib;
 
@@ -23,7 +23,7 @@ struct from_memory {
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(generic::fmt("translations = ", _translator));
+    _log.tst(format::fmt("translations = ", _translator));
 
     return (_translator.size() == 4);
   }
@@ -47,7 +47,7 @@ struct from_existing_file {
       return false;
     }
 
-    _log.tst(generic::fmt("translations = ", _translator));
+    _log.tst(format::fmt("translations = ", _translator));
 
     return true;
   }
@@ -77,11 +77,11 @@ struct translate_non_existing_word {
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(generic::fmt("translations = ", _translator));
+    _log.tst(format::fmt("translations = ", _translator));
 
     std::string _word = _translator.get(8);
 
-    _log.tst(generic::fmt("word = '", _word, "'"));
+    _log.tst(format::fmt("word = '", _word, "'"));
 
     return _word.empty();
   }
@@ -97,11 +97,11 @@ struct translate_an_existing_word {
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(generic::fmt("translations = ", _translator));
+    _log.tst(format::fmt("translations = ", _translator));
 
     std::string _word = _translator.get(9);
 
-    _log.tst(generic::fmt("word = '", _word, "'"));
+    _log.tst(format::fmt("word = '", _word, "'"));
 
     return _word == "word 9";
   }
@@ -111,7 +111,7 @@ struct translate_an_existing_word {
 
 int main(int argc, char **argv) {
 
-  generic::tester<> _test(argc, argv);
+  tester::test<> _test(argc, argv);
 
   run_test(_test, from_memory);
   run_test(_test, from_existing_file);

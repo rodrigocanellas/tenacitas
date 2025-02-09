@@ -6,17 +6,16 @@
 #ifndef TENACITAS_LIB_TRAITS_PAIR_LIKE_H
 #define TENACITAS_LIB_TRAITS_PAIR_LIKE_H
 
-#include <concepts>
+#include <utility>
 
 namespace tenacitas::lib::traits {
 
-template <typename t>
-concept pair_like = requires(t p_t) {
-  typename t::first_type;
-  typename t::second_type;
-  { p_t.first } -> std::same_as<typename t::first_type>;
-  { p_t.second } -> std::same_as<typename t::second_type>;
-};
+template <typename T>
+concept pair_like = requires {
+  typename T::first_type;
+  typename T::second_type;
+}
+&&std::is_same_v<T, std::pair<typename T::first_type, typename T::second_type>>;
 
 } // namespace tenacitas::lib::traits
 #endif

@@ -3,15 +3,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <tenacitas.lib/generic/tester.h>
-#include <tenacitas.lib/container/test/matrix.h>
-#include <tenacitas.lib/container/test/test_circular_queue.h>
+#include "tenacitas.lib/container/test/circular_queue_test.h"
+#include "tenacitas.lib/container/test/matrix_test.h"
+#include "tenacitas.lib/tester/test.h"
 
 using namespace tenacitas::lib;
 
 int main(int argc, char **argv) {
 
-  generic::tester _tester(argc, argv);
+  tester::test _tester(argc, argv);
   run_test(_tester, circular_queue_001);
   run_test(_tester, circular_queue_003);
   run_test(_tester, circular_queue_test);
