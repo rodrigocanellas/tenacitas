@@ -6,4 +6,4 @@ TEMPLATE=subdirs
 SUBDIRS=test
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/tester/test.h
+        $$BASE_DIR/tnct/tester/test.h

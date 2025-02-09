@@ -1,11 +1,11 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.time.test
+TARGET=tnct.time.test
 
 include (../../common.pri)
 
 
-SOURCES = $$BASE_DIR/tenacitas.lib/time/test/main.cpp
+SOURCES = $$BASE_DIR/tnct/time/test/main.cpp
 
-HEADERS += $$BASE_DIR/tenacitas.lib/time/test/chrono_output_test.h
+HEADERS += $$BASE_DIR/tnct/time/test/chrono_output_test.h
