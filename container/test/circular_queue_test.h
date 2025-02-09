@@ -18,7 +18,6 @@
 #include "tenacitas.lib/log/cerr.h"
 #include "tenacitas.lib/parser/ini_file.h"
 #include "tenacitas.lib/program/options.h"
-#include "tenacitas.lib/traits/queue.h"
 
 using namespace tenacitas::lib;
 

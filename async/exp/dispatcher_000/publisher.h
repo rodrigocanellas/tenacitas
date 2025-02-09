@@ -10,8 +10,8 @@
 #include <string_view>
 #include <vector>
 
-#include "tenacitas.lib/async/exp/dispatcher/event.h"
-#include "tenacitas.lib/async/exp/dispatcher/logger.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/event.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/logger.h"
 #include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/async/sleeping_loop.h"
 #include "tenacitas.lib/traits/dispatcher.h"
@@ -19,7 +19,7 @@
 namespace tenacitas::lib::async::exp {
 
 template <char t_event_id,
-          traits::dispatcher<logger, exp::event<t_event_id>> t_dispacther>
+          traits::dispatcher<exp::event<t_event_id>> t_dispacther>
 struct publisher {
   using event = exp::event<t_event_id>;
 
@@ -84,8 +84,7 @@ private:
   const event m_event{};
 };
 
-template <char t_event_id,
-          traits::dispatcher<logger, event<t_event_id>> t_dispacther>
+template <char t_event_id, traits::dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tenacitas::lib::async::exp

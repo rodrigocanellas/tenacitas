@@ -3,12 +3,12 @@
 
 #include <tuple>
 
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/new_temperature.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/sensor_id.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/temperature.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/typ/sensor_id.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/typ/temperature.h"
 #include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/async/sleeping_loop.h"
-#include "tenacitas.lib/generic/fmt.h"
+#include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 #include "tenacitas.lib/traits/logger.h"
 #include "tenacitas.lib/traits/tuple_contains_tuple.h"
@@ -45,11 +45,10 @@ requires(traits::tuple_contains_tuple<typename t_dispatcher::events,
                 std::lock_guard<std::mutex> _lock(m_mutex);
                 m_current += m_increment;
               }
-              auto _result(
-                  m_dispatcher.template publish<sensor, evt::new_temperature>(
-                      m_sensor_id, m_current));
+              auto _result(m_dispatcher.template publish<evt::new_temperature>(
+                  m_sensor_id, m_current));
               if (_result != async::result::OK) {
-                m_logger.err(generic::fmt(_result));
+                m_logger.err(format::fmt(_result));
               }
             },
             p_interval) {}

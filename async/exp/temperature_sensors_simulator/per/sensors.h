@@ -5,13 +5,12 @@
 #include <memory>
 #include <set>
 
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/add_sensor.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/remove_sensor.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/evt/set_temperature.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/per/sensor.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/evt/add_sensor.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/per/sensor.h"
 #include "tenacitas.lib/async/handling_priority.h"
-#include "tenacitas.lib/async/result.h"
-#include "tenacitas.lib/generic/fmt.h"
+#include "tenacitas.lib/container/circular_queue.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 #include "tenacitas.lib/traits/logger.h"
 #include "tenacitas.lib/traits/tuple_contains_tuple.h"
@@ -25,38 +24,46 @@ requires(traits::tuple_contains_tuple<
          std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>>)
 
     struct sensors {
-  using events_subscribed =
-      std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
 
   sensors(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher) {
-
-    auto _result(m_dispatcher.template subscribe<sensors, evt::add_sensor>(
-        "add-sensor", *this, async::handling_priority::medium, 1));
-    if (_result != async::result::OK) {
-      m_logger.err(generic::fmt(_result));
+    auto _result(m_dispatcher.template add_handling<evt::add_sensor>(
+        [&](evt::add_sensor &&p_event) { (*this)(std::move(p_event)); },
+        async::handling_priority::medium,
+        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger}, 1));
+    if (!_result) {
+      TNCT_LOG_ERR(m_logger, "error creating handling for 'add_sensor'");
+      return;
     }
 
-    _result = m_dispatcher.template subscribe<sensors, evt::remove_sensor>(
-        "remove-sensor", *this, async::handling_priority::medium, 1);
-    if (_result != async::result::OK) {
-      m_logger.err(generic::fmt(_result));
+    _result = m_dispatcher.template add_handling<evt::remove_sensor>(
+        [&](evt::remove_sensor &&p_event) { (*this)(std::move(p_event)); },
+        async::handling_priority::medium,
+        container::circular_queue<t_logger, evt::remove_sensor, 10>{m_logger},
+        1);
+    if (!_result) {
+      TNCT_LOG_ERR(m_logger, "error creating handling for 'remove_sensor'");
+      return;
     }
 
-    _result = m_dispatcher.template subscribe<sensors, evt::set_temperature>(
-        "set-temp", *this, async::handling_priority::medium, 1);
-    if (_result != async::result::OK) {
-      m_logger.err(generic::fmt(_result));
+    _result = m_dispatcher.template add_handling<evt::set_temperature>(
+        [&](evt::set_temperature &&p_event) { (*this)(std::move(p_event)); },
+        async::handling_priority::medium,
+        container::circular_queue<t_logger, evt::set_temperature, 10>{m_logger},
+        1);
+    if (!_result) {
+      TNCT_LOG_ERR(m_logger, "error creating handling for 'set_sensor'");
+      return;
     }
   }
 
-  void handle(evt::add_sensor &&p_evt) { on_add_sensor(std::move(p_evt)); }
+  void operator()(evt::add_sensor &&p_evt) { on_add_sensor(std::move(p_evt)); }
 
-  void handle(evt::remove_sensor &&p_evt) {
+  void operator()(evt::remove_sensor &&p_evt) {
     on_remove_sensor(std::move(p_evt));
   }
 
-  void handle(evt::set_temperature &&p_evt) {
+  void operator()(evt::set_temperature &&p_evt) {
     on_set_temperature(std::move(p_evt));
   }
 

@@ -50,8 +50,7 @@ public:
 };
 
 template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_logger, t_event> t_queue,
-          traits::handler<t_event> t_handler>
+          traits::queue<t_event> t_queue, traits::handler<t_event> t_handler>
 class handling_concrete final : public handling<t_event> {
 public:
   using logger = t_logger;

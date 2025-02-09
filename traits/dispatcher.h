@@ -9,7 +9,6 @@
 // #include <tuple>
 
 #include "tenacitas.lib/traits/has_new_operator.h"
-#include "tenacitas.lib/traits/logger.h"
 #include "tenacitas.lib/traits/tuple_contains_only_events.h"
 #include "tenacitas.lib/traits/tuple_contains_tuple.h"
 #include "tenacitas.lib/traits/tuple_like.h"
@@ -17,17 +16,11 @@
 
 namespace tenacitas::lib::traits {
 
-template <typename t, typename t_logger, typename... t_events>
+template <typename t, typename... t_events>
 concept dispatcher = requires {
   typename t::events;
-  typename t::logger;
 }
-&&logger<typename t::logger>
-
-    // &&std::constructible_from<
-    //     std::add_lvalue_reference<std::remove_cv_t<t_logger>>>
-
-    && !std::copy_constructible<t>
+&&!std::copy_constructible<t>
 
     && !std::move_constructible<t>
 

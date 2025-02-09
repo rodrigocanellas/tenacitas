@@ -11,10 +11,10 @@
 #include <string>
 #include <tuple>
 
-#include "tenacitas.lib/async/exp/dispatcher/event_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/handler_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/handler_type_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/handling_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/event_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/handler_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/handler_type_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/handling_id.h"
 
 namespace tenacitas::lib::async::exp {
 

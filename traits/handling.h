@@ -9,7 +9,6 @@
 #include <type_traits>
 
 #include "tenacitas.lib/traits/event.h"
-#include "tenacitas.lib/traits/handler.h"
 #include "tenacitas.lib/traits/logger.h"
 #include "tenacitas.lib/traits/queue.h"
 
@@ -25,7 +24,7 @@ concept handling = requires(t p_t) {
   typename t::handler;
 
   event<typename t::event>;
-  queue<typename t::queue, typename t::logger, typename t::event>;
+  queue<typename t::queue, typename t::event>;
   logger<typename t::logger>;
 };
 

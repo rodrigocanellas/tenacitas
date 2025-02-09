@@ -8,12 +8,12 @@
 
 #include <chrono>
 
-#include "tenacitas.lib/async/exp/dispatcher/event.h"
-#include "tenacitas.lib/async/exp/dispatcher/event_handled.h"
-#include "tenacitas.lib/async/exp/dispatcher/event_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/handler_type_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/handling_id.h"
-#include "tenacitas.lib/async/exp/dispatcher/logger.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/event.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/event_handled.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/event_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/handler_type_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/handling_id.h"
+#include "tenacitas.lib/async/exp/dispatcher_000/logger.h"
 #include "tenacitas.lib/async/result.h"
 #include "tenacitas.lib/format/fmt.h"
 #include "tenacitas.lib/traits/dispatcher.h"
@@ -21,8 +21,7 @@
 namespace tenacitas::lib::async::exp {
 
 template <event_id t_event_id, handler_type_id t_type_id,
-          traits::dispatcher<async::exp::logger, async::exp::event_handled>
-              t_dispatcher>
+          traits::dispatcher<async::exp::event_handled> t_dispatcher>
 struct handler {
   using event = async::exp::event<t_event_id>;
 

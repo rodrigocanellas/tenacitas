@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/sensor_id.h"
-#include "tenacitas.lib/async/example/temperature_sensors_simulator/typ/temperature.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/typ/sensor_id.h"
+#include "tenacitas.lib/async/exp/temperature_sensors_simulator/typ/temperature.h"
 #include "tenacitas.lib/async/handling_priority.h"
 #include "tenacitas.lib/async/result.h"
-#include "tenacitas.lib/generic/fmt.h"
-#include "tenacitas.lib/log/cerr.h"
+#include "tenacitas.lib/container/circular_queue.h"
+#include "tenacitas.lib/format/fmt.h"
 
 using namespace temperature_sensors_simulator;
 using namespace tenacitas::lib;
@@ -19,11 +19,15 @@ MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,
 
   m_logger.set_inf();
 
-  auto _result(
-      m_dispatcher.template subscribe<MainWindow, evt::new_temperature>(
-          "new-temp", *this, async::handling_priority::high, 1));
-  if (_result != async::result::OK) {
-    m_logger.err(generic::fmt(_result));
+  auto _result(m_dispatcher.template add_handling<evt::new_temperature>(
+      [this](evt::new_temperature &&p_event) { (*this)(std::move(p_event)); },
+      async::handling_priority::high,
+      container::circular_queue<logger, evt::new_temperature, 10>{m_logger},
+      1));
+
+  if (!_result) {
+    TNCT_LOG_ERR(m_logger, "error creating handling for 'new_temperature");
+    return;
   }
 }
 
@@ -63,10 +67,9 @@ void MainWindow::on_btnAddSensor_clicked() {
       ui->tblTemperatures->setItem(
           ui->tblTemperatures->rowCount() - 1, 0,
           new QTableWidgetItem(QString::number(static_cast<int>(_sensor_id))));
-      auto _result(m_dispatcher.template publish<MainWindow, evt::add_sensor>(
-          _sensor_id));
+      auto _result(m_dispatcher.template publish<evt::add_sensor>(_sensor_id));
       if (_result != async::result::OK) {
-        m_logger.err(generic::fmt(_result));
+        m_logger.err(format::fmt(_result));
       }
       ui->txtSensorToAdd->setText("");
     }
@@ -82,10 +85,9 @@ void MainWindow::on_btnDeleteSensor_clicked() {
     int _row = findRow(_sensor_id);
     if (_row != -1) {
       ui->tblTemperatures->removeRow(_row);
-      auto _result(
-          m_dispatcher.publish<MainWindow, evt::remove_sensor>(_sensor_id));
+      auto _result(m_dispatcher.publish<evt::remove_sensor>(_sensor_id));
       if (_result != async::result::OK) {
-        m_logger.err(generic::fmt(_result));
+        m_logger.err(format::fmt(_result));
       }
     }
   }
@@ -104,10 +106,10 @@ void MainWindow::on_btnSetTemperature_clicked() {
 
   std::lock_guard<std::mutex> _lock{m_mutex};
   if (findRow(_sensor_id) != -1) {
-    auto _result(m_dispatcher.publish<MainWindow, evt::set_temperature>(
-        _sensor_id, _temperature));
+    auto _result(
+        m_dispatcher.publish<evt::set_temperature>(_sensor_id, _temperature));
     if (_result != async::result::OK) {
-      m_logger.err(generic::fmt(_result));
+      m_logger.err(format::fmt(_result));
     }
   }
 }

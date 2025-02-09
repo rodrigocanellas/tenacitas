@@ -12,18 +12,12 @@
 #include <utility>
 
 #include "tenacitas.lib/traits/has_output_operator.h"
-#include "tenacitas.lib/traits/logger.h"
 
 namespace tenacitas::lib::traits {
 
-template <typename t, typename t_logger, typename t_data>
+template <typename t, typename t_data>
 concept queue = requires(t p_t) {
-  typename t::logger;
   typename t::data;
-
-  logger<typename t::logger>;
-
-  std::is_same_v<typename t::logger, t_logger>;
 
   std::is_same_v<typename t::data, t_data>;
 
@@ -45,8 +39,6 @@ concept queue = requires(t p_t) {
 
   std::is_copy_assignable_v<t>;
 
-  // queue name, logger
-  {t(std::declval<std::add_lvalue_reference_t<t_logger>>())};
   {
     p_t.push(std::move(std::declval<typename t::data>()))
     } -> std::same_as<void>;

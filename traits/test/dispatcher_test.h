@@ -9,7 +9,6 @@
 #include <tuple>
 
 #include "tenacitas.lib/log/cerr.h"
-#include "tenacitas.lib/program/options.h"
 #include "tenacitas.lib/traits/dispatcher.h"
 #include "tenacitas.lib/traits/event.h"
 
@@ -61,9 +60,9 @@ private:
     void *operator new(size_t) = delete;
   };
 
-  using my_dispatcher = dispatcher<event_a>;
+  using my_dispatcher = dispatcher<event_a, event_b>;
 
-  template <traits::dispatcher<log::cerr, event_a, event_b> t_dispatcher>
+  template <traits::dispatcher<event_a, event_b> t_dispatcher>
   void f(t_dispatcher &) {}
 };
 

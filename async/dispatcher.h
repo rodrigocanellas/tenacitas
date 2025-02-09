@@ -32,11 +32,11 @@
 namespace tenacitas::lib::async {
 
 /** \brief Class that allows creation of queues for an event, creation of
-subscribers for an event, and publising of events
+subscribers for an event, and publishing of events
 
 
-The UML below, written in www.plantuml.com, shows the conceptual structure of
-the \p dispatcher and other associated structures
+The UML class diagram below, written in www.plantuml.com, shows the conceptual
+structure of the \p dispatcher and other associated structures
 
 @startuml
 hide empty members
@@ -47,51 +47,42 @@ skinparam linetype ortho
 class dispatcher<t_events...>
 class handling<t_event>
 class queue<t_event>
-class subscriber
+class handler
 class event
 
 publisher -[#green]->  event
-subscriber -[#blue]->  event
+handling -[#blue]->  event
 queue *-- "*" event
-handling "1" *-- "*" subscriber
-handling *-- handling_priority
+handling "1" *-- "*" handler
+handling *-up- handling_priority
 dispatcher *-- "*" handling
 handling *-- queue
-subscriber o-- dispatcher
-publisher o-- dispatcher
+publisher o-left- dispatcher
 
 note "<color green>publishes\n<color blue>subscribes" as legend
 @enduml
 
 The central concept is an \p event, a struct that contains data about an
-interesting event in the application. It can be, for example, a incoming message
-from a network connection, a user menu choice or a temperature coming from a
-sensor.
+interesting event in the application. It can be, for example, an incoming
+message from a network connection, a user menu choice or a temperature coming
+from a sensor.
 
-A \p tenacitas::lib::subscriber is a function object that will
-handle a \p t_event object.
+A \p handling is how one can define which type of \p handler will be executed
+for the \p event.
 
-A \p queue is where \p event objects will be queued for subscibers objects to
-access them. For example, a user menu choice can generate a log message, a
-message sent to a remote program, and to change the color of widget in the user
-interface.
+Each \p handling has its own \p queue of \p event objects, and the
+implementantion of the queue can vary as much as necessary, as far as it
+satisfies the requirements defined by \p traits::queue.
 
-Besides, it is possible to define, for example, one single subscriber for the
-logging queue, five subscribers for the network message queue, and
-two for the widget color changing. When the user makes its menu choice, the five
-\p tenacitas::lib::subscriber objects in the message network queue
-will "fight each other" to get the event to handle; the same for the two \p
-tenacitas::lib::subscriber in the color changing queue.
+A \p handling can have multiples instances of the \p hander type, in case each
+\p event instance can be handled independently from any other \p event.
 
-It is possible to define a handling_priority between the queues, so that an
-event is delivered to the highest handling_priority queue before the others.
+It is possible to define a \p handling_priority for a \p handling, so that
+handlings that have higher priority will have the event copied to its queue
+before a handling with lower priority.
 
-The \p dispatcher class is responsible for managing the creation of
-queue, adding \p tenacitas::lib::subscriber to the queues, and
-publish event objects to the queues.
-
-Please, look at the \p Examples section for examples on how to use these
-functions and classes.
+Please, take a look at the tests and examples for more information on how to use
+the dispatcher class.
 */
 
 template <traits::logger t_logger, traits::event... t_events>
@@ -162,7 +153,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+  template <traits::event t_event, traits::queue<t_event> t_queue,
             traits::handler<t_event> t_handler>
   std::optional<handling_id> add_handling(
       t_handler &&p_handler, t_queue &&p_queue,
@@ -194,7 +185,7 @@ public:
     return std::nullopt;
   }
 
-  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+  template <traits::event t_event, traits::queue<t_event> t_queue,
             traits::handler<t_event> t_handler>
   std::optional<handling_id>
   add_handling(t_handler &&p_handler, handling_priority p_handling_priority,
@@ -227,10 +218,11 @@ public:
     return std::nullopt;
   }
 
-  template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
+  template <traits::event t_event, traits::queue<t_event> t_queue,
             traits::handler<t_event> t_handler>
-  std::optional<handling_id> add_handling(t_handler &&p_handler, t_queue &&p_queue,
-                                       size_t p_num_handlers) {
+  std::optional<handling_id> add_handling(t_handler &&p_handler,
+                                          t_queue &&p_queue,
+                                          size_t p_num_handlers) {
 
     event_is_in_events_tupĺe<t_event>();
 
