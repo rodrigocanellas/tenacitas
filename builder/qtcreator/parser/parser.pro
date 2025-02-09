@@ -5,6 +5,6 @@ TEMPLATE=subdirs
 SUBDIRS=test
 
 HEADERS += \
-        $$BASE_DIR/tenacitas.lib/parser/ini_file.h
+        $$BASE_DIR/tnct/parser/ini_file.h
 
 

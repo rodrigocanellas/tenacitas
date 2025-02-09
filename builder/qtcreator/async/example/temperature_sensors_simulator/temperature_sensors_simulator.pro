@@ -1,10 +1,10 @@
 QT += core widgets
 TEMPLATE = app
-TARGET = tenacitas.lib.async.exp.temperature_sensors_simulator
+TARGET = tnct.async.exp.temperature_sensors_simulator
 CONFIG += example
 include (../../../common.pri)
 
-PRJ_DIR=$$BASE_DIR/tenacitas.lib/async/exp
+PRJ_DIR=$$BASE_DIR/tnct/async/exp
 
 SOURCES += \
     $$PRJ_DIR/temperature_sensors_simulator/uix/qt/main.cpp \

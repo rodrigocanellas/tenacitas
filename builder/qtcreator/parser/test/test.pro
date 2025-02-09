@@ -2,9 +2,9 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.parser.test
+TARGET=tnct.parser.test
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR/tenacitas.lib/parser/test/main.cpp
+SOURCES = $$BASE_DIR/tnct/parser/test/main.cpp
 

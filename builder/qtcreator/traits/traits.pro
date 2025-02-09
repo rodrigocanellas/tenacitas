@@ -4,7 +4,7 @@ TEMPLATE=subdirs
 
 SUBDIRS=test
 
-PRJ_DIR=$$BASE_DIR/tenacitas.lib/traits
+PRJ_DIR=$$BASE_DIR/tnct/traits
 
 HEADERS += \
         $$PRJ_DIR/is_pair.h \

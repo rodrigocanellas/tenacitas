@@ -5,5 +5,5 @@ TEMPLATE=subdirs
 SUBDIRS=test
 
 HEADERS += \
-    $$BASE_DIR/tenacitas.lib/pair/is_pair.h \
-    $$BASE_DIR/tenacitas.lib/pair/pair_output.h
+    $$BASE_DIR/tnct/pair/is_pair.h \
+    $$BASE_DIR/tnct/pair/pair_output.h

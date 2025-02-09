@@ -6,7 +6,7 @@ SUBDIRS=\
      test \
      example
 
-PRJ_DIR=$$BASE_DIR/tenacitas.lib/async
+PRJ_DIR=$$BASE_DIR/tnct/async
 
 HEADERS += \
         $$PRJ_DIR/sleeping_loop.h \

@@ -1,17 +1,17 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.container.test
+TARGET=tnct.container.test
 
 include (../../common.pri)
 
 
-SOURCES = $$BASE_DIR/tenacitas.lib/container/test/main.cpp
+SOURCES = $$BASE_DIR/tnct/container/test/main.cpp
 
-HEADERS = $$BASE_DIR/tenacitas.lib/container/test/matrix_test.h \
-          $$BASE_DIR/tenacitas.lib/container/test/circular_queue_test.h
+HEADERS = $$BASE_DIR/tnct/container/test/matrix_test.h \
+          $$BASE_DIR/tnct/container/test/circular_queue_test.h
 
 DISTFILES += \
-    $$BASE_DIR/tenacitas.lib/container/test/circular_queue_tests_000.ini
+    $$BASE_DIR/tnct/container/test/circular_queue_tests_000.ini
 
 

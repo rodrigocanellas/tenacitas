@@ -2,9 +2,9 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.log.test
+TARGET=tnct.log.test
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR/tenacitas.lib/log/test/main.cpp
+SOURCES = $$BASE_DIR/tnct/log/test/main.cpp
 

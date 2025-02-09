@@ -1,11 +1,11 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tenacitas.lib.traits.test
+TARGET=tnct.traits.test
 
 include (../../common.pri)
 
-TRAITS_TEST=$$BASE_DIR/tenacitas.lib/traits/test
+TRAITS_TEST=$$BASE_DIR/tnct/traits/test
 
 SOURCES = $$TRAITS_TEST/main.cpp
 
