@@ -509,7 +509,8 @@ struct dispatcher_008 {
 
       TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
 
-      auto _result{_dispatcher.publish<event_1>(53)};
+      auto _result{
+          _dispatcher.publish<event_1>(static_cast<decltype(event_1::i)>(53))};
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt(_result));
         return false;

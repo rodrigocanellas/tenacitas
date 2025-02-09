@@ -27,13 +27,13 @@ struct handler {
   using event = async::exp::event<t_event_id>;
 
   handler(logger &p_logger, t_dispatcher &p_dispatcher,
-          const handling_id &p_handling_id,
+          handling_id p_handling_id,
           std::chrono::milliseconds p_sleep_to_simulate_work)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
         m_handling_id(p_handling_id),
         m_sleep_to_simulate_work(p_sleep_to_simulate_work) {}
 
-  void operator()(event &&p_event) {
+  void operator()(event && /*p_event*/) {
     std::this_thread::sleep_for(m_sleep_to_simulate_work);
 
     auto _result{m_dispatcher.template publish<event_handled>(event_handled{
@@ -45,11 +45,11 @@ struct handler {
     }
 
     ++m_num_events;
-    TNCT_LOG_TST(m_logger,
-                 format::fmt('\'', p_event, "', handling ", m_handling_id,
-                             ", handler type #", type_id, ", handler # ",
-                             std::this_thread::get_id(), ": handling event #",
-                             m_num_events));
+    // TNCT_LOG_TST(m_logger,
+    //              format::fmt('\'', p_event, "', handling ", m_handling_id,
+    //                          ", handler type #", type_id, ", handler # ",
+    //                          std::this_thread::get_id(), ": handling event
+    //                          #", m_num_events));
   }
 
   static constexpr async::exp::handler_type_id type_id{t_type_id};

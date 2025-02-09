@@ -5,4 +5,7 @@ CONFIG += example
 include (../../../../common.pri)
 SOURCES = $$BASE_DIR/tenacitas.lib/async/exp/dispatcher/dispatcher_000/main.cpp
 
+DISTFILES += \
+    ../../../../../../async/exp/dispatcher/dispatcher_000/cfg.ini
+
 

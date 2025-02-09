@@ -229,7 +229,7 @@ public:
 
   template <traits::event t_event, traits::queue<t_logger, t_event> t_queue,
             traits::handler<t_event> t_handler>
-  std::optional<handling_id> subscribe(t_handler &&p_handler, t_queue &&p_queue,
+  std::optional<handling_id> add_handling(t_handler &&p_handler, t_queue &&p_queue,
                                        size_t p_num_handlers) {
 
     event_is_in_events_tupĺe<t_event>();
@@ -273,7 +273,7 @@ public:
     }
   }
 
-  /// \brief Cleans all handlings of a certain handling for a certain event
+  /// \brief Cleans all handlers of a certain handling for a certain event
   template <traits::event t_event> result clear(handling_id p_handling_id) {
     event_is_in_events_tupĺe<t_event>();
     try {

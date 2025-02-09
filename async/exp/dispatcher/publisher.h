@@ -44,8 +44,8 @@ struct publisher {
   ~publisher() { m_slepping_loop.stop(); }
 
   void start() {
-    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
-                                       "': starting publisher"));
+    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+    //                                    "': starting publisher"));
     m_slepping_loop.start();
   }
 
@@ -67,9 +67,10 @@ private:
       return;
     }
     ++m_num_events;
-    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
-                                       "': publishing event # ", m_num_events,
-                                       "/", m_total_events));
+    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+    //                                    "': publishing event # ",
+    //                                    m_num_events,
+    //                                    "/", m_total_events));
   }
 
 private:
