@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/traits/dispatcher.h Source File</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/traits/dispatcher.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -22,8 +22,8 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.3</span>
+   <div id="projectname">tenacitas
+   &#160;<span id="projectnumber">0.1.4</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_8895ea8127241f78454aef1994a04607.html">traits</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_687a0c414e603c445974b58ad42c85dc.html">traits</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,97 +74,60 @@ $(function() {
 <div class="contents">
 <a href="../../d7/d41/traits_2dispatcher_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_TRAITS_DISPATCHER_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_TRAITS_DISPATCHER_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TRAITS_DISPATCHER_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_DISPATCHER_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// #include &lt;tuple&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dd/d20/event_8h.html">tenacitas.lib/traits/event.h</a>&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d2/d41/is__smart__ptr_8h.html">tenacitas.lib/traits/is_smart_ptr.h</a>&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../da/d67/traits_2logger_8h.html">tenacitas.lib/traits/logger.h</a>&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d5/dcf/new__operator_8h.html">tenacitas.lib/traits/new_operator.h</a>&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../dc/d25/tuple__like_8h.html">tenacitas.lib/traits/tuple_like.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d0/d67/has__new__operator_8h.html">tnct/traits/has_new_operator.h</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d3/d0d/tuple__contains__only__events_8h.html">tnct/traits/tuple_contains_only_events.h</a>&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d3/d43/tuple__contains__tuple_8h.html">tnct/traits/tuple_contains_tuple.h</a>&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dc/d25/tuple__like_8h.html">tnct/traits/tuple_like.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d21/tuple__size__greather__or__equal_8h.html">tnct/traits/tuple_size_greather_or_equal.h</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html">tenacitas::lib::traits</a> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a> {</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a83e5bb89e3438e40303bb0575dc8be87">   20</a></span>&#160;concept <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a83e5bb89e3438e40303bb0575dc8be87">dispatcher</a> = <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a50f3c32732194e937d4878544395d9aa">requires</a>(t p_t) {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t, <span class="keyword">typename</span>... t_events&gt;</div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a37d8df57ff4b9b37edbac3ee5eaffcef">   20</a></span>&#160;concept <a class="code" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a457fb2dfba249359e97a2850dcf78c15">dispatcher</a> = <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#aeea9fc89404dee07c1b4f1361a1ad71e">requires</a> {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">typename</span> t::events;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  !std::copy_constructible&lt;t&gt;;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;&amp;&amp;!std::copy_constructible&lt;t&gt;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  !std::move_constructible&lt;t&gt;;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    &amp;&amp; !std::move_constructible&lt;t&gt;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  std::default_initializable&lt;t&gt;;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    &amp;&amp; !std::is_copy_assignable_v&lt;t&gt;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  no_new_operator&lt;t&gt;;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    &amp;&amp; !std::is_move_assignable_v&lt;t&gt;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="comment">// t::events is a std::tuple</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  tuple_like&lt;typename t::events&gt;;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  <span class="comment">// every type in t::events is an event</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  []&lt;std::size_t... t_idx&gt;(std::index_sequence&lt;t_idx...&gt;) {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> (<a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">event</a>&lt;std::tuple_element&lt;t_idx, typename t::events&gt;&gt; &amp;&amp; ...);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  }</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  (std::make_index_sequence&lt;std::tuple_size_v&lt;typename t::events&gt;&gt;());</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;};</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    &amp;&amp; !has_new_operator_v&lt;t&gt;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    &amp;&amp; tuple_like&lt;typename t::events&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    &amp;&amp; <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a927f15282b238b550d06b505fcb24ecd">tuple_like</a>&lt;std::tuple&lt;t_events...&gt;&gt;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    &amp;&amp; <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a6777b478d012e827e9b3e75dde1527e6">tuple_size_greather_or_equal</a>&lt;<span class="keyword">typename</span> t::events, std::tuple&lt;t_events...&gt;&gt;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    &amp;&amp; tuple_contains_only_events&lt;typename t::events&gt;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;} <span class="comment">// namespace tenacitas::lib::traits</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    &amp;&amp; <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#aed82f12ba48c9522609a2f69d4b0373b">tuple_contains_only_events</a>&lt;std::tuple&lt;t_events...&gt;&gt;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">// template &lt;typename t, typename t_logger, typename... t_events&gt;</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">// concept dispatcher = requires(t p_t) {</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">//   typename t::events;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//   typename t::logger;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">//   !std::copy_constructible&lt;t&gt;;</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">//   !std::move_constructible&lt;t&gt;;</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">//   std::default_initializable&lt;t&gt;;</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">//   no_new_operator&lt;t&gt;;</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">//   logger&lt;typename t::logger&gt;;</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">//   // t::events is a std::tuple</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">//   tuple_like&lt;typename t::events&gt;;</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">//   // every type in t::events is an event</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment">//   []&lt;std::size_t... t_idx&gt;(std::index_sequence&lt;t_idx...&gt;) {</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">//     return (event&lt;std::tuple_element&lt;t_idx, typename t::events&gt;&gt; &amp;&amp; ...);</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">//   }</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">//   (std::make_index_sequence&lt;std::tuple_size_v&lt;typename t::events&gt;&gt;());</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">//   // every type in t_events is a event</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">//   []&lt;std::size_t... t_idx&gt;(std::index_sequence&lt;t_idx...&gt;) {</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">//     return (event&lt;std::tuple_element&lt;t_idx, std::tuple&lt;t_events...&gt;&gt;&gt; &amp;&amp;</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">//     ...);</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">//   }</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//   (std::make_index_sequence&lt;std::tuple_size_v&lt;std::tuple&lt;t_events...&gt;&gt;&gt;());</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">//   // every event in t_events exists in t::events</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">//   (tuple_traverse&lt;std::tuple&lt;t_events...&gt;&gt;(</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">//        []&lt;std::tuple&lt;t_events...&gt;, size_t t_idx_1&gt;() {</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">//          return tuple_traverse&lt;typename t::events&gt;(</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">//              []&lt;typename t::events, size_t t_idx_2&gt;() {</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">//                // the traverse stops if the lambda returns false</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">//                return !std::equal&lt;</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">//                    std::tuple_element_t&lt;t_idx_1, std::tuple&lt;t_events...&gt;&gt;,</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">//                    std::tuple_element_t&lt;t_idx_2, typename t::events&gt;&gt;;</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">//              });</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">//        }) != -1);</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// };</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aevent_8h_html"><div class="ttname"><a href="../../dd/d20/event_8h.html">event.h</a></div></div>
-<div class="ttc" id="ais__smart__ptr_8h_html"><div class="ttname"><a href="../../d2/d41/is__smart__ptr_8h.html">is_smart_ptr.h</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html">tenacitas::lib::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a50f3c32732194e937d4878544395d9aa"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a50f3c32732194e937d4878544395d9aa">tenacitas::lib::traits::requires</a></div><div class="ttdeci">requires(visit_value_in_tuple&lt; t_func, t_tuple, t_idx &gt;) void tuple_traverse(t_func p_function</div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a650ce519690f252f0ef5b3c38666cb2c"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">tenacitas::lib::traits::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d20/event_8h_source.html#l00014">event.h:14</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a83e5bb89e3438e40303bb0575dc8be87"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a83e5bb89e3438e40303bb0575dc8be87">tenacitas::lib::traits::dispatcher</a></div><div class="ttdeci">concept dispatcher</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d41/traits_2dispatcher_8h_source.html#l00020">dispatcher.h:20</a></div></div>
-<div class="ttc" id="anew__operator_8h_html"><div class="ttname"><a href="../../d5/dcf/new__operator_8h.html">new_operator.h</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html">logger.h</a></div></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    &amp;&amp; <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">tuple_contains_tuple</a>&lt;<span class="keyword">typename</span> t::events, std::tuple&lt;t_events...&gt;&gt;;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;} <span class="comment">// namespace tnct::traits</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aasync_2exp_2dispatcher__000_2main_8cpp_html_a457fb2dfba249359e97a2850dcf78c15"><div class="ttname"><a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a457fb2dfba249359e97a2850dcf78c15">dispatcher</a></div><div class="ttdeci">async::dispatcher&lt; logger, event_a, event_handled &gt; dispatcher</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp_source.html#l00033">main.cpp:33</a></div></div>
+<div class="ttc" id="ahas__new__operator_8h_html"><div class="ttname"><a href="../../d0/d67/has__new__operator_8h.html">has_new_operator.h</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_aeea9fc89404dee07c1b4f1361a1ad71e"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#aeea9fc89404dee07c1b4f1361a1ad71e">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple_contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a6777b478d012e827e9b3e75dde1527e6"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a6777b478d012e827e9b3e75dde1527e6">tnct::traits::tuple_size_greather_or_equal</a></div><div class="ttdeci">concept tuple_size_greather_or_equal</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d21/tuple__size__greather__or__equal_8h_source.html#l00016">tuple_size_greather_or_equal.h:16</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a927f15282b238b550d06b505fcb24ecd"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a927f15282b238b550d06b505fcb24ecd">tnct::traits::tuple_like</a></div><div class="ttdeci">concept tuple_like</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/d25/tuple__like_8h_source.html#l00014">tuple_like.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_addbad48337d3b04dcc1a6a9235568707"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">tnct::traits::tuple_contains_tuple</a></div><div class="ttdeci">concept tuple_contains_tuple</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d43/tuple__contains__tuple_8h_source.html#l00017">tuple_contains_tuple.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_aed82f12ba48c9522609a2f69d4b0373b"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#aed82f12ba48c9522609a2f69d4b0373b">tnct::traits::tuple_contains_only_events</a></div><div class="ttdeci">concept tuple_contains_only_events</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d0d/tuple__contains__only__events_8h_source.html#l00016">tuple_contains_only_events.h:16</a></div></div>
+<div class="ttc" id="atuple__contains__only__events_8h_html"><div class="ttname"><a href="../../d3/d0d/tuple__contains__only__events_8h.html">tuple_contains_only_events.h</a></div></div>
+<div class="ttc" id="atuple__contains__tuple_8h_html"><div class="ttname"><a href="../../d3/d43/tuple__contains__tuple_8h.html">tuple_contains_tuple.h</a></div></div>
 <div class="ttc" id="atuple__like_8h_html"><div class="ttname"><a href="../../dc/d25/tuple__like_8h.html">tuple_like.h</a></div></div>
+<div class="ttc" id="atuple__size__greather__or__equal_8h_html"><div class="ttname"><a href="../../d9/d21/tuple__size__greather__or__equal_8h.html">tuple_size_greather_or_equal.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -9,19 +9,14 @@
 #include <string>
 #include <tuple>
 
-#ifndef TENACITAS_LOG
-#define TENACITAS_LOG
-#endif
-
 #include "tnct/log/cerr.h"
 #include "tnct/program/options.h"
-#include "tnct/traits/event.h"
 #include "tnct/traits/subscriber.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
 
-namespace subscriber_test {
+namespace tnct::traits::subscriber_test {
 
 struct ev0 {
   friend std::ostream &operator<<(std::ostream &p_out, const ev0 &) {
@@ -37,7 +32,7 @@ struct ev1 {
   }
 };
 
-} // namespace subscriber_test
+} // namespace tnct::traits::subscriber_test
 
 struct subscriber_000 {
   static std::string desc() {
@@ -56,12 +51,12 @@ struct subscriber_000 {
 private:
   struct subscriber {
     using events_subscribed =
-        std::tuple<subscriber_test::ev0, subscriber_test::ev1>;
+        std::tuple<traits::subscriber_test::ev0, traits::subscriber_test::ev1>;
     subscriber(log::cerr &p_log) : m_log(p_log) {}
 
-    void handle(subscriber_test::ev0 &&) { m_log.tst("ev0"); }
+    void handle(traits::subscriber_test::ev0 &&) { m_log.tst("ev0"); }
 
-    void handle(subscriber_test::ev1 &&) { m_log.tst("ev1"); }
+    void handle(traits::subscriber_test::ev1 &&) { m_log.tst("ev1"); }
 
   private:
     log::cerr &m_log;
@@ -69,8 +64,8 @@ private:
 
   template <traits::subscriber t_subscriber>
   void test(t_subscriber &p_subscriber) {
-    p_subscriber.handle(subscriber_test::ev0());
-    p_subscriber.handle(subscriber_test::ev1());
+    p_subscriber.handle(traits::subscriber_test::ev0());
+    p_subscriber.handle(traits::subscriber_test::ev1());
   }
 
   log::cerr m_log;

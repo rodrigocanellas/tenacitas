@@ -12,10 +12,8 @@
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensors.h"
 #include "tnct/async/exp/temperature_sensors_simulator/supplier.h"
 
-using namespace temperature_sensors_simulator;
-
 int main(int argc, char *argv[]) {
-  using namespace temperature_sensors_simulator;
+  using namespace tnct::async::exp::temperature_sensors_simulator;
 
   logger _logger;
   dispatcher _dispatcher(_logger);

@@ -1,0 +1,4 @@
+<map id="tnct::async::sleeping_loop::~sleeping_loop" name="tnct::async::sleeping_loop::~sleeping_loop">
+<area shape="rect" id="node1" title="Destructor The loops stops calling the function." alt="" coords="5,5,172,47"/>
+<area shape="rect" id="node2" href="$da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aed8e0f51c4db06d08ff2531fbb00ca60" title="Stops the loop, if it was started." alt="" coords="220,5,376,47"/>
+</map>

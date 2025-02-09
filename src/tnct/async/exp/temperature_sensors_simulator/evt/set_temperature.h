@@ -6,7 +6,7 @@
 #include "tnct/async/exp/temperature_sensors_simulator/typ/sensor_id.h"
 #include "tnct/async/exp/temperature_sensors_simulator/typ/temperature.h"
 
-namespace temperature_sensors_simulator::evt {
+namespace tnct::async::exp::temperature_sensors_simulator::evt {
 
 struct set_temperature {
   set_temperature() = default;
@@ -30,6 +30,6 @@ struct set_temperature {
   typ::temperature temperature;
 };
 
-} // namespace temperature_sensors_simulator::evt
+} // namespace tnct::async::exp::temperature_sensors_simulator::evt
 
 #endif // set_temperature_H

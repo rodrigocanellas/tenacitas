@@ -5,7 +5,7 @@
 
 #include "tnct/async/exp/temperature_sensors_simulator/typ/sensor_id.h"
 
-namespace temperature_sensors_simulator::evt {
+namespace tnct::async::exp::temperature_sensors_simulator::evt {
 
 struct remove_sensor {
   remove_sensor() = default;
@@ -24,6 +24,6 @@ struct remove_sensor {
 
   typ::sensor_id sensor_id;
 };
-} // namespace temperature_sensors_simulator::evt
+} // namespace tnct::async::exp::temperature_sensors_simulator::evt
 
 #endif // remove_sensor_H

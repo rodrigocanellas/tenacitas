@@ -6,7 +6,7 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/supplier.h"
 
-using namespace temperature_sensors_simulator;
+using namespace tnct::async::exp::temperature_sensors_simulator;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

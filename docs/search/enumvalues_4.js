@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['inf_919',['inf',['../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html#a976806ea3b812f339598e404b71aaf24aee7b630995e7a36b6420696989441e2d',1,'tenacitas::lib::log::internal']]]
+  ['inf_1097',['inf',['../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50ccaee7b630995e7a36b6420696989441e2d',1,'tnct::log']]]
 ];

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/log/internal/logger.h File Reference</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/log/internal/logger.h File Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -22,8 +22,8 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.3</span>
+   <div id="projectname">tenacitas
+   &#160;<span id="projectnumber">0.1.4</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_9381a7bbd03577d6d8720c7f35c94ffa.html">log</a></li><li class="navelem"><a class="el" href="../../dir_8d53cbc04535e80fa0d5e268c0c6d5e8.html">internal</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_cd3d90c27c281d20bf53dfcebed30fdb.html">log</a></li><li class="navelem"><a class="el" href="../../dir_8f1ae980209ad07bda09b9a272a58dab.html">internal</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -75,96 +75,94 @@ $(function() {
 <div class="title">logger.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;chrono&gt;</code><br />
-<code>#include &lt;cstddef&gt;</code><br />
-<code>#include &lt;cstdint&gt;</code><br />
+<div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;ctime&gt;</code><br />
-<code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;source_location&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
-<code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../d1/ddf/align_8h_source.html">tenacitas.lib/generic/align.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../da/df1/format__number_8h_source.html">tenacitas.lib/generic/format_number.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../d6/dbe/tuple__output_8h_source.html">tenacitas.lib/generic/tuple_output.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../de/d09/level_8h_source.html">tenacitas.lib/log/internal/level.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../dd/d35/is__pair_8h_source.html">tenacitas.lib/traits/is_pair.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../d9/d1a/is__tuple_8h_source.html">tenacitas.lib/traits/is_tuple.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="../../dc/d10/log__writer_8h_source.html">tenacitas.lib/traits/log_writer.h</a>&gt;</code><br />
+<code>#include &quot;<a class="el" href="../../d1/ddf/align_8h_source.html">tnct/format/align.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../da/df1/format__number_8h_source.html">tnct/format/format_number.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../de/d09/level_8h_source.html">tnct/log/level.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d1/d17/line__header__formater_8h_source.html">tnct/log/line_header_formater.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../dd/d35/is__pair_8h_source.html">tnct/pair/is_pair.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../dc/d10/log__writer_8h_source.html">tnct/traits/log_writer.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d9/d1a/is__tuple_8h_source.html">tnct/traits/is_tuple.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d6/dbe/tuple__output_8h_source.html">tnct/tuple/tuple_output.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for logger.h:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../da/dac/log_2internal_2logger_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8h" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8h" id="a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8h">
-<area shape="rect" title=" " alt="" coords="1164,5,1367,61"/>
-<area shape="rect" title=" " alt="" coords="5,117,72,143"/>
-<area shape="rect" title=" " alt="" coords="205,295,275,322"/>
-<area shape="rect" title=" " alt="" coords="431,295,497,322"/>
-<area shape="rect" title=" " alt="" coords="1404,117,1471,143"/>
-<area shape="rect" title=" " alt="" coords="1495,117,1553,143"/>
-<area shape="rect" title=" " alt="" coords="1577,117,1668,143"/>
-<area shape="rect" title=" " alt="" coords="248,206,328,233"/>
-<area shape="rect" title=" " alt="" coords="1692,117,1756,143"/>
-<area shape="rect" title=" " alt="" coords="1781,117,1905,143"/>
-<area shape="rect" title=" " alt="" coords="981,206,1056,233"/>
-<area shape="rect" title=" " alt="" coords="1929,117,1993,143"/>
-<area shape="rect" title=" " alt="" coords="1821,295,1881,322"/>
-<area shape="rect" href="../../d1/ddf/align_8h.html" title=" " alt="" coords="720,199,875,240"/>
-<area shape="rect" href="../../da/df1/format__number_8h.html" title=" " alt="" coords="653,109,808,151"/>
-<area shape="rect" href="../../d6/dbe/tuple__output_8h.html" title=" " alt="" coords="1073,109,1228,151"/>
-<area shape="rect" href="../../dd/d35/is__pair_8h.html" title=" " alt="" coords="1677,199,1817,240"/>
-<area shape="rect" href="../../d9/d1a/is__tuple_8h.html" title=" " alt="" coords="1513,199,1653,240"/>
-<area shape="rect" href="../../de/d09/level_8h.html" title=" " alt="" coords="198,109,378,151"/>
-<area shape="rect" href="../../dc/d10/log__writer_8h.html" title=" " alt="" coords="2018,109,2158,151"/>
-<area shape="rect" title=" " alt="" coords="352,206,427,233"/>
-<area shape="rect" title=" " alt="" coords="899,206,957,233"/>
-<area shape="rect" href="../../d8/d73/max__str__length_8h.html" title=" " alt="" coords="502,199,695,240"/>
-<area shape="rect" title=" " alt="" coords="567,295,630,322"/>
-<area shape="rect" title=" " alt="" coords="1374,467,1429,493"/>
-<area shape="rect" href="../../d9/d94/pair__like_8h.html" title=" " alt="" coords="1297,199,1437,240"/>
-<area shape="rect" href="../../dc/d25/tuple__like_8h.html" title=" " alt="" coords="1189,288,1329,329"/>
-<area shape="rect" href="../../d9/de0/tuple__traverse_8h.html" title=" " alt="" coords="1081,199,1221,240"/>
-<area shape="rect" title=" " alt="" coords="1701,295,1793,322"/>
-<area shape="rect" title=" " alt="" coords="1353,295,1433,322"/>
-<area shape="rect" href="../../dd/d04/has__tuple__element_8h.html" title=" " alt="" coords="1204,377,1420,419"/>
-<area shape="rect" title=" " alt="" coords="2039,206,2137,233"/>
+<div class="center"><img src="../../da/dac/log_2internal_2logger_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8h" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8h">
+<area shape="rect" title=" " alt="" coords="1217,5,1420,61"/>
+<area shape="rect" title=" " alt="" coords="427,377,498,404"/>
+<area shape="rect" title=" " alt="" coords="1107,206,1173,233"/>
+<area shape="rect" title=" " alt="" coords="1824,117,1883,143"/>
+<area shape="rect" title=" " alt="" coords="861,295,941,322"/>
+<area shape="rect" title=" " alt="" coords="1907,117,1971,143"/>
+<area shape="rect" title=" " alt="" coords="1198,206,1322,233"/>
+<area shape="rect" title=" " alt="" coords="1073,295,1148,322"/>
+<area shape="rect" title=" " alt="" coords="2073,206,2133,233"/>
+<area shape="rect" href="../../d1/ddf/align_8h.html" title=" " alt="" coords="1794,295,1937,322"/>
+<area shape="rect" href="../../da/df1/format__number_8h.html" title=" " alt="" coords="1398,199,1541,240"/>
+<area shape="rect" href="../../de/d09/level_8h.html" title=" " alt="" coords="913,206,1031,233"/>
+<area shape="rect" href="../../d1/d17/line__header__formater_8h.html" title=" " alt="" coords="1394,109,1545,151"/>
+<area shape="rect" href="../../dd/d35/is__pair_8h.html" title=" " alt="" coords="2046,117,2181,143"/>
+<area shape="rect" href="../../dc/d10/log__writer_8h.html" title=" " alt="" coords="2227,117,2392,143"/>
+<area shape="rect" href="../../d9/d1a/is__tuple_8h.html" title=" " alt="" coords="291,452,443,479"/>
+<area shape="rect" href="../../d6/dbe/tuple__output_8h.html" title=" " alt="" coords="609,117,791,143"/>
+<area shape="rect" title=" " alt="" coords="1195,377,1261,404"/>
+<area shape="rect" title=" " alt="" coords="1441,295,1516,322"/>
+<area shape="rect" title=" " alt="" coords="1545,295,1604,322"/>
+<area shape="rect" href="../../d8/d73/max__str__length_8h.html" title=" " alt="" coords="1265,288,1417,329"/>
+<area shape="rect" title=" " alt="" coords="1310,377,1373,404"/>
+<area shape="rect" title=" " alt="" coords="1616,206,1683,233"/>
+<area shape="rect" title=" " alt="" coords="1707,206,1797,233"/>
+<area shape="rect" title=" " alt="" coords="1822,206,1909,233"/>
+<area shape="rect" title=" " alt="" coords="1933,206,1997,233"/>
+<area shape="rect" title=" " alt="" coords="2157,206,2249,233"/>
+<area shape="rect" title=" " alt="" coords="2273,206,2370,233"/>
+<area shape="rect" title=" " alt="" coords="594,527,649,553"/>
+<area shape="rect" href="../../dc/d25/tuple__like_8h.html" title=" " alt="" coords="142,377,306,404"/>
+<area shape="rect" href="../../d9/de0/tuple__traverse_8h.html" title=" " alt="" coords="323,206,517,233"/>
+<area shape="rect" href="../../dd/d62/visit__type__in__tuple_8h.html" title=" " alt="" coords="329,288,482,329"/>
+<area shape="rect" href="../../d5/d36/visit__value__in__tuple_8h.html" title=" " alt="" coords="144,288,304,329"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d0/d30/log_2internal_2logger_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8hdep" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_8lib_2log_2internal_2logger_8hdep">
-<area shape="rect" title=" " alt="" coords="3401,5,3603,61"/>
-<area shape="rect" href="../../da/d1e/cerr_8h.html" title=" " alt="" coords="1806,109,2009,151"/>
-<area shape="rect" href="../../d6/d38/cout_8h.html" title=" " alt="" coords="3627,109,3830,151"/>
-<area shape="rect" href="../../d2/d4d/file_8h.html" title=" " alt="" coords="3401,109,3603,151"/>
-<area shape="rect" href="../../db/d09/async_2example_2executer__000_2main_8cpp.html" title=" " alt="" coords="5,206,215,262"/>
-<area shape="rect" href="../../d7/d65/async_2example_2sleeping__loop__000_2main_8cpp.html" title=" " alt="" coords="239,206,450,262"/>
-<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="475,199,708,269"/>
-<area shape="rect" href="../../d8/dd9/mainwindow_8cpp.html" title=" " alt="" coords="616,436,849,507"/>
-<area shape="rect" href="../../df/d79/async_2test_2dispatcher_8h.html" title=" " alt="" coords="783,206,986,262"/>
-<area shape="rect" href="../../da/d0c/test_2handling_8h.html" title=" " alt="" coords="1010,206,1213,262"/>
-<area shape="rect" href="../../dd/deb/test_2handling__id_8h.html" title=" " alt="" coords="1237,206,1439,262"/>
-<area shape="rect" href="../../da/d86/test_2handlings_8h.html" title=" " alt="" coords="1463,206,1666,262"/>
-<area shape="rect" href="../../d1/d92/test_2sleeping__loop_8h.html" title=" " alt="" coords="1690,206,1893,262"/>
-<area shape="rect" href="../../dc/daa/circular__queue__on__list_8h.html" title=" " alt="" coords="1917,206,2129,262"/>
-<area shape="rect" href="../../dc/da1/test_2matrix_8h.html" title=" " alt="" coords="2154,206,2357,262"/>
-<area shape="rect" href="../../d0/d7f/test__circular__queue_8h.html" title=" " alt="" coords="2381,206,2583,262"/>
-<area shape="rect" href="../../d4/db8/log_2test_2main_8cpp.html" title=" " alt="" coords="3514,206,3717,262"/>
-<area shape="rect" href="../../dd/d43/test_2factorial_8h.html" title=" " alt="" coords="2607,206,2810,262"/>
-<area shape="rect" href="../../d1/d27/parser_2test_2main_8cpp.html" title=" " alt="" coords="2834,206,3037,262"/>
-<area shape="rect" href="../../dc/dff/test_2subscriber_8h.html" title=" " alt="" coords="3061,206,3263,262"/>
-<area shape="rect" href="../../d8/d39/translator_2test_2main_8cpp.html" title=" " alt="" coords="3287,206,3490,262"/>
-<area shape="rect" href="../../de/df3/async_2example_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="345,436,579,507"/>
-<area shape="rect" href="../../d9/d53/mainwindow_8h.html" title=" " alt="" coords="475,317,708,388"/>
-<area shape="rect" href="../../d9/de5/async_2test_2main_8cpp.html" title=" " alt="" coords="1237,325,1439,381"/>
-<area shape="rect" href="../../d1/da2/container_2test_2main_8cpp.html" title=" " alt="" coords="2267,325,2470,381"/>
-<area shape="rect" href="../../d2/dd5/traits_2test_2main_8cpp.html" title=" " alt="" coords="3061,325,3263,381"/>
-<area shape="rect" href="../../d3/df2/test_2queue_8h.html" title=" " alt="" coords="3741,206,3943,262"/>
+<div class="center"><img src="../../d0/d30/log_2internal_2logger_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8hdep" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2log_2internal_2logger_8hdep">
+<area shape="rect" title=" " alt="" coords="3150,5,3353,61"/>
+<area shape="rect" href="../../da/d1e/cerr_8h.html" title=" " alt="" coords="1903,109,2106,151"/>
+<area shape="rect" href="../../d6/d38/cout_8h.html" title=" " alt="" coords="3148,109,3355,151"/>
+<area shape="rect" href="../../d2/d4d/file_8h.html" title=" " alt="" coords="3379,109,3582,151"/>
+<area shape="rect" href="../../d4/da3/async_2exp_2dispatcher__000_2logger_8h.html" title=" " alt="" coords="156,206,365,262"/>
+<area shape="rect" href="../../dd/d33/async_2exp_2executer__000_2main_8cpp.html" title=" " alt="" coords="390,206,595,262"/>
+<area shape="rect" href="../../d1/d9b/async_2exp_2sleeping__loop__000_2main_8cpp.html" title=" " alt="" coords="620,206,859,262"/>
+<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="883,199,1086,269"/>
+<area shape="rect" href="../../da/d55/async_2test_2dispatcher__test_8h.html" title=" " alt="" coords="1110,206,1313,262"/>
+<area shape="rect" href="../../de/d54/handling__id__test_8h.html" title=" " alt="" coords="1337,206,1539,262"/>
+<area shape="rect" href="../../d2/d66/handling__test_8h.html" title=" " alt="" coords="1563,206,1766,262"/>
+<area shape="rect" href="../../de/d9d/sleeping__loop__test_8h.html" title=" " alt="" coords="1790,206,1993,262"/>
+<area shape="rect" href="../../d7/d66/circular__queue__test_8h.html" title=" " alt="" coords="2017,206,2219,262"/>
+<area shape="rect" href="../../d4/d6d/matrix__test_8h.html" title=" " alt="" coords="2243,206,2446,262"/>
+<area shape="rect" href="../../d4/db8/log_2test_2main_8cpp.html" title=" " alt="" coords="3379,206,3582,262"/>
+<area shape="rect" href="../../d1/d27/parser_2test_2main_8cpp.html" title=" " alt="" coords="2470,206,2673,262"/>
+<area shape="rect" href="../../de/d76/traits_2test_2dispatcher__test_8h.html" title=" " alt="" coords="2697,206,2899,262"/>
+<area shape="rect" href="../../d9/da3/subscriber__test_8h.html" title=" " alt="" coords="2923,206,3126,262"/>
+<area shape="rect" href="../../d8/d39/translator_2test_2main_8cpp.html" title=" " alt="" coords="3150,206,3355,262"/>
+<area shape="rect" href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h.html" title=" " alt="" coords="5,325,223,381"/>
+<area shape="rect" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html" title=" " alt="" coords="152,443,369,499"/>
+<area shape="rect" href="../../d5/d03/async_2exp_2dispatcher__000_2publisher_8h.html" title=" " alt="" coords="299,325,527,381"/>
+<area shape="rect" href="../../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="806,436,1009,507"/>
+<area shape="rect" href="../../d9/d53/mainwindow_8h.html" title=" " alt="" coords="945,317,1176,388"/>
+<area shape="rect" href="../../d8/dd9/mainwindow_8cpp.html" title=" " alt="" coords="1033,436,1278,507"/>
+<area shape="rect" href="../../d9/de5/async_2test_2main_8cpp.html" title=" " alt="" coords="1450,325,1653,381"/>
+<area shape="rect" href="../../d1/da2/container_2test_2main_8cpp.html" title=" " alt="" coords="2130,325,2333,381"/>
 </map>
 </div>
 </div>
@@ -172,19 +170,17 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html">tenacitas::lib::log::internal::logger&lt; t_log_writer &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread safe writing of log messages.  <a href="../../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger&lt; t_log_writer &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread safe writing of log messages.  <a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:da/dd0/namespacetenacitas"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dd0/namespacetenacitas.html">tenacitas</a></td></tr>
+<tr class="memitem:d4/d18/namespacetnct"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d18/namespacetnct.html">tnct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d1/d8d/namespacetenacitas_1_1lib"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a></td></tr>
+<tr class="memitem:df/dce/namespacetnct_1_1log"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/dce/namespacetnct_1_1log.html">tnct::log</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d1/d23/namespacetenacitas_1_1lib_1_1log"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d23/namespacetenacitas_1_1lib_1_1log.html">tenacitas::lib::log</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html">tenacitas::lib::log::internal</a></td></tr>
+<tr class="memitem:d4/da3/namespacetnct_1_1log_1_1internal"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/da3/namespacetnct_1_1log_1_1internal.html">tnct::log::internal</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->

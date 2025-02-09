@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['b_449',['b',['../d2/de2/structb.html',1,'']]]
+  ['basic_5flog_531',['basic_log',['../d1/d85/structbasic__log.html',1,'']]]
 ];

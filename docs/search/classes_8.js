@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['log_5f000_563',['log_000',['../df/d04/structlog__000.html',1,'']]],
-  ['logger_564',['logger',['../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html',1,'tenacitas::lib::log::internal']]]
+  ['log_5f000_652',['log_000',['../df/d04/structlog__000.html',1,'']]],
+  ['logger_653',['logger',['../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html',1,'tnct::log::internal']]]
 ];

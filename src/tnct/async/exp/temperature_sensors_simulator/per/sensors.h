@@ -17,7 +17,7 @@
 
 using namespace std::chrono_literals;
 
-namespace temperature_sensors_simulator::per {
+namespace tnct::async::exp::temperature_sensors_simulator::per {
 template <traits::logger t_logger, traits::dispatcher t_dispatcher>
 requires(traits::tuple_contains_tuple<
          typename t_dispatcher::events,
@@ -119,6 +119,6 @@ private:
   std::mutex m_mutex;
 };
 
-} // namespace temperature_sensors_simulator::per
+} // namespace tnct::async::exp::temperature_sensors_simulator::per
 
 #endif // SENSORS_H

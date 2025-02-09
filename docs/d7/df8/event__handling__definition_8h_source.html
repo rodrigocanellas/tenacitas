@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/traits/event_handling_definition.h Source File</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/traits/event_handling_definition.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -22,8 +22,8 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.3</span>
+   <div id="projectname">tenacitas
+   &#160;<span id="projectnumber">0.1.4</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_8895ea8127241f78454aef1994a04607.html">traits</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_687a0c414e603c445974b58ad42c85dc.html">traits</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -79,21 +79,21 @@ $(function() {
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/async/event_handler.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/async/event_priority.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../db/db5/handling__id_8h.html">tenacitas.lib/async/handling_id.h</a>&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/sta/event.h&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/sta/is_pair.h&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;tenacitas.lib/sta/queue.h&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/async/event_handler.h&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/async/event_priority.h&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/async/handling_id.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/sta/event.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/sta/is_pair.h&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;tenacitas.lib/sta/queue.h&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">   18</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a> {</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="../../da/dd0/namespacetenacitas.html">   18</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a> {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// Define handling_definition concept</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a4f9d6ca3b8d29801c01dc3dd77f8e318">   22</a></span>&#160;concept <a class="code" href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a4f9d6ca3b8d29801c01dc3dd77f8e318">event_handling_definition</a> =</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="../../d8/d25/namespacetemperature__sensors__simulator_1_1per.html#a5fef83a37596c1675688845bb950c149">requires</a>(t p_t, <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">t::event</a> &amp;evt_lvalue, std::ostream &amp;out) {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="../../d8/d25/namespacetemperature__sensors__simulator_1_1per.html#a5fef83a37596c1675688845bb950c149">requires</a>(t p_t, <span class="keyword">const</span> <span class="keyword">typename</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a1647c288262daaed2f73942686b2d190">t::event</a> &amp;evt_lvalue, std::ostream &amp;out) {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">typename</span> <a class="code" href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">t::event</a>;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">typename</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a1647c288262daaed2f73942686b2d190">t::event</a>;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <a class="code" href="../../d8/d25/namespacetemperature__sensors__simulator_1_1per.html#a5fef83a37596c1675688845bb950c149">requires</a> sta::event&lt;typename t::event&gt;;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  {p_t.id};</div>
@@ -137,11 +137,10 @@ $(function() {
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">// namespace tenacitas::lib::sta</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// EVENTS_DEFINITION_H</span></div>
-<div class="ttc" id="ahandling__id_8h_html"><div class="ttname"><a href="../../db/db5/handling__id_8h.html">handling_id.h</a></div></div>
 <div class="ttc" id="anamespacetemperature__sensors__simulator_1_1per_html_a5fef83a37596c1675688845bb950c149"><div class="ttname"><a href="../../d8/d25/namespacetemperature__sensors__simulator_1_1per.html#a5fef83a37596c1675688845bb950c149">temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple_contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
 <div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html">tenacitas::lib::sta</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/df8/event__handling__definition_8h_source.html#l00018">event_handling_definition.h:18</a></div></div>
 <div class="ttc" id="anamespacetenacitas_1_1lib_1_1sta_html_a4f9d6ca3b8d29801c01dc3dd77f8e318"><div class="ttname"><a href="../../dc/dfa/namespacetenacitas_1_1lib_1_1sta.html#a4f9d6ca3b8d29801c01dc3dd77f8e318">tenacitas::lib::sta::event_handling_definition</a></div><div class="ttdeci">concept event_handling_definition</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/df8/event__handling__definition_8h_source.html#l00022">event_handling_definition.h:22</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1traits_html_a650ce519690f252f0ef5b3c38666cb2c"><div class="ttname"><a href="../../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a650ce519690f252f0ef5b3c38666cb2c">tenacitas::lib::traits::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d20/event_8h_source.html#l00014">event.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a1647c288262daaed2f73942686b2d190"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a1647c288262daaed2f73942686b2d190">tnct::traits::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d89/traits_2event_8h_source.html#l00014">event.h:14</a></div></div>
 <div class="ttc" id="atest_2queue_8h_html_ab24d99e24db0e3010c1fbcb2d3ec659f"><div class="ttname"><a href="../../d3/df2/test_2queue_8h.html#ab24d99e24db0e3010c1fbcb2d3ec659f">queue</a></div><div class="ttdeci">container::circular_queue&lt; uint16_t, supplier &gt; queue</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/df2/test_2queue_8h_source.html#l00019">queue.h:19</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

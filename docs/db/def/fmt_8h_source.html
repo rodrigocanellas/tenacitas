@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: /home/rodrigo/development/tenacitas.lib/generic/fmt.h Source File</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/format/fmt.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -22,8 +22,8 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.3</span>
+   <div id="projectname">tenacitas
+   &#160;<span id="projectnumber">0.1.4</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_6646d5d5edc224bb18b97caffb429c3d.html">generic</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_b40440698e5a6ddde6d1360f9f8dc00f.html">format</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,26 +74,31 @@ $(function() {
 <div class="contents">
 <a href="../../db/def/fmt_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TENACITAS_LIB_GENERIC_FMT_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TENACITAS_LIB_GENERIC_FMT_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_FORMAT_FMT_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_FORMAT_FMT_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d6/da6/chrono__output_8h.html">tenacitas.lib/generic/chrono_output.h</a>&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="../../d6/dbe/tuple__output_8h.html">tenacitas.lib/generic/tuple_output.h</a>&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html">tenacitas::lib::generic</a> {</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>... t_params&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> std::string fmt(t_params &amp;&amp;...p_params) {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  std::ostringstream _stream;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  ((_stream &lt;&lt; p_params), ...);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;}</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;} <span class="comment">// namespace tenacitas::lib::generic</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d0/dfd/pair__output_8h.html">tnct/pair/pair_output.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d6/da6/chrono__output_8h.html">tnct/time/chrono_output.h</a>&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d6/dbe/tuple__output_8h.html">tnct/tuple/tuple_output.h</a>&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../dd/dd1/namespacetnct_1_1format.html">tnct::format</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span>... t_params&gt;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> std::string fmt(t_params &amp;&amp;...p_params) {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  std::ostringstream _stream;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  ((_stream &lt;&lt; p_params), ...);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keywordflow">return</span> _stream.str();</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;}</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;} <span class="comment">// namespace tnct::format</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="achrono__output_8h_html"><div class="ttname"><a href="../../d6/da6/chrono__output_8h.html">chrono_output.h</a></div></div>
-<div class="ttc" id="anamespacetenacitas_1_1lib_1_1generic_html"><div class="ttname"><a href="../../d6/df8/namespacetenacitas_1_1lib_1_1generic.html">tenacitas::lib::generic</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00009">align.h:9</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1format_html"><div class="ttname"><a href="../../dd/dd1/namespacetnct_1_1format.html">tnct::format</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/ddf/align_8h_source.html#l00009">align.h:9</a></div></div>
+<div class="ttc" id="apair__output_8h_html"><div class="ttname"><a href="../../d0/dfd/pair__output_8h.html">pair_output.h</a></div></div>
 <div class="ttc" id="atuple__output_8h_html"><div class="ttname"><a href="../../d6/dbe/tuple__output_8h.html">tuple_output.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

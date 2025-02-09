@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['has_5fhandle_5fmethod_849',['has_handle_method',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a63a71b0ff3d5486f5db384b967b4ec05',1,'tenacitas::lib::traits']]],
-  ['has_5ftuple_5felement_850',['has_tuple_element',['../d6/d4e/namespacetenacitas_1_1lib_1_1traits_1_1internal.html#ac88f0d6426c9b4f9bd8d0e589d12785e',1,'tenacitas::lib::traits::internal']]]
+  ['event_995',['event',['../db/da4/namespacetnct_1_1traits.html#a1647c288262daaed2f73942686b2d190',1,'tnct::traits']]],
+  ['event_5fid_996',['event_id',['../d3/dbd/structtnct_1_1async_1_1exp_1_1event__handled.html#a36ad78ce1f6e2799b08a83fd7ffc6d1d',1,'tnct::async::exp::event_handled::event_id()'],['../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html#a59a1bc3365bd3c6b73e1916a4ce19b00',1,'tnct::async::exp::handler::event_id()']]]
 ];

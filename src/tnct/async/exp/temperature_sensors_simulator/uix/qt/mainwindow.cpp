@@ -8,7 +8,7 @@
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 
-using namespace temperature_sensors_simulator;
+using namespace tnct::async::exp::temperature_sensors_simulator;
 using namespace tnct;
 
 MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,

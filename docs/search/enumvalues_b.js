@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['unidentified_929',['UNIDENTIFIED',['../d2/d86/namespacetenacitas_1_1lib_1_1async.html#a4eef82b6d0c3bdc8996ddab48e124824aa5af0fad68409313b83495fc786909e8',1,'tenacitas::lib::async']]]
+  ['very_5fhigh_1107',['very_high',['../d9/d3a/namespacetnct_1_1async.html#afb3ea0354b89bfe846110791b15e636caaa4cea18ae7516f9a3c28d597055082f',1,'tnct::async']]],
+  ['very_5flow_1108',['very_low',['../d9/d3a/namespacetnct_1_1async.html#afb3ea0354b89bfe846110791b15e636cab7619bc8e14fe34d78820f979605ee8b',1,'tnct::async']]]
 ];

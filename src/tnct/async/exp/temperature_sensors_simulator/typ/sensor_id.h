@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace temperature_sensors_simulator::typ {
+namespace tnct::async::exp::temperature_sensors_simulator::typ {
 
 using sensor_id = uint16_t;
 

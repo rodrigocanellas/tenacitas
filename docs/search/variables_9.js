@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue_865',['queue',['../d4/d1f/namespacetenacitas_1_1lib_1_1traits.html#a0f38ff64e4eefc9d08fcfa24a8620b24',1,'tenacitas::lib::traits']]]
+  ['num_5fhandlings_1018',['num_handlings',['../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ab88fbc4377968fdc897fd09689437888',1,'main.cpp']]]
 ];

@@ -1,8 +1,8 @@
-# tenacitas.lib
+# tenacitas
 C++ 20 header only libraries
 
 
-`tenacitas.lib` is the result of my continuous study of C++ and Software Design.
+`tenacitas` is the result of my continuous study of C++ and Software Design.
 
 It is made up of the following `namespace`s:
 
@@ -11,29 +11,26 @@ It is made up of the following `namespace`s:
 
 **container** - a simple `matrix` and a `circular_queue` that expands as necessary.
 
-**generic** - commom classes for generic purposes, like `fmt` or `tester`
-
 **log** - another log class
-
-**math** - so far, a text-book `factorial` function
 
 **parser** - a `.ini` parser is the first class of this namespace
 
-**program** - classes related to a program, like `options`, a `exit` event and a `closer` classes , used with `async::dispatche` allows asynchronous console programs.
+**program** - classes related to a program, like `options`, a `exit` event and a `closer` classes , used with `async::dispatcher` allows asynchronous console programs.
 
 **traits** - type traits and some very simple meta programming
 
 **translator** - I could not resist trying to implement a `translator` structure
 
+And some other namespaces.
 
 # using it
-As `tenacitas.lib` is a header only "library", there is no need to build it, all you need is to add the directory `...tenacitas.lib` to the include path of your compiler. In `gcc` it would be `-Isome-path/tenacitas.lib`
+As `tenacitas` is a header only "library", there is no need to build it, all you need is to add the directory `...tenacitas/src` to the include path of your compiler. In `gcc` it would be `-Isome-path/tenacitas/src`
 
 # examples and tests
-The examples and tests are, for now, the best source of documentation. If you want to build them, you can use `QtCreator`(I am using version 13.0.1) and open the `tenacitas.lib/builder/qtcreator/tenacitas.lib.pro` file, or create a project file you like the most. You will also need to clone the `https://github.com/rodrigocanellas/tenacitas.bld` side by side with `tenacitas.lib` directory.
+The examples and tests are, for now, the best source of documentation. If you want to build them, you can use `QtCreator`(I am using version 13.0.1) and open the `tenacitas/builder/qtcreator/tenacitas.pro` file, or create a project file you like the most.
 
 # dependencies
-`tenacitas.lib` does not depend on any other software
+`tenacitas` does not depend on any other software
 
 # contributions
 I would be most pleased to read you comments and suggestions, as long as they are presented in a polite way.

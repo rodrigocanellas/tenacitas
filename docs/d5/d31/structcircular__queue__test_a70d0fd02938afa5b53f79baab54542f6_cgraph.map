@@ -1,9 +1,9 @@
 <map id="circular_queue_test::operator()" name="circular_queue_test::operator()">
 <area shape="rect" id="node1" title=" " alt="" coords="5,169,155,211"/>
-<area shape="rect" id="node2" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#af787612f0558a8d35e5ff8a93cfd58a0" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="227,5,381,47"/>
-<area shape="rect" id="node3" href="$dd/d43/structtenacitas_1_1lib_1_1program_1_1options.html#ab289e6b52625c252012c5c96f9a65be6" title="Retrieves the bool parameter, if possible." alt="" coords="209,71,399,112"/>
-<area shape="rect" id="node4" href="$dd/d43/structtenacitas_1_1lib_1_1program_1_1options.html#a9a83c43070ce5a7187e88aec3d4c49d3" title="Retrieves the values of a parameter." alt="" coords="213,136,395,177"/>
-<area shape="rect" id="node5" href="$dd/d43/structtenacitas_1_1lib_1_1program_1_1options.html#a858359afcd8eca46b798820f7c6066ed" title="Retrieves a single parameter, if possible." alt="" coords="203,201,405,243"/>
-<area shape="rect" id="node6" href="$dc/d68/structtenacitas_1_1lib_1_1parser_1_1ini__file.html#ab382c4a480cd7f6ced789c501962e6f5" title=" " alt="" coords="227,267,381,308"/>
-<area shape="rect" id="node7" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aeba9cf39c8640aebffd6752059201e09" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="227,332,381,373"/>
+<area shape="rect" id="node2" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="219,5,353,47"/>
+<area shape="rect" id="node3" href="$db/da3/structtnct_1_1program_1_1options.html#a32a3347d6016dbacfabcba20a3a1cd85" title="Retrieves the bool parameter, if possible." alt="" coords="203,71,369,112"/>
+<area shape="rect" id="node4" href="$db/da3/structtnct_1_1program_1_1options.html#a2fb579c2db2ddd89923121af4dd08363" title="Retrieves the values of a parameter." alt="" coords="203,136,369,177"/>
+<area shape="rect" id="node5" href="$db/da3/structtnct_1_1program_1_1options.html#ac43acf6b90d3d1e5c89e0f2fe36af06e" title="Retrieves a single parameter, if possible." alt="" coords="203,201,369,243"/>
+<area shape="rect" id="node6" href="$dd/d7f/structtnct_1_1parser_1_1ini__file.html#ab470ef7b294108f36815b893ce71115f" title=" " alt="" coords="213,267,359,308"/>
+<area shape="rect" id="node7" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a05aa125514f2eab826a3e6cd290862a1" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="219,332,353,373"/>
 </map>

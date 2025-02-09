@@ -1,5 +1,5 @@
 <map id="cout_log::operator()" name="cout_log::operator()">
-<area shape="rect" id="node1" title=" " alt="" coords="5,57,156,84"/>
-<area shape="rect" id="node2" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aed1fa83dfcaede6eabb6e7b569d58d57" title=" " alt="" coords="213,5,350,61"/>
-<area shape="rect" id="node3" href="$d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#aeba9cf39c8640aebffd6752059201e09" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="204,86,359,127"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,46,156,73"/>
+<area shape="rect" id="node2" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#ab16f526dfdcb0f7f02a4ff3d6f7043d5" title=" " alt="" coords="204,5,337,47"/>
+<area shape="rect" id="node3" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a05aa125514f2eab826a3e6cd290862a1" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="204,71,337,112"/>
 </map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['no_5flog_924',['no_log',['../d7/d44/namespacetenacitas_1_1lib_1_1log_1_1internal.html#a976806ea3b812f339598e404b71aaf24aaea5bde16df000c5ec8699df8cfd0f28',1,'tenacitas::lib::log::internal']]]
+  ['no_5flog_1102',['no_log',['../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50ccaaea5bde16df000c5ec8699df8cfd0f28',1,'tnct::log']]]
 ];

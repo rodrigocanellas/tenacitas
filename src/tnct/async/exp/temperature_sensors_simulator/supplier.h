@@ -8,15 +8,14 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/log/cerr.h"
 
-namespace temperature_sensors_simulator {
+namespace tnct::async::exp::temperature_sensors_simulator {
 
 using logger = tnct::log::cerr;
 
 using dispatcher =
-    tnct::async::dispatcher<logger, evt::add_sensor,
-                                      evt::new_temperature, evt::remove_sensor,
-                                      evt::set_temperature>;
+    tnct::async::dispatcher<logger, evt::add_sensor, evt::new_temperature,
+                            evt::remove_sensor, evt::set_temperature>;
 
-} // namespace temperature_sensors_simulator
+} // namespace tnct::async::exp::temperature_sensors_simulator
 
 #endif

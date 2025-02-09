@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas.lib: MainWindow Class Reference</title>
+<title>tenacitas: MainWindow Class Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -22,8 +22,8 @@
  <tr style="height: 56px;">
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">tenacitas.lib
-   &#160;<span id="projectnumber">0.1.3</span>
+   <div id="projectname">tenacitas
+   &#160;<span id="projectnumber">0.1.4</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -65,7 +65,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="../../d0/d54/class_main_window-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -93,59 +92,19 @@ Collaboration diagram for MainWindow:</div>
 </map>
 <center><span class="legend">[<a href="../../graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a8afde9f47675cada2e350cb271d89a6c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#a8afde9f47675cada2e350cb271d89a6c">events_subscribed</a> = std::tuple&lt; <a class="el" href="../../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &gt;</td></tr>
-<tr class="separator:a8afde9f47675cada2e350cb271d89a6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10f73f3867e425d0a9a448e632885057"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#a10f73f3867e425d0a9a448e632885057">events_published</a> = std::tuple&lt; <a class="el" href="../../de/d3c/structtemperature__sensors__simulator_1_1evt_1_1add__sensor.html">evt::add_sensor</a>, <a class="el" href="../../d6/d6c/structtemperature__sensors__simulator_1_1evt_1_1remove__sensor.html">evt::remove_sensor</a>, <a class="el" href="../../de/d0f/structtemperature__sensors__simulator_1_1evt_1_1set__temperature.html">evt::set_temperature</a> &gt;</td></tr>
-<tr class="separator:a10f73f3867e425d0a9a448e632885057"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa97573eb4b0f8f2157ffbf8987872253"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow</a> (<a class="el" href="../../d7/d65/async_2example_2sleeping__loop__000_2main_8cpp.html#ab0cd0c1ac411fd0abe700047d636db72">logger</a> &amp;p_logger, <a class="el" href="../../d7/ddf/namespacetemperature__sensors__simulator.html#a7a3b38c83826ef60e979d4f3ef6bd662">dispatcher</a> &amp;p_dispatcher, QWidget *parent=nullptr)</td></tr>
+<tr class="memitem:aa97573eb4b0f8f2157ffbf8987872253"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow</a> (<a class="el" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a44559d859956b89d6f21f75f2e1d7a87">logger</a> &amp;p_logger, <a class="el" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a457fb2dfba249359e97a2850dcf78c15">dispatcher</a> &amp;p_dispatcher, QWidget *parent=nullptr)</td></tr>
 <tr class="separator:aa97573eb4b0f8f2157ffbf8987872253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae98d00a93bc118200eeef9f9bba1dba7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">~MainWindow</a> ()</td></tr>
 <tr class="separator:ae98d00a93bc118200eeef9f9bba1dba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4e9ebd43adb2b973d73f4a4500ba988"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#af4e9ebd43adb2b973d73f4a4500ba988">handle</a> (<a class="el" href="../../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;p_evt)</td></tr>
-<tr class="separator:af4e9ebd43adb2b973d73f4a4500ba988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cadaaab7a6dce8bc61a2f6a04c6af3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/dc6/class_main_window.html#a6cadaaab7a6dce8bc61a2f6a04c6af3a">operator()</a> (<a class="el" href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;p_evt)</td></tr>
+<tr class="separator:a6cadaaab7a6dce8bc61a2f6a04c6af3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00022">22</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
-</div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a10f73f3867e425d0a9a448e632885057"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10f73f3867e425d0a9a448e632885057">&#9670;&nbsp;</a></span>events_published</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="../../d9/dc6/class_main_window.html#a10f73f3867e425d0a9a448e632885057">MainWindow::events_published</a> =  std::tuple&lt;<a class="el" href="../../de/d3c/structtemperature__sensors__simulator_1_1evt_1_1add__sensor.html">evt::add_sensor</a>, <a class="el" href="../../d6/d6c/structtemperature__sensors__simulator_1_1evt_1_1remove__sensor.html">evt::remove_sensor</a>, <a class="el" href="../../de/d0f/structtemperature__sensors__simulator_1_1evt_1_1set__temperature.html">evt::set_temperature</a>&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00027">27</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
-
-</div>
-</div>
-<a id="a8afde9f47675cada2e350cb271d89a6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8afde9f47675cada2e350cb271d89a6c">&#9670;&nbsp;</a></span>events_subscribed</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="../../d9/dc6/class_main_window.html#a8afde9f47675cada2e350cb271d89a6c">MainWindow::events_subscribed</a> =  std::tuple&lt;<a class="el" href="../../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a>&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00026">26</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00017">17</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa97573eb4b0f8f2157ffbf8987872253"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa97573eb4b0f8f2157ffbf8987872253">&#9670;&nbsp;</a></span>MainWindow()</h2>
 
@@ -155,13 +114,13 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">MainWindow::MainWindow </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../d7/d65/async_2example_2sleeping__loop__000_2main_8cpp.html#ab0cd0c1ac411fd0abe700047d636db72">logger</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a44559d859956b89d6f21f75f2e1d7a87">logger</a> &amp;&#160;</td>
           <td class="paramname"><em>p_logger</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="../../d7/ddf/namespacetemperature__sensors__simulator.html#a7a3b38c83826ef60e979d4f3ef6bd662">dispatcher</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a457fb2dfba249359e97a2850dcf78c15">dispatcher</a> &amp;&#160;</td>
           <td class="paramname"><em>p_dispatcher</em>, </td>
         </tr>
         <tr>
@@ -184,9 +143,8 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d9/dc6/class_main_window_aa97573eb4b0f8f2157ffbf8987872253_cgraph.png" border="0" usemap="#ad9/dc6/class_main_window_aa97573eb4b0f8f2157ffbf8987872253_cgraph" alt=""/></div>
 <map name="ad9/dc6/class_main_window_aa97573eb4b0f8f2157ffbf8987872253_cgraph" id="ad9/dc6/class_main_window_aa97573eb4b0f8f2157ffbf8987872253_cgraph">
-<area shape="rect" title=" " alt="" coords="5,50,203,77"/>
-<area shape="rect" href="../../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#af787612f0558a8d35e5ff8a93cfd58a0" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="251,5,405,47"/>
-<area shape="rect" href="../../d0/d62/classtenacitas_1_1lib_1_1log_1_1internal_1_1logger.html#a03d1e1733883ee3e4f211a65611aec43" title=" " alt="" coords="259,71,397,127"/>
+<area shape="rect" title=" " alt="" coords="5,13,203,39"/>
+<area shape="rect" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a2f9b8f17624921b68a2eeef43443f631" title=" " alt="" coords="251,5,384,47"/>
 </map>
 </div>
 
@@ -207,13 +165,13 @@ Here is the call graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html#l00030">30</a> of file <a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html">mainwindow.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html#l00034">34</a> of file <a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html">mainwindow.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af4e9ebd43adb2b973d73f4a4500ba988"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4e9ebd43adb2b973d73f4a4500ba988">&#9670;&nbsp;</a></span>handle()</h2>
+<a id="a6cadaaab7a6dce8bc61a2f6a04c6af3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cadaaab7a6dce8bc61a2f6a04c6af3a">&#9670;&nbsp;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,9 +180,9 @@ Here is the call graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void MainWindow::handle </td>
+          <td class="memname">void MainWindow::operator() </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../d4/d43/structtemperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>p_evt</em></td><td>)</td>
           <td></td>
         </tr>
@@ -236,13 +194,13 @@ Here is the call graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00035">35</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d53/mainwindow_8h_source.html#l00025">25</a> of file <a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/rodrigo/development/tenacitas.lib/async/example/temperature_sensors_simulator/uix/qt/<a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a></li>
-<li>/home/rodrigo/development/tenacitas.lib/async/example/temperature_sensors_simulator/uix/qt/<a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html">mainwindow.cpp</a></li>
+<li>/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/uix/qt/<a class="el" href="../../d9/d53/mainwindow_8h_source.html">mainwindow.h</a></li>
+<li>/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/uix/qt/<a class="el" href="../../d8/dd9/mainwindow_8cpp_source.html">mainwindow.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
