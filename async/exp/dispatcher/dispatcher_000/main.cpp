@@ -202,12 +202,12 @@ int main(int argc, char **argv) {
           ++_total_handled;
           _results.increment(p_event.event_id, p_event.handling_id,
                              p_event.handler_type_id, p_event.handler_id);
-          if (_total_handled >= _total_to_be_handled) {
-            _cond_all_handled.notify_all();
-          }
           if ((_total_handled % _percentage_to_display) == 0) {
             TNCT_LOG_TST(_logger, format::fmt("handled ", _total_handled, '/',
                                               _total_to_be_handled));
+          }
+          if (_total_handled >= _total_to_be_handled) {
+            _cond_all_handled.notify_all();
           }
         },
         queue_event_handled{_logger});
@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
 
     const std::chrono::duration<double> _diff = _end - _start;
 
-    TNCT_LOG_TST(_logger, format::fmt("time = ", _diff.count()));
+    TNCT_LOG_TST(_logger, format::fmt("time = ", _diff.count(), " seconds"));
 
     std::cout << _results.report() << std::endl;
   } catch (std::exception &_ex) {
