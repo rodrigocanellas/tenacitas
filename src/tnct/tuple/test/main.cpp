@@ -3,7 +3,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/tuple/test/tuple_output_test.h"
 #include "tnct/tuple/test/tuple_transform_test.h"
 #include "tnct/tuple/test/tuple_traverse_test.h"
 
@@ -20,8 +19,4 @@ int main(int argc, char **argv) {
   run_test(_tester, tuple::test::tuple_traverse_000);
   run_test(_tester, tuple::test::tuple_traverse_001);
   run_test(_tester, tuple::test::tuple_traverse_002);
-
-  run_test(_tester, tuple::test::tuple_output_000);
-  run_test(_tester, tuple::test::tuple_output_001);
-  run_test(_tester, tuple::test::tuple_output_002);
 }

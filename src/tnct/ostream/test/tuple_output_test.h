@@ -3,21 +3,20 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_TUPLE_TEST_TUPLE_OUTPUT_TEST_H
-#define TNCT_TUPLE_TEST_TUPLE_OUTPUT_TEST_H
+#ifndef TNCT_OSTREAM_TEST_TUPLE_OUTPUT_TEST_H
+#define TNCT_OSTREAM_TEST_TUPLE_OUTPUT_TEST_H
 
 #include <iostream>
 #include <limits>
 #include <string>
 #include <tuple>
 
-#include "tnct/pair/pair_output.h"
+#include "tnct/ostream/tuple.h"
 #include "tnct/program/options.h"
-#include "tnct/tuple/tuple_output.h"
 
 using namespace tnct;
 
-namespace tnct::tuple::test {
+namespace tnct::ostream::test {
 
 struct tuple_output_000 {
   static std::string desc() { return "Simple tuple output test"; }
@@ -60,6 +59,6 @@ struct tuple_output_002 {
   }
 };
 
-} // namespace tnct::tuple::test
+} // namespace tnct::ostream::test
 
 #endif

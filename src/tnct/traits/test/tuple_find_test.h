@@ -24,28 +24,28 @@ struct tuple_find_000 {
     using my_tuple = std::tuple<int, char, float>;
 
     auto _idx{traits::tuple_find<my_tuple, int>()};
-    if (_idx == -1) {
+    if (!_idx) {
       std::cerr << "ERROR! idx should be 0, but the 'int' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
 
     _idx = traits::tuple_find<my_tuple, char>();
-    if (_idx == -1) {
+    if (!_idx) {
       std::cerr << "ERROR! idx should be 1, but the 'char' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
 
     _idx = traits::tuple_find<my_tuple, float>();
-    if (_idx == -1) {
+    if (!_idx) {
       std::cerr << "ERROR! idx should be 2, but it 'char' was not found "
                 << std::endl;
       return false;
     }
-    std::cerr << "idx is " << _idx << ", as expected" << std::endl;
+    std::cerr << "idx is " << _idx.value() << ", as expected" << std::endl;
 
     return true;
   }
@@ -60,9 +60,9 @@ struct tuple_find_001 {
     using my_tuple = std::tuple<int, char, float>;
 
     auto _idx{traits::tuple_find<my_tuple, std::string>()};
-    if (_idx != -1) {
-      std::cerr << "'std::string' should not be found, but is is " << _idx
-                << std::endl;
+    if (!_idx) {
+      std::cerr << "'std::string' should not be found, but is is "
+                << _idx.value() << std::endl;
       return false;
     }
     std::cerr << "'std::string' was not found, as it should" << std::endl;
@@ -77,9 +77,9 @@ struct tuple_find_002 {
     using my_tuple = std::tuple<>;
 
     auto _idx{traits::tuple_find<my_tuple, std::string>()};
-    if (_idx != -1) {
-      std::cerr << "'std::string' should not be found, but is is " << _idx
-                << std::endl;
+    if (!_idx) {
+      std::cerr << "'std::string' should not be found, but is is "
+                << _idx.value() << std::endl;
       return false;
     }
     std::cerr << "'std::string' was not found, as it should" << std::endl;

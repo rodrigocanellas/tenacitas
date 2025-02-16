@@ -50,8 +50,7 @@ template <traits::logger t_logger> struct ini_file {
       size_t _line_number(0);
       for (std::string _line; std::getline(_file, _line);) {
         ++_line_number;
-        m_logger.tra(
-            format::fmt("line # ", _line_number, " = '", _line, '\''));
+        m_logger.tra(format::fmt("line # ", _line_number, " = '", _line, '\''));
         std::smatch _matches;
 
         std::regex_search(_line, _matches, _section_regex);
@@ -62,9 +61,6 @@ template <traits::logger t_logger> struct ini_file {
         }
 
         if (_matches.size() == 2) {
-          m_logger.tra(format::fmt("line # ", _line_number,
-                                    ", contains a section: '", _matches[1],
-                                    '\''));
           if (!_section.empty()) {
             m_logger.tra(format::fmt("sections not empty: '", _section, '\''));
             _sections.insert({std::move(_section), std::move(_properties)});
@@ -79,13 +75,10 @@ template <traits::logger t_logger> struct ini_file {
         } else {
           std::regex_search(_line, _matches, _property_regex);
           if (_matches.size() == 3) {
-            m_logger.tra(format::fmt(
-                "line # ", _line_number, " contains a property: property = '",
-                _matches[1], "', value = '", _matches[2], "'"));
             _properties.insert({_matches[1].str(), _matches[2].str()});
           } else {
             m_logger.tra(format::fmt("line # ", _line_number, " '", _line,
-                                      "' does not contain a section or value"));
+                                     "' does not contain a section or value"));
           }
         }
       }
@@ -95,7 +88,7 @@ template <traits::logger t_logger> struct ini_file {
 
     } catch (std::exception &_ex) {
       m_logger.err(format::fmt("ERROR reading INI file '", p_filename, "': '",
-                                _ex.what(), '\''));
+                               _ex.what(), '\''));
       return std::nullopt;
     }
     return std::optional<sections>(std::move(_sections));

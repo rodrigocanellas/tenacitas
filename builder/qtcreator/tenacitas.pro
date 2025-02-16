@@ -13,10 +13,10 @@ SUBDIRS = \
     parser \
     program \
     tuple \
-    pair \
     time \
     format \
-    tester
+    tester \
+    ostream
 
 
 

@@ -15,14 +15,9 @@
 #include <sstream>
 #include <utility>
 
-#include "tnct/format/align.h"
-#include "tnct/format/format_number.h"
 #include "tnct/log/level.h"
 #include "tnct/log/line_header_formater.h"
-#include "tnct/pair/is_pair.h"
 #include "tnct/traits/log_writer.h"
-#include "tnct/traits/is_tuple.h"
-#include "tnct/tuple/tuple_output.h"
 
 namespace tnct::log::internal {
 

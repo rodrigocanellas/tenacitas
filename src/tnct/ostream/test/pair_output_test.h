@@ -3,18 +3,18 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_PAIR_TEST_PAIR_OUTPUT_TEST_H
-#define TNCT_PAIR_TEST_PAIR_OUTPUT_TEST_H
+#ifndef TNCT_OSTREAM_TEST_PAIR_OUTPUT_TEST_H
+#define TNCT_OSTREAM_TEST_PAIR_OUTPUT_TEST_H
 
 #include <iostream>
 #include <utility>
 
-#include "tnct/pair/pair_output.h"
+#include "tnct/ostream/pair.h"
 #include "tnct/program/options.h"
 
 using namespace tnct;
 
-namespace tnct::pair::test {
+namespace tnct::ostream::test {
 
 struct pair_output_000 {
   static std ::string desc() { return "Simple pair output"; }
@@ -40,6 +40,6 @@ struct pair_output_001 {
   }
 };
 
-} // namespace tnct::pair::test
+} // namespace tnct::ostream::test
 
 #endif

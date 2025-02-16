@@ -11,9 +11,9 @@
 /// \attention the headers below are necessary, although not explicitly used,
 /// because of the 'operator<<' that they define
 
-#include "tnct/pair/pair_output.h"
+#include "tnct/ostream/pair.h"
+#include "tnct/ostream/tuple.h"
 #include "tnct/time/chrono_output.h"
-#include "tnct/tuple/tuple_output.h"
 
 namespace tnct::format {
 
