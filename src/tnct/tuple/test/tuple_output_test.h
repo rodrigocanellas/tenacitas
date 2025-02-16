@@ -11,7 +11,6 @@
 #include <string>
 #include <tuple>
 
-#include "tnct/pair/pair_output.h"
 #include "tnct/program/options.h"
 #include "tnct/tuple/tuple_output.h"
 

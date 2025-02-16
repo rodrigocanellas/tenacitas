@@ -468,10 +468,10 @@ private:
   }
 
   template <traits::event t_event>
-  [[nodiscard]] static constexpr size_t get_handlings_index() {
+  [[nodiscard]] static constexpr std::size_t get_handlings_index() {
     constexpr auto _idx{traits::tuple_find<events, t_event>()};
-    static_assert(_idx != -1, "event not found in the tuple of events");
-    return static_cast<size_t>(_idx);
+    static_assert(_idx, "event not found in the tuple of events");
+    return _idx.value();
   }
 
   template <traits::event t_event>
