@@ -35,7 +35,7 @@ struct tuple_output_001 {
   bool operator()(const program::options &) {
     auto _tuple{std::make_tuple(
         'c', 3.14,
-        std::make_tuple("hello", std::numeric_limits<uint32_t>::max(), 0.0029),
+        std::make_tuple("hello", std::numeric_limits<uint32_t>::max(), 0.0028),
         -8)};
 
     std::cerr << "tuple = " << _tuple << std::endl;
