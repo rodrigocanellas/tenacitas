@@ -10,8 +10,7 @@
 #include <tuple>
 
 #include "tnct/traits/tuple_like.h"
-// #include "tnct/traits/visit_type_in_tuple.h"
-#include "tnct/traits/visit_value_in_tuple.h"
+#include "tnct/traits/visit_tuple.h"
 
 namespace tnct::tuple {
 
@@ -49,7 +48,9 @@ requires(traits::visit_value_in_mutable_tuple<t_func, t_tuple, t_idx>)
 /// \brief Traverses a tuple while the visitor function returns true
 /// \note a little help from ChatGPT was used here
 template <traits::tuple_like t_tuple, typename t_func, std::size_t t_idx = 0>
-constexpr void tuple_type_traverse(t_func p_function) {
+requires(traits::visit_type_in_tuple<t_func, t_tuple, t_idx>)
+
+    constexpr void tuple_traverse(t_func p_function) {
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return;
   }
@@ -62,7 +63,7 @@ constexpr void tuple_type_traverse(t_func p_function) {
   }
 
   if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-    tuple_type_traverse<t_tuple, t_func, t_idx + 1>(p_function);
+    tuple_traverse<t_tuple, t_func, t_idx + 1>(p_function);
   }
 }
 

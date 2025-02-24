@@ -293,7 +293,7 @@ public:
         return true;
       }};
 
-      tuple::tuple_type_traverse<events, decltype(_visit)>(_visit);
+      tuple::tuple_traverse<events, decltype(_visit)>(_visit);
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
@@ -353,7 +353,7 @@ public:
         return true;
       }};
 
-      tuple::tuple_type_traverse<events, decltype(_visit)>(_visit);
+      tuple::tuple_traverse<events, decltype(_visit)>(_visit);
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());

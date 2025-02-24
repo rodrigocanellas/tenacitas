@@ -29,11 +29,10 @@ HEADERS += \
         $$PRJ_DIR/tuple_contains_tuple.h \
         $$PRJ_DIR/is_type_in_tuple.h \
         $$PRJ_DIR/tuple_find.h \
-        $$PRJ_DIR/visit_type_in_tuple.h \
+        $$PRJ_DIR/visit_tuple.h \
         $$PRJ_DIR/chrono_convertible.h \
         $$PRJ_DIR/tuple_contains_only_events.h \
         $$PRJ_DIR/tuple_size_greather_or_equal.h \
-        $$PRJ_DIR/is_pair.h
-
+        $$PRJ_DIR/is_pair.h \
 
 
