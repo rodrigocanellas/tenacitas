@@ -42,8 +42,7 @@ struct tuple_traverse_000 {
       return true;
     };
 
-    tuple::tuple_mutable_traverse<decltype(_tuple), decltype(_visit)>(_tuple,
-                                                                      _visit);
+    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
 
     return _ret;
   }
@@ -79,8 +78,7 @@ struct tuple_traverse_001 {
       return true;
     };
 
-    tuple::tuple_mutable_traverse<decltype(_tuple), decltype(_visit)>(_tuple,
-                                                                      _visit);
+    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
 
     return _ret;
   }

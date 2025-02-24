@@ -30,7 +30,7 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out,
     return true;
   };
 
-  tnct::tuple::tuple_constant_traverse<tuple, decltype(_visit)>(p_tuple,
+  tnct::tuple::tuple_traverse<tuple, decltype(_visit)>(p_tuple,
                                                                 _visit);
 
   p_out << '}';
@@ -53,7 +53,7 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out,
     return true;
   };
 
-  tnct::tuple::tuple_constant_traverse<t_tuple, decltype(_visit)>(p_tuple,
+  tnct::tuple::tuple_traverse<t_tuple, decltype(_visit)>(p_tuple,
                                                                   _visit);
 
   p_out << '}';
