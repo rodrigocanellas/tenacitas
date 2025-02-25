@@ -19,4 +19,6 @@ int main(int argc, char **argv) {
   run_test(_tester, tuple::test::tuple_traverse_000);
   run_test(_tester, tuple::test::tuple_traverse_001);
   run_test(_tester, tuple::test::tuple_traverse_002);
+  run_test(_tester, tuple::test::tuple_traverse_003);
+  run_test(_tester, tuple::test::tuple_traverse_004);
 }

@@ -19,7 +19,6 @@ HEADERS += \
         $$PRJ_DIR/queue.h \
         $$PRJ_DIR/log_writer.h \
         $$PRJ_DIR/logger.h \
-        $$PRJ_DIR/i_queue.h \
         $$PRJ_DIR/handler.h \
         $$PRJ_DIR/handling.h \
         $$PRJ_DIR/handlings.h \

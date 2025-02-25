@@ -133,6 +133,52 @@ struct tuple_traverse_002 {
   }
 };
 
+struct tuple_traverse_003 {
+  static std::string desc() {
+    return "Traverse 'std::tuple<char, int, float>' with 'W', -9 and 1.14 and "
+           "prints the values";
+  }
+
+  bool operator()(const program::options &) {
+    auto _tuple{std::make_tuple('W', -9)};
+
+    auto _visit =
+        []<traits::tuple_like t_tuple, size_t t_idx>(const t_tuple &p_tuple) {
+          std::cerr << "in " << t_idx << " there is "
+                    << std::get<t_idx>(p_tuple) << '\n';
+          return true;
+        };
+
+    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
+
+    return true;
+  }
+};
+
+struct tuple_traverse_004 {
+  static std::string desc() {
+    return "Traverse 'std::tuple<uint16_t, float, int32_t>' with '14', 3.14 "
+           "and -983271, adds 1 to each of them and prints the values";
+  }
+
+  bool operator()(const program::options &) {
+    auto _tuple{std::make_tuple(14U, 3.14, -983271)};
+
+    auto _visit =
+        []<traits::tuple_like t_tuple, size_t t_idx>(t_tuple &p_tuple) {
+          std::cerr << "in " << t_idx << " there was "
+                    << std::get<t_idx>(p_tuple) << ", and now there is "
+                    << (std::get<t_idx>(p_tuple) = std::get<t_idx>(p_tuple) + 1)
+                    << '\n';
+          return true;
+        };
+
+    tuple::tuple_traverse<decltype(_tuple), decltype(_visit)>(_tuple, _visit);
+
+    return true;
+  }
+};
+
 } // namespace tnct::tuple::test
 
 #endif

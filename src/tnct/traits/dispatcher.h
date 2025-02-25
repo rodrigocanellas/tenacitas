@@ -22,13 +22,13 @@ concept dispatcher = requires {
 }
 &&!std::copy_constructible<t>
 
-    && !std::move_constructible<t>
+    && not std::copy_constructible<t>
 
-    && !std::is_copy_assignable_v<t>
+    && not std::move_constructible<t>
 
-    && !std::is_move_assignable_v<t>
+    && not has_new_operator_v<t>
 
-    && !has_new_operator_v<t>
+    && not std::assignable_from<t &, t>
 
     && tuple_like<typename t::events>
 
