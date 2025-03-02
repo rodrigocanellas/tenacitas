@@ -9,56 +9,56 @@
 #include <cstddef>
 #include <tuple>
 
-#include "tnct/traits/tuple_like.h"
-#include "tnct/traits/visit_type_in_tuple.h"
-#include "tnct/traits/visit_value_in_tuple.h"
+#include "tnct/traits/tuple/like.h"
+#include "tnct/traits/tuple/visit.h"
 
 namespace tnct::tuple {
 
-template <traits::tuple_like t_tuple, typename t_func, size_t t_idx = 0>
-requires(traits::visit_value_in_constant_tuple<t_func, t_tuple, t_idx>)
+/// \brief Traverses the values of a non const tuple while the visitor function
+/// returns true \note a little help from ChatGPT was used here
+template <traits::tuple::like t_tuple, typename t_func, size_t t_idx = 0>
+requires(traits::tuple::visit_value_in_constant_tuple<t_func, t_tuple, t_idx>)
 
-    constexpr void tuple_constant_traverse(const t_tuple &p_tuple,
-                                           t_func p_function) {
+    constexpr void tuple_traverse(const t_tuple &p_tuple, t_func p_function) {
+
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return;
-  } else {
-    if (!p_function.template operator()<t_tuple, t_idx>(p_tuple)) {
+  }
+
+  if constexpr (requires {
+                  p_function.template operator()<t_tuple, t_idx>(
+                      std::declval<const t_tuple &>());
+                }) {
+    if (!p_function.template operator()<t_tuple, t_idx>(p_tuple))
       return;
-    } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-      tuple_constant_traverse<t_tuple, t_func, t_idx + 1>(p_tuple, p_function);
-    }
+  }
+
+  if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
+    tuple_traverse<t_tuple, t_func, t_idx + 1>(p_tuple, p_function);
   }
 }
 
-template <traits::tuple_like t_tuple, typename t_func, size_t t_idx = 0>
-requires(traits::visit_value_in_mutable_tuple<t_func, t_tuple, t_idx>)
+/// \brief Traverses the values of a const tuple while the visitor function
+/// returns true \note a little help from ChatGPT was used here
+template <traits::tuple::like t_tuple, typename t_func, size_t t_idx = 0>
+requires(traits::tuple::visit_value_in_mutable_tuple<t_func, t_tuple, t_idx>)
 
-    constexpr void tuple_mutable_traverse(t_tuple &p_tuple, t_func p_function) {
+    constexpr void tuple_traverse(t_tuple &p_tuple, t_func p_function) {
+
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return;
-  } else {
-    if (!p_function.template operator()<t_tuple, t_idx>(p_tuple)) {
-      return;
-    } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-      tuple_constant_traverse<t_tuple, t_func, t_idx + 1>(p_tuple, p_function);
-    }
   }
-}
 
-/// \brief Traverses a tuple while the visitor function returns true
-template <traits::tuple_like t_tuple, typename t_func, size_t t_idx = 0>
-requires(traits::visit_type_in_tuple<t_func, t_tuple, t_idx>)
+  if constexpr (requires {
+                  p_function.template operator()<t_tuple, t_idx>(
+                      std::declval<t_tuple &>());
+                }) {
+    if (!p_function.template operator()<t_tuple, t_idx>(p_tuple))
+      return;
+  }
 
-    constexpr void tuple_type_traverse(t_func p_function) {
-  if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
-    return;
-  } else if (!p_function.template operator()<t_tuple, t_idx>()) {
-    return;
-  } else if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-    return tuple_type_traverse<t_tuple, t_func, t_idx + 1>(p_function);
-  } else {
-    return;
+  if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
+    tuple_traverse<t_tuple, t_func, t_idx + 1>(p_tuple, p_function);
   }
 }
 

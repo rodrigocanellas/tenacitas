@@ -11,13 +11,13 @@
 
 #include "tnct/async/dispatcher.h"
 #include "tnct/async/result.h"
-#include "tnct/traits/dispatcher.h"
+#include "tnct/traits/async/dispatcher.h"
 
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/program/options.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
@@ -582,12 +582,12 @@ private:
   using logger = log::cerr;
 
 private:
-  template <traits::dispatcher<event_a, event_b, event_c> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b, event_c> t_dispatcher>
   void foo(t_dispatcher &) {}
 };
 
 struct dispatcher_012 {
-  static std::string desc() { return "Testing 'traits::dispatcher'"; }
+  static std::string desc() { return "Testing 'traits::async::dispatcher'"; }
 
   bool operator()(const program::options &) {
 
@@ -635,7 +635,7 @@ private:
   using dispatcher = async::dispatcher<logger, event_a, event_b, event_d>;
 
 private:
-  template <traits::dispatcher<event_a, event_b, event_c, event_e> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b, event_c, event_e> t_dispatcher>
 
   // requires(std::tuple_size_v<dispatcher::events> >=
   //          std::tuple_size_v<std::tuple<event_a, event_b, event_c, event_e>>)

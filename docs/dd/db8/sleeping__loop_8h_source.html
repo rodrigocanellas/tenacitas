@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -86,11 +86,11 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/def/fmt_8h.html">tnct/format/fmt.h</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d3a/chrono__convertible_8h.html">tnct/traits/chrono_convertible.h</a>&quot;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../da/d67/traits_2logger_8h.html">tnct/traits/logger.h</a>&quot;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html">tnct/traits/log/logger.h</a>&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d9/d3a/namespacetnct_1_1async.html">tnct::async</a> {</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">   23</a></span>&#160;<span class="keyword">template</span> &lt;traits::logger t_logger&gt; <span class="keyword">struct </span><a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">sleeping_loop</a> {</div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">   23</a></span>&#160;<span class="keyword">template</span> &lt;traits::log::logger t_logger&gt; <span class="keyword">struct </span><a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">sleeping_loop</a> {</div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a15887e6a48a1dca4e210a14031411962">   26</a></span>&#160;  <span class="keyword">using</span> <span class="keyword">function</span> = std::function&lt;void()&gt;;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aee1b7000f78f6fe835cd44a8b52f18ca">   28</a></span>&#160;  <span class="keyword">using</span> <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aee1b7000f78f6fe835cd44a8b52f18ca">logger</a> = t_logger;</div>
@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        m_interval(</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            std::chrono::duration_cast&lt;decltype(m_interval)&gt;(p_interval)) {</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                                       <span class="stringliteral">&quot; - creating with function &quot;</span>,</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                                       &amp;m_function, <span class="stringliteral">&quot; and interval of &quot;</span>,</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                       m_interval.count(), <span class="stringliteral">&quot; nanosecs&quot;</span>));</div>
@@ -113,31 +113,31 @@ $(function() {
 <div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#ab775330a2d4daba4798b0901b1060ee1">   53</a></span>&#160;  <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">sleeping_loop</a> &amp;<a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#ab775330a2d4daba4798b0901b1060ee1">operator=</a>(<span class="keyword">const</span> <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">sleeping_loop</a> &amp;) = <span class="keyword">delete</span>;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a85d40d53ea506805c801fb4ddd3908ad">   57</a></span>&#160;  <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a85d40d53ea506805c801fb4ddd3908ad">~sleeping_loop</a>() {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                 format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - destructor&quot;</span>));</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aed8e0f51c4db06d08ff2531fbb00ca60">stop</a>();</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordflow">if</span> (m_thread.get_id() == std::thread::id()) {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                   format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                               <span class="stringliteral">&quot; - not joining because m_thread.get_id() == &quot;</span></div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                               <span class="stringliteral">&quot;std::thread::id()&quot;</span>));</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    }</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                 format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                             <span class="stringliteral">&quot; - m_thread.get_id() != std::thread::id()&quot;</span>));</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordflow">if</span> (!m_thread.joinable()) {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;          m_logger,</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;          format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                      <span class="stringliteral">&quot; - not joining because m_thread is not joinable&quot;</span>));</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                 format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - m_thread.joinable()&quot;</span>));</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    {</div>
@@ -150,7 +150,7 @@ $(function() {
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      : m_logger(p_loop.m_logger), m_id(std::move(p_loop.m_id)),</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        m_function(std::move(p_loop.m_function)),</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        m_interval(p_loop.m_interval) {</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                 format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; move constructor from &quot;</span>,</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                             &amp;p_loop, <span class="stringliteral">&quot; to &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">bool</span> _stopped(p_loop.is_stopped());</div>
@@ -169,14 +169,14 @@ $(function() {
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
 <div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">  115</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">start</a>() {</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">if</span> (!m_stopped) {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                   format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                               <span class="stringliteral">&quot; - not starting because it is not stopped&quot;</span>));</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    m_stopped = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                 format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                             <span class="stringliteral">&quot; - starting loop thread in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
@@ -185,19 +185,19 @@ $(function() {
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
 <div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aed8e0f51c4db06d08ff2531fbb00ca60">  132</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aed8e0f51c4db06d08ff2531fbb00ca60">stop</a>() {</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordflow">if</span> (m_stopped) {</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                   format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                               <span class="stringliteral">&quot; - not stopping because it is stopped&quot;</span>));</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                                       <span class="stringliteral">&quot; - stopping in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    m_stopped = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    m_cond.notify_one();</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;                                       <span class="stringliteral">&quot; - leaving stop in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  }</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
@@ -238,26 +238,26 @@ $(function() {
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;  <span class="keywordtype">void</span> loop() {</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      <span class="keywordflow">if</span> (m_stopped) {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - stop&quot;</span>));</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - stop&quot;</span>));</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;      }</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                   format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - calling function &quot;</span>,</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;                               &amp;m_function, <span class="stringliteral">&quot; in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      m_function();</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160; </div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - &quot;</span>,</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - &quot;</span>,</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;                                         &amp;m_function, <span class="stringliteral">&quot; called&quot;</span>));</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160; </div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;      <span class="keywordflow">if</span> (m_stopped) {</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - stop&quot;</span>));</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - stop&quot;</span>));</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
 <div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                   format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - waiting for &quot;</span>,</div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                               m_interval.count(),</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;                               <span class="stringliteral">&quot; microsecs to elaps, or a stop order&quot;</span>));</div>
@@ -268,17 +268,17 @@ $(function() {
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;             std::cv_status::no_timeout) ||</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            (m_stopped)) {</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;          <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;          <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger,</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;                       format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;                                   <span class="stringliteral">&quot; - ordered to stop in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;          <span class="keywordflow">break</span>;</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        }</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;      }</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - &quot;</span>,</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id, <span class="stringliteral">&quot; - &quot;</span>,</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                                         m_interval.count(), <span class="stringliteral">&quot; ms elapsed&quot;</span>));</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a>(m_logger, format::fmt(<span class="stringliteral">&quot;sleeping loop &quot;</span>, m_id,</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                                       <span class="stringliteral">&quot; - leaving loop in &quot;</span>, &amp;(*<span class="keyword">this</span>)));</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;  }</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
@@ -307,9 +307,9 @@ $(function() {
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="achrono__convertible_8h_html"><div class="ttname"><a href="../../d9/d3a/chrono__convertible_8h.html">chrono_convertible.h</a></div></div>
-<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00039">logger.h:39</a></div></div>
+<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">logger.h:34</a></div></div>
 <div class="ttc" id="afmt_8h_html"><div class="ttname"><a href="../../db/def/fmt_8h.html">fmt.h</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1async_html"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html">tnct::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00032">dispatcher.h:32</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html">tnct::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00033">dispatcher.h:33</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">tnct::async::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00023">sleeping_loop.h:23</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_a11827a673103a66414e8453b404ef443"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a11827a673103a66414e8453b404ef443">tnct::async::sleeping_loop::is_stopped</a></div><div class="ttdeci">bool is_stopped() const</div><div class="ttdoc">Retrieves if the loop was stopped.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00151">sleeping_loop.h:151</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_a141f2a7757ae99dd024fa21093bc7603"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a141f2a7757ae99dd024fa21093bc7603">tnct::async::sleeping_loop::sleeping_loop</a></div><div class="ttdeci">sleeping_loop(const sleeping_loop &amp;)=delete</div></div>
@@ -323,8 +323,8 @@ $(function() {
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_ac0c5a2bb262980fc2ca68b323963ae7e"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#ac0c5a2bb262980fc2ca68b323963ae7e">tnct::async::sleeping_loop::sleeping_loop</a></div><div class="ttdeci">sleeping_loop(logger &amp;p_logger, function p_function, t_interval p_interval, std::string_view p_id=&quot;no-id&quot;)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00039">sleeping_loop.h:39</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_aed8e0f51c4db06d08ff2531fbb00ca60"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aed8e0f51c4db06d08ff2531fbb00ca60">tnct::async::sleeping_loop::stop</a></div><div class="ttdeci">void stop()</div><div class="ttdoc">Stops the loop, if it was started.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00132">sleeping_loop.h:132</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_aee1b7000f78f6fe835cd44a8b52f18ca"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aee1b7000f78f6fe835cd44a8b52f18ca">tnct::async::sleeping_loop::logger</a></div><div class="ttdeci">t_logger logger</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00028">sleeping_loop.h:28</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html">logger.h</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html_a2de422d8cfe7d33587b58f6927a420db"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a></div><div class="ttdeci">#define TNCT_LOG_TRA(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d67/traits_2logger_8h_source.html#l00014">logger.h:14</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html">logger.h</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html_a2de422d8cfe7d33587b58f6927a420db"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html#a2de422d8cfe7d33587b58f6927a420db">TNCT_LOG_TRA</a></div><div class="ttdeci">#define TNCT_LOG_TRA(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d7c/traits_2log_2logger_8h_source.html#l00014">logger.h:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

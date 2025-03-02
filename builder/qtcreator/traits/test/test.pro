@@ -16,5 +16,6 @@ HEADERS = \
         $$TRAITS_TEST/tuple_find_test.h \
         $$TRAITS_TEST/is_type_in_tuple_test.h \
         $$TRAITS_TEST/tuple_contains_tuple_test.h \
-        $$TRAITS_TEST/dispatcher_test.h
+        $$TRAITS_TEST/dispatcher_test.h \
+        $$TRAITS_TEST/tuple_traverse_test.h
 

@@ -5,11 +5,13 @@
 
 #include <iostream>
 
+#include "tnct/traits/test/dispatcher_test.h"
 #include "tnct/traits/test/is_tuple_test.h"
 #include "tnct/traits/test/is_type_in_tuple_test.h"
 #include "tnct/traits/test/tuple_contains_tuple_test.h"
 #include "tnct/traits/test/tuple_find_test.h"
 #include "tnct/traits/test/tuple_like_test.h"
+#include "tnct/traits/test/tuple_traverse_test.h"
 
 #include "tnct/tester/test.h"
 
@@ -48,6 +50,10 @@ int main(int argc, char **argv) {
     run_test(_tester, traits::test::is_type_in_tuple_000);
     run_test(_tester, traits::test::is_type_in_tuple_001);
     run_test(_tester, traits::test::is_type_in_tuple_002);
+
+    run_test(_tester, traits::test::tuple_traverse_000);
+
+    run_test(_tester, traits::test::dispatcher_000);
 
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;

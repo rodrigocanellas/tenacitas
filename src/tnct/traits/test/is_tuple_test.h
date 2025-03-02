@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "tnct/program/options.h"
-#include "tnct/traits/is_tuple.h"
+#include "tnct/traits/tuple/is.h"
 
 using namespace tnct;
 
@@ -19,7 +19,9 @@ namespace tnct::traits::test {
 struct is_tuple_000 {
   static std::string desc() { return "Checking if a 'int' is not a tuple"; }
 
-  bool operator()(const program::options &) { return !traits::is_tuple_v<int>; }
+  bool operator()(const program::options &) {
+    return !traits::tuple::is_v<int>;
+  }
 };
 
 struct is_tuple_001 {
@@ -28,7 +30,7 @@ struct is_tuple_001 {
   }
 
   bool operator()(const program::options &) {
-    return traits::is_tuple_v<std::tuple<>>;
+    return traits::tuple::is_v<std::tuple<>>;
   }
 };
 
@@ -38,7 +40,7 @@ struct is_tuple_002 {
   }
 
   bool operator()(const program::options &) {
-    return traits::is_tuple_v<std::tuple<char>>;
+    return traits::tuple::is_v<std::tuple<char>>;
   }
 };
 
@@ -48,7 +50,7 @@ struct is_tuple_003 {
   }
 
   bool operator()(const program::options &) {
-    return traits::is_tuple_v<std::tuple<char, std::string>>;
+    return traits::tuple::is_v<std::tuple<char, std::string>>;
   }
 };
 
@@ -58,7 +60,7 @@ struct is_tuple_004 {
   }
 
   bool operator()(const program::options &) {
-    return !traits::is_tuple_v<std::vector<int>>;
+    return !traits::tuple::is_v<std::vector<int>>;
   }
 };
 
@@ -68,7 +70,7 @@ struct is_tuple_005 {
   }
 
   bool operator()(const program::options &) {
-    return !traits::is_tuple_v<std::vector<std::tuple<double>>>;
+    return !traits::tuple::is_v<std::vector<std::tuple<double>>>;
   }
 };
 
@@ -78,7 +80,7 @@ struct is_tuple_006 {
   }
 
   bool operator()(const program::options &) {
-    return traits::is_tuple_v<std::tuple<double, std::vector<char>>>;
+    return traits::tuple::is_v<std::tuple<double, std::vector<char>>>;
   }
 };
 

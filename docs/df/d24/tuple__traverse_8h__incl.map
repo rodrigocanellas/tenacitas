@@ -1,9 +1,8 @@
 <map id="/home/rodrigo/development/tenacitas/src/tnct/tuple/tuple_traverse.h" name="/home/rodrigo/development/tenacitas/src/tnct/tuple/tuple_traverse.h">
-<area shape="rect" id="node1" title=" " alt="" coords="185,5,388,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="70,199,140,225"/>
-<area shape="rect" id="node3" title=" " alt="" coords="342,348,396,375"/>
-<area shape="rect" id="node4" href="$dc/d25/tuple__like_8h.html" title=" " alt="" coords="218,199,382,225"/>
-<area shape="rect" id="node6" href="$dd/d62/visit__type__in__tuple_8h.html" title=" " alt="" coords="210,109,363,151"/>
-<area shape="rect" id="node7" href="$d5/d36/visit__value__in__tuple_8h.html" title=" " alt="" coords="25,109,185,151"/>
-<area shape="rect" id="node5" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="237,273,389,300"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,208,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="34,184,105,211"/>
+<area shape="rect" id="node3" title=" " alt="" coords="25,333,79,360"/>
+<area shape="rect" id="node4" href="$d6/d94/tuple_2like_8h.html" title=" " alt="" coords="129,184,290,211"/>
+<area shape="rect" id="node6" href="$d2/d0b/visit_8h.html" title=" " alt="" coords="85,109,251,136"/>
+<area shape="rect" id="node5" href="$df/d9f/tuple_2is_8h.html" title=" " alt="" coords="84,259,233,285"/>
 </map>

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -145,7 +145,7 @@ $(function() {
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
 <div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="../../db/da3/structtnct_1_1program_1_1options.html#a32a3347d6016dbacfabcba20a3a1cd85">  103</a></span>&#160;  std::optional&lt;bool&gt; <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html#a32a3347d6016dbacfabcba20a3a1cd85">get_bool_param</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html#a354a237e65544c6c269a5fa7de6452e7">name</a> &amp;p_name)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    booleans::const_iterator _ite =</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        std::find(m_booleans.begin(), m_booleans.end(), p_name);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">std::find</a>(m_booleans.begin(), m_booleans.end(), p_name);</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">if</span> (_ite == m_booleans.end()) {</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;      <span class="keywordflow">return</span> {};</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
@@ -270,6 +270,7 @@ $(function() {
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetnct_1_1program_html"><div class="ttname"><a href="../../d5/d42/namespacetnct_1_1program.html">tnct::program</a></div><div class="ttdef"><b>Definition:</b> <a href="../../df/dfc/closer_8h_source.html#l00021">closer.h:21</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_acad4e7535b73e7a6477941430d080529"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">tnct::traits::tuple::find</a></div><div class="ttdeci">constexpr std::optional&lt; std::size_t &gt; find()</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/db2/find_8h_source.html#l00016">find.h:16</a></div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html">tnct::program::options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d5b/options_8h_source.html#l00021">options.h:21</a></div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html_a2aac7e7160aaabd42c6803c882ced923"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html#a2aac7e7160aaabd42c6803c882ced923">tnct::program::options::operator=</a></div><div class="ttdeci">options &amp; operator=(const options &amp;)=delete</div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html_a2fb579c2db2ddd89923121af4dd08363"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html#a2fb579c2db2ddd89923121af4dd08363">tnct::program::options::get_set_param</a></div><div class="ttdeci">std::optional&lt; std::list&lt; value &gt; &gt; get_set_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the values of a parameter.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d5b/options_8h_source.html#l00135">options.h:135</a></div></div>

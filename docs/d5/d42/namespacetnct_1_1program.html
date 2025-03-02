@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -87,26 +87,26 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af1fa960425c1fb4668a7cfee01c827bb"><td class="memTemplParams" colspan="2">template&lt;traits::logger t_logger, traits::dispatcher t_dispatcher&gt; </td></tr>
-<tr class="memitem:af1fa960425c1fb4668a7cfee01c827bb"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d5/d42/namespacetnct_1_1program.html#af1fa960425c1fb4668a7cfee01c827bb">requires</a> (<a class="el" href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">traits::tuple_contains_tuple</a>&lt; typename t_dispatcher::events, std::tuple&lt; <a class="el" href="../../d6/dea/structtnct_1_1program_1_1exit.html">program::exit</a> &gt;&gt;) struct closer</td></tr>
-<tr class="separator:af1fa960425c1fb4668a7cfee01c827bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1f06605810edcc0e327857b3695c3c0"><td class="memTemplParams" colspan="2">template&lt;traits::log::logger t_logger, traits::async::dispatcher t_dispatcher&gt; </td></tr>
+<tr class="memitem:ac1f06605810edcc0e327857b3695c3c0"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d5/d42/namespacetnct_1_1program.html#ac1f06605810edcc0e327857b3695c3c0">requires</a> (traits::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; <a class="el" href="../../d6/dea/structtnct_1_1program_1_1exit.html">program::exit</a> &gt;&gt;) struct closer</td></tr>
+<tr class="separator:ac1f06605810edcc0e327857b3695c3c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>This file is under GPL 3 license. Please read the <code>LICENSE</code> file at the root of <code>tenacitas</code> directory</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Rodrigo Canellas - rodrigo.canellas at gmail.com </dd></dl>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="af1fa960425c1fb4668a7cfee01c827bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1fa960425c1fb4668a7cfee01c827bb">&#9670;&nbsp;</a></span>requires()</h2>
+<a id="ac1f06605810edcc0e327857b3695c3c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1f06605810edcc0e327857b3695c3c0">&#9670;&nbsp;</a></span>requires()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::dispatcher t_dispatcher&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::dispatcher t_dispatcher&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">tnct::program::requires </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">traits::tuple_contains_tuple</a>&lt; typename t_dispatcher::events, std::tuple&lt; <a class="el" href="../../d6/dea/structtnct_1_1program_1_1exit.html">program::exit</a> &gt;&gt;&#160;</td>
+          <td class="paramtype">traits::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; <a class="el" href="../../d6/dea/structtnct_1_1program_1_1exit.html">program::exit</a> &gt;&gt;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>

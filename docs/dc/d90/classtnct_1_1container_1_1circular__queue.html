@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas: tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size &gt; Class Template Reference</title>
+<title>tenacitas: tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; Class Template Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -74,7 +74,7 @@ $(function() {
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="../../d7/db2/classtnct_1_1container_1_1circular__queue-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size &gt; Class Template Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
+<div class="title">tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; Class Template Reference<span class="mlabels"><span class="mlabel">final</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -85,62 +85,62 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a1edfae0c40424a952416f4566403f463"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a1edfae0c40424a952416f4566403f463">data</a> = t_data</td></tr>
-<tr class="separator:a1edfae0c40424a952416f4566403f463"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9937b0e6979641368aa4a73095dba43"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac9937b0e6979641368aa4a73095dba43">logger</a> = t_logger</td></tr>
-<tr class="separator:ac9937b0e6979641368aa4a73095dba43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a010b5a7d2f693b6be181f99a855979ee"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a010b5a7d2f693b6be181f99a855979ee">data</a> = t_data</td></tr>
+<tr class="separator:a010b5a7d2f693b6be181f99a855979ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19527acd6225f433b897ce6c09a8e07c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a19527acd6225f433b897ce6c09a8e07c">logger</a> = t_logger</td></tr>
+<tr class="separator:a19527acd6225f433b897ce6c09a8e07c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abcfaf5b1de93c13424d17a36887ef9b7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#abcfaf5b1de93c13424d17a36887ef9b7">circular_queue</a> ()=delete</td></tr>
-<tr class="separator:abcfaf5b1de93c13424d17a36887ef9b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00e6c55f69be3f3004f0f6ad765e53f8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a00e6c55f69be3f3004f0f6ad765e53f8">circular_queue</a> (t_logger &amp;p_logger)</td></tr>
-<tr class="separator:a00e6c55f69be3f3004f0f6ad765e53f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23e491643385b72abebeb652d349e832"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a23e491643385b72abebeb652d349e832">~circular_queue</a> ()</td></tr>
-<tr class="separator:a23e491643385b72abebeb652d349e832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1986fd5f41418719293f863a13bc21b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a1986fd5f41418719293f863a13bc21b6">circular_queue</a> (const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;p_queue)</td></tr>
-<tr class="separator:a1986fd5f41418719293f863a13bc21b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a338345775c8354dbc6298ebd596eaed2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a338345775c8354dbc6298ebd596eaed2">circular_queue</a> (<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&amp;p_queue)</td></tr>
-<tr class="separator:a338345775c8354dbc6298ebd596eaed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7bf9129f3cb84955292c281de2080e16"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a7bf9129f3cb84955292c281de2080e16">operator=</a> (const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;p_queue)</td></tr>
-<tr class="separator:a7bf9129f3cb84955292c281de2080e16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85d5656725ebc597da64fda231043514"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a85d5656725ebc597da64fda231043514">operator=</a> (<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&amp;p_queue)</td></tr>
-<tr class="separator:a85d5656725ebc597da64fda231043514"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9a757505e440b81f5d4ca2c6a740383"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383">full_report</a> ()</td></tr>
-<tr class="separator:ad9a757505e440b81f5d4ca2c6a740383"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d9b91e84368306828bbef4d4bbd3d24"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24">brief_report</a> ()</td></tr>
-<tr class="separator:a9d9b91e84368306828bbef4d4bbd3d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32e0a40eb8e60057f5987a51e148a515"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515">push</a> (t_data &amp;&amp;p_data)</td></tr>
-<tr class="separator:a32e0a40eb8e60057f5987a51e148a515"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a758f67804bef9b4edb08d8f311aea360"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a758f67804bef9b4edb08d8f311aea360">push</a> (const t_data &amp;p_data)</td></tr>
-<tr class="separator:a758f67804bef9b4edb08d8f311aea360"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3270ff553e7d331d75671c13c0c40665"><td class="memItemLeft" align="right" valign="top">std::optional&lt; t_data &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a3270ff553e7d331d75671c13c0c40665">pop</a> ()</td></tr>
-<tr class="separator:a3270ff553e7d331d75671c13c0c40665"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf55f373fc381a4e89749f3b17881f16"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#adf55f373fc381a4e89749f3b17881f16">full</a> () const</td></tr>
-<tr class="separator:adf55f373fc381a4e89749f3b17881f16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec3365ef539d821185699c4262fa7b90"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aec3365ef539d821185699c4262fa7b90">empty</a> () const</td></tr>
-<tr class="separator:aec3365ef539d821185699c4262fa7b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac916306e82d90624565de777f813a310"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310">capacity</a> () const</td></tr>
-<tr class="separator:ac916306e82d90624565de777f813a310"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15dd315e5d652c38acddecd5b7b1f29d"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d">occupied</a> () const</td></tr>
-<tr class="separator:a15dd315e5d652c38acddecd5b7b1f29d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4282da8aa14ea2ae6e6f073525f80938"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a4282da8aa14ea2ae6e6f073525f80938">clear</a> ()</td></tr>
-<tr class="separator:a4282da8aa14ea2ae6e6f073525f80938"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa541dadc39b55ab17c952c7c8df696a1"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aa541dadc39b55ab17c952c7c8df696a1">head</a> () const</td></tr>
-<tr class="separator:aa541dadc39b55ab17c952c7c8df696a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5965016500e3923b13f9587448355b0f"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a5965016500e3923b13f9587448355b0f">tail</a> () const</td></tr>
-<tr class="separator:a5965016500e3923b13f9587448355b0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a078d7e6f571431a4c353fdd627eac960"><td class="memItemLeft" align="right" valign="top">constexpr t_data&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a078d7e6f571431a4c353fdd627eac960">operator[]</a> (size_t p_index) const</td></tr>
-<tr class="separator:a078d7e6f571431a4c353fdd627eac960"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5762134eb275a1f9f1977938c52d682"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac5762134eb275a1f9f1977938c52d682">circular_queue</a> ()=delete</td></tr>
+<tr class="separator:ac5762134eb275a1f9f1977938c52d682"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e2e374c4f3bd5d44b0168e2fc6b8db5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a4e2e374c4f3bd5d44b0168e2fc6b8db5">circular_queue</a> (t_logger &amp;p_logger)</td></tr>
+<tr class="separator:a4e2e374c4f3bd5d44b0168e2fc6b8db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f044b1eb384c71a76d3425b79165b07"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a0f044b1eb384c71a76d3425b79165b07">~circular_queue</a> ()</td></tr>
+<tr class="separator:a0f044b1eb384c71a76d3425b79165b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04d9d107c7b44ec762a3af71fb132ca7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a04d9d107c7b44ec762a3af71fb132ca7">circular_queue</a> (const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;p_queue)</td></tr>
+<tr class="separator:a04d9d107c7b44ec762a3af71fb132ca7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a590a713ea9895289a36525242a1addc7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a590a713ea9895289a36525242a1addc7">circular_queue</a> (<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&amp;p_queue)</td></tr>
+<tr class="separator:a590a713ea9895289a36525242a1addc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88362c933f6eb5e9d6bed1acf6d3db84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a88362c933f6eb5e9d6bed1acf6d3db84">operator=</a> (const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;p_queue)</td></tr>
+<tr class="separator:a88362c933f6eb5e9d6bed1acf6d3db84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a69615e8dee8560c6d779ecf0d40ba1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6a69615e8dee8560c6d779ecf0d40ba1">operator=</a> (<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> &amp;&amp;p_queue)</td></tr>
+<tr class="separator:a6a69615e8dee8560c6d779ecf0d40ba1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad81aeecf7da7997444f306d549fbed82"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82">full_report</a> ()</td></tr>
+<tr class="separator:ad81aeecf7da7997444f306d549fbed82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5c8e3a404c4ecbdbfee654eb2b1b32b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b">brief_report</a> ()</td></tr>
+<tr class="separator:ae5c8e3a404c4ecbdbfee654eb2b1b32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57f98b0cc2ba23bee9cdb46e5eb7aad6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6">push</a> (t_data &amp;&amp;p_data)</td></tr>
+<tr class="separator:a57f98b0cc2ba23bee9cdb46e5eb7aad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec7de6fdecaa6af9dfa1ebe6edade065"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aec7de6fdecaa6af9dfa1ebe6edade065">push</a> (const t_data &amp;p_data)</td></tr>
+<tr class="separator:aec7de6fdecaa6af9dfa1ebe6edade065"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e3a751be7dbbdb153b58d242bb2c2cb"><td class="memItemLeft" align="right" valign="top">std::optional&lt; t_data &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6e3a751be7dbbdb153b58d242bb2c2cb">pop</a> ()</td></tr>
+<tr class="separator:a6e3a751be7dbbdb153b58d242bb2c2cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fff4308d881464a33033068f44910c6"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a2fff4308d881464a33033068f44910c6">full</a> () const</td></tr>
+<tr class="separator:a2fff4308d881464a33033068f44910c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52bca68d35ac28d5403501d4fc6e55f5"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a52bca68d35ac28d5403501d4fc6e55f5">empty</a> () const</td></tr>
+<tr class="separator:a52bca68d35ac28d5403501d4fc6e55f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a765c7679166464a9f812e9d403f8331b"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b">capacity</a> () const</td></tr>
+<tr class="separator:a765c7679166464a9f812e9d403f8331b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae870991853f42a7008bd25586dbfd55"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55">occupied</a> () const</td></tr>
+<tr class="separator:aae870991853f42a7008bd25586dbfd55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fe908d4c7bb505e4eb02bbfe085b5e3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a8fe908d4c7bb505e4eb02bbfe085b5e3">clear</a> ()</td></tr>
+<tr class="separator:a8fe908d4c7bb505e4eb02bbfe085b5e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6435d62d5cbb33eb66810f760baf647"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac6435d62d5cbb33eb66810f760baf647">head</a> () const</td></tr>
+<tr class="separator:ac6435d62d5cbb33eb66810f760baf647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0bfa24bbc6beff0c3e23c63593e46c4"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ab0bfa24bbc6beff0c3e23c63593e46c4">tail</a> () const</td></tr>
+<tr class="separator:ab0bfa24bbc6beff0c3e23c63593e46c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cf55467f7fcc8756da603cdd226afc5"><td class="memItemLeft" align="right" valign="top">constexpr t_data&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6cf55467f7fcc8756da603cdd226afc5">operator[]</a> (size_t p_index) const</td></tr>
+<tr class="separator:a6cf55467f7fcc8756da603cdd226afc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ac3a4dfc5cd6f39507bef80eab8dce6e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9">enlarge</a> ()</td></tr>
-<tr class="separator:ac3a4dfc5cd6f39507bef80eab8dce6e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75f61d2c801c2400160e16151ab64b09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09">enlarge</a> ()</td></tr>
+<tr class="separator:a75f61d2c801c2400160e16151ab64b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;traits::logger t_logger, typename t_data, size_t t_initial_size&gt;<br />
-class tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size &gt;</h3>
+<div class="textblock"><h3>template&lt;traits::log::logger t_logger, typename t_data, size_t t_initial_size, size_t t_incremental_percentage = 50&gt;<br />
+class tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;</h3>
 
 <p>Implements a circular queue which size is increased if it becomes full. </p>
 <p>The purpose is to avoid unnecessary memory allocations to create nodes in the queue by reusing nodes which data have been read</p>
@@ -153,16 +153,16 @@ class tnct::container::circular_queue&lt; t_logger, t_data, t_initial_size &gt;<
 
 <p class="definition">Definition at line <a class="el" href="../../d3/d1e/circular__queue_8h_source.html#l00032">32</a> of file <a class="el" href="../../d3/d1e/circular__queue_8h_source.html">circular_queue.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a1edfae0c40424a952416f4566403f463"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1edfae0c40424a952416f4566403f463">&#9670;&nbsp;</a></span>data</h2>
+<a id="a010b5a7d2f693b6be181f99a855979ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a010b5a7d2f693b6be181f99a855979ee">&#9670;&nbsp;</a></span>data</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a1edfae0c40424a952416f4566403f463">data</a> =  t_data</td>
+          <td class="memname">using <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a010b5a7d2f693b6be181f99a855979ee">data</a> =  t_data</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -171,16 +171,16 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="ac9937b0e6979641368aa4a73095dba43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9937b0e6979641368aa4a73095dba43">&#9670;&nbsp;</a></span>logger</h2>
+<a id="a19527acd6225f433b897ce6c09a8e07c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19527acd6225f433b897ce6c09a8e07c">&#9670;&nbsp;</a></span>logger</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac9937b0e6979641368aa4a73095dba43">logger</a> =  t_logger</td>
+          <td class="memname">using <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a19527acd6225f433b897ce6c09a8e07c">logger</a> =  t_logger</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -190,19 +190,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="abcfaf5b1de93c13424d17a36887ef9b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcfaf5b1de93c13424d17a36887ef9b7">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[1/4]</span></h2>
+<a id="ac5762134eb275a1f9f1977938c52d682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5762134eb275a1f9f1977938c52d682">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -217,19 +217,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a00e6c55f69be3f3004f0f6ad765e53f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00e6c55f69be3f3004f0f6ad765e53f8">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[2/4]</span></h2>
+<a id="a4e2e374c4f3bd5d44b0168e2fc6b8db5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e2e374c4f3bd5d44b0168e2fc6b8db5">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
           <td>(</td>
           <td class="paramtype">t_logger &amp;&#160;</td>
           <td class="paramname"><em>p_logger</em></td><td>)</td>
@@ -247,30 +247,30 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a00e6c55f69be3f3004f0f6ad765e53f8_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a00e6c55f69be3f3004f0f6ad765e53f8_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a00e6c55f69be3f3004f0f6ad765e53f8_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a00e6c55f69be3f3004f0f6ad765e53f8_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a4e2e374c4f3bd5d44b0168e2fc6b8db5_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a4e2e374c4f3bd5d44b0168e2fc6b8db5_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a4e2e374c4f3bd5d44b0168e2fc6b8db5_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a4e2e374c4f3bd5d44b0168e2fc6b8db5_cgraph">
 <area shape="rect" title=" " alt="" coords="5,39,177,80"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="225,39,397,80"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="445,71,617,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="225,39,397,80"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="445,71,617,112"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a23e491643385b72abebeb652d349e832"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23e491643385b72abebeb652d349e832">&#9670;&nbsp;</a></span>~circular_queue()</h2>
+<a id="a0f044b1eb384c71a76d3425b79165b07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f044b1eb384c71a76d3425b79165b07">&#9670;&nbsp;</a></span>~circular_queue()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::~<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::~<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -287,21 +287,21 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a1986fd5f41418719293f863a13bc21b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1986fd5f41418719293f863a13bc21b6">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[3/4]</span></h2>
+<a id="a04d9d107c7b44ec762a3af71fb132ca7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04d9d107c7b44ec762a3af71fb132ca7">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; &amp;&#160;</td>
           <td class="paramname"><em>p_queue</em></td><td>)</td>
           <td></td>
         </tr>
@@ -317,21 +317,21 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a338345775c8354dbc6298ebd596eaed2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a338345775c8354dbc6298ebd596eaed2">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[4/4]</span></h2>
+<a id="a590a713ea9895289a36525242a1addc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a590a713ea9895289a36525242a1addc7">&#9670;&nbsp;</a></span>circular_queue() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::<a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt; &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; &amp;&amp;&#160;</td>
           <td class="paramname"><em>p_queue</em></td><td>)</td>
           <td></td>
         </tr>
@@ -348,19 +348,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9d9b91e84368306828bbef4d4bbd3d24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d9b91e84368306828bbef4d4bbd3d24">&#9670;&nbsp;</a></span>brief_report()</h2>
+<a id="ae5c8e3a404c4ecbdbfee654eb2b1b32b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5c8e3a404c4ecbdbfee654eb2b1b32b">&#9670;&nbsp;</a></span>brief_report()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::brief_report </td>
+          <td class="memname">std::string <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::brief_report </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -377,42 +377,42 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_cgraph">
 <area shape="rect" title=" " alt="" coords="5,39,177,80"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="225,5,397,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="225,71,397,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="225,5,397,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="225,71,397,112"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a9d9b91e84368306828bbef4d4bbd3d24_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ae5c8e3a404c4ecbdbfee654eb2b1b32b_icgraph">
 <area shape="rect" title=" " alt="" coords="665,123,837,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a00e6c55f69be3f3004f0f6ad765e53f8" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,123,397,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,152,177,193"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="445,123,617,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a3270ff553e7d331d75671c13c0c40665" title=" " alt="" coords="445,240,617,281"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a4e2e374c4f3bd5d44b0168e2fc6b8db5" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,123,397,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,152,177,193"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="445,123,617,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6e3a751be7dbbdb153b58d242bb2c2cb" title=" " alt="" coords="445,240,617,281"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ac916306e82d90624565de777f813a310"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac916306e82d90624565de777f813a310">&#9670;&nbsp;</a></span>capacity()</h2>
+<a id="a765c7679166464a9f812e9d403f8331b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a765c7679166464a9f812e9d403f8331b">&#9670;&nbsp;</a></span>capacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::capacity </td>
+          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::capacity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -429,33 +429,33 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ac916306e82d90624565de777f813a310_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ac916306e82d90624565de777f813a310_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ac916306e82d90624565de777f813a310_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ac916306e82d90624565de777f813a310_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a765c7679166464a9f812e9d403f8331b_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a765c7679166464a9f812e9d403f8331b_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a765c7679166464a9f812e9d403f8331b_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a765c7679166464a9f812e9d403f8331b_icgraph">
 <area shape="rect" title=" " alt="" coords="885,123,1057,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="665,123,837,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a00e6c55f69be3f3004f0f6ad765e53f8" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,123,397,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,152,177,193"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="445,123,617,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a3270ff553e7d331d75671c13c0c40665" title=" " alt="" coords="445,240,617,281"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="665,123,837,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a4e2e374c4f3bd5d44b0168e2fc6b8db5" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,123,397,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,152,177,193"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="445,123,617,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6e3a751be7dbbdb153b58d242bb2c2cb" title=" " alt="" coords="445,240,617,281"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a4282da8aa14ea2ae6e6f073525f80938"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4282da8aa14ea2ae6e6f073525f80938">&#9670;&nbsp;</a></span>clear()</h2>
+<a id="a8fe908d4c7bb505e4eb02bbfe085b5e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fe908d4c7bb505e4eb02bbfe085b5e3">&#9670;&nbsp;</a></span>clear()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::clear </td>
+          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::clear </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -472,19 +472,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="aec3365ef539d821185699c4262fa7b90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec3365ef539d821185699c4262fa7b90">&#9670;&nbsp;</a></span>empty()</h2>
+<a id="a52bca68d35ac28d5403501d4fc6e55f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52bca68d35ac28d5403501d4fc6e55f5">&#9670;&nbsp;</a></span>empty()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr bool <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::empty </td>
+          <td class="memname">constexpr bool <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::empty </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -501,28 +501,28 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_aec3365ef539d821185699c4262fa7b90_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_aec3365ef539d821185699c4262fa7b90_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_aec3365ef539d821185699c4262fa7b90_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_aec3365ef539d821185699c4262fa7b90_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a52bca68d35ac28d5403501d4fc6e55f5_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a52bca68d35ac28d5403501d4fc6e55f5_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a52bca68d35ac28d5403501d4fc6e55f5_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a52bca68d35ac28d5403501d4fc6e55f5_icgraph">
 <area shape="rect" title=" " alt="" coords="225,5,397,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a3270ff553e7d331d75671c13c0c40665" title=" " alt="" coords="5,5,177,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6e3a751be7dbbdb153b58d242bb2c2cb" title=" " alt="" coords="5,5,177,47"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ac3a4dfc5cd6f39507bef80eab8dce6e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3a4dfc5cd6f39507bef80eab8dce6e9">&#9670;&nbsp;</a></span>enlarge()</h2>
+<a id="a75f61d2c801c2400160e16151ab64b09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75f61d2c801c2400160e16151ab64b09">&#9670;&nbsp;</a></span>enlarge()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::enlarge </td>
+          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::enlarge </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -539,40 +539,40 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_cgraph">
 <area shape="rect" title=" " alt="" coords="5,41,177,83"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="445,12,617,53"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="225,71,397,112"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="665,5,837,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="665,71,837,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="445,12,617,53"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="225,71,397,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="665,5,837,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="665,71,837,112"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ac3a4dfc5cd6f39507bef80eab8dce6e9_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a75f61d2c801c2400160e16151ab64b09_icgraph">
 <area shape="rect" title=" " alt="" coords="225,5,397,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,5,177,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,5,177,47"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="adf55f373fc381a4e89749f3b17881f16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf55f373fc381a4e89749f3b17881f16">&#9670;&nbsp;</a></span>full()</h2>
+<a id="a2fff4308d881464a33033068f44910c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fff4308d881464a33033068f44910c6">&#9670;&nbsp;</a></span>full()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr bool <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::full </td>
+          <td class="memname">constexpr bool <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::full </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -589,28 +589,28 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_adf55f373fc381a4e89749f3b17881f16_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_adf55f373fc381a4e89749f3b17881f16_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_adf55f373fc381a4e89749f3b17881f16_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_adf55f373fc381a4e89749f3b17881f16_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a2fff4308d881464a33033068f44910c6_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a2fff4308d881464a33033068f44910c6_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a2fff4308d881464a33033068f44910c6_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a2fff4308d881464a33033068f44910c6_icgraph">
 <area shape="rect" title=" " alt="" coords="225,5,397,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,5,177,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,5,177,47"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ad9a757505e440b81f5d4ca2c6a740383"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad9a757505e440b81f5d4ca2c6a740383">&#9670;&nbsp;</a></span>full_report()</h2>
+<a id="ad81aeecf7da7997444f306d549fbed82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad81aeecf7da7997444f306d549fbed82">&#9670;&nbsp;</a></span>full_report()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::full_report </td>
+          <td class="memname">std::string <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::full_report </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -627,40 +627,40 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_cgraph">
 <area shape="rect" title=" " alt="" coords="5,41,177,83"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="225,12,397,53"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="445,71,617,112"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="225,12,397,53"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="445,71,617,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="445,5,617,47"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ad9a757505e440b81f5d4ca2c6a740383_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_ad81aeecf7da7997444f306d549fbed82_icgraph">
 <area shape="rect" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,5,397,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,5,177,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,5,397,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,5,177,47"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="aa541dadc39b55ab17c952c7c8df696a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa541dadc39b55ab17c952c7c8df696a1">&#9670;&nbsp;</a></span>head()</h2>
+<a id="ac6435d62d5cbb33eb66810f760baf647"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6435d62d5cbb33eb66810f760baf647">&#9670;&nbsp;</a></span>head()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::head </td>
+          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::head </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -677,19 +677,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a15dd315e5d652c38acddecd5b7b1f29d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15dd315e5d652c38acddecd5b7b1f29d">&#9670;&nbsp;</a></span>occupied()</h2>
+<a id="aae870991853f42a7008bd25586dbfd55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae870991853f42a7008bd25586dbfd55">&#9670;&nbsp;</a></span>occupied()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::occupied </td>
+          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::occupied </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -706,35 +706,35 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a15dd315e5d652c38acddecd5b7b1f29d_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a15dd315e5d652c38acddecd5b7b1f29d_icgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a15dd315e5d652c38acddecd5b7b1f29d_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a15dd315e5d652c38acddecd5b7b1f29d_icgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_aae870991853f42a7008bd25586dbfd55_icgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_aae870991853f42a7008bd25586dbfd55_icgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_aae870991853f42a7008bd25586dbfd55_icgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_aae870991853f42a7008bd25586dbfd55_icgraph">
 <area shape="rect" title=" " alt="" coords="885,176,1057,217"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="665,144,837,185"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="445,239,617,280"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a00e6c55f69be3f3004f0f6ad765e53f8" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,123,397,164"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a32e0a40eb8e60057f5987a51e148a515" title=" " alt="" coords="5,93,177,135"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a3270ff553e7d331d75671c13c0c40665" title=" " alt="" coords="445,173,617,215"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="665,144,837,185"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="445,239,617,280"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a4e2e374c4f3bd5d44b0168e2fc6b8db5" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,123,397,164"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a57f98b0cc2ba23bee9cdb46e5eb7aad6" title=" " alt="" coords="5,93,177,135"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a6e3a751be7dbbdb153b58d242bb2c2cb" title=" " alt="" coords="445,173,617,215"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a85d5656725ebc597da64fda231043514"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85d5656725ebc597da64fda231043514">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+<a id="a6a69615e8dee8560c6d779ecf0d40ba1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a69615e8dee8560c6d779ecf0d40ba1">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&amp; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::operator= </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&amp; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt; &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; &amp;&amp;&#160;</td>
           <td class="paramname"><em>p_queue</em></td><td>)</td>
           <td></td>
         </tr>
@@ -750,21 +750,21 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a7bf9129f3cb84955292c281de2080e16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7bf9129f3cb84955292c281de2080e16">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+<a id="a88362c933f6eb5e9d6bed1acf6d3db84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88362c933f6eb5e9d6bed1acf6d3db84">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&amp; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::operator= </td>
+          <td class="memname"><a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&amp; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt; &amp;&#160;</td>
           <td class="paramname"><em>p_queue</em></td><td>)</td>
           <td></td>
         </tr>
@@ -780,19 +780,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a078d7e6f571431a4c353fdd627eac960"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a078d7e6f571431a4c353fdd627eac960">&#9670;&nbsp;</a></span>operator[]()</h2>
+<a id="a6cf55467f7fcc8756da603cdd226afc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cf55467f7fcc8756da603cdd226afc5">&#9670;&nbsp;</a></span>operator[]()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr t_data <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::operator[] </td>
+          <td class="memname">constexpr t_data <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::operator[] </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>p_index</em></td><td>)</td>
@@ -810,19 +810,19 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 
 </div>
 </div>
-<a id="a3270ff553e7d331d75671c13c0c40665"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3270ff553e7d331d75671c13c0c40665">&#9670;&nbsp;</a></span>pop()</h2>
+<a id="a6e3a751be7dbbdb153b58d242bb2c2cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e3a751be7dbbdb153b58d242bb2c2cb">&#9670;&nbsp;</a></span>pop()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::optional&lt;t_data&gt; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::pop </td>
+          <td class="memname">std::optional&lt;t_data&gt; <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::pop </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -839,31 +839,31 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a3270ff553e7d331d75671c13c0c40665_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a3270ff553e7d331d75671c13c0c40665_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a3270ff553e7d331d75671c13c0c40665_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a3270ff553e7d331d75671c13c0c40665_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a6e3a751be7dbbdb153b58d242bb2c2cb_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a6e3a751be7dbbdb153b58d242bb2c2cb_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a6e3a751be7dbbdb153b58d242bb2c2cb_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a6e3a751be7dbbdb153b58d242bb2c2cb_cgraph">
 <area shape="rect" title=" " alt="" coords="5,71,177,112"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="225,37,397,79"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aec3365ef539d821185699c4262fa7b90" title=" " alt="" coords="225,103,397,144"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="445,5,617,47"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="445,71,617,112"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="225,37,397,79"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a52bca68d35ac28d5403501d4fc6e55f5" title=" " alt="" coords="225,103,397,144"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="445,5,617,47"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="445,71,617,112"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a758f67804bef9b4edb08d8f311aea360"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a758f67804bef9b4edb08d8f311aea360">&#9670;&nbsp;</a></span>push() <span class="overload">[1/2]</span></h2>
+<a id="aec7de6fdecaa6af9dfa1ebe6edade065"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec7de6fdecaa6af9dfa1ebe6edade065">&#9670;&nbsp;</a></span>push() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::push </td>
+          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::push </td>
           <td>(</td>
           <td class="paramtype">const t_data &amp;&#160;</td>
           <td class="paramname"><em>p_data</em></td><td>)</td>
@@ -881,33 +881,33 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a758f67804bef9b4edb08d8f311aea360_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a758f67804bef9b4edb08d8f311aea360_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a758f67804bef9b4edb08d8f311aea360_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a758f67804bef9b4edb08d8f311aea360_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_aec7de6fdecaa6af9dfa1ebe6edade065_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_aec7de6fdecaa6af9dfa1ebe6edade065_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_aec7de6fdecaa6af9dfa1ebe6edade065_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_aec7de6fdecaa6af9dfa1ebe6edade065_cgraph">
 <area shape="rect" title=" " alt="" coords="5,27,177,68"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="665,19,837,60"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,27,397,68"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#adf55f373fc381a4e89749f3b17881f16" title=" " alt="" coords="225,92,397,134"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="885,12,1057,54"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="885,78,1057,119"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="445,78,617,119"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="665,19,837,60"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,27,397,68"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a2fff4308d881464a33033068f44910c6" title=" " alt="" coords="225,92,397,134"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="885,12,1057,54"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="885,78,1057,119"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="445,78,617,119"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a32e0a40eb8e60057f5987a51e148a515"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32e0a40eb8e60057f5987a51e148a515">&#9670;&nbsp;</a></span>push() <span class="overload">[2/2]</span></h2>
+<a id="a57f98b0cc2ba23bee9cdb46e5eb7aad6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57f98b0cc2ba23bee9cdb46e5eb7aad6">&#9670;&nbsp;</a></span>push() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::push </td>
+          <td class="memname">void <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::push </td>
           <td>(</td>
           <td class="paramtype">t_data &amp;&amp;&#160;</td>
           <td class="paramname"><em>p_data</em></td><td>)</td>
@@ -925,33 +925,33 @@ template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt;
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a32e0a40eb8e60057f5987a51e148a515_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a32e0a40eb8e60057f5987a51e148a515_cgraph" alt=""/></div>
-<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a32e0a40eb8e60057f5987a51e148a515_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a32e0a40eb8e60057f5987a51e148a515_cgraph">
+<div class="center"><img src="../../dc/d90/classtnct_1_1container_1_1circular__queue_a57f98b0cc2ba23bee9cdb46e5eb7aad6_cgraph.png" border="0" usemap="#adc/d90/classtnct_1_1container_1_1circular__queue_a57f98b0cc2ba23bee9cdb46e5eb7aad6_cgraph" alt=""/></div>
+<map name="adc/d90/classtnct_1_1container_1_1circular__queue_a57f98b0cc2ba23bee9cdb46e5eb7aad6_cgraph" id="adc/d90/classtnct_1_1container_1_1circular__queue_a57f98b0cc2ba23bee9cdb46e5eb7aad6_cgraph">
 <area shape="rect" title=" " alt="" coords="5,27,177,68"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a9d9b91e84368306828bbef4d4bbd3d24" title=" " alt="" coords="665,19,837,60"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac3a4dfc5cd6f39507bef80eab8dce6e9" title=" " alt="" coords="225,27,397,68"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#adf55f373fc381a4e89749f3b17881f16" title=" " alt="" coords="225,92,397,134"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ac916306e82d90624565de777f813a310" title=" " alt="" coords="885,12,1057,54"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a15dd315e5d652c38acddecd5b7b1f29d" title=" " alt="" coords="885,78,1057,119"/>
-<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad9a757505e440b81f5d4ca2c6a740383" title=" " alt="" coords="445,78,617,119"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ae5c8e3a404c4ecbdbfee654eb2b1b32b" title=" " alt="" coords="665,19,837,60"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a75f61d2c801c2400160e16151ab64b09" title=" " alt="" coords="225,27,397,68"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a2fff4308d881464a33033068f44910c6" title=" " alt="" coords="225,92,397,134"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#a765c7679166464a9f812e9d403f8331b" title=" " alt="" coords="885,12,1057,54"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#aae870991853f42a7008bd25586dbfd55" title=" " alt="" coords="885,78,1057,119"/>
+<area shape="rect" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html#ad81aeecf7da7997444f306d549fbed82" title=" " alt="" coords="445,78,617,119"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a5965016500e3923b13f9587448355b0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5965016500e3923b13f9587448355b0f">&#9670;&nbsp;</a></span>tail()</h2>
+<a id="ab0bfa24bbc6beff0c3e23c63593e46c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0bfa24bbc6beff0c3e23c63593e46c4">&#9670;&nbsp;</a></span>tail()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, typename t_data , size_t t_initial_size&gt; </div>
+template&lt;traits::log::logger t_logger, typename t_data , size_t t_initial_size, size_t t_incremental_percentage = 50&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size &gt;::tail </td>
+          <td class="memname">constexpr size_t <a class="el" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a>&lt; t_logger, t_data, t_initial_size, t_incremental_percentage &gt;::tail </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

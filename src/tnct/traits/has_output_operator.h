@@ -6,13 +6,16 @@
 #ifndef TNCT_TRAITS_HAS_OUTPUT_OPERATOR_H
 #define TNCT_TRAITS_HAS_OUTPUT_OPERATOR_H
 
-#include <iostream>
+#include <ostream>
 
 namespace tnct::traits {
 
-template <typename T>
-concept has_output_operator = requires(std::ostream &os, T value) {
-  { os << value } -> std::same_as<std::ostream &>;
+// // code reviewed by ChatGPT from a previous version I wrote
+template <typename T, typename CharT = char,
+          typename Traits = std::char_traits<CharT>>
+concept has_output_operator = requires(std::basic_ostream<CharT, Traits> &os,
+                                       const T &value) {
+  { os << value } -> std::same_as<std::basic_ostream<CharT, Traits> &>;
 };
 
 } // namespace tnct::traits

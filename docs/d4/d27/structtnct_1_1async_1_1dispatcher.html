@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -113,66 +113,66 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8a351facf078998756307dc8e7168e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76bdcaadfbc3d47206fae31d637af36b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a76bdcaadfbc3d47206fae31d637af36b">operator delete[]</a> (void *)=delete</td></tr>
 <tr class="separator:a76bdcaadfbc3d47206fae31d637af36b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac83d8512b636eb5566c8b3041f1d3e11"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:ac83d8512b636eb5566c8b3041f1d3e11"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:ac83d8512b636eb5566c8b3041f1d3e11"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">publish</a> (const t_event &amp;p_event) noexcept</td></tr>
 <tr class="separator:ac83d8512b636eb5566c8b3041f1d3e11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac24741f48c8840fed8ac1cb287d7c4e8"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event, typename... t_event_params&gt; </td></tr>
+<tr class="memitem:ac24741f48c8840fed8ac1cb287d7c4e8"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event, typename... t_event_params&gt; </td></tr>
 <tr class="memitem:ac24741f48c8840fed8ac1cb287d7c4e8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac24741f48c8840fed8ac1cb287d7c4e8">publish</a> (t_event_params &amp;&amp;...p_params) noexcept</td></tr>
 <tr class="separator:ac24741f48c8840fed8ac1cb287d7c4e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6214576a998cb22618b25b9b38431fe0"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </td></tr>
+<tr class="memitem:a6214576a998cb22618b25b9b38431fe0"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </td></tr>
 <tr class="memitem:a6214576a998cb22618b25b9b38431fe0"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a6214576a998cb22618b25b9b38431fe0">add_handling</a> (t_handler &amp;&amp;p_handler, t_queue &amp;&amp;p_queue, <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#afb3ea0354b89bfe846110791b15e636c">handling_priority</a> p_handling_priority=<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#afb3ea0354b89bfe846110791b15e636ca075a3e36a0a52dcbc568c05788e8a713">handling_priority::medium</a>)</td></tr>
 <tr class="separator:a6214576a998cb22618b25b9b38431fe0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a291c86122b28908fdc7ba9df84df1bce"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </td></tr>
+<tr class="memitem:a291c86122b28908fdc7ba9df84df1bce"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </td></tr>
 <tr class="memitem:a291c86122b28908fdc7ba9df84df1bce"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a291c86122b28908fdc7ba9df84df1bce">add_handling</a> (t_handler &amp;&amp;p_handler, <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#afb3ea0354b89bfe846110791b15e636c">handling_priority</a> p_handling_priority, t_queue &amp;&amp;p_queue, size_t p_num_handlers)</td></tr>
 <tr class="separator:a291c86122b28908fdc7ba9df84df1bce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc3083415d95707a14231b3ae4c4c0c0"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </td></tr>
+<tr class="memitem:adc3083415d95707a14231b3ae4c4c0c0"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </td></tr>
 <tr class="memitem:adc3083415d95707a14231b3ae4c4c0c0"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#adc3083415d95707a14231b3ae4c4c0c0">add_handling</a> (t_handler &amp;&amp;p_handler, t_queue &amp;&amp;p_queue, size_t p_num_handlers)</td></tr>
 <tr class="separator:adc3083415d95707a14231b3ae4c4c0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a204faef3be167026bc1451ad685128ad"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a204faef3be167026bc1451ad685128ad"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a204faef3be167026bc1451ad685128ad"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a204faef3be167026bc1451ad685128ad">clear</a> ()</td></tr>
 <tr class="memdesc:a204faef3be167026bc1451ad685128ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans all handlings of a certain event.  <a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a204faef3be167026bc1451ad685128ad">More...</a><br /></td></tr>
 <tr class="separator:a204faef3be167026bc1451ad685128ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61201c10c24133a744724f0acfb8382a"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a61201c10c24133a744724f0acfb8382a"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a61201c10c24133a744724f0acfb8382a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a61201c10c24133a744724f0acfb8382a">clear</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id)</td></tr>
 <tr class="memdesc:a61201c10c24133a744724f0acfb8382a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cleans all handlers of a certain handling for a certain event.  <a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a61201c10c24133a744724f0acfb8382a">More...</a><br /></td></tr>
 <tr class="separator:a61201c10c24133a744724f0acfb8382a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab48027fd76a61b5328e5e4d1011ea5a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ab48027fd76a61b5328e5e4d1011ea5a7">clear</a> ()</td></tr>
 <tr class="separator:ab48027fd76a61b5328e5e4d1011ea5a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a532ce21a9718a162c286f3567a87d54f"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a532ce21a9718a162c286f3567a87d54f"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a532ce21a9718a162c286f3567a87d54f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a532ce21a9718a162c286f3567a87d54f">add_handlers</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id, size_t p_amount=1)</td></tr>
 <tr class="separator:a532ce21a9718a162c286f3567a87d54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a34b3617977deefce0791e94d8dcf37"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a4a34b3617977deefce0791e94d8dcf37"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a4a34b3617977deefce0791e94d8dcf37"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a4a34b3617977deefce0791e94d8dcf37">get_amount_handlers</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id) const noexcept</td></tr>
 <tr class="separator:a4a34b3617977deefce0791e94d8dcf37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0da61757e3b43c447178e0e08a0b5b3a"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a0da61757e3b43c447178e0e08a0b5b3a"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a0da61757e3b43c447178e0e08a0b5b3a"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a0da61757e3b43c447178e0e08a0b5b3a">get_amount_handlings</a> () const noexcept</td></tr>
 <tr class="separator:a0da61757e3b43c447178e0e08a0b5b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6103dcbacc6b12f715f9f166a994b9f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a6103dcbacc6b12f715f9f166a994b9f4">stop</a> () noexcept</td></tr>
 <tr class="separator:a6103dcbacc6b12f715f9f166a994b9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80961810ccf47fc621a40faa7c90330c"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a80961810ccf47fc621a40faa7c90330c"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a80961810ccf47fc621a40faa7c90330c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a80961810ccf47fc621a40faa7c90330c">stop</a> () noexcept</td></tr>
 <tr class="separator:a80961810ccf47fc621a40faa7c90330c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a92d7001e2ef438131ec2ab2627a650"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:a2a92d7001e2ef438131ec2ab2627a650"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:a2a92d7001e2ef438131ec2ab2627a650"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a2a92d7001e2ef438131ec2ab2627a650">stop</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id) noexcept</td></tr>
 <tr class="separator:a2a92d7001e2ef438131ec2ab2627a650"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0feb9101f01c959636c10ab90f0973a"><td class="memTemplParams" colspan="2">template&lt;traits::event t_event&gt; </td></tr>
+<tr class="memitem:aa0feb9101f01c959636c10ab90f0973a"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event&gt; </td></tr>
 <tr class="memitem:aa0feb9101f01c959636c10ab90f0973a"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; bool &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#aa0feb9101f01c959636c10ab90f0973a">is_stopped</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id) const</td></tr>
 <tr class="separator:aa0feb9101f01c959636c10ab90f0973a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;traits::logger t_logger, traits::event... t_events&gt;<br />
+<div class="textblock"><h3>template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt;<br />
 struct tnct::async::dispatcher&lt; t_logger, t_events &gt;</h3>
 
 <p>Class that allows creation of queues for an event, creation of subscribers for an event, and publishing of events. </p>
 <p>The UML class diagram below, written in www.plantuml.com, shows the conceptual structure of the <code>dispatcher</code> and other associated structures</p>
 <p>The central concept is an <code>event</code>, a struct that contains data about an interesting event in the application. It can be, for example, an incoming message from a network connection, a user menu choice or a temperature coming from a sensor.</p>
 <p>A <code>handling</code> is how one can define which type of <code>handler</code> will be executed for the <code>event</code>.</p>
-<p>Each <code>handling</code> has its own <code>queue</code> of <code>event</code> objects, and the implementantion of the queue can vary as much as necessary, as far as it satisfies the requirements defined by <code><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a490211a9a723abced384319ddc85a250">traits::queue</a></code>.</p>
+<p>Each <code>handling</code> has its own <code>queue</code> of <code>event</code> objects, and the implementantion of the queue can vary as much as necessary, as far as it satisfies the requirements defined by <code><a class="el" href="../../d2/d5b/namespacetnct_1_1traits_1_1container.html#a29cd132a52198b2eb4c9c9617f2c8638">traits::container::queue</a></code>.</p>
 <p>A <code>handling</code> can have multiples instances of the <code>hander</code> type, in case each <code>event</code> instance can be handled independently from any other <code>event</code>.</p>
 <p>It is possible to define a <code>handling_priority</code> for a <code>handling</code>, so that handlings that have higher priority will have the event copied to its queue before a handling with lower priority.</p>
 <p>Please, take a look at the tests and examples for more information on how to use the dispatcher class. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00089">89</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00090">90</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="afdee9d8af35a2e88b1f439abdce73123"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afdee9d8af35a2e88b1f439abdce73123">&#9670;&nbsp;</a></span>events</h2>
@@ -180,7 +180,7 @@ struct tnct::async::dispatcher&lt; t_logger, t_events &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">tnct::async::dispatcher</a>&lt; t_logger, t_events &gt;::<a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#afdee9d8af35a2e88b1f439abdce73123">events</a> =  std::tuple&lt;t_events...&gt;</td>
@@ -188,7 +188,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00092">92</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00093">93</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -198,7 +198,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">tnct::async::dispatcher</a>&lt; t_logger, t_events &gt;::<a class="el" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#a6104ebe94b569a73f4f45c3d51b9dcd7">logger</a> =  t_logger</td>
@@ -206,7 +206,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00093">93</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00094">94</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -217,7 +217,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -244,7 +244,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -264,7 +264,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00097">97</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00098">98</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -274,7 +274,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -302,7 +302,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -330,7 +330,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -349,7 +349,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00102">102</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00103">103</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -369,9 +369,9 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -401,7 +401,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00306">306</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00311">311</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -420,9 +420,9 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -464,7 +464,7 @@ template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, trait
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00191">191</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00194">194</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -474,9 +474,9 @@ template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, trait
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -512,7 +512,7 @@ template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, trait
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00158">158</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00160">160</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -533,9 +533,9 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -571,7 +571,7 @@ template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, trait
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00223">223</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00227">227</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -581,9 +581,9 @@ template&lt;traits::event t_event, traits::queue&lt; t_event &gt; t_queue, trait
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -604,7 +604,7 @@ template&lt;traits::event t_event&gt; </div>
 
 <p>Cleans all handlings of a certain event. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00255">255</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00259">259</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -623,7 +623,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -642,7 +642,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00289">289</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00294">294</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -652,9 +652,9 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -676,7 +676,7 @@ template&lt;traits::event t_event&gt; </div>
 
 <p>Cleans all handlers of a certain handling for a certain event. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00269">269</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00274">274</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -686,9 +686,9 @@ template&lt;traits::event t_event&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -708,7 +708,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00326">326</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00331">331</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -727,9 +727,9 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -748,7 +748,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00343">343</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00348">348</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -758,9 +758,9 @@ template&lt;traits::event t_event&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -780,7 +780,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00404">404</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00409">409</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -790,7 +790,7 @@ template&lt;traits::event t_event&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -818,7 +818,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -846,7 +846,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -874,7 +874,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -902,7 +902,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -930,7 +930,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -958,9 +958,9 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -980,7 +980,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00117">117</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00118">118</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1000,9 +1000,9 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event, typename... t_event_params&gt; </div>
+template&lt;traits::async::event t_event, typename... t_event_params&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1022,7 +1022,7 @@ template&lt;traits::event t_event, typename... t_event_params&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00136">136</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00137">137</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -1032,7 +1032,7 @@ template&lt;traits::event t_event, typename... t_event_params&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1051,7 +1051,7 @@ template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00349">349</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00354">354</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1070,9 +1070,9 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1091,7 +1091,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00365">365</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00370">370</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>
@@ -1101,9 +1101,9 @@ template&lt;traits::event t_event&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event... t_events&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event... t_events&gt; </div>
 <div class="memtemplate">
-template&lt;traits::event t_event&gt; </div>
+template&lt;traits::async::event t_event&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1123,7 +1123,7 @@ template&lt;traits::event t_event&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00382">382</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html#l00387">387</a> of file <a class="el" href="../../d8/d07/async_2dispatcher_8h_source.html">dispatcher.h</a>.</p>
 
 </div>
 </div>

@@ -12,20 +12,20 @@
 // tuple_like_002 actually causes a compile error
 
 #include "tnct/program/options.h"
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 
 using namespace tnct;
 
 namespace tnct::traits::test {
 
-template <traits::tuple_like t_tuple> void func(t_tuple &&p_tuple) {
+template <traits::tuple::like t_tuple> void func(t_tuple &&p_tuple) {
   std::cerr << "tuple<0>    = " << std::get<0>(p_tuple) << std::endl;
 }
 
 struct tuple_like_000 {
   static std::string desc() {
     return "Passing a 'std::tuple' object to a template function which type "
-           "parameter is restricted by the concept 'tuple:::tuple_like'";
+           "parameter is restricted by the concept 'tuple:::like'";
   }
 
   bool operator()(const program::options &) {
@@ -40,7 +40,7 @@ struct tuple_like_000 {
 struct tuple_like_001 {
   static std::string desc() {
     return "Passing a 'int' object to a template function which type parameter "
-           "is restricted by the concept 'tuple:::tuple_like'. The code will "
+           "is restricted by the concept 'tuple:::like'. The code will "
            "not compile, so the code is commented.";
   }
 
@@ -57,7 +57,7 @@ struct tuple_like_002 {
   static std::string desc() {
     return "Passing a 'std::vector<double>' object to a template function "
            "which type parameter is restricted by the concept "
-           "'tuple:::tuple_like'. The code will not compile, so the code is "
+           "'tuple:::like'. The code will not compile, so the code is "
            "commented.";
   }
 

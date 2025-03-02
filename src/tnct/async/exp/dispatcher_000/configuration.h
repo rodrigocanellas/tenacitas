@@ -14,13 +14,13 @@
 #include <string_view>
 
 #include "tnct/parser/ini_file.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 using namespace std::chrono_literals;
 
 namespace tnct::async::exp {
 
-template <traits::logger t_logger, size_t t_num_handlings = 5>
+template <traits::log::logger t_logger, size_t t_num_handlings = 5>
 struct configuration {
   struct handling_cfg {
     bool use{false};

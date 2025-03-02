@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -85,15 +85,15 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d5/d2e/sensor_8h.html">tnct/async/exp/temperature_sensors_simulator/per/sensor.h</a>&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d0/dca/handling__priority_8h.html">tnct/async/handling_priority.h</a>&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d3/d1e/circular__queue_8h.html">tnct/container/circular_queue.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d7/d41/traits_2dispatcher_8h.html">tnct/traits/dispatcher.h</a>&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../da/d67/traits_2logger_8h.html">tnct/traits/logger.h</a>&quot;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d3/d43/tuple__contains__tuple_8h.html">tnct/traits/tuple_contains_tuple.h</a>&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d1/d93/traits_2async_2dispatcher_8h.html">tnct/traits/async/dispatcher.h</a>&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html">tnct/traits/log/logger.h</a>&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dd/d47/contains__tuple_8h.html">tnct/traits/tuple/contains_tuple.h</a>&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">using namespace </span>std::chrono_literals;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html">tnct::async::exp::temperature_sensors_simulator::per</a> {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">template</span> &lt;traits::logger t_logger, traits::dispatcher t_dispatcher&gt;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a894791640350194f7cafdca562c49532">   22</a></span>&#160;<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a894791640350194f7cafdca562c49532">requires</a>(<a class="code" href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">traits::tuple_contains_tuple</a>&lt;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">template</span> &lt;traits::log::logger t_logger, traits::async::dispatcher t_dispatcher&gt;</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a35072bcc0727667f05b8f5d55950ab32">   22</a></span>&#160;<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a35072bcc0727667f05b8f5d55950ab32">requires</a>(<a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">traits::tuple::contains_tuple</a>&lt;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;         <span class="keyword">typename</span> t_dispatcher::events,</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;         std::tuple&lt;evt::add_sensor, evt::remove_sensor, evt::set_temperature&gt;&gt;)</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
@@ -106,7 +106,7 @@ $(function() {
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        async::handling_priority::medium,</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <a class="code" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">container::circular_queue&lt;t_logger, evt::add_sensor, 10&gt;</a>{m_logger}, 1));</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">if</span> (!_result) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;add_sensor&#39;&quot;</span>);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;add_sensor&#39;&quot;</span>);</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    }</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
@@ -116,7 +116,7 @@ $(function() {
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">container::circular_queue&lt;t_logger, evt::remove_sensor, 10&gt;</a>{m_logger},</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        1);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">if</span> (!_result) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;remove_sensor&#39;&quot;</span>);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;remove_sensor&#39;&quot;</span>);</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
@@ -126,7 +126,7 @@ $(function() {
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <a class="code" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">container::circular_queue&lt;t_logger, evt::set_temperature, 10&gt;</a>{m_logger},</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        1);</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">if</span> (!_result) {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;set_sensor&#39;&quot;</span>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;set_sensor&#39;&quot;</span>);</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  }</div>
@@ -166,20 +166,20 @@ $(function() {
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">void</span> on_remove_sensor(<a class="code" href="../../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html">evt::remove_sensor</a> &amp;&amp;p_evt) {</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    std::lock_guard&lt;std::mutex&gt; _lock(m_mutex);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    iterator _ite = find(p_evt.sensor_id);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    iterator _ite = <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">find</a>(p_evt.sensor_id);</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (_ite != m_collection.end()) {</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      m_collection.erase(_ite);</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    }</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordtype">void</span> on_set_temperature(<a class="code" href="../../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html">evt::set_temperature</a> &amp;&amp;p_evt) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    iterator _ite = find(p_evt.sensor_id);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    iterator _ite = <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">find</a>(p_evt.sensor_id);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">if</span> (_ite != m_collection.end()) {</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      (*_ite)-&gt;reset_temperature(p_evt.temperature);</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  }</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  iterator find(<a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> p_sensor_id) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  iterator <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">find</a>(<a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> p_sensor_id) {</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> std::find_if(m_collection.begin(), m_collection.end(),</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                        [&amp;](<span class="keyword">const</span> sensor_ptr &amp;p_sensor) {</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                          return p_sensor-&gt;get_id() == p_sensor_id;</div>
@@ -199,22 +199,23 @@ $(function() {
 <div class="ttc" id="aadd__sensor_8h_html"><div class="ttname"><a href="../../dd/d6a/add__sensor_8h.html">add_sensor.h</a></div></div>
 <div class="ttc" id="acircular__queue_8h_html"><div class="ttname"><a href="../../d3/d1e/circular__queue_8h.html">circular_queue.h</a></div></div>
 <div class="ttc" id="aclasstnct_1_1container_1_1circular__queue_html"><div class="ttname"><a href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a></div><div class="ttdoc">Implements a circular queue which size is increased if it becomes full.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d1e/circular__queue_8h_source.html#l00032">circular_queue.h:32</a></div></div>
+<div class="ttc" id="acontains__tuple_8h_html"><div class="ttname"><a href="../../dd/d47/contains__tuple_8h.html">contains_tuple.h</a></div></div>
 <div class="ttc" id="ahandling__priority_8h_html"><div class="ttname"><a href="../../d0/dca/handling__priority_8h.html">handling_priority.h</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html">tnct::async::exp::temperature_sensors_simulator::per</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00020">sensor.h:20</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a894791640350194f7cafdca562c49532"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a894791640350194f7cafdca562c49532">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple_contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::add_sensor, evt::remove_sensor, evt::set_temperature &gt;&gt;) struct sensors</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d9f/sensors_8h_source.html#l00022">sensors.h:22</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a35072bcc0727667f05b8f5d55950ab32"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a35072bcc0727667f05b8f5d55950ab32">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::add_sensor, evt::remove_sensor, evt::set_temperature &gt;&gt;) struct sensors</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d9f/sensors_8h_source.html#l00022">sensors.h:22</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ_html_a3d9709704f8c7fa7e99a83a4f6cc3637"><div class="ttname"><a href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#a3d9709704f8c7fa7e99a83a4f6cc3637">tnct::async::exp::temperature_sensors_simulator::typ::temperature</a></div><div class="ttdeci">float temperature</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d91/temperature_8h_source.html#l00006">temperature.h:6</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ_html_adf857c72f4907e3d1cfb8485268d38c3"><div class="ttname"><a href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">tnct::async::exp::temperature_sensors_simulator::typ::sensor_id</a></div><div class="ttdeci">uint16_t sensor_id</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d8c/sensor__id_8h_source.html#l00008">sensor_id.h:8</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_addbad48337d3b04dcc1a6a9235568707"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#addbad48337d3b04dcc1a6a9235568707">tnct::traits::tuple_contains_tuple</a></div><div class="ttdeci">concept tuple_contains_tuple</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d43/tuple__contains__tuple_8h_source.html#l00017">tuple_contains_tuple.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_a6fc85536fbcaeb72acb54ce0b619d621"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">tnct::traits::tuple::contains_tuple</a></div><div class="ttdeci">concept contains_tuple</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00033">contains_tuple.h:33</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_acad4e7535b73e7a6477941430d080529"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">tnct::traits::tuple::find</a></div><div class="ttdeci">constexpr std::optional&lt; std::size_t &gt; find()</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/db2/find_8h_source.html#l00016">find.h:16</a></div></div>
 <div class="ttc" id="aremove__sensor_8h_html"><div class="ttname"><a href="../../d9/d14/remove__sensor_8h.html">remove_sensor.h</a></div></div>
 <div class="ttc" id="asensor_8h_html"><div class="ttname"><a href="../../d5/d2e/sensor_8h.html">sensor.h</a></div></div>
 <div class="ttc" id="aset__temperature_8h_html"><div class="ttname"><a href="../../d6/d33/set__temperature_8h.html">set_temperature.h</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1add__sensor_html"><div class="ttname"><a href="../../d5/d04/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1add__sensor.html">tnct::async::exp::temperature_sensors_simulator::evt::add_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d6a/add__sensor_8h_source.html#l00010">add_sensor.h:10</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor_html"><div class="ttname"><a href="../../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html">tnct::async::exp::temperature_sensors_simulator::evt::remove_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d14/remove__sensor_8h_source.html#l00010">remove_sensor.h:10</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature_html"><div class="ttname"><a href="../../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html">tnct::async::exp::temperature_sensors_simulator::evt::set_temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d33/set__temperature_8h_source.html#l00011">set_temperature.h:11</a></div></div>
-<div class="ttc" id="atraits_2dispatcher_8h_html"><div class="ttname"><a href="../../d7/d41/traits_2dispatcher_8h.html">dispatcher.h</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html">logger.h</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d67/traits_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
-<div class="ttc" id="atuple__contains__tuple_8h_html"><div class="ttname"><a href="../../d3/d43/tuple__contains__tuple_8h.html">tuple_contains_tuple.h</a></div></div>
+<div class="ttc" id="atraits_2async_2dispatcher_8h_html"><div class="ttname"><a href="../../d1/d93/traits_2async_2dispatcher_8h.html">dispatcher.h</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html">logger.h</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d7c/traits_2log_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

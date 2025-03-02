@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -87,12 +87,12 @@ $(function() {
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d4/da3/async_2exp_2dispatcher__000_2logger_8h.html">tnct/async/exp/dispatcher_000/logger.h</a>&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../de/d93/result_8h.html">tnct/async/result.h</a>&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/def/fmt_8h.html">tnct/format/fmt.h</a>&quot;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d7/d41/traits_2dispatcher_8h.html">tnct/traits/dispatcher.h</a>&quot;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d1/d93/traits_2async_2dispatcher_8h.html">tnct/traits/async/dispatcher.h</a>&quot;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html">tnct::async::exp</a> {</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">template</span> &lt;<a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">event_id</a> t_event_id, <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a5408966e3061490019e9736ca2550329">handler_type_id</a> t_type_id,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;          traits::dispatcher&lt;async::exp::event_handled&gt; t_dispatcher&gt;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;          traits::async::dispatcher&lt;async::exp::event_handled&gt; t_dispatcher&gt;</div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html">handler</a> {</div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html#aa86c13603671e5bd1a44845895d0c4af">   26</a></span>&#160;  <span class="keyword">using</span> <span class="keyword">event</span> = <a class="code" href="../../d9/d6f/structtnct_1_1async_1_1exp_1_1event.html">async::exp::event&lt;t_event_id&gt;</a>;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
@@ -110,7 +110,7 @@ $(function() {
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        m_handling_id, t_event_id, t_type_id, std::this_thread::get_id()})};</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> (_result != <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564">result::OK</a>) {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, format::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, format::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
@@ -139,7 +139,7 @@ $(function() {
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aasync_2exp_2dispatcher__000_2event_8h_html"><div class="ttname"><a href="../../dd/d93/async_2exp_2dispatcher__000_2event_8h.html">event.h</a></div></div>
 <div class="ttc" id="aasync_2exp_2dispatcher__000_2logger_8h_html"><div class="ttname"><a href="../../d4/da3/async_2exp_2dispatcher__000_2logger_8h.html">logger.h</a></div></div>
-<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00039">logger.h:39</a></div></div>
+<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">logger.h:34</a></div></div>
 <div class="ttc" id="aevent__handled_8h_html"><div class="ttname"><a href="../../d0/d35/event__handled_8h.html">event_handled.h</a></div></div>
 <div class="ttc" id="aevent__id_8h_html"><div class="ttname"><a href="../../df/dc3/event__id_8h.html">event_id.h</a></div></div>
 <div class="ttc" id="aexp_2dispatcher__000_2handling__id_8h_html"><div class="ttname"><a href="../../d5/d34/exp_2dispatcher__000_2handling__id_8h.html">handling_id.h</a></div></div>
@@ -157,8 +157,8 @@ $(function() {
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1handler_html_a375b93b4637493d9375e2302d331f12d"><div class="ttname"><a href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html#a375b93b4637493d9375e2302d331f12d">tnct::async::exp::handler::handler</a></div><div class="ttdeci">handler(logger &amp;p_logger, t_dispatcher &amp;p_dispatcher, handling_id p_handling_id, std::chrono::milliseconds p_sleep_to_simulate_work)</div><div class="ttdef"><b>Definition:</b> <a href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h_source.html#l00028">handler.h:28</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1handler_html_a837683461f95d09bae931e763ad0debd"><div class="ttname"><a href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html#a837683461f95d09bae931e763ad0debd">tnct::async::exp::handler::type_id</a></div><div class="ttdeci">static constexpr async::exp::handler_type_id type_id</div><div class="ttdef"><b>Definition:</b> <a href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h_source.html#l00054">handler.h:54</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1handler_html_ae3b485e9a817a198571915910b80be06"><div class="ttname"><a href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html#ae3b485e9a817a198571915910b80be06">tnct::async::exp::handler::operator()</a></div><div class="ttdeci">void operator()(event &amp;&amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h_source.html#l00035">handler.h:35</a></div></div>
-<div class="ttc" id="atraits_2dispatcher_8h_html"><div class="ttname"><a href="../../d7/d41/traits_2dispatcher_8h.html">dispatcher.h</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d67/traits_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
+<div class="ttc" id="atraits_2async_2dispatcher_8h_html"><div class="ttname"><a href="../../d1/d93/traits_2async_2dispatcher_8h.html">dispatcher.h</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d7c/traits_2log_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

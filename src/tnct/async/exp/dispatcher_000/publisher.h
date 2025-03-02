@@ -14,12 +14,12 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/result.h"
 #include "tnct/async/sleeping_loop.h"
-#include "tnct/traits/dispatcher.h"
+#include "tnct/traits/async/dispatcher.h"
 
 namespace tnct::async::exp {
 
 template <char t_event_id,
-          traits::dispatcher<exp::event<t_event_id>> t_dispacther>
+          traits::async::dispatcher<exp::event<t_event_id>> t_dispacther>
 struct publisher {
   using event = exp::event<t_event_id>;
 
@@ -84,7 +84,7 @@ private:
   const event m_event{};
 };
 
-template <char t_event_id, traits::dispatcher<event<t_event_id>> t_dispacther>
+template <char t_event_id, traits::async::dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tnct::async::exp

@@ -9,8 +9,9 @@
 #include <tuple>
 
 #include "tnct/log/cerr.h"
-#include "tnct/traits/dispatcher.h"
-#include "tnct/traits/event.h"
+#include "tnct/program/options.h"
+#include "tnct/traits/async/dispatcher.h"
+#include "tnct/traits/async/event.h"
 
 using namespace tnct;
 
@@ -18,14 +19,16 @@ namespace tnct::traits::test {
 
 struct dispatcher_000 {
 
-  bool operator()() {
-    log::cerr _logger;
+  static std::string desc() { return "Basic traitrs::dispatcher test"; }
+
+  bool operator()(const program::options &) {
+    tnct::log::cerr _logger;
 
     my_dispatcher _dispatcher;
 
     f(_dispatcher);
 
-    return false;
+    return true;
   }
 
 private:
@@ -47,7 +50,7 @@ private:
     }
   };
 
-  template <traits::event... t_events> struct dispatcher {
+  template <traits::async::event... t_events> struct dispatcher {
     using events = std::tuple<t_events...>;
 
     dispatcher() = default;
@@ -62,7 +65,7 @@ private:
 
   using my_dispatcher = dispatcher<event_a, event_b>;
 
-  template <traits::dispatcher<event_a, event_b> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b> t_dispatcher>
   void f(t_dispatcher &) {}
 };
 
