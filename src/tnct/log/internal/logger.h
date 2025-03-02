@@ -17,7 +17,7 @@
 
 #include "tnct/log/level.h"
 #include "tnct/log/line_header_formater.h"
-#include "tnct/traits/log_writer.h"
+#include "tnct/traits/log/writer.h"
 
 namespace tnct::log::internal {
 
@@ -31,7 +31,7 @@ namespace tnct::log::internal {
 /// logging; \p funcition-name is the name of the function \p line-number is the
 /// number of the line that is logging; contents are the log message specific
 /// contents
-template <traits::log_writer t_log_writer> class logger {
+template <traits::log::writer t_log_writer> class logger {
 
 public:
   /// \brief Default contructor

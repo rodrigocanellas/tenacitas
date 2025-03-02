@@ -9,7 +9,7 @@
 #include <iostream>
 #include <tuple>
 
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 #include "tnct/tuple/tuple_traverse.h"
 
 template <typename t_char, typename t_traits, typename... t_types>
@@ -20,7 +20,7 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out,
   using tuple = std::tuple<t_types...>;
 
   p_out << '{';
-  auto _visit = [&]<tnct::traits::tuple_like t_tuple_lambda, size_t t_idx>(
+  auto _visit = [&]<tnct::traits::tuple::like t_tuple_lambda, size_t t_idx>(
                     const t_tuple_lambda &p_t) {
     p_out << std::get<t_idx>(p_t);
 
@@ -37,12 +37,12 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out,
   return p_out;
 }
 
-template <typename t_char, typename t_traits, tnct::traits::tuple_like t_tuple>
+template <typename t_char, typename t_traits, tnct::traits::tuple::like t_tuple>
 std::basic_ostream<t_char, t_traits> &
 operator<<(std::basic_ostream<t_char, t_traits> &p_out,
            const t_tuple &p_tuple) {
   p_out << '{';
-  auto _visit = [&]<tnct::traits::tuple_like t_tuple_lambda, size_t t_idx>(
+  auto _visit = [&]<tnct::traits::tuple::like t_tuple_lambda, size_t t_idx>(
                     const t_tuple_lambda &p_t) {
     p_out << std::get<t_idx>(p_t);
 

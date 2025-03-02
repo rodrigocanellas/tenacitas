@@ -3,12 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TRAITS_EVENT_H
-#define TNCT_TRAITS_EVENT_H
+#ifndef TNCT_TRAITS_ASYNC_EVENT_H
+#define TNCT_TRAITS_ASYNC_EVENT_H
 
 #include "tnct/traits/has_output_operator.h"
 
-namespace tnct::traits {
+namespace tnct::traits::async {
 
 template <typename t>
 concept event = std::default_initializable<t> && std::copy_constructible<t> &&

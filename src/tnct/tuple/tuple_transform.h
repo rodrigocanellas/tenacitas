@@ -8,12 +8,12 @@
 
 #include <tuple>
 
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 
 namespace tnct::tuple {
 
 // Base class for specialization
-template <traits::tuple_like t_uple, template <typename> typename t_converter>
+template <traits::tuple::like t_uple, template <typename> typename t_converter>
 struct tuple_transform;
 
 /**

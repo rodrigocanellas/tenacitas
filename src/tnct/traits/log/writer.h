@@ -8,12 +8,12 @@
 
 #include <string_view>
 
-namespace tnct::traits {
+namespace tnct::traits::log {
 
 template <typename t>
-concept log_writer = requires(t p_t) {
+concept writer = requires(t p_t) {
   { p_t.operator()(std::declval<std::string_view>()) } -> std::same_as<void>;
 };
 
-} // namespace tnct::traits
+} // namespace tnct::traits::log
 #endif

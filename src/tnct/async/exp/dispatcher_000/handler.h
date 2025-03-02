@@ -16,12 +16,12 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/result.h"
 #include "tnct/format/fmt.h"
-#include "tnct/traits/dispatcher.h"
+#include "tnct/traits/async/dispatcher.h"
 
 namespace tnct::async::exp {
 
 template <event_id t_event_id, handler_type_id t_type_id,
-          traits::dispatcher<async::exp::event_handled> t_dispatcher>
+          traits::async::dispatcher<async::exp::event_handled> t_dispatcher>
 struct handler {
   using event = async::exp::event<t_event_id>;
 

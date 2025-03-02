@@ -8,17 +8,17 @@
 
 #include <tuple>
 
-#include "tnct/traits/event.h"
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/async/event.h"
+#include "tnct/traits/tuple/like.h"
 
 namespace tnct::traits {
 template <typename t_tuple>
 concept tuple_contains_only_events =
 
-    tuple_like<t_tuple> &&
+    tuple::like<t_tuple> &&
 
         []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-  return (event<std::tuple_element_t<t_idx, t_tuple>> && ...);
+  return (async::event<std::tuple_element_t<t_idx, t_tuple>> && ...);
 }
 (std::make_index_sequence<std::tuple_size_v<t_tuple>>());
 

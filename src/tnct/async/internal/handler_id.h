@@ -8,19 +8,20 @@
 
 #include <typeinfo>
 
-#include "tnct/traits/event.h"
-#include "tnct/traits/handler.h"
+#include "tnct/traits/async/event.h"
+#include "tnct/traits/async/handler.h"
 
 namespace tnct::async::internal {
 
 using handler_id = size_t;
 
-template <traits::event t_event, traits::handler<t_event> t_handler>
+template <traits::async::event t_event,
+          traits::async::handler<t_event> t_handler>
 inline handler_id get_handler_id() {
   return static_cast<handler_id>(typeid(t_handler).hash_code());
 };
 
-// template <traits::event t_event>
+// template <traits::async::event t_event>
 
 // std ::array<uint8_t, sizeof(void *)>
 // handler_id(const async::handler<t_event> &p_handler) {
@@ -38,7 +39,7 @@ inline handler_id get_handler_id() {
 // struct handler_id final {
 //   handler_id() = delete;
 
-//   template <traits::event t_event>
+//   template <traits::async::event t_event>
 //   handler_id(const async::handler<t_event> *const p_handler) {
 //     uint8_t *_b = (uint8_t *)&p_handler;
 //     uint8_t *_e = _b + sizeof(void *);

@@ -9,9 +9,9 @@
 #include <iostream>
 #include <utility>
 
-#include "tnct/traits/pair_like.h"
+#include "tnct/traits/pair/like.h"
 
-template <typename t_char, typename t_traits, tnct::traits::pair_like t_pair>
+template <typename t_char, typename t_traits, tnct::traits::pair::like t_pair>
 std::basic_ostream<t_char, t_traits> &
 operator<<(std::basic_ostream<t_char, t_traits> &p_out, const t_pair &p_pair) {
   p_out << '(' << p_pair.first << ',' << p_pair.second << ')';

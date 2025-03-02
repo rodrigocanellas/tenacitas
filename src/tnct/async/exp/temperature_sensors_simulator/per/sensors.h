@@ -11,15 +11,15 @@
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
 #include "tnct/async/handling_priority.h"
 #include "tnct/container/circular_queue.h"
-#include "tnct/traits/dispatcher.h"
-#include "tnct/traits/logger.h"
-#include "tnct/traits/tuple_contains_tuple.h"
+#include "tnct/traits/async/dispatcher.h"
+#include "tnct/traits/log/logger.h"
+#include "tnct/traits/tuple/contains_tuple.h"
 
 using namespace std::chrono_literals;
 
 namespace tnct::async::exp::temperature_sensors_simulator::per {
-template <traits::logger t_logger, traits::dispatcher t_dispatcher>
-requires(traits::tuple_contains_tuple<
+template <traits::log::logger t_logger, traits::async::dispatcher t_dispatcher>
+requires(traits::tuple::contains_tuple<
          typename t_dispatcher::events,
          std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>>)
 

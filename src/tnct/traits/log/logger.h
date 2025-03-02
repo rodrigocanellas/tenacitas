@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TRAITS_LOGGER_H
-#define TNCT_TRAITS_LOGGER_H
+#ifndef TNCT_TRAITS_LOG_LOGGER_H
+#define TNCT_TRAITS_LOG_LOGGER_H
 
 #include <source_location>
 #include <string_view>
@@ -41,11 +41,11 @@
 
 #define TNCT_LOG_ERR(logger, msg) logger.err(msg);
 
-#define TNCT_LOG_FAT(logger, msg) logger.err(msg);
+#define TNCT_LOG_FAT(logger, msg) logger.fat(msg);
 
 #define TNCT_LOG_TST(logger, msg) logger.tst(msg);
 
-namespace tnct::traits {
+namespace tnct::traits::log {
 
 template <typename t>
 concept logger = !std::copy_constructible<t> &&
@@ -105,6 +105,6 @@ concept logger = !std::copy_constructible<t> &&
   { p_t.can_war() } -> std::same_as<bool>;
 };
 
-} // namespace tnct::traits
+} // namespace tnct::traits::log
 
 #endif

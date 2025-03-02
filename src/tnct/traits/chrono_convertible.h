@@ -11,7 +11,7 @@
 
 namespace tnct::traits {
 
-// the code below is an improved version by ChatGPT of a previous version I
+// the code below is an improved version by ChatGPT from a previous version I
 // wrote
 
 template <typename t_from>

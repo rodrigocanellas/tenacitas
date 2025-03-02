@@ -26,11 +26,9 @@ template <typename t>
 struct is_unique_ptr<std::unique_ptr<t>> : std::true_type {};
 
 /// \brief Determines if a type is a shared or unique pointer
-template <typename t>
-using is_smart_ptr =
-    std::conditional_t<is_shared_ptr<t>::value, std::true_type,
-                       std::conditional_t<is_unique_ptr<t>::value,
-                                          std::true_type, std::false_type>>;
+/// \note Version improved by ChatGPT
+template <typename T>
+struct is_smart_ptr : std::disjunction<is_shared_ptr<T>, is_unique_ptr<T>> {};
 
 template <typename t>
 inline constexpr bool is_smart_ptr_v = is_smart_ptr<t>::value;

@@ -8,18 +8,18 @@
 
 #include <tuple>
 
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 
-namespace tnct::traits {
+namespace tnct::traits::tuple {
 
 template <typename t_tuple_1, typename t_tuple_2>
-concept tuple_size_greather_or_equal =
+concept size_greather_or_equal =
 
-    tuple_like<t_tuple_1> &&
+    like<t_tuple_1> &&
 
-    tuple_like<t_tuple_2> &&
+    like<t_tuple_2> &&
 
     (std::tuple_size_v<t_tuple_1> >= std::tuple_size_v<t_tuple_2>);
 
-} // namespace tnct::traits
+} // namespace tnct::traits::tuple
 #endif

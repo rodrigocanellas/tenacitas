@@ -15,11 +15,11 @@
 #include <string_view>
 
 #include "tnct/format/fmt.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::parser {
 
-template <traits::logger t_logger> struct ini_file {
+template <traits::log::logger t_logger> struct ini_file {
   using key = std::string;
   using value = std::string;
   using properties = std::map<key, value>;

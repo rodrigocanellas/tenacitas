@@ -10,7 +10,7 @@
 #include <tuple>
 
 #include "tnct/program/options.h"
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 #include "tnct/tuple/tuple_traverse.h"
 
 using namespace tnct;
@@ -29,7 +29,7 @@ struct tuple_traverse_000 {
 
     bool _ret{true};
 
-    auto _visit = [&_ret, &_char]<traits::tuple_like t_tuple, size_t t_idx>(
+    auto _visit = [&_ret, &_char]<traits::tuple::like t_tuple, size_t t_idx>(
                       const t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -61,7 +61,7 @@ struct tuple_traverse_001 {
 
     bool _ret{true};
 
-    auto _visit = [&_ret, &_char]<traits::tuple_like t_tuple, size_t t_idx>(
+    auto _visit = [&_ret, &_char]<traits::tuple::like t_tuple, size_t t_idx>(
                       t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -84,55 +84,6 @@ struct tuple_traverse_001 {
   }
 };
 
-struct tuple_traverse_002 {
-  static std::string desc() {
-    return "Checks and prints the types 'typeid' in a tuple";
-  }
-
-  bool operator()(const program::options &) {
-    using my_tuple = std::tuple<int, char, std::string, float>;
-
-    auto _ret{true};
-    auto _visit = [&_ret]<traits::tuple_like t_tuple, std ::size_t t_idx>() {
-      using element_type = std::tuple_element_t<t_idx, t_tuple>;
-      if constexpr (t_idx == 0) {
-        if constexpr (!std::is_same_v<element_type, int>) {
-          _ret = false;
-          std::cerr << "error checking type in " << t_idx << std::endl;
-          return false;
-        }
-      } else if constexpr (t_idx == 1) {
-        if constexpr (!std::is_same_v<element_type, char>) {
-          std::cerr << "error checking type in " << t_idx << std::endl;
-          _ret = false;
-          return false;
-        }
-      } else if constexpr (t_idx == 2) {
-        if constexpr (!std::is_same_v<element_type, std::string>) {
-          std::cerr << "error checking type in " << t_idx << std::endl;
-          _ret = false;
-          return false;
-        }
-      } else if constexpr (t_idx == 3) {
-        if constexpr (!std::is_same_v<element_type, float>) {
-          std::cerr << "error checking type in " << t_idx << std::endl;
-          _ret = false;
-          return false;
-        }
-      }
-
-      std::cerr << "in idx " << t_idx << " there is a "
-                << typeid(element_type).name() << std::endl;
-
-      return true;
-    };
-
-    tuple::tuple_traverse<my_tuple>(_visit);
-
-    return _ret;
-  }
-};
-
 struct tuple_traverse_003 {
   static std::string desc() {
     return "Traverse 'std::tuple<char, int, float>' with 'W', -9 and 1.14 and "
@@ -143,7 +94,7 @@ struct tuple_traverse_003 {
     auto _tuple{std::make_tuple('W', -9)};
 
     auto _visit =
-        []<traits::tuple_like t_tuple, size_t t_idx>(const t_tuple &p_tuple) {
+        []<traits::tuple::like t_tuple, size_t t_idx>(const t_tuple &p_tuple) {
           std::cerr << "in " << t_idx << " there is "
                     << std::get<t_idx>(p_tuple) << '\n';
           return true;
@@ -165,7 +116,7 @@ struct tuple_traverse_004 {
     auto _tuple{std::make_tuple(14U, 3.14, -983271)};
 
     auto _visit =
-        []<traits::tuple_like t_tuple, size_t t_idx>(t_tuple &p_tuple) {
+        []<traits::tuple::like t_tuple, size_t t_idx>(t_tuple &p_tuple) {
           std::cerr << "in " << t_idx << " there was "
                     << std::get<t_idx>(p_tuple) << ", and now there is "
                     << (std::get<t_idx>(p_tuple) = std::get<t_idx>(p_tuple) + 1)

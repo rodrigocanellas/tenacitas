@@ -13,7 +13,7 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 using namespace tnct;
 

@@ -3,21 +3,21 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TRAITS_IS_PAIR_H
-#define TNCT_TRAITS_IS_PAIR_H
+#ifndef TNCT_TRAITS_PAIR_IS_H
+#define TNCT_TRAITS_PAIR_IS_H
 
 #include <type_traits>
 #include <utility>
 
-namespace tnct::traits {
+namespace tnct::traits::pair {
 
 /// \brief Type trait that identifies if a type is not a \p pair
-template <typename> struct is_pair : std::false_type {};
+template <typename> struct is : std::false_type {};
 
 /// \brief Type trait that identifies if a type is a pair
-template <typename... t> struct is_pair<std::pair<t...>> : std::true_type {};
+template <typename... t> struct is<std::pair<t...>> : std::true_type {};
 
-template <typename t> inline constexpr bool is_pair_v = is_pair<t>::value;
+template <typename t> inline constexpr bool is_v = is<t>::value;
 
 } // namespace tnct::traits
 

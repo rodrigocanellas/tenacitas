@@ -6,12 +6,12 @@
 #ifndef TNCT_TRAITS_TUPLE_LIKE_H
 #define TNCT_TRAITS_TUPLE_LIKE_H
 
-#include "tnct/traits/is_tuple.h"
+#include "tnct/traits/tuple/is.h"
 
-namespace tnct::traits {
+namespace tnct::traits::tuple {
 
 template <typename t_tuple>
-concept tuple_like = traits::is_tuple_v<t_tuple>;
+concept like = traits::tuple::is_v<t_tuple>;
 
-} // namespace tnct::traits
+} // namespace tnct::traits::tuple
 #endif

@@ -18,14 +18,14 @@
 #include "tnct/async/internal/handler_id.h"
 
 #include "tnct/format/fmt.h"
-#include "tnct/traits/event.h"
-#include "tnct/traits/handler.h"
-#include "tnct/traits/logger.h"
-#include "tnct/traits/queue.h"
+#include "tnct/traits/async/event.h"
+#include "tnct/traits/async/handler.h"
+#include "tnct/traits/container/queue.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::async::internal {
 
-template <traits::event t_event> class handling {
+template <traits::async::event t_event> class handling {
 public:
   virtual ~handling() = default;
 
@@ -48,19 +48,15 @@ public:
   virtual void clear() = 0;
 };
 
-template <traits::logger t_logger, traits::event t_event,
-          traits::queue<t_event> t_queue, traits::handler<t_event> t_handler>
+template <traits::log::logger t_logger, traits::async::event t_event,
+          traits::container::queue<t_event> t_queue,
+          traits::async::handler<t_event> t_handler>
 class handling_concrete final : public handling<t_event> {
 public:
   using logger = t_logger;
   using event = t_event;
   using queue = t_queue;
   using handler = t_handler;
-
-  /// \brief Creates a handling_concrete for an event type
-  ///
-  /// \param p_logger
-  /// \param p_handler
 
   handling_concrete(handling_id p_handling_id, t_logger &p_logger,
                     handler &&p_handler, queue &&p_queue,
@@ -142,12 +138,6 @@ public:
   // \brief Stops this handling
   void stop() override {
     TNCT_LOG_TRA(m_logger, trace("entering stop()"));
-
-    // using loop_lockers = std::vector<std::lock_guard<std::mutex>>;
-    // loop_lockers _loop_lockers;
-    // for (loop_mutexes::value_type &_loop_mutex : m_loop_mutexes) {
-    //   _loop_lockers.push_back(std::lock_guard<std::mutex>{_loop_mutex});
-    // }
 
     if (m_stopped) {
       TNCT_LOG_TRA(m_logger, trace("not stopping because it is stopped"));

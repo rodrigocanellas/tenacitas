@@ -14,15 +14,15 @@
 #include "tnct/format/fmt.h"
 
 #include "tnct/program/exit.h"
-#include "tnct/traits/dispatcher.h"
-#include "tnct/traits/logger.h"
-#include "tnct/traits/tuple_contains_tuple.h"
+#include "tnct/traits/async/dispatcher.h"
+#include "tnct/traits/log/logger.h"
+#include "tnct/traits/tuple/contains_tuple.h"
 
 namespace tnct::program {
 
-template <traits::logger t_logger, traits::dispatcher t_dispatcher>
+template <traits::log::logger t_logger, traits::async::dispatcher t_dispatcher>
 
-requires(traits::tuple_contains_tuple<typename t_dispatcher::events,
+requires(traits::contains_tuple<typename t_dispatcher::events,
                                       std::tuple<program::exit>>)
 
     struct closer {

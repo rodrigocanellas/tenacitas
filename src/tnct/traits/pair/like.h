@@ -8,21 +8,13 @@
 
 #include <concepts>
 
-namespace tnct::traits {
-
-// template <typename T>
-// concept pair_like = requires {
-//   typename T::first_type;
-//   typename T::second_type;
-// }
-// &&std::is_same_v<T, std::pair<typename T::first_type, typename
-// T::second_type>>;
+namespace tnct::traits::pair {
 
 template <typename T>
-concept pair_like = requires(T t) {
+concept like = requires(T t) {
   { t.first } -> std::convertible_to<typename T::first_type>;
   { t.second } -> std::convertible_to<typename T::second_type>;
 };
 
-} // namespace tnct::traits
+} // namespace tnct::traits::pair
 #endif

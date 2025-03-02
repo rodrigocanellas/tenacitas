@@ -15,12 +15,12 @@
 #include "tnct/format/fmt.h"
 
 #include "tnct/traits/chrono_convertible.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::async {
 
 /// \brief Periodically executes a function
-template <traits::logger t_logger> struct sleeping_loop {
+template <traits::log::logger t_logger> struct sleeping_loop {
   /// \brief Signature of the function that will be called in each round of
   /// the loop
   using function = std::function<void()>;

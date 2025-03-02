@@ -12,9 +12,8 @@
 #include <vector>
 
 #include "tnct/format/fmt.h"
-#include "tnct/log/no_logger.h"
 #include "tnct/traits/has_output_operator.h"
-#include "tnct/traits/logger.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::container {
 
@@ -25,7 +24,8 @@ namespace tnct::container {
 /// the queue by reusing nodes which data have been read
 ///
 /// \tparam t_data defines the types of the data contained in the queue
-template <traits::logger t_logger, typename t_data, size_t t_initial_size>
+template <traits::log::logger t_logger, typename t_data, size_t t_initial_size,
+          size_t t_incremental_percentage = 50>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
     std::is_default_constructible_v<t_data> &&
     traits::has_output_operator<t_data>
@@ -39,7 +39,7 @@ public:
 
   circular_queue(t_logger &p_logger)
       : m_logger(p_logger), m_initial_size(t_initial_size),
-        m_incremental_size(m_initial_size == 0 ? 50 : (m_initial_size / 2)),
+        m_incremental_size(m_initial_size / t_incremental_percentage),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
     TNCT_LOG_TRA(this->m_logger, format::fmt("creating - ", brief_report()));

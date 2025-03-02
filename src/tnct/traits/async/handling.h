@@ -8,13 +8,13 @@
 
 #include <type_traits>
 
-#include "tnct/traits/event.h"
-#include "tnct/traits/logger.h"
-#include "tnct/traits/queue.h"
+#include "tnct/traits/async/event.h"
+#include "tnct/traits/container/queue.h"
+#include "tnct/traits/log/logger.h"
 
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/tuple/like.h"
 
-namespace tnct::traits {
+namespace tnct::traits::async {
 
 template <typename t>
 concept handling = requires(t p_t) {
@@ -23,16 +23,16 @@ concept handling = requires(t p_t) {
   typename t::logger;
   typename t::handler;
 
-  event<typename t::event>;
-  queue<typename t::queue, typename t::event>;
-  logger<typename t::logger>;
+  async::event<typename t::event>;
+  container::queue<typename t::queue, typename t::event>;
+  log::logger<typename t::logger>;
 };
 
 template <typename t_event, typename t_handlings_tuple>
 concept all_handlings_are_for_same_event = requires {
-  requires tuple_like<t_handlings_tuple> &&
+  requires tuple::like<t_handlings_tuple> &&
 
-      event<t_event> &&
+      async::event<t_event> &&
 
           []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
     return (
@@ -45,6 +45,6 @@ concept all_handlings_are_for_same_event = requires {
   (std::make_index_sequence<std::tuple_size_v<t_handlings_tuple>>());
 };
 
-} // namespace tnct::traits
+} // namespace tnct::traits::async
 
 #endif

@@ -8,15 +8,15 @@
 
 #include <functional>
 
-#include "tnct/traits/event.h"
+#include "tnct/traits/async/event.h"
 
 namespace tnct::async {
 
 /// \brief Type of function that handles an event
-template <traits::event t_event>
+template <traits::async::event t_event>
 using handler = std::function<void(t_event &&)>;
 
-// template<traits::event t_event>
+// template<traits::async::event t_event>
 // using handler = void (*)(t_event &&);
 
 } // namespace tnct::async

@@ -20,12 +20,13 @@
 #include "tnct/async/result.h"
 
 #include "tnct/format/fmt.h"
-#include "tnct/traits/event.h"
-#include "tnct/traits/handler.h"
-#include "tnct/traits/is_type_in_tuple.h"
-#include "tnct/traits/queue.h"
-#include "tnct/traits/tuple_find.h"
-#include "tnct/traits/tuple_like.h"
+#include "tnct/traits/async/event.h"
+#include "tnct/traits/async/handler.h"
+#include "tnct/traits/container/queue.h"
+#include "tnct/traits/tuple/contains_type.h"
+#include "tnct/traits/tuple/find.h"
+#include "tnct/traits/tuple/like.h"
+#include "tnct/traits/tuple/traverse.h"
 #include "tnct/tuple/tuple_transform.h"
 #include "tnct/tuple/tuple_traverse.h"
 
@@ -72,7 +73,7 @@ for the \p event.
 
 Each \p handling has its own \p queue of \p event objects, and the
 implementantion of the queue can vary as much as necessary, as far as it
-satisfies the requirements defined by \p traits::queue.
+satisfies the requirements defined by \p traits::container::queue.
 
 A \p handling can have multiples instances of the \p hander type, in case each
 \p event instance can be handled independently from any other \p event.
@@ -85,7 +86,7 @@ Please, take a look at the tests and examples for more information on how to use
 the dispatcher class.
 */
 
-template <traits::logger t_logger, traits::event... t_events>
+template <traits::log::logger t_logger, traits::async::event... t_events>
 struct dispatcher {
 
 public:
@@ -113,7 +114,7 @@ public:
   void operator delete(void *) = delete;
   void operator delete[](void *) = delete;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] result publish(const t_event &p_event) noexcept {
 
     event_is_in_events_tupĺe<t_event>();
@@ -132,7 +133,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event, typename... t_event_params>
+  template <traits::async::event t_event, typename... t_event_params>
   [[nodiscard]] result publish(t_event_params &&...p_params) noexcept {
 
     event_is_in_events_tupĺe<t_event>();
@@ -153,8 +154,9 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event, traits::queue<t_event> t_queue,
-            traits::handler<t_event> t_handler>
+  template <traits::async::event t_event,
+            traits::container::queue<t_event> t_queue,
+            traits::async::handler<t_event> t_handler>
   std::optional<handling_id> add_handling(
       t_handler &&p_handler, t_queue &&p_queue,
       handling_priority p_handling_priority = handling_priority::medium) {
@@ -185,8 +187,9 @@ public:
     return std::nullopt;
   }
 
-  template <traits::event t_event, traits::queue<t_event> t_queue,
-            traits::handler<t_event> t_handler>
+  template <traits::async::event t_event,
+            traits::container::queue<t_event> t_queue,
+            traits::async::handler<t_event> t_handler>
   std::optional<handling_id>
   add_handling(t_handler &&p_handler, handling_priority p_handling_priority,
                t_queue &&p_queue, size_t p_num_handlers) {
@@ -218,8 +221,9 @@ public:
     return std::nullopt;
   }
 
-  template <traits::event t_event, traits::queue<t_event> t_queue,
-            traits::handler<t_event> t_handler>
+  template <traits::async::event t_event,
+            traits::container::queue<t_event> t_queue,
+            traits::async::handler<t_event> t_handler>
   std::optional<handling_id> add_handling(t_handler &&p_handler,
                                           t_queue &&p_queue,
                                           size_t p_num_handlers) {
@@ -252,7 +256,7 @@ public:
   }
 
   /// \brief Cleans all handlings of a certain event
-  template <traits::event t_event> void clear() {
+  template <traits::async::event t_event> void clear() {
     event_is_in_events_tupĺe<t_event>();
     try {
       handling<t_event> &_handlings{get_handlings<t_event>()};
@@ -266,7 +270,8 @@ public:
   }
 
   /// \brief Cleans all handlers of a certain handling for a certain event
-  template <traits::event t_event> result clear(handling_id p_handling_id) {
+  template <traits::async::event t_event>
+  result clear(handling_id p_handling_id) {
     event_is_in_events_tupĺe<t_event>();
     try {
       TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
@@ -288,7 +293,7 @@ public:
 
   result clear() {
     try {
-      auto _visit{[this]<traits::tuple_like t_tuple, size_t t_idx>() {
+      auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
         clear<std::tuple_element_t<t_idx, t_tuple>>();
         return true;
       }};
@@ -302,7 +307,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] result add_handlers(handling_id p_handling_id,
                                     size_t p_amount = 1) {
     event_is_in_events_tupĺe<t_event>();
@@ -321,7 +326,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] std::optional<size_t>
   get_amount_handlers(handling_id p_handling_id) const noexcept {
     event_is_in_events_tupĺe<t_event>();
@@ -339,7 +344,7 @@ public:
     return std::nullopt;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] size_t get_amount_handlings() const noexcept {
     event_is_in_events_tupĺe<t_event>();
     auto &_handlings{get_handlings<t_event>()};
@@ -348,12 +353,12 @@ public:
 
   result stop() noexcept {
     try {
-      auto _visit{[this]<traits::tuple_like t_tuple, size_t t_idx>() {
+      auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
         stop<std::tuple_element_t<t_idx, t_tuple>>();
         return true;
       }};
 
-      tuple::tuple_traverse<events, decltype(_visit)>(_visit);
+      traits::tuple::traverse<events>(_visit);
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
@@ -362,7 +367,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event> result stop() noexcept {
+  template <traits::async::event t_event> result stop() noexcept {
     event_is_in_events_tupĺe<t_event>();
     try {
       handlings<t_event> &_handlings{get_handlings<t_event>()};
@@ -378,7 +383,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] result stop(handling_id p_handling_id) noexcept {
     event_is_in_events_tupĺe<t_event>();
     try {
@@ -399,7 +404,7 @@ public:
     return result::OK;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] std::optional<bool>
   is_stopped(handling_id p_handling_id) const {
     try {
@@ -419,28 +424,30 @@ public:
   }
 
 private:
-  template <traits::event t_event> using handling = internal::handling<t_event>;
+  template <traits::async::event t_event>
+  using handling = internal::handling<t_event>;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   using handling_ptr = std::unique_ptr<handling<t_event>>;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   using handlings_ite = typename handlings<t_event>::iterator;
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   using handlings_const_ite = typename handlings<t_event>::const_iterator;
 
   using events_handlings =
       typename tuple::tuple_transform<events, handlings>::type;
 
 private:
-  template <traits::event t_event, traits::handler<t_event> t_handler>
+  template <traits::async::event t_event,
+            traits::async::handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const {
 
     const internal::handler_id _handler_id{
@@ -467,24 +474,24 @@ private:
     return false;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] static constexpr std::size_t get_handlings_index() {
-    constexpr auto _idx{traits::tuple_find<events, t_event>()};
+    constexpr auto _idx{traits::tuple::find<events, t_event>()};
     static_assert(_idx, "event not found in the tuple of events");
     return _idx.value();
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] handlings<t_event> &get_handlings() {
     return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] const handlings<t_event> &get_handlings() const {
     return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] bool
   find_handling(handling_id p_handling_id,
                 std::function<void(handling<t_event> &)> p_exec) {
@@ -505,7 +512,7 @@ private:
     return false;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   [[nodiscard]] handlings_ite<t_event>
   find_handling(handlings<t_event> &p_handlings, handling_id p_handling_id) {
 
@@ -516,7 +523,7 @@ private:
     return {std::find_if(p_handlings.begin(), p_handlings.end(), _match)};
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   bool
   find_handling(handling_id p_handling_id,
                 std::function<void(const handling<t_event> &)> p_exec) const {
@@ -540,9 +547,9 @@ private:
     return false;
   }
 
-  template <traits::event t_event>
+  template <traits::async::event t_event>
   static constexpr void event_is_in_events_tupĺe() {
-    static_assert(traits::is_type_in_tuple<events, t_event>,
+    static_assert(traits::tuple::contains_type<events, t_event>(),
                   "event is not in the 't_events...' of the dispatcher");
   }
 

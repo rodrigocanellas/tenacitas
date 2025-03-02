@@ -33,11 +33,11 @@ using event_handled = async::exp::event_handled;
 using dispatcher = async::dispatcher<logger, event_a, event_handled>;
 
 using queue_event_handled =
-    container::circular_queue<logger, event_handled, 2000>;
+    container::circular_queue<logger, event_handled, 5000>;
 
 using publisher = async::exp::publisher<'a', dispatcher>;
 
-using queue_event_a = container::circular_queue<logger, event_a, 200>;
+using queue_event_a = container::circular_queue<logger, event_a, 5000>;
 
 constexpr size_t num_handlings{5};
 
