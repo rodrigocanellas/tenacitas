@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -167,14 +167,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aaa8081b91782c5351ec581c2dd2c3563"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;traits::log_writer t_log_writer&gt;<br />
+<div class="textblock"><h3>template&lt;traits::log::writer t_log_writer&gt;<br />
 class tnct::log::internal::logger&lt; t_log_writer &gt;</h3>
 
 <p>Thread safe writing of log messages. </p>
 <p>A log message has the format: log-level|timestamp|thread-id|function-name|line-number|contents</p>
 <p><code>log-level</code> is TST, TRA, DEB, INF, WAR, ERR or FAT; <code>timestamp</code> is a EPOCH number in microsecs; <code>thread-id</code> is the id of the thread that is logging; <code>funcition-name</code> is the name of the function <code>line-number</code> is the number of the line that is logging; contents are the log message specific contents </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00039">39</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">34</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a635c89691fc295cbb1014a52358f3304"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a635c89691fc295cbb1014a52358f3304">&#9670;&nbsp;</a></span>logger() <span class="overload">[1/6]</span></h2>
@@ -182,7 +182,7 @@ class tnct::log::internal::logger&lt; t_log_writer &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -215,7 +215,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <p>Default contructor. </p>
 <p><code>p_writer</code> Responsible for actually writing the log message </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00045">45</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00040">40</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +225,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -244,7 +244,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00050">50</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00045">45</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -254,7 +254,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -274,7 +274,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00054">54</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00049">49</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -284,7 +284,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -304,7 +304,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00058">58</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00053">53</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -314,7 +314,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -344,7 +344,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -375,7 +375,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -394,7 +394,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00220">220</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00215">215</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -404,7 +404,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -423,7 +423,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00221">221</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00216">216</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -433,7 +433,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -452,7 +452,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00219">219</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00214">214</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -462,7 +462,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -481,7 +481,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00222">222</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00217">217</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -491,7 +491,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -536,7 +536,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00139">139</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00134">134</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -557,7 +557,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -602,7 +602,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00193">193</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00188">188</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -628,7 +628,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -673,7 +673,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00208">208</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00203">203</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -692,7 +692,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -714,7 +714,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <p>Retrieves the separator used in the log messages. </p>
 <dl class="section return"><dt>Returns</dt><dd>the value of the separator </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00100">100</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00095">95</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -724,7 +724,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -769,7 +769,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00157">157</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00152">152</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -789,7 +789,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -819,7 +819,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -849,7 +849,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -879,7 +879,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -909,7 +909,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -939,7 +939,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -969,7 +969,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -988,7 +988,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00226">226</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00221">221</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1007,7 +1007,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1026,7 +1026,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00224">224</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00219">219</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1045,7 +1045,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1064,7 +1064,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00215">215</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00210">210</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1090,7 +1090,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1110,7 +1110,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00086">86</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00081">81</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -1120,7 +1120,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1139,7 +1139,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00216">216</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00211">211</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1160,7 +1160,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1188,7 +1188,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00095">95</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00090">90</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -1198,7 +1198,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1217,7 +1217,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00214">214</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00209">209</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1242,7 +1242,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1261,7 +1261,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00217">217</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00212">212</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 
 </div>
 </div>
@@ -1271,7 +1271,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1316,7 +1316,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00121">121</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00116">116</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1335,7 +1335,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1367,7 +1367,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
 
 <p>Logs message with <code>tst</code> severity Each parameter must implement the output operator. The log message will be allways written, and it should only be used in tests. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00106">106</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00101">101</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -1408,7 +1408,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log_writer t_log_writer&gt; </div>
+template&lt;traits::log::writer t_log_writer&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1453,7 +1453,7 @@ template&lt;traits::log_writer t_log_writer&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00176">176</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00171">171</a> of file <a class="el" href="../../d9/d1c/log_2internal_2logger_8h_source.html">logger.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">

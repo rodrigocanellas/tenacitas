@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['log_5fwriter_1014',['log_writer',['../db/da4/namespacetnct_1_1traits.html#a1a4c285617293d31a6f9cd1defa09d46',1,'tnct::traits']]],
-  ['logger_1015',['logger',['../db/da4/namespacetnct_1_1traits.html#a98e67077c2a40d3194dde4c70e617b74',1,'tnct::traits']]]
+  ['like_1002',['like',['../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5',1,'tnct::traits::pair::like()'],['../d2/d49/namespacetnct_1_1traits_1_1tuple.html#aa73d282feda0f4f63ff5654be8db2f92',1,'tnct::traits::tuple::like()']]],
+  ['logger_1003',['logger',['../df/d8c/namespacetnct_1_1traits_1_1log.html#a3d8058c6a499e7e4b48100f11058d4ee',1,'tnct::traits::log']]]
 ];

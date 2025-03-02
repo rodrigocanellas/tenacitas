@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -78,34 +78,49 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_CHRONO_CONVERTIBLE_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;chrono&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html">   11</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a> {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_to, <span class="keyword">typename</span> t_from&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">   14</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">chrono_convertible</a> = <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#aeea9fc89404dee07c1b4f1361a1ad71e">requires</a>(t_from p_time) {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  std::chrono::duration_cast&lt;t_to&gt;(p_time);</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;};</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">   19</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">convertible_to_milli</a> =</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    chrono_convertible&lt;std::chrono::milliseconds, t_from&gt;;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">   23</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">convertible_to_sec</a> = chrono_convertible&lt;std::chrono::seconds, t_from&gt;;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">   26</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">convertible_to_nano</a> =</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    chrono_convertible&lt;std::chrono::nanoseconds, t_from&gt;;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;} <span class="comment">// namespace tnct::traits</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_aeea9fc89404dee07c1b4f1361a1ad71e"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#aeea9fc89404dee07c1b4f1361a1ad71e">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple_contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a53a53acccc0e964d0107e4e7b488b5b2"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">tnct::traits::convertible_to_nano</a></div><div class="ttdeci">concept convertible_to_nano</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00026">chrono_convertible.h:26</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a6b1d850cb8d278b8bdd051d3dbd219c6"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">tnct::traits::chrono_convertible</a></div><div class="ttdeci">concept chrono_convertible</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00014">chrono_convertible.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a780c07e889f1881bd44c162943c17134"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">tnct::traits::convertible_to_sec</a></div><div class="ttdeci">concept convertible_to_sec</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00023">chrono_convertible.h:23</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_ab27a7ac7b5ba964e0b76af23c4101cce"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">tnct::traits::convertible_to_milli</a></div><div class="ttdeci">concept convertible_to_milli</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00019">chrono_convertible.h:19</a></div></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a> {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// the code below is an improved version by ChatGPT from a previous version I</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// wrote</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#ab99ca2a4413650c67a4d0f2ae0a627f2">   18</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#ab99ca2a4413650c67a4d0f2ae0a627f2">is_chrono_duration</a> = <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keyword">typename</span> t_from::rep;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <span class="keyword">typename</span> t_from::period;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a> std::is_same_v&lt;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      t_from,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      std::chrono::duration&lt;typename t_from::rep, typename t_from::period&gt;&gt;;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;};</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_to, <span class="keyword">typename</span> t_from&gt;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">   27</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">chrono_convertible</a> = is_chrono_duration&lt;t_from&gt; &amp;&amp;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a>(t_from p_time) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  { std::chrono::duration_cast&lt;t_to&gt;(p_time) } -&gt; std::same_as&lt;t_to&gt;;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;};</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">   33</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">convertible_to_milli</a> =</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    chrono_convertible&lt;std::chrono::milliseconds, t_from&gt;;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">   37</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">convertible_to_sec</a> = chrono_convertible&lt;std::chrono::seconds, t_from&gt;;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_from&gt;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">   40</a></span>&#160;concept <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">convertible_to_nano</a> =</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    chrono_convertible&lt;std::chrono::nanoseconds, t_from&gt;;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;} <span class="comment">// namespace tnct::traits</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a0bab79948626fbd4dbfe2712562d36ad"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d93/traits_2async_2dispatcher_8h_source.html#l00017">dispatcher.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a53a53acccc0e964d0107e4e7b488b5b2"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">tnct::traits::convertible_to_nano</a></div><div class="ttdeci">concept convertible_to_nano</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00040">chrono_convertible.h:40</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a6b1d850cb8d278b8bdd051d3dbd219c6"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a6b1d850cb8d278b8bdd051d3dbd219c6">tnct::traits::chrono_convertible</a></div><div class="ttdeci">concept chrono_convertible</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00027">chrono_convertible.h:27</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a780c07e889f1881bd44c162943c17134"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a780c07e889f1881bd44c162943c17134">tnct::traits::convertible_to_sec</a></div><div class="ttdeci">concept convertible_to_sec</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00037">chrono_convertible.h:37</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_ab27a7ac7b5ba964e0b76af23c4101cce"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#ab27a7ac7b5ba964e0b76af23c4101cce">tnct::traits::convertible_to_milli</a></div><div class="ttdeci">concept convertible_to_milli</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00033">chrono_convertible.h:33</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_ab99ca2a4413650c67a4d0f2ae0a627f2"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#ab99ca2a4413650c67a4d0f2ae0a627f2">tnct::traits::is_chrono_duration</a></div><div class="ttdeci">concept is_chrono_duration</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00018">chrono_convertible.h:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

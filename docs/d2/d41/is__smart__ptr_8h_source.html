@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -92,22 +92,19 @@ $(function() {
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="../../d8/d98/structtnct_1_1traits_1_1is__unique__ptr_3_01std_1_1unique__ptr_3_01t_01_4_01_4.html">   26</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d5/da5/structtnct_1_1traits_1_1is__unique__ptr.html">is_unique_ptr</a>&lt;std::unique_ptr&lt;t&gt;&gt; : std::true_type {};</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#af150e8c861da32fd49b93dc057bd4b0c">   30</a></span>&#160;<span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#af150e8c861da32fd49b93dc057bd4b0c">is_smart_ptr</a> =</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::conditional_t&lt;is_shared_ptr&lt;t&gt;::value, std::true_type,</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                       std::conditional_t&lt;is_unique_ptr&lt;t&gt;::value,</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                                          std::true_type, std::false_type&gt;&gt;;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">   36</a></span>&#160;<span class="keyword">inline</span> constexpr <span class="keywordtype">bool</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">is_smart_ptr_v</a> = <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#af150e8c861da32fd49b93dc057bd4b0c">is_smart_ptr&lt;t&gt;::value</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="../../d8/db3/structtnct_1_1traits_1_1is__smart__ptr.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../d8/db3/structtnct_1_1traits_1_1is__smart__ptr.html">is_smart_ptr</a> : std::disjunction&lt;is_shared_ptr&lt;T&gt;, is_unique_ptr&lt;T&gt;&gt; {};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">   34</a></span>&#160;<span class="keyword">inline</span> constexpr <span class="keywordtype">bool</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">is_smart_ptr_v</a> = <a class="code" href="../../d8/db3/structtnct_1_1traits_1_1is__smart__ptr.html">is_smart_ptr&lt;t&gt;::value</a>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;} <span class="comment">// namespace tnct::traits</span></div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;} <span class="comment">// namespace tnct::traits</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d3a/chrono__convertible_8h_source.html#l00011">chrono_convertible.h:11</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a1ad6edb10c851d86681651700dffb1a0"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">tnct::traits::is_smart_ptr_v</a></div><div class="ttdeci">constexpr bool is_smart_ptr_v</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00036">is_smart_ptr.h:36</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_af150e8c861da32fd49b93dc057bd4b0c"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#af150e8c861da32fd49b93dc057bd4b0c">tnct::traits::is_smart_ptr</a></div><div class="ttdeci">std::conditional_t&lt; is_shared_ptr&lt; t &gt;::value, std::true_type, std::conditional_t&lt; is_unique_ptr&lt; t &gt;::value, std::true_type, std::false_type &gt; &gt; is_smart_ptr</div><div class="ttdoc">Determines if a type is a shared or unique pointer.</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00030">is_smart_ptr.h:33</a></div></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d93/traits_2async_2dispatcher_8h_source.html#l00017">dispatcher.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a1ad6edb10c851d86681651700dffb1a0"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">tnct::traits::is_smart_ptr_v</a></div><div class="ttdeci">constexpr bool is_smart_ptr_v</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00034">is_smart_ptr.h:34</a></div></div>
 <div class="ttc" id="astructtnct_1_1traits_1_1is__shared__ptr_html"><div class="ttname"><a href="../../db/dc3/structtnct_1_1traits_1_1is__shared__ptr.html">tnct::traits::is_shared_ptr</a></div><div class="ttdoc">Determines is a type is not a shared pointer.</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00016">is_smart_ptr.h:16</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1is__smart__ptr_html"><div class="ttname"><a href="../../d8/db3/structtnct_1_1traits_1_1is__smart__ptr.html">tnct::traits::is_smart_ptr</a></div><div class="ttdoc">Determines if a type is a shared or unique pointer.</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00031">is_smart_ptr.h:31</a></div></div>
 <div class="ttc" id="astructtnct_1_1traits_1_1is__unique__ptr_html"><div class="ttname"><a href="../../d5/da5/structtnct_1_1traits_1_1is__unique__ptr.html">tnct::traits::is_unique_ptr</a></div><div class="ttdoc">Determines is a type is not a unique pointer.</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d41/is__smart__ptr_8h_source.html#l00022">is_smart_ptr.h:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

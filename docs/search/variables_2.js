@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dispatcher_994',['dispatcher',['../db/da4/namespacetnct_1_1traits.html#a37d8df57ff4b9b37edbac3ee5eaffcef',1,'tnct::traits']]]
+  ['dispatcher_984',['dispatcher',['../d2/d60/namespacetnct_1_1traits_1_1async.html#aaff63cdbef3c9b83a02e0fe8d98293e2',1,'tnct::traits::async']]]
 ];

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -112,7 +112,6 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0c22783af97f931d2d5290d79812d344"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344">handling_concrete</a> (<a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a4d563c2914fec4e92d3461b81b1cbe5f">handling_id</a> p_handling_id, t_logger &amp;p_logger, <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#ab5312f442b293742ebe462002f4bb1f7">handler</a> &amp;&amp;p_handler, <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#ac8982987c8fbcfd836d45faa763d3463">queue</a> &amp;&amp;p_queue, size_t p_num_handlers=1)</td></tr>
-<tr class="memdesc:a0c22783af97f931d2d5290d79812d344"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">handling_concrete</a> for an event type.  <a href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344">More...</a><br /></td></tr>
 <tr class="separator:a0c22783af97f931d2d5290d79812d344"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afed5637edb66c108942bcf1388db16ae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#afed5637edb66c108942bcf1388db16ae">handling_concrete</a> (const <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">handling_concrete</a> &amp;)=delete</td></tr>
 <tr class="separator:afed5637edb66c108942bcf1388db16ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,11 +153,11 @@ Friends</h2></td></tr>
 <tr class="separator:ab996691876aa37fd1f374931864338c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt;<br />
+<div class="textblock"><h3>template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt;<br />
 class tnct::async::internal::handling_concrete&lt; t_logger, t_event, t_queue, t_handler &gt;</h3>
 
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00053">53</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00054">54</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a453c22793fc10f6f7a52b8f3fc5f0aea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a453c22793fc10f6f7a52b8f3fc5f0aea">&#9670;&nbsp;</a></span>event</h2>
@@ -166,7 +165,7 @@ class tnct::async::internal::handling_concrete&lt; t_logger, t_event, t_queue, t
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">tnct::async::internal::handling_concrete</a>&lt; t_logger, t_event, t_queue, t_handler &gt;::<a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a453c22793fc10f6f7a52b8f3fc5f0aea">event</a> =  t_event</td>
@@ -174,7 +173,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00056">56</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00057">57</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -184,7 +183,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">tnct::async::internal::handling_concrete</a>&lt; t_logger, t_event, t_queue, t_handler &gt;::<a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#ab5312f442b293742ebe462002f4bb1f7">handler</a> =  t_handler</td>
@@ -192,7 +191,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00058">58</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00059">59</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -202,7 +201,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">tnct::async::internal::handling_concrete</a>&lt; t_logger, t_event, t_queue, t_handler &gt;::<a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a174b7a416891656fc6925a1bfe3bab29">logger</a> =  t_logger</td>
@@ -210,7 +209,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00055">55</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00056">56</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -220,7 +219,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">tnct::async::internal::handling_concrete</a>&lt; t_logger, t_event, t_queue, t_handler &gt;::<a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#ac8982987c8fbcfd836d45faa763d3463">queue</a> =  t_queue</td>
@@ -228,7 +227,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00057">57</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00058">58</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -239,7 +238,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -287,22 +286,13 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 </table>
 </div><div class="memdoc">
 
-<p>Creates a <a class="el" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html">handling_concrete</a> for an event type. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p_logger</td><td></td></tr>
-    <tr><td class="paramname">p_handler</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00065">65</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00061">61</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_a0c22783af97f931d2d5290d79812d344_cgraph.png" border="0" usemap="#ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_a0c22783af97f931d2d5290d79812d344_cgraph" alt=""/></div>
 <map name="ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_a0c22783af97f931d2d5290d79812d344_cgraph" id="ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_a0c22783af97f931d2d5290d79812d344_cgraph">
-<area shape="rect" title="Creates a handling_concrete for an event type." alt="" coords="5,5,163,61"/>
+<area shape="rect" title=" " alt="" coords="5,5,163,61"/>
 <area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#af76a8ec78a1ddb5b0e0a3dea6c8a82d4" title=" " alt="" coords="211,5,368,61"/>
 <area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a2a5c4d265ec7ddbfbdf60f65a1986e6c" title=" " alt="" coords="416,13,607,54"/>
 </map>
@@ -316,7 +306,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -344,7 +334,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -364,7 +354,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00079">79</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00075">75</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -384,7 +374,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -403,7 +393,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00097">97</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00093">93</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -424,7 +414,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -446,7 +436,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#a864b926235f97e0e292ae26f7ba185b9">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00106">106</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00102">102</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -465,7 +455,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -486,7 +476,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#a67c64469ce3fb94953000eda1b24da03">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00196">196</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00186">186</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -496,7 +486,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -517,7 +507,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#ae7cd7870b221b3c1177e79cdfcf7da62">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00185">185</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00175">175</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -527,7 +517,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -548,7 +538,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#ac5cf34632a2ddcbe3e90ace5ebeaa0e4">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00093">93</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00089">89</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -558,7 +548,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -579,7 +569,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#a879801e398e2e5018606136a1ec096dc">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00189">189</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00179">179</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -589,7 +579,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -610,7 +600,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#afd50c1fe0fbb5ded9a58756c1becdbe0">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00192">192</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00182">182</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -620,7 +610,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -642,7 +632,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#a99efb2a548d58125688a89e5f15eecb9">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00118">118</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00114">114</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -658,7 +648,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_af76a8ec78a1ddb5b0e0a3dea6c8a82d4_icgraph.png" border="0" usemap="#ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_af76a8ec78a1ddb5b0e0a3dea6c8a82d4_icgraph" alt=""/></div>
 <map name="ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_af76a8ec78a1ddb5b0e0a3dea6c8a82d4_icgraph" id="ad6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete_af76a8ec78a1ddb5b0e0a3dea6c8a82d4_icgraph">
 <area shape="rect" title=" " alt="" coords="211,5,368,61"/>
-<area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344" title="Creates a handling_concrete for an event type." alt="" coords="5,5,163,61"/>
+<area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344" title=" " alt="" coords="5,5,163,61"/>
 </map>
 </div>
 
@@ -670,7 +660,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -691,7 +681,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#aae97b1675209f1ef836dc7945fe42c25">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00183">183</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00173">173</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>
@@ -701,7 +691,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -729,7 +719,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -757,7 +747,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -778,7 +768,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 
 <p>Implements <a class="el" href="../../dc/d9e/classtnct_1_1async_1_1internal_1_1handling.html#a2af2b68b1672b24f46f0232fbdc80e74">tnct::async::internal::handling&lt; t_event &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00143">143</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00139">139</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -806,7 +796,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -836,7 +826,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00213">213</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00203">203</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
@@ -847,7 +837,7 @@ Here is the caller graph for this function:</div>
 <area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#af76a8ec78a1ddb5b0e0a3dea6c8a82d4" title=" " alt="" coords="225,85,382,141"/>
 <area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a8994c8496fc6f30f7fe9a0cb62cfa9c0" title=" " alt="" coords="211,166,396,207"/>
 <area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#aed47d76b7388597921044371f17160b3" title=" " alt="" coords="5,191,163,247"/>
-<area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344" title="Creates a handling_concrete for an event type." alt="" coords="5,85,163,141"/>
+<area shape="rect" href="../../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#a0c22783af97f931d2d5290d79812d344" title=" " alt="" coords="5,85,163,141"/>
 </map>
 </div>
 
@@ -860,7 +850,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_event &gt; t_queue, traits::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;traits::log::logger t_logger, traits::async::event t_event, traits::container::queue&lt; t_event &gt; t_queue, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -890,7 +880,7 @@ template&lt;traits::logger t_logger, traits::event t_event, traits::queue&lt; t_
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00202">202</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html#l00192">192</a> of file <a class="el" href="../../d1/d74/async_2internal_2handling_8h_source.html">handling.h</a>.</p>
 
 </div>
 </div>

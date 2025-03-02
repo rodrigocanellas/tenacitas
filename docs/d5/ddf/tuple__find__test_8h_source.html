@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -80,7 +80,7 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d7/d5b/options_8h.html">tnct/program/options.h</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dd/dda/tuple__find_8h.html">tnct/traits/tuple_find.h</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d6/db2/find_8h.html">tnct/traits/tuple/find.h</a>&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d4/d18/namespacetnct.html">tnct</a>;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
@@ -94,87 +94,102 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="../../dd/d2f/structtnct_1_1traits_1_1test_1_1tuple__find__000.html#a4fbf0acb7e637284587a96622610b3d6">   23</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../dd/d2f/structtnct_1_1traits_1_1test_1_1tuple__find__000.html#a4fbf0acb7e637284587a96622610b3d6">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html">program::options</a> &amp;) {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">using</span> my_tuple = std::tuple&lt;int, char, float&gt;;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple_find&lt;my_tuple, int&gt;()};</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span> (_idx == -1) {</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple::find&lt;my_tuple, int&gt;()};</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span> (!_idx) {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;ERROR! idx should be 0, but the &#39;int&#39; was not found &quot;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    }</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _idx &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    _idx = traits::tuple_find&lt;my_tuple, char&gt;();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">if</span> (_idx == -1) {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;ERROR! idx should be 1, but the &#39;char&#39; was not found &quot;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _idx &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    _idx = traits::tuple_find&lt;my_tuple, float&gt;();</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">if</span> (_idx == -1) {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;ERROR! idx should be 2, but it &#39;char&#39; was not found &quot;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _idx &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">   54</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">tuple_find_001</a> {</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">   55</a></span>&#160;  <span class="keyword">static</span> std::string <a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">desc</a>() {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&quot;Tries to find a non existing type in a std::tuple&quot;</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">   59</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html">program::options</a> &amp;) {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">using</span> my_tuple = std::tuple&lt;int, char, float&gt;;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple_find&lt;my_tuple, std::string&gt;()};</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">if</span> (_idx != -1) {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; should not be found, but is is &quot;</span> &lt;&lt; _idx</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; was not found, as it should&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;};</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">   73</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">tuple_find_002</a> {</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">   74</a></span>&#160;  <span class="keyword">static</span> std::string <a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">desc</a>() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Tries to find a type in a std::tuple&lt;&gt;&quot;</span>; }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">   76</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html">program::options</a> &amp;) {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">using</span> my_tuple = std::tuple&lt;&gt;;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple_find&lt;my_tuple, std::string&gt;()};</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (_idx != -1) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; should not be found, but is is &quot;</span> &lt;&lt; _idx</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    }</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; was not found, as it should&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;};</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;} <span class="comment">// namespace tnct::traits::test</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">auto</span> _index{_idx.value()};</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">if</span> (_index != 0) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx should be 0, but it is &quot;</span> &lt;&lt; _index &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    }</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _index &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    _idx = traits::tuple::find&lt;my_tuple, char&gt;();</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> (!_idx) {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;ERROR! idx should be 1, but the &#39;char&#39; was not found &quot;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    _index = _idx.value();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">if</span> (_index != 1) {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx should be 1, but it is &quot;</span> &lt;&lt; _index &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _index &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    _idx = traits::tuple::find&lt;my_tuple, float&gt;();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordflow">if</span> (!_idx) {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;ERROR! idx should be 2, but it &#39;char&#39; was not found &quot;</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    _index = _idx.value();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordflow">if</span> (_index != 2) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx should be 2, but it is &quot;</span> &lt;&lt; _index &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;idx is &quot;</span> &lt;&lt; _index &lt;&lt; <span class="stringliteral">&quot;, as expected&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">   69</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">tuple_find_001</a> {</div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">   70</a></span>&#160;  <span class="keyword">static</span> std::string <a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">desc</a>() {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&quot;Tries to find a non existing type in a std::tuple&quot;</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">   74</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html">program::options</a> &amp;) {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">using</span> my_tuple = std::tuple&lt;int, char, float&gt;;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple::find&lt;my_tuple, std::string&gt;()};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">if</span> (_idx) {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; should not be found, but it is &quot;</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                &lt;&lt; _idx.value() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; was not found, as it should&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;};</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">   88</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">tuple_find_002</a> {</div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">   89</a></span>&#160;  <span class="keyword">static</span> std::string <a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">desc</a>() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Tries to find a type in a std::tuple&lt;&gt;&quot;</span>; }</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">   91</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">operator()</a>(<span class="keyword">const</span> <a class="code" href="../../db/da3/structtnct_1_1program_1_1options.html">program::options</a> &amp;) {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keyword">using</span> my_tuple = std::tuple&lt;&gt;;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keyword">auto</span> _idx{traits::tuple::find&lt;my_tuple, std::string&gt;()};</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">if</span> (_idx) {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; should not be found, but is is &quot;</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                &lt;&lt; _idx.value() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">std::cerr</a> &lt;&lt; <span class="stringliteral">&quot;&#39;std::string&#39; was not found, as it should&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  }</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;};</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;} <span class="comment">// namespace tnct::traits::test</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="afind_8h_html"><div class="ttname"><a href="../../d6/db2/find_8h.html">find.h</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00019">cerr.h:19</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1test_html"><div class="ttname"><a href="../../d3/d56/namespacetnct_1_1traits_1_1test.html">tnct::traits::test</a></div><div class="ttdef"><b>Definition:</b> <a href="../../de/d76/traits_2test_2dispatcher__test_8h_source.html#l00017">dispatcher_test.h:17</a></div></div>
-<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00032">dispatcher.h:32</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1test_html"><div class="ttname"><a href="../../d3/d56/namespacetnct_1_1traits_1_1test.html">tnct::traits::test</a></div><div class="ttdef"><b>Definition:</b> <a href="../../de/d76/traits_2test_2dispatcher__test_8h_source.html#l00018">dispatcher_test.h:18</a></div></div>
+<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00033">dispatcher.h:33</a></div></div>
 <div class="ttc" id="aoptions_8h_html"><div class="ttname"><a href="../../d7/d5b/options_8h.html">options.h</a></div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html">tnct::program::options</a></div><div class="ttdoc">Program options parser.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d5b/options_8h_source.html#l00021">options.h:21</a></div></div>
 <div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__000_html"><div class="ttname"><a href="../../dd/d2f/structtnct_1_1traits_1_1test_1_1tuple__find__000.html">tnct::traits::test::tuple_find_000</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00018">tuple_find_test.h:18</a></div></div>
 <div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__000_html_a334fd0cf587b1a40929e8e0717025532"><div class="ttname"><a href="../../dd/d2f/structtnct_1_1traits_1_1test_1_1tuple__find__000.html#a334fd0cf587b1a40929e8e0717025532">tnct::traits::test::tuple_find_000::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00019">tuple_find_test.h:19</a></div></div>
 <div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__000_html_a4fbf0acb7e637284587a96622610b3d6"><div class="ttname"><a href="../../dd/d2f/structtnct_1_1traits_1_1test_1_1tuple__find__000.html#a4fbf0acb7e637284587a96622610b3d6">tnct::traits::test::tuple_find_000::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00023">tuple_find_test.h:23</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">tnct::traits::test::tuple_find_001</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00054">tuple_find_test.h:54</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html_ab1b5c185450a11fcd81a32d8be018391"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">tnct::traits::test::tuple_find_001::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00059">tuple_find_test.h:59</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html_acfb3b7fb4db6a37ab03f2151dd5313fa"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">tnct::traits::test::tuple_find_001::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00055">tuple_find_test.h:55</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">tnct::traits::test::tuple_find_002</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00073">tuple_find_test.h:73</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html_a975b1d471dd084d83744a77d3c7e6377"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">tnct::traits::test::tuple_find_002::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00074">tuple_find_test.h:74</a></div></div>
-<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html_aed0b0425f0d02998acd077011290ff85"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">tnct::traits::test::tuple_find_002::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00076">tuple_find_test.h:76</a></div></div>
-<div class="ttc" id="atuple__find_8h_html"><div class="ttname"><a href="../../dd/dda/tuple__find_8h.html">tuple_find.h</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html">tnct::traits::test::tuple_find_001</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00069">tuple_find_test.h:69</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html_ab1b5c185450a11fcd81a32d8be018391"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#ab1b5c185450a11fcd81a32d8be018391">tnct::traits::test::tuple_find_001::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00074">tuple_find_test.h:74</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__001_html_acfb3b7fb4db6a37ab03f2151dd5313fa"><div class="ttname"><a href="../../dd/d7d/structtnct_1_1traits_1_1test_1_1tuple__find__001.html#acfb3b7fb4db6a37ab03f2151dd5313fa">tnct::traits::test::tuple_find_001::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00070">tuple_find_test.h:70</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html">tnct::traits::test::tuple_find_002</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00088">tuple_find_test.h:88</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html_a975b1d471dd084d83744a77d3c7e6377"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#a975b1d471dd084d83744a77d3c7e6377">tnct::traits::test::tuple_find_002::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00089">tuple_find_test.h:89</a></div></div>
+<div class="ttc" id="astructtnct_1_1traits_1_1test_1_1tuple__find__002_html_aed0b0425f0d02998acd077011290ff85"><div class="ttname"><a href="../../da/d65/structtnct_1_1traits_1_1test_1_1tuple__find__002.html#aed0b0425f0d02998acd077011290ff85">tnct::traits::test::tuple_find_002::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/ddf/tuple__find__test_8h_source.html#l00091">tuple_find_test.h:91</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -72,68 +72,65 @@ $(function() {
 <div class="title">tuple_output.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<a href="../../d6/dbe/tuple__output_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<a href="../../d6/dbe/tuple__output_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno"><a class="line" href="../../d6/dbe/tuple__output_8h.html#aea8f16d91a6e38ad9c919cfd87da84f0">    1</a></span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TUPLE_TUPLE_OUTPUT_H</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TUPLE_TUPLE_OUTPUT_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d1a/is__tuple_8h.html">tnct/traits/is_tuple.h</a>&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dc/d25/tuple__like_8h.html">tnct/traits/tuple_like.h</a>&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/de0/tuple__traverse_8h.html">tnct/tuple/tuple_traverse.h</a>&quot;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">// #include &quot;tnct/traits/is_tuple.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment">// #include &quot;tnct/traits/tuple_like.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">// #include &quot;tnct/tuple/tuple_traverse.h&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d4/d9e/namespacetnct_1_1tuple.html">tnct::tuple</a> {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">// namespace tnct::tuple {</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_output_stream, traits::tuple_like t_tuple&gt;</div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">   20</a></span>&#160;t_output_stream &amp;<a class="code" href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">tuple2out</a>(t_output_stream &amp;p_out, <span class="keyword">const</span> t_tuple &amp;p_tuple,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                           <span class="keyword">const</span> <span class="keywordtype">char</span> p_left_delimeter = <span class="charliteral">&#39;(&#39;</span>,</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                           <span class="keyword">const</span> <span class="keywordtype">char</span> p_right_delimeter = <span class="charliteral">&#39;)&#39;</span>) {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  p_out &lt;&lt; p_left_delimeter;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// template &lt;typename t_output_stream, traits::tuple_like t_tuple&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// t_output_stream &amp;tuple2out(t_output_stream &amp;p_out, const t_tuple &amp;p_tuple,</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">//                            const char p_left_delimeter = &#39;(&#39;,</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">//                            const char p_right_delimeter = &#39;)&#39;) {</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//   p_out &lt;&lt; p_left_delimeter;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keyword">auto</span> _visit = [&amp;]&lt;<a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a927f15282b238b550d06b505fcb24ecd">traits::tuple_like</a> t_tuple_lambda, <span class="keywordtype">size_t</span> t_idx&gt;(</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                    <span class="keyword">const</span> t_tuple_lambda &amp;p_t) {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordflow">if</span> constexpr (<a class="code" href="../../db/da4/namespacetnct_1_1traits.html#ad1bd952b5a4bacff9930666463c1af29">traits::is_tuple_v</a>&lt;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                      std::tuple_element_t&lt;t_idx, t_tuple_lambda&gt;&gt;) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;      <a class="code" href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">tuple2out</a>(p_out, std::get&lt;t_idx&gt;(p_t));</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;      p_out &lt;&lt; std::get&lt;t_idx&gt;(p_t);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">if</span> constexpr (t_idx &lt; (std::tuple_size_v&lt;t_tuple_lambda&gt; - 1)) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      p_out &lt;&lt; <span class="charliteral">&#39;,&#39;</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  };</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//   auto _visit = [&amp;]&lt;traits::tuple_like t_tuple_lambda, size_t t_idx&gt;(</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">//                     const t_tuple_lambda &amp;p_t) {</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">//     if constexpr (traits::is_tuple_v&lt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">//                       std::tuple_element_t&lt;t_idx, t_tuple_lambda&gt;&gt;) {</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">//       tuple2out(p_out, std::get&lt;t_idx&gt;(p_t));</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">//     } else {</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">//       p_out &lt;&lt; std::get&lt;t_idx&gt;(p_t);</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">//     }</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">//     if constexpr (t_idx &lt; (std::tuple_size_v&lt;t_tuple_lambda&gt; - 1)) {</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">//       p_out &lt;&lt; &#39;,&#39;;</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">//     }</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">//     return true;</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">//   };</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  tuple::tuple_constant_traverse&lt;t_tuple, decltype(_visit)&gt;(p_tuple, _visit);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  p_out &lt;&lt; p_right_delimeter;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">return</span> p_out;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">//   tuple::tuple_constant_traverse&lt;t_tuple, decltype(_visit)&gt;(p_tuple, _visit);</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">//   p_out &lt;&lt; p_right_delimeter;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">//   return p_out;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">// }</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;} <span class="comment">// namespace tnct::tuple</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">// } // namespace tnct::tuple</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">template</span> &lt;tnct::traits::tuple_like t_tuple&gt;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="../../d6/dbe/tuple__output_8h.html#aabb7ccf92d71063450eade2107326e6f">   47</a></span>&#160;std::ostream &amp;<a class="code" href="../../d6/dbe/tuple__output_8h.html#aabb7ccf92d71063450eade2107326e6f">operator&lt;&lt;</a>(std::ostream &amp;p_out, <span class="keyword">const</span> t_tuple &amp;p_tuple) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">tnct::tuple::tuple2out</a>(p_out, p_tuple);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">template</span> &lt;tnct::traits::tuple_like t_tuple&gt;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="../../d6/dbe/tuple__output_8h.html#a1ee48e3711debc64fd8ea1d5aacfc41d">   52</a></span>&#160;std::ostringstream &amp;<a class="code" href="../../d6/dbe/tuple__output_8h.html#aabb7ccf92d71063450eade2107326e6f">operator&lt;&lt;</a>(std::ostringstream &amp;p_out,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                               <span class="keyword">const</span> t_tuple &amp;p_tuple) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">tnct::tuple::tuple2out</a>(p_out, p_tuple);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="ais__tuple_8h_html"><div class="ttname"><a href="../../d9/d1a/is__tuple_8h.html">is_tuple.h</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a927f15282b238b550d06b505fcb24ecd"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a927f15282b238b550d06b505fcb24ecd">tnct::traits::tuple_like</a></div><div class="ttdeci">concept tuple_like</div><div class="ttdef"><b>Definition:</b> <a href="../../dc/d25/tuple__like_8h_source.html#l00014">tuple_like.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_ad1bd952b5a4bacff9930666463c1af29"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#ad1bd952b5a4bacff9930666463c1af29">tnct::traits::is_tuple_v</a></div><div class="ttdeci">constexpr bool is_tuple_v</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1a/is__tuple_8h_source.html#l00019">is_tuple.h:19</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1tuple_html"><div class="ttname"><a href="../../d4/d9e/namespacetnct_1_1tuple.html">tnct::tuple</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dcd/tuple__output__test_8h_source.html#l00020">tuple_output_test.h:20</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1tuple_html_aaae7d6e5b657e955162a2df709166e82"><div class="ttname"><a href="../../d4/d9e/namespacetnct_1_1tuple.html#aaae7d6e5b657e955162a2df709166e82">tnct::tuple::tuple2out</a></div><div class="ttdeci">t_output_stream &amp; tuple2out(t_output_stream &amp;p_out, const t_tuple &amp;p_tuple, const char p_left_delimeter='(', const char p_right_delimeter=')')</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dbe/tuple__output_8h_source.html#l00020">tuple_output.h:20</a></div></div>
-<div class="ttc" id="atuple__like_8h_html"><div class="ttname"><a href="../../dc/d25/tuple__like_8h.html">tuple_like.h</a></div></div>
-<div class="ttc" id="atuple__output_8h_html_aabb7ccf92d71063450eade2107326e6f"><div class="ttname"><a href="../../d6/dbe/tuple__output_8h.html#aabb7ccf92d71063450eade2107326e6f">operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, const t_tuple &amp;p_tuple)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dbe/tuple__output_8h_source.html#l00047">tuple_output.h:47</a></div></div>
-<div class="ttc" id="atuple__traverse_8h_html"><div class="ttname"><a href="../../d9/de0/tuple__traverse_8h.html">tuple_traverse.h</a></div></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_char, <span class="keyword">typename</span> t_traits, <span class="keyword">typename</span>... t_types&gt;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;std::basic_ostream&lt;t_char, t_traits&gt; &amp;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<a class="code" href="../../d6/dbe/tuple__output_8h.html#aea8f16d91a6e38ad9c919cfd87da84f0">operator&lt;&lt;</a>(std::basic_ostream&lt;t_char, t_traits&gt; &amp;p_out,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;           <span class="keyword">const</span> std::tuple&lt;t_types...&gt; &amp;p_tuple) {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::apply(</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      [&amp;p_out](<span class="keyword">const</span> t_types &amp;...p_types) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        p_out &lt;&lt; <span class="charliteral">&#39;[&#39;</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        std::size_t n{0};</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        ((p_out &lt;&lt; p_types &lt;&lt; (++n != <span class="keyword">sizeof</span>...(t_types) ? <span class="stringliteral">&quot;, &quot;</span> : <span class="stringliteral">&quot;&quot;</span>)), ...);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        p_out &lt;&lt; <span class="charliteral">&#39;]&#39;</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      },</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;      p_tuple);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">return</span> p_out;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="atuple__output_8h_html_aea8f16d91a6e38ad9c919cfd87da84f0"><div class="ttname"><a href="../../d6/dbe/tuple__output_8h.html#aea8f16d91a6e38ad9c919cfd87da84f0">operator&lt;&lt;</a></div><div class="ttdeci">std::basic_ostream&lt; t_char, t_traits &gt; &amp; operator&lt;&lt;(std::basic_ostream&lt; t_char, t_traits &gt; &amp;p_out, const std::tuple&lt; t_types... &gt; &amp;p_tuple)</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/dbe/tuple__output_8h_source.html#l00001">tuple_output.h:48</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

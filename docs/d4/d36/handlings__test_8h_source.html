@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.5</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -102,9 +102,9 @@ $(function() {
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    handling_1b _handling_1b{<span class="stringliteral">&quot;handling_1b&quot;</span>, _logger, handler_1b{}};</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> =</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">using</span> handlings =</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        async::handlings&lt;logger, event_1, handling_1a, handling_1b&gt;;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1a), std::move(_handling_1b)};</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    handlings _handlings{std::move(_handling_1a), std::move(_handling_1b)};</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  }</div>
@@ -242,12 +242,12 @@ $(function() {
 <div class="line"><a name="l00172"></a><span class="lineno"><a class="line" href="../../dd/d82/structhandlings__003.html#adc6f418fe4f316e6892bbfc663bbf55a">  172</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../dd/d82/structhandlings__003.html#adc6f418fe4f316e6892bbfc663bbf55a">operator()</a>(<span class="keyword">const</span> program::options &amp;) {</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    logger _logger;</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keyword">using</span> handlings = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    handling_1 _handling_1{<span class="stringliteral">&quot;handling_1&quot;</span>, _logger, <a class="code" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ae9125328f87e9ac28dd5181dd1f9a48c">handler_1</a>{}};</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    _handling_1.increment_handlers(1U);</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1)};</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    handlings _handlings{std::move(_handling_1)};</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">size_t</span> _num_handlers{0};</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
@@ -255,17 +255,17 @@ $(function() {
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        _handlings.get_num_handlers&lt;handling_1&gt;(_num_handlers)};</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordflow">if</span> (_num_handlers != 1U) {</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                   generic::fmt(<span class="stringliteral">&quot;number of handlers should be 1 but it is = &quot;</span>,</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                                _num_handlers));</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        _logger,</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        generic::fmt(<span class="stringliteral">&quot;number of handlers should be 1 and it is actually = &quot;</span>,</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                     _num_handlers))</div>
@@ -303,12 +303,12 @@ $(function() {
 <div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="../../d9/d00/structhandlings__004.html#a60c4d23b8ccd8b910f3b4ccba0dbdf10">  233</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d9/d00/structhandlings__004.html#a60c4d23b8ccd8b910f3b4ccba0dbdf10">operator()</a>(<span class="keyword">const</span> program::options &amp;) {</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    logger _logger;</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keyword">using</span> handlings = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    handling_1 _handling_1{<span class="stringliteral">&quot;handling_1&quot;</span>, _logger, <a class="code" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ae9125328f87e9ac28dd5181dd1f9a48c">handler_1</a>{}};</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    _handling_1.increment_handlers(1U);</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1)};</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    handlings _handlings{std::move(_handling_1)};</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">size_t</span> _num_handlers{0};</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
@@ -316,41 +316,41 @@ $(function() {
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        _handlings.get_num_handlers&lt;handling_1&gt;(_num_handlers)};</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    <span class="keywordflow">if</span> (_num_handlers != 1U) {</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                   generic::fmt(<span class="stringliteral">&quot;number of handlers should be 1 but it is = &quot;</span>,</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                                _num_handlers));</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    }</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        _logger,</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        generic::fmt(<span class="stringliteral">&quot;number of handlers should be 1 and it is actually = &quot;</span>,</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                     _num_handlers))</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    _result = _handlings.increment_handlers&lt;handling_1&gt;(2U);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    _result = _handlings.get_num_handlers&lt;handling_1&gt;(_num_handlers);</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;result = &quot;</span>, _result));</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    }</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordflow">if</span> (_num_handlers != 3U) {</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                   generic::fmt(<span class="stringliteral">&quot;number of handlers should be 3 but it is = &quot;</span>,</div>
 <div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                                _num_handlers));</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(</div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        _logger,</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        generic::fmt(<span class="stringliteral">&quot;number of handlers should be 3 and it is actually = &quot;</span>,</div>
 <div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                     _num_handlers))</div>
@@ -387,24 +387,24 @@ $(function() {
 <div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="../../d7/d02/structhandlings__005.html#a2f04b7c70613c829081226050f9cd1fc">  317</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../d7/d02/structhandlings__005.html#a2f04b7c70613c829081226050f9cd1fc">operator()</a>(<span class="keyword">const</span> program::options &amp;) {</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    logger _logger;</div>
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160; </div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keyword">using</span> handlings = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160; </div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    int16_t _i{0};</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    handling_1 _handling_1{<span class="stringliteral">&quot;handling_1&quot;</span>, _logger, <a class="code" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ae9125328f87e9ac28dd5181dd1f9a48c">handler_1</a>{_logger, &amp;_i}};</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    _handling_1.increment_handlers(1U);</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1)};</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    handlings _handlings{std::move(_handling_1)};</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">async::result</a> _result{_handlings.add_event&lt;handling_1&gt;(event_1{-1})};</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    std::this_thread::sleep_for(3s);</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">if</span> (_i != -3) {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;i should be -3, but it is &quot;</span>, _i));</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;i should be -3, but it is &quot;</span>, _i));</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
@@ -442,7 +442,7 @@ $(function() {
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="keywordtype">void</span> operator()(<a class="code" href="../../dd/dbc/structevent__1.html">event_1</a> &amp;&amp;p_event) {</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;      std::this_thread::sleep_for(2s);</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;      *m_i = p_event.i - 2;</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;*m_i is now &quot;</span>, *m_i));</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;*m_i is now &quot;</span>, *m_i));</div>
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    }</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160; </div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;  <span class="keyword">private</span>:</div>
@@ -465,37 +465,37 @@ $(function() {
 <div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="../../db/d40/structhandlings__006.html#a67c104ab57f0f503ea067636d4cd824b">  395</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../db/d40/structhandlings__006.html#a67c104ab57f0f503ea067636d4cd824b">operator()</a>(<span class="keyword">const</span> program::options &amp;) {</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    logger _logger;</div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160; </div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">using</span> handlings = async::handlings&lt;logger, event_1, handling_1&gt;;</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160; </div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    uint16_t _counter{0};</div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    handling_1 _handling_1{<span class="stringliteral">&quot;handling_1&quot;</span>, _logger, <a class="code" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ae9125328f87e9ac28dd5181dd1f9a48c">handler_1</a>{_logger}};</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    _handling_1.increment_handlers(1U);</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1)};</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    handlings _handlings{std::move(_handling_1)};</div>
 <div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="keywordflow">while</span> (!_handlings.is_stopped&lt;handling_1&gt;()) {</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">async::result</a> _result{</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;          _handlings.add_event&lt;handling_1&gt;(event_1{_counter})};</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;        <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;        <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger, generic::fmt(<span class="stringliteral">&quot;error: &quot;</span>, _result));</div>
 <div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;      }</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;      <span class="keywordflow">if</span> (_counter == 14) {</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        <span class="keyword">auto</span> _result{_handlings.stop&lt;handling_1&gt;()};</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;          <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;          <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(_logger,</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                       generic::fmt(<span class="stringliteral">&quot;result is &quot;</span>, _result,</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;                                    <span class="stringliteral">&quot;, but is should be &quot;</span>, async::result::OK));</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;          <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        }</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;        <span class="keywordflow">if</span> (!_handlings.is_stopped&lt;handling_1&gt;()) {</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;          <a class="code" href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;          <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;              _logger,</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;              generic::fmt(<span class="stringliteral">&quot;handlings should be stopped, but it is not&quot;</span>));</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;          <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;        }</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(_logger,</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;        <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(_logger,</div>
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;                     generic::fmt(<span class="stringliteral">&quot;handlings is stopped, as it should&quot;</span>))</div>
 <div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;      } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;        ++_counter;</div>
@@ -532,7 +532,7 @@ $(function() {
 <div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    <span class="keywordtype">void</span> operator()(<a class="code" href="../../dd/dbc/structevent__1.html">event_1</a> &amp;&amp;p_event) {</div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;      std::this_thread::sleep_for(800ms);</div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160; </div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;p_event.i = &quot;</span>, p_event.i));</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;p_event.i = &quot;</span>, p_event.i));</div>
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    }</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160; </div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  <span class="keyword">private</span>:</div>
@@ -551,15 +551,15 @@ $(function() {
 <div class="line"><a name="l00481"></a><span class="lineno"><a class="line" href="../../dd/d13/structhandlings__007.html#a8ad73680d5268163547c99926fb4a67b">  481</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="../../dd/d13/structhandlings__007.html#a8ad73680d5268163547c99926fb4a67b">operator()</a>(<span class="keyword">const</span> program::options &amp;) {</div>
 <div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    logger _logger;</div>
 <div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160; </div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    <span class="keyword">using</span> <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> =</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    <span class="keyword">using</span> handlings =</div>
 <div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;        async::handlings&lt;logger, event_1, handling_1a, handling_1b&gt;;</div>
 <div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
 <div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    handling_1a _handling_1a{<span class="stringliteral">&quot;handling_1a&quot;</span>, _logger, handler_1a{_logger}};</div>
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    handling_1b _handling_1b{<span class="stringliteral">&quot;handling_1b&quot;</span>, _logger, handler_1b{_logger}};</div>
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160; </div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">handlings</a> _handlings{std::move(_handling_1a), std::move(_handling_1b)};</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    handlings _handlings{std::move(_handling_1a), std::move(_handling_1b)};</div>
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160; </div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(_logger, generic::fmt(_handlings));</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(_logger, generic::fmt(_handlings));</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160; </div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;  }</div>
@@ -592,7 +592,7 @@ $(function() {
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    <span class="keywordtype">void</span> operator()(<a class="code" href="../../dd/dbc/structevent__1.html">event_1</a> &amp;&amp;p_event) {</div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;      std::this_thread::sleep_for(800ms);</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160; </div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;*m_i is now &quot;</span>, p_event.i));</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;*m_i is now &quot;</span>, p_event.i));</div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    }</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160; </div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;  <span class="keyword">private</span>:</div>
@@ -609,7 +609,7 @@ $(function() {
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    handler_1b(<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> &amp;p_logger) : m_logger(p_logger) {}</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160; </div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    <span class="keywordtype">void</span> operator()(<a class="code" href="../../dd/dbc/structevent__1.html">event_1</a> &amp;&amp;p_event) {</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;      <a class="code" href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;p_event * 2 is &quot;</span>, p_event.i * 2));</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;      <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a>(m_logger, generic::fmt(<span class="stringliteral">&quot;p_event * 2 is &quot;</span>, p_event.i * 2));</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    }</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160; </div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;  <span class="keyword">private</span>:</div>
@@ -1023,11 +1023,10 @@ $(function() {
 <div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aasync_2exp_2dispatcher__000_2main_8cpp_html_ae9125328f87e9ac28dd5181dd1f9a48c"><div class="ttname"><a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#ae9125328f87e9ac28dd5181dd1f9a48c">handler_1</a></div><div class="ttdeci">async::exp::handler&lt; 'a', 1, dispatcher &gt; handler_1</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp_source.html#l00045">main.cpp:45</a></div></div>
 <div class="ttc" id="aclasstnct_1_1container_1_1circular__queue_html"><div class="ttname"><a href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a></div><div class="ttdoc">Implements a circular queue which size is increased if it becomes full.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d1e/circular__queue_8h_source.html#l00032">circular_queue.h:32</a></div></div>
-<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00039">logger.h:39</a></div></div>
+<div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">logger.h:34</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_a1e05efb48c061db23a6da492d9738c4b"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#a1e05efb48c061db23a6da492d9738c4b">tnct::async::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, handling_priority p_handling_priority)</div><div class="ttdoc">Output operator for handling_priority.</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/dca/handling__priority_8h_source.html#l00028">handling_priority.h:28</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">tnct::async::result</a></div><div class="ttdeci">result</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d93/result_8h_source.html#l00014">result.h:14</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00019">cerr.h:19</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_html_a66e9c611ea717950e4d7337b73916f15"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a66e9c611ea717950e4d7337b73916f15">tnct::traits::handlings</a></div><div class="ttdeci">concept handlings</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/db3/handlings_8h_source.html#l00018">handlings.h:18</a></div></div>
 <div class="ttc" id="astructevent__1_html"><div class="ttname"><a href="../../dd/dbc/structevent__1.html">event_1</a></div><div class="ttdef"><b>Definition:</b> <a href="../../da/d55/async_2test_2dispatcher__test_8h_source.html#l00027">dispatcher_test.h:27</a></div></div>
 <div class="ttc" id="astructevent__1_html_abb8be1e1363dd0a380cec551491df5ff"><div class="ttname"><a href="../../dd/dbc/structevent__1.html#abb8be1e1363dd0a380cec551491df5ff">event_1::i</a></div><div class="ttdeci">int16_t i</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d55/async_2test_2dispatcher__test_8h_source.html#l00034">dispatcher_test.h:34</a></div></div>
 <div class="ttc" id="astructevent__2_html"><div class="ttname"><a href="../../d8/db4/structevent__2.html">event_2</a></div><div class="ttdef"><b>Definition:</b> <a href="../../da/d55/async_2test_2dispatcher__test_8h_source.html#l00037">dispatcher_test.h:37</a></div></div>
@@ -1056,8 +1055,8 @@ $(function() {
 <div class="ttc" id="astructhandlings__007_html_a8ad73680d5268163547c99926fb4a67b"><div class="ttname"><a href="../../dd/d13/structhandlings__007.html#a8ad73680d5268163547c99926fb4a67b">handlings_007::operator()</a></div><div class="ttdeci">bool operator()(const program::options &amp;)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d36/handlings__test_8h_source.html#l00481">handlings_test.h:481</a></div></div>
 <div class="ttc" id="astructhandlings__007_html_ae4b94ad24da48bade57a71b75ecc4ecf"><div class="ttname"><a href="../../dd/d13/structhandlings__007.html#ae4b94ad24da48bade57a71b75ecc4ecf">handlings_007::desc</a></div><div class="ttdeci">static std::string desc()</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d36/handlings__test_8h_source.html#l00479">handlings_test.h:479</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1handler_html"><div class="ttname"><a href="../../d4/da8/structtnct_1_1async_1_1exp_1_1handler.html">tnct::async::exp::handler</a></div><div class="ttdef"><b>Definition:</b> <a href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h_source.html#l00025">handler.h:25</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html_a097cdf1e3894a8392b202fac77ced484"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a></div><div class="ttdeci">#define TNCT_LOG_TST(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d67/traits_2logger_8h_source.html#l00046">logger.h:46</a></div></div>
-<div class="ttc" id="atraits_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../da/d67/traits_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d67/traits_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html_a097cdf1e3894a8392b202fac77ced484"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html#a097cdf1e3894a8392b202fac77ced484">TNCT_LOG_TST</a></div><div class="ttdeci">#define TNCT_LOG_TST(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d7c/traits_2log_2logger_8h_source.html#l00046">logger.h:46</a></div></div>
+<div class="ttc" id="atraits_2log_2logger_8h_html_a6a64aa76293016a2acb2b2515688f698"><div class="ttname"><a href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a></div><div class="ttdeci">#define TNCT_LOG_ERR(logger, msg)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d7c/traits_2log_2logger_8h_source.html#l00042">logger.h:42</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
