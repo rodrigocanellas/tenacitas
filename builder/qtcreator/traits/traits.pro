@@ -8,6 +8,7 @@ PRJ_DIR=$$BASE_DIR/tnct/traits
 
 HEADERS += \
         $$PRJ_DIR/is_smart_ptr.h \
+        $$PRJ_DIR/enum.h \
         $$PRJ_DIR/chrono_convertible.h \
         $$PRJ_DIR/has_new_operator.h \
         $$PRJ_DIR/has_output_operator.h \
@@ -16,6 +17,7 @@ HEADERS += \
         $$PRJ_DIR/async/event.h \
         $$PRJ_DIR/async/dispatcher.h \
         $$PRJ_DIR/async/tuple_contains_only_events.h \
+        $$PRJ_DIR/async/publish_method.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/like.h \

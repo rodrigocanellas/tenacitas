@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "tnct/traits/test/dispatcher_test.h"
+#include "tnct/traits/test/async_test.h"
 #include "tnct/traits/test/is_tuple_test.h"
 #include "tnct/traits/test/is_type_in_tuple_test.h"
 #include "tnct/traits/test/tuple_contains_tuple_test.h"
@@ -54,6 +54,10 @@ int main(int argc, char **argv) {
     run_test(_tester, traits::test::tuple_traverse_000);
 
     run_test(_tester, traits::test::dispatcher_000);
+
+    run_test(_tester, traits::test::has_publish_method_000);
+    run_test(_tester, traits::test::has_publish_method_001);
+    run_test(_tester, traits::test::has_publish_method_002);
 
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;

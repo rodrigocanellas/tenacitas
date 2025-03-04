@@ -10,7 +10,7 @@ TRAITS_TEST=$$BASE_DIR/tnct/traits/test
 SOURCES = $$TRAITS_TEST/main.cpp
 
 HEADERS = \
-        $$TRAITS_TEST/subscriber_test.h \
+        $$TRAITS_TEST/async_test.h \
         $$TRAITS_TEST/is_tuple_test.h \
         $$TRAITS_TEST/tuple_like_test.h \
         $$TRAITS_TEST/tuple_find_test.h \

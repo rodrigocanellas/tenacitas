@@ -25,7 +25,7 @@ namespace tnct::container {
 ///
 /// \tparam t_data defines the types of the data contained in the queue
 template <traits::log::logger t_logger, typename t_data, size_t t_initial_size,
-          size_t t_incremental_percentage = 50>
+          size_t t_incremental_size = t_initial_size / 2>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
     std::is_default_constructible_v<t_data> &&
     traits::has_output_operator<t_data>
@@ -39,7 +39,10 @@ public:
 
   circular_queue(t_logger &p_logger)
       : m_logger(p_logger), m_initial_size(t_initial_size),
-        m_incremental_size(m_initial_size / t_incremental_percentage),
+        m_incremental_size(t_incremental_size == 0 ? ((t_initial_size / 2) == 0
+                                                          ? t_initial_size
+                                                          : t_initial_size / 2)
+                                                   : t_incremental_size),
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0) {
 
     TNCT_LOG_TRA(this->m_logger, format::fmt("creating - ", brief_report()));

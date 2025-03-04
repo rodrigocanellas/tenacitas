@@ -7,6 +7,7 @@
 #define TNCT_TRAITS_TUPLE_TRAVERSE_H
 
 #include <cstddef>
+// #include <optional>
 #include <tuple>
 
 #include "tnct/traits/tuple/like.h"
@@ -33,7 +34,7 @@ requires(traits::tuple::visit_type_in_tuple<t_func, t_tuple, t_idx>)
   }
 
   if constexpr ((t_idx + 1) < std::tuple_size_v<t_tuple>) {
-    traverse<t_tuple, t_func, t_idx + 1>(p_function);
+    return traverse<t_tuple, t_func, t_idx + 1>(p_function);
   }
 }
 
