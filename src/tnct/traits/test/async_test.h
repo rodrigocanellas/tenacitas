@@ -100,7 +100,8 @@ private:
     }
   };
 
-  template <async::publish_method_like<result, event_a> t_has_publish_method>
+  template <async::has_const_lvalue_publish_method<result, event_a>
+                t_has_publish_method>
   result f(t_has_publish_method &p_publisher, const event_a &p_event_a) {
     return p_publisher.publish(p_event_a);
   };
@@ -141,7 +142,8 @@ private:
     // }
   };
 
-  template <async::publish_method_like<result, event_a> t_has_publish_method>
+  template <async::has_const_lvalue_publish_method<result, event_a>
+                t_has_publish_method>
   result f(t_has_publish_method &p_publisher, const event_a &p_event_a) {
     return p_publisher.publish(p_event_a);
   };
@@ -152,46 +154,34 @@ struct has_publish_method_002 {
 
   bool operator()(const program::options &) {
     static_assert(
-        traits::async::publish_method_like<publisher, result, event_a>,
-        "publisher should match publish_method_like for event_a!");
-
-    static_assert(
-        traits::async::publish_method_like<publisher, result, event_b>,
-        "publisher should match publish_method_like for event_b!");
-
-    static_assert(
-        traits::async::publish_method_like<publisher, result, event_c>,
-        "publisher should match publish_method_like for event_c!");
-
-    static_assert(traits::async::event<event_a>, "event_a is not an event");
-
-    static_assert(traits::async::event<event_b>, "event_b is not an event");
-
-    static_assert(traits::async::event<event_c>, "event_c is not an event");
+        traits::async::has_const_lvalue_publish_method<publisher, result,
+                                                       event_a>,
+        "publisher should match has_const_lvalue_publish for event_a!");
 
     publisher _publisher;
 
     event_b _event_b;
-    auto _result{publish(_publisher, _event_b)};
-    if (_result != result::r1) {
+    auto _result{f(_publisher, _event_b)};
+    if (_result != result::b) {
       return false;
     }
 
     event_a _event_a;
-    _result = publish(_publisher, _event_a);
-    if (_result != result::r0) {
+    _result = f(_publisher, _event_a);
+    if (_result != result::a) {
       return false;
     }
 
     event_c _event_c;
-
-    _result = publish(_publisher, std::move(_event_c));
-    if (_result != result::r2) {
+    _result = f(_publisher, _event_c);
+    if (_result != result::c) {
       return false;
     }
 
-    _result = publish(_publisher, event_b{});
-    if (_result != result::r1) {
+    int16_t _i{-9};
+    const std::string &_s{"hi"};
+    _result = f<publisher>(_publisher, _i, _s);
+    if (_result != result::d) {
       return false;
     }
 
@@ -199,7 +189,7 @@ struct has_publish_method_002 {
   }
 
 private:
-  enum class result : int { r0 = 1, r1 = 2, r2 = 3, r3 = 4 };
+  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
   struct event_a {
     friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
       return p_out;
@@ -218,63 +208,63 @@ private:
     }
   };
 
-  // struct publisher {
-  //   template <traits::async::event t_event> result publish(const t_event &) {
-  //     return result::r0;
-  //   } // ✅ Only const version
+  struct event_d {
+    event_d() = default;
+    event_d(int16_t p_i, const std::string &p_s) : m_i(p_i), m_s(p_s) {}
 
-  //   // Uncomment this to fix:
-  //   template <traits::async::event t_event> result publish(t_event &&) {
-  //     return result::r1;
-  //   }
-  // };
+    friend std::ostream &operator<<(std::ostream &p_out, const event_d &) {
+      return p_out;
+    }
 
-  // Should FAIL because publisher lacks `publish(T&&)`
-  // static_assert(async::has_rvalue_publish<publisher, result, event_a>);
+    int16_t m_i;
+    const std::string m_s;
+  };
 
-  // static_assert(async::has_lvalue_publish<publisher, result, event_a>);
+  template <async::has_const_lvalue_publish_method<result, event_a>
+                t_has_publish_method>
+  result f(t_has_publish_method &p_publisher, const event_a &p_event_a) {
+    return p_publisher.publish(p_event_a);
+  };
+
+  template <async::has_const_lvalue_publish_method<result, event_a>
+                t_has_publish_method>
+  result f(t_has_publish_method &p_publisher, const event_b &p_event_b) {
+    return p_publisher.publish(p_event_b);
+  };
+
+  template <async::has_const_lvalue_publish_method<result, event_a>
+                t_has_publish_method>
+  result f(t_has_publish_method &p_publisher, const event_c &p_event_c) {
+    return p_publisher.publish(p_event_c);
+  };
+
+  template <async::has_variadic_params_publish_method<result, event_d>
+                t_has_publish_method>
+  result f(t_has_publish_method &p_publisher, int16_t p_i,
+           const std::string &p_s) {
+    return p_publisher.template publish<event_d>(p_i, p_s);
+  };
 
   struct publisher {
     template <traits::async::event t_event> result publish(const t_event &) {
       if constexpr (std::is_same_v<t_event, event_a>) {
-        return result::r0;
+        return result::a;
       } else if constexpr (std::is_same_v<t_event, event_b>) {
-        return result::r1;
+        return result::b;
       } else if constexpr (std::is_same_v<t_event, event_c>) {
-        return result::r2;
+        return result::c;
       } else
-        return result::r3;
+        return result::d;
     }
 
-    template <traits::async::event t_event> result publish(t_event &&) {
-      if constexpr (std::is_same_v<t_event, event_a>) {
-        return result::r0;
-      } else if constexpr (std::is_same_v<t_event, event_b>) {
-        return result::r1;
-      } else if constexpr (std::is_same_v<t_event, event_c>) {
-        return result::r2;
-      } else
-        return result::r3;
+    template <async::event t_event, typename... t_params>
+    result publish(t_params &&...) {
+      if constexpr (std::is_same_v<t_event, event_d>) {
+        return result::d;
+      }
+      return result::unknown;
     }
   };
-
-  template <async::publishers_methods_like<result, event_a, event_b, event_c>
-                t_publisher>
-  result publish(t_publisher &p_publisher, const event_a &p_event_a) {
-    return p_publisher.template publish<event_a>(p_event_a);
-  }
-
-  template <async::publishers_methods_like<result, event_a, event_b, event_c>
-                t_publisher>
-  result publish(t_publisher &p_publisher, const event_b &p_event_b) {
-    return p_publisher.template publish<event_b>(p_event_b);
-  }
-
-  template <async::publishers_methods_like<result, event_a, event_b, event_c>
-                t_publisher>
-  result publish(t_publisher &p_publisher, const event_c &p_event_c) {
-    return p_publisher.template publish<event_c>(p_event_c);
-  }
 };
 
 } // namespace tnct::traits::test

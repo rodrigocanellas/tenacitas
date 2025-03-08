@@ -18,7 +18,8 @@ enum class result : std::uint8_t {
   ERRROR_PUBLISHNG,
   ERROR_CLEARING,
   ERROR_ADDING_HANDLER,
-  ERROR_STOPPING
+  ERROR_STOPPING,
+  ERROR_HANDLER_ALREADY_IN_USE
 };
 
 static inline std::ostream &operator<<(std::ostream &p_out, result p_result) {
@@ -43,6 +44,9 @@ static inline std::ostream &operator<<(std::ostream &p_out, result p_result) {
     break;
   case result::ERROR_STOPPING:
     p_out << "error stopping";
+    break;
+  case result::ERROR_HANDLER_ALREADY_IN_USE:
+    p_out << "handler already in use";
     break;
   }
   return p_out;
