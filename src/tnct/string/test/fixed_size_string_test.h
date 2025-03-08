@@ -71,6 +71,43 @@ struct fixed_size_string_003 {
   }
 };
 
+struct fixed_size_string_004 {
+  static std ::string desc() {
+    return "Creating from a std::string with size less than maximum";
+  }
+
+  bool operator()(const program::options &) {
+    const std::string _s{"012345"};
+    string::fixed_size_string<10> _str1{_s};
+
+    std::cerr << "str 1 = " << _str1 << std::endl;
+
+    string::fixed_size_string<10> _str2{"012345"};
+    return _str1 == _str2;
+  }
+};
+
+struct fixed_size_string_005 {
+  static std ::string desc() {
+    return "Creating from a std::string with size greather than maximum";
+  }
+
+  bool operator()(const program::options &) {
+    try {
+      const std::string _s{"0123456789A"};
+      string::fixed_size_string<10> _str1{_s};
+
+      std::cerr << "str 1 = " << _str1 << std::endl;
+
+      return false;
+
+    } catch (std::exception &_ex) {
+      std::cerr << "error: " << _ex.what() << std::endl;
+    }
+    return true;
+  }
+};
+
 } // namespace tnct::string::test
 
 #endif

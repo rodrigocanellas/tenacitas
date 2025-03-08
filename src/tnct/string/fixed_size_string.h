@@ -19,20 +19,21 @@ template <std::uint16_t t_size> struct fixed_size_string {
   fixed_size_string() = default; //{ reset(); }
 
   // with help from ChatGPT
-  // template <std::uint16_t t_str_size>
-  // constexpr fixed_size_string(const char (&p_value)[t_str_size]) {
-  //   reset();
-  //   static_assert(t_str_size <= t_size + 1,
-  //                 "string literal is too large for fixed_size_string");
+  template <std::uint16_t t_str_size>
+  constexpr fixed_size_string(const char (&p_value)[t_str_size]) {
 
-  //   std::copy_n(p_value, std::strlen(p_value), m_value.begin());
-  // }
+    static_assert(t_str_size <= t_size + 1,
+                  "string literal is too large for fixed_size_string");
+
+    std::copy_n(p_value, std::strlen(p_value), m_value.begin());
+  }
 
   // with help from ChatGPT
-  consteval fixed_size_string(std::string_view p_value) {
+  fixed_size_string(std::string_view p_value) {
     // reset();
     if (p_value.size() > t_size) {
-      throw "String too large!"; // Triggers a compile-time error
+      throw std::runtime_error(
+          "string too large!"); // Triggers a compile-time error
     }
     std::copy_n(p_value.begin(), p_value.size(), m_value.begin());
   }

@@ -15,4 +15,6 @@ int main(int argc, char **argv) {
   run_test(_tester, string::test::fixed_size_string_001);
   run_test(_tester, string::test::fixed_size_string_002);
   run_test(_tester, string::test::fixed_size_string_003);
+  run_test(_tester, string::test::fixed_size_string_004);
+  run_test(_tester, string::test::fixed_size_string_005);
 }
