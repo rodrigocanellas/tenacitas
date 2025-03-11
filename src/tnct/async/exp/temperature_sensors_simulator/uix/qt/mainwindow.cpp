@@ -20,12 +20,12 @@ MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,
   m_logger.set_inf();
 
   auto _result(m_dispatcher.template add_handling<evt::new_temperature>(
+      "new-temperature",
       [this](evt::new_temperature &&p_event) { (*this)(std::move(p_event)); },
-      async::handling_priority::high,
       container::circular_queue<logger, evt::new_temperature, 10>{m_logger},
-      1));
+      async::handling_priority::high, 1));
 
-  if (!_result) {
+  if (_result != async::result::OK) {
     TNCT_LOG_ERR(m_logger, "error creating handling for 'new_temperature");
     return;
   }

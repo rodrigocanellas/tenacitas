@@ -128,7 +128,7 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERRROR_PUBLISHNG;
+      return result::ERROR_PUBLISHNG;
     }
     return result::OK;
   }
@@ -149,7 +149,7 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERRROR_PUBLISHNG;
+      return result::ERROR_PUBLISHNG;
     }
     return result::OK;
   }
@@ -157,14 +157,14 @@ public:
   template <traits::async::event t_event,
             traits::container::queue<t_event> t_queue,
             traits::async::handler<t_event> t_handler>
-  std::optional<handling_id> add_handling(
-      t_handler &&p_handler, t_queue &&p_queue,
-      handling_priority p_handling_priority = handling_priority::medium) {
+  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
+                      t_queue &&p_queue, handling_priority p_handling_priority,
+                      size_t p_num_handlers) {
 
     event_is_in_events_tupĺe<t_event>();
 
     if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
+      return result::ERROR_HANDLER_ALREADY_IN_USE;
     }
 
     using handling_concrete =
@@ -174,85 +174,51 @@ public:
       std::lock_guard<std::mutex> _lock(m_mutex);
 
       handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue))};
-
-      get_handlings<t_event>().insert(
-          {p_handling_priority, std::move(_handling_ptr)});
-
-      return m_handling_id;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return std::nullopt;
-  }
-
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  std::optional<handling_id>
-  add_handling(t_handler &&p_handler, handling_priority p_handling_priority,
-               t_queue &&p_queue, size_t p_num_handlers) {
-
-    event_is_in_events_tupĺe<t_event>();
-
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
-    }
-
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
-
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
+          p_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
           p_num_handlers)};
 
       get_handlings<t_event>().insert(
           {p_handling_priority, std::move(_handling_ptr)});
 
-      return m_handling_id;
+      return result::OK;
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
     }
 
-    return std::nullopt;
+    return result::ERROR_UNKNOWN;
   }
 
   template <traits::async::event t_event,
             traits::container::queue<t_event> t_queue,
             traits::async::handler<t_event> t_handler>
-  std::optional<handling_id> add_handling(t_handler &&p_handler,
-                                          t_queue &&p_queue,
-                                          size_t p_num_handlers) {
+  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
+                      t_queue &&p_queue) {
+    return add_handling<t_event, t_queue, t_handler>(
+        p_handling_id, std::move(p_handler), std::move(p_queue),
+        handling_priority::medium, 0);
+  }
 
-    event_is_in_events_tupĺe<t_event>();
+  template <traits::async::event t_event,
+            traits::container::queue<t_event> t_queue,
+            traits::async::handler<t_event> t_handler>
+  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
+                      handling_priority p_handling_priority,
+                      t_queue &&p_queue) {
 
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
-    }
+    return add_handling<t_event, t_queue, t_handler>(
+        p_handling_id, std::move(p_handler), std::move(p_queue),
+        p_handling_priority, 0);
+  }
 
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
+  template <traits::async::event t_event,
+            traits::container::queue<t_event> t_queue,
+            traits::async::handler<t_event> t_handler>
+  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
+                      t_queue &&p_queue, size_t p_num_handlers) {
 
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
-          p_num_handlers)};
-
-      get_handlings<t_event>().insert(
-          {handling_priority::medium, std::move(_handling_ptr)});
-
-      return m_handling_id;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return std::nullopt;
+    return add_handling<t_event, t_queue, t_handler>(
+        p_handling_id, std::move(p_handler), std::move(p_queue),
+        handling_priority::medium, p_num_handlers);
   }
 
   /// \brief Cleans all handlings of a certain event
@@ -558,7 +524,6 @@ private:
 
   events_handlings m_events_handlings;
 
-  handling_id m_handling_id{0};
   std::mutex m_mutex;
 };
 

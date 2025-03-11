@@ -28,30 +28,31 @@ requires(traits::tuple::contains_tuple<
   sensors(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher) {
     auto _result(m_dispatcher.template add_handling<evt::add_sensor>(
+        "add-sensor",
         [&](evt::add_sensor &&p_event) { (*this)(std::move(p_event)); },
-        async::handling_priority::medium,
-        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger}, 1));
-    if (!_result) {
+        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger},
+        async::handling_priority::medium, 1));
+    if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'add_sensor'");
       return;
     }
 
     _result = m_dispatcher.template add_handling<evt::remove_sensor>(
+        "remove-sensor",
         [&](evt::remove_sensor &&p_event) { (*this)(std::move(p_event)); },
-        async::handling_priority::medium,
         container::circular_queue<t_logger, evt::remove_sensor, 10>{m_logger},
-        1);
-    if (!_result) {
+        async::handling_priority::medium, 1);
+    if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'remove_sensor'");
       return;
     }
 
     _result = m_dispatcher.template add_handling<evt::set_temperature>(
+        "set-temperature",
         [&](evt::set_temperature &&p_event) { (*this)(std::move(p_event)); },
-        async::handling_priority::medium,
         container::circular_queue<t_logger, evt::set_temperature, 10>{m_logger},
-        1);
-    if (!_result) {
+        async::handling_priority::medium, 1);
+    if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'set_sensor'");
       return;
     }

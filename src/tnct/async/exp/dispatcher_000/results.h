@@ -14,7 +14,7 @@
 #include "tnct/async/exp/dispatcher_000/event_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_type_id.h"
-#include "tnct/async/exp/dispatcher_000/handling_id.h"
+#include "tnct/async/handling_id.h"
 
 namespace tnct::async::exp {
 

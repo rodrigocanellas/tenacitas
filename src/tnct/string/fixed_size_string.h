@@ -70,6 +70,17 @@ template <std::uint16_t t_size> struct fixed_size_string {
     return true;
   }
 
+  constexpr bool operator<(const fixed_size_string &p_fixed_size_string) const {
+    for (decltype(t_size) _i = 0; _i < t_size; ++_i) {
+
+      if ((m_value[_i] != '\0') &&
+          (p_fixed_size_string.m_value[_i] >= m_value[_i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   constexpr bool empty() const { return m_value[0] == '\0'; }
 
   constexpr bool

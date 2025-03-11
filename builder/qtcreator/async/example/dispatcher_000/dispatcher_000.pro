@@ -13,8 +13,6 @@ HEADERS+=$$PRJ_DIR/dispatcher_000/publisher.h \
          $$PRJ_DIR/dispatcher_000/event_handled.h \
          $$PRJ_DIR/dispatcher_000/event_id.h \
          $$PRJ_DIR/dispatcher_000/handler_type_id.h \
-         $$PRJ_DIR/dispatcher_000/handler_id.h \
-         $$PRJ_DIR/dispatcher_000/handling_id.h \
          $$PRJ_DIR/dispatcher_000/results.h \
          $$PRJ_DIR/dispatcher_000/configuration.h
 
@@ -22,6 +20,10 @@ HEADERS+=$$PRJ_DIR/dispatcher_000/publisher.h \
 SOURCES = $$PRJ_DIR/dispatcher_000/main.cpp
 
 DISTFILES += \
-    $$PRJ_DIR/dispatcher_000/cfg.ini
-
-
+    $$PRJ_DIR/dispatcher_000/cfg.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-a.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-b.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-c.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-d.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-e.ini \
+    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-f.ini

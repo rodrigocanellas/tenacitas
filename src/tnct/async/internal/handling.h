@@ -101,7 +101,7 @@ public:
 
   void add_event(const event &p_event) override {
 
-    TNCT_LOG_TRA(m_logger, trace("adding event"));
+    TNCT_LOG_TRA(m_logger, format::fmt("event = ", p_event));
 
     m_queue.push(p_event);
 

@@ -44,8 +44,9 @@ struct publisher {
   ~publisher() { m_slepping_loop.stop(); }
 
   void start() {
-    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
-    //                                    "': starting publisher"));
+    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+                                       "': starting publisher with ",
+                                       m_total_events, " to be published"));
     m_slepping_loop.start();
   }
 
@@ -84,7 +85,8 @@ private:
   const event m_event{};
 };
 
-template <char t_event_id, traits::async::dispatcher<event<t_event_id>> t_dispacther>
+template <char t_event_id,
+          traits::async::dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tnct::async::exp

@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include "tnct/async/handling_id.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/sleeping_loop.h"
 
@@ -63,7 +64,8 @@ struct handling_000 : public handling_test {
     try {
       m_logger.set_deb();
 
-      handling _handling(0, m_logger, std::move(_handler), queue{m_logger});
+      handling _handling("hand-000", m_logger, std::move(_handler),
+                         queue{m_logger});
 
       _handling.add_event(ev1());
 
@@ -92,7 +94,8 @@ struct handling_001 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(1, m_logger, std::move(_handler), queue{m_logger});
+    handling _handling("hand-001", m_logger, std::move(_handler),
+                       queue{m_logger});
 
     const auto _is_stopped(_handling.is_stopped());
 
@@ -113,13 +116,14 @@ struct handling_005 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(5, m_logger, std::move(_handler), queue{m_logger});
+    handling _handling("hand-005", m_logger, std::move(_handler),
+                       queue{m_logger});
 
-    auto _handling_id(_handling.get_id());
+    auto _handling_id{_handling.get_id()};
 
     m_logger.tst(format::fmt("id = ", _handling_id));
 
-    return _handling_id == 5;
+    return _handling_id == async::handling_id{"hand-005"};
   }
 };
 
@@ -136,7 +140,8 @@ struct handling_006 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
     try {
-      handling _handling(6, m_logger, std::move(_handler), queue{m_logger}, 0);
+      handling _handling("hand-006", m_logger, std::move(_handler),
+                         queue{m_logger}, 0);
 
       _handling.add_event(ev1());
 
@@ -181,7 +186,8 @@ struct handling_007 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(7, m_logger, std::move(_handler), queue{m_logger}, 0);
+    handling _handling("hand-007", m_logger, std::move(_handler),
+                       queue{m_logger}, 0);
 
     _handling.increment_handlers(2U);
 
@@ -206,7 +212,8 @@ struct handling_008 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(8, m_logger, std::move(_handler), queue{m_logger});
+    handling _handling("hand-008", m_logger, std::move(_handler),
+                       queue{m_logger});
 
     _handling.increment_handlers(2U);
 
@@ -230,7 +237,8 @@ struct handling_009 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(9, m_logger, std::move(_handler), queue{m_logger}, 1);
+    handling _handling("hand-009", m_logger, std::move(_handler),
+                       queue{m_logger}, 1);
 
     _handling.increment_handlers(1U);
 
@@ -260,7 +268,8 @@ struct handling_010 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
     try {
-      handling _handling(10, m_logger, std::move(_handler), queue{m_logger}, 2);
+      handling _handling("hand-010", m_logger, std::move(_handler),
+                         queue{m_logger}, 2);
 
       _handling.stop();
 
@@ -295,7 +304,8 @@ struct handling_011 : public handling_test {
                                                         decltype(_handler)>;
 
     try {
-      handling _handling(11, m_logger, std::move(_handler), queue{m_logger}, 2);
+      handling _handling("hand-011", m_logger, std::move(_handler),
+                         queue{m_logger}, 2);
 
       _handling.add_event(ev1());
 
@@ -330,7 +340,8 @@ struct handling_012 : public handling_test {
     using handling = async::internal::handling_concrete<logger, ev1, queue,
                                                         decltype(_handler)>;
 
-    handling _handling(12, m_logger, std::move(_handler), queue{m_logger}, 0);
+    handling _handling("hand-012", m_logger, std::move(_handler),
+                       queue{m_logger}, 0);
     _handling.increment_handlers(3U);
 
     auto _num_handlers(_handling.get_amount_handlers());
@@ -363,7 +374,8 @@ struct handling_014 : public handling_test {
       using handling =
           async::internal::handling_concrete<logger, ev1, queue, handler>;
 
-      handling _handling(1, m_logger, handler{this}, queue{m_logger}, 1);
+      handling _handling("hand-014", m_logger, handler{this}, queue{m_logger},
+                         1);
 
       for (num_events _i = 0; _i < m_num_events; ++_i) {
         _handling.add_event(ev1(_i));
@@ -461,7 +473,7 @@ struct handling_015 : public handling_test {
       using handling =
           async::internal::handling_concrete<logger, ev1, queue, handler>;
 
-      handling _handling(1, m_logger, handler{this}, queue{m_logger});
+      handling _handling("hand-015", m_logger, handler{this}, queue{m_logger});
       _handling.increment_handlers(1U);
 
       num_events _i = 0;
@@ -541,7 +553,8 @@ struct handling_016 : public handling_test {
       using handling =
           async::internal::handling_concrete<logger, ev1, queue, handler>;
 
-      handling _handling(1, m_logger, handler{this}, queue{m_logger}, 10);
+      handling _handling("hand-016", m_logger, handler{this}, queue{m_logger},
+                         10);
 
       sleeping_loop _sleeping_loop(
           m_logger,

@@ -55,41 +55,46 @@ void define_handlings(dispatcher &p_dispatcher, logger &p_logger,
                       const configuration &p_configuration) {
   if (p_configuration.handlings_cfg[0].use) {
     p_dispatcher.add_handling<event_a>(
-        handler_0{p_logger, p_dispatcher, 0,
+        "event-a-0",
+        handler_0{p_logger, p_dispatcher, "handling-0",
                   p_configuration.handlings_cfg[0].sleep_to_simulate_work},
-        queue_event_a{p_logger},
+        queue_event_a{p_logger, "event-a-0"},
         p_configuration.handlings_cfg[0].amount_handlers);
   }
 
   if (p_configuration.handlings_cfg[1].use) {
     p_dispatcher.add_handling<event_a>(
-        handler_1{p_logger, p_dispatcher, 1,
+        "event-a-1",
+        handler_1{p_logger, p_dispatcher, "handling-1",
                   p_configuration.handlings_cfg[1].sleep_to_simulate_work},
-        queue_event_a{p_logger},
+        queue_event_a{p_logger, "event-a-1"},
         p_configuration.handlings_cfg[1].amount_handlers);
   }
 
   if (p_configuration.handlings_cfg[2].use) {
     p_dispatcher.add_handling<event_a>(
-        handler_2{p_logger, p_dispatcher, 2,
+        "event-a-2",
+        handler_2{p_logger, p_dispatcher, "handling-2",
                   p_configuration.handlings_cfg[2].sleep_to_simulate_work},
-        queue_event_a{p_logger},
+        queue_event_a{p_logger, "event-a-2"},
         p_configuration.handlings_cfg[2].amount_handlers);
   }
 
   if (p_configuration.handlings_cfg[3].use) {
     p_dispatcher.add_handling<event_a>(
-        handler_3{p_logger, p_dispatcher, 3,
+        "event-a-3",
+        handler_3{p_logger, p_dispatcher, "handling-3",
                   p_configuration.handlings_cfg[3].sleep_to_simulate_work},
-        queue_event_a{p_logger},
+        queue_event_a{p_logger, "event-a-3"},
         p_configuration.handlings_cfg[3].amount_handlers);
   }
 
   if (p_configuration.handlings_cfg[4].use) {
     p_dispatcher.add_handling<event_a>(
-        handler_4{p_logger, p_dispatcher, 4,
+        "event-a-4",
+        handler_4{p_logger, p_dispatcher, "handling-4",
                   p_configuration.handlings_cfg[4].sleep_to_simulate_work},
-        queue_event_a{p_logger},
+        queue_event_a{p_logger, "event-a-4"},
         p_configuration.handlings_cfg[4].amount_handlers);
   }
 }
@@ -149,6 +154,11 @@ void syntax(const char *p_pgm_name) {
             << std::endl;
 }
 
+std::size_t percentage_to_display(std::size_t p_total_to_be_handled) {
+  auto _aux{static_cast<size_t>(p_total_to_be_handled * 0.1)};
+  return (_aux == 0 ? 1 : _aux);
+}
+
 int main(int argc, char **argv) {
   logger _logger;
 
@@ -191,26 +201,27 @@ int main(int argc, char **argv) {
                                       _total_to_be_handled));
     size_t _total_handled{0};
     const size_t _percentage_to_display{
-        static_cast<size_t>(_total_to_be_handled * 0.1)};
+        percentage_to_display(_total_to_be_handled)};
 
     std::condition_variable _cond_all_handled;
     std::mutex _mutex_all_handled;
 
-    _dispatcher.add_handling<event_handled>(
-        [&](event_handled &&p_event) {
-          // TNCT_LOG_TST(_logger, format::fmt("event handled: ", p_event))
-          ++_total_handled;
-          _results.increment(p_event.event_id, p_event.handling_id,
-                             p_event.handler_type_id, p_event.handler_id);
-          if ((_total_handled % _percentage_to_display) == 0) {
-            TNCT_LOG_TST(_logger, format::fmt("handled ", _total_handled, '/',
-                                              _total_to_be_handled));
-          }
-          if (_total_handled >= _total_to_be_handled) {
-            _cond_all_handled.notify_all();
-          }
-        },
-        queue_event_handled{_logger});
+    auto _event_handled_handler = [&](event_handled &&p_event) {
+      ++_total_handled;
+      _results.increment(p_event.event_id, p_event.handling_id,
+                         p_event.handler_type_id, p_event.handler_id);
+      if ((_total_handled % _percentage_to_display) == 0) {
+        TNCT_LOG_TST(_logger, format::fmt("handled ", _total_handled, '/',
+                                          _total_to_be_handled));
+      }
+      if (_total_handled >= _total_to_be_handled) {
+        _cond_all_handled.notify_all();
+      }
+    };
+
+    _dispatcher.add_handling<event_handled>("event-handled",
+                                            std::move(_event_handled_handler),
+                                            queue_event_handled{_logger}, 1);
 
     publisher _publisher{_dispatcher, _logger,
                          _configuration.interval_for_events_publishing,
