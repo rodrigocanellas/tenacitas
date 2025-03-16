@@ -157,9 +157,10 @@ public:
   template <traits::async::event t_event,
             traits::container::queue<t_event> t_queue,
             traits::async::handler<t_event> t_handler>
-  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
-                      t_queue &&p_queue, handling_priority p_handling_priority,
-                      size_t p_num_handlers) {
+  result add_handling(
+      const handling_id &p_handling_id, t_handler &&p_handler,
+      t_queue &&p_queue, size_t p_num_handlers,
+      handling_priority p_handling_priority = handling_priority::medium) {
 
     event_is_in_events_tupĺe<t_event>();
 
@@ -186,39 +187,6 @@ public:
     }
 
     return result::ERROR_UNKNOWN;
-  }
-
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
-                      t_queue &&p_queue) {
-    return add_handling<t_event, t_queue, t_handler>(
-        p_handling_id, std::move(p_handler), std::move(p_queue),
-        handling_priority::medium, 0);
-  }
-
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
-                      handling_priority p_handling_priority,
-                      t_queue &&p_queue) {
-
-    return add_handling<t_event, t_queue, t_handler>(
-        p_handling_id, std::move(p_handler), std::move(p_queue),
-        p_handling_priority, 0);
-  }
-
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  result add_handling(const handling_id &p_handling_id, t_handler &&p_handler,
-                      t_queue &&p_queue, size_t p_num_handlers) {
-
-    return add_handling<t_event, t_queue, t_handler>(
-        p_handling_id, std::move(p_handler), std::move(p_queue),
-        handling_priority::medium, p_num_handlers);
   }
 
   /// \brief Cleans all handlings of a certain event
@@ -273,24 +241,24 @@ public:
     return result::OK;
   }
 
-  template <traits::async::event t_event>
-  [[nodiscard]] result add_handlers(handling_id p_handling_id,
-                                    size_t p_amount = 1) {
-    event_is_in_events_tupĺe<t_event>();
-    try {
-      if (find_handling<t_event>(p_handling_id,
-                                 [&](handling<t_event> &p_handling) {
-                                   p_handling.increment_handlers(p_amount);
-                                 })) {
-        return result::HANDLING_NOT_FOUND;
-      }
+  // template <traits::async::event t_event>
+  // [[nodiscard]] result add_handlers(handling_id p_handling_id,
+  //                                   size_t p_amount = 1) {
+  //   event_is_in_events_tupĺe<t_event>();
+  //   try {
+  //     if (find_handling<t_event>(p_handling_id,
+  //                                [&](handling<t_event> &p_handling) {
+  //                                  p_handling.increment_handlers(p_amount);
+  //                                })) {
+  //       return result::HANDLING_NOT_FOUND;
+  //     }
 
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_ADDING_HANDLER;
-    }
-    return result::OK;
-  }
+  //   } catch (std::exception &_ex) {
+  //     TNCT_LOG_ERR(m_logger, _ex.what());
+  //     return result::ERROR_ADDING_HANDLER;
+  //   }
+  //   return result::OK;
+  // }
 
   template <traits::async::event t_event>
   [[nodiscard]] std::optional<size_t>

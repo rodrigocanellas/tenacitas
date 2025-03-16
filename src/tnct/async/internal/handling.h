@@ -31,7 +31,7 @@ public:
 
   virtual void add_event(const t_event &p_event) = 0;
 
-  virtual void increment_handlers(size_t p_num_handlers) = 0;
+  // virtual void increment_handlers(size_t p_num_handlers) = 0;
 
   virtual void stop() = 0;
 
@@ -111,30 +111,6 @@ public:
     ++m_queued_data;
   }
 
-  void increment_handlers(size_t p_num_handlers) override {
-    if (p_num_handlers == 0) {
-      return;
-    }
-
-    if (m_stopped) {
-      TNCT_LOG_TRA(m_logger,
-                   trace("not adding subscriber because handling is stopped"));
-      return;
-    }
-
-    std::lock_guard<std::mutex> _lock(m_add_subscriber_mutex);
-
-    TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
-                                             " event handlers")));
-
-    for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i) {
-      m_handling_handlers.push_back(m_handler);
-
-      m_loops.push_back(std::thread(
-          [this]() -> void { handler_loop(m_handling_handlers.size() - 1); }));
-    }
-  }
-
   // \brief Stops this handling
   void stop() override {
     TNCT_LOG_TRA(m_logger, trace("entering stop()"));
@@ -191,10 +167,10 @@ public:
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const handling_concrete &p_handling) {
-    p_out << "{name " << typeid(event).name() << ", address " << &p_handling
-          << ", id " << p_handling.m_handling_id << ", queue { capacity "
-          << p_handling.m_queue.capacity() << ", occupied "
-          << p_handling.m_queue.occupied() << " }"
+    p_out << "{event " << typeid(event).name() << ", handling address "
+          << &p_handling << ", handling id " << p_handling.m_handling_id
+          << ", queue { capacity " << p_handling.m_queue.capacity()
+          << ", occupied " << p_handling.m_queue.occupied() << " }"
           << ", stopped? " << (p_handling.m_stopped ? 'T' : 'F') << ", #loops "
           << p_handling.m_loops.size() << '}';
     return p_out;
@@ -217,6 +193,67 @@ private:
   using handling_handler_pos = typename handling_handlers::size_type;
 
 private:
+  // void increment_handlers(size_t p_num_handlers) override {
+  //     if (p_num_handlers == 0) {
+  //         return;
+  //     }
+
+  //     if (m_stopped) {
+  //         TNCT_LOG_TRA(m_logger,
+  //                      trace("not adding subscriber because handling is
+  //                      stopped"));
+  //         return;
+  //     }
+
+  //     TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
+  //                                              " event handlers")));
+
+  //     std::lock_guard<std::mutex> _lock(m_add_subscriber_mutex);
+
+  //     // std::size_t _total_num_handlers{m_handling_handlers.size()};
+
+  //     for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i) {
+  //         m_handling_handlers.push_back(m_handler);
+
+  //         const handling_handler_pos
+  //         _new_handler_pos{m_handling_handlers.size()
+  //                                                     -
+  //                                                     1};
+
+  //         TNCT_LOG_TRA(m_logger,
+  //                      format::fmt("_new_handler_pos ", _new_handler_pos));
+
+  //         m_loops.push_back(std::thread([this, _new_handler_pos]() -> void {
+  //             handler_loop(_new_handler_pos);
+  //         }));
+  //     }
+  // }
+
+  void increment_handlers(size_t p_num_handlers) {
+    if (p_num_handlers == 0) {
+      return;
+    }
+
+    TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
+                                             " event handlers")));
+
+    // std::size_t _total_num_handlers{m_handling_handlers.size()};
+
+    for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i) {
+      m_handling_handlers.push_back(m_handler);
+
+      const handling_handler_pos _new_handler_pos{m_handling_handlers.size() -
+                                                  1};
+
+      TNCT_LOG_TRA(m_logger,
+                   format::fmt("_new_handler_pos ", _new_handler_pos));
+
+      m_loops.push_back(std::thread([this, _new_handler_pos]() -> void {
+        handler_loop(_new_handler_pos);
+      }));
+    }
+  }
+
   // Waits for an event to be available in the event queue, then remove it and
   // call the handler in \p p_handling_handler_pos in \p m_handling_handlers. It
   // exits when \p m_stop is set.
@@ -225,7 +262,10 @@ private:
     // auto _queue_addr{&m_queue};
     auto _loop_id{std::this_thread::get_id()};
 
-    TNCT_LOG_TRA(m_logger, trace("starting subscriber's loop", _loop_id));
+    TNCT_LOG_TRA(
+        m_logger,
+        format::fmt("p_handling_handler_pos = ", p_handling_handler_pos, " ",
+                    trace("starting subscriber's loop", _loop_id)));
 
     // auto _subscriber_id{&m_handling_handlers[p_handling_handler_pos]};
 
@@ -275,7 +315,12 @@ private:
       }
       event _event{std::move(*_maybe)};
 
-      TNCT_LOG_TRA(m_logger, trace("about to call subscriber", _loop_id));
+      TNCT_LOG_TRA(
+          m_logger,
+          format::fmt("p_handling_handler_pos = ", p_handling_handler_pos,
+                      ", handler address = ",
+                      &m_handling_handlers[p_handling_handler_pos], " ",
+                      trace("about to call subscriber", _loop_id)));
 
       m_handling_handlers[p_handling_handler_pos](std::move(_event));
 
@@ -338,8 +383,8 @@ private:
   // subscribers are called
   async_loops m_loops;
 
-  // Controls access to the \p m_loops while inserting a new subscriber
-  std::mutex m_add_subscriber_mutex;
+  // Controls access to the \p m_loops while inserting a new handler
+  // std::mutex m_add_subscriber_mutex;
 
   // Controls access to inserting data
   std::mutex m_data_mutex;

@@ -9,7 +9,6 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
-#include "tnct/async/handling_priority.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/traits/async/dispatcher.h"
 #include "tnct/traits/log/logger.h"
@@ -30,8 +29,7 @@ requires(traits::tuple::contains_tuple<
     auto _result(m_dispatcher.template add_handling<evt::add_sensor>(
         "add-sensor",
         [&](evt::add_sensor &&p_event) { (*this)(std::move(p_event)); },
-        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger},
-        async::handling_priority::medium, 1));
+        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger}, 1));
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'add_sensor'");
       return;
@@ -41,7 +39,7 @@ requires(traits::tuple::contains_tuple<
         "remove-sensor",
         [&](evt::remove_sensor &&p_event) { (*this)(std::move(p_event)); },
         container::circular_queue<t_logger, evt::remove_sensor, 10>{m_logger},
-        async::handling_priority::medium, 1);
+        1);
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'remove_sensor'");
       return;
@@ -51,7 +49,7 @@ requires(traits::tuple::contains_tuple<
         "set-temperature",
         [&](evt::set_temperature &&p_event) { (*this)(std::move(p_event)); },
         container::circular_queue<t_logger, evt::set_temperature, 10>{m_logger},
-        async::handling_priority::medium, 1);
+        1);
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'set_sensor'");
       return;

@@ -37,7 +37,8 @@ struct handler {
   }
 
   void operator()(event && /*p_event*/) {
-    std::this_thread::sleep_for(m_sleep_to_simulate_work);
+    //    std::this_thread::sleep_for(m_sleep_to_simulate_work);
+    busy_wait();
 
     auto _result{m_dispatcher.template publish<event_handled>(
         m_handling_id, t_event_id, t_type_id, std::this_thread::get_id())};
@@ -57,6 +58,17 @@ struct handler {
 
   static constexpr async::exp::handler_type_id type_id{t_type_id};
   static constexpr async::exp::event_id event_id{t_event_id};
+
+private:
+  void busy_wait() {
+    const auto start = std::chrono::high_resolution_clock::now();
+    for (;;) {
+      if ((std::chrono::high_resolution_clock::now() - start) >=
+          m_sleep_to_simulate_work) {
+        break;
+      }
+    }
+  }
 
 private:
   logger &m_logger;

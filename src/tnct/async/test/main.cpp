@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
   run_test(_test, handling_009);
   run_test(_test, handling_010);
   run_test(_test, handling_011);
-  run_test(_test, handling_012);
+  // run_test(_test, handling_012);
   run_test(_test, handling_014);
   run_test(_test, handling_015);
   run_test(_test, handling_016);
