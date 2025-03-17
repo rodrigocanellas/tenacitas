@@ -189,7 +189,7 @@ public:
     return result::ERROR_UNKNOWN;
   }
 
-  /// \brief Cleans all handlings of a certain event
+  /// \brief Clears the events queue of all handlings of an event
   template <traits::async::event t_event> void clear() {
     event_is_in_events_tupĺe<t_event>();
     try {
@@ -203,7 +203,7 @@ public:
     }
   }
 
-  /// \brief Cleans all handlers of a certain handling for a certain event
+  /// \brief Clears the events queue of a handling of an event
   template <traits::async::event t_event>
   result clear(handling_id p_handling_id) {
     event_is_in_events_tupĺe<t_event>();
@@ -225,6 +225,7 @@ public:
     return result::OK;
   }
 
+  /// \brief Clears the events queue of all handlings of all events
   result clear() {
     try {
       auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
@@ -241,24 +242,12 @@ public:
     return result::OK;
   }
 
-  // template <traits::async::event t_event>
-  // [[nodiscard]] result add_handlers(handling_id p_handling_id,
-  //                                   size_t p_amount = 1) {
-  //   event_is_in_events_tupĺe<t_event>();
-  //   try {
-  //     if (find_handling<t_event>(p_handling_id,
-  //                                [&](handling<t_event> &p_handling) {
-  //                                  p_handling.increment_handlers(p_amount);
-  //                                })) {
-  //       return result::HANDLING_NOT_FOUND;
-  //     }
-
-  //   } catch (std::exception &_ex) {
-  //     TNCT_LOG_ERR(m_logger, _ex.what());
-  //     return result::ERROR_ADDING_HANDLER;
-  //   }
-  //   return result::OK;
-  // }
+  template <traits::async::event t_event>
+  [[nodiscard]] size_t get_amount_handlings() const noexcept {
+    event_is_in_events_tupĺe<t_event>();
+    auto &_handlings{get_handlings<t_event>()};
+    return static_cast<size_t>(_handlings.size());
+  }
 
   template <traits::async::event t_event>
   [[nodiscard]] std::optional<size_t>
@@ -278,13 +267,30 @@ public:
     return std::nullopt;
   }
 
+private:
   template <traits::async::event t_event>
-  [[nodiscard]] size_t get_amount_handlings() const noexcept {
-    event_is_in_events_tupĺe<t_event>();
-    auto &_handlings{get_handlings<t_event>()};
-    return static_cast<size_t>(_handlings.size());
-  }
+  using handling = internal::handling<t_event>;
 
+  template <traits::async::event t_event>
+  using handling_ptr = std::unique_ptr<handling<t_event>>;
+
+  template <traits::async::event t_event>
+  using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
+
+  template <traits::async::event t_event>
+  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
+
+  template <traits::async::event t_event>
+  using handlings_ite = typename handlings<t_event>::iterator;
+
+  template <traits::async::event t_event>
+  using handlings_const_ite = typename handlings<t_event>::const_iterator;
+
+  using events_handlings =
+      typename tuple::tuple_transform<events, handlings>::type;
+
+private:
+  // \brief Stops all the handlers of all handlings of all events
   result stop() noexcept {
     try {
       auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
@@ -317,69 +323,28 @@ public:
     return result::OK;
   }
 
-  template <traits::async::event t_event>
-  [[nodiscard]] result stop(handling_id p_handling_id) noexcept {
-    event_is_in_events_tupĺe<t_event>();
-    try {
-      TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
-      auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
+  // template <traits::async::event t_event>
+  // result stop(handling_id p_handling_id) noexcept {
+  //   event_is_in_events_tupĺe<t_event>();
+  //   try {
+  //     TNCT_LOG_TRA(m_logger, format::fmt("t_event = ",
+  //     typeid(t_event).name())); auto _stopper{[](handling<t_event>
+  //     &p_handling) { p_handling.stop(); }};
 
-      if (!find_handling<t_event>(p_handling_id, _stopper)) {
-        TNCT_LOG_ERR(m_logger,
-                     format::fmt("Could not find handling ", p_handling_id,
-                                 " in event ", typeid(t_event).name()));
-        return result::HANDLING_NOT_FOUND;
-      }
+  //     if (!find_handling<t_event>(p_handling_id, _stopper)) {
+  //       TNCT_LOG_ERR(m_logger,
+  //                    format::fmt("Could not find handling ", p_handling_id,
+  //                                " in event ", typeid(t_event).name()));
+  //       return result::HANDLING_NOT_FOUND;
+  //     }
 
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_STOPPING;
-    }
-    return result::OK;
-  }
+  //   } catch (std::exception &_ex) {
+  //     TNCT_LOG_ERR(m_logger, _ex.what());
+  //     return result::ERROR_STOPPING;
+  //   }
+  //   return result::OK;
+  // }
 
-  template <traits::async::event t_event>
-  [[nodiscard]] std::optional<bool>
-  is_stopped(handling_id p_handling_id) const {
-    try {
-      bool _is_stopped{false};
-      auto _stopper{[&](const handling<t_event> &p_handling) {
-        _is_stopped = p_handling.is_stopped();
-      }};
-
-      if (!find_handling<t_event>(p_handling_id, _stopper)) {
-        return std::nullopt;
-      }
-      return _is_stopped;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-    return std::nullopt;
-  }
-
-private:
-  template <traits::async::event t_event>
-  using handling = internal::handling<t_event>;
-
-  template <traits::async::event t_event>
-  using handling_ptr = std::unique_ptr<handling<t_event>>;
-
-  template <traits::async::event t_event>
-  using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
-
-  template <traits::async::event t_event>
-  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
-
-  template <traits::async::event t_event>
-  using handlings_ite = typename handlings<t_event>::iterator;
-
-  template <traits::async::event t_event>
-  using handlings_const_ite = typename handlings<t_event>::const_iterator;
-
-  using events_handlings =
-      typename tuple::tuple_transform<events, handlings>::type;
-
-private:
   template <traits::async::event t_event,
             traits::async::handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const {

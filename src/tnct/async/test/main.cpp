@@ -35,9 +35,6 @@ int main(int argc, char **argv) {
   run_test(_test, dispatcher_001);
   run_test(_test, dispatcher_002);
   run_test(_test, dispatcher_003);
-  run_test(_test, dispatcher_004);
-  run_test(_test, dispatcher_005);
-  run_test(_test, dispatcher_006);
   run_test(_test, dispatcher_007);
   run_test(_test, dispatcher_008);
   run_test(_test, dispatcher_011);
