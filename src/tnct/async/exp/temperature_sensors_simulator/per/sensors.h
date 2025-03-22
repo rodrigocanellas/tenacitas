@@ -14,6 +14,8 @@
 #include "tnct/traits/log/logger.h"
 #include "tnct/traits/tuple/contains_tuple.h"
 
+#include "tnct/async/result.h"
+
 using namespace std::chrono_literals;
 
 namespace tnct::async::exp::temperature_sensors_simulator::per {
@@ -24,49 +26,61 @@ requires(traits::tuple::contains_tuple<
 
     struct sensors {
 
+  using queue_add_sensor =
+      container::circular_queue<t_logger, evt::add_sensor, 10>;
+  using queue_remove_sensor =
+      container::circular_queue<t_logger, evt::remove_sensor, 10>;
+  using queue_set_temperature =
+      container::circular_queue<t_logger, evt::set_temperature, 10>;
+
   sensors(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher) {
+
     auto _result(m_dispatcher.template add_handling<evt::add_sensor>(
-        "add-sensor",
-        [&](evt::add_sensor &&p_event) { (*this)(std::move(p_event)); },
-        container::circular_queue<t_logger, evt::add_sensor, 10>{m_logger}, 1));
+        "add-sensor", handler{*this}, queue_add_sensor{m_logger}, 1));
+
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'add_sensor'");
       return;
     }
 
     _result = m_dispatcher.template add_handling<evt::remove_sensor>(
-        "remove-sensor",
-        [&](evt::remove_sensor &&p_event) { (*this)(std::move(p_event)); },
-        container::circular_queue<t_logger, evt::remove_sensor, 10>{m_logger},
-        1);
+        "remove-sensor", handler{*this}, queue_remove_sensor{m_logger}, 1);
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'remove_sensor'");
       return;
     }
 
     _result = m_dispatcher.template add_handling<evt::set_temperature>(
-        "set-temperature",
-        [&](evt::set_temperature &&p_event) { (*this)(std::move(p_event)); },
-        container::circular_queue<t_logger, evt::set_temperature, 10>{m_logger},
-        1);
+        "set-temperature", handler{*this}, queue_set_temperature{m_logger}, 1);
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'set_sensor'");
       return;
     }
   }
 
-  void operator()(evt::add_sensor &&p_evt) { on_add_sensor(std::move(p_evt)); }
+  struct handler {
+    handler(sensors &p_sensors) : m_sensors(p_sensors) {}
 
-  void operator()(evt::remove_sensor &&p_evt) {
-    on_remove_sensor(std::move(p_evt));
-  }
+    using events_handled =
+        std::tuple<evt::add_sensor, evt::remove_sensor, evt::set_temperature>;
 
-  void operator()(evt::set_temperature &&p_evt) {
-    on_set_temperature(std::move(p_evt));
-  }
+    void operator()(evt::add_sensor &&p_evt) {
+      m_sensors.on_add_sensor(std::move(p_evt));
+    }
 
-private:
+    void operator()(evt::remove_sensor &&p_evt) {
+      m_sensors.on_remove_sensor(std::move(p_evt));
+    }
+
+    void operator()(evt::set_temperature &&p_evt) {
+      m_sensors.on_set_temperature(std::move(p_evt));
+    }
+
+  private:
+    sensors &m_sensors;
+  };
+
   using sensor_ptr = std::unique_ptr<sensor<t_logger, t_dispatcher>>;
 
   struct sensor_cmp {

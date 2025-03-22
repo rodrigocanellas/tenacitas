@@ -12,13 +12,13 @@ HEADERS += \
         $$PRJ_DIR/chrono_convertible.h \
         $$PRJ_DIR/has_new_operator.h \
         $$PRJ_DIR/has_output_operator.h \
-        $$PRJ_DIR/async/handler.h \
         $$PRJ_DIR/async/handling.h \
         $$PRJ_DIR/async/event.h \
         $$PRJ_DIR/async/dispatcher.h \
         $$PRJ_DIR/async/tuple_contains_only_events.h \
         $$PRJ_DIR/async/publish_method.h \
         $$PRJ_DIR/async/add_handling_method.h \
+        $$PRJ_DIR/async/handler.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/like.h \

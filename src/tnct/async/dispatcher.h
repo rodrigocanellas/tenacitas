@@ -155,8 +155,8 @@ public:
   }
 
   template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
+            traits::async::handler<t_event> t_handler,
+            traits::container::queue<t_event> t_queue>
   result add_handling(
       const handling_id &p_handling_id, t_handler &&p_handler,
       t_queue &&p_queue, size_t p_num_handlers,

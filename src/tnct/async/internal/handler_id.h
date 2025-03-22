@@ -21,67 +21,6 @@ inline handler_id get_handler_id() {
   return static_cast<handler_id>(typeid(t_handler).hash_code());
 };
 
-// template <traits::async::event t_event>
-
-// std ::array<uint8_t, sizeof(void *)>
-// handler_id(const async::handler<t_event> &p_handler) {
-//   uint8_t *_b = (uint8_t *)&p_handler;
-//   uint8_t *_e = _b + sizeof(void *);
-
-//   std ::array<uint8_t, sizeof(void *)> _id;
-//   uint8_t _count{0};
-//   for (uint8_t *_i = _b; _i != _e; ++_i) {
-//     _id[_count++] = *_i;
-//   }
-//   return _id;
-// };
-
-// struct handler_id final {
-//   handler_id() = delete;
-
-//   template <traits::async::event t_event>
-//   handler_id(const async::handler<t_event> *const p_handler) {
-//     uint8_t *_b = (uint8_t *)&p_handler;
-//     uint8_t *_e = _b + sizeof(void *);
-
-//     uint8_t _count{0};
-//     for (uint8_t *_i = _b; _i != _e; ++_i) {
-//       m_id[_count++] = *_i;
-//     }
-//   }
-
-//   handler_id(const handler_id &) = default;
-//   handler_id(handler_id &&) = default;
-//   ~handler_id() = default;
-
-//   handler_id &operator=(const handler_id &) = default;
-//   handler_id &operator=(handler_id &&) = default;
-
-//   constexpr bool operator==(const handler_id &p_handler_id) const {
-//     uint8_t _count{0};
-//     for (auto _i : m_id) {
-//       if (_i != p_handler_id.m_id[_count++]) {
-//         return false;
-//       }
-//     }
-//     return true;
-//   }
-
-//   friend std::ostream &operator<<(std::ostream &out, handler_id
-//   &p_handler_id) {
-//     for (auto _i : p_handler_id.m_id) {
-//       out << static_cast<uint16_t>(_i);
-//     }
-//     return out;
-//   }
-
-// private:
-//   using id = std::array<uint8_t, sizeof(void *)>;
-
-// private:
-//   id m_id;
-// };
-
 } // namespace tnct::async::internal
 
 #endif

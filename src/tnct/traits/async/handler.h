@@ -3,31 +3,51 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TRAITS_ASYNC_HANDLER_H
-#define TNCT_TRAITS_ASYNC_HANDLER_H
+#ifndef TNCT_TRAITS_ASYNC_SUBSCRIBER_H
+#define TNCT_TRAITS_ASYNC_SUBSCRIBER_H
 
-// #include <type_traits>
+#include <tuple>
 
 #include "tnct/traits/async/event.h"
+#include "tnct/traits/tuple/contains_type.h"
+#include "tnct/traits/tuple/like.h"
 
 namespace tnct::traits::async {
 
 template <typename t, typename t_event>
-concept handler =
-    async::event<t_event> && std::is_invocable_r_v<void, t, t_event &&>;
+concept handler_operator = requires(t p_t) {
+  requires event<t_event>;
 
-// std::invocable<t,
-//                std::add_rvalue_reference_t<std::remove_cvref_t<t_event>>>;
+  { p_t.operator()(std::declval<t_event &&>()) } -> std::same_as<void>;
+};
 
-//     requires(t p_t) {
+template <typename t, typename t_event>
+concept handler = requires(t p_t) {
+  typename t::events_handled;
 
-//   requires event<typename t::event>;
+  requires
 
-//   {
-//     p_t((
-//         std::declval<std::add_rvalue_reference_t<std::remove_cv_t<t_event>>>()))
-//     } -> std::same_as<void>;
-// };
+      event<t_event> &&
+
+      tuple::like<typename t::events_handled> &&
+
+      tuple::contains_type<typename t::events_handled, t_event>() &&
+
+          // every element of t::events_subscribed is a traits::event and there
+          // is a 'handle' method for every 'event' in t::events_subscribed
+
+          []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
+    return (
+
+        (event<typename std::tuple_element_t<t_idx,
+                                             typename t::events_handled>> &&
+         handler_operator<t, typename std::tuple_element_t<
+                                 t_idx, typename t::events_handled>>)
+
+        &&...);
+  }
+  (std::make_index_sequence<std::tuple_size_v<typename t::events_handled>>());
+};
 
 } // namespace tnct::traits::async
 

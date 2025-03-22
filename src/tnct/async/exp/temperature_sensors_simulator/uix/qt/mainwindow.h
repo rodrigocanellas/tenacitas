@@ -27,6 +27,19 @@ public:
   }
 
 private:
+  struct handler {
+    using events_handled = std::tuple<evt::new_temperature>;
+    handler(MainWindow *p_main_window) : m_main_window(p_main_window) {}
+
+    void operator()(evt::new_temperature &&p_new_temperature) {
+      (*m_main_window)(std::move(p_new_temperature));
+    }
+
+  private:
+    MainWindow *m_main_window{nullptr};
+  };
+
+private:
   void on_new_temperature(evt::new_temperature &&);
   int findRow(typ::sensor_id) const;
 

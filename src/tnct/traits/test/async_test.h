@@ -300,24 +300,24 @@ private:
 
   using queue = tnct::container::circular_queue<logger, event_a, 10>;
 
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
-
-  using handler_a_type = decltype(handler_a);
-
   using handling_id = tnct::string::fixed_size_string<5>;
 
-  template <traits::async::has_add_handling_method<
-      result, event_a, handler_a_type, queue, priority, handling_id>
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
+  };
+
+  template <traits::async::has_add_handling_method<result, event_a, handler,
+                                                   queue, priority, handling_id>
                 t_add_handling_method>
   void foo(t_add_handling_method p_add_handling_method) {
     p_add_handling_method.template add_handling<event_a>(
-        "abc", std::move(handler_a), queue{m_logger}, 1, priority::l);
+        "abc", handler{}, queue{m_logger}, 1, priority::l);
   }
 
   struct dummy {
     template <typename t_event>
-    result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
-                        priority) {
+    result add_handling(handling_id, handler &&, queue &&, size_t, priority) {
       return result::a;
     }
   };
@@ -357,21 +357,21 @@ private:
 
   using queue = tnct::container::circular_queue<logger, event_a, 10>;
 
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
-
-  using handler_a_type = decltype(handler_a);
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
+  };
 
   using handling_id = tnct::string::fixed_size_string<5>;
 
-  template <traits::async::has_add_handling_method<
-      result, event_a, handler_a_type, queue, priority, handling_id>
+  template <traits::async::has_add_handling_method<result, event_a, handler,
+                                                   queue, priority, handling_id>
                 t_add_handling_method>
   void foo(t_add_handling_method) {}
 
   struct dummy {
     template <typename t_event>
-    result add_handling(std::string, handler_a_type &&, queue &&, size_t,
-                        priority) {
+    result add_handling(std::string, handler &&, queue &&, size_t, priority) {
       return result::a;
     }
   };
@@ -409,24 +409,24 @@ private:
 
   using queue = tnct::container::circular_queue<logger, event_a, 10>;
 
-  std::function<bool()> handler_a = []() { return false; };
-
-  using handler_a_type = decltype(handler_a);
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()() {}
+  };
 
   using handling_id = tnct::string::fixed_size_string<5>;
 
-  template <traits::async::has_add_handling_method<
-      result, event_a, handler_a_type, queue, priority, handling_id>
+  template <traits::async::has_add_handling_method<result, event_a, handler,
+                                                   queue, priority, handling_id>
                 t_add_handling_method>
   void foo(t_add_handling_method p_add_handling_method) {
     p_add_handling_method.template add_handling<event_a>(
-        "abc", std::move(handler_a), queue{m_logger}, 1, priority::l);
+        "abc", handler{}, queue{m_logger}, 1, priority::l);
   }
 
   struct dummy {
     template <typename t_event>
-    result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
-                        priority) {
+    result add_handling(handling_id, handler &&, queue &&, size_t, priority) {
       return result::a;
     }
   };
@@ -466,9 +466,10 @@ private:
 
   using logger = tnct::log::no_logger;
 
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
-
-  using handler_a_type = decltype(handler_a);
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
+  };
 
   using handling_id = tnct::string::fixed_size_string<5>;
 
@@ -479,22 +480,22 @@ private:
   // using queue = tnct::container::circular_queue<logger, event_a, 10>;
 
   // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler_a_type, queue, priority, handling_id>
+  //     result, event_a, handler, queue, priority, handling_id>
   //               t_add_handling_method>
   // void foo(t_add_handling_method p_add_handling_method) {
   //   p_add_handling_method.template add_handling<event_a>(
-  //       "abc", std::move(handler_a), queue{m_logger}, 1, priority::l);
+  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
   // }
 
   // struct dummy {
   //   template <typename t_event>
-  //   result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
+  //   result add_handling(handling_id, handler &&, queue &&, size_t,
   //                       priority) {
   //     return result::a;
   //   }
   // };
 
-  logger m_logger;
+  // logger m_logger;
 };
 
 struct has_add_handling_method_004 {
@@ -529,9 +530,10 @@ private:
 
   using queue = int;
 
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
-
-  using handler_a_type = decltype(handler_a);
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
+  };
 
   using handling_id = tnct::string::fixed_size_string<5>;
 
@@ -540,22 +542,22 @@ private:
   // 'tnct::traits::container::queue'
 
   // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler_a_type, queue, priority, handling_id>
+  //     result, event_a, handler, queue, priority, handling_id>
   //               t_add_handling_method>
   // void foo(t_add_handling_method p_add_handling_method) {
   //   p_add_handling_method.template add_handling<event_a>(
-  //       "abc", std::move(handler_a), queue{m_logger}, 1, priority::l);
+  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
   // }
 
-  struct dummy {
-    template <typename t_event>
-    result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
-                        priority) {
-      return result::a;
-    }
-  };
+  // struct dummy {
+  //   template <typename t_event>
+  //   result add_handling(handling_id, handler &&, queue &&, size_t,
+  //                       priority) {
+  //     return result::a;
+  //   }
+  // };
 
-  logger m_logger;
+  // logger m_logger;
 };
 
 struct has_add_handling_method_005 {
@@ -593,25 +595,26 @@ private:
 
   std::function<void(event_a &&)> handler_a = [](event_a &&) {};
 
-  using handler_a_type = decltype(handler_a);
-
-  using handling_id = tnct::string::fixed_size_string<5>;
-
-  template <traits::async::has_add_handling_method<
-      result, event_a, handler_a_type, queue, priority, handling_id>
-                t_add_handling_method>
-  void foo(t_add_handling_method p_add_handling_method) {
-    p_add_handling_method.template add_handling<event_a>(
-        "abc", std::move(handler_a), queue{m_logger}, 1, 'p');
-  }
-
-  struct dummy {
-    template <typename t_event>
-    result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
-                        priority) {
-      return result::a;
-    }
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
   };
+
+  // template <traits::async::has_add_handling_method<
+  //     result, event_a, handler, queue, priority, handling_id>
+  //               t_add_handling_method>
+  // void foo(t_add_handling_method p_add_handling_method) {
+  //   p_add_handling_method.template add_handling<event_a>(
+  //         "abc", handler{}, queue{m_logger}, 1, 'p');
+  // }
+
+  // struct dummy {
+  //   template <typename t_event>
+  //   result add_handling(handling_id, handler &&, queue &&, size_t,
+  //                       priority) {
+  //     return result::a;
+  //   }
+  // };
 
   logger m_logger;
 };
@@ -650,25 +653,26 @@ private:
 
   std::function<void(event_a &&)> handler_a = [](event_a &&) {};
 
-  using handler_a_type = decltype(handler_a);
-
-  using handling_id = tnct::string::fixed_size_string<5>;
-
-  template <traits::async::has_add_handling_method<
-      result, event_a, handler_a_type, queue, priority, handling_id>
-                t_add_handling_method>
-  void foo(t_add_handling_method p_add_handling_method) {
-    p_add_handling_method.template add_handling<event_a>(
-        "abc", std::move(handler_a), queue{m_logger}, 1, priority::l);
-  }
-
-  struct dummy {
-    template <typename t_event>
-    result add_handling(handling_id, handler_a_type &&, queue &&, size_t,
-                        priority) {
-      return -1;
-    }
+  struct handler {
+    using events_handled = std::tuple<event_a>;
+    void operator()(event_a &&) {}
   };
+
+  // template <traits::async::has_add_handling_method<
+  //     result, event_a, handler, queue, priority, handling_id>
+  //               t_add_handling_method>
+  // void foo(t_add_handling_method p_add_handling_method) {
+  //   p_add_handling_method.template add_handling<event_a>(
+  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
+  // }
+
+  // struct dummy {
+  //   template <typename t_event>
+  //   result add_handling(handling_id, handler &&, queue &&, size_t,
+  //                       priority) {
+  //     return -1;
+  //   }
+  // };
 
   logger m_logger;
 };

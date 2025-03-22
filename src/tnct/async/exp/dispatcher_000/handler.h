@@ -26,6 +26,8 @@ template <event_id t_event_id, handler_type_id t_type_id,
 struct handler {
   using event = async::exp::event<t_event_id>;
 
+  using events_handled = std::tuple<event>;
+
   handler(logger &p_logger, t_dispatcher &p_dispatcher,
           handling_id p_handling_id,
           std::chrono::milliseconds p_sleep_to_simulate_work)
