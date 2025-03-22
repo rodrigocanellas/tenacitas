@@ -16,7 +16,9 @@
 namespace tnct::string {
 
 template <std::uint16_t t_size> struct fixed_size_string {
-  fixed_size_string() = default; //{ reset(); }
+  static constexpr std::uint16_t size = t_size;
+
+  fixed_size_string() = default;
 
   // with help from ChatGPT
   template <std::uint16_t t_str_size>
@@ -94,9 +96,6 @@ template <std::uint16_t t_size> struct fixed_size_string {
     p_out << p_fixed_size_string.m_value.data();
     return p_out;
   };
-
-private:
-  // void reset() { std::fill_n(m_value.begin(), t_size, '\0'); }
 
 private:
   std::array<char, t_size + 1> m_value{'\0'};

@@ -18,6 +18,7 @@ HEADERS += \
         $$PRJ_DIR/async/dispatcher.h \
         $$PRJ_DIR/async/tuple_contains_only_events.h \
         $$PRJ_DIR/async/publish_method.h \
+        $$PRJ_DIR/async/add_handling_method.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/like.h \
@@ -31,4 +32,5 @@ HEADERS += \
         $$PRJ_DIR/tuple/find.h \
         $$PRJ_DIR/tuple/visit.h \
         $$PRJ_DIR/tuple/traverse.h \
-        $$PRJ_DIR/tuple/size_greather_or_equal.h
+        $$PRJ_DIR/tuple/size_greather_or_equal.h \
+        $$PRJ_DIR/string/fixed_size_string.h

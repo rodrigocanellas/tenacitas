@@ -6,16 +6,18 @@
 #ifndef TNCT_TRAITS_ASYNC_HANDLER_H
 #define TNCT_TRAITS_ASYNC_HANDLER_H
 
-#include <type_traits>
+// #include <type_traits>
 
 #include "tnct/traits/async/event.h"
 
 namespace tnct::traits::async {
 
 template <typename t, typename t_event>
-concept handler = async::event<t_event> &&
-    std::invocable<t,
-                   std::add_rvalue_reference_t<std::remove_cvref_t<t_event>>>;
+concept handler =
+    async::event<t_event> && std::is_invocable_r_v<void, t, t_event &&>;
+
+// std::invocable<t,
+//                std::add_rvalue_reference_t<std::remove_cvref_t<t_event>>>;
 
 //     requires(t p_t) {
 

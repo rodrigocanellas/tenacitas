@@ -59,6 +59,14 @@ int main(int argc, char **argv) {
     run_test(_tester, traits::test::has_publish_method_001);
     run_test(_tester, traits::test::has_publish_method_002);
 
+    run_test(_tester, traits::test::has_add_handling_method_000);
+    run_test(_tester, traits::test::has_add_handling_method_001);
+    run_test(_tester, traits::test::has_add_handling_method_002);
+    run_test(_tester, traits::test::has_add_handling_method_003);
+    run_test(_tester, traits::test::has_add_handling_method_004);
+    run_test(_tester, traits::test::has_add_handling_method_005);
+    run_test(_tester, traits::test::has_add_handling_method_006);
+
   } catch (std::exception &_ex) {
     std::cout << "EXCEPTION: '" << _ex.what() << "'" << std::endl;
   }
