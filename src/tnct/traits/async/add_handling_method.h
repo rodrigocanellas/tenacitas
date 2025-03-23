@@ -22,17 +22,17 @@ template <typename t, typename t_result, typename t_event, typename t_handler,
           typename t_handling_id>
 concept has_add_handling_method =
 
-    enum_like<t_result> &&
+    tnct::traits::enum_like<t_result> &&
 
-    event<t_event> &&
+    tnct::traits::async::event<t_event> &&
 
-    handler<t_handler, t_event> &&
+    tnct::traits::async::handler<t_handler, t_event> &&
 
-    container::queue<t_queue, t_event> &&
+    tnct::traits::container::queue<t_queue, t_event> &&
 
-    enum_like<t_handling_priority> &&
+    tnct::traits::enum_like<t_handling_priority> &&
 
-    string::fixed_size_string<t_handling_id> &&
+    tnct::traits::string::fixed_size_string<t_handling_id> &&
 
     requires(t p_t) {
   {
