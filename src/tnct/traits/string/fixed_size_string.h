@@ -7,11 +7,15 @@
 #define TNCT_TRAITS_STRNG_FIXED_SIZE_STRING_H
 
 #include <cstring>
+#include <type_traits>
 
 namespace tnct::traits::string {
 
 template <typename t>
-concept fixed_size_string = requires(t p_t, const char *p_value) {
+concept fixed_size_string =
+    std::is_same_v<decltype(t::size), const std::size_t> &&
+
+    requires(t p_t, const char *p_value) {
 
   {t{p_value}};
 

@@ -18,6 +18,7 @@
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/result.h"
+#include "tnct/traits/async/handling.h"
 
 #include "tnct/format/fmt.h"
 #include "tnct/traits/async/event.h"
@@ -87,7 +88,7 @@ the dispatcher class.
 */
 
 template <traits::log::logger t_logger, traits::async::event... t_events>
-struct dispatcher {
+struct dispatcher final {
 
 public:
   using events = std::tuple<t_events...>;
@@ -101,7 +102,7 @@ public:
   dispatcher(dispatcher &&) = delete;
 
   ~dispatcher() {
-    TNCT_LOG_TRA(m_logger, "dispactcher destructor");
+    TNCT_LOG_TRA(m_logger, "dispatcher destructor");
     stop();
   }
 
@@ -154,39 +155,14 @@ public:
     return result::OK;
   }
 
-  template <traits::async::event t_event,
-            traits::async::handler<t_event> t_handler,
-            traits::container::queue<t_event> t_queue>
-  result add_handling(
-      const handling_id &p_handling_id, t_handler &&p_handler,
-      t_queue &&p_queue, size_t p_num_handlers,
-      handling_priority p_handling_priority = handling_priority::medium) {
-
-    event_is_in_events_tupĺe<t_event>();
-
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return result::ERROR_HANDLER_ALREADY_IN_USE;
-    }
-
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
-
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          p_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
-          p_num_handlers)};
-
-      get_handlings<t_event>().insert(
-          {p_handling_priority, std::move(_handling_ptr)});
-
-      return result::OK;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return result::ERROR_UNKNOWN;
+  template <traits::async::handling t_handling>
+  result add_handling(t_handling &&p_handling) {
+    return add_handling<typename t_handling::event,
+                        typename t_handling::handler,
+                        typename t_handling::queue>(
+        p_handling.get_id(), std::move(p_handling.get_handler()),
+        std::move(p_handling.get_queue()), p_handling.get_num_handlers(),
+        p_handling.get_priority());
   }
 
   /// \brief Clears the events queue of all handlings of an event
@@ -450,6 +426,41 @@ private:
   static constexpr void event_is_in_events_tupĺe() {
     static_assert(traits::tuple::contains_type<events, t_event>(),
                   "event is not in the 't_events...' of the dispatcher");
+  }
+
+  template <traits::async::event t_event,
+            traits::async::handler<t_event> t_handler,
+            traits::container::queue<t_event> t_queue>
+  result add_handling(
+      const handling_id &p_handling_id, t_handler &&p_handler,
+      t_queue &&p_queue, size_t p_num_handlers,
+      handling_priority p_handling_priority = handling_priority::medium) {
+
+    event_is_in_events_tupĺe<t_event>();
+
+    if (is_handler_already_being_used<t_event, t_handler>()) {
+      return result::ERROR_HANDLER_ALREADY_IN_USE;
+    }
+
+    using handling_concrete =
+        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
+
+    try {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+
+      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
+          p_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
+          p_num_handlers)};
+
+      get_handlings<t_event>().insert(
+          {p_handling_priority, std::move(_handling_ptr)});
+
+      return result::OK;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+
+    return result::ERROR_UNKNOWN;
   }
 
 private:

@@ -14,10 +14,12 @@ HEADERS += \
         $$PRJ_DIR/has_output_operator.h \
         $$PRJ_DIR/async/handling.h \
         $$PRJ_DIR/async/event.h \
+        $$PRJ_DIR/async/handling_priority.h \
         $$PRJ_DIR/async/dispatcher.h \
         $$PRJ_DIR/async/tuple_contains_only_events.h \
         $$PRJ_DIR/async/publish_method.h \
         $$PRJ_DIR/async/add_handling_method.h \
+        $$PRJ_DIR/async/result.h \
         $$PRJ_DIR/async/handler.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/is.h \

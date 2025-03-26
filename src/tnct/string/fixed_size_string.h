@@ -15,8 +15,8 @@
 
 namespace tnct::string {
 
-template <std::uint16_t t_size> struct fixed_size_string {
-  static constexpr std::uint16_t size = t_size;
+template <std::size_t t_size> struct fixed_size_string {
+  static constexpr decltype(t_size) size = t_size;
 
   fixed_size_string() = default;
 

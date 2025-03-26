@@ -6,7 +6,6 @@
 #ifndef TNCT_TRAITS_TEST_ASYNC_TEST_H
 #define TNCT_TRAITS_TEST_ASYNC_TEST_H
 
-#include <functional>
 #include <tuple>
 
 #include "tnct/container/circular_queue.h"
@@ -18,6 +17,7 @@
 #include "tnct/traits/async/dispatcher.h"
 #include "tnct/traits/async/event.h"
 #include "tnct/traits/async/publish_method.h"
+#include "tnct/traits/async/result.h"
 
 using namespace tnct;
 
@@ -272,6 +272,20 @@ private:
   };
 };
 
+enum class result_master : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
+std::ostream &operator<<(std::ostream &p_out, const result_master &p_result) {
+  p_out << static_cast<std::underlying_type_t<result_master>>(p_result);
+  return p_out;
+}
+
+enum class priority_master : uint16_t { l = 0, m = 1, h = 2 };
+std::ostream &operator<<(std::ostream &p_out,
+                         const priority_master &p_priority_master) {
+  p_out << static_cast<std::underlying_type_t<priority_master>>(
+      p_priority_master);
+  return p_out;
+}
+
 struct has_add_handling_method_000 {
   static std::string desc() {
     return "Check if tnct::traits::async::has_add_handling_method captures in "
@@ -281,63 +295,75 @@ struct has_add_handling_method_000 {
 
   bool operator()(const program::options &) {
     dummy _dummy;
-
     foo(_dummy);
 
     return true;
   }
 
 private:
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
-    }
-  };
-
   using logger = tnct::log::no_logger;
 
-  using queue = tnct::container::circular_queue<logger, event_a, 10>;
+  struct handling_a {
+    struct event {
+      friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+        return p_out;
+      }
+    };
 
-  using handling_id = tnct::string::fixed_size_string<5>;
+    using priority = priority_master;
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
+    struct handler {
+      void operator()(event &&) {}
+    };
+
+    using queue = tnct::container::circular_queue<logger, event, 10>;
+
+    using id = tnct::string::fixed_size_string<5>;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    queue get_queue() { return queue{m_logger}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    logger m_logger;
+    id m_id{"01234"};
   };
 
-  template <traits::async::has_add_handling_method<result, event_a, handler,
-                                                   queue, priority, handling_id>
+  template <traits::async::has_add_handling_method<result_master, handling_a>
                 t_add_handling_method>
-  void foo(t_add_handling_method p_add_handling_method) {
-    p_add_handling_method.template add_handling<event_a>(
-        "abc", handler{}, queue{m_logger}, 1, priority::l);
+  void foo(t_add_handling_method &p_add_handling_method) {
+    p_add_handling_method.template add_handling<handling_a>(
+        std::move(handling_a{}));
   }
 
   struct dummy {
-    template <typename t_event>
-    result add_handling(handling_id, handler &&, queue &&, size_t, priority) {
-      return result::a;
+    template <traits::async::handling t_handling>
+    result_master add_handling(t_handling &&) {
+      return result_master::a;
     }
   };
-
-  logger m_logger;
 };
 
 struct has_add_handling_method_001 {
   static std::string desc() {
     return "Check if tnct::traits::async::has_add_handling_method captures in "
            "compile time an error if a class does not have the 'add_handling' "
-           "method correctly declared because the first parameter is not a "
-           "tnct::traits::string::fixed_size_string";
+           "method correctly declared because the the handling_id does not "
+           "conform to tnct::string::fixed_size_string";
   }
 
   bool operator()(const program::options &) {
-    // the following lines cause a compiler error, as expected, because
-    // 'std::string' is not compatible with
-    // 'tnct::traits::string::fixed_size_string'
+    static_assert(!tnct::traits::string::fixed_size_string<handling_a::id>);
+    static_assert(!tnct::traits::async::handling<handling_a>);
+    static_assert(
+        !tnct::traits::async::has_add_handling_method<dummy, result_master,
+                                                      handling_a>);
 
+    // the following lines cause a compiler error, as expected, because
+    // handling_a::id does not conform to
+    // 'tnct::traits::string::fixed_size_string'
     // dummy _dummy;
     // foo(_dummy);
 
@@ -345,34 +371,46 @@ struct has_add_handling_method_001 {
   }
 
 private:
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
-    }
-  };
-
   using logger = tnct::log::no_logger;
 
-  using queue = tnct::container::circular_queue<logger, event_a, 10>;
+  struct handling_a {
+    struct event {
+      friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+        return p_out;
+      }
+    };
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
+    struct handler {
+      void operator()(event &&) {}
+    };
+
+    using queue = tnct::container::circular_queue<logger, event, 10>;
+    using priority = priority_master;
+    using id = int *;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    queue get_queue() { return queue{m_logger}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    logger m_logger;
+    id m_id{nullptr};
   };
 
-  using handling_id = tnct::string::fixed_size_string<5>;
-
-  template <traits::async::has_add_handling_method<result, event_a, handler,
-                                                   queue, priority, handling_id>
-                t_add_handling_method>
-  void foo(t_add_handling_method) {}
+  // template <traits::async::has_add_handling_method<result_master, handling_a>
+  //               t_add_handling_method>
+  // void foo(t_add_handling_method p_add_handling_method) {
+  //   static_assert(traits::async::handling<handling_a>,
+  //                 "handling_a does not satisfy traits::async::handling");
+  //   p_add_handling_method.template add_handling<handling_a>(
+  //       std::move(handling_a{}));
+  // }
 
   struct dummy {
-    template <typename t_event>
-    result add_handling(std::string, handler &&, queue &&, size_t, priority) {
-      return result::a;
+    template <typename t_event> result_master add_handling(handling_a &&) {
+      return result_master::a;
     }
   };
 };
@@ -381,15 +419,18 @@ struct has_add_handling_method_002 {
   static std::string desc() {
     return "Check if tnct::traits::async::has_add_handling_method captures in "
            "compile time an error if a class does not have the 'add_handling' "
-           "method correctly declared because the second parameter does not "
-           "conform to tnct::async::handler";
+           "method handler conform to tnct::async::handler";
   }
 
   bool operator()(const program::options &) {
-    // the following lines cause a compiler error, as expected, because
-    // 'handle_a' declared below is not compatible with
-    // 'tnct::traits::async::handler'
 
+    static_assert(
+        !tnct::traits::async::handler<handling_a::handler, handling_a::event>);
+    static_assert(!tnct::traits::async::handling<handling_a>);
+
+    // the following lines cause a compiler error, as expected, because
+    // 'handling_a::handler' declared below is not compatible with
+    // 'tnct::traits::async::handler'
     // dummy _dummy;
     // foo(_dummy);
 
@@ -397,41 +438,46 @@ struct has_add_handling_method_002 {
   }
 
 private:
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
-    }
-  };
-
   using logger = tnct::log::no_logger;
 
-  using queue = tnct::container::circular_queue<logger, event_a, 10>;
+  struct handling_a {
+    struct event {
+      friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+        return p_out;
+      }
+    };
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()() {}
+    struct handler {
+      void operator()(event) {}
+    };
+
+    using queue = tnct::container::circular_queue<logger, event, 10>;
+    using priority = priority_master;
+    using id = tnct::string::fixed_size_string<5>;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    queue get_queue() { return queue{m_logger}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    logger m_logger;
+    id m_id{"01234"};
   };
 
-  using handling_id = tnct::string::fixed_size_string<5>;
-
-  template <traits::async::has_add_handling_method<result, event_a, handler,
-                                                   queue, priority, handling_id>
+  template <traits::async::has_add_handling_method<result_master, handling_a>
                 t_add_handling_method>
   void foo(t_add_handling_method p_add_handling_method) {
-    p_add_handling_method.template add_handling<event_a>(
-        "abc", handler{}, queue{m_logger}, 1, priority::l);
+    p_add_handling_method.template add_handling<handling_a>(
+        std::move(handling_a{}));
   }
 
   struct dummy {
-    template <typename t_event>
-    result add_handling(handling_id, handler &&, queue &&, size_t, priority) {
-      return result::a;
+    template <typename t_event> result_master add_handling(handling_a &&) {
+      return result_master::a;
     }
   };
-
-  logger m_logger;
 };
 
 struct has_add_handling_method_003 {
@@ -443,10 +489,13 @@ struct has_add_handling_method_003 {
   }
 
   bool operator()(const program::options &) {
-    // the following lines cause a compiler error, as expected, because
-    // 'event_a' declared below is not compatible with
-    // 'tnct::traits::async::event'
 
+    static_assert(!tnct::traits::async::event<handling_a::event>);
+    static_assert(!tnct::traits::async::handling<handling_a>);
+
+    // the following lines cause a compiler error, as expected, because
+    // 'handling_a::event' declared below is not compatible with
+    // 'tnct::traits::async::event'
     // dummy _dummy;
     // foo(_dummy);
 
@@ -454,48 +503,46 @@ struct has_add_handling_method_003 {
   }
 
 private:
-  struct event_a {
-    event_a() = delete;
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
-    }
-  };
-
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-
   using logger = tnct::log::no_logger;
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
+  struct handling_a {
+    struct event {};
+
+    struct handler {
+      void operator()(event &&) {}
+    };
+
+    // the following lines cause a compiler error, as expected, because
+    // 'handling_a::event' declared below is not compatible with
+    // 'tnct::traits::async::event'
+
+    // using queue = tnct::container::circular_queue<logger, event, 10>;
+    using priority = priority_master;
+    using id = tnct::string::fixed_size_string<5>;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    //     queue get_queue() { return queue{m_logger}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    // logger m_logger;
+    id m_id{"01234"};
   };
 
-  using handling_id = tnct::string::fixed_size_string<5>;
+  template <traits::async::has_add_handling_method<result_master, handling_a>
+                t_add_handling_method>
+  void foo(t_add_handling_method p_add_handling_method) {
+    p_add_handling_method.template add_handling<handling_a>(
+        std::move(handling_a{}));
+  }
 
-  // the following lines cause a compiler error, as expected, because
-  // 'event_a' declared below is not compatible with
-  // 'tnct::traits::async::event'
-
-  // using queue = tnct::container::circular_queue<logger, event_a, 10>;
-
-  // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler, queue, priority, handling_id>
-  //               t_add_handling_method>
-  // void foo(t_add_handling_method p_add_handling_method) {
-  //   p_add_handling_method.template add_handling<event_a>(
-  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
-  // }
-
-  // struct dummy {
-  //   template <typename t_event>
-  //   result add_handling(handling_id, handler &&, queue &&, size_t,
-  //                       priority) {
-  //     return result::a;
-  //   }
-  // };
-
-  // logger m_logger;
+  struct dummy {
+    template <typename t_event> result_master add_handling(handling_a &&) {
+      return result_master::a;
+    }
+  };
 };
 
 struct has_add_handling_method_004 {
@@ -507,10 +554,9 @@ struct has_add_handling_method_004 {
   }
 
   bool operator()(const program::options &) {
-    // the following lines cause a compiler error, as expected, because
-    // 'queue' declared below is not compatible with
-    // 'tnct::traits::container::queue'
-
+    static_assert(
+        !tnct::traits::container::queue<handling_a::queue, handling_a::event>);
+    static_assert(!tnct::traits::async::handling<handling_a>);
     // dummy _dummy;
     // foo(_dummy);
 
@@ -518,105 +564,47 @@ struct has_add_handling_method_004 {
   }
 
 private:
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
-    }
-  };
-
   using logger = tnct::log::no_logger;
 
-  using queue = int;
+  struct handling_a {
+    struct event {
+      friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+        return p_out;
+      }
+    };
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
+    struct handler {
+      void operator()(event &&) {}
+    };
+
+    using queue = int;
+
+    enum class priority : char { l = 'l', m = 'm', h = 'h' };
+    using id = tnct::string::fixed_size_string<5>;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    queue get_queue() { return queue{}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    // logger m_logger;
+    id m_id{"01234"};
   };
 
-  using handling_id = tnct::string::fixed_size_string<5>;
-
-  // the following lines cause a compiler error, as expected, because
-  // 'queue' declared below is not compatible with
-  // 'tnct::traits::container::queue'
-
-  // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler, queue, priority, handling_id>
-  //               t_add_handling_method>
-  // void foo(t_add_handling_method p_add_handling_method) {
-  //   p_add_handling_method.template add_handling<event_a>(
-  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
-  // }
-
-  // struct dummy {
-  //   template <typename t_event>
-  //   result add_handling(handling_id, handler &&, queue &&, size_t,
-  //                       priority) {
-  //     return result::a;
-  //   }
-  // };
-
-  // logger m_logger;
-};
-
-struct has_add_handling_method_005 {
-  static std::string desc() {
-    return "Check if tnct::traits::async::has_add_handling_method captures in "
-           "compile time an error if a class does not have the 'add_handling' "
-           "method correctly declared because the handling_priority informed "
-           "does not conform to 'tnct::traits::async::handling_priroity";
+  template <traits::async::has_add_handling_method<result_master, handling_a>
+                t_add_handling_method>
+  void foo(t_add_handling_method p_add_handling_method) {
+    p_add_handling_method.template add_handling<handling_a>(
+        std::move(handling_a{}));
   }
 
-  bool operator()(const program::options &) {
-    // the following lines cause a compiler error, as expected, because
-    // 'handling_priority' declared below is not compatible with
-    // 'tnct::traits::async::handling_priority'
-
-    // dummy _dummy;
-    // foo(_dummy);
-
-    return true;
-  }
-
-private:
-  enum class result : int { unknown = -1, a = 1, b = 2, c = 3, d = 4 };
-  using priority = char;
-
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
-      return p_out;
+  struct dummy {
+    template <typename t_event> result_master add_handling(handling_a &&) {
+      return result_master::a;
     }
   };
-
-  using logger = tnct::log::no_logger;
-
-  using queue = tnct::container::circular_queue<logger, event_a, 10>;
-
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
-
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
-  };
-
-  // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler, queue, priority, handling_id>
-  //               t_add_handling_method>
-  // void foo(t_add_handling_method p_add_handling_method) {
-  //   p_add_handling_method.template add_handling<event_a>(
-  //         "abc", handler{}, queue{m_logger}, 1, 'p');
-  // }
-
-  // struct dummy {
-  //   template <typename t_event>
-  //   result add_handling(handling_id, handler &&, queue &&, size_t,
-  //                       priority) {
-  //     return result::a;
-  //   }
-  // };
-
-  logger m_logger;
 };
 
 struct has_add_handling_method_006 {
@@ -628,6 +616,11 @@ struct has_add_handling_method_006 {
   }
 
   bool operator()(const program::options &) {
+
+    static_assert(!tnct::traits::async::result<result>);
+    static_assert(!tnct::traits::async::has_add_handling_method<dummy, result,
+                                                                handling_a>);
+
     // the following lines cause a compiler error, as expected, because
     // 'result' declared below is not compatible with
     // 'tnct::traits::async::result'
@@ -639,42 +632,381 @@ struct has_add_handling_method_006 {
   }
 
 private:
+  using logger = tnct::log::no_logger;
+
   using result = int;
-  enum class priority : char { l = 'l', m = 'm', h = 'h' };
-  struct event_a {
-    friend std::ostream &operator<<(std::ostream &p_out, const event_a &) {
+
+  struct handling_a {
+    struct event {
+      friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+        return p_out;
+      }
+    };
+
+    struct handler {
+      void operator()(event &&) {}
+    };
+
+    using queue = tnct::container::circular_queue<logger, event, 10>;
+
+    using priority = priority_master;
+    using id = tnct::string::fixed_size_string<5>;
+
+    const id &get_id() const { return m_id; }
+    handler get_handler() const { return handler{}; }
+    queue get_queue() { return queue{m_logger}; }
+    std::size_t get_num_handlers() const { return 3; }
+    priority get_priority() const { return priority::h; }
+
+  private:
+    logger m_logger;
+    id m_id{"01234"};
+  };
+
+  template <traits::async::has_add_handling_method<result, handling_a>
+                t_add_handling_method>
+  void foo(t_add_handling_method p_add_handling_method) {
+    p_add_handling_method.template add_handling<handling_a>(
+        std::move(handling_a{}));
+  }
+
+  struct dummy {
+    template <typename t_event> result_master add_handling(handling_a &&) {
+      return result_master::a;
+    }
+  };
+};
+
+struct handling_priority_000 {
+  static std::string desc() {
+    return "a 'handling_priority' which is not conformance to "
+           "tnct::traits::async::handling_priority because it does not "
+           "conformance to tnct::traits::has_output_operator";
+  }
+
+  bool operator()(const program::options &) {
+    // enum class priority_000 : int { a = -1, b = 0, c = 1 };
+    // static_assert(tnct::traits::async::handling_priority<priority_000>,
+    //               "priority_000 is not tnct::traits::async::handling_priority
+    //               " "conformance");
+
+    /*
+async_test.h:660:19: Static assertion failed: priority_000 is not
+tnct::traits::async::handling_priority conformance
+
+async_test.h:660:19: because 'priority_000' does not satisfy 'handling_priority'
+
+handling_priority.h:15:45: because 'priority_000' does not satisfy
+'has_output_operator'
+
+has_output_operator.h:18:8: because 'os << value' would be invalid: invalid
+operands to binary expression ('std::basic_ostream<char, char_traits<char>>' and
+'const priority_000')
+*/
+    return true;
+  }
+};
+
+struct handling_priority_001 {
+  static std::string desc() {
+    return "a 'handling_priority' which is not conformance to "
+           "tnct::traits::async::handling_priority because it does not "
+           "conformance to tnct::traits::enum_like";
+  }
+
+  bool operator()(const program::options &) {
+    // using priority_001 = uint16_t;
+    // static_assert(tnct::traits::async::handling_priority<priority_001>,
+    //               "priority_000 is not tnct::traits::async::handling_priority
+    //               " "conformance");
+    /*
+async_test.h:692:19: Static assertion failed: priority_000 is not
+tnct::traits::async::handling_priority conformance
+
+async_test.h:692:19: because 'priority_001' (aka 'unsigned short') does not
+satisfy 'handling_priority'
+
+handling_priority.h:15:29: because 'unsigned short' does not satisfy 'enum_like'
+
+enum.h:14:21: because 'std::is_enum_v<unsigned short>' evaluated to false
+*/
+
+    return true;
+  }
+};
+
+enum class priority_002 : int { a = -1, b = 0, c = 1 };
+std::ostream &operator<<(std::ostream &p_out, const priority_002 &) {
+  return p_out;
+}
+
+struct handling_priority_002 {
+  static std::string desc() {
+    return "a 'handling_priority' which is conformance to "
+           "tnct::traits::async::handling_priority";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(tnct::traits::async::handling_priority<priority_002>,
+                  "priority_000 is not tnct::traits::async::handling_priority "
+                  "conformance");
+
+    return true;
+  }
+};
+
+struct handler_000 {
+  static std::string desc() {
+    return "A lambda function that is tnct::traits::async::handler conformance";
+  }
+  bool operator()(const program::options &) {
+
+    static_assert(tnct::traits::async::handler<handler, event>,
+                  "'auto _handle = [](event &&) {}' is conformance to "
+                  "tnct::traits::async::handler");
+
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
+  };
+  struct handler {
+    void operator()(event &&) {}
+  };
+};
+
+struct handler_001 {
+  static std::string desc() {
+    return "A lambda function that is not tnct::traits::async::handler "
+           "conformance";
+  }
+  bool operator()(const program::options &) {
+    auto _handle = []() {};
+
+    static_assert(!tnct::traits::async::handler<decltype(_handle), event>,
+                  "'auto _handle = [](event &&) {}' is not conformance to "
+                  "tnct::traits::async::handler");
+
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
+  };
+};
+
+struct handler_002 {
+  static std::string desc() {
+    return "A 'handle' class that is tnct::traits::async::handler conformance";
+  }
+  bool operator()(const program::options &) {
+
+    static_assert(
+        tnct::traits::async::handler<handle, event>,
+        "'handle class is conformance to tnct::traits::async::handler");
+
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
       return p_out;
     }
   };
 
-  using logger = tnct::log::no_logger;
+  struct handle {
+    void operator()(event &&) {}
+  };
+};
 
-  using queue = tnct::container::circular_queue<logger, event_a, 10>;
+struct handler_003 {
+  static std::string desc() {
+    return "A 'handle' class that is not conformant to "
+           "tnct::traits::async::handler ";
+  }
+  bool operator()(const program::options &) {
 
-  std::function<void(event_a &&)> handler_a = [](event_a &&) {};
+    static_assert(
+        !tnct::traits::async::handler<handle, event>,
+        "'handle class is not conformant to tnct::traits::async::handler");
 
-  struct handler {
-    using events_handled = std::tuple<event_a>;
-    void operator()(event_a &&) {}
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
   };
 
-  // template <traits::async::has_add_handling_method<
-  //     result, event_a, handler, queue, priority, handling_id>
-  //               t_add_handling_method>
-  // void foo(t_add_handling_method p_add_handling_method) {
-  //   p_add_handling_method.template add_handling<event_a>(
-  //       "abc", handler{}, queue{m_logger}, 1, priority::l);
-  // }
+  struct handle {
+    void operator()() {}
+  };
+};
 
-  // struct dummy {
-  //   template <typename t_event>
-  //   result add_handling(handling_id, handler &&, queue &&, size_t,
-  //                       priority) {
-  //     return -1;
-  //   }
-  // };
+struct handler_004 {
+  static std::string desc() {
+    return "Another 'handle' class that is not conformant to "
+           "tnct::traits::async::handler";
+  }
 
-  logger m_logger;
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::handler<handle, event>,
+        "'handle' class is not conformant to tnct::traits::async::handler");
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
+  };
+
+  struct handle {
+    void operator()(event) {}
+  };
+};
+
+struct handler_005 {
+  static std::string desc() {
+    return "Yet another 'handle' class that is not conformant to "
+           "tnct::traits::async::handler";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::handler<handle, event>,
+        "'handle' class is not conformant to tnct::traits::async::handler");
+    return true;
+  }
+
+private:
+  struct event {
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
+  };
+
+  struct handle {
+    void operator()(const event &) {}
+  };
+};
+
+struct event_000 {
+  static std::string desc() {
+    return "A 'event' class is not conformant to 'tnct::traits::async::event' "
+           "because it does not have output operator";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::event<event>,
+        "'event' should not be  conformant to 'tnct::traits::async::event' "
+        "because it does not output operator");
+
+    return true;
+  }
+
+private:
+  struct event {};
+};
+
+struct event_001 {
+  static std::string desc() {
+    return "A 'event' class is not conformant to 'tnct::traits::async::event' "
+           "because its default constructor is deleted";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::event<event>,
+        "'event' should not be  conformant to 'tnct::traits::async::event' "
+        "because its default constructor is deleted");
+
+    return true;
+  }
+
+private:
+  struct event {
+    event() = delete;
+  };
+};
+
+struct event_002 {
+  static std::string desc() {
+    return "A 'event' class is not conformant to 'tnct::traits::async::event' "
+           "because its copy constructor is deleted";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::event<event>,
+        "'event' should not be  conformant to 'tnct::traits::async::event' "
+        "because its copy constructor is deleted");
+
+    return true;
+  }
+
+private:
+  struct event {
+    event(const event &) = delete;
+  };
+};
+
+struct event_003 {
+  static std::string desc() {
+    return "A 'event' class is not conformant to 'tnct::traits::async::event' "
+           "because its move constructor is deleted";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        !tnct::traits::async::event<event>,
+        "'event' should not be  conformant to 'tnct::traits::async::event' "
+        "because its move constructor is deleted");
+
+    return true;
+  }
+
+private:
+  struct event {
+    event(event &&) = delete;
+  };
+};
+
+struct event_004 {
+  static std::string desc() {
+    return "A 'event' class is conformant to 'tnct::traits::async::event'";
+  }
+
+  bool operator()(const program::options &) {
+    static_assert(
+        tnct::traits::async::event<event>,
+        "'event' should be  conformant to 'tnct::traits::async::event' ");
+
+    return true;
+  }
+
+private:
+  struct event {
+    event() = default;
+    event(event &&) = default;
+    event(const event &) = default;
+    friend std::ostream &operator<<(std::ostream &p_out, const event &) {
+      return p_out;
+    }
+  };
 };
 
 } // namespace tnct::traits::test

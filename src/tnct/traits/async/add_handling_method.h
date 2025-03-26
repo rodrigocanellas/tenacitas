@@ -9,47 +9,66 @@
 #include <concepts>
 #include <cstring>
 
-#include "tnct/traits/async/event.h"
-#include "tnct/traits/async/handler.h"
-#include "tnct/traits/container/queue.h"
-#include "tnct/traits/enum.h"
-#include "tnct/traits/string/fixed_size_string.h"
+#include "tnct/traits/async/handling.h"
+#include "tnct/traits/async/result.h"
+#include "tnct/traits/has_output_operator.h"
 
 namespace tnct::traits::async {
 
-template <typename t, typename t_result, typename t_event, typename t_handler,
-          typename t_queue, typename t_handling_priority,
-          typename t_handling_id>
+// template <typename t, typename t_result, typename t_event, typename
+// t_handler,
+//           typename t_queue, typename t_handling_priority,
+//           typename t_handling_id>
+// concept has_add_handling_method =
+
+//     tnct::traits::enum_like<t_result> &&
+
+//     tnct::traits::async::event<t_event> &&
+
+//     tnct::traits::async::handler<t_handler, t_event> &&
+
+//     tnct::traits::container::queue<t_queue, t_event> &&
+
+//     tnct::traits::enum_like<t_handling_priority> &&
+
+//     tnct::traits::string::fixed_size_string<t_handling_id> &&
+
+//     requires(t p_t) {
+//   {
+//     p_t.template add_handling<std::remove_cvref_t<t_event>>(
+//         std::declval<t_handling_id>(),
+
+//         std::declval<
+//             std::add_rvalue_reference_t<std::remove_cvref_t<t_handler>>>(),
+
+//         std::declval<
+//             std::add_rvalue_reference_t<std::remove_cvref_t<t_queue>>>(),
+
+//         std::declval<std::size_t>(),
+
+//         std::declval<t_handling_priority>())
+
+//     } -> std::same_as<t_result>;
+// };
+
+template <typename t, typename t_result, typename t_handling>
 concept has_add_handling_method =
 
-    tnct::traits::enum_like<t_result> &&
+    traits::async::handling<std::remove_cvref_t<t_handling>>
 
-    tnct::traits::async::event<t_event> &&
+    &&
 
-    tnct::traits::async::handler<t_handler, t_event> &&
+    traits::async::result<std::remove_cvref_t<t_result>>
 
-    tnct::traits::container::queue<t_queue, t_event> &&
-
-    tnct::traits::enum_like<t_handling_priority> &&
-
-    tnct::traits::string::fixed_size_string<t_handling_id> &&
+    &&
 
     requires(t p_t) {
   {
-    p_t.template add_handling<std::remove_cvref_t<t_event>>(
-        std::declval<t_handling_id>(),
-
+    p_t.template add_handling<std::remove_cvref_t<t_handling>>(
         std::declval<
-            std::add_rvalue_reference_t<std::remove_cvref_t<t_handler>>>(),
+            std::add_rvalue_reference_t<std::remove_cvref_t<t_handling>>>())
 
-        std::declval<
-            std::add_rvalue_reference_t<std::remove_cvref_t<t_queue>>>(),
-
-        std::declval<std::size_t>(),
-
-        std::declval<t_handling_priority>())
-
-    } -> std::same_as<t_result>;
+    } -> std::same_as<std::remove_cvref_t<t_result>>;
 };
 
 } // namespace tnct::traits::async

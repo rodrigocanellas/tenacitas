@@ -10,6 +10,7 @@
 #include <string>
 
 #include "tnct/async/dispatcher.h"
+#include "tnct/async/handling.h"
 #include "tnct/async/result.h"
 #include "tnct/traits/async/dispatcher.h"
 
@@ -60,8 +61,14 @@ struct dispatcher_000 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _result{_dispatcher.add_handling<event_1>("handling-000", handler{},
-                                                   queue_1{_logger}, 0)};
+    auto _handler = [](event_1 &&) {};
+
+    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+
+    handling_1 _handling_1{"handling-000", std::move(_handler),
+                           queue_1{_logger}, 0};
+
+    auto _result{_dispatcher.add_handling<handling_1>(std::move(_handling_1))};
 
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -70,13 +77,6 @@ struct dispatcher_000 {
 
     return true;
   }
-
-private:
-  struct handler {
-    using events_handled = std::tuple<event_1>;
-
-    void operator()(event_1 &&) {}
-  };
 };
 
 struct dispatcher_001 {
@@ -92,8 +92,12 @@ struct dispatcher_001 {
 
     async::handling_id _handling_id{"handling-001"};
 
-    auto _result{_dispatcher.add_handling<event_1>(_handling_id, handler{},
-                                                   queue_1{_logger}, 1)};
+    auto _handler = [](event_1 &&) {};
+
+    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+
+    auto _result{_dispatcher.add_handling<handling_1>(
+        {_handling_id, std::move(_handler), queue_1{_logger}, 1})};
 
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -117,13 +121,6 @@ struct dispatcher_001 {
 
     return _amount_handlers == 1;
   }
-
-private:
-  struct handler {
-    using events_handled = std::tuple<event_1>;
-
-    void operator()(event_1 &&) {}
-  };
 };
 
 struct dispatcher_002 {
@@ -137,8 +134,12 @@ struct dispatcher_002 {
 
     async::handling_id _handling_id{"handling-002"};
 
-    auto _result{_dispatcher.add_handling<event_1>(_handling_id, handler{},
-                                                   queue_1{_logger}, 4)};
+    auto _handler = [](event_1 &&) {};
+
+    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+
+    auto _result{_dispatcher.add_handling(
+        handling_1{_handling_id, std::move(_handler), queue_1{_logger}, 4})};
 
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -171,13 +172,6 @@ struct dispatcher_002 {
 
     return true;
   }
-
-private:
-  struct handler {
-    using events_handled = std::tuple<event_1>;
-
-    void operator()(event_1 &&) {}
-  };
 };
 
 struct dispatcher_003 {
@@ -192,10 +186,11 @@ struct dispatcher_003 {
 
       dispatcher _dispatcher{_logger};
 
-      async::handling_id _handling_id_1{"handling-003-1"};
-
-      auto _result{_dispatcher.add_handling<event_1>(_handling_id_1, handler{},
-                                                     queue_1{_logger}, 0)};
+      auto _handler_1 = [](event_1 &&) {};
+      using handling_1 =
+          async::handling<event_1, decltype(_handler_1), queue_1>;
+      auto _result{_dispatcher.add_handling(handling_1{
+          "handling-003-1", std::move(_handler_1), queue_1{_logger}, 0})};
 
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -203,9 +198,11 @@ struct dispatcher_003 {
       }
 
       TNCT_LOG_TST(_logger, "passed 1st subscribe");
-      async::handling_id _handling_id_2{"handling-003-2"};
-      _result = _dispatcher.add_handling<event_1>(_handling_id_2, handler{},
-                                                  queue_1{_logger}, 0);
+      auto _handler_2 = [](event_1 &&) {};
+      using handling_2 =
+          async::handling<event_1, decltype(_handler_2), queue_1>;
+      _result = _dispatcher.add_handling<handling_2>(
+          {"handling-003-2", std::move(_handler_2), queue_1{_logger}, 0});
 
       if (_result != async::result::ERROR_HANDLER_ALREADY_IN_USE) {
         TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -219,13 +216,6 @@ struct dispatcher_003 {
 
     return false;
   }
-
-private:
-  struct handler {
-    using events_handled = std::tuple<event_1>;
-
-    void operator()(event_1 &&) {}
-  };
 };
 
 struct dispatcher_007 {
@@ -243,10 +233,12 @@ struct dispatcher_007 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      async::handling_id _handling_id{"handling-007"};
+      auto _handler_1 = [&](event_1 &&p_event) { _event = p_event; };
+      using handling_1 =
+          async::handling<event_1, decltype(_handler_1), queue_1>;
 
-      auto _result{_dispatcher.add_handling<event_1>(
-          _handling_id, handler{_event}, queue_1{_logger}, 1)};
+      auto _result{_dispatcher.add_handling<handling_1>(
+          {"handling-007", std::move(_handler_1), queue_1{_logger}, 1})};
 
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -268,18 +260,6 @@ struct dispatcher_007 {
 
     return true;
   }
-
-private:
-  struct handler {
-    handler(event_1 &p_event) : m_event(p_event) {}
-
-    using events_handled = std::tuple<event_1>;
-
-    void operator()(event_1 &&p_event) { m_event = p_event; }
-
-  private:
-    event_1 &m_event;
-  };
 };
 
 struct dispatcher_008 {
@@ -297,10 +277,12 @@ struct dispatcher_008 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      async::handling_id _handling_id{"handling-008"};
+      auto _handler_1 = [&](event_1 &&p_event) { _event = p_event; };
+      using handling_1 =
+          async::handling<event_1, decltype(_handler_1), queue_1>;
 
-      auto _result{_dispatcher.add_handling<event_1>(
-          _handling_id, handler{_event}, queue_1{_logger}, 1)};
+      auto _result{_dispatcher.add_handling<handling_1>(
+          {"handling-008", std::move(_handler_1), queue_1{_logger}, 1})};
 
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
@@ -453,7 +435,8 @@ private:
                 t_dispatcher>
 
   // requires(std::tuple_size_v<dispatcher::events> >=
-  //          std::tuple_size_v<std::tuple<event_a, event_b, event_c, event_e>>)
+  //          std::tuple_size_v<std::tuple<event_a, event_b, event_c,
+  //          event_e>>)
 
   void foo(t_dispatcher &) {}
 };

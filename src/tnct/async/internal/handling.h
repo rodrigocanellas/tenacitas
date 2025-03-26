@@ -16,7 +16,6 @@
 
 #include "tnct/async/handling_id.h"
 #include "tnct/async/internal/handler_id.h"
-
 #include "tnct/format/fmt.h"
 #include "tnct/traits/async/event.h"
 #include "tnct/traits/async/handler.h"
