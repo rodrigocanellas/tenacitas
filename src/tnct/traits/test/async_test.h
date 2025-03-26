@@ -679,20 +679,20 @@ private:
 
 struct handling_priority_000 {
   static std::string desc() {
-    return "a 'handling_priority' which is not conformance to "
+    return "a 'handling_priority' which is not conformant to "
            "tnct::traits::async::handling_priority because it does not "
-           "conformance to tnct::traits::has_output_operator";
+           "conformant to tnct::traits::has_output_operator";
   }
 
   bool operator()(const program::options &) {
     // enum class priority_000 : int { a = -1, b = 0, c = 1 };
     // static_assert(tnct::traits::async::handling_priority<priority_000>,
     //               "priority_000 is not tnct::traits::async::handling_priority
-    //               " "conformance");
+    //               " "conformant");
 
     /*
 async_test.h:660:19: Static assertion failed: priority_000 is not
-tnct::traits::async::handling_priority conformance
+tnct::traits::async::handling_priority conformant
 
 async_test.h:660:19: because 'priority_000' does not satisfy 'handling_priority'
 
@@ -709,19 +709,19 @@ operands to binary expression ('std::basic_ostream<char, char_traits<char>>' and
 
 struct handling_priority_001 {
   static std::string desc() {
-    return "a 'handling_priority' which is not conformance to "
+    return "a 'handling_priority' which is not conformant to "
            "tnct::traits::async::handling_priority because it does not "
-           "conformance to tnct::traits::enum_like";
+           "conformant to tnct::traits::enum_like";
   }
 
   bool operator()(const program::options &) {
     // using priority_001 = uint16_t;
     // static_assert(tnct::traits::async::handling_priority<priority_001>,
     //               "priority_000 is not tnct::traits::async::handling_priority
-    //               " "conformance");
+    //               " "conformant");
     /*
 async_test.h:692:19: Static assertion failed: priority_000 is not
-tnct::traits::async::handling_priority conformance
+tnct::traits::async::handling_priority conformant
 
 async_test.h:692:19: because 'priority_001' (aka 'unsigned short') does not
 satisfy 'handling_priority'
@@ -742,14 +742,14 @@ std::ostream &operator<<(std::ostream &p_out, const priority_002 &) {
 
 struct handling_priority_002 {
   static std::string desc() {
-    return "a 'handling_priority' which is conformance to "
+    return "a 'handling_priority' which is conformant to "
            "tnct::traits::async::handling_priority";
   }
 
   bool operator()(const program::options &) {
     static_assert(tnct::traits::async::handling_priority<priority_002>,
-                  "priority_000 is not tnct::traits::async::handling_priority "
-                  "conformance");
+                  "priority_000 is not conformant to "
+                  "tnct::traits::async::handling_priority ");
 
     return true;
   }
@@ -757,12 +757,14 @@ struct handling_priority_002 {
 
 struct handler_000 {
   static std::string desc() {
-    return "A lambda function that is tnct::traits::async::handler conformance";
+    return "A lambda function that is conformant to "
+           "tnct::traits::async::handler";
   }
   bool operator()(const program::options &) {
+    auto _handler = [](event &&) mutable {};
 
-    static_assert(tnct::traits::async::handler<handler, event>,
-                  "'auto _handle = [](event &&) {}' is conformance to "
+    static_assert(tnct::traits::async::handler<decltype(_handler), event>,
+                  "'auto _handle = [](event &&) {}' is conformant to "
                   "tnct::traits::async::handler");
 
     return true;
@@ -773,9 +775,6 @@ private:
     friend std::ostream &operator<<(std::ostream &p_out, const event &) {
       return p_out;
     }
-  };
-  struct handler {
-    void operator()(event &&) {}
   };
 };
 
