@@ -28,11 +28,8 @@ HEADERS += \
 
 HEADERS += \
     $$PRJ_DIR/per/sensor.h \
-    $$PRJ_DIR/per/sensors_base.h \
     $$PRJ_DIR/per/sensors.h \
-    $$PRJ_DIR/per/handle_add_sensor.h  \
-    $$PRJ_DIR/per/handle_remove_sensor.h \
-    $$PRJ_DIR/per/handle_set_temperature.h
+
 
 HEADERS += \
     $$PRJ_DIR/supplier.h
