@@ -18,55 +18,72 @@
 #include "tnct/async/exp/temperature_sensors_simulator/per/handle_set_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensors_base.h"
-#include "tnct/async/handling_id.h"
-#include "tnct/async/handling_priority.h"
 #include "tnct/async/result.h"
 #include "tnct/traits/async/add_handling_method.h"
+#include "tnct/traits/async/dispatcher.h"
 #include "tnct/traits/log/logger.h"
 
+using namespace tnct;
 using namespace std::chrono_literals;
 
 namespace tnct::async::exp::temperature_sensors_simulator::per {
+
 template <traits::log::logger t_logger, typename t_dispatcher>
-requires(traits::async::has_add_handling_method<
-         t_dispatcher, tnct::async::result, evt::add_sensor, handle_add_sensor,
-         queue_add_sensor<t_logger>, tnct::async::handling_priority,
-         tnct::async::handling_id>
+requires(
 
-             &&traits::async::has_add_handling_method<
-                 t_dispatcher, tnct::async::result, evt::remove_sensor,
-                 handle_remove_sensor, queue_remove_sensor<t_logger>,
-                 tnct::async::handling_priority, tnct::async::handling_id>
+    traits::async::dispatcher<t_dispatcher, evt::add_sensor, evt::remove_sensor,
+                              evt::set_temperature>
 
-                 &&traits::async::has_add_handling_method<
-                     t_dispatcher, tnct::async::result, evt::set_temperature,
-                     handle_set_temperature, queue_set_temperature<t_logger>,
-                     tnct::async::handling_priority, tnct::async::handling_id>)
+        &&
+
+            traits::async::has_add_handling_method<
+                t_dispatcher, tnct::async::result,
+                handling_definition_add_sensor<t_logger>>
+
+                &&
+
+                    traits::async::has_add_handling_method<
+                        t_dispatcher, async::result,
+                        handling_definition_remove_sensor<t_logger>>
+
+                        &&
+
+                            traits::async::has_add_handling_method<
+                                t_dispatcher, tnct::async::result,
+                                handling_definition_set_temperature<t_logger>>
+
+    )
 
     struct sensors : public sensors_base {
 
   sensors(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher) {
 
-    auto _result(m_dispatcher.template add_handling<evt::add_sensor>(
-        "add-sensor", handle_add_sensor{*this}, queue_add_sensor{m_logger}, 1));
+    auto _result(
+        m_dispatcher
+            .template add_handling<handling_definition_add_sensor<t_logger>>(
+                {"add-sensor", handle_add_sensor{*this},
+                 queue_add_sensor{m_logger}, 1}));
 
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'add_sensor'");
       return;
     }
 
-    _result = m_dispatcher.template add_handling<evt::remove_sensor>(
-        "remove-sensor", handle_remove_sensor{*this},
-        queue_remove_sensor{m_logger}, 1);
+    _result =
+        m_dispatcher
+            .template add_handling<handling_definition_remove_sensor<t_logger>>(
+                {"remove-sensor", handle_remove_sensor{*this},
+                 queue_remove_sensor{m_logger}, 1});
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'remove_sensor'");
       return;
     }
 
-    _result = m_dispatcher.template add_handling<evt::set_temperature>(
-        "set-temperature", handle_set_temperature{*this},
-        queue_set_temperature{m_logger}, 1);
+    _result = m_dispatcher.template add_handling<
+        handling_definition_set_temperature<t_logger>>(
+        {"set-temperature", handle_set_temperature{*this},
+         queue_set_temperature{m_logger}, 1});
     if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, "error creating handling for 'set_sensor'");
       return;

@@ -79,7 +79,8 @@ struct has_publish_method_000 {
   static std::string desc() { return "A valid has_publish_method"; }
 
   bool operator()(const program::options &) {
-    using my_publisher = publisher<event_a>;
+    using my_publisher = publisher;
+    //<event_a>;
     my_publisher _publisher;
     event_a _event_a;
 
@@ -99,7 +100,8 @@ private:
     }
   };
 
-  template <traits::async::event... t_events> struct publisher {
+  struct publisher {
+    using events = std::tuple<event_a>;
     template <traits::async::event t_event> result publish(const t_event &) {
       return result::r0;
     }
@@ -141,7 +143,7 @@ private:
     }
   };
   template <traits::async::event... t_events> struct publisher {
-
+    // using events = std::tuple<event_a>;
     // template <traits::async::event t_event> result publish(const t_event &) {
     //   return result::r0;
     // }
@@ -251,6 +253,7 @@ private:
   };
 
   struct publisher {
+    using events = std::tuple<event_a, event_b, event_c, event_d>;
     template <traits::async::event t_event> result publish(const t_event &) {
       if constexpr (std::is_same_v<t_event, event_a>) {
         return result::a;
@@ -339,7 +342,8 @@ private:
   }
 
   struct dummy {
-    template <traits::async::handling t_handling>
+    using events = std::tuple<handling_a::event>;
+    template <traits::async::handling_definition t_handling>
     result_master add_handling(t_handling &&) {
       return result_master::a;
     }
@@ -356,7 +360,7 @@ struct has_add_handling_method_001 {
 
   bool operator()(const program::options &) {
     static_assert(!tnct::traits::string::fixed_size_string<handling_a::id>);
-    static_assert(!tnct::traits::async::handling<handling_a>);
+    static_assert(!tnct::traits::async::handling_definition<handling_a>);
     static_assert(
         !tnct::traits::async::has_add_handling_method<dummy, result_master,
                                                       handling_a>);
@@ -426,7 +430,7 @@ struct has_add_handling_method_002 {
 
     static_assert(
         !tnct::traits::async::handler<handling_a::handler, handling_a::event>);
-    static_assert(!tnct::traits::async::handling<handling_a>);
+    static_assert(!tnct::traits::async::handling_definition<handling_a>);
 
     // the following lines cause a compiler error, as expected, because
     // 'handling_a::handler' declared below is not compatible with
@@ -491,7 +495,7 @@ struct has_add_handling_method_003 {
   bool operator()(const program::options &) {
 
     static_assert(!tnct::traits::async::event<handling_a::event>);
-    static_assert(!tnct::traits::async::handling<handling_a>);
+    static_assert(!tnct::traits::async::handling_definition<handling_a>);
 
     // the following lines cause a compiler error, as expected, because
     // 'handling_a::event' declared below is not compatible with
@@ -556,7 +560,7 @@ struct has_add_handling_method_004 {
   bool operator()(const program::options &) {
     static_assert(
         !tnct::traits::container::queue<handling_a::queue, handling_a::event>);
-    static_assert(!tnct::traits::async::handling<handling_a>);
+    static_assert(!tnct::traits::async::handling_definition<handling_a>);
     // dummy _dummy;
     // foo(_dummy);
 
@@ -787,7 +791,7 @@ struct handler_001 {
     auto _handle = []() {};
 
     static_assert(!tnct::traits::async::handler<decltype(_handle), event>,
-                  "'auto _handle = [](event &&) {}' is not conformance to "
+                  "'auto _handle = []() {}' is not conformance to "
                   "tnct::traits::async::handler");
 
     return true;

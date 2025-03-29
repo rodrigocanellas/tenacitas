@@ -5,7 +5,6 @@
 #include "tnct/async/exp/temperature_sensors_simulator/typ/temperature.h"
 #include "tnct/async/handling_priority.h"
 #include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 
 using namespace tnct::async::exp::temperature_sensors_simulator;
@@ -19,10 +18,11 @@ MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,
 
   m_logger.set_inf();
 
-  auto _result(m_dispatcher.template add_handling<evt::new_temperature>(
-      "new-temperature", handler{this},
-      container::circular_queue<logger, evt::new_temperature, 10>{m_logger}, 1,
-      async::handling_priority::high));
+  auto _result(
+      m_dispatcher.template add_handling<handling_definition_new_temperature>(
+          {"new-temperature", handler_new_temperature{this},
+           queue_new_temperature{m_logger}, 1,
+           async::handling_priority::high}));
 
   if (_result != async::result::OK) {
     TNCT_LOG_ERR(m_logger, "error creating handling for 'new_temperature");

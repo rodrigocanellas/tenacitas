@@ -12,8 +12,10 @@ HEADERS += \
         $$PRJ_DIR/chrono_convertible.h \
         $$PRJ_DIR/has_new_operator.h \
         $$PRJ_DIR/has_output_operator.h \
-        $$PRJ_DIR/async/handling.h \
+        $$PRJ_DIR/async/handling_definition.h \
         $$PRJ_DIR/async/event.h \
+        $$PRJ_DIR/async/has_events_published.h \
+        $$PRJ_DIR/async/has_events_handled.h \
         $$PRJ_DIR/async/handling_priority.h \
         $$PRJ_DIR/async/dispatcher.h \
         $$PRJ_DIR/async/tuple_contains_only_events.h \

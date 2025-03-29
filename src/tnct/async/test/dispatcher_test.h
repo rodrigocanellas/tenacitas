@@ -10,7 +10,7 @@
 #include <string>
 
 #include "tnct/async/dispatcher.h"
-#include "tnct/async/handling.h"
+#include "tnct/async/handling_definition.h"
 #include "tnct/async/result.h"
 #include "tnct/traits/async/dispatcher.h"
 
@@ -61,9 +61,10 @@ struct dispatcher_000 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _handler = [](event_1 &&) {};
+    auto _handler = [](event_1 &&) mutable {};
 
-    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
 
     handling_1 _handling_1{"handling-000", std::move(_handler),
                            queue_1{_logger}, 0};
@@ -92,9 +93,10 @@ struct dispatcher_001 {
 
     async::handling_id _handling_id{"handling-001"};
 
-    auto _handler = [](event_1 &&) {};
+    auto _handler = [](event_1 &&) mutable {};
 
-    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
 
     auto _result{_dispatcher.add_handling<handling_1>(
         {_handling_id, std::move(_handler), queue_1{_logger}, 1})};
@@ -134,9 +136,10 @@ struct dispatcher_002 {
 
     async::handling_id _handling_id{"handling-002"};
 
-    auto _handler = [](event_1 &&) {};
+    auto _handler = [](event_1 &&) mutable {};
 
-    using handling_1 = async::handling<event_1, decltype(_handler), queue_1>;
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
 
     auto _result{_dispatcher.add_handling(
         handling_1{_handling_id, std::move(_handler), queue_1{_logger}, 4})};
@@ -186,9 +189,9 @@ struct dispatcher_003 {
 
       dispatcher _dispatcher{_logger};
 
-      auto _handler_1 = [](event_1 &&) {};
+      auto _handler_1 = [](event_1 &&) mutable {};
       using handling_1 =
-          async::handling<event_1, decltype(_handler_1), queue_1>;
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
       auto _result{_dispatcher.add_handling(handling_1{
           "handling-003-1", std::move(_handler_1), queue_1{_logger}, 0})};
 
@@ -198,9 +201,9 @@ struct dispatcher_003 {
       }
 
       TNCT_LOG_TST(_logger, "passed 1st subscribe");
-      auto _handler_2 = [](event_1 &&) {};
+      auto _handler_2 = [](event_1 &&) mutable {};
       using handling_2 =
-          async::handling<event_1, decltype(_handler_2), queue_1>;
+          async::handling_definition<event_1, decltype(_handler_2), queue_1>;
       _result = _dispatcher.add_handling<handling_2>(
           {"handling-003-2", std::move(_handler_2), queue_1{_logger}, 0});
 
@@ -233,9 +236,9 @@ struct dispatcher_007 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      auto _handler_1 = [&](event_1 &&p_event) { _event = p_event; };
+      auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
       using handling_1 =
-          async::handling<event_1, decltype(_handler_1), queue_1>;
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
 
       auto _result{_dispatcher.add_handling<handling_1>(
           {"handling-007", std::move(_handler_1), queue_1{_logger}, 1})};
@@ -277,9 +280,9 @@ struct dispatcher_008 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      auto _handler_1 = [&](event_1 &&p_event) { _event = p_event; };
+      auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
       using handling_1 =
-          async::handling<event_1, decltype(_handler_1), queue_1>;
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
 
       auto _result{_dispatcher.add_handling<handling_1>(
           {"handling-008", std::move(_handler_1), queue_1{_logger}, 1})};
@@ -378,7 +381,8 @@ private:
   using logger = log::cerr;
 
 private:
-  template <traits::async::dispatcher<event_a, event_b, event_c> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b, event_c, event_d>
+                t_dispatcher>
   void foo(t_dispatcher &) {}
 };
 

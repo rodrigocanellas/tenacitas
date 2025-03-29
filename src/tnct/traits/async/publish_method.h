@@ -10,13 +10,18 @@
 
 #include "tnct/traits/async/event.h"
 #include "tnct/traits/enum.h"
+#include "tnct/traits/tuple/contains_type.h"
 
 namespace tnct::traits::async {
 
 template <typename t, typename t_result, typename t_event>
 concept has_const_lvalue_publish_method =
 
-    enum_like<t_result> && event<t_event> &&
+    enum_like<t_result> &&
+
+    event<t_event> &&
+
+    tuple::contains_type<typename t::events, t_event>() &&
 
     requires(t p_t) {
   {
@@ -29,7 +34,11 @@ concept has_const_lvalue_publish_method =
 template <typename t, typename t_result, typename t_event, typename... t_params>
 concept has_variadic_params_publish_method =
 
-    enum_like<t_result> && event<t_event> &&
+    enum_like<t_result> &&
+
+    event<t_event> &&
+
+    tuple::contains_type<typename t::events, t_event>() &&
 
     requires(t p_t, t_params &&...p_params) {
   {

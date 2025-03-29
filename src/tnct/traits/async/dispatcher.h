@@ -35,14 +35,16 @@ concept dispatcher = requires {
 
     && tuple::like<std::tuple<t_events...>>
 
+    && tuple_contains_only_events<typename t::events>
+
+    && tuple_contains_only_events<std::tuple<t_events...>>
+
     &&
     tuple::size_greather_or_equal<typename t::events, std::tuple<t_events...>>
 
-    && tuple_contains_only_events<typename t::events>
+    // && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>
 
-    && tuple_contains_only_events<std::tuple<t_events...>>;
-
-// && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>;
+    ;
 
 } // namespace tnct::traits::async
 

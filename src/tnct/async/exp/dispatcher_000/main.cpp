@@ -18,6 +18,7 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/exp/dispatcher_000/publisher.h"
 #include "tnct/async/exp/dispatcher_000/results.h"
+#include "tnct/async/handling_definition.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 
@@ -83,9 +84,16 @@ struct pgm {
                                                    _total_to_be_handled,
                                                    _cond_all_handled};
 
-      _dispatcher.add_handling<event_handled, event_handled_handler>(
-          "event-handled", std::move(_event_handled_handler),
-          queue_event_handled{_logger}, 1);
+      // _dispatcher.add_handling<event_handled, event_handled_handler>(
+      //     "event-handled", std::move(_event_handled_handler),
+      //     queue_event_handled{_logger}, 1);
+
+      // async::handling_id _event_handled_id{"event-handled"};
+
+      _dispatcher.add_handling<async::handling_definition<
+          event_handled, event_handled_handler, queue_event_handled>>(
+          {"event-handled", std::move(_event_handled_handler),
+           queue_event_handled{_logger}, 1});
 
       publisher _publisher{_dispatcher, _logger,
                            _configuration.interval_for_events_publishing,
@@ -178,48 +186,53 @@ private:
   void define_handlings(dispatcher &p_dispatcher, logger &p_logger,
                         const configuration &p_configuration) {
     if (p_configuration.handlings_cfg[0].use) {
-      p_dispatcher.add_handling<event_a>(
-          "event-a-0",
-          handler_0{p_logger, p_dispatcher, "handling-0",
-                    p_configuration.handlings_cfg[0].sleep_to_simulate_work},
-          queue_event_a{p_logger, "event-a-0"},
-          p_configuration.handlings_cfg[0].amount_handlers);
+      p_dispatcher.add_handling<
+          async::handling_definition<event_a, handler_0, queue_event_a>>(
+          {"event-a-0",
+           handler_0{p_logger, p_dispatcher, "handling-0",
+                     p_configuration.handlings_cfg[0].sleep_to_simulate_work},
+           queue_event_a{p_logger, "event-a-0"},
+           p_configuration.handlings_cfg[0].amount_handlers});
     }
 
     if (p_configuration.handlings_cfg[1].use) {
-      p_dispatcher.add_handling<event_a>(
-          "event-a-1",
-          handler_1{p_logger, p_dispatcher, "handling-1",
-                    p_configuration.handlings_cfg[1].sleep_to_simulate_work},
-          queue_event_a{p_logger, "event-a-1"},
-          p_configuration.handlings_cfg[1].amount_handlers);
+      p_dispatcher.add_handling<
+          async::handling_definition<event_a, handler_1, queue_event_a>>(
+          {"event-a-1",
+           handler_1{p_logger, p_dispatcher, "handling-1",
+                     p_configuration.handlings_cfg[1].sleep_to_simulate_work},
+           queue_event_a{p_logger, "event-a-1"},
+           p_configuration.handlings_cfg[1].amount_handlers});
     }
 
     if (p_configuration.handlings_cfg[2].use) {
-      p_dispatcher.add_handling<event_a>(
-          "event-a-2",
-          handler_2{p_logger, p_dispatcher, "handling-2",
-                    p_configuration.handlings_cfg[2].sleep_to_simulate_work},
-          queue_event_a{p_logger, "event-a-2"},
-          p_configuration.handlings_cfg[2].amount_handlers);
+      p_dispatcher.add_handling<
+          async::handling_definition<event_a, handler_2, queue_event_a>>(
+          {"event-a-2",
+           handler_2{p_logger, p_dispatcher, "handling-2",
+                     p_configuration.handlings_cfg[2].sleep_to_simulate_work},
+           queue_event_a{p_logger, "event-a-2"},
+           p_configuration.handlings_cfg[2].amount_handlers});
     }
 
     if (p_configuration.handlings_cfg[3].use) {
-      p_dispatcher.add_handling<event_a>(
-          "event-a-3",
-          handler_3{p_logger, p_dispatcher, "handling-3",
-                    p_configuration.handlings_cfg[3].sleep_to_simulate_work},
-          queue_event_a{p_logger, "event-a-3"},
-          p_configuration.handlings_cfg[3].amount_handlers);
+      p_dispatcher.add_handling<
+          async::handling_definition<event_a, handler_3, queue_event_a>>(
+          {"event-a-3",
+           handler_3{p_logger, p_dispatcher, "handling-3",
+                     p_configuration.handlings_cfg[3].sleep_to_simulate_work},
+           queue_event_a{p_logger, "event-a-3"},
+           p_configuration.handlings_cfg[3].amount_handlers});
     }
 
     if (p_configuration.handlings_cfg[4].use) {
-      p_dispatcher.add_handling<event_a>(
-          "event-a-4",
-          handler_4{p_logger, p_dispatcher, "handling-4",
-                    p_configuration.handlings_cfg[4].sleep_to_simulate_work},
-          queue_event_a{p_logger, "event-a-4"},
-          p_configuration.handlings_cfg[4].amount_handlers);
+      p_dispatcher.add_handling<
+          async::handling_definition<event_a, handler_4, queue_event_a>>(
+          {"event-a-4",
+           handler_4{p_logger, p_dispatcher, "handling-4",
+                     p_configuration.handlings_cfg[4].sleep_to_simulate_work},
+           queue_event_a{p_logger, "event-a-4"},
+           p_configuration.handlings_cfg[4].amount_handlers});
     }
   }
 

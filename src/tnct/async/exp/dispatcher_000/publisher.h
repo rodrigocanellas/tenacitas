@@ -23,6 +23,8 @@ template <char t_event_id,
 struct publisher {
   using event = exp::event<t_event_id>;
 
+  using events_published = std::tuple<event>;
+
   publisher(t_dispacther &p_dispatcher, logger &p_logger,
             std::chrono::milliseconds p_interval, size_t p_total_events,
             std::string_view p_id)

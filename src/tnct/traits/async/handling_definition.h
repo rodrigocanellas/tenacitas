@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TRAITS_ASYNC_HANDLING_H
-#define TNCT_TRAITS_ASYNC_HANDLING_H
+#ifndef TNCT_TRAITS_ASYNC_HANDLING_DEFINITION_H
+#define TNCT_TRAITS_ASYNC_HANDLING_DEFINITION_H
 
 #include <type_traits>
 
@@ -41,7 +41,7 @@ namespace tnct::traits::async {
 //                         std::remove_cvref_t<typename t::priority>>;
 
 template <typename t>
-concept handling = requires(t p_t) {
+concept handling_definition = requires(t p_t) {
 
   typename t::event;
   typename t::handler;

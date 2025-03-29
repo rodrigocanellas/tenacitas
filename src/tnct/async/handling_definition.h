@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_HANDLING_H
-#define TNCT_ASYNC_HANDLING_H
+#ifndef TNCT_ASYNC_HANDLING_DEFINITION_H
+#define TNCT_ASYNC_HANDLING_DEFINITION_H
 
 #include "tnct/async/handling_id.h"
 #include "tnct/async/handling_priority.h"
@@ -17,17 +17,17 @@ namespace tnct::async {
 template <traits::async::event t_event,
           traits::async::handler<t_event> t_handler,
           traits::container::queue<t_event> t_queue>
-struct handling {
+struct handling_definition {
   using event = t_event;
   using handler = t_handler;
   using queue = t_queue;
   using priority = handling_priority;
   using id = handling_id;
 
-  handling() = delete;
-  handling(const handling_id &p_handling_id, handler &&p_handler,
-           queue &&p_queue, std::size_t p_num_handlers,
-           handling_priority p_priority = handling_priority::medium)
+  handling_definition() = delete;
+  handling_definition(const handling_id &p_handling_id, handler &&p_handler,
+                      queue &&p_queue, std::size_t p_num_handlers,
+                      handling_priority p_priority = handling_priority::medium)
       : m_id(p_handling_id), m_handler(std::move(p_handler)),
         m_queue(std::move(p_queue)), m_num_handlers(p_num_handlers),
         m_priority(std::move(p_priority)) {}

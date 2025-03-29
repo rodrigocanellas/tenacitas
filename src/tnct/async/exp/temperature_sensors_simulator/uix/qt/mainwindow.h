@@ -5,6 +5,8 @@
 
 #include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/supplier.h"
+#include "tnct/async/handling_definition.h"
+#include "tnct/container/circular_queue.h"
 
 using namespace tnct::async::exp::temperature_sensors_simulator;
 
@@ -27,9 +29,10 @@ public:
   }
 
 private:
-  struct handler {
+  struct handler_new_temperature {
     using events_handled = std::tuple<evt::new_temperature>;
-    handler(MainWindow *p_main_window) : m_main_window(p_main_window) {}
+    handler_new_temperature(MainWindow *p_main_window)
+        : m_main_window(p_main_window) {}
 
     void operator()(evt::new_temperature &&p_new_temperature) {
       (*m_main_window)(std::move(p_new_temperature));
@@ -38,6 +41,12 @@ private:
   private:
     MainWindow *m_main_window{nullptr};
   };
+
+  using queue_new_temperature =
+      tnct::container::circular_queue<logger, evt::new_temperature, 10>;
+
+  using handling_definition_new_temperature = tnct::async::handling_definition<
+      evt::new_temperature, handler_new_temperature, queue_new_temperature>;
 
 private:
   void on_new_temperature(evt::new_temperature &&);

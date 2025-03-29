@@ -3,9 +3,8 @@ include (../common.pri)
 TEMPLATE=subdirs
 
 SUBDIRS=\
-     test
-     # \
-     # example
+     test \
+     example
 
 PRJ_DIR=$$BASE_DIR/tnct/async
 
@@ -18,6 +17,6 @@ HEADERS += \
         $$PRJ_DIR/result.h \
         $$PRJ_DIR/internal/handling.h \
         $$PRJ_DIR/internal/handler_id.h \
-        $$PRJ_DIR/handling.h
+        $$PRJ_DIR/handling_definition.h
 
 

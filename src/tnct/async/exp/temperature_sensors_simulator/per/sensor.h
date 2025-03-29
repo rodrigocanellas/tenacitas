@@ -10,18 +10,29 @@
 #include "tnct/async/sleeping_loop.h"
 #include "tnct/format/fmt.h"
 #include "tnct/traits/async/dispatcher.h"
+#include "tnct/traits/async/publish_method.h"
 #include "tnct/traits/log/logger.h"
-#include "tnct/traits/tuple/contains_tuple.h"
-
-#include "tnct/async/sleeping_loop.h"
 
 using namespace tnct;
 
 namespace tnct::async::exp::temperature_sensors_simulator::per {
 
 template <traits::log::logger t_logger, traits::async::dispatcher t_dispatcher>
-requires(traits::tuple::contains_tuple<typename t_dispatcher::events,
-                                             std::tuple<evt::new_temperature>>)
+requires(
+
+    traits::async::dispatcher<t_dispatcher, evt::new_temperature>
+
+        &&
+
+            traits::async::has_const_lvalue_publish_method<
+                t_dispatcher, async::result, evt::new_temperature>
+
+                &&
+
+                    traits::async::has_variadic_params_publish_method<
+                        t_dispatcher, async::result, evt::new_temperature>
+
+    )
 
     struct sensor {
   using events_published = std::tuple<evt::new_temperature>;

@@ -18,7 +18,7 @@
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/result.h"
-#include "tnct/traits/async/handling.h"
+#include "tnct/traits/async/handling_definition.h"
 
 #include "tnct/format/fmt.h"
 #include "tnct/traits/async/event.h"
@@ -155,7 +155,7 @@ public:
     return result::OK;
   }
 
-  template <traits::async::handling t_handling>
+  template <traits::async::handling_definition t_handling>
   result add_handling(t_handling &&p_handling) {
     return add_handling<typename t_handling::event,
                         typename t_handling::handler,

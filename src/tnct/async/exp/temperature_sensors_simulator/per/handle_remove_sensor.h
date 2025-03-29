@@ -8,6 +8,7 @@
 
 #include "tnct/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensors_base.h"
+#include "tnct/async/handling_definition.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/traits/log/logger.h"
 
@@ -29,6 +30,11 @@ struct handle_remove_sensor {
 private:
   sensors_base &m_sensors;
 };
+
+template <traits::log::logger t_logger>
+using handling_definition_remove_sensor =
+    async::handling_definition<evt::remove_sensor, handle_remove_sensor,
+                               queue_remove_sensor<t_logger>>;
 
 } // namespace tnct::async::exp::temperature_sensors_simulator::per
 

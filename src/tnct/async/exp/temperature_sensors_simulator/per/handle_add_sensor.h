@@ -8,6 +8,7 @@
 
 #include "tnct/async/exp/temperature_sensors_simulator/evt/add_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensors_base.h"
+#include "tnct/async/handling_definition.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/traits/log/logger.h"
 
@@ -29,6 +30,11 @@ struct handle_add_sensor {
 private:
   sensors_base &m_sensors;
 };
+
+template <traits::log::logger t_logger>
+using handling_definition_add_sensor =
+    async::handling_definition<evt::add_sensor, handle_add_sensor,
+                               queue_add_sensor<t_logger>>;
 
 } // namespace tnct::async::exp::temperature_sensors_simulator::per
 
