@@ -11,6 +11,7 @@
 #include <set>
 
 #include "tnct/async/exp/temperature_sensors_simulator/evt/add_sensor.h"
+#include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
@@ -30,7 +31,7 @@ template <traits::log::logger t_logger, typename t_dispatcher>
 requires(
 
     traits::async::dispatcher<t_dispatcher, evt::add_sensor, evt::remove_sensor,
-                              evt::set_temperature>
+                              evt::set_temperature, evt::new_temperature>
 
     )
 

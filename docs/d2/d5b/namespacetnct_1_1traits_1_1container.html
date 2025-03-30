@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -104,7 +104,7 @@ template&lt;typename t , typename t_data &gt; </div>
 <div class="line">    has_output_operator&lt;typename t::data&gt; &amp;&amp; std::copy_constructible&lt;t&gt; &amp;&amp;</div>
 <div class="line">    std::move_constructible&lt;t&gt; &amp;&amp; std::assignable_from&lt;t &amp;, t&gt; &amp;&amp;</div>
 <div class="line"> </div>
-<div class="line">    <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a>(t p_t) {</div>
+<div class="line">    <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t) {</div>
 <div class="line"> </div>
 <div class="line">  <span class="keyword">typename</span> t::data;</div>
 <div class="line"> </div>
@@ -117,7 +117,7 @@ template&lt;typename t , typename t_data &gt; </div>
 <div class="line">  { p_t.occupied() } -&gt; std::same_as&lt;std::size_t&gt;;</div>
 <div class="line">  { p_t.clear() } -&gt; std::same_as&lt;void&gt;;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a0bab79948626fbd4dbfe2712562d36ad"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a5e8c962b62e8e27fa8ce3bb88bb26f92"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::async::dispatcher&lt; t_dispatcher, evt::new_temperature &gt; &amp;&amp;traits::async::has_const_lvalue_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt; &amp;&amp;traits::async::has_variadic_params_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00021">sensor.h:21</a></div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../d5/dd6/container_2queue_8h_source.html#l00019">19</a> of file <a class="el" href="../../d5/dd6/container_2queue_8h_source.html">queue.h</a>.</p>
 

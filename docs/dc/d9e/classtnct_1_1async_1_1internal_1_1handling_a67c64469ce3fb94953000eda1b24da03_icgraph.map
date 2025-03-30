@@ -1,4 +1,4 @@
 <map id="tnct::async::internal::handling::clear" name="tnct::async::internal::handling::clear">
 <area shape="rect" id="node1" title=" " alt="" coords="223,5,373,47"/>
-<area shape="rect" id="node2" href="$d4/d27/structtnct_1_1async_1_1dispatcher.html#a204faef3be167026bc1451ad685128ad" title="Cleans all handlings of a certain event." alt="" coords="5,5,175,47"/>
+<area shape="rect" id="node2" href="$d4/d27/structtnct_1_1async_1_1dispatcher.html#a204faef3be167026bc1451ad685128ad" title="Clears the events queue of all handlings of an event." alt="" coords="5,5,175,47"/>
 </map>

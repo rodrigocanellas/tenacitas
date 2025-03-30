@@ -10,7 +10,7 @@
 
 #include "tnct/traits/async/tuple_contains_only_events.h"
 #include "tnct/traits/has_new_operator.h"
-// #include "tnct/traits/tuple/contains_tuple.h"
+#include "tnct/traits/tuple/contains_tuple.h"
 #include "tnct/traits/tuple/like.h"
 #include "tnct/traits/tuple/size_greather_or_equal.h"
 
@@ -42,7 +42,7 @@ concept dispatcher = requires {
     &&
     tuple::size_greather_or_equal<typename t::events, std::tuple<t_events...>>
 
-    // && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>
+    && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>
 
     ;
 

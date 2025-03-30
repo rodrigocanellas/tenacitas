@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -103,7 +103,7 @@ $(function() {
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_container_tuple, <span class="keyword">typename</span> t_contained_tuple&gt;</div>
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">   33</a></span>&#160;concept <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">contains_tuple</a> =</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    (std::tuple_size_v&lt;t_container_tuple&gt; &gt; 0) &amp;&amp;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    (std::tuple_size_v&lt;t_contained_tuple&gt; &gt; 0) &amp;&amp;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    (std::tuple_size_v&lt;t_contained_tuple&gt; &gt;= 0) &amp;&amp;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    contains_tuple_helper&lt;t_container_tuple, t_contained_tuple&gt;();</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;} <span class="comment">// namespace tnct::traits::tuple</span></div>

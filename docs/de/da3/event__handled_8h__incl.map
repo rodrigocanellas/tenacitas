@@ -1,11 +1,16 @@
 <map id="/home/rodrigo/development/tenacitas/src/tnct/async/exp/dispatcher_000/event_handled.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/exp/dispatcher_000/event_handled.h">
-<area shape="rect" id="node1" title=" " alt="" coords="213,5,416,76"/>
-<area shape="rect" id="node2" title=" " alt="" coords="494,213,561,240"/>
-<area shape="rect" id="node3" title=" " alt="" coords="33,131,113,158"/>
-<area shape="rect" id="node4" title=" " alt="" coords="137,131,196,158"/>
-<area shape="rect" id="node5" href="$df/dc3/event__id_8h.html" title=" " alt="" coords="220,124,409,165"/>
-<area shape="rect" id="node6" href="$d8/dc5/exp_2dispatcher__000_2handler__id_8h.html" title=" " alt="" coords="860,124,1049,165"/>
-<area shape="rect" id="node8" href="$df/df6/handler__type__id_8h.html" title=" " alt="" coords="433,124,622,165"/>
-<area shape="rect" id="node9" href="$d5/d34/exp_2dispatcher__000_2handling__id_8h.html" title=" " alt="" coords="646,124,836,165"/>
-<area shape="rect" id="node7" title=" " alt="" coords="922,213,986,240"/>
+<area shape="rect" id="node1" title=" " alt="" coords="309,5,512,76"/>
+<area shape="rect" id="node2" title=" " alt="" coords="152,303,219,329"/>
+<area shape="rect" id="node3" title=" " alt="" coords="243,303,323,329"/>
+<area shape="rect" id="node4" title=" " alt="" coords="525,131,584,158"/>
+<area shape="rect" id="node5" href="$df/dc3/event__id_8h.html" title=" " alt="" coords="608,124,797,165"/>
+<area shape="rect" id="node6" href="$d8/dc5/exp_2dispatcher__000_2handler__id_8h.html" title=" " alt="" coords="821,124,1011,165"/>
+<area shape="rect" id="node8" href="$df/df6/handler__type__id_8h.html" title=" " alt="" coords="5,213,195,255"/>
+<area shape="rect" id="node9" href="$db/db5/handling__id_8h.html" title=" " alt="" coords="321,131,501,158"/>
+<area shape="rect" id="node7" title=" " alt="" coords="884,221,948,247"/>
+<area shape="rect" id="node10" href="$d3/d96/string_2fixed__size__string_8h.html" title=" " alt="" coords="333,213,489,255"/>
+<area shape="rect" id="node11" title=" " alt="" coords="539,303,624,329"/>
+<area shape="rect" id="node12" title=" " alt="" coords="648,303,704,329"/>
+<area shape="rect" id="node13" title=" " alt="" coords="347,303,413,329"/>
+<area shape="rect" id="node14" title=" " alt="" coords="438,303,514,329"/>
 </map>

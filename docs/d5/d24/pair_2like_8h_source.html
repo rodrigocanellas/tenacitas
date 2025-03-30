@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -82,14 +82,14 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html">tnct::traits::pair</a> {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5">   14</a></span>&#160;concept <a class="code" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5">like</a> = <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a>(T t) {</div>
+<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5">   14</a></span>&#160;concept <a class="code" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5">like</a> = <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(T t) {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  { t.first } -&gt; std::convertible_to&lt;typename T::first_type&gt;;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  { t.second } -&gt; std::convertible_to&lt;typename T::second_type&gt;;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;};</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;} <span class="comment">// namespace tnct::traits::pair</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a0bab79948626fbd4dbfe2712562d36ad"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a5e8c962b62e8e27fa8ce3bb88bb26f92"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::async::dispatcher&lt; t_dispatcher, evt::new_temperature &gt; &amp;&amp;traits::async::has_const_lvalue_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt; &amp;&amp;traits::async::has_variadic_params_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00021">sensor.h:21</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1traits_1_1pair_html"><div class="ttname"><a href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html">tnct::traits::pair</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d0/d92/pair_2is_8h_source.html#l00012">is.h:12</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1traits_1_1pair_html_a590632dcc7e81df1b37fea10dccefaa5"><div class="ttname"><a href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html#a590632dcc7e81df1b37fea10dccefaa5">tnct::traits::pair::like</a></div><div class="ttdeci">concept like</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d24/pair_2like_8h_source.html#l00014">like.h:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

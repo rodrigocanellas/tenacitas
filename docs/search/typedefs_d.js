@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['temperature_1059',['temperature',['../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#a3d9709704f8c7fa7e99a83a4f6cc3637',1,'tnct::async::exp::temperature_sensors_simulator::typ']]],
-  ['translate_1060',['translate',['../d1/dc1/namespacetnct_1_1translator.html#a53f3b05c651e8fb8031d39688c4ca0c6',1,'tnct::translator']]],
-  ['tuple_5ftransform_5ft_1061',['tuple_transform_t',['../d4/d9e/namespacetnct_1_1tuple.html#a5a5568692ba0be56db45df890f3d1aed',1,'tnct::tuple']]],
-  ['type_1062',['type',['../d7/d32/structtnct_1_1tuple_1_1tuple__transform_3_01std_1_1tuple_3_01ts_8_8_8_01_4_00_01t__converter_01_4.html#a766a1e9abecd3fa168efaeb37a82c731',1,'tnct::tuple::tuple_transform&lt; std::tuple&lt; ts... &gt;, t_converter &gt;']]]
+  ['value_1150',['value',['../d8/df7/structsleeping__loop__001.html#a81d9e0ad0bc23f425b455c8688617523',1,'sleeping_loop_001::value()'],['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#ae4bd1eae783e4199d43e17267af04d44',1,'tnct::parser::ini_file::value()'],['../db/da3/structtnct_1_1program_1_1options.html#a304a37bea59c25adc7925e3888ff9396',1,'tnct::program::options::value()']]]
 ];
