@@ -6,13 +6,15 @@
 #ifndef TNCT_TRAITS_ASYNC_EVENT_H
 #define TNCT_TRAITS_ASYNC_EVENT_H
 
+#include <type_traits>
+
 #include "tnct/traits/has_output_operator.h"
 
 namespace tnct::traits::async {
 
 template <typename t>
 concept event = std::default_initializable<t> && std::copy_constructible<t> &&
-    std::move_constructible<t> && has_output_operator<t>;
+    std::move_constructible<t> && has_output_operator<t> && std::is_class_v<t>;
 
 }
 

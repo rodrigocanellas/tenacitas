@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -77,136 +77,134 @@ $(function() {
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../de/d8c/sensor__id_8h.html">tnct/async/exp/temperature_sensors_simulator/typ/sensor_id.h</a>&quot;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d6/d91/temperature_8h.html">tnct/async/exp/temperature_sensors_simulator/typ/temperature.h</a>&quot;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d0/dca/handling__priority_8h.html">tnct/async/handling_priority.h</a>&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../de/d93/result_8h.html">tnct/async/result.h</a>&quot;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d3/d1e/circular__queue_8h.html">tnct/container/circular_queue.h</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/def/fmt_8h.html">tnct/format/fmt.h</a>&quot;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../da/db1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator.html">tnct::async::exp::temperature_sensors_simulator</a>;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d4/d18/namespacetnct.html">tnct</a>;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">   14</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow::MainWindow</a>(<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> &amp;p_logger, <a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">dispatcher</a> &amp;p_dispatcher,</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;                       QWidget *parent)</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    : QMainWindow(parent), m_logger(p_logger), m_dispatcher(p_dispatcher),</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      ui(new <a class="code" href="../../dc/df0/namespace_ui.html">Ui</a>::<a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>) {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  ui-&gt;setupUi(<span class="keyword">this</span>);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a2f9b8f17624921b68a2eeef43443f631">set_inf</a>();</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <span class="keyword">auto</span> _result(m_dispatcher.template add_handling&lt;evt::new_temperature&gt;(</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      [<span class="keyword">this</span>](<a class="code" href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;p_event) { (*this)(std::move(p_event)); },</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      async::handling_priority::high,</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      <a class="code" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">container::circular_queue&lt;logger, evt::new_temperature, 10&gt;</a>{m_logger},</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      1));</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordflow">if</span> (!_result) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;new_temperature&quot;</span>);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  }</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">   34</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a>() { <span class="keyword">delete</span> ui; }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">int</span> MainWindow::findRow(<a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> p_sensor_id)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordtype">int</span> _row_count = ui-&gt;tblTemperatures-&gt;rowCount();</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> _i = 0; _i &lt; _row_count; ++_i) {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    QString _sensor_id_str = ui-&gt;tblTemperatures-&gt;item(_i, 0)-&gt;text();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">auto</span> _sendor_id =</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keyword">static_cast&lt;</span>decltype(p_sensor_id)<span class="keyword">&gt;</span>(_sensor_id_str.toInt());</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">if</span> (_sendor_id == p_sensor_id) {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      <span class="keywordflow">return</span> _i;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keywordtype">void</span> MainWindow::on_new_temperature(<a class="code" href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;p_evt) {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordtype">int</span> _row = findRow(p_evt.sensor_id);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">if</span> (_row != -1) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    ui-&gt;tblTemperatures-&gt;setItem(</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        _row, 1,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keyword">new</span> QTableWidgetItem(QString::number(p_evt.temperature, <span class="charliteral">&#39;g&#39;</span>, 4)));</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnAddSensor_clicked() {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keywordflow">if</span> (!ui-&gt;txtSensorToAdd-&gt;text().isEmpty()) {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToAdd-&gt;text().toInt())};</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">int</span> _row = findRow(_sensor_id);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordflow">if</span> (_row == -1) {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      ui-&gt;tblTemperatures-&gt;insertRow(ui-&gt;tblTemperatures-&gt;rowCount());</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;      ui-&gt;tblTemperatures-&gt;setItem(</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;          ui-&gt;tblTemperatures-&gt;rowCount() - 1, 0,</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;          <span class="keyword">new</span> QTableWidgetItem(QString::number(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(_sensor_id))));</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keyword">auto</span> _result(m_dispatcher.template publish&lt;evt::add_sensor&gt;(_sensor_id));</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      ui-&gt;txtSensorToAdd-&gt;setText(<span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnDeleteSensor_clicked() {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordflow">if</span> (!ui-&gt;txtSensorToDelete-&gt;text().isEmpty()) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToDelete-&gt;text().toInt())};</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span> _row = findRow(_sensor_id);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">if</span> (_row != -1) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      ui-&gt;tblTemperatures-&gt;removeRow(_row);</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="keyword">auto</span> _result(m_dispatcher.<a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">publish</a>&lt;<a class="code" href="../../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html">evt::remove_sensor</a>&gt;(_sensor_id));</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  }</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnSetTemperature_clicked() {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">if</span> (ui-&gt;txtTemperatureToSet-&gt;text().isEmpty() ||</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      ui-&gt;txtSensorToSet-&gt;text().isEmpty()) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToSet-&gt;text().toInt())};</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#a3d9709704f8c7fa7e99a83a4f6cc3637">typ::temperature</a> _temperature{ui-&gt;txtTemperatureToSet-&gt;text().toFloat()};</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keywordflow">if</span> (findRow(_sensor_id) != -1) {</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">auto</span> _result(</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        m_dispatcher.<a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">publish</a>&lt;<a class="code" href="../../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html">evt::set_temperature</a>&gt;(_sensor_id, _temperature));</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;      m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div>
-<div class="ttc" id="acircular__queue_8h_html"><div class="ttname"><a href="../../d3/d1e/circular__queue_8h.html">circular_queue.h</a></div></div>
-<div class="ttc" id="aclass_main_window_html"><div class="ttname"><a href="../../d9/dc6/class_main_window.html">MainWindow</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00017">mainwindow.h:17</a></div></div>
-<div class="ttc" id="aclass_main_window_html_aa97573eb4b0f8f2157ffbf8987872253"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow::MainWindow</a></div><div class="ttdeci">MainWindow(logger &amp;p_logger, dispatcher &amp;p_dispatcher, QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dd9/mainwindow_8cpp_source.html#l00014">mainwindow.cpp:14</a></div></div>
-<div class="ttc" id="aclass_main_window_html_ae98d00a93bc118200eeef9f9bba1dba7"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a></div><div class="ttdeci">~MainWindow()</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dd9/mainwindow_8cpp_source.html#l00034">mainwindow.cpp:34</a></div></div>
-<div class="ttc" id="aclasstnct_1_1container_1_1circular__queue_html"><div class="ttname"><a href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a></div><div class="ttdoc">Implements a circular queue which size is increased if it becomes full.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d1e/circular__queue_8h_source.html#l00032">circular_queue.h:32</a></div></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d2/d62/async_2handling__priority_8h.html">tnct/async/handling_priority.h</a>&quot;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../da/dca/async_2result_8h.html">tnct/async/result.h</a>&quot;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/def/fmt_8h.html">tnct/format/fmt.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../da/db1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator.html">tnct::async::exp::temperature_sensors_simulator</a>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">using namespace </span><a class="code" href="../../d4/d18/namespacetnct.html">tnct</a>;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">   13</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow::MainWindow</a>(<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> &amp;p_logger, <a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">dispatcher</a> &amp;p_dispatcher,</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                       QWidget *parent)</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    : QMainWindow(parent), m_logger(p_logger), m_dispatcher(p_dispatcher),</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      ui(new <a class="code" href="../../dc/df0/namespace_ui.html">Ui</a>::<a class="code" href="../../d9/dc6/class_main_window.html">MainWindow</a>) {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  ui-&gt;setupUi(<span class="keyword">this</span>);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a2f9b8f17624921b68a2eeef43443f631">set_inf</a>();</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <span class="keyword">auto</span> _result(</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      m_dispatcher.template add_handling&lt;handling_definition_new_temperature&gt;(</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;          {<span class="stringliteral">&quot;new-temperature&quot;</span>, handler_new_temperature{this},</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;           <a class="code" href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">queue_new_temperature</a>{m_logger}, 1,</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;           async::handling_priority::high}));</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="../../d5/d7c/traits_2log_2logger_8h.html#a6a64aa76293016a2acb2b2515688f698">TNCT_LOG_ERR</a>(m_logger, <span class="stringliteral">&quot;error creating handling for &#39;new_temperature&quot;</span>);</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">   33</a></span>&#160;<a class="code" href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a>() { <span class="keyword">delete</span> ui; }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordtype">int</span> MainWindow::findRow(<a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> p_sensor_id)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordtype">int</span> _row_count = ui-&gt;tblTemperatures-&gt;rowCount();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> _i = 0; _i &lt; _row_count; ++_i) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    QString _sensor_id_str = ui-&gt;tblTemperatures-&gt;item(_i, 0)-&gt;text();</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">auto</span> _sendor_id =</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">static_cast&lt;</span>decltype(p_sensor_id)<span class="keyword">&gt;</span>(_sensor_id_str.toInt());</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> (_sendor_id == p_sensor_id) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      <span class="keywordflow">return</span> _i;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keywordtype">void</span> MainWindow::on_new_temperature(<a class="code" href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">evt::new_temperature</a> &amp;&amp;p_evt) {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordtype">int</span> _row = findRow(p_evt.sensor_id);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordflow">if</span> (_row != -1) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    ui-&gt;tblTemperatures-&gt;setItem(</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        _row, 1,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keyword">new</span> QTableWidgetItem(QString::number(p_evt.temperature, <span class="charliteral">&#39;g&#39;</span>, 4)));</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnAddSensor_clicked() {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keywordflow">if</span> (!ui-&gt;txtSensorToAdd-&gt;text().isEmpty()) {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToAdd-&gt;text().toInt())};</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">int</span> _row = findRow(_sensor_id);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordflow">if</span> (_row == -1) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      ui-&gt;tblTemperatures-&gt;insertRow(ui-&gt;tblTemperatures-&gt;rowCount());</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      ui-&gt;tblTemperatures-&gt;setItem(</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;          ui-&gt;tblTemperatures-&gt;rowCount() - 1, 0,</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;          <span class="keyword">new</span> QTableWidgetItem(QString::number(<span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(_sensor_id))));</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keyword">auto</span> _result(m_dispatcher.template publish&lt;evt::add_sensor&gt;(_sensor_id));</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      ui-&gt;txtSensorToAdd-&gt;setText(<span class="stringliteral">&quot;&quot;</span>);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnDeleteSensor_clicked() {</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordflow">if</span> (!ui-&gt;txtSensorToDelete-&gt;text().isEmpty()) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToDelete-&gt;text().toInt())};</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">int</span> _row = findRow(_sensor_id);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordflow">if</span> (_row != -1) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      ui-&gt;tblTemperatures-&gt;removeRow(_row);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      <span class="keyword">auto</span> _result(m_dispatcher.<a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">publish</a>&lt;<a class="code" href="../../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html">evt::remove_sensor</a>&gt;(_sensor_id));</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160; </div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keywordtype">void</span> MainWindow::on_btnSetTemperature_clicked() {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">if</span> (ui-&gt;txtTemperatureToSet-&gt;text().isEmpty() ||</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      ui-&gt;txtSensorToSet-&gt;text().isEmpty()) {</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a> _sensor_id{</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      <span class="keyword">static_cast&lt;</span><a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">typ::sensor_id</a><span class="keyword">&gt;</span>(ui-&gt;txtSensorToSet-&gt;text().toInt())};</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <a class="code" href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#a3d9709704f8c7fa7e99a83a4f6cc3637">typ::temperature</a> _temperature{ui-&gt;txtTemperatureToSet-&gt;text().toFloat()};</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  std::lock_guard&lt;std::mutex&gt; _lock{m_mutex};</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordflow">if</span> (findRow(_sensor_id) != -1) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">auto</span> _result(</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        m_dispatcher.<a class="code" href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">publish</a>&lt;<a class="code" href="../../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html">evt::set_temperature</a>&gt;(_sensor_id, _temperature));</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">if</span> (_result != async::result::OK) {</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;      m_logger.<a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">err</a>(format::fmt(_result));</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
+<div class="ttc" id="aasync_2handling__priority_8h_html"><div class="ttname"><a href="../../d2/d62/async_2handling__priority_8h.html">handling_priority.h</a></div></div>
+<div class="ttc" id="aasync_2result_8h_html"><div class="ttname"><a href="../../da/dca/async_2result_8h.html">result.h</a></div></div>
+<div class="ttc" id="aclass_main_window_html"><div class="ttname"><a href="../../d9/dc6/class_main_window.html">MainWindow</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00019">mainwindow.h:19</a></div></div>
+<div class="ttc" id="aclass_main_window_html_aa97573eb4b0f8f2157ffbf8987872253"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#aa97573eb4b0f8f2157ffbf8987872253">MainWindow::MainWindow</a></div><div class="ttdeci">MainWindow(logger &amp;p_logger, dispatcher &amp;p_dispatcher, QWidget *parent=nullptr)</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dd9/mainwindow_8cpp_source.html#l00013">mainwindow.cpp:13</a></div></div>
+<div class="ttc" id="aclass_main_window_html_ae98d00a93bc118200eeef9f9bba1dba7"><div class="ttname"><a href="../../d9/dc6/class_main_window.html#ae98d00a93bc118200eeef9f9bba1dba7">MainWindow::~MainWindow</a></div><div class="ttdeci">~MainWindow()</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dd9/mainwindow_8cpp_source.html#l00033">mainwindow.cpp:33</a></div></div>
+<div class="ttc" id="aclasstnct_1_1container_1_1circular__queue_html"><div class="ttname"><a href="../../dc/d90/classtnct_1_1container_1_1circular__queue.html">tnct::container::circular_queue</a></div><div class="ttdoc">Implements a circular queue which size is increased if it becomes full.</div><div class="ttdef"><b>Definition:</b> <a href="../../d3/d1e/circular__queue_8h_source.html#l00033">circular_queue.h:33</a></div></div>
 <div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">logger.h:34</a></div></div>
 <div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html_a2f9b8f17624921b68a2eeef43443f631"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a2f9b8f17624921b68a2eeef43443f631">tnct::log::internal::logger::set_inf</a></div><div class="ttdeci">void set_inf()</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00211">logger.h:211</a></div></div>
 <div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html_a4176c22c621559e54e605b9eb08cb140"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140">tnct::log::internal::logger::err</a></div><div class="ttdeci">void err(std::string_view p_string, std::source_location p_source_location=std::source_location::current())</div><div class="ttdoc">Logs message with err severity Each parameter must implement the output operator. level::err messages...</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00188">logger.h:188</a></div></div>
 <div class="ttc" id="afmt_8h_html"><div class="ttname"><a href="../../db/def/fmt_8h.html">fmt.h</a></div></div>
-<div class="ttc" id="ahandling__priority_8h_html"><div class="ttname"><a href="../../d0/dca/handling__priority_8h.html">handling_priority.h</a></div></div>
 <div class="ttc" id="amainwindow_8h_html"><div class="ttname"><a href="../../d9/d53/mainwindow_8h.html">mainwindow.h</a></div></div>
-<div class="ttc" id="anamespace_ui_html"><div class="ttname"><a href="../../dc/df0/namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00012">mainwindow.h:12</a></div></div>
+<div class="ttc" id="anamespace_ui_html"><div class="ttname"><a href="../../dc/df0/namespace_ui.html">Ui</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d53/mainwindow_8h_source.html#l00014">mainwindow.h:14</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ_html_a3d9709704f8c7fa7e99a83a4f6cc3637"><div class="ttname"><a href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#a3d9709704f8c7fa7e99a83a4f6cc3637">tnct::async::exp::temperature_sensors_simulator::typ::temperature</a></div><div class="ttdeci">float temperature</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d91/temperature_8h_source.html#l00006">temperature.h:6</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ_html_adf857c72f4907e3d1cfb8485268d38c3"><div class="ttname"><a href="../../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3">tnct::async::exp::temperature_sensors_simulator::typ::sensor_id</a></div><div class="ttdeci">uint16_t sensor_id</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d8c/sensor__id_8h_source.html#l00008">sensor_id.h:8</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_html"><div class="ttname"><a href="../../da/db1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator.html">tnct::async::exp::temperature_sensors_simulator</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d6a/add__sensor_8h_source.html#l00008">add_sensor.h:8</a></div></div>
-<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00033">dispatcher.h:33</a></div></div>
-<div class="ttc" id="aresult_8h_html"><div class="ttname"><a href="../../de/d93/result_8h.html">result.h</a></div></div>
+<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00034">dispatcher.h:34</a></div></div>
 <div class="ttc" id="asensor__id_8h_html"><div class="ttname"><a href="../../de/d8c/sensor__id_8h.html">sensor_id.h</a></div></div>
-<div class="ttc" id="astructtnct_1_1async_1_1dispatcher_html"><div class="ttname"><a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">tnct::async::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00090">dispatcher.h:90</a></div></div>
-<div class="ttc" id="astructtnct_1_1async_1_1dispatcher_html_ac83d8512b636eb5566c8b3041f1d3e11"><div class="ttname"><a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">tnct::async::dispatcher::publish</a></div><div class="ttdeci">result publish(const t_event &amp;p_event) noexcept</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00118">dispatcher.h:118</a></div></div>
+<div class="ttc" id="astructtnct_1_1async_1_1dispatcher_html"><div class="ttname"><a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html">tnct::async::dispatcher</a></div><div class="ttdoc">Class that allows creation of queues for an event, creation of subscribers for an event,...</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00091">dispatcher.h:91</a></div></div>
+<div class="ttc" id="astructtnct_1_1async_1_1dispatcher_html_ac83d8512b636eb5566c8b3041f1d3e11"><div class="ttname"><a href="../../d4/d27/structtnct_1_1async_1_1dispatcher.html#ac83d8512b636eb5566c8b3041f1d3e11">tnct::async::dispatcher::publish</a></div><div class="ttdeci">result publish(const t_event &amp;p_event) noexcept</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00119">dispatcher.h:119</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature_html"><div class="ttname"><a href="../../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html">tnct::async::exp::temperature_sensors_simulator::evt::new_temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d4a/new__temperature_8h_source.html#l00011">new_temperature.h:11</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor_html"><div class="ttname"><a href="../../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html">tnct::async::exp::temperature_sensors_simulator::evt::remove_sensor</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d14/remove__sensor_8h_source.html#l00010">remove_sensor.h:10</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature_html"><div class="ttname"><a href="../../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html">tnct::async::exp::temperature_sensors_simulator::evt::set_temperature</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d33/set__temperature_8h_source.html#l00011">set_temperature.h:11</a></div></div>

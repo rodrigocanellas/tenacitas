@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -77,19 +77,21 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TRAITS_ASYNC_EVENT_H</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_ASYNC_EVENT_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d8/da7/has__output__operator_8h.html">tnct/traits/has_output_operator.h</a>&quot;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a> {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d8/da7/has__output__operator_8h.html">tnct/traits/has_output_operator.h</a>&quot;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">   14</a></span>&#160;concept <span class="keyword">event</span> = std::default_initializable&lt;t&gt; &amp;&amp; std::copy_constructible&lt;t&gt; &amp;&amp;</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    std::move_constructible&lt;t&gt; &amp;&amp; has_output_operator&lt;t&gt;;</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;}</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a> {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t&gt;</div>
+<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">   16</a></span>&#160;concept <span class="keyword">event</span> = std::default_initializable&lt;t&gt; &amp;&amp; std::copy_constructible&lt;t&gt; &amp;&amp;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    std::move_constructible&lt;t&gt; &amp;&amp; has_output_operator&lt;t&gt; &amp;&amp; std::is_class_v&lt;t&gt;;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;}</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="ahas__output__operator_8h_html"><div class="ttname"><a href="../../d8/da7/has__output__operator_8h.html">has_output_operator.h</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d93/traits_2async_2dispatcher_8h_source.html#l00017">dispatcher.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d0/dc1/add__handling__method_8h_source.html#l00017">add_handling_method.h:17</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

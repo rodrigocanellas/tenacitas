@@ -4,7 +4,6 @@ TEMPLATE=subdirs
 
 SUBDIRS = \
     generic \
-    # math \
     container \
     async \
     traits \
@@ -16,7 +15,8 @@ SUBDIRS = \
     time \
     format \
     tester \
-    ostream
+    ostream \
+    string
 
 
 

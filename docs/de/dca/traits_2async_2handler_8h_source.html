@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -74,35 +74,39 @@ $(function() {
 <div class="contents">
 <a href="../../de/dca/traits_2async_2handler_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TRAITS_ASYNC_HANDLER_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_ASYNC_HANDLER_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TRAITS_ASYNC_SUBSCRIBER_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_ASYNC_SUBSCRIBER_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d2/de3/traits_2async_2event_8h.html">tnct/traits/async/event.h</a>&quot;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d2/de3/traits_2async_2event_8h.html">tnct/traits/async/event.h</a>&quot;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a> {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a> {</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t, <span class="keyword">typename</span> t_event&gt;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">   16</a></span>&#160;concept <a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">handler</a> = async::event&lt;t_event&gt; &amp;&amp;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    std::invocable&lt;t,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;                   std::add_rvalue_reference_t&lt;std::remove_cvref_t&lt;t_event&gt;&gt;&gt;;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">//     requires(t p_t) {</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">//   requires event&lt;typename t::event&gt;;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//   {</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//     p_t((</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">//         std::declval&lt;std::add_rvalue_reference_t&lt;std::remove_cv_t&lt;t_event&gt;&gt;&gt;()))</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">//     } -&gt; std::same_as&lt;void&gt;;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">// };</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;} <span class="comment">// namespace tnct::traits::async</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d93/traits_2async_2dispatcher_8h_source.html#l00017">dispatcher.h:17</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html_a5461676dcadb06f838815c55a9bd18a0"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">tnct::traits::async::handler</a></div><div class="ttdeci">concept handler</div><div class="ttdef"><b>Definition:</b> <a href="../../de/dca/traits_2async_2handler_8h_source.html#l00016">handler.h:16</a></div></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">// code reviewed by ChatGPT from a previous version I wrote</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t, <span class="keyword">typename</span> t_event&gt;</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">   15</a></span>&#160;concept <a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">handler</a> = event&lt;t_event&gt; &amp;&amp; <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event &amp;&amp;evt) {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  { p_t(std::move(evt)) } -&gt; std::same_as&lt;void&gt;;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;}</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;&amp;&amp; !<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, <span class="keyword">const</span> t_event &amp;evt) {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  p_t(evt);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;} <span class="comment">// Prevents const t_event&amp;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;&amp;&amp;!<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event evt) {</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;  p_t(evt);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;} <span class="comment">// Prevents t_event (by value)</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// template &lt;typename t, typename t_event&gt;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">// concept handler = event&lt;t_event&gt; &amp;&amp;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">//     std::is_invocable_r_v&lt;void, t, t_event &amp;&amp;&gt;; // Ensures correct signature</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;} <span class="comment">// namespace tnct::traits::async</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a5e8c962b62e8e27fa8ce3bb88bb26f92"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::async::dispatcher&lt; t_dispatcher, evt::new_temperature &gt; &amp;&amp;traits::async::has_const_lvalue_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt; &amp;&amp;traits::async::has_variadic_params_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00021">sensor.h:21</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html">tnct::traits::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d0/dc1/add__handling__method_8h_source.html#l00017">add_handling_method.h:17</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html_a5461676dcadb06f838815c55a9bd18a0"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#a5461676dcadb06f838815c55a9bd18a0">tnct::traits::async::handler</a></div><div class="ttdeci">concept handler</div><div class="ttdef"><b>Definition:</b> <a href="../../de/dca/traits_2async_2handler_8h_source.html#l00015">handler.h:15</a></div></div>
 <div class="ttc" id="atraits_2async_2event_8h_html"><div class="ttname"><a href="../../d2/de3/traits_2async_2event_8h.html">event.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -10,7 +10,7 @@
 
 #include "tnct/traits/async/tuple_contains_only_events.h"
 #include "tnct/traits/has_new_operator.h"
-// #include "tnct/traits/tuple/contains_tuple.h"
+#include "tnct/traits/tuple/contains_tuple.h"
 #include "tnct/traits/tuple/like.h"
 #include "tnct/traits/tuple/size_greather_or_equal.h"
 
@@ -20,6 +20,7 @@ template <typename t, typename... t_events>
 concept dispatcher = requires {
   typename t::events;
 }
+
 &&!std::copy_constructible<t>
 
     && not std::copy_constructible<t>
@@ -34,14 +35,16 @@ concept dispatcher = requires {
 
     && tuple::like<std::tuple<t_events...>>
 
+    && tuple_contains_only_events<typename t::events>
+
+    && tuple_contains_only_events<std::tuple<t_events...>>
+
     &&
     tuple::size_greather_or_equal<typename t::events, std::tuple<t_events...>>
 
-    && tuple_contains_only_events<typename t::events>
+    && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>
 
-    && tuple_contains_only_events<std::tuple<t_events...>>;
-
-// && tuple::contains_tuple<typename t::events, std::tuple<t_events...>>;
+    ;
 
 } // namespace tnct::traits::async
 

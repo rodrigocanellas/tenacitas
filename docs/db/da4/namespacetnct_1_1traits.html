@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -87,6 +87,8 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:d0/dde/namespacetnct_1_1traits_1_1pair"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/dde/namespacetnct_1_1traits_1_1pair.html">pair</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:d4/d78/namespacetnct_1_1traits_1_1string"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d78/namespacetnct_1_1traits_1_1string.html">string</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:d5/dfa/namespacetnct_1_1traits_1_1subscriber__test"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dfa/namespacetnct_1_1traits_1_1subscriber__test.html">subscriber_test</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:d3/d56/namespacetnct_1_1traits_1_1test"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d56/namespacetnct_1_1traits_1_1test.html">test</a></td></tr>
@@ -133,6 +135,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a53a53acccc0e964d0107e4e7b488b5b2"><td class="memTemplParams" colspan="2">template&lt;typename t_from &gt; </td></tr>
 <tr class="memitem:a53a53acccc0e964d0107e4e7b488b5b2"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a53a53acccc0e964d0107e4e7b488b5b2">convertible_to_nano</a></td></tr>
 <tr class="separator:a53a53acccc0e964d0107e4e7b488b5b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad2c5f5ec103008d2e4f25a21fa85844"><td class="memTemplParams" colspan="2">template&lt;typename t &gt; </td></tr>
+<tr class="memitem:aad2c5f5ec103008d2e4f25a21fa85844"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#aad2c5f5ec103008d2e4f25a21fa85844">enum_like</a> = std::is_enum_v&lt;t&gt;</td></tr>
+<tr class="separator:aad2c5f5ec103008d2e4f25a21fa85844"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a472e7e9af87a678e54389302bf63c101"><td class="memTemplParams" colspan="2">template&lt;typename t &gt; </td></tr>
 <tr class="memitem:a472e7e9af87a678e54389302bf63c101"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a472e7e9af87a678e54389302bf63c101">has_new_operator_v</a> = <a class="el" href="../../d3/d23/classtnct_1_1traits_1_1has__new__operator.html">has_new_operator</a>&lt;t&gt;::value</td></tr>
 <tr class="separator:a472e7e9af87a678e54389302bf63c101"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,6 +147,12 @@ Variables</h2></td></tr>
 <tr class="memitem:a1ad6edb10c851d86681651700dffb1a0"><td class="memTemplParams" colspan="2">template&lt;typename t &gt; </td></tr>
 <tr class="memitem:a1ad6edb10c851d86681651700dffb1a0"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a1ad6edb10c851d86681651700dffb1a0">is_smart_ptr_v</a> = <a class="el" href="../../d8/db3/structtnct_1_1traits_1_1is__smart__ptr.html">is_smart_ptr</a>&lt;t&gt;::value</td></tr>
 <tr class="separator:a1ad6edb10c851d86681651700dffb1a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55e7af0ee0af92ec68dcaf5f1012b09e"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_event &gt; </td></tr>
+<tr class="memitem:a55e7af0ee0af92ec68dcaf5f1012b09e"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a55e7af0ee0af92ec68dcaf5f1012b09e">has_handle_method</a></td></tr>
+<tr class="separator:a55e7af0ee0af92ec68dcaf5f1012b09e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0df58966a5cfa674d8db5882917eb0b4"><td class="memTemplParams" colspan="2">template&lt;typename t &gt; </td></tr>
+<tr class="memitem:a0df58966a5cfa674d8db5882917eb0b4"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a0df58966a5cfa674d8db5882917eb0b4">subscriber</a></td></tr>
+<tr class="separator:a0df58966a5cfa674d8db5882917eb0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>This file is under GPL 3 license. Please read the <code>LICENSE</code> file at the root of <code>tenacitas</code> directory</dd></dl>
@@ -161,10 +172,10 @@ template&lt;typename t_to , typename t_from &gt; </div>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= is_chrono_duration&lt;t_from&gt; &amp;&amp;</div>
-<div class="line">    <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a>(t_from p_time) {</div>
+<div class="line">    <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t_from p_time) {</div>
 <div class="line">  { std::chrono::duration_cast&lt;t_to&gt;(p_time) } -&gt; std::same_as&lt;t_to&gt;;</div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a0bab79948626fbd4dbfe2712562d36ad"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::tuple::contains_tuple&lt; typename t_dispatcher::events, std::tuple&lt; evt::new_temperature &gt;&gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00023">sensor.h:23</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_html_a5e8c962b62e8e27fa8ce3bb88bb26f92"><div class="ttname"><a href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">tnct::async::exp::temperature_sensors_simulator::per::requires</a></div><div class="ttdeci">requires(traits::async::dispatcher&lt; t_dispatcher, evt::new_temperature &gt; &amp;&amp;traits::async::has_const_lvalue_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt; &amp;&amp;traits::async::has_variadic_params_publish_method&lt; t_dispatcher, async::result, evt::new_temperature &gt;) struct sensor</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d2e/sensor_8h_source.html#l00021">sensor.h:21</a></div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../d9/d3a/chrono__convertible_8h_source.html#l00027">27</a> of file <a class="el" href="../../d9/d3a/chrono__convertible_8h_source.html">chrono_convertible.h</a>.</p>
 
@@ -228,6 +239,47 @@ template&lt;typename t_from &gt; </div>
 
 </div>
 </div>
+<a id="aad2c5f5ec103008d2e4f25a21fa85844"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad2c5f5ec103008d2e4f25a21fa85844">&#9670;&nbsp;</a></span>enum_like</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">concept tnct::traits::enum_like = std::is_enum_v&lt;t&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d0/d9b/enum_8h_source.html#l00014">14</a> of file <a class="el" href="../../d0/d9b/enum_8h_source.html">enum.h</a>.</p>
+
+</div>
+</div>
+<a id="a55e7af0ee0af92ec68dcaf5f1012b09e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55e7af0ee0af92ec68dcaf5f1012b09e">&#9670;&nbsp;</a></span>has_handle_method</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename t , typename t_event &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">concept tnct::traits::has_handle_method</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t) {</div>
+<div class="line">  <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a> event&lt;t_event&gt;;</div>
+<div class="line"> </div>
+<div class="line">  { p_t.handle(std::declval&lt;t_event &amp;&amp;&gt;()) } -&gt; std::same_as&lt;void&gt;;</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="../../da/d9f/subscriber_8h_source.html#l00017">17</a> of file <a class="el" href="../../da/d9f/subscriber_8h_source.html">subscriber.h</a>.</p>
+
+</div>
+</div>
 <a id="a472e7e9af87a678e54389302bf63c101"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a472e7e9af87a678e54389302bf63c101">&#9670;&nbsp;</a></span>has_new_operator_v</h2>
 
@@ -267,7 +319,7 @@ template&lt;typename T , typename CharT  = char, typename Traits  = std::char_tr
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a>(std::basic_ostream&lt;CharT, Traits&gt; &amp;os,</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(std::basic_ostream&lt;CharT, Traits&gt; &amp;os,</div>
 <div class="line">                                       <span class="keyword">const</span> T &amp;value) {</div>
 <div class="line">  { os &lt;&lt; value } -&gt; std::same_as&lt;std::basic_ostream&lt;CharT, Traits&gt; &amp;&gt;;</div>
 <div class="line">}</div>
@@ -289,10 +341,10 @@ template&lt;typename t_from &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a> {</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a> {</div>
 <div class="line">  <span class="keyword">typename</span> t_from::rep;</div>
 <div class="line">  <span class="keyword">typename</span> t_from::period;</div>
-<div class="line">  <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a0bab79948626fbd4dbfe2712562d36ad">requires</a> std::is_same_v&lt;</div>
+<div class="line">  <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a> std::is_same_v&lt;</div>
 <div class="line">      t_from,</div>
 <div class="line">      std::chrono::duration&lt;typename t_from::rep, typename t_from::period&gt;&gt;;</div>
 <div class="line">}</div>
@@ -327,6 +379,48 @@ template&lt;typename t &gt; </div>
 
 </div>
 </div>
+<a id="a0df58966a5cfa674d8db5882917eb0b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0df58966a5cfa674d8db5882917eb0b4">&#9670;&nbsp;</a></span>subscriber</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename t &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">concept tnct::traits::subscriber</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t) {</div>
+<div class="line">  <span class="keyword">typename</span> t::events_subscribed;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a> tuple_like&lt;typename t::events_subscribed&gt;</div>
+<div class="line"> </div>
+<div class="line">      &amp;&amp; </div>
+<div class="line">         </div>
+<div class="line"> </div>
+<div class="line">          []&lt;std::size_t... t_idx&gt;(std::index_sequence&lt;t_idx...&gt;) {</div>
+<div class="line">    <span class="keywordflow">return</span> (</div>
+<div class="line">        (<a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">event</a>&lt;<span class="keyword">typename</span> std::tuple_element_t&lt;t_idx,</div>
+<div class="line">                                             <span class="keyword">typename</span> t::events_subscribed&gt;&gt; &amp;&amp;</div>
+<div class="line">         (<a class="code" href="../../db/da4/namespacetnct_1_1traits.html#a55e7af0ee0af92ec68dcaf5f1012b09e">has_handle_method</a>&lt;t, <span class="keyword">typename</span> std::tuple_element_t&lt;</div>
+<div class="line">                                   t_idx, <span class="keyword">typename</span> t::events_subscribed&gt;&gt;)</div>
+<div class="line"> </div>
+<div class="line">             )</div>
+<div class="line"> </div>
+<div class="line">        &amp;&amp; ...);</div>
+<div class="line">  }</div>
+<div class="line">  (std::make_index_sequence&lt;</div>
+<div class="line">      std::tuple_size_v&lt;typename t::events_subscribed&gt;&gt;());</div>
+<div class="line">}</div>
+<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html_ab1f546b685675780a2027664cd2adce8"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">tnct::traits::async::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/de3/traits_2async_2event_8h_source.html#l00016">event.h:16</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1traits_html_a55e7af0ee0af92ec68dcaf5f1012b09e"><div class="ttname"><a href="../../db/da4/namespacetnct_1_1traits.html#a55e7af0ee0af92ec68dcaf5f1012b09e">tnct::traits::has_handle_method</a></div><div class="ttdeci">concept has_handle_method</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d9f/subscriber_8h_source.html#l00017">subscriber.h:17</a></div></div>
+</div><!-- fragment -->
+<p class="definition">Definition at line <a class="el" href="../../da/d9f/subscriber_8h_source.html#l00024">24</a> of file <a class="el" href="../../da/d9f/subscriber_8h_source.html">subscriber.h</a>.</p>
+
+</div>
+</div>
 <a id="aed82f12ba48c9522609a2f69d4b0373b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed82f12ba48c9522609a2f69d4b0373b">&#9670;&nbsp;</a></span>tuple_contains_only_events</h2>
 
@@ -348,7 +442,6 @@ template&lt;typename t_tuple &gt; </div>
 <div class="line">  <span class="keywordflow">return</span> (<a class="code" href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">async::event</a>&lt;std::tuple_element_t&lt;t_idx, t_tuple&gt;&gt; &amp;&amp; ...);</div>
 <div class="line">}</div>
 <div class="line">(std::make_index_sequence&lt;std::tuple_size_v&lt;t_tuple&gt;&gt;())</div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1async_html_ab1f546b685675780a2027664cd2adce8"><div class="ttname"><a href="../../d2/d60/namespacetnct_1_1traits_1_1async.html#ab1f546b685675780a2027664cd2adce8">tnct::traits::async::event</a></div><div class="ttdeci">concept event</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/de3/traits_2async_2event_8h_source.html#l00014">event.h:14</a></div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../d3/d0d/tuple__contains__only__events_8h_source.html#l00016">16</a> of file <a class="el" href="../../d3/d0d/tuple__contains__only__events_8h_source.html">tuple_contains_only_events.h</a>.</p>
 

@@ -10,6 +10,7 @@
 #include <string>
 
 #include "tnct/async/dispatcher.h"
+#include "tnct/async/handling_definition.h"
 #include "tnct/async/result.h"
 #include "tnct/traits/async/dispatcher.h"
 
@@ -60,23 +61,23 @@ struct dispatcher_000 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _handler = [this](event_1 &&p_event) { (*this)(std::move(p_event)); };
+    auto _handler = [](event_1 &&) mutable {};
 
-    auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
-        std::move(_handler), queue_1{_logger})};
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
 
-    if (!_handling_id_maybe) {
+    handling_1 _handling_1{"handling-000", std::move(_handler),
+                           queue_1{_logger}, 0};
+
+    auto _result{_dispatcher.add_handling<handling_1>(std::move(_handling_1))};
+
+    if (_result != async::result::OK) {
+      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
       return false;
     }
 
-    auto _handling_id{_handling_id_maybe.value()};
-
-    TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
-
-    return _handling_id == 1;
+    return true;
   }
-
-  void operator()(event_1 &&) {}
 };
 
 struct dispatcher_001 {
@@ -90,18 +91,20 @@ struct dispatcher_001 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _handler{[](event_1 &&) {}};
+    async::handling_id _handling_id{"handling-001"};
 
-    auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
-        std::move(_handler), queue_1{_logger})};
+    auto _handler = [](event_1 &&) mutable {};
 
-    if (!_handling_id_maybe) {
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
+
+    auto _result{_dispatcher.add_handling<handling_1>(
+        {_handling_id, std::move(_handler), queue_1{_logger}, 1})};
+
+    if (_result != async::result::OK) {
+      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
       return false;
     }
-
-    auto _handling_id{_handling_id_maybe.value()};
-
-    TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
 
     auto _amount_handlers_maybe{
         _dispatcher.get_amount_handlers<event_1>(_handling_id)};
@@ -120,19 +123,10 @@ struct dispatcher_001 {
 
     return _amount_handlers == 1;
   }
-
-private:
-  struct handler {
-    using event = event_1;
-
-    void operator()(event &&) {}
-  };
 };
 
 struct dispatcher_002 {
-  static std::string desc() {
-    return "Checks the number of handlers in a handling after increasing";
-  }
+  static std::string desc() { return "Checks the number of handlers"; }
 
   bool operator()(const program::options &) {
     logger _logger;
@@ -140,14 +134,20 @@ struct dispatcher_002 {
 
     dispatcher _dispatcher{_logger};
 
-    auto _handling_id_maybe{
-        _dispatcher.add_handling<event_1>([](event_1 &&) {}, queue_1{_logger})};
+    async::handling_id _handling_id{"handling-002"};
 
-    if (!_handling_id_maybe) {
+    auto _handler = [](event_1 &&) mutable {};
+
+    using handling_1 =
+        async::handling_definition<event_1, decltype(_handler), queue_1>;
+
+    auto _result{_dispatcher.add_handling(
+        handling_1{_handling_id, std::move(_handler), queue_1{_logger}, 4})};
+
+    if (_result != async::result::OK) {
+      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
       return false;
     }
-
-    auto _handling_id{_handling_id_maybe.value()};
 
     TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_id));
 
@@ -166,38 +166,9 @@ struct dispatcher_002 {
     TNCT_LOG_TST(_logger,
                  format::fmt("amount of handlers = ", _amount_handlers));
 
-    if (_amount_handlers != 1) {
-      TNCT_LOG_ERR(_logger,
-                   format::fmt("amount of handlers should be 1, but it is ",
-                               _amount_handlers));
-      return false;
-    }
-
-    auto _result{_dispatcher.add_handlers<event_1>(_handling_id, 3)};
-
-    if (_result != async::result::OK) {
-      TNCT_LOG_ERR(_logger, format::fmt("error adding handlers to handling ",
-                                        _handling_id, ": ", _result));
-      return false;
-    }
-
-    _amount_handlers_maybe =
-        _dispatcher.get_amount_handlers<event_1>(_handling_id);
-
-    if (!_amount_handlers_maybe) {
-      TNCT_LOG_ERR(
-          _logger,
-          format::fmt(
-              "not possible to get the amount of handlers for handling ",
-              _handling_id));
-    }
-    _amount_handlers = _amount_handlers_maybe.value();
-    TNCT_LOG_TST(_logger,
-                 format::fmt("amount of handlers = ", _amount_handlers));
-
     if (_amount_handlers != 4) {
       TNCT_LOG_ERR(_logger,
-                   format::fmt("amount of handlers should be 4, but it is ",
+                   format::fmt("amount of handlers should be 1, but it is ",
                                _amount_handlers));
       return false;
     }
@@ -218,22 +189,26 @@ struct dispatcher_003 {
 
       dispatcher _dispatcher{_logger};
 
-      auto _handler = [&](event_1 &&) {};
+      auto _handler_1 = [](event_1 &&) mutable {};
+      using handling_1 =
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
+      auto _result{_dispatcher.add_handling(handling_1{
+          "handling-003-1", std::move(_handler_1), queue_1{_logger}, 0})};
 
-      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
-          std::move(_handler), queue_1{_logger})};
-
-      if (!_handling_id_maybe) {
-        TNCT_LOG_ERR(_logger, "handling not created, but it should");
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
         return false;
       }
 
       TNCT_LOG_TST(_logger, "passed 1st subscribe");
-      _handling_id_maybe = _dispatcher.add_handling<event_1>(
-          std::move(_handler), queue_1{_logger});
+      auto _handler_2 = [](event_1 &&) mutable {};
+      using handling_2 =
+          async::handling_definition<event_1, decltype(_handler_2), queue_1>;
+      _result = _dispatcher.add_handling<handling_2>(
+          {"handling-003-2", std::move(_handler_2), queue_1{_logger}, 0});
 
-      if (_handling_id_maybe) {
-        TNCT_LOG_ERR(_logger, "handling created, but it should not have been");
+      if (_result != async::result::ERROR_HANDLER_ALREADY_IN_USE) {
+        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
         return false;
       }
 
@@ -243,197 +218,6 @@ struct dispatcher_003 {
     }
 
     return false;
-  }
-};
-
-struct dispatcher_004 {
-  static std::string desc() { return "Retrieves if a handling is stopped"; }
-  bool operator()(const program::options &) {
-    logger _logger;
-    try {
-      dispatcher _dispatcher{_logger};
-
-      auto _handler_1 = [&](event_1 &&) {};
-
-      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
-          std::move(_handler_1), queue_1{_logger})};
-
-      if (!_handling_id_maybe) {
-        TNCT_LOG_ERR(_logger, "handling 1 not created, but it should");
-        return false;
-      }
-
-      auto _handling_1{_handling_id_maybe.value()};
-
-      TNCT_LOG_TST(_logger,
-                   format::fmt("_handling_1 = ", _handling_id_maybe.value()));
-
-      auto _is_stopped_maybe{_dispatcher.is_stopped<event_1>(_handling_1)};
-      if (!_is_stopped_maybe) {
-        TNCT_LOG_ERR(_logger, format::fmt("could not retrieve if handling ",
-                                          _handling_1, " is stopped"));
-        return false;
-      }
-
-      auto _is_stopped{_is_stopped_maybe.value()};
-      if (_is_stopped) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_1,
-                                          " is stopped, but it should not be"));
-        return false;
-      }
-      TNCT_LOG_TST(_logger,
-                   format::fmt("handling ", _handling_1, "'s condition is ",
-                               (_is_stopped ? "t" : "f")));
-      return true;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(_logger, _ex.what());
-    }
-    return false;
-  }
-};
-
-struct dispatcher_005 {
-  static std::string desc() { return "Stops one handling of an event"; }
-  bool operator()(const program::options &) {
-    logger _logger;
-    try {
-      _logger.set_deb();
-      dispatcher _dispatcher{_logger};
-
-      auto _handler_1 = [&](event_1 &&) {};
-
-      auto _handling_id_maybe{_dispatcher.add_handling<event_1>(
-          std::move(_handler_1), queue_1{_logger})};
-
-      if (!_handling_id_maybe) {
-        TNCT_LOG_ERR(_logger, "handling 1 not created, but it should");
-        return false;
-      }
-
-      TNCT_LOG_TST(_logger,
-                   format::fmt("_handling_1 = ", _handling_id_maybe.value()));
-
-      auto _handler_2 = [&](event_2 &&) {};
-
-      _handling_id_maybe = _dispatcher.add_handling<event_2>(
-          std::move(_handler_2), queue_2{_logger});
-
-      if (!_handling_id_maybe) {
-        TNCT_LOG_ERR(_logger, "handling 2 not created, but it should");
-        return false;
-      }
-
-      auto _handling_2{_handling_id_maybe.value()};
-
-      TNCT_LOG_TST(_logger, format::fmt("_handling_2 = ", _handling_2));
-
-      auto _result{_dispatcher.stop<event_2>(_handling_2)};
-
-      if (_result != async::result::OK) {
-        TNCT_LOG_ERR(_logger, format::fmt("could not stop handling ",
-                                          _handling_2, ": ", _result));
-        return false;
-      }
-
-      auto _is_stopped_maybe{_dispatcher.is_stopped<event_2>(_handling_2)};
-      if (!_is_stopped_maybe) {
-        TNCT_LOG_ERR(_logger, format::fmt("could not retrieve if handling ",
-                                          _handling_2, " is stopped"));
-        return false;
-      }
-
-      auto _is_stopped{_is_stopped_maybe.value()};
-      if (!_is_stopped) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_2,
-                                          " is not stopped, but it should be"));
-        return false;
-      }
-      TNCT_LOG_TST(_logger,
-                   format::fmt("handling ", _handling_2, "'s condition is ",
-                               (_is_stopped ? "stopped" : "not stopped")));
-
-      return true;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(_logger, _ex.what());
-    }
-    return false;
-  }
-};
-
-struct dispatcher_006 {
-  static std::string desc() { return "Stops all handlings of an event"; }
-  bool operator()(const program::options &) {
-    logger _logger;
-    _logger.set_deb();
-    try {
-      dispatcher _dispatcher{_logger};
-
-      auto _handler_1a = [&](event_1 &&) {};
-
-      auto _handling_id1a_maybe{_dispatcher.add_handling<event_1>(
-          std::move(_handler_1a), queue_1{_logger})};
-
-      if (!_handling_id1a_maybe) {
-        TNCT_LOG_ERR(_logger, "handling 1 not created, but it should");
-        return false;
-      }
-
-      auto _handling_id1a{_handling_id1a_maybe.value()};
-
-      TNCT_LOG_TST(_logger, format::fmt("_handling_1a = ", _handling_id1a));
-
-      auto _handler_1b = [&](event_1 &&) {};
-
-      auto _handling_id1b_maybe{_dispatcher.add_handling<event_1>(
-          std::move(_handler_1b), queue_1{_logger})};
-
-      if (!_handling_id1b_maybe) {
-        TNCT_LOG_ERR(_logger, "handling 1 not created, but it should");
-        return false;
-      }
-
-      auto _handling_id1b{_handling_id1b_maybe.value()};
-
-      TNCT_LOG_TST(_logger, format::fmt("_handling_1b = ", _handling_id1b));
-
-      auto _is_running{
-          !(_dispatcher.is_stopped<event_1>(_handling_id1a).value())};
-
-      if (!_is_running) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1a,
-                                          " is stopped, but it should not be"));
-        return false;
-      }
-
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b).value();
-      if (!_is_running) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1b,
-                                          " is stopped, but it should not be"));
-        return false;
-      }
-
-      _dispatcher.stop<event_1>();
-
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1a).value();
-
-      if (_is_running) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1a,
-                                          " is running, but it should not be"));
-        return false;
-      }
-
-      _is_running = !_dispatcher.is_stopped<event_1>(_handling_id1b).value();
-
-      if (_is_running) {
-        TNCT_LOG_ERR(_logger, format::fmt("handling ", _handling_id1b,
-                                          " is running, but it should not be"));
-        return false;
-      }
-
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(_logger, _ex.what());
-    }
-    return true;
   }
 };
 
@@ -452,19 +236,19 @@ struct dispatcher_007 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      auto _handler{[&](event_1 &&p_event) {
-        TNCT_LOG_TST(_logger, format::fmt("event 1 = ", p_event));
-        _event = p_event;
-      }};
+      auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
+      using handling_1 =
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
 
-      auto _handling_1{
-          _dispatcher
-              .add_handling<event_1>(std::move(_handler), queue_1{_logger})
-              .value()};
+      auto _result{_dispatcher.add_handling<handling_1>(
+          {"handling-007", std::move(_handler_1), queue_1{_logger}, 1})};
 
-      TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        return false;
+      }
 
-      auto _result{_dispatcher.publish(event_1{53})};
+      _result = _dispatcher.publish(event_1{53});
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt(_result));
         return false;
@@ -483,9 +267,8 @@ struct dispatcher_007 {
 
 struct dispatcher_008 {
   static std::string desc() {
-    return "Publish an event passing the paramenter, and checks for the "
-           "modified value of the event "
-           "attribute";
+    return "Publish an event passing the parameter, and checks for the "
+           "modified value of the event attribute";
   }
 
   bool operator()(const program::options &) {
@@ -497,20 +280,20 @@ struct dispatcher_008 {
 
       TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
 
-      auto _handler{[&](event_1 &&p_event) {
-        TNCT_LOG_TST(_logger, format::fmt("event 1 = ", p_event));
-        _event = p_event;
-      }};
+      auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
+      using handling_1 =
+          async::handling_definition<event_1, decltype(_handler_1), queue_1>;
 
-      auto _handling_1{
-          _dispatcher
-              .add_handling<event_1>(std::move(_handler), queue_1{_logger})
-              .value()};
+      auto _result{_dispatcher.add_handling<handling_1>(
+          {"handling-008", std::move(_handler_1), queue_1{_logger}, 1})};
 
-      TNCT_LOG_TST(_logger, format::fmt("handling 1 = ", _handling_1));
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        return false;
+      }
 
-      auto _result{
-          _dispatcher.publish<event_1>(static_cast<decltype(event_1::i)>(53))};
+      _result =
+          _dispatcher.publish<event_1>(static_cast<decltype(event_1::i)>(53));
       if (_result != async::result::OK) {
         TNCT_LOG_ERR(_logger, format::fmt(_result));
         return false;
@@ -525,10 +308,26 @@ struct dispatcher_008 {
 
     return true;
   }
+
+private:
+  struct handler {
+    handler(event_1 &p_event) : m_event(p_event) {}
+
+    using events_handled = std::tuple<event_1>;
+
+    void operator()(event_1 &&p_event) { m_event = p_event; }
+
+  private:
+    event_1 &m_event;
+  };
 };
 
 struct dispatcher_011 {
-  static std::string desc() { return ""; }
+  static std::string desc() {
+    return "A method depends on a tnct::traits::async::dispatcher with 3 "
+           "events, and the concrete tnct::async::dispatcher is defined with "
+           "those 3 and 1 more";
+  }
 
   bool operator()(const program::options &) {
     using dispatcher =
@@ -540,7 +339,7 @@ struct dispatcher_011 {
 
     foo(_dispatcher);
 
-    return false;
+    return true;
   }
 
 private:
@@ -582,7 +381,8 @@ private:
   using logger = log::cerr;
 
 private:
-  template <traits::async::dispatcher<event_a, event_b, event_c> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b, event_c, event_d>
+                t_dispatcher>
   void foo(t_dispatcher &) {}
 };
 
@@ -599,7 +399,7 @@ struct dispatcher_012 {
 
     // foo<dispatcher>(_dispatcher);
 
-    return false;
+    return true;
   }
 
 private:
@@ -635,10 +435,12 @@ private:
   using dispatcher = async::dispatcher<logger, event_a, event_b, event_d>;
 
 private:
-  template <traits::async::dispatcher<event_a, event_b, event_c, event_e> t_dispatcher>
+  template <traits::async::dispatcher<event_a, event_b, event_c, event_e>
+                t_dispatcher>
 
   // requires(std::tuple_size_v<dispatcher::events> >=
-  //          std::tuple_size_v<std::tuple<event_a, event_b, event_c, event_e>>)
+  //          std::tuple_size_v<std::tuple<event_a, event_b, event_c,
+  //          event_e>>)
 
   void foo(t_dispatcher &) {}
 };

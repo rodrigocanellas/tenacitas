@@ -17,6 +17,6 @@ HEADERS += \
         $$PRJ_DIR/result.h \
         $$PRJ_DIR/internal/handling.h \
         $$PRJ_DIR/internal/handler_id.h \
-        $$PRJ_DIR/handler.h
+        $$PRJ_DIR/handling_definition.h
 
 

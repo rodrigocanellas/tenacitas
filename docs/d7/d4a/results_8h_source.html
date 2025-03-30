@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.6</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -85,12 +85,12 @@ $(function() {
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../df/dc3/event__id_8h.html">tnct/async/exp/dispatcher_000/event_id.h</a>&quot;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d8/dc5/exp_2dispatcher__000_2handler__id_8h.html">tnct/async/exp/dispatcher_000/handler_id.h</a>&quot;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../df/df6/handler__type__id_8h.html">tnct/async/exp/dispatcher_000/handler_type_id.h</a>&quot;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d5/d34/exp_2dispatcher__000_2handling__id_8h.html">tnct/async/exp/dispatcher_000/handling_id.h</a>&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../db/db5/handling__id_8h.html">tnct/async/handling_id.h</a>&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html">tnct::async::exp</a> {</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
 <div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html">   21</a></span>&#160;<span class="keyword">struct </span><a class="code" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html">results</a> {</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">   22</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">increment</a>(<a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">event_id</a> p_event_id, <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">handling_id</a> p_handling_id,</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">   22</a></span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">increment</a>(<a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">event_id</a> p_event_id, <a class="code" href="../../d5/d87/structtnct_1_1string_1_1fixed__size__string.html">handling_id</a> p_handling_id,</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                 <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a5408966e3061490019e9736ca2550329">handler_type_id</a> p_handler_type_id, <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a63db067712ae9bea992dfc98f8fe54d9">handler_id</a> p_handler_id) {</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">const</span> key _key{p_event_id, p_handling_id, p_handler_type_id, p_handler_id};</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    map::iterator _ite{m_map.find(_key)};</div>
@@ -116,7 +116,7 @@ $(function() {
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">event_id</a> _event_prior{get_event_id(_ite)};</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <span class="keywordflow">while</span> ((_ite != _end) &amp;&amp; (_event_prior == get_event_id(_ite))) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">handling_id</a> _handling_prior{get_handling_id(_ite)};</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="../../d5/d87/structtnct_1_1string_1_1fixed__size__string.html">handling_id</a> _handling_prior{get_handling_id(_ite)};</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordflow">while</span> ((_ite != _end) &amp;&amp; (_event_prior == get_event_id(_ite)) &amp;&amp;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;               (_handling_prior == get_handling_id(_ite))) {</div>
@@ -182,7 +182,7 @@ $(function() {
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">increment</a>(events_totals &amp;p_events_totals, <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">event_id</a> p_event_id,</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                 <span class="keyword">const</span> <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">handling_id</a> &amp;p_handling_id,</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                 <span class="keyword">const</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ab2a9de33bc3151eba8a8e505ab9d3f7c">handling_id</a> &amp;p_handling_id,</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                 <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a5408966e3061490019e9736ca2550329">handler_type_id</a> p_handler_type_id, <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a63db067712ae9bea992dfc98f8fe54d9">handler_id</a> p_handler_id,</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;                 <span class="keywordtype">size_t</span> p_value)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    events_totals::iterator _event_ite{p_events_totals.find(p_event_id)};</div>
@@ -223,7 +223,7 @@ $(function() {
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordflow">return</span> std::get&lt;0&gt;(p_ite-&gt;first);</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  }</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">handling_id</a> get_handling_id(map::const_iterator p_ite)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ab2a9de33bc3151eba8a8e505ab9d3f7c">handling_id</a> get_handling_id(map::const_iterator p_ite)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordflow">return</span> std::get&lt;1&gt;(p_ite-&gt;first);</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  }</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
@@ -259,7 +259,7 @@ $(function() {
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">return</span> p_ite-&gt;second.handlings;</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;  }</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160; </div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <a class="code" href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">handling_id</a> get_handling_id(handlings_totals::const_iterator p_ite)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ab2a9de33bc3151eba8a8e505ab9d3f7c">handling_id</a> get_handling_id(handlings_totals::const_iterator p_ite)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordflow">return</span> p_ite-&gt;first;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  }</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
@@ -313,16 +313,17 @@ $(function() {
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aevent__id_8h_html"><div class="ttname"><a href="../../df/dc3/event__id_8h.html">event_id.h</a></div></div>
 <div class="ttc" id="aexp_2dispatcher__000_2handler__id_8h_html"><div class="ttname"><a href="../../d8/dc5/exp_2dispatcher__000_2handler__id_8h.html">handler_id.h</a></div></div>
-<div class="ttc" id="aexp_2dispatcher__000_2handling__id_8h_html"><div class="ttname"><a href="../../d5/d34/exp_2dispatcher__000_2handling__id_8h.html">handling_id.h</a></div></div>
 <div class="ttc" id="ahandler__type__id_8h_html"><div class="ttname"><a href="../../df/df6/handler__type__id_8h.html">handler_type_id.h</a></div></div>
+<div class="ttc" id="ahandling__id_8h_html"><div class="ttname"><a href="../../db/db5/handling__id_8h.html">handling_id.h</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_html"><div class="ttname"><a href="../../d6/da8/namespacetnct_1_1async_1_1exp.html">tnct::async::exp</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d2c/configuration_8h_source.html#l00021">configuration.h:21</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1async_1_1exp_html_a430ef78e6d3c79be04703fc033cf6064"><div class="ttname"><a href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a430ef78e6d3c79be04703fc033cf6064">tnct::async::exp::handling_id</a></div><div class="ttdeci">uint16_t handling_id</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d34/exp_2dispatcher__000_2handling__id_8h_source.html#l00013">handling_id.h:13</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_html_a4400bb64728c1308946d3474f0b999fb"><div class="ttname"><a href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a4400bb64728c1308946d3474f0b999fb">tnct::async::exp::event_id</a></div><div class="ttdeci">char event_id</div><div class="ttdef"><b>Definition:</b> <a href="../../df/dc3/event__id_8h_source.html#l00011">event_id.h:11</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_html_a5408966e3061490019e9736ca2550329"><div class="ttname"><a href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a5408966e3061490019e9736ca2550329">tnct::async::exp::handler_type_id</a></div><div class="ttdeci">uint16_t handler_type_id</div><div class="ttdef"><b>Definition:</b> <a href="../../df/df6/handler__type__id_8h_source.html#l00013">handler_type_id.h:13</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_1_1exp_html_a63db067712ae9bea992dfc98f8fe54d9"><div class="ttname"><a href="../../d6/da8/namespacetnct_1_1async_1_1exp.html#a63db067712ae9bea992dfc98f8fe54d9">tnct::async::exp::handler_id</a></div><div class="ttdeci">std::thread::id handler_id</div><div class="ttdef"><b>Definition:</b> <a href="../../d8/dc5/exp_2dispatcher__000_2handler__id_8h_source.html#l00015">handler_id.h:15</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html_ab2a9de33bc3151eba8a8e505ab9d3f7c"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ab2a9de33bc3151eba8a8e505ab9d3f7c">tnct::async::handling_id</a></div><div class="ttdeci">string::fixed_size_string&lt; 15 &gt; handling_id</div><div class="ttdef"><b>Definition:</b> <a href="../../db/db5/handling__id_8h_source.html#l00013">handling_id.h:13</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1results_html"><div class="ttname"><a href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html">tnct::async::exp::results</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d4a/results_8h_source.html#l00021">results.h:21</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1results_html_a87ca44ae98a32a0437e21a62ada367ca"><div class="ttname"><a href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#a87ca44ae98a32a0437e21a62ada367ca">tnct::async::exp::results::report</a></div><div class="ttdeci">std::string report() const</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d4a/results_8h_source.html#l00033">results.h:33</a></div></div>
 <div class="ttc" id="astructtnct_1_1async_1_1exp_1_1results_html_aaaab96dd687340502b6844270c3f5619"><div class="ttname"><a href="../../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aaaab96dd687340502b6844270c3f5619">tnct::async::exp::results::increment</a></div><div class="ttdeci">void increment(event_id p_event_id, handling_id p_handling_id, handler_type_id p_handler_type_id, handler_id p_handler_id)</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d4a/results_8h_source.html#l00022">results.h:22</a></div></div>
+<div class="ttc" id="astructtnct_1_1string_1_1fixed__size__string_html"><div class="ttname"><a href="../../d5/d87/structtnct_1_1string_1_1fixed__size__string.html">tnct::string::fixed_size_string&lt; 15 &gt;</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

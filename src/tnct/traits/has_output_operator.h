@@ -10,7 +10,7 @@
 
 namespace tnct::traits {
 
-// // code reviewed by ChatGPT from a previous version I wrote
+// code reviewed by ChatGPT from a previous version I wrote
 template <typename T, typename CharT = char,
           typename Traits = std::char_traits<CharT>>
 concept has_output_operator = requires(std::basic_ostream<CharT, Traits> &os,

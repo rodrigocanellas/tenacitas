@@ -131,20 +131,11 @@ struct sleeping_loop_002 {
 
     int16_t _counter{0};
 
-    loop _loop1{
-        _logger,
-        [&_counter]() {
-          std::cout
-              << std::chrono::system_clock::now().time_since_epoch().count()
-              << ' ' << ++_counter << std::endl;
-        },
-        1s, "loop1"};
+    loop _loop1{_logger, [&_counter]() { ++_counter; }, 1s, "loop1"};
 
     _loop1.start();
 
     std::this_thread::sleep_for(4s);
-
-    std::cout << "move" << std::endl;
 
     loop _loop2{std::move(_loop1)};
 

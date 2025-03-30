@@ -6,11 +6,11 @@
 #ifndef TNCT_ASYNC_HANDLING_ID_H
 #define TNCT_ASYNC_HANDLING_ID_H
 
-#include <cstdint>
+#include "tnct/string/fixed_size_string.h"
 
 namespace tnct::async {
 
-using handling_id = uint16_t;
+using handling_id = string::fixed_size_string<15>;
 
 } // namespace tnct::async
 

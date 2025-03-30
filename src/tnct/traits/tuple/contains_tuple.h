@@ -32,7 +32,7 @@ constexpr bool contains_tuple_helper() {
 template <typename t_container_tuple, typename t_contained_tuple>
 concept contains_tuple =
     (std::tuple_size_v<t_container_tuple> > 0) &&
-    (std::tuple_size_v<t_contained_tuple> > 0) &&
+    (std::tuple_size_v<t_contained_tuple> >= 0) &&
     contains_tuple_helper<t_container_tuple, t_contained_tuple>();
 
 } // namespace tnct::traits::tuple

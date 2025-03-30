@@ -19,17 +19,23 @@ struct no_logger {
 
   void *operator new(size_t) = delete;
 
-  void tra(std::string_view, std::source_location) {}
+  void tra(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
-  void deb(std::string_view, std::source_location) {}
+  void deb(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
-  void inf(std::string_view, std::source_location) {}
+  void inf(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
-  void war(std::string_view, std::source_location) {}
+  void war(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
-  void err(std::string_view, std::source_location) {}
+  void err(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
-  void fat(std::string_view, std::source_location) {}
+  void fat(std::string_view,
+           std::source_location = std::source_location::current()) {}
 
   void set_tra() {}
 

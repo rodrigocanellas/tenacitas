@@ -18,6 +18,7 @@
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/result.h"
+#include "tnct/traits/async/handling_definition.h"
 
 #include "tnct/format/fmt.h"
 #include "tnct/traits/async/event.h"
@@ -87,7 +88,7 @@ the dispatcher class.
 */
 
 template <traits::log::logger t_logger, traits::async::event... t_events>
-struct dispatcher {
+struct dispatcher final {
 
 public:
   using events = std::tuple<t_events...>;
@@ -101,7 +102,7 @@ public:
   dispatcher(dispatcher &&) = delete;
 
   ~dispatcher() {
-    TNCT_LOG_TRA(m_logger, "dispactcher destructor");
+    TNCT_LOG_TRA(m_logger, "dispatcher destructor");
     stop();
   }
 
@@ -128,7 +129,7 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERRROR_PUBLISHNG;
+      return result::ERROR_PUBLISHNG;
     }
     return result::OK;
   }
@@ -149,113 +150,22 @@ public:
 
     } catch (std::exception &_ex) {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERRROR_PUBLISHNG;
+      return result::ERROR_PUBLISHNG;
     }
     return result::OK;
   }
 
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  std::optional<handling_id> add_handling(
-      t_handler &&p_handler, t_queue &&p_queue,
-      handling_priority p_handling_priority = handling_priority::medium) {
-
-    event_is_in_events_tupĺe<t_event>();
-
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
-    }
-
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
-
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue))};
-
-      get_handlings<t_event>().insert(
-          {p_handling_priority, std::move(_handling_ptr)});
-
-      return m_handling_id;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return std::nullopt;
+  template <traits::async::handling_definition t_handling>
+  result add_handling(t_handling &&p_handling) {
+    return add_handling<typename t_handling::event,
+                        typename t_handling::handler,
+                        typename t_handling::queue>(
+        p_handling.get_id(), std::move(p_handling.get_handler()),
+        std::move(p_handling.get_queue()), p_handling.get_num_handlers(),
+        p_handling.get_priority());
   }
 
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  std::optional<handling_id>
-  add_handling(t_handler &&p_handler, handling_priority p_handling_priority,
-               t_queue &&p_queue, size_t p_num_handlers) {
-
-    event_is_in_events_tupĺe<t_event>();
-
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
-    }
-
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
-
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
-          p_num_handlers)};
-
-      get_handlings<t_event>().insert(
-          {p_handling_priority, std::move(_handling_ptr)});
-
-      return m_handling_id;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return std::nullopt;
-  }
-
-  template <traits::async::event t_event,
-            traits::container::queue<t_event> t_queue,
-            traits::async::handler<t_event> t_handler>
-  std::optional<handling_id> add_handling(t_handler &&p_handler,
-                                          t_queue &&p_queue,
-                                          size_t p_num_handlers) {
-
-    event_is_in_events_tupĺe<t_event>();
-
-    if (is_handler_already_being_used<t_event, t_handler>()) {
-      return std::nullopt;
-    }
-
-    using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
-
-    try {
-      std::lock_guard<std::mutex> _lock(m_mutex);
-
-      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
-          ++m_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
-          p_num_handlers)};
-
-      get_handlings<t_event>().insert(
-          {handling_priority::medium, std::move(_handling_ptr)});
-
-      return m_handling_id;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-
-    return std::nullopt;
-  }
-
-  /// \brief Cleans all handlings of a certain event
+  /// \brief Clears the events queue of all handlings of an event
   template <traits::async::event t_event> void clear() {
     event_is_in_events_tupĺe<t_event>();
     try {
@@ -269,7 +179,7 @@ public:
     }
   }
 
-  /// \brief Cleans all handlers of a certain handling for a certain event
+  /// \brief Clears the events queue of a handling of an event
   template <traits::async::event t_event>
   result clear(handling_id p_handling_id) {
     event_is_in_events_tupĺe<t_event>();
@@ -291,6 +201,7 @@ public:
     return result::OK;
   }
 
+  /// \brief Clears the events queue of all handlings of all events
   result clear() {
     try {
       auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
@@ -308,22 +219,10 @@ public:
   }
 
   template <traits::async::event t_event>
-  [[nodiscard]] result add_handlers(handling_id p_handling_id,
-                                    size_t p_amount = 1) {
+  [[nodiscard]] size_t get_amount_handlings() const noexcept {
     event_is_in_events_tupĺe<t_event>();
-    try {
-      if (find_handling<t_event>(p_handling_id,
-                                 [&](handling<t_event> &p_handling) {
-                                   p_handling.increment_handlers(p_amount);
-                                 })) {
-        return result::HANDLING_NOT_FOUND;
-      }
-
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_ADDING_HANDLER;
-    }
-    return result::OK;
+    auto &_handlings{get_handlings<t_event>()};
+    return static_cast<size_t>(_handlings.size());
   }
 
   template <traits::async::event t_event>
@@ -344,13 +243,30 @@ public:
     return std::nullopt;
   }
 
+private:
   template <traits::async::event t_event>
-  [[nodiscard]] size_t get_amount_handlings() const noexcept {
-    event_is_in_events_tupĺe<t_event>();
-    auto &_handlings{get_handlings<t_event>()};
-    return static_cast<size_t>(_handlings.size());
-  }
+  using handling = internal::handling<t_event>;
 
+  template <traits::async::event t_event>
+  using handling_ptr = std::unique_ptr<handling<t_event>>;
+
+  template <traits::async::event t_event>
+  using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
+
+  template <traits::async::event t_event>
+  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
+
+  template <traits::async::event t_event>
+  using handlings_ite = typename handlings<t_event>::iterator;
+
+  template <traits::async::event t_event>
+  using handlings_const_ite = typename handlings<t_event>::const_iterator;
+
+  using events_handlings =
+      typename tuple::tuple_transform<events, handlings>::type;
+
+private:
+  // \brief Stops all the handlers of all handlings of all events
   result stop() noexcept {
     try {
       auto _visit{[this]<traits::tuple::like t_tuple, size_t t_idx>() {
@@ -383,69 +299,28 @@ public:
     return result::OK;
   }
 
-  template <traits::async::event t_event>
-  [[nodiscard]] result stop(handling_id p_handling_id) noexcept {
-    event_is_in_events_tupĺe<t_event>();
-    try {
-      TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
-      auto _stopper{[](handling<t_event> &p_handling) { p_handling.stop(); }};
+  // template <traits::async::event t_event>
+  // result stop(handling_id p_handling_id) noexcept {
+  //   event_is_in_events_tupĺe<t_event>();
+  //   try {
+  //     TNCT_LOG_TRA(m_logger, format::fmt("t_event = ",
+  //     typeid(t_event).name())); auto _stopper{[](handling<t_event>
+  //     &p_handling) { p_handling.stop(); }};
 
-      if (!find_handling<t_event>(p_handling_id, _stopper)) {
-        TNCT_LOG_ERR(m_logger,
-                     format::fmt("Could not find handling ", p_handling_id,
-                                 " in event ", typeid(t_event).name()));
-        return result::HANDLING_NOT_FOUND;
-      }
+  //     if (!find_handling<t_event>(p_handling_id, _stopper)) {
+  //       TNCT_LOG_ERR(m_logger,
+  //                    format::fmt("Could not find handling ", p_handling_id,
+  //                                " in event ", typeid(t_event).name()));
+  //       return result::HANDLING_NOT_FOUND;
+  //     }
 
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_STOPPING;
-    }
-    return result::OK;
-  }
+  //   } catch (std::exception &_ex) {
+  //     TNCT_LOG_ERR(m_logger, _ex.what());
+  //     return result::ERROR_STOPPING;
+  //   }
+  //   return result::OK;
+  // }
 
-  template <traits::async::event t_event>
-  [[nodiscard]] std::optional<bool>
-  is_stopped(handling_id p_handling_id) const {
-    try {
-      bool _is_stopped{false};
-      auto _stopper{[&](const handling<t_event> &p_handling) {
-        _is_stopped = p_handling.is_stopped();
-      }};
-
-      if (!find_handling<t_event>(p_handling_id, _stopper)) {
-        return std::nullopt;
-      }
-      return _is_stopped;
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR(m_logger, _ex.what());
-    }
-    return std::nullopt;
-  }
-
-private:
-  template <traits::async::event t_event>
-  using handling = internal::handling<t_event>;
-
-  template <traits::async::event t_event>
-  using handling_ptr = std::unique_ptr<handling<t_event>>;
-
-  template <traits::async::event t_event>
-  using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
-
-  template <traits::async::event t_event>
-  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
-
-  template <traits::async::event t_event>
-  using handlings_ite = typename handlings<t_event>::iterator;
-
-  template <traits::async::event t_event>
-  using handlings_const_ite = typename handlings<t_event>::const_iterator;
-
-  using events_handlings =
-      typename tuple::tuple_transform<events, handlings>::type;
-
-private:
   template <traits::async::event t_event,
             traits::async::handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const {
@@ -553,12 +428,46 @@ private:
                   "event is not in the 't_events...' of the dispatcher");
   }
 
+  template <traits::async::event t_event,
+            traits::async::handler<t_event> t_handler,
+            traits::container::queue<t_event> t_queue>
+  result add_handling(
+      const handling_id &p_handling_id, t_handler &&p_handler,
+      t_queue &&p_queue, size_t p_num_handlers,
+      handling_priority p_handling_priority = handling_priority::medium) {
+
+    event_is_in_events_tupĺe<t_event>();
+
+    if (is_handler_already_being_used<t_event, t_handler>()) {
+      return result::ERROR_HANDLER_ALREADY_IN_USE;
+    }
+
+    using handling_concrete =
+        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
+
+    try {
+      std::lock_guard<std::mutex> _lock(m_mutex);
+
+      handling_ptr<t_event> _handling_ptr{std::make_unique<handling_concrete>(
+          p_handling_id, m_logger, std::move(p_handler), std::move(p_queue),
+          p_num_handlers)};
+
+      get_handlings<t_event>().insert(
+          {p_handling_priority, std::move(_handling_ptr)});
+
+      return result::OK;
+    } catch (std::exception &_ex) {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+
+    return result::ERROR_UNKNOWN;
+  }
+
 private:
   logger &m_logger;
 
   events_handlings m_events_handlings;
 
-  handling_id m_handling_id{0};
   std::mutex m_mutex;
 };
 
