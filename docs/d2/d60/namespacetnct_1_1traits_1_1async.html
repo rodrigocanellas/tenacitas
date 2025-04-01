@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -177,8 +177,8 @@ template&lt;typename t &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= std::default_initializable&lt;t&gt; &amp;&amp; std::copy_constructible&lt;t&gt; &amp;&amp;</div>
-<div class="line">    std::move_constructible&lt;t&gt; &amp;&amp; has_output_operator&lt;t&gt; &amp;&amp; std::is_class_v&lt;t&gt;</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= std::copy_constructible&lt;t&gt; &amp;&amp; std::move_constructible&lt;t&gt; &amp;&amp;</div>
+<div class="line">    has_output_operator&lt;t&gt; &amp;&amp; std::is_class_v&lt;t&gt;</div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../d2/de3/traits_2async_2event_8h_source.html#l00016">16</a> of file <a class="el" href="../../d2/de3/traits_2async_2event_8h_source.html">event.h</a>.</p>
 
@@ -197,17 +197,18 @@ template&lt;typename t , typename t_event &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= event&lt;t_event&gt; &amp;&amp; <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event &amp;&amp;evt) {</div>
-<div class="line">  { p_t(std::move(evt)) } -&gt; std::same_as&lt;void&gt;;</div>
+<b>Initial value:</b><div class="fragment"><div class="line">= event&lt;t_event&gt; &amp;&amp; <a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event &amp;&amp;<a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>) {</div>
+<div class="line">  { p_t(std::move(<a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>)) } -&gt; std::same_as&lt;void&gt;;</div>
 <div class="line">}</div>
 <div class="line"> </div>
-<div class="line">&amp;&amp; !<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, <span class="keyword">const</span> t_event &amp;evt) {</div>
-<div class="line">  p_t(evt);</div>
+<div class="line">&amp;&amp; !<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, <span class="keyword">const</span> t_event &amp;<a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>) {</div>
+<div class="line">  p_t(<a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>);</div>
 <div class="line">} </div>
 <div class="line"> </div>
-<div class="line">&amp;&amp;!<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event evt) {</div>
-<div class="line">  p_t(evt);</div>
+<div class="line">&amp;&amp;!<a class="code" href="../../d8/d27/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per.html#a5e8c962b62e8e27fa8ce3bb88bb26f92">requires</a>(t p_t, t_event <a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>) {</div>
+<div class="line">  p_t(<a class="code" href="../../dd/dd1/namespaceevt.html">evt</a>);</div>
 <div class="line">}</div>
+<div class="ttc" id="anamespaceevt_html"><div class="ttname"><a href="../../dd/dd1/namespaceevt.html">evt</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d1/df6/async_2exp_2matrix__sum_2main_8cpp_source.html#l00083">main.cpp:83</a></div></div>
 </div><!-- fragment -->
 <p class="definition">Definition at line <a class="el" href="../../de/dca/traits_2async_2handler_8h_source.html#l00015">15</a> of file <a class="el" href="../../de/dca/traits_2async_2handler_8h_source.html">handler.h</a>.</p>
 
@@ -227,7 +228,7 @@ template&lt;typename t &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d87/traits_2async_2handling__definition_8h_source.html#l00044">44</a> of file <a class="el" href="../../d3/d87/traits_2async_2handling__definition_8h_source.html">handling_definition.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d87/traits_2async_2handling__definition_8h_source.html#l00020">20</a> of file <a class="el" href="../../d3/d87/traits_2async_2handling__definition_8h_source.html">handling_definition.h</a>.</p>
 
 </div>
 </div>
