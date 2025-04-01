@@ -67,76 +67,20 @@ matrix::data sum_matrix(const matrix &p_matrix) {
   return _sum;
 }
 
+void sync_sum_matrix_wrapper(const matrix &p_matrix, logger &p_logger) {
+  const auto _start = std::chrono::high_resolution_clock::now();
+
+  const auto _sum{sum_matrix(p_matrix)};
+
+  const auto _end = std::chrono::high_resolution_clock::now();
+
+  const std::chrono::duration<double> _diff = _end - _start;
+
+  TNCT_LOG_TST(p_logger,
+               format::fmt("time = ", _diff.count(), " seconds, sum: ", _sum));
+}
+
 namespace evt {
-
-struct sum_line {
-  sum_line() = default;
-  sum_line(matrix *p_matrix, matrix::index p_row)
-      : m_matrix{p_matrix}, m_row{p_row} {}
-
-  sum_line(const sum_line &p_sum_line)
-      : m_matrix(p_sum_line.m_matrix), m_row(p_sum_line.m_row) {}
-
-  sum_line(sum_line &&p_sum_line)
-      : m_matrix(p_sum_line.m_matrix), m_row(p_sum_line.m_row) {}
-
-  sum_line &operator=(const sum_line &p_matrix_summed) {
-    m_matrix = p_matrix_summed.m_matrix;
-    m_row = p_matrix_summed.m_row;
-
-    return *this;
-  }
-
-  sum_line &operator=(sum_line &&p_matrix_summed) {
-    m_matrix = p_matrix_summed.m_matrix;
-    m_row = p_matrix_summed.m_row;
-
-    return *this;
-  }
-
-  matrix *m_matrix;
-  matrix::index m_row;
-
-  friend std::ostream &operator<<(std::ostream &p_out,
-                                  const sum_line &p_sum_line) {
-    p_out << "sum line " << p_sum_line.m_row << std::endl;
-    return p_out;
-  }
-};
-
-struct line_summed {
-  line_summed() = default;
-  line_summed(matrix::index p_row, matrix::data p_sum)
-      : m_row(p_row), m_sum(p_sum) {}
-
-  line_summed(const line_summed &p_line_summed)
-      : m_row(p_line_summed.m_row), m_sum(p_line_summed.m_sum) {}
-
-  line_summed(line_summed &&p_line_summed)
-      : m_row(p_line_summed.m_row), m_sum(p_line_summed.m_sum) {}
-
-  line_summed &operator=(const line_summed &p_matrix_summed) {
-    m_row = p_matrix_summed.m_row;
-    m_sum = p_matrix_summed.m_sum;
-    return *this;
-  }
-
-  line_summed &operator=(line_summed &&p_matrix_summed) {
-    m_row = p_matrix_summed.m_row;
-    m_sum = p_matrix_summed.m_sum;
-    return *this;
-  }
-
-  friend std::ostream &operator<<(std::ostream &p_out,
-                                  const line_summed &p_line_summed) {
-    p_out << "line summed " << p_line_summed.m_row << ", "
-          << p_line_summed.m_sum << std::endl;
-    return p_out;
-  }
-
-  matrix::index m_row;
-  matrix::data m_sum;
-};
 
 struct matrix_summed {
   matrix_summed() = default;
@@ -169,115 +113,189 @@ struct matrix_summed {
 
 } // namespace evt
 
-using dispatcher = async::dispatcher<logger, evt::sum_line, evt::line_summed,
-                                     evt::matrix_summed>;
+using dispatcher = async::dispatcher<logger, evt::matrix_summed>;
 
-namespace dom {
-
-struct line_summer {
-  line_summer(dispatcher &p_dispatcher, logger &p_logger)
-      : m_dispatcher(p_dispatcher), m_logger(p_logger) {}
-
-  void operator()(evt::sum_line &&p_sum_line) {
-    matrix::data _sum{0};
-    for (matrix::index _c = 0; _c < p_sum_line.m_matrix->get_num_cols(); ++_c) {
-      _sum += p_sum_line.m_matrix->operator()(p_sum_line.m_row, _c);
-    }
-    auto _result{
-        m_dispatcher.publish<evt::line_summed>(p_sum_line.m_row, _sum)};
-    if (_result != async::result::OK) {
-      TNCT_LOG_ERR(m_logger,
-                   format::fmt("error publishing 'line_summed': ", _result));
-    }
+struct async_sum_matrix {
+  async_sum_matrix(dispatcher &p_dispatcher, logger &p_logger, matrix &p_matrix)
+      : m_dispatcher(p_dispatcher), m_logger(p_logger), m_matrix(p_matrix) {
+    define_handlers();
   }
 
-private:
-  dispatcher &m_dispatcher;
-  logger &m_logger;
-};
-
-struct matrix_summer {
-  matrix_summer(dispatcher &p_dispatcher, logger &p_logger,
-                matrix::index p_num_rows)
-      : m_dispatcher(p_dispatcher), m_logger(p_logger),
-        m_rows_summed(p_num_rows, false) {}
-
-  void operator()(evt::line_summed &&p_line_summed) {
-    m_sum += p_line_summed.m_sum;
-    m_rows_summed[p_line_summed.m_row] = true;
-    if (all_rows_summed()) {
-      auto _result{m_dispatcher.publish<evt::matrix_summed>(m_sum)};
+  async::result operator()() {
+    for (matrix::index _r = 0; _r < m_matrix.get_num_rows(); ++_r) {
+      auto _result{m_internal_dispatcher.publish<sum_line>(_r)};
       if (_result != async::result::OK) {
-        TNCT_LOG_ERR(m_logger, format::fmt("error publishing 'matrix_summed': ",
-                                           _result));
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("error publishing 'sum_line': ", _result));
+        return _result;
       }
     }
+    return async::result::OK;
   }
 
 private:
-  bool all_rows_summed() const {
-    for (bool _b : m_rows_summed) {
-      if (!_b) {
-        return false;
+  struct sum_line {
+    sum_line(matrix::index p_row) : m_row{p_row} {}
+
+    sum_line() = default;
+    sum_line(const sum_line &) = default;
+    sum_line(sum_line &&p_sum_line) = default;
+    sum_line &operator=(const sum_line &) = default;
+    sum_line &operator=(sum_line &&) = default;
+
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const sum_line &p_sum_line) {
+      p_out << "sum line " << p_sum_line.m_row << std::endl;
+      return p_out;
+    }
+
+    matrix::index m_row;
+  };
+
+  struct line_summed {
+    line_summed(matrix::index p_row, matrix::data p_sum)
+        : m_row(p_row), m_sum(p_sum) {}
+
+    line_summed() = default;
+    line_summed(const line_summed &) = default;
+    line_summed(line_summed &&) = default;
+    line_summed &operator=(const line_summed &) = default;
+    line_summed &operator=(line_summed &&) = default;
+
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const line_summed &p_line_summed) {
+      p_out << "line summed " << p_line_summed.m_row << ", "
+            << p_line_summed.m_sum << std::endl;
+      return p_out;
+    }
+
+    matrix::index m_row;
+    matrix::data m_sum;
+  };
+
+  using internal_dispatcher = async::dispatcher<logger, sum_line, line_summed>;
+
+  void define_handlers() {
+    using sum_line_queue = container::circular_queue<logger, sum_line, 200>;
+    m_internal_dispatcher.add_handling(
+        async::handling_definition<sum_line, line_summer, sum_line_queue>{
+            "sum-line", line_summer{m_internal_dispatcher, m_logger, m_matrix},
+            sum_line_queue{m_logger}, 8});
+
+    using line_summed_queue =
+        container::circular_queue<logger, line_summed, 10>;
+    m_internal_dispatcher.add_handling(
+        async::handling_definition<line_summed, matrix_summer,
+                                   line_summed_queue>{
+            "line-summed",
+            matrix_summer{m_dispatcher, m_logger, m_matrix.get_num_rows()},
+            line_summed_queue{m_logger}, 1});
+  }
+
+  struct line_summer {
+    line_summer(internal_dispatcher &p_dispatcher, logger &p_logger,
+                matrix &p_matrix)
+        : m_internal_dispatcher(p_dispatcher), m_logger(p_logger),
+          m_matrix(p_matrix) {}
+
+    void operator()(sum_line &&p_sum_line) {
+      matrix::data _sum{0};
+      for (matrix::index _c = 0; _c < m_matrix.get_num_cols(); ++_c) {
+        _sum += m_matrix(p_sum_line.m_row, _c);
+      }
+      auto _result{
+          m_internal_dispatcher.publish<line_summed>(p_sum_line.m_row, _sum)};
+      if (_result != async::result::OK) {
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("error publishing 'line_summed': ", _result));
       }
     }
-    return true;
-  }
+
+  private:
+    internal_dispatcher &m_internal_dispatcher;
+    logger &m_logger;
+    matrix &m_matrix;
+  };
+
+  struct matrix_summer {
+    matrix_summer(dispatcher &p_dispatcher, logger &p_logger,
+                  matrix::index p_num_rows)
+        : m_dispatcher(p_dispatcher), m_logger(p_logger),
+          m_rows_summed(p_num_rows, false) {}
+
+    void operator()(line_summed &&p_line_summed) {
+      m_sum += p_line_summed.m_sum;
+      m_rows_summed[p_line_summed.m_row] = true;
+      if (all_rows_summed()) {
+        auto _result{m_dispatcher.publish<evt::matrix_summed>(m_sum)};
+        if (_result != async::result::OK) {
+          TNCT_LOG_ERR(
+              m_logger,
+              format::fmt("error publishing 'matrix_summed': ", _result));
+        }
+      }
+    }
+
+  private:
+    bool all_rows_summed() const {
+      for (bool _b : m_rows_summed) {
+        if (!_b) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+  private:
+    dispatcher &m_dispatcher;
+    logger &m_logger;
+
+    std::vector<bool> m_rows_summed;
+    matrix::data m_sum{0};
+  };
 
 private:
   dispatcher &m_dispatcher;
   logger &m_logger;
-
-  std::vector<bool> m_rows_summed;
-  matrix::data m_sum{0};
+  matrix &m_matrix;
+  internal_dispatcher m_internal_dispatcher{m_logger};
 };
 
-struct end_of_pgm {
-  end_of_pgm(matrix::data &p_sum, std::condition_variable &p_cond)
-      : m_sum(p_sum), m_cond(p_cond) {}
+void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger) {
+  dispatcher _dispatcher(p_logger);
 
-  void operator()(evt::matrix_summed &&p_matrix_summed) {
-    m_sum = p_matrix_summed.m_sum;
-    m_cond.notify_one();
-  }
-
-private:
-  matrix::data &m_sum;
-  std::condition_variable &m_cond;
-};
-
-} // namespace dom
-
-void define_handlers(dispatcher &p_dispatcher, logger &p_logger,
-                     matrix &p_matrix, std::condition_variable &p_cond_end,
-                     matrix::data &p_sum) {
-  using sum_line_queue = container::circular_queue<logger, evt::sum_line, 20>;
-
-  p_dispatcher.add_handling(
-      async::handling_definition<evt::sum_line, dom::line_summer,
-                                 sum_line_queue>{
-          "sum-line", dom::line_summer{p_dispatcher, p_logger},
-          sum_line_queue{p_logger}, 4});
-
-  using line_summed_queue =
-      container::circular_queue<logger, evt::line_summed, 10>;
-
-  p_dispatcher.add_handling(
-      async::handling_definition<evt::line_summed, dom::matrix_summer,
-                                 line_summed_queue>{
-          "line-summed",
-          dom::matrix_summer{p_dispatcher, p_logger, p_matrix.get_num_rows()},
-          line_summed_queue{p_logger}, 1});
+  std::mutex _mutex;
+  std::condition_variable _cond;
+  std::size_t _sum{std::numeric_limits<std::size_t>::max()};
 
   using matrix_summed_queue =
       container::circular_queue<logger, evt::matrix_summed, 1>;
+  auto _end_of_pgm = [&](evt::matrix_summed &&p_event) {
+    _sum = p_event.m_sum;
+    _cond.notify_one();
+  };
 
-  p_dispatcher.add_handling(
-
-      async::handling_definition<evt::matrix_summed, dom::end_of_pgm,
+  _dispatcher.add_handling(
+      async::handling_definition<evt::matrix_summed, decltype(_end_of_pgm),
                                  matrix_summed_queue>{
-          "matrix-summed", dom::end_of_pgm{p_sum, p_cond_end},
+          "matrix-summed", std::move(_end_of_pgm),
           matrix_summed_queue{p_logger}, 1});
+
+  async_sum_matrix _async_sum_matrix(_dispatcher, p_logger, p_matrix);
+
+  const auto _start = std::chrono::high_resolution_clock::now();
+
+  _async_sum_matrix();
+
+  std::unique_lock<std::mutex> _lock{_mutex};
+  _cond.wait(_lock);
+
+  const auto _end = std::chrono::high_resolution_clock::now();
+
+  const std::chrono::duration<double> _diff = _end - _start;
+
+  TNCT_LOG_TST(p_logger,
+               format::fmt("time = ", _diff.count(), " seconds, sum: ", _sum));
 }
 
 int main(int argc, char **argv) {
@@ -287,54 +305,17 @@ int main(int argc, char **argv) {
   }
 
   logger _logger;
-
+  _logger.set_war();
   std::size_t _matriz_size{get_matriz_size(_logger, argv[1]).value_or(0)};
 
   if (_matriz_size == 0) {
+    syntax(argv[0]);
     return -2;
   }
 
   matrix _matrix{fill_matrix(_matriz_size)};
 
-  {
-    const auto _start = std::chrono::high_resolution_clock::now();
+  sync_sum_matrix_wrapper(_matrix, _logger);
 
-    std::cout << "sync sum: " << sum_matrix(_matrix) << std::endl;
-
-    const auto _end = std::chrono::high_resolution_clock::now();
-
-    const std::chrono::duration<double> _diff = _end - _start;
-
-    TNCT_LOG_TST(_logger, format::fmt("time = ", _diff.count(), " seconds"));
-  }
-
-  matrix::data _sum{std::numeric_limits<matrix::data>::max()};
-  dispatcher _dispatcher(_logger);
-
-  std::mutex _mutex;
-  std::condition_variable _cond;
-
-  define_handlers(_dispatcher, _logger, _matrix, _cond, _sum);
-
-  const auto _start = std::chrono::high_resolution_clock::now();
-
-  for (matrix::index _r = 0; _r < _matrix.get_num_rows(); ++_r) {
-    auto _result{_dispatcher.publish<evt::sum_line>(&_matrix, _r)};
-    if (_result != async::result::OK) {
-      TNCT_LOG_ERR(_logger,
-                   format::fmt("error publishing 'sum_line': ", _result));
-      return -3;
-    }
-  }
-
-  std::unique_lock<std::mutex> _lock{_mutex};
-  _cond.wait(_lock);
-
-  const auto _end = std::chrono::high_resolution_clock::now();
-
-  const std::chrono::duration<double> _diff = _end - _start;
-
-  TNCT_LOG_TST(_logger, format::fmt("time = ", _diff.count(), " seconds"));
-
-  std::cout << "async sum: " << _sum << std::endl;
+  async_sum_matrix_wrapper(_matrix, _logger);
 }
