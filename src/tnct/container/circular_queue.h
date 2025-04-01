@@ -28,7 +28,6 @@ namespace tnct::container {
 template <traits::log::logger t_logger, typename t_data, size_t t_initial_size,
           size_t t_incremental_size = t_initial_size / 2>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
-    std::is_default_constructible_v<t_data> &&
     traits::has_output_operator<t_data>
 class circular_queue final {
 public:

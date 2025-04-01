@@ -16,30 +16,6 @@
 
 namespace tnct::traits::async {
 
-// template <typename t>
-// concept handling_helper = requires(t p_t) {
-//   typename t::event;
-//   typename t::handler;
-//   typename t::queue;
-//   typename t::priority;
-//   typename t::id;
-// }
-// &&
-
-//     traits::async::event<std::remove_cvref_t<typename t::event>> &&
-
-//         traits::container::queue<std::remove_cvref_t<typename t::queue>,
-//                                  std::remove_cvref_t<typename t::event>> &&
-
-//             traits::async::handler<std::remove_cvref_t<typename t::handler>,
-//                                    std::remove_cvref_t<typename t::event>> &&
-
-//                 traits::string::fixed_size_string<
-//                     std::remove_cvref_t<typename t::id>> &&
-
-//                     traits::async::handling_priority<
-//                         std::remove_cvref_t<typename t::priority>>;
-
 template <typename t>
 concept handling_definition = requires(t p_t) {
 
@@ -77,23 +53,6 @@ concept handling_definition = requires(t p_t) {
 
                     traits::async::handling_priority<
                         std::remove_cvref_t<typename t::priority>>;
-
-// template <typename t_event, typename t_handlings_tuple>
-// concept all_handlings_are_for_same_event = requires {
-//   requires tuple::like<t_handlings_tuple> &&
-
-//       async::event<t_event> &&
-
-//           []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-//     return (
-
-//         (std::is_same_v<t_event, typename std::tuple_element_t<
-//                                      t_idx, t_handlings_tuple>::event>)
-
-//         &&...);
-//   }
-//   (std::make_index_sequence<std::tuple_size_v<t_handlings_tuple>>());
-// };
 
 } // namespace tnct::traits::async
 

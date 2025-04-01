@@ -18,7 +18,7 @@ namespace tnct::traits::container {
 template <typename t, typename t_data>
 concept queue = std::copy_constructible<typename t::data> &&
     std::move_constructible<typename t::data> &&
-    std::assignable_from<typename t::data &, typename t::data> &&
+    // std::assignable_from<typename t::data &, typename t::data> &&
     has_output_operator<typename t::data> && std::copy_constructible<t> &&
     std::move_constructible<t> && std::assignable_from<t &, t> &&
 
