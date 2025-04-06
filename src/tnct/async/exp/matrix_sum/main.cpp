@@ -221,11 +221,14 @@ private:
     matrix_summer(dispatcher &p_dispatcher, logger &p_logger,
                   matrix::index p_num_rows)
         : m_dispatcher(p_dispatcher), m_logger(p_logger),
-          m_rows_summed(p_num_rows, false) {}
+          m_num_rows(p_num_rows) {
+      if (m_num_rows == 0) {
+        throw std::runtime_error("number of rows can not be 0");
+      }
+    }
 
     void operator()(line_summed &&p_line_summed) {
       m_sum += p_line_summed.m_sum;
-      m_rows_summed[p_line_summed.m_row] = true;
       if (all_rows_summed()) {
         auto _result{m_dispatcher.publish<evt::matrix_summed>(m_sum)};
         if (_result != async::result::OK) {
@@ -237,20 +240,20 @@ private:
     }
 
   private:
-    bool all_rows_summed() const {
-      for (bool _b : m_rows_summed) {
-        if (!_b) {
-          return false;
-        }
+    bool all_rows_summed() {
+      ++m_num_rows_summed;
+      if (m_num_rows_summed == m_num_rows) {
+        return true;
       }
-      return true;
+      return false;
     }
 
   private:
     dispatcher &m_dispatcher;
     logger &m_logger;
 
-    std::vector<bool> m_rows_summed;
+    matrix::index m_num_rows{0};
+    matrix::index m_num_rows_summed{0};
     matrix::data m_sum{0};
   };
 
@@ -297,6 +300,11 @@ void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger) {
   TNCT_LOG_TST(p_logger,
                format::fmt("time = ", _diff.count(), " seconds, sum: ", _sum));
 }
+// clang-format off
+//rodrigo@wayne:~/development/prd/linux-release-64/exp$ ./tnct.async.exp.matrix_sum 60260
+//TST|2025-04-06 11:58:08,584990|140374769088320|main.cpp                           |00079|time = 1.73989 seconds, sum: 6593052193220513800
+//TST|2025-04-06 11:58:09,747472|140374769088320|main.cpp                           |00308|time = 0.975312 seconds, sum: 6593052193220513800
+//  clang-format on
 
 int main(int argc, char **argv) {
   if (argc != 2) {
