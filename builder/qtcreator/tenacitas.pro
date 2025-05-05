@@ -16,7 +16,9 @@ SUBDIRS = \
     format \
     tester \
     ostream \
-    string
+    string \
+    mf4 \
+    byte_array
 
 
 

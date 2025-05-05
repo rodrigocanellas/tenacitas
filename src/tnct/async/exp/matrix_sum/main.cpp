@@ -180,7 +180,7 @@ private:
     m_internal_dispatcher.add_handling(
         async::handling_definition<sum_line, line_summer, sum_line_queue>{
             "sum-line", line_summer{m_internal_dispatcher, m_logger, m_matrix},
-            sum_line_queue{m_logger}, 8});
+            sum_line_queue{m_logger}, 12});
 
     using line_summed_queue =
         container::circular_queue<logger, line_summed, 10>;
