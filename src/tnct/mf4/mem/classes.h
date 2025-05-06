@@ -19,7 +19,7 @@
 
 namespace tnct::mf4::mem {
 
-enum class Result : std::uint8_t { ok = 0, file_not_found = 1 };
+enum class Result : std::uint8_t { ok = 0, file_not_found = 1, error_reading };
 
 std::ostream &operator<<(std::ostream &out, Result result) {
   switch (result) {
@@ -28,6 +28,9 @@ std::ostream &operator<<(std::ostream &out, Result result) {
     break;
   case Result::file_not_found:
     out << "file not found";
+    break;
+  case Result::error_reading:
+    out << "error reading";
     break;
   default:
     out << "unknown";
@@ -141,11 +144,22 @@ public:
 
 template <Traits::Id TBlockId, traits::log::logger t_logger> struct Block;
 
+template <traits::log::logger t_logger> struct Block<Traits::ID, t_logger>;
+
+template <traits::log::logger t_logger> struct Block<Traits::HD, t_logger>;
+
 template <traits::log::logger t_logger>
 struct Block<Traits::ID, t_logger> final {
   Block() = delete;
   Block(const Block &) = delete;
-  Block(Block &&) = delete;
+  Block(Block &&p_block) : logger_(p_block.logger_) {
+    std::strcpy(id_file_, p_block.GetIdFile());
+    std::strcpy(id_vers_, p_block.GetIdVersionStr());
+    std::strcpy(id_prog_, p_block.GetIdProg());
+    id_ver_ = p_block.GetIdVersion();
+    id_unfin_flags_ = p_block.GetIdUnfinFlags();
+    id_custom_unfin_flags_ = p_block.GetIdCustomUnfinFlags();
+  }
   ~Block() = default;
 
   Block(t_logger &p_logger, const char *id_file, const char *id_vers,
@@ -225,75 +239,58 @@ std::ostream &operator<<(std::ostream &out,
   return out;
 }
 
-// template <Traits::Id TBlockId> struct HeaderSection {
-//   HeaderSection() = delete;
-//   HeaderSection(const HeaderSection &) = delete;
-//   HeaderSection(HeaderSection &&) = delete;
-//   HeaderSection &operator=(const HeaderSection &) = delete;
-//   HeaderSection &operator=(HeaderSection &&) = delete;
-//   HeaderSection(std::streamsize offset_start, std::ifstream &file) {
-//     const std::streamsize offset_id{offset_start};
-//     const std::streamsize offset_length{
-//         offset_id + static_cast<std::streamsize>(id_field_size) +
-//         static_cast<std::streamsize>(sizeof(reserved_))};
-//     const std::streamsize offset_link_count{
-//         offset_length + static_cast<std::streamsize>(sizeof(length_))};
+template <Traits::Id TBlockId, traits::log::logger t_logger>
+struct HeaderSection {
+  HeaderSection() = delete;
+  HeaderSection(const HeaderSection &) = delete;
+  HeaderSection(HeaderSection &&p_obj) : m_logger(p_obj.m_logger) {
+    std::strcpy(m_id, p_obj.GetId());
+    m_length = p_obj.GetLenght();
+    m_link_count = p_obj.GetLinkCount();
+  }
+  HeaderSection &operator=(const HeaderSection &) = delete;
+  HeaderSection &operator=(HeaderSection &&) = delete;
+  HeaderSection(t_logger &p_logger, const char *p_id, uint64_t p_lenght,
+                uint64_t p_link_count)
+      : m_logger(p_logger) {
+    if (std::strlen(p_id) > id_field_size) {
+      TNCT_LOG_ERR(m_logger,
+                   format::fmt("id should be ", id_field_size,
+                               " long, but it is ", std::strlen(p_id),
+                               " for block ", Traits::strs_[TBlockId]));
+      throw std::runtime_error("error creating HeaderSection");
+    }
+    std::memset(m_id, '\0', id_field_size + 1);
+    std::strcpy(m_id, p_id);
 
-//     bool error_reading{false};
+    m_length = p_lenght;
+    m_link_count = p_link_count;
+  }
 
-//     if (!read_string(file, offset_id, id_, id_field_size)) {
-//       error_reading = true;
-//       ctw::log::err("error reading 'id' from 'HDBLOCK'");
-//     }
+  ~HeaderSection() = default;
 
-//     if (!error_reading && (std::strcmp(id_, Traits::strs_[TBlockId]))) {
-//       error_reading = true;
-//       ctw::log::err(
-//           ctw::format::fmt("error reading 'id' from 'HDBLOCK', expected ",
-//                            Traits::strs_[TBlockId], ", but read ", id_));
-//     }
+  const char *GetId() const { return m_id; };
+  std::uint64_t GetLenght() const { return m_length; }
+  std::uint64_t GetLinkCount() const { return m_link_count; }
 
-//     if (!error_reading && !read_unsigned(file, offset_length, length_)) {
-//       error_reading = true;
-//       ctw::log::err("error reading 'length' from 'HDBLOCK'");
-//     }
+  static constexpr uint8_t id_field_size{4};
 
-//     if (!error_reading &&
-//         !read_unsigned(file, offset_link_count, link_count_)) {
-//       error_reading = true;
-//       ctw::log::err("error reading 'link_count' from 'HDBLOCK'");
-//     }
+private:
+  t_logger &m_logger;
 
-//     if (error_reading) {
-//       throw std::runtime_error("error reading 'HDBLOCK'");
-//     }
-//   }
+  char m_id[id_field_size + 1];
+  std::uint64_t m_length{std::numeric_limits<std::uint64_t>::max()};
+  std::uint64_t m_link_count{std::numeric_limits<std::uint64_t>::max()};
+};
 
-//   ~HeaderSection() = default;
-
-//   const char *GetId() const { return id_; };
-//   std::uint64_t GetLenght() const { return length_; }
-//   std::uint64_t GetLinkCount() const { return link_count_; }
-
-//   static constexpr std::streamsize size{24};
-
-// private:
-//   static constexpr uint8_t id_field_size{4};
-
-//   char id_[id_field_size + 1];
-//   std::uint32_t reserved_{0xFFFFFFFF};
-//   std::uint64_t length_{std::numeric_limits<std::uint64_t>::max()};
-//   std::uint64_t link_count_{std::numeric_limits<std::uint64_t>::max()};
-// };
-
-// template <Traits::Id TBlockId>
-// std::ostream &operator<<(std::ostream &out,
-//                          const HeaderSection<TBlockId> &obj) {
-//   out << "Header Section id = '" << obj.GetId()
-//       << "', length = " << obj.GetLenght()
-//       << ", link count = " << obj.GetLinkCount();
-//   return out;
-// }
+template <Traits::Id TBlockId, traits::log::logger t_logger>
+std::ostream &operator<<(std::ostream &out,
+                         const HeaderSection<TBlockId, t_logger> &obj) {
+  out << "Header Section id = '" << obj.GetId()
+      << "', length = " << obj.GetLenght()
+      << ", link count = " << obj.GetLinkCount();
+  return out;
+}
 
 // template <Traits::Id TBlockId> struct LinkSection {
 //   static constexpr std::streamsize size{static_cast<std::streamsize>(
