@@ -7,53 +7,53 @@
 #include "tnct/traits/log/logger.h"
 
 // template <>
-// struct Block<Traits::HD>
+// struct Block<HD>
 // {
-//     static constexpr std::streamsize size{HeaderSection<Traits::HD>::size +
-//     LinkSection<Traits::HD>::size};
+//     static constexpr std::streamsize size{HeaderSection<HD>::size +
+//     LinkSection<HD>::size};
 // };
 
-// template <Traits::Id TBlockId>
+// template <Id t_block_Id>
 // class Block
 // {
 //   public:
-//     constexpr static Traits::Id id_{TBlockId};
+//     constexpr static Id id_{t_block_Id};
 
 //   private:
 //     HeaderSection header_section_;
-//     LinkSection<TBlockId> link_section_;
-//     DataSection<TBlockId> data_section_;
+//     LinkSection<t_block_Id> link_section_;
+//     DataSection<t_block_Id> data_section_;
 // };
 
 // class File
 // {
 //   private:
-//     template <Traits::Id TBlockId>
-//     using BlocksVector = std::vector<Block<TBlockId>>;
+//     template <Id t_block_Id>
+//     using BlocksVector = std::vector<Block<t_block_Id>>;
 
-//     using Blocks = std::tuple<BlocksVector<Traits::Id::MD>,
-//                               BlocksVector<Traits::Id::TX>,
-//                               BlocksVector<Traits::Id::FH>,
-//                               BlocksVector<Traits::Id::CH>,
-//                               BlocksVector<Traits::Id::AT>,
-//                               BlocksVector<Traits::Id::AT>,
-//                               BlocksVector<Traits::Id::EV>,
-//                               BlocksVector<Traits::Id::DG>,
-//                               BlocksVector<Traits::Id::CG>,
-//                               BlocksVector<Traits::Id::SI>,
-//                               BlocksVector<Traits::Id::CN>,
-//                               BlocksVector<Traits::Id::CC>,
-//                               BlocksVector<Traits::Id::CA>,
-//                               BlocksVector<Traits::Id::DT>,
-//                               BlocksVector<Traits::Id::SR>,
-//                               BlocksVector<Traits::Id::RD>,
-//                               BlocksVector<Traits::Id::SD>,
-//                               BlocksVector<Traits::Id::DL>,
-//                               BlocksVector<Traits::Id::DZ>,
-//                               BlocksVector<Traits::Id::HL>>;
+//     using Blocks = std::tuple<BlocksVector<Id::MD>,
+//                               BlocksVector<Id::TX>,
+//                               BlocksVector<Id::FH>,
+//                               BlocksVector<Id::CH>,
+//                               BlocksVector<Id::AT>,
+//                               BlocksVector<Id::AT>,
+//                               BlocksVector<Id::EV>,
+//                               BlocksVector<Id::DG>,
+//                               BlocksVector<Id::CG>,
+//                               BlocksVector<Id::SI>,
+//                               BlocksVector<Id::CN>,
+//                               BlocksVector<Id::CC>,
+//                               BlocksVector<Id::CA>,
+//                               BlocksVector<Id::DT>,
+//                               BlocksVector<Id::SR>,
+//                               BlocksVector<Id::RD>,
+//                               BlocksVector<Id::SD>,
+//                               BlocksVector<Id::DL>,
+//                               BlocksVector<Id::DZ>,
+//                               BlocksVector<Id::HL>>;
 
-//     Block<Traits::Id::ID> identification_;
-//     Block<Traits::Id::HD> header_;
+//     Block<Id::ID> identification_;
+//     Block<Id::HD> header_;
 // };
 
 // template <std::unsigned_integral TNum> static bool to_from_to(TNum num_to) {
@@ -105,6 +105,6 @@ int main(int argc, char **argv) {
 
   log::cout _logger;
 
-  mf4::mem::Result result{mf4::per::mf4_reader(argv[1], _logger)};
+  mf4::mem::result result{mf4::per::mf4_reader(argv[1], _logger)};
   TNCT_LOG_INF(_logger, tnct::format::fmt("result = ", result));
 }

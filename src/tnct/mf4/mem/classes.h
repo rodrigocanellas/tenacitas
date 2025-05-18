@@ -7,29 +7,30 @@
 #define TNCT_MF4_MEM_CLASSES_H
 
 #include <array>
-#include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
-#include <fstream>
 #include <iostream>
 #include <optional>
+#include <vector>
 
 #include "tnct/format/fmt.h"
 #include "tnct/traits/log/logger.h"
 
 namespace tnct::mf4::mem {
 
-enum class Result : std::uint8_t { ok = 0, file_not_found = 1, error_reading };
+using LINK = std::int64_t;
 
-std::ostream &operator<<(std::ostream &out, Result result) {
+enum class result : std::uint8_t { ok = 0, file_not_found = 1, error_reading };
+
+std::ostream &operator<<(std::ostream &out, result result) {
   switch (result) {
-  case Result::ok:
+  case result::ok:
     out << "OK";
     break;
-  case Result::file_not_found:
-    out << "file not found";
+  case result::file_not_found:
     break;
-  case Result::error_reading:
+  case result::error_reading:
     out << "error reading";
     break;
   default:
@@ -39,132 +40,212 @@ std::ostream &operator<<(std::ostream &out, Result result) {
   return out;
 }
 
-using LINK = std::int64_t;
-
-// static constexpr LINK invalid_link{0};
-
-class Traits {
-public:
-  using Id = std::uint8_t;
+enum class block_id : std::uint8_t {
 
   // Identification block. Identification of the file as MDF file
-  static constexpr Id ID = 0;
+  ID = 0,
   // Header block. General description of the measurement file
-  static constexpr Id HD = 1;
+  HD = 1,
   // Metadata block. Container for an XML string of variable length
-  static constexpr Id MD = 2;
+  MD = 2,
   // Text block. Container for a plain string of variable  length
-  static constexpr Id TX = 3;
+  TX = 3,
   // File history block. Change history information of the MDF file
-  static constexpr Id FH = 4;
+  FH = 4,
   // Channel hierarchy block. Definition of a logical structure/hierarchy for
   // channels
-  static constexpr Id CH = 5;
+  CH = 5,
   // Attachment block. Container for binary data or a reference to an external
   // file
-  static constexpr Id AT = 6;
+  AT = 6,
   // Event block. Description of an event
-  static constexpr Id EV = 7;
+  EV = 7,
   // Data group block. Description of data block that may refer to one or more
   // channel groups
-  static constexpr Id DG = 8;
-  // Channel group block. Description of a channel group; i.e. channels which
+  DG = 8,
+  // Channel group block. Description of a channel group, i.e. channels which
   // are always measured jointly
-  static constexpr Id CG = 9;
-  // Source information block. Specifies source information for a channel or for
-  // the acquisition of a channel group.
-  static constexpr Id SI = 10;
-  // Channel block. Description of a channel; i.e. information about the
+  CG = 9,
+  // Source information block. Specifies source information for a channel or
+  // for the acquisition of a channel group.
+  SI = 10,
+  // Channel block. Description of a channel, i.e. information about the
   // measured signal and how the signal nums are stored.
-  static constexpr Id CN = 11;
-  // Channel conversion block. Description of a conversion formula for a channel
-  static constexpr Id CC = 12;
+  CN = 11,
+  // Channel conversion block. Description of a conversion formula for a
+  // channel
+  CC = 12,
   // Channel array block. Description of an array  dependency (N-dimensional
   // matrix of channels with equal data type) including axes.
-  static constexpr Id CA = 13;
+  CA = 13,
   // Data block. Container for data records with signal nums
-  static constexpr Id DT = 14;
-  // Sample reduction block. Description of reduced/condensed signal nums which
-  // can be used for preview
-  static constexpr Id SR = 15;
+  DT = 14,
+  // Sample reduction block. Description of reduced/condensed signal nums
+  // which can be used for preview
+  SR = 15,
   // Reduction data block. Container for data record triples with result of a
   // sample reduction
-  static constexpr Id RD = 16;
+  RD = 16,
   // Signal data block. Container for signal nums of variable length
-  static constexpr Id SD = 17;
-  // Data list block. Ordered list of links to (signal/reduction) data blocks if
-  // the data is spread over multiple blocks
-  static constexpr Id DL = 18;
+  SD = 17,
+  // Data list block. Ordered list of links to (signal/reduction) data blocks
+  // if the data is spread over multiple blocks
+  DL = 18,
   // Data zipped block. Container for zipped (compressed) data section of a
   // DT/SD/RD block as replacement of such a block.
-  static constexpr Id DZ = 19;
+  DZ = 19,
   // Header of list block. Header information for linked list of data blocks
-  static constexpr Id HL = 20;
+  HL = 20,
+
+};
+
+using block_id_str = char[5];
+
+struct block_id_converter {
+  static const block_id_str &to_str(block_id p_id) {
+    return m_array[static_cast<block_id_type>(p_id)];
+  }
+
+  static std::optional<block_id> to_id(const block_id_str p_id_str) {
+    const auto _ite{std::find_if(m_array.begin(), m_array.end(),
+                                 [&](const block_id_str &item) {
+                                   return (std::strcmp(p_id_str, item) == 0);
+                                 })};
+    if (_ite == m_array.end()) {
+      return std::nullopt;
+    }
+    const auto _distance{std::distance(m_array.begin(), _ite)};
+    const block_id _block_id{static_cast<block_id_type>(_distance)};
+    return {_block_id};
+  }
 
 private:
-  static constexpr decltype(HL) num_ids{HL + 1};
+  using array =
+      std::array<block_id_str,
+                 static_cast<std::underlying_type_t<block_id>>(block_id::HL) +
+                     1>;
 
-public:
-  using Str = char[5];
+  using block_id_type = std::underlying_type_t<block_id>;
 
-  using Strs = std::array<Str, num_ids>;
-  using NumLinks = std::array<std::size_t, num_ids>;
+  static constexpr array m_array{"##ID", "##HD", "##MD", "##TX", "##FH", "##CH",
+                                 "##AT", "##EV", "##DG", "##CG", "##SI", "##CN",
+                                 "##CC", "##CA", "##DT", "##SR", "##RD", "##SD",
+                                 "##DL", "##DZ", "##HL"};
+};
 
-  static constexpr Strs strs_{"##ID", "##HD", "##MD", "##TX", "##FH", "##CH",
-                              "##AT", "##EV", "##DG", "##CG", "##SI", "##CN",
-                              "##CC", "##CA", "##DT", "##SR", "##RD", "##SD",
-                              "##DL", "##DZ", "##HL"};
+template <block_id t_block_Id> struct data_section_t;
 
-  static constexpr NumLinks num_links_{
-      0, // ID
-      6, // HD
-      0, // MD
-      0, // TX
-      0, // FH
-      0, // CH
-      0, // AT
-      0, // EV
-      0, // DG
-      0, // CG
-      0, // SI
-      0, // CN
-      0, // CC
-      0, // CA
-      0, // DT
-      0, // SR
-      0, // RD
-      0, // SD
-      0, // DL
-      0, // DZ
-      0, // HL
-  };
+template <block_id t_block_id> struct block_t final {
+  using link = std::int64_t;
+
+  using links = std::vector<link>;
+
+  using const_links_iterator = links::const_iterator;
+
+  using data_section = data_section_t<t_block_id>;
+
+  block_t() = delete;
+
+  block_t(link p_position) : m_position(p_position) {}
+
+  block_t(link p_position, link p_parent)
+      : m_position(p_position), m_parent(p_parent) {}
+
+  block_t(const block_t &) = delete;
+
+  block_t(block_t &&) noexcept = default;
+
+  ~block_t() = default;
+
+  block_t &operator=(const block_t &) = delete;
+  block_t &operator=(block_t &&) noexcept = default;
+
+  constexpr bool operator==(const block_t &p_block) const {
+    return (m_id == p_block.m_id) && (m_position == p_block.m_position);
+  }
+
+  constexpr bool operator!=(const block_t &p_block) const {
+    return !(*this == p_block);
+  }
+
+  constexpr bool operator<(const block_t &p_block) const {
+    if (m_id < p_block.m_id) {
+      return true;
+    }
+    if (m_id > p_block.m_id) {
+      return false;
+    }
+    if (m_position < p_block.m_position) {
+      return true;
+    }
+    return false;
+  }
+
+  const block_id &get_id() const { return m_id; }
+
+  const link &get_position() const { return m_position; }
+
+  std::optional<link> get_parent() const { return m_parent; }
+
+  const_links_iterator begin() const { return m_links.begin(); }
+
+  const_links_iterator end() const { return m_links.end(); }
+
+  std::size_t get_num_links() const { return m_links.size(); }
+
+  void add_link(link p_link) { m_links.push_back(p_link); }
+
+  void set_data_section(data_section &&p_data_section) {
+    m_data_section = std::move(p_data_section);
+  }
+
+  const data_section &get_data_section() const { return m_data_section; }
+
+private:
+  block_id m_id{t_block_id};
+
+  link m_position;
+
+  std::optional<link> m_parent;
+
+  links m_links;
+
+  data_section m_data_section;
 };
 
 // referencing and unique link?
 
-template <Traits::Id TBlockId, traits::log::logger t_logger> struct Block;
+template <block_id t_block_id>
+std::ostream &operator<<(std::ostream &p_out,
+                         const block_t<t_block_id> &p_block) {
+  p_out << "{ id = " << block_id_converter::to_str(p_block.get_id())
+        << ", position = " << p_block.get_position() << ", parent = ";
+  if (p_block.get_parent().has_value()) {
+    p_out << p_block.get_parent().value();
+  } else {
+    p_out << " NULL";
+  }
+  p_out << ", # links = " << p_block.get_num_links() << ", data = { "
+        << p_block.get_data_section() << " } }\n";
+  return p_out;
+}
 
-template <traits::log::logger t_logger> struct Block<Traits::ID, t_logger>;
-
-template <traits::log::logger t_logger> struct Block<Traits::HD, t_logger>;
-
-template <traits::log::logger t_logger>
-struct Block<Traits::ID, t_logger> final {
-  Block() = delete;
-  Block(const Block &) = delete;
-  Block(Block &&p_block) : logger_(p_block.logger_) {
-    std::strcpy(id_file_, p_block.GetIdFile());
-    std::strcpy(id_vers_, p_block.GetIdVersionStr());
-    std::strcpy(id_prog_, p_block.GetIdProg());
+template <traits::log::logger t_logger> struct id_block final {
+  id_block() = delete;
+  id_block(const id_block &) = delete;
+  id_block(id_block &&p_block) noexcept : logger_(p_block.logger_) {
+    std::strncpy(id_file_, p_block.GetIdFile(), sizeof(id_file_));
+    std::strncpy(id_vers_, p_block.GetIdVersionStr(), sizeof(id_file_));
+    std::strncpy(id_prog_, p_block.GetIdProg(), sizeof(id_file_));
     id_ver_ = p_block.GetIdVersion();
     id_unfin_flags_ = p_block.GetIdUnfinFlags();
     id_custom_unfin_flags_ = p_block.GetIdCustomUnfinFlags();
   }
-  ~Block() = default;
+  ~id_block() = default;
 
-  Block(t_logger &p_logger, const char *id_file, const char *id_vers,
-        const char *id_prog, std::uint16_t id_ver, std::uint16_t id_unfin_flags,
-        std::uint16_t id_custom_unfin_flags)
+  id_block(t_logger &p_logger, const char *id_file, const char *id_vers,
+           const char *id_prog, std::uint16_t id_ver,
+           std::uint16_t id_unfin_flags, std::uint16_t id_custom_unfin_flags)
       : logger_{p_logger} {
     bool error{false};
     if (std::strlen(id_file) != str_field_size) {
@@ -174,7 +255,7 @@ struct Block<Traits::ID, t_logger> final {
                                " but it is ", std::strlen(id_file)));
       error = true;
     }
-    std::strcpy(id_file_, id_file);
+    std::strncpy(id_file_, id_file, sizeof(id_file_));
 
     if (std::strlen(id_vers) != str_field_size) {
       TNCT_LOG_ERR(logger_,
@@ -183,7 +264,7 @@ struct Block<Traits::ID, t_logger> final {
                                " but it is ", std::strlen(id_file)));
       error = true;
     }
-    std::strcpy(id_vers_, id_vers);
+    std::strncpy(id_vers_, id_vers, sizeof(id_vers_));
 
     if (std::strlen(id_prog) != str_field_size) {
       TNCT_LOG_ERR(logger_,
@@ -192,7 +273,7 @@ struct Block<Traits::ID, t_logger> final {
                                " but it is ", std::strlen(id_prog)));
       error = true;
     }
-    std::strcpy(id_prog_, id_prog);
+    std::strncpy(id_prog_, id_prog, sizeof(id_prog_));
 
     id_ver_ = id_ver;
     id_unfin_flags_ = id_unfin_flags;
@@ -203,8 +284,8 @@ struct Block<Traits::ID, t_logger> final {
     }
   }
 
-  Block &operator=(const Block &) = delete;
-  Block &operator=(Block &&) = delete;
+  id_block &operator=(const id_block &) = delete;
+  id_block &operator=(id_block &&) = delete;
 
   static constexpr std::streamsize size{64};
 
@@ -228,8 +309,7 @@ private:
 };
 
 template <traits::log::logger t_logger>
-std::ostream &operator<<(std::ostream &out,
-                         const Block<Traits::ID, t_logger> &obj) {
+std::ostream &operator<<(std::ostream &out, const id_block<t_logger> &obj) {
   out << "Identification: file = '" << obj.GetIdFile() << "', version = ('"
       << obj.GetIdVersionStr() << "'," << obj.GetIdVersion() << ") program = '"
       << obj.GetIdProg() << "', id_unfin_flags = " << obj.GetIdUnfinFlags()
@@ -239,194 +319,60 @@ std::ostream &operator<<(std::ostream &out,
   return out;
 }
 
-template <Traits::Id TBlockId, traits::log::logger t_logger>
-struct HeaderSection {
-  HeaderSection() = delete;
-  HeaderSection(const HeaderSection &) = delete;
-  HeaderSection(HeaderSection &&p_obj) : m_logger(p_obj.m_logger) {
-    std::strcpy(m_id, p_obj.GetId());
-    m_length = p_obj.GetLenght();
-    m_link_count = p_obj.GetLinkCount();
-  }
-  HeaderSection &operator=(const HeaderSection &) = delete;
-  HeaderSection &operator=(HeaderSection &&) = delete;
-  HeaderSection(t_logger &p_logger, const char *p_id, uint64_t p_lenght,
-                uint64_t p_link_count)
-      : m_logger(p_logger) {
-    if (std::strlen(p_id) > id_field_size) {
-      TNCT_LOG_ERR(m_logger,
-                   format::fmt("id should be ", id_field_size,
-                               " long, but it is ", std::strlen(p_id),
-                               " for block ", Traits::strs_[TBlockId]));
-      throw std::runtime_error("error creating HeaderSection");
-    }
-    std::memset(m_id, '\0', id_field_size + 1);
-    std::strcpy(m_id, p_id);
+template <> struct data_section_t<block_id::HD> final {
+  data_section_t() = default;
+  data_section_t(std::uint64_t p_hd_start_time_ns,
+                 std::int16_t p_hd_tz_offset_min,
+                 std::int16_t p_hd_dst_offset_min, std::uint8_t p_hd_time_flags,
+                 std::uint8_t p_hd_time_class, std::uint8_t p_hd_flags,
+                 double p_hd_start_angle_rad, double p_hd_start_distance_m)
+      : m_hd_start_time_ns(p_hd_start_time_ns),
+        m_hd_tz_offset_min(p_hd_tz_offset_min),
+        m_hd_dst_offset_min(p_hd_dst_offset_min),
+        m_hd_time_flags(p_hd_time_flags), m_hd_time_class(p_hd_time_class),
+        m_hd_flags(p_hd_flags), m_hd_start_angle_rad(p_hd_start_angle_rad),
+        m_hd_start_distance_m(p_hd_start_distance_m) {}
 
-    m_length = p_lenght;
-    m_link_count = p_link_count;
-  }
+  data_section_t(const data_section_t &) = delete;
+  data_section_t(data_section_t &&) = default;
 
-  ~HeaderSection() = default;
+  ~data_section_t() = default;
 
-  const char *GetId() const { return m_id; };
-  std::uint64_t GetLenght() const { return m_length; }
-  std::uint64_t GetLinkCount() const { return m_link_count; }
+  data_section_t &operator=(const data_section_t &) = delete;
+  data_section_t &operator=(data_section_t &&) = default;
 
-  static constexpr uint8_t id_field_size{4};
+  std::uint64_t get_hd_start_time_ns() const { return m_hd_start_time_ns; }
+  std::int16_t get_hd_tz_offset_min() const { return m_hd_tz_offset_min; }
+  std::int16_t get_hd_dst_offset_min() const { return m_hd_dst_offset_min; }
+  std::uint8_t get_hd_time_flags() const { return m_hd_time_flags; }
+  std::uint8_t get_hd_time_class() const { return m_hd_time_class; }
+  std::uint8_t get_hd_flags() const { return m_hd_flags; };
+  double get_hd_start_angle_rad() const { return m_hd_start_angle_rad; }
+  double get_hd_start_distance_m() const { return m_hd_start_distance_m; }
 
 private:
-  t_logger &m_logger;
-
-  char m_id[id_field_size + 1];
-  std::uint64_t m_length{std::numeric_limits<std::uint64_t>::max()};
-  std::uint64_t m_link_count{std::numeric_limits<std::uint64_t>::max()};
+  std::uint64_t m_hd_start_time_ns;
+  std::int16_t m_hd_tz_offset_min;
+  std::int16_t m_hd_dst_offset_min;
+  std::uint8_t m_hd_time_flags;
+  std::uint8_t m_hd_time_class;
+  std::uint8_t m_hd_flags;
+  double m_hd_start_angle_rad;
+  double m_hd_start_distance_m;
 };
 
-template <Traits::Id TBlockId, traits::log::logger t_logger>
-std::ostream &operator<<(std::ostream &out,
-                         const HeaderSection<TBlockId, t_logger> &obj) {
-  out << "Header Section id = '" << obj.GetId()
-      << "', length = " << obj.GetLenght()
-      << ", link count = " << obj.GetLinkCount();
-  return out;
+std::ostream &operator<<(std::ostream &p_out,
+                         const data_section_t<block_id::HD> &p_obj) {
+  p_out << "data section of " << block_id_converter::to_str(block_id::HD)
+        << ": " << p_obj.get_hd_start_time_ns() << " "
+        << p_obj.get_hd_tz_offset_min() << ' ' << p_obj.get_hd_dst_offset_min()
+        << ' ' << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_time_class()) << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_flags()) << ' '
+        << p_obj.get_hd_start_angle_rad() << ' '
+        << p_obj.get_hd_start_distance_m();
+  return p_out;
 }
-
-// template <Traits::Id TBlockId> struct LinkSection {
-//   static constexpr std::streamsize size{static_cast<std::streamsize>(
-//       Traits::num_links_[TBlockId] * sizeof(LINK))};
-
-//   using Links = std::array<LINK, Traits::num_links_[TBlockId]>;
-
-//   LinkSection() = delete;
-//   LinkSection(const LinkSection &) = delete;
-//   LinkSection(LinkSection &&) = delete;
-
-//   LinkSection(std::streamsize offset_start, std::ifstream &file) {
-
-//     for (typename Links::size_type i = 0; i < std::tuple_size_v<Links>; ++i)
-//     {
-//       std::uint64_t tmp{std::numeric_limits<std::uint64_t>::max()};
-//       if (!read_unsigned(file, offset_start + i * sizeof(LINK), tmp)) {
-//         ctw::log::err(ctw::format::fmt("error reading LINK #", i,
-//                                        ", from block ",
-//                                        Traits::strs_[TBlockId]));
-//         throw std::runtime_error("error reading LINK section");
-//       }
-//       links_[i] = static_cast<LINK>(tmp);
-//     }
-//   }
-
-//   ~LinkSection() = default;
-
-//   LinkSection &operator=(const LinkSection &) = delete;
-//   LinkSection &operator=(LinkSection &&) = delete;
-
-//   Links::size_type num_links() const { return links_.size(); }
-
-//   std::optional<LINK> get(Links::size_type index) const {
-//     if (index > links_.size()) {
-//       return std::nullopt;
-//     }
-//     return {links_[index]};
-//   }
-
-// private:
-//   Links links_;
-// };
-
-// template <Traits::Id TBlockId>
-// std::ostream &operator<<(std::ostream &out, const LinkSection<TBlockId> &obj)
-// {
-//   out << "link section of " << Traits::strs_[TBlockId] << ": ";
-//   for (typename LinkSection<TBlockId>::Links::size_type i = 0;
-//        i < obj.num_links(); ++i) {
-//     out << obj.get(i).value() << ' ';
-//   }
-//   return out;
-// }
-
-// template <Traits::Id TBlockId> struct DataSection;
-
-// template <> struct DataSection<Traits::HD> {
-
-//   static constexpr std::streamsize size{
-//       sizeof(std::uint64_t) + sizeof(std::int16_t) + sizeof(std::int16_t) +
-//       sizeof(std::uint8_t) + sizeof(std::uint8_t) + sizeof(std::uint8_t) +
-//       sizeof(std::uint8_t) + sizeof(double) + sizeof(double)};
-
-//   DataSection(std::streamsize offset_start, std::ifstream &file) {
-//     char buf[size];
-//     std::memset(&buf[0], 0, size);
-
-//     file.seekg(offset_start);
-//     if (!file.read(&buf[0], size).good()) {
-//       ctw::log::err(ctw::format::fmt("error reading data section for ",
-//                                      Traits::strs_[Traits::HD]));
-//       throw std::runtime_error("error reading data section");
-//     }
-
-//     auto ptr{reinterpret_cast<const std::uint8_t *>(&buf[0])};
-
-//     hd_start_time_ns_ =
-//         ctw::byte_array::from_little<decltype(hd_start_time_ns_)>(ptr);
-//     ptr += sizeof(hd_start_time_ns_);
-
-//     hd_tz_offset_min_ =
-//         ctw::byte_array::from_little<decltype(hd_start_time_ns_)>(ptr);
-//     ptr += sizeof(hd_tz_offset_min_);
-
-//     hd_dst_offset_min_ =
-//         ctw::byte_array::from_little<decltype(hd_dst_offset_min_)>(ptr);
-//     ptr += sizeof(hd_dst_offset_min_);
-
-//     hd_time_flags_ =
-//         ctw::byte_array::from_little<decltype(hd_time_flags_)>(ptr);
-//     ptr += sizeof(hd_time_flags_);
-
-//     hd_flags_ = ctw::byte_array::from_little<decltype(hd_flags_)>(ptr);
-//     ptr += sizeof(hd_flags_) + sizeof(hd_reserved_);
-
-//     hd_start_angle_rad_ =
-//         ctw::byte_array::from_little<decltype(hd_start_angle_rad_)>(ptr);
-//     ptr += sizeof(hd_start_angle_rad_);
-
-//     hd_start_distance_m_ =
-//         ctw::byte_array::from_little<decltype(hd_start_distance_m_)>(ptr);
-//   }
-
-//   std::uint64_t Gethd_start_time_ns() const { return hd_start_time_ns_; }
-//   std::int16_t Gethd_tz_offset_min() const { return hd_tz_offset_min_; }
-//   std::int16_t Gethd_dst_offset_min() const { return hd_dst_offset_min_; }
-//   std::uint8_t Gethd_time_flags() const { return hd_time_flags_; }
-//   std::uint8_t Gethd_time_class() const { return hd_time_class_; }
-//   std::uint8_t Gethd_flags() const { return hd_flags_; };
-//   double Gethd_start_angle_rad() const { return hd_start_angle_rad_; }
-//   double Gethd_start_distance_m() const { return hd_start_distance_m_; }
-
-// private:
-//   std::uint64_t hd_start_time_ns_;
-//   std::int16_t hd_tz_offset_min_;
-//   std::int16_t hd_dst_offset_min_;
-//   std::uint8_t hd_time_flags_;
-//   std::uint8_t hd_time_class_;
-//   std::uint8_t hd_flags_;
-//   std::uint8_t hd_reserved_;
-//   double hd_start_angle_rad_;
-//   double hd_start_distance_m_;
-// };
-
-// std::ostream &operator<<(std::ostream &out,
-//                          const DataSection<Traits::HD> &obj) {
-//   out << "data section of " << Traits::strs_[Traits::HD] << ": "
-//       << obj.Gethd_start_time_ns() << " " << obj.Gethd_tz_offset_min() << ' '
-//       << obj.Gethd_dst_offset_min() << ' '
-//       << static_cast<uint16_t>(obj.Gethd_time_flags()) << ' '
-//       << static_cast<uint16_t>(obj.Gethd_time_class()) << ' '
-//       << static_cast<uint16_t>(obj.Gethd_flags()) << ' '
-//       << obj.Gethd_start_angle_rad() << ' ' << obj.Gethd_start_distance_m();
-//   return out;
-// }
 
 } // namespace tnct::mf4::mem
 

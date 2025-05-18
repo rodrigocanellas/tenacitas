@@ -38,17 +38,17 @@ public:
   ///
   /// \p p_writer  Responsible for actually writing the log message
   logger(t_log_writer &&p_log_writer,
-         line_header_formater p_line_header_formater)
+         line_header_formater&& p_line_header_formater)
       : m_writer(std::move(p_log_writer)),
-        m_line_header_formater(p_line_header_formater) {}
+        m_line_header_formater(std::move(p_line_header_formater)) {}
 
   logger()
       : m_writer(t_log_writer()),
         m_line_header_formater(default_line_header_formater) {}
 
-  logger(line_header_formater p_line_header_formater)
+  logger(line_header_formater &&p_line_header_formater)
       : m_writer(t_log_writer()),
-        m_line_header_formater(p_line_header_formater) {}
+        m_line_header_formater(std::move(p_line_header_formater)) {}
 
   logger(t_log_writer &&p_log_writer)
       : m_writer(std::move(p_log_writer)),
@@ -78,9 +78,9 @@ public:
   /// \brief Delete operator not allowed
   void operator delete[](void *) = delete;
 
-  void set_header_formater(line_header_formater p_line_header_formater) {
+  void set_header_formater(line_header_formater&& p_line_header_formater) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_line_header_formater = p_line_header_formater;
+    m_line_header_formater =std::move(p_line_header_formater);
   }
 
   /// \brief Defines the separator to be used in the log messages
@@ -226,7 +226,7 @@ private:
 
     std::stringstream _stream;
     m_line_header_formater(_stream, p_level, p_source_location)
-        << p_string << std::endl;
+        << p_string << '\n';
 
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_writer(_stream.str());
