@@ -187,16 +187,6 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
 
 // template <> struct data_section_t<block_id::HD> {
 
-//     static constexpr std::streamsize size{
-//                                           sizeof(std::uint64_t) +
-//                                           sizeof(std::int16_t) +
-//                                           sizeof(std::int16_t) +
-//                                           sizeof(std::uint8_t) +
-//                                           sizeof(std::uint8_t) +
-//                                           sizeof(std::uint8_t) +
-//                                           sizeof(std::uint8_t) +
-//                                           sizeof(double) + sizeof(double)};
-
 //     data_section_t(std::streamsize offset_start, std::ifstream &file) {
 //         char buf[size];
 //         std::memset(&buf[0], 0, size);
@@ -272,6 +262,76 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
 //     return out;
 // }
 
+template <mem::block_id t_block_Id> struct data_section_reader_t;
+
+template <> struct data_section_reader_t<mem::block_id::HD> {
+  template <traits::log::logger t_logger>
+  std::pair<mem::data_section_t<mem::block_id::HD>, std::int64_t>
+  operator()(std::ifstream &p_file, t_logger &p_logger,
+             std::int64_t p_offset_start) {
+    if (!p_file.seekg(p_offset_start).good()) {
+      TNCT_LOG_ERR(p_logger,
+                   format::fmt("error seekg for ", p_offset_start, " bytes"));
+      throw std::runtime_error("error seekg in file");
+    }
+
+    static constexpr std::size_t _buf_size{
+        sizeof(std::uint64_t) + sizeof(std::int16_t) + sizeof(std::int16_t) +
+        sizeof(std::uint8_t) + sizeof(std::uint8_t) + sizeof(std::uint8_t) +
+        sizeof(std::uint8_t) + sizeof(double) + sizeof(double)};
+
+    char _buf[_buf_size];
+    std::memset(&_buf[0], 0, _buf_size);
+
+    if (p_file.readsome(&_buf[0], _buf_size) != _buf_size) {
+      TNCT_LOG_ERR(p_logger, format::fmt("error reading ", _buf_size,
+                                         " bytes from file"));
+      throw std::runtime_error("error reading from file");
+    }
+
+    using hd_reserved = std::uint8_t;
+
+    auto ptr{reinterpret_cast<const std::uint8_t *>(&_buf[0])};
+
+    std::uint64_t m_hd_start_time_ns =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(ptr);
+    ptr += sizeof(m_hd_start_time_ns);
+
+    std::int16_t m_hd_tz_offset_min =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(ptr);
+    ptr += sizeof(m_hd_tz_offset_min);
+
+    std::int16_t m_hd_dst_offset_min =
+        byte_array::from_little<decltype(m_hd_dst_offset_min)>(ptr);
+    ptr += sizeof(m_hd_dst_offset_min);
+
+    std::uint8_t m_hd_time_flags =
+        byte_array::from_little<decltype(m_hd_time_flags)>(ptr);
+    ptr += sizeof(m_hd_time_flags);
+
+    std::uint8_t m_hd_time_class =
+        byte_array::from_little<decltype(m_hd_time_class)>(ptr);
+    ptr += sizeof(m_hd_time_class);
+
+    std::uint8_t m_hd_flags =
+        byte_array::from_little<decltype(m_hd_flags)>(ptr);
+    ptr += sizeof(m_hd_flags) + sizeof(hd_reserved);
+
+    double m_hd_start_angle_rad =
+        byte_array::from_little<decltype(m_hd_start_angle_rad)>(ptr);
+    ptr += sizeof(m_hd_start_angle_rad);
+
+    double m_hd_start_distance_m =
+        byte_array::from_little<decltype(m_hd_start_distance_m)>(ptr);
+
+    return {mem::data_section_t<mem::block_id::HD>{
+                m_hd_start_time_ns, m_hd_tz_offset_min, m_hd_dst_offset_min,
+                m_hd_time_flags, m_hd_time_class, m_hd_flags,
+                m_hd_start_angle_rad, m_hd_start_distance_m},
+            _buf_size};
+  }
+};
+
 template <tnct::traits::log::logger t_logger>
 mem::result mf4_reader(std::string_view file_name, t_logger &p_logger) {
   try {
@@ -284,7 +344,7 @@ mem::result mf4_reader(std::string_view file_name, t_logger &p_logger) {
     TNCT_LOG_INF(p_logger,
                  format::fmt(_id_block, " - size = ", _id_block_size));
 
-    auto [_header_id, _header_num_links, _heder_section_size] =
+    auto [_header_id, _header_num_links, _header_section_size] =
         read_header_section<t_logger>(_file, p_logger, _id_block_size);
 
     if (_header_id != mem::block_id::HD) {
@@ -297,28 +357,18 @@ mem::result mf4_reader(std::string_view file_name, t_logger &p_logger) {
       throw std::runtime_error("error reading header section of HEADER block");
     }
     TNCT_LOG_INF(p_logger,
-                 format::fmt("reader header section for block ",
+                 format::fmt("block ",
                              mem::block_id_converter::to_str(_header_id),
-                             ", it has ", _header_num_links, " links and size ",
-                             _heder_section_size));
+                             " has ", _header_num_links, " links and size ",
+                             _header_section_size));
 
-    // auto [_link_section, _link_section_size] =
-    //     read_link_section<mem::HD, t_logger>()(
-    //         _file, p_logger, _id_block_size + _header_section_size);
-    // TNCT_LOG_INF(p_logger, tnct::format::fmt(_link_section));
+    data_section_reader_t<mem::block_id::HD> _data_section_reader;
 
-    // tnct::mf4::mem::LinkSection<tnct::mf4::mem::HD> link_section(
-    //     tnct::mf4::mem::Block<tnct::mf4::mem::ID>::size +
-    //         tnct::mf4::mem::HeaderSection<tnct::mf4::mem::HD>::size,
-    //     file);
-    // TNCT_LOG_INF(p_logger, tnct::format::fmt(link_section));
+    auto [_header_data_section, _header_data_section_size] =
+        _data_section_reader(_file, p_logger,
+                             _id_block_size + _header_section_size + 48);
+    TNCT_LOG_INF(p_logger, format::fmt(_header_data_section));
 
-    // tnct::mf4::mem::DataSection<tnct::mf4::mem::HD> data_section(
-    //     tnct::mf4::mem::Block<tnct::mf4::mem::ID>::size +
-    //         tnct::mf4::mem::HeaderSection<tnct::mf4::mem::HD>::size +
-    //         tnct::mf4::mem::LinkSection<tnct::mf4::mem::HD>::size,
-    //     file);
-    // TNCT_LOG_INF(p_logger, tnct::format::fmt(data_section));
     return mem::result::ok;
   } catch (std::exception &ex) {
     std::cout << "ERROR: " << ex.what() << '\n';
