@@ -8,6 +8,8 @@
 
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <source_location>
 #include <utility>
 
 #include "tnct/byte_array/classes.h"
@@ -15,7 +17,25 @@
 #include "tnct/mf4/mem/classes.h"
 #include "tnct/traits/log/logger.h"
 
+namespace tnct::mf4 {
+
+template <tnct::traits::log::logger t_logger>
+void log_and_throw(
+    t_logger &p_logger, std::string_view p_str,
+    std::source_location p_location = std::source_location::current()) {
+  p_logger.err(p_str, p_location);
+  throw std::runtime_error(p_str.data());
+}
+
+} // namespace tnct::mf4
+
 namespace tnct::mf4::per {
+
+using amount_to_read = std::uint64_t;
+using offset = std::int64_t;
+using field_size = std::uint8_t;
+
+static constexpr amount_to_read header_section_size{24};
 
 template <tnct::traits::log::logger t_logger>
 [[nodiscard]] std::pair<mem::id_block<t_logger>, std::int64_t>
@@ -33,18 +53,19 @@ read_id_block(std::ifstream &file, t_logger &p_logger) {
   std::uint16_t _id_unfin_flags{0XFFFF};
   std::uint16_t _id_custom_unfin_flags{0xFFFF};
 
-  constexpr std::int64_t _size{
+  constexpr amount_to_read _amount_to_read{
       3 * _str_field_size + sizeof(id_reserved_1) + sizeof(decltype(_id_ver)) +
       std::tuple_size_v<id_reserverd_2> + sizeof(decltype(_id_unfin_flags)) +
       sizeof(_id_custom_unfin_flags)};
 
-  char buf[_size];
-  std::memset(&buf[0], 0, _size);
+  char buf[_amount_to_read];
+  std::memset(&buf[0], 0, _amount_to_read);
 
-  file.seekg(0);
-  if (!file.read(&buf[0], _size).good()) {
-    TNCT_LOG_ERR(p_logger, "error reading id block");
-    throw std::runtime_error("error reading id block");
+  if (!file.seekg(0).good()) {
+    log_and_throw(p_logger, "could not seekg to 0");
+  }
+  if (!file.read(&buf[0], _amount_to_read).good()) {
+    log_and_throw(p_logger, "error reading id block");
   }
 
   std::memcpy(&_id_file[0], &buf[0], _str_field_size);
@@ -66,63 +87,209 @@ read_id_block(std::ifstream &file, t_logger &p_logger) {
   auto _pair = std::make_pair(
       mem::id_block<t_logger>{p_logger, _id_file, _id_vers, _id_prog, _id_ver,
                               _id_unfin_flags, _id_custom_unfin_flags},
-      _size);
+      static_cast<offset>(_amount_to_read));
 
   return _pair;
 }
 
 template <tnct::traits::log::logger t_logger>
-[[nodiscard]] std::tuple<mem::block_id, uint64_t, std::int64_t>
+[[nodiscard]] std::tuple<mem::block_identifier, amount_to_read, std::size_t>
 read_header_section(std::ifstream &p_file, t_logger &p_logger,
-                    std::int64_t p_offset_start) {
-  constexpr std::int64_t _id_field_size{sizeof(mem::block_id_str) - 1};
-  constexpr std::int64_t _reserved_field_size{sizeof(std::uint8_t) * 4};
-  constexpr std::int64_t _length_field_size{sizeof(uint64_t)};
-  constexpr std::int64_t _link_count_field_size{sizeof(uint64_t)};
-  constexpr std::int64_t _total_size{_id_field_size + _reserved_field_size +
-                                     _length_field_size +
-                                     _link_count_field_size};
+                    offset p_offset_start) {
+  constexpr field_size _reserved_field_size{sizeof(std::uint8_t) * 4};
 
-  char _buf[_total_size];
-  std::memset(&_buf[0], '\0', _total_size);
+  char _buf[header_section_size];
+  std::memset(&_buf[0], '\0', header_section_size);
 
   if (!p_file.seekg(p_offset_start).good()) {
-    TNCT_LOG_ERR(p_logger, format::fmt("error 'seekg' to ", p_offset_start,
-                                       " for header section"));
-    throw std::runtime_error("error reading header section");
+    log_and_throw(p_logger, format::fmt("error 'seekg' to ", p_offset_start,
+                                        " for header section"));
   }
 
-  if (!p_file.read(_buf, _total_size).good()) {
-    TNCT_LOG_ERR(p_logger, format::fmt("error reading to ", p_offset_start,
-                                       " for header section of block "));
-    throw std::runtime_error("error reading header section");
+  if (!p_file.read(_buf, header_section_size).good()) {
+    log_and_throw(p_logger, format::fmt("error reading to ", p_offset_start,
+                                        " for header section of block "));
   }
 
   mem::block_id_str _id_str;
-  std::memset(_id_str, '\0', _id_field_size + 1);
-  std::memcpy(_id_str, &_buf[0], _id_field_size);
+  std::memset(_id_str, '\0', sizeof(mem::block_id_str));
+  std::memcpy(_id_str, &_buf[0], sizeof(mem::block_id_str) - 1);
 
   auto _ptr{reinterpret_cast<const std::uint8_t *>(
-      &_buf[_id_field_size + _reserved_field_size + _length_field_size])};
+      &_buf[sizeof(mem::block_id_str) - 1 + _reserved_field_size])};
 
-  // uint64_t _lenght{byte_array::from_little<decltype(_lenght)>(_ptr)};
-  // _ptr += _length_field_size;
+  amount_to_read _length{byte_array::from_little<decltype(_length)>(_ptr)};
+  _ptr += sizeof(decltype(_length));
 
-  uint64_t _link_count{byte_array::from_little<decltype(_link_count)>(_ptr)};
+  std::size_t _link_count{byte_array::from_little<decltype(_link_count)>(_ptr)};
 
   const auto optional_block_id{mem::block_id_converter::to_id(_id_str)};
 
   if (!optional_block_id.has_value()) {
-    TNCT_LOG_ERR(p_logger, format::fmt("error converting '", _id_str,
-                                       "' to a mem::block_id"));
-    throw std::runtime_error("error reading header section id");
+    log_and_throw(p_logger, format::fmt("error converting '", _id_str,
+                                        "' to a mem::block_id"));
   }
 
-  auto _pair = std::make_tuple(optional_block_id.value(), _link_count,
-                               std::streamsize{_total_size});
+  auto _pair = std::make_tuple(optional_block_id.value(), _length, _link_count);
 
   return _pair;
 }
+
+template <mem::block_identifier t_block_Id> struct data_section_reader_t;
+
+template <> struct data_section_reader_t<mem::block_identifier::HD> {
+  template <traits::log::logger t_logger>
+  mem::data_section_t<mem::block_identifier::HD>
+  operator()(const std::uint8_t *p_buf, t_logger & /*p_logger*/) {
+
+    std::uint64_t m_hd_start_time_ns =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
+    p_buf += sizeof(m_hd_start_time_ns);
+
+    std::int16_t m_hd_tz_offset_min =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
+    p_buf += sizeof(m_hd_tz_offset_min);
+
+    std::int16_t m_hd_dst_offset_min =
+        byte_array::from_little<decltype(m_hd_dst_offset_min)>(p_buf);
+    p_buf += sizeof(m_hd_dst_offset_min);
+
+    std::uint8_t m_hd_time_flags =
+        byte_array::from_little<decltype(m_hd_time_flags)>(p_buf);
+    p_buf += sizeof(m_hd_time_flags);
+
+    std::uint8_t m_hd_time_class =
+        byte_array::from_little<decltype(m_hd_time_class)>(p_buf);
+    p_buf += sizeof(m_hd_time_class);
+
+    std::uint8_t m_hd_flags =
+        byte_array::from_little<decltype(m_hd_flags)>(p_buf);
+    p_buf += sizeof(m_hd_flags) + sizeof(std::uint8_t);
+
+    double m_hd_start_angle_rad =
+        byte_array::from_little<decltype(m_hd_start_angle_rad)>(p_buf);
+    p_buf += sizeof(m_hd_start_angle_rad);
+
+    double m_hd_start_distance_m =
+        byte_array::from_little<decltype(m_hd_start_distance_m)>(p_buf);
+
+    return {mem::data_section_t<mem::block_identifier::HD>{
+        m_hd_start_time_ns, m_hd_tz_offset_min, m_hd_dst_offset_min,
+        m_hd_time_flags, m_hd_time_class, m_hd_flags, m_hd_start_angle_rad,
+        m_hd_start_distance_m}};
+  }
+};
+
+template <mem::block_identifier t_block_Id> struct block_reader_t;
+
+template <> struct block_reader_t<mem::block_identifier::HD> {
+
+  template <tnct::traits::log::logger t_logger>
+  void operator()(std::ifstream &p_file, t_logger &p_logger,
+                  int64_t p_offset_start, amount_to_read p_block_size,
+                  std::size_t p_num_links) {
+    const amount_to_read size_to_read{p_block_size - header_section_size};
+
+    if (!p_file.seekg(p_offset_start).good()) {
+      log_and_throw(p_logger,
+                    format::fmt("error seekg for ", p_offset_start, " bytes"));
+    }
+
+    std::vector<char> _buf(size_to_read, 0);
+    if (!p_file.read(_buf.data(), size_to_read).good()) {
+      log_and_throw(p_logger, format::fmt("error reading ", size_to_read,
+                                          " bytes for header block "));
+    }
+
+    mem::block_t<mem::block_identifier::HD> _block{p_offset_start};
+
+    auto _ptr = reinterpret_cast<const std::uint8_t *>(&_buf[0]);
+    {
+      for (decltype(p_num_links) _i = 0; _i < p_num_links; ++_i) {
+        mem::block_link _link{byte_array::from_little<mem::block_link>(
+            _ptr + _i * sizeof(mem::block_link))};
+
+        if (_link == 0) {
+          TNCT_LOG_INF(p_logger, format::fmt("linkk # ", _i, " is NIL"));
+          continue;
+        }
+
+        auto [_block_id, _block_size, _block_num_links] =
+            read_header_section<t_logger>(p_file, p_logger, _link);
+
+        _block.add_link({_block_id, _link});
+      }
+    }
+
+    _ptr = reinterpret_cast<const std::uint8_t *>(
+        &_buf[p_num_links * sizeof(mem::block_link)]);
+
+    _block.set_data_section(
+        data_section_reader_t<mem::block_identifier::HD>()(_ptr, p_logger));
+
+    TNCT_LOG_INF(p_logger, format::fmt(_block));
+  }
+};
+
+// template <mem::block_id t_block_id> using read_block_t =
+// std::function<void()>;
+
+template <tnct::traits::log::logger t_logger>
+std::pair<mem::block_identifier, offset>
+read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start) {
+  if (!p_file.seekg(p_offset_start).good()) {
+    log_and_throw(p_logger,
+                  format::fmt("error seekg for ", p_offset_start, " bytes"));
+  }
+
+  auto [_block_id, _block_size, _block_num_links] =
+      read_header_section<t_logger>(p_file, p_logger, p_offset_start);
+
+  TNCT_LOG_INF(p_logger,
+               format::fmt("block ", mem::block_id_converter::to_str(_block_id),
+                           " has ", _block_size, " bytes and ",
+                           _block_num_links, " links"));
+
+  switch (_block_id) {
+  case mem::block_identifier::HD:
+
+    block_reader_t<mem::block_identifier::HD>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links);
+    break;
+  default:
+    break;
+  }
+
+  return {_block_id, p_offset_start + _block_size};
+}
+
+template <tnct::traits::log::logger t_logger>
+mem::result mf4_reader(std::string_view file_name, t_logger &p_logger) {
+  try {
+    std::ifstream _file(file_name.data(), std::ios_base::binary);
+    if (!_file.good()) {
+      return mem::result::file_not_found;
+    }
+
+    auto [_id_block, _id_block_size] = read_id_block(_file, p_logger);
+    TNCT_LOG_INF(p_logger,
+                 format::fmt(_id_block, " - size = ", _id_block_size));
+
+    read_block(_file, p_logger, _id_block_size);
+
+    return mem::result::ok;
+  } catch (std::exception &ex) {
+    std::cout << "ERROR: " << ex.what() << '\n';
+  } catch (...) {
+    std::cout << "ERROR unknow" << '\n';
+  }
+  return mem::result::error_reading;
+}
+
+} // namespace tnct::mf4::per
+
+#endif
 
 // template <mem::block_type t_block_Id, tnct::traits::log::logger t_logger>
 // struct read_link_section;
@@ -134,7 +301,7 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
 //   operator()(std::ifstream &p_file, t_logger &p_logger,
 //              std::streamsize p_offset_start) {
 //     constexpr std::uint8_t _num_links{6};
-//     constexpr std::uint8_t _buf_size{_num_links * sizeof(mem::LINK)};
+//     constexpr std::uint8_t _buf_size{_num_links * sizeof(mem::block_link)};
 
 //     char _buf[_buf_size];
 
@@ -159,27 +326,27 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
 
 //     _result.first.add_link(mem::DG,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     _result.first.add_link(mem::FH,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     _result.first.add_link(mem::CH,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     _result.first.add_link(mem::AT,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     _result.first.add_link(mem::EV,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     _result.first.add_link(mem::TX,
 //                            byte_array::from_little<std::uint64_t>(_ptr));
-//     _ptr += sizeof(mem::LINK);
+//     _ptr += sizeof(mem::block_link);
 
 //     return _result;
 //   }
@@ -261,123 +428,3 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
 //         obj.Gethd_start_distance_m();
 //     return out;
 // }
-
-template <mem::block_id t_block_Id> struct data_section_reader_t;
-
-template <> struct data_section_reader_t<mem::block_id::HD> {
-  template <traits::log::logger t_logger>
-  std::pair<mem::data_section_t<mem::block_id::HD>, std::int64_t>
-  operator()(std::ifstream &p_file, t_logger &p_logger,
-             std::int64_t p_offset_start) {
-    if (!p_file.seekg(p_offset_start).good()) {
-      TNCT_LOG_ERR(p_logger,
-                   format::fmt("error seekg for ", p_offset_start, " bytes"));
-      throw std::runtime_error("error seekg in file");
-    }
-
-    static constexpr std::size_t _buf_size{
-        sizeof(std::uint64_t) + sizeof(std::int16_t) + sizeof(std::int16_t) +
-        sizeof(std::uint8_t) + sizeof(std::uint8_t) + sizeof(std::uint8_t) +
-        sizeof(std::uint8_t) + sizeof(double) + sizeof(double)};
-
-    char _buf[_buf_size];
-    std::memset(&_buf[0], 0, _buf_size);
-
-    if (p_file.readsome(&_buf[0], _buf_size) != _buf_size) {
-      TNCT_LOG_ERR(p_logger, format::fmt("error reading ", _buf_size,
-                                         " bytes from file"));
-      throw std::runtime_error("error reading from file");
-    }
-
-    using hd_reserved = std::uint8_t;
-
-    auto ptr{reinterpret_cast<const std::uint8_t *>(&_buf[0])};
-
-    std::uint64_t m_hd_start_time_ns =
-        byte_array::from_little<decltype(m_hd_start_time_ns)>(ptr);
-    ptr += sizeof(m_hd_start_time_ns);
-
-    std::int16_t m_hd_tz_offset_min =
-        byte_array::from_little<decltype(m_hd_start_time_ns)>(ptr);
-    ptr += sizeof(m_hd_tz_offset_min);
-
-    std::int16_t m_hd_dst_offset_min =
-        byte_array::from_little<decltype(m_hd_dst_offset_min)>(ptr);
-    ptr += sizeof(m_hd_dst_offset_min);
-
-    std::uint8_t m_hd_time_flags =
-        byte_array::from_little<decltype(m_hd_time_flags)>(ptr);
-    ptr += sizeof(m_hd_time_flags);
-
-    std::uint8_t m_hd_time_class =
-        byte_array::from_little<decltype(m_hd_time_class)>(ptr);
-    ptr += sizeof(m_hd_time_class);
-
-    std::uint8_t m_hd_flags =
-        byte_array::from_little<decltype(m_hd_flags)>(ptr);
-    ptr += sizeof(m_hd_flags) + sizeof(hd_reserved);
-
-    double m_hd_start_angle_rad =
-        byte_array::from_little<decltype(m_hd_start_angle_rad)>(ptr);
-    ptr += sizeof(m_hd_start_angle_rad);
-
-    double m_hd_start_distance_m =
-        byte_array::from_little<decltype(m_hd_start_distance_m)>(ptr);
-
-    return {mem::data_section_t<mem::block_id::HD>{
-                m_hd_start_time_ns, m_hd_tz_offset_min, m_hd_dst_offset_min,
-                m_hd_time_flags, m_hd_time_class, m_hd_flags,
-                m_hd_start_angle_rad, m_hd_start_distance_m},
-            _buf_size};
-  }
-};
-
-template <tnct::traits::log::logger t_logger>
-mem::result mf4_reader(std::string_view file_name, t_logger &p_logger) {
-  try {
-    std::ifstream _file(file_name.data(), std::ios_base::binary);
-    if (!_file.good()) {
-      return mem::result::file_not_found;
-    }
-
-    auto [_id_block, _id_block_size] = read_id_block(_file, p_logger);
-    TNCT_LOG_INF(p_logger,
-                 format::fmt(_id_block, " - size = ", _id_block_size));
-
-    auto [_header_id, _header_num_links, _header_section_size] =
-        read_header_section<t_logger>(_file, p_logger, _id_block_size);
-
-    if (_header_id != mem::block_id::HD) {
-      TNCT_LOG_ERR(
-          p_logger,
-          format::fmt("header should be ",
-                      mem::block_id_converter::to_str(mem::block_id::HD),
-                      ", but it is ",
-                      mem::block_id_converter::to_str(_header_id)));
-      throw std::runtime_error("error reading header section of HEADER block");
-    }
-    TNCT_LOG_INF(p_logger,
-                 format::fmt("block ",
-                             mem::block_id_converter::to_str(_header_id),
-                             " has ", _header_num_links, " links and size ",
-                             _header_section_size));
-
-    data_section_reader_t<mem::block_id::HD> _data_section_reader;
-
-    auto [_header_data_section, _header_data_section_size] =
-        _data_section_reader(_file, p_logger,
-                             _id_block_size + _header_section_size + 48);
-    TNCT_LOG_INF(p_logger, format::fmt(_header_data_section));
-
-    return mem::result::ok;
-  } catch (std::exception &ex) {
-    std::cout << "ERROR: " << ex.what() << '\n';
-  } catch (...) {
-    std::cout << "ERROR unknow" << '\n';
-  }
-  return mem::result::error_reading;
-}
-
-} // namespace tnct::mf4::per
-
-#endif

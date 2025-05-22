@@ -19,7 +19,7 @@
 
 namespace tnct::mf4::mem {
 
-using LINK = std::int64_t;
+using block_link = std::int64_t;
 
 enum class result : std::uint8_t { ok = 0, file_not_found = 1, error_reading };
 
@@ -40,7 +40,7 @@ std::ostream &operator<<(std::ostream &out, result result) {
   return out;
 }
 
-enum class block_id : std::uint8_t {
+enum class block_identifier : std::uint8_t {
 
   // Identification block. Identification of the file as MDF file
   ID = 0,
@@ -102,11 +102,11 @@ enum class block_id : std::uint8_t {
 using block_id_str = char[5];
 
 struct block_id_converter {
-  static const block_id_str &to_str(block_id p_id) {
+  static const block_id_str &to_str(block_identifier p_id) {
     return m_array[static_cast<block_id_type>(p_id)];
   }
 
-  static std::optional<block_id> to_id(const block_id_str p_id_str) {
+  static std::optional<block_identifier> to_id(const block_id_str p_id_str) {
     const auto _ite{std::find_if(m_array.begin(), m_array.end(),
                                  [&](const block_id_str &item) {
                                    return (std::strcmp(p_id_str, item) == 0);
@@ -115,17 +115,18 @@ struct block_id_converter {
       return std::nullopt;
     }
     const auto _distance{std::distance(m_array.begin(), _ite)};
-    const block_id _block_id{static_cast<block_id_type>(_distance)};
+    const block_identifier _block_id{static_cast<block_id_type>(_distance)};
     return {_block_id};
   }
 
 private:
   using array =
       std::array<block_id_str,
-                 static_cast<std::underlying_type_t<block_id>>(block_id::HL) +
+                 static_cast<std::underlying_type_t<block_identifier>>(
+                     block_identifier::HL) +
                      1>;
 
-  using block_id_type = std::underlying_type_t<block_id>;
+  using block_id_type = std::underlying_type_t<block_identifier>;
 
   static constexpr array m_array{"##ID", "##HD", "##MD", "##TX", "##FH", "##CH",
                                  "##AT", "##EV", "##DG", "##CG", "##SI", "##CN",
@@ -133,22 +134,76 @@ private:
                                  "##DL", "##DZ", "##HL"};
 };
 
-template <block_id t_block_Id> struct data_section_t;
+struct block_id_link {
+  block_id_link() = delete;
 
-template <block_id t_block_id> struct block_t final {
-  using link = std::int64_t;
+  block_id_link(block_identifier p_block_id, block_link p_block_link)
+      : m_block_id(p_block_id), m_block_link(p_block_link) {}
 
-  using links = std::vector<link>;
+  block_id_link(const block_id_link &) = default;
 
-  using const_links_iterator = links::const_iterator;
+  block_id_link(block_id_link &&) = default;
+
+  ~block_id_link() = default;
+
+  block_id_link &operator=(const block_id_link &) = default;
+
+  block_id_link &operator=(block_id_link &&) = default;
+
+  constexpr bool operator==(const block_id_link &p_obj) const {
+    return (m_block_id == p_obj.m_block_id) &&
+           (m_block_link == p_obj.m_block_link);
+  }
+
+  constexpr bool operator!=(const block_id_link &p_obj) const {
+    return !(*this == p_obj);
+  }
+
+  constexpr bool operator<(const block_id_link &p_obj) const {
+    if (m_block_id < p_obj.m_block_id) {
+      return true;
+    }
+    if (m_block_id > p_obj.m_block_id) {
+      return false;
+    }
+
+    if (m_block_link < p_obj.m_block_link) {
+      return true;
+    }
+
+    return false;
+  }
+
+  block_identifier id() const { return m_block_id; }
+
+  block_link link() const { return m_block_link; }
+
+private:
+  block_identifier m_block_id;
+  block_link m_block_link;
+};
+
+std::ostream &operator<<(std::ostream &p_out, const block_id_link &p_obj) {
+  p_out << "id = " << block_id_converter::to_str(p_obj.id())
+        << ", link = " << p_obj.link();
+  return p_out;
+}
+
+template <block_identifier t_block_Id> struct data_section_t;
+
+template <block_identifier t_block_id> struct block_t final {
+
+  using block_ids_links = std::vector<block_id_link>;
+
+  using const_links_iterator = block_ids_links::const_iterator;
 
   using data_section = data_section_t<t_block_id>;
 
   block_t() = delete;
 
-  block_t(link p_position) : m_position(p_position) {}
+  block_t(block_link p_position) : m_position(p_position) {}
 
-  block_t(link p_position, link p_parent)
+  block_t(block_link p_position, block_link p_parent)
       : m_position(p_position), m_parent(p_parent) {}
 
   block_t(const block_t &) = delete;
@@ -181,19 +236,21 @@ template <block_id t_block_id> struct block_t final {
     return false;
   }
 
-  const block_id &get_id() const { return m_id; }
+  const block_identifier &get_id() const { return m_id; }
 
-  const link &get_position() const { return m_position; }
+  const block_link &get_position() const { return m_position; }
 
-  std::optional<link> get_parent() const { return m_parent; }
+  std::optional<block_link> get_parent() const { return m_parent; }
 
-  const_links_iterator begin() const { return m_links.begin(); }
+  const_links_iterator begin() const { return m_block_ids_links.begin(); }
 
-  const_links_iterator end() const { return m_links.end(); }
+  const_links_iterator end() const { return m_block_ids_links.end(); }
 
-  std::size_t get_num_links() const { return m_links.size(); }
+  std::size_t get_num_links() const { return m_block_ids_links.size(); }
 
-  void add_link(link p_link) { m_links.push_back(p_link); }
+  void add_link(block_id_link &&p_link) {
+    m_block_ids_links.push_back(std::move(p_link));
+  }
 
   void set_data_section(data_section &&p_data_section) {
     m_data_section = std::move(p_data_section);
@@ -202,20 +259,20 @@ template <block_id t_block_id> struct block_t final {
   const data_section &get_data_section() const { return m_data_section; }
 
 private:
-  block_id m_id{t_block_id};
+  block_identifier m_id{t_block_id};
 
-  link m_position;
+  block_link m_position;
 
-  std::optional<link> m_parent;
+  std::optional<block_link> m_parent;
 
-  links m_links;
+  block_ids_links m_block_ids_links;
 
   data_section m_data_section;
 };
 
 // referencing and unique link?
 
-template <block_id t_block_id>
+template <block_identifier t_block_id>
 std::ostream &operator<<(std::ostream &p_out,
                          const block_t<t_block_id> &p_block) {
   p_out << "{ id = " << block_id_converter::to_str(p_block.get_id())
@@ -225,8 +282,14 @@ std::ostream &operator<<(std::ostream &p_out,
   } else {
     p_out << " NULL";
   }
-  p_out << ", # links = " << p_block.get_num_links() << ", data = { "
-        << p_block.get_data_section() << " } }\n";
+  p_out << " {";
+  for (typename block_t<t_block_id>::const_links_iterator _ite =
+           p_block.begin();
+       _ite != p_block.end(); ++_ite) {
+    p_out << *_ite << " - ";
+  }
+  p_out << "} ";
+  p_out << ", data = { " << p_block.get_data_section() << " } }\n";
   return p_out;
 }
 
@@ -319,7 +382,7 @@ std::ostream &operator<<(std::ostream &out, const id_block<t_logger> &obj) {
   return out;
 }
 
-template <> struct data_section_t<block_id::HD> final {
+template <> struct data_section_t<block_identifier::HD> final {
   data_section_t() = default;
   data_section_t(std::uint64_t p_hd_start_time_ns,
                  std::int16_t p_hd_tz_offset_min,
@@ -362,11 +425,12 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &p_out,
-                         const data_section_t<block_id::HD> &p_obj) {
-  p_out << "data section of " << block_id_converter::to_str(block_id::HD)
-        << ": " << p_obj.get_hd_start_time_ns() << " "
-        << p_obj.get_hd_tz_offset_min() << ' ' << p_obj.get_hd_dst_offset_min()
-        << ' ' << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
+                         const data_section_t<block_identifier::HD> &p_obj) {
+  p_out << "data section of "
+        << block_id_converter::to_str(block_identifier::HD) << ": "
+        << p_obj.get_hd_start_time_ns() << " " << p_obj.get_hd_tz_offset_min()
+        << ' ' << p_obj.get_hd_dst_offset_min() << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
         << static_cast<uint16_t>(p_obj.get_hd_time_class()) << ' '
         << static_cast<uint16_t>(p_obj.get_hd_flags()) << ' '
         << p_obj.get_hd_start_angle_rad() << ' '

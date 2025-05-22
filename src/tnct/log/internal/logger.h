@@ -9,7 +9,6 @@
 #include <cstddef>
 #include <cstring>
 #include <ctime>
-#include <iostream>
 #include <mutex>
 #include <source_location>
 #include <sstream>
@@ -38,7 +37,7 @@ public:
   ///
   /// \p p_writer  Responsible for actually writing the log message
   logger(t_log_writer &&p_log_writer,
-         line_header_formater&& p_line_header_formater)
+         line_header_formater &&p_line_header_formater)
       : m_writer(std::move(p_log_writer)),
         m_line_header_formater(std::move(p_line_header_formater)) {}
 
@@ -78,9 +77,9 @@ public:
   /// \brief Delete operator not allowed
   void operator delete[](void *) = delete;
 
-  void set_header_formater(line_header_formater&& p_line_header_formater) {
+  void set_header_formater(line_header_formater &&p_line_header_formater) {
     std::lock_guard<std::mutex> _lock(m_mutex);
-    m_line_header_formater =std::move(p_line_header_formater);
+    m_line_header_formater = std::move(p_line_header_formater);
   }
 
   /// \brief Defines the separator to be used in the log messages
