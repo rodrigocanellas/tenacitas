@@ -14,6 +14,7 @@
 #include <optional>
 #include <vector>
 
+#include "tnct/byte_array/classes.h"
 #include "tnct/format/fmt.h"
 #include "tnct/traits/log/logger.h"
 
@@ -191,6 +192,323 @@ std::ostream &operator<<(std::ostream &p_out, const block_id_link &p_obj) {
 
 template <block_identifier t_block_Id> struct data_section_t;
 
+template <> struct data_section_t<block_identifier::MD> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::TX> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::FH> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::AT> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::EV> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::DG> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::CG> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::SI> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::CN> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::CC> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::CA> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::DT> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::SR> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::RD> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::SD> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::DL> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::DZ> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <> struct data_section_t<block_identifier::HL> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *) {}
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+};
+
+template <block_identifier t_block_Id>
+std::ostream &operator<<(std::ostream &p_out,
+                         const data_section_t<t_block_Id> &) {
+  p_out << " data section of " << block_id_converter::to_str(t_block_Id);
+  return p_out;
+}
+
+template <> struct data_section_t<block_identifier::HD> final {
+  data_section_t() = default;
+  data_section_t(const std::uint8_t *p_buf) {
+    std::uint64_t m_hd_start_time_ns =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
+    p_buf += sizeof(m_hd_start_time_ns);
+
+    std::int16_t m_hd_tz_offset_min =
+        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
+    p_buf += sizeof(m_hd_tz_offset_min);
+
+    std::int16_t m_hd_dst_offset_min =
+        byte_array::from_little<decltype(m_hd_dst_offset_min)>(p_buf);
+    p_buf += sizeof(m_hd_dst_offset_min);
+
+    std::uint8_t m_hd_time_flags =
+        byte_array::from_little<decltype(m_hd_time_flags)>(p_buf);
+    p_buf += sizeof(m_hd_time_flags);
+
+    std::uint8_t m_hd_time_class =
+        byte_array::from_little<decltype(m_hd_time_class)>(p_buf);
+    p_buf += sizeof(m_hd_time_class);
+
+    std::uint8_t m_hd_flags =
+        byte_array::from_little<decltype(m_hd_flags)>(p_buf);
+    p_buf += sizeof(m_hd_flags) + sizeof(std::uint8_t);
+
+    double m_hd_start_angle_rad =
+        byte_array::from_little<decltype(m_hd_start_angle_rad)>(p_buf);
+    p_buf += sizeof(m_hd_start_angle_rad);
+
+    double m_hd_start_distance_m =
+        byte_array::from_little<decltype(m_hd_start_distance_m)>(p_buf);
+  }
+
+  data_section_t(const data_section_t &) = default;
+  data_section_t(data_section_t &&) = default;
+
+  ~data_section_t() = default;
+
+  data_section_t &operator=(const data_section_t &) = default;
+  data_section_t &operator=(data_section_t &&) = default;
+
+  std::uint64_t get_hd_start_time_ns() const { return m_hd_start_time_ns; }
+  std::int16_t get_hd_tz_offset_min() const { return m_hd_tz_offset_min; }
+  std::int16_t get_hd_dst_offset_min() const { return m_hd_dst_offset_min; }
+  std::uint8_t get_hd_time_flags() const { return m_hd_time_flags; }
+  std::uint8_t get_hd_time_class() const { return m_hd_time_class; }
+  std::uint8_t get_hd_flags() const { return m_hd_flags; };
+  double get_hd_start_angle_rad() const { return m_hd_start_angle_rad; }
+  double get_hd_start_distance_m() const { return m_hd_start_distance_m; }
+
+private:
+  std::uint64_t m_hd_start_time_ns;
+  std::int16_t m_hd_tz_offset_min;
+  std::int16_t m_hd_dst_offset_min;
+  std::uint8_t m_hd_time_flags;
+  std::uint8_t m_hd_time_class;
+  std::uint8_t m_hd_flags;
+  double m_hd_start_angle_rad;
+  double m_hd_start_distance_m;
+};
+
+std::ostream &operator<<(std::ostream &p_out,
+                         const data_section_t<block_identifier::HD> &p_obj) {
+  p_out << block_id_converter::to_str(block_identifier::HD) << ": "
+        << p_obj.get_hd_start_time_ns() << " " << p_obj.get_hd_tz_offset_min()
+        << ' ' << p_obj.get_hd_dst_offset_min() << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_time_class()) << ' '
+        << static_cast<uint16_t>(p_obj.get_hd_flags()) << ' '
+        << p_obj.get_hd_start_angle_rad() << ' '
+        << p_obj.get_hd_start_distance_m();
+  return p_out;
+}
+
 template <block_identifier t_block_id> struct block_t final {
 
   using block_ids_links = std::vector<block_id_link>;
@@ -201,9 +519,8 @@ template <block_identifier t_block_id> struct block_t final {
 
   block_t() = delete;
 
-  block_t(block_link p_position) : m_position(p_position) {}
-
-  block_t(block_link p_position, block_link p_parent)
+  block_t(block_link p_position,
+          std::optional<block_id_link> p_parent = std::nullopt)
       : m_position(p_position), m_parent(p_parent) {}
 
   block_t(const block_t &) = delete;
@@ -240,7 +557,7 @@ template <block_identifier t_block_id> struct block_t final {
 
   const block_link &get_position() const { return m_position; }
 
-  std::optional<block_link> get_parent() const { return m_parent; }
+  std::optional<block_id_link> get_parent() const { return m_parent; }
 
   const_links_iterator begin() const { return m_block_ids_links.begin(); }
 
@@ -263,7 +580,7 @@ private:
 
   block_link m_position;
 
-  std::optional<block_link> m_parent;
+  std::optional<block_id_link> m_parent;
 
   block_ids_links m_block_ids_links;
 
@@ -275,21 +592,21 @@ private:
 template <block_identifier t_block_id>
 std::ostream &operator<<(std::ostream &p_out,
                          const block_t<t_block_id> &p_block) {
-  p_out << "{ id = " << block_id_converter::to_str(p_block.get_id())
-        << ", position = " << p_block.get_position() << ", parent = ";
+  p_out << "{id = " << block_id_converter::to_str(p_block.get_id())
+        << ", position = " << p_block.get_position() << ", parent {";
   if (p_block.get_parent().has_value()) {
     p_out << p_block.get_parent().value();
   } else {
-    p_out << " NULL";
+    p_out << "NULL";
   }
-  p_out << " {";
+  p_out << "}, links {";
   for (typename block_t<t_block_id>::const_links_iterator _ite =
            p_block.begin();
        _ite != p_block.end(); ++_ite) {
     p_out << *_ite << " - ";
   }
   p_out << "} ";
-  p_out << ", data = { " << p_block.get_data_section() << " } }\n";
+  p_out << ", data {" << p_block.get_data_section() << "} }";
   return p_out;
 }
 
@@ -380,62 +697,6 @@ std::ostream &operator<<(std::ostream &out, const id_block<t_logger> &obj) {
       << ", is finalized? " << std::boolalpha << obj.IsFinalized();
 
   return out;
-}
-
-template <> struct data_section_t<block_identifier::HD> final {
-  data_section_t() = default;
-  data_section_t(std::uint64_t p_hd_start_time_ns,
-                 std::int16_t p_hd_tz_offset_min,
-                 std::int16_t p_hd_dst_offset_min, std::uint8_t p_hd_time_flags,
-                 std::uint8_t p_hd_time_class, std::uint8_t p_hd_flags,
-                 double p_hd_start_angle_rad, double p_hd_start_distance_m)
-      : m_hd_start_time_ns(p_hd_start_time_ns),
-        m_hd_tz_offset_min(p_hd_tz_offset_min),
-        m_hd_dst_offset_min(p_hd_dst_offset_min),
-        m_hd_time_flags(p_hd_time_flags), m_hd_time_class(p_hd_time_class),
-        m_hd_flags(p_hd_flags), m_hd_start_angle_rad(p_hd_start_angle_rad),
-        m_hd_start_distance_m(p_hd_start_distance_m) {}
-
-  data_section_t(const data_section_t &) = delete;
-  data_section_t(data_section_t &&) = default;
-
-  ~data_section_t() = default;
-
-  data_section_t &operator=(const data_section_t &) = delete;
-  data_section_t &operator=(data_section_t &&) = default;
-
-  std::uint64_t get_hd_start_time_ns() const { return m_hd_start_time_ns; }
-  std::int16_t get_hd_tz_offset_min() const { return m_hd_tz_offset_min; }
-  std::int16_t get_hd_dst_offset_min() const { return m_hd_dst_offset_min; }
-  std::uint8_t get_hd_time_flags() const { return m_hd_time_flags; }
-  std::uint8_t get_hd_time_class() const { return m_hd_time_class; }
-  std::uint8_t get_hd_flags() const { return m_hd_flags; };
-  double get_hd_start_angle_rad() const { return m_hd_start_angle_rad; }
-  double get_hd_start_distance_m() const { return m_hd_start_distance_m; }
-
-private:
-  std::uint64_t m_hd_start_time_ns;
-  std::int16_t m_hd_tz_offset_min;
-  std::int16_t m_hd_dst_offset_min;
-  std::uint8_t m_hd_time_flags;
-  std::uint8_t m_hd_time_class;
-  std::uint8_t m_hd_flags;
-  double m_hd_start_angle_rad;
-  double m_hd_start_distance_m;
-};
-
-std::ostream &operator<<(std::ostream &p_out,
-                         const data_section_t<block_identifier::HD> &p_obj) {
-  p_out << "data section of "
-        << block_id_converter::to_str(block_identifier::HD) << ": "
-        << p_obj.get_hd_start_time_ns() << " " << p_obj.get_hd_tz_offset_min()
-        << ' ' << p_obj.get_hd_dst_offset_min() << ' '
-        << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
-        << static_cast<uint16_t>(p_obj.get_hd_time_class()) << ' '
-        << static_cast<uint16_t>(p_obj.get_hd_flags()) << ' '
-        << p_obj.get_hd_start_angle_rad() << ' '
-        << p_obj.get_hd_start_distance_m();
-  return p_out;
 }
 
 } // namespace tnct::mf4::mem

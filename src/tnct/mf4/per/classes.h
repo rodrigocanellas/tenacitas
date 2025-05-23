@@ -135,59 +135,14 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
   return _pair;
 }
 
-template <mem::block_identifier t_block_Id> struct data_section_reader_t;
-
-template <> struct data_section_reader_t<mem::block_identifier::HD> {
-  template <traits::log::logger t_logger>
-  mem::data_section_t<mem::block_identifier::HD>
-  operator()(const std::uint8_t *p_buf, t_logger & /*p_logger*/) {
-
-    std::uint64_t m_hd_start_time_ns =
-        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
-    p_buf += sizeof(m_hd_start_time_ns);
-
-    std::int16_t m_hd_tz_offset_min =
-        byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
-    p_buf += sizeof(m_hd_tz_offset_min);
-
-    std::int16_t m_hd_dst_offset_min =
-        byte_array::from_little<decltype(m_hd_dst_offset_min)>(p_buf);
-    p_buf += sizeof(m_hd_dst_offset_min);
-
-    std::uint8_t m_hd_time_flags =
-        byte_array::from_little<decltype(m_hd_time_flags)>(p_buf);
-    p_buf += sizeof(m_hd_time_flags);
-
-    std::uint8_t m_hd_time_class =
-        byte_array::from_little<decltype(m_hd_time_class)>(p_buf);
-    p_buf += sizeof(m_hd_time_class);
-
-    std::uint8_t m_hd_flags =
-        byte_array::from_little<decltype(m_hd_flags)>(p_buf);
-    p_buf += sizeof(m_hd_flags) + sizeof(std::uint8_t);
-
-    double m_hd_start_angle_rad =
-        byte_array::from_little<decltype(m_hd_start_angle_rad)>(p_buf);
-    p_buf += sizeof(m_hd_start_angle_rad);
-
-    double m_hd_start_distance_m =
-        byte_array::from_little<decltype(m_hd_start_distance_m)>(p_buf);
-
-    return {mem::data_section_t<mem::block_identifier::HD>{
-        m_hd_start_time_ns, m_hd_tz_offset_min, m_hd_dst_offset_min,
-        m_hd_time_flags, m_hd_time_class, m_hd_flags, m_hd_start_angle_rad,
-        m_hd_start_distance_m}};
-  }
-};
-
-template <mem::block_identifier t_block_Id> struct block_reader_t;
-
-template <> struct block_reader_t<mem::block_identifier::HD> {
-
+template <mem::block_identifier t_block_id> struct block_reader_t {
   template <tnct::traits::log::logger t_logger>
   void operator()(std::ifstream &p_file, t_logger &p_logger,
                   int64_t p_offset_start, amount_to_read p_block_size,
-                  std::size_t p_num_links) {
+                  std::size_t p_num_links,
+                  std::optional<mem::block_id_link> p_parent,
+                  std::size_t p_level = 0) {
+
     const amount_to_read size_to_read{p_block_size - header_section_size};
 
     if (!p_file.seekg(p_offset_start).good()) {
@@ -201,33 +156,36 @@ template <> struct block_reader_t<mem::block_identifier::HD> {
                                           " bytes for header block "));
     }
 
-    mem::block_t<mem::block_identifier::HD> _block{p_offset_start};
+    mem::block_t<t_block_id> _block{p_offset_start, p_parent};
 
     auto _ptr = reinterpret_cast<const std::uint8_t *>(&_buf[0]);
     {
       for (decltype(p_num_links) _i = 0; _i < p_num_links; ++_i) {
-        mem::block_link _link{byte_array::from_little<mem::block_link>(
-            _ptr + _i * sizeof(mem::block_link))};
+        offset _offset{
+            byte_array::from_little<offset>(_ptr + _i * sizeof(offset))};
 
-        if (_link == 0) {
-          TNCT_LOG_INF(p_logger, format::fmt("linkk # ", _i, " is NIL"));
+        // auto [_block_id, _block_size, _block_num_links] =
+        //     read_header_section<t_logger>(p_file, p_logger, _link);
+        if (_offset == 0) {
           continue;
         }
 
-        auto [_block_id, _block_size, _block_num_links] =
-            read_header_section<t_logger>(p_file, p_logger, _link);
+        auto _block_id{read_block<t_logger>(
+            p_file, p_logger, _offset,
+            mem::block_id_link{t_block_id, p_offset_start}, p_level + 1)};
 
-        _block.add_link({_block_id, _link});
+        mem::block_id_link _block_id_link{_block_id, _offset};
+
+        _block.add_link(std::move(_block_id_link));
       }
     }
 
     _ptr = reinterpret_cast<const std::uint8_t *>(
         &_buf[p_num_links * sizeof(mem::block_link)]);
 
-    _block.set_data_section(
-        data_section_reader_t<mem::block_identifier::HD>()(_ptr, p_logger));
+    _block.set_data_section(std::move(mem::data_section_t<t_block_id>{_ptr}));
 
-    TNCT_LOG_INF(p_logger, format::fmt(_block));
+    TNCT_LOG_INF(p_logger, format::fmt(std::string(p_level, '\t'), _block));
   }
 };
 
@@ -235,8 +193,10 @@ template <> struct block_reader_t<mem::block_identifier::HD> {
 // std::function<void()>;
 
 template <tnct::traits::log::logger t_logger>
-std::pair<mem::block_identifier, offset>
-read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start) {
+mem::block_identifier
+read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start,
+           std::optional<mem::block_id_link> p_parent = std::nullopt,
+           std::size_t p_level = 0) {
   if (!p_file.seekg(p_offset_start).good()) {
     log_and_throw(p_logger,
                   format::fmt("error seekg for ", p_offset_start, " bytes"));
@@ -245,23 +205,113 @@ read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start) {
   auto [_block_id, _block_size, _block_num_links] =
       read_header_section<t_logger>(p_file, p_logger, p_offset_start);
 
-  TNCT_LOG_INF(p_logger,
-               format::fmt("block ", mem::block_id_converter::to_str(_block_id),
-                           " has ", _block_size, " bytes and ",
-                           _block_num_links, " links"));
+  // TNCT_LOG_INF(p_logger,
+  //              format::fmt("block ",
+  //              mem::block_id_converter::to_str(_block_id),
+  //                          " has ", _block_size, " bytes and ",
+  //                          _block_num_links, " links"));
 
   switch (_block_id) {
   case mem::block_identifier::HD:
-
     block_reader_t<mem::block_identifier::HD>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
-        _block_num_links);
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::MD:
+    block_reader_t<mem::block_identifier::MD>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::TX:
+    block_reader_t<mem::block_identifier::TX>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::FH:
+    block_reader_t<mem::block_identifier::FH>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::AT:
+    block_reader_t<mem::block_identifier::AT>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::EV:
+    block_reader_t<mem::block_identifier::EV>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::DG:
+    block_reader_t<mem::block_identifier::DG>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::CG:
+    block_reader_t<mem::block_identifier::CG>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::SI:
+    block_reader_t<mem::block_identifier::SI>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::CN:
+    block_reader_t<mem::block_identifier::CN>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::CC:
+    block_reader_t<mem::block_identifier::CC>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::CA:
+    block_reader_t<mem::block_identifier::CA>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::DT:
+    block_reader_t<mem::block_identifier::DT>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::SR:
+    block_reader_t<mem::block_identifier::SR>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::RD:
+    block_reader_t<mem::block_identifier::RD>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::SD:
+    block_reader_t<mem::block_identifier::SD>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::DL:
+    block_reader_t<mem::block_identifier::DL>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::DZ:
+    block_reader_t<mem::block_identifier::DZ>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
+    break;
+  case mem::block_identifier::HL:
+    block_reader_t<mem::block_identifier::HL>()(
+        p_file, p_logger, p_offset_start + header_section_size, _block_size,
+        _block_num_links, p_parent, p_level);
     break;
   default:
     break;
   }
 
-  return {_block_id, p_offset_start + _block_size};
+  return _block_id;
 }
 
 template <tnct::traits::log::logger t_logger>
