@@ -123,8 +123,7 @@ struct block_id_converter {
 private:
   using array =
       std::array<block_id_str,
-                 static_cast<std::underlying_type_t<block_id>>(
-                     block_id::HL) +
+                 static_cast<std::underlying_type_t<block_id>>(block_id::HL) +
                      1>;
 
   using block_id_type = std::underlying_type_t<block_id>;
@@ -435,6 +434,19 @@ std::ostream &operator<<(std::ostream &p_out,
 
 template <> struct data_section_t<block_id::HD> final {
   data_section_t() = default;
+
+  data_section_t(std::uint64_t p_hd_start_time_ns,
+                 std::int16_t p_hd_tz_offset_min,
+                 std::int16_t p_hd_dst_offset_min, std::uint8_t p_hd_time_flags,
+                 std::uint8_t p_hd_time_class, std::uint8_t p_hd_flags,
+                 double p_hd_start_angle_rad, double p_hd_start_distance_m)
+      : m_hd_start_time_ns(p_hd_start_time_ns),
+        m_hd_tz_offset_min(p_hd_tz_offset_min),
+        m_hd_dst_offset_min(p_hd_dst_offset_min),
+        m_hd_time_flags(p_hd_time_flags), m_hd_time_class(p_hd_time_class),
+        m_hd_flags(p_hd_flags), m_hd_start_angle_rad(p_hd_start_angle_rad),
+        m_hd_start_distance_m(p_hd_start_distance_m) {}
+
   data_section_t(const std::uint8_t *p_buf) {
     std::uint64_t m_hd_start_time_ns =
         byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
@@ -520,7 +532,7 @@ template <block_id t_block_id> struct block_t final {
   block_t() = delete;
 
   block_t(block_link p_position,
-          std::optional<block_ref> p_parent = std::nullopt)
+          const std::optional<block_ref> &p_parent = std::nullopt)
       : m_position(p_position), m_parent(p_parent) {}
 
   block_t(const block_t &) = delete;
