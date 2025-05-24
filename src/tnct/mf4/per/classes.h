@@ -225,7 +225,7 @@ template <mem::block_id t_block_id> struct block_reader_t {
 
     mem::block_t<t_block_id> _block{p_offset_start, p_parent};
 
-    mem::block_ref _parent{t_block_id, _start};
+    mem::block_ref _parent{t_block_id, p_offset_start};
 
     auto _ptr = reinterpret_cast<const std::uint8_t *>(&_buf[0]);
     {
