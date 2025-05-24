@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_MF4_MEM_CLASSES_H
-#define TNCT_MF4_MEM_CLASSES_H
+#ifndef TNCT_MF4_V411_MEM_CLASSES_H
+#define TNCT_MF4_V411_MEM_CLASSES_H
 
 #include <array>
 #include <cstdint>
@@ -18,7 +18,7 @@
 #include "tnct/format/fmt.h"
 #include "tnct/traits/log/logger.h"
 
-namespace tnct::mf4::mem {
+namespace tnct::mf4::v411::mem {
 
 using block_link = std::int64_t;
 
@@ -184,8 +184,8 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &p_out, const block_ref &p_obj) {
-  p_out << "id = " << block_id_converter::to_str(p_obj.id())
-        << ", link = " << p_obj.link();
+  p_out << '{' << block_id_converter::to_str(p_obj.id()) << ", " << p_obj.link()
+        << '}';
   return p_out;
 }
 
@@ -428,7 +428,7 @@ template <> struct data_section_t<block_id::HL> final {
 template <block_id t_block_Id>
 std::ostream &operator<<(std::ostream &p_out,
                          const data_section_t<t_block_Id> &) {
-  p_out << " data section of " << block_id_converter::to_str(t_block_Id);
+  p_out << "{}";
   return p_out;
 }
 
@@ -510,14 +510,13 @@ private:
 
 std::ostream &operator<<(std::ostream &p_out,
                          const data_section_t<block_id::HD> &p_obj) {
-  p_out << block_id_converter::to_str(block_id::HD) << ": "
-        << p_obj.get_hd_start_time_ns() << " " << p_obj.get_hd_tz_offset_min()
-        << ' ' << p_obj.get_hd_dst_offset_min() << ' '
-        << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
+  p_out << '{' << p_obj.get_hd_start_time_ns() << " "
+        << p_obj.get_hd_tz_offset_min() << ' ' << p_obj.get_hd_dst_offset_min()
+        << ' ' << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
         << static_cast<uint16_t>(p_obj.get_hd_time_class()) << ' '
         << static_cast<uint16_t>(p_obj.get_hd_flags()) << ' '
         << p_obj.get_hd_start_angle_rad() << ' '
-        << p_obj.get_hd_start_distance_m();
+        << p_obj.get_hd_start_distance_m() << '}';
   return p_out;
 }
 
@@ -533,7 +532,7 @@ template <block_id t_block_id> struct block_t final {
 
   block_t(block_link p_position,
           const std::optional<block_ref> &p_parent = std::nullopt)
-      : m_position(p_position), m_parent(p_parent) {}
+      : m_link(p_position), m_parent(p_parent) {}
 
   block_t(const block_t &) = delete;
 
@@ -545,7 +544,7 @@ template <block_id t_block_id> struct block_t final {
   block_t &operator=(block_t &&) noexcept = default;
 
   constexpr bool operator==(const block_t &p_block) const {
-    return (m_id == p_block.m_id) && (m_position == p_block.m_position);
+    return (m_id == p_block.m_id) && (m_link == p_block.m_link);
   }
 
   constexpr bool operator!=(const block_t &p_block) const {
@@ -559,7 +558,7 @@ template <block_id t_block_id> struct block_t final {
     if (m_id > p_block.m_id) {
       return false;
     }
-    if (m_position < p_block.m_position) {
+    if (m_link < p_block.m_link) {
       return true;
     }
     return false;
@@ -567,7 +566,7 @@ template <block_id t_block_id> struct block_t final {
 
   const block_id &get_id() const { return m_id; }
 
-  const block_link &get_position() const { return m_position; }
+  const block_link &get_link() const { return m_link; }
 
   std::optional<block_ref> get_parent() const { return m_parent; }
 
@@ -590,7 +589,7 @@ template <block_id t_block_id> struct block_t final {
 private:
   block_id m_id{t_block_id};
 
-  block_link m_position;
+  block_link m_link;
 
   std::optional<block_ref> m_parent;
 
@@ -604,21 +603,21 @@ private:
 template <block_id t_block_id>
 std::ostream &operator<<(std::ostream &p_out,
                          const block_t<t_block_id> &p_block) {
-  p_out << "{id = " << block_id_converter::to_str(p_block.get_id())
-        << ", position = " << p_block.get_position() << ", parent {";
+  p_out << "{ {id " << block_id_converter::to_str(p_block.get_id())
+        << "} {position " << p_block.get_link() << "} {parent ";
   if (p_block.get_parent().has_value()) {
     p_out << p_block.get_parent().value();
   } else {
-    p_out << "NULL";
+    p_out << "{NULL}";
   }
-  p_out << "}, links {";
+  p_out << "} {links ";
   for (typename block_t<t_block_id>::const_links_iterator _ite =
            p_block.begin();
        _ite != p_block.end(); ++_ite) {
-    p_out << *_ite << " - ";
+    p_out << *_ite;
   }
-  p_out << "} ";
-  p_out << ", data {" << p_block.get_data_section() << "} }";
+  p_out << "}";
+  p_out << " {data " << p_block.get_data_section() << "} }";
   return p_out;
 }
 
@@ -711,6 +710,6 @@ std::ostream &operator<<(std::ostream &out, const id_block<t_logger> &obj) {
   return out;
 }
 
-} // namespace tnct::mf4::mem
+} // namespace tnct::mf4::v411::mem
 
 #endif
