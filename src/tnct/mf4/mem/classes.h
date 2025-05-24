@@ -41,7 +41,7 @@ std::ostream &operator<<(std::ostream &out, result result) {
   return out;
 }
 
-enum class block_identifier : std::uint8_t {
+enum class block_id : std::uint8_t {
 
   // Identification block. Identification of the file as MDF file
   ID = 0,
@@ -103,11 +103,11 @@ enum class block_identifier : std::uint8_t {
 using block_id_str = char[5];
 
 struct block_id_converter {
-  static const block_id_str &to_str(block_identifier p_id) {
+  static const block_id_str &to_str(block_id p_id) {
     return m_array[static_cast<block_id_type>(p_id)];
   }
 
-  static std::optional<block_identifier> to_id(const block_id_str p_id_str) {
+  static std::optional<block_id> to_id(const block_id_str p_id_str) {
     const auto _ite{std::find_if(m_array.begin(), m_array.end(),
                                  [&](const block_id_str &item) {
                                    return (std::strcmp(p_id_str, item) == 0);
@@ -116,18 +116,18 @@ struct block_id_converter {
       return std::nullopt;
     }
     const auto _distance{std::distance(m_array.begin(), _ite)};
-    const block_identifier _block_id{static_cast<block_id_type>(_distance)};
+    const block_id _block_id{static_cast<block_id_type>(_distance)};
     return {_block_id};
   }
 
 private:
   using array =
       std::array<block_id_str,
-                 static_cast<std::underlying_type_t<block_identifier>>(
-                     block_identifier::HL) +
+                 static_cast<std::underlying_type_t<block_id>>(
+                     block_id::HL) +
                      1>;
 
-  using block_id_type = std::underlying_type_t<block_identifier>;
+  using block_id_type = std::underlying_type_t<block_id>;
 
   static constexpr array m_array{"##ID", "##HD", "##MD", "##TX", "##FH", "##CH",
                                  "##AT", "##EV", "##DG", "##CG", "##SI", "##CN",
@@ -135,32 +135,32 @@ private:
                                  "##DL", "##DZ", "##HL"};
 };
 
-struct block_id_link {
-  block_id_link() = delete;
+struct block_ref {
+  block_ref() = delete;
 
-  block_id_link(block_identifier p_block_id, block_link p_block_link)
+  block_ref(block_id p_block_id, block_link p_block_link)
       : m_block_id(p_block_id), m_block_link(p_block_link) {}
 
-  block_id_link(const block_id_link &) = default;
+  block_ref(const block_ref &) = default;
 
-  block_id_link(block_id_link &&) = default;
+  block_ref(block_ref &&) = default;
 
-  ~block_id_link() = default;
+  ~block_ref() = default;
 
-  block_id_link &operator=(const block_id_link &) = default;
+  block_ref &operator=(const block_ref &) = default;
 
-  block_id_link &operator=(block_id_link &&) = default;
+  block_ref &operator=(block_ref &&) = default;
 
-  constexpr bool operator==(const block_id_link &p_obj) const {
+  constexpr bool operator==(const block_ref &p_obj) const {
     return (m_block_id == p_obj.m_block_id) &&
            (m_block_link == p_obj.m_block_link);
   }
 
-  constexpr bool operator!=(const block_id_link &p_obj) const {
+  constexpr bool operator!=(const block_ref &p_obj) const {
     return !(*this == p_obj);
   }
 
-  constexpr bool operator<(const block_id_link &p_obj) const {
+  constexpr bool operator<(const block_ref &p_obj) const {
     if (m_block_id < p_obj.m_block_id) {
       return true;
     }
@@ -175,24 +175,24 @@ struct block_id_link {
     return false;
   }
 
-  block_identifier id() const { return m_block_id; }
+  block_id id() const { return m_block_id; }
 
   block_link link() const { return m_block_link; }
 
 private:
-  block_identifier m_block_id;
+  block_id m_block_id;
   block_link m_block_link;
 };
 
-std::ostream &operator<<(std::ostream &p_out, const block_id_link &p_obj) {
+std::ostream &operator<<(std::ostream &p_out, const block_ref &p_obj) {
   p_out << "id = " << block_id_converter::to_str(p_obj.id())
         << ", link = " << p_obj.link();
   return p_out;
 }
 
-template <block_identifier t_block_Id> struct data_section_t;
+template <block_id t_block_Id> struct data_section_t;
 
-template <> struct data_section_t<block_identifier::MD> final {
+template <> struct data_section_t<block_id::MD> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -205,7 +205,7 @@ template <> struct data_section_t<block_identifier::MD> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::TX> final {
+template <> struct data_section_t<block_id::TX> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -218,7 +218,7 @@ template <> struct data_section_t<block_identifier::TX> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::FH> final {
+template <> struct data_section_t<block_id::FH> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -231,7 +231,7 @@ template <> struct data_section_t<block_identifier::FH> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::AT> final {
+template <> struct data_section_t<block_id::AT> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -244,7 +244,7 @@ template <> struct data_section_t<block_identifier::AT> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::EV> final {
+template <> struct data_section_t<block_id::EV> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -257,7 +257,7 @@ template <> struct data_section_t<block_identifier::EV> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::DG> final {
+template <> struct data_section_t<block_id::DG> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -270,7 +270,7 @@ template <> struct data_section_t<block_identifier::DG> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::CG> final {
+template <> struct data_section_t<block_id::CG> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -283,7 +283,7 @@ template <> struct data_section_t<block_identifier::CG> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::SI> final {
+template <> struct data_section_t<block_id::SI> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -296,7 +296,7 @@ template <> struct data_section_t<block_identifier::SI> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::CN> final {
+template <> struct data_section_t<block_id::CN> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -309,7 +309,7 @@ template <> struct data_section_t<block_identifier::CN> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::CC> final {
+template <> struct data_section_t<block_id::CC> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -322,7 +322,7 @@ template <> struct data_section_t<block_identifier::CC> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::CA> final {
+template <> struct data_section_t<block_id::CA> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -335,7 +335,7 @@ template <> struct data_section_t<block_identifier::CA> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::DT> final {
+template <> struct data_section_t<block_id::DT> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -348,7 +348,7 @@ template <> struct data_section_t<block_identifier::DT> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::SR> final {
+template <> struct data_section_t<block_id::SR> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -361,7 +361,7 @@ template <> struct data_section_t<block_identifier::SR> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::RD> final {
+template <> struct data_section_t<block_id::RD> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -374,7 +374,7 @@ template <> struct data_section_t<block_identifier::RD> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::SD> final {
+template <> struct data_section_t<block_id::SD> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -387,7 +387,7 @@ template <> struct data_section_t<block_identifier::SD> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::DL> final {
+template <> struct data_section_t<block_id::DL> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -400,7 +400,7 @@ template <> struct data_section_t<block_identifier::DL> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::DZ> final {
+template <> struct data_section_t<block_id::DZ> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -413,7 +413,7 @@ template <> struct data_section_t<block_identifier::DZ> final {
   ~data_section_t() = default;
 };
 
-template <> struct data_section_t<block_identifier::HL> final {
+template <> struct data_section_t<block_id::HL> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *) {}
 
@@ -426,14 +426,14 @@ template <> struct data_section_t<block_identifier::HL> final {
   ~data_section_t() = default;
 };
 
-template <block_identifier t_block_Id>
+template <block_id t_block_Id>
 std::ostream &operator<<(std::ostream &p_out,
                          const data_section_t<t_block_Id> &) {
   p_out << " data section of " << block_id_converter::to_str(t_block_Id);
   return p_out;
 }
 
-template <> struct data_section_t<block_identifier::HD> final {
+template <> struct data_section_t<block_id::HD> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *p_buf) {
     std::uint64_t m_hd_start_time_ns =
@@ -497,8 +497,8 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &p_out,
-                         const data_section_t<block_identifier::HD> &p_obj) {
-  p_out << block_id_converter::to_str(block_identifier::HD) << ": "
+                         const data_section_t<block_id::HD> &p_obj) {
+  p_out << block_id_converter::to_str(block_id::HD) << ": "
         << p_obj.get_hd_start_time_ns() << " " << p_obj.get_hd_tz_offset_min()
         << ' ' << p_obj.get_hd_dst_offset_min() << ' '
         << static_cast<uint16_t>(p_obj.get_hd_time_flags()) << ' '
@@ -509,9 +509,9 @@ std::ostream &operator<<(std::ostream &p_out,
   return p_out;
 }
 
-template <block_identifier t_block_id> struct block_t final {
+template <block_id t_block_id> struct block_t final {
 
-  using block_ids_links = std::vector<block_id_link>;
+  using block_ids_links = std::vector<block_ref>;
 
   using const_links_iterator = block_ids_links::const_iterator;
 
@@ -520,7 +520,7 @@ template <block_identifier t_block_id> struct block_t final {
   block_t() = delete;
 
   block_t(block_link p_position,
-          std::optional<block_id_link> p_parent = std::nullopt)
+          std::optional<block_ref> p_parent = std::nullopt)
       : m_position(p_position), m_parent(p_parent) {}
 
   block_t(const block_t &) = delete;
@@ -553,11 +553,11 @@ template <block_identifier t_block_id> struct block_t final {
     return false;
   }
 
-  const block_identifier &get_id() const { return m_id; }
+  const block_id &get_id() const { return m_id; }
 
   const block_link &get_position() const { return m_position; }
 
-  std::optional<block_id_link> get_parent() const { return m_parent; }
+  std::optional<block_ref> get_parent() const { return m_parent; }
 
   const_links_iterator begin() const { return m_block_ids_links.begin(); }
 
@@ -565,7 +565,7 @@ template <block_identifier t_block_id> struct block_t final {
 
   std::size_t get_num_links() const { return m_block_ids_links.size(); }
 
-  void add_link(block_id_link &&p_link) {
+  void add_link(block_ref &&p_link) {
     m_block_ids_links.push_back(std::move(p_link));
   }
 
@@ -576,11 +576,11 @@ template <block_identifier t_block_id> struct block_t final {
   const data_section &get_data_section() const { return m_data_section; }
 
 private:
-  block_identifier m_id{t_block_id};
+  block_id m_id{t_block_id};
 
   block_link m_position;
 
-  std::optional<block_id_link> m_parent;
+  std::optional<block_ref> m_parent;
 
   block_ids_links m_block_ids_links;
 
@@ -589,7 +589,7 @@ private:
 
 // referencing and unique link?
 
-template <block_identifier t_block_id>
+template <block_id t_block_id>
 std::ostream &operator<<(std::ostream &p_out,
                          const block_t<t_block_id> &p_block) {
   p_out << "{id = " << block_id_converter::to_str(p_block.get_id())

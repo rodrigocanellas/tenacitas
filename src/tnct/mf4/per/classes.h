@@ -93,7 +93,7 @@ read_id_block(std::ifstream &file, t_logger &p_logger) {
 }
 
 template <tnct::traits::log::logger t_logger>
-[[nodiscard]] std::tuple<mem::block_identifier, amount_to_read, std::size_t>
+[[nodiscard]] std::tuple<mem::block_id, amount_to_read, std::size_t>
 read_header_section(std::ifstream &p_file, t_logger &p_logger,
                     offset p_offset_start) {
   constexpr field_size _reserved_field_size{sizeof(std::uint8_t) * 4};
@@ -135,12 +135,12 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
   return _pair;
 }
 
-template <mem::block_identifier t_block_id> struct block_reader_t {
+template <mem::block_id t_block_id> struct block_reader_t {
   template <tnct::traits::log::logger t_logger>
   void operator()(std::ifstream &p_file, t_logger &p_logger,
                   int64_t p_offset_start, amount_to_read p_block_size,
                   std::size_t p_num_links,
-                  std::optional<mem::block_id_link> p_parent,
+                  std::optional<mem::block_ref> p_parent,
                   std::size_t p_level = 0) {
 
     const amount_to_read size_to_read{p_block_size - header_section_size};
@@ -172,9 +172,9 @@ template <mem::block_identifier t_block_id> struct block_reader_t {
 
         auto _block_id{read_block<t_logger>(
             p_file, p_logger, _offset,
-            mem::block_id_link{t_block_id, p_offset_start}, p_level + 1)};
+            mem::block_ref{t_block_id, p_offset_start}, p_level + 1)};
 
-        mem::block_id_link _block_id_link{_block_id, _offset};
+        mem::block_ref _block_id_link{_block_id, _offset};
 
         _block.add_link(std::move(_block_id_link));
       }
@@ -193,9 +193,9 @@ template <mem::block_identifier t_block_id> struct block_reader_t {
 // std::function<void()>;
 
 template <tnct::traits::log::logger t_logger>
-mem::block_identifier
+mem::block_id
 read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start,
-           std::optional<mem::block_id_link> p_parent = std::nullopt,
+           std::optional<mem::block_ref> p_parent = std::nullopt,
            std::size_t p_level = 0) {
   if (!p_file.seekg(p_offset_start).good()) {
     log_and_throw(p_logger,
@@ -212,98 +212,98 @@ read_block(std::ifstream &p_file, t_logger &p_logger, offset p_offset_start,
   //                          _block_num_links, " links"));
 
   switch (_block_id) {
-  case mem::block_identifier::HD:
-    block_reader_t<mem::block_identifier::HD>()(
+  case mem::block_id::HD:
+    block_reader_t<mem::block_id::HD>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::MD:
-    block_reader_t<mem::block_identifier::MD>()(
+  case mem::block_id::MD:
+    block_reader_t<mem::block_id::MD>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::TX:
-    block_reader_t<mem::block_identifier::TX>()(
+  case mem::block_id::TX:
+    block_reader_t<mem::block_id::TX>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::FH:
-    block_reader_t<mem::block_identifier::FH>()(
+  case mem::block_id::FH:
+    block_reader_t<mem::block_id::FH>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::AT:
-    block_reader_t<mem::block_identifier::AT>()(
+  case mem::block_id::AT:
+    block_reader_t<mem::block_id::AT>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::EV:
-    block_reader_t<mem::block_identifier::EV>()(
+  case mem::block_id::EV:
+    block_reader_t<mem::block_id::EV>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::DG:
-    block_reader_t<mem::block_identifier::DG>()(
+  case mem::block_id::DG:
+    block_reader_t<mem::block_id::DG>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::CG:
-    block_reader_t<mem::block_identifier::CG>()(
+  case mem::block_id::CG:
+    block_reader_t<mem::block_id::CG>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::SI:
-    block_reader_t<mem::block_identifier::SI>()(
+  case mem::block_id::SI:
+    block_reader_t<mem::block_id::SI>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::CN:
-    block_reader_t<mem::block_identifier::CN>()(
+  case mem::block_id::CN:
+    block_reader_t<mem::block_id::CN>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::CC:
-    block_reader_t<mem::block_identifier::CC>()(
+  case mem::block_id::CC:
+    block_reader_t<mem::block_id::CC>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::CA:
-    block_reader_t<mem::block_identifier::CA>()(
+  case mem::block_id::CA:
+    block_reader_t<mem::block_id::CA>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::DT:
-    block_reader_t<mem::block_identifier::DT>()(
+  case mem::block_id::DT:
+    block_reader_t<mem::block_id::DT>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::SR:
-    block_reader_t<mem::block_identifier::SR>()(
+  case mem::block_id::SR:
+    block_reader_t<mem::block_id::SR>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::RD:
-    block_reader_t<mem::block_identifier::RD>()(
+  case mem::block_id::RD:
+    block_reader_t<mem::block_id::RD>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::SD:
-    block_reader_t<mem::block_identifier::SD>()(
+  case mem::block_id::SD:
+    block_reader_t<mem::block_id::SD>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::DL:
-    block_reader_t<mem::block_identifier::DL>()(
+  case mem::block_id::DL:
+    block_reader_t<mem::block_id::DL>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::DZ:
-    block_reader_t<mem::block_identifier::DZ>()(
+  case mem::block_id::DZ:
+    block_reader_t<mem::block_id::DZ>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
-  case mem::block_identifier::HL:
-    block_reader_t<mem::block_identifier::HL>()(
+  case mem::block_id::HL:
+    block_reader_t<mem::block_id::HL>()(
         p_file, p_logger, p_offset_start + header_section_size, _block_size,
         _block_num_links, p_parent, p_level);
     break;
