@@ -1,6 +1,6 @@
 #include "tnct/log/cout.h"
 #include "tnct/mf4/v411/mem/file.h"
-#include "tnct/mf4/v411/per/classes.h"
+#include "tnct/mf4/v411/per/file.h"
 
 using namespace tnct;
 
@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 
     mf4::v411::mem::file _mf4_file;
 
-    mf4::v411::per::mf4_reader(argv[1], _logger, _mf4_file);
+    mf4::v411::per::read(argv[1], _logger, _mf4_file);
 
     std::cout << '\n';
 
