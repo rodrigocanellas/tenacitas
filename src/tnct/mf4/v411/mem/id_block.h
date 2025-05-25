@@ -34,7 +34,7 @@ template <traits::log::logger t_logger> struct id_block final {
            std::uint16_t id_unfin_flags, std::uint16_t id_custom_unfin_flags)
       : logger_{p_logger} {
     bool error{false};
-    if (std::strlen(id_file) != str_field_size) {
+    if (std::strlen(id_file) > str_field_size) {
       TNCT_LOG_ERR(logger_,
                    format::fmt("id file should be ",
                                static_cast<std::uint16_t>(str_field_size),
@@ -43,7 +43,7 @@ template <traits::log::logger t_logger> struct id_block final {
     }
     std::strncpy(id_file_, id_file, sizeof(id_file_));
 
-    if (std::strlen(id_vers) != str_field_size) {
+    if (std::strlen(id_vers) > str_field_size) {
       TNCT_LOG_ERR(logger_,
                    format::fmt("version id should be ",
                                static_cast<std::uint16_t>(str_field_size),
@@ -52,7 +52,7 @@ template <traits::log::logger t_logger> struct id_block final {
     }
     std::strncpy(id_vers_, id_vers, sizeof(id_vers_));
 
-    if (std::strlen(id_prog) != str_field_size) {
+    if (std::strlen(id_prog) > str_field_size) {
       TNCT_LOG_ERR(logger_,
                    format::fmt("program id should be ",
                                static_cast<std::uint16_t>(str_field_size),

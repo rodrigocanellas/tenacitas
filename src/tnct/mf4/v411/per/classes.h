@@ -14,7 +14,6 @@
 #include "tnct/byte_array/classes.h"
 #include "tnct/format/fmt.h"
 #include "tnct/mf4/v411/log_and_throw.h"
-#include "tnct/mf4/v411/mem/block.h"
 #include "tnct/mf4/v411/mem/block_id.h"
 #include "tnct/mf4/v411/mem/block_ref.h"
 #include "tnct/mf4/v411/mem/data_section.h"
@@ -37,10 +36,13 @@ read_id_block(std::ifstream &file, t_logger &p_logger) {
   constexpr uint8_t _str_field_size{8};
   char _id_file[_str_field_size + 1];
   std::memset(_id_file, '\0', _str_field_size + 1);
+
   char _id_vers[_str_field_size + 1];
   std::memset(_id_vers, '\0', _str_field_size + 1);
+
   char _id_prog[_str_field_size + 1];
   std::memset(_id_prog, '\0', _str_field_size + 1);
+
   using id_reserved_1 = std::uint32_t;
   std::uint16_t _id_ver{0xFFFF};
   using id_reserverd_2 = std::array<std::uint8_t, 30>;

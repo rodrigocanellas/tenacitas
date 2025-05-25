@@ -88,7 +88,7 @@ private:
 
   block_ids_links m_block_ids_links;
 
-  data_section m_data_section;
+  data_section m_data_section{};
 };
 
 // referencing and unique link?
