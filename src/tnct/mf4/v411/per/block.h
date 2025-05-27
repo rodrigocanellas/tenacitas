@@ -7,11 +7,15 @@
 #define TNCT_MF4_PER_BLOCK_H
 
 #include <fstream>
+#include <sstream>
 
 #include "tnct/mf4/v411/mem/block_id.h"
 #include "tnct/mf4/v411/mem/file.h"
 #include "tnct/mf4/v411/per/basic_types.h"
 #include "tnct/mf4/v411/per/data_section.h"
+#include "tnct/mf4/v411/per/data_section_hd.h"
+#include "tnct/mf4/v411/per/data_section_md.h"
+#include "tnct/mf4/v411/per/data_section_tx.h"
 #include "tnct/mf4/v411/per/header_section.h"
 #include "tnct/traits/log/logger.h"
 
@@ -70,9 +74,22 @@ template <mem::block_id t_block_id> struct block_reader_t {
     data_section_t<t_block_id> _data_section_reader;
 
     auto &_block{p_mf4_file.get<t_block_id>(_block_index, p_logger)};
-    _block.set_data_section(std::move(_data_section_reader(_ptr)));
 
-    // TNCT_LOG_INF(p_logger, format::fmt(std::string(p_level, '\t'), _block));
+    auto _data_section{
+        _data_section_reader(_ptr, p_block_size - header_section_size -
+                                       (p_num_links * sizeof(offset)))};
+
+    std::ostringstream _stream;
+
+    if (p_parent.has_value()) {
+      _stream << p_parent.value();
+    }
+
+    TNCT_LOG_INF(p_logger,
+                 format::fmt("ref = ", _block_ref, ", parent = ", _stream.str(),
+                             ", data = ", _data_section));
+
+    _block.set_data_section(std::move(_data_section));
 
     return _block_ref;
   }

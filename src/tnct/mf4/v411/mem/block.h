@@ -8,6 +8,7 @@
 #include "tnct/mf4/v411/mem/block_ref.h"
 #include "tnct/mf4/v411/mem/data_section.h"
 #include "tnct/mf4/v411/mem/data_section_hd.h"
+#include "tnct/mf4/v411/mem/data_section_md.h"
 
 namespace tnct::mf4::v411::mem {
 

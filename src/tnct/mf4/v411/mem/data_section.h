@@ -14,35 +14,9 @@ namespace tnct::mf4::v411::mem {
 
 template <block_id t_block_Id> struct data_section_t;
 
-template <> struct data_section_t<block_id::MD> final {
-  data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
-
-  data_section_t(const data_section_t &) = default;
-  data_section_t(data_section_t &&) = default;
-
-  data_section_t &operator=(const data_section_t &) = default;
-  data_section_t &operator=(data_section_t &&) = default;
-
-  ~data_section_t() = default;
-};
-
-template <> struct data_section_t<block_id::TX> final {
-  data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
-
-  data_section_t(const data_section_t &) = default;
-  data_section_t(data_section_t &&) = default;
-
-  data_section_t &operator=(const data_section_t &) = default;
-  data_section_t &operator=(data_section_t &&) = default;
-
-  ~data_section_t() = default;
-};
-
 template <> struct data_section_t<block_id::FH> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -55,7 +29,7 @@ template <> struct data_section_t<block_id::FH> final {
 
 template <> struct data_section_t<block_id::CH> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -68,7 +42,7 @@ template <> struct data_section_t<block_id::CH> final {
 
 template <> struct data_section_t<block_id::AT> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -81,7 +55,7 @@ template <> struct data_section_t<block_id::AT> final {
 
 template <> struct data_section_t<block_id::EV> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -94,7 +68,7 @@ template <> struct data_section_t<block_id::EV> final {
 
 template <> struct data_section_t<block_id::DG> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -107,7 +81,7 @@ template <> struct data_section_t<block_id::DG> final {
 
 template <> struct data_section_t<block_id::CG> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -120,7 +94,7 @@ template <> struct data_section_t<block_id::CG> final {
 
 template <> struct data_section_t<block_id::SI> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -133,7 +107,7 @@ template <> struct data_section_t<block_id::SI> final {
 
 template <> struct data_section_t<block_id::CN> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -146,7 +120,7 @@ template <> struct data_section_t<block_id::CN> final {
 
 template <> struct data_section_t<block_id::CC> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -159,7 +133,7 @@ template <> struct data_section_t<block_id::CC> final {
 
 template <> struct data_section_t<block_id::CA> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -172,7 +146,7 @@ template <> struct data_section_t<block_id::CA> final {
 
 template <> struct data_section_t<block_id::DT> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -185,7 +159,7 @@ template <> struct data_section_t<block_id::DT> final {
 
 template <> struct data_section_t<block_id::SR> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -198,7 +172,7 @@ template <> struct data_section_t<block_id::SR> final {
 
 template <> struct data_section_t<block_id::RD> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -211,7 +185,7 @@ template <> struct data_section_t<block_id::RD> final {
 
 template <> struct data_section_t<block_id::SD> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -224,7 +198,7 @@ template <> struct data_section_t<block_id::SD> final {
 
 template <> struct data_section_t<block_id::DL> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -237,7 +211,7 @@ template <> struct data_section_t<block_id::DL> final {
 
 template <> struct data_section_t<block_id::DZ> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -250,7 +224,7 @@ template <> struct data_section_t<block_id::DZ> final {
 
 template <> struct data_section_t<block_id::HL> final {
   data_section_t() = default;
-  data_section_t(const std::uint8_t *) {}
+  data_section_t(const std::uint8_t *, std::size_t) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;

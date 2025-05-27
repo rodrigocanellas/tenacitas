@@ -17,7 +17,8 @@
 namespace tnct::mf4::v411::per {
 
 template <> struct data_section_t<mem::block_id::HD> {
-  mem::data_section_t<mem::block_id::HD> operator()(const std::uint8_t *p_buf) {
+  mem::data_section_t<mem::block_id::HD> operator()(const std::uint8_t *p_buf,
+                                                    std::size_t) {
 
     using hd_start_time_ns = std::uint64_t;
     using hd_tz_offset_min = std::int16_t;

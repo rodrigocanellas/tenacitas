@@ -63,6 +63,7 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &p_out, const block_ref &p_obj) {
+
   p_out << '{' << block_id_converter::to_str(p_obj.get_id()) << ", "
         << p_obj.get_index() << '}';
   return p_out;

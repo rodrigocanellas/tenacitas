@@ -14,7 +14,8 @@
 namespace tnct::mf4::v411::per {
 
 template <mem::block_id t_block_id> struct data_section_t {
-  mem::data_section_t<t_block_id> operator()(const std::uint8_t *) {
+  mem::data_section_t<t_block_id> operator()(const std::uint8_t *,
+                                             std::size_t) {
     return {};
   }
 };

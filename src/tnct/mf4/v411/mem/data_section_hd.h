@@ -28,7 +28,7 @@ template <> struct data_section_t<block_id::HD> final {
         m_hd_flags(p_hd_flags), m_hd_start_angle_rad(p_hd_start_angle_rad),
         m_hd_start_distance_m(p_hd_start_distance_m) {}
 
-  data_section_t(const std::uint8_t *p_buf) {
+  data_section_t(const std::uint8_t *p_buf, std::size_t) {
     std::uint64_t m_hd_start_time_ns =
         byte_array::from_little<decltype(m_hd_start_time_ns)>(p_buf);
     p_buf += sizeof(m_hd_start_time_ns);
