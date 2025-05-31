@@ -13,5 +13,8 @@ HEADERS += \
     $$PRJ_DIR/per/data_section_hd.h \
     $$PRJ_DIR/per/data_section_md.h \
     $$PRJ_DIR/per/data_section_tx.h \
+    $$PRJ_DIR/per/data_section_fh.h \
+    $$PRJ_DIR/per/data_section_ch.h \
+    $$PRJ_DIR/per/data_section_at.h \
     $$PRJ_DIR/per/block.h
 

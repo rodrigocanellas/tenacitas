@@ -14,32 +14,6 @@ namespace tnct::mf4::v411::mem {
 
 template <block_id t_block_Id> struct data_section_t;
 
-template <> struct data_section_t<block_id::FH> final {
-  data_section_t() = default;
-  data_section_t(const std::uint8_t *, std::size_t) {}
-
-  data_section_t(const data_section_t &) = default;
-  data_section_t(data_section_t &&) = default;
-
-  data_section_t &operator=(const data_section_t &) = default;
-  data_section_t &operator=(data_section_t &&) = default;
-
-  ~data_section_t() = default;
-};
-
-template <> struct data_section_t<block_id::CH> final {
-  data_section_t() = default;
-  data_section_t(const std::uint8_t *, std::size_t) {}
-
-  data_section_t(const data_section_t &) = default;
-  data_section_t(data_section_t &&) = default;
-
-  data_section_t &operator=(const data_section_t &) = default;
-  data_section_t &operator=(data_section_t &&) = default;
-
-  ~data_section_t() = default;
-};
-
 template <> struct data_section_t<block_id::AT> final {
   data_section_t() = default;
   data_section_t(const std::uint8_t *, std::size_t) {}
