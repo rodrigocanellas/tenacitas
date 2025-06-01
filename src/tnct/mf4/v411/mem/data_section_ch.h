@@ -8,15 +8,27 @@
 
 #include <iostream>
 
+#include "tnct/byte_array/classes.h"
 #include "tnct/mf4/v411/mem/data_section.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::mf4::v411::mem {
 
 template <> struct data_section_t<block_id::CH> final {
+
+  using ch_element_count = std::uint32_t;
+  using ch_type = std::uint8_t;
+
   data_section_t() = default;
 
-  data_section_t(std::uint32_t p_ch_element_count, std::uint8_t p_ch_type)
-      : m_ch_element_count(p_ch_element_count), m_ch_type(p_ch_type) {}
+  template <traits::log::logger t_logger>
+  data_section_t(t_logger &p_logger, const std::uint8_t *p_buf,
+                 std::size_t p_size) {
+    byte_array::from_buffer_little_endian(
+        p_logger, p_buf, p_size, std::source_location::current(),
+        m_ch_element_count, m_ch_type, m_reserved_1, m_reserved_2,
+        m_reserved_3);
+  }
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;
@@ -30,8 +42,14 @@ template <> struct data_section_t<block_id::CH> final {
   std::uint8_t get_ch_type() const { return m_ch_type; }
 
 private:
-  std::uint32_t m_ch_element_count;
-  std::uint8_t m_ch_type;
+  using reserved = std::uint8_t;
+
+private:
+  ch_element_count m_ch_element_count;
+  ch_type m_ch_type;
+  reserved m_reserved_1;
+  reserved m_reserved_2;
+  reserved m_reserved_3;
 };
 
 std::ostream &operator<<(std::ostream &p_out,

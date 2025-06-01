@@ -10,6 +10,7 @@
 
 #include "tnct/byte_array/classes.h"
 #include "tnct/format/fmt.h"
+#include "tnct/generic/log_and_throw.h"
 #include "tnct/mf4/v411/mem/block_id.h"
 #include "tnct/mf4/v411/per/basic_types.h"
 #include "tnct/traits/log/logger.h"
@@ -26,13 +27,15 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
   std::memset(&_buf[0], '\0', header_section_size);
 
   if (!p_file.seekg(p_offset_start).good()) {
-    log_and_throw(p_logger, format::fmt("error 'seekg' to ", p_offset_start,
-                                        " for header section"));
+    generic::log_and_throw(p_logger,
+                           format::fmt("error 'seekg' to ", p_offset_start,
+                                       " for header section"));
   }
 
   if (!p_file.read(_buf, header_section_size).good()) {
-    log_and_throw(p_logger, format::fmt("error reading to ", p_offset_start,
-                                        " for header section of block "));
+    generic::log_and_throw(p_logger,
+                           format::fmt("error reading to ", p_offset_start,
+                                       " for header section of block "));
   }
 
   mem::block_id_str _id_str;
@@ -50,8 +53,8 @@ read_header_section(std::ifstream &p_file, t_logger &p_logger,
   const auto optional_block_id{mem::block_id_converter::to_id(_id_str)};
 
   if (!optional_block_id.has_value()) {
-    log_and_throw(p_logger, format::fmt("error converting '", _id_str,
-                                        "' to a mem::block_id"));
+    generic::log_and_throw(p_logger, format::fmt("error converting '", _id_str,
+                                                 "' to a mem::block_id"));
   }
 
   auto _pair = std::make_tuple(optional_block_id.value(), _length, _link_count);

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "tnct/format/fmt.h"
-#include "tnct/mf4/v411/log_and_throw.h"
+#include "tnct/generic/log_and_throw.h"
 #include "tnct/mf4/v411/mem/block.h"
 #include "tnct/mf4/v411/mem/block_id.h"
 #include "tnct/mf4/v411/mem/block_ref.h"
@@ -27,7 +27,7 @@ struct file {
         traits::tuple::find<blocks_catalog, blocks_t<t_block_id>>();
 
     if (!_optional_index.has_value()) {
-      log_and_throw(
+      generic::log_and_throw(
           p_logger,
           format::fmt("block_id ", block_id_converter::to_str(t_block_id),
                       " was not found in the std::tuple of block ids"));
@@ -49,7 +49,7 @@ struct file {
         traits::tuple::find<blocks_catalog, blocks_t<t_block_id>>();
 
     if (!_optional_index.has_value()) {
-      log_and_throw(
+      generic::log_and_throw(
           p_logger,
           format::fmt("block_id ", block_id_converter::to_str(t_block_id),
                       " was not found in the std::tuple of block ids"));
@@ -61,8 +61,8 @@ struct file {
     blocks &_blocks = std::get<_blocks_index>(m_blocks_catalog);
 
     if (p_block_index >= _blocks.size()) {
-      log_and_throw(p_logger,
-                    format::fmt("block index ", p_block_index,
+      generic::log_and_throw(
+          p_logger, format::fmt("block index ", p_block_index,
                                 " is out of range for block_id ",
                                 block_id_converter::to_str(t_block_id),
                                 " which has ", _blocks.size(), " blocks "));
@@ -74,7 +74,7 @@ struct file {
   template <tnct::traits::log::logger t_logger>
   void report(std::ostream &p_out, t_logger &p_logger) {
     if (std::tuple_size_v<blocks_catalog> == 0) {
-      log_and_throw(p_logger, "no block id defined in the tuple");
+      generic::log_and_throw(p_logger, "no block id defined in the tuple");
     }
     blocks_t<block_id::HD> &_blocks{std::get<0>(m_blocks_catalog)};
 

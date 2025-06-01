@@ -9,6 +9,7 @@
 #include <fstream>
 
 #include "tnct/byte_array/classes.h"
+#include "tnct/generic/log_and_throw.h"
 #include "tnct/mf4/v411/mem/id_block.h"
 #include "tnct/mf4/v411/per/basic_types.h"
 #include "tnct/traits/log/logger.h"
@@ -43,10 +44,10 @@ read_id_block(std::ifstream &file, t_logger &p_logger) {
   std::memset(&buf[0], 0, _amount_to_read);
 
   if (!file.seekg(0).good()) {
-    log_and_throw(p_logger, "could not seekg to 0");
+    generic::log_and_throw(p_logger, "could not seekg to 0");
   }
   if (!file.read(&buf[0], _amount_to_read).good()) {
-    log_and_throw(p_logger, "error reading id block");
+    generic::log_and_throw(p_logger, "error reading id block");
   }
 
   std::memcpy(&_id_file[0], &buf[0], _str_field_size);

@@ -15,6 +15,10 @@
 #include <sstream>
 #include <string>
 
+#include "tnct/format/fmt.h"
+#include "tnct/generic/log_and_throw.h"
+#include "tnct/traits/log/logger.h"
+
 namespace tnct::byte_array {
 template <std::unsigned_integral TNum>
 std::array<std::uint8_t, sizeof(TNum)> to_little(const TNum num);
@@ -80,9 +84,11 @@ from_little(const std::array<std::uint8_t, sizeof(std::uint64_t)> &array) {
          static_cast<std::uint64_t>(array[0]);
 }
 
-template <typename TNum>
-requires(std::integral<TNum> || std::floating_point<TNum>) TNum
-    from_little(const std::uint8_t *);
+template <typename t_number>
+requires(std::integral<std::remove_cvref_t<t_number>> ||
+         std::floating_point<std::remove_cvref_t<t_number>>)
+
+    t_number from_little(const std::uint8_t *);
 
 template <> std::uint8_t from_little<std::uint8_t>(const std::uint8_t *array) {
   return static_cast<std::uint8_t>(array[0]);
@@ -114,8 +120,8 @@ std::uint64_t from_little<std::uint64_t>(const std::uint8_t *array) {
          static_cast<std::uint64_t>(array[0]);
 }
 
-template <std::integral TNum>
-std::string to_str(const std::array<std::uint8_t, sizeof(TNum)> &array) {
+template <std::integral t_number>
+std::string to_str(const std::array<std::uint8_t, sizeof(t_number)> &array) {
   std::stringstream stream;
   for (size_t i = 0; i < array.size(); ++i) {
     stream << "0x" << std::hex << std::setw(2) << std::setfill('0')
@@ -158,6 +164,45 @@ template <> double from_little<double>(const std::uint8_t *array) {
   double value{std::numeric_limits<double>::max()};
   std::memcpy(&value, &tmp, sizeof(double));
   return value;
+}
+
+template <typename t_field>
+requires(std::integral<std::remove_cvref_t<t_field>> ||
+         std::floating_point<std::remove_cvref_t<t_field>>)
+
+    void from_buffer_little_endian(const std::uint8_t *p_buf,
+                                   std::size_t &p_offset, t_field &p_field) {
+  p_field = byte_array::from_little<std::remove_cvref_t<decltype(p_field)>>(
+      p_buf + p_offset);
+  p_offset += sizeof(decltype(p_field));
+}
+
+template <typename... t_fields>
+void from_buffer_little_endian(const std::uint8_t *p_buf,
+                               t_fields &&...p_fields) {
+
+  std::size_t _offset{0};
+
+  (from_buffer_little_endian(p_buf, _offset, p_fields), ...);
+}
+
+template <traits::log::logger t_logger, typename... t_fields>
+void from_buffer_little_endian(t_logger &p_logger, const std::uint8_t *p_buf,
+                               std::size_t p_size,
+                               std::source_location p_location,
+                               t_fields &&...p_fields) {
+  std::size_t _sizeof{0};
+  ((_sizeof += sizeof(p_fields)), ...);
+
+  if (_sizeof != p_size) {
+    generic::log_and_throw(
+        p_logger,
+        format::fmt("sum of sizes of fields (", sizeof...(t_fields),
+                    ") must be equal to buffer size (", p_size, ')'),
+        p_location);
+  }
+
+  from_buffer_little_endian(p_buf, p_fields...);
 }
 
 } // namespace tnct::byte_array

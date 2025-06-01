@@ -16,7 +16,10 @@ namespace tnct::mf4::v411::mem {
 template <> struct data_section_t<block_id::TX> final {
   data_section_t() = default;
 
-  data_section_t(std::string &&p_text) : m_text(std::move(p_text)) {}
+  template <traits::log::logger t_logger>
+  data_section_t(t_logger & /*p_logger*/, const std::uint8_t *p_buf,
+                 std::size_t p_size)
+      : m_text(reinterpret_cast<const char *>(p_buf), p_size - 1) {}
 
   data_section_t(const data_section_t &) = default;
   data_section_t(data_section_t &&) = default;

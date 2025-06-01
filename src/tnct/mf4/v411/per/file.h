@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "tnct/format/fmt.h"
-#include "tnct/mf4/v411/log_and_throw.h"
+#include "tnct/generic/log_and_throw.h"
 #include "tnct/mf4/v411/mem/file.h"
 #include "tnct/mf4/v411/per/block.h"
 #include "tnct/mf4/v411/per/id_block.h"
@@ -20,12 +20,12 @@ namespace tnct::mf4::v411::per {
 
 template <tnct::traits::log::logger t_logger>
 void read(std::string_view file_name, t_logger &p_logger,
-                mem::file &p_mf4_file) {
+          mem::file &p_mf4_file) {
 
   std::ifstream _file(file_name.data(), std::ios_base::binary);
   if (!_file.good()) {
-    log_and_throw(p_logger, format::fmt("file ", file_name.data(),
-                                        " could not be opened"));
+    generic::log_and_throw(p_logger, format::fmt("file ", file_name.data(),
+                                                 " could not be opened"));
   }
 
   try {
@@ -36,9 +36,9 @@ void read(std::string_view file_name, t_logger &p_logger,
     read_block(_file, p_logger, _id_block_size, p_mf4_file);
 
   } catch (std::exception &_ex) {
-    log_and_throw(p_logger, _ex.what());
+    generic::log_and_throw(p_logger, _ex.what());
   } catch (...) {
-    log_and_throw(p_logger, "ERROR unknow");
+    generic::log_and_throw(p_logger, "ERROR unknow");
   }
 }
 

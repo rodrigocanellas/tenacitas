@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
     }
 
     log::cout _logger;
+    _logger.set_tra();
 
     mf4::v411::mem::file _mf4_file;
 

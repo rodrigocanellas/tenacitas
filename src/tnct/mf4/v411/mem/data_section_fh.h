@@ -8,37 +8,61 @@
 
 #include <iostream>
 
+#include "tnct/byte_array/classes.h"
 #include "tnct/mf4/v411/mem/data_section.h"
+#include "tnct/traits/log/logger.h"
 
 namespace tnct::mf4::v411::mem {
 
 template <> struct data_section_t<block_id::FH> final {
+
+  using fh_time_ns = std::uint64_t;
+  using fh_tz_offset_min = std::int16_t;
+  using fh_dst_offset_min = std::int16_t;
+  using fh_time_flags = std::uint8_t;
+
   data_section_t() = default;
 
-  data_section_t(std::uint64_t p_fh_time_ns, std::int16_t p_fh_tz_offset_min,
-                 std::int16_t p_fh_dst_offset_min, std::uint8_t p_fh_time_flags)
-      : m_fh_time_ns(p_fh_time_ns), m_fh_tz_offset_min(p_fh_tz_offset_min),
-        m_fh_dst_offset_min(p_fh_dst_offset_min),
-        m_fh_time_flags(p_fh_time_flags) {}
+  template <traits::log::logger t_logger>
+  data_section_t(t_logger &p_logger, const std::uint8_t *p_buf,
+                 std::size_t p_size) {
+    byte_array::from_buffer_little_endian(
+        p_logger, p_buf, p_size, std::source_location::current(), m_fh_time_ns,
+        m_fh_tz_offset_min, m_fh_dst_offset_min, m_fh_time_flags, m_reserved_1,
+        m_reserved_2, m_reserved_3);
+  }
 
   data_section_t(const data_section_t &) = default;
+
   data_section_t(data_section_t &&) = default;
 
   ~data_section_t() = default;
 
   data_section_t &operator=(const data_section_t &) = default;
+
   data_section_t &operator=(data_section_t &&) = default;
 
-  std::uint64_t get_fh_time_ns() const { return m_fh_time_ns; }
-  std::int16_t get_fh_tz_offset_min() const { return m_fh_tz_offset_min; }
-  std::int16_t get_fh_dst_offset_min() const { return m_fh_dst_offset_min; }
-  std::uint8_t get_fh_time_flags() const { return m_fh_time_flags; }
+  fh_time_ns get_fh_time_ns() const { return m_fh_time_ns; }
+
+  fh_tz_offset_min get_fh_tz_offset_min() const { return m_fh_tz_offset_min; }
+
+  fh_dst_offset_min get_fh_dst_offset_min() const {
+    return m_fh_dst_offset_min;
+  }
+
+  fh_time_flags get_fh_time_flags() const { return m_fh_time_flags; }
 
 private:
-  std::uint64_t m_fh_time_ns;
-  std::int16_t m_fh_tz_offset_min;
-  std::int16_t m_fh_dst_offset_min;
-  std::uint8_t m_fh_time_flags;
+  using reserved = std::uint8_t;
+
+private:
+  fh_time_ns m_fh_time_ns;
+  fh_tz_offset_min m_fh_tz_offset_min;
+  fh_dst_offset_min m_fh_dst_offset_min;
+  fh_time_flags m_fh_time_flags;
+  reserved m_reserved_1;
+  reserved m_reserved_2;
+  reserved m_reserved_3;
 };
 
 std::ostream &operator<<(std::ostream &p_out,

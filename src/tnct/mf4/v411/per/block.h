@@ -7,19 +7,38 @@
 #define TNCT_MF4_PER_BLOCK_H
 
 #include <fstream>
-#include <sstream>
 
+#include "tnct/generic/log_and_throw.h"
 #include "tnct/mf4/v411/mem/block_id.h"
 #include "tnct/mf4/v411/mem/file.h"
 #include "tnct/mf4/v411/per/basic_types.h"
 #include "tnct/mf4/v411/per/data_section.h"
-#include "tnct/mf4/v411/per/data_section_hd.h"
-#include "tnct/mf4/v411/per/data_section_md.h"
-#include "tnct/mf4/v411/per/data_section_tx.h"
 #include "tnct/mf4/v411/per/header_section.h"
 #include "tnct/traits/log/logger.h"
 
 namespace tnct::mf4::v411::per {
+
+template <mem::block_id t_block_id, tnct::traits::log::logger t_logger>
+void read_links(std::ifstream &p_file, t_logger &p_logger,
+                mem::file &p_mf4_file, mem::block_ref p_block_ref,
+                std::size_t p_num_links, const std::uint8_t *p_start,
+                std::size_t p_level) {
+  for (decltype(p_num_links) _i = 0; _i < p_num_links; ++_i) {
+
+    offset _offset{
+        byte_array::from_little<offset>(p_start + _i * sizeof(offset))};
+
+    if (_offset == 0) {
+      continue;
+    }
+
+    mem::block_ref _inner_block_ref{read_block<t_logger>(
+        p_file, p_logger, _offset, p_mf4_file, {p_block_ref}, p_level + 1)};
+
+    p_mf4_file.get<t_block_id>(p_block_ref.get_index(), p_logger)
+        .add_link(std::move(_inner_block_ref));
+  }
+}
 
 template <mem::block_id t_block_id> struct block_reader_t {
   template <tnct::traits::log::logger t_logger>
@@ -35,14 +54,15 @@ template <mem::block_id t_block_id> struct block_reader_t {
                         static_cast<offset>(header_section_size)};
 
     if (!p_file.seekg(_start).good()) {
-      log_and_throw(p_logger,
-                    format::fmt("error seekg for ", _start, " bytes"));
+      generic::log_and_throw(p_logger,
+                             format::fmt("error seekg for ", _start, " bytes"));
     }
 
     std::vector<char> _buf(size_to_read, 0);
     if (!p_file.read(_buf.data(), size_to_read).good()) {
-      log_and_throw(p_logger, format::fmt("error reading ", size_to_read,
-                                          " bytes for header block "));
+      generic::log_and_throw(p_logger,
+                             format::fmt("error reading ", size_to_read,
+                                         " bytes for header block "));
     }
 
     mem::block_index _block_index{
@@ -51,43 +71,28 @@ template <mem::block_id t_block_id> struct block_reader_t {
     mem::block_ref _block_ref{t_block_id, _block_index};
 
     auto _ptr = reinterpret_cast<const std::uint8_t *>(&_buf[0]);
-    {
-      for (decltype(p_num_links) _i = 0; _i < p_num_links; ++_i) {
 
-        offset _offset{
-            byte_array::from_little<offset>(_ptr + _i * sizeof(offset))};
-
-        if (_offset == 0) {
-          continue;
-        }
-
-        mem::block_ref _inner_block_ref{read_block<t_logger>(
-            p_file, p_logger, _offset, p_mf4_file, {_block_ref}, p_level + 1)};
-
-        p_mf4_file.get<t_block_id>(_block_index, p_logger)
-            .add_link(std::move(_inner_block_ref));
-      }
-    }
+    read_links<t_block_id, t_logger>(p_file, p_logger, p_mf4_file, _block_ref,
+                                     p_num_links, _ptr, p_level);
 
     _ptr += (p_num_links * sizeof(mem::block_index));
 
-    data_section_t<t_block_id> _data_section_reader;
-
     auto &_block{p_mf4_file.get<t_block_id>(_block_index, p_logger)};
 
-    auto _data_section{
-        _data_section_reader(_ptr, p_block_size - header_section_size -
-                                       (p_num_links * sizeof(offset)))};
+    data_section_t<t_block_id> _data_section_reader;
 
-    std::ostringstream _stream;
+    auto _data_section{_data_section_reader(
+        p_logger, _ptr,
+        p_block_size - header_section_size - (p_num_links * sizeof(offset)))};
 
     if (p_parent.has_value()) {
-      _stream << p_parent.value();
+      TNCT_LOG_INF(p_logger, format::fmt("ref = ", _block_ref,
+                                         ", parent = ", p_parent.value(),
+                                         ", data = ", _data_section));
+    } else {
+      TNCT_LOG_INF(p_logger, format::fmt("ref = ", _block_ref, ", parent = NIL",
+                                         ", data = ", _data_section));
     }
-
-    TNCT_LOG_INF(p_logger,
-                 format::fmt("ref = ", _block_ref, ", parent = ", _stream.str(),
-                             ", data = ", _data_section));
 
     _block.set_data_section(std::move(_data_section));
 
@@ -101,12 +106,17 @@ mem::block_ref read_block(std::ifstream &p_file, t_logger &p_logger,
                           std::optional<mem::block_ref> p_parent = std::nullopt,
                           std::size_t p_level = 0) {
   if (!p_file.seekg(p_offset_start).good()) {
-    log_and_throw(p_logger,
-                  format::fmt("error seekg for ", p_offset_start, " bytes"));
+    generic::log_and_throw(
+        p_logger, format::fmt("error seekg for ", p_offset_start, " bytes"));
   }
 
   auto [_block_id, _block_size, _block_num_links] =
       read_header_section<t_logger>(p_file, p_logger, p_offset_start);
+
+  TNCT_LOG_TRA(p_logger,
+               format::fmt("block ", mem::block_id_converter::to_str(_block_id),
+                           ", size = ", _block_size,
+                           ", # links = ", _block_num_links));
 
   mem::block_ref _block_ref;
 
