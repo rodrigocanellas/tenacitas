@@ -21,16 +21,33 @@ template <> struct data_section_t<block_id::AT> final {
   using at_original_size = std::uint64_t;
   using at_embedded_size = std::uint64_t;
   using at_embedded_data = std::uint8_t;
+  using at_embeddeds_data = std::vector<std::uint8_t>;
 
   data_section_t() = default;
 
   template <traits::log::logger t_logger>
   data_section_t(t_logger &p_logger, const std::uint8_t *p_buf,
-                 std::size_t p_size) {
+                 std::size_t /*p_size*/) {
+    constexpr std::size_t _min_to_read{
+        sizeof(at_flags) + sizeof(at_creator_index) + sizeof(reserved) +
+        sizeof(at_md5_checksum) + sizeof(at_original_size) +
+        sizeof(at_embedded_size)};
+
     byte_array::from_buffer_little_endian(
-        p_logger, p_buf, p_size, std::source_location::current(), m_at_flags,
-        m_at_creator_index, m_reserved, m_at_md5_checksum, m_at_original_size,
-        m_at_embedded_size, m_at_embedded_data);
+        p_logger, p_buf, _min_to_read, std::source_location::current(),
+        m_at_flags, m_at_creator_index, m_reserved, m_at_md5_checksum,
+        m_at_original_size, m_at_embedded_size);
+
+    if (m_at_embedded_size > 0) {
+      m_at_embeddeds_data.resize(m_at_embedded_size);
+
+      for (std::size_t _i = 0; _i < m_at_embedded_size; ++_i) {
+        m_at_embeddeds_data[_i] = byte_array::from_little<at_embedded_data>(
+            p_buf + _min_to_read + (_i * sizeof(at_embedded_data)));
+      }
+    }
+
+    //, );
   }
 
   data_section_t(const data_section_t &) = default;
@@ -61,8 +78,8 @@ template <> struct data_section_t<block_id::AT> final {
     return m_at_embedded_size;
   }
 
-  constexpr at_embedded_data get_at_embedded_data() const {
-    return m_at_embedded_data;
+  const at_embeddeds_data &get_at_embeddeds_data() const {
+    return m_at_embeddeds_data;
   }
 
 private:
@@ -75,7 +92,7 @@ private:
   at_md5_checksum m_at_md5_checksum;
   at_original_size m_at_original_size;
   at_embedded_size m_at_embedded_size;
-  at_embedded_data m_at_embedded_data;
+  at_embeddeds_data m_at_embeddeds_data;
 };
 
 std::ostream &operator<<(std::ostream &p_out,
@@ -86,8 +103,8 @@ std::ostream &operator<<(std::ostream &p_out,
         << static_cast<std::uint16_t>(p_obj.get_at_md5_checksum())
         << ", at_original_size = " << p_obj.get_at_original_size()
         << ", at_embedded_size = " << p_obj.get_at_embedded_size()
-        << ", at_embedded_data = "
-        << static_cast<std::uint16_t>(p_obj.get_at_embedded_data()) << "}";
+        << ", at_embeddeds_data size = " << p_obj.get_at_embeddeds_data().size()
+        << "}";
 
   return p_out;
 }

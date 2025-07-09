@@ -31,7 +31,8 @@ template <block_id t_block_Id> struct data_section_t final {
 template <block_id t_block_Id>
 std::ostream &operator<<(std::ostream &p_out,
                          const data_section_t<t_block_Id> &) {
-  p_out << "{}";
+  p_out << "{ data section for block " << block_id_converter::to_str(t_block_Id)
+        << " not implemented yet }";
   return p_out;
 }
 

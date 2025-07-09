@@ -113,11 +113,6 @@ mem::block_ref read_block(std::ifstream &p_file, t_logger &p_logger,
   auto [_block_id, _block_size, _block_num_links] =
       read_header_section<t_logger>(p_file, p_logger, p_offset_start);
 
-  TNCT_LOG_TRA(p_logger,
-               format::fmt("block ", mem::block_id_converter::to_str(_block_id),
-                           ", size = ", _block_size,
-                           ", # links = ", _block_num_links));
-
   mem::block_ref _block_ref;
 
   auto _block_reader = [&]<mem::block_id t_block_id>() {

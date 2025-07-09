@@ -20,8 +20,8 @@
 #include "tnct/traits/log/logger.h"
 
 namespace tnct::byte_array {
-template <std::unsigned_integral TNum>
-std::array<std::uint8_t, sizeof(TNum)> to_little(const TNum num);
+template <std::unsigned_integral t_number>
+std::array<std::uint8_t, sizeof(t_number)> to_little(const t_number num);
 
 template <>
 std::array<std::uint8_t, sizeof(std::uint16_t)>
@@ -52,8 +52,8 @@ to_little(const std::uint64_t num) {
           static_cast<std::uint8_t>((num >> 56) & 0xFF)};
 }
 
-template <std::unsigned_integral TNum>
-TNum from_little(const std::array<std::uint8_t, sizeof(TNum)> &);
+template <std::unsigned_integral t_number>
+t_number from_little(const std::array<std::uint8_t, sizeof(t_number)> &);
 
 template <>
 std::uint16_t

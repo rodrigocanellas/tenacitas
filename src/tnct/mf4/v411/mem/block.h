@@ -8,11 +8,18 @@
 #include "tnct/mf4/v411/mem/block_ref.h"
 #include "tnct/mf4/v411/mem/data_section.h"
 #include "tnct/mf4/v411/mem/data_section_at.h"
+#include "tnct/mf4/v411/mem/data_section_ca.h"
+#include "tnct/mf4/v411/mem/data_section_cc.h"
+#include "tnct/mf4/v411/mem/data_section_cg.h"
 #include "tnct/mf4/v411/mem/data_section_ch.h"
+#include "tnct/mf4/v411/mem/data_section_cn.h"
+#include "tnct/mf4/v411/mem/data_section_dg.h"
+#include "tnct/mf4/v411/mem/data_section_dt.h"
 #include "tnct/mf4/v411/mem/data_section_ev.h"
 #include "tnct/mf4/v411/mem/data_section_fh.h"
 #include "tnct/mf4/v411/mem/data_section_hd.h"
 #include "tnct/mf4/v411/mem/data_section_md.h"
+#include "tnct/mf4/v411/mem/data_section_si.h"
 #include "tnct/mf4/v411/mem/data_section_tx.h"
 
 namespace tnct::mf4::v411::mem {
@@ -96,8 +103,6 @@ private:
 
   data_section m_data_section{};
 };
-
-// referencing and unique link?
 
 template <block_id t_block_id>
 std::ostream &operator<<(std::ostream &p_out,
