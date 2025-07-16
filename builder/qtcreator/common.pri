@@ -24,7 +24,10 @@ linux:os=linux
 win32:os=win32
 
 
-BASE_DIR=$$PWD/../../src
+BASE_DIR=$$PWD/../..
+BASE_DIR_EXP=$$BASE_DIR/exp
+BASE_DIR_SRC=$$BASE_DIR/src
+BASE_DIR_TST=$$BASE_DIR/tst
 
 
 products_dir=$$BASE_DIR/../../prd/$$os-$$cfg-$$arch
@@ -105,15 +108,19 @@ win32 {
 }
 
 
-INCLUDEPATH += $$BASE_DIR
 INCLUDEPATH += $$UI_DIR
 INCLUDEPATH += $${third_dir}/include
-INCLUDEPATH += $$BASE_DIR_LIB
+INCLUDEPATH += $$BASE_DIR_EXP
+INCLUDEPATH += $$BASE_DIR_TST
+INCLUDEPATH += $$BASE_DIR_SRC
+
 
 
 message("_PRO_FILE_PWD_ = "$$_PRO_FILE_PWD_)
 message("BASE_DIR= "$$BASE_DIR)
-message("BASE_DIR_LIB= "$$BASE_DIR_LIB)
+message("BASE_DIR_SRC= "$$BASE_DIR_SRC)
+message("BASE_DIR_EXP= "$$BASE_DIR_EXP)
+message("BASE_DIR_TST= "$$BASE_DIR_TST)
 message("build_type ="$$build_type)
 message("products_dir = "$$products_dir)
 message("TARGET = "$$TARGET)
