@@ -6,7 +6,7 @@ TARGET=tnct.tst.ostream
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 include (../../common.pri)
 
-PRJ_DIR=$$BASE_DIR_TST/tnct/ostream
+PRJ_DIR=$$BASE_DIR/tenacitas/tst/ostream
 
 
 SOURCES = $$PRJ_DIR/main.cpp

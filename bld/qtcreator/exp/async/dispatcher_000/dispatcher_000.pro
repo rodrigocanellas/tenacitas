@@ -1,11 +1,11 @@
 QT -= core
 TEMPLATE = app
-TARGET = tnct.exp.async.dispatcher_000
+TARGET = tenacitas.exp.async.dispatcher_000
 CONFIG += example
 include (../../../common.pri)
 
 
-PRJ_DIR=$$BASE_DIR_EXP/tnct/async/
+PRJ_DIR=$$BASE_DIR/tenacitas/exp/async/
 
 HEADERS+=$$PRJ_DIR/dispatcher_000/publisher.h \
          $$PRJ_DIR/dispatcher_000/logger.h \
@@ -22,9 +22,9 @@ SOURCES = $$PRJ_DIR/dispatcher_000/main.cpp
 
 DISTFILES += \
     $$PRJ_DIR/dispatcher_000/cfg.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-a.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-b.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-c.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-d.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-e.ini \
-    ../../../../../src/tnct/async/exp/dispatcher_000/cfg-f.ini
+    $$PRJ_DIR/dispatcher_000/cfg-a.ini \
+    $$prj_dir/dispatcher_000/cfg-b.ini \
+    $$prj_dir/dispatcher_000/cfg-c.ini \
+    $$prj_dir/dispatcher_000/cfg-d.ini \
+    $$prj_dir/dispatcher_000/cfg-e.ini \
+    $$prj_dir/dispatcher_000/cfg-f.ini

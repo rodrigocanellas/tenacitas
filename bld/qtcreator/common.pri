@@ -24,14 +24,11 @@ linux:os=linux
 win32:os=win32
 
 
-BASE_DIR=$$PWD/../..
-BASE_DIR_EXP=$$BASE_DIR/exp
-BASE_DIR_SRC=$$BASE_DIR/src
-BASE_DIR_TST=$$BASE_DIR/tst
+BASE_DIR=$$PWD/../../..
 
 
 products_dir=$$BASE_DIR/../prd/$$os-$$cfg-$$arch
-third_dir=$$BASE_DIR/tenacitas/3rd
+third_dir=$$BASE_DIR/tenacitas/src/3rd
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/app
 test_dir=$$products_dir/tst
@@ -110,17 +107,12 @@ win32 {
 
 INCLUDEPATH += $$UI_DIR
 INCLUDEPATH += $${third_dir}/include
-INCLUDEPATH += $$BASE_DIR_EXP
-INCLUDEPATH += $$BASE_DIR_TST
-INCLUDEPATH += $$BASE_DIR_SRC
+INCLUDEPATH += $$BASE_DIR
 
 
 
 message("_PRO_FILE_PWD_ = "$$_PRO_FILE_PWD_)
 message("BASE_DIR= "$$BASE_DIR)
-message("BASE_DIR_SRC= "$$BASE_DIR_SRC)
-message("BASE_DIR_EXP= "$$BASE_DIR_EXP)
-message("BASE_DIR_TST= "$$BASE_DIR_TST)
 message("build_type ="$$build_type)
 message("products_dir = "$$products_dir)
 message("TARGET = "$$TARGET)

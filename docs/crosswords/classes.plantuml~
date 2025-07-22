@@ -1,0 +1,60 @@
+@startuml
+hide empty members
+skinparam linetype ortho
+
+enum level {
+super_easy
+very_easy
+easy
+medium
+difficult
+very_difficult
+super_difficult
+}
+
+enum result {
+on_going
+gave_up
+timeout
+finished
+}
+
+enum orientation {
+vertical
+horizontal
+}
+
+user -- "" crossword
+user *-- "private" dictionary
+user *-- "public" dictionary
+dictionary -- "*" entry
+entry *-- classification
+entry *-- "value" text3
+classification o-- subject
+classification *-- level
+entry *-- "hint" text2
+crossword -- "" game
+game o-- "player" user
+game *-up- "started" timestamp1
+game *-- "ended" timestamp2
+game *-- "gave_up" timestamp3
+game *-- "to_finish_until" timestamp4
+game -- "" session
+session *-- "start" timestamp5
+session *-- "end" timestamp5
+user -- "" subject
+game *-- result
+crossword -- "" word
+word o-- entry
+word *-- position
+word *-- orientation
+crossword *-- "created" timestamp7
+crossword *-left- "title" text1
+
+note right of timestamp5 
+all timestamps are the same, they were
+created to make the diagram easier to read
+end note
+
+@enduml
+

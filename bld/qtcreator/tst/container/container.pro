@@ -6,12 +6,12 @@ TARGET=tnct.tst.container
 include (../../common.pri)
 
 
-SOURCES = $$BASE_DIR_TST/tnct/container/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/container/main.cpp
 
-HEADERS = $$BASE_DIR_TST/tnct/container/matrix_test.h \
-          $$BASE_DIR_TST/tnct/container/circular_queue_test.h
+HEADERS = $$BASE_DIR/tenacitas/tst/container/matrix_test.h \
+          $$BASE_DIR/tenacitas/tst/container/circular_queue_test.h
 
 DISTFILES += \
-    $$BASE_DIR_TST/tnct/container/circular_queue_tests_000.ini
+    $$BASE_DIR/tenacitas/tst/container/circular_queue_tests_000.ini
 
 

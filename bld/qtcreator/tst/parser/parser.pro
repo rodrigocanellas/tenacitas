@@ -6,5 +6,5 @@ TARGET=tnct.tst.parser
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR_TST/tnct/parser/test/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/parser/test/main.cpp
 

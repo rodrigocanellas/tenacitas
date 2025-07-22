@@ -4,8 +4,8 @@ CONFIG += test
 TARGET = tnct.tst.translator
 include (../../common.pri)
 
-SOURCES += $$BASE_DIR_TST/tnct/translator/main.cpp
+SOURCES += $$BASE_DIR/tenacitas/tst/translator/main.cpp
 
 DISTFILES += \
-  $$BASE_DIR_TST/tnct/translator/translation_00.dict
+  $$BASE_DIR/tenacitas/tst/translator/translation_00.dict
 

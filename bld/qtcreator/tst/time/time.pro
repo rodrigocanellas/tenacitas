@@ -6,6 +6,6 @@ TARGET=tnct.tst.time
 include (../../common.pri)
 
 
-SOURCES = $$BASE_DIR_TST/tnct/time/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/time/main.cpp
 
-HEADERS += $$BASE_DIR_TST/tnct/time/chrono_output_test.h
+HEADERS += $$BASE_DIR/tenacitas/tst/time/chrono_output_test.h

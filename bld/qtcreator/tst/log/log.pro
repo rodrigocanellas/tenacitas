@@ -6,5 +6,5 @@ TARGET=tnct.tst.log
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR_TST/tnct/log/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/log/main.cpp
 

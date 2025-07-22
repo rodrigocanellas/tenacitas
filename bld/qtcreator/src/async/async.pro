@@ -2,7 +2,7 @@ include (../../common.pri)
 
 TEMPLATE=aux
 
-PRJ_DIR=$$BASE_DIR_SRC/tnct/async
+PRJ_DIR=$$BASE_DIR/tenacitas/src/async
 
 HEADERS += \
         $$PRJ_DIR/sleeping_loop.h \

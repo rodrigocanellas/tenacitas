@@ -3,9 +3,9 @@ include (../../common.pri)
 TEMPLATE=aux
 
 HEADERS += \
-        $$BASE_DIR_SRC/tnct/program/options.h \
-        $$BASE_DIR_SRC/tnct/program/exit.h \
-        $$BASE_DIR_SRC/tnct/program/closer.h
+        $$BASE_DIR/tenacitas/src/program/options.h \
+        $$BASE_DIR/tenacitas/src/program/exit.h \
+        $$BASE_DIR/tenacitas/src/program/closer.h
 
 
 

@@ -1,10 +1,10 @@
 QT += core widgets
 TEMPLATE = app
-TARGET = tnct.exp.async.temperature_sensors_simulator
+TARGET = tenacitas.exp.async.temperature_sensors_simulator
 CONFIG += example
 include (../../../common.pri)
 
-PRJ_DIR=$$BASE_DIR/exp/tnct/async/temperature_sensors_simulator
+PRJ_DIR=$$BASE_DIR/tenacitas/exp/async/temperature_sensors_simulator
 
 SOURCES += \
     $$PRJ_DIR/uix/qt/main.cpp \
@@ -17,8 +17,8 @@ HEADERS += \
     $$PRJ_DIR/uix/qt/mainwindow.h
 
 HEADERS += \
-    $$PRJ_DIR/typ/sensor_id.h \
-    $$PRJ_DIR/typ/temperature.h
+    $$PRJ_DIR/dat/sensor_id.h \
+    $$PRJ_DIR/dat/temperature.h
 
 HEADERS += \
     $$PRJ_DIR/evt/add_sensor.h \

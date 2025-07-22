@@ -2,7 +2,7 @@ include (../../common.pri)
 
 TEMPLATE=aux
 
-PRJ_DIR=$$BASE_DIR_SRC/tnct/traits
+PRJ_DIR=$$BASE_DIR/tenacitas/src/traits
 
 HEADERS += \
         $$PRJ_DIR/is_smart_ptr.h \

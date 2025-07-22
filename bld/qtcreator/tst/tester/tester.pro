@@ -5,7 +5,7 @@ TARGET=tnct.tst.tester
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR_TST/tnct/tester/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/tester/main.cpp
 
 HEADERS = \
-        $$BASE_DIR_TST/tnct/tester/test_test.h
+        $$BASE_DIR/tenacitas/tst/tester/test_test.h
