@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_SRC_ASYNC_HANDLING_ID_H
-#define TENACITAS_SRC_SRC_ASYNC_HANDLING_ID_H
+#ifndef TENACITAS_SRC_ASYNC_INTERNAL_HANDLING_ID_H
+#define TENACITAS_SRC_ASYNC_INTERNAL_HANDLING_ID_H
 
-#include "tenacitas/src/string/fixed_size_string.h"
+#include <cstddef>
 
-namespace tenacitas::src::async {
+namespace tenacitas::src::async::internal {
 
-using handling_id = string::fixed_size_string<15>;
+using handling_id = std::size_t;
 
 } // namespace tenacitas::src::async
 

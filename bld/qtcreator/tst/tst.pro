@@ -15,8 +15,7 @@ SUBDIRS = \
     format \
     tester \
     ostream \
-    string
-    # \
-    # crosswords
+    string \
+    crosswords
 
 

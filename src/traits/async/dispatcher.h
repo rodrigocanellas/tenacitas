@@ -21,7 +21,6 @@ concept dispatcher = requires {
   typename t::events;
 }
 
-&&!std::copy_constructible<t>
 
     && not std::copy_constructible<t>
 

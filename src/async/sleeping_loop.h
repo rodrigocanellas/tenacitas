@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_SRC_ASYNC_SLEEPING_LOOP_H
-#define TENACITAS_SRC_SRC_ASYNC_SLEEPING_LOOP_H
+#ifndef TENACITAS_SRC_ASYNC_SLEEPING_LOOP_H
+#define TENACITAS_SRC_ASYNC_SLEEPING_LOOP_H
 
 #include <condition_variable>
 #include <functional>

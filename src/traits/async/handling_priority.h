@@ -6,13 +6,14 @@
 #ifndef TENACITAS_SRC_TRAITS_ASYNC_HANDLING_PRIORITY_H
 #define TENACITAS_SRC_TRAITS_ASYNC_HANDLING_PRIORITY_H
 
-#include "tenacitas/src/traits/enum.h"
 #include "tenacitas/src/traits/has_output_operator.h"
 
-namespace tenacitas::src::traits::async {
+namespace tenacitas::src::traits::async
+{
 
 template <typename t>
-concept handling_priority = enum_like<t> && has_output_operator<t>;
+concept handling_priority = std::is_enum_v<t> && has_output_operator<t>
+                            && std::is_integral_v<std::underlying_type_t<t>>;
 
 } // namespace tenacitas::src::traits::async
 

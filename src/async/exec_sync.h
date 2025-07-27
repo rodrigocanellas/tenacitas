@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_SRC_ASYNC_EXEC_ASYNC_H
-#define TENACITAS_SRC_SRC_ASYNC_EXEC_ASYNC_H
+#ifndef TENACITAS_SRC_ASYNC_EXEC_ASYNC_H
+#define TENACITAS_SRC_ASYNC_EXEC_ASYNC_H
 
 #include <condition_variable>
 #include <functional>

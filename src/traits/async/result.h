@@ -6,13 +6,17 @@
 #ifndef TENACITAS_SRC_TRAITS_ASYNC_RESULT_H
 #define TENACITAS_SRC_TRAITS_ASYNC_RESULT_H
 
-#include "tenacitas/src/traits/enum.h"
 #include "tenacitas/src/traits/has_output_operator.h"
 
-namespace tenacitas::src::traits::async {
+namespace tenacitas::src::traits::async
+{
 
 template <typename t>
-concept result = enum_like<t> && has_output_operator<t>;
+concept result = std::is_enum_v<t> && has_output_operator<t> && requires {
+  {
+    t::OK
+  } -> std::convertible_to<t>;
+};
 
 } // namespace tenacitas::src::traits::async
 

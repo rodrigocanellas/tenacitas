@@ -6,11 +6,10 @@ PRJ_DIR=$$BASE_DIR/tenacitas/src/traits
 
 HEADERS += \
         $$PRJ_DIR/is_smart_ptr.h \
-        $$PRJ_DIR/enum.h \
+        $$PRJ_DIR/is_hashable.h \
         $$PRJ_DIR/chrono_convertible.h \
         $$PRJ_DIR/has_new_operator.h \
         $$PRJ_DIR/has_output_operator.h \
-        $$PRJ_DIR/async/handling_definition.h \
         $$PRJ_DIR/async/event.h \
         $$PRJ_DIR/async/has_events_published.h \
         $$PRJ_DIR/async/has_events_handled.h \
@@ -20,7 +19,8 @@ HEADERS += \
         $$PRJ_DIR/async/publish_method.h \
         $$PRJ_DIR/async/add_handling_method.h \
         $$PRJ_DIR/async/result.h \
-        $$PRJ_DIR/async/handler.h \
+        $$PRJ_DIR/async/handling_function.h \
+        $$PRJ_DIR/async/handling_name.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/is.h \
         $$PRJ_DIR/pair/like.h \

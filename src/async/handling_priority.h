@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_SRC_ASYNC_HANDLING_PRIORITY_H
-#define TENACITAS_SRC_SRC_ASYNC_HANDLING_PRIORITY_H
+#ifndef TENACITAS_SRC_ASYNC_HANDLING_PRIORITY_H
+#define TENACITAS_SRC_ASYNC_HANDLING_PRIORITY_H
 
 #include <cstdint>
 #include <iostream>

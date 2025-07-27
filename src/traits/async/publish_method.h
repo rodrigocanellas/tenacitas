@@ -9,43 +9,43 @@
 #include <concepts>
 
 #include "tenacitas/src/traits/async/event.h"
-#include "tenacitas/src/traits/enum.h"
 #include "tenacitas/src/traits/tuple/contains_type.h"
 
-namespace tenacitas::src::traits::async {
+namespace tenacitas::src::traits::async
+{
 
 template <typename t, typename t_result, typename t_event>
 concept has_const_lvalue_publish_method =
 
-    enum_like<t_result> &&
+    std::is_enum_v<t_result> &&
 
     event<t_event> &&
 
     tuple::contains_type<typename t::events, t_event>() &&
 
     requires(t p_t) {
-  {
-    p_t.template publish<std::remove_cvref_t<t_event>>(
-        std::declval<std::add_const_t<
-            std::add_lvalue_reference_t<std::remove_cvref_t<t_event>>>>())
-    } -> std::same_as<t_result>;
-};
+      {
+        p_t.template publish<std::remove_cvref_t<t_event>>(
+            std::declval<std::add_const_t<
+                std::add_lvalue_reference_t<std::remove_cvref_t<t_event>>>>())
+      } -> std::same_as<t_result>;
+    };
 
 template <typename t, typename t_result, typename t_event, typename... t_params>
 concept has_variadic_params_publish_method =
 
-    enum_like<t_result> &&
+    std::is_enum_v<t_result> &&
 
     event<t_event> &&
 
     tuple::contains_type<typename t::events, t_event>() &&
 
     requires(t p_t, t_params &&...p_params) {
-  {
-    p_t.template publish<std::remove_cvref_t<t_event>>(
-        std::forward<t_params>(p_params)...)
-    } -> std::same_as<t_result>;
-};
+      {
+        p_t.template publish<std::remove_cvref_t<t_event>>(
+            std::forward<t_params>(p_params)...)
+      } -> std::same_as<t_result>;
+    };
 
 } // namespace tenacitas::src::traits::async
 

@@ -6,8 +6,9 @@ TARGET=tnct.tst.crosswords
 
 include (../../common.pri)
 
-SOURCES = $$BASE_DIR_TST/tnct/crosswords/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/tst/crosswords/main.cpp
 
 
-HEADERS = $$BASE_DIR_TST/tnct/crosswords/organizer_test.h \
-          $$BASE_DIR_TST/tnct/crosswords/dat_test.h
+HEADERS = $$BASE_DIR/tenacitas/tst/crosswords/organizer_test.h
+# \
+#           $$BASE_DIR/tenacitas/tst/tnct/crosswords/dat_test.h

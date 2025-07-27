@@ -13,8 +13,8 @@
 // #include <tnct/crosswords/dat/internal/assembler.h>
 // #include <tnct/crosswords/mod/grid.h>
 
-#include "tnct/crosswords/dat_test.h"
-#include "tnct/tester/test.h"
+#include "tenacitas/src/tester/test.h"
+#include "tenacitas/tst/crosswords/organizer_test.h"
 
 using namespace tenacitas;
 
@@ -2394,13 +2394,15 @@ using namespace tenacitas;
 // private:
 // };
 
+namespace tnctt = tenacitas::tst;
+
 int main(int argc, char **argv) {
 
   //  log::dat::set_file_writer("crosswords");
 
   src::tester::test _tester(argc, argv);
 
-  run_test(_tester, crosswords::tst::dat::test_000);
+  run_test(_tester, tnctt::crosswords::organizer_test_000);
   //  run_test(_tester, test_001);
   //  run_test(_tester, test_003);
   //  run_test(_tester, test_004);

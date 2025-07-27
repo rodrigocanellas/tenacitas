@@ -9,39 +9,46 @@
 #include <tuple>
 #include <vector>
 
+#include "tenacitas/src/async/handling_id.h"
 #include "tenacitas/src/container/circular_queue.h"
-#include "tenacitas/src/crosswords/asy/dispatcher.h"
+#include "tenacitas/src/crosswords/asy/grid_create_solved.h"
+#include "tenacitas/src/crosswords/asy/grid_create_stop.h"
+#include "tenacitas/src/crosswords/asy/grid_create_timeout.h"
+#include "tenacitas/src/crosswords/asy/grid_create_unsolved.h"
 #include "tenacitas/src/crosswords/dat/coordinates.h"
 #include "tenacitas/src/crosswords/dat/grid.h"
+#include "tenacitas/src/traits/async/dispatcher.h"
 #include "tenacitas/src/traits/log/logger.h"
 
 namespace tenacitas::src::crosswords::bus::internal {
 
-template <src::traits::log::logger t_logger> struct organizer {
-  using events_subscribed =
-      std::tuple<asy::grid_create_stop, asy::grid_create_solved,
-                 asy::grid_create_unsolved, asy::grid_create_timeout>;
+template <src::traits::log::logger t_logger,
+          src::traits::async::dispatcher t_dispatcher>
+struct organizer {
+  // using events_subscribed =
+  //     std::tuple<asy::grid_create_stop, asy::grid_create_solved,
+  //                asy::grid_create_unsolved, asy::grid_create_timeout>;
 
-  organizer(t_logger &p_logger, asy::dispatcher &p_dispatcher)
+  organizer(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher) {
 
-    p_dispatcher.add_handling<crosswords::asy::grid_create_stop>(
+    m_dispatcher.template add_handling<crosswords::asy::grid_create_stop>(
         m_grid_create_stop, [&](auto) { m_stop = true; },
         container::circular_queue<t_logger, asy::grid_create_stop, 10>{
             m_logger});
 
-    p_dispatcher.add_handling<crosswords::asy::grid_create_solved>(
+    m_dispatcher.template add_handling<crosswords::asy::grid_create_solved>(
         m_grid_create_solved, [&](auto) { m_stop = true; },
         container::circular_queue<t_logger, crosswords::asy::grid_create_solved,
                                   10>{m_logger});
 
-    p_dispatcher.add_handling<crosswords::asy::grid_create_unsolved>(
+    m_dispatcher.template add_handling<crosswords::asy::grid_create_unsolved>(
         m_grid_create_solved, [&](auto) { m_stop = true; },
         container::circular_queue<t_logger,
                                   crosswords::asy::grid_create_unsolved, 10>{
             m_logger});
 
-    p_dispatcher.add_handling<crosswords::asy::grid_create_timeout>(
+    m_dispatcher.template add_handling<crosswords::asy::grid_create_timeout>(
         m_grid_create_solved, [&](auto) { m_stop = true; },
         container::circular_queue<t_logger,
                                   crosswords::asy::grid_create_timeout, 10>{
@@ -52,12 +59,13 @@ template <src::traits::log::logger t_logger> struct organizer {
 
   bool operator()(std::shared_ptr<dat::grid> p_grid) {
     m_stop = false;
-    m_dispatcher.clear<crosswords::asy::grid_create_stop>(m_grid_create_stop);
-    m_dispatcher.clear<crosswords::asy::grid_create_solved>(
+    m_dispatcher.template clear<crosswords::asy::grid_create_stop>(
+        m_grid_create_stop);
+    m_dispatcher.template clear<crosswords::asy::grid_create_solved>(
         m_grid_create_solved);
-    m_dispatcher.clear<crosswords::asy::grid_create_unsolved>(
+    m_dispatcher.template clear<crosswords::asy::grid_create_unsolved>(
         m_grid_create_unsolved);
-    m_dispatcher.clear<crosswords::asy::grid_create_timeout>(
+    m_dispatcher.template clear<crosswords::asy::grid_create_timeout>(
         m_grid_create_timeout);
 
     if (m_stop) {
@@ -456,7 +464,7 @@ private:
 private:
   t_logger &m_logger;
 
-  asy::dispatcher &m_dispatcher;
+  t_dispatcher &m_dispatcher;
 
   bool m_stop{false};
 

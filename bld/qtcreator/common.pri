@@ -44,8 +44,9 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 #RCC_DIR += $${tmp_dir}/rsc
 
+QMAKE_CXX = g++-13
+CONFIG += c++23
 
-CONFIG += c++20
 
 
 equals(TEMPLATE,app) {
@@ -128,6 +129,7 @@ message("MOC_DIR = "$$MOC_DIR)
 message("OUT_PWD = "$$OUT_PWD)
 message("libs_dir = "$$libs_dir)
 message("bins_dir = "$$bins_dir)
+message("tst_dir = "$$test_dir)
 message("QMAKE_CXXFLAGS = "$$QMAKE_CXXFLAGS)
 message("CONFIG = "$$CONFIG)
 message("QMAKESPEC = "$$QMAKESPEC)
