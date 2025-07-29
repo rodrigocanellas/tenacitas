@@ -19,53 +19,13 @@
 // #include "tenacitas/src/string/fixed_size_string.h"
 // #include "tenacitas/src/traits/async/add_handling_method.h"
 // #include "tenacitas/src/traits/async/dispatcher.h"
-// #include "tenacitas/src/traits/async/event.h"
+#include "tenacitas/src/traits/async/event.h"
 // #include "tenacitas/src/traits/async/publish_method.h"
 // #include "tenacitas/src/traits/async/result.h"
 
 #include "tenacitas/src/traits/async/handling_name.h"
 
 using namespace tenacitas;
-
-// namespace handling_name_types
-// {
-// struct abc_1
-// {
-//   abc_1()              = delete;
-//   abc_1(const abc_1 &) = default;
-//   abc_1(abc_1 &&)      = default;
-//   abc_1 &operator=(const abc_1 &)
-//   {
-//     return *this;
-//   }
-//   abc_1 &operator=(abc_1 &&)
-//   {
-//     return *this;
-//   }
-//   friend std::ostream &operator<<(std::ostream &p_out, const abc_1 &)
-//   {
-//     return p_out;
-//   }
-//   std::size_t operator()() const noexcept
-//   {
-//     return 42;
-//   }
-// };
-
-// } // namespace handling_name_types
-
-// namespace std
-// {
-// template <>
-// struct hash<handling_name_types::abc_1>
-// {
-//   std::size_t operator()(const handling_name_types::abc_1 &) const noexcepta
-//   {
-//     // Since abc_1 has no state, return a fixed value or hash typeid
-//     return 42;
-//   }
-// };
-// } // namespace std
 
 namespace tenacitas::tst::traits
 {
@@ -74,16 +34,16 @@ struct handling_name_000
 {
   static std::string desc()
   {
-    return "Verifies that a type is 'handling_name' compatible ";
+    return "Verifies that 'const char *' is 'handling_name' compatible ";
   }
 
   bool operator()(const src::program::options &)
   {
 
-    using compatible_handling_name = std::thread::id;
+    using compatible_handling_name = const char *;
 
     static_assert(src::traits::async::handling_name<compatible_handling_name>,
-                  "'std::thread::id' should be a acceptable 'handling_name'");
+                  "'const cnar *' should be a acceptable 'handling_name'");
 
     return true;
   }
@@ -93,240 +53,190 @@ struct handling_name_001
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "is not default constructible";
+    return "Verifies that 'int' is not 'handling_name' compatible";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(!src::traits::async::handling_name<int>,
+                  "'int' should not be an acceptable 'handling_name'");
 
     return true;
   }
-
-private:
-  struct abc
-  {
-    abc()                                       = delete;
-    abc(const abc &)                            = default;
-    abc(abc &&)                                 = default;
-    abc                 &operator=(const abc &) = default;
-    abc                 &operator=(abc &&)      = default;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
-    {
-      return p_out;
-    }
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
-  };
 };
 
 struct handling_name_002
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "is not copy constructible";
+    return "Verifies that 'std::string' is 'handling_name' compatible ";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+
+    using compatible_handling_name = std::string;
+
+    static_assert(src::traits::async::handling_name<compatible_handling_name>,
+                  "'const cnar *' should be a acceptable 'handling_name'");
 
     return true;
   }
-
-private:
-  struct abc
-  {
-    abc()                                       = default;
-    abc(const abc &)                            = delete;
-    abc(abc &&)                                 = default;
-    abc                 &operator=(const abc &) = default;
-    abc                 &operator=(abc &&)      = default;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
-    {
-      return p_out;
-    }
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
-  };
 };
 
-struct handling_name_003
+struct event_000
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "is not move constructible";
+    return "Verifies that a class that is not default contructible is not "
+           "compatible with 'event";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(
+        !src::traits::async::event<event_a>,
+        "'event_a' is not compatible with src::traits::async::event<event_a>");
 
     return true;
   }
 
 private:
-  struct abc
+  struct event_a
   {
-    abc()                                       = default;
-    abc(const abc &)                            = default;
-    abc(abc &&)                                 = delete;
-    abc                 &operator=(const abc &) = default;
-    abc                 &operator=(abc &&)      = default;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
-    {
-      return p_out;
-    }
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
+    event_a() = delete;
   };
 };
 
-struct handling_name_004
+struct event_001
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "is not copy assignable";
+    return "Verifies that a class that is not copy contructible is not "
+           "compatible with 'event";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(
+        !src::traits::async::event<event_a>,
+        "'event_a' is not compatible with src::traits::async::event<event_a>");
 
     return true;
   }
 
 private:
-  struct abc
+  struct event_a
   {
-    abc()                                       = default;
-    abc(const abc &)                            = default;
-    abc(abc &&)                                 = default;
-    abc                 &operator=(const abc &) = delete;
-    abc                 &operator=(abc &&)      = default;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
-    {
-      return p_out;
-    }
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
+    event_a()                = default;
+    event_a(const event_a &) = delete;
   };
 };
 
-struct handling_name_005
+struct event_002
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "is not move assignable";
+    return "Verifies that a class that is not move contructible is not "
+           "compatible with 'event";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(
+        !src::traits::async::event<event_a>,
+        "'event_a' is not compatible with src::traits::async::event<event_a>");
 
     return true;
   }
 
 private:
-  struct abc
+  struct event_a
   {
-    abc()                                       = default;
-    abc(const abc &)                            = default;
-    abc(abc &&)                                 = default;
-    abc                 &operator=(const abc &) = default;
-    abc                 &operator=(abc &&)      = delete;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
-    {
-      return p_out;
-    }
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
+    event_a()                = default;
+    event_a(const event_a &) = default;
+    event_a(event_a &&)      = delete;
   };
 };
 
-struct handling_name_006
+struct event_003
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "does not have output operator";
+    return "Verifies that a class that does not have the output operator is "
+           "not compatible with 'event";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(
+        !src::traits::async::event<event_a>,
+        "'event_a' is not compatible with src::traits::async::event<event_a>");
 
     return true;
   }
 
 private:
-  struct abc
+  struct event_a
   {
-    abc()                              = default;
-    abc(const abc &)                   = default;
-    abc(abc &&)                        = default;
-    abc        &operator=(const abc &) = default;
-    abc        &operator=(abc &&)      = default;
-    std::size_t operator()() const noexcept
-    {
-      return 42;
-    }
+    event_a()                = default;
+    event_a(const event_a &) = default;
+    event_a(event_a &&)      = default;
   };
 };
 
-struct handling_name_007
+enum class event_004_event_a : char
+{
+  start  = 's',
+  finish = 'f'
+};
+
+std::ostream &operator<<(std::ostream &p_out, event_004_event_a)
+{
+  return p_out;
+}
+
+struct event_004
 {
   static std::string desc()
   {
-    return "Verifies that a type is not 'handling_name' compatible because it "
-           "does not satidfy 'traits::is_hashable";
+    return "Verifies that an 'enum' not compatible with 'event";
   }
 
   bool operator()(const src::program::options &)
   {
-    static_assert(!src::traits::async::handling_name<abc>,
-                  "'abc' should not be a acceptable "
-                  "'handling_name'");
+    static_assert(
+        !src::traits::async::event<event_004_event_a>,
+        "'event_a' is not compatible with src::traits::async::event<event_a>");
+
+    return true;
+  }
+};
+
+struct event_005
+{
+  static std::string desc()
+  {
+    return "Verifies that a class is default,copy and move constructible and "
+           "that implements output operator is compatible with 'event";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        src::traits::async::event<event_a>,
+        "'event_a' is compatible with src::traits::async::event<event_a>");
 
     return true;
   }
 
 private:
-  struct abc
+  struct event_a
   {
-    abc()                                       = default;
-    abc(const abc &)                            = default;
-    abc(abc &&)                                 = default;
-    abc                 &operator=(const abc &) = default;
-    abc                 &operator=(abc &&)      = default;
-    friend std::ostream &operator<<(std::ostream &p_out, const abc &)
+    event_a()                = default;
+    event_a(const event_a &) = default;
+    event_a(event_a &&)      = default;
+    friend std::ostream &operator<<(std::ostream &p_out, event_a)
     {
       return p_out;
     }

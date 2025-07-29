@@ -58,12 +58,6 @@ int main(int argc, char **argv)
 
     run_test(_tester, tst::traits::handling_name_000);
     run_test(_tester, tst::traits::handling_name_001);
-    run_test(_tester, tst::traits::handling_name_002);
-    run_test(_tester, tst::traits::handling_name_003);
-    run_test(_tester, tst::traits::handling_name_004);
-    run_test(_tester, tst::traits::handling_name_005);
-    run_test(_tester, tst::traits::handling_name_006);
-    run_test(_tester, tst::traits::handling_name_007);
 
     // run_test(_tester, tst::traits::dispatcher_000);
 
@@ -82,8 +76,8 @@ int main(int argc, char **argv)
     // run_test(_tester, tst::traits::handling_priority_001);
     // run_test(_tester, tst::traits::handling_priority_002);
 
-    // run_test(_tester, tst::traits::fixed_size_string_000);
-    // run_test(_tester, tst::traits::fixed_size_string_001);
+    run_test(_tester, tst::traits::fixed_size_string_000);
+    run_test(_tester, tst::traits::fixed_size_string_001);
 
     // run_test(_tester, tst::traits::handler_000);
     // run_test(_tester, tst::traits::handler_001);
@@ -92,11 +86,12 @@ int main(int argc, char **argv)
     // run_test(_tester, tst::traits::handler_004);
     // run_test(_tester, tst::traits::handler_005);
 
-    // run_test(_tester, tst::traits::event_000);
-    // run_test(_tester, tst::traits::event_001);
-    // run_test(_tester, tst::traits::event_002);
-    // run_test(_tester, tst::traits::event_003);
-    // run_test(_tester, tst::traits::event_004);
+    run_test(_tester, tst::traits::event_000);
+    run_test(_tester, tst::traits::event_001);
+    run_test(_tester, tst::traits::event_002);
+    run_test(_tester, tst::traits::event_003);
+    run_test(_tester, tst::traits::event_004);
+    run_test(_tester, tst::traits::event_005);
   }
   catch (std::exception &_ex)
   {

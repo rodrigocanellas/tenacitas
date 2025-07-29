@@ -6,18 +6,14 @@
 #ifndef TENACITAS_SRC_TRAITS_ASYNC_HANDLING_NAME_H
 #define TENACITAS_SRC_TRAITS_ASYNC_HANDLING_NAME_H
 
-#include "tenacitas/src/traits/has_output_operator.h"
-#include "tenacitas/src/traits/is_hashable.h"
+#include <string_view>
 #include <type_traits>
 
 namespace tenacitas::src::traits::async
 {
 
 template <typename t>
-concept handling_name =
-    std::is_default_constructible_v<t> && std::is_copy_constructible_v<t>
-    && std::is_move_constructible_v<t> && std::is_copy_assignable_v<t>
-    && std::is_move_assignable_v<t> && has_output_operator<t> && is_hashable<t>;
+concept handling_name = std::is_convertible_v<t, std::string_view>;
 
 } // namespace tenacitas::src::traits::async
 
