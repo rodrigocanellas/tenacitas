@@ -35,4 +35,5 @@ HEADERS += \
         $$PRJ_DIR/tuple/visit.h \
         $$PRJ_DIR/tuple/traverse.h \
         $$PRJ_DIR/tuple/size_greather_or_equal.h \
-        $$PRJ_DIR/string/fixed_size_string.h
+        $$PRJ_DIR/string/fixed_size_string.h \
+        ../../../../src/traits/scoped_enum.h

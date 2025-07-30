@@ -7,12 +7,13 @@
 #define TENACITAS_SRC_TRAITS_ASYNC_RESULT_H
 
 #include "tenacitas/src/traits/has_output_operator.h"
+#include "tenacitas/src/traits/scoped_enum.h"
 
 namespace tenacitas::src::traits::async
 {
 
 template <typename t>
-concept result = std::is_enum_v<t> && has_output_operator<t> && requires {
+concept result = scoped_enum<t> && has_output_operator<t> && requires {
   {
     t::OK
   } -> std::convertible_to<t>;

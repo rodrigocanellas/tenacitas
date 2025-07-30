@@ -7,13 +7,13 @@
 #define TENACITAS_SRC_TRAITS_ASYNC_HANDLING_PRIORITY_H
 
 #include "tenacitas/src/traits/has_output_operator.h"
+#include "tenacitas/src/traits/scoped_enum.h"
 
 namespace tenacitas::src::traits::async
 {
 
 template <typename t>
-concept handling_priority = std::is_enum_v<t> && has_output_operator<t>
-                            && std::is_integral_v<std::underlying_type_t<t>>;
+concept handling_priority = scoped_enum<t> && has_output_operator<t>;
 
 } // namespace tenacitas::src::traits::async
 

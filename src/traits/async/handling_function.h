@@ -23,9 +23,9 @@ concept handling_function =
       } -> std::same_as<void>;
     } &&
 
-    !requires(t p_t, const t_event &evt) { p_t(evt); } &&
-
-    !requires(t p_t, t_event evt) { p_t(evt); };
+    !requires(t p_t, t_event &evt) { p_t(evt); }
+    && !requires(t p_t, const t_event &evt) { p_t(evt); }
+    && !requires(t p_t, t_event evt) { p_t(evt); };
 
 } // namespace tenacitas::src::traits::async
 

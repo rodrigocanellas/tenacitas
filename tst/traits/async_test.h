@@ -15,15 +15,17 @@
 // #include "tenacitas/src/container/circular_queue.h"
 // #include "tenacitas/src/log/cerr.h"
 // #include "tenacitas/src/log/no_logger.h"
-#include "tenacitas/src/program/options.h"
 // #include "tenacitas/src/string/fixed_size_string.h"
 // #include "tenacitas/src/traits/async/add_handling_method.h"
 // #include "tenacitas/src/traits/async/dispatcher.h"
-#include "tenacitas/src/traits/async/event.h"
 // #include "tenacitas/src/traits/async/publish_method.h"
-// #include "tenacitas/src/traits/async/result.h"
 
+#include "tenacitas/src/program/options.h"
+#include "tenacitas/src/traits/async/event.h"
+#include "tenacitas/src/traits/async/handling_function.h"
 #include "tenacitas/src/traits/async/handling_name.h"
+#include "tenacitas/src/traits/async/handling_priority.h"
+#include "tenacitas/src/traits/async/result.h"
 
 using namespace tenacitas;
 
@@ -242,6 +244,411 @@ private:
     }
   };
 };
+
+struct handling_priority_000
+{
+  static std::string desc()
+  {
+    return "A 'handling_priority' which is not compatible with "
+           "src::traits::async::handling_priority because it does not "
+           "implement the output operator";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    enum class priority_000 : int
+    {
+      a = -1,
+      b = 0,
+      c = 1
+    };
+    static_assert(!src::traits::async::handling_priority<priority_000>,
+                  "priority_000 is not compatible with "
+                  "src::traits::async::handling_priority");
+
+    return true;
+  }
+};
+
+struct handling_priority_001
+{
+  static std::string desc()
+  {
+    return "A 'handling_priority' which is not compatible with  "
+           "src::traits::async::handling_priority because it is not an enum ";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    using priority_001 = uint16_t;
+    static_assert(!src::traits::async::handling_priority<priority_001>,
+                  "priority_000 is not compatible with "
+                  "src::traits::async::handling_priority");
+    return true;
+  }
+};
+
+enum class handling_priority_002_enum : int
+{
+  a = -1,
+  b = 0,
+  c = 1
+};
+
+std::ostream &operator<<(std::ostream &p_out,
+                         const handling_priority_002_enum &)
+{
+  return p_out;
+}
+
+struct handling_priority_002
+{
+  static std::string desc()
+  {
+    return "A 'handling_priority' which is compatible with "
+           "src::traits::async::handling_priority";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        src::traits::async::handling_priority<handling_priority_002_enum>,
+        "handling_priority_002_enum is compatible with "
+        "src::traits::async::handling_priority ");
+
+    return true;
+  }
+};
+
+struct handling_priority_003
+{
+  static std::string desc()
+  {
+    return "A non scoped enum is not compatible with "
+           "src::traits::async::handling_priority";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    enum priority_003 : int
+    {
+      a = -1,
+      b = 0,
+      c = 1
+    };
+
+    static_assert(!src::traits::async::handling_priority<priority_003>,
+                  "handling_priority_002_enum is compatible with "
+                  "src::traits::async::handling_priority ");
+
+    return true;
+  }
+};
+
+struct result_000
+{
+  static std::string desc()
+  {
+    return "'int' is not compatible with src::traits::async::result because it "
+           "is not an 'enum'";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    static_assert(!src::traits::async::result<int>,
+                  "'int' is not compatible with src::traits::async::result ");
+
+    return true;
+  }
+};
+
+struct result_001
+{
+  static std::string desc()
+  {
+    return "A 'struct' is not compatible with src::traits::async::result "
+           "because it is not an 'enum'";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::result<abc>,
+        "struct 'abc' is not compatible with src::traits::async::result");
+
+    return true;
+  }
+
+private:
+  struct abc
+  {
+  };
+};
+
+struct result_002
+{
+  static std::string desc()
+  {
+    return "A 'enum' is not compatible with src::traits::async::result "
+           "because it does not have a 'OK' member";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    enum class result_002_enum : int
+    {
+      yes = 1,
+      no  = 0
+    };
+
+    static_assert(
+        !src::traits::async::result<result_002_enum>,
+        "'result_002_enum' is not compatible with src::traits::async::result ");
+
+    return true;
+  }
+};
+
+struct result_003
+{
+  static std::string desc()
+  {
+    return "A 'enum' is not compatible with src::traits::async::result "
+           "because it does not implement the output operator";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    enum class result_003_enum : int
+    {
+      OK  = 100,
+      yes = 1,
+      no  = 0
+    };
+
+    static_assert(
+        !src::traits::async::result<result_003_enum>,
+        "'result_003_enum' is not compatible with src::traits::async::result ");
+
+    return true;
+  }
+};
+
+struct result_004
+{
+  static std::string desc()
+  {
+    return "A non scoped 'enum' is not compatible with "
+           "src::traits::async::result ";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    enum result_004_enum : int
+    {
+      OK  = 100,
+      yes = 1,
+      no  = 0
+    };
+
+    static_assert(
+        !src::traits::async::result<result_004_enum>,
+        "'result_004_enum' is not compatible with src::traits::async::result ");
+
+    return true;
+  }
+};
+
+enum class result_005_enum : int
+{
+  OK  = 100,
+  yes = 1,
+  no  = 0
+};
+
+std::ostream &operator<<(std::ostream &p_out, result_005_enum)
+{
+  return p_out;
+}
+
+struct result_005
+{
+  static std::string desc()
+  {
+    return "A enum compatible ith src::traits::async::result ";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+
+    static_assert(
+        src::traits::async::result<result_005_enum>,
+        "'result_005_enum' is compatible with src::traits::async::result ");
+
+    return true;
+  }
+};
+
+struct handling_function_tests_event
+{
+  friend std::ostream &operator<<(std::ostream &p_out,
+                                  handling_function_tests_event)
+  {
+    return p_out;
+  }
+};
+
+struct handling_function_000
+{
+  static std::string desc()
+  {
+    return "A struct not compatible with "
+           "'src::traits::async::handling_function' because it does not "
+           "implement call operator that receives a 'event' rvalue";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::handling_function<handling_function_000,
+                                               handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+};
+
+struct handling_function_001
+{
+  static std::string desc()
+  {
+    return "A struct not compatible with "
+           "'src::traits::async::handling_function' because it implements a "
+           "call operator that receives a 'event' rvalue, but it returns bool";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::handling_function<handling_function_001,
+                                               handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+
+  bool operator()(handling_function_tests_event &&)
+  {
+    return false;
+  }
+};
+
+struct handling_function_002
+{
+  static std::string desc()
+  {
+    return "A struct not compatible with "
+           "'src::traits::async::handling_function' because it implements a "
+           "call operator that receives a 'event' rvalue, but it also "
+           "implements a call operator that receives a constant 'event' lvalue "
+           "reference";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::handling_function<handling_function_002,
+                                               handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+
+  void operator()(handling_function_tests_event &&)
+  {
+  }
+
+  void operator()(const handling_function_tests_event &)
+  {
+  }
+};
+
+struct handling_function_003
+{
+  static std::string desc()
+  {
+    return "A struct not compatible with "
+           "'src::traits::async::handling_function' because it implements a "
+           "call operator that receives a 'event' rvalue, but it also "
+           "implements a call operator that receives a constant 'event' "
+           "lvalue ";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::handling_function<handling_function_003,
+                                               handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+
+  void operator()(handling_function_tests_event)
+  {
+  }
+};
+
+struct handling_function_004
+{
+  static std::string desc()
+  {
+    return "A struct not compatible with "
+           "'src::traits::async::handling_function' because it implements a "
+           "call operator that receives a 'event' rvalue, but it also "
+           "implements a call operator that receives a 'event' lvalue "
+           "reference ";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        !src::traits::async::handling_function<handling_function_004,
+                                               handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+
+  void operator()(handling_function_tests_event &)
+  {
+  }
+};
+
+struct handling_function_005
+{
+  static std::string desc()
+  {
+    return "A struct compatible with 'src::traits::async::handling_function' ";
+  }
+  bool operator()(const src::program::options &)
+  {
+    static_assert(
+        src::traits::async::handling_function<handling_function_005,
+                                              handling_function_tests_event>,
+        "'handling_function_000' is not compatible with "
+        "src::traits::async::handling_function ");
+
+    return true;
+  }
+
+  void operator()(handling_function_tests_event &&)
+  {
+  }
+};
+
+} // namespace tenacitas::tst::traits
+#endif
 
 // struct dispatcher_000
 // {
@@ -1194,132 +1601,6 @@ private:
 //   };
 // };
 
-// struct handling_priority_000
-// {
-//   static std::string desc()
-//   {
-//     return "a 'handling_priority' which is not conformant to "
-//            "src::traits::async::handling_priority because it does not "
-//            "conformant to traits::has_output_operator";
-//   }
-
-//   bool operator()(const src::program::options &)
-//   {
-//     // enum class priority_000 : int { a = -1, b = 0, c = 1 };
-//     // static_assert(src::traits::async::handling_priority<priority_000>,
-//     //               "priority_000 is not
-//     src::traits::async::handling_priority
-//     //               " "conformant");
-
-//     /*
-// async_test.h:660:19: Static assertion failed: priority_000 is not
-// src::traits::async::handling_priority conformant
-
-// async_test.h:660:19: because 'priority_000' does not satisfy
-// 'handling_priority'
-
-// handling_priority.h:15:45: because 'priority_000' does not satisfy
-// 'has_output_operator'
-
-// has_output_operator.h:18:8: because 'os << value' would be invalid: invalid
-// operands to binary expression ('std::basic_ostream<char, char_traits<char>>'
-// and 'const priority_000')
-// */
-//     return true;
-//   }
-// };
-
-// struct handling_priority_001
-// {
-//   static std::string desc()
-//   {
-//     return "a 'handling_priority' which is not conformant to "
-//            "src::traits::async::handling_priority because it does not "
-//            "conformant to traits::enum_like";
-//   }
-
-//   bool operator()(const src::program::options &)
-//   {
-//     // using priority_001 = uint16_t;
-//     // static_assert(src::traits::async::handling_priority<priority_001>,
-//     //               "priority_000 is not
-//     src::traits::async::handling_priority
-//     //               " "conformant");
-//     /*
-// async_test.h:692:19: Static assertion failed: priority_000 is not
-// src::traits::async::handling_priority conformant
-
-// async_test.h:692:19: because 'priority_001' (aka 'unsigned short') does not
-// satisfy 'handling_priority'
-
-// handling_priority.h:15:29: because 'unsigned short' does not satisfy
-// 'enum_like'
-
-// enum.h:14:21: because 'std::is_enum_v<unsigned short>' evaluated to false
-// */
-
-//     return true;
-//   }
-// };
-
-// enum class priority_002 : int
-// {
-//   a = -1,
-//   b = 0,
-//   c = 1
-// };
-// std::ostream &operator<<(std::ostream &p_out, const priority_002 &)
-// {
-//   return p_out;
-// }
-
-// struct handling_priority_002
-// {
-//   static std::string desc()
-//   {
-//     return "a 'handling_priority' which is conformant to "
-//            "src::traits::async::handling_priority";
-//   }
-
-//   bool operator()(const src::program::options &)
-//   {
-//     static_assert(src::traits::async::handling_priority<priority_002>,
-//                   "priority_000 is not conformant to "
-//                   "src::traits::async::handling_priority ");
-
-//     return true;
-//   }
-// };
-
-// struct handler_000
-// {
-//   static std::string desc()
-//   {
-//     return "A lambda function that is conformant to "
-//            "src::traits::async::handler";
-//   }
-//   bool operator()(const src::program::options &)
-//   {
-//     auto _handler = [](event &&) mutable {};
-
-//     static_assert(
-//         src::traits::async::handling_method<decltype(_handler), event>,
-//         "'auto _handle = [](event &&) {}' is conformant to "
-//         "src::traits::async::handler");
-
-//     return true;
-//   }
-
-// private:
-//   struct event
-//   {
-//     friend std::ostream &operator<<(std::ostream &p_out, const event &)
-//     {
-//       return p_out;
-//     }
-//   };
-// };
-
 // struct handler_001
 // {
 //   static std::string desc()
@@ -1642,6 +1923,3 @@ private:
 //     return true;
 //   }
 // };
-
-} // namespace tenacitas::tst::traits
-#endif
