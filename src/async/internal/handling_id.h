@@ -8,10 +8,18 @@
 
 #include <cstddef>
 
-namespace tenacitas::src::async::internal {
+#include "tenacitas/src/async/handling_name.h"
+
+namespace tenacitas::src::async::internal
+{
 
 using handling_id = std::size_t;
 
-} // namespace tenacitas::src::async
+inline handling_id get_handling_id(const handling_name &p_handling_name)
+{
+  return std::hash<handling_name>{}(p_handling_name);
+}
+
+} // namespace tenacitas::src::async::internal
 
 #endif

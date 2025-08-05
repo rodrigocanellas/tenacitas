@@ -31,7 +31,7 @@ namespace tenacitas::src::log::internal {
 /// logging; \p funcition-name is the name of the function \p line-number is the
 /// number of the line that is logging; contents are the log message specific
 /// contents
-template <traits::log::writer t_log_writer> class logger {
+template <src::traits::log::writer t_log_writer> class logger {
 
 public:
   /// \brief Default contructor

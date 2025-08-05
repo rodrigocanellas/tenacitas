@@ -5,19 +5,20 @@
 
 #include "tenacitas/exp/async/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tenacitas/exp/async/temperature_sensors_simulator/supplier.h"
-#include "tenacitas/src/async/handling_definition.h"
 #include "tenacitas/src/container/circular_queue.h"
 
 using namespace tenacitas;
 using namespace tenacitas::exp::async::temperature_sensors_simulator;
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
   Q_OBJECT
 
 public:
@@ -25,17 +26,22 @@ public:
              QWidget *parent = nullptr);
   ~MainWindow();
 
-  void operator()(evt::new_temperature &&p_evt) {
+  void operator()(evt::new_temperature &&p_evt)
+  {
     on_new_temperature(std::move(p_evt));
   }
 
 private:
-  struct handler_new_temperature {
+  struct handler_new_temperature
+  {
     using events_handled = std::tuple<evt::new_temperature>;
     handler_new_temperature(MainWindow *p_main_window)
-        : m_main_window(p_main_window) {}
+        : m_main_window(p_main_window)
+    {
+    }
 
-    void operator()(evt::new_temperature &&p_new_temperature) {
+    void operator()(evt::new_temperature &&p_new_temperature)
+    {
       (*m_main_window)(std::move(p_new_temperature));
     }
 
@@ -46,12 +52,9 @@ private:
   using queue_new_temperature =
       src::container::circular_queue<logger, evt::new_temperature, 10>;
 
-  using handling_definition_new_temperature = src::async::handling_definition<
-      evt::new_temperature, handler_new_temperature, queue_new_temperature>;
-
 private:
   void on_new_temperature(evt::new_temperature &&);
-  int findRow(dat::sensor_id) const;
+  int  findRow(dat::sensor_id) const;
 
 private slots:
   void on_btnAddSensor_clicked();
@@ -59,9 +62,9 @@ private slots:
   void on_btnSetTemperature_clicked();
 
 private:
-  logger &m_logger;
-  dispatcher &m_dispatcher;
+  logger         &m_logger;
+  dispatcher     &m_dispatcher;
   Ui::MainWindow *ui;
-  std::mutex m_mutex;
+  std::mutex      m_mutex;
 };
 #endif // MAINWINDOW_H

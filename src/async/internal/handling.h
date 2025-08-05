@@ -17,16 +17,16 @@
 #include "tenacitas/src/async/handling_name.h"
 #include "tenacitas/src/async/internal/handler_id.h"
 #include "tenacitas/src/async/internal/handling_id.h"
+#include "tenacitas/src/async/traits/is_event.h"
+#include "tenacitas/src/async/traits/is_handler.h"
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/async/event.h"
-#include "tenacitas/src/traits/async/handling_function.h"
 #include "tenacitas/src/traits/container/queue.h"
 #include "tenacitas/src/traits/log/logger.h"
 
 namespace tenacitas::src::async::internal
 {
 
-template <traits::async::event t_event>
+template <src::async::traits::is_event t_event>
 class handling
 {
 public:
@@ -40,7 +40,8 @@ public:
 
   virtual constexpr bool is_stopped() const = 0;
 
-  [[nodiscard]] virtual constexpr size_t get_amount_handlers() const = 0;
+  [[nodiscard]] virtual constexpr size_t
+  get_amount_handlers() const = 0;
 
   [[nodiscard]] virtual handling_id get_id() const = 0;
 
@@ -48,33 +49,37 @@ public:
 
   [[nodiscard]] virtual constexpr size_t get_num_events() const = 0;
 
-  [[nodiscard]] virtual internal::handler_id get_handler_id() const = 0;
+  [[nodiscard]] virtual internal::handler_id
+  get_handler_id() const = 0;
 
   virtual void clear() = 0;
 };
 
-template <traits::log::logger t_logger, traits::async::event t_event,
-          traits::container::queue<t_event> t_queue,
-          traits::async::handling_function<t_event>   t_handler>
+template <src::traits::log::logger                          t_logger,
+          src::async::traits::is_event                      t_event,
+          src::traits::container::queue<t_event>            t_queue,
+          src::async::traits::is_handler<t_event> t_handler>
 class handling_concrete final : public handling<t_event>
 {
 public:
-  using logger  = t_logger;
-  using event   = t_event;
-  using queue   = t_queue;
+  using logger            = t_logger;
+  using event             = t_event;
+  using queue             = t_queue;
   using handler = t_handler;
 
-  handling_concrete(handling_name p_handling_name, t_logger &p_logger,
+  handling_concrete(const handling_name &p_handling_name, t_logger &p_logger,
                     handler &&p_handler, queue &&p_queue,
                     size_t p_num_handlers = 1)
       : m_logger(p_logger),
         m_handling_id(std::hash<handling_name>{}(p_handling_name)),
         m_handler(p_handler), m_queue(std::move(p_queue)),
-        m_handler_id(internal::get_handler_id<t_event, t_handler>())
+        m_handler_id(
+            internal::get_handler_id<t_event, t_handler>())
   {
-    TNCT_LOG_TRA(m_logger, format::fmt("m_handling_id = ", m_handling_id,
-                                       ", m_handler_id = ", m_handler_id,
-                                       ", p_num_handlers = ", p_num_handlers));
+    TNCT_LOG_TRA(m_logger,
+                 format::fmt("m_handling_id = ", m_handling_id,
+                             ", m_handler_id = ", m_handler_id,
+                             ", p_num_handlers = ", p_num_handlers));
     increment_handlers(p_num_handlers);
   }
 
@@ -83,7 +88,8 @@ public:
   handling_concrete(handling_concrete &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
         m_handler(std::move(p_handling.m_handler)),
-        m_queue(p_handling.m_logger), m_handler_id(p_handling.m_handler_id)
+        m_queue(p_handling.m_logger),
+        m_handler_id(p_handling.m_handler_id)
   {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();
@@ -96,7 +102,8 @@ public:
     }
   }
 
-  [[nodiscard]] internal::handler_id get_handler_id() const override
+  [[nodiscard]] internal::handler_id
+  get_handler_id() const override
   {
     return m_handler_id;
   }
@@ -174,7 +181,7 @@ public:
     return m_handling_handlers.size();
   }
 
-  [[nodiscard]] handling_name get_handling_name() const override
+  [[nodiscard]] handling_name get_name() const override
   {
     return m_handling_name;
   }
@@ -374,7 +381,8 @@ private:
     TNCT_LOG_TRA(m_logger, trace("leaving subscriber's loop", _loop_id));
   }
 
-  void empty_queue(const std::thread::id &p_loop_id, handler p_subscriber)
+  void empty_queue(const std::thread::id &p_loop_id,
+                   handler      p_subscriber)
   {
     TNCT_LOG_TRA(m_logger, trace("entering empty_queue", p_loop_id));
 

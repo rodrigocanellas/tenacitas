@@ -10,12 +10,12 @@
 
 #include "tenacitas/src/program/options.h"
 #include "tenacitas/src/traits/tuple/contains_tuple.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 using namespace tenacitas;
 
-template <src::traits::tuple::like t_container,
-          src::traits::tuple::like t_contained>
+template <src::traits::tuple::is_tuple t_container,
+          src::traits::tuple::is_tuple t_contained>
 // requires src::traits::tuple::contains_tuple<t_container, t_contained>
 void func() {}
 

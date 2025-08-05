@@ -14,12 +14,12 @@
 #include "tenacitas/exp/async/dispatcher_000/logger.h"
 #include "tenacitas/src/async/result.h"
 #include "tenacitas/src/async/sleeping_loop.h"
-#include "tenacitas/src/traits/async/dispatcher.h"
+#include "tenacitas/src/async/traits/is_dispatcher.h"
 
 namespace tenacitas::exp::async {
 
 template <char t_event_id,
-          src::traits::async::dispatcher<event<t_event_id>> t_dispacther>
+          src::async::traits::is_dispatcher<event<t_event_id>> t_dispacther>
 struct publisher {
   using event = exp::async::event<t_event_id>;
 
@@ -91,7 +91,7 @@ private:
 };
 
 template <char t_event_id,
-          src::traits::async::dispatcher<event<t_event_id>> t_dispacther>
+          src::async::traits::is_dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tenacitas::exp::async

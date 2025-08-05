@@ -10,7 +10,7 @@
 #include <tuple>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 #include "tenacitas/src/traits/tuple/traverse.h"
 
 using namespace tenacitas;
@@ -27,7 +27,7 @@ struct tuple_traverse_000 {
 
     auto _ret{true};
     auto _visit =
-        [&_ret]<src::traits::tuple::like t_tuple, std ::size_t t_idx>() {
+        [&_ret]<src::traits::tuple::is_tuple t_tuple, std ::size_t t_idx>() {
           using element_type = std::tuple_element_t<t_idx, t_tuple>;
           if constexpr (t_idx == 0) {
             if constexpr (!std::is_same_v<element_type, int>) {

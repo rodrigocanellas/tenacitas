@@ -50,7 +50,7 @@ void executer_001() {
 }
 
 void executer_002() {
-  src::src::log::cerr _log;
+  src::log::cerr _log;
 
   auto _function = [&](std::function<bool()>) -> void {
     TNCT_LOG_DEB(_log, "hello");
@@ -75,7 +75,7 @@ void executer_003() {
 }
 
 void executer_004() {
-  src::src::log::cerr _log;
+  src::log::cerr _log;
   auto _function = [&](std::function<bool()>, int p_i, std::string &&p_str,
                        const char *p_char) -> void {
     TNCT_LOG_DEB(_log, src::format::fmt(p_i, ',', p_str, ',', p_char));

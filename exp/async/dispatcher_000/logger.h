@@ -10,7 +10,7 @@
 
 namespace tenacitas::exp::async {
 
-using logger = src::src::log::cerr;
+using logger = src::log::cerr;
 
 }
 

@@ -6,6 +6,7 @@
 #ifndef TENACITAS_TST_OSTREAM_TUPLE_OUTPUT_H
 #define TENACITAS_TST_OSTREAM_TUPLE_OUTPUT_H
 
+#include <cstdint>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -16,12 +17,18 @@
 
 using namespace tenacitas;
 
-namespace tenacitas::tst::ostream {
+namespace tenacitas::tst::ostream
+{
 
-struct tuple_output_000 {
-  static std::string desc() { return "Simple tuple output test"; }
+struct tuple_output_000
+{
+  static std::string desc()
+  {
+    return "Simple tuple output test";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     auto _tuple{std::make_tuple('c', 3.14, -8)};
 
     std::cerr << "tuple = " << _tuple << std::endl;
@@ -29,10 +36,15 @@ struct tuple_output_000 {
   }
 };
 
-struct tuple_output_001 {
-  static std::string desc() { return "Printing a tuple with a tuple inside"; }
+struct tuple_output_001
+{
+  static std::string desc()
+  {
+    return "Printing a tuple with a tuple inside";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     auto _tuple{std::make_tuple(
         'c', 3.14,
         std::make_tuple("hello", std::numeric_limits<uint32_t>::max(), 0.0028),
@@ -43,12 +55,15 @@ struct tuple_output_001 {
   }
 };
 
-struct tuple_output_002 {
-  static std::string desc() {
+struct tuple_output_002
+{
+  static std::string desc()
+  {
     return "Printing a tuple with a tuple and a pair  inside";
   }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     auto _tuple{std::make_tuple(
         'c', 3.14,
         std::make_tuple("hello", std::numeric_limits<uint32_t>::max(), 0.0029),

@@ -14,13 +14,13 @@
 #include "tenacitas/src/format/fmt.h"
 
 #include "tenacitas/src/program/exit.h"
-#include "tenacitas/src/traits/async/dispatcher.h"
+#include "tenacitas/src/async/traits/is_dispatcher.h"
 #include "tenacitas/src/traits/log/logger.h"
 #include "tenacitas/src/traits/tuple/contains_tuple.h"
 
 namespace tenacitas::src::program {
 
-template <src::traits::log::logger t_logger, traits::async::dispatcher t_dispatcher>
+template <src::traits::log::logger t_logger, src::async::traits::is_dispatcher t_dispatcher>
 
 requires(traits::contains_tuple<typename t_dispatcher::events,
                                       std::tuple<program::exit>>)

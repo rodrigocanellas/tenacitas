@@ -8,16 +8,16 @@
 
 #include <tuple>
 
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 namespace tenacitas::src::traits::tuple {
 
 template <typename t_tuple_1, typename t_tuple_2>
 concept size_greather_or_equal =
 
-    like<t_tuple_1> &&
+    is_tuple<t_tuple_1> &&
 
-    like<t_tuple_2> &&
+    is_tuple<t_tuple_2> &&
 
     (std::tuple_size_v<t_tuple_1> >= std::tuple_size_v<t_tuple_2>);
 

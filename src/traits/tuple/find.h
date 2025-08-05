@@ -8,11 +8,11 @@
 
 #include <optional>
 
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 namespace tenacitas::src::traits::tuple {
 
-template <like t_tuple, typename t_type, std::size_t t_idx = 0>
+template <is_tuple t_tuple, typename t_type, std::size_t t_idx = 0>
 constexpr std::optional<std::size_t> find() {
   if constexpr (t_idx >= std::tuple_size_v<t_tuple>) {
     return std::nullopt;

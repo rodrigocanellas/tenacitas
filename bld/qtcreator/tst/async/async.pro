@@ -10,9 +10,11 @@ include (../../common.pri)
 SOURCES = $$BASE_DIR/tenacitas/tst/async/main.cpp
 
 HEADERS = \
-          $$BASE_DIR/tenacitas/tst/async/sleeping_loop_test.h \
-          $$BASE_DIR/tenacitas/tst/async/handling_test.h \
-          $$BASE_DIR/tenacitas/tst/async/dispatcher_test.h
+         $$BASE_DIR/tenacitas/tst/async/dispatcher_test.h \
+         $$BASE_DIR/tenacitas/tst/async/traits_test.h
+
+          # $$BASE_DIR/tenacitas/tst/async/sleeping_loop_test.h \
+          # $$BASE_DIR/tenacitas/tst/async/handling_test.h \
 
 
 

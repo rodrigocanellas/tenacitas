@@ -9,14 +9,14 @@
 #include <cstddef>
 #include <tuple>
 
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 #include "tenacitas/src/traits/tuple/visit.h"
 
 namespace tenacitas::src::tuple {
 
 /// \brief Traverses the values of a non const tuple while the visitor function
 /// returns true \note a little help from ChatGPT was used here
-template <traits::tuple::like t_tuple, typename t_func, size_t t_idx = 0>
+template <traits::tuple::is_tuple t_tuple, typename t_func, size_t t_idx = 0>
 requires(traits::tuple::visit_value_in_constant_tuple<t_func, t_tuple, t_idx>)
 
     constexpr void tuple_traverse(const t_tuple &p_tuple, t_func p_function) {
@@ -40,7 +40,7 @@ requires(traits::tuple::visit_value_in_constant_tuple<t_func, t_tuple, t_idx>)
 
 /// \brief Traverses the values of a const tuple while the visitor function
 /// returns true \note a little help from ChatGPT was used here
-template <traits::tuple::like t_tuple, typename t_func, size_t t_idx = 0>
+template <traits::tuple::is_tuple t_tuple, typename t_func, size_t t_idx = 0>
 requires(traits::tuple::visit_value_in_mutable_tuple<t_func, t_tuple, t_idx>)
 
     constexpr void tuple_traverse(t_tuple &p_tuple, t_func p_function) {

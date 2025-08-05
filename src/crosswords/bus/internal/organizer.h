@@ -17,13 +17,13 @@
 #include "tenacitas/src/crosswords/asy/grid_create_unsolved.h"
 #include "tenacitas/src/crosswords/dat/coordinates.h"
 #include "tenacitas/src/crosswords/dat/grid.h"
-#include "tenacitas/src/traits/async/dispatcher.h"
+#include "tenacitas/src/async/traits/is_dispatcher.h"
 #include "tenacitas/src/traits/log/logger.h"
 
 namespace tenacitas::src::crosswords::bus::internal {
 
 template <src::traits::log::logger t_logger,
-          src::traits::async::dispatcher t_dispatcher>
+          src::async::traits::dispatcher t_dispatcher>
 struct organizer {
   // using events_subscribed =
   //     std::tuple<asy::grid_create_stop, asy::grid_create_solved,

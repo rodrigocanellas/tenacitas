@@ -24,13 +24,18 @@ using namespace tenacitas;
 
 using logger = src::log::cerr;
 
-struct sleeping_loop_000 {
+namespace tenacitas::tst::async
+{
+struct sleeping_loop_000
+{
 
-  static const std::string desc() {
+  static const std::string desc()
+  {
     return "'src::async::sleeping_loop' creation test";
   }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     using loop = src::async::sleeping_loop<logger>;
     logger _logger;
 
@@ -42,20 +47,23 @@ struct sleeping_loop_000 {
   }
 };
 
-struct sleeping_loop_001 {
+struct sleeping_loop_001
+{
 
   typedef uint16_t value;
 
-  static const std::string desc() {
+  static const std::string desc()
+  {
     std::stringstream _stream;
-    _stream << "'src::async::sleeping_loop' with interval of " << m_interval_secs
-            << "s, increments a counter, and just prints."
+    _stream << "'src::async::sleeping_loop' with interval of "
+            << m_interval_secs << "s, increments a counter, and just prints."
 
             << "\nCounter should be " << m_amount;
     return _stream.str();
   }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     using loop = src::async::sleeping_loop<logger>;
 
     logger _logger;
@@ -75,31 +83,38 @@ struct sleeping_loop_001 {
 
     _loop.stop();
 
-    if (_op.counter != m_amount) {
-      _logger.err(src::format::fmt("counter should be ", m_amount, ", but it is ",
-                              _op.counter));
+    if (_op.counter != m_amount)
+    {
+      _logger.err(src::format::fmt("counter should be ", m_amount,
+                                   ", but it is ", _op.counter));
       return false;
     }
 
     _logger.tst(src::format::fmt("counter should be ", m_amount,
-                            ", and it really is ", _op.counter));
+                                 ", and it really is ", _op.counter));
 
     return true;
   }
 
 private:
-  struct operation1 {
+  struct operation1
+  {
     operation1(std::condition_variable *p_cond, logger &p_logger)
-        : m_cond(p_cond), m_logger(p_logger) {
+        : m_cond(p_cond), m_logger(p_logger)
+    {
       m_logger.set_deb();
     }
 
-    void operator()() {
-      if (counter < m_amount) {
+    void operator()()
+    {
+      if (counter < m_amount)
+      {
         ++counter;
         m_logger.deb(src::format::fmt("counter = ", counter));
         std::this_thread::sleep_for(m_sleep);
-      } else {
+      }
+      else
+      {
         m_cond->notify_one();
       }
     }
@@ -108,22 +123,27 @@ private:
 
   private:
     std::condition_variable *m_cond;
-    logger &m_logger;
+    logger                  &m_logger;
   };
 
 private:
-  std::mutex m_mutex;
+  std::mutex              m_mutex;
   std::condition_variable m_cond;
 
-  static constexpr value m_interval_secs{1};
-  static constexpr value m_amount{14};
+  static constexpr value                     m_interval_secs{1};
+  static constexpr value                     m_amount{14};
   static constexpr std::chrono::milliseconds m_sleep{200};
 };
 
-struct sleeping_loop_002 {
-  static std::string desc() { return "Tests move constructor"; }
+struct sleeping_loop_002
+{
+  static std::string desc()
+  {
+    return "Tests move constructor";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     using loop = src::async::sleeping_loop<logger>;
 
     logger _logger;
@@ -144,5 +164,5 @@ struct sleeping_loop_002 {
     return true;
   }
 };
-
+} // namespace tenacitas::tst::async
 #endif

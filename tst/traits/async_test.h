@@ -6,85 +6,25 @@
 #ifndef TENACITAS_TST_TRAITS_ASYNC_H
 #define TENACITAS_TST_TRAITS_ASYNC_H
 
-#include <functional>
 #include <string>
-#include <thread>
-// #include <cstdint>
-// #include <tuple>
 
-// #include "tenacitas/src/container/circular_queue.h"
-// #include "tenacitas/src/log/cerr.h"
-// #include "tenacitas/src/log/no_logger.h"
-// #include "tenacitas/src/string/fixed_size_string.h"
-// #include "tenacitas/src/traits/async/add_handling_method.h"
-// #include "tenacitas/src/traits/async/dispatcher.h"
-// #include "tenacitas/src/traits/async/publish_method.h"
-
+#include "tenacitas/src/async/dispatcher.h"
+#include "tenacitas/src/async/handling_name.h"
+#include "tenacitas/src/async/handling_priority.h"
+#include "tenacitas/src/async/result.h"
+#include "tenacitas/src/container/circular_queue.h"
+#include "tenacitas/src/format/fmt.h"
+#include "tenacitas/src/log/cerr.h"
 #include "tenacitas/src/program/options.h"
+#include "tenacitas/src/traits/async/dispatcher.h"
 #include "tenacitas/src/traits/async/event.h"
 #include "tenacitas/src/traits/async/handling_function.h"
-#include "tenacitas/src/traits/async/handling_name.h"
-#include "tenacitas/src/traits/async/handling_priority.h"
-#include "tenacitas/src/traits/async/result.h"
+#include "tenacitas/src/traits/async/has_add_handling_method.h"
 
 using namespace tenacitas;
 
 namespace tenacitas::tst::traits
 {
-
-struct handling_name_000
-{
-  static std::string desc()
-  {
-    return "Verifies that 'const char *' is 'handling_name' compatible ";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-
-    using compatible_handling_name = const char *;
-
-    static_assert(src::traits::async::handling_name<compatible_handling_name>,
-                  "'const cnar *' should be a acceptable 'handling_name'");
-
-    return true;
-  }
-};
-
-struct handling_name_001
-{
-  static std::string desc()
-  {
-    return "Verifies that 'int' is not 'handling_name' compatible";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    static_assert(!src::traits::async::handling_name<int>,
-                  "'int' should not be an acceptable 'handling_name'");
-
-    return true;
-  }
-};
-
-struct handling_name_002
-{
-  static std::string desc()
-  {
-    return "Verifies that 'std::string' is 'handling_name' compatible ";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-
-    using compatible_handling_name = std::string;
-
-    static_assert(src::traits::async::handling_name<compatible_handling_name>,
-                  "'const cnar *' should be a acceptable 'handling_name'");
-
-    return true;
-  }
-};
 
 struct event_000
 {
@@ -245,250 +185,6 @@ private:
   };
 };
 
-struct handling_priority_000
-{
-  static std::string desc()
-  {
-    return "A 'handling_priority' which is not compatible with "
-           "src::traits::async::handling_priority because it does not "
-           "implement the output operator";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    enum class priority_000 : int
-    {
-      a = -1,
-      b = 0,
-      c = 1
-    };
-    static_assert(!src::traits::async::handling_priority<priority_000>,
-                  "priority_000 is not compatible with "
-                  "src::traits::async::handling_priority");
-
-    return true;
-  }
-};
-
-struct handling_priority_001
-{
-  static std::string desc()
-  {
-    return "A 'handling_priority' which is not compatible with  "
-           "src::traits::async::handling_priority because it is not an enum ";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    using priority_001 = uint16_t;
-    static_assert(!src::traits::async::handling_priority<priority_001>,
-                  "priority_000 is not compatible with "
-                  "src::traits::async::handling_priority");
-    return true;
-  }
-};
-
-enum class handling_priority_002_enum : int
-{
-  a = -1,
-  b = 0,
-  c = 1
-};
-
-std::ostream &operator<<(std::ostream &p_out,
-                         const handling_priority_002_enum &)
-{
-  return p_out;
-}
-
-struct handling_priority_002
-{
-  static std::string desc()
-  {
-    return "A 'handling_priority' which is compatible with "
-           "src::traits::async::handling_priority";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    static_assert(
-        src::traits::async::handling_priority<handling_priority_002_enum>,
-        "handling_priority_002_enum is compatible with "
-        "src::traits::async::handling_priority ");
-
-    return true;
-  }
-};
-
-struct handling_priority_003
-{
-  static std::string desc()
-  {
-    return "A non scoped enum is not compatible with "
-           "src::traits::async::handling_priority";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    enum priority_003 : int
-    {
-      a = -1,
-      b = 0,
-      c = 1
-    };
-
-    static_assert(!src::traits::async::handling_priority<priority_003>,
-                  "handling_priority_002_enum is compatible with "
-                  "src::traits::async::handling_priority ");
-
-    return true;
-  }
-};
-
-struct result_000
-{
-  static std::string desc()
-  {
-    return "'int' is not compatible with src::traits::async::result because it "
-           "is not an 'enum'";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    static_assert(!src::traits::async::result<int>,
-                  "'int' is not compatible with src::traits::async::result ");
-
-    return true;
-  }
-};
-
-struct result_001
-{
-  static std::string desc()
-  {
-    return "A 'struct' is not compatible with src::traits::async::result "
-           "because it is not an 'enum'";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    static_assert(
-        !src::traits::async::result<abc>,
-        "struct 'abc' is not compatible with src::traits::async::result");
-
-    return true;
-  }
-
-private:
-  struct abc
-  {
-  };
-};
-
-struct result_002
-{
-  static std::string desc()
-  {
-    return "A 'enum' is not compatible with src::traits::async::result "
-           "because it does not have a 'OK' member";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    enum class result_002_enum : int
-    {
-      yes = 1,
-      no  = 0
-    };
-
-    static_assert(
-        !src::traits::async::result<result_002_enum>,
-        "'result_002_enum' is not compatible with src::traits::async::result ");
-
-    return true;
-  }
-};
-
-struct result_003
-{
-  static std::string desc()
-  {
-    return "A 'enum' is not compatible with src::traits::async::result "
-           "because it does not implement the output operator";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    enum class result_003_enum : int
-    {
-      OK  = 100,
-      yes = 1,
-      no  = 0
-    };
-
-    static_assert(
-        !src::traits::async::result<result_003_enum>,
-        "'result_003_enum' is not compatible with src::traits::async::result ");
-
-    return true;
-  }
-};
-
-struct result_004
-{
-  static std::string desc()
-  {
-    return "A non scoped 'enum' is not compatible with "
-           "src::traits::async::result ";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-    enum result_004_enum : int
-    {
-      OK  = 100,
-      yes = 1,
-      no  = 0
-    };
-
-    static_assert(
-        !src::traits::async::result<result_004_enum>,
-        "'result_004_enum' is not compatible with src::traits::async::result ");
-
-    return true;
-  }
-};
-
-enum class result_005_enum : int
-{
-  OK  = 100,
-  yes = 1,
-  no  = 0
-};
-
-std::ostream &operator<<(std::ostream &p_out, result_005_enum)
-{
-  return p_out;
-}
-
-struct result_005
-{
-  static std::string desc()
-  {
-    return "A enum compatible ith src::traits::async::result ";
-  }
-
-  bool operator()(const src::program::options &)
-  {
-
-    static_assert(
-        src::traits::async::result<result_005_enum>,
-        "'result_005_enum' is compatible with src::traits::async::result ");
-
-    return true;
-  }
-};
-
 struct handling_function_tests_event
 {
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -645,77 +341,246 @@ struct handling_function_005
   void operator()(handling_function_tests_event &&)
   {
   }
+
+  void handle(handling_function_tests_event &&)
+  {
+  }
+};
+
+struct dispatcher_000
+{
+
+  static std::string desc()
+  {
+    return "Basic traitrs::dispatcher test";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+    src::log::cerr _logger;
+
+    my_dispatcher _dispatcher;
+
+    f(_dispatcher);
+
+    return true;
+  }
+
+private:
+  struct event_a
+  {
+    friend std::ostream &operator<<(std::ostream &p_out, const event_a &)
+    {
+      return p_out;
+    }
+  };
+
+  struct event_b
+  {
+    friend std::ostream &operator<<(std::ostream &p_out, const event_b &)
+    {
+      return p_out;
+    }
+  };
+
+  struct event_c
+  {
+    friend std::ostream &operator<<(std::ostream &p_out, const event_c &)
+    {
+      return p_out;
+    }
+  };
+
+  template <src::traits::async::event... t_events>
+  struct dispatcher
+  {
+    using events = std::tuple<t_events...>;
+
+    dispatcher()                   = default;
+    dispatcher(const dispatcher &) = delete;
+    dispatcher(dispatcher &&)      = delete;
+
+    dispatcher &operator=(const dispatcher &) = delete;
+    dispatcher &operator=(dispatcher &&)      = delete;
+
+    void *operator new(size_t) = delete;
+  };
+
+  using my_dispatcher = dispatcher<event_a, event_b>;
+
+  template <src::traits::async::dispatcher<event_a, event_b> t_dispatcher>
+  void f(t_dispatcher &)
+  {
+  }
+};
+
+struct has_add_handling_method_000
+{
+  static std::string desc()
+  {
+    return "Checks for src::traits::async::has_add_handling_method";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+
+    logger _logger;
+
+    using dispatcher = src::async::dispatcher<logger, event_a>;
+
+    dispatcher _dispatcher{_logger};
+
+    abc<dispatcher> _abc(_logger, _dispatcher);
+
+    return true;
+  }
+
+private:
+  using logger = src::log::cerr;
+
+  struct event_a
+  {
+    friend std ::ostream &operator<<(std::ostream &p_out, const event_a &)
+    {
+      return p_out;
+    }
+  };
+
+  template <typename t_dispatcher>
+  struct abc
+  {
+
+    using queue_a = src::container::circular_queue<logger, event_a, 100>;
+    using handling_function_a = std::function<void(event_a &&)>;
+
+    static_assert(src::traits::async::has_add_handling_method<
+                      t_dispatcher, event_a, handling_function_a, queue_a>,
+                  "t_dispatcher must have add_handling<event_a>()");
+
+    abc(logger &p_logger, t_dispatcher &p_dispatcher)
+        : m_dispatcher(p_dispatcher)
+    {
+      create_handling_1(p_logger);
+      create_handling_2(p_logger);
+    }
+
+    void handling_function_1(event_a &&)
+    {
+    }
+
+    void handling_function_2(event_a &&)
+    {
+    }
+
+  private:
+    void create_handling_1(logger &p_logger)
+    {
+
+      src::async::result _result{m_dispatcher.template add_handling<event_a>(
+          "handling 1",
+          [this](event_a &&evt) { handling_function_1(std::move(evt)); },
+          queue_a{p_logger}, src::async::handling_priority::medium, 2)};
+
+      if (_result != src::async::result::OK)
+      {
+        TNCT_LOG_ERR(p_logger, src::format::fmt(_result));
+      }
+      else
+      {
+        TNCT_LOG_INF(p_logger, "add handling 1 OK");
+      }
+    }
+
+    void create_handling_2(logger &p_logger)
+    {
+
+      src::async::result _result{m_dispatcher.template add_handling<event_a>(
+          "handling 2",
+          [this](event_a &&evt) { handling_function_2(std::move(evt)); },
+          queue_a{p_logger}, src::async::handling_priority::medium, 4)};
+
+      if (_result != src::async::result::OK)
+      {
+        TNCT_LOG_ERR(p_logger, src::format::fmt(_result));
+      }
+      else
+      {
+        TNCT_LOG_INF(p_logger, "add handling 2 OK");
+      }
+    }
+
+  private:
+    t_dispatcher &m_dispatcher;
+  };
+};
+
+struct has_add_handling_method_001
+{
+  static std::string desc()
+  {
+    return "Checks for src::traits::async::has_add_handling_method";
+  }
+
+  bool operator()(const src::program::options &)
+  {
+
+    logger _logger;
+
+    using dispatcher = invalid_dispatcher;
+
+    dispatcher _dispatcher;
+
+    abc<dispatcher> _abc(_dispatcher);
+
+    return true;
+  }
+
+private:
+  using logger = src::log::cerr;
+
+  struct invalid_dispatcher
+  {
+  };
+
+  struct event_a
+  {
+    friend std ::ostream &operator<<(std::ostream &p_out, const event_a &)
+    {
+      return p_out;
+    }
+  };
+
+  template <typename t_dispatcher>
+  struct abc
+  {
+
+    using queue_a = src::container::circular_queue<logger, event_a, 100>;
+    using handling_function_a = std::function<void(event_a &&)>;
+
+    static_assert(!src::traits::async::has_add_handling_method<
+                      t_dispatcher, event_a, handling_function_a, queue_a>,
+                  "t_dispatcher must have add_handling<event_a>()");
+
+    abc(t_dispatcher &p_dispatcher) : m_dispatcher(p_dispatcher)
+    {
+    }
+
+    void handling_function_1(event_a &&)
+    {
+    }
+
+    void handling_function_2(event_a &&)
+    {
+    }
+
+  private:
+  private:
+    t_dispatcher &m_dispatcher;
+  };
 };
 
 } // namespace tenacitas::tst::traits
 #endif
-
-// struct dispatcher_000
-// {
-
-//   static std::string desc()
-//   {
-//     return "Basic traitrs::dispatcher test";
-//   }
-
-//   bool operator()(const src::program::options &)
-//   {
-//     src::log::cerr _logger;
-
-//     my_dispatcher _dispatcher;
-
-//     f(_dispatcher);
-
-//     return true;
-//   }
-
-// private:
-//   struct event_a
-//   {
-//     friend std::ostream &operator<<(std::ostream &p_out, const event_a &)
-//     {
-//       return p_out;
-//     }
-//   };
-
-//   struct event_b
-//   {
-//     friend std::ostream &operator<<(std::ostream &p_out, const event_b &)
-//     {
-//       return p_out;
-//     }
-//   };
-
-//   struct event_c
-//   {
-//     friend std::ostream &operator<<(std::ostream &p_out, const event_c &)
-//     {
-//       return p_out;
-//     }
-//   };
-
-//   template <src::traits::async::event... t_events>
-//   struct dispatcher
-//   {
-//     using events = std::tuple<t_events...>;
-
-//     dispatcher()                   = default;
-//     dispatcher(const dispatcher &) = delete;
-//     dispatcher(dispatcher &&)      = delete;
-
-//     dispatcher &operator=(const dispatcher &) = delete;
-//     dispatcher &operator=(dispatcher &&)      = delete;
-
-//     void *operator new(size_t) = delete;
-//   };
-
-//   using my_dispatcher = dispatcher<event_a, event_b>;
-
-//   template <src::traits::async::dispatcher<event_a, event_b> t_dispatcher>
-//   void f(t_dispatcher &)
-//   {
-//   }
-// };
 
 // struct has_publish_method_000
 // {

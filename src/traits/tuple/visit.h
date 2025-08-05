@@ -8,12 +8,12 @@
 
 #include <cstddef>
 
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 namespace tenacitas::src::traits::tuple {
 
 template <typename t, typename t_tuple, size_t t_idx = 0>
-concept visit_value_in_constant_tuple = tuple::like<t_tuple> &&
+concept visit_value_in_constant_tuple = tuple::is_tuple<t_tuple> &&
     requires(t p_t) {
 
   {
@@ -22,14 +22,14 @@ concept visit_value_in_constant_tuple = tuple::like<t_tuple> &&
 };
 
 template <typename t, typename t_tuple, size_t t_idx = 0>
-concept visit_value_in_mutable_tuple = tuple::like<t_tuple> && requires(t p_t) {
+concept visit_value_in_mutable_tuple = tuple::is_tuple<t_tuple> && requires(t p_t) {
   {
     p_t.template operator()<t_tuple, t_idx>(std::declval<t_tuple &>())
     } -> std::same_as<bool>;
 };
 
 template <typename t, typename t_tuple, std::size_t t_idx>
-concept visit_type_in_tuple = tuple::like<t_tuple> && requires(t p_t) {
+concept visit_type_in_tuple = tuple::is_tuple<t_tuple> && requires(t p_t) {
   { p_t.template operator()<t_tuple, t_idx>() } -> std::same_as<bool>;
 };
 

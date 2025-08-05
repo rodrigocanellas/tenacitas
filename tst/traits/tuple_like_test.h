@@ -12,13 +12,13 @@
 // tuple_like_002 actually causes a compile error
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 using namespace tenacitas;
 
 namespace tenacitas::tst::traits {
 
-template <src::traits::tuple::like t_tuple> void func(t_tuple &&p_tuple) {
+template <src::traits::tuple::is_tuple t_tuple> void func(t_tuple &&p_tuple) {
   std::cerr << "tuple<0>    = " << std::get<0>(p_tuple) << std::endl;
 }
 

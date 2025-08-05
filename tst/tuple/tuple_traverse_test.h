@@ -10,7 +10,7 @@
 #include <tuple>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 #include "tenacitas/src/tuple/tuple_traverse.h"
 
 using namespace tenacitas;
@@ -30,7 +30,7 @@ struct tuple_traverse_000 {
     bool _ret{true};
 
     auto _visit = [&_ret,
-                   &_char]<src::traits::tuple::like t_tuple, size_t t_idx>(
+                   &_char]<src::traits::tuple::is_tuple t_tuple, size_t t_idx>(
                       const t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -64,7 +64,7 @@ struct tuple_traverse_001 {
     bool _ret{true};
 
     auto _visit = [&_ret,
-                   &_char]<src::traits::tuple::like t_tuple, size_t t_idx>(
+                   &_char]<src::traits::tuple::is_tuple t_tuple, size_t t_idx>(
                       t_tuple &p_tuple) {
       if constexpr (std::tuple_size_v<t_tuple> == 1) {
         _char = std::get<0>(p_tuple);
@@ -97,7 +97,7 @@ struct tuple_traverse_003 {
   bool operator()(const src::program::options &) {
     auto _tuple{std::make_tuple('W', -9)};
 
-    auto _visit = []<src::traits::tuple::like t_tuple, size_t t_idx>(
+    auto _visit = []<src::traits::tuple::is_tuple t_tuple, size_t t_idx>(
                       const t_tuple &p_tuple) {
       std::cerr << "in " << t_idx << " there is " << std::get<t_idx>(p_tuple)
                 << '\n';
@@ -121,7 +121,7 @@ struct tuple_traverse_004 {
     auto _tuple{std::make_tuple(14U, 3.14, -983271)};
 
     auto _visit =
-        []<src::traits::tuple::like t_tuple, size_t t_idx>(t_tuple &p_tuple) {
+        []<src::traits::tuple::is_tuple t_tuple, size_t t_idx>(t_tuple &p_tuple) {
           std::cerr << "in " << t_idx << " there was "
                     << std::get<t_idx>(p_tuple) << ", and now there is "
                     << (std::get<t_idx>(p_tuple) = std::get<t_idx>(p_tuple) + 1)

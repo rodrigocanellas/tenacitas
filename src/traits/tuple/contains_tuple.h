@@ -9,11 +9,11 @@
 #include <tuple>
 
 #include "tenacitas/src/traits/tuple/contains_type.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 namespace tenacitas::src::traits::tuple {
 
-template <tuple::like t_container_tuple, tuple::like t_contained_tuple,
+template <tuple::is_tuple t_container_tuple, tuple::is_tuple t_contained_tuple,
           std::size_t t_idx = 0>
 constexpr bool contains_tuple_helper() {
   if constexpr (t_idx >= std::tuple_size_v<t_contained_tuple>) {

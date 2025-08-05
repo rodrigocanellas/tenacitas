@@ -7,12 +7,12 @@
 #define TENACITAS_SRC_TRAITS_TUPLE_CONTAINS_TYPE_H
 
 #include "tenacitas/src/traits/tuple/find.h"
-#include "tenacitas/src/traits/tuple/like.h"
+#include "tenacitas/src/traits/tuple/is_tuple.h"
 
 namespace tenacitas::src::traits::tuple {
 
 // code reviewed by ChatGPT from a previous version I wrote
-template <traits::tuple::like t_tuple, typename t_type>
+template <traits::tuple::is_tuple t_tuple, typename t_type>
 constexpr bool contains_type() {
   return find<t_tuple, t_type>().has_value();
 }
