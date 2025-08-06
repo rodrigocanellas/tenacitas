@@ -3,13 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_CHRONO_CONVERTIBLE_H
-#define TENACITAS_SRC_TRAITS_CHRONO_CONVERTIBLE_H
+#ifndef TENACITAS_SRC_TIME_TRAITS_CHRONO_CONVERTIBLE_H
+#define TENACITAS_SRC_TIME_TRAITS_CHRONO_CONVERTIBLE_H
 
 #include <chrono>
 #include <type_traits>
 
-namespace tenacitas::src::traits {
+namespace tenacitas::src::time::traits
+{
 
 // the code below is an improved version by ChatGPT from a previous version I
 // wrote
@@ -24,10 +25,12 @@ concept is_chrono_duration = requires {
 };
 
 template <typename t_to, typename t_from>
-concept chrono_convertible = is_chrono_duration<t_from> &&
-    requires(t_from p_time) {
-  { std::chrono::duration_cast<t_to>(p_time) } -> std::same_as<t_to>;
-};
+concept chrono_convertible =
+    is_chrono_duration<t_from> && requires(t_from p_time) {
+      {
+        std::chrono::duration_cast<t_to>(p_time)
+      } -> std::same_as<t_to>;
+    };
 
 template <typename t_from>
 concept convertible_to_milli =
@@ -40,6 +43,6 @@ template <typename t_from>
 concept convertible_to_nano =
     chrono_convertible<std::chrono::nanoseconds, t_from>;
 
-} // namespace tenacitas::src::traits
+} // namespace tenacitas::src::time::traits
 
 #endif

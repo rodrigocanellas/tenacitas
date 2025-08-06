@@ -15,11 +15,11 @@
 #include <string_view>
 
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::src::parser {
 
-template <src::traits::log::logger t_logger> struct ini_file {
+template <src::log::traits::logger t_logger> struct ini_file {
   using key = std::string;
   using value = std::string;
   using properties = std::map<key, value>;

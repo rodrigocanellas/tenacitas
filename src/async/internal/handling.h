@@ -20,8 +20,8 @@
 #include "tenacitas/src/async/traits/is_event.h"
 #include "tenacitas/src/async/traits/is_handler.h"
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/container/queue.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/container/traits/queue.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::src::async::internal
 {
@@ -55,9 +55,9 @@ public:
   virtual void clear() = 0;
 };
 
-template <src::traits::log::logger                          t_logger,
+template <src::log::traits::logger                          t_logger,
           src::async::traits::is_event                      t_event,
-          src::traits::container::queue<t_event>            t_queue,
+          src::container::traits::queue<t_event>            t_queue,
           src::async::traits::is_handler<t_event> t_handler>
 class handling_concrete final : public handling<t_event>
 {

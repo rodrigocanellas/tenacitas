@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/is.h"
+#include "tenacitas/src/tuple/traits/is.h"
 
 using namespace tenacitas;
 
@@ -20,7 +20,7 @@ struct is_tuple_000 {
   static std::string desc() { return "Checking if a 'int' is not a tuple"; }
 
   bool operator()(const src::program::options &) {
-    return !src::traits::tuple::is_v<int>;
+    return !src::tuple::traits::is_v<int>;
   }
 };
 
@@ -30,7 +30,7 @@ struct is_tuple_001 {
   }
 
   bool operator()(const src::program::options &) {
-    return src::traits::tuple::is_v<std::tuple<>>;
+    return src::tuple::traits::is_v<std::tuple<>>;
   }
 };
 
@@ -40,7 +40,7 @@ struct is_tuple_002 {
   }
 
   bool operator()(const src::program::options &) {
-    return src::traits::tuple::is_v<std::tuple<char>>;
+    return src::tuple::traits::is_v<std::tuple<char>>;
   }
 };
 
@@ -50,7 +50,7 @@ struct is_tuple_003 {
   }
 
   bool operator()(const src::program::options &) {
-    return src::traits::tuple::is_v<std::tuple<char, std::string>>;
+    return src::tuple::traits::is_v<std::tuple<char, std::string>>;
   }
 };
 
@@ -60,7 +60,7 @@ struct is_tuple_004 {
   }
 
   bool operator()(const src::program::options &) {
-    return !src::traits::tuple::is_v<std::vector<int>>;
+    return !src::tuple::traits::is_v<std::vector<int>>;
   }
 };
 
@@ -70,7 +70,7 @@ struct is_tuple_005 {
   }
 
   bool operator()(const src::program::options &) {
-    return !src::traits::tuple::is_v<std::vector<std::tuple<double>>>;
+    return !src::tuple::traits::is_v<std::vector<std::tuple<double>>>;
   }
 };
 
@@ -80,7 +80,7 @@ struct is_tuple_006 {
   }
 
   bool operator()(const src::program::options &) {
-    return src::traits::tuple::is_v<std::tuple<double, std::vector<char>>>;
+    return src::tuple::traits::is_v<std::tuple<double, std::vector<char>>>;
   }
 };
 

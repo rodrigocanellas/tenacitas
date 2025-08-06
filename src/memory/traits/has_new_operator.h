@@ -3,22 +3,27 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_HAS_NEW_OPERATOR_H
-#define TENACITAS_SRC_TRAITS_HAS_NEW_OPERATOR_H
+#ifndef TENACITAS_SRC_MEMORY_TRAITS_HAS_NEW_OPERATOR_H
+#define TENACITAS_SRC_MEMORY_TRAITS_HAS_NEW_OPERATOR_H
 
 #include <cstdint>
 
-namespace tenacitas::src::traits {
+namespace tenacitas::src::memory::traits
+{
 
 /// Type trait to check if a class has new operator
 ///
 /// Code adapted from ChatGPT
-template <typename T> class has_new_operator {
+template <typename T>
+class has_new_operator
+{
   using yes = uint8_t;
-  using no = uint16_t;
+  using no  = uint16_t;
 
-  template <typename C> static yes &test(decltype(new C()));
-  template <typename C> static no &test(...);
+  template <typename C>
+  static yes &test(decltype(new C()));
+  template <typename C>
+  static no &test(...);
 
 public:
   static const bool value = sizeof(test<T>(0)) == sizeof(yes);
@@ -27,6 +32,6 @@ public:
 template <typename t>
 constexpr bool has_new_operator_v = has_new_operator<t>::value;
 
-} // namespace tenacitas::src::traits
+} // namespace tenacitas::src::memory::traits
 
 #endif

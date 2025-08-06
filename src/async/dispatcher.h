@@ -20,11 +20,11 @@
 #include "tenacitas/src/async/traits/is_event.h"
 #include "tenacitas/src/async/traits/is_handler.h"
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/container/queue.h"
-#include "tenacitas/src/traits/tuple/contains_type.h"
-#include "tenacitas/src/traits/tuple/find.h"
-#include "tenacitas/src/traits/tuple/is_tuple.h"
-#include "tenacitas/src/traits/tuple/traverse.h"
+#include "tenacitas/src/container/traits/queue.h"
+#include "tenacitas/src/tuple/traits/contains_type.h"
+#include "tenacitas/src/tuple/traits/find.h"
+#include "tenacitas/src/tuple/traits/is_tuple.h"
+#include "tenacitas/src/tuple/traits/traverse.h"
 #include "tenacitas/src/tuple/tuple_transform.h"
 #include "tenacitas/src/tuple/tuple_traverse.h"
 
@@ -73,7 +73,7 @@ executed for the \p event.
 
 Each \p handling has its own \p queue of \p event objects, and the
 implementantion of the queue can vary as much as necessary, as far as it
-satisfies the requirements defined by \p src::traits::container::queue.
+satisfies the requirements defined by \p src::container::traits::queue.
 
 A \p handling can have multiples instances of the \p hander type, in case each
 \p event instance can be handled independently from any other \p event.
@@ -86,7 +86,7 @@ Please, take a look at the tests and examples for more information on how to use
 the dispatcher class.
 */
 
-template <src::traits::log::logger t_logger,
+template <src::log::traits::logger t_logger,
           src::async::traits::is_event... t_events>
 struct dispatcher final
 {
@@ -168,7 +168,7 @@ public:
   }
 
   template <src::async::traits::is_event            t_event,
-            src::traits::container::queue<t_event>  t_handling_queue,
+            src::container::traits::queue<t_event>  t_handling_queue,
             src::async::traits::is_handler<t_event> t_handler>
   result add_handling(const handling_name &p_id, t_handling_queue &&p_queue,
                       t_handler       &&p_handler,
@@ -231,7 +231,7 @@ public:
   {
     try
     {
-      auto _visit{[this]<src::traits::tuple::is_tuple t_tuple, size_t t_idx>()
+      auto _visit{[this]<src::tuple::traits::is_tuple t_tuple, size_t t_idx>()
                   {
                     clear<std::tuple_element_t<t_idx, t_tuple>>();
                     return true;
@@ -305,13 +305,13 @@ private:
   {
     try
     {
-      auto _visit{[this]<src::traits::tuple::is_tuple t_tuple, size_t t_idx>()
+      auto _visit{[this]<src::tuple::traits::is_tuple t_tuple, size_t t_idx>()
                   {
                     stop<std::tuple_element_t<t_idx, t_tuple>>();
                     return true;
                   }};
 
-      src::traits::tuple::traverse<events>(_visit);
+      src::tuple::traits::traverse<events>(_visit);
     }
     catch (std::exception &_ex)
     {
@@ -396,7 +396,7 @@ private:
   template <src::async::traits::is_event t_event>
   [[nodiscard]] static constexpr std::size_t get_handlings_index()
   {
-    constexpr auto _idx{src::traits::tuple::find<events, t_event>()};
+    constexpr auto _idx{src::tuple::traits::find<events, t_event>()};
     static_assert(_idx, "event not found in the tuple of events");
     return _idx.value();
   }
@@ -478,13 +478,13 @@ private:
   template <src::async::traits::is_event t_event>
   static constexpr void check_if_event_is_in_events_tupĺe()
   {
-    static_assert(src::traits::tuple::contains_type<events, t_event>(),
+    static_assert(src::tuple::traits::contains_type<events, t_event>(),
                   "event is not in the 't_events...' of the dispatcher");
   }
 
   template <src::async::traits::is_event            t_event,
             src::async::traits::is_handler<t_event> t_handler,
-            src::traits::container::queue<t_event>  t_queue>
+            src::container::traits::queue<t_event>  t_queue>
   result add_handling(
       const handling_name &p_handling_id, t_handler &&p_handler,
       t_queue &&p_queue, size_t p_num_handlers,

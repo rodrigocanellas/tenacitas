@@ -18,11 +18,11 @@
 #include "tenacitas/src/crosswords/dat/coordinates.h"
 #include "tenacitas/src/crosswords/dat/grid.h"
 #include "tenacitas/src/async/traits/is_dispatcher.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::src::crosswords::bus::internal {
 
-template <src::traits::log::logger t_logger,
+template <src::log::traits::logger t_logger,
           src::async::traits::dispatcher t_dispatcher>
 struct organizer {
   // using events_subscribed =

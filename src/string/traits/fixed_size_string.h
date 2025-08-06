@@ -3,25 +3,29 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_STRNG_FIXED_SIZE_STRING_H
-#define TENACITAS_SRC_TRAITS_STRNG_FIXED_SIZE_STRING_H
+#ifndef TENACITAS_SRC_STRING_TRAITS_FIXED_SIZE_STRING_H
+#define TENACITAS_SRC_STRING_TRAITS_FIXED_SIZE_STRING_H
 
 #include <cstring>
 #include <type_traits>
 
-namespace tenacitas::src::traits::string {
+namespace tenacitas::src::string::traits
+{
 
 template <typename t>
 concept fixed_size_string =
     std::is_same_v<decltype(t::size), const std::size_t> &&
 
     requires(t p_t, const char *p_value) {
+      {
+        t{p_value}
+      };
 
-  {t{p_value}};
+      {
+        std::strlen(p_value) <= t::size
+      };
+    };
 
-  {std::strlen(p_value) <= t::size};
-};
-
-} // namespace tenacitas::src::traits::string
+} // namespace tenacitas::src::string::traits
 
 #endif

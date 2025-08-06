@@ -11,14 +11,14 @@
 #include "tenacitas/src/async/traits/has_publish_method.h"
 #include "tenacitas/src/async/traits/is_dispatcher.h"
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 using namespace tenacitas;
 
 namespace tenacitas::exp::async::temperature_sensors_simulator::per
 {
 
-template <src::traits::log::logger          t_logger,
+template <src::log::traits::logger          t_logger,
           src::async::traits::is_dispatcher t_dispatcher>
 requires(src::async::traits::is_dispatcher<t_dispatcher, evt::new_temperature>
          && src::async::traits::has_publish_method<t_dispatcher,

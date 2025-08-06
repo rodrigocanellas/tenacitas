@@ -12,12 +12,12 @@
 #include <string>
 
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 #include "tenacitas/src/translator/dictionary.h"
 
 namespace tenacitas::src::translator {
 
-template <src::traits::log::logger t_logger, std::unsigned_integral t_index = uint32_t>
+template <src::log::traits::logger t_logger, std::unsigned_integral t_index = uint32_t>
 struct translator_from_file {
   using logger = t_logger;
 

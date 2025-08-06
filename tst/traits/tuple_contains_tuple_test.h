@@ -9,14 +9,14 @@
 #include <tuple>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/contains_tuple.h"
-#include "tenacitas/src/traits/tuple/is_tuple.h"
+#include "tenacitas/src/tuple/traits/contains_tuple.h"
+#include "tenacitas/src/tuple/traits/is_tuple.h"
 
 using namespace tenacitas;
 
-template <src::traits::tuple::is_tuple t_container,
-          src::traits::tuple::is_tuple t_contained>
-// requires src::traits::tuple::contains_tuple<t_container, t_contained>
+template <src::tuple::traits::is_tuple t_container,
+          src::tuple::traits::is_tuple t_contained>
+// requires src::tuple::traits::contains_tuple<t_container, t_contained>
 void func() {}
 
 namespace tenacitas::tst::traits {
@@ -32,7 +32,7 @@ struct tuple_contains_tuple_000 {
     using tuple_2 = std::tuple<char>;
 
     static_assert(
-        src::traits::tuple::contains_tuple_helper<tuple_1, tuple_2>());
+        src::tuple::traits::contains_tuple_helper<tuple_1, tuple_2>());
 
     // this should compile
     func<tuple_1, tuple_2>();

@@ -14,13 +14,13 @@
 #include <string_view>
 
 #include "tenacitas/src/parser/ini_file.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 using namespace std::chrono_literals;
 
 namespace tenacitas::exp::async {
 
-template <src::traits::log::logger t_logger, size_t t_num_handlings = 5>
+template <src::log::traits::logger t_logger, size_t t_num_handlings = 5>
 struct configuration {
   struct handling_cfg {
     bool use{false};

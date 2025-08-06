@@ -2,7 +2,11 @@ include (../../common.pri)
 
 TEMPLATE=aux
 
+
+PRJ_DIR=$$BASE_DIR/tenacitas/src/string
+
 HEADERS += \
-    $$BASE_DIR/tenacitas/src/string/fixed_size_string.h
+    $$PRJ_DIR/fixed_size_string.h \
+    $$PRJ_DIR/traits/fixed_size_string.h
 
 

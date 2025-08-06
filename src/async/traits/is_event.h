@@ -8,15 +8,15 @@
 
 #include <type_traits>
 
-#include "tenacitas/src/traits/has_output_operator.h"
+#include "tenacitas/src/ostream/traits/has_output_operator.h"
 
 namespace tenacitas::src::async::traits
 {
 
 template <typename t>
-concept is_event = std::default_initializable<t> && std::copyable<t>
-                   && std::movable<t> && src::traits::has_output_operator<t>
-                   && std::is_class_v<t>;
+concept is_event =
+    std::default_initializable<t> && std::copyable<t> && std::movable<t>
+    && src::ostream::traits::has_output_operator<t> && std::is_class_v<t>;
 
 }
 

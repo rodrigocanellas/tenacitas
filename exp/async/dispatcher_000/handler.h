@@ -17,7 +17,7 @@
 #include "tenacitas/src/async/result.h"
 #include "tenacitas/src/async/traits/has_publish_method.h"
 #include "tenacitas/src/format/fmt.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::exp::async
 {

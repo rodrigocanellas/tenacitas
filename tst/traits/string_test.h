@@ -8,7 +8,7 @@
 
 #include "tenacitas/src/program/options.h"
 #include "tenacitas/src/string/fixed_size_string.h"
-#include "tenacitas/src/traits/string/fixed_size_string.h"
+#include "tenacitas/src/string/traits/fixed_size_string.h"
 
 using namespace tenacitas;
 
@@ -23,7 +23,7 @@ struct fixed_size_string_000 {
   bool operator()(const src::program::options &) {
     using fss = src::string::fixed_size_string<5>;
 
-    static_assert(src::traits::string::fixed_size_string<fss>,
+    static_assert(src::string::traits::fixed_size_string<fss>,
                   "src::string::fixed_size_string<5> is conformance to "
                   "traits::src::string::fixed_size_string");
 
@@ -40,7 +40,7 @@ struct fixed_size_string_001 {
   bool operator()(const src::program::options &) {
 
     using fss = std::string;
-    static_assert(!src::traits::string::fixed_size_string<fss>,
+    static_assert(!src::string::traits::fixed_size_string<fss>,
                   "src::string::fixed_size_string<5> is conformance to "
                   "traits::src::string::fixed_size_string");
 

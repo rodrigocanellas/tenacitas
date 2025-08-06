@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_TUPLE_SIZE_GREATER_OR_EQUAL_H
-#define TENACITAS_SRC_TRAITS_TUPLE_SIZE_GREATER_OR_EQUAL_H
+#ifndef TENACITAS_SRC_TUPLE_TRAITS_SIZE_GREATER_OR_EQUAL_H
+#define TENACITAS_SRC_TUPLE_TRAITS_SIZE_GREATER_OR_EQUAL_H
 
 #include <tuple>
 
-#include "tenacitas/src/traits/tuple/is_tuple.h"
+#include "tenacitas/src/tuple/traits/is_tuple.h"
 
-namespace tenacitas::src::traits::tuple {
+namespace tenacitas::src::tuple::traits {
 
 template <typename t_tuple_1, typename t_tuple_2>
 concept size_greather_or_equal =
@@ -21,5 +21,5 @@ concept size_greather_or_equal =
 
     (std::tuple_size_v<t_tuple_1> >= std::tuple_size_v<t_tuple_2>);
 
-} // namespace tenacitas::src::traits::tuple
+} // namespace tenacitas::src::tuple::traits
 #endif

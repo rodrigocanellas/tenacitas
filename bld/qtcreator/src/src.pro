@@ -17,6 +17,7 @@ SUBDIRS = \
     tester \
     ostream \
     string  \
+    memory  \
     crosswords
 
 

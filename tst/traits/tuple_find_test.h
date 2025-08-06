@@ -9,7 +9,7 @@
 #include <tuple>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/traits/tuple/find.h"
+#include "tenacitas/src/tuple/traits/find.h"
 
 using namespace tenacitas;
 
@@ -23,7 +23,7 @@ struct tuple_find_000 {
   bool operator()(const src::program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{src::traits::tuple::find<my_tuple, int>()};
+    auto _idx{src::tuple::traits::find<my_tuple, int>()};
     if (!_idx) {
       std::cerr << "ERROR! idx should be 0, but the 'int' was not found "
                 << std::endl;
@@ -36,7 +36,7 @@ struct tuple_find_000 {
     }
     std::cerr << "idx is " << _index << ", as expected" << std::endl;
 
-    _idx = src::traits::tuple::find<my_tuple, char>();
+    _idx = src::tuple::traits::find<my_tuple, char>();
     if (!_idx) {
       std::cerr << "ERROR! idx should be 1, but the 'char' was not found "
                 << std::endl;
@@ -49,7 +49,7 @@ struct tuple_find_000 {
     }
     std::cerr << "idx is " << _index << ", as expected" << std::endl;
 
-    _idx = src::traits::tuple::find<my_tuple, float>();
+    _idx = src::tuple::traits::find<my_tuple, float>();
     if (!_idx) {
       std::cerr << "ERROR! idx should be 2, but it 'char' was not found "
                 << std::endl;
@@ -74,7 +74,7 @@ struct tuple_find_001 {
   bool operator()(const src::program::options &) {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{src::traits::tuple::find<my_tuple, std::string>()};
+    auto _idx{src::tuple::traits::find<my_tuple, std::string>()};
     if (_idx) {
       std::cerr << "'std::string' should not be found, but it is "
                 << _idx.value() << std::endl;
@@ -91,7 +91,7 @@ struct tuple_find_002 {
   bool operator()(const src::program::options &) {
     using my_tuple = std::tuple<>;
 
-    auto _idx{src::traits::tuple::find<my_tuple, std::string>()};
+    auto _idx{src::tuple::traits::find<my_tuple, std::string>()};
     if (_idx) {
       std::cerr << "'std::string' should not be found, but is is "
                 << _idx.value() << std::endl;

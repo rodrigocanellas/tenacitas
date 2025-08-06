@@ -13,13 +13,15 @@
 
 #include "tenacitas/src/ostream/pair.h"
 #include "tenacitas/src/ostream/tuple.h"
-#include "tenacitas/src/time/chrono_output.h"
+#include "tenacitas/src/time/output.h"
 
-namespace tenacitas::src::format {
+namespace tenacitas::src::format
+{
 
 /// \brief Formats the params into a string
 template <typename... t_params>
-static inline std::string fmt(t_params &&...p_params) {
+static inline std::string fmt(t_params &&...p_params)
+{
   std::ostringstream _stream;
   ((_stream << p_params), ...);
   return _stream.str();

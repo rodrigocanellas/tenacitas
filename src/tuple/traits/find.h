@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_TUPLE_FIND_H
-#define TENACITAS_SRC_TRAITS_TUPLE_FIND_H
+#ifndef TENACITAS_SRC_TUPLE_TRAITS_FIND_H
+#define TENACITAS_SRC_TUPLE_TRAITS_FIND_H
 
 #include <optional>
 
-#include "tenacitas/src/traits/tuple/is_tuple.h"
+#include "tenacitas/src/tuple/traits/is_tuple.h"
 
-namespace tenacitas::src::traits::tuple {
+namespace tenacitas::src::tuple::traits {
 
 template <is_tuple t_tuple, typename t_type, std::size_t t_idx = 0>
 constexpr std::optional<std::size_t> find() {
@@ -46,6 +46,6 @@ constexpr std::optional<std::size_t> find() {
 //   }
 // }
 
-} // namespace tenacitas::src::traits::tuple
+} // namespace tenacitas::src::tuple::traits
 
 #endif

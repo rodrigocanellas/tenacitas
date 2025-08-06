@@ -7,7 +7,7 @@
 #define TENACITAS_SRC_ASYNC_TRAITS_HAS_EVENTS_PUBLISHED_H
 
 #include "tenacitas/src/async/traits/is_event.h"
-#include "tenacitas/src/traits/tuple/contains_type.h"
+#include "tenacitas/src/tuple/traits/contains_type.h"
 
 namespace tenacitas::src::async::traits {
 

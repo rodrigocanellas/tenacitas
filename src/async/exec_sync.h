@@ -10,9 +10,10 @@
 #include <functional>
 #include <optional>
 
-#include "tenacitas/src/traits/chrono_convertible.h"
+#include "tenacitas/src/time/traits/chrono_convertible.h"
 
-namespace tenacitas::src::async {
+namespace tenacitas::src::async
+{
 
 /// \brief Executes a function synchronoulsy with timeout control
 /// The function may or may not return, and may or may not receive parameters
@@ -55,11 +56,12 @@ inline std::conditional_t<
     // 'p_function' executes in less 'p_max_time', or empty otherwise
     std::optional<
         std::invoke_result_t<t_function, std::function<bool()>, t_params...>>>
-exec_sync(traits::convertible_to_nano auto p_max_time, t_function &p_function,
-          t_params &&...p_params) {
-  std::mutex _mutex;
+exec_sync(time::traits::convertible_to_nano auto p_max_time,
+          t_function &p_function, t_params &&...p_params)
+{
+  std::mutex              _mutex;
   std::condition_variable _cond;
-  bool _timeout{false};
+  bool                    _timeout{false};
 
   auto _is_timeout = [&_timeout]() { return _timeout; };
 
@@ -68,14 +70,18 @@ exec_sync(traits::convertible_to_nano auto p_max_time, t_function &p_function,
 
   auto _ns{std::chrono::duration_cast<std::chrono::nanoseconds>(p_max_time)};
 
-  if constexpr (std::is_void_v<t_ret>) {
-    std::thread _th([&]() -> void {
-      p_function(_is_timeout, std::forward<t_params>(p_params)...);
-      _cond.notify_one();
-    });
+  if constexpr (std::is_void_v<t_ret>)
+  {
+    std::thread _th(
+        [&]() -> void
+        {
+          p_function(_is_timeout, std::forward<t_params>(p_params)...);
+          _cond.notify_one();
+        });
 
     std::unique_lock<std::mutex> _lock{_mutex};
-    if (_cond.wait_for(_lock, _ns) != std::cv_status::timeout) {
+    if (_cond.wait_for(_lock, _ns) != std::cv_status::timeout)
+    {
       //      _th.join();
       _th.detach();
       return true;
@@ -83,16 +89,21 @@ exec_sync(traits::convertible_to_nano auto p_max_time, t_function &p_function,
     _timeout = true;
     _th.join();
     return false;
-  } else {
+  }
+  else
+  {
     t_ret _ret;
 
-    std::thread _th([&]() -> void {
-      _ret = p_function(_is_timeout, std::forward<t_params>(p_params)...);
-      _cond.notify_one();
-    });
+    std::thread _th(
+        [&]() -> void
+        {
+          _ret = p_function(_is_timeout, std::forward<t_params>(p_params)...);
+          _cond.notify_one();
+        });
 
     std::unique_lock<std::mutex> _lock{_mutex};
-    if (_cond.wait_for(_lock, _ns) != std::cv_status::timeout) {
+    if (_cond.wait_for(_lock, _ns) != std::cv_status::timeout)
+    {
       //      _th.join();
       _th.detach();
       return {std::move(_ret)};

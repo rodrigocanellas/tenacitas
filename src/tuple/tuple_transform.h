@@ -8,12 +8,14 @@
 
 #include <tuple>
 
-#include "tenacitas/src/traits/tuple/is_tuple.h"
+#include "tenacitas/src/tuple/traits/is_tuple.h"
 
-namespace tenacitas::src::tuple {
+namespace tenacitas::src::tuple
+{
 
 // Base class for specialization
-template <traits::tuple::is_tuple t_uple, template <typename> typename t_converter>
+template <src::tuple::traits::is_tuple t_uple,
+          template <typename> typename t_converter>
 struct tuple_transform;
 
 /**
@@ -47,7 +49,8 @@ int main() {
 }
 */
 template <template <typename> typename t_converter, typename... ts>
-struct tuple_transform<std::tuple<ts...>, t_converter> {
+struct tuple_transform<std::tuple<ts...>, t_converter>
+{
   using type = std::tuple<t_converter<ts>...>;
 };
 

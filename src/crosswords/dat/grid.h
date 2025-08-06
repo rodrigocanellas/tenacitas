@@ -22,7 +22,7 @@
 #include "tenacitas/src/crosswords/dat/permutation.h"
 #include "tenacitas/src/crosswords/dat/word.h"
 // #include "tenacitas/src/log/cerr.h"
-// #include "tenacitas/src/traits/log/logger.h"
+// #include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::src::crosswords::dat {
 

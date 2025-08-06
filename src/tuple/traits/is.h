@@ -3,12 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_SRC_TRAITS_TUPLE_IS_H
-#define TENACITAS_SRC_TRAITS_TUPLE_IS_H
+#ifndef TENACITAS_SRC_TUPLE_TRAITS_IS_H
+#define TENACITAS_SRC_TUPLE_TRAITS_IS_H
 
 #include <tuple>
 
-namespace tenacitas::src::traits::tuple {
+namespace tenacitas::src::tuple::traits {
 
 /// \brief Type trait that identifies if an object is not a tuple
 template <typename> struct is : std::false_type {};
@@ -18,6 +18,6 @@ template <typename... t> struct is<std::tuple<t...>> : std::true_type {};
 
 template <typename t> inline constexpr bool is_v = is<t>::value;
 
-} // namespace tenacitas::src::traits::tuple
+} // namespace tenacitas::src::tuple::traits
 
 #endif

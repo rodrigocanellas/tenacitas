@@ -11,7 +11,7 @@
 #include "tenacitas/src/async/result.h"
 #include "tenacitas/src/async/traits/is_event.h"
 #include "tenacitas/src/async/traits/is_handler.h"
-#include "tenacitas/src/traits/container/queue.h"
+#include "tenacitas/src/container/traits/queue.h"
 
 namespace tenacitas::src::async::traits
 {
@@ -23,7 +23,7 @@ namespace tenacitas::src::async::traits
 template <typename t, typename t_event, typename t_queue, typename t_handler>
 concept has_add_handling_method =
     src::async::traits::is_event<t_event>
-    && src::traits::container::queue<t_queue, t_event>
+    && src::container::traits::queue<t_queue, t_event>
     && src::async::traits::is_handler<t_handler, t_event>
     && requires(t &d, src::async::handling_name &&p_handling_name,
                 t_queue &&p_queue, t_handler &&p_handler,

@@ -11,16 +11,22 @@
 #include <sstream>
 
 #include "tenacitas/src/program/options.h"
-#include "tenacitas/src/time/chrono_output.h"
+#include "tenacitas/src/time/output.h"
 
 using namespace tenacitas;
 
-namespace tenacitas::tst::time {
+namespace tenacitas::tst::time
+{
 
-struct time_output_000 {
-  static std ::string desc() { return "Output nanoseconds"; }
+struct time_output_000
+{
+  static std ::string desc()
+  {
+    return "Output nanoseconds";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
     std::ostringstream _stream;
 
     _stream << std::chrono::nanoseconds(39);
@@ -32,10 +38,15 @@ struct time_output_000 {
   }
 };
 
-struct time_output_001 {
-  static std ::string desc() { return "Output microseconds"; }
+struct time_output_001
+{
+  static std ::string desc()
+  {
+    return "Output microseconds";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -48,10 +59,15 @@ struct time_output_001 {
   }
 };
 
-struct time_output_002 {
-  static std ::string desc() { return "Output milliseconds"; }
+struct time_output_002
+{
+  static std ::string desc()
+  {
+    return "Output milliseconds";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -64,10 +80,15 @@ struct time_output_002 {
   }
 };
 
-struct time_output_003 {
-  static std ::string desc() { return "Output seconds"; }
+struct time_output_003
+{
+  static std ::string desc()
+  {
+    return "Output seconds";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -80,10 +101,15 @@ struct time_output_003 {
   }
 };
 
-struct time_output_004 {
-  static std ::string desc() { return "Output minutes"; }
+struct time_output_004
+{
+  static std ::string desc()
+  {
+    return "Output minutes";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -96,10 +122,15 @@ struct time_output_004 {
   }
 };
 
-struct time_output_005 {
-  static std ::string desc() { return "Output hours"; }
+struct time_output_005
+{
+  static std ::string desc()
+  {
+    return "Output hours";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -112,10 +143,15 @@ struct time_output_005 {
   }
 };
 
-struct time_output_006 {
-  static std ::string desc() { return "Output days"; }
+struct time_output_006
+{
+  static std ::string desc()
+  {
+    return "Output days";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -128,10 +164,15 @@ struct time_output_006 {
   }
 };
 
-struct time_output_007 {
-  static std ::string desc() { return "Output months"; }
+struct time_output_007
+{
+  static std ::string desc()
+  {
+    return "Output months";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 
@@ -144,10 +185,15 @@ struct time_output_007 {
   }
 };
 
-struct time_output_008 {
-  static std ::string desc() { return "Output years"; }
+struct time_output_008
+{
+  static std ::string desc()
+  {
+    return "Output years";
+  }
 
-  bool operator()(const src::program::options &) {
+  bool operator()(const src::program::options &)
+  {
 
     std::ostringstream _stream;
 

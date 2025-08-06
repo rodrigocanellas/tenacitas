@@ -17,7 +17,7 @@
 
 #include "tenacitas/src/log/level.h"
 #include "tenacitas/src/log/line_header_formater.h"
-#include "tenacitas/src/traits/log/writer.h"
+#include "tenacitas/src/log/traits/writer.h"
 
 namespace tenacitas::src::log::internal {
 
@@ -31,7 +31,7 @@ namespace tenacitas::src::log::internal {
 /// logging; \p funcition-name is the name of the function \p line-number is the
 /// number of the line that is logging; contents are the log message specific
 /// contents
-template <src::traits::log::writer t_log_writer> class logger {
+template <src::log::traits::writer t_log_writer> class logger {
 
 public:
   /// \brief Default contructor

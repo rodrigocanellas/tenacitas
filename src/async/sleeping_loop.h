@@ -14,14 +14,14 @@
 
 #include "tenacitas/src/format/fmt.h"
 
-#include "tenacitas/src/traits/chrono_convertible.h"
-#include "tenacitas/src/traits/log/logger.h"
+#include "tenacitas/src/time/traits/chrono_convertible.h"
+#include "tenacitas/src/log/traits/logger.h"
 
 namespace tenacitas::src::async
 {
 
 /// \brief Periodically executes a function
-template <src::traits::log::logger t_logger>
+template <src::log::traits::logger t_logger>
 struct sleeping_loop
 {
   /// \brief Signature of the function that will be called in each round of
@@ -38,7 +38,7 @@ struct sleeping_loop
   /// \param p_function to be executed at a certain interval
   ///
   /// \param p_interval interval that \p p_function will be executed
-  template <src::traits::convertible_to_nano t_interval>
+  template <src::time::traits::convertible_to_nano t_interval>
   sleeping_loop(logger &p_logger, function p_function, t_interval p_interval,
                 std::string_view p_id = "no-id")
       : m_logger(p_logger), m_id(p_id), m_function(p_function),
