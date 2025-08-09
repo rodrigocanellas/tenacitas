@@ -1,8 +1,9 @@
 QT -= core
 TEMPLATE = app
-TARGET = tnct.async.exp.executer_000
+TARGET = tenacitas.async.exp.executer_000
 CONFIG += example
 include (../../../../common.pri)
-SOURCES = $$BASE_DIR_SRC/tnct/async/executer_000/main.cpp
+
+SOURCES = $$BASE_DIR/tenacitas/src/async/exp/executer_000/main.cpp
 
 

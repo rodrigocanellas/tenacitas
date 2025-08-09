@@ -28,7 +28,7 @@ FORMS += \
 #CONFIG += embed_translations
 
 
-TARGET=tnct.crosswords.qt.desktop
+TARGET=tenacitas.crosswords.qt.desktop
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin

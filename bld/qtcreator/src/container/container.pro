@@ -1,6 +1,8 @@
 include (../../common.pri)
 
-TEMPLATE=aux
+TEMPLATE=subdirs
+
+SUBDIRS = test
 
 
 HEADERS += \

@@ -5,7 +5,9 @@ TARGET=tnct.format.test
 
 include (../../../common.pri)
 
-SOURCES = $$BASE_DIR_SRC/tnct/format/test/main.cpp
+PRJ_DIR=$$BASE_DIR/tenacitas/src/format/tst
+
+SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
-        $$BASE_DIR_SRC/tnct/format/test/format_number_test.h
+        $$PRJ_DIR/format_number_test.h

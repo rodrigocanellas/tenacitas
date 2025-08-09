@@ -5,13 +5,14 @@ TARGET=tnct.container.test
 
 include (../../../common.pri)
 
+PRJ_DIR=$$BASE_DIR/tenacitas/src/container/tst
 
-SOURCES = $$BASE_DIR_SRC/tnct/container/test/main.cpp
+SOURCES = $$PRJ_DIR/main.cpp
 
-HEADERS = $$BASE_DIR_SRC/tnct/container/test/matrix_test.h \
-          $$BASE_DIR_SRC/tnct/container/test/circular_queue_test.h
+HEADERS = $$PRJ_DIR/matrix_test.h \
+          $$PRJ_DIR/circular_queue_test.h
 
 DISTFILES += \
-    $$BASE_DIR_SRC/tnct/container/test/circular_queue_tests_000.ini
+    $$PRJ_DIR/circular_queue_tests_000.ini
 
 

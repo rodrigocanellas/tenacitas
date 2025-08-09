@@ -5,9 +5,11 @@ TARGET=tnct.generic.test
 
 include (../../../common.pri)
 
-SOURCES = $$BASE_DIR_SRC/tnct/generic/test/main.cpp
+PRJ_DIR=$$BASE_DIR/tenacitas/src/generic/tst
+
+SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
-        $$BASE_DIR_SRC/tnct/generic/test/tester_test.h \
-        $$BASE_DIR_SRC/tnct/generic/test/id_test.h \
-        $$BASE_DIR_SRC/tnct/generic/test/format_number_test.h
+        $$PRJ_DIR/tester_test.h \
+        $$PRJ_DIR/id_test.h \
+        $$PRJ_DIR/format_number_test.h

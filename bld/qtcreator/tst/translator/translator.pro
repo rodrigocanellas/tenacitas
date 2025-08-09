@@ -1,7 +1,7 @@
 QT -= core
 TEMPLATE = app
 CONFIG += test
-TARGET = tnct.tst.translator
+TARGET = tenacitas.tst.translator
 include (../../common.pri)
 
 SOURCES += $$BASE_DIR/tenacitas/tst/translator/main.cpp

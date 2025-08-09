@@ -6,14 +6,14 @@ TARGET=tnct.ostream.test
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 include (../../../common.pri)
 
-PRJ_DIR=$$BASE_DIR_SRC/tnct/ostream
+PRJ_DIR=$$BASE_DIR/tenacitas/src/ostream/tst
 
 
-SOURCES = $$PRJ_DIR/test/main.cpp
+SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
-          $$PRJ_DIR/test/tuple_output_test.h \
-          $$PRJ_DIR/test/pair_output_test.h
+          $$PRJ_DIR/tuple_output_test.h \
+          $$PRJ_DIR/pair_output_test.h
 
 
 

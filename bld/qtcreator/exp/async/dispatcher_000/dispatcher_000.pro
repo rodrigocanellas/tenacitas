@@ -5,7 +5,7 @@ CONFIG += example
 include (../../../common.pri)
 
 
-PRJ_DIR=$$BASE_DIR/tenacitas/exp/async/
+PRJ_DIR=$$BASE_DIR/tenacitas/src/async/exp/
 
 HEADERS+=$$PRJ_DIR/dispatcher_000/publisher.h \
          $$PRJ_DIR/dispatcher_000/logger.h \

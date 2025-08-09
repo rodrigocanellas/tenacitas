@@ -1,7 +1,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.time
+TARGET=tenacitas.tst.time
 
 include (../../common.pri)
 

@@ -20,24 +20,29 @@
 #include "tenacitas/src/log/log.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 QT_END_NAMESPACE
 
-
-
-class Char : public QLabel {
+class Char : public QLabel
+{
   Q_OBJECT
 public:
-  Char(QChar p_value) : Char() { set(p_value); }
+  Char(QChar p_value) : Char()
+  {
+    set(p_value);
+  }
 
-  Char() : QLabel() {
+  Char() : QLabel()
+  {
     setFrameShadow(QFrame::Shadow::Plain);
     setFrameStyle(QFrame::NoFrame);
   }
 
-  void set(QChar p_value) {
+  void set(QChar p_value)
+  {
     setAlignment(Qt::AlignCenter);
     setStyleSheet(lowlight_style);
     setText(QString(p_value).toUpper());
@@ -45,13 +50,20 @@ public:
     // adjustSize();
   }
 
-  void highlight(crosswords::dat::orientation p_orientation) {
+  void highlight(crosswords::dat::orientation p_orientation)
+  {
     setStyleSheet((p_orientation == crosswords::dat::orientation::hori
                        ? hightlight_style_horizontal
                        : hightlight_style_vertical));
   }
-  void lowlight() { setStyleSheet(lowlight_style); }
-  void unused() { setStyleSheet(unused_style); }
+  void lowlight()
+  {
+    setStyleSheet(lowlight_style);
+  }
+  void unused()
+  {
+    setStyleSheet(unused_style);
+  }
 
 public:
   static const QString lowlight_style;
@@ -60,53 +72,81 @@ public:
   static const QString unused_style;
 };
 
-class Content : public QFrame {
+class Content : public QFrame
+{
   Q_OBJECT
 public:
-  Content() : QFrame() {
+  Content() : QFrame()
+  {
     setFrameShadow(QFrame::Shadow::Plain);
     setFrameStyle(QFrame::NoFrame);
   }
-  virtual bool is_first() const { return false; }
+  virtual bool is_first() const
+  {
+    return false;
+  }
   virtual void highlight(crosswords::dat::orientation) = 0;
-  virtual void lowlight() = 0;
-  virtual void unused() = 0;
-  virtual bool is_unused() const = 0;
+  virtual void lowlight()                              = 0;
+  virtual void unused()                                = 0;
+  virtual bool is_unused() const                       = 0;
 };
 
-class Letter : public Content {
+class Letter : public Content
+{
   Q_OBJECT
 public:
-  Letter(QChar p_value) : Letter() { set(p_value); }
+  Letter(QChar p_value) : Letter()
+  {
+    set(p_value);
+  }
 
-  Letter() : Content() {
+  Letter() : Content()
+  {
     m_char = new Char();
     auto _layout{new QHBoxLayout()};
     _layout->addWidget(m_char);
     setLayout(_layout);
   }
 
-  void set(QChar p_value) { m_char->set(p_value); }
+  void set(QChar p_value)
+  {
+    m_char->set(p_value);
+  }
 
-  void highlight(crosswords::dat::orientation p_orientation) override {
+  void highlight(crosswords::dat::orientation p_orientation) override
+  {
     m_char->highlight(p_orientation);
   }
-  void lowlight() override { m_char->lowlight(); }
-  void unused() override { m_char->unused(); }
-  bool is_unused() const override { return false; }
-  Char *get_char() const { return m_char; }
+  void lowlight() override
+  {
+    m_char->lowlight();
+  }
+  void unused() override
+  {
+    m_char->unused();
+  }
+  bool is_unused() const override
+  {
+    return false;
+  }
+  Char *get_char() const
+  {
+    return m_char;
+  }
 
 private:
   Char *m_char{nullptr};
 };
 
-class Superscript : public QLabel {
+class Superscript : public QLabel
+{
   Q_OBJECT
 public:
   Superscript(QTableWidget *p_table,
               std::function<void(crosswords::dat::grid::const_layout_ite)>
                   p_letter_id_clicked)
-      : QLabel(), m_table(p_table), m_letter_id_clicked(p_letter_id_clicked) {
+      : QLabel(), m_table(p_table), m_letter_id_clicked(p_letter_id_clicked)
+  {
     setMouseTracking(true);
     setAlignment(Qt::AlignCenter);
     // setMaximumWidth(15);
@@ -117,31 +157,36 @@ public:
     setTextFormat(Qt::RichText);
   }
 
-  void set(crosswords::dat::grid::const_layout_ite p_layout) {
-    m_set = true;
+  void set(crosswords::dat::grid::const_layout_ite p_layout)
+  {
+    m_set    = true;
     m_layout = p_layout;
-    QString _str{"<sup>" +
-                 QString::number(static_cast<int>(m_layout->get_id())) +
-                 "</sup>"};
+    QString _str{"<sup>" + QString::number(static_cast<int>(m_layout->get_id()))
+                 + "</sup>"};
     this->setText(_str);
     //    this->adjustSize();
   }
 
-  void mousePressEvent(QMouseEvent * /*event*/) {
+  void mousePressEvent(QMouseEvent * /*event*/)
+  {
     m_letter_id_clicked(m_layout);
   }
 
-  uint16_t get_id() const { return (m_set ? m_layout->get_id() : 0); }
+  uint16_t get_id() const
+  {
+    return (m_set ? m_layout->get_id() : 0);
+  }
 
 private:
   QTableWidget *m_table{nullptr};
   std::function<void(crosswords::dat::grid::const_layout_ite)>
-      m_letter_id_clicked;
+                                          m_letter_id_clicked;
   crosswords::dat::grid::const_layout_ite m_layout;
-  bool m_set{false};
+  bool                                    m_set{false};
 };
 
-class FirstLetter : public Content {
+class FirstLetter : public Content
+{
   Q_OBJECT
 public:
   FirstLetter(QTableWidget *p_table,
@@ -149,20 +194,27 @@ public:
                   p_letter_id_clicked)
       : Content(), m_table(p_table), m_char(nullptr),
         m_horizontal(new Superscript(m_table, p_letter_id_clicked)),
-        m_vertical(new Superscript(m_table, p_letter_id_clicked)) {
+        m_vertical(new Superscript(m_table, p_letter_id_clicked))
+  {
     setFrameShape(QFrame::NoFrame);
     setFrameShadow(QFrame::Plain);
   }
 
-  bool is_first() const override { return true; }
+  bool is_first() const override
+  {
+    return true;
+  }
 
-  std::pair<uint16_t, uint16_t> get_id() {
+  std::pair<uint16_t, uint16_t> get_id()
+  {
     return {m_horizontal->get_id(), m_vertical->get_id()};
   }
 
-  void set_layout(crosswords::dat::grid::const_layout_ite p_layout) {
+  void set_layout(crosswords::dat::grid::const_layout_ite p_layout)
+  {
     auto _lay = layout();
-    if (!_lay) {
+    if (!_lay)
+    {
       _lay = new QHBoxLayout();
       _lay->addWidget(m_horizontal);
       m_char = new Char(p_layout->get_word()[0]);
@@ -175,20 +227,27 @@ public:
     auto _row{p_layout->get_row()};
     auto _col{p_layout->get_col()};
 
-    if (p_layout->get_orientation() == crosswords::dat::orientation::hori) {
+    if (p_layout->get_orientation() == crosswords::dat::orientation::hori)
+    {
       m_horizontal->set(p_layout);
       m_orientation = crosswords::dat::orientation::hori;
-      for (decltype(_size) _i = 1; _i < _size; ++_i) {
-        if (!m_table->cellWidget(_row, _col + _i)) {
+      for (decltype(_size) _i = 1; _i < _size; ++_i)
+      {
+        if (!m_table->cellWidget(_row, _col + _i))
+        {
           m_table->setCellWidget(_row, _col + _i,
                                  new Letter(p_layout->get_word()[_i]));
         }
       }
-    } else {
+    }
+    else
+    {
       m_vertical->set(p_layout);
       m_orientation = crosswords::dat::orientation::vert;
-      for (decltype(_size) _i = 1; _i < _size; ++_i) {
-        if (!m_table->cellWidget(_row + _i, _col)) {
+      for (decltype(_size) _i = 1; _i < _size; ++_i)
+      {
+        if (!m_table->cellWidget(_row + _i, _col))
+        {
           m_table->setCellWidget(_row + _i, _col,
                                  new Letter(p_layout->get_word()[_i]));
         }
@@ -196,38 +255,66 @@ public:
     }
   }
 
-  bool is_unused() const override { return false; }
+  bool is_unused() const override
+  {
+    return false;
+  }
 
-  Char *get_char() const { return m_char; }
+  Char *get_char() const
+  {
+    return m_char;
+  }
 
-  void highlight(crosswords::dat::orientation p_orientation) override {
+  void highlight(crosswords::dat::orientation p_orientation) override
+  {
     m_char->highlight(p_orientation);
   }
-  void lowlight() override { m_char->lowlight(); }
-  void unused() override { m_char->unused(); }
+  void lowlight() override
+  {
+    m_char->lowlight();
+  }
+  void unused() override
+  {
+    m_char->unused();
+  }
 
 private:
-  QTableWidget *m_table{nullptr};
-  Char *m_char{nullptr};
-  Superscript *m_horizontal{nullptr};
-  Superscript *m_vertical{nullptr};
+  QTableWidget                *m_table{nullptr};
+  Char                        *m_char{nullptr};
+  Superscript                 *m_horizontal{nullptr};
+  Superscript                 *m_vertical{nullptr};
   crosswords::dat::orientation m_orientation{
       crosswords::dat::orientation::undef};
 };
 
-class UnusedtLetter : public Content {
+class UnusedtLetter : public Content
+{
   Q_OBJECT
 public:
-  UnusedtLetter() : Content() { setStyleSheet(Char::unused_style); }
-  void highlight(crosswords::dat::orientation) override {
+  UnusedtLetter() : Content()
+  {
     setStyleSheet(Char::unused_style);
   }
-  void lowlight() override { setStyleSheet(Char::unused_style); }
-  void unused() override { setStyleSheet(Char::unused_style); }
-  bool is_unused() const override { return true; }
+  void highlight(crosswords::dat::orientation) override
+  {
+    setStyleSheet(Char::unused_style);
+  }
+  void lowlight() override
+  {
+    setStyleSheet(Char::unused_style);
+  }
+  void unused() override
+  {
+    setStyleSheet(Char::unused_style);
+  }
+  bool is_unused() const override
+  {
+    return true;
+  }
 };
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
   Q_OBJECT
 
 public:
@@ -242,7 +329,7 @@ public:
                  crosswords::asy::grid_permutations_tried>;
 
   MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
-             QWidget *parent = nullptr);
+             QWidget                         *parent = nullptr);
 
   ~MainWindow();
 
@@ -301,14 +388,14 @@ private:
   Ui::MainWindow *ui;
 
   crosswords::asy::dispatcher::ptr m_dispatcher;
-  crosswords::dat::entries m_entries;
+  crosswords::dat::entries         m_entries;
 
   std::shared_ptr<crosswords::dat::grid> m_grid;
 
   QColor m_original_background;
 
   crosswords::dat::grid::const_layout_ite m_first_letter;
-  int m_current_row{-1};
+  int                                     m_current_row{-1};
 
   std::atomic_bool m_solving{false};
 

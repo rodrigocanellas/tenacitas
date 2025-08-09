@@ -1,7 +1,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.generic
+TARGET=tenacitas.tst.generic
 
 include (../../common.pri)
 

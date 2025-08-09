@@ -2,7 +2,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.parser
+TARGET=tenacitas.tst.parser
 
 include (../../common.pri)
 

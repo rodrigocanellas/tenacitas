@@ -1,7 +1,9 @@
 include (../../common.pri)
 
 
-TEMPLATE=aux
+TEMPLATE=subdirs
+
+SUBDIRS = test
 
 HEADERS += \
         $$BASE_DIR/tenacitas/src/generic/id.h

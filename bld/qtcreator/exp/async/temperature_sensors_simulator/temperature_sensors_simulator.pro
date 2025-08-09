@@ -4,7 +4,7 @@ TARGET = tenacitas.exp.async.temperature_sensors_simulator
 CONFIG += example
 include (../../../common.pri)
 
-PRJ_DIR=$$BASE_DIR/tenacitas/exp/async/temperature_sensors_simulator
+PRJ_DIR=$$BASE_DIR/tenacitas/src/async/exp/temperature_sensors_simulator
 
 SOURCES += \
     $$PRJ_DIR/uix/qt/main.cpp \

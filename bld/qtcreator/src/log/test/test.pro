@@ -6,5 +6,7 @@ TARGET=tnct.log.test
 
 include (../../../common.pri)
 
-SOURCES = $$BASE_DIR_SRC/tnct/log/test/main.cpp
+PRJ_DIR=$$BASE_DIR/tenacitas/src/log/tst
+
+SOURCES = $$PRJ_DIR/main.cpp
 

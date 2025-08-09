@@ -1,12 +1,13 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.tuple
+TARGET=tenacitas.tst.tuple
 
 include (../../common.pri)
 
+PRJ_DIR=$$BASE_DIR/tenacitas/src/tst/tuple
 
-SOURCES = $$BASE_DIR/tenacitas/tst/tuple/main.cpp
+SOURCES = $$PRJ_DIR/main.cpp
 
-HEADERS += $$BASE_DIR/tenacitas/tst/tuple/tuple_transform_test.h \
-           $$BASE_DIR/tenacitas/tst/tuple/tuple_traverse_test.h
+HEADERS += $$PRJ_DIR/tuple_transform_test.h \
+           $$PRJ_DIR/tuple_traverse_test.h

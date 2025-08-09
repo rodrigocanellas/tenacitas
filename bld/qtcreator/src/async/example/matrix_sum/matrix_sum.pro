@@ -1,8 +1,8 @@
 QT -= core
 TEMPLATE = app
-TARGET = tnct.async.exp.matrix_sum
+TARGET = tenacitas.async.exp.matrix_sum
 CONFIG += example
 include (../../../../common.pri)
-SOURCES = $$BASE_DIR_SRC/tnct/async/matrix_sum/main.cpp
+SOURCES = $$BASE_DIR/tenacitas/src/async/exp/matrix_sum/main.cpp
 
 

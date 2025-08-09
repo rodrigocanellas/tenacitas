@@ -1,7 +1,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.ostream
+TARGET=tenacitas.tst.ostream
 
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 include (../../common.pri)

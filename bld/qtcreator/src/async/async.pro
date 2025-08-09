@@ -1,6 +1,9 @@
 include (../../common.pri)
 
-TEMPLATE=aux
+TEMPLATE=subdirs
+
+SUBDIRS = test \
+          example
 
 PRJ_DIR=$$BASE_DIR/tenacitas/src/async
 

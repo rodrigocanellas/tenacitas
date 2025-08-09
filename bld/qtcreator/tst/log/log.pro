@@ -2,7 +2,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.tst.log
+TARGET=tenacitas.tst.log
 
 include (../../common.pri)
 
