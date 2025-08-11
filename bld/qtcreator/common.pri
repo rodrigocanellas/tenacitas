@@ -24,11 +24,11 @@ linux:os=linux
 win32:os=win32
 
 
-BASE_DIR=$$PWD/../../..
+BASE_DIR=$$PWD/../../src
 
 
-products_dir=$$BASE_DIR/../prd/$$os-$$cfg-$$arch
-third_dir=$$BASE_DIR/tenacitas/src/3rd
+products_dir=$$BASE_DIR/../../prd/$$os-$$cfg-$$arch
+third_dir=$$BASE_DIR/tnct/3rd
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/app
 test_dir=$$products_dir/tst

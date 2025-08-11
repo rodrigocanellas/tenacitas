@@ -3,8 +3,23 @@ TEMPLATE=subdirs
 
 
 SUBDIRS = \
-    src
-
+    generic \
+    container \
+    async \
+    traits \
+    log \
+    translator \
+    parser \
+    program \
+    tuple \
+    time \
+    format \
+    tester \
+    ostream \
+    string  \
+    memory
+    # \
+    # crosswords
 
 
 
