@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TUPLE_GET_INDEX_H
-#define TNCT_TUPLE_GET_INDEX_H
+#ifndef TNCT_TUPLE_GET_TYPE_INDEX_H
+#define TNCT_TUPLE_GET_TYPE_INDEX_H
 
 #include <optional>
 #include <tuple>

@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_TUPLE_TST_TRANSFORM_H
-#define TENACITAS_TUPLE_TST_TRANSFORM_H
+#ifndef TNCT_TUPLE_TST_TRANSFORM_TEST_H
+#define TNCT_TUPLE_TST_TRANSFORM_TEST_H
 
 #include <iostream>
 #include <memory>

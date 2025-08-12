@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXEC_ASYNC_H
-#define TNCT_ASYNC_EXEC_ASYNC_H
+#ifndef TNCT_ASYNC_EXEC_SYNC_H
+#define TNCT_ASYNC_EXEC_SYNC_H
 
 #include <condition_variable>
 #include <functional>
 #include <optional>
 
-#include "tnct/time/traits/chrono_convertible.h"
+#include "tnct/time/cpt/chrono_convertible.h"
 
 namespace tnct::async
 {
@@ -56,7 +56,7 @@ inline std::conditional_t<
     // 'p_function' executes in less 'p_max_time', or empty otherwise
     std::optional<
         std::invoke_result_t<t_function, std::function<bool()>, t_params...>>>
-exec_sync(time::traits::convertible_to_nano auto p_max_time,
+exec_sync(time::cpt::convertible_to_nano auto p_max_time,
           t_function &p_function, t_params &&...p_params)
 {
   std::mutex              _mutex;

@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_TST_ASYNC_HANDLING_H
-#define TENACITAS_TST_ASYNC_HANDLING_H
+#ifndef TNCT_ASYNC_TST_HANDLING_TEST_H
+#define TNCT_ASYNC_TST_HANDLING_TEST_H
 
 #include <limits>
 
 #include "tnct/async/handling_name.h"
-#include "tnct/async/int/handling.h"
-#include "tnct/async/int/handling_id.h"
+#include "tnct/async/internal/handling.h"
+#include "tnct/async/internal/handling_id.h"
 #include "tnct/async/sleeping_loop.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
@@ -180,8 +180,8 @@ struct handling_006 : public handling_test
 
       if (_num_events != 1)
       {
-        m_logger.tst(format::fmt("# events before should be, but it is ",
-                                      _num_events));
+        m_logger.tst(
+            format::fmt("# events before should be, but it is ", _num_events));
         return false;
       }
 
@@ -385,24 +385,24 @@ struct handling_014 : public handling_test
       }
 
       TNCT_LOG_TST(m_logger, format::fmt("number of events = ",
-                                              _handling.get_num_events()));
+                                         _handling.get_num_events()));
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_wait);
-        m_logger.tst(format::fmt(
-            "thread main ", std::this_thread::get_id(), " starts to wait"));
+        m_logger.tst(format::fmt("thread main ", std::this_thread::get_id(),
+                                 " starts to wait"));
         m_cond_wait.wait(_lock, [&]()
                          { return m_current_num_events == m_num_events; });
       }
 
       TNCT_LOG_TST(m_logger,
                    format::fmt("thread main ", std::this_thread::get_id(),
-                                    ", done waiting"));
+                               ", done waiting"));
 
       for (const auto &_value : m_events_by_handler)
       {
         m_logger.tst(format::fmt("thread ", _value.first,
-                                      " # events = ", _value.second));
+                                 " # events = ", _value.second));
       }
 
       return (m_current_num_events == m_num_events)
@@ -445,9 +445,9 @@ private:
           ++m_owner->m_events_by_handler[std::this_thread ::get_id()];
         }
       }
-      m_owner->m_logger.tst(
-          format::fmt("handler ", std ::this_thread ::get_id(),
-                           " handling event ", p_event.value));
+      m_owner->m_logger.tst(format::fmt("handler ",
+                                        std ::this_thread ::get_id(),
+                                        " handling event ", p_event.value));
       m_owner->m_cond_wait.notify_all();
 
       // m_owner->m_logger.tst(format::fmt("thread ", std ::this_thread
@@ -613,8 +613,8 @@ struct handling_016 : public handling_test
             if (_added != m_num_events)
             {
               ev1 _ev(_added);
-              m_logger.tst(format::fmt("adding event # ", ++_added, ": '",
-                                            _ev, '\''));
+              m_logger.tst(
+                  format::fmt("adding event # ", ++_added, ": '", _ev, '\''));
               _handling.add_event(std::move(_ev));
             }
           },
@@ -631,7 +631,7 @@ struct handling_016 : public handling_test
               if (m_handled == m_num_events)
               {
                 m_logger.tst(format::fmt(m_handled, " = ", m_num_events,
-                                              ", stopping event generation"));
+                                         ", stopping event generation"));
                 _sleeping_loop.stop();
                 return true;
               }
@@ -640,7 +640,7 @@ struct handling_016 : public handling_test
                 if (!_sleeping_loop.is_stopped())
                 {
                   m_logger.tst(format::fmt(_added, " = ", m_num_events,
-                                                " stopping event generation"));
+                                           " stopping event generation"));
                   _sleeping_loop.stop();
                 }
               }
@@ -652,7 +652,7 @@ struct handling_016 : public handling_test
       }
 
       m_logger.tst(format::fmt("# events added = ", _added,
-                                    ", # events handled = ", m_handled));
+                               ", # events handled = ", m_handled));
 
       return (m_handled == m_num_events) && (_added == m_num_events);
     }

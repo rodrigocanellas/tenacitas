@@ -14,15 +14,15 @@ HEADERS += \
         $$PRJ_DIR/handling_priority.h \
         $$PRJ_DIR/handling_name.h \
         $$PRJ_DIR/result.h \
-        $$PRJ_DIR/int/handling.h \
-        $$PRJ_DIR/int/handler_id.h \
-        $$PRJ_DIR/int/handling_id.h \
-        $$PRJ_DIR/traits/is_dispatcher.h  \
-        $$PRJ_DIR/traits/is_event.h  \
-        $$PRJ_DIR/traits/is_handler.h  \
-        $$PRJ_DIR/traits/has_add_handling_method.h  \
-        $$PRJ_DIR/traits/has_events_handled.h  \
-        $$PRJ_DIR/traits/has_events_published.h  \
-        $$PRJ_DIR/traits/has_publish_method.h  \
-        $$PRJ_DIR/traits/tuple_contains_only_events.h
+        $$PRJ_DIR/internal/handling.h \
+        $$PRJ_DIR/internal/handler_id.h \
+        $$PRJ_DIR/internal/handling_id.h \
+        $$PRJ_DIR/cpt/is_dispatcher.h  \
+        $$PRJ_DIR/cpt/is_event.h  \
+        $$PRJ_DIR/cpt/is_handler.h  \
+        $$PRJ_DIR/cpt/has_add_handling_method.h  \
+        $$PRJ_DIR/cpt/has_events_handled.h  \
+        $$PRJ_DIR/cpt/has_events_published.h  \
+        $$PRJ_DIR/cpt/has_publish_method.h  \
+        $$PRJ_DIR/cpt/tuple_contains_only_events.h
 

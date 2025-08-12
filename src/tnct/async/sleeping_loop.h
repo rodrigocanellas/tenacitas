@@ -14,14 +14,14 @@
 
 #include "tnct/format/fmt.h"
 
-#include "tnct/time/traits/chrono_convertible.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/time/cpt/chrono_convertible.h"
+#include "tnct/log/cpt/logger.h"
 
 namespace tnct::async
 {
 
 /// \brief Periodically executes a function
-template <log::traits::logger t_logger>
+template <log::cpt::logger t_logger>
 struct sleeping_loop
 {
   /// \brief Signature of the function that will be called in each round of
@@ -38,7 +38,7 @@ struct sleeping_loop
   /// \param p_function to be executed at a certain interval
   ///
   /// \param p_interval interval that \p p_function will be executed
-  template <time::traits::convertible_to_nano t_interval>
+  template <time::cpt::convertible_to_nano t_interval>
   sleeping_loop(logger &p_logger, function p_function, t_interval p_interval,
                 std::string_view p_id = "no-id")
       : m_logger(p_logger), m_id(p_id), m_function(p_function),

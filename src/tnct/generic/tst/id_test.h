@@ -3,8 +3,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_TST_GENERIC_ID_H
-#define TENACITAS_TST_GENERIC_ID_H
+#ifndef TNCT_GENERIC_TST_ID_TEST_H
+#define TNCT_GENERIC_TST_ID_TEST_H
+
 #include <string>
 
 #include "tnct/generic/id.h"
@@ -26,7 +27,7 @@ struct id_001
     // THIS FAILS TO COMPILE BECAUSE '4' IS AUTOMATICALLY DEDUCED TO 'int',
     // WHICH DOES NOT SATISFY 'id'
 
-    // traits::id<0> auto _i{4};
+    // id<0> auto _i{4};
     return true;
   }
 };
@@ -44,7 +45,7 @@ struct id_002
     // THIS FAILS TO COMPILE BECAUSE '-4' IS AUTOMATICALLY DEDUCED TO 'int',
     // WHICH DOES NOT SATISFY 'id'
 
-    // traits::id<0> auto _i{-4};
+    // id<0> auto _i{-4};
 
     return true;
   }

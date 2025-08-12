@@ -3,31 +3,35 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_LOG_LOG_LEVEL_H
-#define TNCT_LOG_LOG_LEVEL_H
+#ifndef TNCT_LOG_LEVEL_H
+#define TNCT_LOG_LEVEL_H
 
 #include <cstdint>
 #include <iostream>
 
-namespace tnct::log {
+namespace tnct::log
+{
 
-enum class level : int8_t {
-  tst = -2,
+enum class level : int8_t
+{
+  tst    = -2,
   no_log = -1,
-  tra = 0,
-  deb = 1,
-  inf = 2,
-  war = 3,
-  err = 4,
-  fat = 5
+  tra    = 0,
+  deb    = 1,
+  inf    = 2,
+  war    = 3,
+  err    = 4,
+  fat    = 5
 };
 
 /// \brief Output operator for \p level
 ///
 /// \param p_out is the output stream
 /// \param p_level is the level to be written to p_out
-inline std::ostream &operator<<(std::ostream &p_out, level p_level) {
-  switch (p_level) {
+inline std::ostream &operator<<(std::ostream &p_out, level p_level)
+{
+  switch (p_level)
+  {
   case level::tst:
     p_out << "TST";
     break;

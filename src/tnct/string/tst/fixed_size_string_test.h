@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_TST_STRING_FIXED_SIZE_STRING_H
-#define TENACITAS_TST_STRING_FIXED_SIZE_STRING_H
+#ifndef TNCT_STRING_TST_FIXED_SIZE_STRING_TEST_H
+#define TNCT_STRING_TST_FIXED_SIZE_STRING_TEST_H
 
 #include <iostream>
 
@@ -96,7 +96,7 @@ struct fixed_size_string_004
 
   bool operator()(const program::options &)
   {
-    const std::string                  _s{"012345"};
+    const std::string             _s{"012345"};
     string::fixed_size_string<10> _str1{_s};
 
     std::cerr << "str 1 = " << _str1 << std::endl;
@@ -117,7 +117,7 @@ struct fixed_size_string_005
   {
     try
     {
-      const std::string                  _s{"0123456789A"};
+      const std::string             _s{"0123456789A"};
       string::fixed_size_string<10> _str1{_s};
 
       std::cerr << "str 1 = " << _str1 << std::endl;

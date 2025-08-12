@@ -13,7 +13,7 @@
 
 namespace tnct::tuple::tst
 {
-struct cpt_is_tuple_000
+struct is_tuple_000
 {
   static std::string desc()
   {
@@ -32,7 +32,7 @@ struct cpt_is_tuple_000
   }
 };
 
-struct cpt_is_tuple_001
+struct is_tuple_001
 {
   static std::string desc()
   {
@@ -48,7 +48,7 @@ struct cpt_is_tuple_001
   }
 };
 
-struct cpt_is_tuple_002
+struct is_tuple_002
 {
   static std::string desc()
   {

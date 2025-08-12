@@ -11,9 +11,7 @@ PRJ_DIR=$$BASE_DIR/tnct/ostream/tst
 
 SOURCES = $$PRJ_DIR/main.cpp
 
-HEADERS = \
-          $$PRJ_DIR/tuple_output_test.h \
-          $$PRJ_DIR/pair_output_test.h
+
 
 
 

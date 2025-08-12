@@ -13,7 +13,8 @@ SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
           $$PRJ_DIR/fixed_size_string_test.h \
-          $$PRJ_DIR/traits_test.h
+          $$PRJ_DIR/cpt_test.h \
+          $$PRJ_DIR/cpt/fixed_size_string.h
 
 
 

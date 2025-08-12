@@ -25,16 +25,6 @@ concept visit_value_in_constant_tuple =
       } -> std::same_as<bool>;
     };
 
-template <typename t, typename t_tuple, std::size_t t_idx>
-concept visit_type_in_tuple =
-    (tuple::cpt::is_tuple<std::remove_cvref_t<t_tuple>>)&&
-
-    requires(t p_t) {
-      {
-        p_t.template operator()<t_tuple, t_idx>()
-      } -> std::same_as<bool>;
-    };
-
 template <typename t, typename t_tuple, size_t t_idx = 0>
 concept visit_value_in_mutable_tuple =
     (tuple::cpt::is_tuple<std::remove_cvref_t<t_tuple>>)&&
@@ -43,6 +33,16 @@ concept visit_value_in_mutable_tuple =
       {
         p_t.template operator()<t_tuple, t_idx>(
             std::declval<std::remove_cvref_t<t_tuple> &>())
+      } -> std::same_as<bool>;
+    };
+
+template <typename t, typename t_tuple, std::size_t t_idx = 0>
+concept visit_type_in_tuple =
+    (tuple::cpt::is_tuple<std::remove_cvref_t<t_tuple>>)&&
+
+    requires(t p_t) {
+      {
+        p_t.template operator()<t_tuple, t_idx>()
       } -> std::same_as<bool>;
     };
 

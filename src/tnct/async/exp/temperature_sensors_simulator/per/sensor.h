@@ -1,28 +1,26 @@
-#ifndef TEMPERATURE_SENSORS_SIMULATOR__PER__SENSOR_H
-#define TEMPERATURE_SENSORS_SIMULATOR__PER__SENSOR_H
+#ifndef TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_PER_SENSOR_H
+#define TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_PER_SENSOR_H
 
 #include <tuple>
 
+#include "tnct/async/cpt/has_publish_method.h"
+#include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h"
 #include "tnct/async/exp/temperature_sensors_simulator/dat/temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tnct/async/result.h"
 #include "tnct/async/sleeping_loop.h"
-#include "tnct/async/traits/has_publish_method.h"
-#include "tnct/async/traits/is_dispatcher.h"
 #include "tnct/format/fmt.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 using namespace tnct;
 
 namespace tnct::async::exp::temperature_sensors_simulator::per
 {
 
-template <log::traits::logger          t_logger,
-          async::traits::is_dispatcher t_dispatcher>
-requires(async::traits::is_dispatcher<t_dispatcher, evt::new_temperature>
-         && async::traits::has_publish_method<t_dispatcher,
-                                                   evt::new_temperature>)
+template <log::cpt::logger t_logger, async::cpt::is_dispatcher t_dispatcher>
+requires(async::cpt::is_dispatcher<t_dispatcher, evt::new_temperature>
+         && async::cpt::has_publish_method<t_dispatcher, evt::new_temperature>)
 
 struct sensor
 {
@@ -103,13 +101,13 @@ struct sensor
   }
 
 private:
-  t_logger                           &m_logger;
-  t_dispatcher                       &m_dispatcher;
-  dat::sensor_id                      m_sensor_id;
-  dat::temperature                    m_current;
-  dat::temperature                    m_increment;
+  t_logger                      &m_logger;
+  t_dispatcher                  &m_dispatcher;
+  dat::sensor_id                 m_sensor_id;
+  dat::temperature               m_current;
+  dat::temperature               m_increment;
   async::sleeping_loop<t_logger> m_sleeping_loop;
-  std::mutex                          m_mutex;
+  std::mutex                     m_mutex;
 };
 
 } // namespace tnct::async::exp::temperature_sensors_simulator::per

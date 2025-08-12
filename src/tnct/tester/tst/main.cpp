@@ -7,7 +7,7 @@
 
 #include "tnct/tester/test.h"
 
-#include "tnct/tester/tst/test_test.h"
+#include "tnct/tester/tst/tester_test.h"
 
 using namespace tnct;
 

@@ -15,6 +15,8 @@ HEADERS += \
     $$PRJ_DIR/traverse.h \
     $$PRJ_DIR/contains_type.h \
     $$PRJ_DIR/get_type_index.h \
+    $$PRJ_DIR/output.h \
     $$PRJ_DIR/internal/is_tuple_helper.h \
     $$PRJ_DIR/internal/contains_tuple_helper.h
+
 

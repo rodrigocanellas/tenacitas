@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TENACITAS_TST_TRATIS_TUPLE_FIND_H
-#define TENACITAS_TST_TRATIS_TUPLE_FIND_H
+#ifndef TNCT_TUPLE_TST_GET_TYPE_INDEX_TEST_H
+#define TNCT_TUPLE_TST_GET_TYPE_INDEX_TEST_H
 
 #include <cstdint>
 #include <tuple>
@@ -127,7 +127,7 @@ struct get_type_index_003
 {
   static std ::string desc()
   {
-    return "";
+    return "Finds a non POD in a tuple";
   }
 
   bool operator()(const program::options &)
@@ -165,7 +165,7 @@ struct get_type_index_004
 {
   static std ::string desc()
   {
-    return "";
+    return "Fails to find a non POD in tuple";
   }
 
   bool operator()(const program::options &)

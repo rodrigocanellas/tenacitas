@@ -3,14 +3,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TUPLE_CPT_SIZE_GREATER_OR_EQUAL_H
-#define TNCT_TUPLE_CPT_SIZE_GREATER_OR_EQUAL_H
+#ifndef TNCT_TUPLE_CPT_SIZE_GREATHER_OR_EQUAL_H
+#define TNCT_TUPLE_CPT_SIZE_GREATHER_OR_EQUAL_H
 
 #include <tuple>
 
 #include "tnct/tuple/cpt/is_tuple.h"
 
-namespace tnct::tuple::cpt {
+namespace tnct::tuple::cpt
+{
 
 template <typename t_tuple_1, typename t_tuple_2>
 concept size_greather_or_equal =

@@ -6,7 +6,7 @@ SUBDIRS = \
     generic \
     container \
     async \
-    traits \
+    concepts \
     log \
     translator \
     parser \
@@ -17,9 +17,8 @@ SUBDIRS = \
     tester \
     ostream \
     string  \
-    memory
+    memory \
+    pair
     # \
     # crosswords
-
-
 

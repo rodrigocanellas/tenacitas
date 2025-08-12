@@ -16,10 +16,10 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
 #include "tnct/async/result.h"
-#include "tnct/async/traits/has_add_handling_method.h"
-#include "tnct/async/traits/is_dispatcher.h"
+#include "tnct/async/cpt/has_add_handling_method.h"
+#include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/container/circular_queue.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
@@ -27,10 +27,10 @@ using namespace std::chrono_literals;
 namespace tnct::async::exp::temperature_sensors_simulator::per
 {
 
-template <log::traits::logger t_logger, typename t_dispatcher>
+template <log::cpt::logger t_logger, typename t_dispatcher>
 requires(
 
-    async::traits::is_dispatcher<t_dispatcher, evt::add_sensor,
+    async::cpt::is_dispatcher<t_dispatcher, evt::add_sensor,
                                       evt::remove_sensor, evt::set_temperature,
                                       evt::new_temperature>
 
@@ -127,7 +127,7 @@ private:
     auto _handler = [this](evt::add_sensor &&p_evt) mutable
     { this->on_add_sensor(std::move(p_evt)); };
 
-    static_assert(async::traits::has_add_handling_method<
+    static_assert(async::cpt::has_add_handling_method<
                       t_dispatcher, evt::add_sensor, queue, decltype(_handler)>,
                   "Invalid handling definition for 'evt::add_sensor'");
 
@@ -144,7 +144,7 @@ private:
     auto _handler = [this](evt::remove_sensor &&p_evt)
     { this->on_remove_sensor(std::move(p_evt)); };
 
-    static_assert(async::traits::has_add_handling_method<
+    static_assert(async::cpt::has_add_handling_method<
                   t_dispatcher, evt::remove_sensor, queue, decltype(_handler)>);
 
     return m_dispatcher.template add_handling<evt::remove_sensor>(
@@ -161,7 +161,7 @@ private:
     { this->on_set_temperature(std::move(p_evt)); };
 
     static_assert(
-        async::traits::has_add_handling_method<
+        async::cpt::has_add_handling_method<
             t_dispatcher, evt::set_temperature, queue, decltype(_handler)>);
 
     return m_dispatcher.template add_handling<evt::set_temperature>(

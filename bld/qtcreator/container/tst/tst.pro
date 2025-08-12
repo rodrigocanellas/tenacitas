@@ -11,7 +11,7 @@ SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = $$PRJ_DIR/matrix_test.h \
           $$PRJ_DIR/circular_queue_test.h \
-          $$PRJ_DIR/traits_test.h
+          $$PRJ_DIR/cpt_test.h
 
 DISTFILES += \
     $$PRJ_DIR/circular_queue_tests_000.ini

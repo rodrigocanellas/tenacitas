@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_TST_FORMAT_NUMBER_H
-#define TNCT_FORMAT_TST_FORMAT_NUMBER_H
+#ifndef TNCT_FORMAT_TST_FORMAT_NUMBER_TEST_H
+#define TNCT_FORMAT_TST_FORMAT_NUMBER_TEST_H
 
 #include <string>
 
@@ -38,8 +38,7 @@ struct format_number_001
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_max_number(static_cast<int16_t>(-34), ' '));
+    const auto _str(format::format_max_number(static_cast<int16_t>(-34), ' '));
 
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == "  -34";
@@ -70,8 +69,7 @@ struct format_number_003
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_max_number(static_cast<int8_t>(-4), ' '));
+    const auto _str(format::format_max_number(static_cast<int8_t>(-4), ' '));
 
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == " -4";
@@ -193,8 +191,7 @@ struct format_number_010
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_max_number(static_cast<int32_t>(-34), ' '));
+    const auto _str(format::format_max_number(static_cast<int32_t>(-34), ' '));
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == "       -34";
   }
@@ -224,8 +221,7 @@ struct format_number_012
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_max_number(static_cast<int64_t>(-34), ' '));
+    const auto _str(format::format_max_number(static_cast<int64_t>(-34), ' '));
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == "                 -34";
   }
@@ -240,8 +236,7 @@ struct format_number_014
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_fix_number(static_cast<uint64_t>(34), 6));
+    const auto _str(format::format_fix_number(static_cast<uint64_t>(34), 6));
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == "000034";
   }
@@ -256,8 +251,7 @@ struct format_number_015
 
   bool operator()(const program::options &)
   {
-    const auto _str(
-        format::format_fix_number(static_cast<uint32_t>(73290), 4));
+    const auto _str(format::format_fix_number(static_cast<uint32_t>(73290), 4));
     std::cerr << "str = '" << _str << '\'' << std::endl;
     return _str == "73290";
   }

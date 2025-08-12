@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_HANDLER_TYPE_ID_H
-#define TNCT_ASYNC_EXP_DISPATCHER_HANDLER_TYPE_ID_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_TYPE_ID_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_TYPE_ID_H
 
 #include <cstdint>
 

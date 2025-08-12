@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_PUBLISHER_H
-#define TNCT_ASYNC_EXP_DISPATCHER_PUBLISHER_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_PUBLISHER_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_PUBLISHER_H
 
 #include <chrono>
 #include <string_view>
@@ -14,12 +14,12 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/result.h"
 #include "tnct/async/sleeping_loop.h"
-#include "tnct/async/traits/is_dispatcher.h"
+#include "tnct/async/cpt/is_dispatcher.h"
 
 namespace tnct::async::exp {
 
 template <char t_event_id,
-          async::traits::is_dispatcher<event<t_event_id>> t_dispacther>
+          async::cpt::is_dispatcher<event<t_event_id>> t_dispacther>
 struct publisher {
   using event = async::exp::event<t_event_id>;
 
@@ -91,7 +91,7 @@ private:
 };
 
 template <char t_event_id,
-          async::traits::is_dispatcher<event<t_event_id>> t_dispacther>
+          async::cpt::is_dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tnct::async::exp

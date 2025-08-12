@@ -6,8 +6,8 @@
 #include "tnct/tester/test.h"
 
 #include "tnct/container/tst/circular_queue_test.h"
+#include "tnct/container/tst/cpt_test.h"
 #include "tnct/container/tst/matrix_test.h"
-#include "tnct/container/tst/traits_test.h"
 
 using namespace tnct;
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   run_test(_tester, container::tst::matrix_003);
   run_test(_tester, container::tst::matrix_004);
 
-  run_test(_tester, container::tst::traits_test_000);
-  run_test(_tester, container::tst::traits_test_001);
-  run_test(_tester, container::tst::traits_test_002);
+  run_test(_tester, container::tst::cpt_test_000);
+  run_test(_tester, container::tst::cpt_test_001);
+  run_test(_tester, container::tst::cpt_test_002);
 }

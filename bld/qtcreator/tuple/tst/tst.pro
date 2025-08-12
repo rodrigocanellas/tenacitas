@@ -18,7 +18,14 @@ HEADERS = \
           $$PRJ_DIR/transform_test.h  \
           $$PRJ_DIR/traverse_test.h \
           $$PRJ_DIR/is_tuple_test.h \
-          $$PRJ_DIR/contains_tuple_test.h
+          $$PRJ_DIR/contains_tuple_test.h \
+          $$PRJ_DIR/visit_test.h \
+          $$PRJ_DIR/output_test.h
+
+
+
+
+
 
 
 

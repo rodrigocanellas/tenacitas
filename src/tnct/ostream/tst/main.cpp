@@ -4,21 +4,6 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/ostream/tst/pair_output_test.h"
-#include "tnct/ostream/tst/tuple_output_test.h"
-
-#include "tnct/tester/test.h"
-
-using namespace tnct;
-
-int main(int argc, char **argv)
+int main(int, char **)
 {
-  tester::test _tester(argc, argv);
-
-  run_test(_tester, ostream::tst::tuple_output_000);
-  run_test(_tester, ostream::tst::tuple_output_001);
-  run_test(_tester, ostream::tst::tuple_output_002);
-
-  run_test(_tester, ostream::tst::pair_output_000);
-  run_test(_tester, ostream::tst::pair_output_000);
 }

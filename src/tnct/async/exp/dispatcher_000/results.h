@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_RESULTS_H
-#define TNCT_ASYNC_EXP_DISPATCHER_RESULTS_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_RESULTS_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_RESULTS_H
 
 #include <map>
 #include <sstream>

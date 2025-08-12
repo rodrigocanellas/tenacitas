@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_EVENT_ID_H
-#define TNCT_ASYNC_EXP_DISPATCHER_EVENT_ID_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_EVENT_ID_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_EVENT_ID_H
 
 namespace tnct::async::exp {
 

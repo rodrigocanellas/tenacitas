@@ -5,8 +5,8 @@
 
 #include "tnct/tester/test.h"
 
+#include "tnct/string/tst/cpt_test.h"
 #include "tnct/string/tst/fixed_size_string_test.h"
-#include "tnct/string/tst/traits_test.h"
 
 using namespace tnct;
 
@@ -21,6 +21,6 @@ int main(int argc, char **argv)
   run_test(_tester, string::tst::fixed_size_string_004);
   run_test(_tester, string::tst::fixed_size_string_005);
 
-  run_test(_tester, string::tst::traits_fixed_size_string_000);
-  run_test(_tester, string::tst::traits_fixed_size_string_001);
+  run_test(_tester, string::tst::cpt_fixed_size_string_000);
+  run_test(_tester, string::tst::cpt_fixed_size_string_001);
 }

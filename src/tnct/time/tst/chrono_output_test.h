@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_TIME_TST_CHRONO_OUTPUT_H
-#define TNCT_TIME_TST_CHRONO_OUTPUT_H
+#ifndef TNCT_TIME_TST_CHRONO_OUTPUT_TEST_H
+#define TNCT_TIME_TST_CHRONO_OUTPUT_TEST_H
 
 #include <chrono>
 #include <iostream>

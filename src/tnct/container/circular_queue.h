@@ -13,8 +13,8 @@
 #include <vector>
 
 #include "tnct/format/fmt.h"
-#include "tnct/log/traits/logger.h"
-#include "tnct/ostream/traits/has_output_operator.h"
+#include "tnct/log/cpt/logger.h"
+#include "tnct/ostream/cpt/has_output_operator.h"
 
 namespace tnct::container
 {
@@ -26,12 +26,12 @@ namespace tnct::container
 /// the queue by reusing nodes which data have been read
 ///
 /// \tparam t_data defines the types of the data contained in the queue
-template <log::traits::logger t_logger, typename t_data,
+template <log::cpt::logger t_logger, typename t_data,
           std::size_t              t_initial_size,
           std::size_t              t_incremental_size = t_initial_size / 2>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
          && std::is_default_constructible_v<t_data>
-         && ostream::traits::has_output_operator<t_data>
+         && ostream::cpt::has_output_operator<t_data>
 class circular_queue final
 {
 public:

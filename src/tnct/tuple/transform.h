@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TUPLE_TUPLE_TRANSFORM_H
-#define TNCT_TUPLE_TUPLE_TRANSFORM_H
+#ifndef TNCT_TUPLE_TRANSFORM_H
+#define TNCT_TUPLE_TRANSFORM_H
 
 #include <tuple>
 
@@ -14,8 +14,7 @@ namespace tnct::tuple
 {
 
 // Base class for specialization
-template <tuple::cpt::is_tuple t_uple,
-          template <typename> typename t_converter>
+template <tuple::cpt::is_tuple t_uple, template <typename> typename t_converter>
 struct tuple_transform;
 
 /**

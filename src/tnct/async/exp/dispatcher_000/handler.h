@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_HANDLER_H
-#define TNCT_ASYNC_EXP_DISPATCHER_HANDLER_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_H
 
 #include <chrono>
 
@@ -15,15 +15,15 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/handling_name.h"
 #include "tnct/async/result.h"
-#include "tnct/async/traits/has_publish_method.h"
+#include "tnct/async/cpt/has_publish_method.h"
 #include "tnct/format/fmt.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 namespace tnct::async::exp
 {
 
 template <event_id t_event_id, handler_type_id t_type_id,
-          async::traits::has_publish_method<async::exp::event_handled>
+          async::cpt::has_publish_method<async::exp::event_handled>
               t_dispatcher>
 struct handler
 {

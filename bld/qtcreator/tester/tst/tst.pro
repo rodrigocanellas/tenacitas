@@ -12,7 +12,7 @@ PRJ_DIR=$$BASE_DIR/tnct/tester/tst
 SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
-          $$PRJ_DIR/test_test.h
+          $$PRJ_DIR/tester_test.h
 
 
 

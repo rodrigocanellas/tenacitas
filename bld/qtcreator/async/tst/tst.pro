@@ -12,7 +12,7 @@ SOURCES = $$PRJ_DIR/main.cpp
 
 HEADERS = \
          $$PRJ_DIR/dispatcher_test.h \
-         $$PRJ_DIR/traits_test.h \
+         $$PRJ_DIR/cpt_test.h \
          $$PRJ_DIR/sleeping_loop_test.h \
          $$PRJ_DIR/handling_test.h
 

@@ -10,7 +10,7 @@
 
 #include "tenacitas/src/crosswords/dat/entries.h"
 #include "tenacitas/src/crosswords/dat/index.h"
-#include "tenacitas/src/time/traits/chrono_convertible.h"
+#include "tenacitas/src/time/cpt/chrono_convertible.h"
 
 namespace tenacitas::src::crosswords::asy {
 
@@ -18,7 +18,7 @@ struct grid_create_start {
   grid_create_start() = default;
   grid_create_start(const grid_create_start &) = default;
 
-  template <tenacitas::src::time::traits::convertible_to_sec t_duration>
+  template <tenacitas::src::time::cpt::convertible_to_sec t_duration>
   grid_create_start(const dat::entries &p_entries, dat::index p_num_rows,
                     dat::index p_num_cols, t_duration p_wait_for,
                     dat::index p_max_num_rows)

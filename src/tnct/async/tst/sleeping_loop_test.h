@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_TST_ASYNC_SLEPPING_LOOP_H
-#define TENACITAS_TST_ASYNC_SLEPPING_LOOP_H
+#ifndef TNCT_ASYNC_TST_SLEEPING_LOOP_TEST_H
+#define TNCT_ASYNC_TST_SLEEPING_LOOP_TEST_H
 
 #include <chrono>
 #include <condition_variable>
@@ -55,8 +55,8 @@ struct sleeping_loop_001
   static const std::string desc()
   {
     std::stringstream _stream;
-    _stream << "'async::sleeping_loop' with interval of "
-            << m_interval_secs << "s, increments a counter, and just prints."
+    _stream << "'async::sleeping_loop' with interval of " << m_interval_secs
+            << "s, increments a counter, and just prints."
 
             << "\nCounter should be " << m_amount;
     return _stream.str();
@@ -85,13 +85,13 @@ struct sleeping_loop_001
 
     if (_op.counter != m_amount)
     {
-      _logger.err(format::fmt("counter should be ", m_amount,
-                                   ", but it is ", _op.counter));
+      _logger.err(format::fmt("counter should be ", m_amount, ", but it is ",
+                              _op.counter));
       return false;
     }
 
     _logger.tst(format::fmt("counter should be ", m_amount,
-                                 ", and it really is ", _op.counter));
+                            ", and it really is ", _op.counter));
 
     return true;
   }

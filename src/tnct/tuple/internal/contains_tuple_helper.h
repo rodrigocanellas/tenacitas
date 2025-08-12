@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_TUPLE_CPT_INTERNAL_CONTAINS_TUPLE_HELPER_H
-#define TNCT_TUPLE_CPT_INTERNAL_CONTAINS_TUPLE_HELPER_H
+#ifndef TNCT_TUPLE_INTERNAL_CONTAINS_TUPLE_HELPER_H
+#define TNCT_TUPLE_INTERNAL_CONTAINS_TUPLE_HELPER_H
 
 #include <tuple>
 

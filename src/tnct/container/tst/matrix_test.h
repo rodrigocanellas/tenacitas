@@ -3,6 +3,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#ifndef TNCT_CONTAINER_TST_MATRIX_TEST_H
+#define TNCT_CONTAINER_TST_MATRIX_TEST_H
+
 #include <cstdint>
 #include <string>
 
@@ -31,13 +34,11 @@ struct matrix_000
 
     if (_matrix(1, 2) != 'z')
     {
-      _log.err(format::fmt(
-          "container::matrix(1,2) should be 'z', but it is '",
-          _matrix(1, 2), '\''));
+      _log.err(format::fmt("container::matrix(1,2) should be 'z', but it is '",
+                           _matrix(1, 2), '\''));
       return false;
     }
-    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2),
-                              '\''));
+    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2), '\''));
     return true;
   }
 };
@@ -58,9 +59,8 @@ struct matrix_001
 
     if (_matrix(1, 2) != 'z')
     {
-      _log.err(format::fmt(
-          "container::matrix(1,2) should be 'z', but it is '",
-          _matrix(1, 2), '\''));
+      _log.err(format::fmt("container::matrix(1,2) should be 'z', but it is '",
+                           _matrix(1, 2), '\''));
       return false;
     }
 
@@ -68,16 +68,14 @@ struct matrix_001
 
     if (_matrix(1, 2) != 'e')
     {
-      _log.err(format::fmt(
-          "container::matrix(1,2) should be 'e', but it is '",
-          _matrix(1, 2), '\''));
+      _log.err(format::fmt("container::matrix(1,2) should be 'e', but it is '",
+                           _matrix(1, 2), '\''));
       return false;
     }
 
     _log.tst(format::fmt(_matrix));
 
-    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2),
-                              '\''));
+    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2), '\''));
     return true;
   }
 };
@@ -100,13 +98,11 @@ struct matrix_002
 
     if (_matrix(1, 2) != -1)
     {
-      _log.err(format::fmt(
-          "container::matrix(1,2) should be -1, but it is '",
-          _matrix(1, 2), '\''));
+      _log.err(format::fmt("container::matrix(1,2) should be -1, but it is '",
+                           _matrix(1, 2), '\''));
       return false;
     }
-    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2),
-                              '\''));
+    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2), '\''));
 
     uint16_t _i = 0;
     for (uint16_t _row = 0; _row < _matrix.get_num_rows(); ++_row)
@@ -123,14 +119,12 @@ struct matrix_002
 
     if (_matrix(1, 2) != 6)
     {
-      _log.err(format::fmt(
-          "container::matrix(1,2) should be 6, but it is '", _matrix(1, 2),
-          '\''));
+      _log.err(format::fmt("container::matrix(1,2) should be 6, but it is '",
+                           _matrix(1, 2), '\''));
       return false;
     }
 
-    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2),
-                              '\''));
+    _log.tst(format::fmt("container::matrix(1,2) is '", _matrix(1, 2), '\''));
 
     return true;
   }
@@ -147,9 +141,9 @@ struct matrix_003
   {
     log::cerr                         _log;
     container::matrix<uint16_t, char> _m(11, 8, '-');
-    uint16_t                               _row{0};
-    uint16_t                               _col{0};
-    uint16_t                               _count{0};
+    uint16_t                          _row{0};
+    uint16_t                          _col{0};
+    uint16_t                          _count{0};
     _log.tst(format::fmt(_m));
     std::string _s0{"open"};
     for (char _c : _s0)
@@ -174,9 +168,9 @@ struct matrix_004
   {
     log::cerr                         _log;
     container::matrix<uint16_t, char> _m(11, 8, '-');
-    uint16_t                               _row{0};
-    uint16_t                               _col{0};
-    uint16_t                               _count{0};
+    uint16_t                          _row{0};
+    uint16_t                          _col{0};
+    uint16_t                          _count{0};
     _log.tst(format::fmt(_m));
     std::string _s0{"open"};
     for (char _c : _s0)
@@ -190,3 +184,5 @@ struct matrix_004
   }
 };
 } // namespace tnct::container::tst
+
+#endif

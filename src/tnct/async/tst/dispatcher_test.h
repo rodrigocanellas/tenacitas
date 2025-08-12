@@ -3,20 +3,20 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_TST_ASYNC_DISPATCHER_H
-#define TENACITAS_TST_ASYNC_DISPATCHER_H
+#ifndef TNCT_ASYNC_TST_DISPATCHER_TEST_H
+#define TNCT_ASYNC_TST_DISPATCHER_TEST_H
 
 #include <iostream>
 #include <string>
 
+#include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/async/dispatcher.h"
 #include "tnct/async/result.h"
-#include "tnct/async/traits/is_dispatcher.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/logger.h"
 #include "tnct/program/options.h"
-#include "tnct/log/traits/logger.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
@@ -186,9 +186,9 @@ struct dispatcher_002
 
     if (_amount_handlers != 4)
     {
-      TNCT_LOG_ERR(_logger, format::fmt(
-                                "amount of handlers should be 1, but it is ",
-                                _amount_handlers));
+      TNCT_LOG_ERR(_logger,
+                   format::fmt("amount of handlers should be 1, but it is ",
+                               _amount_handlers));
       return false;
     }
 
@@ -369,7 +369,7 @@ struct dispatcher_009
 {
   static std::string desc()
   {
-    return "A method depends on a async::traits::dispatcher with 3 "
+    return "A method depends on a async::cpt::dispatcher with 3 "
            "events, and the concrete async::dispatcher is defined with "
            "those 3 and 1 more";
   }
@@ -423,9 +423,8 @@ private:
   using logger = log::cerr;
 
 private:
-  template <
-      async::traits::is_dispatcher<event_a, event_b, event_c, event_d>
-          t_dispatcher>
+  template <async::cpt::is_dispatcher<event_a, event_b, event_c, event_d>
+                t_dispatcher>
   void foo(t_dispatcher &)
   {
   }

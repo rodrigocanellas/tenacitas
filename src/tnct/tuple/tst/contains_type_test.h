@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_TRAITS_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
-#define TNCT_TRAITS_TEST_TUPLE_IS_TYPE_IN_TUPLE_TEST_H
+#ifndef TNCT_TUPLE_TST_CONTAINS_TYPE_TEST_H
+#define TNCT_TUPLE_TST_CONTAINS_TYPE_TEST_H
 
 #include <tuple>
 

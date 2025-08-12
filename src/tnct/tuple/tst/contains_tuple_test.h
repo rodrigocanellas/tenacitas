@@ -12,7 +12,7 @@
 namespace tnct::tuple::tst
 {
 
-struct cpt_contains_tuple_000
+struct contains_tuple_000
 {
   static std::string desc()
   {
@@ -33,7 +33,7 @@ struct cpt_contains_tuple_000
   }
 };
 
-struct cpt_contains_tuple_001
+struct contains_tuple_001
 {
   static std::string desc()
   {
@@ -54,7 +54,7 @@ struct cpt_contains_tuple_001
   }
 };
 
-struct cpt_contains_tuple_002
+struct contains_tuple_002
 {
   static std::string desc()
   {
@@ -75,7 +75,7 @@ struct cpt_contains_tuple_002
   }
 };
 
-struct cpt_contains_tuple_003
+struct contains_tuple_003
 {
   static std::string desc()
   {
@@ -94,7 +94,7 @@ struct cpt_contains_tuple_003
   }
 };
 
-struct cpt_contains_tuple_004
+struct contains_tuple_004
 {
   static std::string desc()
   {
@@ -114,7 +114,7 @@ struct cpt_contains_tuple_004
   }
 };
 
-struct cpt_contains_tuple_005
+struct contains_tuple_005
 {
   static std::string desc()
   {
@@ -136,7 +136,7 @@ struct cpt_contains_tuple_005
   }
 };
 
-struct cpt_contains_tuple_006
+struct contains_tuple_006
 {
   static std::string desc()
   {
@@ -157,7 +157,7 @@ struct cpt_contains_tuple_006
   }
 };
 
-struct cpt_contains_tuple_007
+struct contains_tuple_007
 {
   static std::string desc()
   {
@@ -175,39 +175,6 @@ struct cpt_contains_tuple_007
     static_assert(tuple::cpt::contains_tuple<tuple_1, tuple_2>,
                   "std::tuple<int, char, float> should contain "
                   "std::tuple<int, char>");
-
-    return true;
-  }
-};
-
-struct cpt_contains_tuple_008
-{
-  static std::string desc()
-  {
-    return "Checks if 'std::tuple<int, char>' is contained in "
-           "'std::tuple<int, float>'";
-  }
-
-  bool operator()(const program::options &)
-  {
-    // using tuple_1 = std::tuple<int, float>;
-    // using tuple_2 = std::tuple<int, char>;
-
-    // this should not compile
-    /*
-cpt_contains_tuple_test.h:197:5: No matching function for call to 'func'
-cpt_contains_tuple_test.h:19:6: candidate template ignored: constraints
-not satisfied [with t_container = tuple_1, t_contained = tuple_2]
-cpt_contains_tuple_test.h:18:10: because
-'traits::contains_tuple<std::tuple<int, float>, std::tuple<int, char> >'
-evaluated to false contains_tuple.h:32:9: because '[]<std::size_t
-...t_idx>(std::index_sequence<t_idx...>) { return
-((contains_type<std::tuple<int, float>, std::tuple_element_t<t_idx,
-tuple<int, char> > >) && ...);
-}(std::make_index_sequence<std::tuple_size_v<tuple<int, char> > >())'
-evaluated to false
-     */
-    // func<tuple_1, tuple_2>();
 
     return true;
   }

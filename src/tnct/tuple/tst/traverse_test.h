@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_TUPLE_TST_TUPLE_TRAVERSE_H
-#define TNCT_TUPLE_TST_TUPLE_TRAVERSE_H
+#ifndef TNCT_TUPLE_TST_TRAVERSE_TEST_H
+#define TNCT_TUPLE_TST_TRAVERSE_TEST_H
 
 #include <iostream>
 #include <tuple>

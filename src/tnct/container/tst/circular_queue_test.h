@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TENACITAS_TST_CONTAINER_CIRCULAR_QUEUE_ON_VECTOR_H
-#define TENACITAS_TST_CONTAINER_CIRCULAR_QUEUE_ON_VECTOR_H
+#ifndef TNCT_CONTAINER_TST_CIRCULAR_QUEUE_TEST_H
+#define TNCT_CONTAINER_TST_CIRCULAR_QUEUE_TEST_H
 
 #include <algorithm>
 #include <cstdint>
@@ -37,9 +37,8 @@ struct circular_queue_001
     try
     {
 
-      container::circular_queue<log::cerr, std::string,
-                                     m_initial_size>
-                  queue(_logger);
+      container::circular_queue<log::cerr, std::string, m_initial_size> queue(
+          _logger);
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < m_amount; ++i)
@@ -57,8 +56,8 @@ struct circular_queue_001
           return false;
         }
         _logger.tst(format::fmt("capacity = ", queue.capacity(),
-                                     ", occupied = ", queue.occupied(),
-                                     ", data # ", j++));
+                                ", occupied = ", queue.occupied(), ", data # ",
+                                j++));
       }
     }
     catch (std::exception &ex)
@@ -91,7 +90,7 @@ struct circular_queue_003
   {
     using queue = container::circular_queue<log::cerr, int32_t, 30>;
     log::cerr _logger;
-    queue          _queue_1(_logger);
+    queue     _queue_1(_logger);
 
     queue _queue_2(std::move(_queue_1));
 
@@ -112,7 +111,7 @@ struct circular_queue_test
 
   bool operator()(program::options &p_options)
   {
-    bool           _success(true);
+    bool      _success(true);
     log::cerr _logger;
     try
     {
@@ -151,14 +150,14 @@ struct circular_queue_test
       if (!_maybe_sections)
       {
         _logger.tst(format::fmt("Failed to read sections from ini file ",
-                                     _ini_file_name));
+                                _ini_file_name));
         return false;
       }
       auto _sections(std::move(_maybe_sections.value()));
       if (_sections.size() == 0)
       {
-        _logger.tst(format::fmt("No sections read from ini file ",
-                                     _ini_file_name));
+        _logger.tst(
+            format::fmt("No sections read from ini file ", _ini_file_name));
         return false;
       }
 
@@ -177,7 +176,7 @@ struct circular_queue_test
                 == _tests_to_run.end()))
         {
           _logger.tst(format::fmt("Test ", _value_section.first,
-                                       " is not in the parameter 'run' list"));
+                                  " is not in the parameter 'run' list"));
         }
         else
         {
@@ -197,8 +196,8 @@ struct circular_queue_test
           }
           else
           {
-            _logger.err(format::fmt("error parsing section ",
-                                         _value_section.first));
+            _logger.err(
+                format::fmt("error parsing section ", _value_section.first));
             _success = false;
           }
         }
@@ -277,8 +276,7 @@ private:
       if (_num_matches != 9)
       {
         m_logger.tst(format::fmt("# matches in step ", p_step,
-                                      " should be 9, but it is ",
-                                      _num_matches));
+                                 " should be 9, but it is ", _num_matches));
         return false;
       }
       act    = (_match[1].str() == "push" ? action::push : action::pop);
@@ -313,8 +311,8 @@ private:
       if (contents.size() != capacity_expected)
       {
         m_logger.err(format::fmt("capacity expected = ", capacity_expected,
-                                      ", but ", contents.size(),
-                                      " items were found"));
+                                 ", but ", contents.size(),
+                                 " items were found"));
         return false;
       }
 
@@ -368,13 +366,13 @@ private:
       }
       if (_step.repor == step::report::brief)
       {
-        p_logger.tst(format::fmt("step ", ++_step_counter, ": ",
-                                      _queue.brief_report()));
+        p_logger.tst(
+            format::fmt("step ", ++_step_counter, ": ", _queue.brief_report()));
       }
       else if (_step.repor == step::report::full)
       {
-        p_logger.tst(format::fmt("step ", ++_step_counter, ": ",
-                                      _queue.full_report()));
+        p_logger.tst(
+            format::fmt("step ", ++_step_counter, ": ", _queue.full_report()));
       }
       else
       {
@@ -397,7 +395,7 @@ private:
         if (_step.contents[_i] != _queue[_i])
         {
           p_logger.err(format::fmt("content is ", _queue[_i], ", but ",
-                                        _step.contents[_i], " was expected"));
+                                   _step.contents[_i], " was expected"));
           return false;
         }
       }

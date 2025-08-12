@@ -1,7 +1,8 @@
-#ifndef TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_TYP_TEMPERATURE_H
-#define TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_TYP_TEMPERATURE_H
+#ifndef TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_DAT_TEMPERATURE_H
+#define TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_DAT_TEMPERATURE_H
 
-namespace tnct::async::exp::temperature_sensors_simulator::dat {
+namespace tnct::async::exp::temperature_sensors_simulator::dat
+{
 
 using temperature = float;
 

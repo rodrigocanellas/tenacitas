@@ -14,7 +14,8 @@ HEADERS+=$$PRJ_DIR/dispatcher_000/publisher.h \
          $$PRJ_DIR/dispatcher_000/event_id.h \
          $$PRJ_DIR/dispatcher_000/handler_type_id.h \
          $$PRJ_DIR/dispatcher_000/results.h \
-         $$PRJ_DIR/dispatcher_000/configuration.h
+         $$PRJ_DIR/dispatcher_000/configuration.h \
+         $$PRJ_DIR/dispatcher_000/handler_id.h
 
 
 SOURCES = $$PRJ_DIR/dispatcher_000/main.cpp

@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_CONFIGURATION_H
-#define TNCT_ASYNC_EXP_DISPATCHER_CONFIGURATION_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_CONFIGURATION_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_CONFIGURATION_H
 
 #include <array>
 #include <chrono>
@@ -14,13 +14,13 @@
 #include <string_view>
 
 #include "tnct/parser/ini_file.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 using namespace std::chrono_literals;
 
 namespace tnct::async::exp {
 
-template <log::traits::logger t_logger, size_t t_num_handlings = 5>
+template <log::cpt::logger t_logger, size_t t_num_handlings = 5>
 struct configuration {
   struct handling_cfg {
     bool use{false};

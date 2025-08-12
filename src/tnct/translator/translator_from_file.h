@@ -12,12 +12,12 @@
 #include <string>
 
 #include "tnct/format/fmt.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 #include "tnct/translator/dictionary.h"
 
 namespace tnct::translator {
 
-template <log::traits::logger t_logger, std::unsigned_integral t_index = uint32_t>
+template <log::cpt::logger t_logger, std::unsigned_integral t_index = uint32_t>
 struct translator_from_file {
   using logger = t_logger;
 

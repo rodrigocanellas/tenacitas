@@ -19,7 +19,7 @@
 #include "tnct/container/matrix.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 using namespace tnct;
 

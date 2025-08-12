@@ -14,14 +14,14 @@
 #include <tuple>
 
 #include "tnct/async/handling_priority.h"
-#include "tnct/async/int/handler_id.h"
-#include "tnct/async/int/handling.h"
+#include "tnct/async/internal/handler_id.h"
+#include "tnct/async/internal/handling.h"
 #include "tnct/async/result.h"
-#include "tnct/async/traits/is_event.h"
-#include "tnct/async/traits/is_handler.h"
-#include "tnct/container/traits/queue.h"
+#include "tnct/async/cpt/is_event.h"
+#include "tnct/async/cpt/is_handler.h"
+#include "tnct/container/cpt/queue.h"
 #include "tnct/format/fmt.h"
-#include "tnct/log/traits/logger.h"
+#include "tnct/log/cpt/logger.h"
 #include "tnct/tuple/contains_type.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/get_type_index.h"
@@ -73,7 +73,7 @@ executed for the \p event.
 
 Each \p handling has its own \p queue of \p event objects, and the
 implementantion of the queue can vary as much as necessary, as far as it
-satisfies the requirements defined by \p container::traits::queue.
+satisfies the requirements defined by \p container::cpt::queue.
 
 A \p handling can have multiples instances of the \p hander type, in case each
 \p event instance can be handled independently from any other \p event.
@@ -86,7 +86,7 @@ Please, take a look at the tests and examples for more information on how to use
 the dispatcher class.
 */
 
-template <log::traits::logger t_logger, async::traits::is_event... t_events>
+template <log::cpt::logger t_logger, async::cpt::is_event... t_events>
 struct dispatcher final
 {
 
@@ -118,7 +118,7 @@ public:
   void operator delete(void *)   = delete;
   void operator delete[](void *) = delete;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] result publish(const t_event &p_event) noexcept
   {
 
@@ -141,7 +141,7 @@ public:
     return result::OK;
   }
 
-  template <async::traits::is_event t_event, typename... t_event_params>
+  template <async::cpt::is_event t_event, typename... t_event_params>
   [[nodiscard]] result publish(t_event_params &&...p_params) noexcept
   {
 
@@ -166,9 +166,9 @@ public:
     return result::OK;
   }
 
-  template <async::traits::is_event            t_event,
-            container::traits::queue<t_event>  t_handling_queue,
-            async::traits::is_handler<t_event> t_handler>
+  template <async::cpt::is_event            t_event,
+            container::cpt::queue<t_event>  t_handling_queue,
+            async::cpt::is_handler<t_event> t_handler>
   result add_handling(const handling_name &p_id, t_handling_queue &&p_queue,
                       t_handler       &&p_handler,
                       handling_priority p_priority = handling_priority::medium,
@@ -180,7 +180,7 @@ public:
   }
 
   /// \brief Clears the events queue of all handlings of an is_event
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   void clear()
   {
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -199,7 +199,7 @@ public:
   }
 
   /// \brief Clears the events queue of a handling of an is_event
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   result clear(std::string_view p_handling_id)
   {
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -246,7 +246,7 @@ public:
     return result::OK;
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] size_t get_amount_handlings() const noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -254,7 +254,7 @@ public:
     return static_cast<size_t>(_handlings.size());
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] std::optional<size_t>
   get_amount_handlers(std::string_view p_handling_id) const noexcept
   {
@@ -277,22 +277,22 @@ public:
   }
 
 private:
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handling = internal::handling<t_event>;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handling_ptr = std::unique_ptr<handling<t_event>>;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handlings_ite = typename handlings<t_event>::iterator;
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   using handlings_const_ite = typename handlings<t_event>::const_iterator;
 
   using events_handlings =
@@ -320,7 +320,7 @@ private:
     return result::OK;
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   result stop() noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -341,7 +341,7 @@ private:
     return result::OK;
   }
 
-  // template <async::traits::event t_event>
+  // template <async::cpt::event t_event>
   // result stop(handling_id p_handling_id) noexcept {
   //   event_is_in_events_tupĺe<t_event>();
   //   try {
@@ -363,8 +363,8 @@ private:
   //   return result::OK;
   // }
 
-  template <async::traits::is_event            t_event,
-            async::traits::is_handler<t_event> t_handler>
+  template <async::cpt::is_event            t_event,
+            async::cpt::is_handler<t_event> t_handler>
   [[nodiscard]] bool is_handler_already_being_used() const
   {
 
@@ -392,7 +392,7 @@ private:
     return false;
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] static constexpr std::size_t get_handlings_index()
   {
     constexpr auto _idx{tuple::get_type_index<events, t_event>()};
@@ -400,19 +400,19 @@ private:
     return _idx.value();
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] handlings<t_event> &get_handlings()
   {
     return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] const handlings<t_event> &get_handlings() const
   {
     return std::get<get_handlings_index<t_event>()>(m_events_handlings);
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] bool
   find_handling(std::string_view                         p_handling_id,
                 std::function<void(handling<t_event> &)> p_exec)
@@ -434,7 +434,7 @@ private:
     return false;
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   [[nodiscard]] handlings_ite<t_event>
   find_handling(handlings<t_event> &p_handlings, std::string_view p_handling_id)
   {
@@ -445,7 +445,7 @@ private:
     return {std::find_if(p_handlings.begin(), p_handlings.end(), _match)};
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   bool
   find_handling(std::string_view                               p_handling_name,
                 std::function<void(const handling<t_event> &)> p_exec) const
@@ -474,16 +474,16 @@ private:
     return false;
   }
 
-  template <async::traits::is_event t_event>
+  template <async::cpt::is_event t_event>
   static constexpr void check_if_event_is_in_events_tupĺe()
   {
     static_assert(tuple::contains_type<events, t_event>(),
                   "event is not in the 't_events...' of the dispatcher");
   }
 
-  template <async::traits::is_event            t_event,
-            async::traits::is_handler<t_event> t_handler,
-            container::traits::queue<t_event>  t_queue>
+  template <async::cpt::is_event            t_event,
+            async::cpt::is_handler<t_event> t_handler,
+            container::cpt::queue<t_event>  t_queue>
   result add_handling(
       const handling_name &p_handling_id, t_handler &&p_handler,
       t_queue &&p_queue, size_t p_num_handlers,
