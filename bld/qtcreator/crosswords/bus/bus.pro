@@ -1,13 +1,14 @@
 
 
-include (../../../common.pri)
+include (../../common.pri)
 
-TEMPLATE=lib
+TEMPLATE=aux
+
+PRJ_DIR=$$BASE_DIR/tnct/crosswords/bus
 
 
 HEADERS +=  \
-    $$BASE_DIR/tenacitas/src/crosswords/bus/grid_creator.h \
-    $$BASE_DIR/tenacitas/src/crosswords/bus/internal/organizer.h \
-    $$BASE_DIR/tenacitas/src/crosswords/bus/internal/assembler.h \
-    $$BASE_DIR/tenacitas/src/crosswords/bus/internal/dispatcher.h \
+    $$PRJ_DIR/grid_creator.h \
+    $$PRJ_DIR/internal/organizer.h \
+    $$PRJ_DIR/internal/assembler.h
 

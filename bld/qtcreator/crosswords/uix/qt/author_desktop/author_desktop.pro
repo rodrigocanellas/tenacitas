@@ -1,4 +1,4 @@
-include (../../../../../common.pri)
+include (../../../../common.pri)
 
 QT += core gui widgets
 
@@ -8,17 +8,17 @@ CONFIG += c++20 app
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-
+PRJ_DIR=$$BASE_DIR/tnct/crosswords
 
 
 SOURCES += \
-    $$BASE_DIR/tenacitas/src/crosswords/uix/qt/author_desktop/main.cpp \
-    $$BASE_DIR/tenacitas/src/crosswords/uix/qt/author_desktop/mainwindow.cpp
+    $$PRJ_DIR/uix/qt/author_desktop/main.cpp \
+    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.cpp
 HEADERS += \
-    $$BASE_DIR/tenacitas/src/crosswords/uix/qt/author_desktop/mainwindow.h
+    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.h
 
 FORMS += \
-    $$BASE_DIR/tenacitas/src/crosswords/uix/qt/author_desktop/mainwindow.ui
+    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.ui
 
 
 
@@ -36,4 +36,4 @@ TARGET=tenacitas.crosswords.qt.desktop
 #!isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    $$BASE_DIR/tenacitas/src/crosswords/rsc/crosswords.qrc
+    $$PRJ_DIR/rsc/crosswords.qrc

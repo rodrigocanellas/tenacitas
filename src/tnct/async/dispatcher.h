@@ -13,12 +13,13 @@
 #include <optional>
 #include <tuple>
 
+#include "tnct/async/cpt/is_event.h"
+#include "tnct/async/cpt/is_handler.h"
+#include "tnct/async/handling_name.h"
 #include "tnct/async/handling_priority.h"
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/result.h"
-#include "tnct/async/cpt/is_event.h"
-#include "tnct/async/cpt/is_handler.h"
 #include "tnct/container/cpt/queue.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
@@ -256,15 +257,59 @@ public:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] std::optional<size_t>
-  get_amount_handlers(std::string_view p_handling_id) const noexcept
+  get_amount_handlers(const handling_name &p_handling_name) const noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
     {
-      size_t _amount{0};
+      std::size_t _amount{0};
       if (find_handling<t_event>(
-              p_handling_id, [&](const handling<t_event> &p_handling)
+              p_handling_name, [&](const handling<t_event> &p_handling)
               { _amount = p_handling.get_amount_handlers(); }))
+      {
+        return {_amount};
+      }
+    }
+    catch (std::exception &_ex)
+    {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+    return std::nullopt;
+  }
+
+  template <async::cpt::is_event t_event>
+  [[nodiscard]] std::optional<size_t>
+  get_num_events(const handling_name &p_handling_name) const noexcept
+  {
+    check_if_event_is_in_events_tupĺe<t_event>();
+    try
+    {
+      std::size_t _amount{0};
+      if (find_handling<t_event>(p_handling_name,
+                                 [&](const handling<t_event> &p_handling)
+                                 { _amount = p_handling.get_num_events(); }))
+      {
+        return {_amount};
+      }
+    }
+    catch (std::exception &_ex)
+    {
+      TNCT_LOG_ERR(m_logger, _ex.what());
+    }
+    return std::nullopt;
+  }
+
+  template <async::cpt::is_event t_event>
+  [[nodiscard]] std::optional<size_t>
+  get_events_capacity(const handling_name &p_handling_name) const noexcept
+  {
+    check_if_event_is_in_events_tupĺe<t_event>();
+    try
+    {
+      std::size_t _amount{0};
+      if (find_handling<t_event>(
+              p_handling_name, [&](const handling<t_event> &p_handling)
+              { _amount = p_handling.get_events_capacity(); }))
       {
         return {_amount};
       }
@@ -414,13 +459,16 @@ private:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] bool
-  find_handling(std::string_view                         p_handling_id,
+  find_handling(const handling_name                     &p_handling_name,
                 std::function<void(handling<t_event> &)> p_exec)
   {
     handlings<t_event> &_handlings{get_handlings<t_event>()};
 
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
-                { return p_value.second->get_id() == p_handling_id; }};
+                {
+                  return p_value.second->get_id()
+                         == internal::get_handling_id(p_handling_name);
+                }};
 
     auto _ite{std::find_if(_handlings.begin(), _handlings.end(), _match)};
     if (_ite != _handlings.end())
@@ -430,17 +478,21 @@ private:
     }
 
     TNCT_LOG_WAR(m_logger,
-                 format::fmt("Could not find handling id ", p_handling_id));
+                 format::fmt("Could not find handling ", p_handling_name));
     return false;
   }
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] handlings_ite<t_event>
-  find_handling(handlings<t_event> &p_handlings, std::string_view p_handling_id)
+  find_handling(handlings<t_event>  &p_handlings,
+                const handling_name &p_handling_name)
   {
 
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
-                { return p_value.second->get_id() == p_handling_id; }};
+                {
+                  return p_value.second->get_id()
+                         == internal::get_handling_id(p_handling_name);
+                }};
 
     return {std::find_if(p_handlings.begin(), p_handlings.end(), _match)};
   }

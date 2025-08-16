@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_ASY_GRID_ATTEMPT_CONFIGURATION_H
-#define TENACITAS_SRC_CROSSWORDS_ASY_GRID_ATTEMPT_CONFIGURATION_H
+#ifndef TNCT_CROSSWORDS_ASY_GRID_ATTEMPT_CONFIGURATION_H
+#define TNCT_CROSSWORDS_ASY_GRID_ATTEMPT_CONFIGURATION_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -8,9 +8,9 @@
 
 #include <iostream>
 
-#include "tenacitas/src/crosswords/dat/index.h"
+#include "tnct/crosswords/dat/index.h"
 
-namespace tenacitas::src::crosswords::asy {
+namespace tnct::crosswords::evt {
 
 struct grid_attempt_configuration {
   grid_attempt_configuration() = default;
@@ -35,6 +35,6 @@ struct grid_attempt_configuration {
   }
 };
 
-} // namespace tenacitas::src::crosswords::asy
+} // namespace tnct::crosswords::evt
 
 #endif

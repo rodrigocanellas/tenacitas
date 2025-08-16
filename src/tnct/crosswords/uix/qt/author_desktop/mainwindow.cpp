@@ -14,7 +14,12 @@
 #include <fstream>
 #include <map>
 
+#include "tnct/async/handling_priority.h"
+#include "tnct/async/result.h"
+#include "tnct/format/fmt.h"
+#include "tnct/log/cerr.h"
 
+using namespace tnct;
 
 static const int USE_COL{0};
 static const int WORD_COL{1};
@@ -31,61 +36,15 @@ const QString Char::hightlight_style_vertical =
     "font: 700 12pt \"FreeMono\";color: rgb(0, 0, 255);";
 const QString Char::unused_style = "background-color: rgb(100, 100, 100);";
 
-MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
-                       QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), m_dispatcher(p_dispatcher) {
+MainWindow::MainWindow(log::cerr                   &m_logger,
+                       crosswords::evt::dispatcher &p_dispatcher,
+                       QWidget                     *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_logger(m_logger),
+      m_dispatcher(p_dispatcher)
+{
   ui->setupUi(this);
 
-  m_dispatcher->subscribe<MainWindow, crosswords::asy::grid_create_unsolved>(
-      [&](auto) {
-        m_solving = false;
-        emit unresolved();
-      });
-
-  m_dispatcher->subscribe<MainWindow, crosswords::asy::grid_create_solved>(
-      [&](auto p_event) {
-        TNCT_LOG_DEB("grid = ", *p_event.grid);
-        // m_grid = p_event.grid;
-
-        on_grid_solved(std::move(p_event));
-      });
-
-  m_dispatcher->subscribe<MainWindow, crosswords::asy::grid_create_timeout>(
-      [&](auto p_event) {
-        emit log(QString{"Tempo excedido para grade de " +
-                         QString::number(p_event.num_rows) + "x" +
-                         QString::number(p_event.num_cols)} +
-                 "\n");
-      });
-
-  m_dispatcher->subscribe<MainWindow, crosswords::asy::grid_create_stop>(
-      [&](auto) { emit log({"Montagem interrompida\n"}); });
-
-  m_dispatcher
-      ->subscribe<MainWindow, crosswords::asy::grid_attempt_configuration>(
-          [&](auto p_event) {
-            emit log(QString{"############\n"} +
-                     QString{"Iniciando tentativa de montagem da grade "} +
-                     QString::number(p_event.num_rows) + "x" +
-                     QString::number(p_event.num_cols) + "\n" +
-                     QString{"Número de permutações: " +
-                             QString::number(p_event.number_of_permutations)} +
-                     "\n" +
-                     QString{"Memória disponível: " +
-                             QString::number(p_event.memory_available / 1024 /
-                                             1024) +
-                             " MB\n"} +
-                     QString{"Máximo de memória a ser usada: " +
-                             QString::number(p_event.max_memory_to_be_used /
-                                             1024 / 1024) +
-                             " MB\n"});
-          });
-
-  m_dispatcher->subscribe<MainWindow, crosswords::asy::grid_permutations_tried>(
-      [&](auto p_event) {
-        emit log(QString::number(p_event.permutations) +
-                 " permutações tentadas\n");
-      });
+  configure_dispatcher();
 
   m_original_background = QColor{255, 255, 255};
 
@@ -94,21 +53,32 @@ MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
   connect(ui->btnAddWord, &QPushButton::clicked, this,
           &MainWindow::on_add_word_clicked);
 
-  connect(ui->btnRemoveWord, &QPushButton::clicked, this, [&]() {
-    if (m_current_row == -1) {
-      m_current_row = ui->tblWords->currentRow();
-    }
-    ui->tblWords->removeRow(m_current_row);
-    m_current_row = -1;
-    reset();
-    // show();
-  });
+  connect(ui->btnRemoveWord, &QPushButton::clicked, this,
+          [&]()
+          {
+            if (m_current_row == tnct::crosswords::dat::invalid_index)
+            {
+              m_current_row = ui->tblWords->currentRow();
+            }
+            ui->tblWords->removeRow(m_current_row);
+            m_current_row = tnct::crosswords::dat::invalid_index;
+            reset();
+            // show();
+          });
 
   connect(ui->btnStart, &QPushButton::clicked, this, &MainWindow::on_start);
 
-  connect(ui->btnStop, &QPushButton::clicked, this, [&]() {
-    m_dispatcher->publish<MainWindow, crosswords::asy::grid_create_stop>();
-  });
+  connect(ui->btnStop, &QPushButton::clicked, this,
+          [&]()
+          {
+            if (auto _result =
+                    m_dispatcher
+                        .template publish<crosswords::evt::grid_create_stop>()
+                    != async::result::OK)
+            {
+              TNCT_LOG_ERR(m_logger, format::fmt(_result));
+            }
+          });
 
   connect(this, &MainWindow::unresolved, this, &MainWindow::on_unresolved);
 
@@ -121,18 +91,24 @@ MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
   connect(ui->btnSaveAs, &QPushButton::clicked, this,
           &MainWindow::on_save_as_clicked);
 
-  connect(ui->spbNumRows, &QSpinBox::valueChanged, this, [&](int p_value) {
-    if (ui->spbMaxRows->value() < p_value) {
-      ui->spbMaxRows->setValue(p_value);
-    }
-  });
+  connect(ui->spbNumRows, &QSpinBox::valueChanged, this,
+          [&](int p_value)
+          {
+            if (ui->spbMaxRows->value() < p_value)
+            {
+              ui->spbMaxRows->setValue(p_value);
+            }
+          });
 
-  connect(ui->spbNumRows, &QSpinBox::textChanged, this, [&](QString p_value) {
-    auto _value{p_value.toInt()};
-    if (ui->spbMaxRows->value() < _value) {
-      ui->spbMaxRows->setValue(_value);
-    }
-  });
+  connect(ui->spbNumRows, &QSpinBox::textChanged, this,
+          [&](QString p_value)
+          {
+            auto _value{p_value.toInt()};
+            if (ui->spbMaxRows->value() < _value)
+            {
+              ui->spbMaxRows->setValue(_value);
+            }
+          });
 
   connect(ui->tblWords, &QTableWidget::cellPressed,
           [&](int p_row, int) { on_word_selected(p_row); });
@@ -140,12 +116,14 @@ MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
   connect(this, &MainWindow::grid_solved, this,
           &MainWindow::handle_grid_solved);
 
-  connect(ui->btnClear, &QPushButton::clicked, [&]() {
-    clear_words();
-    clear_grid();
-    ui->chbAllWords->setCheckState(Qt::Unchecked);
-    ui->lblFileName->clear();
-  });
+  connect(ui->btnClear, &QPushButton::clicked,
+          [&]()
+          {
+            clear_words();
+            clear_grid();
+            ui->chbAllWords->setCheckState(Qt::Unchecked);
+            ui->lblFileName->clear();
+          });
 
   connect(ui->chbAllWords, &QCheckBox::clicked,
           [&](bool) { on_check_all_clicked(); });
@@ -153,15 +131,19 @@ MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
   connect(ui->btnPrint, &QPushButton::clicked, this,
           &MainWindow::on_print_clicked);
 
-  connect(ui->chbLog, &QCheckBox::clicked, this, [&](bool) {
-    auto _is_checked{ui->chbLog->checkState()};
-    if (_is_checked) {
-      ui->txtLog->setVisible(true);
-
-    } else {
-      ui->txtLog->setVisible(false);
-    }
-  });
+  connect(ui->chbLog, &QCheckBox::clicked, this,
+          [&](bool)
+          {
+            auto _is_checked{ui->chbLog->checkState()};
+            if (_is_checked)
+            {
+              ui->txtLog->setVisible(true);
+            }
+            else
+            {
+              ui->txtLog->setVisible(false);
+            }
+          });
 
   connect(this, &MainWindow::log, this,
           [&](QString p_txt) { ui->txtLog->append(p_txt); });
@@ -184,25 +166,99 @@ MainWindow::MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
   }
 }
 
-void MainWindow::create_check_box_first_column(int p_row, bool p_checked) {
+void MainWindow::configure_dispatcher()
+{
+
+  m_dispatcher.template add_handling<crosswords::evt::grid_create_unsolved>(
+      "grid_create_unsolved", grid_create_unsolved_queue{m_logger},
+      [&](crosswords::evt::grid_create_unsolved &&)
+      {
+        m_solving = false;
+        emit unresolved();
+      });
+
+  m_dispatcher.template add_handling<crosswords::evt::grid_create_solved>(
+      "grid_create_solved", grid_create_solved_queue{m_logger},
+      [&](crosswords::evt::grid_create_solved &&p_event)
+      {
+        TNCT_LOG_DEB(m_logger, format::fmt("grid = ", *p_event.grid));
+        // m_grid = p_event.grid;
+
+        on_grid_solved(std::move(p_event));
+      });
+
+  m_dispatcher.template add_handling<crosswords::evt::grid_create_timeout>(
+      "grid_create_timeout", grid_create_timeout_queue{m_logger},
+      [&](crosswords::evt::grid_create_timeout &&p_event)
+      {
+        emit log(QString{"Tempo excedido para grade de "
+                         + QString::number(p_event.num_rows) + "x"
+                         + QString::number(p_event.num_cols)}
+                 + "\n");
+      });
+
+  m_dispatcher.template add_handling<crosswords::evt::grid_create_stop>(
+      "grid_create_stop", grid_create_stop_queue{m_logger},
+      [&](crosswords::evt::grid_create_stop &&)
+      { emit log({"Montagem interrompida\n"}); });
+
+  m_dispatcher
+      .template add_handling<crosswords::evt::grid_attempt_configuration>(
+          "grid_attempt_configuration",
+          grid_attempt_configuration_queue{m_logger},
+          [&](crosswords::evt::grid_attempt_configuration &&p_event)
+          {
+            emit log(
+                QString{"############\n"}
+                + QString{"Iniciando tentativa de montagem da grade "}
+                + QString::number(p_event.num_rows) + "x"
+                + QString::number(p_event.num_cols) + "\n"
+                + QString{"Número de permutações: "
+                          + QString::number(p_event.number_of_permutations)}
+                + "\n"
+                + QString{"Memória disponível: "
+                          + QString::number(p_event.memory_available / 1024
+                                            / 1024)
+                          + " MB\n"}
+                + QString{"Máximo de memória a ser usada: "
+                          + QString::number(p_event.max_memory_to_be_used / 1024
+                                            / 1024)
+                          + " MB\n"});
+          });
+
+  m_dispatcher.template add_handling<crosswords::evt::grid_permutations_tried>(
+      "grid_permutations_tried", grid_permutations_tried_queue{m_logger},
+      [&](crosswords::evt::grid_permutations_tried &&p_event)
+      {
+        emit log(QString::number(p_event.permutations)
+                 + " permutações tentadas\n");
+      });
+}
+
+void MainWindow::create_check_box_first_column(int p_row, bool p_checked)
+{
   QTableWidgetItem *_item{new QTableWidgetItem()};
   _item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   _item->setTextAlignment(Qt::AlignCenter);
 
-  TNCT_LOG_DEB("checked = ", Qt::Checked, ", unchecked = ", Qt::Unchecked);
+  TNCT_LOG_DEB(m_logger, format::fmt("checked = ", Qt::Checked,
+                                     ", unchecked = ", Qt::Unchecked));
   _item->setCheckState((p_checked ? Qt::Checked : Qt::Unchecked));
   ui->tblWords->setItem(p_row, USE_COL, _item);
 }
 
-void MainWindow::clear_grid() {
+void MainWindow::clear_grid()
+{
   auto _num_rows{static_cast<crosswords::dat::index>(ui->spbNumRows->value())};
   auto _num_cols{static_cast<crosswords::dat::index>(ui->spbNumCols->value())};
 
   ui->tblGrid->setRowCount(_num_rows);
   ui->tblGrid->setColumnCount(_num_cols);
 
-  for (decltype(_num_rows) _r = 0; _r < _num_rows; ++_r) {
-    for (decltype(_num_cols) _c = 0; _c < _num_cols; ++_c) {
+  for (decltype(_num_rows) _r = 0; _r < _num_rows; ++_r)
+  {
+    for (decltype(_num_cols) _c = 0; _c < _num_cols; ++_c)
+    {
       ui->tblGrid->setCellWidget(_r, _c, new UnusedtLetter());
     }
   }
@@ -210,87 +266,102 @@ void MainWindow::clear_grid() {
   m_grid.reset();
 }
 
-void MainWindow::clear_words() {
+void MainWindow::clear_words()
+{
   ui->tblWords->setRowCount(0);
-  m_current_row = -1;
+  m_current_row = tnct::crosswords::dat::invalid_index;
 }
 
 void MainWindow::add_word_to_words(
     int p_row, const crosswords::dat::word &p_word,
-    const crosswords::dat::explanation &p_explanation) {
+    const crosswords::dat::explanation &p_explanation)
+{
 
   ui->tblWords->insertRow(p_row);
 
   create_check_box_first_column(p_row);
 
-  ui->tblWords->setItem(
-      p_row, WORD_COL,
-      new QTableWidgetItem(QString{p_word.to_string().c_str()}));
-  ui->tblWords->setItem(
-      p_row, EXPLANATION_COL,
-      new QTableWidgetItem(QString{p_explanation.to_string().c_str()}));
+  ui->tblWords->setItem(p_row, WORD_COL,
+                        new QTableWidgetItem(QString{p_word.c_str()}));
+  ui->tblWords->setItem(p_row, EXPLANATION_COL,
+                        new QTableWidgetItem(QString{p_explanation.c_str()}));
 }
 
-void MainWindow::on_word_selected(int p_row) {
-  if (m_grid == nullptr) {
+void MainWindow::on_word_selected(int p_row)
+{
+  if (m_grid == nullptr)
+  {
     return;
   }
 
   auto _check_box_item{ui->tblWords->item(p_row, USE_COL)};
-  if (_check_box_item == nullptr) {
+  if (_check_box_item == nullptr)
+  {
     return;
   }
 
-  if (_check_box_item->checkState() == Qt::Unchecked) {
+  if (_check_box_item->checkState() == Qt::Unchecked)
+  {
     return;
   }
 
   auto _word_item = ui->tblWords->item(p_row, WORD_COL);
-  if (_word_item == nullptr) {
+  if (_word_item == nullptr)
+  {
     return;
   }
   auto _word{_word_item->text().toStdString()};
-  if (_word.empty()) {
+  if (_word.empty())
+  {
     return;
   }
   auto _end{m_grid->end()};
 
-  for (auto _layout = m_grid->begin(); _layout != _end; ++_layout) {
-    if (_word == _layout->get_word().to_string()) {
+  for (auto _layout = m_grid->begin(); _layout != _end; ++_layout)
+  {
+    if (_word == _layout->get_word())
+    {
       on_letter_id_click(_layout);
       break;
     }
   }
 }
 
-void MainWindow::reset() {
+void MainWindow::reset()
+{
   clear_grid();
   unselect_words();
   ui->txtLog->clear();
-  m_current_row = -1;
+  m_current_row = tnct::crosswords::dat::invalid_index;
   ui->btnPrint->setVisible(false);
   ui->btnStart->setVisible(true);
   ui->btnStop->setVisible(false);
 }
 
-void MainWindow::unselect_words() {
+void MainWindow::unselect_words()
+{
   const QBrush _not_selected(QColor(0, 0, 0));
-  auto _rows{ui->tblWords->rowCount()};
-  for (decltype(_rows) _r = 0; _r < _rows; ++_r) {
-    if (ui->tblWords->item(_r, WORD_COL)) {
+  auto         _rows{ui->tblWords->rowCount()};
+  for (decltype(_rows) _r = 0; _r < _rows; ++_r)
+  {
+    if (ui->tblWords->item(_r, WORD_COL))
+    {
       ui->tblWords->item(_r, WORD_COL)->setForeground(_not_selected);
     }
-    if (ui->tblWords->item(_r, EXPLANATION_COL)) {
+    if (ui->tblWords->item(_r, EXPLANATION_COL))
+    {
       ui->tblWords->item(_r, EXPLANATION_COL)->setForeground(_not_selected);
     }
   }
 }
 
 void MainWindow::on_letter_id_click(
-    crosswords::dat::grid::const_layout_ite p_first_letter) {
+    crosswords::dat::grid::const_layout_ite p_first_letter)
+{
   const QBrush _not_selected(QColor(0, 0, 0));
 
-  if (m_first_letter != m_grid->end()) {
+  if (m_first_letter != m_grid->end())
+  {
     lowlight(m_first_letter);
     ui->tblWords->item(m_current_row, WORD_COL)->setForeground(_not_selected);
     ui->tblWords->item(m_current_row, EXPLANATION_COL)
@@ -300,15 +371,17 @@ void MainWindow::on_letter_id_click(
   m_first_letter = p_first_letter;
   highlight(m_first_letter);
 
-  const QBrush _brush{m_first_letter->get_orientation() ==
-                              crosswords::dat::orientation::hori
+  const QBrush _brush{m_first_letter->get_orientation()
+                              == crosswords::dat::orientation::hori
                           ? horizontal_brush
                           : vertical_brush};
 
   auto _rows{ui->tblWords->rowCount()};
-  for (decltype(_rows) _r = 0; _r < _rows; ++_r) {
-    if (ui->tblWords->item(_r, WORD_COL)->text().toStdString() ==
-        m_first_letter->get_word().to_string()) {
+  for (decltype(_rows) _r = 0; _r < _rows; ++_r)
+  {
+    if (ui->tblWords->item(_r, WORD_COL)->text().toStdString()
+        == m_first_letter->get_word())
+    {
       ui->tblWords->item(_r, WORD_COL)->setForeground(_brush);
       ui->tblWords->item(_r, EXPLANATION_COL)->setForeground(_brush);
       ui->tblWords->setCurrentItem(ui->tblWords->item(_r, WORD_COL));
@@ -319,32 +392,39 @@ void MainWindow::on_letter_id_click(
   }
 }
 
-void MainWindow::handle_grid_solved() {
+void MainWindow::handle_grid_solved()
+{
   show_grid();
   show();
 }
 
 void MainWindow::add_word_to_grid(
-    crosswords::dat::grid::const_layout_ite p_layout) {
+    crosswords::dat::grid::const_layout_ite p_layout)
+{
 
   auto _row{static_cast<int>(p_layout->get_row())};
   auto _col{static_cast<int>(p_layout->get_col())};
 
   auto _on_letter_id_click =
-      [&](crosswords::dat::grid::const_layout_ite p_layout) {
-        on_letter_id_click(p_layout);
-      };
+      [&](crosswords::dat::grid::const_layout_ite p_layout)
+  { on_letter_id_click(p_layout); };
 
   auto _cell{reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col))};
-  if (!_cell) {
+  if (!_cell)
+  {
     auto _first_letter{new FirstLetter(ui->tblGrid, _on_letter_id_click)};
     ui->tblGrid->setCellWidget(_row, _col, _first_letter);
     _first_letter->set_layout(p_layout);
-  } else {
-    if (_cell->is_first()) {
+  }
+  else
+  {
+    if (_cell->is_first())
+    {
       auto _first_letter{reinterpret_cast<FirstLetter *>(_cell)};
       _first_letter->set_layout(p_layout);
-    } else {
+    }
+    else
+    {
       auto _first_letter{new FirstLetter(ui->tblGrid, _on_letter_id_click)};
       ui->tblGrid->setCellWidget(_row, _col, _first_letter);
       _first_letter->set_layout(p_layout);
@@ -352,7 +432,8 @@ void MainWindow::add_word_to_grid(
   }
 }
 
-void MainWindow::show_grid() {
+void MainWindow::show_grid()
+{
   ui->tblGrid->setRowCount(0);
   ui->tblGrid->setColumnCount(0);
 
@@ -364,14 +445,18 @@ void MainWindow::show_grid() {
   auto _num_cols{m_grid->get_num_cols()};
   ui->tblGrid->setColumnCount(_num_cols);
 
-  for (auto _ite = m_grid->begin(); _ite != m_grid->end(); ++_ite) {
+  for (auto _ite = m_grid->begin(); _ite != m_grid->end(); ++_ite)
+  {
     add_word_to_grid(_ite);
   }
 
   // fill unused cells
-  for (decltype(_num_rows) _row = 0; _row < _num_rows; ++_row) {
-    for (decltype(_num_cols) _col = 0; _col < _num_cols; ++_col) {
-      if (ui->tblGrid->cellWidget(_row, _col) == nullptr) {
+  for (decltype(_num_rows) _row = 0; _row < _num_rows; ++_row)
+  {
+    for (decltype(_num_cols) _col = 0; _col < _num_cols; ++_col)
+    {
+      if (ui->tblGrid->cellWidget(_row, _col) == nullptr)
+      {
         ui->tblGrid->setCellWidget(_row, _col, new UnusedtLetter());
       }
     }
@@ -385,63 +470,82 @@ void MainWindow::show_grid() {
   ui->btnPrint->setVisible(true);
 }
 
-void MainWindow::highlight(crosswords::dat::grid::const_layout_ite p_layout) {
+void MainWindow::highlight(crosswords::dat::grid::const_layout_ite p_layout)
+{
   auto _size{p_layout->get_word().size()};
   auto _row{p_layout->get_row()};
   auto _col{p_layout->get_col()};
   auto _orientation{p_layout->get_orientation()};
 
-  if (_orientation == crosswords::dat::orientation::vert) {
-    for (decltype(_size) _i = 0; _i < _size; ++_i) {
+  if (_orientation == crosswords::dat::orientation::vert)
+  {
+    for (decltype(_size) _i = 0; _i < _size; ++_i)
+    {
       reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row + _i, _col))
           ->highlight(_orientation);
     }
-  } else {
-    for (decltype(_size) _i = 0; _i < _size; ++_i) {
+  }
+  else
+  {
+    for (decltype(_size) _i = 0; _i < _size; ++_i)
+    {
       reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col + _i))
           ->highlight(_orientation);
     }
   }
 }
 
-void MainWindow::lowlight(crosswords::dat::grid::const_layout_ite p_layout) {
+void MainWindow::lowlight(crosswords::dat::grid::const_layout_ite p_layout)
+{
   auto _size{p_layout->get_word().size()};
   auto _row{p_layout->get_row()};
   auto _col{p_layout->get_col()};
 
-  if (p_layout->get_orientation() == crosswords::dat::orientation::vert) {
-    for (decltype(_size) _i = 0; _i < _size; ++_i) {
+  if (p_layout->get_orientation() == crosswords::dat::orientation::vert)
+  {
+    for (decltype(_size) _i = 0; _i < _size; ++_i)
+    {
       reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row + _i, _col))
           ->lowlight();
     }
-  } else {
-    for (decltype(_size) _i = 0; _i < _size; ++_i) {
+  }
+  else
+  {
+    for (decltype(_size) _i = 0; _i < _size; ++_i)
+    {
       reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col + _i))
           ->lowlight();
     }
   }
 }
 
-void MainWindow::on_grid_solved(crosswords::asy::grid_create_solved &&p_event) {
+void MainWindow::on_grid_solved(crosswords::evt::grid_create_solved &&p_event)
+{
   m_solving = false;
-  m_grid = p_event.grid;
-  emit log(QString{"Grade montada em " + QString::number(p_event.time.count()) +
-                   " segundos\n"});
+  m_grid    = p_event.grid;
+  emit log(QString{"Grade montada em " + QString::number(p_event.time.count())
+                   + " segundos\n"});
   emit grid_solved(/*p_event.grid*/);
 }
 
-void MainWindow::on_unresolved() {
+void MainWindow::on_unresolved()
+{
   QMessageBox qMessageBox;
   qMessageBox.warning(nullptr, "NÃO RESOLVIDO",
                       "Não foi possível montar a grade");
   ui->btnStart->setVisible(true);
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow()
+{
+  delete ui;
+}
 
-void MainWindow::on_add_word_clicked() {
+void MainWindow::on_add_word_clicked()
+{
   ui->tblWords->setRowCount(ui->tblWords->rowCount() + 1);
-  if (ui->tblWords->rowCount() == 1) {
+  if (ui->tblWords->rowCount() == 1)
+  {
     ui->chbAllWords->setChecked(true);
   }
   //  {
@@ -460,8 +564,10 @@ void MainWindow::on_add_word_clicked() {
   ui->tblWords->setCurrentCell(ui->tblWords->rowCount() - 1, WORD_COL);
 }
 
-void MainWindow::on_start() {
-  if (m_solving) {
+void MainWindow::on_start()
+{
+  if (m_solving)
+  {
     return;
   }
 
@@ -470,35 +576,44 @@ void MainWindow::on_start() {
   m_entries.clear();
 
   auto _rows{ui->tblWords->rowCount()};
-  for (decltype(_rows) _row = 0; _row < _rows; ++_row) {
+  for (decltype(_rows) _row = 0; _row < _rows; ++_row)
+  {
     auto _item{ui->tblWords->item(_row, USE_COL)};
-    if (!_item) {
+    if (!_item)
+    {
       return;
     }
 
     auto _checked_state{_item->checkState()};
-    TNCT_LOG_DEB("check state is = ",
-                 ui->tblWords->item(_row, WORD_COL)->text().toStdString(),
-                 " = ", _checked_state);
-    if (_checked_state == Qt::Checked) {
+    TNCT_LOG_DEB(
+        m_logger,
+        format::fmt("check state is = ",
+                    ui->tblWords->item(_row, WORD_COL)->text().toStdString(),
+                    " = ", _checked_state));
+    if (_checked_state == Qt::Checked)
+    {
       QTableWidgetItem *_item_word{ui->tblWords->item(_row, WORD_COL)};
       QTableWidgetItem *_item_explanation{
           ui->tblWords->item(_row, EXPLANATION_COL)};
 
-      if (_item_word && _item_explanation) {
+      if (_item_word && _item_explanation)
+      {
         QString _text0{_item_word->text().trimmed()};
         QString _text1{_item_explanation->text().trimmed()};
-        if (!_text0.isEmpty() && !_text1.isEmpty()) {
+        if (!_text0.isEmpty() && !_text1.isEmpty())
+        {
           m_entries.add_entry(_item_word->text().toStdString(),
                               _item_explanation->text().toStdString());
-          TNCT_LOG_DEB("word = ", _text0.toStdString(),
-                       ", explanation = ", _text1.toStdString());
+          TNCT_LOG_DEB(m_logger,
+                       format::fmt("word = ", _text0.toStdString(),
+                                   ", explanation = ", _text1.toStdString()));
         }
       }
     }
   }
 
-  if (m_entries.empty()) {
+  if (m_entries.empty())
+  {
     return;
   }
 
@@ -507,26 +622,38 @@ void MainWindow::on_start() {
   auto _max_rows{static_cast<crosswords::dat::index>(ui->spbMaxRows->value())};
 
   std::chrono::seconds _interval;
-  if (ui->rdbSeconds->isChecked()) {
+  if (ui->rdbSeconds->isChecked())
+  {
     _interval = std::chrono::seconds{ui->spbInterval->value()};
-  } else if (ui->rdbMinutes->isChecked()) {
+  }
+  else if (ui->rdbMinutes->isChecked())
+  {
     _interval = std::chrono::seconds{ui->spbInterval->value() * 60};
-  } else {
+  }
+  else
+  {
     _interval = std::chrono::seconds{ui->spbInterval->value() * 60 * 24};
   }
 
-  m_dispatcher->publish<MainWindow, crosswords::asy::grid_create_start>(
-      m_entries, _num_rows, _num_cols, _interval, _max_rows);
+  if (auto _result =
+          m_dispatcher.template publish<crosswords::evt::grid_create_start>(
+              m_entries, _num_rows, _num_cols, _interval, _max_rows)
+          != async::result::OK)
+  {
+    TNCT_LOG_ERR(m_logger, format::fmt(_result));
+  }
 
   ui->btnStop->setVisible(true);
   ui->btnStart->setVisible(false);
 }
 
-void MainWindow::on_import_clicked() {
-  auto _file_name{QFileDiasrc::log::getOpenFileName(this, tr("Abrir palavras"), "./",
+void MainWindow::on_import_clicked()
+{
+  auto _file_name{QFileDialog::getOpenFileName(this, tr("Abrir palavras"), "./",
                                                "*.cross")};
 
-  if (_file_name.isEmpty()) {
+  if (_file_name.isEmpty())
+  {
     return;
   }
 
@@ -538,8 +665,9 @@ void MainWindow::on_import_clicked() {
 
   std::getline(_file, _line);
   int _row{0};
-  while (!_file.eof()) {
-    auto _pos{_line.find('|')};
+  while (!_file.eof())
+  {
+    auto        _pos{_line.find('|')};
     std::string _word{_line.substr(0, _pos)};
     ++_pos;
     std::string _explanation{_line.substr(_pos, _line.size())};
@@ -553,12 +681,14 @@ void MainWindow::on_import_clicked() {
   ui->chbAllWords->setCheckState(Qt::Checked);
 }
 
-void MainWindow::on_save_clicked() {
+void MainWindow::on_save_clicked()
+{
   QFileDialog _save_file;
 
-  bool _add_extension{false};
+  bool    _add_extension{false};
   QString _file_name{ui->lblFileName->text()};
-  if (_file_name.isEmpty()) {
+  if (_file_name.isEmpty())
+  {
     _add_extension = true;
   }
 
@@ -566,16 +696,19 @@ void MainWindow::on_save_clicked() {
       this, tr("Salvar palavras"), (_file_name.isEmpty() ? "" : _file_name),
       tr("*.cross"));
 
-  if (_file_name.isEmpty()) {
+  if (_file_name.isEmpty())
+  {
     return;
   }
 
-  if (_add_extension) {
+  if (_add_extension)
+  {
     _file_name += ".cross";
   }
 
   std::ofstream _file(_file_name.toStdString());
-  if (_file.bad()) {
+  if (_file.bad())
+  {
     QMessageBox qMessageBox;
     qMessageBox.critical(nullptr, "", "erro salvando arquivo");
     return;
@@ -583,12 +716,14 @@ void MainWindow::on_save_clicked() {
 
   auto _rows{ui->tblWords->rowCount()};
 
-  for (decltype(_rows) _row = 0; _row < _rows; ++_row) {
+  for (decltype(_rows) _row = 0; _row < _rows; ++_row)
+  {
     QTableWidgetItem *_item_word{ui->tblWords->item(_row, WORD_COL)};
     QTableWidgetItem *_item_explanation{
         ui->tblWords->item(_row, EXPLANATION_COL)};
 
-    if (_item_word && _item_explanation) {
+    if (_item_word && _item_explanation)
+    {
       QString _text0{_item_word->text().trimmed()};
       QString _text1{_item_explanation->text().trimmed()};
       _file << _text0.toStdString() << '|' << _text1.toStdString() << '\n';
@@ -597,15 +732,18 @@ void MainWindow::on_save_clicked() {
   ui->lblFileName->setText(_file_name);
 }
 
-void MainWindow::on_save_as_clicked() {
-  QString _file_name = QFileDiasrc::log::getSaveFileName(this, tr("Salvar palavras"),
+void MainWindow::on_save_as_clicked()
+{
+  QString _file_name = QFileDialog::getSaveFileName(this, tr("Salvar palavras"),
                                                     "./", tr("*.cross"));
 
-  if (_file_name.isEmpty()) {
+  if (_file_name.isEmpty())
+  {
     return;
   }
   std::ofstream _file(_file_name.toStdString());
-  if (_file.bad()) {
+  if (_file.bad())
+  {
     QMessageBox qMessageBox;
     qMessageBox.critical(nullptr, "", "erro salvando arquivo");
     return;
@@ -613,12 +751,14 @@ void MainWindow::on_save_as_clicked() {
 
   auto _rows{ui->tblWords->rowCount()};
 
-  for (decltype(_rows) _row = 0; _row < _rows; ++_row) {
+  for (decltype(_rows) _row = 0; _row < _rows; ++_row)
+  {
     QTableWidgetItem *_item_word{ui->tblWords->item(_row, WORD_COL)};
     QTableWidgetItem *_item_explanation{
         ui->tblWords->item(_row, EXPLANATION_COL)};
 
-    if (_item_word && _item_explanation) {
+    if (_item_word && _item_explanation)
+    {
       QString _text0{_item_word->text().trimmed()};
       QString _text1{_item_explanation->text().trimmed()};
       _file << _text0.toStdString() << '|' << _text1.toStdString() << '\n';
@@ -627,21 +767,24 @@ void MainWindow::on_save_as_clicked() {
   ui->lblFileName->setText(_file_name);
 }
 
-void MainWindow::on_check_all_clicked() {
+void MainWindow::on_check_all_clicked()
+{
   auto _rows{ui->tblWords->rowCount()};
 
   auto _is_checked{ui->chbAllWords->checkState()};
 
-  for (decltype(_rows) _row = 0; _row < _rows; ++_row) {
+  for (decltype(_rows) _row = 0; _row < _rows; ++_row)
+  {
     auto _item{ui->tblWords->item(_row, USE_COL)};
     _item->setCheckState(_is_checked);
   }
 }
 
 // void MainWindow::on_print_clicked() {
-//   using namespace tenacitas::src::crosswords;
+//   using namespace tnct::crosswords;
 
-//  QString _file_name = QFileDiasrc::log::getSaveFileName(this, tr("Imprimir grid"),
+//  QString _file_name = QFileDialog::getSaveFileName(this, tr("Imprimir
+//  grid"),
 //                                                    "./", tr("*.pdf"));
 
 //  if (_file_name.isEmpty()) {
@@ -728,20 +871,23 @@ void MainWindow::on_check_all_clicked() {
 //  _text.print(&_pdf);
 //}
 
-void MainWindow::on_print_clicked() {
-  using namespace tenacitas::src::crosswords;
+void MainWindow::on_print_clicked()
+{
+  using namespace tnct::crosswords;
 
-  QString _file_name = QFileDiasrc::log::getSaveFileName(this, tr("Imprimir grid"),
+  QString _file_name = QFileDialog::getSaveFileName(this, tr("Imprimir grid"),
                                                     "./", tr("*.pdf"));
 
-  if (_file_name.isEmpty()) {
+  if (_file_name.isEmpty())
+  {
     return;
   }
 
   const int _cols{ui->tblGrid->columnCount()};
   const int _rows{ui->tblGrid->rowCount()};
 
-  if (_file_name.contains(".pdf", Qt::CaseInsensitive)) {
+  if (_file_name.contains(".pdf", Qt::CaseInsensitive))
+  {
     _file_name = _file_name.left(_file_name.size() - 4);
   }
 
@@ -767,17 +913,20 @@ void MainWindow::on_print_clicked() {
     _painter_to_solve.setPen(line_pen);
     _painter_solution.setPen(line_pen);
     QFont _font;
-    for (int _row = 0; _row < _rows; ++_row) {
+    for (int _row = 0; _row < _rows; ++_row)
+    {
       int _yi = _y0 + (_row * _height);
       int _yf = _yi + _height;
-      for (int _col = 0; _col < _cols; ++_col) {
+      for (int _col = 0; _col < _cols; ++_col)
+      {
 
         int _xi = _x0 + (_col * _width);
         int _xf = _xi + _width;
 
         Content *_content =
             reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col));
-        if (!_content->is_unused()) {
+        if (!_content->is_unused())
+        {
           _painter_to_solve.drawLine(_xi, _yi, _xf, _yi);
           _painter_to_solve.drawLine(_xf, _yi, _xf, _yf);
           _painter_to_solve.drawLine(_xf, _yf, _xi, _yf);
@@ -792,7 +941,8 @@ void MainWindow::on_print_clicked() {
           _painter_solution.fillRect(QRect{QPoint{_xi, _yi}, QPoint{_xf, _yf}},
                                      QColor{250, 250, 250});
 
-          if (_content->is_first()) {
+          if (_content->is_first())
+          {
             _font.setPointSize(50);
             _painter_solution.setFont(_font);
             FirstLetter *_first_letter{
@@ -806,7 +956,8 @@ void MainWindow::on_print_clicked() {
             _font.setPointSize(35);
             _painter_to_solve.setFont(_font);
             _painter_solution.setFont(_font);
-            if (_pair.first != 0) {
+            if (_pair.first != 0)
+            {
               _painter_to_solve.drawText(_xi + (0.05 * _width),
                                          _yi + (0.3 * _height),
                                          QString::number(_pair.first));
@@ -814,7 +965,8 @@ void MainWindow::on_print_clicked() {
                                          _yi + (0.3 * _height),
                                          QString::number(_pair.first));
             }
-            if (_pair.second != 0) {
+            if (_pair.second != 0)
+            {
               _painter_to_solve.drawText(_xi + (0.7 * _width),
                                          _yi + (0.3 * _height),
                                          QString::number(_pair.second));
@@ -822,7 +974,9 @@ void MainWindow::on_print_clicked() {
                                          _yi + (0.3 * _height),
                                          QString::number(_pair.second));
             }
-          } else {
+          }
+          else
+          {
             Letter *_letter{reinterpret_cast<Letter *>(_content)};
             _font.setPointSize(50);
             _painter_solution.setFont(_font);
@@ -872,17 +1026,22 @@ void MainWindow::on_print_clicked() {
     lines _verticals;
 
     for (dat::grid::const_layout_ite _ite = m_grid->begin();
-         _ite != m_grid->end(); ++_ite) {
-      if (_ite->get_orientation() == dat::orientation::hori) {
+         _ite != m_grid->end(); ++_ite)
+    {
+      if (_ite->get_orientation() == dat::orientation::hori)
+      {
         _horizontals[_ite->get_id()] =
             std::make_pair(_ite->get_word(), _ite->get_explanation());
-      } else {
+      }
+      else
+      {
         _verticals[_ite->get_id()] =
             std::make_pair(_ite->get_word(), _ite->get_explanation());
       }
     }
 
-    auto _print = [&](const QString &p_title, const lines &p_lines) {
+    auto _print = [&](const QString &p_title, const lines &p_lines)
+    {
       _html += "<h3>" + p_title + "</h3>";
       _html += "<table style=\"width:100%\"> ";
       _html += "<tr>"
@@ -890,13 +1049,13 @@ void MainWindow::on_print_clicked() {
                "<th border-collapse: collapse style=\"width: 98%\" ></th>"
                "</tr>";
 
-      for (const lines::value_type &_value : p_lines) {
+      for (const lines::value_type &_value : p_lines)
+      {
         _html += "<tr> ";
         _html += "<td><small>" + QString::number(_value.first) + "<small></td>";
-        _html += "<td> <small>" +
-                 QString(_value.second.second.to_string().c_str()) + " (" +
-                 QString::number(_value.second.first.size()) + " letras)" +
-                 "</small></td>";
+        _html += "<td> <small>" + QString(_value.second.second.c_str()) + " ("
+                 + QString::number(_value.second.first.size()) + " letras)"
+                 + "</small></td>";
         _html += "</tr>";
       }
 
@@ -910,8 +1069,8 @@ void MainWindow::on_print_clicked() {
 
   {
     _html += "<p class=\"aligncenter\"> ";
-    _html += "<img src=\"" + _png_to_solve_file_name +
-             "\" alt=\"grid\" width=\"600\" height=\"600\">";
+    _html += "<img src=\"" + _png_to_solve_file_name
+             + "\" alt=\"grid\" width=\"600\" height=\"600\">";
     _html += "</p>";
   }
 

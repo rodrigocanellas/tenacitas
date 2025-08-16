@@ -18,7 +18,7 @@ void NewWordIntoTheGrid::on_btnOk_clicked() {
   word _word{ui->txtWord->text().toStdString()};
   if (_word.size() != 0) {
 
-    m_dispatcher->publish<crosswords::asy::new_word_into_the_grid>(
+    m_dispatcher->publish<crosswords::evt::new_word_into_the_grid>(
         _word, crosswords::typ::explanation(
                    ui->txtExplanation->toPlainText().toStdString()));
   }

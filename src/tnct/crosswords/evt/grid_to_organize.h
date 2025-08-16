@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_ASY_GRID_ORGANIZE_H
-#define TENACITAS_SRC_CROSSWORDS_ASY_GRID_ORGANIZE_H
+#ifndef TNCT_CROSSWORDS_ASY_GRID_ORGANIZE_H
+#define TNCT_CROSSWORDS_ASY_GRID_ORGANIZE_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,9 +9,9 @@
 #include <iostream>
 #include <memory>
 
-#include "tenacitas/src/crosswords/dat/grid.h"
+#include "tnct/crosswords/dat/grid.h"
 
-namespace tenacitas::src::crosswords::asy {
+namespace tnct::crosswords::evt {
 
 /// \brief Published when a new grid be assembled
 struct grid_to_organize {
@@ -29,6 +29,6 @@ struct grid_to_organize {
   }
 };
 
-} // namespace tenacitas::src::crosswords::asy
+} // namespace tnct::crosswords::evt
 
 #endif

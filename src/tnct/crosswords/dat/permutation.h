@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_DAT_PERMUTATION_H
-#define TENACITAS_SRC_CROSSWORDS_DAT_PERMUTATION_H
+#ifndef TNCT_CROSSWORDS_DAT_PERMUTATION_H
+#define TNCT_CROSSWORDS_DAT_PERMUTATION_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,9 +9,9 @@
 #include <iostream>
 #include <vector>
 
-#include "tenacitas/src/crosswords/dat/entries.h"
+#include "tnct/crosswords/dat/entries.h"
 
-namespace tenacitas::src::crosswords::dat {
+namespace tnct::crosswords::dat {
 
 /// \brief A combination of entries
 using permutation = std::vector<entries::const_entry_ite>;
@@ -26,6 +26,6 @@ inline std::ostream &operator<<(std::ostream &p_out,
   return p_out;
 }
 
-} // namespace tenacitas::src::crosswords::dat
+} // namespace tnct::crosswords::dat
 
 #endif

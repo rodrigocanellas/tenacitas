@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_TIMEOUT_H
-#define TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_TIMEOUT_H
+#ifndef TNCT_CROSSWORDS_ASY_GRID_CREATE_TIMEOUT_H
+#define TNCT_CROSSWORDS_ASY_GRID_CREATE_TIMEOUT_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -8,9 +8,9 @@
 
 #include <iostream>
 
-#include "tenacitas/src/crosswords/dat/index.h"
+#include "tnct/crosswords/dat/index.h"
 
-namespace tenacitas::src::crosswords::asy {
+namespace tnct::crosswords::evt {
 
 struct grid_create_timeout {
   grid_create_timeout() = default;
@@ -31,6 +31,6 @@ struct grid_create_timeout {
   dat::index num_cols;
 };
 
-} // namespace tenacitas::src::crosswords::asy
+} // namespace tnct::crosswords::evt
 
 #endif

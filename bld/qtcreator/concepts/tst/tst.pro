@@ -1,7 +1,7 @@
 QT-=core
 TEMPLATE=app
 CONFIG+=test
-TARGET=tnct.traits.tst
+TARGET=tnct.concepts.tst
 
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 include (../../common.pri)

@@ -18,7 +18,7 @@ SUBDIRS = \
     ostream \
     string  \
     memory \
-    pair
-    # \
-    # crosswords
+    pair \
+    crosswords \
+    math
 

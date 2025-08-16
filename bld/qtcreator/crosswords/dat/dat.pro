@@ -1,21 +1,23 @@
 
-include (../../../common.pri)
+include (../../common.pri)
 
-TEMPLATE=lib
+TEMPLATE=aux
+
+
+PRJ_DIR=$$BASE_DIR/tnct/crosswords/dat
 
 
 HEADERS +=  \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/coordinate.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/coordinates.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/entries.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/entry.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/explanation.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/grid.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/index.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/layout.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/occupied.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/orientation.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/permutation.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/word.h \
-    $$BASE_DIR/tenacitas/src/crosswords/dat/string.h
+    $$PRJ_DIR/coordinate.h \
+    $$PRJ_DIR/coordinates.h \
+    $$PRJ_DIR/entries.h \
+    $$PRJ_DIR/entry.h \
+    $$PRJ_DIR/explanation.h \
+    $$PRJ_DIR/grid.h \
+    $$PRJ_DIR/index.h \
+    $$PRJ_DIR/layout.h \
+    $$PRJ_DIR/occupied.h \
+    $$PRJ_DIR/orientation.h \
+    $$PRJ_DIR/permutation.h \
+    $$PRJ_DIR/word.h
 

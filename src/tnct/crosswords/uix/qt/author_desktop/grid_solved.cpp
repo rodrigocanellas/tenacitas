@@ -25,7 +25,7 @@ GridSolved::GridSolved(crosswords::mod::dispatcher::ptr p_dispatcher,
 
   m_original_background = QColor{255, 255, 255};
 
-  m_dispatcher->subscribe<crosswords::asy::grid_create_solved>(
+  m_dispatcher->subscribe<crosswords::evt::grid_create_solved>(
       [&](auto p_event) {
         TNCT_LOG_DEB("grid = ", *p_event.grid);
         // m_grid = p_event.grid;
@@ -64,7 +64,7 @@ void GridSolved::on_words_table_cell_clicked(QTableWidget *p_table, int p_row) {
 
 GridSolved::~GridSolved() { delete ui; }
 
-void GridSolved::on_grid_solved(crosswords::asy::grid_create_solved &&p_event) {
+void GridSolved::on_grid_solved(crosswords::evt::grid_create_solved &&p_event) {
   m_grid = p_event.grid;
   emit grid_solved(/*p_event.grid*/);
 }

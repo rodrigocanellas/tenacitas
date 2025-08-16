@@ -4,6 +4,7 @@ QMAKE_CXXFLAGS += -DTENACITAS_LOG
 
 SUBDIRS = \
     bus \
-    asy \
+    evt \
     dat \
-    uix/qt/author_desktop
+    uix/qt/author_desktop \
+    tst

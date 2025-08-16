@@ -15,7 +15,7 @@
 #include <tenacitas.crosswords/src/typ/orientation.h>
 #include <tenacitas.crosswords/src/typ/word.h>
 
-namespace tenacitas::crosswords::asy {
+namespace tenacitas::crosswords::evt {
 
 struct new_word_into_the_grid {
   explicit new_word_into_the_grid(const typ::word &p_word,
@@ -31,6 +31,6 @@ struct new_word_into_the_grid {
   typ::explanation explanation;
 };
 
-} // namespace tenacitas::crosswords::asy
+} // namespace tenacitas::crosswords::evt
 
 #endif

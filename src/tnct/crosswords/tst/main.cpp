@@ -13,10 +13,11 @@
 // #include <tnct/crosswords/dat/internal/assembler.h>
 // #include <tnct/crosswords/mod/grid.h>
 
-#include "tenacitas/src/tester/test.h"
-#include "tenacitas/tst/crosswords/organizer_test.h"
+#include "tnct/crosswords/tst/dat_test.h"
+#include "tnct/crosswords/tst/organizer_test.h"
+#include "tnct/tester/test.h"
 
-using namespace tenacitas;
+using namespace tnct;
 
 // struct test_001 {
 //   static std::string desc() {
@@ -512,7 +513,7 @@ using namespace tenacitas;
 //    auto _grid{std::make_shared<crosswords::dat::grid>(
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 //    if (_organize(_grid)) {
 //      TNCT_LOG_TST(*_grid);
@@ -540,7 +541,7 @@ using namespace tenacitas;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -570,7 +571,7 @@ using namespace tenacitas;
 //    auto _grid{std::make_shared<crosswords::dat::grid>(
 //        _permutation, crosswords::dat::index{5}, crosswords::dat::index{8})};
 
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (_organize(_grid)) {
@@ -655,7 +656,7 @@ using namespace tenacitas;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -740,7 +741,7 @@ using namespace tenacitas;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -919,7 +920,7 @@ using namespace tenacitas;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::asy::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -944,7 +945,7 @@ using namespace tenacitas;
 
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"}};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -970,7 +971,7 @@ using namespace tenacitas;
 
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"}};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -996,7 +997,7 @@ using namespace tenacitas;
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"},
 //                                      {"exumar", "expl exumar"}};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1022,7 +1023,7 @@ using namespace tenacitas;
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"},
 //                                      {"exumar", "expl exumar"}};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1106,7 +1107,7 @@ using namespace tenacitas;
 //    badalar
 //     * farelos viravira afunilar sibliar renovar lesante sideral salutar*/
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1187,7 +1188,7 @@ using namespace tenacitas;
 //            {"crepom", "expl crepom"},     {"debute", "expl debute"}/*,
 //        {"usina", "expl usina"}*/};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1268,7 +1269,7 @@ using namespace tenacitas;
 //        {"crepom", "expl crepom"},     {"debute", "expl debute"},
 //        {"usina", "expl usina"}};
 
-//    crosswords::dat::assembler _solver(crosswords::asy::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1294,10 +1295,10 @@ using namespace tenacitas;
 //   }
 
 //  test_030()
-//      : m_dispatcher(crosswords::asy::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
-//    m_dispatcher->subscribe<crosswords::asy::grid_create_new_attempt>(
+//    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //        [](auto p_event) -> void {
 //          TNCT_LOG_TST("attempt # ", p_event.number);
 //        });
@@ -1337,8 +1338,8 @@ using namespace tenacitas;
 //  }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1349,10 +1350,10 @@ using namespace tenacitas;
 //   }
 
 //  test_031()
-//      : m_dispatcher(crosswords::asy::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
-//    m_dispatcher->subscribe<crosswords::asy::grid_create_new_attempt>(
+//    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //        [this](auto p_event) -> void {
 //          if (p_event.number == 5000) {
 //            TNCT_LOG_TST("number of attempts = ", p_event.number);
@@ -1395,8 +1396,8 @@ using namespace tenacitas;
 //  }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1407,10 +1408,10 @@ using namespace tenacitas;
 //   }
 
 //  test_032()
-//      : m_dispatcher(crosswords::asy::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
-//    m_dispatcher->subscribe<crosswords::asy::grid_create_new_attempt>(
+//    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //        [this](auto p_event) -> void {
 //          if (p_event.number == 5000) {
 //            TNCT_LOG_TST("number of attempts = ", p_event.number);
@@ -1454,8 +1455,8 @@ using namespace tenacitas;
 //  }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1467,9 +1468,9 @@ using namespace tenacitas;
 //   }
 
 //  test_033()
-//      : m_dispatcher(crosswords::asy::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::dispatcher::create()),
 //        m_solver(m_dispatcher) {
-//    //    m_dispatcher->subscribe<crosswords::asy::grid_create_new_attempt>(
+//    //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //    //        [this](auto p_event) -> void {
 //    //          if (p_event.number == 5000) {
 //    //            TNCT_LOG_TST("number of attempts = ", p_event.number);
@@ -1528,8 +1529,8 @@ using namespace tenacitas;
 //  }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1541,7 +1542,7 @@ using namespace tenacitas;
 //   }
 
 //  test_034()
-//      : m_dispatcher(crosswords::asy::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 //    m_entries = crosswords::dat::entries{
 //        {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -1558,7 +1559,7 @@ using namespace tenacitas;
 //        {"idade", "expl idade"},       {"lados", "expl lados"},
 //        {"regis", "expl regis"}};
 
-//    //    m_dispatcher->subscribe<crosswords::asy::grid_create_new_attempt>(
+//    //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //    //        [this](auto p_event) -> void {
 //    //          if (p_event.number == 5000) {
 //    //            TNCT_LOG_TST("number of attempts = ", p_event.number);
@@ -1573,19 +1574,19 @@ using namespace tenacitas;
 //    crosswords::dat::index _max_num_rows{16};
 
 //    while (_current_num_rows <= _max_num_rows) {
-//#ifdef TENACITAS_LOG
+// #ifdef TENACITAS_LOG
 //      TNCT_LOG_DEB("Trying grid ", _current_num_rows, 'x', _current_num_cols);
-//#endif
+// #endif
 
 //      std::future<std::shared_ptr<crosswords::dat::grid>> _future{
 //          std::async(std::launch::async, [&]() {
 //            return solve(_current_num_rows, _current_num_cols);
 //          })};
 
-//#ifdef TENACITAS_LOG
-//      TNCT_LOG_DEB("Waiting for grid ", _current_num_rows, 'x',
-//                   _current_num_cols);
-//#endif
+// #ifdef TENACITAS_LOG
+//       TNCT_LOG_DEB("Waiting for grid ", _current_num_rows, 'x',
+//                    _current_num_cols);
+// #endif
 
 //      uint16_t _counter{0};
 //      std::chrono::milliseconds _wait{
@@ -1596,29 +1597,29 @@ using namespace tenacitas;
 //        _status = _future.wait_for(_wait);
 //        switch (_status) {
 //        case std::future_status::deferred:
-//#ifdef TENACITAS_LOG
+// #ifdef TENACITAS_LOG
 //          TNCT_LOG_DEB("Future returned for ", _current_num_rows, 'x',
 //                       _current_num_cols);
-//#endif
+// #endif
 //          break;
 //        case std::future_status::timeout:
-//#ifdef TENACITAS_LOG
+// #ifdef TENACITAS_LOG
 //          TNCT_LOG_DEB("Future timeout for ", _current_num_rows, 'x',
 //                       _current_num_cols);
-//#endif
+// #endif
 //          break;
 //        case std::future_status::ready:
-//#ifdef TENACITAS_LOG
+// #ifdef TENACITAS_LOG
 //          TNCT_LOG_DEB("Future ready for ", _current_num_rows, 'x',
 //                       _current_num_cols);
-//#endif
+// #endif
 //          break;
 //        }
 //        ++_counter;
-//#ifdef TENACITAS_LOG
+// #ifdef TENACITAS_LOG
 //        TNCT_LOG_DEB("Counter = ", _counter, " for ", _current_num_rows, 'x',
 //                     _current_num_cols);
-//#endif
+// #endif
 
 //      } while ((_status != std::future_status::ready) && (_counter < 10));
 
@@ -1670,19 +1671,19 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::entries m_entries;
 //   crosswords::dat::internal::assembler m_solver{m_dispatcher};
 // };
 
 // struct test_035 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 25 words in a 15x15, waiting for 1 "
@@ -1709,11 +1710,11 @@ using namespace tenacitas;
 //         {"idade", "expl idade"},       {"lados", "expl lados"},
 //         {"regis", "expl regis"}};
 
-//     crosswords::asy::dispatcher::ptr _dispatcher{
-//         crosswords::asy::dispatcher::create()};
+//     crosswords::evt::dispatcher::ptr _dispatcher{
+//         crosswords::evt::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
-//     _dispatcher->subscribe<test_035, crosswords::asy::grid_create_solved>(
+//     _dispatcher->subscribe<test_035, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1721,12 +1722,12 @@ using namespace tenacitas;
 //         });
 
 //     _dispatcher->subscribe<test_035,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     _dispatcher->subscribe<test_035, crosswords::asy::grid_create_unsolved>(
+//     _dispatcher->subscribe<test_035, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
@@ -1735,7 +1736,7 @@ using namespace tenacitas;
 
 //     TNCT_LOG_TST("##################### ABOUT TO START");
 
-//     _dispatcher->publish<test_035, crosswords::asy::grid_create_start>(
+//     _dispatcher->publish<test_035, crosswords::evt::grid_create_start>(
 //         _entries, crosswords::dat::index{15}, crosswords::dat::index{15},
 //         1min, crosswords::dat::index{15});
 //     // {
@@ -1758,12 +1759,12 @@ using namespace tenacitas;
 // };
 
 // struct test_036 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to unsolvable grid with 25 words in a 10x10, waiting for 1
@@ -1776,7 +1777,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_036, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_036, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1784,19 +1785,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_036,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_036, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_036, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_036, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_036, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{10}, crosswords::dat::index{10},
 //         60s, crosswords::dat::index{10});
 
@@ -1809,8 +1810,8 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{
 //       {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -1829,12 +1830,12 @@ using namespace tenacitas;
 // };
 
 // struct test_037 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to unsolvable a grid with 2 words in a 3x8, waiting for 5s
@@ -1846,7 +1847,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_037, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_037, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1854,19 +1855,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_037,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_037, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_037, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_037, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_037, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{3}, crosswords::dat::index{8}, 5s,
 //         crosswords::dat::index{3});
 
@@ -1879,20 +1880,20 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"afunilar", "expl afunilar"},
 //                                      {"ovo", "expl ovo"}};
 // };
 
 // struct test_038 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 25 words starting with a 12x12 until "
@@ -1904,7 +1905,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_038, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_038, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -1912,19 +1913,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_038,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_038, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_038, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_038, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_038, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{12}, crosswords::dat::index{12},
 //         3min, crosswords::dat::index{15});
 
@@ -1937,8 +1938,8 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{
 //       {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -1957,12 +1958,12 @@ using namespace tenacitas;
 // };
 
 // struct test_039 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to organize a grid with 60 words strting at 15x15 up to "
@@ -1974,7 +1975,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_039, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_039, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -1982,19 +1983,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_039,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_039, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_039, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_039, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_039, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{15}, crosswords::dat::index{15},
 //         60s, crosswords::dat::index{18});
 
@@ -2007,8 +2008,8 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"precoce", "expl precoce"},
 //                                      {"piar", "expl piar"},
@@ -2074,12 +2075,12 @@ using namespace tenacitas;
 // };
 
 // struct test_040 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries a grid with 'esdrúxulo' and 'baú' in a grid 11x11";
@@ -2090,7 +2091,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_040, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_040, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2098,19 +2099,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_040,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_040, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_040, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_040, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_040, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{11}, crosswords::dat::index{11},
 //         60min, crosswords::dat::index{11});
 
@@ -2123,20 +2124,20 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"esdrúxulo", "expl esdrúxulo"},
 //                                      {"baú", "expl baú"}};
 // };
 
 // struct test_041 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to create a grid for 'door' and 'day'in a 3x8, waiting";
@@ -2147,7 +2148,7 @@ using namespace tenacitas;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_041, crosswords::asy::grid_create_solved>(
+//     m_dispatcher->subscribe<test_041, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2155,19 +2156,19 @@ using namespace tenacitas;
 //         });
 
 //     m_dispatcher->subscribe<test_041,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_041, crosswords::asy::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_041, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_041, crosswords::asy::grid_create_start>(
+//     m_dispatcher->publish<test_041, crosswords::evt::grid_create_start>(
 //         m_entries, crosswords::dat::index{3}, crosswords::dat::index{8}, 50s,
 //         crosswords::dat::index{3});
 
@@ -2180,8 +2181,8 @@ using namespace tenacitas;
 //   }
 
 // private:
-//   crosswords::asy::dispatcher::ptr m_dispatcher{
-//       crosswords::asy::dispatcher::create()};
+//   crosswords::evt::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"door", "expl door"},
 //                                      {"day", "expl day"}};
@@ -2193,7 +2194,7 @@ using namespace tenacitas;
 //     using namespace crosswords;
 //     dat::entries _original{{"door", "expl door"}, {"day", "expl day"}};
 
-//     dat::internal::organizer _organizer(asy::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2241,7 +2242,7 @@ using namespace tenacitas;
 //     dat::entries _original{{"esdrúxulo", "expl esdrúxulo"},
 //                            {"baú", "expl baú"}};
 
-//     dat::internal::organizer _organizer(asy::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2287,7 +2288,7 @@ using namespace tenacitas;
 
 //     dat::entries _original{{"alho", "expl alho"}, {"coelho", "expl coelho"}};
 
-//     dat::internal::organizer _organizer(asy::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2326,12 +2327,12 @@ using namespace tenacitas;
 // };
 
 // struct test_045 {
-//   using events_published = std::tuple<crosswords::asy::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::asy::grid_create_unsolved,
-//                  crosswords::asy::grid_create_solved,
-//                  crosswords::asy::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::grid_create_unsolved,
+//                  crosswords::evt::grid_create_solved,
+//                  crosswords::evt::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 2 words in a 5x5, waiting for 1 "
@@ -2346,11 +2347,11 @@ using namespace tenacitas;
 //     crosswords::dat::entries _entries{{"abc", "expl abc"}, {"cde", "expl
 //     cde"}};
 
-//     crosswords::asy::dispatcher::ptr _dispatcher{
-//         crosswords::asy::dispatcher::create()};
+//     crosswords::evt::dispatcher::ptr _dispatcher{
+//         crosswords::evt::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
-//     _dispatcher->subscribe<test_045, crosswords::asy::grid_create_solved>(
+//     _dispatcher->subscribe<test_045, crosswords::evt::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2358,12 +2359,12 @@ using namespace tenacitas;
 //         });
 
 //     _dispatcher->subscribe<test_045,
-//     crosswords::asy::grid_permutations_tried>(
+//     crosswords::evt::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     _dispatcher->subscribe<test_045, crosswords::asy::grid_create_unsolved>(
+//     _dispatcher->subscribe<test_045, crosswords::evt::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
@@ -2372,7 +2373,7 @@ using namespace tenacitas;
 
 //     TNCT_LOG_TST("##################### ABOUT TO START");
 
-//     _dispatcher->publish<test_045, crosswords::asy::grid_create_start>(
+//     _dispatcher->publish<test_045, crosswords::evt::grid_create_start>(
 //         _entries, crosswords::dat::index{5}, crosswords::dat::index{5}, 1min,
 //         crosswords::dat::index{5});
 //     // {
@@ -2394,15 +2395,19 @@ using namespace tenacitas;
 // private:
 // };
 
-namespace tnctt = tenacitas::tst;
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
   //  log::dat::set_file_writer("crosswords");
 
-  src::tester::test _tester(argc, argv);
+  tester::test _tester(argc, argv);
 
-  run_test(_tester, tnctt::crosswords::organizer_test_000);
+  run_test(_tester, crosswords::tst::dat_000);
+  run_test(_tester, crosswords::tst::dat_001);
+
+  run_test(_tester, crosswords::tst::organizer_test_000);
+  run_test(_tester, crosswords::tst::organizer_test_001);
+  run_test(_tester, crosswords::tst::organizer_test_002);
   //  run_test(_tester, test_001);
   //  run_test(_tester, test_003);
   //  run_test(_tester, test_004);

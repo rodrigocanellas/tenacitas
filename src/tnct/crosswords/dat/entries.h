@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_DAT_ENTRIES_H
-#define TENACITAS_SRC_CROSSWORDS_DAT_ENTRIES_H
+#ifndef TNCT_CROSSWORDS_DAT_ENTRIES_H
+#define TNCT_CROSSWORDS_DAT_ENTRIES_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,11 +9,11 @@
 #include <iostream>
 #include <vector>
 
-#include "tenacitas/src/crosswords/dat/entry.h"
-#include "tenacitas/src/crosswords/dat/explanation.h"
-#include "tenacitas/src/crosswords/dat/word.h"
+#include "tnct/crosswords/dat/entry.h"
+#include "tnct/crosswords/dat/explanation.h"
+#include "tnct/crosswords/dat/word.h"
 
-namespace tenacitas::src::crosswords::dat {
+namespace tnct::crosswords::dat {
 
 /// \brief A set of \p entry
 struct entries {
@@ -70,6 +70,6 @@ private:
   collection m_collection;
 };
 
-} // namespace tenacitas::src::crosswords::dat
+} // namespace tnct::crosswords::dat
 
 #endif

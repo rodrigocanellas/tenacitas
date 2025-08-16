@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_NEW_ATTEMPT_H
-#define TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_NEW_ATTEMPT_H
+#ifndef TNCT_CROSSWORDS_ASY_GRID_CREATE_NEW_ATTEMPT_H
+#define TNCT_CROSSWORDS_ASY_GRID_CREATE_NEW_ATTEMPT_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <iostream>
 
-namespace tenacitas::src::crosswords::asy {
+namespace tnct::crosswords::evt {
 
 /// \brief Published when a new attempt to assemble a grid has started
 struct grid_permutations_tried {
@@ -28,6 +28,6 @@ struct grid_permutations_tried {
   }
 };
 
-} // namespace tenacitas::src::crosswords::asy
+} // namespace tnct::crosswords::evt
 
 #endif

@@ -6,13 +6,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tenacitas/src/crosswords/dat/string.h"
+#include <string>
 
-namespace tenacitas::src::crosswords::dat {
+namespace tnct::crosswords::dat
+{
 
 /// \brief Explanation of a explanation
-using explanation = dat::string;
+using explanation = std::string;
 
-} // namespace tenacitas::src::crosswords::dat
+} // namespace tnct::crosswords::dat
 
 #endif

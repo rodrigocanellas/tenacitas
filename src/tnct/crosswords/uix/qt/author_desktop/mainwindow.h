@@ -13,11 +13,21 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include "tenacitas/src/crosswords/asy/dispatcher.h"
-#include "tenacitas/src/crosswords/asy/events.h"
-#include "tenacitas/src/crosswords/dat/entries.h"
-#include "tenacitas/src/crosswords/dat/grid.h"
-#include "tenacitas/src/log/log.h"
+#include "tnct/container/circular_queue.h"
+#include "tnct/crosswords/dat/entries.h"
+#include "tnct/crosswords/dat/grid.h"
+#include "tnct/crosswords/evt/dispatcher.h"
+#include "tnct/crosswords/evt/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/grid_create_solved.h"
+#include "tnct/crosswords/evt/grid_create_start.h"
+#include "tnct/crosswords/evt/grid_create_stop.h"
+#include "tnct/crosswords/evt/grid_create_timeout.h"
+#include "tnct/crosswords/evt/grid_create_unsolved.h"
+#include "tnct/crosswords/evt/grid_permutations_tried.h"
+
+#include "tnct/log/cerr.h"
+
+using namespace tnct;
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -318,18 +328,18 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  using events_published = std::tuple<crosswords::asy::grid_create_stop,
-                                      crosswords::asy::grid_create_start>;
+  using events_published = std::tuple<crosswords::evt::grid_create_stop,
+                                      crosswords::evt::grid_create_start>;
   using events_subscribed =
-      std::tuple<crosswords::asy::grid_create_unsolved,
-                 crosswords::asy::grid_create_solved,
-                 crosswords::asy::grid_create_timeout,
-                 crosswords::asy::grid_create_stop,
-                 crosswords::asy::grid_attempt_configuration,
-                 crosswords::asy::grid_permutations_tried>;
+      std::tuple<crosswords::evt::grid_create_unsolved,
+                 crosswords::evt::grid_create_solved,
+                 crosswords::evt::grid_create_timeout,
+                 crosswords::evt::grid_create_stop,
+                 crosswords::evt::grid_attempt_configuration,
+                 crosswords::evt::grid_permutations_tried>;
 
-  MainWindow(crosswords::asy::dispatcher::ptr p_dispatcher,
-             QWidget                         *parent = nullptr);
+  MainWindow(log::cerr &p_logger, crosswords::evt::dispatcher &p_dispatcher,
+             QWidget *parent = nullptr);
 
   ~MainWindow();
 
@@ -348,7 +358,7 @@ private:
 
   void on_check_all_clicked();
 
-  void on_grid_solved(crosswords::asy::grid_create_solved &&);
+  void on_grid_solved(crosswords::evt::grid_create_solved &&);
 
   void handle_grid_solved();
 
@@ -385,17 +395,40 @@ signals:
   void log(QString);
 
 private:
+  using grid_create_unsolved_queue = tnct::container::circular_queue<
+      tnct::log::cerr, tnct::crosswords::evt::grid_create_unsolved, 20>;
+
+  using grid_create_solved_queue = tnct::container::circular_queue<
+      tnct::log::cerr, tnct::crosswords::evt::grid_create_solved, 20>;
+
+  using grid_create_timeout_queue = tnct::container::circular_queue<
+      tnct::log::cerr, tnct::crosswords::evt::grid_create_timeout, 20>;
+
+  using grid_create_stop_queue = tnct::container::circular_queue<
+      tnct::log::cerr, tnct::crosswords::evt::grid_create_stop, 20>;
+
+  using grid_attempt_configuration_queue = tnct::container::circular_queue<
+      tnct::log::cerr, tnct::crosswords::evt::grid_attempt_configuration, 20>;
+
+  using grid_permutations_tried_queue = tnct::container::circular_queue<
+      tnct::log::cerr, crosswords::evt::grid_permutations_tried, 20>;
+
+private:
+  void configure_dispatcher();
+
+private:
   Ui::MainWindow *ui;
 
-  crosswords::asy::dispatcher::ptr m_dispatcher;
-  crosswords::dat::entries         m_entries;
+  log::cerr                   &m_logger;
+  crosswords::evt::dispatcher &m_dispatcher;
+  crosswords::dat::entries     m_entries;
 
   std::shared_ptr<crosswords::dat::grid> m_grid;
 
   QColor m_original_background;
 
   crosswords::dat::grid::const_layout_ite m_first_letter;
-  int                                     m_current_row{-1};
+  crosswords::dat::index m_current_row{crosswords::dat::invalid_index};
 
   std::atomic_bool m_solving{false};
 

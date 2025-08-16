@@ -220,7 +220,7 @@ public:
   void on_letter_id_click(crosswords::typ::grid::const_layout_ite);
 
 private:
-  void on_grid_solved(crosswords::asy::grid_create_solved &&);
+  void on_grid_solved(crosswords::evt::grid_create_solved &&);
 
   void handle_grid_solved();
 

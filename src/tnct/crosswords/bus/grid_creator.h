@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_BUS_GRID_CREATOR_H
-#define TENACITAS_SRC_CROSSWORDS_BUS_GRID_CREATOR_H
+#ifndef TNCT_CROSSWORDS_BUS_GRID_CREATOR_H
+#define TNCT_CROSSWORDS_BUS_GRID_CREATOR_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -9,50 +9,50 @@
 #include <atomic>
 #include <memory>
 
-#include "tenacitas/src/container/matrix.h"
-#include "tenacitas/src/crosswords/asy/dispatcher.h"
-#include "tenacitas/src/crosswords/asy/events.h"
-#include "tenacitas/src/crosswords/dat/grid.h"
-#include "tenacitas/src/crosswords/bus/internal/assembler.h"
-#include "tenacitas/src/crosswords/bus/internal/organizer.h"
-#include "tenacitas/src/fmt/format_number.h"
-#include "tenacitas/src/log/log.h"
-#include "tenacitas/src/mat/factorial.h"
-#include "tenacitas/src/sta/chrono_convertible.h"
+#include "tnct/crosswords/bus/internal/assembler.h"
+#include "tnct/crosswords/dat/grid.h"
+#include "tnct/crosswords/evt/grid_create_start.h"
+#include "tnct/format/fmt.h"
+#include "tnct/log/cpt/logger.h"
 
-namespace tenacitas::src::crosswords::bus {
+namespace tnct::crosswords::bus
+{
 
-struct grid_creator {
+template <log::cpt::logger t_logger, async::cpt::is_dispatcher t_dispatcher>
+struct grid_creator
+{
   using events_subscribed =
-      std::tuple<asy::grid_create_start, asy::grid_create_stop>;
+      std::tuple<evt::grid_create_start, evt::grid_create_stop>;
 
   // ,
-  //              asy::grid_create_unsolved>;
+  //              evt::grid_create_unsolved>;
 
   using events_published =
-      std ::tuple<asy::grid_create_solved, asy::grid_create_unsolved>;
+      std ::tuple<evt::grid_create_solved, evt::grid_create_unsolved>;
 
-  grid_creator(asy::dispatcher::ptr p_dispatcher)
-      : m_dispatcher(p_dispatcher), m_assembler(m_dispatcher) {
-    m_dispatcher->subscribe<grid_creator, asy::grid_create_start>(
-        [&](auto p_event) {
-#ifdef TENACITAS_LOG
-          TNCT_LOG_DEB("subscriber for asy::grid_create_start");
-#endif
+  grid_creator(t_logger &p_logger, t_dispatcher &p_dispatcher)
+      : m_logger(p_logger), m_dispatcher(p_dispatcher),
+        m_assembler(m_dispatcher)
+  {
+    m_dispatcher.template subscribe<grid_creator, evt::grid_create_start>(
+        [&](auto p_event)
+        {
+          TNCT_LOG_DEB(m_logger, "subscriber for evt::grid_create_start");
 
           (*this)(p_event.entries, p_event.num_rows, p_event.num_cols,
                   p_event.wait_for, p_event.max_num_rows);
         });
 
-    m_dispatcher->subscribe<grid_creator, asy::grid_create_stop>(
+    m_dispatcher.template subscribe<grid_creator, evt::grid_create_stop>(
         [&](auto) { m_stop = true; });
 
-    //    m_dispatcher->subscribe<asy::grid_create_solved>(
+    //    m_dispatcher.template subscribe<evt::grid_create_solved>(
     //        [&](auto) { m_stop = true; });
   }
 
-  ~grid_creator() {
-    // m_dispatcher->publish<asy::grid_create_stop>();
+  ~grid_creator()
+  {
+    // m_dispatcher.template publish<evt::grid_create_stop>();
 
     m_stop = true;
   }
@@ -67,88 +67,95 @@ private:
   /// p_num_rows is equal to \p p_max_num_rows. Each attempt will take up to \p
   /// p_wait_for time.
   ///
-  /// It will publish asy::grid_create_solved with \p grid attribute \p nullptr
+  /// It will publish evt::grid_create_solved with \p grid attribute \p nullptr
   /// if the grid creation failed, or a valid pointer otherwise
 
   void operator()(const dat::entries &p_entries, dat::index p_num_rows,
                   dat::index p_num_cols, std::chrono::seconds p_wait_for,
-                  dat::index p_max_num_rows) {
+                  dat::index p_max_num_rows)
+  {
 
-    try {
+    try
+    {
       m_stop = false;
 
-#ifdef TENACITAS_LOG
-      TNCT_LOG_DEB("starting grid_creator::operator() with m_stop = ", m_stop);
-#endif
+      TNCT_LOG_DEB(
+          m_logger,
+          format::fmt("starting grid_creator::operator() with m_stop = ",
+                      m_stop));
 
       crosswords::dat::index _current_num_rows{p_num_rows};
       crosswords::dat::index _current_num_cols{p_num_cols};
-      m_dispatcher->clear();
+      m_dispatcher.clear();
 
-      while ((_current_num_rows <= p_max_num_rows) && (!m_stop)) {
-#ifdef TENACITAS_LOG
-        TNCT_LOG_DEB("Trying grid ", _current_num_rows, 'x', _current_num_cols);
-#endif
+      while ((_current_num_rows <= p_max_num_rows) && (!m_stop))
+      {
+
+        TNCT_LOG_DEB(m_logger, format::fmt("Trying grid ", _current_num_rows,
+                                           'x', _current_num_cols));
 
         auto _start = std::chrono::high_resolution_clock::now();
 
         std::shared_ptr<crosswords::dat::grid> _grid{m_assembler.start(
             p_entries, _current_num_rows, _current_num_cols, p_wait_for)};
 
-        if (_grid) {
+        if (_grid)
+        {
 
           auto _end = std::chrono::high_resolution_clock::now();
 
           std::chrono::duration<double> _diff = _end - _start;
 
-#ifdef TENACITAS_LOG
-          std::stringstream _stream;
-          _stream << "grid " << _current_num_rows << 'x' << _current_num_cols
-                  << " solved in " << _diff.count() << " seconds";
-          std::string _str{_stream.str()};
-          TNCT_LOG_DEB(_str);
-#endif
-          m_dispatcher->publish<grid_creator, asy::grid_create_solved>(
+          TNCT_LOG_DEB(m_logger, format::fmt("grid ", _current_num_rows, 'x',
+                                             _current_num_cols, " solved in ",
+                                             _diff.count(), " seconds"));
+
+          m_dispatcher.template publish<grid_creator, evt::grid_create_solved>(
               _grid, std::chrono::duration_cast<std::chrono::seconds>(
                          std::chrono::duration<double>(_diff)));
-#ifdef TENACITAS_LOG
-          TNCT_LOG_DEB("asy::grid_create_solved published");
-#endif
+
+          TNCT_LOG_DEB(m_logger, "evt::grid_create_solved published");
+
           return;
         }
 
-        if (m_stop) {
+        if (m_stop)
+        {
           break;
         }
 
-#ifdef TENACITAS_LOG
-        TNCT_LOG_DEB("Not solved for ", _current_num_rows, 'x',
-                     _current_num_cols);
-#endif
+        TNCT_LOG_DEB(m_logger, format::fmt("Not solved for ", _current_num_rows,
+                                           'x', _current_num_cols));
+
         ++_current_num_rows;
         ++_current_num_cols;
 
-        m_dispatcher->clear();
+        m_dispatcher.clear();
       }
-#ifdef TENACITAS_LOG
-      TNCT_LOG_DEB("Not solved for all the grid sizes");
-#endif
-      m_dispatcher->publish<grid_creator, asy::grid_create_unsolved>(
+
+      TNCT_LOG_DEB(m_logger, "Not solved for all the grid sizes");
+
+      m_dispatcher.template publish<grid_creator, evt::grid_create_unsolved>(
           _current_num_rows, _current_num_cols);
-      m_dispatcher->clear();
-    } catch (std::exception &_ex) {
-      TNCT_LOG_ERR("error '", _ex.what(), '\'');
-    } catch (...) {
-      TNCT_LOG_ERR("unknown error");
+      m_dispatcher.clear();
+    }
+    catch (std::exception &_ex)
+    {
+      TNCT_LOG_ERR(m_logger, format::fmt("error '", _ex.what(), '\''));
+    }
+    catch (...)
+    {
+      TNCT_LOG_ERR(m_logger, "unknown error");
     }
   }
 
 private:
-  asy::dispatcher::ptr m_dispatcher;
-  dat::internal::assembler m_assembler;
-  std::atomic_bool m_stop{false};
+  t_logger                                        &m_logger;
+  t_dispatcher                                    &m_dispatcher;
+  bus::internal::assembler<t_logger, t_dispatcher> m_assembler;
+  std::atomic_bool                                 m_stop{false};
 };
 
-} // namespace tenacitas::src::crosswords::bus
+} // namespace tnct::crosswords::bus
 
 #endif

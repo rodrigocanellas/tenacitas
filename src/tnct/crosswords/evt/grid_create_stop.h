@@ -1,5 +1,5 @@
-#ifndef TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_STOP_H
-#define TENACITAS_SRC_CROSSWORDS_ASY_GRID_CREATE_STOP_H
+#ifndef TNCT_CROSSWORDS_ASY_GRID_CREATE_STOP_H
+#define TNCT_CROSSWORDS_ASY_GRID_CREATE_STOP_H
 
 /// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
 /// at the root of \p tenacitas directory
@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-namespace tenacitas::src::crosswords::asy {
+namespace tnct::crosswords::evt {
 
 /// \brief Published when all attemps of assembling grids should stop
 struct grid_create_stop {
@@ -19,6 +19,6 @@ struct grid_create_stop {
   }
 };
 
-} // namespace tenacitas::src::crosswords::asy
+} // namespace tnct::crosswords::evt
 
 #endif
