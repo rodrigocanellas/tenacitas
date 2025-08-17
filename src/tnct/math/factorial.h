@@ -6,7 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <limits>
+// #include <limits>
 #include <optional>
 #include <type_traits>
 
@@ -27,8 +27,8 @@ std::optional<t_ret> factorial(t_val p_val)
   for (t_val i = 1; i <= p_val; ++i)
   {
     // Detect potential overflow before multiplication
-    if (ret > std::numeric_limits<t_ret>::max() / i)
-      return std::nullopt;
+    // if (ret > std::numeric_limits<t_ret>::max() / i)
+    //   return std::nullopt;
 
     ret *= static_cast<t_ret>(i);
   }

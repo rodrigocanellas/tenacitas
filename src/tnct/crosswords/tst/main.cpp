@@ -13,6 +13,7 @@
 // #include <tnct/crosswords/dat/internal/assembler.h>
 // #include <tnct/crosswords/mod/grid.h>
 
+#include "tnct/crosswords/tst/assembler_test.h"
 #include "tnct/crosswords/tst/dat_test.h"
 #include "tnct/crosswords/tst/organizer_test.h"
 #include "tnct/tester/test.h"
@@ -2408,6 +2409,11 @@ int main(int argc, char **argv)
   run_test(_tester, crosswords::tst::organizer_test_000);
   run_test(_tester, crosswords::tst::organizer_test_001);
   run_test(_tester, crosswords::tst::organizer_test_002);
+
+  run_test(_tester, crosswords::tst::assembler_test_000);
+  run_test(_tester, crosswords::tst::assembler_test_001);
+  run_test(_tester, crosswords::tst::assembler_test_002);
+
   //  run_test(_tester, test_001);
   //  run_test(_tester, test_003);
   //  run_test(_tester, test_004);

@@ -187,7 +187,7 @@ public:
     check_if_event_is_in_events_tupĺe<t_event>();
     try
     {
-      handling<t_event> &_handlings{get_handlings<t_event>()};
+      handlings<t_event> &_handlings{get_handlings<t_event>()};
       for (auto &_value : _handlings)
       {
         _value.second->clear();

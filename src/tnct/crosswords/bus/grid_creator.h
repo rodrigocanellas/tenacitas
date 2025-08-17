@@ -9,6 +9,7 @@
 #include <atomic>
 #include <memory>
 
+#include "tnct/container/circular_queue.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/evt/grid_create_start.h"
@@ -32,10 +33,13 @@ struct grid_creator
 
   grid_creator(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
-        m_assembler(m_dispatcher)
+        m_assembler(p_logger, m_dispatcher)
   {
-    m_dispatcher.template subscribe<grid_creator, evt::grid_create_start>(
-        [&](auto p_event)
+    using grid_create_start_queue =
+        container::circular_queue<t_logger, evt::grid_create_start, 10>;
+    m_dispatcher.template add_handling<evt::grid_create_start>(
+        "grid-create-start", grid_create_start_queue{m_logger},
+        [&](evt::grid_create_start &&p_event)
         {
           TNCT_LOG_DEB(m_logger, "subscriber for evt::grid_create_start");
 
@@ -43,8 +47,11 @@ struct grid_creator
                   p_event.wait_for, p_event.max_num_rows);
         });
 
-    m_dispatcher.template subscribe<grid_creator, evt::grid_create_stop>(
-        [&](auto) { m_stop = true; });
+    using grid_create_stop_queue =
+        container::circular_queue<t_logger, evt::grid_create_stop, 10>;
+    m_dispatcher.template add_handling<evt::grid_create_stop>(
+        "grid-create-stop", grid_create_stop_queue{m_logger},
+        [&](evt::grid_create_stop &&) { m_stop = true; });
 
     //    m_dispatcher.template subscribe<evt::grid_create_solved>(
     //        [&](auto) { m_stop = true; });
@@ -110,9 +117,16 @@ private:
                                              _current_num_cols, " solved in ",
                                              _diff.count(), " seconds"));
 
-          m_dispatcher.template publish<grid_creator, evt::grid_create_solved>(
-              _grid, std::chrono::duration_cast<std::chrono::seconds>(
-                         std::chrono::duration<double>(_diff)));
+          if (const auto _result{
+                  m_dispatcher.template publish<evt::grid_create_solved>(
+                      _grid, std::chrono::duration_cast<std::chrono::seconds>(
+                                 std::chrono::duration<double>(_diff)))};
+              _result != async::result::OK)
+          {
+            TNCT_LOG_ERR(
+                m_logger,
+                format::fmt("Error publishing grid_create_solved: ", _result));
+          }
 
           TNCT_LOG_DEB(m_logger, "evt::grid_create_solved published");
 
@@ -135,8 +149,15 @@ private:
 
       TNCT_LOG_DEB(m_logger, "Not solved for all the grid sizes");
 
-      m_dispatcher.template publish<grid_creator, evt::grid_create_unsolved>(
-          _current_num_rows, _current_num_cols);
+      if (const auto _result{
+              m_dispatcher.template publish<evt::grid_create_unsolved>(
+                  _current_num_rows, _current_num_cols)};
+          _result != async::result::OK)
+      {
+        TNCT_LOG_ERR(
+            m_logger,
+            format::fmt("Error publishing grid_create_unsolved: ", _result));
+      }
       m_dispatcher.clear();
     }
     catch (std::exception &_ex)

@@ -146,9 +146,8 @@ struct organizer_test_002
     _permutation.push_back(_entries->begin());
     _permutation.push_back(std::next(_entries->begin()));
 
-    auto _grid{std::make_shared<crosswords::dat::grid>(
-        _entries, _permutation, crosswords::dat::index{5},
-        crosswords::dat::index{8})};
+    auto _grid{
+        std::make_shared<grid>(_entries, _permutation, index{5}, index{8})};
 
     organizer _organize{_logger, _dispatcher};
 
