@@ -14,6 +14,7 @@
 #include <fstream>
 #include <map>
 
+#include "tnct/async/handling_priority.h"
 #include "tnct/async/result.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
@@ -240,6 +241,8 @@ void MainWindow::create_check_box_first_column(int p_row, bool p_checked)
   _item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   _item->setTextAlignment(Qt::AlignCenter);
 
+  TNCT_LOG_DEB(m_logger, format::fmt("checked = ", Qt::Checked,
+                                     ", unchecked = ", Qt::Unchecked));
   _item->setCheckState((p_checked ? Qt::Checked : Qt::Unchecked));
   ui->tblWords->setItem(p_row, USE_COL, _item);
 }
@@ -582,6 +585,11 @@ void MainWindow::on_start()
     }
 
     auto _checked_state{_item->checkState()};
+    TNCT_LOG_DEB(
+        m_logger,
+        format::fmt("check state is = ",
+                    ui->tblWords->item(_row, WORD_COL)->text().toStdString(),
+                    " = ", _checked_state));
     if (_checked_state == Qt::Checked)
     {
       QTableWidgetItem *_item_word{ui->tblWords->item(_row, WORD_COL)};

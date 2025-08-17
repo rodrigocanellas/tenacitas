@@ -81,18 +81,7 @@ struct assembler
     auto _entries{std::make_shared<dat::entries>(p_entries)};
     sort_entries(*_entries);
 
-    auto _maybe{
-        tnct::math::factorial<std::uint64_t>(_entries->get_num_entries())};
-    if (!_maybe)
-    {
-      TNCT_LOG_WAR(m_logger, format::fmt("overflow when calculating factorial "
-                                         "for '_entries->get_num_entries()' = ",
-                                         static_cast<std::uint16_t>(
-                                             _entries->get_num_entries())));
-
-      return nullptr;
-    }
-    const size_t _max_permutations = _maybe.value();
+    const auto _max_permutations = number_of_permutations(p_entries);
 
     TNCT_LOG_INF(m_logger, format::fmt("# permutations = ", _max_permutations));
 
@@ -126,15 +115,15 @@ struct assembler
       _permutation.push_back(_entry);
     }
 
-    size_t _permutation_counter{0};
+    std::remove_cv_t<decltype(_max_permutations)> _permutation_counter{0};
 
     const auto _initial = std::chrono::high_resolution_clock::now();
 
     TNCT_LOG_DEB(m_logger, format::fmt("initial = ",
                                        _initial.time_since_epoch().count()));
 
-    size_t     _slept{0};
-    const auto _amount_to_sleep{100ms};
+    std::size_t _slept{0};
+    const auto  _amount_to_sleep{100ms};
 
     while (true)
     {
@@ -262,6 +251,17 @@ struct assembler
   }
 
 private:
+  std::uint64_t number_of_permutations(const dat::entries &p_entries) const
+  {
+
+    if (p_entries.get_num_entries() > 20)
+    {
+      return math::factorial<std::uint64_t>(20).value();
+    }
+
+    return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+  }
+
   bool should_wait(size_t p_initial_free_memory)
   {
 #ifdef TENACITAS_LOG
