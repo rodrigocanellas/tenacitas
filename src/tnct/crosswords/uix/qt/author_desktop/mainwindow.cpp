@@ -261,6 +261,7 @@ void MainWindow::clear_grid()
   }
   ui->tblGrid->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   m_grid.reset();
+  ui->lblNumWords->clear();
 }
 
 void MainWindow::clear_words()
@@ -333,6 +334,7 @@ void MainWindow::reset()
   ui->btnPrint->setVisible(false);
   ui->btnStart->setVisible(true);
   ui->btnStop->setVisible(false);
+  ui->lblNumWords->setText("");
 }
 
 void MainWindow::unselect_words()
@@ -671,6 +673,7 @@ void MainWindow::on_import_clicked()
     std::getline(_file, _line);
   }
   ui->chbAllWords->setCheckState(Qt::Checked);
+  ui->lblNumWords->setText(QString::number(_row));
 }
 
 void MainWindow::on_save_clicked()
@@ -875,8 +878,54 @@ void MainWindow::on_print_clicked()
     return;
   }
 
-  const int _cols{ui->tblGrid->columnCount()};
-  const int _rows{ui->tblGrid->rowCount()};
+  int _cols{ui->tblGrid->columnCount()};
+  int _rows{ui->tblGrid->rowCount()};
+
+  {
+    int  _num_cols_empty{0};
+    bool _stop_cols{false};
+    for (int _col = _cols - 1; _col >= 0; _col--)
+    {
+      if (_stop_cols)
+      {
+        break;
+      }
+      ++_num_cols_empty;
+      for (int _row = 0; _row < _rows; ++_row)
+      {
+        Content *_content =
+            reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col));
+        if (!_content->is_unused())
+        {
+          _stop_cols = true;
+        }
+      }
+    }
+    _cols -= _num_cols_empty;
+  }
+
+  {
+    int  _num_rows_empty{0};
+    bool _stop_rows{false};
+    for (int _row = _rows - 1; _row >= 0; _row--)
+    {
+      if (_stop_rows)
+      {
+        break;
+      }
+      ++_num_rows_empty;
+      for (int _col = 0; _col < _cols; ++_col)
+      {
+        Content *_content =
+            reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col));
+        if (!_content->is_unused())
+        {
+          _stop_rows = true;
+        }
+      }
+    }
+    _rows -= _num_rows_empty;
+  }
 
   if (_file_name.contains(".pdf", Qt::CaseInsensitive))
   {
@@ -892,11 +941,11 @@ void MainWindow::on_print_clicked()
     const int _width{250};
     const int _height{250};
 
-    QPixmap _paint_to_solve_device(_rows * _height + 400, _cols * _width + 400);
+    QPixmap _paint_to_solve_device(_rows * _height + 600, _cols * _width + 600);
     _paint_to_solve_device.fill();
     QPainter _painter_to_solve(&_paint_to_solve_device);
 
-    QPixmap _paint_solution_device(_rows * _height + 400, _cols * _width + 400);
+    QPixmap _paint_solution_device(_rows * _height + 600, _cols * _width + 600);
     _paint_solution_device.fill();
     QPainter _painter_solution(&_paint_solution_device);
 
@@ -1049,6 +1098,9 @@ void MainWindow::on_print_clicked()
                  + QString::number(_value.second.first.size()) + " letras)"
                  + "</small></td>";
         _html += "</tr>";
+
+        std::cout << _value.first << '\t' << _value.second.second << " ("
+                  << _value.second.first.size() << " letras)\n";
       }
 
       _html += "</table> ";
