@@ -1,8 +1,0 @@
-<map id="tnct::parser::tst::test_000::operator()" name="tnct::parser::tst::test_000::operator()">
-<area shape="rect" id="node1" title=" " alt="" coords="5,136,156,177"/>
-<area shape="rect" id="node2" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a4176c22c621559e54e605b9eb08cb140" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="221,5,354,47"/>
-<area shape="rect" id="node3" href="$db/da3/structtnct_1_1program_1_1options.html#ac43acf6b90d3d1e5c89e0f2fe36af06e" title="Retrieves a single parameter, if possible." alt="" coords="204,71,371,112"/>
-<area shape="rect" id="node4" href="$dd/d7f/structtnct_1_1parser_1_1ini__file.html#ab470ef7b294108f36815b893ce71115f" title=" " alt="" coords="214,136,361,177"/>
-<area shape="rect" id="node5" href="$dd/d7f/structtnct_1_1parser_1_1ini__file.html#a671c88ec085073c87942417146416646" title=" " alt="" coords="214,201,361,243"/>
-<area shape="rect" id="node6" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a05aa125514f2eab826a3e6cd290862a1" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="221,267,354,308"/>
-</map>

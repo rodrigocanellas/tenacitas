@@ -1,4 +1,0 @@
-<map id="tenacitas::lib::container::circular_queue&lt; t_logger, t_data &gt;" name="tenacitas::lib::container::circular_queue&lt; t_logger, t_data &gt;">
-<area shape="rect" id="node1" title="Implements a circular queue which size is increased if it becomes full." alt="" coords="5,109,203,165"/>
-<area shape="rect" id="node2" href="$d6/d95/classtenacitas_1_1lib_1_1traits_1_1i__queue.html" title=" " alt="" coords="23,5,185,61"/>
-</map>

@@ -1,9 +1,0 @@
-var searchData=
-[
-  ['scoped_5fenum_1344',['scoped_enum',['../d5/dcb/namespacetnct_1_1concepts.html#a6e19ece975a60ed8a5ee4011cdf93539',1,'tnct::concepts']]],
-  ['sensor_5fid_1345',['sensor_id',['../d5/d04/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1add__sensor.html#a1828ddf41d10e1acc35efb41a7d7354d',1,'tnct::async::exp::temperature_sensors_simulator::evt::add_sensor::sensor_id()'],['../d6/d08/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1new__temperature.html#ad98f272044a9b20093861a5d293a42df',1,'tnct::async::exp::temperature_sensors_simulator::evt::new_temperature::sensor_id()'],['../d4/d7a/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1remove__sensor.html#a1e981092e5ef8dd36c630951edb21867',1,'tnct::async::exp::temperature_sensors_simulator::evt::remove_sensor::sensor_id()'],['../d4/d7e/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1evt_1_1set__temperature.html#a53dab6fc365ca3874525948cbe2e82cf',1,'tnct::async::exp::temperature_sensors_simulator::evt::set_temperature::sensor_id()']]],
-  ['size_1346',['size',['../d5/d87/structtnct_1_1string_1_1fixed__size__string.html#a028c4332f91ee5e71cafbaa16ef4f1e4',1,'tnct::string::fixed_size_string']]],
-  ['size_5fgreather_5for_5fequal_1347',['size_greather_or_equal',['../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#aa306978cffe36086e23fc42dd3c6693c',1,'tnct::tuple::cpt']]],
-  ['sleep_5fto_5fsimulate_5fwork_1348',['sleep_to_simulate_work',['../d2/db3/structtnct_1_1async_1_1exp_1_1configuration_1_1handling__cfg.html#aa7d9fad6af836f19b07dea1f1a69979f',1,'tnct::async::exp::configuration::handling_cfg']]],
-  ['status_1349',['status',['../da/dee/structtnct_1_1crosswords_1_1evt_1_1grid__create__status.html#a253001a038426086428a9f7fd4fc2354',1,'tnct::crosswords::evt::grid_create_status']]]
-];

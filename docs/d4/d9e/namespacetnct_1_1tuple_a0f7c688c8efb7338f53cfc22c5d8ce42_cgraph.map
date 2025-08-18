@@ -1,4 +1,0 @@
-<map id="tnct::tuple::requires" name="tnct::tuple::requires">
-<area shape="rect" id="node1" title="Traverses the values of a const tuple while the visitor function returns true." alt="" coords="5,5,155,32"/>
-<area shape="rect" id="node2" href="$d4/d9e/namespacetnct_1_1tuple.html#acd69ecd05b213a812acf33eb93a1551d" title="Traverses the types of a tuple while the visitor function returns true." alt="" coords="203,5,352,32"/>
-</map>
