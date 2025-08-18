@@ -1,0 +1,34 @@
+<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/uix/qt/author_desktop" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/uix/qt/author_desktop">
+<area shape="rect" id="node1" href="dir_1af223854b66e4d01b2510a01838e2a9.html" title="author_desktop" alt="" coords="217,52,340,100"/>
+<area shape="rect" id="node2" href="dir_0239a87b871aa424856d24bfb4c8ace7.html" title="async" alt="" coords="71,340,143,388"/>
+<area shape="rect" id="edge17-headlabel" href="dir_000033_000002.html" title="1" alt="" coords="103,313,112,328"/>
+<area shape="rect" id="node3" href="dir_2660176808333e8ef19c9ae19a1ec1d8.html" title="evt" alt="" coords="144,244,216,292"/>
+<area shape="rect" id="edge18-headlabel" href="dir_000033_000005.html" title="9" alt="" coords="198,223,207,237"/>
+<area shape="rect" id="node4" href="dir_5c44d525a186b8bd7f5bb22e9c34a90e.html" title="bus" alt="" coords="243,148,315,196"/>
+<area shape="rect" id="edge19-headlabel" href="dir_000033_000060.html" title="1" alt="" coords="282,122,292,137"/>
+<area shape="rect" id="node5" href="dir_5e0cf7b17a337224a00a6f0df8f0bdec.html" title="dat" alt="" coords="319,340,391,388"/>
+<area shape="rect" id="edge20-headlabel" href="dir_000033_000062.html" title="2" alt="" coords="360,314,369,329"/>
+<area shape="rect" id="node6" href="dir_7077961a792401cc971b494c76dc051f.html" title="container" alt="" coords="268,436,351,484"/>
+<area shape="rect" id="edge21-headlabel" href="dir_000033_000024.html" title="1" alt="" coords="366,429,375,443"/>
+<area shape="rect" id="node7" href="dir_b40440698e5a6ddde6d1360f9f8dc00f.html" title="format" alt="" coords="195,628,267,676"/>
+<area shape="rect" id="edge22-headlabel" href="dir_000033_000034.html" title="1" alt="" coords="176,618,185,632"/>
+<area shape="rect" id="node8" href="dir_cd3d90c27c281d20bf53dfcebed30fdb.html" title="log" alt="" coords="195,532,267,580"/>
+<area shape="rect" id="edge23-headlabel" href="dir_000033_000012.html" title="3" alt="" coords="281,551,290,566"/>
+<area shape="rect" id="edge9-headlabel" href="dir_000002_000024.html" title="11" alt="" coords="246,417,264,432"/>
+<area shape="rect" id="edge10-headlabel" href="dir_000002_000034.html" title="13" alt="" coords="202,600,219,615"/>
+<area shape="rect" id="edge11-headlabel" href="dir_000002_000012.html" title="19" alt="" coords="188,506,206,521"/>
+<area shape="rect" id="edge12-headlabel" href="dir_000005_000002.html" title="1" alt="" coords="138,323,147,338"/>
+<area shape="rect" id="edge13-headlabel" href="dir_000005_000062.html" title="7" alt="" coords="302,320,311,335"/>
+<area shape="rect" id="edge14-headlabel" href="dir_000005_000012.html" title="1" alt="" coords="223,505,232,520"/>
+<area shape="rect" id="edge8-headlabel" href="dir_000060_000002.html" title="5" alt="" coords="110,314,120,329"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000060_000005.html" title="8" alt="" coords="218,230,228,245"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000060_000062.html" title="4" alt="" coords="350,313,360,328"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000060_000024.html" title="3" alt="" coords="309,409,318,424"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000060_000034.html" title="2" alt="" coords="282,628,292,643"/>
+<area shape="rect" id="edge7-headlabel" href="dir_000060_000012.html" title="3" alt="" coords="240,507,249,522"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000062_000024.html" title="1" alt="" coords="331,416,341,431"/>
+<area shape="rect" id="edge15-headlabel" href="dir_000024_000034.html" title="3" alt="" coords="262,611,271,625"/>
+<area shape="rect" id="edge16-headlabel" href="dir_000024_000012.html" title="4" alt="" coords="263,516,273,531"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000012_000034.html" title="2" alt="" coords="234,602,244,617"/>
+<area shape="rect" id="clust1" href="dir_aba7706c273fedbe4d6637ff130986e5.html" title="qt" alt="" coords="207,16,351,111"/>
+</map>
