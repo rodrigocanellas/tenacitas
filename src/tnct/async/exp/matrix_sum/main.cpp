@@ -88,7 +88,7 @@ void sync_sum_matrix_wrapper(const matrix &p_matrix, logger &p_logger)
   const std::chrono::duration<double> _diff = _end - _start;
 
   TNCT_LOG_TST(p_logger, format::fmt("SYNC time = ", _diff.count(),
-                                          " seconds, sum: ", _sum));
+                                     " seconds, sum: ", _sum));
 }
 
 namespace evt
@@ -151,8 +151,8 @@ struct async_sum_matrix
       auto _result{m_internal_dispatcher.publish<sum_line>(_r)};
       if (_result != async::result::OK)
       {
-        TNCT_LOG_ERR(m_logger, format::fmt("error publishing 'sum_line': ",
-                                                _result));
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("error publishing 'sum_line': ", _result));
         return _result;
       }
     }
@@ -207,13 +207,11 @@ private:
     matrix::data  m_sum;
   };
 
-  using internal_dispatcher =
-      async::dispatcher<logger, sum_line, line_summed>;
+  using internal_dispatcher = async::dispatcher<logger, sum_line, line_summed>;
 
   void define_handlers()
   {
-    using sum_line_queue =
-        container::circular_queue<logger, sum_line, 200>;
+    using sum_line_queue = container::circular_queue<logger, sum_line, 200>;
     m_internal_dispatcher.add_handling<sum_line>(
         "sum-line", sum_line_queue{m_logger},
         line_summer{m_internal_dispatcher, m_logger, m_matrix},
@@ -247,9 +245,8 @@ private:
           m_internal_dispatcher.publish<line_summed>(p_sum_line.m_row, _sum)};
       if (_result != async::result::OK)
       {
-        TNCT_LOG_ERR(
-            m_logger,
-            format::fmt("error publishing 'line_summed': ", _result));
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("error publishing 'line_summed': ", _result));
       }
     }
 
@@ -347,7 +344,7 @@ void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger)
   const std::chrono::duration<double> _diff = _end - _start;
 
   TNCT_LOG_TST(p_logger, format::fmt("ASYNC time = ", _diff.count(),
-                                          " seconds, sum: ", _sum));
+                                     " seconds, sum: ", _sum));
 }
 // clang-format off
 //rodrigo@wayne:~/development/prd/linux-release-64/exp$ ./tnct.async.exp.matrix_sum 60260
