@@ -48,7 +48,8 @@ int main() {
 
   // sleeping loop object
   logger _logger;
-  async::sleeping_loop<logger> _sleeping_loop(_logger, _function, _interval);
+  async::sleeping_loop<logger> _sleeping_loop(_logger, _function,
+                                                   _interval);
 
   // starts the loop asynchronously
   _sleeping_loop.start();

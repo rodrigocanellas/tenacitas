@@ -38,9 +38,9 @@ namespace tnct::tester {
 /// #include <iostream>
 /// #include <string>
 ///
-/// #include <tester/test.h>
+/// #include "tester/test.h"
 ///
-/// using namespace tnct::src;
+/// using namespace tenacitas::src;
 ///
 /// struct test_ok {
 ///   bool operator()(const program::options &) { return true; }

@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_LOGGER_H
-#define TNCT_ASYNC_EXP_DISPATCHER_LOGGER_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_LOGGER_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_LOGGER_H
 
 #include "tnct/log/cerr.h"
 

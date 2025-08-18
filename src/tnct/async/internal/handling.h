@@ -14,17 +14,21 @@
 #include <typeinfo>
 #include <vector>
 
-#include "tnct/async/handling_id.h"
+#include "tnct/async/cpt/is_event.h"
+#include "tnct/async/cpt/is_handler.h"
+#include "tnct/async/handling_name.h"
 #include "tnct/async/internal/handler_id.h"
+#include "tnct/async/internal/handling_id.h"
+#include "tnct/container/cpt/queue.h"
 #include "tnct/format/fmt.h"
-#include "tnct/traits/async/event.h"
-#include "tnct/traits/async/handler.h"
-#include "tnct/traits/container/queue.h"
-#include "tnct/traits/log/logger.h"
+#include "tnct/log/cpt/logger.h"
 
-namespace tnct::async::internal {
+namespace tnct::async::internal
+{
 
-template <traits::async::event t_event> class handling {
+template <async::cpt::is_event t_event>
+class handling
+{
 public:
   virtual ~handling() = default;
 
@@ -40,30 +44,38 @@ public:
 
   [[nodiscard]] virtual handling_id get_id() const = 0;
 
+  [[nodiscard]] virtual handling_name get_name() const = 0;
+
   [[nodiscard]] virtual constexpr size_t get_num_events() const = 0;
+
+  [[nodiscard]] virtual constexpr size_t get_events_capacity() const = 0;
 
   [[nodiscard]] virtual internal::handler_id get_handler_id() const = 0;
 
   virtual void clear() = 0;
 };
 
-template <traits::log::logger t_logger, traits::async::event t_event,
-          traits::container::queue<t_event> t_queue,
-          traits::async::handler<t_event> t_handler>
-class handling_concrete final : public handling<t_event> {
+template <log::cpt::logger t_logger, async::cpt::is_event t_event,
+          container::cpt::queue<t_event>  t_queue,
+          async::cpt::is_handler<t_event> t_handler>
+class handling_concrete final : public handling<t_event>
+{
 public:
-  using logger = t_logger;
-  using event = t_event;
-  using queue = t_queue;
+  using logger  = t_logger;
+  using event   = t_event;
+  using queue   = t_queue;
   using handler = t_handler;
 
-  handling_concrete(handling_id p_handling_id, t_logger &p_logger,
+  handling_concrete(const handling_name &p_handling_name, t_logger &p_logger,
                     handler &&p_handler, queue &&p_queue,
                     size_t p_num_handlers = 1)
-      : m_logger(p_logger), m_handling_id(p_handling_id), m_handler(p_handler),
-        m_queue(std::move(p_queue)),
-        m_handler_id(internal::get_handler_id<t_event, t_handler>()) {
+      : m_logger(p_logger), m_handling_name(p_handling_name),
+        m_handling_id(internal::get_handling_id(m_handling_name)),
+        m_handler(p_handler), m_queue(std::move(p_queue)),
+        m_handler_id(internal::get_handler_id<t_event, t_handler>())
+  {
     TNCT_LOG_TRA(m_logger, format::fmt("m_handling_id = ", m_handling_id,
+                                       ", m_handling_name = ", m_handling_name,
                                        ", m_handler_id = ", m_handler_id,
                                        ", p_num_handlers = ", p_num_handlers));
     increment_handlers(p_num_handlers);
@@ -74,31 +86,36 @@ public:
   handling_concrete(handling_concrete &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
         m_handler(std::move(p_handling.m_handler)),
-        m_queue(p_handling.m_logger), m_handler_id(p_handling.m_handler_id) {
+        m_queue(p_handling.m_logger), m_handler_id(p_handling.m_handler_id)
+  {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();
 
     m_queued_data.store(p_handling.m_queued_data);
     m_queue = std::move(p_handling.m_queue);
-    if (!_right_handling_was_stopped) {
+    if (!_right_handling_was_stopped)
+    {
       increment_handlers(p_handling.get_amount_handlers());
     }
   }
 
-  [[nodiscard]] internal::handler_id get_handler_id() const override {
+  [[nodiscard]] internal::handler_id get_handler_id() const override
+  {
     return m_handler_id;
   }
 
-  ~handling_concrete() override {
+  ~handling_concrete() override
+  {
     TNCT_LOG_TRA(m_logger, trace("entering destructor"));
     stop();
     TNCT_LOG_TRA(m_logger, trace("leaving destructor"));
   }
 
   handling_concrete &operator=(const handling_concrete &) = default;
-  handling_concrete &operator=(handling_concrete &&) = default;
+  handling_concrete &operator=(handling_concrete &&)      = default;
 
-  void add_event(const event &p_event) override {
+  void add_event(const event &p_event) override
+  {
 
     TNCT_LOG_TRA(m_logger, format::fmt("event = ", p_event));
 
@@ -111,10 +128,12 @@ public:
   }
 
   // \brief Stops this handling
-  void stop() override {
+  void stop() override
+  {
     TNCT_LOG_TRA(m_logger, trace("entering stop()"));
 
-    if (m_stopped) {
+    if (m_stopped)
+    {
       TNCT_LOG_TRA(m_logger, trace("not stopping because it is stopped"));
 
       std::lock_guard<std::mutex> _lock(m_data_mutex);
@@ -129,15 +148,18 @@ public:
       m_data_cond.notify_all();
     }
 
-    for (std::thread &_thread : m_loops) {
-      if (_thread.joinable()) {
+    for (std::thread &_thread : m_loops)
+    {
+      if (_thread.joinable())
+      {
         TNCT_LOG_TRA(m_logger, trace("is joinable", _thread.get_id()));
 
         _thread.join();
 
         TNCT_LOG_TRA(m_logger, trace("joined", _thread.get_id()));
-
-      } else {
+      }
+      else
+      {
         TNCT_LOG_TRA(m_logger, trace("is not joinable", _thread.get_id()));
       }
     }
@@ -145,27 +167,47 @@ public:
   }
 
   // Informs if the publishing is stopped
-  constexpr bool is_stopped() const override { return m_stopped; }
+  constexpr bool is_stopped() const override
+  {
+    return m_stopped;
+  }
 
-  [[nodiscard]] constexpr size_t get_amount_handlers() const override {
+  [[nodiscard]] constexpr size_t get_amount_handlers() const override
+  {
     return m_handling_handlers.size();
   }
 
-  [[nodiscard]] handling_id get_id() const override { return m_handling_id; }
+  [[nodiscard]] handling_name get_name() const override
+  {
+    return m_handling_name;
+  }
+
+  [[nodiscard]] handling_id get_id() const override
+  {
+    return m_handling_id;
+  }
 
   // \return Returns the amount of \p t_event objects in the queue
-  [[nodiscard]] constexpr size_t get_num_events() const override {
+  [[nodiscard]] constexpr size_t get_num_events() const override
+  {
     return m_queue.occupied();
   }
 
-  void clear() override {
+  [[nodiscard]] constexpr size_t get_events_capacity() const
+  {
+    return m_queue.capacity();
+  }
+
+  void clear() override
+  {
     std::lock_guard<std::mutex> _lock(m_data_mutex);
     m_queue.clear();
     m_data_cond.notify_all();
   }
 
-  friend std::ostream &operator<<(std::ostream &p_out,
-                                  const handling_concrete &p_handling) {
+  friend std::ostream &operator<<(std::ostream            &p_out,
+                                  const handling_concrete &p_handling)
+  {
     p_out << "{event " << typeid(event).name() << ", handling address "
           << &p_handling << ", handling id " << p_handling.m_handling_id
           << ", queue { capacity " << p_handling.m_queue.capacity()
@@ -176,7 +218,8 @@ public:
   }
 
   std::string trace(std::string_view p_text,
-                    std::thread::id p_thread = std::this_thread::get_id()) {
+                    std::thread::id  p_thread = std::this_thread::get_id())
+  {
     std::ostringstream _stream;
     _stream << *this << " - thread = " << p_thread << " - " << p_text;
     return _stream.str();
@@ -228,8 +271,10 @@ private:
   //     }
   // }
 
-  void increment_handlers(size_t p_num_handlers) {
-    if (p_num_handlers == 0) {
+  void increment_handlers(size_t p_num_handlers)
+  {
+    if (p_num_handlers == 0)
+    {
       return;
     }
 
@@ -238,25 +283,23 @@ private:
 
     // std::size_t _total_num_handlers{m_handling_handlers.size()};
 
-    for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i) {
+    for (decltype(p_num_handlers) _i = 0; _i < p_num_handlers; ++_i)
+    {
       m_handling_handlers.push_back(m_handler);
 
-      const handling_handler_pos _new_handler_pos{m_handling_handlers.size() -
-                                                  1};
+      const handling_handler_pos _new_handler_pos{m_handling_handlers.size()
+                                                  - 1};
 
-      TNCT_LOG_TRA(m_logger,
-                   format::fmt("_new_handler_pos ", _new_handler_pos));
-
-      m_loops.push_back(std::thread([this, _new_handler_pos]() -> void {
-        handler_loop(_new_handler_pos);
-      }));
+      m_loops.push_back(std::thread([this, _new_handler_pos]() -> void
+                                    { handler_loop(_new_handler_pos); }));
     }
   }
 
   // Waits for an event to be available in the event queue, then remove it and
   // call the handler in \p p_handling_handler_pos in \p m_handling_handlers. It
   // exits when \p m_stop is set.
-  void handler_loop(handling_handler_pos p_handling_handler_pos) {
+  void handler_loop(handling_handler_pos p_handling_handler_pos)
+  {
 
     // auto _queue_addr{&m_queue};
     auto _loop_id{std::this_thread::get_id()};
@@ -268,28 +311,33 @@ private:
 
     // auto _subscriber_id{&m_handling_handlers[p_handling_handler_pos]};
 
-    if (m_stopped) {
+    if (m_stopped)
+    {
       TNCT_LOG_TRA(m_logger, trace("already stopped", _loop_id));
       return;
     }
 
     TNCT_LOG_TRA(m_logger, trace("entering loop"));
 
-    while (true) {
+    while (true)
+    {
       {
         TNCT_LOG_TRA(m_logger, trace("locking", _loop_id));
 
         std::unique_lock<std::mutex> _lock(m_data_mutex);
         m_data_cond.wait(
             _lock,
-            [this, /*_subscriber_id,*/ _loop_id /*,_queue_addr*/]() -> bool {
+            [this, /*_subscriber_id,*/ _loop_id /*,_queue_addr*/]() -> bool
+            {
               TNCT_LOG_TRA(m_logger, trace("entering condition", _loop_id));
 
-              if (m_stopped) {
+              if (m_stopped)
+              {
                 TNCT_LOG_TRA(m_logger, trace("stopped", _loop_id));
                 return true;
               }
-              if (!m_queue.empty()) {
+              if (!m_queue.empty())
+              {
                 TNCT_LOG_TRA(m_logger, trace("there is data", _loop_id));
                 return true;
               }
@@ -300,7 +348,8 @@ private:
 
       TNCT_LOG_TRA(m_logger, trace("lock released", _loop_id));
 
-      if (m_stopped) {
+      if (m_stopped)
+      {
         TNCT_LOG_TRA(m_logger, trace("stopped due to explicit stop", _loop_id));
         break;
       }
@@ -308,7 +357,8 @@ private:
       TNCT_LOG_TRA(m_logger, trace("getting event from the queue", _loop_id));
 
       std::optional<event> _maybe{m_queue.pop()};
-      if (!_maybe.has_value()) {
+      if (!_maybe.has_value())
+      {
         TNCT_LOG_TRA(m_logger, trace("no event in queue", _loop_id));
         continue;
       }
@@ -329,23 +379,28 @@ private:
     TNCT_LOG_TRA(m_logger, trace("leaving subscriber's loop", _loop_id));
   }
 
-  void empty_queue(const std::thread::id &p_loop_id, handler p_subscriber) {
+  void empty_queue(const std::thread::id &p_loop_id, handler p_subscriber)
+  {
     TNCT_LOG_TRA(m_logger, trace("entering empty_queue", p_loop_id));
 
-    while (true) {
+    while (true)
+    {
       std::optional<event> _maybe{m_queue.pop()};
-      if (!_maybe.has_value()) {
+      if (!_maybe.has_value())
+      {
         break;
       }
 
-      if (m_stopped) {
+      if (m_stopped)
+      {
         TNCT_LOG_TRA(m_logger, trace("stop", p_loop_id));
         break;
       }
 
       event _event{std::move(*_maybe)};
 
-      if (this->m_stopped) {
+      if (this->m_stopped)
+      {
         TNCT_LOG_TRA(m_logger, trace("stop", p_loop_id));
         break;
       }
@@ -360,6 +415,8 @@ private:
 
 private:
   logger &m_logger;
+
+  handling_name m_handling_name;
 
   handling_id m_handling_id;
 

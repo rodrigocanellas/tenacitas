@@ -3,17 +3,22 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_LOG_CERR_LOG_H
-#define TNCT_LOG_CERR_LOG_H
+#ifndef TNCT_LOG_CERR_H
+#define TNCT_LOG_CERR_H
 
 #include <string_view>
 
 #include "tnct/log/internal/logger.h"
 
-namespace tnct::log {
+namespace tnct::log
+{
 
-struct cerr_writer {
-  void operator()(std::string_view p_str) { std::cerr << p_str; }
+struct cerr_writer
+{
+  void operator()(std::string_view p_str)
+  {
+    std::cerr << p_str;
+  }
 };
 
 using cerr = tnct::log::internal::logger<cerr_writer>;

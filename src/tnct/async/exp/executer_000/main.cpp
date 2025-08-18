@@ -13,7 +13,7 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
-#include "tnct/traits/log/logger.h"
+#include "tnct/log/cpt/logger.h"
 
 using namespace tnct;
 
@@ -26,8 +26,9 @@ void executer_000() {
   };
   int _i{4};
 
-  std::cout << (async::exec_sync(200ms, _function, std::move(_i)) ? "true"
-                                                                  : "false")
+  std::cout << (async::exec_sync(200ms, _function, std::move(_i))
+                    ? "true"
+                    : "false")
             << '\n';
 }
 
@@ -42,8 +43,9 @@ void executer_001() {
   };
   int _i{4};
 
-  std::cout << (async::exec_sync(200ms, _function, std::move(_i)) ? "true"
-                                                                  : "false")
+  std::cout << (async::exec_sync(200ms, _function, std::move(_i))
+                    ? "true"
+                    : "false")
             << '\n';
 }
 
@@ -54,7 +56,8 @@ void executer_002() {
     TNCT_LOG_DEB(_log, "hello");
   };
 
-  std::cout << (async::exec_sync(200ms, _function) ? "true" : "false") << '\n';
+  std::cout << (async::exec_sync(200ms, _function) ? "true" : "false")
+            << '\n';
 }
 
 void executer_003() {
@@ -67,7 +70,8 @@ void executer_003() {
     }
   };
 
-  std::cout << (async::exec_sync(200ms, _function) ? "true" : "false") << '\n';
+  std::cout << (async::exec_sync(200ms, _function) ? "true" : "false")
+            << '\n';
 }
 
 void executer_004() {
@@ -80,7 +84,7 @@ void executer_004() {
   std::string _str{"hello"};
 
   std::cout << (async::exec_sync(200ms, _function, 4, std::move(_str),
-                                 "goodbye")
+                                      "goodbye")
                     ? "true"
                     : "false")
             << '\n';
@@ -100,7 +104,7 @@ void executer_005() {
   std::string _str{"hello"};
 
   std::cout << (async::exec_sync(200ms, _function, 4, std::move(_str),
-                                 "goodbye")
+                                      "goodbye")
                     ? "true"
                     : "false")
             << '\n';
@@ -199,7 +203,8 @@ void executer_010() {
     return p_f * p_i;
   };
 
-  std::optional<float> _maybe = async::exec_sync(200ms, _function, 4, -2.5);
+  std::optional<float> _maybe =
+      async::exec_sync(200ms, _function, 4, -2.5);
   if (!_maybe) {
     std::cout << "function timeout, when it should not\n";
     return;
@@ -222,7 +227,8 @@ void executer_011() {
     return p_f * p_i;
   };
 
-  std::optional<float> _maybe = async::exec_sync(200ms, _function, 4, -2.5);
+  std::optional<float> _maybe =
+      async::exec_sync(200ms, _function, 4, -2.5);
   if (_maybe) {
     std::cout << "function should timeout, but it has not, and returned "
               << *_maybe << '\n';

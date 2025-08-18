@@ -14,13 +14,16 @@
 
 #include "tnct/format/fmt.h"
 
-#include "tnct/traits/chrono_convertible.h"
-#include "tnct/traits/log/logger.h"
+#include "tnct/time/cpt/chrono_convertible.h"
+#include "tnct/log/cpt/logger.h"
 
-namespace tnct::async {
+namespace tnct::async
+{
 
 /// \brief Periodically executes a function
-template <traits::log::logger t_logger> struct sleeping_loop {
+template <log::cpt::logger t_logger>
+struct sleeping_loop
+{
   /// \brief Signature of the function that will be called in each round of
   /// the loop
   using function = std::function<void()>;
@@ -35,12 +38,12 @@ template <traits::log::logger t_logger> struct sleeping_loop {
   /// \param p_function to be executed at a certain interval
   ///
   /// \param p_interval interval that \p p_function will be executed
-  template <traits::convertible_to_nano t_interval>
+  template <time::cpt::convertible_to_nano t_interval>
   sleeping_loop(logger &p_logger, function p_function, t_interval p_interval,
                 std::string_view p_id = "no-id")
       : m_logger(p_logger), m_id(p_id), m_function(p_function),
-        m_interval(
-            std::chrono::duration_cast<decltype(m_interval)>(p_interval)) {
+        m_interval(std::chrono::duration_cast<decltype(m_interval)>(p_interval))
+  {
 
     TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
                                        " - creating with function ",
@@ -48,18 +51,20 @@ template <traits::log::logger t_logger> struct sleeping_loop {
                                        m_interval.count(), " nanosecs"));
   }
 
-  sleeping_loop() = delete;
-  sleeping_loop(const sleeping_loop &) = delete;
+  sleeping_loop()                                 = delete;
+  sleeping_loop(const sleeping_loop &)            = delete;
   sleeping_loop &operator=(const sleeping_loop &) = delete;
 
   /// \brief Destructor
   /// The loops stops calling the function
-  ~sleeping_loop() {
+  ~sleeping_loop()
+  {
     TNCT_LOG_TRA(m_logger,
                  format::fmt("sleeping loop ", m_id, " - destructor"));
 
     stop();
-    if (m_thread.get_id() == std::thread::id()) {
+    if (m_thread.get_id() == std::thread::id())
+    {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
                                " - not joining because m_thread.get_id() == "
@@ -71,7 +76,8 @@ template <traits::log::logger t_logger> struct sleeping_loop {
                  format::fmt("sleeping loop ", m_id,
                              " - m_thread.get_id() != std::thread::id()"));
 
-    if (!m_thread.joinable()) {
+    if (!m_thread.joinable())
+    {
       TNCT_LOG_TRA(
           m_logger,
           format::fmt("sleeping loop ", m_id,
@@ -91,8 +97,8 @@ template <traits::log::logger t_logger> struct sleeping_loop {
   /// \brief Move constructor
   sleeping_loop(sleeping_loop &&p_loop)
       : m_logger(p_loop.m_logger), m_id(std::move(p_loop.m_id)),
-        m_function(std::move(p_loop.m_function)),
-        m_interval(p_loop.m_interval) {
+        m_function(std::move(p_loop.m_function)), m_interval(p_loop.m_interval)
+  {
     TNCT_LOG_TRA(m_logger,
                  format::fmt("sleeping loop ", m_id, " move constructor from ",
                              &p_loop, " to ", &(*this)));
@@ -102,7 +108,8 @@ template <traits::log::logger t_logger> struct sleeping_loop {
     m_stopped = _stopped;
 
     //    m_thread = std::move(p_loop.m_thread);
-    if (!m_stopped) {
+    if (!m_stopped)
+    {
       m_stopped = true;
       start();
     }
@@ -112,8 +119,10 @@ template <traits::log::logger t_logger> struct sleeping_loop {
   sleeping_loop &operator=(sleeping_loop &&) = delete;
 
   /// \brief Starts calling the function periodically
-  void start() {
-    if (!m_stopped) {
+  void start()
+  {
+    if (!m_stopped)
+    {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
                                " - not starting because it is not stopped"));
@@ -129,8 +138,10 @@ template <traits::log::logger t_logger> struct sleeping_loop {
   }
 
   /// \brief Stops the loop, if it was started
-  void stop() {
-    if (m_stopped) {
+  void stop()
+  {
+    if (m_stopped)
+    {
       TNCT_LOG_TRA(m_logger,
                    format::fmt("sleeping loop ", m_id,
                                " - not stopping because it is stopped"));
@@ -148,9 +159,15 @@ template <traits::log::logger t_logger> struct sleeping_loop {
   }
 
   /// \brief Retrieves if the loop was stopped
-  bool is_stopped() const { return m_stopped; }
+  bool is_stopped() const
+  {
+    return m_stopped;
+  }
 
-  const std::string &get_id() const { return m_id; }
+  const std::string &get_id() const
+  {
+    return m_id;
+  }
 
 private:
   /// \brief Helper move function
@@ -184,9 +201,12 @@ private:
   // }
 
   /// \brief Loop where the function will be called
-  void loop() {
-    while (true) {
-      if (m_stopped) {
+  void loop()
+  {
+    while (true)
+    {
+      if (m_stopped)
+      {
         TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - stop"));
 
         break;
@@ -201,7 +221,8 @@ private:
       TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - ",
                                          &m_function, " called"));
 
-      if (m_stopped) {
+      if (m_stopped)
+      {
         TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - stop"));
 
         break;
@@ -213,9 +234,9 @@ private:
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_interval);
-        if ((m_cond.wait_for(_lock, m_interval) ==
-             std::cv_status::no_timeout) ||
-            (m_stopped)) {
+        if ((m_cond.wait_for(_lock, m_interval) == std::cv_status::no_timeout)
+            || (m_stopped))
+        {
 
           TNCT_LOG_TRA(m_logger,
                        format::fmt("sleeping loop ", m_id,

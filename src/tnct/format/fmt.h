@@ -11,15 +11,17 @@
 /// \attention the headers below are necessary, although not explicitly used,
 /// because of the 'operator<<' that they define
 
-#include "tnct/ostream/pair.h"
-#include "tnct/ostream/tuple.h"
-#include "tnct/time/chrono_output.h"
+#include "tnct/pair/output.h"
+#include "tnct/time/output.h"
+#include "tnct/tuple/output.h"
 
-namespace tnct::format {
+namespace tnct::format
+{
 
 /// \brief Formats the params into a string
 template <typename... t_params>
-static inline std::string fmt(t_params &&...p_params) {
+static inline std::string fmt(t_params &&...p_params)
+{
   std::ostringstream _stream;
   ((_stream << p_params), ...);
   return _stream.str();

@@ -3,13 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_INTERNAL_MAX_STR_LENGTH_H
-#define TNCT_FORMAT_INTERNAL_MAX_STR_LENGTH_H
+#ifndef TNCT_FORMAT_MAX_STR_LENGTH_H
+#define TNCT_FORMAT_MAX_STR_LENGTH_H
 
 #include <cmath>
 #include <cstdint>
 
-namespace tnct::format {
+namespace tnct::format
+{
 
 /// \brief Maximum number of characters needed to represent a type of number
 ///
@@ -19,10 +20,10 @@ namespace tnct::format {
 /// \tparam t_num_type is the type of number
 template <typename t_num_type>
 requires std::integral<t_num_type> || std::floating_point<t_num_type>
-inline constexpr uint16_t max_str_length() {
-  return (
-      static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8))) +
-      1);
+inline constexpr uint16_t max_str_length()
+{
+  return (static_cast<uint16_t>(std::log10(std::pow(2, sizeof(t_num_type) * 8)))
+          + 1);
 }
 
 } // namespace tnct::format

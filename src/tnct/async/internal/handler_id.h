@@ -8,16 +8,18 @@
 
 #include <typeinfo>
 
-#include "tnct/traits/async/event.h"
-#include "tnct/traits/async/handler.h"
+#include "tnct/async/cpt/is_event.h"
+#include "tnct/async/cpt/is_handler.h"
 
-namespace tnct::async::internal {
+namespace tnct::async::internal
+{
 
 using handler_id = size_t;
 
-template <traits::async::event t_event,
-          traits::async::handler<t_event> t_handler>
-inline handler_id get_handler_id() {
+template <async::cpt::is_event            t_event,
+          async::cpt::is_handler<t_event> t_handler>
+inline handler_id get_handler_id()
+{
   return static_cast<handler_id>(typeid(t_handler).hash_code());
 };
 

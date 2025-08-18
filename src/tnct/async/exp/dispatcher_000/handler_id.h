@@ -3,17 +3,15 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_HANDLER_ID_H
-#define TNCT_ASYNC_EXP_DISPATCHER_HANDLER_ID_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_ID_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_HANDLER_ID_H
 
-// #include "tnct/generic/id.h"
-//#include <cstdint>
 #include <thread>
 
-namespace tnct::async::exp {
+namespace tnct::async::exp
+{
 
 using handler_id = std::thread::id;
-// generic::id<uint16_t>;
 
 } // namespace tnct::async::exp
 

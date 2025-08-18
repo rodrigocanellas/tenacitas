@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_EXP_DISPATCHER_PUBLISHER_H
-#define TNCT_ASYNC_EXP_DISPATCHER_PUBLISHER_H
+#ifndef TNCT_ASYNC_EXP_DISPATCHER_000_PUBLISHER_H
+#define TNCT_ASYNC_EXP_DISPATCHER_000_PUBLISHER_H
 
 #include <chrono>
 #include <string_view>
@@ -14,18 +14,18 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/result.h"
 #include "tnct/async/sleeping_loop.h"
-#include "tnct/traits/async/dispatcher.h"
+#include "tnct/async/cpt/is_dispatcher.h"
 
 namespace tnct::async::exp {
 
 template <char t_event_id,
-          traits::async::dispatcher<exp::event<t_event_id>> t_dispacther>
+          async::cpt::is_dispatcher<event<t_event_id>> t_dispacther>
 struct publisher {
-  using event = exp::event<t_event_id>;
+  using event = async::exp::event<t_event_id>;
 
   using events_published = std::tuple<event>;
 
-  publisher(t_dispacther &p_dispatcher, logger &p_logger,
+  publisher(t_dispacther &p_dispatcher, async::exp::logger &p_logger,
             std::chrono::milliseconds p_interval, size_t p_total_events,
             std::string_view p_id)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
@@ -46,9 +46,10 @@ struct publisher {
   ~publisher() { m_slepping_loop.stop(); }
 
   void start() {
-    TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
-                                       "': starting publisher with ",
-                                       m_total_events, " to be published"));
+    TNCT_LOG_TST(m_logger,
+                 format::fmt('\'', m_event, "', publisher '", m_id,
+                                  "': starting publisher with ", m_total_events,
+                                  " to be published"));
     m_slepping_loop.start();
   }
 
@@ -57,20 +58,22 @@ struct publisher {
 private:
   void sleeping_function() {
     if (m_num_events >= m_total_events) {
-      TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
-                                         "': total of ", m_num_events, " of ",
-                                         m_total_events,
-                                         " published, stopping publisher"));
+      TNCT_LOG_TST(m_logger,
+                   format::fmt('\'', m_event, "', publisher '", m_id,
+                                    "': total of ", m_num_events, " of ",
+                                    m_total_events,
+                                    " published, stopping publisher"));
       m_slepping_loop.stop();
       return;
     }
     auto _result{m_dispatcher.template publish<event>()};
-    if (_result != result::OK) {
+    if (_result != async::result::OK) {
       TNCT_LOG_ERR(m_logger, format::fmt("error: ", _result));
       return;
     }
     ++m_num_events;
-    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '", m_id,
+    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '",
+    // m_id,
     //                                    "': publishing event # ",
     //                                    m_num_events,
     //                                    "/", m_total_events));
@@ -88,7 +91,7 @@ private:
 };
 
 template <char t_event_id,
-          traits::async::dispatcher<event<t_event_id>> t_dispacther>
+          async::cpt::is_dispatcher<event<t_event_id>> t_dispacther>
 using publishers = std::vector<publisher<t_event_id, t_dispacther>>;
 
 } // namespace tnct::async::exp

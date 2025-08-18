@@ -1,17 +1,17 @@
-#ifndef TEMPERATURE_SENSORS_SIMULATOR_EVT_SET_TEMPERATURE_H
-#define TEMPERATURE_SENSORS_SIMULATOR_EVT_SET_TEMPERATURE_H
+#ifndef TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_EVT_SET_TEMPERATURE_H
+#define TNCT_ASYNC_EXP_TEMPERATURE_SENSORS_SIMULATOR_EVT_SET_TEMPERATURE_H
 
 #include <iostream>
 
-#include "tnct/async/exp/temperature_sensors_simulator/typ/sensor_id.h"
-#include "tnct/async/exp/temperature_sensors_simulator/typ/temperature.h"
+#include "tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h"
+#include "tnct/async/exp/temperature_sensors_simulator/dat/temperature.h"
 
 namespace tnct::async::exp::temperature_sensors_simulator::evt {
 
 struct set_temperature {
   set_temperature() = default;
-  explicit set_temperature(typ::sensor_id p_sensor_id,
-                           typ::temperature p_temperature)
+  explicit set_temperature(dat::sensor_id p_sensor_id,
+                           dat::temperature p_temperature)
       : sensor_id(p_sensor_id), temperature(p_temperature) {}
 
   set_temperature(const set_temperature &) = default;
@@ -26,8 +26,8 @@ struct set_temperature {
     return p_out;
   }
 
-  typ::sensor_id sensor_id;
-  typ::temperature temperature;
+  dat::sensor_id sensor_id;
+  dat::temperature temperature;
 };
 
 } // namespace tnct::async::exp::temperature_sensors_simulator::evt
