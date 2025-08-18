@@ -1,6 +1,0 @@
-<map id="tnct::lib::dat::internal::event_queue::trace" name="tnct::lib::dat::internal::event_queue::trace">
-<area shape="rect" id="node1" title=" " alt="" coords="5,71,164,112"/>
-<area shape="rect" id="node2" href="$d3/d88/namespacetnct_1_1lib_1_1alg.html#aa95fd8c6a9887d0b0a576535cd2d3b30" title="Formats a number with the maximum characters necessary to represent the number to string,..." alt="" coords="215,5,365,47"/>
-<area shape="rect" id="node3" href="$d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue.html#a76f8c5df5f49d76948b9e1da8bb130f2" title="returns an identifier used for debug purposes" alt="" coords="212,71,368,112"/>
-<area shape="rect" id="node4" href="$d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue.html#a1f4fbfff4b7bd3e61ab30634f7ae6cc7" title="amount of nodes that that have t_data objects" alt="" coords="212,136,368,177"/>
-</map>

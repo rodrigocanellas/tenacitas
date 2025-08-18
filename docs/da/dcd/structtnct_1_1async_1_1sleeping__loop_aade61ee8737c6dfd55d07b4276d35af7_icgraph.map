@@ -1,6 +1,0 @@
-<map id="tnct::async::sleeping_loop::start" name="tnct::async::sleeping_loop::start">
-<area shape="rect" id="node1" title="Starts calling the function periodically." alt="" coords="236,49,392,90"/>
-<area shape="rect" id="node2" href="$d1/d9b/async_2exp_2sleeping__loop__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="69,5,124,32"/>
-<area shape="rect" id="node3" href="$d2/d39/structhandling__016.html#a75dbf461417dbc0e11e43d7bc93e914f" title=" " alt="" coords="5,56,188,83"/>
-<area shape="rect" id="node4" href="$da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a8c23f0e4b30f932241a6068186929a5b" title="Move constructor." alt="" coords="19,107,175,149"/>
-</map>

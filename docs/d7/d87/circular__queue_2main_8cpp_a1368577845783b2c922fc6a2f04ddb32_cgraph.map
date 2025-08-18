@@ -1,5 +1,0 @@
-<map id="check" name="check">
-<area shape="rect" id="node1" title=" " alt="" coords="5,46,65,73"/>
-<area shape="rect" id="node2" href="$d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue.html#a72f6ba0f1980fdc40b8acaa522b98a25" title="amount of nodes in the queue" alt="" coords="113,5,269,47"/>
-<area shape="rect" id="node3" href="$d5/d32/structtnct_1_1lib_1_1dat_1_1circular__queue.html#a1f4fbfff4b7bd3e61ab30634f7ae6cc7" title="amount of nodes that that have t_data objects" alt="" coords="113,71,269,112"/>
-</map>

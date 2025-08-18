@@ -1,4 +1,0 @@
-<map id="tenacitas::lib::alg::set_writer_cerr" name="tenacitas::lib::alg::set_writer_cerr">
-<area shape="rect" id="node1" title="Defines that log messages will be written to std::cerr." alt="" coords="5,13,140,54"/>
-<area shape="rect" id="node2" href="$de/d98/classtenacitas_1_1lib_1_1alg_1_1internal_1_1log__wrapper.html#a35e16d2d708090e68bbf3ad8177e5713" title="Defines the function responsible for actually writing the message." alt="" coords="188,5,356,61"/>
-</map>
