@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.5</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -86,51 +86,62 @@ $(function() {
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564">OK</a> = 0,</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af6081cba130bcba63f024a65ffb0d9e6">HANDLING_FOUND</a>,</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a27ac4feb1c03f13b3dd3df5ca3eb3a0d">HANDLING_NOT_FOUND</a>,</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af5ec30d65a867ce969b04bc3d04fce20">ERRROR_PUBLISHNG</a>,</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948">ERROR_CLEARING</a>,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa">ERROR_ADDING_HANDLER</a>,</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca">ERROR_STOPPING</a></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;};</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> std::ostream &amp;<a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#a1e05efb48c061db23a6da492d9738c4b">operator&lt;&lt;</a>(std::ostream &amp;p_out, <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a> p_result) {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="keywordflow">switch</span> (p_result) {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564">result::OK</a>:</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;ok&quot;</span>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af6081cba130bcba63f024a65ffb0d9e6">result::HANDLING_FOUND</a>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;handling exists&quot;</span>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a0a306e577f7923ac78d86a60bee66966">ERROR_UNKNOWN</a>,</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a392b572df3a7a9b187bf86fb72335174">ERROR_PUBLISHNG</a>,</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948">ERROR_CLEARING</a>,</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa">ERROR_ADDING_HANDLER</a>,</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca">ERROR_STOPPING</a>,</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;  <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ac9ce73ad0933f6af203458549fecdcaf">ERROR_HANDLER_ALREADY_IN_USE</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;};</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">static</span> <span class="keyword">inline</span> std::ostream &amp;<a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#a1e05efb48c061db23a6da492d9738c4b">operator&lt;&lt;</a>(std::ostream &amp;p_out, <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a> p_result) {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordflow">switch</span> (p_result) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564">result::OK</a>:</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;ok&quot;</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a27ac4feb1c03f13b3dd3df5ca3eb3a0d">result::HANDLING_NOT_FOUND</a>:</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;handling does not exist&quot;</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af6081cba130bcba63f024a65ffb0d9e6">result::HANDLING_FOUND</a>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;handling exists&quot;</span>;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af5ec30d65a867ce969b04bc3d04fce20">result::ERRROR_PUBLISHNG</a>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error publishing&quot;</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a27ac4feb1c03f13b3dd3df5ca3eb3a0d">result::HANDLING_NOT_FOUND</a>:</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;handling does not exist&quot;</span>;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948">result::ERROR_CLEARING</a>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error clearing&quot;</span>;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a0a306e577f7923ac78d86a60bee66966">result::ERROR_UNKNOWN</a>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error unknown, look a log for exactly reason&quot;</span>;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa">result::ERROR_ADDING_HANDLER</a>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error adding handler&quot;</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a392b572df3a7a9b187bf86fb72335174">result::ERROR_PUBLISHNG</a>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error publishing&quot;</span>;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca">result::ERROR_STOPPING</a>:</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error stopping&quot;</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948">result::ERROR_CLEARING</a>:</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error clearing&quot;</span>;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">return</span> p_out;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;} <span class="comment">// namespace tnct::async</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1async_html"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html">tnct::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00033">dispatcher.h:33</a></div></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa">result::ERROR_ADDING_HANDLER</a>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error adding handler&quot;</span>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca">result::ERROR_STOPPING</a>:</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;error stopping&quot;</span>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">case</span> <a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ac9ce73ad0933f6af203458549fecdcaf">result::ERROR_HANDLER_ALREADY_IN_USE</a>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    p_out &lt;&lt; <span class="stringliteral">&quot;handler already in use&quot;</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordflow">return</span> p_out;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;} <span class="comment">// namespace tnct::async</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetnct_1_1async_html"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html">tnct::async</a></div><div class="ttdef"><b>Definition:</b> <a href="../../da/dfb/has__add__handling__method_8h_source.html#l00016">has_add_handling_method.h:17</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_a1e05efb48c061db23a6da492d9738c4b"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#a1e05efb48c061db23a6da492d9738c4b">tnct::async::operator&lt;&lt;</a></div><div class="ttdeci">std::ostream &amp; operator&lt;&lt;(std::ostream &amp;p_out, handling_priority p_handling_priority)</div><div class="ttdoc">Output operator for handling_priority.</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/dca/handling__priority_8h_source.html#l00028">handling_priority.h:28</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">tnct::async::result</a></div><div class="ttdeci">result</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d93/result_8h_source.html#l00014">result.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063a0a306e577f7923ac78d86a60bee66966"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a0a306e577f7923ac78d86a60bee66966">tnct::async::result::ERROR_UNKNOWN</a></div><div class="ttdeci">@ ERROR_UNKNOWN</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063a27ac4feb1c03f13b3dd3df5ca3eb3a0d"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a27ac4feb1c03f13b3dd3df5ca3eb3a0d">tnct::async::result::HANDLING_NOT_FOUND</a></div><div class="ttdeci">@ HANDLING_NOT_FOUND</div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063a392b572df3a7a9b187bf86fb72335174"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a392b572df3a7a9b187bf86fb72335174">tnct::async::result::ERROR_PUBLISHNG</a></div><div class="ttdeci">@ ERROR_PUBLISHNG</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a4d94f4ef61526d4ddf0fdd20cb67e948">tnct::async::result::ERROR_CLEARING</a></div><div class="ttdeci">@ ERROR_CLEARING</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063a705707edc14c93ee39846570f2f1a1ca">tnct::async::result::ERROR_STOPPING</a></div><div class="ttdeci">@ ERROR_STOPPING</div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063ac9ce73ad0933f6af203458549fecdcaf"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ac9ce73ad0933f6af203458549fecdcaf">tnct::async::result::ERROR_HANDLER_ALREADY_IN_USE</a></div><div class="ttdeci">@ ERROR_HANDLER_ALREADY_IN_USE</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ad7165d6c749e639d1f17b2d762f93faa">tnct::async::result::ERROR_ADDING_HANDLER</a></div><div class="ttdeci">@ ERROR_ADDING_HANDLER</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564">tnct::async::result::OK</a></div><div class="ttdeci">@ OK</div></div>
-<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063af5ec30d65a867ce969b04bc3d04fce20"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af5ec30d65a867ce969b04bc3d04fce20">tnct::async::result::ERRROR_PUBLISHNG</a></div><div class="ttdeci">@ ERRROR_PUBLISHNG</div></div>
 <div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063af6081cba130bcba63f024a65ffb0d9e6"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063af6081cba130bcba63f024a65ffb0d9e6">tnct::async::result::HANDLING_FOUND</a></div><div class="ttdeci">@ HANDLING_FOUND</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -75,18 +75,30 @@ $(function() {
 <div class="title">factorial.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
-<code>#include &lt;limits&gt;</code><br />
-<code>#include &lt;optional&gt;</code><br />
+<div class="textblock"><code>#include &lt;optional&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for factorial.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../de/d59/factorial_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8h" alt=""/></div>
 <map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8h">
-<area shape="rect" title=" " alt="" coords="37,5,240,61"/>
-<area shape="rect" title=" " alt="" coords="5,109,85,136"/>
-<area shape="rect" title=" " alt="" coords="109,109,168,136"/>
-<area shape="rect" title=" " alt="" coords="192,109,267,136"/>
+<area shape="rect" title=" " alt="" coords="5,5,208,61"/>
+<area shape="rect" title=" " alt="" coords="16,109,91,136"/>
+<area shape="rect" title=" " alt="" coords="115,109,207,136"/>
+</map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../d7/d54/factorial_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8hdep" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2math_2factorial_8hdep">
+<area shape="rect" title=" " alt="" coords="397,5,599,61"/>
+<area shape="rect" href="../../d4/dec/assembler_8h.html" title=" " alt="" coords="391,109,605,165"/>
+<area shape="rect" href="../../d7/d3c/grid__creator_8h.html" title=" " alt="" coords="272,213,487,269"/>
+<area shape="rect" href="../../d2/d7b/assembler__test_8h.html" title=" " alt="" coords="515,213,729,269"/>
+<area shape="rect" href="../../d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="5,317,239,373"/>
+<area shape="rect" href="../../d1/d46/crosswords_2uix_2qt_2author__desktop_2main_8cpp.html" title=" " alt="" coords="263,317,495,373"/>
+<area shape="rect" href="../../d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="520,317,735,373"/>
 </map>
 </div>
 </div>
@@ -94,21 +106,16 @@ Include dependency graph for factorial.h:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:da/dd0/namespacetenacitas"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/dd0/namespacetenacitas.html">tenacitas</a></td></tr>
+<tr class="memitem:d4/d18/namespacetnct"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d18/namespacetnct.html">tnct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d1/d8d/namespacetenacitas_1_1lib"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d8d/namespacetenacitas_1_1lib.html">tenacitas::lib</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d7/d58/namespacetenacitas_1_1lib_1_1mat"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d7/d58/namespacetenacitas_1_1lib_1_1mat.html">tenacitas::lib::mat</a></td></tr>
+<tr class="memitem:d8/d84/namespacetnct_1_1math"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d84/namespacetnct_1_1math.html">tnct::math</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a4f0c089449bbd5871bb86e677ef198da"><td class="memTemplParams" colspan="2">template&lt;typename t_type &gt; </td></tr>
-<tr class="memitem:a4f0c089449bbd5871bb86e677ef198da"><td class="memTemplItemLeft" align="right" valign="top">requires std::floating_point&lt; t_type &gt; std::optional&lt; t_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d7/d58/namespacetenacitas_1_1lib_1_1mat.html#a4f0c089449bbd5871bb86e677ef198da">tenacitas::lib::mat::factorial</a> (t_type p_val)</td></tr>
-<tr class="separator:a4f0c089449bbd5871bb86e677ef198da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0a27f26ecc4740d32e2fbc1a2d503ef"><td class="memTemplParams" colspan="2">template&lt;typename t_type &gt; </td></tr>
-<tr class="memitem:ac0a27f26ecc4740d32e2fbc1a2d503ef"><td class="memTemplItemLeft" align="right" valign="top">requires std::integral&lt; t_type &gt; std::optional&lt; t_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d7/d58/namespacetenacitas_1_1lib_1_1mat.html#ac0a27f26ecc4740d32e2fbc1a2d503ef">tenacitas::lib::mat::factorial</a> (t_type p_val)</td></tr>
-<tr class="separator:ac0a27f26ecc4740d32e2fbc1a2d503ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac00779423b5b2d2787c1b1a0a0e0201f"><td class="memTemplParams" colspan="2">template&lt;typename t_ret , typename t_val &gt; </td></tr>
+<tr class="memitem:ac00779423b5b2d2787c1b1a0a0e0201f"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; t_ret &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d8/d84/namespacetnct_1_1math.html#ac00779423b5b2d2787c1b1a0a0e0201f">tnct::math::factorial</a> (t_val p_val)</td></tr>
+<tr class="separator:ac00779423b5b2d2787c1b1a0a0e0201f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

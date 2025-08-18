@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -88,12 +88,16 @@ Classes</h2></td></tr>
 Typedefs</h2></td></tr>
 <tr class="memitem:aa1a92fbf73716f7ca56447571922d4eb"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#aa1a92fbf73716f7ca56447571922d4eb">handler_id</a> = size_t</td></tr>
 <tr class="separator:aa1a92fbf73716f7ca56447571922d4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f163db7c8d39a381b02e269b5d64e60"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a2f163db7c8d39a381b02e269b5d64e60">handling_id</a> = std::size_t</td></tr>
+<tr class="separator:a2f163db7c8d39a381b02e269b5d64e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a78f1bfe8cfff192961422984ddca537f"><td class="memTemplParams" colspan="2">template&lt;traits::async::event t_event, traits::async::handler&lt; t_event &gt; t_handler&gt; </td></tr>
+<tr class="memitem:a78f1bfe8cfff192961422984ddca537f"><td class="memTemplParams" colspan="2">template&lt;async::cpt::is_event t_event, async::cpt::is_handler&lt; t_event &gt; t_handler&gt; </td></tr>
 <tr class="memitem:a78f1bfe8cfff192961422984ddca537f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#aa1a92fbf73716f7ca56447571922d4eb">handler_id</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a78f1bfe8cfff192961422984ddca537f">get_handler_id</a> ()</td></tr>
 <tr class="separator:a78f1bfe8cfff192961422984ddca537f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6770881d5182a6f04370adf55830634e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a2f163db7c8d39a381b02e269b5d64e60">handling_id</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a6770881d5182a6f04370adf55830634e">get_handling_id</a> (const <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a0f45c63f0a58beb3027f041a54c0dd27">handling_name</a> &amp;p_handling_name)</td></tr>
+<tr class="separator:a6770881d5182a6f04370adf55830634e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>This file is under GPL 3 license. Please read the <code>LICENSE</code> file at the root of <code>tenacitas</code> directory</dd></dl>
@@ -111,7 +115,23 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html#l00016">16</a> of file <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html">handler_id.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html#l00017">17</a> of file <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html">handler_id.h</a>.</p>
+
+</div>
+</div>
+<a id="a2f163db7c8d39a381b02e269b5d64e60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f163db7c8d39a381b02e269b5d64e60">&#9670;&nbsp;</a></span>handling_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a2f163db7c8d39a381b02e269b5d64e60">tnct::async::internal::handling_id</a> = typedef std::size_t</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../db/db5/handling__id_8h_source.html#l00016">16</a> of file <a class="el" href="../../db/db5/handling__id_8h_source.html">handling_id.h</a>.</p>
 
 </div>
 </div>
@@ -122,7 +142,7 @@ Functions</h2></td></tr>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::async::event t_event, traits::async::handler&lt; t_event &gt; t_handler&gt; </div>
+template&lt;async::cpt::is_event t_event, async::cpt::is_handler&lt; t_event &gt; t_handler&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -141,7 +161,44 @@ template&lt;traits::async::event t_event, traits::async::handler&lt; t_event &gt
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html#l00020">20</a> of file <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html">handler_id.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html#l00021">21</a> of file <a class="el" href="../../d1/d4d/internal_2handler__id_8h_source.html">handler_id.h</a>.</p>
+
+</div>
+</div>
+<a id="a6770881d5182a6f04370adf55830634e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6770881d5182a6f04370adf55830634e">&#9670;&nbsp;</a></span>get_handling_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../dc/de2/namespacetnct_1_1async_1_1internal.html#a2f163db7c8d39a381b02e269b5d64e60">handling_id</a> tnct::async::internal::get_handling_id </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../d9/d3a/namespacetnct_1_1async.html#a0f45c63f0a58beb3027f041a54c0dd27">handling_name</a> &amp;&#160;</td>
+          <td class="paramname"><em>p_handling_name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../db/db5/handling__id_8h_source.html#l00018">18</a> of file <a class="el" href="../../db/db5/handling__id_8h_source.html">handling_id.h</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="../../dc/de2/namespacetnct_1_1async_1_1internal_a6770881d5182a6f04370adf55830634e_icgraph.png" border="0" usemap="#adc/de2/namespacetnct_1_1async_1_1internal_a6770881d5182a6f04370adf55830634e_icgraph" alt=""/></div>
+<map name="adc/de2/namespacetnct_1_1async_1_1internal_a6770881d5182a6f04370adf55830634e_icgraph" id="adc/de2/namespacetnct_1_1async_1_1internal_a6770881d5182a6f04370adf55830634e_icgraph">
+<area shape="rect" title=" " alt="" coords="236,5,387,47"/>
+<area shape="rect" href="../../d3/d09/structtnct_1_1async_1_1tst_1_1handling__005.html#ab74163abf160a8c5eb2cb8918b583b6e" title=" " alt="" coords="5,5,188,47"/>
+</map>
+</div>
 
 </div>
 </div>

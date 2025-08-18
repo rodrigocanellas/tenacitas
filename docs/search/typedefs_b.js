@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['section_1142',['section',['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#a9a291637a147c31dd438c36b83ce3c02',1,'tnct::parser::ini_file']]],
-  ['sections_1143',['sections',['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#ad41f4dd8ddedf4d02f3c46ed6a94a07a',1,'tnct::parser::ini_file']]],
-  ['sensor_5fid_1144',['sensor_id',['../dd/dc1/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1typ.html#adf857c72f4907e3d1cfb8485268d38c3',1,'tnct::async::exp::temperature_sensors_simulator::typ']]],
-  ['sleeping_5floop_1145',['sleeping_loop',['../d2/d95/structhandling__test.html#a8530de6c5aaefaa4c7c108da7e08ad0b',1,'handling_test']]]
+  ['permutation_1401',['permutation',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#a993176675c5e4bd66f9f03192136b3cf',1,'tnct::crosswords::dat']]],
+  ['properties_1402',['properties',['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#a72677730bc6114144d9ec8ada6974995',1,'tnct::parser::ini_file']]],
+  ['publishers_1403',['publishers',['../d6/da8/namespacetnct_1_1async_1_1exp.html#a8aacda0b153e489fa052f49fe42693df',1,'tnct::async::exp']]]
 ];

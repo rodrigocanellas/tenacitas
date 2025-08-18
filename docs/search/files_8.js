@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['main_2ecpp_866',['main.cpp',['../dd/d33/async_2exp_2executer__000_2main_8cpp.html',1,'(Global Namespace)'],['../d0/dc2/tuple_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d8/d39/translator_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d2/dd5/traits_2test_2main_8cpp.html',1,'(Global Namespace)'],['../da/d48/time_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d5/d20/tester_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d2/d2d/string_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d1/d27/parser_2test_2main_8cpp.html',1,'(Global Namespace)'],['../db/d5d/pair_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d1/d88/ostream_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d4/db8/log_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d2/db4/generic_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d7/d72/format_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d1/da2/container_2test_2main_8cpp.html',1,'(Global Namespace)'],['../d9/de5/async_2test_2main_8cpp.html',1,'(Global Namespace)'],['../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html',1,'(Global Namespace)'],['../d1/d9b/async_2exp_2sleeping__loop__000_2main_8cpp.html',1,'(Global Namespace)'],['../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html',1,'(Global Namespace)']]],
-  ['mainwindow_2ecpp_867',['mainwindow.cpp',['../d8/dd9/mainwindow_8cpp.html',1,'']]],
-  ['mainwindow_2eh_868',['mainwindow.h',['../d9/d53/mainwindow_8h.html',1,'']]],
-  ['matrix_2eh_869',['matrix.h',['../dd/df4/matrix_8h.html',1,'']]],
-  ['matrix_5ftest_2eh_870',['matrix_test.h',['../d4/d6d/matrix__test_8h.html',1,'']]],
-  ['max_5fstr_5flength_2eh_871',['max_str_length.h',['../d8/d73/max__str__length_8h.html',1,'']]]
+  ['layout_2eh_1028',['layout.h',['../db/d51/layout_8h.html',1,'']]],
+  ['level_2eh_1029',['level.h',['../de/d09/level_8h.html',1,'']]],
+  ['line_5fheader_5fformater_2eh_1030',['line_header_formater.h',['../d1/d17/line__header__formater_8h.html',1,'']]],
+  ['logger_2eh_1031',['logger.h',['../d4/da3/async_2exp_2dispatcher__000_2logger_8h.html',1,'(Global Namespace)'],['../db/d63/log_2cpt_2logger_8h.html',1,'(Global Namespace)'],['../d9/d1c/log_2internal_2logger_8h.html',1,'(Global Namespace)']]]
 ];

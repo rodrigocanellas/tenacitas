@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['f_1070',['f',['../d8/db4/structevent__2.html#a289f62158ca5a5f9f31de86a3dc70694',1,'event_2']]],
-  ['fixed_5fsize_5fstring_1071',['fixed_size_string',['../d4/d78/namespacetnct_1_1traits_1_1string.html#a7e4b456622254d4600e75d960036b80a',1,'tnct::traits::string']]]
+  ['grid_1306',['grid',['../d4/d10/structtnct_1_1crosswords_1_1evt_1_1grid__create__solved.html#a6c105c5e5519c02f1e9780a54b4ef2f0',1,'tnct::crosswords::evt::grid_create_solved::grid()'],['../d6/df9/structtnct_1_1crosswords_1_1evt_1_1grid__to__organize.html#a65869ef2be9c14ac80d5754072dc67d9',1,'tnct::crosswords::evt::grid_to_organize::grid()']]]
 ];

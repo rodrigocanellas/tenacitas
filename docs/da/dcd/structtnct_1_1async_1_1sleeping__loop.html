@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -92,7 +92,7 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac0c5a2bb262980fc2ca68b323963ae7e"><td class="memTemplParams" colspan="2">template&lt;traits::convertible_to_nano t_interval&gt; </td></tr>
+<tr class="memitem:ac0c5a2bb262980fc2ca68b323963ae7e"><td class="memTemplParams" colspan="2">template&lt;time::cpt::convertible_to_nano t_interval&gt; </td></tr>
 <tr class="memitem:ac0c5a2bb262980fc2ca68b323963ae7e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#ac0c5a2bb262980fc2ca68b323963ae7e">sleeping_loop</a> (<a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aee1b7000f78f6fe835cd44a8b52f18ca">logger</a> &amp;p_logger, <a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a15887e6a48a1dca4e210a14031411962">function</a> p_function, t_interval p_interval, std::string_view p_id=&quot;no-id&quot;)</td></tr>
 <tr class="memdesc:ac0c5a2bb262980fc2ca68b323963ae7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#ac0c5a2bb262980fc2ca68b323963ae7e">More...</a><br /></td></tr>
 <tr class="separator:ac0c5a2bb262980fc2ca68b323963ae7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,12 +124,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a71b65bcfebf27cd58ba6b53ee52c1567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;traits::log::logger t_logger&gt;<br />
+<div class="textblock"><h3>template&lt;log::cpt::logger t_logger&gt;<br />
 struct tnct::async::sleeping_loop&lt; t_logger &gt;</h3>
 
 <p>Periodically executes a function. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00023">23</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00025">25</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a15887e6a48a1dca4e210a14031411962"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a15887e6a48a1dca4e210a14031411962">&#9670;&nbsp;</a></span>function</h2>
@@ -137,7 +137,7 @@ struct tnct::async::sleeping_loop&lt; t_logger &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">tnct::async::sleeping_loop</a>&lt; t_logger &gt;::<a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a15887e6a48a1dca4e210a14031411962">function</a> =  std::function&lt;void()&gt;</td>
@@ -147,7 +147,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Signature of the function that will be called in each round of the loop. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00026">26</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00029">29</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 
 </div>
 </div>
@@ -157,7 +157,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">tnct::async::sleeping_loop</a>&lt; t_logger &gt;::<a class="el" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aee1b7000f78f6fe835cd44a8b52f18ca">logger</a> =  t_logger</td>
@@ -165,7 +165,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00028">28</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00031">31</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 
 </div>
 </div>
@@ -176,9 +176,9 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <div class="memtemplate">
-template&lt;traits::convertible_to_nano t_interval&gt; </div>
+template&lt;time::cpt::convertible_to_nano t_interval&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -235,7 +235,7 @@ template&lt;traits::convertible_to_nano t_interval&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00039">39</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00042">42</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 
 </div>
 </div>
@@ -245,7 +245,7 @@ template&lt;traits::convertible_to_nano t_interval&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -272,7 +272,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -300,7 +300,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -321,7 +321,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Destructor The loops stops calling the function. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00057">57</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00060">60</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -340,7 +340,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -362,7 +362,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Move constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00092">92</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00098">98</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
@@ -382,7 +382,7 @@ Here is the call graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -401,7 +401,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00153">153</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00167">167</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 
 </div>
 </div>
@@ -411,7 +411,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -432,7 +432,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Retrieves if the loop was stopped. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00151">151</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00162">162</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 
 </div>
 </div>
@@ -442,7 +442,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -470,7 +470,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -500,7 +500,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -521,16 +521,16 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Starts calling the function periodically. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00115">115</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00122">122</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../da/dcd/structtnct_1_1async_1_1sleeping__loop_aade61ee8737c6dfd55d07b4276d35af7_icgraph.png" border="0" usemap="#ada/dcd/structtnct_1_1async_1_1sleeping__loop_aade61ee8737c6dfd55d07b4276d35af7_icgraph" alt=""/></div>
 <map name="ada/dcd/structtnct_1_1async_1_1sleeping__loop_aade61ee8737c6dfd55d07b4276d35af7_icgraph" id="ada/dcd/structtnct_1_1async_1_1sleeping__loop_aade61ee8737c6dfd55d07b4276d35af7_icgraph">
-<area shape="rect" title="Starts calling the function periodically." alt="" coords="236,49,392,90"/>
+<area shape="rect" title="Starts calling the function periodically." alt="" coords="236,57,392,98"/>
 <area shape="rect" href="../../d1/d9b/async_2exp_2sleeping__loop__000_2main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="69,5,124,32"/>
-<area shape="rect" href="../../d2/d39/structhandling__016.html#a75dbf461417dbc0e11e43d7bc93e914f" title=" " alt="" coords="5,56,188,83"/>
-<area shape="rect" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a8c23f0e4b30f932241a6068186929a5b" title="Move constructor." alt="" coords="19,107,175,149"/>
+<area shape="rect" href="../../d5/d59/structtnct_1_1async_1_1tst_1_1handling__016.html#a1eb1d66804a24b07d2dc7ca84663d937" title=" " alt="" coords="5,57,188,98"/>
+<area shape="rect" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a8c23f0e4b30f932241a6068186929a5b" title="Move constructor." alt="" coords="19,122,175,163"/>
 </map>
 </div>
 
@@ -542,7 +542,7 @@ Here is the caller graph for this function:</div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;traits::log::logger t_logger&gt; </div>
+template&lt;log::cpt::logger t_logger&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -563,7 +563,7 @@ template&lt;traits::log::logger t_logger&gt; </div>
 
 <p>Stops the loop, if it was started. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00132">132</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html#l00141">141</a> of file <a class="el" href="../../dd/db8/sleeping__loop_8h_source.html">sleeping_loop.h</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">

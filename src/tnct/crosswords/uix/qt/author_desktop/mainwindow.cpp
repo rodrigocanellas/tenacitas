@@ -1098,9 +1098,6 @@ void MainWindow::on_print_clicked()
                  + QString::number(_value.second.first.size()) + " letras)"
                  + "</small></td>";
         _html += "</tr>";
-
-        std::cout << _value.first << '\t' << _value.second.second << " ("
-                  << _value.second.first.size() << " letras)\n";
       }
 
       _html += "</table> ";

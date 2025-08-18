@@ -1,10 +1,6 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/async/handling_id.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/handling_id.h">
-<area shape="rect" id="node1" title=" " alt="" coords="172,5,375,61"/>
-<area shape="rect" id="node2" href="$d3/d96/string_2fixed__size__string_8h.html" title=" " alt="" coords="195,109,351,151"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,199,91,225"/>
-<area shape="rect" id="node4" title=" " alt="" coords="115,199,171,225"/>
-<area shape="rect" id="node5" title=" " alt="" coords="195,199,261,225"/>
-<area shape="rect" id="node6" title=" " alt="" coords="285,199,352,225"/>
-<area shape="rect" id="node7" title=" " alt="" coords="376,199,456,225"/>
-<area shape="rect" id="node8" title=" " alt="" coords="481,199,557,225"/>
+<map id="/home/rodrigo/development/tenacitas/src/tnct/async/internal/handling_id.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/internal/handling_id.h">
+<area shape="rect" id="node1" title=" " alt="" coords="6,5,209,61"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,117,76,143"/>
+<area shape="rect" id="node3" href="$d8/d67/handling__name_8h.html" title=" " alt="" coords="101,109,250,151"/>
+<area shape="rect" id="node4" title=" " alt="" coords="127,199,224,225"/>
 </map>

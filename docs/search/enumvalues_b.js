@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['ok_1184',['OK',['../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063ae0aa021e21dddbd6d8cecec71e9cf564',1,'tnct::async']]]
+  ['tra_1448',['tra',['../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50ccacfac4e0dc47d98414cf373a2f09d28a1',1,'tnct::log']]],
+  ['tst_1449',['tst',['../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cca9301c2a72c0f099d0313099f1cd54799',1,'tnct::log']]]
 ];

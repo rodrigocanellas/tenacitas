@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -112,31 +112,32 @@ $(function() {
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;      _cond.notify_one();</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      ++_counter;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;counter = &quot;</span> &lt;&lt; _counter &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;counter = &quot;</span> &lt;&lt; _counter &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  };</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// sleeping loop object</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> _logger;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">async::sleeping_loop&lt;logger&gt;</a> _sleeping_loop(_logger, _function, _interval);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// starts the loop asynchronously</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  _sleeping_loop.<a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">start</a>();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// waits for the function to be executed inside the sleeping loop to notify</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// that the counter reached the maximum value</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  std::unique_lock&lt;std::mutex&gt; _lock(_mutex);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  _cond.wait(_lock);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
-<div class="ttc" id="aasync_2exp_2dispatcher__000_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp_source.html#l00300">main.cpp:300</a></div></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">async::sleeping_loop&lt;logger&gt;</a> _sleeping_loop(_logger, _function,</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                                                   _interval);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// starts the loop asynchronously</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  _sleeping_loop.<a class="code" href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">start</a>();</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="comment">// waits for the function to be executed inside the sleeping loop to notify</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// that the counter reached the maximum value</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::unique_lock&lt;std::mutex&gt; _lock(_mutex);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  _cond.wait(_lock);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;}</div>
+<div class="ttc" id="aasync_2exp_2dispatcher__000_2main_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp_source.html#l00325">main.cpp:325</a></div></div>
 <div class="ttc" id="acerr_8h_html"><div class="ttname"><a href="../../da/d1e/cerr_8h.html">cerr.h</a></div></div>
 <div class="ttc" id="aclasstnct_1_1log_1_1internal_1_1logger_html"><div class="ttname"><a href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">tnct::log::internal::logger</a></div><div class="ttdoc">Thread safe writing of log messages.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00034">logger.h:34</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00019">cerr.h:19</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1log_html_afb981b125b7d791a048888f6f2a112d3"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">tnct::log::cout</a></div><div class="ttdeci">tnct::log::internal::logger&lt; decltype([](std::string_view s) { std::cout&lt;&lt; s cout</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d38/cout_8h_source.html#l00013">cout.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d8/d07/async_2dispatcher_8h_source.html#l00034">dispatcher.h:34</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00024">cerr.h:24</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1log_html_a89d4fa34f6568ef51035ee95c44a6488"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">tnct::log::cout</a></div><div class="ttdeci">tnct::log::internal::logger&lt; decltype([](std::string_view s) { std::cout&lt;&lt; s cout</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d38/cout_8h_source.html#l00014">cout.h:15</a></div></div>
+<div class="ttc" id="anamespacetnct_html"><div class="ttname"><a href="../../d4/d18/namespacetnct.html">tnct</a></div><div class="ttdef"><b>Definition:</b> <a href="../../da/dfb/has__add__handling__method_8h_source.html#l00016">has_add_handling_method.h:17</a></div></div>
 <div class="ttc" id="asleeping__loop_8h_html"><div class="ttname"><a href="../../dd/db8/sleeping__loop_8h.html">sleeping_loop.h</a></div></div>
-<div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">tnct::async::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00023">sleeping_loop.h:23</a></div></div>
-<div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_aade61ee8737c6dfd55d07b4276d35af7"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">tnct::async::sleeping_loop::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00115">sleeping_loop.h:115</a></div></div>
+<div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html">tnct::async::sleeping_loop</a></div><div class="ttdoc">Periodically executes a function.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00025">sleeping_loop.h:26</a></div></div>
+<div class="ttc" id="astructtnct_1_1async_1_1sleeping__loop_html_aade61ee8737c6dfd55d07b4276d35af7"><div class="ttname"><a href="../../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#aade61ee8737c6dfd55d07b4276d35af7">tnct::async::sleeping_loop::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Starts calling the function periodically.</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/db8/sleeping__loop_8h_source.html#l00122">sleeping_loop.h:122</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

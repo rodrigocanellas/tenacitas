@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['value_1107',['value',['../d2/d2a/structhandling__test_1_1ev1.html#aad7e35aca8b0a4d7a4f770214afc9b9d',1,'handling_test::ev1::value()'],['../d3/d23/classtnct_1_1traits_1_1has__new__operator.html#a1a72af369bd6871b1e1a3cc08cd38b1a',1,'tnct::traits::has_new_operator::value()']]],
-  ['visit_5ftype_5fin_5ftuple_1108',['visit_type_in_tuple',['../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a5373a40edb364b49993bd303c70740a2',1,'tnct::traits::tuple']]],
-  ['visit_5fvalue_5fin_5fconstant_5ftuple_1109',['visit_value_in_constant_tuple',['../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a5f9900bf73910b3257c8178cf9177754',1,'tnct::traits::tuple']]],
-  ['visit_5fvalue_5fin_5fmutable_5ftuple_1110',['visit_value_in_mutable_tuple',['../d2/d49/namespacetnct_1_1traits_1_1tuple.html#afdaaa9af392d29fd4f54f24ec44b3a2c',1,'tnct::traits::tuple']]]
+  ['unused_5fstyle_1354',['unused_style',['../de/d70/class_char.html#ac3ab24241a7c98ed52f456947873e7f0',1,'Char']]],
+  ['use_1355',['use',['../d2/db3/structtnct_1_1async_1_1exp_1_1configuration_1_1handling__cfg.html#a5dfa57ed5b4994b2242f335860b84806',1,'tnct::async::exp::configuration::handling_cfg']]]
 ];

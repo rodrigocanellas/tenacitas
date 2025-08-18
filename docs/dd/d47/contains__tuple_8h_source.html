@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/traits/tuple/contains_tuple.h Source File</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/tuple/cpt/contains_tuple.h Source File</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_687a0c414e603c445974b58ad42c85dc.html">traits</a></li><li class="navelem"><a class="el" href="../../dir_36f7e161b21432b7fca0f235f12284a6.html">tuple</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_8a1dd7ad9509b9310146c87cfa02c521.html">tuple</a></li><li class="navelem"><a class="el" href="../../dir_cf60c150a69092d05171d8818668c919.html">cpt</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -74,48 +74,29 @@ $(function() {
 <div class="contents">
 <a href="../../dd/d47/contains__tuple_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TRAITS_TUPLE_CONTAINS_TUPLE_H</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TRAITS_TUPLE_CONTAINS_TUPLE_H</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef TNCT_TUPLE_CPT_CONTAINS_TUPLE_H</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define TNCT_TUPLE_CPT_CONTAINS_TUPLE_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;tuple&gt;</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d0/dc4/contains__type_8h.html">tnct/traits/tuple/contains_type.h</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d6/d94/tuple_2like_8h.html">tnct/traits/tuple/like.h</a>&quot;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html">   14</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html">tnct::traits::tuple</a> {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../dc/d33/contains__tuple__helper_8h.html">tnct/tuple/internal/contains_tuple_helper.h</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html">   13</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html">tnct::tuple::cpt</a></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">template</span> &lt;<a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#aa73d282feda0f4f63ff5654be8db2f92">tuple::like</a> t_container_tuple, <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#aa73d282feda0f4f63ff5654be8db2f92">tuple::like</a> t_contained_tuple,</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;          std::size_t t_idx = 0&gt;</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a531cd58a83d4ae1f76d9324d118324ac">   18</a></span>&#160;constexpr <span class="keywordtype">bool</span> <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a531cd58a83d4ae1f76d9324d118324ac">contains_tuple_helper</a>() {</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;  <span class="keywordflow">if</span> constexpr (t_idx &gt;= std::tuple_size_v&lt;t_contained_tuple&gt;) {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> constexpr (!<a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a9f552e521bd64b15057002eb70581da5">contains_type</a>&lt;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                           t_container_tuple,</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                           std::tuple_element_t&lt;t_idx, t_contained_tuple&gt;&gt;()) {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a531cd58a83d4ae1f76d9324d118324ac">contains_tuple_helper</a>&lt;t_container_tuple, t_contained_tuple,</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                                 t_idx + 1&gt;(); <span class="comment">// Recur to next index</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  }</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// code reviewed by ChatGPT from a previous version I wrote</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_container_tuple, <span class="keyword">typename</span> t_contained_tuple&gt;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">   33</a></span>&#160;concept <a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">contains_tuple</a> =</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    (std::tuple_size_v&lt;t_container_tuple&gt; &gt; 0) &amp;&amp;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    (std::tuple_size_v&lt;t_contained_tuple&gt; &gt;= 0) &amp;&amp;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    contains_tuple_helper&lt;t_container_tuple, t_contained_tuple&gt;();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;} <span class="comment">// namespace tnct::traits::tuple</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="acontains__type_8h_html"><div class="ttname"><a href="../../d0/dc4/contains__type_8h.html">contains_type.h</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html">tnct::traits::tuple</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00014">contains_tuple.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_a531cd58a83d4ae1f76d9324d118324ac"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a531cd58a83d4ae1f76d9324d118324ac">tnct::traits::tuple::contains_tuple_helper</a></div><div class="ttdeci">constexpr bool contains_tuple_helper()</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00018">contains_tuple.h:18</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_a6fc85536fbcaeb72acb54ce0b619d621"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a6fc85536fbcaeb72acb54ce0b619d621">tnct::traits::tuple::contains_tuple</a></div><div class="ttdeci">concept contains_tuple</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00033">contains_tuple.h:33</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_a9f552e521bd64b15057002eb70581da5"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a9f552e521bd64b15057002eb70581da5">tnct::traits::tuple::contains_type</a></div><div class="ttdeci">constexpr bool contains_type()</div><div class="ttdef"><b>Definition:</b> <a href="../../d0/dc4/contains__type_8h_source.html#l00016">contains_type.h:16</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_aa73d282feda0f4f63ff5654be8db2f92"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#aa73d282feda0f4f63ff5654be8db2f92">tnct::traits::tuple::like</a></div><div class="ttdeci">concept like</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d94/tuple_2like_8h_source.html#l00014">like.h:14</a></div></div>
-<div class="ttc" id="atuple_2like_8h_html"><div class="ttname"><a href="../../d6/d94/tuple_2like_8h.html">like.h</a></div></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment">// code reviewed by ChatGPT from a previous version I wrote</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> t_container_tuple, <span class="keyword">typename</span> t_contained_tuple&gt;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#a32c6b2d0a496380a7abbde7b7afef34a">   18</a></span>&#160;concept <a class="code" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#a32c6b2d0a496380a7abbde7b7afef34a">contains_tuple</a> =</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    (std::tuple_size_v&lt;t_container_tuple&gt; &gt; 0)</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    &amp;&amp; (std::tuple_size_v&lt;t_contained_tuple&gt; &gt;= 0)</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    &amp;&amp; internal::contains_tuple_helper&lt;t_container_tuple, t_contained_tuple&gt;();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;} <span class="comment">// namespace tnct::tuple::cpt</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="acontains__tuple__helper_8h_html"><div class="ttname"><a href="../../dc/d33/contains__tuple__helper_8h.html">contains_tuple_helper.h</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1tuple_1_1cpt_html"><div class="ttname"><a href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html">tnct::tuple::cpt</a></div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00013">contains_tuple.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1tuple_1_1cpt_html_a32c6b2d0a496380a7abbde7b7afef34a"><div class="ttname"><a href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#a32c6b2d0a496380a7abbde7b7afef34a">tnct::tuple::cpt::contains_tuple</a></div><div class="ttdeci">concept contains_tuple</div><div class="ttdef"><b>Definition:</b> <a href="../../dd/d47/contains__tuple_8h_source.html#l00018">contains_tuple.h:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

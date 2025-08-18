@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['unknown_1188',['unknown',['../d3/d56/namespacetnct_1_1traits_1_1test.html#aa5e5f1c25eca4e7694e656d731d70fc8aad921d60486366258809553a3db49a4a',1,'tnct::traits::test']]]
+  ['war_1454',['war',['../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cca4ca9d3dcd2b6843e62d75eb191887cf2',1,'tnct::log']]]
 ];

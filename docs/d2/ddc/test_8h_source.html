@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -116,7 +116,7 @@ $(function() {
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        print_mini_howto();</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;      }</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;_ex) {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;EXCEPTION &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;EXCEPTION &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  }</div>
@@ -136,12 +136,12 @@ $(function() {
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">using namespace </span>std;</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">try</span> {</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;      <span class="keywordflow">if</span> (m_print_desc) {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">cout</a> &lt;&lt; p_test_name &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; t_test_class::desc() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">cout</a> &lt;&lt; p_test_name &lt;&lt; <span class="stringliteral">&quot;: &quot;</span> &lt;&lt; t_test_class::desc() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span> &lt;&lt; endl;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;      }</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;      <span class="keywordflow">if</span> (m_execute_tests) {</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="keywordflow">if</span> (!m_tests_to_exec.empty()) {</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;          <span class="keywordflow">if</span> ((<a class="code" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">std::find</a>(m_tests_to_exec.begin(), m_tests_to_exec.end(),</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;          <span class="keywordflow">if</span> ((std::find(m_tests_to_exec.begin(), m_tests_to_exec.end(),</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                         p_test_name)) != m_tests_to_exec.end()) {</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            exec&lt;t_test_class&gt;(p_test_name);</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;          }</div>
@@ -150,7 +150,7 @@ $(function() {
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        }</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      }</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;_ex) {</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;EXCEPTION &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">std::cout</a> &lt;&lt; <span class="stringliteral">&quot;EXCEPTION &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;      <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  }</div>
@@ -167,16 +167,16 @@ $(function() {
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;      <span class="comment">//            cout &lt;&lt; (result ? &quot;SUCCESS&quot; : &quot;FAIL&quot;) &lt;&lt; &quot; for &quot; &lt;&lt;</span></div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;      <span class="comment">//            p_test_name</span></div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;      <span class="comment">//                 &lt;&lt; endl;</span></div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">cout</a> &lt;&lt; p_test_name &lt;&lt; (<a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a> ? <span class="stringliteral">&quot; SUCCESS&quot;</span> : <span class="stringliteral">&quot; FAIL&quot;</span>) &lt;&lt; endl;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">cout</a> &lt;&lt; p_test_name &lt;&lt; (<a class="code" href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">result</a> ? <span class="stringliteral">&quot; SUCCESS&quot;</span> : <span class="stringliteral">&quot; FAIL&quot;</span>) &lt;&lt; endl;</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    } <span class="keywordflow">catch</span> (exception &amp;_ex) {</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">cout</a> &lt;&lt; <span class="stringliteral">&quot;ERROR for &quot;</span> &lt;&lt; p_test_name &lt;&lt; <span class="stringliteral">&quot; &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;      <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">cout</a> &lt;&lt; <span class="stringliteral">&quot;ERROR for &quot;</span> &lt;&lt; p_test_name &lt;&lt; <span class="stringliteral">&quot; &#39;&quot;</span> &lt;&lt; _ex.what() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span> &lt;&lt; endl;</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    }</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">cerr</a> &lt;&lt; <span class="stringliteral">&quot;############ &lt;- &quot;</span> &lt;&lt; p_test_name &lt;&lt; endl;</div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  }</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;  <span class="keywordtype">void</span> print_mini_howto() {</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">cout</a> &lt;&lt; <span class="stringliteral">&quot;Syntax:\n&quot;</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <a class="code" href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">cout</a> &lt;&lt; <span class="stringliteral">&quot;Syntax:\n&quot;</span></div>
 <div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;         &lt;&lt; <span class="stringliteral">&quot;\t&#39;&quot;</span> &lt;&lt; m_pgm_name</div>
 <div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; --desc&#39; will display a description of the test\n&quot;</span></div>
 <div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;         &lt;&lt; <span class="stringliteral">&quot;\t&#39;&quot;</span> &lt;&lt; m_pgm_name &lt;&lt; <span class="stringliteral">&quot; --exec&#39; will execute the all the tests\n&quot;</span></div>
@@ -227,11 +227,10 @@ $(function() {
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;} <span class="comment">// namespace tnct::tester</span></div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">tnct::async::result</a></div><div class="ttdeci">result</div><div class="ttdef"><b>Definition:</b> <a href="../../da/dca/async_2result_8h_source.html#l00014">result.h:14</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00019">cerr.h:19</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1log_html_afb981b125b7d791a048888f6f2a112d3"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#afb981b125b7d791a048888f6f2a112d3">tnct::log::cout</a></div><div class="ttdeci">tnct::log::internal::logger&lt; decltype([](std::string_view s) { std::cout&lt;&lt; s cout</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d38/cout_8h_source.html#l00013">cout.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1async_html_ad9e68c2e9f62f29e1d3d329d8f270063"><div class="ttname"><a href="../../d9/d3a/namespacetnct_1_1async.html#ad9e68c2e9f62f29e1d3d329d8f270063">tnct::async::result</a></div><div class="ttdeci">result</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d93/result_8h_source.html#l00014">result.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1log_html_a74484ef1d63bad04ea7e09336399af2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a">tnct::log::cerr</a></div><div class="ttdeci">tnct::log::internal::logger&lt; cerr_writer &gt; cerr</div><div class="ttdef"><b>Definition:</b> <a href="../../da/d1e/cerr_8h_source.html#l00024">cerr.h:24</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1log_html_a89d4fa34f6568ef51035ee95c44a6488"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488">tnct::log::cout</a></div><div class="ttdeci">tnct::log::internal::logger&lt; decltype([](std::string_view s) { std::cout&lt;&lt; s cout</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d38/cout_8h_source.html#l00014">cout.h:15</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1tester_html"><div class="ttname"><a href="../../dd/dc7/namespacetnct_1_1tester.html">tnct::tester</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d2/ddc/test_8h_source.html#l00031">test.h:31</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1traits_1_1tuple_html_acad4e7535b73e7a6477941430d080529"><div class="ttname"><a href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#acad4e7535b73e7a6477941430d080529">tnct::traits::tuple::find</a></div><div class="ttdeci">constexpr std::optional&lt; std::size_t &gt; find()</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/db2/find_8h_source.html#l00016">find.h:16</a></div></div>
 <div class="ttc" id="aoptions_8h_html"><div class="ttname"><a href="../../d7/d5b/options_8h.html">options.h</a></div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html_a2fb579c2db2ddd89923121af4dd08363"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html#a2fb579c2db2ddd89923121af4dd08363">tnct::program::options::get_set_param</a></div><div class="ttdeci">std::optional&lt; std::list&lt; value &gt; &gt; get_set_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the values of a parameter.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d5b/options_8h_source.html#l00135">options.h:135</a></div></div>
 <div class="ttc" id="astructtnct_1_1program_1_1options_html_a32a3347d6016dbacfabcba20a3a1cd85"><div class="ttname"><a href="../../db/da3/structtnct_1_1program_1_1options.html#a32a3347d6016dbacfabcba20a3a1cd85">tnct::program::options::get_bool_param</a></div><div class="ttdeci">std::optional&lt; bool &gt; get_bool_param(const name &amp;p_name) const</div><div class="ttdoc">Retrieves the bool parameter, if possible.</div><div class="ttdef"><b>Definition:</b> <a href="../../d7/d5b/options_8h_source.html#l00103">options.h:103</a></div></div>

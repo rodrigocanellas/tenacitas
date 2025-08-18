@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['result_1097',['result',['../d2/d60/namespacetnct_1_1traits_1_1async.html#ae5b58468aba9ab808e2145d45da9a11b',1,'tnct::traits::async']]]
+  ['permutations_1342',['permutations',['../d1/de5/structtnct_1_1crosswords_1_1evt_1_1grid__permutations__tried.html#a12b49677e6efa841c36f3d8cb9996111',1,'tnct::crosswords::evt::grid_permutations_tried']]]
 ];

@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -88,11 +88,11 @@ $(function() {
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../de/d09/level_8h.html">tnct/log/level.h</a>&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d1/d17/line__header__formater_8h.html">tnct/log/line_header_formater.h</a>&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d53/writer_8h.html">tnct/traits/log/writer.h</a>&quot;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="../../d9/d53/writer_8h.html">tnct/log/cpt/writer.h</a>&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="../../d4/da3/namespacetnct_1_1log_1_1internal.html">   22</a></span>&#160;<span class="keyword">namespace </span><a class="code" href="../../d4/da3/namespacetnct_1_1log_1_1internal.html">tnct::log::internal</a> {</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">   34</a></span>&#160;<span class="keyword">template</span> &lt;traits::log::writer t_log_writer&gt; <span class="keyword">class </span><a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">   34</a></span>&#160;<span class="keyword">template</span> &lt;log::cpt::writer t_log_writer&gt; <span class="keyword">class </span><a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html">logger</a> {</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a635c89691fc295cbb1014a52358f3304">   40</a></span>&#160;  <a class="code" href="../../d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a635c89691fc295cbb1014a52358f3304">logger</a>(t_log_writer &amp;&amp;p_log_writer,</div>
@@ -262,7 +262,7 @@ $(function() {
 <div class="ttc" id="aline__header__formater_8h_html"><div class="ttname"><a href="../../d1/d17/line__header__formater_8h.html">line_header_formater.h</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1log_1_1internal_html"><div class="ttname"><a href="../../d4/da3/namespacetnct_1_1log_1_1internal.html">tnct::log::internal</a></div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d1c/log_2internal_2logger_8h_source.html#l00022">logger.h:22</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_a0ac8c94fd63b56a19d0316fb97bd2f2a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#a0ac8c94fd63b56a19d0316fb97bd2f2a">tnct::log::line_header_formater</a></div><div class="ttdeci">std::function&lt; std::stringstream &amp;(std::stringstream &amp;, level, const std::source_location &amp;)&gt; line_header_formater</div><div class="ttdef"><b>Definition:</b> <a href="../../d1/d17/line__header__formater_8h_source.html#l00023">line_header_formater.h:24</a></div></div>
-<div class="ttc" id="anamespacetnct_1_1log_html_ac3d95638114e7e8142d462b8e76c50cc"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cc">tnct::log::level</a></div><div class="ttdeci">level</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d09/level_8h_source.html#l00014">level.h:14</a></div></div>
+<div class="ttc" id="anamespacetnct_1_1log_html_ac3d95638114e7e8142d462b8e76c50cc"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cc">tnct::log::level</a></div><div class="ttdeci">level</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d09/level_8h_source.html#l00015">level.h:16</a></div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_ac3d95638114e7e8142d462b8e76c50cca0d8dc086e16e3ac48f05d555994da7d7"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cca0d8dc086e16e3ac48f05d555994da7d7">tnct::log::level::fat</a></div><div class="ttdeci">@ fat</div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_ac3d95638114e7e8142d462b8e76c50cca38db7ce1861ee11b6a231c764662b68a"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cca38db7ce1861ee11b6a231c764662b68a">tnct::log::level::deb</a></div><div class="ttdeci">@ deb</div></div>
 <div class="ttc" id="anamespacetnct_1_1log_html_ac3d95638114e7e8142d462b8e76c50cca4ca9d3dcd2b6843e62d75eb191887cf2"><div class="ttname"><a href="../../df/dce/namespacetnct_1_1log.html#ac3d95638114e7e8142d462b8e76c50cca4ca9d3dcd2b6843e62d75eb191887cf2">tnct::log::level::war</a></div><div class="ttdeci">@ war</div></div>

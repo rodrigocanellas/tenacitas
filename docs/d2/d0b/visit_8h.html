@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/traits/tuple/visit.h File Reference</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/tuple/cpt/visit.h File Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.6</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_687a0c414e603c445974b58ad42c85dc.html">traits</a></li><li class="navelem"><a class="el" href="../../dir_36f7e161b21432b7fca0f235f12284a6.html">tuple</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_8a1dd7ad9509b9310146c87cfa02c521.html">tuple</a></li><li class="navelem"><a class="el" href="../../dir_cf60c150a69092d05171d8818668c919.html">cpt</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -76,65 +76,75 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d6/d94/tuple_2like_8h_source.html">tnct/traits/tuple/like.h</a>&quot;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
+<code>#include &quot;<a class="el" href="../../d9/d1a/is__tuple_8h_source.html">tnct/tuple/cpt/is_tuple.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for visit.h:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d1/d10/visit_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8h" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8h">
-<area shape="rect" title=" " alt="" coords="9,5,211,61"/>
+<div class="center"><img src="../../d1/d10/visit_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8h" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8h">
+<area shape="rect" title=" " alt="" coords="13,5,215,61"/>
 <area shape="rect" title=" " alt="" coords="5,109,76,136"/>
-<area shape="rect" href="../../d6/d94/tuple_2like_8h.html" title=" " alt="" coords="100,109,261,136"/>
-<area shape="rect" href="../../df/d9f/tuple_2is_8h.html" title=" " alt="" coords="106,184,255,211"/>
-<area shape="rect" title=" " alt="" coords="153,259,208,285"/>
+<area shape="rect" title=" " alt="" coords="121,273,213,300"/>
+<area shape="rect" href="../../d9/d1a/is__tuple_8h.html" title=" " alt="" coords="152,109,327,136"/>
+<area shape="rect" href="../../d1/d7e/is__tuple__helper_8h.html" title=" " alt="" coords="161,184,299,225"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d2/d8a/visit_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8hdep" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2tuple_2visit_8hdep">
-<area shape="rect" title=" " alt="" coords="331,5,533,61"/>
-<area shape="rect" href="../../d0/deb/traverse_8h.html" title=" " alt="" coords="217,421,420,477"/>
-<area shape="rect" href="../../d9/de0/tuple__traverse_8h.html" title=" " alt="" coords="885,109,1088,165"/>
-<area shape="rect" href="../../d8/d07/async_2dispatcher_8h.html" title=" " alt="" coords="319,533,521,589"/>
-<area shape="rect" href="../../d7/d2f/traits_2test_2tuple__traverse__test_8h.html" title=" " alt="" coords="92,533,295,589"/>
-<area shape="rect" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html" title=" " alt="" coords="2051,651,2269,707"/>
-<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="193,644,396,715"/>
-<area shape="rect" href="../../d9/d4e/dispatcher__test_8h.html" title=" " alt="" coords="647,651,849,707"/>
-<area shape="rect" href="../../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="347,881,549,952"/>
-<area shape="rect" href="../../d9/d53/mainwindow_8h.html" title=" " alt="" coords="179,763,410,833"/>
-<area shape="rect" href="../../d8/dd9/mainwindow_8cpp.html" title=" " alt="" coords="5,881,251,952"/>
-<area shape="rect" href="../../d9/de5/async_2test_2main_8cpp.html" title=" " alt="" coords="899,770,1101,826"/>
-<area shape="rect" href="../../d2/dd5/traits_2test_2main_8cpp.html" title=" " alt="" coords="420,651,623,707"/>
-<area shape="rect" href="../../d2/d20/tuple_8h.html" title=" " alt="" coords="1496,213,1699,269"/>
-<area shape="rect" href="../../d6/d08/tuple_2test_2tuple__traverse__test_8h.html" title=" " alt="" coords="1841,213,2044,269"/>
-<area shape="rect" href="../../db/def/fmt_8h.html" title=" " alt="" coords="1485,325,1710,366"/>
-<area shape="rect" href="../../d8/dcd/tuple__output__test_8h.html" title=" " alt="" coords="1735,317,1937,373"/>
-<area shape="rect" href="../../df/dce/async_2exp_2dispatcher__000_2handler_8h.html" title=" " alt="" coords="1982,421,2199,477"/>
-<area shape="rect" href="../../dd/d33/async_2exp_2executer__000_2main_8cpp.html" title=" " alt="" coords="601,421,807,477"/>
-<area shape="rect" href="../../d5/d2e/sensor_8h.html" title=" " alt="" coords="1743,525,1945,596"/>
-<area shape="rect" href="../../da/df8/handling_8h.html" title=" " alt="" coords="831,421,1033,477"/>
-<area shape="rect" href="../../d2/d66/handling__test_8h.html" title=" " alt="" coords="924,533,1127,589"/>
-<area shape="rect" href="../../dd/db8/sleeping__loop_8h.html" title=" " alt="" coords="1427,421,1629,477"/>
-<area shape="rect" href="../../de/d9d/sleeping__loop__test_8h.html" title=" " alt="" coords="1252,533,1455,589"/>
-<area shape="rect" href="../../d3/d1e/circular__queue_8h.html" title=" " alt="" coords="1108,421,1311,477"/>
-<area shape="rect" href="../../d7/d66/circular__queue__test_8h.html" title=" " alt="" coords="2324,533,2527,589"/>
-<area shape="rect" href="../../d4/d6d/matrix__test_8h.html" title=" " alt="" coords="2728,421,2931,477"/>
-<area shape="rect" href="../../d4/db8/log_2test_2main_8cpp.html" title=" " alt="" coords="1755,421,1957,477"/>
-<area shape="rect" href="../../d4/de1/ini__file_8h.html" title=" " alt="" coords="2501,421,2704,477"/>
-<area shape="rect" href="../../df/dfc/closer_8h.html" title=" " alt="" coords="2224,421,2427,477"/>
-<area shape="rect" href="../../d8/d39/translator_2test_2main_8cpp.html" title=" " alt="" coords="3108,533,3313,589"/>
-<area shape="rect" href="../../d5/d0e/translator__from__file_8h.html" title=" " alt="" coords="2955,421,3160,477"/>
-<area shape="rect" href="../../d1/d9f/sensors_8h.html" title=" " alt="" coords="1088,644,1291,715"/>
-<area shape="rect" href="../../d1/d40/publisher_8h.html" title=" " alt="" coords="1970,533,2198,589"/>
-<area shape="rect" href="../../d1/d9b/async_2exp_2sleeping__loop__000_2main_8cpp.html" title=" " alt="" coords="1479,533,1718,589"/>
-<area shape="rect" href="../../dd/ded/async__test_8h.html" title=" " alt="" coords="596,533,799,589"/>
-<area shape="rect" href="../../d1/da2/container_2test_2main_8cpp.html" title=" " alt="" coords="2647,651,2849,707"/>
-<area shape="rect" href="../../d2/d2c/configuration_8h.html" title=" " alt="" coords="2551,533,2806,589"/>
-<area shape="rect" href="../../d1/d27/parser_2test_2main_8cpp.html" title=" " alt="" coords="2831,533,3033,589"/>
-<area shape="rect" href="../../d1/d88/ostream_2test_2main_8cpp.html" title=" " alt="" coords="3235,421,3437,477"/>
-<area shape="rect" href="../../d0/dc2/tuple_2test_2main_8cpp.html" title=" " alt="" coords="1961,317,2164,373"/>
+<div class="center"><img src="../../d2/d8a/visit_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8hdep" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2tuple_2cpt_2visit_8hdep">
+<area shape="rect" title=" " alt="" coords="2184,5,2387,61"/>
+<area shape="rect" href="../../db/dea/get__type__index_8h.html" title=" " alt="" coords="1329,109,1532,165"/>
+<area shape="rect" href="../../d0/deb/traverse_8h.html" title=" " alt="" coords="2184,109,2387,165"/>
+<area shape="rect" href="../../d3/da1/visit__test_8h.html" title=" " alt="" coords="2649,109,2852,165"/>
+<area shape="rect" href="../../d8/d07/async_2dispatcher_8h.html" title=" " alt="" coords="1225,547,1428,603"/>
+<area shape="rect" href="../../d0/dc4/contains__type_8h.html" title=" " alt="" coords="489,213,692,269"/>
+<area shape="rect" href="../../df/d4e/get__type__index__test_8h.html" title=" " alt="" coords="1820,213,2023,269"/>
+<area shape="rect" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html" title=" " alt="" coords="1273,666,1490,722"/>
+<area shape="rect" href="../../d1/df6/async_2exp_2matrix__sum_2main_8cpp.html" title=" " alt="" coords="1045,666,1248,722"/>
+<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="667,659,869,729"/>
+<area shape="rect" href="../../d6/d03/async_2tst_2cpt__test_8h.html" title=" " alt="" coords="2248,666,2451,722"/>
+<area shape="rect" href="../../d9/d4e/dispatcher__test_8h.html" title=" " alt="" coords="2475,666,2677,722"/>
+<area shape="rect" href="../../d8/d70/crosswords_2evt_2dispatcher_8h.html" title=" " alt="" coords="1617,666,1831,722"/>
+<area shape="rect" href="../../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="755,896,957,967"/>
+<area shape="rect" href="../../d4/da0/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8h.html" title=" " alt="" coords="718,777,949,848"/>
+<area shape="rect" href="../../d5/d24/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="485,896,731,967"/>
+<area shape="rect" href="../../df/dfe/async_2tst_2main_8cpp.html" title=" " alt="" coords="2620,785,2823,841"/>
+<area shape="rect" href="../../d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="1567,903,1801,959"/>
+<area shape="rect" href="../../df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="1275,785,1541,841"/>
+<area shape="rect" href="../../d2/d7b/assembler__test_8h.html" title=" " alt="" coords="1566,785,1781,841"/>
+<area shape="rect" href="../../d6/d78/organizer__test_8h.html" title=" " alt="" coords="1030,785,1245,841"/>
+<area shape="rect" href="../../d1/d46/crosswords_2uix_2qt_2author__desktop_2main_8cpp.html" title=" " alt="" coords="2131,903,2363,959"/>
+<area shape="rect" href="../../d7/d32/crosswords_2uix_2qt_2author__desktop_2mainwindow_8h.html" title=" " alt="" coords="1957,785,2224,841"/>
+<area shape="rect" href="../../da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="1169,903,1452,959"/>
+<area shape="rect" href="../../d0/d4b/crosswords_2uix_2qt_2author__desktop_2mainwindow_8cpp.html" title=" " alt="" coords="1825,903,2106,959"/>
+<area shape="rect" href="../../d2/dbc/has__events__handled_8h.html" title=" " alt="" coords="5,325,208,381"/>
+<area shape="rect" href="../../d1/d03/has__events__published_8h.html" title=" " alt="" coords="233,325,439,381"/>
+<area shape="rect" href="../../dc/d33/contains__tuple__helper_8h.html" title=" " alt="" coords="464,317,667,388"/>
+<area shape="rect" href="../../d9/d5a/contains__type__test_8h.html" title=" " alt="" coords="2552,325,2755,381"/>
+<area shape="rect" href="../../dd/d47/contains__tuple_8h.html" title=" " alt="" coords="464,436,667,492"/>
+<area shape="rect" href="../../df/dfc/closer_8h.html" title=" " alt="" coords="503,547,705,603"/>
+<area shape="rect" href="../../d3/d97/tuple_2tst_2main_8cpp.html" title=" " alt="" coords="3423,436,3625,492"/>
+<area shape="rect" href="../../d7/da3/tuple_2output_8h.html" title=" " alt="" coords="2184,213,2387,269"/>
+<area shape="rect" href="../../d1/ded/traverse__test_8h.html" title=" " alt="" coords="2697,213,2900,269"/>
+<area shape="rect" href="../../db/def/fmt_8h.html" title=" " alt="" coords="1886,332,2111,373"/>
+<area shape="rect" href="../../d0/d5f/tuple_2tst_2output__test_8h.html" title=" " alt="" coords="3141,325,3344,381"/>
+<area shape="rect" href="../../dd/dee/handler_8h.html" title=" " alt="" coords="1503,547,1721,603"/>
+<area shape="rect" href="../../dd/d33/async_2exp_2executer__000_2main_8cpp.html" title=" " alt="" coords="1553,436,1759,492"/>
+<area shape="rect" href="../../d5/d2e/sensor_8h.html" title=" " alt="" coords="2868,540,3071,611"/>
+<area shape="rect" href="../../da/df8/handling_8h.html" title=" " alt="" coords="1884,436,2087,492"/>
+<area shape="rect" href="../../d2/d66/handling__test_8h.html" title=" " alt="" coords="2752,666,2955,722"/>
+<area shape="rect" href="../../dd/db8/sleeping__loop_8h.html" title=" " alt="" coords="2868,436,3071,492"/>
+<area shape="rect" href="../../de/d9d/sleeping__loop__test_8h.html" title=" " alt="" coords="3328,547,3531,603"/>
+<area shape="rect" href="../../d3/d1e/circular__queue_8h.html" title=" " alt="" coords="1935,547,2137,603"/>
+<area shape="rect" href="../../d7/d66/circular__queue__test_8h.html" title=" " alt="" coords="3095,666,3297,722"/>
+<area shape="rect" href="../../d7/d3c/grid__creator_8h.html" title=" " alt="" coords="2249,785,2463,841"/>
+<area shape="rect" href="../../d4/dec/assembler_8h.html" title=" " alt="" coords="1907,666,2122,722"/>
+<area shape="rect" href="../../d4/d6d/matrix__test_8h.html" title=" " alt="" coords="2364,436,2567,492"/>
+<area shape="rect" href="../../da/dea/log_2tst_2main_8cpp.html" title=" " alt="" coords="2591,436,2793,492"/>
+<area shape="rect" href="../../d4/de1/ini__file_8h.html" title=" " alt="" coords="3095,436,3297,492"/>
 </map>
 </div>
 </div>
@@ -144,22 +154,22 @@ This graph shows which files directly or indirectly include this file:</div>
 Namespaces</h2></td></tr>
 <tr class="memitem:d4/d18/namespacetnct"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d18/namespacetnct.html">tnct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:db/da4/namespacetnct_1_1traits"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></td></tr>
+<tr class="memitem:d4/d9e/namespacetnct_1_1tuple"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d9e/namespacetnct_1_1tuple.html">tnct::tuple</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:d2/d49/namespacetnct_1_1traits_1_1tuple"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html">tnct::traits::tuple</a></td></tr>
+<tr class="memitem:d2/d31/namespacetnct_1_1tuple_1_1cpt"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html">tnct::tuple::cpt</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a5f9900bf73910b3257c8178cf9177754"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , size_t t_idx = 0&gt; </td></tr>
-<tr class="memitem:a5f9900bf73910b3257c8178cf9177754"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a5f9900bf73910b3257c8178cf9177754">tnct::traits::tuple::visit_value_in_constant_tuple</a></td></tr>
-<tr class="separator:a5f9900bf73910b3257c8178cf9177754"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdaaa9af392d29fd4f54f24ec44b3a2c"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , size_t t_idx = 0&gt; </td></tr>
-<tr class="memitem:afdaaa9af392d29fd4f54f24ec44b3a2c"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#afdaaa9af392d29fd4f54f24ec44b3a2c">tnct::traits::tuple::visit_value_in_mutable_tuple</a></td></tr>
-<tr class="separator:afdaaa9af392d29fd4f54f24ec44b3a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5373a40edb364b49993bd303c70740a2"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , std::size_t t_idx&gt; </td></tr>
-<tr class="memitem:a5373a40edb364b49993bd303c70740a2"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d49/namespacetnct_1_1traits_1_1tuple.html#a5373a40edb364b49993bd303c70740a2">tnct::traits::tuple::visit_type_in_tuple</a></td></tr>
-<tr class="separator:a5373a40edb364b49993bd303c70740a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aced50531d3b4cad488eab705993b12d9"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , size_t t_idx = 0&gt; </td></tr>
+<tr class="memitem:aced50531d3b4cad488eab705993b12d9"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#aced50531d3b4cad488eab705993b12d9">tnct::tuple::cpt::visit_value_in_constant_tuple</a></td></tr>
+<tr class="separator:aced50531d3b4cad488eab705993b12d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab24278e0e38bd3e25f8c52bec5bc04a1"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , size_t t_idx = 0&gt; </td></tr>
+<tr class="memitem:ab24278e0e38bd3e25f8c52bec5bc04a1"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#ab24278e0e38bd3e25f8c52bec5bc04a1">tnct::tuple::cpt::visit_value_in_mutable_tuple</a></td></tr>
+<tr class="separator:ab24278e0e38bd3e25f8c52bec5bc04a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a801761723d4db8896c693c3bb730e8db"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_tuple , std::size_t t_idx = 0&gt; </td></tr>
+<tr class="memitem:a801761723d4db8896c693c3bb730e8db"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d31/namespacetnct_1_1tuple_1_1cpt.html#a801761723d4db8896c693c3bb730e8db">tnct::tuple::cpt::visit_type_in_tuple</a></td></tr>
+<tr class="separator:a801761723d4db8896c693c3bb730e8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

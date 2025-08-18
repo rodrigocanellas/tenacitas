@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/traits/queue.h File Reference</title>
+<title>tenacitas: /home/rodrigo/development/tenacitas/src/tnct/container/cpt/queue.h File Reference</title>
 <link href="../../tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="../../jquery.js"></script>
 <script type="text/javascript" src="../../dynsections.js"></script>
@@ -23,7 +23,7 @@
   <td id="projectlogo"><img alt="Logo" src="../../tenacitas-logo.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">tenacitas
-   &#160;<span id="projectnumber">0.1.4</span>
+   &#160;<span id="projectnumber">0.1.7</span>
    </div>
    <div id="projectbrief">C++ header only library</div>
   </td>
@@ -64,7 +64,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_687a0c414e603c445974b58ad42c85dc.html">traits</a></li>  </ul>
+<li class="navelem"><a class="el" href="../../dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="../../dir_2578f82299e2e5ae958bba3e1d7060e6.html">tnct</a></li><li class="navelem"><a class="el" href="../../dir_7077961a792401cc971b494c76dc051f.html">container</a></li><li class="navelem"><a class="el" href="../../dir_3a4e5b8fb3ff1c6f70c04ce200029d87.html">cpt</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -75,42 +75,57 @@ $(function() {
 <div class="title">queue.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
+<div class="textblock"><code>#include &lt;concepts&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
-<code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
-<code>#include &quot;<a class="el" href="../../d8/da7/has__output__operator_8h_source.html">tnct/traits/has_output_operator.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d8/da7/has__output__operator_8h_source.html">tnct/ostream/cpt/has_output_operator.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for queue.h:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d9/dc8/queue_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8h" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8h">
-<area shape="rect" title=" " alt="" coords="145,5,347,61"/>
-<area shape="rect" title=" " alt="" coords="5,117,76,143"/>
-<area shape="rect" title=" " alt="" coords="101,117,175,143"/>
-<area shape="rect" title=" " alt="" coords="200,117,292,143"/>
-<area shape="rect" title=" " alt="" coords="316,117,376,143"/>
-<area shape="rect" href="../../d8/da7/has__output__operator_8h.html" title=" " alt="" coords="400,109,561,151"/>
-<area shape="rect" title=" " alt="" coords="441,199,521,225"/>
+<div class="center"><img src="../../d9/dc8/queue_8h__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8h" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8h" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8h">
+<area shape="rect" title=" " alt="" coords="141,5,344,61"/>
+<area shape="rect" title=" " alt="" coords="5,117,85,143"/>
+<area shape="rect" title=" " alt="" coords="110,117,181,143"/>
+<area shape="rect" title=" " alt="" coords="205,117,280,143"/>
+<area shape="rect" title=" " alt="" coords="305,117,365,143"/>
+<area shape="rect" href="../../d8/da7/has__output__operator_8h.html" title=" " alt="" coords="389,109,545,151"/>
+<area shape="rect" title=" " alt="" coords="429,199,505,225"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="../../d2/d5f/queue_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8hdep" alt=""/></div>
-<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2traits_2queue_8hdep">
-<area shape="rect" title=" " alt="" coords="455,5,658,61"/>
-<area shape="rect" href="../../d8/d07/async_2dispatcher_8h.html" title=" " alt="" coords="317,213,519,269"/>
-<area shape="rect" href="../../d1/d74/async_2internal_2handling_8h.html" title=" " alt="" coords="455,109,658,165"/>
-<area shape="rect" href="../../d5/d3b/traits_2handling_8h.html" title=" " alt="" coords="682,109,885,165"/>
-<area shape="rect" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html" title=" " alt="" coords="5,325,223,381"/>
-<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="247,317,450,388"/>
-<area shape="rect" href="../../da/d55/async_2test_2dispatcher__test_8h.html" title=" " alt="" coords="474,325,677,381"/>
-<area shape="rect" href="../../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="125,555,327,625"/>
-<area shape="rect" href="../../d9/d53/mainwindow_8h.html" title=" " alt="" coords="264,436,495,507"/>
-<area shape="rect" href="../../d8/dd9/mainwindow_8cpp.html" title=" " alt="" coords="351,555,597,625"/>
-<area shape="rect" href="../../d9/de5/async_2test_2main_8cpp.html" title=" " alt="" coords="581,443,783,499"/>
-<area shape="rect" href="../../d2/d66/handling__test_8h.html" title=" " alt="" coords="578,213,781,269"/>
+<div class="center"><img src="../../d2/d5f/queue_8h__dep__incl.png" border="0" usemap="#a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8hdep" alt=""/></div>
+<map name="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8hdep" id="a_2home_2rodrigo_2development_2tenacitas_2src_2tnct_2container_2cpt_2queue_8hdep">
+<area shape="rect" title=" " alt="" coords="615,5,817,61"/>
+<area shape="rect" href="../../da/dfb/has__add__handling__method_8h.html" title=" " alt="" coords="197,213,433,269"/>
+<area shape="rect" href="../../d8/d07/async_2dispatcher_8h.html" title=" " alt="" coords="684,213,887,269"/>
+<area shape="rect" href="../../da/df8/handling_8h.html" title=" " alt="" coords="545,109,748,165"/>
+<area shape="rect" href="../../d6/d44/container_2tst_2cpt__test_8h.html" title=" " alt="" coords="867,109,1069,165"/>
+<area shape="rect" href="../../d1/d9f/sensors_8h.html" title=" " alt="" coords="5,436,208,507"/>
+<area shape="rect" href="../../d6/d03/async_2tst_2cpt__test_8h.html" title=" " alt="" coords="223,325,425,381"/>
+<area shape="rect" href="../../df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="269,555,472,625"/>
+<area shape="rect" href="../../df/dfe/async_2tst_2main_8cpp.html" title=" " alt="" coords="232,443,435,499"/>
+<area shape="rect" href="../../d4/d46/async_2exp_2dispatcher__000_2main_8cpp.html" title=" " alt="" coords="677,325,894,381"/>
+<area shape="rect" href="../../d1/df6/async_2exp_2matrix__sum_2main_8cpp.html" title=" " alt="" coords="1411,325,1613,381"/>
+<area shape="rect" href="../../d3/dde/supplier_8h.html" title=" " alt="" coords="919,317,1121,388"/>
+<area shape="rect" href="../../d9/d4e/dispatcher__test_8h.html" title=" " alt="" coords="449,325,652,381"/>
+<area shape="rect" href="../../d8/d70/crosswords_2evt_2dispatcher_8h.html" title=" " alt="" coords="1171,325,1386,381"/>
+<area shape="rect" href="../../d4/da0/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8h.html" title=" " alt="" coords="510,436,741,507"/>
+<area shape="rect" href="../../d5/d24/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="496,555,741,625"/>
+<area shape="rect" href="../../d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="1566,562,1799,618"/>
+<area shape="rect" href="../../df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="1713,443,1980,499"/>
+<area shape="rect" href="../../d2/d7b/assembler__test_8h.html" title=" " alt="" coords="1185,443,1399,499"/>
+<area shape="rect" href="../../d6/d78/organizer__test_8h.html" title=" " alt="" coords="1423,443,1638,499"/>
+<area shape="rect" href="../../d1/d46/crosswords_2uix_2qt_2author__desktop_2main_8cpp.html" title=" " alt="" coords="765,562,997,618"/>
+<area shape="rect" href="../../d7/d32/crosswords_2uix_2qt_2author__desktop_2mainwindow_8h.html" title=" " alt="" coords="893,443,1160,499"/>
+<area shape="rect" href="../../da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="1824,562,2107,618"/>
+<area shape="rect" href="../../d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="1327,562,1542,618"/>
+<area shape="rect" href="../../d0/d4b/crosswords_2uix_2qt_2author__desktop_2mainwindow_8cpp.html" title=" " alt="" coords="1022,562,1303,618"/>
+<area shape="rect" href="../../d2/d66/handling__test_8h.html" title=" " alt="" coords="457,213,660,269"/>
+<area shape="rect" href="../../d1/d6d/container_2tst_2main_8cpp.html" title=" " alt="" coords="911,213,1113,269"/>
 </map>
 </div>
 </div>
@@ -120,14 +135,16 @@ This graph shows which files directly or indirectly include this file:</div>
 Namespaces</h2></td></tr>
 <tr class="memitem:d4/d18/namespacetnct"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d4/d18/namespacetnct.html">tnct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:db/da4/namespacetnct_1_1traits"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html">tnct::traits</a></td></tr>
+<tr class="memitem:d5/dda/namespacetnct_1_1container"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dda/namespacetnct_1_1container.html">tnct::container</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:d2/d5b/namespacetnct_1_1container_1_1cpt"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d5b/namespacetnct_1_1container_1_1cpt.html">tnct::container::cpt</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a490211a9a723abced384319ddc85a250"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_data &gt; </td></tr>
-<tr class="memitem:a490211a9a723abced384319ddc85a250"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../db/da4/namespacetnct_1_1traits.html#a490211a9a723abced384319ddc85a250">tnct::traits::queue</a></td></tr>
-<tr class="separator:a490211a9a723abced384319ddc85a250"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d6bdb85811eebda8374feb34f2b752a"><td class="memTemplParams" colspan="2">template&lt;typename t , typename t_data &gt; </td></tr>
+<tr class="memitem:a3d6bdb85811eebda8374feb34f2b752a"><td class="memTemplItemLeft" align="right" valign="top">concept&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="../../d2/d5b/namespacetnct_1_1container_1_1cpt.html#a3d6bdb85811eebda8374feb34f2b752a">tnct::container::cpt::queue</a></td></tr>
+<tr class="separator:a3d6bdb85811eebda8374feb34f2b752a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
