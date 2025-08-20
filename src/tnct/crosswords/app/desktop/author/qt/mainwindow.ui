@@ -14,7 +14,7 @@
    <string>Cruzadista</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../rsc/crosswords.qrc">
+   <iconset resource="../../../../rsc/crosswords.qrc">
     <normaloff>:/app.png</normaloff>:/app.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -635,7 +635,7 @@ border-color: rgb(0, 0, 0);</string>
   </widget>
  </widget>
  <resources>
-  <include location="../../../rsc/crosswords.qrc"/>
+  <include location="../../../../rsc/crosswords.qrc"/>
  </resources>
  <connections/>
 </ui>

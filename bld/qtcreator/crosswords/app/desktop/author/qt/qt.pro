@@ -12,13 +12,15 @@ PRJ_DIR=$$BASE_DIR/tnct/crosswords
 
 
 SOURCES += \
-    $$PRJ_DIR/uix/qt/author_desktop/main.cpp \
-    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.cpp
+    $$PRJ_DIR/app/desktop/author/qt/main.cpp \
+    $$PRJ_DIR/app/desktop/author/qt/mainwindow.cpp
 HEADERS += \
-    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.h
+    $$PRJ_DIR/app/desktop/author/qt/mainwindow.h \
+    $$PRJ_DIR/app/desktop/author/qt/printer.h
+
 
 FORMS += \
-    $$PRJ_DIR/uix/qt/author_desktop/mainwindow.ui
+    $$PRJ_DIR/app/desktop/author/qt/mainwindow.ui
 
 
 

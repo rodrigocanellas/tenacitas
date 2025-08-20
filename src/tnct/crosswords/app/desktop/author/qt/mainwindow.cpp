@@ -14,7 +14,6 @@
 #include <fstream>
 #include <map>
 
-#include "tnct/async/handling_priority.h"
 #include "tnct/async/result.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
@@ -871,12 +870,241 @@ void MainWindow::on_check_all_clicked()
 //  _text.print(&_pdf);
 //}
 
+// void MainWindow::on_print_clicked()
+// {
+//   using namespace tnct::crosswords;
+
+//   QString _file_name = QFileDialog::getSaveFileName(this, tr("Imprimir
+//   grid"),
+//                                                     "./", tr("*.pdf"));
+
+//   if (_file_name.isEmpty())
+//   {
+//     return;
+//   }
+
+//   const int _cols{ui->tblGrid->columnCount()};
+//   const int _rows{ui->tblGrid->rowCount()};
+
+//   if (_file_name.contains(".pdf", Qt::CaseInsensitive))
+//   {
+//     _file_name = _file_name.left(_file_name.size() - 4);
+//   }
+
+//   QString _png_to_solve_file_name{_file_name + ".png"};
+//   QString _png_solution_file_name{_file_name + ".SOLUTION.png"};
+//   {
+//     const int _x0{10};
+//     const int _y0{10};
+
+//     const int _width{250};
+//     const int _height{250};
+
+//     QPixmap _paint_to_solve_device(_rows * _height + 400, _cols * _width +
+//     400); _paint_to_solve_device.fill(); QPainter
+//     _painter_to_solve(&_paint_to_solve_device);
+
+//     QPixmap _paint_solution_device(_rows * _height + 400, _cols * _width +
+//     400); _paint_solution_device.fill(); QPainter
+//     _painter_solution(&_paint_solution_device);
+
+//     QPen line_pen(Qt::black);
+//     line_pen.setWidth(5);
+//     _painter_to_solve.setPen(line_pen);
+//     _painter_solution.setPen(line_pen);
+//     QFont _font;
+//     for (int _row = 0; _row < _rows; ++_row)
+//     {
+//       int _yi = _y0 + (_row * _height);
+//       int _yf = _yi + _height;
+//       for (int _col = 0; _col < _cols; ++_col)
+//       {
+
+//         int _xi = _x0 + (_col * _width);
+//         int _xf = _xi + _width;
+
+//         Content *_content =
+//             reinterpret_cast<Content *>(ui->tblGrid->cellWidget(_row, _col));
+//         if (!_content->is_unused())
+//         {
+//           _painter_to_solve.drawLine(_xi, _yi, _xf, _yi);
+//           _painter_to_solve.drawLine(_xf, _yi, _xf, _yf);
+//           _painter_to_solve.drawLine(_xf, _yf, _xi, _yf);
+//           _painter_to_solve.drawLine(_xi, _yf, _xi, _yi);
+//           _painter_to_solve.fillRect(QRect{QPoint{_xi, _yi}, QPoint{_xf,
+//           _yf}},
+//                                      QColor{250, 250, 250});
+
+//           _painter_solution.drawLine(_xi, _yi, _xf, _yi);
+//           _painter_solution.drawLine(_xf, _yi, _xf, _yf);
+//           _painter_solution.drawLine(_xf, _yf, _xi, _yf);
+//           _painter_solution.drawLine(_xi, _yf, _xi, _yi);
+//           _painter_solution.fillRect(QRect{QPoint{_xi, _yi}, QPoint{_xf,
+//           _yf}},
+//                                      QColor{250, 250, 250});
+
+//           if (_content->is_first())
+//           {
+//             _font.setPointSize(50);
+//             _painter_solution.setFont(_font);
+//             FirstLetter *_first_letter{
+//                 reinterpret_cast<FirstLetter *>(_content)};
+
+//             _painter_solution.drawText(_xi + 0.4 * _width, _yi + 0.4 *
+//             _height,
+//                                        _first_letter->get_char()->text());
+
+//             auto _pair{_first_letter->get_id()};
+
+//             _font.setPointSize(35);
+//             _painter_to_solve.setFont(_font);
+//             _painter_solution.setFont(_font);
+//             if (_pair.first != 0)
+//             {
+//               _painter_to_solve.drawText(_xi + (0.05 * _width),
+//                                          _yi + (0.3 * _height),
+//                                          QString::number(_pair.first));
+//               _painter_solution.drawText(_xi + (0.05 * _width),
+//                                          _yi + (0.3 * _height),
+//                                          QString::number(_pair.first));
+//             }
+//             if (_pair.second != 0)
+//             {
+//               _painter_to_solve.drawText(_xi + (0.7 * _width),
+//                                          _yi + (0.3 * _height),
+//                                          QString::number(_pair.second));
+//               _painter_solution.drawText(_xi + (0.7 * _width),
+//                                          _yi + (0.3 * _height),
+//                                          QString::number(_pair.second));
+//             }
+//           }
+//           else
+//           {
+//             Letter *_letter{reinterpret_cast<Letter *>(_content)};
+//             _font.setPointSize(50);
+//             _painter_solution.setFont(_font);
+
+//             _painter_solution.drawText(_xi + 0.4 * _width, _yi + 0.4 *
+//             _height,
+//                                        _letter->get_char()->text());
+//           }
+//         }
+//       }
+//     }
+
+//     _paint_to_solve_device.save(_png_to_solve_file_name, "PNG");
+//     _paint_solution_device.save(_png_solution_file_name, "PNG");
+//   }
+
+//   QString _html{"<!DOCTYPE html> "
+//                 "<html> "
+//                 "<head> "
+//                 "<style> "
+//                 "table { "
+//                 "font-family: arial, sans-serif; "
+//                 "font-size: 80%;"
+//                 "border: 1px solid black;"
+//                 "border-collapse: collapse; "
+//                 "width: 100%; "
+//                 "} "
+//                 "td, th { "
+//                 "border: 1px solid #dddddd;"
+//                 "text-align: left; "
+//                 "padding: 2px; "
+//                 "}"
+//                 "</style> "
+//                 "</head> "
+//                 "<body> "};
+
+//   //  "img{ "
+//   //  "max-height:500px;"
+//   //  "max-width:500px;"
+//   //  "height:auto;"
+//   //  "width:auto;"
+//   //  "}"
+
+//   {
+//     using lines = std::map<uint16_t, std::pair<dat::word, dat::explanation>>;
+
+//     lines _horizontals;
+//     lines _verticals;
+
+//     for (dat::grid::const_layout_ite _ite = m_grid->begin();
+//          _ite != m_grid->end(); ++_ite)
+//     {
+//       if (_ite->get_orientation() == dat::orientation::hori)
+//       {
+//         _horizontals[_ite->get_id()] =
+//             std::make_pair(_ite->get_word(), _ite->get_explanation());
+//       }
+//       else
+//       {
+//         _verticals[_ite->get_id()] =
+//             std::make_pair(_ite->get_word(), _ite->get_explanation());
+//       }
+//     }
+
+//     auto _print = [&](const QString &p_title, const lines &p_lines)
+//     {
+//       _html += "<h3>" + p_title + "</h3>";
+//       _html += "<table style=\"width:100%\"> ";
+//       _html += "<tr>"
+//                "<th border-collapse: collapse style=\"width: 2%\" ></th>"
+//                "<th border-collapse: collapse style=\"width: 98%\" ></th>"
+//                "</tr>";
+
+//       for (const lines::value_type &_value : p_lines)
+//       {
+//         _html += "<tr> ";
+//         _html += "<td><small>" + QString::number(_value.first) +
+//         "<small></td>"; _html += "<td> <small>" +
+//         QString(_value.second.second.c_str()) + " ("
+//                  + QString::number(_value.second.first.size()) + " letras)"
+//                  + "</small></td>";
+//         _html += "</tr>";
+//       }
+
+//       _html += "</table> ";
+//       _html += "<p style=\"page-break-after: always;\">&nbsp;</p>";
+//     };
+
+//     _print("Horizontais", _horizontals);
+//     _print("Verticais", _verticals);
+//   }
+
+//   {
+//     _html += "<p class=\"aligncenter\"> ";
+//     _html += "<img src=\"" + _png_to_solve_file_name
+//              + "\" alt=\"grid\" width=\"600\" height=\"600\">";
+//     _html += "</p>";
+//   }
+
+//   _html += "</body> "
+//            "</html> ";
+
+//   QPdfWriter _pdf(_file_name + ".pdf");
+//   _pdf.setPageSize(QPageSize::A4);
+//   _pdf.setPageOrientation((_cols > _rows ?
+//   QPageLayout::Orientation::Landscape
+//                                          :
+//                                          QPageLayout::Orientation::Portrait));
+//   _pdf.setPageMargins(QMargins(10, 10, 10, 10), QPageLayout::Millimeter);
+
+//   QTextDocument _text;
+//   _text.setDefaultFont(QFont("Times", 8));
+//   _text.setHtml(_html);
+//   _text.print(&_pdf);
+
+//   std::filesystem::remove(
+//       std::filesystem::path(_png_to_solve_file_name.toStdString()));
+// }
+
 void MainWindow::on_print_clicked()
 {
   using namespace tnct::crosswords;
 
-  QString _file_name = QFileDialog::getSaveFileName(this, tr("Imprimir grid"),
-                                                    "./", tr("*.pdf"));
+  QString _file_name =
+      QFileDialog::getSaveFileName(this, tr("Imprimir grid"), "./", "");
 
   if (_file_name.isEmpty())
   {
@@ -992,33 +1220,6 @@ void MainWindow::on_print_clicked()
     _paint_solution_device.save(_png_solution_file_name, "PNG");
   }
 
-  QString _html{"<!DOCTYPE html> "
-                "<html> "
-                "<head> "
-                "<style> "
-                "table { "
-                "font-family: arial, sans-serif; "
-                "font-size: 80%;"
-                "border: 1px solid black;"
-                "border-collapse: collapse; "
-                "width: 100%; "
-                "} "
-                "td, th { "
-                "border: 1px solid #dddddd;"
-                "text-align: left; "
-                "padding: 2px; "
-                "}"
-                "</style> "
-                "</head> "
-                "<body> "};
-
-  //  "img{ "
-  //  "max-height:500px;"
-  //  "max-width:500px;"
-  //  "height:auto;"
-  //  "width:auto;"
-  //  "}"
-
   {
     using lines = std::map<uint16_t, std::pair<dat::word, dat::explanation>>;
 
@@ -1040,54 +1241,20 @@ void MainWindow::on_print_clicked()
       }
     }
 
-    auto _print = [&](const QString &p_title, const lines &p_lines)
+    std::ofstream _tables{std::string(_file_name.toStdString()) + ".txt"};
+
+    for (const auto &_hor : _horizontals)
     {
-      _html += "<h3>" + p_title + "</h3>";
-      _html += "<table style=\"width:100%\"> ";
-      _html += "<tr>"
-               "<th border-collapse: collapse style=\"width: 2%\" ></th>"
-               "<th border-collapse: collapse style=\"width: 98%\" ></th>"
-               "</tr>";
+      _tables << std::setw(2) << std::setfill(' ') << std::right << _hor.first
+              << '\t' << ' ' << _hor.second.second << " ("
+              << _hor.second.first.size() << " letras)\n";
+    }
 
-      for (const lines::value_type &_value : p_lines)
-      {
-        _html += "<tr> ";
-        _html += "<td><small>" + QString::number(_value.first) + "<small></td>";
-        _html += "<td> <small>" + QString(_value.second.second.c_str()) + " ("
-                 + QString::number(_value.second.first.size()) + " letras)"
-                 + "</small></td>";
-        _html += "</tr>";
-      }
-
-      _html += "</table> ";
-      _html += "<p style=\"page-break-after: always;\">&nbsp;</p>";
-    };
-
-    _print("Horizontais", _horizontals);
-    _print("Verticais", _verticals);
+    for (const auto &_ver : _verticals)
+    {
+      _tables << std::setw(2) << std::setfill(' ') << std::right << _ver.first
+              << '\t' << ' ' << _ver.second.second << " ("
+              << _ver.second.first.size() << " letras)\n";
+    }
   }
-
-  {
-    _html += "<p class=\"aligncenter\"> ";
-    _html += "<img src=\"" + _png_to_solve_file_name
-             + "\" alt=\"grid\" width=\"600\" height=\"600\">";
-    _html += "</p>";
-  }
-
-  _html += "</body> "
-           "</html> ";
-
-  QPdfWriter _pdf(_file_name + ".pdf");
-  _pdf.setPageSize(QPageSize::A4);
-  _pdf.setPageOrientation((_cols > _rows ? QPageLayout::Orientation::Landscape
-                                         : QPageLayout::Orientation::Portrait));
-  _pdf.setPageMargins(QMargins(10, 10, 10, 10), QPageLayout::Millimeter);
-
-  QTextDocument _text;
-  _text.setDefaultFont(QFont("Times", 8));
-  _text.setHtml(_html);
-  _text.print(&_pdf);
-
-  std::filesystem::remove(
-      std::filesystem::path(_png_to_solve_file_name.toStdString()));
 }
