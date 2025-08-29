@@ -9,28 +9,35 @@
 #include <boost/beast/websocket.hpp>
 #include <nlohmann/json.hpp>
 
+#include "tnct/format/fmt.h"
+#include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
+
 namespace beast     = boost::beast;
 namespace websocket = beast::websocket;
 namespace net       = boost::asio;
 using tcp           = net::ip::tcp;
 using nlohmann::json;
+using namespace tnct;
 
 // WebSocket session
 class WebSocketSession : public std::enable_shared_from_this<WebSocketSession>
 {
 public:
-  explicit WebSocketSession(tcp::socket socket) : ws_(std::move(socket))
+  explicit WebSocketSession(log::cerr &p_logger, tcp::socket socket)
+      : m_logger(p_logger), m_websocket(std::move(socket))
   {
   }
 
   void start()
   {
-    ws_.async_accept(
-        [self = shared_from_this()](beast::error_code ec)
+    m_websocket.async_accept(
+        [self = shared_from_this()](beast::error_code p_error)
         {
-          if (ec)
+          if (p_error)
           {
-            std::cerr << "Accept error: " << ec.message() << "\n";
+            TNCT_LOG_ERR(self->m_logger,
+                         format::fmt("Accept error: ", p_error.message()));
             return;
           }
           self->read_message();
@@ -40,14 +47,14 @@ public:
 private:
   void read_message()
   {
-    ws_.async_read(
-        buffer_,
+    m_websocket.async_read(
+        m_buffer,
         [self = shared_from_this()](beast::error_code ec, std::size_t)
         {
           if (!ec)
           {
-            std::string msg = beast::buffers_to_string(self->buffer_.data());
-            self->buffer_.consume(self->buffer_.size());
+            std::string msg = beast::buffers_to_string(self->m_buffer.data());
+            self->m_buffer.consume(self->m_buffer.size());
 
             // auto _payload = json::parse(msg);
             // std::cerr << _payload << std::endl;
@@ -57,23 +64,23 @@ private:
 
             std::this_thread::sleep_for(std::chrono::seconds(3));
             // Echo back
-            self->ws_.text(self->ws_.got_text());
-            self->ws_.async_write(net::buffer(msg),
-                                  [self](beast::error_code ec, std::size_t)
-                                  {
-                                    if (ec)
-                                      std::cerr
-                                          << "Write error: " << ec.message()
-                                          << "\n";
-                                    else
-                                      self->read_message();
-                                  });
+            self->m_websocket.text(self->m_websocket.got_text());
+            self->m_websocket.async_write(
+                net::buffer(msg),
+                [self](beast::error_code ec, std::size_t)
+                {
+                  if (ec)
+                    std::cerr << "Write error: " << ec.message() << "\n";
+                  else
+                    self->read_message();
+                });
           }
         });
   }
 
-  websocket::stream<tcp::socket> ws_;
-  beast::flat_buffer             buffer_;
+  log::cerr                     &m_logger;
+  websocket::stream<tcp::socket> m_websocket;
+  beast::flat_buffer             m_buffer;
 };
 
 // Listener
@@ -81,7 +88,7 @@ class WebSocketListener : public std::enable_shared_from_this<WebSocketListener>
 {
 public:
   WebSocketListener(net::io_context &ioc, tcp::endpoint ep)
-      : /*ioc_(ioc),*/ acceptor_(ioc, ep)
+      : /*ioc_(ioc),*/ m_acceptor(ioc, ep)
   {
   }
 
@@ -93,7 +100,7 @@ public:
 private:
   void do_accept()
   {
-    acceptor_.async_accept(
+    m_acceptor.async_accept(
         [self = shared_from_this()](beast::error_code ec, tcp::socket socket)
         {
           if (!ec)
@@ -103,18 +110,19 @@ private:
   }
 
   //  net::io_context &ioc_;
-  tcp::acceptor acceptor_;
+  tcp::acceptor m_acceptor;
 };
 
 int main()
 {
+  log::cerr _cerr;
   try
   {
     net::io_context ioc;
     auto            listener = std::make_shared<WebSocketListener>(
         ioc, tcp::endpoint{tcp::v4(), 9002});
     listener->run();
-    std::cout << "WebSocket server running on port 9002\n";
+    TNCT_LOG_INF(_cerr, "WebSocket server running on port 9002");
     ioc.run();
   }
   catch (std::exception const &e)
