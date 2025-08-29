@@ -28,7 +28,7 @@ BASE_DIR=$$PWD/../../src
 
 
 products_dir=$$BASE_DIR/../../prd/$$os-$$cfg-$$arch
-third_dir=$$BASE_DIR/tnct/3rd
+third_dir=$$BASE_DIR/3rd
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/app
 test_dir=$$products_dir/tst
@@ -106,10 +106,7 @@ win32 {
 }
 
 
-INCLUDEPATH += $$UI_DIR
-INCLUDEPATH += $${third_dir}/include
-INCLUDEPATH += $$BASE_DIR
-
+INCLUDEPATH += $$UI_DIR $$BASE_DIR $$third_dir/websocket $$third_dir/asio/asio/include
 
 
 message("_PRO_FILE_PWD_ = "$$_PRO_FILE_PWD_)
@@ -134,6 +131,7 @@ message("QMAKE_CXXFLAGS = "$$QMAKE_CXXFLAGS)
 message("CONFIG = "$$CONFIG)
 message("QMAKESPEC = "$$QMAKESPEC)
 message("static_lib_ext = "$$static_lib_ext)
+message("third_dir = "$$third_dir)
 
 #message("LIBS = "$$LIBS)
 

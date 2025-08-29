@@ -15,6 +15,7 @@
 #include <tuple>
 
 #include "tnct/async/cpt/is_dispatcher.h"
+#include "tnct/async/dispatcher.h"
 #include "tnct/async/handling_priority.h"
 #include "tnct/async/result.h"
 #include "tnct/container/circular_queue.h"
@@ -22,7 +23,7 @@
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/evt/grid_attempt_configuration.h"
 #include "tnct/crosswords/evt/grid_permutations_tried.h"
-#include "tnct/crosswords/evt/grid_to_organize.h"
+#include "tnct/crosswords/evt/internal/grid_to_organize.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/math/factorial.h"
@@ -37,12 +38,12 @@ namespace tnct::crosswords::bus::internal
 template <log::cpt::logger t_logger, async::cpt::is_dispatcher t_dispatcher>
 struct assembler
 {
-  using events_published =
-      std::tuple<evt::grid_attempt_configuration, evt::grid_permutations_tried,
-                 evt::grid_to_organize>;
+  // using events_published =
+  //     std::tuple<evt::grid_attempt_configuration,
+  //     evt::grid_permutations_tried>;
 
-  using events_subscribed =
-      std::tuple<evt::grid_create_stop, evt::grid_to_organize>;
+  // using events_subscribed =
+  //     std::tuple<evt::grid_create_stop>;
 
   assembler(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
@@ -75,8 +76,9 @@ struct assembler
     m_solved           = std::shared_ptr<dat::grid>();
     m_organizers_fails = 0;
     m_timeout          = false;
-    m_dispatcher.template clear<crosswords::evt::grid_to_organize>(
-        m_grid_to_organize);
+    m_internal_dispatcher
+        .template clear<crosswords::evt::internal::grid_to_organize>(
+            m_grid_to_organize);
 
     auto _entries{std::make_shared<dat::entries>(p_entries)};
     sort_entries(*_entries);
@@ -165,7 +167,8 @@ struct assembler
       }
 
       if (auto _result{
-              m_dispatcher.template publish<evt::grid_to_organize>(_grid)};
+              m_internal_dispatcher
+                  .template publish<evt::internal::grid_to_organize>(_grid)};
           _result != async::result::OK)
       {
         TNCT_LOG_ERR(
@@ -230,7 +233,7 @@ struct assembler
     {
       TNCT_LOG_DEB(m_logger, "grid solved");
 
-      m_dispatcher.template clear<evt::grid_to_organize>();
+      m_internal_dispatcher.template clear<evt::internal::grid_to_organize>();
       return m_solved;
     }
 
@@ -238,7 +241,7 @@ struct assembler
     {
       TNCT_LOG_DEB(m_logger, "timeout");
 
-      m_dispatcher.template clear<evt::grid_to_organize>();
+      m_internal_dispatcher.template clear<evt::internal::grid_to_organize>();
     }
 
     return {};
@@ -249,6 +252,10 @@ struct assembler
   {
     m_stop = true;
   }
+
+private:
+  using internal_dispatcher =
+      async::dispatcher<t_logger, crosswords::evt::internal::grid_to_organize>;
 
 private:
   std::uint64_t number_of_permutations(const dat::entries &p_entries) const
@@ -272,17 +279,20 @@ private:
     if (m_max_mem_occupied)
     {
       const auto _maybe_num_events{
-          m_dispatcher.template get_num_events<evt::grid_to_organize>(
-              m_grid_to_organize)};
+          m_internal_dispatcher
+              .template get_num_events<evt::internal::grid_to_organize>(
+                  m_grid_to_organize)};
 
       const auto _maybe_events_capacity{
-          m_dispatcher.template get_events_capacity<evt::grid_to_organize>(
-              m_grid_to_organize)};
+          m_internal_dispatcher
+              .template get_events_capacity<evt::internal::grid_to_organize>(
+                  m_grid_to_organize)};
 
       if (!_maybe_num_events.has_value())
       {
-        TNCT_LOG_ERR(m_logger, format::fmt("Error retrieving the number of "
-                                           "events for evt::grid_to_organize"));
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("Error retrieving the number of "
+                                 "events for evt::internal::grid_to_organize"));
         return false;
       }
 
@@ -290,7 +300,7 @@ private:
       {
         TNCT_LOG_ERR(m_logger,
                      format::fmt("Error retrieving the events capacity for "
-                                 "evt::grid_to_organize"));
+                                 "evt::internal::grid_to_organize"));
         return false;
       }
 
@@ -358,12 +368,14 @@ private:
         async::handling_priority::highest);
 
     using grid_to_organize_queue =
-        container::circular_queue<t_logger, evt::grid_to_organize, 10000>;
-    m_dispatcher.template add_handling<evt::grid_to_organize>(
-        m_grid_to_organize, grid_to_organize_queue{m_logger},
-        [&](evt::grid_to_organize &&p_event) -> void
-        { on_new_grid_to_organize(std::move(p_event)); },
-        async::handling_priority::highest, p_hw_num_threads);
+        container::circular_queue<t_logger, evt::internal::grid_to_organize,
+                                  10000>;
+    m_internal_dispatcher
+        .template add_handling<evt::internal::grid_to_organize>(
+            m_grid_to_organize, grid_to_organize_queue{m_logger},
+            [&](evt::internal::grid_to_organize &&p_event) -> void
+            { on_new_grid_to_organize(std::move(p_event)); },
+            async::handling_priority::highest, p_hw_num_threads);
 
     TNCT_LOG_DEB(m_logger,
                  "configuring queue for event evt::grid_create_solved");
@@ -412,7 +424,7 @@ private:
     return false;
   }
 
-  void on_new_grid_to_organize(evt::grid_to_organize &&p_event)
+  void on_new_grid_to_organize(evt::internal::grid_to_organize &&p_event)
   {
     if (p_event.grid == nullptr)
     {
@@ -437,7 +449,7 @@ private:
                    format::fmt("grid was organized at permutation ",
                                p_event.grid->get_permutation_number()));
 
-      // m_dispatcher. template clear<evt::grid_to_organize>();
+      // m_dispatcher. template clear<evt::internal::grid_to_organize>();
       m_solved = p_event.grid;
       m_cond_wait.notify_all();
       m_cond_finish.notify_one();
@@ -458,14 +470,12 @@ private:
     {
 
       const auto _maybe_events_capacity{
-          m_dispatcher
-              .template get_events_capacity<crosswords::evt::grid_to_organize>(
-                  m_grid_to_organize)};
+          m_internal_dispatcher.template get_events_capacity<
+              crosswords::evt::internal::grid_to_organize>(m_grid_to_organize)};
 
       const auto _maybe_num_events{
-          m_dispatcher
-              .template get_num_events<crosswords::evt::grid_to_organize>(
-                  m_grid_to_organize)};
+          m_internal_dispatcher.template get_num_events<
+              crosswords::evt::internal::grid_to_organize>(m_grid_to_organize)};
 
       if (!_maybe_events_capacity.has_value() || !_maybe_num_events.has_value())
       {
@@ -516,6 +526,8 @@ private:
   std::condition_variable m_cond_wait;
 
   std::atomic_bool m_max_mem_occupied{false};
+
+  internal_dispatcher m_internal_dispatcher{m_logger};
 
   static constexpr float m_perc_memory_to_be_used{0.5};
 };

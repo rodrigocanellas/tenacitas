@@ -15,7 +15,7 @@
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/evt/grid_create_solved.h"
 #include "tnct/crosswords/evt/grid_create_stop.h"
-#include "tnct/crosswords/evt/grid_create_timeout.h"
+// #include "tnct/crosswords/evt/grid_create_timeout.h"
 #include "tnct/crosswords/evt/grid_create_unsolved.h"
 #include "tnct/log/cpt/logger.h"
 
@@ -50,8 +50,8 @@ struct organizer
         m_grid_create_solved);
     m_dispatcher.template clear<crosswords::evt::grid_create_unsolved>(
         m_grid_create_unsolved);
-    m_dispatcher.template clear<crosswords::evt::grid_create_timeout>(
-        m_grid_create_timeout);
+    // m_dispatcher.template clear<crosswords::evt::grid_create_timeout>(
+    //     m_grid_create_timeout);
 
     if (m_stop)
     {
@@ -140,7 +140,7 @@ private:
 
     using crosswords::evt::grid_create_solved;
     using crosswords::evt::grid_create_stop;
-    using crosswords::evt::grid_create_timeout;
+    // using crosswords::evt::grid_create_timeout;
     using crosswords::evt::grid_create_unsolved;
 
     using grid_create_stop_queue =
@@ -152,8 +152,8 @@ private:
     using grid_create_unsolved_queue =
         container::circular_queue<t_logger, grid_create_unsolved, 10>;
 
-    using grid_create_timeout_queue =
-        container::circular_queue<t_logger, grid_create_timeout, 10>;
+    // using grid_create_timeout_queue =
+    //     container::circular_queue<t_logger, grid_create_timeout, 10>;
 
     m_dispatcher.template add_handling<grid_create_stop>(
         m_grid_create_stop, grid_create_stop_queue{m_logger},
@@ -167,9 +167,9 @@ private:
         m_grid_create_unsolved, grid_create_unsolved_queue{m_logger},
         [&](grid_create_unsolved &&) { m_stop = true; });
 
-    m_dispatcher.template add_handling<grid_create_timeout>(
-        m_grid_create_timeout, grid_create_timeout_queue{m_logger},
-        [&](grid_create_timeout &&) { m_stop = true; });
+    // m_dispatcher.template add_handling<grid_create_timeout>(
+    //     m_grid_create_timeout, grid_create_timeout_queue{m_logger},
+    //     [&](grid_create_timeout &&) { m_stop = true; });
   }
 
   bool all_words_fit(const dat::grid &p_grid)

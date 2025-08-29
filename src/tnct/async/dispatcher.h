@@ -113,10 +113,10 @@ public:
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&)      = delete;
 
-  void *operator new(size_t)   = delete;
+  // void *operator new(size_t)   = delete;
   void *operator new[](size_t) = delete;
 
-  void operator delete(void *)   = delete;
+  // void operator delete(void *)   = delete;
   void operator delete[](void *) = delete;
 
   template <async::cpt::is_event t_event>

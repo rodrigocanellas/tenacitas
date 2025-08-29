@@ -4,9 +4,7 @@
 #include <QApplication>
 #include <QString>
 
-// #include "grid_solved.h"
 #include "tnct/crosswords/bus/grid_creator.h"
-
 #include "tnct/crosswords/evt/dispatcher.h"
 #include "tnct/log/cerr.h"
 

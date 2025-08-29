@@ -21,7 +21,7 @@
 #include "tnct/crosswords/evt/grid_create_solved.h"
 #include "tnct/crosswords/evt/grid_create_start.h"
 #include "tnct/crosswords/evt/grid_create_stop.h"
-#include "tnct/crosswords/evt/grid_create_timeout.h"
+// #include "tnct/crosswords/evt/grid_create_timeout.h"
 #include "tnct/crosswords/evt/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/grid_permutations_tried.h"
 
@@ -333,7 +333,7 @@ public:
   using events_subscribed =
       std::tuple<crosswords::evt::grid_create_unsolved,
                  crosswords::evt::grid_create_solved,
-                 crosswords::evt::grid_create_timeout,
+                 // crosswords::evt::grid_create_timeout,
                  crosswords::evt::grid_create_stop,
                  crosswords::evt::grid_attempt_configuration,
                  crosswords::evt::grid_permutations_tried>;
@@ -401,8 +401,8 @@ private:
   using grid_create_solved_queue = tnct::container::circular_queue<
       tnct::log::cerr, tnct::crosswords::evt::grid_create_solved, 20>;
 
-  using grid_create_timeout_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_create_timeout, 20>;
+  // using grid_create_timeout_queue = tnct::container::circular_queue<
+  //     tnct::log::cerr, tnct::crosswords::evt::grid_create_timeout, 20>;
 
   using grid_create_stop_queue = tnct::container::circular_queue<
       tnct::log::cerr, tnct::crosswords::evt::grid_create_stop, 20>;

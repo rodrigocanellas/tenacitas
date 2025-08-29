@@ -121,12 +121,12 @@ struct organizer_test_002
     using logger = log::cerr;
     using crosswords::evt::grid_create_solved;
     using crosswords::evt::grid_create_stop;
-    using crosswords::evt::grid_create_timeout;
+    // using crosswords::evt::grid_create_timeout;
     using crosswords::evt::grid_create_unsolved;
 
     using dispatcher =
         async::dispatcher<logger, grid_create_solved, grid_create_stop,
-                          grid_create_timeout, grid_create_unsolved>;
+                          /*grid_create_timeout, */ grid_create_unsolved>;
 
     using organizer = crosswords::bus::internal::organizer<logger, dispatcher>;
     using crosswords::dat::entries;

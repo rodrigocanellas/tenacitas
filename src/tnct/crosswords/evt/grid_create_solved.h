@@ -12,21 +12,35 @@
 
 #include "tnct/crosswords/dat/grid.h"
 
-namespace tnct::crosswords::evt {
+namespace tnct::crosswords::evt
+{
 
 /// \brief Published when a grid was assembled
-struct grid_create_solved {
-  grid_create_solved() = default;
+struct grid_create_solved
+{
+  grid_create_solved()                           = default;
   grid_create_solved(const grid_create_solved &) = default;
-  explicit grid_create_solved(std::shared_ptr<dat::grid> p_grid,
-                              std::chrono::seconds p_time)
-      : grid(p_grid), time(p_time) {}
+  grid_create_solved(grid_create_solved &&)      = default;
+
+  grid_create_solved &operator=(const grid_create_solved &) = default;
+  grid_create_solved &operator=(grid_create_solved &&)      = default;
+
+  ~grid_create_solved() = default;
+
+  explicit grid_create_solved(
+      std::shared_ptr<dat::grid> p_grid, std::chrono::seconds p_time,
+      std::optional<std::size_t> p_client = std::nullopt)
+      : grid(p_grid), time(p_time), client(p_client)
+  {
+  }
 
   std::shared_ptr<dat::grid> grid;
-  std::chrono::seconds time;
+  std::chrono::seconds       time{std::chrono::seconds::zero()};
+  std::optional<std::size_t> client{std::nullopt};
 
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  const grid_create_solved &) {
+                                  const grid_create_solved &)
+  {
     return p_out;
   }
 };

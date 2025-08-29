@@ -52,9 +52,6 @@ struct grid_creator
     m_dispatcher.template add_handling<evt::grid_create_stop>(
         "grid-create-stop", grid_create_stop_queue{m_logger},
         [&](evt::grid_create_stop &&) { m_stop = true; });
-
-    //    m_dispatcher.template subscribe<evt::grid_create_solved>(
-    //        [&](auto) { m_stop = true; });
   }
 
   ~grid_creator()
@@ -74,9 +71,7 @@ private:
   /// p_num_rows is equal to \p p_max_num_rows. Each attempt will take up to \p
   /// p_wait_for time.
   ///
-  /// It will publish evt::grid_create_solved with \p grid attribute \p nullptr
-  /// if the grid creation failed, or a valid pointer otherwise
-
+  /// It will publish evt::grid_create_solved or evt::grid_create_unsolved
   void operator()(const dat::entries &p_entries, dat::index p_num_rows,
                   dat::index p_num_cols, std::chrono::seconds p_wait_for,
                   dat::index p_max_num_rows)

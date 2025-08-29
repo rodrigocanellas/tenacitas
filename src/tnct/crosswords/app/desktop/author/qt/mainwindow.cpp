@@ -10,11 +10,11 @@
 #include <QPixmap>
 
 #include <chrono>
-#include <filesystem>
 #include <fstream>
 #include <map>
 
 #include "tnct/async/result.h"
+#include "tnct/crosswords/evt/dispatcher.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
 
@@ -184,16 +184,6 @@ void MainWindow::configure_dispatcher()
         // m_grid = p_event.grid;
 
         on_grid_solved(std::move(p_event));
-      });
-
-  m_dispatcher.template add_handling<crosswords::evt::grid_create_timeout>(
-      "grid_create_timeout", grid_create_timeout_queue{m_logger},
-      [&](crosswords::evt::grid_create_timeout &&p_event)
-      {
-        emit log(QString{"Tempo excedido para grade de "
-                         + QString::number(p_event.num_rows) + "x"
-                         + QString::number(p_event.num_cols)}
-                 + "\n");
       });
 
   m_dispatcher.template add_handling<crosswords::evt::grid_create_stop>(

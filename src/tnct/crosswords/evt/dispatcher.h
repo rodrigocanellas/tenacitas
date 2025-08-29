@@ -10,22 +10,18 @@
 #include "tnct/crosswords/evt/grid_attempt_configuration.h"
 #include "tnct/crosswords/evt/grid_create_solved.h"
 #include "tnct/crosswords/evt/grid_create_start.h"
-#include "tnct/crosswords/evt/grid_create_status.h"
 #include "tnct/crosswords/evt/grid_create_stop.h"
-#include "tnct/crosswords/evt/grid_create_timeout.h"
 #include "tnct/crosswords/evt/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/grid_permutations_tried.h"
-#include "tnct/crosswords/evt/grid_to_organize.h"
 #include "tnct/log/cerr.h"
 
 namespace tnct::crosswords::evt
 {
 
 using dispatcher = tnct::async::dispatcher<
-    log::cerr, evt::grid_create_timeout, evt::grid_to_organize,
-    evt::grid_permutations_tried, evt::grid_create_solved,
-    evt::grid_create_start, evt::grid_create_stop, evt::grid_create_unsolved,
-    evt::grid_create_status, evt::grid_attempt_configuration>;
+    log::cerr, /*evt::grid_create_timeout, */ evt::grid_permutations_tried,
+    evt::grid_create_solved, evt::grid_create_start, evt::grid_create_stop,
+    evt::grid_create_unsolved, evt::grid_attempt_configuration>;
 }
 
 #endif

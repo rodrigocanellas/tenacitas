@@ -8,22 +8,36 @@
 
 #include <cstddef>
 #include <iostream>
+#include <optional>
 
-namespace tnct::crosswords::evt {
+namespace tnct::crosswords::evt
+{
 
 /// \brief Published when a new attempt to assemble a grid has started
-struct grid_permutations_tried {
+struct grid_permutations_tried
+{
 
-  grid_permutations_tried() = default;
+  grid_permutations_tried()                                = default;
   grid_permutations_tried(const grid_permutations_tried &) = default;
+  grid_permutations_tried(grid_permutations_tried &&)      = default;
 
-  grid_permutations_tried(size_t p_permutations)
-      : permutations(p_permutations) {}
+  grid_permutations_tried &operator=(const grid_permutations_tried &) = default;
+  grid_permutations_tried &operator=(grid_permutations_tried &&)      = default;
 
-  size_t permutations{0};
+  ~grid_permutations_tried() = default;
+
+  grid_permutations_tried(size_t                     p_permutations,
+                          std::optional<std::size_t> p_client = std::nullopt)
+      : permutations(p_permutations), client(p_client)
+  {
+  }
+
+  size_t                     permutations{0};
+  std::optional<std::size_t> client = std::nullopt;
 
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  const grid_permutations_tried &) {
+                                  const grid_permutations_tried &)
+  {
     return p_out;
   }
 };
