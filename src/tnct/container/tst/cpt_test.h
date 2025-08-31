@@ -13,6 +13,7 @@
 #include "tnct/container/circular_queue.h"
 #include "tnct/container/cpt/queue.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 
 using namespace tnct;

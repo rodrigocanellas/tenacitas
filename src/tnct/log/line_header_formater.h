@@ -17,6 +17,7 @@
 
 #include "tnct/format/format_number.h"
 #include "tnct/log/level.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::log {
 

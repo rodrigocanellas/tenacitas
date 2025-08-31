@@ -16,6 +16,7 @@
 
 #include "tnct/time/cpt/chrono_convertible.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::async
 {

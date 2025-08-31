@@ -26,6 +26,7 @@
 #include "tnct/crosswords/evt/internal/grid_to_organize.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/math/factorial.h"
 #include "tnct/time/cpt/chrono_convertible.h"
 

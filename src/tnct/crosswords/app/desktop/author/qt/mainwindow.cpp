@@ -17,6 +17,7 @@
 #include "tnct/crosswords/evt/dispatcher.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 

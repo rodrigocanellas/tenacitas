@@ -12,6 +12,7 @@
 #include "tnct/async/sleeping_loop.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 

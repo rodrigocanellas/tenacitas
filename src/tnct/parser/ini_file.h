@@ -16,6 +16,7 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::parser
 {

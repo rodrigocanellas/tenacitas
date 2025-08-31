@@ -18,6 +18,7 @@
 // #include "tnct/crosswords/evt/grid_create_timeout.h"
 #include "tnct/crosswords/evt/grid_create_unsolved.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::crosswords::bus::internal
 {

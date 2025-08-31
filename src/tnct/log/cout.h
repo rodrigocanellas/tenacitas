@@ -7,6 +7,7 @@
 #define TNCT_LOG_COUT_H
 
 #include "tnct/log/internal/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::log
 {

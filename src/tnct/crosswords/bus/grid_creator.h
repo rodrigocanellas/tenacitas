@@ -15,6 +15,7 @@
 #include "tnct/crosswords/evt/grid_create_start.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::crosswords::bus
 {
@@ -36,7 +37,7 @@ struct grid_creator
         m_assembler(p_logger, m_dispatcher)
   {
     using grid_create_start_queue =
-        container::circular_queue<t_logger, evt::grid_create_start, 10>;
+        container::circular_queue<t_logger, evt::grid_create_start, 1000>;
     m_dispatcher.template add_handling<evt::grid_create_start>(
         "grid-create-start", grid_create_start_queue{m_logger},
         [&](evt::grid_create_start &&p_event)

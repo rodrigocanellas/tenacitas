@@ -26,6 +26,7 @@
 #include "tnct/crosswords/evt/grid_permutations_tried.h"
 
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 

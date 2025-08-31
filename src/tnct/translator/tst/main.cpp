@@ -8,6 +8,7 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 #include "tnct/tester/test.h"
 #include "tnct/translator/translator_from_file.h"

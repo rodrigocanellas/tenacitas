@@ -16,8 +16,11 @@
 #include <utility>
 
 #include "tnct/log/level.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/log/line_header_formater.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/writer.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::log::internal {
 

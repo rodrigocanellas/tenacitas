@@ -7,6 +7,7 @@
 #include "tnct/crosswords/bus/grid_creator.h"
 #include "tnct/crosswords/evt/dispatcher.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 

@@ -14,6 +14,7 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/ostream/cpt/has_output_operator.h"
 
 namespace tnct::container
@@ -303,7 +304,7 @@ protected:
     TNCT_LOG_TRA(this->m_logger,
                  format::fmt("enlarging - leaving ", full_report()));
 
-    TNCT_LOG_INF(this->m_logger, format::fmt("enlarged - ", brief_report()));
+    TNCT_LOG_DEB(this->m_logger, format::fmt("enlarged - ", brief_report()));
   }
 
 private:
