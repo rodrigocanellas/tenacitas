@@ -86,7 +86,7 @@ struct assembler
 
     const auto _max_permutations = number_of_permutations(p_entries);
 
-    TNCT_LOG_INF(m_logger, format::fmt("# permutations = ", _max_permutations));
+    TNCT_LOG_DEB(m_logger, format::fmt("# permutations = ", _max_permutations));
 
     m_wait_for = std::chrono::duration_cast<std::chrono::seconds>(p_wait_for);
 

@@ -195,9 +195,10 @@ int main(int argc, char **argv)
 
     _websocket.handshake("127.0.0.1", "/");
 
+    _websocket.write(net::buffer(_msg));
+
     while (true)
     {
-      _websocket.write(net::buffer(_msg));
 
       beast::flat_buffer _buffer;
       _websocket.read(_buffer);

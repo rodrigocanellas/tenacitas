@@ -14,7 +14,6 @@
 #include "tnct/crosswords/evt/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/grid_permutations_tried.h"
 #include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
 
 namespace tnct::crosswords::evt
 {

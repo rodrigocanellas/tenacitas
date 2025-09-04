@@ -18,3 +18,4 @@ SOURCES = $$PRJ_DIR/main.cpp
 # DISTFILES += $$PRJ_DIR/cfg_000.ini
 
 
+LIBS+= -L/usr/local/lib -lixwebsocket  -lssl -lcrypto -lpthread -lz
