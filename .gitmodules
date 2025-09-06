@@ -1,0 +1,6 @@
+[submodule "src/3rd/websocket"]
+	path = src/3rd/websocket
+	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "src/3rd/asio"]
+	path = src/3rd/asio
+	url = https://github.com/chriskohlhoff/asio.git

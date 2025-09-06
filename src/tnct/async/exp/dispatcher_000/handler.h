@@ -18,6 +18,7 @@
 #include "tnct/async/cpt/has_publish_method.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::async::exp
 {

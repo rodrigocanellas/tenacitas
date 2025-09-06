@@ -7,6 +7,7 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/dispatcher.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::async::exp::temperature_sensors_simulator {
 

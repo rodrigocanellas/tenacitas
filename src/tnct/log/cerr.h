@@ -9,6 +9,7 @@
 #include <string_view>
 
 #include "tnct/log/internal/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 namespace tnct::log
 {

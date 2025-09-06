@@ -14,6 +14,7 @@
 
 #include "tnct/async/sleeping_loop.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace std::chrono_literals;
 using namespace tnct;
