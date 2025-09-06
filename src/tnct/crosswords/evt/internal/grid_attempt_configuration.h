@@ -11,7 +11,7 @@
 
 #include "tnct/crosswords/dat/index.h"
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 struct grid_attempt_configuration
@@ -52,6 +52,6 @@ struct grid_attempt_configuration
   }
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif

@@ -13,7 +13,7 @@
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/time/cpt/chrono_convertible.h"
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 struct grid_create_start
@@ -52,6 +52,6 @@ struct grid_create_start
   }
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif

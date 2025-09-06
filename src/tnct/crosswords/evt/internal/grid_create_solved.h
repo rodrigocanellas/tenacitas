@@ -12,7 +12,7 @@
 
 #include "tnct/crosswords/dat/grid.h"
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 /// \brief Published when a grid was assembled
@@ -45,6 +45,6 @@ struct grid_create_solved
   }
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif

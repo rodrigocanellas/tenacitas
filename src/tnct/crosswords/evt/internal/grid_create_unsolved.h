@@ -11,7 +11,7 @@
 
 #include "tnct/crosswords/dat/index.h"
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 /// \brief Published when a grid was not assembled
@@ -44,6 +44,6 @@ struct grid_create_unsolved
   }
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif

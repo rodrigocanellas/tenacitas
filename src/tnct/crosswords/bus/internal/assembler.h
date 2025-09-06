@@ -21,8 +21,8 @@
 #include "tnct/container/circular_queue.h"
 #include "tnct/crosswords/bus/internal/organizer.h"
 #include "tnct/crosswords/dat/grid.h"
-#include "tnct/crosswords/evt/grid_attempt_configuration.h"
-#include "tnct/crosswords/evt/grid_permutations_tried.h"
+#include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/crosswords/evt/internal/grid_to_organize.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
@@ -40,11 +40,11 @@ template <log::cpt::logger t_logger, async::cpt::is_dispatcher t_dispatcher>
 struct assembler
 {
   // using events_published =
-  //     std::tuple<evt::grid_attempt_configuration,
-  //     evt::grid_permutations_tried>;
+  //     std::tuple<evt::internal::grid_attempt_configuration,
+  //     evt::internal::grid_permutations_tried>;
 
   // using events_subscribed =
-  //     std::tuple<evt::grid_create_stop>;
+  //     std::tuple<evt::internal::grid_create_stop>;
 
   assembler(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
@@ -96,13 +96,13 @@ struct assembler
         _initial_free_memory * m_perc_memory_to_be_used)};
 
     if (auto _result{
-            m_dispatcher.template publish<evt::grid_attempt_configuration>(
+            m_dispatcher.template publish<evt::internal::grid_attempt_configuration>(
                 p_num_rows, p_num_cols, _max_memory_to_use,
                 _initial_free_memory, _max_permutations)};
         _result != async::result::OK)
     {
       TNCT_LOG_ERR(m_logger,
-                   format::fmt("Error publishing 'grid_attempt_configuration'",
+                   format::fmt("Error publishing 'internal::grid_attempt_configuration'",
                                _result));
       return std::shared_ptr<dat::grid>();
     }
@@ -152,12 +152,12 @@ struct assembler
                                            _permutation_counter));
 
         if (auto _result{
-                m_dispatcher.template publish<evt::grid_permutations_tried>(
+                m_dispatcher.template publish<evt::internal::grid_permutations_tried>(
                     _permutation_counter)};
             _result != async::result::OK)
         {
           TNCT_LOG_ERR(m_logger,
-                       format::fmt("Error publishing 'grid_permutations_tried'",
+                       format::fmt("Error publishing 'internal::grid_permutations_tried'",
                                    _result));
         }
       }
@@ -359,13 +359,13 @@ private:
   void configure_dispatcher(size_t p_hw_num_threads)
   {
 
-    TNCT_LOG_DEB(m_logger, "configuring queue for event evt::grid_create_stop");
+    TNCT_LOG_DEB(m_logger, "configuring queue for event evt::internal::grid_create_stop");
 
     using grid_create_stop_queue =
-        container::circular_queue<t_logger, evt::grid_create_stop, 100>;
-    m_dispatcher.template add_handling<evt::grid_create_stop>(
+        container::circular_queue<t_logger, evt::internal::grid_create_stop, 100>;
+    m_dispatcher.template add_handling<evt::internal::grid_create_stop>(
         "grid-create-stop", grid_create_stop_queue{m_logger},
-        [&](evt::grid_create_stop &&) -> void { m_stop = true; },
+        [&](evt::internal::grid_create_stop &&) -> void { m_stop = true; },
         async::handling_priority::highest);
 
     using grid_to_organize_queue =
@@ -379,7 +379,7 @@ private:
             async::handling_priority::highest, p_hw_num_threads);
 
     TNCT_LOG_DEB(m_logger,
-                 "configuring queue for event evt::grid_create_solved");
+                 "configuring queue for event evt::internal::grid_create_solved");
   }
 
   bool

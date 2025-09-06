@@ -6,8 +6,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include "tnct/async/dispatcher.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
-#include "tnct/crosswords/evt/dispatcher.h"
+#include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/internal/grid_create_solved.h"
+#include "tnct/crosswords/evt/internal/grid_create_start.h"
+#include "tnct/crosswords/evt/internal/grid_create_stop.h"
+#include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
+#include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -29,8 +35,12 @@ struct assembler_test_000
   {
 
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 
@@ -67,8 +77,13 @@ struct assembler_test_001
   bool operator()(const program::options &)
   {
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 
@@ -106,8 +121,12 @@ struct assembler_test_002
   {
 
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 

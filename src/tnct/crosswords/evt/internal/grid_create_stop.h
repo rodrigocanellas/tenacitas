@@ -9,7 +9,7 @@
 #include <iostream>
 #include <optional>
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 /// \brief Published when all attemps of assembling grids should stop
@@ -37,6 +37,6 @@ struct grid_create_stop
   std::optional<std::size_t> client = std::nullopt;
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <optional>
 
-namespace tnct::crosswords::evt
+namespace tnct::crosswords::evt::internal
 {
 
 /// \brief Published when a new attempt to assemble a grid has started
@@ -42,6 +42,6 @@ struct grid_permutations_tried
   }
 };
 
-} // namespace tnct::crosswords::evt
+} // namespace tnct::crosswords::evt::internal
 
 #endif
