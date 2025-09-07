@@ -1,7 +1,8 @@
 
 include (../../../common.pri)
 
-QT-=core
+QT += core gui widgets
+
 TEMPLATE=app
 CONFIG+=app
 TARGET=tnct.crosswords.app.server

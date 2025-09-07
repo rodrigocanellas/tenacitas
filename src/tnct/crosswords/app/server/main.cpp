@@ -53,6 +53,8 @@ struct connection
     m_socket = p_socket;
 
     auto _payload = json::parse(p_request);
+    TNCT_LOG_ERR(m_logger, fmt("request = ", _payload.dump(1)));
+
     if (_payload.value("request", "") == "create")
     {
       TNCT_LOG_INF(m_logger, "'create' request");
@@ -203,7 +205,8 @@ private:
                 {"explanation", p_layout.get_explanation()},
                 {"row", p_layout.get_row()},
                 {"col", p_layout.get_col()},
-                {"orientation", _stream.str()}};
+                {"orientation", _stream.str()},
+                {"id", p_layout.get_id()}};
   }
 
   json layouts_to_json(grid::const_layout_ite p_begin,
