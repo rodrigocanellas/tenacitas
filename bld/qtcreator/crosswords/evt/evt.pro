@@ -13,4 +13,5 @@ HEADERS +=  \
     $$PRJ_DIR/internal/grid_create_solved.h \
     $$PRJ_DIR/internal/grid_create_unsolved.h \
     $$PRJ_DIR/internal/grid_to_organize.h \
-    $$PRJ_DIR/internal/grid_attempt_configuration.h
+    $$PRJ_DIR/internal/grid_attempt_configuration.h \
+    $$PRJ_DIR/internal/grid_create_error.h

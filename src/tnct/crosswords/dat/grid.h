@@ -11,10 +11,12 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "tnct/crosswords/dat/entries.h"
 #include "tnct/crosswords/dat/entry.h"
+#include "tnct/crosswords/dat/error.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/dat/layout.h"
 #include "tnct/crosswords/dat/occupied.h"
@@ -53,13 +55,15 @@ struct grid
   {
 
     // checks if all the words fit in the grid
-    if ((m_longest > p_num_rows) && (m_longest > p_num_cols))
+    if ((m_longest.second > p_num_rows) && (m_longest.second > p_num_cols))
     {
-      std::string _err("Longest word has " + std::to_string(m_longest)
-                       + " chars and is longer than "
-                       + std::to_string(p_num_rows) + " rows and "
-                       + std::to_string(p_num_cols) + " columns");
-      throw std::runtime_error(_err);
+      // std::string _err("Longest word has " + std::to_string(m_longest)
+      //                  + " chars and is longer than "
+      //                  + std::to_string(p_num_rows) + " rows and "
+      //                  + std::to_string(p_num_cols) + " columns");
+      // throw std::runtime_error(_err);
+      throw dat::error{dat::error_code::WORD_TOO_LONG,
+                       m_longest.first->get_word()};
     }
 
     // fills the collection of \p layout objects
@@ -276,7 +280,7 @@ struct grid
 
   inline index longest_word() const
   {
-    return m_longest;
+    return m_longest.second;
   }
 
   std::optional<const_layout_ite> get_id(index p_row, index p_col) const
@@ -337,28 +341,29 @@ private:
     }
   }
 
-  index longest_word(const permutation &p_permutation)
+  std::pair<entries::const_entry_ite, index>
+  longest_word(const permutation &p_permutation)
   {
     // using namespace dat;
-    index _size{0};
+    std::pair<entries::const_entry_ite, index> _result{p_permutation[0], 0};
 
     for (entries::const_entry_ite _entry : p_permutation)
     {
       auto _current{_entry->get_word().size()};
-      if (static_cast<index>(_current) > _size)
+      if (static_cast<index>(_current) > _result.second)
       {
-        _size = _current;
+        _result = {_entry, _current};
       }
     }
 
-    return _size;
+    return _result;
   }
 
 private:
-  index    m_longest{0};
-  index    m_num_rows{0};
-  index    m_num_cols{0};
-  uint64_t m_permutation_number;
+  std::pair<entries::const_entry_ite, index> m_longest{m_entries->end(), 0};
+  index                                      m_num_rows{0};
+  index                                      m_num_cols{0};
+  uint64_t                                   m_permutation_number;
 
   occupied                       m_occupied;
   std::shared_ptr<const entries> m_entries;

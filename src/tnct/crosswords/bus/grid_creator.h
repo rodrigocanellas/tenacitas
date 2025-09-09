@@ -13,9 +13,11 @@
 #include "tnct/async/dispatcher.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
+#include "tnct/crosswords/dat/error.h"
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/internal/grid_create_error.h"
 #include "tnct/crosswords/evt/internal/grid_create_solved.h"
 #include "tnct/crosswords/evt/internal/grid_create_start.h"
 #include "tnct/crosswords/evt/internal/grid_create_stop.h"
@@ -133,12 +135,25 @@ struct grid_creator
         { p_callback(p_event.permutations); });
   }
 
+  void on_error(std::invocable<dat::error> auto p_callback)
+  {
+    using evt::internal::grid_create_error;
+
+    using queue = container::circular_queue<t_logger, grid_create_error, 5>;
+
+    m_dispatcher.template add_handling<grid_create_error>(
+        "grid-create-error", queue{m_logger},
+        [p_callback](grid_create_error &&p_event)
+        { p_callback(p_event.error); });
+  }
+
 private:
   using dispatcher = tnct::async::dispatcher<
       t_logger, evt::internal::grid_permutations_tried,
       evt::internal::grid_create_solved, evt::internal::grid_create_start,
       evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
-      evt::internal::grid_attempt_configuration>;
+      evt::internal::grid_attempt_configuration,
+      evt::internal::grid_create_error>;
 
 private:
   void on_start()
@@ -298,6 +313,17 @@ private:
                         _result));
       }
       m_dispatcher.clear();
+    }
+    catch (dat::error &_error)
+    {
+      if (const auto _result{
+              m_dispatcher.template publish<evt::internal::grid_create_error>(
+                  _error)};
+          _result != async::result::OK)
+      {
+        TNCT_LOG_ERR(m_logger,
+                     format::fmt("could not publish the  error ", _error))
+      }
     }
     catch (std::exception &_ex)
     {

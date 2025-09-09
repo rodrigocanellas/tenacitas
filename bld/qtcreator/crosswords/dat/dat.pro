@@ -19,5 +19,5 @@ HEADERS +=  \
     $$PRJ_DIR/occupied.h \
     $$PRJ_DIR/orientation.h \
     $$PRJ_DIR/permutation.h \
-    $$PRJ_DIR/word.h
-
+    $$PRJ_DIR/word.h \
+    $$PRJ_DIR/error.h

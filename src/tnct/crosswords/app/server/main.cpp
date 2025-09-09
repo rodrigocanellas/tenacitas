@@ -5,12 +5,10 @@
 
 #include "tnct/crosswords/bus/grid_creator.h"
 #include "tnct/crosswords/dat/entries.h"
+#include "tnct/crosswords/dat/error.h"
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/dat/layout.h"
-#include "tnct/crosswords/evt/internal/grid_create_solved.h"
-#include "tnct/crosswords/evt/internal/grid_create_start.h"
-#include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -26,7 +24,8 @@ using grid_index   = tnct::crosswords::dat::index;
 using grid_layout  = tnct::crosswords::dat::layout;
 using grid_entries = tnct::crosswords::dat::entries;
 using tnct::crosswords::dat::grid;
-using grid_ptr = std::shared_ptr<grid>;
+using grid_error = tnct::crosswords::dat::error;
+using grid_ptr   = std::shared_ptr<grid>;
 
 struct connection
 {
@@ -179,6 +178,16 @@ private:
     send(_out);
   }
 
+  void send_grid_error(grid_error p_error)
+  {
+    TNCT_LOG_ERR(m_logger, fmt(p_error));
+    json _out;
+    _out["response"]    = "error";
+    _out["description"] = fmt(p_error);
+    m_working           = false;
+    send(_out);
+  }
+
   void configure_callbacks()
   {
     m_grid_creator.on_configuration(
@@ -186,6 +195,9 @@ private:
 
     m_grid_creator.on_permutations_tried(
         std::bind_front(&connection::send_permutations, this));
+
+    m_grid_creator.on_error(
+        std::bind_front(&connection::send_grid_error, this));
   }
 
   void deserialize_entries(const json &p_json, grid_entries &p_grid_entries)
