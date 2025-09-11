@@ -175,15 +175,6 @@ body {
   background: linear-gradient(135deg, #92400e 0%, #a16207 100%);
 }
 
-.btn-warning {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: white;
-}
-
-.btn-warning:hover {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-}
-
 /* Status Messages */
 .status-message {
   padding: 1rem;
@@ -355,47 +346,6 @@ canvas {
 .loading {
   animation: pulse 2s infinite;
 }
-
-/* Word Entry Table Styles */
-.word-entry-row input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  background: white;
-}
-
-.word-entry-row input:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
-}
-
-.word-entry-row .word-input {
-  font-family: 'Courier New', monospace;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.word-entry-row .explanation-input {
-  font-family: inherit;
-}
-
-.remove-row-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-  transition: background-color 0.2s;
-}
-
-.remove-row-btn:hover {
-  background: #dc2626;
-}
 </style>
 </head>
 <body>
@@ -410,48 +360,11 @@ canvas {
     <div class="section file-section">
       <h2><span class="icon">📁</span>Load Crossword File</h2>
       <p style="margin-bottom: 1rem; color: #1e40af;">Select a .cross file containing your word entries and explanations.</p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button id="loadButton" class="btn btn-primary">
-          <span class="icon">⬆️</span>Choose File
-        </button>
-        <button id="saveButton" class="btn btn-secondary">
-          <span class="icon">💾</span>Save as .cross
-        </button>
-      </div>
+      <button id="loadButton" class="btn btn-primary">
+        <span class="icon">⬆️</span>Choose File
+      </button>
       <input type="file" id="fileInput" accept=".cross" class="hidden" />
       <div id="fileStatus" class="status-message hidden"></div>
-    </div>
-
-    <!-- Word Entry Editor Section -->
-    <div class="section">
-      <div class="section-header">
-        <h2><span class="icon">✏️</span>Word Entry Editor</h2>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button id="addRowButton" class="btn btn-success">
-            <span class="icon">➕</span>Add Word
-          </button>
-          <button id="clearAllButton" class="btn btn-secondary">
-            <span class="icon">🗑️</span>Clear All
-          </button>
-        </div>
-      </div>
-      <div class="table-container">
-        <table id="wordEntryTable">
-          <thead>
-            <tr>
-              <th style="width: 30%;">Word</th>
-              <th style="width: 60%;">Explanation/Clue</th>
-              <th style="width: 10%;">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="wordEntryTableBody">
-            <!-- Rows will be added dynamically -->
-          </tbody>
-        </table>
-      </div>
-      <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
-        0 entries
-      </div>
     </div>
 
     <!-- Configuration Section -->
@@ -500,30 +413,13 @@ canvas {
           <span class="icon">🖨️</span>Print Solution
         </button>
       </div>
-      
-      <div class="clues-container">
-        <div>
-          <h3><span class="icon">➡️</span>Horizontal Words</h3>
-          <div class="table-container">
-            <table id="horizontalSolution">
-              <thead>
-                <tr><th class="idCol">ID</th><th>Word</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <h3><span class="icon">⬇️</span>Vertical Words</h3>
-          <div class="table-container">
-            <table id="verticalSolution">
-              <thead>
-                <tr><th class="idCol">ID</th><th>Word</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
+      <div class="table-container">
+        <table id="solutionTable">
+          <thead>
+            <tr><th class="idCol">ID</th><th>Orientation</th><th>Word</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
 
@@ -629,7 +525,7 @@ function handleWebSocketMessage(event) {
         text = "❌ Could not generate crossword. Try increasing maximum rows or interval.";
         type = "error";
       } else if (msg.response === "error") {
-        text = `❌ Server Error: ${msg.explanation}`;
+        text = `❌ Server Error: ${msg.description}`;
         type = "error";
       } else {
         text = `📝 ${JSON.stringify(msg, null, 2)}`;
@@ -665,6 +561,9 @@ function updateMessages(text, type = "info") {
   }
 }
 
+// Initialize WebSocket on page load
+window.addEventListener("load", connectWebSocket);
+
 // File loading with enhanced feedback
 document.getElementById("loadButton").onclick = () => {
   document.getElementById("fileInput").click();
@@ -696,9 +595,6 @@ document.getElementById("fileInput").addEventListener("change", (e) => {
       statusEl.className = "status-message status-success";
       statusEl.textContent = `✅ Successfully loaded ${entries.length} word entries!`;
       updateMessages(`📁 Loaded ${entries.length} entries from ${file.name}`, "success");
-      
-      // Update the word entry table with loaded data
-      populateWordEntryTable(entries);
     } catch (error) {
       statusEl.className = "status-message status-error";
       statusEl.textContent = "❌ Error reading file. Please check the format.";
@@ -712,141 +608,6 @@ document.getElementById("fileInput").addEventListener("change", (e) => {
   };
   
   reader.readAsText(file);
-});
-
-// Save functionality
-document.getElementById("saveButton").onclick = () => {
-  const currentEntries = getEntriesFromTable();
-  
-  if (currentEntries.length === 0) {
-    alert("⚠️ No entries to save. Add some words first.");
-    return;
-  }
-  
-  const content = currentEntries
-    .map(entry => `${entry.word}|${entry.explanation}`)
-    .join('\n');
-  
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = window.URL.createObjectURL(blob);
-  
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'crossword.cross';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  window.URL.revokeObjectURL(url);
-  
-  updateMessages(`💾 Saved ${currentEntries.length} entries to crossword.cross`, "success");
-};
-
-// Word Entry Table Management
-function addWordEntryRow(word = '', explanation = '') {
-  const tbody = document.getElementById("wordEntryTableBody");
-  const row = document.createElement("tr");
-  row.className = "word-entry-row";
-  
-  row.innerHTML = `
-    <td>
-      <input type="text" class="word-input" placeholder="Enter word..." value="${word}" 
-             oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '')" maxlength="20">
-    </td>
-    <td>
-      <input type="text" class="explanation-input" placeholder="Enter clue/explanation..." value="${explanation}" maxlength="200">
-    </td>
-    <td style="text-align: center;">
-      <button class="remove-row-btn" onclick="removeWordEntryRow(this)" title="Remove this entry">
-        ❌
-      </button>
-    </td>
-  `;
-  
-  tbody.appendChild(row);
-  updateEntryCount();
-  
-  // Focus on the word input of the new row
-  const wordInput = row.querySelector('.word-input');
-  if (!word) {
-    wordInput.focus();
-  }
-}
-
-function removeWordEntryRow(button) {
-  const row = button.closest('tr');
-  row.remove();
-  updateEntryCount();
-}
-
-function populateWordEntryTable(entriesArray) {
-  const tbody = document.getElementById("wordEntryTableBody");
-  tbody.innerHTML = "";
-  
-  entriesArray.forEach(entry => {
-    addWordEntryRow(entry.word, entry.explanation);
-  });
-  
-  // Add a few empty rows for easy editing
-  if (entriesArray.length > 0) {
-    addWordEntryRow();
-    addWordEntryRow();
-  }
-}
-
-function getEntriesFromTable() {
-  const rows = document.querySelectorAll("#wordEntryTableBody .word-entry-row");
-  const tableEntries = [];
-  
-  rows.forEach(row => {
-    const word = row.querySelector('.word-input').value.trim();
-    const explanation = row.querySelector('.explanation-input').value.trim();
-    
-    if (word && explanation) {
-      tableEntries.push({ word, explanation });
-    }
-  });
-  
-  return tableEntries;
-}
-
-function updateEntryCount() {
-  const validEntries = getEntriesFromTable();
-  const countEl = document.getElementById("entryCount");
-  countEl.textContent = `${validEntries.length} entries`;
-  
-  // Update the global entries array
-  entries = validEntries;
-}
-
-// Button event handlers
-document.getElementById("addRowButton").onclick = () => {
-  addWordEntryRow();
-};
-
-document.getElementById("clearAllButton").onclick = () => {
-  if (confirm("⚠️ Are you sure you want to clear all entries? This action cannot be undone.")) {
-    document.getElementById("wordEntryTableBody").innerHTML = "";
-    entries = [];
-    updateEntryCount();
-    updateMessages("🗑️ All entries cleared", "info");
-  }
-};
-
-// Initialize with some empty rows
-window.addEventListener("load", () => {
-  connectWebSocket();
-  
-  // Add initial empty rows
-  addWordEntryRow();
-  addWordEntryRow();
-  addWordEntryRow();
-});
-
-// Update entries array whenever table changes
-document.addEventListener('input', (e) => {
-  if (e.target.matches('.word-input, .explanation-input')) {
-    updateEntryCount();
-  }
 });
 
 // Enhanced input validation
@@ -897,12 +658,9 @@ function validateInputs() {
     return false;
   }
   
-  // Update entries from table before validation
-  entries = getEntriesFromTable();
-  
   if (entries.length === 0) {
     statusEl.className = "status-message status-error";
-    statusEl.textContent = "❌ Please add some word entries first.";
+    statusEl.textContent = "❌ Please load a crossword file first.";
     return false;
   }
   
@@ -924,9 +682,6 @@ document.getElementById("submitButton").onclick = () => {
   clearPreviousResults();
   updateMessages("🚀 Generating crossword puzzle...", "info");
 
-  // Get fresh entries from table to ensure we have the latest data
-  const currentEntries = getEntriesFromTable();
-
   // Send request
   const request = {
     request: "create",
@@ -934,13 +689,11 @@ document.getElementById("submitButton").onclick = () => {
     cols,
     max_rows,
     interval,
-    entries: currentEntries
+    entries
   };
   
-  console.log("Current entries from table:", currentEntries);
-  console.log("Full request being sent:", JSON.stringify(request, null, 2));
-  
   ws.send(JSON.stringify(request));
+  console.log("Sent request:", request);
 };
 
 // Clear previous results
@@ -964,8 +717,7 @@ function clearPreviousResults() {
   // Clear tables
   document.getElementById("horizontalClues").querySelector("tbody").innerHTML = "";
   document.getElementById("verticalClues").querySelector("tbody").innerHTML = "";
-  document.getElementById("horizontalSolution").querySelector("tbody").innerHTML = "";
-  document.getElementById("verticalSolution").querySelector("tbody").innerHTML = "";
+  document.getElementById("solutionTable").querySelector("tbody").innerHTML = "";
 }
 
 // Enhanced print functions
@@ -1014,11 +766,8 @@ document.getElementById("printButton").onclick = () => {
 };
 
 document.getElementById("printSolutionButton").onclick = () => {
-  const horizSolution = document.getElementById("horizontalSolution");
-  const vertSolution = document.getElementById("verticalSolution");
-  
-  if (horizSolution.querySelector("tbody").children.length === 0 && 
-      vertSolution.querySelector("tbody").children.length === 0) {
+  const solutionTable = document.getElementById("solutionTable");
+  if (solutionTable.querySelector("tbody").children.length === 0) {
     alert("⚠️ No solution to print. Generate a crossword first.");
     return;
   }
@@ -1030,8 +779,6 @@ document.getElementById("printSolutionButton").onclick = () => {
         <title>Crossword Solution</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 20px; }
-          .solution { display: flex; gap: 40px; }
-          .solution > div { flex: 1; }
           table { border-collapse: collapse; width: 100%; }
           th, td { border: 1px solid #333; padding: 8px; text-align: left; }
           th { background: #f5f5f5; }
@@ -1040,10 +787,7 @@ document.getElementById("printSolutionButton").onclick = () => {
       </head>
       <body>
         <h1>✅ Crossword Solution</h1>
-        <div class="solution">
-          <div><h2>➡️ Horizontal Words</h2>${horizSolution.outerHTML}</div>
-          <div><h2>⬇️ Vertical Words</h2>${vertSolution.outerHTML}</div>
-        </div>
+        ${solutionTable.outerHTML}
       </body>
     </html>
   `);
@@ -1056,24 +800,18 @@ document.getElementById("printSolutionButton").onclick = () => {
 
 // Enhanced rendering functions
 function renderSolutionTable(layouts) {
-  const horizTbody = document.getElementById("horizontalSolution").querySelector("tbody");
-  const vertTbody = document.getElementById("verticalSolution").querySelector("tbody");
-  
-  horizTbody.innerHTML = "";
-  vertTbody.innerHTML = "";
+  const tbody = document.getElementById("solutionTable").querySelector("tbody");
+  tbody.innerHTML = "";
   
   layouts.forEach(layout => {
     const row = document.createElement("tr");
+    const orientation = (layout.orientation === "H") ? "Horizontal" : "Vertical";
     row.innerHTML = `
       <td class='idCol'>${layout.id || ""}</td>
+      <td>${orientation}</td>
       <td style="font-weight: 600;">${layout.word || ""}</td>
     `;
-    
-    if (layout.orientation === "H") {
-      horizTbody.appendChild(row);
-    } else {
-      vertTbody.appendChild(row);
-    }
+    tbody.appendChild(row);
   });
 }
 

@@ -95,9 +95,7 @@ private:
 
       deserialize_entries(p_json, _grid_entries);
 
-      TNCT_LOG_INF(m_logger, fmt("Received 'create' request: ", _rows, 'x',
-                                 _cols, ", max rows = ", _max_rows,
-                                 ", interval = ", _interval.count()));
+      TNCT_LOG_INF(m_logger, fmt("JSON: ", p_json.dump()));
 
       if (!m_grid_creator.start(_grid_entries, _rows, _cols, _interval,
                                 _max_rows))
