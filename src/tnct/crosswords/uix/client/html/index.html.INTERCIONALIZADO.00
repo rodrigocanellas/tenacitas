@@ -38,6 +38,7 @@ body {
   display: flex;
   gap: 0.5rem;
   z-index: 10;
+  flex-wrap: wrap;
 }
 
 .lang-btn {
@@ -343,6 +344,12 @@ canvas {
   .content {
     padding: 1rem;
   }
+  
+  .language-selector {
+    position: static;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
 }
 
 /* Section Headers with Actions */
@@ -430,6 +437,7 @@ canvas {
     <div class="language-selector">
       <button class="lang-btn active" data-lang="en" title="English">🇬🇧</button>
       <button class="lang-btn" data-lang="pt" title="Português">🇵🇹</button>
+      <button class="lang-btn" data-lang="pt-br" title="Português Brasil">🇧🇷</button>
       <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
       <button class="lang-btn" data-lang="it" title="Italiano">🇮🇹</button>
     </div>
@@ -685,6 +693,42 @@ var translations = {
     'game.vertical': 'Pistas Verticais',
     'game.clue': 'Pista'
   },
+  'pt-br': {
+    'app.title': 'Cliente de Palavras Cruzadas',
+    'app.subtitle': 'Gerador e solucionador profissional de palavras cruzadas',
+    'file.title': 'Carregar Arquivo de Palavras Cruzadas',
+    'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
+    'file.choose': 'Escolher Arquivo',
+    'file.save': 'Salvar como .cross',
+    'editor.title': 'Editor de Entradas de Palavras',
+    'editor.add': 'Adicionar Palavra',
+    'editor.clear': 'Limpar Tudo',
+    'editor.word': 'Palavra',
+    'editor.clue': 'Explicação/Dica',
+    'editor.actions': 'Ações',
+    'editor.entries': 'entradas',
+    'editor.word_placeholder': 'Digite a palavra...',
+    'editor.clue_placeholder': 'Digite a dica/explicação...',
+    'config.title': 'Configuração da Grade',
+    'config.rows': 'Número de Linhas',
+    'config.cols': 'Número de Colunas',
+    'config.maxrows': 'Máximo de Linhas',
+    'config.interval': 'Intervalo (segundos)',
+    'config.generate': 'Gerar Palavras Cruzadas',
+    'messages.title': 'Mensagens do Servidor',
+    'messages.waiting': 'Aguardando conexão com o servidor...',
+    'solution.title': 'Solução',
+    'solution.print': 'Imprimir Solução',
+    'solution.horizontal': 'Palavras Horizontais',
+    'solution.vertical': 'Palavras Verticais',
+    'solution.word': 'Palavra',
+    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.print': 'Imprimir Jogo',
+    'game.placeholder': 'A grade aparecerá aqui após a geração',
+    'game.horizontal': 'Dicas Horizontais',
+    'game.vertical': 'Dicas Verticais',
+    'game.clue': 'Dica'
+  },
   es: {
     'app.title': 'Cliente de Crucigramas',
     'app.subtitle': 'Generador y solucionador profesional de crucigramas',
@@ -779,7 +823,6 @@ function updateUI() {
     var key = element.getAttribute('data-i18n');
     var translation = translate(key);
     element.textContent = translation;
-    element.textContent = translation;
     console.log('✅ Translated "' + key + '" to "' + translation + '"');
   }
   
@@ -796,6 +839,7 @@ function updateUI() {
   
   // Update config placeholders
   var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
+                         currentLanguage === 'pt-br' ? 'ex.' :
                          currentLanguage === 'es' ? 'ej.' :
                          currentLanguage === 'it' ? 'es.' : 'e.g.';
   
@@ -1212,6 +1256,75 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("fileInput").click();
   };
   
+  document.getElementById("fileInput").addEventListener("change", function(e) {
+    var file = e.target.files[0];
+    var statusEl = document.getElementById("fileStatus");
+    
+    if (!file) return;
+    
+    console.log('📁 Loading file:', file.name);
+    statusEl.className = "status-message loading";
+    statusEl.textContent = "Loading file...";
+    statusEl.classList.remove("hidden");
+    
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        console.log('📄 File content loaded, parsing...');
+        var lines = ev.target.result.split("\n");
+        var newEntries = [];
+        
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line && line.includes("|")) {
+            var parts = line.split("|");
+            if (parts.length >= 2) {
+              newEntries.push({
+                word: parts[0].trim(),
+                explanation: parts[1].trim()
+              });
+            }
+          }
+        }
+        
+        console.log('✅ Parsed entries:', newEntries.length);
+        entries = newEntries;
+        
+        statusEl.className = "status-message status-success";
+        statusEl.textContent = "✅ Successfully loaded " + newEntries.length + " word entries!";
+        updateMessages("📁 Loaded " + newEntries.length + " entries from " + file.name, "success");
+        
+        // Clear existing table and populate with loaded data
+        document.getElementById("wordEntryTableBody").innerHTML = "";
+        for (var j = 0; j < newEntries.length; j++) {
+          addWordEntryRow(newEntries[j].word, newEntries[j].explanation);
+        }
+        
+        // Add a few empty rows for easy editing
+        if (newEntries.length > 0) {
+          addWordEntryRow();
+          addWordEntryRow();
+        }
+        
+        updateEntryCount();
+        
+      } catch (error) {
+        console.error('❌ Error parsing file:', error);
+        statusEl.className = "status-message status-error";
+        statusEl.textContent = "❌ Error reading file. Please check the format.";
+        updateMessages("❌ Failed to load file", "error");
+      }
+    };
+    
+    reader.onerror = function() {
+      console.error('❌ FileReader error');
+      statusEl.className = "status-message status-error";
+      statusEl.textContent = "❌ Failed to read file.";
+    };
+    
+    reader.readAsText(file);
+  });
+  
   document.getElementById("saveButton").onclick = function() {
     var currentEntries = getEntriesFromTable();
     
@@ -1302,6 +1415,94 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     ws.send(JSON.stringify(request));
+  };
+  
+  // Print buttons
+  document.getElementById("printButton").onclick = function() {
+    console.log('🖨️ Print Game button clicked');
+    var canvas = document.getElementById("gridCanvas");
+    if (canvas.classList.contains("hidden")) {
+      alert("⚠️ No crossword grid to print. Generate a crossword first.");
+      return;
+    }
+    
+    var imgData = canvas.toDataURL("image/png");
+    var horizTable = document.getElementById("horizontalClues").outerHTML;
+    var vertTable = document.getElementById("verticalClues").outerHTML;
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + translate('game.title') + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            'img { max-width: 100%; margin-bottom: 20px; }' +
+            '.clues { display: flex; gap: 40px; }' +
+            '.clues > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>🧩 ' + translate('game.title') + '</h1>' +
+          '<img src="' + imgData + '" alt="Crossword Grid" />' +
+          '<div class="clues">' +
+            '<div><h2>➡️ ' + translate('game.horizontal') + '</h2>' + horizTable + '</div>' +
+            '<div><h2>⬇️ ' + translate('game.vertical') + '</h2>' + vertTable + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+  document.getElementById("printSolutionButton").onclick = function() {
+    console.log('🖨️ Print Solution button clicked');
+    var horizSolution = document.getElementById("horizontalSolution");
+    var vertSolution = document.getElementById("verticalSolution");
+    
+    if (horizSolution.querySelector("tbody").children.length === 0 && 
+        vertSolution.querySelector("tbody").children.length === 0) {
+      alert("⚠️ No solution to print. Generate a crossword first.");
+      return;
+    }
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + translate('solution.title') + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            '.solution { display: flex; gap: 40px; }' +
+            '.solution > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>✅ ' + translate('solution.title') + '</h1>' +
+          '<div class="solution">' +
+            '<div><h2>➡️ ' + translate('solution.horizontal') + '</h2>' + horizSolution.outerHTML + '</div>' +
+            '<div><h2>⬇️ ' + translate('solution.vertical') + '</h2>' + vertSolution.outerHTML + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
   };
   
   console.log('✅ Initialization complete!');

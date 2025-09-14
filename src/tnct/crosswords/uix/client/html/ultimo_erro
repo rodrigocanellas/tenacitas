@@ -1,0 +1,66 @@
+O botão 'Sobre' não está traduzido e quando clico, independente do país selecionado, aparece 
+
+'
+
+about.title
+
+📖 about.how_to_use
+
+about.description
+
+about.save_info
+
+palavra|explicação um par por linha
+
+about.grid_config
+
+about.example
+
+about.solution
+
+about.game
+
+🚀 about.future
+
+about.future_desc
+
+about.feature1
+
+about.feature2
+
+about.feature3
+
+about.feature4
+
+about.feature5
+
+📋 about.terms
+
+about.term1
+
+about.term2
+
+about.term3
+
+'
+
+E na aba 'Console' aparece:
+
+'
+
+showAboutModal() called index.html:627:11
+
+Creating new modal... index.html:637:11
+
+Modal created and should be visible index.html:679:11
+
+'
+
+
+Here are key strategies to optimize your usage:
+Batch your requests: Group related questions or tasks into a single message instead of sending them separately. Ask multiple questions at once, especially when working with long documents.
+Use Projects effectively: When working on related tasks, use our Project feature to store relevant documents in the knowledge base. When you add documents to a project, they're cached, and every time you reference that content, cached tokens count less toward your usage limits.
+Avoid re-uploading files: Don't re-upload files within the same conversation since Claude remembers the context from your conversation.
+Start new conversations strategically: Begin new chats for different topics or tasks rather than continuing lengthy conversations.
+Review and edit messages: Before sending, ensure clarity and reduce follow-ups by being specific and concise in your initial requests.
+These practices will help you extend your usage time before hitting the five-hour reset limits on your Pro Plan.

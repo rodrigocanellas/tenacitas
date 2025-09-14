@@ -5,6 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crossword Client</title>
 <style>
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.5);
+  /* Centering properties */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex; /* Show as flex when .show class is added */
+}
+
+
+
+.modal-content {
+  background-color: #fff;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 800px;
+}
+
+
 /* Modern CSS Reset and Base Styles */
 * {
   box-sizing: border-box;
@@ -38,6 +69,7 @@ body {
   display: flex;
   gap: 0.5rem;
   z-index: 10;
+  flex-wrap: wrap;
 }
 
 .lang-btn {
@@ -63,12 +95,39 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* About Button in Header */
+.about-button-header {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+}
+
+.about-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.about-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
 .header {
   position: relative;
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
   padding: 2rem;
   text-align: center;
+  overflow: visible;
 }
 
 .header h1 {
@@ -109,10 +168,34 @@ body {
   margin-bottom: 1rem;
 }
 
-/* File Loading Section */
+/* File Operations Section - Green theme */
 .file-section {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  border: 1px solid #3b82f6;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #059669;
+}
+
+/* Word Editor Section - Green theme (same as file) */
+.editor-section {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #059669;
+}
+
+/* Configuration Section - Gray theme */
+.config-section {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #64748b;
+}
+
+/* Server Messages Section - Gray theme (same as config) */
+.messages-section {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #64748b;
+}
+
+/* Results Sections - Orange theme */
+.results-section {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  border: 1px solid #ea580c;
 }
 
 /* Configuration Section */
@@ -133,6 +216,24 @@ body {
   color: #374151;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.help-icon {
+  cursor: help;
+  color: #6b7280;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.help-icon:hover {
+  background: #e5e7eb;
+  color: #374151;
 }
 
 .input-group input {
@@ -151,6 +252,55 @@ body {
 
 .input-group input:invalid {
   border-color: #ef4444;
+}
+
+/* Custom styles for config inputs */
+.config-input {
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.config-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.config-input:invalid {
+  border-color: #ef4444;
+}
+
+.config-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  height: 1.2rem;
+  display: block;
+}
+
+.help-tooltip {
+  cursor: help;
+  color: #6b7280;
+  font-size: 0.8rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.help-tooltip:hover {
+  background: #e5e7eb;
+  color: #374151;
 }
 
 /* Buttons */
@@ -336,12 +486,29 @@ canvas {
     grid-template-columns: 1fr;
   }
   
+  /* Responsive config grid for the new inline layout */
+  .config-params-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
   .header h1 {
     font-size: 2rem;
   }
   
   .content {
     padding: 1rem;
+  }
+  
+  .language-selector {
+    position: static;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .about-button-header {
+    position: static;
+    text-align: center;
+    margin-bottom: 1rem;
   }
 }
 
@@ -424,14 +591,26 @@ canvas {
 </style>
 </head>
 <body>
+
+
 <div class="container">
   <div class="header">
+    <!-- About Button in Top Left -->
+    <div class="about-button-header">
+      <button class="about-btn" onclick="openAboutModal()">
+        ℹ️ <span data-i18n="about.button">Sobre</span>
+      </button>
+    </div>
+    
     <!-- Language Selector -->
     <div class="language-selector">
       <button class="lang-btn active" data-lang="en" title="English">🇬🇧</button>
       <button class="lang-btn" data-lang="pt" title="Português">🇵🇹</button>
+      <button class="lang-btn" data-lang="pt-br" title="Português Brasil">🇧🇷</button>
       <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
       <button class="lang-btn" data-lang="it" title="Italiano">🇮🇹</button>
+      <button class="lang-btn" data-lang="fr" title="Français">🇫🇷</button>
+      <button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button>
     </div>
     
     <h1><span class="icon">🧩</span><span data-i18n="app.title">Crossword Client</span></h1>
@@ -456,7 +635,7 @@ canvas {
     </div>
 
     <!-- Word Entry Editor Section -->
-    <div class="section">
+    <div class="section editor-section">
       <div class="section-header">
         <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
@@ -488,24 +667,37 @@ canvas {
     </div>
 
     <!-- Configuration Section -->
-    <div class="section">
+    <div class="section config-section">
       <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
-      <div class="config-grid">
+      
+      <!-- Title Input - Separate Row -->
+      <div style="margin-bottom: 1.5rem;">
         <div class="input-group">
-          <label for="rowsInput" data-i18n="config.rows">Number of Rows</label>
-          <input type="number" id="rowsInput" min="1" placeholder="e.g., 15">
+          <label for="titleInput" data-i18n="config.title_label">Título</label>
+          <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
         </div>
-        <div class="input-group">
-          <label for="colsInput" data-i18n="config.cols">Number of Columns</label>
-          <input type="number" id="colsInput" min="1" placeholder="e.g., 15">
+      </div>
+      
+      <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
+      <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="display: flex; flex-direction: column;">
+          <label class="config-label" data-i18n="config.rows">Number of Rows</label>
+          <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
         </div>
-        <div class="input-group">
-          <label for="maxRowsInput" data-i18n="config.maxrows">Maximum Rows</label>
-          <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20">
+        <div style="display: flex; flex-direction: column;">
+          <label class="config-label" data-i18n="config.cols">Number of Columns</label>
+          <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
         </div>
-        <div class="input-group">
-          <label for="intervalInput" data-i18n="config.interval">Interval (seconds)</label>
-          <input type="number" id="intervalInput" min="1" placeholder="e.g., 5">
+        <div style="display: flex; flex-direction: column;">
+          <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
+          <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
+            <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
+          </div>
         </div>
       </div>
       
@@ -516,7 +708,7 @@ canvas {
     </div>
 
     <!-- Messages Section -->
-    <div class="section">
+    <div class="section messages-section">
       <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
       <div class="messages-container">
         <ul id="messages" class="messages-list">
@@ -526,7 +718,7 @@ canvas {
     </div>
 
     <!-- Solution Section -->
-    <div class="section">
+    <div class="section results-section">
       <div class="section-header">
         <h2><span class="icon">✅</span><span data-i18n="solution.title">Solution</span></h2>
         <button id="printSolutionButton" class="btn btn-print">
@@ -561,7 +753,7 @@ canvas {
     </div>
 
     <!-- Game Section -->
-    <div class="section">
+    <div class="section results-section">
       <div class="section-header">
         <h2><span class="icon">🎮</span><span data-i18n="game.title">Crossword Game</span></h2>
         <button id="printButton" class="btn btn-print">
@@ -603,7 +795,16 @@ canvas {
 </div>
 
 <script>
-console.log('🚀 JavaScript started loading...');
+console.log('JavaScript started loading...');
+
+// Global function for About modal - MUST BE FIRST
+function openAboutModal() {
+  document.getElementById('aboutModal').classList.add('show');
+}
+
+function closeAboutModal() {
+  document.getElementById('aboutModal').classList.remove('show');
+}
 
 // Global variables
 var currentLanguage = 'en';
@@ -611,11 +812,32 @@ var ws;
 var entries = [];
 var rows = 0, cols = 0, max_rows = 0, interval = 0;
 
-// Translations object
+// Translations object with French and German added
 var translations = {
   en: {
-    'app.title': 'Crossword Client',
-    'app.subtitle': 'Professional crossword puzzle generator and solver',
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Crosswords creator',
+    'about.button': 'About',
+    'about.title': 'About o tnct.crosswords',
+    "about.how_to_use": "How to use:",
+    "about.description": "'tnct.crosswords' is an application that allows anyone to create a crossword game! Just enter the words and explanations, and configure some parameters for game creation.",
+    "about.save_info": "You can save the set of words and clues by clicking the 'Save as .cross' button. The file is plain text (no formatting) with entries like:",
+    "about.format_example": "one pair per line.",
+    "about.grid_config": "In 'Grid Configuration' you define the parameters for 'tnct.crosswords' to try to generate the puzzle.",
+    "about.example": "For example, if you choose 17 rows, 15 columns, maximum 20 rows and an interval of 3 seconds, the program will try 17x15 for 3 seconds, then 18x16, 19x17 and finally 20x18.",
+    "about.solution": "If successful, the 'Solution' section will display two tables: horizontal words and vertical words. You can print them with the 'Print Solution' button.",
+    "about.game": "In 'Crossword Game' you will see the puzzle grid, two tables with horizontal and vertical clues, and you can print with the 'Print Game' button.",
+    "about.future": "Future",
+    "about.future_desc": "Currently, 'tnct.crosswords' only generates puzzles, but in the future we may implement:",
+    "about.feature1": "Send the puzzle to friends",
+    "about.feature2": "Solve puzzles directly in the browser",
+    "about.feature3": "Create dictionaries to reuse words",
+    "about.feature4": "Online tournaments",
+    "about.feature5": "...",
+    "about.terms": "Terms of use",
+    "about.term1": "Words used in the puzzles are the sole responsibility of their authors.",
+    "about.term2": "Currently no word sets are stored on our servers.",
+    'about.file_line_format':'word|explanation',
     'file.title': 'Load Crossword File',
     'file.description': 'Select a .cross file containing your word entries and explanations.',
     'file.choose': 'Choose File',
@@ -647,11 +869,35 @@ var translations = {
     'game.placeholder': 'Grid will appear here after generation',
     'game.horizontal': 'Horizontal Clues',
     'game.vertical': 'Vertical Clues',
-    'game.clue': 'Clue'
+    'game.clue': 'Clue',
+    'config.title_label': 'Title',
+    'config.title_placeholder': 'Enter game title...',
+    "config.interval_help": "Time limit for each grid size attempt" 
   },
   pt: {
-    'app.title': 'Cliente de Palavras Cruzadas',
-    'app.subtitle': 'Gerador e solucionador profissional de palavras cruzadas',
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Criador de Palavras Cruzadas',
+    'about.button': 'Sobre',
+    'about.title': 'Sobre o tnct.crosswords',
+    "about.how_to_use": "Como usar:",
+    "about.description": "O 'tnct.crosswords' é uma aplicação que permite a qualquer pessoa criar um jogo de palavras cruzadas! Basta escrever as palavras e as explicações, e configurar alguns parâmetros para a criação do jogo.",
+    "about.save_info": "É possível guardar o conjunto de palavras e explicações criadas clicando no botão 'Guardar como .cross', que é apenas um ficheiro de texto simples (sem formatação) com as palavras e explicações guardadas assim:",
+    "about.format_example": "um par por linha.",
+    "about.grid_config": "Em 'Configuração da Grelha' são definidos os parâmetros para o 'tnct.crosswords' tentar criar o jogo.",
+    "about.example": "Por exemplo, se escolher 17 linhas, 15 colunas, máximo de 20 linhas e intervalo de 3 segundos, o programa vai tentar sucessivamente criar o jogo nestas dimensões, até encontrar uma solução.",
+    "about.solution": "Se for possível criar o jogo, em 'Solução' vão ser apresentadas duas tabelas, uma com as palavras horizontais e outra com as verticais. Também é possível imprimir com o botão 'Imprimir Solução'.",
+    "about.game": "Em 'Jogo de Palavras Cruzadas' será apresentada a grelha do jogo, duas tabelas com as pistas horizontais e verticais, e através do botão 'Imprimir Jogo' é possível imprimir.",
+    "about.future": "Futuro",
+    "about.future_desc": "De momento, o 'tnct.crosswords' apenas permite criar o jogo, mas futuramente poderemos implementar:",
+    "about.feature1": "Enviar o jogo para os seus amigos",
+    "about.feature2": "Resolver o jogo diretamente no navegador",
+    "about.feature3": "Criar dicionários para reutilizar palavras",
+    "about.feature4": "Torneios online",
+    "about.feature5": "...",
+    "about.terms": "Termos de uso",
+    "about.term1": "As palavras usadas nos jogos são da inteira responsabilidade dos autores.",
+    "about.term2": "Atualmente nenhum conjunto de palavras é guardado nos nossos servidores.",
+    'about.file_line_format':'palavra|explicação',
     'file.title': 'Carregar Ficheiro de Palavras Cruzadas',
     'file.description': 'Seleccione um ficheiro .cross contendo as suas entradas de palavras e explicações.',
     'file.choose': 'Escolher Ficheiro',
@@ -683,11 +929,95 @@ var translations = {
     'game.placeholder': 'A grelha aparecerá aqui após a geração',
     'game.horizontal': 'Pistas Horizontais',
     'game.vertical': 'Pistas Verticais',
-    'game.clue': 'Pista'
+    'game.clue': 'Pista',    
+    'config.title_label': 'Título',
+    'config.title_placeholder': 'Digite o título do jogo...',
+    "config.interval_help": "Tempo limite para cada tentativa de tamanho da grelha"
+  },
+  'pt-br': {
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Criador de Palavras Cruzadas',
+    'about.title' : "Sobre o tnct.crosswords",
+    'about.button': 'Sobre',
+    "about.how_to_use": "Como usar:",
+    "about.description": "'tnct.crosswords' é uma aplicação que permite que qualquer pessoa crie um jogo de palavras cruzadas! Basta digitar as palavras e as explicações, e configurar alguns parâmetros para criação do jogo.",
+    "about.save_info": "É possível salvar o conjunto de palavras e explicações criadas clicando no botão 'Guardar como .cross', que é apenas um arquivo texto puro (sem formatação) com as palavras e explicações salvas assim:",
+    "about.format_example": "um par por linha.",
+    "about.grid_config": "Em 'Configuração do Grid' são definidos os parâmetros para 'tnct.crosswords' tentar criar o jogo.",
+    "about.example": "Por exemplo, se escolher 17 linhas, 15 colunas, máximo de 20 linhas e intervalo de 3 segundos, o programa vai tentar sucessivamente criar o jogo nestas dimensões, até encontrar uma solução.",
+    "about.solution": "Se for possível criar o jogo, em 'Solução' vão ser exibidas duas tabelas, uma com as palavras horizontais e outra com as verticais. Também é possível imprimir com o botão 'Imprimir Solução'.",
+    "about.game": "Em 'Jogo de Palavras Cruzadas' será exibida a grade com o jogo, duas tabelas com as pistas horizontais e verticais, e através do botão 'Imprimir Jogo' é possível imprimir.",
+    "about.future": "Futuro",
+    "about.future_desc": "No momento, 'tnct.crosswords' permite apenas a criação do jogo, mas futuramente podemos implementar:",
+    "about.feature1": "Enviar o jogo para seus amigos",
+    "about.feature2": "Resolver o jogo direto no navegador",
+    "about.feature3": "Criar dicionários para reaproveitar palavras",
+    "about.feature4": "Torneios online",
+    "about.feature5": "...",
+    "about.terms": "Termos de uso",
+    "about.term1": "As palavras usadas nos jogos são de inteira responsabilidade dos autores.",
+    "about.term2": "Atualmente nenhum conjunto de palavras é guardado nos nossos servidores.",
+    'about.file_line_format':'palavra|explicação',
+    'file.title': 'Carregar Arquivo de Palavras Cruzadas',
+    'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
+    'file.choose': 'Escolher Arquivo',
+    'file.save': 'Salvar como .cross',
+    'editor.title': 'Editor de Entradas de Palavras',
+    'editor.add': 'Adicionar Palavra',
+    'editor.clear': 'Limpar Tudo',
+    'editor.word': 'Palavra',
+    'editor.clue': 'Explicação/Dica',
+    'editor.actions': 'Ações',
+    'editor.entries': 'entradas',
+    'editor.word_placeholder': 'Digite a palavra...',
+    'editor.clue_placeholder': 'Digite a dica/explicação...',
+    'config.title': 'Configuração da Grade',
+    'config.rows': 'Número de Linhas',
+    'config.cols': 'Número de Colunas',
+    'config.maxrows': 'Máximo de Linhas',
+    'config.interval': 'Intervalo (segundos)',
+    'config.generate': 'Gerar Palavras Cruzadas',
+    'messages.title': 'Mensagens do Servidor',
+    'messages.waiting': 'Aguardando conexão com o servidor...',
+    'solution.title': 'Solução',
+    'solution.print': 'Imprimir Solução',
+    'solution.horizontal': 'Palavras Horizontais',
+    'solution.vertical': 'Palavras Verticais',
+    'solution.word': 'Palavra',
+    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.print': 'Imprimir Jogo',
+    'game.placeholder': 'A grade aparecerá aqui após a geração',
+    'game.horizontal': 'Dicas Horizontais',
+    'game.vertical': 'Dicas Verticais',
+    'game.clue': 'Dica',
+    'config.title_label': 'Título',
+    'config.title_placeholder': 'Digite o título do jogo...',
+    "config.interval_help": "Tempo limite para cada tentativa de tamanho do grid"    
   },
   es: {
-    'app.title': 'Cliente de Crucigramas',
-    'app.subtitle': 'Generador y solucionador profesional de crucigramas',
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Creador de Crucigramas',
+    'about.button': 'Acerca de',
+    'about.title': 'Acerca tnct.crosswords',
+    "about.how_to_use": "Cómo usar:",
+    "about.description": "'tnct.crosswords' es una aplicación que permite a cualquiera crear un crucigrama. Solo hay que escribir las palabras y sus explicaciones, y configurar algunos parámetros para la creación.",
+    "about.save_info": "Puede guardar el conjunto de palabras y explicaciones haciendo clic en 'Guardar como .cross'. El archivo es texto plano (sin formato) con entradas como:",
+    "about.format_example": "un par por línea.",
+    "about.grid_config": "En 'Configuración de la Cuadrícula' se definen los parámetros para que 'tnct.crosswords' intente crear el crucigrama.",
+    "about.example": "Por ejemplo, si elige 17 filas, 15 columnas, máximo 20 filas y un intervalo de 3 segundos, el programa probará 17x15 durante 3 s, luego 18x16, 19x17 y finalmente 20x18.",
+    "about.solution": "Si tiene éxito, en 'Solución' se mostrarán dos tablas: palabras horizontales y verticales. Se pueden imprimir con el botón 'Imprimir Solución'.",
+    "about.game": "En 'Juego de Crucigramas' aparecerá la cuadrícula con el juego, dos tablas con las pistas horizontales y verticales, y podrá imprimir con 'Imprimir Juego'.",
+    "about.future": "Futuro",
+    "about.future_desc": "Actualmente, 'tnct.crosswords' solo genera crucigramas, pero en el futuro se podrá:",
+    "about.feature1": "Enviar el juego a sus amigos",
+    "about.feature2": "Resolver el crucigrama en el navegador",
+    "about.feature3": "Crear diccionarios para reutilizar palabras",
+    "about.feature4": "Torneos en línea",
+    "about.feature5": "...",
+    "about.terms": "Términos de uso",
+    "about.term1": "Las palabras usadas en los juegos son responsabilidad exclusiva de sus autores.",
+    "about.term2": "Actualmente no se guarda ningún conjunto de palabras en nuestros servidores.",
+    'about.file_line_format':'palabra|explicación',
     'file.title': 'Cargar Archivo de Crucigramas',
     'file.description': 'Seleccione un archivo .cross que contenga sus entradas de palabras y explicaciones.',
     'file.choose': 'Elegir Archivo',
@@ -719,11 +1049,35 @@ var translations = {
     'game.placeholder': 'La cuadrícula aparecerá aquí después de la generación',
     'game.horizontal': 'Pistas Horizontales',
     'game.vertical': 'Pistas Verticales',
-    'game.clue': 'Pista'
+    'game.clue': 'Pista',
+    'config.title_label': 'Título',
+    'config.title_placeholder': 'Ingrese el título del juego...',
+    "config.interval_help": "Tiempo límite para cada intento de tamaño de cuadrícula"
   },
   it: {
-    'app.title': 'Client per Cruciverba',
-    'app.subtitle': 'Generatore e risolutore professionale di cruciverba',
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Creatore di Cruciverba',
+    'about.button': 'Informazioni',
+    'about.title': 'Informazioni sul tnct.crosswords',
+    "about.how_to_use": "Come usare:",
+    "about.description": "'tnct.crosswords' è un'applicazione che permette a chiunque di creare un cruciverba! Basta inserire le parole e le spiegazioni, e configurare alcuni parametri per la creazione.",
+    "about.save_info": "È possibile salvare l'elenco di parole e definizioni cliccando sul pulsante 'Salva come .cross'. Il file è semplice testo (senza formattazione) con voci come:",
+    "about.format_example": "una coppia per riga.",
+    "about.grid_config": "In 'Configurazione Griglia' si definiscono i parametri con cui 'tnct.crosswords' proverà a creare il cruciverba.",
+    "about.example": "Ad esempio, scegliendo 17 righe, 15 colonne, massimo 20 righe e intervallo di 3 secondi, il programma proverà 17x15 per 3 s, poi 18x16, 19x17 e infine 20x18.",
+    "about.solution": "Se riesce, la sezione 'Soluzione' mostrerà due tabelle: parole orizzontali e verticali. È possibile stamparle con il pulsante 'Stampa Soluzione'.",
+    "about.game": "In 'Gioco Cruciverba' verrà mostrata la griglia, due tabelle con indizi orizzontali e verticali, e si può stampare con 'Stampa Gioco'.",
+    "about.future": "Futuro",
+    "about.future_desc": "Al momento, 'tnct.crosswords' crea solo il gioco, ma in futuro potremo implementare:",
+    "about.feature1": "Inviare il cruciverba agli amici",
+    "about.feature2": "Risolvere il gioco direttamente nel browser",
+    "about.feature3": "Creare dizionari per riutilizzare parole",
+    "about.feature4": "Tornei online",
+    "about.feature5": "...",
+    "about.terms": "Termini di utilizzo",
+    "about.term1": "Le parole usate nei giochi sono responsabilità esclusiva degli autori.",
+    "about.term2": "Attualmente nessun insieme di parole è salvato sui nostri server.",
+    'about.file_line_format':'parola|definizione',
     'file.title': 'Carica File Cruciverba',
     'file.description': 'Seleziona un file .cross contenente le tue voci di parole e spiegazioni.',
     'file.choose': 'Scegli File',
@@ -755,11 +1109,134 @@ var translations = {
     'game.placeholder': 'La griglia apparirà qui dopo la generazione',
     'game.horizontal': 'Indizi Orizzontali',
     'game.vertical': 'Indizi Verticali',
-    'game.clue': 'Indizio'
+    'game.clue': 'Indizio',
+    'config.title_label': 'Titolo',
+    'config.title_placeholder': 'Inserisci il titolo del gioco...',
+    "config.interval_help": "Tempo limite per ogni tentativo di dimensione della griglia"
+  },
+  fr: {
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Créateur de Mots Croisés',
+    'about.button': 'À propos',
+    'about.title': 'À propos du tnct.crosswords',
+    "about.how_to_use": "Comment utiliser :",
+    "about.description": "'tnct.crosswords' est une application qui permet à tout le monde de créer un jeu de mots croisés ! Il suffit de saisir les mots et leurs explications, puis de configurer quelques paramètres de génération.",
+    "about.save_info": "Vous pouvez sauvegarder vos mots et définitions en cliquant sur le bouton 'Sauvegarder comme .cross'. Le fichier est un simple texte (sans formatage) avec des entrées comme :",
+    "about.format_example": "une paire par ligne.",
+    "about.grid_config": "Dans 'Configuration de la Grille', vous définissez les paramètres pour que 'tnct.crosswords' tente de générer le jeu.",
+    "about.example": "Par exemple, si vous choisissez 17 lignes, 15 colonnes, maximum 20 lignes et un intervalle de 3 secondes, le programme essaiera 17x15 pendant 3 s, puis 18x16, 19x17 et enfin 20x18.",
+    "about.solution": "Si une solution est trouvée, la section 'Solution' affichera deux tableaux : les mots horizontaux et les mots verticaux. Vous pouvez les imprimer avec le bouton 'Imprimer la Solution'.",
+    "about.game": "Dans 'Jeu de Mots Croisés', vous verrez la grille, deux tableaux avec les indices horizontaux et verticaux, et vous pourrez imprimer avec le bouton 'Imprimer le Jeu'.",
+    "about.future": "Futur",
+    "about.future_desc": "Actuellement, 'tnct.crosswords' ne fait que générer des grilles, mais à l'avenir nous pourrons ajouter :",
+    "about.feature1": "Envoyer la grille à vos amis",
+    "about.feature2": "Résoudre les grilles directement dans le navigateur",
+    "about.feature3": "Créer des dictionnaires pour réutiliser des mots",
+    "about.feature4": "Tournois en ligne",
+    "about.feature5": "...",
+    "about.terms": "Conditions d'utilisation",
+    "about.term1": "Les mots utilisés dans les jeux sont de la responsabilité exclusive de leurs auteurs.",
+    "about.term2": "Actuellement, aucun ensemble de mots n'est stocké sur nos serveurs.",
+    'about.file_line_format':'mot|définition',
+    'file.title': 'Charger un Fichier de Mots Croisés',
+    'file.description': 'Sélectionnez un fichier .cross contenant vos entrées de mots et explications.',
+    'file.choose': 'Choisir un Fichier',
+    'file.save': 'Sauvegarder comme .cross',
+    'editor.title': 'Éditeur d\'Entrées de Mots',
+    'editor.add': 'Ajouter un Mot',
+    'editor.clear': 'Tout Effacer',
+    'editor.word': 'Mot',
+    'editor.clue': 'Explication/Indice',
+    'editor.actions': 'Actions',
+    'editor.entries': 'entrées',
+    'editor.word_placeholder': 'Entrez le mot...',
+    'editor.clue_placeholder': 'Entrez l\'indice/explication...',
+    'config.title': 'Configuration de la Grille',
+    'config.rows': 'Nombre de Lignes',
+    'config.cols': 'Nombre de Colonnes',
+    'config.maxrows': 'Maximum de Lignes',
+    'config.interval': 'Intervalle (secondes)',
+    'config.generate': 'Générer les Mots Croisés',
+    'messages.title': 'Messages du Serveur',
+    'messages.waiting': 'En attente de la connexion au serveur...',
+    'solution.title': 'Solution',
+    'solution.print': 'Imprimer la Solution',
+    'solution.horizontal': 'Mots Horizontaux',
+    'solution.vertical': 'Mots Verticaux',
+    'solution.word': 'Mot',
+    'game.title': 'Jeu de Mots Croisés',
+    'game.print': 'Imprimer le Jeu',
+    'game.placeholder': 'La grille apparaîtra ici après la génération',
+    'game.horizontal': 'Indices Horizontaux',
+    'game.vertical': 'Indices Verticaux',
+    'game.clue': 'Indice',
+    'config.title_label': 'Titre',
+    'config.title_placeholder': 'Entrez le titre du jeu...',
+    "config.interval_help": "Durée limite pour chaque tentative de taille de grille"
+  },
+  de: {
+    'app.title': 'tnct.crosswords',
+    'app.subtitle': 'Kreuzworträtsel-Ersteller',
+    'about.button': 'Über',
+    'about.title': 'Über den tnct.crosswords',
+    "about.how_to_use": "So verwenden Sie es:",
+    "about.description": "'tnct.crosswords' ist eine Anwendung, mit der jeder ein Kreuzworträtsel erstellen kann! Einfach Wörter und Erklärungen eingeben und einige Parameter für die Erstellung festlegen.",
+    "about.save_info": "Sie können die Wortliste speichern, indem Sie auf 'Als .cross speichern' klicken. Die Datei ist reiner Text (ohne Formatierung) mit Einträgen wie:",
+    "about.format_example": "ein Paar pro Zeile.",
+    "about.grid_config": "Unter 'Raster-Konfiguration' legen Sie die Parameter fest, mit denen 'tnct.crosswords' versucht, das Rätsel zu erzeugen.",
+    "about.example": "Zum Beispiel: 17 Zeilen, 15 Spalten, maximal 20 Zeilen und Intervall 3 Sekunden → das Programm versucht 17x15, dann 18x16, 19x17 und schließlich 20x18.",
+    "about.solution": "Wenn erfolgreich, zeigt der Abschnitt 'Lösung' zwei Tabellen: horizontale und vertikale Wörter. Diese können mit 'Lösung Drucken' ausgedruckt werden.",
+    "about.game": "Im Abschnitt 'Kreuzworträtsel-Spiel' sehen Sie das Raster, zwei Tabellen mit horizontalen und vertikalen Hinweisen und können alles mit 'Spiel Drucken' ausdrucken.",
+    "about.future": "Zukunft",
+    "about.future_desc": "Derzeit erstellt 'tnct.crosswords' nur Rätsel, aber in Zukunft könnten wir implementieren:",
+    "about.feature1": "Das Rätsel an Freunde senden",
+    "about.feature2": "Das Rätsel direkt im Browser lösen",
+    "about.feature3": "Wörterbücher erstellen, um Wörter wiederzuverwenden",
+    "about.feature4": "Online-Turniere",
+    "about.feature5": "...",
+    "about.terms": "Nutzungsbedingungen",
+    "about.term1": "Die in den Spielen verwendeten Wörter liegen in der alleinigen Verantwortung der Autoren.",
+    "about.term2": "Derzeit werden keine Wortlisten auf unseren Servern gespeichert.",
+    'about.file_line_format':'wort|erklärung',
+    'file.title': 'Kreuzworträtsel-Datei Laden',
+    'file.description': 'Wählen Sie eine .cross-Datei mit Ihren Worteinträgen und Erklärungen.',
+    'file.choose': 'Datei Wählen',
+    'file.save': 'Als .cross Speichern',
+    'editor.title': 'Wort-Eingabe-Editor',
+    'editor.add': 'Wort Hinzufügen',
+    'editor.clear': 'Alles Löschen',
+    'editor.word': 'Wort',
+    'editor.clue': 'Erklärung/Hinweis',
+    'editor.actions': 'Aktionen',
+    'editor.entries': 'Einträge',
+    'editor.word_placeholder': 'Wort eingeben...',
+    'editor.clue_placeholder': 'Hinweis/Erklärung eingeben...',
+    'config.title': 'Raster-Konfiguration',
+    'config.rows': 'Anzahl der Zeilen',
+    'config.cols': 'Anzahl der Spalten',
+    'config.maxrows': 'Maximale Zeilen',
+    'config.interval': 'Intervall (Sekunden)',
+    'config.generate': 'Kreuzworträtsel Generieren',
+    'messages.title': 'Server-Nachrichten',
+    'messages.waiting': 'Warten auf Serververbindung...',
+    'solution.title': 'Lösung',
+    'solution.print': 'Lösung Drucken',
+    'solution.horizontal': 'Horizontale Wörter',
+    'solution.vertical': 'Vertikale Wörter',
+    'solution.word': 'Wort',
+    'game.title': 'Kreuzworträtsel-Spiel',
+    'game.print': 'Spiel Drucken',
+    'game.placeholder': 'Das Raster wird hier nach der Generierung angezeigt',
+    'game.horizontal': 'Horizontale Hinweise',
+    'game.vertical': 'Vertikale Hinweise',
+    'game.clue': 'Hinweis',
+    'config.title_label': 'Titel',
+    'config.title_placeholder': 'Spieltitel eingeben...',
+    "config.interval_help": "Zeitlimit für jeden Versuch einer Rastergröße" 
   }
 };
 
-console.log('📚 Translations loaded:', Object.keys(translations));
+console.log('Translations loaded:', Object.keys(translations));
 
 // Translation function
 function translate(key) {
@@ -769,20 +1246,31 @@ function translate(key) {
 
 // Update UI function
 function updateUI() {
-  console.log('🔄 Updating UI to language:', currentLanguage);
+  console.log('Updating UI to language:', currentLanguage);
   
   var elements = document.querySelectorAll('[data-i18n]');
-  console.log('🏷️ Found elements with data-i18n:', elements.length);
-  
-  for (var i = 0; i < elements.length; i++) {
-    var element = elements[i];
-    var key = element.getAttribute('data-i18n');
-    var translation = translate(key);
-    element.textContent = translation;
-    element.textContent = translation;
-    console.log('✅ Translated "' + key + '" to "' + translation + '"');
-  }
-  
+  console.log('Found elements with data-i18n:', elements.length);
+
+    for (var i = 0; i < elements.length; i++) {
+      var element = elements[i];
+      var key = element.getAttribute('data-i18n');
+      var translation = translate(key);
+      
+      if (!translation) continue;
+
+      if (element.classList.contains("help-tooltip")) {
+        // mantém o "?" visível e põe a tradução no tooltip
+        element.setAttribute("title", translation);
+      } else if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
+        // já tratado mais abaixo (placeholder), mas fica aqui por segurança
+        element.placeholder = translation;
+      } else {
+        element.textContent = translation;
+      }
+
+      console.log('Translated "' + key + '" to "' + translation + '"');
+    }
+
   // Update placeholders
   var wordInputs = document.querySelectorAll('.word-input');
   for (var i = 0; i < wordInputs.length; i++) {
@@ -794,10 +1282,24 @@ function updateUI() {
     explanationInputs[i].placeholder = translate('editor.clue_placeholder');
   }
   
+  // Tratar placeholders especiais
+  var elementsWithPlaceholder = document.querySelectorAll('[data-i18n-placeholder]');
+  for (var i = 0; i < elementsWithPlaceholder.length; i++) {
+    var element = elementsWithPlaceholder[i];
+    var key = element.getAttribute('data-i18n-placeholder');
+    var translation = translate(key);
+    if (translation) {
+      element.placeholder = translation;
+    }
+  }
+  
   // Update config placeholders
   var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
+                         currentLanguage === 'pt-br' ? 'ex.' :
                          currentLanguage === 'es' ? 'ej.' :
-                         currentLanguage === 'it' ? 'es.' : 'e.g.';
+                         currentLanguage === 'it' ? 'es.' :
+                         currentLanguage === 'fr' ? 'ex.' :
+                         currentLanguage === 'de' ? 'z.B.' : 'e.g.';
   
   document.getElementById('rowsInput').placeholder = placeholderPrefix + ', 15';
   document.getElementById('colsInput').placeholder = placeholderPrefix + ', 15';
@@ -809,10 +1311,10 @@ function updateUI() {
 
 // Switch language function
 function switchLanguage(lang) {
-  console.log('🔀 Switching language to:', lang);
+  console.log('Switching language to:', lang);
   
   if (!translations[lang]) {
-    console.error('❌ Language not found:', lang);
+    console.error('Language not found:', lang);
     return;
   }
   
@@ -827,7 +1329,7 @@ function switchLanguage(lang) {
   var activeBtn = document.querySelector('[data-lang="' + lang + '"]');
   if (activeBtn) {
     activeBtn.classList.add('active');
-    console.log('✅ Set active button for:', lang);
+    console.log('Set active button for:', lang);
   }
   
   updateUI();
@@ -835,9 +1337,9 @@ function switchLanguage(lang) {
   // Save to localStorage
   try {
     localStorage.setItem('crossword-language', lang);
-    console.log('💾 Saved language to localStorage:', lang);
+    console.log('Saved language to localStorage:', lang);
   } catch (e) {
-    console.log('⚠️ LocalStorage not available');
+    console.log('LocalStorage not available');
   }
 }
 
@@ -848,23 +1350,23 @@ function connectWebSocket() {
     
     ws.onopen = function() {
       console.log("WebSocket connected");
-      updateMessages("✅ Connected to crossword server", "success");
+      updateMessages("Connected to crossword server", "success");
     };
     
     ws.onerror = function(e) {
       console.error("WebSocket error", e);
-      updateMessages("❌ Failed to connect to server. Make sure your crossword server is running on localhost:9002", "error");
+      updateMessages("Failed to connect to server. Make sure your crossword server is running on localhost:9002", "error");
     };
     
     ws.onclose = function() {
       console.log("WebSocket disconnected");
-      updateMessages("⚠️ Disconnected from server", "warning");
+      updateMessages("Disconnected from server", "warning");
     };
     
     ws.onmessage = handleWebSocketMessage;
   } catch (error) {
     console.error("WebSocket connection failed:", error);
-    updateMessages("❌ WebSocket connection failed", "error");
+    updateMessages("WebSocket connection failed", "error");
   }
 }
 
@@ -876,7 +1378,7 @@ function handleWebSocketMessage(event) {
       renderSolutionTable(msg.layouts);
       renderGrid(msg);
       renderClues(msg.layouts);
-      updateMessages("🎉 Crossword generated successfully!", "success");
+      updateMessages("Crossword generated successfully!", "success");
     } else {
       var text = "";
       var type = "info";
@@ -887,25 +1389,25 @@ function handleWebSocketMessage(event) {
         var perms = parseInt(msg.num_permutations && msg.num_permutations.replace(/"/g, "")) || 0;
         var memAvail = parseInt(msg.mem_available && msg.mem_available.replace(/"/g, "")) || 0;
         var memUsed = parseInt(msg.mem_used && msg.mem_used.replace(/"/g, "")) || 0;
-        text = "🔄 Trying: " + r + " × " + c + " grid, " + perms.toLocaleString() + " permutations, " + memAvail + "MB available, " + memUsed + "MB used";
+        text = "Trying: " + r + " × " + c + " grid, " + perms.toLocaleString() + " permutations, " + memAvail + "MB available, " + memUsed + "MB used";
       } else if (msg.response === "tries") {
         var perms = parseInt(msg.permutations && msg.permutations.replace(/"/g, "")) || 0;
-        text = "⏳ Tried " + perms.toLocaleString() + " permutations...";
+        text = "Tried " + perms.toLocaleString() + " permutations...";
       } else if (msg.response === "unsolved") {
-        text = "❌ Could not generate crossword. Try increasing maximum rows or interval.";
+        text = "Could not generate crossword. Try increasing maximum rows or interval.";
         type = "error";
       } else if (msg.response === "error") {
-        text = "❌ Server Error: " + msg.explanation;
+        text = "Server Error: " + msg.explanation;
         type = "error";
       } else {
-        text = "📝 " + JSON.stringify(msg, null, 2);
+        text = JSON.stringify(msg, null, 2);
       }
       
       updateMessages(text, type);
     }
   } catch (err) {
     console.error("Invalid message format:", err);
-    updateMessages("⚠️ Received invalid message from server", "warning");
+    updateMessages("Received invalid message from server", "warning");
   }
 }
 
@@ -929,6 +1431,16 @@ function updateMessages(text, type) {
   }
 }
 
+function clearMessages() {
+  var messagesList = document.getElementById("messages");
+  messagesList.innerHTML = '';
+  var emptyLi = document.createElement("li");
+  emptyLi.className = "messages-empty";
+  emptyLi.setAttribute("data-i18n", "messages.waiting");
+  emptyLi.textContent = translate("messages.waiting");
+  messagesList.appendChild(emptyLi);
+}
+
 // Word entry functions
 function addWordEntryRow(word, explanation) {
   word = word || '';
@@ -948,7 +1460,7 @@ function addWordEntryRow(word, explanation) {
     '</td>' +
     '<td style="text-align: center;">' +
       '<button class="remove-row-btn" onclick="removeWordEntryRow(this)" title="Remove this entry">' +
-        '❌' +
+        '✘' +
       '</button>' +
     '</td>';
   
@@ -1159,53 +1671,53 @@ function validateAndAssign(e, assignFunc) {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🎯 DOM Content Loaded - Starting initialization');
+  console.log('DOM Content Loaded - Starting initialization');
   
   // Load saved language
   var savedLang = 'en';
   try {
     savedLang = localStorage.getItem('crossword-language') || 'en';
-    console.log('📖 Loaded saved language:', savedLang);
+    console.log('Loaded saved language:', savedLang);
   } catch (e) {
-    console.log('⚠️ LocalStorage not available');
+    console.log('LocalStorage not available');
   }
   
   // Set up language buttons
-  console.log('🏁 Setting up language buttons...');
+  console.log('Setting up language buttons...');
   var langButtons = document.querySelectorAll('.lang-btn');
-  console.log('🔘 Found language buttons:', langButtons.length);
+  console.log('Found language buttons:', langButtons.length);
   
   for (var i = 0; i < langButtons.length; i++) {
     var btn = langButtons[i];
     var lang = btn.getAttribute('data-lang');
-    console.log('🔧 Setting up button for:', lang);
+    console.log('Setting up button for:', lang);
     
     // Use closure to capture lang value
     (function(language) {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('🖱️ Language button clicked:', language);
+        console.log('Language button clicked:', language);
         switchLanguage(language);
       });
     })(lang);
   }
   
   // Initialize language
-  console.log('🌍 Initializing language system...');
+  console.log('Initializing language system...');
   switchLanguage(savedLang);
   
   // Connect WebSocket
-  console.log('🔌 Connecting to WebSocket...');
+  console.log('Connecting to WebSocket...');
   connectWebSocket();
   
   // Add initial word entry rows
-  console.log('📝 Adding initial word entry rows...');
+  console.log('Adding initial word entry rows...');
   addWordEntryRow();
   addWordEntryRow();
   addWordEntryRow();
   
   // Set up other event listeners
-  console.log('🎛️ Setting up other event listeners...');
+  console.log('Setting up other event listeners...');
   
   // File operations
   document.getElementById("loadButton").onclick = function() {
@@ -1218,7 +1730,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!file) return;
     
-    console.log('📁 Loading file:', file.name);
+    console.log('Loading file:', file.name);
     statusEl.className = "status-message loading";
     statusEl.textContent = "Loading file...";
     statusEl.classList.remove("hidden");
@@ -1226,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var reader = new FileReader();
     reader.onload = function(ev) {
       try {
-        console.log('📄 File content loaded, parsing...');
+        console.log('File content loaded, parsing...');
         var lines = ev.target.result.split("\n");
         var newEntries = [];
         
@@ -1243,12 +1755,12 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
         
-        console.log('✅ Parsed entries:', newEntries.length);
+        console.log('Parsed entries:', newEntries.length);
         entries = newEntries;
         
         statusEl.className = "status-message status-success";
-        statusEl.textContent = "✅ Successfully loaded " + newEntries.length + " word entries!";
-        updateMessages("📁 Loaded " + newEntries.length + " entries from " + file.name, "success");
+        statusEl.textContent = "Successfully loaded " + newEntries.length + " word entries!";
+        updateMessages("Loaded " + newEntries.length + " entries from " + file.name, "success");
         
         // Clear existing table and populate with loaded data
         document.getElementById("wordEntryTableBody").innerHTML = "";
@@ -1265,17 +1777,17 @@ document.addEventListener('DOMContentLoaded', function() {
         updateEntryCount();
         
       } catch (error) {
-        console.error('❌ Error parsing file:', error);
+        console.error('Error parsing file:', error);
         statusEl.className = "status-message status-error";
-        statusEl.textContent = "❌ Error reading file. Please check the format.";
-        updateMessages("❌ Failed to load file", "error");
+        statusEl.textContent = "Error reading file. Please check the format.";
+        updateMessages("Failed to load file", "error");
       }
     };
     
     reader.onerror = function() {
-      console.error('❌ FileReader error');
+      console.error('FileReader error');
       statusEl.className = "status-message status-error";
-      statusEl.textContent = "❌ Failed to read file.";
+      statusEl.textContent = "Failed to read file.";
     };
     
     reader.readAsText(file);
@@ -1285,7 +1797,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var currentEntries = getEntriesFromTable();
     
     if (currentEntries.length === 0) {
-      alert("⚠️ No entries to save. Add some words first.");
+      alert("No entries to save. Add some words first.");
       return;
     }
     
@@ -1304,7 +1816,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
     
-    updateMessages("💾 Saved " + currentEntries.length + " entries to crossword.cross", "success");
+    updateMessages("Saved " + currentEntries.length + " entries to crossword.cross", "success");
   };
   
   // Add/Clear buttons
@@ -1313,11 +1825,11 @@ document.addEventListener('DOMContentLoaded', function() {
   };
   
   document.getElementById("clearAllButton").onclick = function() {
-    if (confirm("⚠️ Are you sure you want to clear all entries? This action cannot be undone.")) {
+    if (confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
       document.getElementById("wordEntryTableBody").innerHTML = "";
       entries = [];
       updateEntryCount();
-      updateMessages("🗑️ All entries cleared", "info");
+      updateMessages("All entries cleared", "info");
     }
   };
   
@@ -1343,23 +1855,25 @@ document.addEventListener('DOMContentLoaded', function() {
   // Submit button
   document.getElementById("submitButton").onclick = function() {
     if (!ws || ws.readyState !== WebSocket.OPEN) {
-      alert("❌ WebSocket not connected. Please check if your server is running.");
+      alert("WebSocket not connected. Please check if your server is running.");
       return;
     }
     
     if (!rows || !cols || !max_rows || !interval) {
-      alert("❌ All fields must be filled with positive numbers.");
+      alert("All fields must be filled with positive numbers.");
       return;
     }
     
     entries = getEntriesFromTable();
     
     if (entries.length === 0) {
-      alert("❌ Please add some word entries first.");
+      alert("Please add some word entries first.");
       return;
     }
     
-    updateMessages("🚀 Generating crossword puzzle...", "info");
+    // Clear messages before starting generation
+    clearMessages();
+    updateMessages("Generating crossword puzzle...", "info");
 
     var request = {
       request: "create",
@@ -1373,10 +1887,140 @@ document.addEventListener('DOMContentLoaded', function() {
     ws.send(JSON.stringify(request));
   };
   
-  console.log('✅ Initialization complete!');
+  // Print buttons
+  document.getElementById("printButton").onclick = function() {
+    console.log('Print Game button clicked');
+    var canvas = document.getElementById("gridCanvas");
+    if (canvas.classList.contains("hidden")) {
+      alert("No crossword grid to print. Generate a crossword first.");
+      return;
+    }
+    
+    // Obter o título do input ou usar o padrão
+    var gameTitle = document.getElementById("titleInput").value.trim() || translate('game.title');
+    
+    var imgData = canvas.toDataURL("image/png");
+    var horizTable = document.getElementById("horizontalClues").outerHTML;
+    var vertTable = document.getElementById("verticalClues").outerHTML;
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + gameTitle + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            'h1 { text-align: center; margin-bottom: 30px; color: #1e293b; }' +
+            'img { max-width: 100%; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; }' +
+            '.clues { display: flex; gap: 40px; }' +
+            '.clues > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>' + gameTitle + '</h1>' +
+          '<img src="' + imgData + '" alt="Crossword Grid" />' +
+          '<div class="clues">' +
+            '<div><h2>' + translate('game.horizontal') + '</h2>' + horizTable + '</div>' +
+            '<div><h2>' + translate('game.vertical') + '</h2>' + vertTable + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+  document.getElementById("printSolutionButton").onclick = function() {
+    console.log('Print Solution button clicked');
+    var horizSolution = document.getElementById("horizontalSolution");
+    var vertSolution = document.getElementById("verticalSolution");
+    
+    if (horizSolution.querySelector("tbody").children.length === 0 && 
+        vertSolution.querySelector("tbody").children.length === 0) {
+      alert("No solution to print. Generate a crossword first.");
+      return;
+    }
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + translate('solution.title') + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            '.solution { display: flex; gap: 40px; }' +
+            '.solution > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>' + translate('solution.title') + '</h1>' +
+          '<div class="solution">' +
+            '<div><h2>' + translate('solution.horizontal') + '</h2>' + horizSolution.outerHTML + '</div>' +
+            '<div><h2>' + translate('solution.vertical') + '</h2>' + vertSolution.outerHTML + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+  
+  console.log('Initialization complete!');
 });
 
-console.log('🏁 JavaScript loading complete!');
+console.log('JavaScript loading complete!');
 </script>
+
+<!-- About Modal -->
+<div id="aboutModal" class="modal">
+  <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">
+      <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;" data-i18n="about.title"></h2>
+      <button onclick="closeAboutModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; color: #6b7280;">✕</button>
+    </div>
+    <div style="font-size: 1rem; line-height: 1.7; color: #374151;">
+      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📖 <span data-i18n="about.how_to_use"></span></h3>
+      <p style="margin-bottom: 1rem;" data-i18n="about.description"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.save_info"></p>
+      <p style="font-family: monospace; background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin: 1rem 0;" data-i18n="about.file_line_format"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.format_example"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.grid_config"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.example"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.solution"></p>
+      <p style="margin-bottom: 1rem;" data-i18n="about.game"></p>
+      
+      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">🚀 <span data-i18n="about.future"></span></h3>
+      <p style="margin-bottom: 1rem;" data-i18n="about.future_desc"></p>
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature1"></li>
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature2"></li>
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature3"></li>
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature4"></li>
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature5"></li>
+      </ul>
+      
+      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📋 <span data-i18n="about.terms"></span></h3>
+      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.term1"></li>
+        <li style="margin-bottom: 0.5rem;" data-i18n="about.term2"></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

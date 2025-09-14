@@ -3,6 +3,7 @@
 #include <ixwebsocket/IXWebSocketServer.h>
 #include <nlohmann/json.hpp>
 
+#include "tnct/crosswords/app/server/translations.h"
 #include "tnct/crosswords/bus/grid_creator.h"
 #include "tnct/crosswords/dat/entries.h"
 #include "tnct/crosswords/dat/error.h"
@@ -26,6 +27,7 @@ using grid_entries = tnct::crosswords::dat::entries;
 using tnct::crosswords::dat::grid;
 using grid_error = tnct::crosswords::dat::error;
 using grid_ptr   = std::shared_ptr<grid>;
+using tnct::crosswords::app::translations;
 
 struct connection
 {
@@ -64,6 +66,11 @@ struct connection
       TNCT_LOG_INF(m_logger, "'stop' request");
       stop_creating();
     }
+    else if (_payload.value("request", "") == "translation")
+    {
+      TNCT_LOG_INF(m_logger, fmt("'translation' request: ", _payload.dump()));
+      send_translation(_payload);
+    }
     else
     {
       TNCT_LOG_ERR(m_logger,
@@ -77,6 +84,20 @@ struct connection
   }
 
 private:
+  void send_translation(const json &p_json)
+  {
+    json _out;
+    _out["response"] = "translation";
+    const auto _lang{p_json.at("lang").get<std::string>()};
+    _out["lang"] = _lang;
+    const auto _translation{m_translations.get(_lang)};
+    if (_translation.has_value())
+    {
+      _out["translations"] = json::parse(_translation.value());
+      send(_out);
+    }
+  }
+
   void stop_creating()
   {
     m_grid_creator.stop();
@@ -234,7 +255,10 @@ private:
   std::shared_ptr<ix::WebSocket> m_socket;
   grid_creator                   m_grid_creator;
   bool                           m_working{false};
+  static const translations      m_translations;
 };
+
+const translations connection::m_translations;
 
 using connection_ptr = std::unique_ptr<connection>;
 using connections    = std::vector<connection_ptr>;

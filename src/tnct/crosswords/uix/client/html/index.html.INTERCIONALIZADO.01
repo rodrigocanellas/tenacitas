@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crossword Client</title>
+<style>
+/* Modern CSS Reset and Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Language Selector */
+.language-selector {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.lang-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.lang-btn.active {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* About Button in Header */
+.about-button-header {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+}
+
+.about-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.about-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.header {
+  position: relative;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  overflow: visible;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.content {
+  padding: 2rem;
+}
+
+.section {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.section h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section h3 {
+  color: #475569;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* File Operations Section - Green theme */
+.file-section {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #059669;
+}
+
+/* Word Editor Section - Green theme (same as file) */
+.editor-section {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1px solid #059669;
+}
+
+/* Configuration Section - Gray theme */
+.config-section {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #64748b;
+}
+
+/* Server Messages Section - Gray theme (same as config) */
+.messages-section {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid #64748b;
+}
+
+/* Results Sections - Orange theme */
+.results-section {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  border: 1px solid #ea580c;
+}
+
+/* Configuration Section */
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.help-icon {
+  cursor: help;
+  color: #6b7280;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+}
+
+.help-icon:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.input-group input {
+  padding: 0.75rem;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.input-group input:invalid {
+  border-color: #ef4444;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+.btn-print {
+  background: linear-gradient(135deg, #7c2d12 0%, #92400e 100%);
+  color: white;
+}
+
+.btn-print:hover {
+  background: linear-gradient(135deg, #92400e 0%, #a16207 100%);
+}
+
+/* Status Messages */
+.status-message {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.status-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+/* Messages Section */
+.messages-container {
+  background: #1f2937;
+  border-radius: 6px;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.messages-list {
+  list-style: none;
+}
+
+.messages-list li {
+  background: #374151;
+  color: #f3f4f6;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  border-left: 3px solid #4f46e5;
+}
+
+.messages-list li:last-child {
+  margin-bottom: 0;
+}
+
+.messages-empty {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Tables */
+.table-container {
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+tr:hover {
+  background: #f8fafc;
+}
+
+th.idCol, td.idCol {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+/* Canvas */
+.canvas-container {
+  text-align: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+}
+
+canvas {
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 100%;
+  height: auto;
+}
+
+/* Clues Layout */
+.clues-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .clues-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .config-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .content {
+    padding: 1rem;
+  }
+  
+  .language-selector {
+    position: static;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+  
+  .about-button-header {
+    position: static;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+}
+
+/* Section Headers with Actions */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header h2,
+.section-header h3 {
+  margin: 0;
+}
+
+/* Hidden elements */
+.hidden {
+  display: none !important;
+}
+
+/* Icons (using Unicode symbols) */
+.icon {
+  font-size: 1.2em;
+  margin-right: 0.25rem;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading {
+  animation: pulse 2s infinite;
+}
+
+/* Word Entry Table Styles */
+.word-entry-row input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.word-entry-row input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.word-entry-row .word-input {
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.word-entry-row .explanation-input {
+  font-family: inherit;
+}
+
+.remove-row-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s;
+}
+
+.remove-row-btn:hover {
+  background: #dc2626;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <!-- About Button in Top Left -->
+    <div class="about-button-header">
+      <button class="about-btn" onclick="showAboutModal()">
+        ℹ️ <span data-i18n="about.button">Sobre</span>
+      </button>
+    </div>
+    
+    <!-- Language Selector -->
+    <div class="language-selector">
+      <button class="lang-btn active" data-lang="en" title="English">🇬🇧</button>
+      <button class="lang-btn" data-lang="pt" title="Português">🇵🇹</button>
+      <button class="lang-btn" data-lang="pt-br" title="Português Brasil">🇧🇷</button>
+      <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
+      <button class="lang-btn" data-lang="it" title="Italiano">🇮🇹</button>
+      <button class="lang-btn" data-lang="fr" title="Français">🇫🇷</button>
+      <button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button>
+    </div>
+    
+    <h1><span class="icon">🧩</span><span data-i18n="app.title">Crossword Client</span></h1>
+    <p data-i18n="app.subtitle">Professional crossword puzzle generator and solver</p>
+  </div>
+
+  <div class="content">
+    <!-- File Loading Section -->
+    <div class="section file-section">
+      <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
+      <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button id="loadButton" class="btn btn-primary">
+          <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
+        </button>
+        <button id="saveButton" class="btn btn-secondary">
+          <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
+        </button>
+      </div>
+      <input type="file" id="fileInput" accept=".cross" class="hidden" />
+      <div id="fileStatus" class="status-message hidden"></div>
+    </div>
+
+    <!-- Word Entry Editor Section -->
+    <div class="section editor-section">
+      <div class="section-header">
+        <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button id="addRowButton" class="btn btn-success">
+            <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
+          </button>
+          <button id="clearAllButton" class="btn btn-secondary">
+            <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
+          </button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="wordEntryTable">
+          <thead>
+            <tr>
+              <th style="width: 30%;" data-i18n="editor.word">Word</th>
+              <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
+              <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="wordEntryTableBody">
+            <!-- Rows will be added dynamically -->
+          </tbody>
+        </table>
+      </div>
+      <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
+        0 <span data-i18n="editor.entries">entries</span>
+      </div>
+    </div>
+
+    <!-- Configuration Section -->
+    <div class="section config-section">
+      <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
+      <div class="config-grid">
+        <div class="input-group">
+          <label for="rowsInput" data-i18n="config.rows">Number of Rows</label>
+          <input type="number" id="rowsInput" min="1" placeholder="e.g., 15">
+        </div>
+        <div class="input-group">
+          <label for="colsInput" data-i18n="config.cols">Number of Columns</label>
+          <input type="number" id="colsInput" min="1" placeholder="e.g., 15">
+        </div>
+        <div class="input-group">
+          <label for="maxRowsInput" data-i18n="config.maxrows">Maximum Rows</label>
+          <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20">
+        </div>
+        <div class="input-group">
+          <label for="intervalInput">
+            <span data-i18n="config.interval">Interval (seconds)</span>
+            <span class="help-icon" title="Time limit for each grid size attempt">?</span>
+          </label>
+          <input type="number" id="intervalInput" min="1" placeholder="e.g., 5">
+        </div>
+      </div>
+      
+      <button id="submitButton" class="btn btn-success">
+        <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
+      </button>
+      <div id="statusMessage" class="status-message hidden"></div>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="section messages-section">
+      <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
+      <div class="messages-container">
+        <ul id="messages" class="messages-list">
+          <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Solution Section -->
+    <div class="section results-section">
+      <div class="section-header">
+        <h2><span class="icon">✅</span><span data-i18n="solution.title">Solution</span></h2>
+        <button id="printSolutionButton" class="btn btn-print">
+          <span class="icon">🖨️</span><span data-i18n="solution.print">Print Solution</span>
+        </button>
+      </div>
+      
+      <div class="clues-container">
+        <div>
+          <h3><span class="icon">➡️</span><span data-i18n="solution.horizontal">Horizontal Words</span></h3>
+          <div class="table-container">
+            <table id="horizontalSolution">
+              <thead>
+                <tr><th class="idCol">ID</th><th data-i18n="solution.word">Word</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3><span class="icon">⬇️</span><span data-i18n="solution.vertical">Vertical Words</span></h3>
+          <div class="table-container">
+            <table id="verticalSolution">
+              <thead>
+                <tr><th class="idCol">ID</th><th data-i18n="solution.word">Word</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Section -->
+    <div class="section results-section">
+      <div class="section-header">
+        <h2><span class="icon">🎮</span><span data-i18n="game.title">Crossword Game</span></h2>
+        <button id="printButton" class="btn btn-print">
+          <span class="icon">🖨️</span><span data-i18n="game.print">Print Game</span>
+        </button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="gridCanvas" class="hidden"></canvas>
+        <div id="canvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div>
+      </div>
+
+      <div class="clues-container">
+        <div>
+          <h3><span class="icon">➡️</span><span data-i18n="game.horizontal">Horizontal Clues</span></h3>
+          <div class="table-container">
+            <table id="horizontalClues">
+              <thead>
+                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3><span class="icon">⬇️</span><span data-i18n="game.vertical">Vertical Clues</span></h3>
+          <div class="table-container">
+            <table id="verticalClues">
+              <thead>
+                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+console.log('JavaScript started loading...');
+
+// Global function for About modal - MUST BE FIRST
+function showAboutModal() {
+  console.log('showAboutModal() called');
+  
+  // Check if modal already exists
+  var existingModal = document.getElementById("aboutModal");
+  if (existingModal) {
+    console.log('Modal found, showing existing modal');
+    existingModal.style.display = 'flex';
+    return;
+  }
+  
+  console.log('Creating new modal...');
+  
+  // Create modal HTML using translations
+  var modalHtml = `
+  <div id="aboutModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem;">
+    <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">
+        <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;">${translate('about.title')}</h2>
+        <button onclick="closeAboutModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; color: #6b7280;">✕</button>
+      </div>
+      <div style="font-size: 1rem; line-height: 1.7; color: #374151;">
+        <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📖 ${translate('about.how_to_use')}</h3>
+        <p style="margin-bottom: 1rem;">${translate('about.description')}</p>
+        <p style="margin-bottom: 1rem;">${translate('about.save_info')}</p>
+        <p style="font-family: monospace; background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin: 1rem 0;">palavra|explicação</p>
+        <p style="margin-bottom: 1rem;">${translate('about.format_example')}</p>
+        <p style="margin-bottom: 1rem;">${translate('about.grid_config')}</p>
+        <p style="margin-bottom: 1rem;">${translate('about.example')}</p>
+        <p style="margin-bottom: 1rem;">${translate('about.solution')}</p>
+        <p style="margin-bottom: 1rem;">${translate('about.game')}</p>
+        
+        <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">🚀 ${translate('about.future')}</h3>
+        <p style="margin-bottom: 1rem;">${translate('about.future_desc')}</p>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+          <li style="margin-bottom: 0.5rem;">${translate('about.feature1')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.feature2')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.feature3')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.feature4')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.feature5')}</li>
+        </ul>
+        
+        <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📋 ${translate('about.terms')}</h3>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+          <li style="margin-bottom: 0.5rem;">${translate('about.term1')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.term2')}</li>
+          <li style="margin-bottom: 0.5rem;">${translate('about.term3')}</li>
+        </ul>
+      </div>
+    </div>
+  </div>`;
+  
+  // Add modal to document
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  console.log('Modal created and should be visible');
+}
+
+function closeAboutModal() {
+  console.log('closeAboutModal() called');
+  var modal = document.getElementById("aboutModal");
+  if (modal) {
+    modal.style.display = 'none';
+    console.log('Modal hidden');
+  }
+}
+
+// Global variables
+var currentLanguage = 'en';
+var ws;
+var entries = [];
+var rows = 0, cols = 0, max_rows = 0, interval = 0;
+
+// Translations object with French and German added
+var translations = {
+  en: {
+    'app.title': 'Crossword Client',
+    'app.subtitle': 'Professional crossword puzzle generator and solver',
+    'about.button': 'About',
+    'about.title': 'About Crossword Client',
+    'about.how_to_use': 'How to Use',
+    'about.description': 'This is a professional crossword puzzle generator that connects to a server for creating crosswords.',
+    'about.save_info': 'You can save and load your word lists using the .cross file format.',
+    'about.format_example': 'one pair per line',
+    'about.grid_config': 'Configure the grid size and generation parameters.',
+    'about.example': 'Add words and explanations, then generate your crossword.',
+    'about.solution': 'View the complete solution with all words.',
+    'about.game': 'Print the puzzle for solving.',
+    'about.future': 'Future Features',
+    'about.future_desc': 'Coming soon:',
+    'about.feature1': 'Online solving interface',
+    'about.feature2': 'Multiple puzzle formats',
+    'about.feature3': 'Word difficulty analysis',
+    'about.feature4': 'Automated clue generation',
+    'about.feature5': 'Export to various formats',
+    'about.terms': 'Terms',
+    'about.term1': 'Free to use for personal purposes',
+    'about.term2': 'Server connection required',
+    'about.term3': 'Save your work regularly',
+    'file.title': 'Load Crossword File',
+    'file.description': 'Select a .cross file containing your word entries and explanations.',
+    'file.choose': 'Choose File',
+    'file.save': 'Save as .cross',
+    'editor.title': 'Word Entry Editor',
+    'editor.add': 'Add Word',
+    'editor.clear': 'Clear All',
+    'editor.word': 'Word',
+    'editor.clue': 'Explanation/Clue',
+    'editor.actions': 'Actions',
+    'editor.entries': 'entries',
+    'editor.word_placeholder': 'Enter word...',
+    'editor.clue_placeholder': 'Enter clue/explanation...',
+    'config.title': 'Grid Configuration',
+    'config.rows': 'Number of Rows',
+    'config.cols': 'Number of Columns',
+    'config.maxrows': 'Maximum Rows',
+    'config.interval': 'Interval (seconds)',
+    'config.generate': 'Generate Crossword',
+    'messages.title': 'Server Messages',
+    'messages.waiting': 'Waiting for server connection...',
+    'solution.title': 'Solution',
+    'solution.print': 'Print Solution',
+    'solution.horizontal': 'Horizontal Words',
+    'solution.vertical': 'Vertical Words',
+    'solution.word': 'Word',
+    'game.title': 'Crossword Game',
+    'game.print': 'Print Game',
+    'game.placeholder': 'Grid will appear here after generation',
+    'game.horizontal': 'Horizontal Clues',
+    'game.vertical': 'Vertical Clues',
+    'game.clue': 'Clue'
+  },
+  pt: {
+    'app.title': 'Cliente de Palavras Cruzadas',
+    'app.subtitle': 'Gerador e solucionador profissional de palavras cruzadas',
+    'about.button': 'Sobre',
+    'about.title': 'Sobre o Cliente de Palavras Cruzadas',
+    'about.how_to_use': 'Como Usar',
+    'about.description': 'Este é um gerador profissional de palavras cruzadas que se conecta a um servidor para criar palavras cruzadas.',
+    'about.save_info': 'Pode guardar e carregar as suas listas de palavras usando o formato de ficheiro .cross.',
+    'about.format_example': 'um par por linha',
+    'about.grid_config': 'Configure o tamanho da grelha e os parâmetros de geração.',
+    'about.example': 'Adicione palavras e explicações, depois gere as suas palavras cruzadas.',
+    'about.solution': 'Veja a solução completa com todas as palavras.',
+    'about.game': 'Imprima o puzzle para resolver.',
+    'about.future': 'Funcionalidades Futuras',
+    'about.future_desc': 'Em breve:',
+    'about.feature1': 'Interface de resolução online',
+    'about.feature2': 'Múltiplos formatos de puzzle',
+    'about.feature3': 'Análise de dificuldade das palavras',
+    'about.feature4': 'Geração automática de pistas',
+    'about.feature5': 'Exportação para vários formatos',
+    'about.terms': 'Termos',
+    'about.term1': 'Grátis para uso pessoal',
+    'about.term2': 'Ligação ao servidor necessária',
+    'about.term3': 'Guarde o seu trabalho regularmente',
+    'file.title': 'Carregar Ficheiro de Palavras Cruzadas',
+    'file.description': 'Seleccione um ficheiro .cross contendo as suas entradas de palavras e explicações.',
+    'file.choose': 'Escolher Ficheiro',
+    'file.save': 'Guardar como .cross',
+    'editor.title': 'Editor de Entradas de Palavras',
+    'editor.add': 'Adicionar Palavra',
+    'editor.clear': 'Limpar Tudo',
+    'editor.word': 'Palavra',
+    'editor.clue': 'Explicação/Pista',
+    'editor.actions': 'Acções',
+    'editor.entries': 'entradas',
+    'editor.word_placeholder': 'Introduza palavra...',
+    'editor.clue_placeholder': 'Introduza pista/explicação...',
+    'config.title': 'Configuração da Grelha',
+    'config.rows': 'Número de Linhas',
+    'config.cols': 'Número de Colunas',
+    'config.maxrows': 'Máximo de Linhas',
+    'config.interval': 'Intervalo (segundos)',
+    'config.generate': 'Gerar Palavras Cruzadas',
+    'messages.title': 'Mensagens do Servidor',
+    'messages.waiting': 'Aguardando ligação ao servidor...',
+    'solution.title': 'Solução',
+    'solution.print': 'Imprimir Solução',
+    'solution.horizontal': 'Palavras Horizontais',
+    'solution.vertical': 'Palavras Verticais',
+    'solution.word': 'Palavra',
+    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.print': 'Imprimir Jogo',
+    'game.placeholder': 'A grelha aparecerá aqui após a geração',
+    'game.horizontal': 'Pistas Horizontais',
+    'game.vertical': 'Pistas Verticais',
+    'game.clue': 'Pista'
+  },
+  'pt-br': {
+    'app.title': 'Cliente de Palavras Cruzadas',
+    'app.subtitle': 'Gerador e solucionador profissional de palavras cruzadas',
+    'about.button': 'Sobre',
+    'about.title': 'Sobre o Cliente de Palavras Cruzadas',
+    'about.how_to_use': 'Como Usar',
+    'about.description': 'Este é um gerador profissional de palavras cruzadas que se conecta a um servidor para criar palavras cruzadas.',
+    'about.save_info': 'Você pode salvar e carregar suas listas de palavras usando o formato de arquivo .cross.',
+    'about.format_example': 'um par por linha',
+    'about.grid_config': 'Configure o tamanho da grade e os parâmetros de geração.',
+    'about.example': 'Adicione palavras e explicações, depois gere suas palavras cruzadas.',
+    'about.solution': 'Veja a solução completa com todas as palavras.',
+    'about.game': 'Imprima o puzzle para resolver.',
+    'about.future': 'Recursos Futuros',
+    'about.future_desc': 'Em breve:',
+    'about.feature1': 'Interface de resolução online',
+    'about.feature2': 'Múltiplos formatos de puzzle',
+    'about.feature3': 'Análise de dificuldade das palavras',
+    'about.feature4': 'Geração automática de dicas',
+    'about.feature5': 'Exportação para vários formatos',
+    'about.terms': 'Termos',
+    'about.term1': 'Grátis para uso pessoal',
+    'about.term2': 'Conexão com o servidor necessária',
+    'about.term3': 'Salve seu trabalho regularmente',
+    'file.title': 'Carregar Arquivo de Palavras Cruzadas',
+    'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
+    'file.choose': 'Escolher Arquivo',
+    'file.save': 'Salvar como .cross',
+    'editor.title': 'Editor de Entradas de Palavras',
+    'editor.add': 'Adicionar Palavra',
+    'editor.clear': 'Limpar Tudo',
+    'editor.word': 'Palavra',
+    'editor.clue': 'Explicação/Dica',
+    'editor.actions': 'Ações',
+    'editor.entries': 'entradas',
+    'editor.word_placeholder': 'Digite a palavra...',
+    'editor.clue_placeholder': 'Digite a dica/explicação...',
+    'config.title': 'Configuração da Grade',
+    'config.rows': 'Número de Linhas',
+    'config.cols': 'Número de Colunas',
+    'config.maxrows': 'Máximo de Linhas',
+    'config.interval': 'Intervalo (segundos)',
+    'config.generate': 'Gerar Palavras Cruzadas',
+    'messages.title': 'Mensagens do Servidor',
+    'messages.waiting': 'Aguardando conexão com o servidor...',
+    'solution.title': 'Solução',
+    'solution.print': 'Imprimir Solução',
+    'solution.horizontal': 'Palavras Horizontais',
+    'solution.vertical': 'Palavras Verticais',
+    'solution.word': 'Palavra',
+    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.print': 'Imprimir Jogo',
+    'game.placeholder': 'A grade aparecerá aqui após a geração',
+    'game.horizontal': 'Dicas Horizontais',
+    'game.vertical': 'Dicas Verticais',
+    'game.clue': 'Dica'
+  },
+  es: {
+    'app.title': 'Cliente de Crucigramas',
+    'app.subtitle': 'Generador y solucionador profesional de crucigramas',
+    'about.button': 'Acerca de',
+    'about.title': 'Acerca del Cliente de Crucigramas',
+    'about.how_to_use': 'Cómo Usar',
+    'about.description': 'Este es un generador profesional de crucigramas que se conecta a un servidor para crear crucigramas.',
+    'about.save_info': 'Puede guardar y cargar sus listas de palabras usando el formato de archivo .cross.',
+    'about.format_example': 'un par por línea',
+    'about.grid_config': 'Configure el tamaño de la cuadrícula y los parámetros de generación.',
+    'about.example': 'Agregue palabras y explicaciones, luego genere su crucigrama.',
+    'about.solution': 'Vea la solución completa con todas las palabras.',
+    'about.game': 'Imprima el puzzle para resolver.',
+    'about.future': 'Características Futuras',
+    'about.future_desc': 'Próximamente:',
+    'about.feature1': 'Interfaz de resolución en línea',
+    'about.feature2': 'Múltiples formatos de puzzle',
+    'about.feature3': 'Análisis de dificultad de palabras',
+    'about.feature4': 'Generación automática de pistas',
+    'about.feature5': 'Exportación a varios formatos',
+    'about.terms': 'Términos',
+    'about.term1': 'Gratis para uso personal',
+    'about.term2': 'Conexión al servidor requerida',
+    'about.term3': 'Guarde su trabajo regularmente',
+    'file.title': 'Cargar Archivo de Crucigramas',
+    'file.description': 'Seleccione un archivo .cross que contenga sus entradas de palabras y explicaciones.',
+    'file.choose': 'Elegir Archivo',
+    'file.save': 'Guardar como .cross',
+    'editor.title': 'Editor de Entradas de Palabras',
+    'editor.add': 'Añadir Palabra',
+    'editor.clear': 'Limpiar Todo',
+    'editor.word': 'Palabra',
+    'editor.clue': 'Explicación/Pista',
+    'editor.actions': 'Acciones',
+    'editor.entries': 'entradas',
+    'editor.word_placeholder': 'Introducir palabra...',
+    'editor.clue_placeholder': 'Introducir pista/explicación...',
+    'config.title': 'Configuración de la Cuadrícula',
+    'config.rows': 'Número de Filas',
+    'config.cols': 'Número de Columnas',
+    'config.maxrows': 'Máximo de Filas',
+    'config.interval': 'Intervalo (segundos)',
+    'config.generate': 'Generar Crucigrama',
+    'messages.title': 'Mensajes del Servidor',
+    'messages.waiting': 'Esperando conexión del servidor...',
+    'solution.title': 'Solución',
+    'solution.print': 'Imprimir Solución',
+    'solution.horizontal': 'Palabras Horizontales',
+    'solution.vertical': 'Palabras Verticales',
+    'solution.word': 'Palabra',
+    'game.title': 'Juego de Crucigramas',
+    'game.print': 'Imprimir Juego',
+    'game.placeholder': 'La cuadrícula aparecerá aquí después de la generación',
+    'game.horizontal': 'Pistas Horizontales',
+    'game.vertical': 'Pistas Verticales',
+    'game.clue': 'Pista'
+  },
+  it: {
+    'app.title': 'Client per Cruciverba',
+    'app.subtitle': 'Generatore e risolutore professionale di cruciverba',
+    'about.button': 'Informazioni',
+    'about.title': 'Informazioni sul Client per Cruciverba',
+    'about.how_to_use': 'Come Usare',
+    'about.description': 'Questo è un generatore professionale di cruciverba che si connette a un server per creare cruciverba.',
+    'about.save_info': 'Puoi salvare e caricare le tue liste di parole usando il formato file .cross.',
+    'about.format_example': 'una coppia per riga',
+    'about.grid_config': 'Configura la dimensione della griglia e i parametri di generazione.',
+    'about.example': 'Aggiungi parole e spiegazioni, poi genera il tuo cruciverba.',
+    'about.solution': 'Visualizza la soluzione completa con tutte le parole.',
+    'about.game': 'Stampa il puzzle per risolverlo.',
+    'about.future': 'Caratteristiche Future',
+    'about.future_desc': 'Prossimamente:',
+    'about.feature1': 'Interfaccia di risoluzione online',
+    'about.feature2': 'Formati multipli di puzzle',
+    'about.feature3': 'Analisi di difficoltà delle parole',
+    'about.feature4': 'Generazione automatica di indizi',
+    'about.feature5': 'Esportazione in vari formati',
+    'about.terms': 'Termini',
+    'about.term1': 'Gratuito per uso personale',
+    'about.term2': 'Connessione al server richiesta',
+    'about.term3': 'Salva il tuo lavoro regolarmente',
+    'file.title': 'Carica File Cruciverba',
+    'file.description': 'Seleziona un file .cross contenente le tue voci di parole e spiegazioni.',
+    'file.choose': 'Scegli File',
+    'file.save': 'Salva come .cross',
+    'editor.title': 'Editor delle Voci delle Parole',
+    'editor.add': 'Aggiungi Parola',
+    'editor.clear': 'Cancella Tutto',
+    'editor.word': 'Parola',
+    'editor.clue': 'Spiegazione/Indizio',
+    'editor.actions': 'Azioni',
+    'editor.entries': 'voci',
+    'editor.word_placeholder': 'Inserisci parola...',
+    'editor.clue_placeholder': 'Inserisci indizio/spiegazione...',
+    'config.title': 'Configurazione Griglia',
+    'config.rows': 'Numero di Righe',
+    'config.cols': 'Numero di Colonne',
+    'config.maxrows': 'Massimo Righe',
+    'config.interval': 'Intervallo (secondi)',
+    'config.generate': 'Genera Cruciverba',
+    'messages.title': 'Messaggi del Server',
+    'messages.waiting': 'In attesa della connessione al server...',
+    'solution.title': 'Soluzione',
+    'solution.print': 'Stampa Soluzione',
+    'solution.horizontal': 'Parole Orizzontali',
+    'solution.vertical': 'Parole Verticali',
+    'solution.word': 'Parola',
+    'game.title': 'Gioco Cruciverba',
+    'game.print': 'Stampa Gioco',
+    'game.placeholder': 'La griglia apparirà qui dopo la generazione',
+    'game.horizontal': 'Indizi Orizzontali',
+    'game.vertical': 'Indizi Verticali',
+    'game.clue': 'Indizio'
+  },
+  fr: {
+    'app.title': 'Client de Mots Croisés',
+    'app.subtitle': 'Générateur et solveur professionnel de mots croisés',
+    'about.button': 'À propos',
+    'about.title': 'À propos du Client de Mots Croisés',
+    'about.how_to_use': 'Comment Utiliser',
+    'about.description': 'Ceci est un générateur professionnel de mots croisés qui se connecte à un serveur pour créer des mots croisés.',
+    'about.save_info': 'Vous pouvez sauvegarder et charger vos listes de mots en utilisant le format de fichier .cross.',
+    'about.format_example': 'une paire par ligne',
+    'about.grid_config': 'Configurez la taille de la grille et les paramètres de génération.',
+    'about.example': 'Ajoutez des mots et des explications, puis générez vos mots croisés.',
+    'about.solution': 'Visualisez la solution complète avec tous les mots.',
+    'about.game': 'Imprimez le puzzle pour le résoudre.',
+    'about.future': 'Fonctionnalités Futures',
+    'about.future_desc': 'Prochainement:',
+    'about.feature1': 'Interface de résolution en ligne',
+    'about.feature2': 'Formats multiples de puzzle',
+    'about.feature3': 'Analyse de difficulté des mots',
+    'about.feature4': 'Génération automatique d\'indices',
+    'about.feature5': 'Exportation vers divers formats',
+    'about.terms': 'Conditions',
+    'about.term1': 'Gratuit pour usage personnel',
+    'about.term2': 'Connexion au serveur requise',
+    'about.term3': 'Sauvegardez votre travail régulièrement',
+    'file.title': 'Charger un Fichier de Mots Croisés',
+    'file.description': 'Sélectionnez un fichier .cross contenant vos entrées de mots et explications.',
+    'file.choose': 'Choisir un Fichier',
+    'file.save': 'Sauvegarder comme .cross',
+    'editor.title': 'Éditeur d\'Entrées de Mots',
+    'editor.add': 'Ajouter un Mot',
+    'editor.clear': 'Tout Effacer',
+    'editor.word': 'Mot',
+    'editor.clue': 'Explication/Indice',
+    'editor.actions': 'Actions',
+    'editor.entries': 'entrées',
+    'editor.word_placeholder': 'Entrez le mot...',
+    'editor.clue_placeholder': 'Entrez l\'indice/explication...',
+    'config.title': 'Configuration de la Grille',
+    'config.rows': 'Nombre de Lignes',
+    'config.cols': 'Nombre de Colonnes',
+    'config.maxrows': 'Maximum de Lignes',
+    'config.interval': 'Intervalle (secondes)',
+    'config.generate': 'Générer les Mots Croisés',
+    'messages.title': 'Messages du Serveur',
+    'messages.waiting': 'En attente de la connexion au serveur...',
+    'solution.title': 'Solution',
+    'solution.print': 'Imprimer la Solution',
+    'solution.horizontal': 'Mots Horizontaux',
+    'solution.vertical': 'Mots Verticaux',
+    'solution.word': 'Mot',
+    'game.title': 'Jeu de Mots Croisés',
+    'game.print': 'Imprimer le Jeu',
+    'game.placeholder': 'La grille apparaîtra ici après la génération',
+    'game.horizontal': 'Indices Horizontaux',
+    'game.vertical': 'Indices Verticaux',
+    'game.clue': 'Indice'
+  },
+  de: {
+    'app.title': 'Kreuzworträtsel Client',
+    'app.subtitle': 'Professioneller Kreuzworträtsel-Generator und -Löser',
+    'about.button': 'Über',
+    'about.title': 'Über den Kreuzworträtsel Client',
+    'about.how_to_use': 'Verwendung',
+    'about.description': 'Dies ist ein professioneller Kreuzworträtsel-Generator, der sich mit einem Server verbindet, um Kreuzworträtsel zu erstellen.',
+    'about.save_info': 'Sie können Ihre Wortlisten im .cross-Dateiformat speichern und laden.',
+    'about.format_example': 'ein Paar pro Zeile',
+    'about.grid_config': 'Konfigurieren Sie die Rastergröße und Generierungsparameter.',
+    'about.example': 'Fügen Sie Wörter und Erklärungen hinzu und generieren Sie dann Ihr Kreuzworträtsel.',
+    'about.solution': 'Zeigen Sie die vollständige Lösung mit allen Wörtern an.',
+    'about.game': 'Drucken Sie das Rätsel zum Lösen aus.',
+    'about.future': 'Zukünftige Funktionen',
+    'about.future_desc': 'Demnächst:',
+    'about.feature1': 'Online-Lösungsschnittstelle',
+    'about.feature2': 'Mehrere Rätselformate',
+    'about.feature3': 'Wort-Schwierigkeitsanalyse',
+    'about.feature4': 'Automatische Hinweisgenerierung',
+    'about.feature5': 'Export in verschiedene Formate',
+    'about.terms': 'Bedingungen',
+    'about.term1': 'Kostenlos für den persönlichen Gebrauch',
+    'about.term2': 'Serververbindung erforderlich',
+    'about.term3': 'Speichern Sie Ihre Arbeit regelmäßig',
+    'file.title': 'Kreuzworträtsel-Datei Laden',
+    'file.description': 'Wählen Sie eine .cross-Datei mit Ihren Worteinträgen und Erklärungen.',
+    'file.choose': 'Datei Wählen',
+    'file.save': 'Als .cross Speichern',
+    'editor.title': 'Wort-Eingabe-Editor',
+    'editor.add': 'Wort Hinzufügen',
+    'editor.clear': 'Alles Löschen',
+    'editor.word': 'Wort',
+    'editor.clue': 'Erklärung/Hinweis',
+    'editor.actions': 'Aktionen',
+    'editor.entries': 'Einträge',
+    'editor.word_placeholder': 'Wort eingeben...',
+    'editor.clue_placeholder': 'Hinweis/Erklärung eingeben...',
+    'config.title': 'Raster-Konfiguration',
+    'config.rows': 'Anzahl der Zeilen',
+    'config.cols': 'Anzahl der Spalten',
+    'config.maxrows': 'Maximale Zeilen',
+    'config.interval': 'Intervall (Sekunden)',
+    'config.generate': 'Kreuzworträtsel Generieren',
+    'messages.title': 'Server-Nachrichten',
+    'messages.waiting': 'Warten auf Serververbindung...',
+    'solution.title': 'Lösung',
+    'solution.print': 'Lösung Drucken',
+    'solution.horizontal': 'Horizontale Wörter',
+    'solution.vertical': 'Vertikale Wörter',
+    'solution.word': 'Wort',
+    'game.title': 'Kreuzworträtsel-Spiel',
+    'game.print': 'Spiel Drucken',
+    'game.placeholder': 'Das Raster wird hier nach der Generierung angezeigt',
+    'game.horizontal': 'Horizontale Hinweise',
+    'game.vertical': 'Vertikale Hinweise',
+    'game.clue': 'Hinweis'
+  }
+};
+
+console.log('Translations loaded:', Object.keys(translations));
+
+// Translation function
+function translate(key) {
+  var result = translations[currentLanguage] && translations[currentLanguage][key];
+  return result || key;
+}
+
+// Update UI function
+function updateUI() {
+  console.log('Updating UI to language:', currentLanguage);
+  
+  var elements = document.querySelectorAll('[data-i18n]');
+  console.log('Found elements with data-i18n:', elements.length);
+  
+  for (var i = 0; i < elements.length; i++) {
+    var element = elements[i];
+    var key = element.getAttribute('data-i18n');
+    var translation = translate(key);
+    element.textContent = translation;
+    console.log('Translated "' + key + '" to "' + translation + '"');
+  }
+  
+  // Update placeholders
+  var wordInputs = document.querySelectorAll('.word-input');
+  for (var i = 0; i < wordInputs.length; i++) {
+    wordInputs[i].placeholder = translate('editor.word_placeholder');
+  }
+  
+  var explanationInputs = document.querySelectorAll('.explanation-input');
+  for (var i = 0; i < explanationInputs.length; i++) {
+    explanationInputs[i].placeholder = translate('editor.clue_placeholder');
+  }
+  
+  // Update config placeholders
+  var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
+                         currentLanguage === 'pt-br' ? 'ex.' :
+                         currentLanguage === 'es' ? 'ej.' :
+                         currentLanguage === 'it' ? 'es.' :
+                         currentLanguage === 'fr' ? 'ex.' :
+                         currentLanguage === 'de' ? 'z.B.' : 'e.g.';
+  
+  document.getElementById('rowsInput').placeholder = placeholderPrefix + ', 15';
+  document.getElementById('colsInput').placeholder = placeholderPrefix + ', 15';
+  document.getElementById('maxRowsInput').placeholder = placeholderPrefix + ', 20';
+  document.getElementById('intervalInput').placeholder = placeholderPrefix + ', 5';
+  
+  updateEntryCount();
+}
+
+// Switch language function
+function switchLanguage(lang) {
+  console.log('Switching language to:', lang);
+  
+  if (!translations[lang]) {
+    console.error('Language not found:', lang);
+    return;
+  }
+  
+  currentLanguage = lang;
+  
+  // Update active button
+  var buttons = document.querySelectorAll('.lang-btn');
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].classList.remove('active');
+  }
+  
+  var activeBtn = document.querySelector('[data-lang="' + lang + '"]');
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+    console.log('Set active button for:', lang);
+  }
+  
+  updateUI();
+  
+  // Save to localStorage
+  try {
+    localStorage.setItem('crossword-language', lang);
+    console.log('Saved language to localStorage:', lang);
+  } catch (e) {
+    console.log('LocalStorage not available');
+  }
+}
+
+// WebSocket functions
+function connectWebSocket() {
+  try {
+    ws = new WebSocket("ws://localhost:9002");
+    
+    ws.onopen = function() {
+      console.log("WebSocket connected");
+      updateMessages("Connected to crossword server", "success");
+    };
+    
+    ws.onerror = function(e) {
+      console.error("WebSocket error", e);
+      updateMessages("Failed to connect to server. Make sure your crossword server is running on localhost:9002", "error");
+    };
+    
+    ws.onclose = function() {
+      console.log("WebSocket disconnected");
+      updateMessages("Disconnected from server", "warning");
+    };
+    
+    ws.onmessage = handleWebSocketMessage;
+  } catch (error) {
+    console.error("WebSocket connection failed:", error);
+    updateMessages("WebSocket connection failed", "error");
+  }
+}
+
+function handleWebSocketMessage(event) {
+  try {
+    var msg = JSON.parse(event.data);
+    
+    if (msg.response === "solved") {
+      renderSolutionTable(msg.layouts);
+      renderGrid(msg);
+      renderClues(msg.layouts);
+      updateMessages("Crossword generated successfully!", "success");
+    } else {
+      var text = "";
+      var type = "info";
+      
+      if (msg.response === "configuration") {
+        var r = parseInt(msg.rows && msg.rows.replace(/"/g, "")) || 0;
+        var c = parseInt(msg.cols && msg.cols.replace(/"/g, "")) || 0;
+        var perms = parseInt(msg.num_permutations && msg.num_permutations.replace(/"/g, "")) || 0;
+        var memAvail = parseInt(msg.mem_available && msg.mem_available.replace(/"/g, "")) || 0;
+        var memUsed = parseInt(msg.mem_used && msg.mem_used.replace(/"/g, "")) || 0;
+        text = "Trying: " + r + " × " + c + " grid, " + perms.toLocaleString() + " permutations, " + memAvail + "MB available, " + memUsed + "MB used";
+      } else if (msg.response === "tries") {
+        var perms = parseInt(msg.permutations && msg.permutations.replace(/"/g, "")) || 0;
+        text = "Tried " + perms.toLocaleString() + " permutations...";
+      } else if (msg.response === "unsolved") {
+        text = "Could not generate crossword. Try increasing maximum rows or interval.";
+        type = "error";
+      } else if (msg.response === "error") {
+        text = "Server Error: " + msg.explanation;
+        type = "error";
+      } else {
+        text = JSON.stringify(msg, null, 2);
+      }
+      
+      updateMessages(text, type);
+    }
+  } catch (err) {
+    console.error("Invalid message format:", err);
+    updateMessages("Received invalid message from server", "warning");
+  }
+}
+
+function updateMessages(text, type) {
+  var messagesList = document.getElementById("messages");
+  var emptyMessage = messagesList.querySelector(".messages-empty");
+  
+  if (emptyMessage) {
+    emptyMessage.remove();
+  }
+  
+  var li = document.createElement("li");
+  li.textContent = text;
+  li.className = "message-" + type;
+  
+  messagesList.appendChild(li);
+  messagesList.scrollTop = messagesList.scrollHeight;
+  
+  while (messagesList.children.length > 50) {
+    messagesList.removeChild(messagesList.firstChild);
+  }
+}
+
+function clearMessages() {
+  var messagesList = document.getElementById("messages");
+  messagesList.innerHTML = '';
+  var emptyLi = document.createElement("li");
+  emptyLi.className = "messages-empty";
+  emptyLi.setAttribute("data-i18n", "messages.waiting");
+  emptyLi.textContent = translate("messages.waiting");
+  messagesList.appendChild(emptyLi);
+}
+
+// Word entry functions
+function addWordEntryRow(word, explanation) {
+  word = word || '';
+  explanation = explanation || '';
+  
+  var tbody = document.getElementById("wordEntryTableBody");
+  var row = document.createElement("tr");
+  row.className = "word-entry-row";
+  
+  row.innerHTML = 
+    '<td>' +
+      '<input type="text" class="word-input" placeholder="' + translate('editor.word_placeholder') + '" value="' + word + '" ' +
+             'oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, \'\')" maxlength="20">' +
+    '</td>' +
+    '<td>' +
+      '<input type="text" class="explanation-input" placeholder="' + translate('editor.clue_placeholder') + '" value="' + explanation + '" maxlength="200">' +
+    '</td>' +
+    '<td style="text-align: center;">' +
+      '<button class="remove-row-btn" onclick="removeWordEntryRow(this)" title="Remove this entry">' +
+        '⌘' +
+      '</button>' +
+    '</td>';
+  
+  tbody.appendChild(row);
+  updateEntryCount();
+  
+  if (!word) {
+    var wordInput = row.querySelector('.word-input');
+    wordInput.focus();
+  }
+}
+
+function removeWordEntryRow(button) {
+  var row = button.closest('tr');
+  row.remove();
+  updateEntryCount();
+}
+
+function getEntriesFromTable() {
+  var rows = document.querySelectorAll("#wordEntryTableBody .word-entry-row");
+  var tableEntries = [];
+  
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    var word = row.querySelector('.word-input').value.trim();
+    var explanation = row.querySelector('.explanation-input').value.trim();
+    
+    if (word && explanation) {
+      tableEntries.push({ word: word, explanation: explanation });
+    }
+  }
+  
+  return tableEntries;
+}
+
+function updateEntryCount() {
+  var validEntries = getEntriesFromTable();
+  var countEl = document.getElementById("entryCount");
+  countEl.innerHTML = validEntries.length + ' <span data-i18n="editor.entries">' + translate('editor.entries') + '</span>';
+  entries = validEntries;
+}
+
+// Grid rendering functions
+function renderGrid(msg) {
+  var canvas = document.getElementById("gridCanvas");
+  var ctx = canvas.getContext("2d");
+
+  var nRows = parseInt(msg.rows.replace(/"/g, ""));
+  var nCols = parseInt(msg.cols.replace(/"/g, ""));
+
+  var activeCells = new Set();
+  
+  for (var i = 0; i < msg.layouts.length; i++) {
+    var layout = msg.layouts[i];
+    var startRow = parseInt(layout.row);
+    var startCol = parseInt(layout.col);
+    var wordLength = layout.word.length;
+    
+    if (layout.orientation === "H") {
+      for (var j = 0; j < wordLength; j++) {
+        activeCells.add(startRow + "," + (startCol + j));
+      }
+    } else {
+      for (var j = 0; j < wordLength; j++) {
+        activeCells.add((startRow + j) + "," + startCol);
+      }
+    }
+  }
+
+  var minRow = nRows, maxRow = -1, minCol = nCols, maxCol = -1;
+  
+  activeCells.forEach(function(cellKey) {
+    var parts = cellKey.split(',');
+    var row = parseInt(parts[0]);
+    var col = parseInt(parts[1]);
+    minRow = Math.min(minRow, row);
+    maxRow = Math.max(maxRow, row);
+    minCol = Math.min(minCol, col);
+    maxCol = Math.max(maxCol, col);
+  });
+
+  var effectiveRows = maxRow - minRow + 1;
+  var effectiveCols = maxCol - minCol + 1;
+
+  var maxCanvasSize = 700;
+  var cellSize = Math.min(
+    Math.floor(maxCanvasSize / effectiveCols),
+    Math.floor(maxCanvasSize / effectiveRows),
+    50
+  );
+  
+  var padding = 20;
+  canvas.width = cellSize * effectiveCols + padding * 2;
+  canvas.height = cellSize * effectiveRows + padding * 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  activeCells.forEach(function(cellKey) {
+    var parts = cellKey.split(',');
+    var absoluteRow = parseInt(parts[0]);
+    var absoluteCol = parseInt(parts[1]);
+    
+    var relativeRow = absoluteRow - minRow;
+    var relativeCol = absoluteCol - minCol;
+    
+    var x = relativeCol * cellSize + padding;
+    var y = relativeRow * cellSize + padding;
+    
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x, y, cellSize, cellSize);
+    
+    ctx.strokeStyle = "#2d3748";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, cellSize, cellSize);
+  });
+
+  ctx.fillStyle = "#2d3748";
+  ctx.font = "bold " + Math.max(cellSize / 6, 8) + "px Arial";
+  
+  for (var i = 0; i < msg.layouts.length; i++) {
+    var layout = msg.layouts[i];
+    var absoluteRow = parseInt(layout.row);
+    var absoluteCol = parseInt(layout.col);
+    
+    var relativeRow = absoluteRow - minRow;
+    var relativeCol = absoluteCol - minCol;
+    
+    var x = relativeCol * cellSize + padding;
+    var y = relativeRow * cellSize + padding;
+    
+    var numberX, numberY;
+    
+    if (layout.orientation === "H") {
+      numberX = x + cellSize - 3;
+      numberY = y + 3;
+      ctx.textAlign = "right";
+    } else {
+      numberX = x + 3;
+      numberY = y + 3;
+      ctx.textAlign = "left";
+    }
+    
+    ctx.textBaseline = "top";
+    ctx.fillText(layout.id || "", numberX, numberY);
+  }
+
+  canvas.classList.remove("hidden");
+  document.getElementById("canvasPlaceholder").style.display = "none";
+}
+
+function renderSolutionTable(layouts) {
+  var horizTbody = document.getElementById("horizontalSolution").querySelector("tbody");
+  var vertTbody = document.getElementById("verticalSolution").querySelector("tbody");
+  
+  horizTbody.innerHTML = "";
+  vertTbody.innerHTML = "";
+  
+  for (var i = 0; i < layouts.length; i++) {
+    var layout = layouts[i];
+    var row = document.createElement("tr");
+    row.innerHTML = 
+      '<td class="idCol">' + (layout.id || "") + '</td>' +
+      '<td style="font-weight: 600;">' + (layout.word || "") + '</td>';
+    
+    if (layout.orientation === "H") {
+      horizTbody.appendChild(row);
+    } else {
+      vertTbody.appendChild(row);
+    }
+  }
+}
+
+function renderClues(layouts) {
+  var horizTbody = document.getElementById("horizontalClues").querySelector("tbody");
+  var vertTbody = document.getElementById("verticalClues").querySelector("tbody");
+  
+  horizTbody.innerHTML = "";
+  vertTbody.innerHTML = "";
+  
+  for (var i = 0; i < layouts.length; i++) {
+    var layout = layouts[i];
+    var row = document.createElement("tr");
+    row.innerHTML = 
+      '<td class="idCol">' + (layout.id || "") + '</td>' +
+      '<td>' + (layout.explanation || "") + '</td>';
+    
+    if (layout.orientation === "H") {
+      horizTbody.appendChild(row);
+    } else {
+      vertTbody.appendChild(row);
+    }
+  }
+}
+
+// Input validation
+function validateAndAssign(e, assignFunc) {
+  var value = e.target.value.trim();
+  var num = parseInt(value, 10);
+
+  if (!value || isNaN(num) || num <= 0) {
+    e.target.style.borderColor = "#ef4444";
+    assignFunc(0);
+  } else {
+    e.target.style.borderColor = "#10b981";
+    assignFunc(num);
+  }
+}
+
+// Initialize everything when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM Content Loaded - Starting initialization');
+  
+  // Load saved language
+  var savedLang = 'en';
+  try {
+    savedLang = localStorage.getItem('crossword-language') || 'en';
+    console.log('Loaded saved language:', savedLang);
+  } catch (e) {
+    console.log('LocalStorage not available');
+  }
+  
+  // Set up language buttons
+  console.log('Setting up language buttons...');
+  var langButtons = document.querySelectorAll('.lang-btn');
+  console.log('Found language buttons:', langButtons.length);
+  
+  for (var i = 0; i < langButtons.length; i++) {
+    var btn = langButtons[i];
+    var lang = btn.getAttribute('data-lang');
+    console.log('Setting up button for:', lang);
+    
+    // Use closure to capture lang value
+    (function(language) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Language button clicked:', language);
+        switchLanguage(language);
+      });
+    })(lang);
+  }
+  
+  // Initialize language
+  console.log('Initializing language system...');
+  switchLanguage(savedLang);
+  
+  // Connect WebSocket
+  console.log('Connecting to WebSocket...');
+  connectWebSocket();
+  
+  // Add initial word entry rows
+  console.log('Adding initial word entry rows...');
+  addWordEntryRow();
+  addWordEntryRow();
+  addWordEntryRow();
+  
+  // Set up other event listeners
+  console.log('Setting up other event listeners...');
+  
+  // File operations
+  document.getElementById("loadButton").onclick = function() {
+    document.getElementById("fileInput").click();
+  };
+  
+  document.getElementById("fileInput").addEventListener("change", function(e) {
+    var file = e.target.files[0];
+    var statusEl = document.getElementById("fileStatus");
+    
+    if (!file) return;
+    
+    console.log('Loading file:', file.name);
+    statusEl.className = "status-message loading";
+    statusEl.textContent = "Loading file...";
+    statusEl.classList.remove("hidden");
+    
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        console.log('File content loaded, parsing...');
+        var lines = ev.target.result.split("\n");
+        var newEntries = [];
+        
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i].trim();
+          if (line && line.includes("|")) {
+            var parts = line.split("|");
+            if (parts.length >= 2) {
+              newEntries.push({
+                word: parts[0].trim(),
+                explanation: parts[1].trim()
+              });
+            }
+          }
+        }
+        
+        console.log('Parsed entries:', newEntries.length);
+        entries = newEntries;
+        
+        statusEl.className = "status-message status-success";
+        statusEl.textContent = "Successfully loaded " + newEntries.length + " word entries!";
+        updateMessages("Loaded " + newEntries.length + " entries from " + file.name, "success");
+        
+        // Clear existing table and populate with loaded data
+        document.getElementById("wordEntryTableBody").innerHTML = "";
+        for (var j = 0; j < newEntries.length; j++) {
+          addWordEntryRow(newEntries[j].word, newEntries[j].explanation);
+        }
+        
+        // Add a few empty rows for easy editing
+        if (newEntries.length > 0) {
+          addWordEntryRow();
+          addWordEntryRow();
+        }
+        
+        updateEntryCount();
+        
+      } catch (error) {
+        console.error('Error parsing file:', error);
+        statusEl.className = "status-message status-error";
+        statusEl.textContent = "Error reading file. Please check the format.";
+        updateMessages("Failed to load file", "error");
+      }
+    };
+    
+    reader.onerror = function() {
+      console.error('FileReader error');
+      statusEl.className = "status-message status-error";
+      statusEl.textContent = "Failed to read file.";
+    };
+    
+    reader.readAsText(file);
+  });
+  
+  document.getElementById("saveButton").onclick = function() {
+    var currentEntries = getEntriesFromTable();
+    
+    if (currentEntries.length === 0) {
+      alert("No entries to save. Add some words first.");
+      return;
+    }
+    
+    var content = currentEntries
+      .map(function(entry) { return entry.word + "|" + entry.explanation; })
+      .join('\n');
+    
+    var blob = new Blob([content], { type: 'text/plain' });
+    var url = window.URL.createObjectURL(blob);
+    
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'crossword.cross';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    updateMessages("Saved " + currentEntries.length + " entries to crossword.cross", "success");
+  };
+  
+  // Add/Clear buttons
+  document.getElementById("addRowButton").onclick = function() {
+    addWordEntryRow();
+  };
+  
+  document.getElementById("clearAllButton").onclick = function() {
+    if (confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
+      document.getElementById("wordEntryTableBody").innerHTML = "";
+      entries = [];
+      updateEntryCount();
+      updateMessages("All entries cleared", "info");
+    }
+  };
+  
+  // Input validation for configuration
+  var inputs = [
+    { id: "rowsInput", setter: function(v) { rows = v; } },
+    { id: "colsInput", setter: function(v) { cols = v; } },
+    { id: "maxRowsInput", setter: function(v) { max_rows = v; } },
+    { id: "intervalInput", setter: function(v) { interval = v; } }
+  ];
+
+  for (var i = 0; i < inputs.length; i++) {
+    var input = document.getElementById(inputs[i].id);
+    var setter = inputs[i].setter;
+    
+    (function(inputEl, setterFunc) {
+      inputEl.addEventListener("input", function(e) {
+        validateAndAssign(e, setterFunc);
+      });
+    })(input, setter);
+  }
+  
+  // Submit button
+  document.getElementById("submitButton").onclick = function() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      alert("WebSocket not connected. Please check if your server is running.");
+      return;
+    }
+    
+    if (!rows || !cols || !max_rows || !interval) {
+      alert("All fields must be filled with positive numbers.");
+      return;
+    }
+    
+    entries = getEntriesFromTable();
+    
+    if (entries.length === 0) {
+      alert("Please add some word entries first.");
+      return;
+    }
+    
+    // Clear messages before starting generation
+    clearMessages();
+    updateMessages("Generating crossword puzzle...", "info");
+
+    var request = {
+      request: "create",
+      rows: rows,
+      cols: cols,
+      max_rows: max_rows,
+      interval: interval,
+      entries: entries
+    };
+    
+    ws.send(JSON.stringify(request));
+  };
+  
+  // Print buttons
+  document.getElementById("printButton").onclick = function() {
+    console.log('Print Game button clicked');
+    var canvas = document.getElementById("gridCanvas");
+    if (canvas.classList.contains("hidden")) {
+      alert("No crossword grid to print. Generate a crossword first.");
+      return;
+    }
+    
+    var imgData = canvas.toDataURL("image/png");
+    var horizTable = document.getElementById("horizontalClues").outerHTML;
+    var vertTable = document.getElementById("verticalClues").outerHTML;
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + translate('game.title') + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            'img { max-width: 100%; margin-bottom: 20px; }' +
+            '.clues { display: flex; gap: 40px; }' +
+            '.clues > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>' + translate('game.title') + '</h1>' +
+          '<img src="' + imgData + '" alt="Crossword Grid" />' +
+          '<div class="clues">' +
+            '<div><h2>' + translate('game.horizontal') + '</h2>' + horizTable + '</div>' +
+            '<div><h2>' + translate('game.vertical') + '</h2>' + vertTable + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+  document.getElementById("printSolutionButton").onclick = function() {
+    console.log('Print Solution button clicked');
+    var horizSolution = document.getElementById("horizontalSolution");
+    var vertSolution = document.getElementById("verticalSolution");
+    
+    if (horizSolution.querySelector("tbody").children.length === 0 && 
+        vertSolution.querySelector("tbody").children.length === 0) {
+      alert("No solution to print. Generate a crossword first.");
+      return;
+    }
+    
+    var printWindow = window.open("", "_blank");
+    printWindow.document.write(
+      '<html>' +
+        '<head>' +
+          '<title>' + translate('solution.title') + '</title>' +
+          '<style>' +
+            'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            '.solution { display: flex; gap: 40px; }' +
+            '.solution > div { flex: 1; }' +
+            'table { border-collapse: collapse; width: 100%; }' +
+            'th, td { border: 1px solid #333; padding: 8px; text-align: left; }' +
+            'th { background: #f5f5f5; }' +
+            '.idCol { text-align: right; font-family: monospace; }' +
+          '</style>' +
+        '</head>' +
+        '<body>' +
+          '<h1>' + translate('solution.title') + '</h1>' +
+          '<div class="solution">' +
+            '<div><h2>' + translate('solution.horizontal') + '</h2>' + horizSolution.outerHTML + '</div>' +
+            '<div><h2>' + translate('solution.vertical') + '</h2>' + vertSolution.outerHTML + '</div>' +
+          '</div>' +
+        '</body>' +
+      '</html>'
+    );
+    printWindow.document.close();
+    printWindow.onload = function() {
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+  
+  console.log('Initialization complete!');
+});
+
+console.log('JavaScript loading complete!');
+</script>
+</body>
+</html>

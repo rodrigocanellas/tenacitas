@@ -1,0 +1,36 @@
+Como usar:
+
+'tnct.crosswords' é uma aplicação que permite que qualquer pessoa crie um jogo de palavras cruzadas! 
+
+Basta digitar as palavras e as explicações, e configurar alguns parâmetros para criação do jogo.
+
+É possível salvar o conjunto de palavras e explicações criadas clicando no botão 'Guardar como .cross', que é apenas um arquivo texto puro (sem formatação) com as palavras e explicações salvas assim: 
+
+palavra|explicação
+
+um par por linha.
+
+Em 'Configuração do Grid' são definidos os parâmetros para 'tnct.crosswords' tentar criar o jogo.
+
+Por exemplo, se escolher 'Número de Linhas' com 17, 'Número de Colunas' com 15, 'Máximo de Linhas' com 20 e 'Intervalo (segundos)' com 3, 'tnct.crosswords' vai tentar por 3 segundos criar um jogo 17x15, se não conseguir vai tentar por mais 3 segundos criar no tamanho 18x16, em seguida mais 3 segundos em 19x17 e por fim 3 segundos no tamanho 20x18. 
+
+Se for possível criar o jogo com estes parâmetros, em 'Solução' vão ser exibidas duas tabelas, uma com as palavras que estão nas horizontais e outra com as palavras nas verticais, e é possível imprimir estas tabelas com o botão 'Imprimir Solução'.
+
+Em 'Jogo de Palavras Cruzadas' será exibido a grade com o jogo, duas tabelas com as explicações as palavras na horizontal e outra com as palavras na vertical, e através do botão 'Imprimir Jogo' é possível imprimir a grade e as tabelas.
+
+
+Futuro:
+
+No momento, 'tnct.crosswords' permite a criação do jogo mas se houver interesse, vamos implementar outras funcionalidades como:
+   - enviar o jogo para seus amigos
+   - resolver o jogo direto no navegador de Internet
+   - permitir a criação de dicionários, para que as palavras possam ser usadas em novo jogos
+   - torneios online
+   - ...
+   
+
+Termos de uso:
+
+1 - As palavras usadas nos jogos são de inteira responsabildade do autores.
+2 - Atualmente nenhum conjunto de palavras é guardado nos nossos servidores.
+
