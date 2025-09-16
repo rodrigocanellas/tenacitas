@@ -159,7 +159,8 @@ MainWindow::MainWindow(log::cerr &m_logger, QWidget *parent)
 }
 
 void MainWindow::solved(std::shared_ptr<crosswords::dat::grid> p_grid,
-                        std::chrono::seconds                   p_time)
+                        std::chrono::seconds                   p_time,
+                        std::uint64_t /*p_max_permutations*/)
 {
 
   m_solving = false;

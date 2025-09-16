@@ -35,9 +35,9 @@ template <log::cpt::logger t_logger>
 struct grid_creator
 {
   grid_creator(
-      t_logger &p_logger,
-      std::invocable<std::shared_ptr<dat::grid>, std::chrono::seconds> auto
-                                                  p_callback_on_solved,
+      t_logger                                   &p_logger,
+      std::invocable<std::shared_ptr<dat::grid>, std::chrono::seconds,
+                     std::uint64_t> auto          p_callback_on_solved,
       std::invocable<dat::index, dat::index> auto p_callback_on_unsolved)
       : m_logger{p_logger}, m_dispatcher{p_logger},
         m_assembler{p_logger, m_dispatcher}
@@ -185,8 +185,9 @@ private:
   //
   // \tparam std::shared_ptr<dat::grid> grid assembled
   // \tparam std::chrono::seconds how long it took to assemble the grid
-  void on_solved(std::invocable<std::shared_ptr<dat::grid>,
-                                std::chrono::seconds> auto p_callback)
+  void
+  on_solved(std::invocable<std::shared_ptr<dat::grid>, std::chrono::seconds,
+                           std::uint64_t> auto p_callback)
   {
 
     using evt::internal::grid_create_solved;
@@ -195,7 +196,7 @@ private:
     m_dispatcher.template add_handling<grid_create_solved>(
         "grid-create-solved", queue{m_logger},
         [p_callback](grid_create_solved &&p_event)
-        { p_callback(p_event.grid, p_event.time); },
+        { p_callback(p_event.grid, p_event.time, p_event.max_permutations); },
         async::handling_priority::highest);
   }
 
@@ -235,6 +236,8 @@ private:
     {
       m_stop = false;
 
+      const auto _max_permutations = number_of_permutations(p_entries);
+
       TNCT_LOG_DEB(
           m_logger,
           format::fmt("starting grid_creator::operator() with m_stop = ",
@@ -252,8 +255,9 @@ private:
 
         auto _start = std::chrono::high_resolution_clock::now();
 
-        std::shared_ptr<crosswords::dat::grid> _grid{m_assembler.start(
-            p_entries, _current_num_rows, _current_num_cols, p_wait_for)};
+        std::shared_ptr<crosswords::dat::grid> _grid{
+            m_assembler.start(p_entries, _current_num_rows, _current_num_cols,
+                              p_wait_for, _max_permutations)};
 
         if (_grid)
         {
@@ -271,7 +275,8 @@ private:
                       .template publish<evt::internal::grid_create_solved>(
                           _grid,
                           std::chrono::duration_cast<std::chrono::seconds>(
-                              std::chrono::duration<double>(_diff)))};
+                              std::chrono::duration<double>(_diff)),
+                          _max_permutations)};
               _result != async::result::OK)
           {
             TNCT_LOG_ERR(
@@ -333,6 +338,16 @@ private:
     {
       TNCT_LOG_ERR(m_logger, "unknown error");
     }
+  }
+
+  std::uint64_t number_of_permutations(const dat::entries &p_entries) const
+  {
+    if (p_entries.get_num_entries() > 20)
+    {
+      return math::factorial<std::uint64_t>(20).value();
+    }
+
+    return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
   }
 
 private:

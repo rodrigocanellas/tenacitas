@@ -29,13 +29,16 @@ struct grid_create_solved
 
   explicit grid_create_solved(
       std::shared_ptr<dat::grid> p_grid, std::chrono::seconds p_time,
+      std::uint64_t              p_max_permutations,
       std::optional<std::size_t> p_client = std::nullopt)
-      : grid(p_grid), time(p_time), client(p_client)
+      : grid(p_grid), time(p_time), max_permutations(p_max_permutations),
+        client(p_client)
   {
   }
 
   std::shared_ptr<dat::grid> grid;
   std::chrono::seconds       time{std::chrono::seconds::zero()};
+  std::uint64_t              max_permutations;
   std::optional<std::size_t> client{std::nullopt};
 
   friend std::ostream &operator<<(std::ostream &p_out,

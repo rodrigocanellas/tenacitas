@@ -13,7 +13,9 @@ LIBS+=-lpthread
 
 # -lssl -lcrypto
 
-HEADERS = $$PRJ_DIR/translations.h
+HEADERS = $$PRJ_DIR/connection.h \
+          $$PRJ_DIR/statistics.h
+
 SOURCES = $$PRJ_DIR/main.cpp
 
 # DISTFILES += $$PRJ_DIR/cfg_000.ini

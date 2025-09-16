@@ -198,6 +198,12 @@ body {
   border: 1px solid #ea580c;
 }
 
+/* Game Section - Blue theme */
+.game-section {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  border: 1px solid #2563eb;
+}
+
 /* Configuration Section */
 .config-grid {
   display: grid;
@@ -384,8 +390,26 @@ body {
   background: #1f2937;
   border-radius: 6px;
   padding: 1rem;
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
+}
+
+/* Eye toggle icon */
+.eye-toggle {
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.eye-toggle:hover {
+  background: rgba(0,0,0,0.1);
+  color: #374151;
 }
 
 .messages-list {
@@ -613,7 +637,7 @@ canvas {
       <button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button>
     </div>
     
-    <h1><span class="icon">🧩</span><span data-i18n="app.title">Crossword Client</span></h1>
+    <h1><span class="icon">#️⃣</span><span data-i18n="app.title">Crossword Client</span></h1>
     <p data-i18n="app.subtitle">Professional crossword puzzle generator and solver</p>
   </div>
 
@@ -709,8 +733,11 @@ canvas {
 
     <!-- Messages Section -->
     <div class="section messages-section">
-      <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
-      <div class="messages-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
+        <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
+      </div>
+      <div id="messagesContent" class="messages-container">
         <ul id="messages" class="messages-list">
           <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
         </ul>
@@ -726,13 +753,18 @@ canvas {
         </button>
       </div>
       
+      <div class="canvas-container">
+        <canvas id="solutionCanvas" class="hidden"></canvas>
+        <div id="solutionCanvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div>
+      </div>
+      
       <div class="clues-container">
         <div>
           <h3><span class="icon">➡️</span><span data-i18n="solution.horizontal">Horizontal Words</span></h3>
           <div class="table-container">
             <table id="horizontalSolution">
               <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="solution.word">Word</th></tr>
+                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
               </thead>
               <tbody></tbody>
             </table>
@@ -743,7 +775,7 @@ canvas {
           <div class="table-container">
             <table id="verticalSolution">
               <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="solution.word">Word</th></tr>
+                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
               </thead>
               <tbody></tbody>
             </table>
@@ -753,9 +785,9 @@ canvas {
     </div>
 
     <!-- Game Section -->
-    <div class="section results-section">
+    <div class="section game-section">
       <div class="section-header">
-        <h2><span class="icon">🎮</span><span data-i18n="game.title">Crossword Game</span></h2>
+        <h2><span class="icon">🎮</span><span data-i18n="game.title">Game</span></h2>
         <button id="printButton" class="btn btn-print">
           <span class="icon">🖨️</span><span data-i18n="game.print">Print Game</span>
         </button>
@@ -806,11 +838,31 @@ function closeAboutModal() {
   document.getElementById('aboutModal').classList.remove('show');
 }
 
+// Toggle Messages Section  
+function toggleMessages() {
+  var content = document.getElementById('messagesContent');
+  var toggle = document.getElementById('messagesToggle');
+  
+  if (messagesVisible) {
+    content.style.display = 'none';
+    toggle.textContent = '○'; // Open circle (closed state - click to open/show)
+    toggle.title = translate('messages.show');
+    messagesVisible = false;
+  } else {
+    content.style.display = 'block';
+    toggle.textContent = '●'; // Filled circle (open state - click to close/hide)
+    toggle.title = translate('messages.hide');
+    messagesVisible = true;
+  }
+}
+
 // Global variables
 var currentLanguage = 'en';
 var ws;
 var entries = [];
 var rows = 0, cols = 0, max_rows = 0, interval = 0;
+var messagesVisible = true; // Track messages visibility
+var lastLoadedFileInfo = null; // Track last loaded file info for translation updates
 
 // Translations object with French and German added
 var translations = {
@@ -864,7 +916,7 @@ var translations = {
     'solution.horizontal': 'Horizontal Words',
     'solution.vertical': 'Vertical Words',
     'solution.word': 'Word',
-    'game.title': 'Crossword Game',
+    'game.title': 'Game',
     'game.print': 'Print Game',
     'game.placeholder': 'Grid will appear here after generation',
     'game.horizontal': 'Horizontal Clues',
@@ -872,7 +924,25 @@ var translations = {
     'game.clue': 'Clue',
     'config.title_label': 'Title',
     'config.title_placeholder': 'Enter game title...',
-    "config.interval_help": "Time limit for each grid size attempt" 
+    'messages.show': 'Show messages',
+    'messages.hide': 'Hide messages',
+    'file.loaded_success': 'Successfully loaded {0} word entries!',
+    'file.loaded_from': 'Loaded {0} entries from {1}',
+    "config.interval_help": "Time limit for each grid size attempt",
+    'server.connected': 'Connected to crossword server',
+    'server.connect_failed': 'Failed to connect to server. Make sure your crossword server is running on localhost:9002',
+    'server.disconnected': 'Disconnected from server',
+    'server.websocket_failed': 'WebSocket connection failed',
+    'server.invalid_message': 'Received invalid message from server',
+    'server.trying': 'Trying {0} × {1}',
+    'server.unsolved': 'Could not generate crossword. Verify your words, try increasing maximum rows or interval.',
+    'server.error': 'Server Error: {0}',
+    'server.solved_with_stats': 'Solved! In {0} seconds, attempt {1} out of {2} possible',
+    'server.solved': 'Crossword generated successfully!',
+    'server.generating': 'Generating crossword puzzle...',
+    'file.loading': 'Loading file...',
+    'file.saved': 'Saved {0} entries to crossword.cross',
+    'editor.cleared': 'All word entries cleared'
   },
   pt: {
     'app.title': 'tnct.crosswords',
@@ -924,7 +994,7 @@ var translations = {
     'solution.horizontal': 'Palavras Horizontais',
     'solution.vertical': 'Palavras Verticais',
     'solution.word': 'Palavra',
-    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.title': 'Jogo',
     'game.print': 'Imprimir Jogo',
     'game.placeholder': 'A grelha aparecerá aqui após a geração',
     'game.horizontal': 'Pistas Horizontais',
@@ -932,7 +1002,25 @@ var translations = {
     'game.clue': 'Pista',    
     'config.title_label': 'Título',
     'config.title_placeholder': 'Digite o título do jogo...',
-    "config.interval_help": "Tempo limite para cada tentativa de tamanho da grelha"
+    'messages.show': 'Mostrar mensagens',
+    'messages.hide': 'Ocultar mensagens',
+    'file.loaded_success': 'Carregadas com sucesso {0} entradas de palavras!',
+    'file.loaded_from': 'Carregadas {0} entradas do ficheiro {1}',
+    "config.interval_help": "Tempo limite para cada tentativa de tamanho da grelha",
+    'server.connected': 'Ligado ao servidor de palavras cruzadas',
+    'server.connect_failed': 'Falha ao ligar ao servidor. Certifique-se que o servidor está a executar em localhost:9002',
+    'server.disconnected': 'Desligado do servidor',
+    'server.websocket_failed': 'Falha na ligação WebSocket',
+    'server.invalid_message': 'Recebida mensagem inválida do servidor',
+    'server.trying': 'Tentando {0} × {1}',
+    'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
+    'server.error': 'Erro do Servidor: {0}',
+    'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
+    'server.solved': 'Palavras cruzadas geradas com sucesso!',
+    'server.generating': 'A gerar palavras cruzadas...',
+    'file.loading': 'A carregar ficheiro...',
+    'file.saved': 'Guardadas {0} entradas em crossword.cross',
+    'editor.cleared': 'Todas as entradas de palavras foram limpas'
   },
   'pt-br': {
     'app.title': 'tnct.crosswords',
@@ -984,7 +1072,7 @@ var translations = {
     'solution.horizontal': 'Palavras Horizontais',
     'solution.vertical': 'Palavras Verticais',
     'solution.word': 'Palavra',
-    'game.title': 'Jogo de Palavras Cruzadas',
+    'game.title': 'Jogo',
     'game.print': 'Imprimir Jogo',
     'game.placeholder': 'A grade aparecerá aqui após a geração',
     'game.horizontal': 'Dicas Horizontais',
@@ -992,7 +1080,25 @@ var translations = {
     'game.clue': 'Dica',
     'config.title_label': 'Título',
     'config.title_placeholder': 'Digite o título do jogo...',
-    "config.interval_help": "Tempo limite para cada tentativa de tamanho do grid"    
+    'messages.show': 'Mostrar mensagens',
+    'messages.hide': 'Ocultar mensagens',
+    'file.loaded_success': 'Carregadas com sucesso {0} entradas de palavras!',
+    'file.loaded_from': 'Carregadas {0} entradas do arquivo {1}',
+    "config.interval_help": "Tempo limite para cada tentativa de tamanho do grid",
+    'server.connected': 'Conectado ao servidor de palavras cruzadas',
+    'server.connect_failed': 'Falha ao conectar ao servidor. Certifique-se que o servidor está rodando em localhost:9002',
+    'server.disconnected': 'Desconectado do servidor',
+    'server.websocket_failed': 'Falha na conexão WebSocket',
+    'server.invalid_message': 'Recebida mensagem inválida do servidor',
+    'server.trying': 'Tentando {0} × {1}',
+    'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
+    'server.error': 'Erro do Servidor: {0}',
+    'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
+    'server.solved': 'Palavras cruzadas geradas com sucesso!',
+    'server.generating': 'Gerando palavras cruzadas...',
+    'file.loading': 'Carregando arquivo...',
+    'file.saved': 'Salvas {0} entradas em crossword.cross',
+    'editor.cleared': 'Todas as entradas de palavras foram limpas'
   },
   es: {
     'app.title': 'tnct.crosswords',
@@ -1044,7 +1150,7 @@ var translations = {
     'solution.horizontal': 'Palabras Horizontales',
     'solution.vertical': 'Palabras Verticales',
     'solution.word': 'Palabra',
-    'game.title': 'Juego de Crucigramas',
+    'game.title': 'Juego',
     'game.print': 'Imprimir Juego',
     'game.placeholder': 'La cuadrícula aparecerá aquí después de la generación',
     'game.horizontal': 'Pistas Horizontales',
@@ -1052,7 +1158,25 @@ var translations = {
     'game.clue': 'Pista',
     'config.title_label': 'Título',
     'config.title_placeholder': 'Ingrese el título del juego...',
-    "config.interval_help": "Tiempo límite para cada intento de tamaño de cuadrícula"
+    'messages.show': 'Mostrar mensajes',
+    'messages.hide': 'Ocultar mensajes',
+    'file.loaded_success': '¡Se cargaron exitosamente {0} entradas de palabras!',
+    'file.loaded_from': 'Cargadas {0} entradas del archivo {1}',
+    "config.interval_help": "Tiempo límite para cada intento de tamaño de cuadrícula",
+    'server.connected': 'Conectado al servidor de crucigramas',
+    'server.connect_failed': 'Error al conectar al servidor. Asegúrese de que el servidor esté ejecutándose en localhost:9002',
+    'server.disconnected': 'Desconectado del servidor',
+    'server.websocket_failed': 'Error en la conexión WebSocket',
+    'server.invalid_message': 'Mensaje inválido recibido del servidor',
+    'server.trying': 'Intentando {0} × {1}',
+    'server.unsolved': 'No se pudo generar el crucigrama. Verifique las palabras, intente aumentar el máximo de filas o el intervalo.',
+    'server.error': 'Error del Servidor: {0}',
+    'server.solved_with_stats': '¡Resuelto! En {0} segundos, intento {1} de {2} posibles',
+    'server.solved': '¡Crucigrama generado exitosamente!',
+    'server.generating': 'Generando crucigrama...',
+    'file.loading': 'Cargando archivo...',
+    'file.saved': 'Guardadas {0} entradas en crossword.cross',
+    'editor.cleared': 'Todas las entradas de palabras han sido borradas'
   },
   it: {
     'app.title': 'tnct.crosswords',
@@ -1104,7 +1228,7 @@ var translations = {
     'solution.horizontal': 'Parole Orizzontali',
     'solution.vertical': 'Parole Verticali',
     'solution.word': 'Parola',
-    'game.title': 'Gioco Cruciverba',
+    'game.title': 'Gioco',
     'game.print': 'Stampa Gioco',
     'game.placeholder': 'La griglia apparirà qui dopo la generazione',
     'game.horizontal': 'Indizi Orizzontali',
@@ -1112,7 +1236,25 @@ var translations = {
     'game.clue': 'Indizio',
     'config.title_label': 'Titolo',
     'config.title_placeholder': 'Inserisci il titolo del gioco...',
-    "config.interval_help": "Tempo limite per ogni tentativo di dimensione della griglia"
+    'messages.show': 'Mostra messaggi',
+    'messages.hide': 'Nascondi messaggi',
+    'file.loaded_success': 'Caricate con successo {0} voci di parole!',
+    'file.loaded_from': 'Caricate {0} voci dal file {1}',
+    "config.interval_help": "Tempo limite per ogni tentativo di dimensione della griglia",
+    'server.connected': 'Connesso al server dei cruciverba',
+    'server.connect_failed': 'Errore di connessione al server. Assicurarsi che il server sia in esecuzione su localhost:9002',
+    'server.disconnected': 'Disconnesso dal server',
+    'server.websocket_failed': 'Errore di connessione WebSocket',
+    'server.invalid_message': 'Ricevuto messaggio non valido dal server',
+    'server.trying': 'Tentando {0} × {1}',
+    'server.unsolved': 'Impossibile generare il cruciverba. Verificare le parole, provare ad aumentare le righe massime o l\'intervallo.',
+    'server.error': 'Errore del Server: {0}',
+    'server.solved_with_stats': 'Risolto! In {0} secondi, tentativo {1} di {2} possibili',
+    'server.solved': 'Cruciverba generato con successo!',
+    'server.generating': 'Generando cruciverba...',
+    'file.loading': 'Caricamento file...',
+    'file.saved': 'Salvate {0} voci in crossword.cross',
+    'editor.cleared': 'Tutte le voci delle parole sono state cancellate'
   },
   fr: {
     'app.title': 'tnct.crosswords',
@@ -1164,7 +1306,7 @@ var translations = {
     'solution.horizontal': 'Mots Horizontaux',
     'solution.vertical': 'Mots Verticaux',
     'solution.word': 'Mot',
-    'game.title': 'Jeu de Mots Croisés',
+    'game.title': 'Jeu',
     'game.print': 'Imprimer le Jeu',
     'game.placeholder': 'La grille apparaîtra ici après la génération',
     'game.horizontal': 'Indices Horizontaux',
@@ -1172,7 +1314,25 @@ var translations = {
     'game.clue': 'Indice',
     'config.title_label': 'Titre',
     'config.title_placeholder': 'Entrez le titre du jeu...',
-    "config.interval_help": "Durée limite pour chaque tentative de taille de grille"
+    'messages.show': 'Afficher les messages',
+    'messages.hide': 'Masquer les messages',
+    'file.loaded_success': '{0} entrées de mots chargées avec succès !',
+    'file.loaded_from': 'Chargées {0} entrées du fichier {1}',
+    "config.interval_help": "Durée limite pour chaque tentative de taille de grille",
+    'server.connected': 'Connecté au serveur de mots croisés',
+    'server.connect_failed': 'Échec de connexion au serveur. Assurez-vous que le serveur fonctionne sur localhost:9002',
+    'server.disconnected': 'Déconnecté du serveur',
+    'server.websocket_failed': 'Échec de la connexion WebSocket',
+    'server.invalid_message': 'Message invalide reçu du serveur',
+    'server.trying': 'Tentative {0} × {1}',
+    'server.unsolved': 'Impossible de générer les mots croisés. Vérifiez les mots, essayez d\'augmenter le maximum de lignes ou l\'intervalle.',
+    'server.error': 'Erreur du Serveur : {0}',
+    'server.solved_with_stats': 'Résolu ! En {0} secondes, tentative {1} sur {2} possibles',
+    'server.solved': 'Mots croisés générés avec succès !',
+    'server.generating': 'Génération des mots croisés...',
+    'file.loading': 'Chargement du fichier...',
+    'file.saved': 'Sauvegardées {0} entrées dans crossword.cross',
+    'editor.cleared': 'Toutes les entrées de mots ont été effacées'
   },
   de: {
     'app.title': 'tnct.crosswords',
@@ -1224,7 +1384,7 @@ var translations = {
     'solution.horizontal': 'Horizontale Wörter',
     'solution.vertical': 'Vertikale Wörter',
     'solution.word': 'Wort',
-    'game.title': 'Kreuzworträtsel-Spiel',
+    'game.title': 'Spiel',
     'game.print': 'Spiel Drucken',
     'game.placeholder': 'Das Raster wird hier nach der Generierung angezeigt',
     'game.horizontal': 'Horizontale Hinweise',
@@ -1232,7 +1392,25 @@ var translations = {
     'game.clue': 'Hinweis',
     'config.title_label': 'Titel',
     'config.title_placeholder': 'Spieltitel eingeben...',
-    "config.interval_help": "Zeitlimit für jeden Versuch einer Rastergröße" 
+    'messages.show': 'Nachrichten anzeigen',
+    'messages.hide': 'Nachrichten ausblenden',
+    'file.loaded_success': '{0} Worteinträge erfolgreich geladen!',
+    'file.loaded_from': '{0} Einträge aus Datei {1} geladen',
+    "config.interval_help": "Zeitlimit für jeden Versuch einer Rastergröße",
+    'server.connected': 'Mit Kreuzworträtsel-Server verbunden',
+    'server.connect_failed': 'Verbindung zum Server fehlgeschlagen. Stellen Sie sicher, dass der Server auf localhost:9002 läuft',
+    'server.disconnected': 'Vom Server getrennt',
+    'server.websocket_failed': 'WebSocket-Verbindung fehlgeschlagen',
+    'server.invalid_message': 'Ungültige Nachricht vom Server erhalten',
+    'server.trying': 'Versuche {0} × {1}',
+    'server.unsolved': 'Kreuzworträtsel konnte nicht generiert werden. Überprüfen Sie die Wörter, versuchen Sie, die maximalen Zeilen oder das Intervall zu erhöhen.',
+    'server.error': 'Server-Fehler: {0}',
+    'server.solved_with_stats': 'Gelöst! In {0} Sekunden, Versuch {1} von {2} möglichen',
+    'server.solved': 'Kreuzworträtsel erfolgreich generiert!',
+    'server.generating': 'Kreuzworträtsel wird generiert...',
+    'file.loading': 'Datei wird geladen...',
+    'file.saved': '{0} Einträge in crossword.cross gespeichert',
+    'editor.cleared': 'Alle Worteinträge wurden gelöscht'
   }
 };
 
@@ -1242,6 +1420,15 @@ console.log('Translations loaded:', Object.keys(translations));
 function translate(key) {
   var result = translations[currentLanguage] && translations[currentLanguage][key];
   return result || key;
+}
+
+// Translation function with parameters
+function translateWithParams(key, ...params) {
+  var template = translate(key);
+  for (var i = 0; i < params.length; i++) {
+    template = template.replace('{' + i + '}', params[i]);
+  }
+  return template;
 }
 
 // Update UI function
@@ -1260,6 +1447,9 @@ function updateUI() {
 
       if (element.classList.contains("help-tooltip")) {
         // mantém o "?" visível e põe a tradução no tooltip
+        element.setAttribute("title", translation);
+      } else if (element.classList.contains("eye-toggle")) {
+        // Atualiza tooltip do ícone do olho
         element.setAttribute("title", translation);
       } else if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
         // já tratado mais abaixo (placeholder), mas fica aqui por segurança
@@ -1306,6 +1496,26 @@ function updateUI() {
   document.getElementById('maxRowsInput').placeholder = placeholderPrefix + ', 20';
   document.getElementById('intervalInput').placeholder = placeholderPrefix + ', 5';
   
+  // Update eye toggle tooltip based on current state
+  var toggleEl = document.getElementById('messagesToggle');
+  if (toggleEl) {
+    if (messagesVisible) {
+      toggleEl.title = translate('messages.hide');
+    } else {
+      toggleEl.title = translate('messages.show');
+    }
+  }
+  
+  // Update file status message if there was a recent file load
+  if (lastLoadedFileInfo) {
+    var statusEl = document.getElementById("fileStatus");
+    // Check if element exists and is visible (not hidden) and has success class
+    if (statusEl && !statusEl.classList.contains("hidden") && statusEl.classList.contains("status-success")) {
+      var newText = translateWithParams('file.loaded_success', lastLoadedFileInfo.count);
+      statusEl.textContent = newText;
+    }
+  }
+  
   updateEntryCount();
 }
 
@@ -1350,23 +1560,23 @@ function connectWebSocket() {
     
     ws.onopen = function() {
       console.log("WebSocket connected");
-      updateMessages("Connected to crossword server", "success");
+      updateMessages(translate("server.connected"), "success");
     };
     
     ws.onerror = function(e) {
       console.error("WebSocket error", e);
-      updateMessages("Failed to connect to server. Make sure your crossword server is running on localhost:9002", "error");
+      updateMessages(translate("server.connect_failed"), "error");
     };
     
     ws.onclose = function() {
       console.log("WebSocket disconnected");
-      updateMessages("Disconnected from server", "warning");
+      updateMessages(translate("server.disconnected"), "warning");
     };
     
     ws.onmessage = handleWebSocketMessage;
   } catch (error) {
     console.error("WebSocket connection failed:", error);
-    updateMessages("WebSocket connection failed", "error");
+    updateMessages(translate("server.websocket_failed"), "error");
   }
 }
 
@@ -1376,9 +1586,16 @@ function handleWebSocketMessage(event) {
     
     if (msg.response === "solved") {
       renderSolutionTable(msg.layouts);
+      renderSolutionGrid(msg);
       renderGrid(msg);
       renderClues(msg.layouts);
-      updateMessages("Crossword generated successfully!", "success");
+      
+      // Add solved message with statistics
+      if (msg.total_time && msg.at_permutation && msg.max_permutations) {
+        updateMessages(translateWithParams("server.solved_with_stats", msg.total_time, msg.at_permutation, msg.max_permutations), "success");
+      } else {
+        updateMessages(translate("server.solved"), "success");
+      }
     } else {
       var text = "";
       var type = "info";
@@ -1386,28 +1603,39 @@ function handleWebSocketMessage(event) {
       if (msg.response === "configuration") {
         var r = parseInt(msg.rows && msg.rows.replace(/"/g, "")) || 0;
         var c = parseInt(msg.cols && msg.cols.replace(/"/g, "")) || 0;
-        var perms = parseInt(msg.num_permutations && msg.num_permutations.replace(/"/g, "")) || 0;
-        var memAvail = parseInt(msg.mem_available && msg.mem_available.replace(/"/g, "")) || 0;
-        var memUsed = parseInt(msg.mem_used && msg.mem_used.replace(/"/g, "")) || 0;
-        text = "Trying: " + r + " × " + c + " grid, " + perms.toLocaleString() + " permutations, " + memAvail + "MB available, " + memUsed + "MB used";
+        text = translateWithParams("server.trying", r, c) + " ";
       } else if (msg.response === "tries") {
-        var perms = parseInt(msg.permutations && msg.permutations.replace(/"/g, "")) || 0;
-        text = "Tried " + perms.toLocaleString() + " permutations...";
+        // Find the last message and append '#' to it
+        var messagesList = document.getElementById("messages");
+        var lastMessage = messagesList.lastElementChild;
+        if (lastMessage && !lastMessage.classList.contains("messages-empty")) {
+          // Check if this is the first '#' by seeing if the message already contains '#'
+          if (lastMessage.textContent.indexOf('#') === -1) {
+            // First '#' - add with space
+            lastMessage.textContent += "#";
+          } else {
+            // Subsequent '#' - add without space
+            lastMessage.textContent += "#";
+          }
+          return; // Don't create new message
+        }
       } else if (msg.response === "unsolved") {
-        text = "Could not generate crossword. Try increasing maximum rows or interval.";
+        text = translate("server.unsolved");
         type = "error";
       } else if (msg.response === "error") {
-        text = "Server Error: " + msg.explanation;
+        text = translateWithParams("server.error", msg.explanation);
         type = "error";
       } else {
         text = JSON.stringify(msg, null, 2);
       }
       
-      updateMessages(text, type);
+      if (text) {
+        updateMessages(text, type);
+      }
     }
   } catch (err) {
     console.error("Invalid message format:", err);
-    updateMessages("Received invalid message from server", "warning");
+    updateMessages(translate("server.invalid_message"), "warning");
   }
 }
 
@@ -1424,7 +1652,14 @@ function updateMessages(text, type) {
   li.className = "message-" + type;
   
   messagesList.appendChild(li);
-  messagesList.scrollTop = messagesList.scrollHeight;
+  
+  // Force scroll to bottom with a small delay to ensure rendering
+  setTimeout(function() {
+    var messagesContainer = document.querySelector('.messages-container');
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  }, 10);
   
   while (messagesList.children.length > 50) {
     messagesList.removeChild(messagesList.firstChild);
@@ -1439,6 +1674,46 @@ function clearMessages() {
   emptyLi.setAttribute("data-i18n", "messages.waiting");
   emptyLi.textContent = translate("messages.waiting");
   messagesList.appendChild(emptyLi);
+}
+
+function clearSolution() {
+  // Clear solution tables
+  var horizSolution = document.getElementById("horizontalSolution").querySelector("tbody");
+  var vertSolution = document.getElementById("verticalSolution").querySelector("tbody");
+  horizSolution.innerHTML = "";
+  vertSolution.innerHTML = "";
+  
+  // Clear and hide solution canvas
+  var solutionCanvas = document.getElementById("solutionCanvas");
+  var solutionPlaceholder = document.getElementById("solutionCanvasPlaceholder");
+  if (solutionCanvas) {
+    var ctx = solutionCanvas.getContext("2d");
+    ctx.clearRect(0, 0, solutionCanvas.width, solutionCanvas.height);
+    solutionCanvas.classList.add("hidden");
+  }
+  if (solutionPlaceholder) {
+    solutionPlaceholder.style.display = "block";
+  }
+}
+
+function clearGame() {
+  // Clear game tables
+  var horizClues = document.getElementById("horizontalClues").querySelector("tbody");
+  var vertClues = document.getElementById("verticalClues").querySelector("tbody");
+  horizClues.innerHTML = "";
+  vertClues.innerHTML = "";
+  
+  // Clear and hide game canvas
+  var gameCanvas = document.getElementById("gridCanvas");
+  var gamePlaceholder = document.getElementById("canvasPlaceholder");
+  if (gameCanvas) {
+    var ctx = gameCanvas.getContext("2d");
+    ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+    gameCanvas.classList.add("hidden");
+  }
+  if (gamePlaceholder) {
+    gamePlaceholder.style.display = "block";
+  }
 }
 
 // Word entry functions
@@ -1623,7 +1898,7 @@ function renderSolutionTable(layouts) {
     var row = document.createElement("tr");
     row.innerHTML = 
       '<td class="idCol">' + (layout.id || "") + '</td>' +
-      '<td style="font-weight: 600;">' + (layout.word || "") + '</td>';
+      '<td>' + (layout.explanation || "") + '</td>';
     
     if (layout.orientation === "H") {
       horizTbody.appendChild(row);
@@ -1631,6 +1906,139 @@ function renderSolutionTable(layouts) {
       vertTbody.appendChild(row);
     }
   }
+}
+
+function renderSolutionGrid(msg) {
+  var canvas = document.getElementById("solutionCanvas");
+  var ctx = canvas.getContext("2d");
+
+  var nRows = parseInt(msg.rows.replace(/"/g, ""));
+  var nCols = parseInt(msg.cols.replace(/"/g, ""));
+
+  // Create grid with letters
+  var grid = [];
+  for (var i = 0; i < nRows; i++) {
+    grid[i] = [];
+    for (var j = 0; j < nCols; j++) {
+      grid[i][j] = '';
+    }
+  }
+
+  var activeCells = new Set();
+  
+  // Fill grid with words
+  for (var i = 0; i < msg.layouts.length; i++) {
+    var layout = msg.layouts[i];
+    var startRow = parseInt(layout.row);
+    var startCol = parseInt(layout.col);
+    var word = layout.word;
+    
+    if (layout.orientation === "H") {
+      for (var j = 0; j < word.length; j++) {
+        grid[startRow][startCol + j] = word[j];
+        activeCells.add(startRow + "," + (startCol + j));
+      }
+    } else {
+      for (var j = 0; j < word.length; j++) {
+        grid[startRow + j][startCol] = word[j];
+        activeCells.add((startRow + j) + "," + startCol);
+      }
+    }
+  }
+
+  // Find bounds
+  var minRow = nRows, maxRow = -1, minCol = nCols, maxCol = -1;
+  
+  activeCells.forEach(function(cellKey) {
+    var parts = cellKey.split(',');
+    var row = parseInt(parts[0]);
+    var col = parseInt(parts[1]);
+    minRow = Math.min(minRow, row);
+    maxRow = Math.max(maxRow, row);
+    minCol = Math.min(minCol, col);
+    maxCol = Math.max(maxCol, col);
+  });
+
+  var effectiveRows = maxRow - minRow + 1;
+  var effectiveCols = maxCol - minCol + 1;
+
+  var maxCanvasSize = 700;
+  var cellSize = Math.min(
+    Math.floor(maxCanvasSize / effectiveCols),
+    Math.floor(maxCanvasSize / effectiveRows),
+    50
+  );
+  
+  var padding = 20;
+  canvas.width = cellSize * effectiveCols + padding * 2;
+  canvas.height = cellSize * effectiveRows + padding * 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw cells and letters
+  activeCells.forEach(function(cellKey) {
+    var parts = cellKey.split(',');
+    var absoluteRow = parseInt(parts[0]);
+    var absoluteCol = parseInt(parts[1]);
+    
+    var relativeRow = absoluteRow - minRow;
+    var relativeCol = absoluteCol - minCol;
+    
+    var x = relativeCol * cellSize + padding;
+    var y = relativeRow * cellSize + padding;
+    
+    // Draw cell
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(x, y, cellSize, cellSize);
+    
+    ctx.strokeStyle = "#2d3748";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, cellSize, cellSize);
+    
+    // Draw letter
+    var letter = grid[absoluteRow][absoluteCol];
+    if (letter) {
+      ctx.fillStyle = "#2d3748";
+      ctx.font = "bold " + Math.max(cellSize / 3, 12) + "px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(letter, x + cellSize/2, y + cellSize/2);
+    }
+  });
+
+  // Draw numbers
+  ctx.fillStyle = "#2d3748";
+  ctx.font = "bold " + Math.max(cellSize / 6, 8) + "px Arial";
+  
+  for (var i = 0; i < msg.layouts.length; i++) {
+    var layout = msg.layouts[i];
+    var absoluteRow = parseInt(layout.row);
+    var absoluteCol = parseInt(layout.col);
+    
+    var relativeRow = absoluteRow - minRow;
+    var relativeCol = absoluteCol - minCol;
+    
+    var x = relativeCol * cellSize + padding;
+    var y = relativeRow * cellSize + padding;
+    
+    var numberX, numberY;
+    
+    if (layout.orientation === "H") {
+      numberX = x + cellSize - 3;
+      numberY = y + 3;
+      ctx.textAlign = "right";
+    } else {
+      numberX = x + 3;
+      numberY = y + 3;
+      ctx.textAlign = "left";
+    }
+    
+    ctx.textBaseline = "top";
+    ctx.fillText(layout.id || "", numberX, numberY);
+  }
+
+  canvas.classList.remove("hidden");
+  document.getElementById("solutionCanvasPlaceholder").style.display = "none";
 }
 
 function renderClues(layouts) {
@@ -1730,9 +2138,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!file) return;
     
+    // Clear messages and solution when loading new file
+    clearMessages();
+    clearSolution();
+    clearGame();
+    
     console.log('Loading file:', file.name);
     statusEl.className = "status-message loading";
-    statusEl.textContent = "Loading file...";
+    statusEl.textContent = translate("file.loading");
     statusEl.classList.remove("hidden");
     
     var reader = new FileReader();
@@ -1758,9 +2171,15 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Parsed entries:', newEntries.length);
         entries = newEntries;
         
+        // Store file info for language updates
+        lastLoadedFileInfo = {
+          count: newEntries.length,
+          filename: file.name
+        };
+        
         statusEl.className = "status-message status-success";
-        statusEl.textContent = "Successfully loaded " + newEntries.length + " word entries!";
-        updateMessages("Loaded " + newEntries.length + " entries from " + file.name, "success");
+        statusEl.textContent = translateWithParams('file.loaded_success', newEntries.length);
+        updateMessages(translateWithParams('file.loaded_from', newEntries.length, file.name), "success");
         
         // Clear existing table and populate with loaded data
         document.getElementById("wordEntryTableBody").innerHTML = "";
@@ -1778,6 +2197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
       } catch (error) {
         console.error('Error parsing file:', error);
+        lastLoadedFileInfo = null; // Clear file info on error
         statusEl.className = "status-message status-error";
         statusEl.textContent = "Error reading file. Please check the format.";
         updateMessages("Failed to load file", "error");
@@ -1797,7 +2217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var currentEntries = getEntriesFromTable();
     
     if (currentEntries.length === 0) {
-      alert("No entries to save. Add some words first.");
+      alert("No word entries to save. Please add some words first.");
       return;
     }
     
@@ -1816,7 +2236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
     
-    updateMessages("Saved " + currentEntries.length + " entries to crossword.cross", "success");
+    updateMessages(translateWithParams("file.saved", currentEntries.length), "success");
   };
   
   // Add/Clear buttons
@@ -1825,11 +2245,41 @@ document.addEventListener('DOMContentLoaded', function() {
   };
   
   document.getElementById("clearAllButton").onclick = function() {
-    if (confirm("Are you sure you want to clear all entries? This action cannot be undone.")) {
+    var confirmMessage = "Are you sure you want to clear all word entries? This action cannot be undone.";
+    
+    // Get translated confirmation message if available
+    if (currentLanguage === 'pt') {
+      confirmMessage = "Tem a certeza que quer limpar todas as entradas? Esta acção não pode ser desfeita.";
+    } else if (currentLanguage === 'pt-br') {
+      confirmMessage = "Tem certeza que quer limpar todas as entradas? Esta ação não pode ser desfeita.";
+    } else if (currentLanguage === 'es') {
+      confirmMessage = "¿Está seguro de que desea borrar todas las entradas? Esta acción no se puede deshacer.";
+    } else if (currentLanguage === 'it') {
+      confirmMessage = "Sei sicuro di voler cancellare tutte le voci? Questa azione non può essere annullata.";
+    } else if (currentLanguage === 'fr') {
+      confirmMessage = "Êtes-vous sûr de vouloir effacer toutes les entrées ? Cette action ne peut pas être annulée.";
+    } else if (currentLanguage === 'de') {
+      confirmMessage = "Sind Sie sicher, dass Sie alle Einträge löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
+    }
+    
+    if (confirm(confirmMessage)) {
       document.getElementById("wordEntryTableBody").innerHTML = "";
       entries = [];
+      lastLoadedFileInfo = null; // Clear file info when clearing entries
+      
+      // Hide the file status message
+      var statusEl = document.getElementById("fileStatus");
+      if (statusEl) {
+        statusEl.classList.add("hidden");
+      }
+      
+      // Clear messages and solution
+      clearMessages();
+      clearSolution();
+      clearGame();
+      
       updateEntryCount();
-      updateMessages("All entries cleared", "info");
+      updateMessages(translate("editor.cleared"), "info");
     }
   };
   
@@ -1860,7 +2310,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (!rows || !cols || !max_rows || !interval) {
-      alert("All fields must be filled with positive numbers.");
+      alert("All configuration fields must be filled with positive numbers.");
       return;
     }
     
@@ -1873,7 +2323,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Clear messages before starting generation
     clearMessages();
-    updateMessages("Generating crossword puzzle...", "info");
+    clearSolution();
+    clearGame();
+    updateMessages(translate("server.generating"), "info");
 
     var request = {
       request: "create",
@@ -1892,7 +2344,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Print Game button clicked');
     var canvas = document.getElementById("gridCanvas");
     if (canvas.classList.contains("hidden")) {
-      alert("No crossword grid to print. Generate a crossword first.");
+      alert("No crossword puzzle to print. Please generate a crossword first.");
       return;
     }
     
@@ -1941,11 +2393,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Print Solution button clicked');
     var horizSolution = document.getElementById("horizontalSolution");
     var vertSolution = document.getElementById("verticalSolution");
+    var solutionCanvas = document.getElementById("solutionCanvas");
     
     if (horizSolution.querySelector("tbody").children.length === 0 && 
         vertSolution.querySelector("tbody").children.length === 0) {
-      alert("No solution to print. Generate a crossword first.");
+      alert("No solution to print. Please generate a crossword first.");
       return;
+    }
+    
+    var canvasImg = "";
+    if (solutionCanvas && !solutionCanvas.classList.contains("hidden")) {
+      canvasImg = '<img src="' + solutionCanvas.toDataURL("image/png") + '" alt="Solution Grid" style="max-width: 100%; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />';
     }
     
     var printWindow = window.open("", "_blank");
@@ -1955,6 +2413,7 @@ document.addEventListener('DOMContentLoaded', function() {
           '<title>' + translate('solution.title') + '</title>' +
           '<style>' +
             'body { font-family: Arial, sans-serif; margin: 20px; }' +
+            'h1 { text-align: center; margin-bottom: 30px; color: #1e293b; }' +
             '.solution { display: flex; gap: 40px; }' +
             '.solution > div { flex: 1; }' +
             'table { border-collapse: collapse; width: 100%; }' +
@@ -1965,6 +2424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         '</head>' +
         '<body>' +
           '<h1>' + translate('solution.title') + '</h1>' +
+          canvasImg +
           '<div class="solution">' +
             '<div><h2>' + translate('solution.horizontal') + '</h2>' + horizSolution.outerHTML + '</div>' +
             '<div><h2>' + translate('solution.vertical') + '</h2>' + vertSolution.outerHTML + '</div>' +
@@ -1978,6 +2438,9 @@ document.addEventListener('DOMContentLoaded', function() {
       printWindow.close();
     };
   };
+  
+  // Initialize eye toggle tooltip
+  document.getElementById('messagesToggle').title = translate('messages.hide');
   
   console.log('Initialization complete!');
 });

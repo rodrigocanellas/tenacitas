@@ -376,7 +376,7 @@ signals:
 
 private:
   void solved(std::shared_ptr<crosswords::dat::grid> p_grid,
-              std::chrono::seconds                   p_time);
+              std::chrono::seconds p_time, std::uint64_t p_max_permutations);
 
   void unsolved(crosswords::dat::index p_rows, crosswords::dat::index p_cols);
 
