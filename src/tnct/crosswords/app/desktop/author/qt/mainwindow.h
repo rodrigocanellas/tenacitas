@@ -13,19 +13,12 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
-#include "tnct/container/circular_queue.h"
+#include "tnct/crosswords/bus/grid_creator.h"
 #include "tnct/crosswords/dat/entries.h"
 #include "tnct/crosswords/dat/grid.h"
-#include "tnct/crosswords/evt/dispatcher.h"
-#include "tnct/crosswords/evt/grid_attempt_configuration.h"
-#include "tnct/crosswords/evt/grid_create_solved.h"
-#include "tnct/crosswords/evt/grid_create_start.h"
-#include "tnct/crosswords/evt/grid_create_stop.h"
-#include "tnct/crosswords/evt/grid_create_timeout.h"
-#include "tnct/crosswords/evt/grid_create_unsolved.h"
-#include "tnct/crosswords/evt/grid_permutations_tried.h"
-
+#include "tnct/crosswords/dat/index.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 
@@ -328,18 +321,7 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
-  using events_published = std::tuple<crosswords::evt::grid_create_stop,
-                                      crosswords::evt::grid_create_start>;
-  using events_subscribed =
-      std::tuple<crosswords::evt::grid_create_unsolved,
-                 crosswords::evt::grid_create_solved,
-                 crosswords::evt::grid_create_timeout,
-                 crosswords::evt::grid_create_stop,
-                 crosswords::evt::grid_attempt_configuration,
-                 crosswords::evt::grid_permutations_tried>;
-
-  MainWindow(log::cerr &p_logger, crosswords::evt::dispatcher &p_dispatcher,
-             QWidget *parent = nullptr);
+  MainWindow(log::cerr &p_logger, QWidget *parent = nullptr);
 
   ~MainWindow();
 
@@ -357,8 +339,6 @@ private:
   void on_save_as_clicked();
 
   void on_check_all_clicked();
-
-  void on_grid_solved(crosswords::evt::grid_create_solved &&);
 
   void handle_grid_solved();
 
@@ -395,23 +375,18 @@ signals:
   void log(QString);
 
 private:
-  using grid_create_unsolved_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_create_unsolved, 20>;
+  void solved(std::shared_ptr<crosswords::dat::grid> p_grid,
+              std::chrono::seconds p_time, std::uint64_t p_max_permutations);
 
-  using grid_create_solved_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_create_solved, 20>;
+  void unsolved(crosswords::dat::index p_rows, crosswords::dat::index p_cols);
 
-  using grid_create_timeout_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_create_timeout, 20>;
+  void configuration(crosswords::dat::index p_rows,
+                     crosswords::dat::index p_cols,
+                     std::size_t            p_max_memory_to_be_used,
+                     std::size_t            p_memory_available,
+                     std::size_t            p_number_of_permutations);
 
-  using grid_create_stop_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_create_stop, 20>;
-
-  using grid_attempt_configuration_queue = tnct::container::circular_queue<
-      tnct::log::cerr, tnct::crosswords::evt::grid_attempt_configuration, 20>;
-
-  using grid_permutations_tried_queue = tnct::container::circular_queue<
-      tnct::log::cerr, crosswords::evt::grid_permutations_tried, 20>;
+  void permutations(std::size_t p_permutations);
 
 private:
   void configure_dispatcher();
@@ -419,9 +394,11 @@ private:
 private:
   Ui::MainWindow *ui;
 
-  log::cerr                   &m_logger;
-  crosswords::evt::dispatcher &m_dispatcher;
-  crosswords::dat::entries     m_entries;
+  log::cerr &m_logger;
+
+  crosswords::bus::grid_creator<log::cerr> m_grid_creator;
+
+  crosswords::dat::entries m_entries;
 
   std::shared_ptr<crosswords::dat::grid> m_grid;
 

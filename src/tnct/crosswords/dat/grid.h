@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "tnct/crosswords/dat/entries.h"
-#include "tnct/crosswords/dat/entry.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/dat/layout.h"
 #include "tnct/crosswords/dat/occupied.h"
@@ -47,20 +46,10 @@ struct grid
   grid(std::shared_ptr<const entries> p_entries,
        const permutation &p_permutation, index p_num_rows, index p_num_cols,
        uint64_t p_permutation_number = 0)
-      : m_longest(longest_word(p_permutation)), m_num_rows(p_num_rows),
-        m_num_cols(p_num_cols), m_permutation_number(p_permutation_number),
+      : m_num_rows(p_num_rows), m_num_cols(p_num_cols),
+        m_permutation_number(p_permutation_number),
         m_occupied(p_num_rows, p_num_cols, dat::max_char), m_entries(p_entries)
   {
-
-    // checks if all the words fit in the grid
-    if ((m_longest > p_num_rows) && (m_longest > p_num_cols))
-    {
-      std::string _err("Longest word has " + std::to_string(m_longest)
-                       + " chars and is longer than "
-                       + std::to_string(p_num_rows) + " rows and "
-                       + std::to_string(p_num_cols) + " columns");
-      throw std::runtime_error(_err);
-    }
 
     // fills the collection of \p layout objects
     uint16_t _id{1};
@@ -96,8 +85,7 @@ struct grid
   }
 
   grid(const grid &p_grid)
-      : m_longest(p_grid.m_longest), m_num_rows(p_grid.m_num_rows),
-        m_num_cols(p_grid.m_num_cols),
+      : m_num_cols(p_grid.m_num_cols),
         m_permutation_number(p_grid.m_permutation_number),
         m_occupied(p_grid.m_occupied), m_entries(p_grid.m_entries),
         m_layouts(p_grid.m_layouts), m_header(p_grid.m_header),
@@ -109,7 +97,6 @@ struct grid
   {
     if (this != &p_grid)
     {
-      m_longest            = p_grid.m_longest;
       m_num_rows           = p_grid.m_num_rows;
       m_num_cols           = p_grid.m_num_cols;
       m_permutation_number = p_grid.m_permutation_number;
@@ -274,11 +261,6 @@ struct grid
     return {_c};
   }
 
-  inline index longest_word() const
-  {
-    return m_longest;
-  }
-
   std::optional<const_layout_ite> get_id(index p_row, index p_col) const
   {
     for (auto _ite = begin(); _ite != end(); ++_ite)
@@ -337,25 +319,7 @@ private:
     }
   }
 
-  index longest_word(const permutation &p_permutation)
-  {
-    // using namespace dat;
-    index _size{0};
-
-    for (entries::const_entry_ite _entry : p_permutation)
-    {
-      auto _current{_entry->get_word().size()};
-      if (static_cast<index>(_current) > _size)
-      {
-        _size = _current;
-      }
-    }
-
-    return _size;
-  }
-
 private:
-  index    m_longest{0};
   index    m_num_rows{0};
   index    m_num_cols{0};
   uint64_t m_permutation_number;

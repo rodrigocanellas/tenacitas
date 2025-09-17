@@ -10,13 +10,12 @@
 #include <QPixmap>
 
 #include <chrono>
-#include <filesystem>
 #include <fstream>
 #include <map>
 
-#include "tnct/async/result.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 
@@ -35,15 +34,18 @@ const QString Char::hightlight_style_vertical =
     "font: 700 12pt \"FreeMono\";color: rgb(0, 0, 255);";
 const QString Char::unused_style = "background-color: rgb(100, 100, 100);";
 
-MainWindow::MainWindow(log::cerr                   &m_logger,
-                       crosswords::evt::dispatcher &p_dispatcher,
-                       QWidget                     *parent)
+MainWindow::MainWindow(log::cerr &m_logger, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), m_logger(m_logger),
-      m_dispatcher(p_dispatcher)
+      m_grid_creator{m_logger, std::bind_front(&MainWindow::solved, this),
+                     std::bind_front(&MainWindow::unsolved, this)}
 {
   ui->setupUi(this);
 
-  configure_dispatcher();
+  m_grid_creator.on_configuration(
+      std::bind_front(&MainWindow::configuration, this));
+
+  m_grid_creator.on_permutations_tried(
+      std::bind_front(&MainWindow::permutations, this));
 
   m_original_background = QColor{255, 255, 255};
 
@@ -68,16 +70,7 @@ MainWindow::MainWindow(log::cerr                   &m_logger,
   connect(ui->btnStart, &QPushButton::clicked, this, &MainWindow::on_start);
 
   connect(ui->btnStop, &QPushButton::clicked, this,
-          [&]()
-          {
-            if (auto _result =
-                    m_dispatcher
-                        .template publish<crosswords::evt::grid_create_stop>()
-                    != async::result::OK)
-            {
-              TNCT_LOG_ERR(m_logger, format::fmt(_result));
-            }
-          });
+          [&]() { m_grid_creator.stop(); });
 
   connect(this, &MainWindow::unresolved, this, &MainWindow::on_unresolved);
 
@@ -165,73 +158,47 @@ MainWindow::MainWindow(log::cerr                   &m_logger,
   }
 }
 
-void MainWindow::configure_dispatcher()
+void MainWindow::solved(std::shared_ptr<crosswords::dat::grid> p_grid,
+                        std::chrono::seconds                   p_time,
+                        std::uint64_t /*p_max_permutations*/)
 {
 
-  m_dispatcher.template add_handling<crosswords::evt::grid_create_unsolved>(
-      "grid_create_unsolved", grid_create_unsolved_queue{m_logger},
-      [&](crosswords::evt::grid_create_unsolved &&)
-      {
-        m_solving = false;
-        emit unresolved();
-      });
+  m_solving = false;
+  m_grid    = p_grid;
+  emit log(QString{"Grade montada em " + QString::number(p_time.count())
+                   + " segundos\n"});
+  emit grid_solved(/*p_event.grid*/);
+}
 
-  m_dispatcher.template add_handling<crosswords::evt::grid_create_solved>(
-      "grid_create_solved", grid_create_solved_queue{m_logger},
-      [&](crosswords::evt::grid_create_solved &&p_event)
-      {
-        TNCT_LOG_DEB(m_logger, format::fmt("grid = ", *p_event.grid));
-        // m_grid = p_event.grid;
+void MainWindow::unsolved(crosswords::dat::index, crosswords::dat::index)
+{
+  m_solving = false;
+  emit unresolved();
+}
 
-        on_grid_solved(std::move(p_event));
-      });
+void MainWindow::configuration(crosswords::dat::index p_rows,
+                               crosswords::dat::index p_cols,
+                               std::size_t            p_max_memory_to_be_used,
+                               std::size_t            p_memory_available,
+                               std::size_t            p_number_of_permutations)
+{
+  emit log(QString{"############\n"}
+           + QString{"Iniciando tentativa de montagem da grade "}
+           + QString::number(p_rows) + "x" + QString::number(p_cols) + "\n"
+           + QString{"Número de permutações: "
+                     + QString::number(p_number_of_permutations)}
+           + "\n"
+           + QString{"Memória disponível: "
+                     + QString::number(p_memory_available / 1024 / 1024)
+                     + " MB\n"}
+           + QString{"Máximo de memória a ser usada: "
+                     + QString::number(p_max_memory_to_be_used / 1024 / 1024)
+                     + " MB\n"});
+}
 
-  m_dispatcher.template add_handling<crosswords::evt::grid_create_timeout>(
-      "grid_create_timeout", grid_create_timeout_queue{m_logger},
-      [&](crosswords::evt::grid_create_timeout &&p_event)
-      {
-        emit log(QString{"Tempo excedido para grade de "
-                         + QString::number(p_event.num_rows) + "x"
-                         + QString::number(p_event.num_cols)}
-                 + "\n");
-      });
-
-  m_dispatcher.template add_handling<crosswords::evt::grid_create_stop>(
-      "grid_create_stop", grid_create_stop_queue{m_logger},
-      [&](crosswords::evt::grid_create_stop &&)
-      { emit log({"Montagem interrompida\n"}); });
-
-  m_dispatcher
-      .template add_handling<crosswords::evt::grid_attempt_configuration>(
-          "grid_attempt_configuration",
-          grid_attempt_configuration_queue{m_logger},
-          [&](crosswords::evt::grid_attempt_configuration &&p_event)
-          {
-            emit log(
-                QString{"############\n"}
-                + QString{"Iniciando tentativa de montagem da grade "}
-                + QString::number(p_event.num_rows) + "x"
-                + QString::number(p_event.num_cols) + "\n"
-                + QString{"Número de permutações: "
-                          + QString::number(p_event.number_of_permutations)}
-                + "\n"
-                + QString{"Memória disponível: "
-                          + QString::number(p_event.memory_available / 1024
-                                            / 1024)
-                          + " MB\n"}
-                + QString{"Máximo de memória a ser usada: "
-                          + QString::number(p_event.max_memory_to_be_used / 1024
-                                            / 1024)
-                          + " MB\n"});
-          });
-
-  m_dispatcher.template add_handling<crosswords::evt::grid_permutations_tried>(
-      "grid_permutations_tried", grid_permutations_tried_queue{m_logger},
-      [&](crosswords::evt::grid_permutations_tried &&p_event)
-      {
-        emit log(QString::number(p_event.permutations)
-                 + " permutações tentadas\n");
-      });
+void MainWindow::permutations(std::size_t p_permutations)
+{
+  emit log(QString::number(p_permutations) + " permutações tentadas\n");
 }
 
 void MainWindow::create_check_box_first_column(int p_row, bool p_checked)
@@ -518,15 +485,6 @@ void MainWindow::lowlight(crosswords::dat::grid::const_layout_ite p_layout)
   }
 }
 
-void MainWindow::on_grid_solved(crosswords::evt::grid_create_solved &&p_event)
-{
-  m_solving = false;
-  m_grid    = p_event.grid;
-  emit log(QString{"Grade montada em " + QString::number(p_event.time.count())
-                   + " segundos\n"});
-  emit grid_solved(/*p_event.grid*/);
-}
-
 void MainWindow::on_unresolved()
 {
   QMessageBox qMessageBox;
@@ -634,12 +592,10 @@ void MainWindow::on_start()
     _interval = std::chrono::seconds{ui->spbInterval->value() * 60 * 24};
   }
 
-  if (auto _result =
-          m_dispatcher.template publish<crosswords::evt::grid_create_start>(
-              m_entries, _num_rows, _num_cols, _interval, _max_rows)
-          != async::result::OK)
+  if (!m_grid_creator.start(m_entries, _num_rows, _num_cols, _interval,
+                            _max_rows))
   {
-    TNCT_LOG_ERR(m_logger, format::fmt(_result));
+    TNCT_LOG_ERR(m_logger, "error starting to create the grid");
   }
 
   ui->btnStop->setVisible(true);

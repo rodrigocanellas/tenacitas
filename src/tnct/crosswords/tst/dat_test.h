@@ -13,7 +13,9 @@
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/dat/permutation.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 
 namespace tnct::crosswords::tst

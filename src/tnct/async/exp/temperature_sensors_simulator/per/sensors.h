@@ -20,6 +20,7 @@
 #include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/container/circular_queue.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;

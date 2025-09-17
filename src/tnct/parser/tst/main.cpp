@@ -4,6 +4,7 @@
 #include <string>
 
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/parser/ini_file.h"
 #include "tnct/program/options.h"
 #include "tnct/tester/test.h"

@@ -13,10 +13,9 @@
 #include "tnct/container/circular_queue.h"
 #include "tnct/crosswords/dat/coordinates.h"
 #include "tnct/crosswords/dat/grid.h"
-#include "tnct/crosswords/evt/grid_create_solved.h"
-#include "tnct/crosswords/evt/grid_create_stop.h"
-#include "tnct/crosswords/evt/grid_create_timeout.h"
-#include "tnct/crosswords/evt/grid_create_unsolved.h"
+#include "tnct/crosswords/evt/internal/grid_create_solved.h"
+#include "tnct/crosswords/evt/internal/grid_create_stop.h"
+#include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/log/cpt/logger.h"
 
 namespace tnct::crosswords::bus::internal
@@ -26,8 +25,10 @@ template <log::cpt::logger t_logger, async::cpt::is_dispatcher t_dispatcher>
 struct organizer
 {
   // using events_subscribed =
-  //     std::tuple<evt::grid_create_stop, evt::grid_create_solved,
-  //                evt::grid_create_unsolved, evt::grid_create_timeout>;
+  //     std::tuple<evt::internal::grid_create_stop,
+  //     evt::internal::grid_create_solved,
+  //                evt::internal::grid_create_unsolved,
+  //                evt::grid_create_timeout>;
 
   organizer(t_logger &p_logger, t_dispatcher &p_dispatcher)
       : m_logger(p_logger), m_dispatcher(p_dispatcher)
@@ -44,14 +45,15 @@ struct organizer
   bool operator()(std::shared_ptr<dat::grid> p_grid)
   {
     m_stop = false;
-    m_dispatcher.template clear<crosswords::evt::grid_create_stop>(
+    m_dispatcher.template clear<crosswords::evt::internal::grid_create_stop>(
         m_grid_create_stop);
-    m_dispatcher.template clear<crosswords::evt::grid_create_solved>(
+    m_dispatcher.template clear<crosswords::evt::internal::grid_create_solved>(
         m_grid_create_solved);
-    m_dispatcher.template clear<crosswords::evt::grid_create_unsolved>(
-        m_grid_create_unsolved);
-    m_dispatcher.template clear<crosswords::evt::grid_create_timeout>(
-        m_grid_create_timeout);
+    m_dispatcher
+        .template clear<crosswords::evt::internal::grid_create_unsolved>(
+            m_grid_create_unsolved);
+    // m_dispatcher.template clear<crosswords::evt::grid_create_timeout>(
+    //     m_grid_create_timeout);
 
     if (m_stop)
     {
@@ -138,10 +140,9 @@ private:
   void configure_handlings()
   {
 
-    using crosswords::evt::grid_create_solved;
-    using crosswords::evt::grid_create_stop;
-    using crosswords::evt::grid_create_timeout;
-    using crosswords::evt::grid_create_unsolved;
+    using crosswords::evt::internal::grid_create_solved;
+    using crosswords::evt::internal::grid_create_stop;
+    using crosswords::evt::internal::grid_create_unsolved;
 
     using grid_create_stop_queue =
         container::circular_queue<t_logger, grid_create_stop, 10>;
@@ -152,8 +153,8 @@ private:
     using grid_create_unsolved_queue =
         container::circular_queue<t_logger, grid_create_unsolved, 10>;
 
-    using grid_create_timeout_queue =
-        container::circular_queue<t_logger, grid_create_timeout, 10>;
+    // using grid_create_timeout_queue =
+    //     container::circular_queue<t_logger, grid_create_timeout, 10>;
 
     m_dispatcher.template add_handling<grid_create_stop>(
         m_grid_create_stop, grid_create_stop_queue{m_logger},
@@ -167,9 +168,9 @@ private:
         m_grid_create_unsolved, grid_create_unsolved_queue{m_logger},
         [&](grid_create_unsolved &&) { m_stop = true; });
 
-    m_dispatcher.template add_handling<grid_create_timeout>(
-        m_grid_create_timeout, grid_create_timeout_queue{m_logger},
-        [&](grid_create_timeout &&) { m_stop = true; });
+    // m_dispatcher.template add_handling<grid_create_timeout>(
+    //     m_grid_create_timeout, grid_create_timeout_queue{m_logger},
+    //     [&](grid_create_timeout &&) { m_stop = true; });
   }
 
   bool all_words_fit(const dat::grid &p_grid)

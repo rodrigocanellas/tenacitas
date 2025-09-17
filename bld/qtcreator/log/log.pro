@@ -12,9 +12,10 @@ HEADERS += \
         $$PRJ_DIR/file.h \
         $$PRJ_DIR/cerr.h \
         $$PRJ_DIR/level.h \
+        $$PRJ_DIR/line_header_formater.h \
         $$PRJ_DIR/internal/logger.h \
         $$PRJ_DIR/no_logger.h  \
-        $$PRJ_DIR/logger.h \
-        $$PRJ_DIR/line_header_formater.h \
         $$PRJ_DIR/cpt/writer.h \
         $$PRJ_DIR/cpt/logger.h \
+        $$PRJ_DIR/cpt/macros.h \
+

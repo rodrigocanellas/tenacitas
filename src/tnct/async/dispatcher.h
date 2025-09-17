@@ -23,6 +23,7 @@
 #include "tnct/container/cpt/queue.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/tuple/contains_type.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/get_type_index.h"
@@ -113,10 +114,10 @@ public:
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&)      = delete;
 
-  void *operator new(size_t)   = delete;
+  // void *operator new(size_t)   = delete;
   void *operator new[](size_t) = delete;
 
-  void operator delete(void *)   = delete;
+  // void operator delete(void *)   = delete;
   void operator delete[](void *) = delete;
 
   template <async::cpt::is_event t_event>

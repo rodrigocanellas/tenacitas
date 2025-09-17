@@ -31,8 +31,6 @@ concept queue =
 
     std::move_constructible<t> &&
 
-    std::assignable_from<t &, t> &&
-
     requires(t p_t) {
       typename t::data;
 

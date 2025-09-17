@@ -3,4 +3,6 @@ TEMPLATE=subdirs
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
 
 SUBDIRS = \
-    desktop 
+    desktop \
+    server \
+    client

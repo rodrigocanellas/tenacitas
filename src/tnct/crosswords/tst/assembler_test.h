@@ -6,16 +6,33 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include "tnct/async/dispatcher.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
-#include "tnct/crosswords/evt/dispatcher.h"
+#include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/internal/grid_create_solved.h"
+#include "tnct/crosswords/evt/internal/grid_create_start.h"
+#include "tnct/crosswords/evt/internal/grid_create_stop.h"
+#include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
+#include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 
 using namespace std::chrono_literals;
 
 namespace tnct::crosswords::tst
 {
+
+std::uint64_t number_of_permutations(const dat::entries &p_entries)
+{
+  if (p_entries.get_num_entries() > 20)
+  {
+    return math::factorial<std::uint64_t>(20).value();
+  }
+
+  return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+}
 
 struct assembler_test_000
 {
@@ -28,8 +45,12 @@ struct assembler_test_000
   {
 
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 
@@ -41,7 +62,8 @@ struct assembler_test_000
     assembler _solver(_logger, _dispatcher);
 
     auto _start{std::chrono::high_resolution_clock::now()};
-    auto _grid{_solver.start(_entries, index{11}, index{11}, 1s)};
+    auto _grid{_solver.start(_entries, index{11}, index{11}, 1s,
+                             number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));
@@ -66,8 +88,13 @@ struct assembler_test_001
   bool operator()(const program::options &)
   {
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 
@@ -80,7 +107,8 @@ struct assembler_test_001
 
     auto _start{std::chrono::high_resolution_clock::now()};
     auto _grid{_solver.start(_entries, crosswords::dat::index{11},
-                             crosswords::dat::index{11}, 1s)};
+                             crosswords::dat::index{11}, 1s,
+                             number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));
@@ -105,8 +133,12 @@ struct assembler_test_002
   {
 
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-    using assembler  = crosswords::bus::internal::assembler<logger, dispatcher>;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
+    using assembler = crosswords::bus::internal::assembler<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::index;
 
@@ -128,7 +160,8 @@ struct assembler_test_002
 
     auto _start{std::chrono::high_resolution_clock::now()};
     auto _grid{_solver.start(_entries, crosswords::dat::index{11},
-                             crosswords::dat::index{11}, 2s)};
+                             crosswords::dat::index{11}, 2s,
+                             number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
     TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));

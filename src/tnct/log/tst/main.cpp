@@ -10,8 +10,11 @@
 
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/log/cout.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/log/file.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 #include "tnct/tester/test.h"
 

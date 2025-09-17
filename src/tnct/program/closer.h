@@ -15,6 +15,7 @@
 
 #include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/log/cpt/logger.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/exit.h"
 #include "tnct/tuple/cpt/contains_tuple.h"
 

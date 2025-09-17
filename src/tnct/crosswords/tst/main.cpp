@@ -1679,12 +1679,12 @@ using namespace tnct;
 // };
 
 // struct test_035 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 25 words in a 15x15, waiting for 1 "
@@ -1715,7 +1715,7 @@ using namespace tnct;
 //         crosswords::evt::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
-//     _dispatcher->subscribe<test_035, crosswords::evt::grid_create_solved>(
+//     _dispatcher->subscribe<test_035, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1723,12 +1723,12 @@ using namespace tnct;
 //         });
 
 //     _dispatcher->subscribe<test_035,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     _dispatcher->subscribe<test_035, crosswords::evt::grid_create_unsolved>(
+//     _dispatcher->subscribe<test_035, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
@@ -1737,7 +1737,7 @@ using namespace tnct;
 
 //     TNCT_LOG_TST("##################### ABOUT TO START");
 
-//     _dispatcher->publish<test_035, crosswords::evt::grid_create_start>(
+//     _dispatcher->publish<test_035, crosswords::evt::internal::grid_create_start>(
 //         _entries, crosswords::dat::index{15}, crosswords::dat::index{15},
 //         1min, crosswords::dat::index{15});
 //     // {
@@ -1760,12 +1760,12 @@ using namespace tnct;
 // };
 
 // struct test_036 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to unsolvable grid with 25 words in a 10x10, waiting for 1
@@ -1778,7 +1778,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_036, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_036, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1786,19 +1786,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_036,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_036, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_036, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_036, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_036, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{10}, crosswords::dat::index{10},
 //         60s, crosswords::dat::index{10});
 
@@ -1831,12 +1831,12 @@ using namespace tnct;
 // };
 
 // struct test_037 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to unsolvable a grid with 2 words in a 3x8, waiting for 5s
@@ -1848,7 +1848,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_037, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_037, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", p_event.grid);
@@ -1856,19 +1856,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_037,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_037, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_037, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_037, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_037, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{3}, crosswords::dat::index{8}, 5s,
 //         crosswords::dat::index{3});
 
@@ -1889,12 +1889,12 @@ using namespace tnct;
 // };
 
 // struct test_038 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 25 words starting with a 12x12 until "
@@ -1906,7 +1906,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_038, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_038, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -1914,19 +1914,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_038,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_038, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_038, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_038, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_038, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{12}, crosswords::dat::index{12},
 //         3min, crosswords::dat::index{15});
 
@@ -1959,12 +1959,12 @@ using namespace tnct;
 // };
 
 // struct test_039 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to organize a grid with 60 words strting at 15x15 up to "
@@ -1976,7 +1976,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_039, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_039, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -1984,19 +1984,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_039,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_039, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_039, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_039, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_039, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{15}, crosswords::dat::index{15},
 //         60s, crosswords::dat::index{18});
 
@@ -2076,12 +2076,12 @@ using namespace tnct;
 // };
 
 // struct test_040 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries a grid with 'esdrúxulo' and 'baú' in a grid 11x11";
@@ -2092,7 +2092,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_040, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_040, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2100,19 +2100,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_040,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_040, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_040, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_040, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_040, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{11}, crosswords::dat::index{11},
 //         60min, crosswords::dat::index{11});
 
@@ -2133,12 +2133,12 @@ using namespace tnct;
 // };
 
 // struct test_041 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to create a grid for 'door' and 'day'in a 3x8, waiting";
@@ -2149,7 +2149,7 @@ using namespace tnct;
 //     std::condition_variable _cond;
 //     std::mutex _mutex;
 
-//     m_dispatcher->subscribe<test_041, crosswords::evt::grid_create_solved>(
+//     m_dispatcher->subscribe<test_041, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2157,19 +2157,19 @@ using namespace tnct;
 //         });
 
 //     m_dispatcher->subscribe<test_041,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     m_dispatcher->subscribe<test_041, crosswords::evt::grid_create_unsolved>(
+//     m_dispatcher->subscribe<test_041, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
 //           _cond.notify_one();
 //         });
 
-//     m_dispatcher->publish<test_041, crosswords::evt::grid_create_start>(
+//     m_dispatcher->publish<test_041, crosswords::evt::internal::grid_create_start>(
 //         m_entries, crosswords::dat::index{3}, crosswords::dat::index{8}, 50s,
 //         crosswords::dat::index{3});
 
@@ -2328,12 +2328,12 @@ using namespace tnct;
 // };
 
 // struct test_045 {
-//   using events_published = std::tuple<crosswords::evt::grid_create_start>;
+//   using events_published = std::tuple<crosswords::evt::internal::grid_create_start>;
 
 //   using events_subscribed =
-//       std::tuple<crosswords::evt::grid_create_unsolved,
-//                  crosswords::evt::grid_create_solved,
-//                  crosswords::evt::grid_permutations_tried>;
+//       std::tuple<crosswords::evt::internal::grid_create_unsolved,
+//                  crosswords::evt::internal::grid_create_solved,
+//                  crosswords::evt::internal::grid_permutations_tried>;
 
 //   static std::string desc() {
 //     return "Tries to solve a grid with 2 words in a 5x5, waiting for 1 "
@@ -2352,7 +2352,7 @@ using namespace tnct;
 //         crosswords::evt::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
-//     _dispatcher->subscribe<test_045, crosswords::evt::grid_create_solved>(
+//     _dispatcher->subscribe<test_045, crosswords::evt::internal::grid_create_solved>(
 //         [&](auto p_event) {
 //           _solved = true;
 //           TNCT_LOG_TST("SOLVED: ", *p_event.grid);
@@ -2360,12 +2360,12 @@ using namespace tnct;
 //         });
 
 //     _dispatcher->subscribe<test_045,
-//     crosswords::evt::grid_permutations_tried>(
+//     crosswords::evt::internal::grid_permutations_tried>(
 //         [&](auto p_event) {
 //           TNCT_LOG_TST("Attempt # ", p_event.permutations);
 //         });
 
-//     _dispatcher->subscribe<test_045, crosswords::evt::grid_create_unsolved>(
+//     _dispatcher->subscribe<test_045, crosswords::evt::internal::grid_create_unsolved>(
 //         [&](auto) {
 //           _solved = false;
 //           TNCT_LOG_TST("UNSOLVED");
@@ -2374,7 +2374,7 @@ using namespace tnct;
 
 //     TNCT_LOG_TST("##################### ABOUT TO START");
 
-//     _dispatcher->publish<test_045, crosswords::evt::grid_create_start>(
+//     _dispatcher->publish<test_045, crosswords::evt::internal::grid_create_start>(
 //         _entries, crosswords::dat::index{5}, crosswords::dat::index{5}, 1min,
 //         crosswords::dat::index{5});
 //     // {

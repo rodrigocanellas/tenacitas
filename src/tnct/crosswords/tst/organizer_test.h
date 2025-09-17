@@ -6,10 +6,17 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include "tnct/async/dispatcher.h"
 #include "tnct/crosswords/bus/internal/organizer.h"
-#include "tnct/crosswords/evt/dispatcher.h"
+#include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
+#include "tnct/crosswords/evt/internal/grid_create_solved.h"
+#include "tnct/crosswords/evt/internal/grid_create_start.h"
+#include "tnct/crosswords/evt/internal/grid_create_stop.h"
+#include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
+#include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
 
 using namespace tnct;
@@ -27,8 +34,11 @@ struct organizer_test_000
   bool operator()(const program::options &)
   {
     using logger     = log::cerr;
-    using dispatcher = crosswords::evt::dispatcher;
-
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
     using organizer = crosswords::bus::internal::organizer<logger, dispatcher>;
     using entries   = crosswords::dat::entries;
     using permutation = crosswords::dat::permutation;
@@ -70,8 +80,12 @@ struct organizer_test_001
   bool operator()(const program::options &)
   {
 
-    using logger = log::cerr;
-    using crosswords::evt::dispatcher;
+    using logger     = log::cerr;
+    using dispatcher = tnct::async::dispatcher<
+        logger, evt::internal::grid_permutations_tried,
+        evt::internal::grid_create_solved, evt::internal::grid_create_start,
+        evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
+        evt::internal::grid_attempt_configuration>;
     using organizer = crosswords::bus::internal::organizer<logger, dispatcher>;
     using crosswords::dat::entries;
     using crosswords::dat::grid;
@@ -119,14 +133,14 @@ struct organizer_test_002
   {
 
     using logger = log::cerr;
-    using crosswords::evt::grid_create_solved;
-    using crosswords::evt::grid_create_stop;
-    using crosswords::evt::grid_create_timeout;
-    using crosswords::evt::grid_create_unsolved;
+    using crosswords::evt::internal::grid_create_solved;
+    using crosswords::evt::internal::grid_create_stop;
+    // using crosswords::evt::grid_create_timeout;
+    using crosswords::evt::internal::grid_create_unsolved;
 
     using dispatcher =
         async::dispatcher<logger, grid_create_solved, grid_create_stop,
-                          grid_create_timeout, grid_create_unsolved>;
+                          grid_create_unsolved>;
 
     using organizer = crosswords::bus::internal::organizer<logger, dispatcher>;
     using crosswords::dat::entries;
