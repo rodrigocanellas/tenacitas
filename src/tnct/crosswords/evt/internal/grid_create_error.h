@@ -7,6 +7,7 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <iostream>
+#include <string_view>
 
 #include "tnct/crosswords/dat/error.h"
 
@@ -22,18 +23,22 @@ struct grid_create_error
   grid_create_error &operator=(grid_create_error &&)      = default;
   ~grid_create_error()                                    = default;
 
-  grid_create_error(const dat::error &p_error) : error{p_error}
+  grid_create_error(const dat::error &p_error,
+                    std::string_view  p_description = "")
+      : error{p_error}, description(p_description)
   {
   }
 
   friend std::ostream &operator<<(std::ostream            &p_out,
                                   const grid_create_error &p_event)
   {
-    p_out << "error = " << p_event.error;
+    p_out << "error = " << p_event.error << ", description = '"
+          << p_event.description;
     return p_out;
   }
 
-  dat::error error;
+  dat::error  error;
+  std::string description;
 };
 } // namespace tnct::crosswords::evt::internal
 

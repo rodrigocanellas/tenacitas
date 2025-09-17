@@ -135,7 +135,7 @@ struct grid_creator
         { p_callback(p_event.permutations); });
   }
 
-  void on_error(std::invocable<dat::error> auto p_callback)
+  void on_error(std::invocable<dat::error, const std::string &> auto p_callback)
   {
     using evt::internal::grid_create_error;
 
@@ -144,7 +144,7 @@ struct grid_creator
     m_dispatcher.template add_handling<grid_create_error>(
         "grid-create-error", queue{m_logger},
         [p_callback](grid_create_error &&p_event)
-        { p_callback(p_event.error); });
+        { p_callback(p_event.error, p_event.description); });
   }
 
 private:
@@ -216,6 +216,24 @@ private:
         { p_callback(p_event.num_rows, p_event.num_cols); });
   }
 
+  std::optional<dat::entries::const_entry_ite>
+  is_any_word_too_long(const dat::entries &p_entries, dat::index p_rows,
+                       dat::index p_cols) const
+  {
+
+    for (dat::entries::const_entry_ite _ite = p_entries.begin();
+         _ite != p_entries.end(); ++_ite)
+    {
+      const dat::index _size{static_cast<dat::index>(_ite->get_word().size())};
+
+      if ((_size > p_rows) && (_size > p_cols))
+      {
+        return {_ite};
+      }
+    }
+    return std::nullopt;
+  }
+
   /// \brief Tries to create a grid
   ///
   /// Tries to assemble \p p_entries in a grid of \p p_num_rows and \p
@@ -234,14 +252,52 @@ private:
 
     try
     {
+
+      if (p_wait_for <= std::chrono::seconds::zero())
+      {
+        if (const auto _result =
+                m_dispatcher.template publish<evt::internal::grid_create_error>(
+                    dat::error::INVALID_INTERVAL);
+            _result != async::result::OK)
+        {
+          TNCT_LOG_ERR(m_logger, format::fmt("error publishing error ",
+                                             dat::error::INVALID_INTERVAL));
+        }
+        return;
+      }
+
+      if (p_max_num_rows <= p_num_rows)
+      {
+        if (const auto _result =
+                m_dispatcher.template publish<evt::internal::grid_create_error>(
+                    dat::error::MAX_ROWS_SMALLER_THAN_ROWS);
+            _result != async::result::OK)
+        {
+          TNCT_LOG_ERR(m_logger,
+                       format::fmt("error publishing error ",
+                                   dat::error::MAX_ROWS_SMALLER_THAN_ROWS));
+        }
+        return;
+      }
+
+      if (std::optional<dat::entries::const_entry_ite> _entry{
+              is_any_word_too_long(p_entries, p_num_rows, p_num_cols)};
+          _entry.has_value())
+      {
+        if (const auto _result =
+                m_dispatcher.template publish<evt::internal::grid_create_error>(
+                    dat::error::WORD_TOO_LONG, _entry.value()->get_word());
+            _result != async::result::OK)
+        {
+          TNCT_LOG_ERR(m_logger, format::fmt("error publishing error ",
+                                             dat::error::WORD_TOO_LONG));
+        }
+        return;
+      }
+
       m_stop = false;
 
       const auto _max_permutations = number_of_permutations(p_entries);
-
-      TNCT_LOG_DEB(
-          m_logger,
-          format::fmt("starting grid_creator::operator() with m_stop = ",
-                      m_stop));
 
       crosswords::dat::index _current_num_rows{p_num_rows};
       crosswords::dat::index _current_num_cols{p_num_cols};

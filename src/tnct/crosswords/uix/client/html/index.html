@@ -642,105 +642,111 @@ canvas {
   </div>
 
   <div class="content">
-    <!-- File Loading Section -->
+    <!-- File Operations & Word Entry Editor Section -->
     <div class="section file-section">
-      <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
-      <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button id="loadButton" class="btn btn-primary">
-          <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
-        </button>
-        <button id="saveButton" class="btn btn-secondary">
-          <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
-        </button>
-      </div>
-      <input type="file" id="fileInput" accept=".cross" class="hidden" />
-      <div id="fileStatus" class="status-message hidden"></div>
-    </div>
-
-    <!-- Word Entry Editor Section -->
-    <div class="section editor-section">
-      <div class="section-header">
-        <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button id="addRowButton" class="btn btn-success">
-            <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
+      <!-- File Loading Subsection -->
+      <div style="margin-bottom: 2rem;">
+        <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
+        <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button id="loadButton" class="btn btn-primary">
+            <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
           </button>
-          <button id="clearAllButton" class="btn btn-secondary">
-            <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
+          <button id="saveButton" class="btn btn-secondary">
+            <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
           </button>
         </div>
+        <input type="file" id="fileInput" accept=".cross" class="hidden" />
+        <div id="fileStatus" class="status-message hidden"></div>
       </div>
-      <div class="table-container">
-        <table id="wordEntryTable">
-          <thead>
-            <tr>
-              <th style="width: 30%;" data-i18n="editor.word">Word</th>
-              <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
-              <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="wordEntryTableBody">
-            <!-- Rows will be added dynamically -->
-          </tbody>
-        </table>
-      </div>
-      <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
-        0 <span data-i18n="editor.entries">entries</span>
-      </div>
-    </div>
 
-    <!-- Configuration Section -->
-    <div class="section config-section">
-      <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
-      
-      <!-- Title Input - Separate Row -->
-      <div style="margin-bottom: 1.5rem;">
-        <div class="input-group">
-          <label for="titleInput" data-i18n="config.title_label">Título</label>
-          <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
-        </div>
-      </div>
-      
-      <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
-      <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.rows">Number of Rows</label>
-          <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.cols">Number of Columns</label>
-          <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
-          <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
-            <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
+      <!-- Word Entry Editor Subsection -->
+      <div>
+        <div class="section-header">
+          <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="addRowButton" class="btn btn-success">
+              <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
+            </button>
+            <button id="clearAllButton" class="btn btn-secondary">
+              <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
+            </button>
           </div>
         </div>
+        <div class="table-container">
+          <table id="wordEntryTable">
+            <thead>
+              <tr>
+                <th style="width: 30%;" data-i18n="editor.word">Word</th>
+                <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
+                <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="wordEntryTableBody">
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
+          0 <span data-i18n="editor.entries">entries</span>
+        </div>
       </div>
-      
-      <button id="submitButton" class="btn btn-success">
-        <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
-      </button>
-      <div id="statusMessage" class="status-message hidden"></div>
     </div>
 
-    <!-- Messages Section -->
-    <div class="section messages-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
-        <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
+    <!-- Configuration & Server Messages Section -->
+    <div class="section config-section">
+      <!-- Grid Configuration Subsection -->
+      <div style="margin-bottom: 2rem;">
+        <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
+        
+        <!-- Title Input - Separate Row -->
+        <div style="margin-bottom: 1.5rem;">
+          <div class="input-group">
+            <label for="titleInput" data-i18n="config.title_label">Título</label>
+            <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
+          </div>
+        </div>
+        
+        <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
+        <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.rows">Number of Rows</label>
+            <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.cols">Number of Columns</label>
+            <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
+            <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
+              <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
+            </div>
+          </div>
+        </div>
+        
+        <button id="submitButton" class="btn btn-success">
+          <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
+        </button>
+        <div id="statusMessage" class="status-message hidden"></div>
       </div>
-      <div id="messagesContent" class="messages-container">
-        <ul id="messages" class="messages-list">
-          <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
-        </ul>
+
+      <!-- Server Messages Subsection -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
+          <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
+        </div>
+        <div id="messagesContent" class="messages-container">
+          <ul id="messages" class="messages-list">
+            <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -937,6 +943,9 @@ var translations = {
     'server.trying': 'Trying {0} × {1}',
     'server.unsolved': 'Could not generate crossword. Verify your words, try increasing maximum rows or interval.',
     'server.error': 'Server Error: {0}',
+    'server.error_code_1': 'There is a word that is longer than the number of rows and columns: {0}',
+    'server.error_code_2': 'The interval must be a positive integer',
+    'server.error_code_3': 'The \'Maximum Rows\' must be greater than the \'Number of Rows\'',
     'server.solved_with_stats': 'Solved! In {0} seconds, attempt {1} out of {2} possible',
     'server.solved': 'Crossword generated successfully!',
     'server.generating': 'Generating crossword puzzle...',
@@ -1015,6 +1024,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
     'server.error': 'Erro do Servidor: {0}',
+    'server.error_code_1': 'Há uma palavra maior que o número de linhas e colunas: {0}',
+    'server.error_code_2': 'O intervalo deve ser um número inteiro positivo',
+    'server.error_code_3': 'O \'Máximo de Linhas\' deve ser maior que o \'Número de Linhas\'',
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'A gerar palavras cruzadas...',
@@ -1093,6 +1105,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
     'server.error': 'Erro do Servidor: {0}',
+    'server.error_code_1': 'Há uma palavra maior que o número de linhas e colunas: {0}',
+    'server.error_code_2': 'O intervalo deve ser um número inteiro positivo',
+    'server.error_code_3': 'O \'Máximo de Linhas\' deve ser maior que o \'Número de Linhas\'',
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'Gerando palavras cruzadas...',
@@ -1171,6 +1186,9 @@ var translations = {
     'server.trying': 'Intentando {0} × {1}',
     'server.unsolved': 'No se pudo generar el crucigrama. Verifique las palabras, intente aumentar el máximo de filas o el intervalo.',
     'server.error': 'Error del Servidor: {0}',
+    'server.error_code_1': 'Hay una palabra más larga que el número de filas y columnas: {0}',
+    'server.error_code_2': 'El intervalo debe ser un número entero positivo',
+    'server.error_code_3': 'El \'Máximo de Filas\' debe ser mayor que el \'Número de Filas\'',
     'server.solved_with_stats': '¡Resuelto! En {0} segundos, intento {1} de {2} posibles',
     'server.solved': '¡Crucigrama generado exitosamente!',
     'server.generating': 'Generando crucigrama...',
@@ -1249,6 +1267,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Impossibile generare il cruciverba. Verificare le parole, provare ad aumentare le righe massime o l\'intervallo.',
     'server.error': 'Errore del Server: {0}',
+    'server.error_code_1': 'C\'è una parola più lunga del numero di righe e colonne: {0}',
+    'server.error_code_2': 'L\'intervallo deve essere un numero intero positivo',
+    'server.error_code_3': 'Il \'Massimo Righe\' deve essere maggiore del \'Numero di Righe\'',
     'server.solved_with_stats': 'Risolto! In {0} secondi, tentativo {1} di {2} possibili',
     'server.solved': 'Cruciverba generato con successo!',
     'server.generating': 'Generando cruciverba...',
@@ -1327,6 +1348,9 @@ var translations = {
     'server.trying': 'Tentative {0} × {1}',
     'server.unsolved': 'Impossible de générer les mots croisés. Vérifiez les mots, essayez d\'augmenter le maximum de lignes ou l\'intervalle.',
     'server.error': 'Erreur du Serveur : {0}',
+    'server.error_code_1': 'Il y a un mot plus long que le nombre de lignes et de colonnes : {0}',
+    'server.error_code_2': 'L\'intervalle doit être un nombre entier positif',
+    'server.error_code_3': 'Le \'Maximum de Lignes\' doit être supérieur au \'Nombre de Lignes\'',
     'server.solved_with_stats': 'Résolu ! En {0} secondes, tentative {1} sur {2} possibles',
     'server.solved': 'Mots croisés générés avec succès !',
     'server.generating': 'Génération des mots croisés...',
@@ -1405,6 +1429,9 @@ var translations = {
     'server.trying': 'Versuche {0} × {1}',
     'server.unsolved': 'Kreuzworträtsel konnte nicht generiert werden. Überprüfen Sie die Wörter, versuchen Sie, die maximalen Zeilen oder das Intervall zu erhöhen.',
     'server.error': 'Server-Fehler: {0}',
+    'server.error_code_1': 'Es gibt ein Wort, das länger ist als die Anzahl der Zeilen und Spalten: {0}',
+    'server.error_code_2': 'Das Intervall muss eine positive ganze Zahl sein',
+    'server.error_code_3': 'Die \'Maximalen Zeilen\' müssen größer sein als die \'Anzahl der Zeilen\'',
     'server.solved_with_stats': 'Gelöst! In {0} Sekunden, Versuch {1} von {2} möglichen',
     'server.solved': 'Kreuzworträtsel erfolgreich generiert!',
     'server.generating': 'Kreuzworträtsel wird generiert...',
@@ -1623,7 +1650,26 @@ function handleWebSocketMessage(event) {
         text = translate("server.unsolved");
         type = "error";
       } else if (msg.response === "error") {
-        text = translateWithParams("server.error", msg.explanation);
+        // Handle specific error codes
+        if (msg.code) {
+          switch (parseInt(msg.code)) {
+            case 1:
+              text = translateWithParams("server.error_code_1", msg.description || "");
+              break;
+            case 2:
+              text = translate("server.error_code_2");
+              break;
+            case 3:
+              text = translate("server.error_code_3");
+              break;
+            default:
+              text = translateWithParams("server.error", msg.explanation || "Unknown error");
+              break;
+          }
+        } else {
+          // Fallback to generic error handling
+          text = translateWithParams("server.error", msg.explanation || "Unknown error");
+        }
         type = "error";
       } else {
         text = JSON.stringify(msg, null, 2);

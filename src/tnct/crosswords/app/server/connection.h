@@ -123,7 +123,7 @@ private:
       if (!m_grid_creator.start(_grid_entries, _rows, _cols, _interval,
                                 _max_rows))
       {
-        send_error("error when starting to create the grid");
+        TNCT_LOG_ERR(m_logger, "error when starting to create the grid");
         return;
       }
       m_statistics.grid_creation();
@@ -142,11 +142,11 @@ private:
     m_socket->send(p_json.dump());
   }
 
-  void send_error(std::string_view p_msg)
+  void send_error(const grid_error &p_error)
   {
     json _out;
     _out["response"] = "error";
-    _out["content"]  = p_msg;
+    _out["code"]     = p_error;
     m_working        = false;
     send(_out);
   }
@@ -203,13 +203,14 @@ private:
     send(_out);
   }
 
-  void send_grid_error(grid_error p_error)
+  void send_grid_error(grid_error p_error, const std::string &p_description)
   {
-    TNCT_LOG_ERR(m_logger, fmt(p_error));
     json _out;
-    _out["response"]    = "error";
-    _out["description"] = fmt(p_error);
-    m_working           = false;
+    _out["response"] = "error";
+    _out["code"]     = p_error;
+    _out["desc"]     = p_description;
+    m_working        = false;
+    TNCT_LOG_ERR(m_logger, fmt(_out.dump()));
     send(_out);
   }
 

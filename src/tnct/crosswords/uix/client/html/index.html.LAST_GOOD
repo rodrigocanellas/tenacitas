@@ -889,7 +889,6 @@ var translations = {
     "about.terms": "Terms of use",
     "about.term1": "Words used in the puzzles are the sole responsibility of their authors.",
     "about.term2": "Currently no word sets are stored on our servers.",
-    "about.term3": "",
     'about.file_line_format':'word|explanation',
     'file.title': 'Load Crossword File',
     'file.description': 'Select a .cross file containing your word entries and explanations.',
@@ -938,6 +937,9 @@ var translations = {
     'server.trying': 'Trying {0} × {1}',
     'server.unsolved': 'Could not generate crossword. Verify your words, try increasing maximum rows or interval.',
     'server.error': 'Server Error: {0}',
+    'server.error_code_1': 'There is a word that is longer than the number of rows and columns: {0}',
+    'server.error_code_2': 'The interval must be a positive integer',
+    'server.error_code_3': 'The \'Maximum Rows\' must be greater than the \'Number of Rows\'',
     'server.solved_with_stats': 'Solved! In {0} seconds, attempt {1} out of {2} possible',
     'server.solved': 'Crossword generated successfully!',
     'server.generating': 'Generating crossword puzzle...',
@@ -968,7 +970,6 @@ var translations = {
     "about.terms": "Termos de uso",
     "about.term1": "As palavras usadas nos jogos são da inteira responsabilidade dos autores.",
     "about.term2": "Atualmente nenhum conjunto de palavras é guardado nos nossos servidores.",
-    "about.term3": "",
     'about.file_line_format':'palavra|explicação',
     'file.title': 'Carregar Ficheiro de Palavras Cruzadas',
     'file.description': 'Seleccione um ficheiro .cross contendo as suas entradas de palavras e explicações.',
@@ -1017,6 +1018,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
     'server.error': 'Erro do Servidor: {0}',
+    'server.error_code_1': 'Há uma palavra maior que o número de linhas e colunas: {0}',
+    'server.error_code_2': 'O intervalo deve ser um número inteiro positivo',
+    'server.error_code_3': 'O \'Máximo de Linhas\' deve ser maior que o \'Número de Linhas\'',
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'A gerar palavras cruzadas...',
@@ -1047,7 +1051,6 @@ var translations = {
     "about.terms": "Termos de uso",
     "about.term1": "As palavras usadas nos jogos são de inteira responsabilidade dos autores.",
     "about.term2": "Atualmente nenhum conjunto de palavras é guardado nos nossos servidores.",
-    "about.term3": "",
     'about.file_line_format':'palavra|explicação',
     'file.title': 'Carregar Arquivo de Palavras Cruzadas',
     'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
@@ -1096,6 +1099,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Não foi possível gerar palavras cruzadas. Verifique as palavras, tente aumentar o máximo de linhas ou intervalo.',
     'server.error': 'Erro do Servidor: {0}',
+    'server.error_code_1': 'Há uma palavra maior que o número de linhas e colunas: {0}',
+    'server.error_code_2': 'O intervalo deve ser um número inteiro positivo',
+    'server.error_code_3': 'O \'Máximo de Linhas\' deve ser maior que o \'Número de Linhas\'',
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'Gerando palavras cruzadas...',
@@ -1126,7 +1132,6 @@ var translations = {
     "about.terms": "Términos de uso",
     "about.term1": "Las palabras usadas en los juegos son responsabilidad exclusiva de sus autores.",
     "about.term2": "Actualmente no se guarda ningún conjunto de palabras en nuestros servidores.",
-    "about.term3": "",
     'about.file_line_format':'palabra|explicación',
     'file.title': 'Cargar Archivo de Crucigramas',
     'file.description': 'Seleccione un archivo .cross que contenga sus entradas de palabras y explicaciones.',
@@ -1175,6 +1180,9 @@ var translations = {
     'server.trying': 'Intentando {0} × {1}',
     'server.unsolved': 'No se pudo generar el crucigrama. Verifique las palabras, intente aumentar el máximo de filas o el intervalo.',
     'server.error': 'Error del Servidor: {0}',
+    'server.error_code_1': 'Hay una palabra más larga que el número de filas y columnas: {0}',
+    'server.error_code_2': 'El intervalo debe ser un número entero positivo',
+    'server.error_code_3': 'El \'Máximo de Filas\' debe ser mayor que el \'Número de Filas\'',
     'server.solved_with_stats': '¡Resuelto! En {0} segundos, intento {1} de {2} posibles',
     'server.solved': '¡Crucigrama generado exitosamente!',
     'server.generating': 'Generando crucigrama...',
@@ -1205,7 +1213,6 @@ var translations = {
     "about.terms": "Termini di utilizzo",
     "about.term1": "Le parole usate nei giochi sono responsabilità esclusiva degli autori.",
     "about.term2": "Attualmente nessun insieme di parole è salvato sui nostri server.",
-    "about.term3": "",
     'about.file_line_format':'parola|definizione',
     'file.title': 'Carica File Cruciverba',
     'file.description': 'Seleziona un file .cross contenente le tue voci di parole e spiegazioni.',
@@ -1254,6 +1261,9 @@ var translations = {
     'server.trying': 'Tentando {0} × {1}',
     'server.unsolved': 'Impossibile generare il cruciverba. Verificare le parole, provare ad aumentare le righe massime o l\'intervallo.',
     'server.error': 'Errore del Server: {0}',
+    'server.error_code_1': 'C\'è una parola più lunga del numero di righe e colonne: {0}',
+    'server.error_code_2': 'L\'intervallo deve essere un numero intero positivo',
+    'server.error_code_3': 'Il \'Massimo Righe\' deve essere maggiore del \'Numero di Righe\'',
     'server.solved_with_stats': 'Risolto! In {0} secondi, tentativo {1} di {2} possibili',
     'server.solved': 'Cruciverba generato con successo!',
     'server.generating': 'Generando cruciverba...',
@@ -1284,7 +1294,6 @@ var translations = {
     "about.terms": "Conditions d'utilisation",
     "about.term1": "Les mots utilisés dans les jeux sont de la responsabilité exclusive de leurs auteurs.",
     "about.term2": "Actuellement, aucun ensemble de mots n'est stocké sur nos serveurs.",
-    "about.term3": "",
     'about.file_line_format':'mot|définition',
     'file.title': 'Charger un Fichier de Mots Croisés',
     'file.description': 'Sélectionnez un fichier .cross contenant vos entrées de mots et explications.',
@@ -1333,6 +1342,9 @@ var translations = {
     'server.trying': 'Tentative {0} × {1}',
     'server.unsolved': 'Impossible de générer les mots croisés. Vérifiez les mots, essayez d\'augmenter le maximum de lignes ou l\'intervalle.',
     'server.error': 'Erreur du Serveur : {0}',
+    'server.error_code_1': 'Il y a un mot plus long que le nombre de lignes et de colonnes : {0}',
+    'server.error_code_2': 'L\'intervalle doit être un nombre entier positif',
+    'server.error_code_3': 'Le \'Maximum de Lignes\' doit être supérieur au \'Nombre de Lignes\'',
     'server.solved_with_stats': 'Résolu ! En {0} secondes, tentative {1} sur {2} possibles',
     'server.solved': 'Mots croisés générés avec succès !',
     'server.generating': 'Génération des mots croisés...',
@@ -1363,7 +1375,6 @@ var translations = {
     "about.terms": "Nutzungsbedingungen",
     "about.term1": "Die in den Spielen verwendeten Wörter liegen in der alleinigen Verantwortung der Autoren.",
     "about.term2": "Derzeit werden keine Wortlisten auf unseren Servern gespeichert.",
-    "about.term3": "",
     'about.file_line_format':'wort|erklärung',
     'file.title': 'Kreuzworträtsel-Datei Laden',
     'file.description': 'Wählen Sie eine .cross-Datei mit Ihren Worteinträgen und Erklärungen.',
@@ -1412,6 +1423,9 @@ var translations = {
     'server.trying': 'Versuche {0} × {1}',
     'server.unsolved': 'Kreuzworträtsel konnte nicht generiert werden. Überprüfen Sie die Wörter, versuchen Sie, die maximalen Zeilen oder das Intervall zu erhöhen.',
     'server.error': 'Server-Fehler: {0}',
+    'server.error_code_1': 'Es gibt ein Wort, das länger ist als die Anzahl der Zeilen und Spalten: {0}',
+    'server.error_code_2': 'Das Intervall muss eine positive ganze Zahl sein',
+    'server.error_code_3': 'Die \'Maximalen Zeilen\' müssen größer sein als die \'Anzahl der Zeilen\'',
     'server.solved_with_stats': 'Gelöst! In {0} Sekunden, Versuch {1} von {2} möglichen',
     'server.solved': 'Kreuzworträtsel erfolgreich generiert!',
     'server.generating': 'Kreuzworträtsel wird generiert...',
@@ -1610,20 +1624,46 @@ function handleWebSocketMessage(event) {
       if (msg.response === "configuration") {
         var r = parseInt(msg.rows && msg.rows.replace(/"/g, "")) || 0;
         var c = parseInt(msg.cols && msg.cols.replace(/"/g, "")) || 0;
-        text = translateWithParams("server.trying", r, c);
+        text = translateWithParams("server.trying", r, c) + " ";
       } else if (msg.response === "tries") {
-        // Find the last message and append ' #' to it
+        // Find the last message and append '#' to it
         var messagesList = document.getElementById("messages");
         var lastMessage = messagesList.lastElementChild;
         if (lastMessage && !lastMessage.classList.contains("messages-empty")) {
-          lastMessage.textContent += " #";
+          // Check if this is the first '#' by seeing if the message already contains '#'
+          if (lastMessage.textContent.indexOf('#') === -1) {
+            // First '#' - add with space
+            lastMessage.textContent += "#";
+          } else {
+            // Subsequent '#' - add without space
+            lastMessage.textContent += "#";
+          }
           return; // Don't create new message
         }
       } else if (msg.response === "unsolved") {
         text = translate("server.unsolved");
         type = "error";
       } else if (msg.response === "error") {
-        text = translateWithParams("server.error", msg.explanation);
+        // Handle specific error codes
+        if (msg.code) {
+          switch (parseInt(msg.code)) {
+            case 1:
+              text = translateWithParams("server.error_code_1", msg.desc || "");
+              break;
+            case 2:
+              text = translate("server.error_code_2");
+              break;
+            case 3:
+              text = translate("server.error_code_3");
+              break;
+            default:
+              text = translateWithParams("server.error", msg.explanation || "Unknown error");
+              break;
+          }
+        } else {
+          // Fallback to generic error handling
+          text = translateWithParams("server.error", msg.explanation || "Unknown error");
+        }
         type = "error";
       } else {
         text = JSON.stringify(msg, null, 2);
@@ -2480,7 +2520,6 @@ console.log('JavaScript loading complete!');
       <ul style="margin: 1rem 0; padding-left: 1.5rem;">
         <li style="margin-bottom: 0.5rem;" data-i18n="about.term1"></li>
         <li style="margin-bottom: 0.5rem;" data-i18n="about.term2"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.term3"></li>
       </ul>
     </div>
   </div>
