@@ -8,7 +8,6 @@
 
 #include <atomic>
 #include <memory>
-#include <type_traits>
 
 #include "tnct/async/dispatcher.h"
 #include "tnct/container/circular_queue.h"
@@ -50,8 +49,6 @@ struct grid_creator
 
   ~grid_creator()
   {
-    // m_dispatcher.template publish<evt::internal::grid_create_stop>();
-
     m_stop = true;
   }
 

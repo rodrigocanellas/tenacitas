@@ -642,105 +642,111 @@ canvas {
   </div>
 
   <div class="content">
-    <!-- File Loading Section -->
+    <!-- File Operations & Word Entry Editor Section -->
     <div class="section file-section">
-      <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
-      <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <button id="loadButton" class="btn btn-primary">
-          <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
-        </button>
-        <button id="saveButton" class="btn btn-secondary">
-          <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
-        </button>
-      </div>
-      <input type="file" id="fileInput" accept=".cross" class="hidden" />
-      <div id="fileStatus" class="status-message hidden"></div>
-    </div>
-
-    <!-- Word Entry Editor Section -->
-    <div class="section editor-section">
-      <div class="section-header">
-        <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button id="addRowButton" class="btn btn-success">
-            <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
+      <!-- File Loading Subsection -->
+      <div style="margin-bottom: 2rem;">
+        <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
+        <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button id="loadButton" class="btn btn-primary">
+            <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
           </button>
-          <button id="clearAllButton" class="btn btn-secondary">
-            <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
+          <button id="saveButton" class="btn btn-secondary">
+            <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
           </button>
         </div>
+        <input type="file" id="fileInput" accept=".cross" class="hidden" />
+        <div id="fileStatus" class="status-message hidden"></div>
       </div>
-      <div class="table-container">
-        <table id="wordEntryTable">
-          <thead>
-            <tr>
-              <th style="width: 30%;" data-i18n="editor.word">Word</th>
-              <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
-              <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="wordEntryTableBody">
-            <!-- Rows will be added dynamically -->
-          </tbody>
-        </table>
-      </div>
-      <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
-        0 <span data-i18n="editor.entries">entries</span>
-      </div>
-    </div>
 
-    <!-- Configuration Section -->
-    <div class="section config-section">
-      <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
-      
-      <!-- Title Input - Separate Row -->
-      <div style="margin-bottom: 1.5rem;">
-        <div class="input-group">
-          <label for="titleInput" data-i18n="config.title_label">Título</label>
-          <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
-        </div>
-      </div>
-      
-      <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
-      <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.rows">Number of Rows</label>
-          <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.cols">Number of Columns</label>
-          <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
-          <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
-        </div>
-        <div style="display: flex; flex-direction: column;">
-          <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
-            <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
+      <!-- Word Entry Editor Subsection -->
+      <div>
+        <div class="section-header">
+          <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="addRowButton" class="btn btn-success">
+              <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
+            </button>
+            <button id="clearAllButton" class="btn btn-secondary">
+              <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
+            </button>
           </div>
         </div>
+        <div class="table-container">
+          <table id="wordEntryTable">
+            <thead>
+              <tr>
+                <th style="width: 30%;" data-i18n="editor.word">Word</th>
+                <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
+                <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="wordEntryTableBody">
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+        </div>
+        <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
+          0 <span data-i18n="editor.entries">entries</span>
+        </div>
       </div>
-      
-      <button id="submitButton" class="btn btn-success">
-        <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
-      </button>
-      <div id="statusMessage" class="status-message hidden"></div>
     </div>
 
-    <!-- Messages Section -->
-    <div class="section messages-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
-        <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
+    <!-- Configuration & Server Messages Section -->
+    <div class="section config-section">
+      <!-- Grid Configuration Subsection -->
+      <div style="margin-bottom: 2rem;">
+        <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
+        
+        <!-- Title Input - Separate Row -->
+        <div style="margin-bottom: 1.5rem;">
+          <div class="input-group">
+            <label for="titleInput" data-i18n="config.title_label">Título</label>
+            <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
+          </div>
+        </div>
+        
+        <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
+        <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.rows">Number of Rows</label>
+            <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.cols">Number of Columns</label>
+            <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
+            <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
+          </div>
+          <div style="display: flex; flex-direction: column;">
+            <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
+              <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
+            </div>
+          </div>
+        </div>
+        
+        <button id="submitButton" class="btn btn-success">
+          <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
+        </button>
+        <div id="statusMessage" class="status-message hidden"></div>
       </div>
-      <div id="messagesContent" class="messages-container">
-        <ul id="messages" class="messages-list">
-          <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
-        </ul>
+
+      <!-- Server Messages Subsection -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
+          <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
+        </div>
+        <div id="messagesContent" class="messages-container">
+          <ul id="messages" class="messages-list">
+            <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -1648,7 +1654,7 @@ function handleWebSocketMessage(event) {
         if (msg.code) {
           switch (parseInt(msg.code)) {
             case 1:
-              text = translateWithParams("server.error_code_1", msg.desc || "");
+              text = translateWithParams("server.error_code_1", msg.description || "");
               break;
             case 2:
               text = translate("server.error_code_2");
