@@ -32,7 +32,7 @@ inline std::ostream &operator<<(std::ostream &p_out, error p_error)
     break;
 
   case error::INVALID_INTERVAL:
-    p_out << "invlid interva";
+    p_out << "invalid interval";
     break;
 
   case error::MAX_ROWS_SMALLER_THAN_ROWS:
