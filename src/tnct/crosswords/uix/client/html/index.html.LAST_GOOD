@@ -174,20 +174,8 @@ body {
   border: 1px solid #059669;
 }
 
-/* Word Editor Section - Green theme (same as file) */
-.editor-section {
-  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-  border: 1px solid #059669;
-}
-
 /* Configuration Section - Gray theme */
 .config-section {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border: 1px solid #64748b;
-}
-
-/* Server Messages Section - Gray theme (same as config) */
-.messages-section {
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border: 1px solid #64748b;
 }
@@ -869,6 +857,7 @@ var entries = [];
 var rows = 0, cols = 0, max_rows = 0, interval = 0;
 var messagesVisible = true; // Track messages visibility
 var lastLoadedFileInfo = null; // Track last loaded file info for translation updates
+var num_permutations = 0; // Track number of permutations tried
 
 // Translations object with French and German added
 var translations = {
@@ -949,6 +938,7 @@ var translations = {
     'server.solved_with_stats': 'Solved! In {0} seconds, attempt {1} out of {2} possible',
     'server.solved': 'Crossword generated successfully!',
     'server.generating': 'Generating crossword puzzle...',
+    'server.combinations_tried': ' combinations tried',
     'file.loading': 'Loading file...',
     'file.saved': 'Saved {0} entries to crossword.cross',
     'editor.cleared': 'All word entries cleared'
@@ -1030,6 +1020,7 @@ var translations = {
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'A gerar palavras cruzadas...',
+    'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'A carregar ficheiro...',
     'file.saved': 'Guardadas {0} entradas em crossword.cross',
     'editor.cleared': 'Todas as entradas de palavras foram limpas'
@@ -1111,6 +1102,7 @@ var translations = {
     'server.solved_with_stats': 'Resolvido! Em {0} segundos, tentativa {1} de {2} possíveis',
     'server.solved': 'Palavras cruzadas geradas com sucesso!',
     'server.generating': 'Gerando palavras cruzadas...',
+    'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'Carregando arquivo...',
     'file.saved': 'Salvas {0} entradas em crossword.cross',
     'editor.cleared': 'Todas as entradas de palavras foram limpas'
@@ -1192,6 +1184,7 @@ var translations = {
     'server.solved_with_stats': '¡Resuelto! En {0} segundos, intento {1} de {2} posibles',
     'server.solved': '¡Crucigrama generado exitosamente!',
     'server.generating': 'Generando crucigrama...',
+    'server.combinations_tried': ' combinaciones probadas',
     'file.loading': 'Cargando archivo...',
     'file.saved': 'Guardadas {0} entradas en crossword.cross',
     'editor.cleared': 'Todas las entradas de palabras han sido borradas'
@@ -1273,6 +1266,7 @@ var translations = {
     'server.solved_with_stats': 'Risolto! In {0} secondi, tentativo {1} di {2} possibili',
     'server.solved': 'Cruciverba generato con successo!',
     'server.generating': 'Generando cruciverba...',
+    'server.combinations_tried': ' combinazioni provate',
     'file.loading': 'Caricamento file...',
     'file.saved': 'Salvate {0} voci in crossword.cross',
     'editor.cleared': 'Tutte le voci delle parole sono state cancellate'
@@ -1354,6 +1348,7 @@ var translations = {
     'server.solved_with_stats': 'Résolu ! En {0} secondes, tentative {1} sur {2} possibles',
     'server.solved': 'Mots croisés générés avec succès !',
     'server.generating': 'Génération des mots croisés...',
+    'server.combinations_tried': ' combinaisons testées',
     'file.loading': 'Chargement du fichier...',
     'file.saved': 'Sauvegardées {0} entrées dans crossword.cross',
     'editor.cleared': 'Toutes les entrées de mots ont été effacées'
@@ -1435,6 +1430,7 @@ var translations = {
     'server.solved_with_stats': 'Gelöst! In {0} Sekunden, Versuch {1} von {2} möglichen',
     'server.solved': 'Kreuzworträtsel erfolgreich generiert!',
     'server.generating': 'Kreuzworträtsel wird generiert...',
+    'server.combinations_tried': ' Kombinationen versucht',
     'file.loading': 'Datei wird geladen...',
     'file.saved': '{0} Einträge in crossword.cross gespeichert',
     'editor.cleared': 'Alle Worteinträge wurden gelöscht'
@@ -1580,10 +1576,29 @@ function switchLanguage(lang) {
   }
 }
 
+// Decide automaticamente qual URL usar
+function getWebSocketURL() {
+  let host = window.location.hostname;
+
+  if (!host || host === "") {
+    // Se estiver rodando como file:/// (abrindo direto do disco)
+    host = "localhost";
+  }
+
+  if (host === "localhost") {
+    // Ambiente de desenvolvimento local
+    return "ws://localhost:9002";
+  } else {
+    // Ambiente de produção (com Nginx proxy)
+    return "wss://" + host + "/ws/";
+  }
+}
+
 // WebSocket functions
 function connectWebSocket() {
   try {
-    ws = new WebSocket("ws://localhost:9002");
+
+    ws = new WebSocket(getWebSocketURL());
     
     ws.onopen = function() {
       console.log("WebSocket connected");
@@ -1619,7 +1634,9 @@ function handleWebSocketMessage(event) {
       
       // Add solved message with statistics
       if (msg.total_time && msg.at_permutation && msg.max_permutations) {
-        updateMessages(translateWithParams("server.solved_with_stats", msg.total_time, msg.at_permutation, msg.max_permutations), "success");
+        var atPermutation = parseInt(msg.at_permutation.toString().replace(/"/g, ""));
+        var maxPermutations = parseInt(msg.max_permutations.toString().replace(/"/g, ""));
+        updateMessages(translateWithParams("server.solved_with_stats", msg.total_time, atPermutation, maxPermutations), "success");
       } else {
         updateMessages(translate("server.solved"), "success");
       }
@@ -1628,10 +1645,23 @@ function handleWebSocketMessage(event) {
       var type = "info";
       
       if (msg.response === "configuration") {
+        // Show total combinations tried before starting new configuration
+        var messagesList = document.getElementById("messages");
+        var lastMessage = messagesList.lastElementChild;
+        if (lastMessage && !lastMessage.classList.contains("messages-empty") && lastMessage.textContent.indexOf('#') !== -1) {
+          lastMessage.textContent += " " + num_permutations.toLocaleString() + translate('server.combinations_tried');
+        }
+        
+        // Reset permutations counter for new configuration
+        num_permutations = 0;
+        
         var r = parseInt(msg.rows && msg.rows.replace(/"/g, "")) || 0;
         var c = parseInt(msg.cols && msg.cols.replace(/"/g, "")) || 0;
         text = translateWithParams("server.trying", r, c) + " ";
       } else if (msg.response === "tries") {
+        // Increment permutations counter
+        num_permutations += 20000;
+        
         // Find the last message and append '#' to it
         var messagesList = document.getElementById("messages");
         var lastMessage = messagesList.lastElementChild;
