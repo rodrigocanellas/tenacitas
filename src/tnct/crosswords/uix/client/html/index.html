@@ -413,6 +413,8 @@ body {
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   border-left: 3px solid #4f46e5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .messages-list li:last-child {
@@ -865,7 +867,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Crosswords creator',
     'about.button': 'About',
-    'about.title': 'About o tnct.crosswords',
+    'about.title': 'About the tnct.crosswords',
     "about.how_to_use": "How to use:",
     "about.description": "'tnct.crosswords' is an application that allows anyone to create a crossword game! Just enter the words and explanations, and configure some parameters for game creation.",
     "about.save_info": "You can save the set of words and clues by clicking the 'Save as .cross' button. The file is plain text (no formatting) with entries like:",
@@ -1111,7 +1113,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Creador de Crucigramas',
     'about.button': 'Acerca de',
-    'about.title': 'Acerca tnct.crosswords',
+    'about.title': 'Acerca de tnct.crosswords',
     "about.how_to_use": "Cómo usar:",
     "about.description": "'tnct.crosswords' es una aplicación que permite a cualquiera crear un crucigrama. Solo hay que escribir las palabras y sus explicaciones, y configurar algunos parámetros para la creación.",
     "about.save_info": "Puede guardar el conjunto de palabras y explicaciones haciendo clic en 'Guardar como .cross'. El archivo es texto plano (sin formato) con entradas como:",
@@ -1193,7 +1195,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Creatore di Cruciverba',
     'about.button': 'Informazioni',
-    'about.title': 'Informazioni sul tnct.crosswords',
+    'about.title': 'Informazioni su tnct.crosswords',
     "about.how_to_use": "Come usare:",
     "about.description": "'tnct.crosswords' è un'applicazione che permette a chiunque di creare un cruciverba! Basta inserire le parole e le spiegazioni, e configurare alcuni parametri per la creazione.",
     "about.save_info": "È possibile salvare l'elenco di parole e definizioni cliccando sul pulsante 'Salva come .cross'. Il file è semplice testo (senza formattazione) con voci come:",
@@ -1275,7 +1277,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Créateur de Mots Croisés',
     'about.button': 'À propos',
-    'about.title': 'À propos du tnct.crosswords',
+    'about.title': 'À propos de tnct.crosswords',
     "about.how_to_use": "Comment utiliser :",
     "about.description": "'tnct.crosswords' est une application qui permet à tout le monde de créer un jeu de mots croisés ! Il suffit de saisir les mots et leurs explications, puis de configurer quelques paramètres de génération.",
     "about.save_info": "Vous pouvez sauvegarder vos mots et définitions en cliquant sur le bouton 'Sauvegarder comme .cross'. Le fichier est un simple texte (sans formatage) avec des entrées comme :",
@@ -1357,7 +1359,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Kreuzworträtsel-Ersteller',
     'about.button': 'Über',
-    'about.title': 'Über den tnct.crosswords',
+    'about.title': 'Über tnct.crosswords',
     "about.how_to_use": "So verwenden Sie es:",
     "about.description": "'tnct.crosswords' ist eine Anwendung, mit der jeder ein Kreuzworträtsel erstellen kann! Einfach Wörter und Erklärungen eingeben und einige Parameter für die Erstellung festlegen.",
     "about.save_info": "Sie können die Wortliste speichern, indem Sie auf 'Als .cross speichern' klicken. Die Datei ist reiner Text (ohne Formatierung) mit Einträgen wie:",
@@ -1576,10 +1578,29 @@ function switchLanguage(lang) {
   }
 }
 
+// Decide automaticamente qual URL usar
+function getWebSocketURL() {
+  let host = window.location.hostname;
+
+  if (!host || host === "") {
+    // Se estiver rodando como file:/// (abrindo direto do disco)
+    host = "localhost";
+  }
+
+  if (host === "localhost") {
+    // Ambiente de desenvolvimento local
+    return "ws://localhost:9002";
+  } else {
+    // Ambiente de produção (com Nginx proxy)
+    return "wss://" + host + "/ws/";
+  }
+}
+
 // WebSocket functions
 function connectWebSocket() {
   try {
-    ws = new WebSocket("ws://localhost:9002");
+
+    ws = new WebSocket(getWebSocketURL());
     
     ws.onopen = function() {
       console.log("WebSocket connected");
@@ -1652,8 +1673,16 @@ function handleWebSocketMessage(event) {
             // First '#' - add with space
             lastMessage.textContent += "#";
           } else {
-            // Subsequent '#' - add without space
-            lastMessage.textContent += "#";
+              // Check if we need to break to a new line (after every 80 characters)
+              var currentText = lastMessage.textContent;
+              var lastLineBreak = currentText.lastIndexOf('\n');
+              var currentLineLength = lastLineBreak === -1 ? currentText.length : currentText.length - lastLineBreak - 1;
+              
+              if (currentLineLength >= 80) {
+                lastMessage.textContent += "\n#";
+              } else {
+                lastMessage.textContent += "#";
+              }
           }
           return; // Don't create new message
         }
