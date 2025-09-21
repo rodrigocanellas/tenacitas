@@ -297,6 +297,29 @@ body {
   color: #374151;
 }
 
+/* File format help button */
+.file-help-btn {
+  background: rgba(79, 70, 229, 0.1);
+  border: 2px solid rgba(79, 70, 229, 0.3);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4f46e5;
+  transition: all 0.2s ease;
+}
+
+.file-help-btn:hover {
+  background: rgba(79, 70, 229, 0.2);
+  border-color: rgba(79, 70, 229, 0.5);
+  transform: scale(1.1);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -638,10 +661,11 @@ canvas {
       <div style="margin-bottom: 2rem;">
         <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
         <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
           <button id="loadButton" class="btn btn-primary">
             <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
           </button>
+          <span class="file-help-btn" data-i18n-title="file.format_help" title="">?</span>
           <button id="saveButton" class="btn btn-secondary">
             <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
           </button>
@@ -890,6 +914,7 @@ var translations = {
     'file.title': 'Load Crossword File',
     'file.description': 'Select a .cross file containing your word entries and explanations.',
     'file.choose': 'Choose File',
+    'file.format_help': 'Text file with one pair "word|explanation" per line',
     'file.save': 'Save as .cross',
     'editor.title': 'Word Entry Editor',
     'editor.add': 'Add Word',
@@ -972,6 +997,7 @@ var translations = {
     'file.title': 'Carregar Ficheiro de Palavras Cruzadas',
     'file.description': 'Seleccione um ficheiro .cross contendo as suas entradas de palavras e explicações.',
     'file.choose': 'Escolher Ficheiro',
+    'file.format_help': 'Ficheiro de texto com um par "palavra|explicação" por linha',
     'file.save': 'Guardar como .cross',
     'editor.title': 'Editor de Entradas de Palavras',
     'editor.add': 'Adicionar Palavra',
@@ -1054,6 +1080,7 @@ var translations = {
     'file.title': 'Carregar Arquivo de Palavras Cruzadas',
     'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
     'file.choose': 'Escolher Arquivo',
+    'file.format_help': 'Arquivo texto com um par "palavra|explicação" por linha',
     'file.save': 'Salvar como .cross',
     'editor.title': 'Editor de Entradas de Palavras',
     'editor.add': 'Adicionar Palavra',
@@ -1136,6 +1163,7 @@ var translations = {
     'file.title': 'Cargar Archivo de Crucigramas',
     'file.description': 'Seleccione un archivo .cross que contenga sus entradas de palabras y explicaciones.',
     'file.choose': 'Elegir Archivo',
+    'file.format_help': 'Archivo de texto con un par "palabra|explicación" por línea',
     'file.save': 'Guardar como .cross',
     'editor.title': 'Editor de Entradas de Palabras',
     'editor.add': 'Añadir Palabra',
@@ -1218,6 +1246,7 @@ var translations = {
     'file.title': 'Carica File Cruciverba',
     'file.description': 'Seleziona un file .cross contenente le tue voci di parole e spiegazioni.',
     'file.choose': 'Scegli File',
+    'file.format_help': 'File di testo con una coppia "parola|spiegazione" per riga',
     'file.save': 'Salva come .cross',
     'editor.title': 'Editor delle Voci delle Parole',
     'editor.add': 'Aggiungi Parola',
@@ -1300,6 +1329,7 @@ var translations = {
     'file.title': 'Charger un Fichier de Mots Croisés',
     'file.description': 'Sélectionnez un fichier .cross contenant vos entrées de mots et explications.',
     'file.choose': 'Choisir un Fichier',
+    'file.format_help': 'Fichier texte avec une paire "mot|explication" par ligne',
     'file.save': 'Sauvegarder comme .cross',
     'editor.title': 'Éditeur d\'Entrées de Mots',
     'editor.add': 'Ajouter un Mot',
@@ -1382,6 +1412,7 @@ var translations = {
     'file.title': 'Kreuzworträtsel-Datei Laden',
     'file.description': 'Wählen Sie eine .cross-Datei mit Ihren Worteinträgen und Erklärungen.',
     'file.choose': 'Datei Wählen',
+    'file.format_help': 'Textdatei mit einem Paar "wort|erklärung" pro Zeile',
     'file.save': 'Als .cross Speichern',
     'editor.title': 'Wort-Eingabe-Editor',
     'editor.add': 'Wort Hinzufügen',
@@ -1507,7 +1538,18 @@ function updateUI() {
       element.placeholder = translation;
     }
   }
-  
+
+    // Tratar títulos especiais (tooltips)
+    var elementsWithTitle = document.querySelectorAll('[data-i18n-title]');
+    for (var i = 0; i < elementsWithTitle.length; i++) {
+      var element = elementsWithTitle[i];
+      var key = element.getAttribute('data-i18n-title');
+      var translation = translate(key);
+      if (translation) {
+        element.title = translation;
+      }
+    }  
+
   // Update config placeholders
   var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
                          currentLanguage === 'pt-br' ? 'ex.' :
