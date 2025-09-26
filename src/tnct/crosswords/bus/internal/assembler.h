@@ -109,7 +109,8 @@ struct assembler
     }
 
     TNCT_LOG_DEB(m_logger,
-                 format::fmt("amount of free memory = ", _initial_free_memory));
+                 format::fmt("amount of free memory = ", _initial_free_memory,
+                             ", max memory to use = ", _max_memory_to_use));
 
     // first permutation
     dat::permutation _permutation;
@@ -190,7 +191,7 @@ struct assembler
                            {
                              if (!should_break(_initial, _permutation_counter,
                                                p_max_permutations)
-                                 && should_wait(_initial_free_memory))
+                                 && should_wait(_max_memory_to_use))
                              {
                                ++_slept;
                                return false;
@@ -272,7 +273,7 @@ private:
     return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
   }
 
-  bool should_wait(size_t p_initial_free_memory)
+  bool should_wait(std::size_t p_max_memory_to_use)
   {
 #ifdef TENACITAS_LOG
     static size_t _counter{0};
@@ -319,8 +320,8 @@ private:
       return true;
     }
 
-    if (_current_free_mem <= static_cast<decltype(_current_free_mem)>(
-            m_perc_memory_to_be_used * p_initial_free_memory))
+    if (_current_free_mem
+        <= static_cast<decltype(_current_free_mem)>(p_max_memory_to_use))
     {
 #ifdef TENACITAS_LOG
       if (std::remainder(_counter++, 50000) == 0)
@@ -505,7 +506,7 @@ private:
 
   internal_dispatcher m_internal_dispatcher{m_logger};
 
-  static constexpr float m_perc_memory_to_be_used{0.7};
+  static constexpr float m_perc_memory_to_be_used{0.1};
 };
 
 } // namespace tnct::crosswords::bus::internal
