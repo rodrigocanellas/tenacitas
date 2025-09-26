@@ -968,7 +968,8 @@ var translations = {
     'server.combinations_tried': ' combinations tried',
     'file.loading': 'Loading file...',
     'file.saved': 'Saved {0} entries to crossword.cross',
-    'editor.cleared': 'All word entries cleared'
+    'editor.cleared': 'All word entries cleared',
+    'letters_count': '({0} letters)'
   },
   pt: {
     'app.title': 'tnct.crosswords',
@@ -1051,7 +1052,8 @@ var translations = {
     'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'A carregar ficheiro...',
     'file.saved': 'Guardadas {0} entradas em crossword.cross',
-    'editor.cleared': 'Todas as entradas de palavras foram limpas'
+    'editor.cleared': 'Todas as entradas de palavras foram limpas',
+    'letters_count': '({0} letras)'
   },
   'pt-br': {
     'app.title': 'tnct.crosswords',
@@ -1134,7 +1136,8 @@ var translations = {
     'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'Carregando arquivo...',
     'file.saved': 'Salvas {0} entradas em crossword.cross',
-    'editor.cleared': 'Todas as entradas de palavras foram limpas'
+    'editor.cleared': 'Todas as entradas de palavras foram limpas',
+    'letters_count': '({0} letras)'
   },
   es: {
     'app.title': 'tnct.crosswords',
@@ -1217,7 +1220,8 @@ var translations = {
     'server.combinations_tried': ' combinaciones probadas',
     'file.loading': 'Cargando archivo...',
     'file.saved': 'Guardadas {0} entradas en crossword.cross',
-    'editor.cleared': 'Todas las entradas de palabras han sido borradas'
+    'editor.cleared': 'Todas las entradas de palabras han sido borradas',
+    'letters_count': '({0} letras)'
   },
   it: {
     'app.title': 'tnct.crosswords',
@@ -1300,7 +1304,8 @@ var translations = {
     'server.combinations_tried': ' combinazioni provate',
     'file.loading': 'Caricamento file...',
     'file.saved': 'Salvate {0} voci in crossword.cross',
-    'editor.cleared': 'Tutte le voci delle parole sono state cancellate'
+    'editor.cleared': 'Tutte le voci delle parole sono state cancellate',
+    'letters_count': '({0} lettere)'
   },
   fr: {
     'app.title': 'tnct.crosswords',
@@ -1383,7 +1388,9 @@ var translations = {
     'server.combinations_tried': ' combinaisons testées',
     'file.loading': 'Chargement du fichier...',
     'file.saved': 'Sauvegardées {0} entrées dans crossword.cross',
-    'editor.cleared': 'Toutes les entrées de mots ont été effacées'
+    'editor.cleared': 'Toutes les entrées de mots ont été effacées',
+    'letters_count': '({0} lettres)',
+    'letters_count': '({0} Buchstaben)'
   },
   de: {
     'app.title': 'tnct.crosswords',
@@ -2021,19 +2028,22 @@ function renderSolutionTable(layouts) {
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
   
-  for (var i = 0; i < layouts.length; i++) {
-    var layout = layouts[i];
-    var row = document.createElement("tr");
-    row.innerHTML = 
-      '<td class="idCol">' + (layout.id || "") + '</td>' +
-      '<td>' + (layout.explanation || "") + '</td>';
-    
-    if (layout.orientation === "H") {
-      horizTbody.appendChild(row);
-    } else {
-      vertTbody.appendChild(row);
+    for (var i = 0; i < layouts.length; i++) {
+      var layout = layouts[i];
+      var letterCount = layout.word ? layout.word.length : 0;
+      var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
+      
+      var row = document.createElement("tr");
+      row.innerHTML = 
+        '<td class="idCol">' + (layout.id || "") + '</td>' +
+        '<td>' + explanationWithCount + '</td>';
+      
+      if (layout.orientation === "H") {
+        horizTbody.appendChild(row);
+      } else {
+        vertTbody.appendChild(row);
+      }
     }
-  }
 }
 
 function renderSolutionGrid(msg) {
@@ -2176,19 +2186,22 @@ function renderClues(layouts) {
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
   
-  for (var i = 0; i < layouts.length; i++) {
-    var layout = layouts[i];
-    var row = document.createElement("tr");
-    row.innerHTML = 
-      '<td class="idCol">' + (layout.id || "") + '</td>' +
-      '<td>' + (layout.explanation || "") + '</td>';
-    
-    if (layout.orientation === "H") {
-      horizTbody.appendChild(row);
-    } else {
-      vertTbody.appendChild(row);
+    for (var i = 0; i < layouts.length; i++) {
+      var layout = layouts[i];
+      var letterCount = layout.word ? layout.word.length : 0;
+      var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
+      
+      var row = document.createElement("tr");
+      row.innerHTML = 
+        '<td class="idCol">' + (layout.id || "") + '</td>' +
+        '<td>' + explanationWithCount + '</td>';
+      
+      if (layout.orientation === "H") {
+        horizTbody.appendChild(row);
+      } else {
+        vertTbody.appendChild(row);
+      }
     }
-  }
 }
 
 // Input validation
