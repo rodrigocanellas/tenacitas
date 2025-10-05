@@ -20,5 +20,8 @@ SUBDIRS = \
     memory \
     pair \
     crosswords \
-    math
+    math \
+    network \
+    numerate \
+    io
 

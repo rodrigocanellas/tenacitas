@@ -1,8 +1,12 @@
 
 QMAKE_CXXFLAGS += -DTENACITAS_LOG
+# QMAKE_CXXFLAGS += -std=c++23
 # DEFINES+= -DTENACITAS_LOG
 
+
 CONFIG += sdk_no_version_check
+QMAKE_CXX = g++-13
+CONFIG += c++23
 
 CONFIG(debug, debug|release) {
     cfg=debug
@@ -44,8 +48,7 @@ UI_DIR  += $${tmp_dir}/ui
 OBJECTS_DIR += $${tmp_dir}/obj
 #RCC_DIR += $${tmp_dir}/rsc
 
-QMAKE_CXX = g++-13
-CONFIG += c++23
+
 
 
 
@@ -135,4 +138,5 @@ message("third_dir = "$$third_dir)
 
 #message("LIBS = "$$LIBS)
 
+QMAKE_CXXFLAGS += -std=c++23
 # =============================================================================

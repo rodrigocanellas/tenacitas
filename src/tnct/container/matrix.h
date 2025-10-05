@@ -25,7 +25,7 @@ struct matrix
         m_initial(p_matrix.m_initial),
         m_vec(new t_data[m_num_cols * m_num_rows])
   {
-    std::memcpy(m_vec.get(), p_matrix.m_vec.get(), m_num_rows * m_num_cols);
+    std::memcpy(m_vec, p_matrix.m_vec, m_num_rows * m_num_cols);
   }
 
   matrix(matrix &&p_matrix)
@@ -41,7 +41,13 @@ struct matrix
     reset();
   }
 
-  ~matrix() = default;
+  ~matrix()
+  {
+    if (m_vec)
+    {
+      delete[] m_vec;
+    }
+  };
 
   matrix &operator=(const matrix &p_matrix)
   {
@@ -50,8 +56,8 @@ struct matrix
       m_initial  = p_matrix.m_initial;
       m_num_rows = p_matrix.m_num_rows;
       m_num_cols = p_matrix.m_num_cols;
-      m_vec      = std::unique_ptr<t_data>(new t_data[m_num_cols * m_num_rows]);
-      std::memcpy(m_vec.get(), p_matrix.m_vec.get(), m_num_rows * m_num_cols);
+      m_vec      = new t_data[m_num_cols * m_num_rows];
+      std::memcpy(m_vec, p_matrix.m_vec, m_num_rows * m_num_cols);
     }
     return *this;
   }
@@ -60,10 +66,11 @@ struct matrix
   {
     if (this != &p_matrix)
     {
-      m_vec      = std::move(p_matrix.m_vec);
-      m_initial  = p_matrix.m_initial;
-      m_num_rows = p_matrix.m_num_rows;
-      m_num_cols = p_matrix.m_num_cols;
+      m_vec          = std::move(p_matrix.m_vec);
+      p_matrix.m_vec = nullptr;
+      m_initial      = p_matrix.m_initial;
+      m_num_rows     = p_matrix.m_num_rows;
+      m_num_cols     = p_matrix.m_num_cols;
     }
     return *this;
   }
@@ -93,7 +100,7 @@ struct matrix
     {
       throw std::runtime_error("matrix without rows or cols");
     }
-    return m_vec.get()[(p_row * m_num_cols) + p_col];
+    return m_vec[(p_row * m_num_cols) + p_col];
   }
 
   inline const t_data &operator()(t_int p_row, t_int p_col) const
@@ -102,7 +109,7 @@ struct matrix
     {
       throw std::runtime_error("matrix without rows or cols");
     }
-    return m_vec.get()[(p_row * m_num_cols) + p_col];
+    return m_vec[(p_row * m_num_cols) + p_col];
   }
 
   inline t_int get_num_rows() const
@@ -129,8 +136,8 @@ private:
   t_int m_num_rows{0};
   t_int m_num_cols{0};
 
-  t_data                  m_initial;
-  std::unique_ptr<t_data> m_vec;
+  t_data  m_initial;
+  t_data *m_vec{nullptr};
 };
 
 } // namespace tnct::container

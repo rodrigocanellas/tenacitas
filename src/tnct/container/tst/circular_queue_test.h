@@ -16,7 +16,6 @@
 #include "tnct/container/circular_queue.h"
 #include "tnct/format/fmt.h"
 #include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
 #include "tnct/parser/ini_file.h"
 #include "tnct/program/options.h"
 
