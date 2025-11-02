@@ -114,10 +114,10 @@ public:
   dispatcher &operator=(const dispatcher &) = delete;
   dispatcher &operator=(dispatcher &&)      = delete;
 
-  // void *operator new(size_t)   = delete;
+  void *operator new(size_t)   = delete;
   void *operator new[](size_t) = delete;
 
-  // void operator delete(void *)   = delete;
+  void operator delete(void *)   = delete;
   void operator delete[](void *) = delete;
 
   template <async::cpt::is_event t_event>
@@ -208,14 +208,15 @@ public:
     check_if_event_is_in_events_tupĺe<t_event>();
     try
     {
-      TNCT_LOG_TRA(m_logger, format::bus::fmt("t_event = ", typeid(t_event).name()));
+      TNCT_LOG_TRA(m_logger,
+                   format::bus::fmt("t_event = ", typeid(t_event).name()));
       auto _clear{[](handling<t_event> &p_handling) { p_handling.clear(); }};
 
       if (!find_handling<t_event>(p_handling_id, _clear))
       {
         TNCT_LOG_ERR(m_logger,
                      format::bus::fmt("Could not find handling ", p_handling_id,
-                                 " in event ", typeid(t_event).name()));
+                                      " in event ", typeid(t_event).name()));
         return dat::result::HANDLING_NOT_FOUND;
       }
     }
@@ -399,7 +400,8 @@ private:
 
   //     if (!find_handling<t_event>(p_handling_id, _stopper)) {
   //       TNCT_LOG_ERR(m_logger,
-  //                    format::bus::fmt("Could not find handling ", p_handling_id,
+  //                    format::bus::fmt("Could not find handling ",
+  //                    p_handling_id,
   //                                " in event ", typeid(t_event).name()));
   //       return dat::result::HANDLING_NOT_FOUND;
   //     }
@@ -419,8 +421,9 @@ private:
     const internal::handler_id _handler_id{
         internal::get_handler_id<t_event, t_handler>()};
 
-    TNCT_LOG_TRA(m_logger, format::bus::fmt("handling function id = ", _handler_id,
-                                       " for event ", typeid(t_event).name()));
+    TNCT_LOG_TRA(m_logger,
+                 format::bus::fmt("handling function id = ", _handler_id,
+                                  " for event ", typeid(t_event).name()));
 
     const handlings<t_event> &_handlings{get_handlings<t_event>()};
 
@@ -429,9 +432,10 @@ private:
     {
       if (_ite->second->get_handler_id() == _handler_id)
       {
-        TNCT_LOG_ERR(m_logger, format::bus::fmt("handling function is already being "
-                                           "used in a handling for event '",
-                                           typeid(t_event).name(), '\''));
+        TNCT_LOG_ERR(m_logger,
+                     format::bus::fmt("handling function is already being "
+                                      "used in a handling for event '",
+                                      typeid(t_event).name(), '\''));
 
         return true;
       }
@@ -511,9 +515,9 @@ private:
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
                 {
                   const auto _handling_id{p_value.second->get_id()};
-                  TNCT_LOG_TRA(
-                      m_logger,
-                      format::bus::fmt("p_value.second->get_id() = ", _handling_id));
+                  TNCT_LOG_TRA(m_logger,
+                               format::bus::fmt("p_value.second->get_id() = ",
+                                                _handling_id));
                   return _handling_id == _handling_id_to_find;
                 }};
 
@@ -524,8 +528,8 @@ private:
       return true;
     }
 
-    TNCT_LOG_WAR(m_logger,
-                 format::bus::fmt("Could not find handling id ", p_handling_name));
+    TNCT_LOG_WAR(m_logger, format::bus::fmt("Could not find handling id ",
+                                            p_handling_name));
     return false;
   }
 
