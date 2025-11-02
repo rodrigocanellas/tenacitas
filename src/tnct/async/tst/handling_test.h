@@ -8,12 +8,12 @@
 
 #include <limits>
 
-#include "tnct/async/handling_name.h"
+#include "tnct/async/bus/sleeping_loop.h"
+#include "tnct/async/dat/handling_name.h"
 #include "tnct/async/internal/handling.h"
 #include "tnct/async/internal/handling_id.h"
-#include "tnct/async/sleeping_loop.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -53,7 +53,7 @@ protected:
 
   using event = ev1;
 
-  using queue = container::circular_queue<logger, event, 20>;
+  using queue = container::dat::circular_queue<logger, event, 20>;
 
   using sleeping_loop = async::sleeping_loop<logger>;
 
@@ -94,7 +94,7 @@ struct handling_000 : public handling_test
 
       const auto _num_events(_handling.get_num_events());
 
-      m_logger.tst(format::fmt("# events = ", _num_events));
+      m_logger.tst(format::bus::fmt("# events = ", _num_events));
 
       return _num_events == 1;
     }
@@ -124,7 +124,7 @@ struct handling_001 : public handling_test
 
     const auto _is_stopped(_handling.is_stopped());
 
-    m_logger.tst(format::fmt("is stopped = ", _is_stopped));
+    m_logger.tst(format::bus::fmt("is stopped = ", _is_stopped));
     return !_is_stopped;
   }
 };
@@ -147,11 +147,11 @@ struct handling_005 : public handling_test
 
     auto _handling_id{_handling.get_id()};
 
-    m_logger.tst(format::fmt("id = ", _handling_id));
+    m_logger.tst(format::bus::fmt("id = ", _handling_id));
 
     return _handling_id
            == async::internal::get_handling_id(
-               async::handling_name{"handling-005"});
+               async::dat::handling_name{"handling-005"});
   }
 };
 
@@ -182,14 +182,14 @@ struct handling_006 : public handling_test
       if (_num_events != 1)
       {
         m_logger.tst(
-            format::fmt("# events before should be, but it is ", _num_events));
+            format::bus::fmt("# events before should be, but it is ", _num_events));
         return false;
       }
 
       _handling.clear();
 
       _num_events = _handling.get_num_events();
-      m_logger.tst(format::fmt("# events after = ", _num_events));
+      m_logger.tst(format::bus::fmt("# events after = ", _num_events));
 
       return _num_events == 0;
     }
@@ -218,7 +218,7 @@ struct handling_007 : public handling_test
 
     auto _num_handlers(_handling.get_amount_handlers());
 
-    m_logger.tst(format::fmt("# handlers = ", _num_handlers));
+    m_logger.tst(format::bus::fmt("# handlers = ", _num_handlers));
 
     return _num_handlers == 2;
   }
@@ -242,7 +242,7 @@ struct handling_008 : public handling_test
 
     auto _is_stopped(_handling.is_stopped());
 
-    m_logger.tst(format::fmt("is stopped? ", _is_stopped));
+    m_logger.tst(format::bus::fmt("is stopped? ", _is_stopped));
     return !_is_stopped;
   }
 };
@@ -265,12 +265,12 @@ struct handling_009 : public handling_test
 
     auto _is_stopped(_handling.is_stopped());
 
-    m_logger.tst(format::fmt("is stopped before? ", _is_stopped));
+    m_logger.tst(format::bus::fmt("is stopped before? ", _is_stopped));
 
     _handling.stop();
 
     _is_stopped = _handling.is_stopped();
-    m_logger.tst(format::fmt("is stopped after? ", _is_stopped));
+    m_logger.tst(format::bus::fmt("is stopped after? ", _is_stopped));
 
     return _is_stopped;
   }
@@ -302,7 +302,7 @@ struct handling_010 : public handling_test
 
       auto _num_events(_handling.get_num_events());
 
-      m_logger.tst(format::fmt("# events = ", _num_events));
+      m_logger.tst(format::bus::fmt("# events = ", _num_events));
 
       return _num_events == 2;
     }
@@ -341,7 +341,7 @@ struct handling_011 : public handling_test
 
       auto _num_events(_handling.get_num_events());
 
-      m_logger.tst(format::fmt("# events = ", _num_events));
+      m_logger.tst(format::bus::fmt("# events = ", _num_events));
 
       return _num_events == 0;
     }
@@ -385,24 +385,24 @@ struct handling_014 : public handling_test
         _handling.add_event(ev1(_i));
       }
 
-      TNCT_LOG_TST(m_logger, format::fmt("number of events = ",
+      TNCT_LOG_TST(m_logger, format::bus::fmt("number of events = ",
                                          _handling.get_num_events()));
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_wait);
-        m_logger.tst(format::fmt("thread main ", std::this_thread::get_id(),
+        m_logger.tst(format::bus::fmt("thread main ", std::this_thread::get_id(),
                                  " starts to wait"));
         m_cond_wait.wait(_lock, [&]()
                          { return m_current_num_events == m_num_events; });
       }
 
       TNCT_LOG_TST(m_logger,
-                   format::fmt("thread main ", std::this_thread::get_id(),
+                   format::bus::fmt("thread main ", std::this_thread::get_id(),
                                ", done waiting"));
 
       for (const auto &_value : m_events_by_handler)
       {
-        m_logger.tst(format::fmt("thread ", _value.first,
+        m_logger.tst(format::bus::fmt("thread ", _value.first,
                                  " # events = ", _value.second));
       }
 
@@ -446,19 +446,19 @@ private:
           ++m_owner->m_events_by_handler[std::this_thread ::get_id()];
         }
       }
-      m_owner->m_logger.tst(format::fmt("handler ",
+      m_owner->m_logger.tst(format::bus::fmt("handler ",
                                         std ::this_thread ::get_id(),
                                         " handling event ", p_event.value));
       m_owner->m_cond_wait.notify_all();
 
-      // m_owner->m_logger.tst(format::fmt("thread ", std ::this_thread
+      // m_owner->m_logger.tst(format::bus::fmt("thread ", std ::this_thread
       // ::get_id(),
       //                                   " all notified"));
 
       std::this_thread::sleep_for(200ms);
 
       // m_owner->m_logger.tst(
-      //     format::fmt("thread ", std ::this_thread ::get_id(), ", woke
+      //     format::bus::fmt("thread ", std ::this_thread ::get_id(), ", woke
       //     up"));
     }
     handling_014 *m_owner{nullptr};
@@ -470,11 +470,11 @@ private:
     num_events _total(0);
     for (const auto &_value : p_events_by_handler)
     {
-      // m_logger.tst(format::fmt("thread ", _value.first, " # ",
+      // m_logger.tst(format::bus::fmt("thread ", _value.first, " # ",
       // _value.second));
       _total += _value.second;
     }
-    // m_logger.tst(format::fmt("total = ", _total));
+    // m_logger.tst(format::bus::fmt("total = ", _total));
     return _total >= m_num_events;
   }
   std::mutex              m_mutex_count_all_events;
@@ -535,7 +535,7 @@ struct handling_015 : public handling_test
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_wait);
-        m_logger.tst(format::fmt("still waiting "));
+        m_logger.tst(format::bus::fmt("still waiting "));
         m_cond_wait.wait(_lock, [&]()
                          { return m_current_num_events == m_num_events; });
       }
@@ -560,7 +560,7 @@ private:
     void operator()(event &&p_event)
     {
       ++m_owner->m_current_num_events;
-      m_owner->m_logger.tst(format::fmt("handling event ", p_event.value));
+      m_owner->m_logger.tst(format::bus::fmt("handling event ", p_event.value));
       m_owner->m_cond_wait.notify_all();
 
       std::this_thread::sleep_for(200ms);
@@ -615,7 +615,7 @@ struct handling_016 : public handling_test
             {
               ev1 _ev(_added);
               m_logger.tst(
-                  format::fmt("adding event # ", ++_added, ": '", _ev, '\''));
+                  format::bus::fmt("adding event # ", ++_added, ": '", _ev, '\''));
               _handling.add_event(std::move(_ev));
             }
           },
@@ -631,7 +631,7 @@ struct handling_016 : public handling_test
             {
               if (m_handled == m_num_events)
               {
-                m_logger.tst(format::fmt(m_handled, " = ", m_num_events,
+                m_logger.tst(format::bus::fmt(m_handled, " = ", m_num_events,
                                          ", stopping event generation"));
                 _sleeping_loop.stop();
                 return true;
@@ -640,19 +640,19 @@ struct handling_016 : public handling_test
               {
                 if (!_sleeping_loop.is_stopped())
                 {
-                  m_logger.tst(format::fmt(_added, " = ", m_num_events,
+                  m_logger.tst(format::bus::fmt(_added, " = ", m_num_events,
                                            " stopping event generation"));
                   _sleeping_loop.stop();
                 }
               }
-              m_logger.tst(format::fmt(
+              m_logger.tst(format::bus::fmt(
                   "# events handled = ", m_handled,
                   ", # events in queue = ", _handling.get_num_events()));
               return false;
             });
       }
 
-      m_logger.tst(format::fmt("# events added = ", _added,
+      m_logger.tst(format::bus::fmt("# events added = ", _added,
                                ", # events handled = ", m_handled));
 
       return (m_handled == m_num_events) && (_added == m_num_events);
@@ -674,7 +674,7 @@ private:
     }
     void operator()(event &&p_event)
     {
-      m_owner->m_logger.tst(format::fmt(
+      m_owner->m_logger.tst(format::bus::fmt(
           "handling event # ", ++m_owner->m_handled, ": '", p_event, '\''));
       std::this_thread::sleep_for(500ms);
       m_owner->m_cond.notify_one();

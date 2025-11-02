@@ -3,13 +3,13 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_MAX_STR_LENGTH_H
-#define TNCT_FORMAT_MAX_STR_LENGTH_H
+#ifndef TNCT_FORMAT_BUS_MAX_STR_LENGTH_H
+#define TNCT_FORMAT_BUS_MAX_STR_LENGTH_H
 
 #include <cmath>
 #include <cstdint>
 
-namespace tnct::format
+namespace tnct::format::bus
 {
 
 /// \brief Maximum number of characters needed to represent a type of number
@@ -26,6 +26,6 @@ inline constexpr uint16_t max_str_length()
           + 1);
 }
 
-} // namespace tnct::format
+} // namespace tnct::format::bus
 
 #endif

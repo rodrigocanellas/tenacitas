@@ -8,16 +8,16 @@
 
 #include <cstddef>
 
-#include "tnct/async/handling_name.h"
+#include "tnct/async/dat/handling_name.h"
 
 namespace tnct::async::internal
 {
 
 using handling_id = std::size_t;
 
-inline handling_id get_handling_id(const handling_name &p_handling_name)
+inline handling_id get_handling_id(const dat::handling_name &p_handling_name)
 {
-  return std::hash<handling_name>{}(p_handling_name);
+  return std::hash<dat::handling_name>{}(p_handling_name);
 }
 
 } // namespace tnct::async::internal

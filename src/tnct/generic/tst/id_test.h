@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "tnct/generic/id.h"
+#include "tnct/generic/dat/id.h"
 #include "tnct/program/options.h"
 
 namespace tnct::generic::tst
@@ -60,7 +60,7 @@ struct id_003
 
   bool operator()(const program::options &)
   {
-    using id_0 = generic::id<int>;
+    using id_0 = generic::dat::id<int>;
     id_0 _i;
 
     std::cout << _i << std::endl;
@@ -78,7 +78,7 @@ struct id_004
 
   bool operator()(const program::options &)
   {
-    using id_0 = generic::id<int>;
+    using id_0 = generic::dat::id<int>;
     id_0 _i;
     id_0 _j;
 
@@ -97,8 +97,8 @@ struct id_005
 
   bool operator()(const program::options &)
   {
-    using id_0 = generic::id<int>;
-    using id_1 = generic::id<std::string>;
+    using id_0 = generic::dat::id<int>;
+    using id_1 = generic::dat::id<std::string>;
     id_0 _i;
     id_1 _j;
 

@@ -11,7 +11,7 @@
 #include <regex>
 #include <string>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/translator/dictionary.h"
@@ -45,7 +45,7 @@ struct translator_from_file {
       if (!_file.good()) {
 
         m_logger.err(
-            format::fmt("translation file '", p_file_name, "' not found"));
+            format::bus::fmt("translation file '", p_file_name, "' not found"));
 
         return false;
       }
@@ -71,7 +71,7 @@ struct translator_from_file {
 
     } catch (std::exception &_ex) {
 
-      m_logger.err(format::fmt("Loading translation file '", p_file_name,
+      m_logger.err(format::bus::fmt("Loading translation file '", p_file_name,
                                 "': '", _ex.what(), '\''));
     }
     return false;

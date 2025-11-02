@@ -3,15 +3,16 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_HANDLING_NAME_H
-#define TNCT_ASYNC_HANDLING_NAME_H
+#ifndef TNCT_ASYNC_DAT_HANDLING_NAME_H
+#define TNCT_ASYNC_DAT_HANDLING_NAME_H
 
 #include <string_view>
 
-namespace tnct::async {
+namespace tnct::async::dat
+{
 
 using handling_name = std::string_view;
 
-} // namespace tnct::async
+} // namespace tnct::async::dat
 
 #endif

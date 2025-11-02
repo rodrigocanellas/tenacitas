@@ -13,7 +13,7 @@
 #include <fstream>
 #include <map>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -207,7 +207,7 @@ void MainWindow::create_check_box_first_column(int p_row, bool p_checked)
   _item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   _item->setTextAlignment(Qt::AlignCenter);
 
-  TNCT_LOG_DEB(m_logger, format::fmt("checked = ", Qt::Checked,
+  TNCT_LOG_DEB(m_logger, format::bus::fmt("checked = ", Qt::Checked,
                                      ", unchecked = ", Qt::Unchecked));
   _item->setCheckState((p_checked ? Qt::Checked : Qt::Unchecked));
   ui->tblWords->setItem(p_row, USE_COL, _item);
@@ -544,7 +544,7 @@ void MainWindow::on_start()
     auto _checked_state{_item->checkState()};
     TNCT_LOG_DEB(
         m_logger,
-        format::fmt("check state is = ",
+        format::bus::fmt("check state is = ",
                     ui->tblWords->item(_row, WORD_COL)->text().toStdString(),
                     " = ", _checked_state));
     if (_checked_state == Qt::Checked)
@@ -562,7 +562,7 @@ void MainWindow::on_start()
           m_entries.add_entry(_item_word->text().toStdString(),
                               _item_explanation->text().toStdString());
           TNCT_LOG_DEB(m_logger,
-                       format::fmt("word = ", _text0.toStdString(),
+                       format::bus::fmt("word = ", _text0.toStdString(),
                                    ", explanation = ", _text1.toStdString()));
         }
       }

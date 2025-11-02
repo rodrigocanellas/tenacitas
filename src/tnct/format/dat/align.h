@@ -3,13 +3,18 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_ALIGN_H
-#define TNCT_FORMAT_ALIGN_H
+#ifndef TNCT_FORMAT_DAT_ALIGN_H
+#define TNCT_FORMAT_DAT_ALIGN_H
 
-namespace tnct::format {
+namespace tnct::format::dat
+{
 /// \brief Type of alingnment when formating numbers
-enum class align : char { left = 'l', right = 'd' };
+enum class align : char
+{
+  left  = 'l',
+  right = 'd'
+};
 
-} // namespace tnct::format
+} // namespace tnct::format::dat
 
 #endif

@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h"
 #include "tnct/async/exp/temperature_sensors_simulator/dat/temperature.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 
 using namespace tnct::async::exp::temperature_sensors_simulator;
 using namespace tnct;
@@ -23,9 +23,9 @@ MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,
       "new-temperature", queue_new_temperature{m_logger},
       handler_new_temperature{this},
 
-      async::handling_priority::high, 1));
+      async::dat::handling_priority::high, 1));
 
-  if (_result != async::result::OK)
+  if (_result != async::dat::result::OK)
   {
     TNCT_LOG_ERR(m_logger, "error creating handling for 'new_temperature");
     return;
@@ -80,9 +80,9 @@ void MainWindow::on_btnAddSensor_clicked()
           ui->tblTemperatures->rowCount() - 1, 0,
           new QTableWidgetItem(QString::number(static_cast<int>(_sensor_id))));
       auto _result(m_dispatcher.template publish<evt::add_sensor>(_sensor_id));
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        m_logger.err(format::fmt(_result));
+        m_logger.err(format::bus::fmt(_result));
       }
       ui->txtSensorToAdd->setText("");
     }
@@ -102,9 +102,9 @@ void MainWindow::on_btnDeleteSensor_clicked()
     {
       ui->tblTemperatures->removeRow(_row);
       auto _result(m_dispatcher.publish<evt::remove_sensor>(_sensor_id));
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        m_logger.err(format::fmt(_result));
+        m_logger.err(format::bus::fmt(_result));
       }
     }
   }
@@ -128,9 +128,9 @@ void MainWindow::on_btnSetTemperature_clicked()
   {
     auto _result(
         m_dispatcher.publish<evt::set_temperature>(_sensor_id, _temperature));
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      m_logger.err(format::fmt(_result));
+      m_logger.err(format::bus::fmt(_result));
     }
   }
 }

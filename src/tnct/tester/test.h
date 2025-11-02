@@ -28,7 +28,8 @@
 ///
 #define run_test(test, test_name) test.run<test_name>(#test_name)
 
-namespace tnct::tester {
+namespace tnct::tester
+{
 /// \brief The test struct executes tests implemented in classes
 ///
 /// \tparam use makes tnct::tester to be compiled only if
@@ -80,7 +81,9 @@ namespace tnct::tester {
 ///}
 ///
 /// \endcode
-template <bool use = true> struct test {
+template <bool use = true>
+struct test
+{
   /// \brief Constructor
   /// If '--desc' is passed, \p operator() will print a description of the
   /// tests.
@@ -94,20 +97,28 @@ template <bool use = true> struct test {
   test(
       int argc, char **argv,
       std::initializer_list<program::options::name> &&p_mandatory = {}) noexcept
-      : m_argc(argc), m_argv(argv) {
+      : m_argc(argc), m_argv(argv)
+  {
     m_pgm_name = m_argv[0];
 
-    try {
+    try
+    {
       m_options.parse(m_argc, m_argv, std::move(p_mandatory));
 
-      if (m_options.get_bool_param("exec")) {
+      if (m_options.get_bool_param("exec"))
+      {
         m_execute_tests = true;
-      } else if (m_options.get_bool_param("desc")) {
+      }
+      else if (m_options.get_bool_param("desc"))
+      {
         m_print_desc = true;
-      } else {
+      }
+      else
+      {
         std::optional<std::list<program::options::value>> _maybe =
             m_options.get_set_param("exec");
-        if (_maybe) {
+        if (_maybe)
+        {
           m_execute_tests = true;
           std::list<program::options::value> _tests_to_exec =
               std::move(*_maybe);
@@ -115,10 +126,13 @@ template <bool use = true> struct test {
         }
       }
 
-      if ((!m_execute_tests) && (!m_print_desc)) {
+      if ((!m_execute_tests) && (!m_print_desc))
+      {
         print_mini_howto();
       }
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cout << "EXCEPTION '" << _ex.what() << "'" << std::endl;
       return;
     }
@@ -155,24 +169,35 @@ template <bool use = true> struct test {
   /// \details You can use the macro 'run_test' defined above, instead of
   /// calling this method
   template <typename t_test_class>
-  void run(const std::string &p_test_name) noexcept {
+  void run(const std::string &p_test_name) noexcept
+  {
     using namespace std;
-    try {
-      if (m_print_desc) {
+    try
+    {
+      if (m_print_desc)
+      {
         cout << p_test_name << ": " << t_test_class::desc() << "\n" << endl;
         return;
       }
-      if (m_execute_tests) {
-        if (!m_tests_to_exec.empty()) {
+      if (m_execute_tests)
+      {
+        if (!m_tests_to_exec.empty())
+        {
           if ((std::find(m_tests_to_exec.begin(), m_tests_to_exec.end(),
-                         p_test_name)) != m_tests_to_exec.end()) {
+                         p_test_name))
+              != m_tests_to_exec.end())
+          {
             exec<t_test_class>(p_test_name);
           }
-        } else {
+        }
+        else
+        {
           exec<t_test_class>(p_test_name);
         }
       }
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cout << "EXCEPTION '" << _ex.what() << "'" << std::endl;
       return;
     }
@@ -186,26 +211,32 @@ private:
   ///
   /// static std::string desc()
   /// \endcode
-  template <typename t_test_class> void exec(const std::string p_test_name) {
+  template <typename t_test_class>
+  void exec(const std::string p_test_name)
+  {
     using namespace std;
     bool result = false;
-    try {
+    try
+    {
       t_test_class _test_obj;
       cerr << "\n############ -> " << p_test_name << " - "
            << t_test_class::desc() << endl;
       result = _test_obj(m_options);
-      //            cout << (result ? "SUCCESS" : "FAIL") << " for " <<
+      //            cout << (dat::result ? "SUCCESS" : "FAIL") << " for " <<
       //            p_test_name
       //                 << endl;
       cout << p_test_name << (result ? " SUCCESS" : " FAIL") << endl;
-    } catch (exception &_ex) {
+    }
+    catch (exception &_ex)
+    {
       cout << "ERROR for " << p_test_name << " '" << _ex.what() << "'" << endl;
     }
     cerr << "############ <- " << p_test_name << endl;
   }
 
   /// \brief print_mini_howto prints a mini how-to for using the \p test class
-  void print_mini_howto() {
+  void print_mini_howto()
+  {
     using namespace std;
     cout << "Syntax:\n"
          << "\t'" << m_pgm_name

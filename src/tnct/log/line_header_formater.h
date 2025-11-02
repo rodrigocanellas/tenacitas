@@ -15,7 +15,7 @@
 #include <string>
 #include <thread>
 
-#include "tnct/format/format_number.h"
+#include "tnct/format/bus/format_number.h"
 #include "tnct/log/level.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -54,14 +54,14 @@ default_line_header_formater(std::stringstream &p_stream, level p_level,
   }
 
   p_stream << p_level << _separator << _time_str << ','
-           << format::format_fix_number(
+           << format::bus::format_fix_number(
                   static_cast<uint32_t>(_now_microsecs -
                                         (_now_seconds * 1000000)),
-                  6, '0', tnct::format::align::right)
+                  6, '0', tnct::format::dat::align::right)
            << _separator << std::this_thread::get_id() << _separator
            << std::setfill(' ') << std::left << std::setw(_max_file_name_size)
            << _file_name << _separator
-           << format::format_fix_number(p_source_location.line(), uint8_t{5})
+           << format::bus::format_fix_number(p_source_location.line(), uint8_t{5})
            // << _separator << p_source_location.function_name()
 
            << _separator;

@@ -3,13 +3,13 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONCEPTS_IS_HASHABLE_H
-#define TNCT_CONCEPTS_IS_HASHABLE_H
+#ifndef TNCT_GENERIC_CPT_IS_HASHABLE_H
+#define TNCT_GENERIC_CPT_IS_HASHABLE_H
 
 #include <functional>
 #include <type_traits>
 
-namespace tnct::concepts
+namespace tnct::generic::cpt
 {
 
 template <typename t>
@@ -24,6 +24,6 @@ concept is_hashable =
       } -> std::same_as<std::size_t>;
     };
 
-} // namespace tnct::concepts
+} // namespace tnct::generic::cpt
 
 #endif

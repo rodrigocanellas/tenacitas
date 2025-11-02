@@ -9,8 +9,8 @@
 #include <atomic>
 #include <memory>
 
-#include "tnct/async/dispatcher.h"
-#include "tnct/container/circular_queue.h"
+#include "tnct/async/bus/dispatcher.h"
+#include "tnct/container/dat/circular_queue.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
 #include "tnct/crosswords/dat/error.h"
 #include "tnct/crosswords/dat/grid.h"
@@ -22,7 +22,7 @@
 #include "tnct/crosswords/evt/internal/grid_create_stop.h"
 #include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/time/cpt/chrono_convertible.h"
@@ -69,9 +69,9 @@ struct grid_creator
                 p_entries, p_num_rows, p_num_cols,
                 std::chrono::duration_cast<std::chrono::seconds>(p_wait_for),
                 p_max_num_rows);
-        _result != async::result::OK)
+        _result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(m_logger, format::fmt("Error ", _result,
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("Error ", _result,
                                          " publishing 'grid_create_start' for ",
                                          p_entries));
       return false;
@@ -83,9 +83,9 @@ struct grid_creator
   {
     if (const auto _result =
             m_dispatcher.template publish<evt::internal::grid_create_stop>();
-        _result != async::result::OK)
+        _result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(m_logger, format::fmt("Error ", _result,
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("Error ", _result,
                                          " publishing 'grid_create_stop"));
     }
   }
@@ -104,7 +104,7 @@ struct grid_creator
     using evt::internal::grid_attempt_configuration;
 
     using queue =
-        container::circular_queue<t_logger, grid_attempt_configuration, 5>;
+        container::dat::circular_queue<t_logger, grid_attempt_configuration, 5>;
 
     m_dispatcher.template add_handling<grid_attempt_configuration>(
         "grid-attempt-configuration", queue{m_logger},
@@ -124,7 +124,7 @@ struct grid_creator
     using evt::internal::grid_permutations_tried;
 
     using queue =
-        container::circular_queue<t_logger, grid_permutations_tried, 500>;
+        container::dat::circular_queue<t_logger, grid_permutations_tried, 500>;
 
     m_dispatcher.template add_handling<grid_permutations_tried>(
         "grid-permutations-tried", queue{m_logger},
@@ -136,7 +136,7 @@ struct grid_creator
   {
     using evt::internal::grid_create_error;
 
-    using queue = container::circular_queue<t_logger, grid_create_error, 5>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_error, 5>;
 
     m_dispatcher.template add_handling<grid_create_error>(
         "grid-create-error", queue{m_logger},
@@ -145,7 +145,7 @@ struct grid_creator
   }
 
 private:
-  using dispatcher = tnct::async::dispatcher<
+  using dispatcher = tnct::async::bus::dispatcher<
       t_logger, evt::internal::grid_permutations_tried,
       evt::internal::grid_create_solved, evt::internal::grid_create_start,
       evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -156,7 +156,7 @@ private:
   void on_start()
   {
     using evt::internal::grid_create_start;
-    using queue = container::circular_queue<t_logger, grid_create_start, 1000>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_start, 1000>;
     m_dispatcher.template add_handling<grid_create_start>(
         "grid-create-start", queue{m_logger},
         [&](grid_create_start &&p_event)
@@ -172,7 +172,7 @@ private:
   void on_stop()
   {
     using evt::internal::grid_create_stop;
-    using queue = container::circular_queue<t_logger, grid_create_stop, 10>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_stop, 10>;
     m_dispatcher.template add_handling<grid_create_stop>(
         "grid-create-stop", queue{m_logger},
         [&](grid_create_stop &&) { m_stop = true; });
@@ -189,12 +189,12 @@ private:
 
     using evt::internal::grid_create_solved;
 
-    using queue = container::circular_queue<t_logger, grid_create_solved, 5>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_solved, 5>;
     m_dispatcher.template add_handling<grid_create_solved>(
         "grid-create-solved", queue{m_logger},
         [p_callback](grid_create_solved &&p_event)
         { p_callback(p_event.grid, p_event.time, p_event.max_permutations); },
-        async::handling_priority::highest);
+        async::dat::handling_priority::highest);
   }
 
   // \brief
@@ -205,7 +205,7 @@ private:
   {
     using evt::internal::grid_create_unsolved;
 
-    using queue = container::circular_queue<t_logger, grid_create_unsolved, 5>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_unsolved, 5>;
 
     m_dispatcher.template add_handling<grid_create_unsolved>(
         "grid-create-unsolved", queue{m_logger},
@@ -255,9 +255,9 @@ private:
         if (const auto _result =
                 m_dispatcher.template publish<evt::internal::grid_create_error>(
                     dat::error::INVALID_INTERVAL);
-            _result != async::result::OK)
+            _result != async::dat::result::OK)
         {
-          TNCT_LOG_ERR(m_logger, format::fmt("error publishing error ",
+          TNCT_LOG_ERR(m_logger, format::bus::fmt("error publishing error ",
                                              dat::error::INVALID_INTERVAL));
         }
         return;
@@ -268,10 +268,10 @@ private:
         if (const auto _result =
                 m_dispatcher.template publish<evt::internal::grid_create_error>(
                     dat::error::MAX_ROWS_SMALLER_THAN_ROWS);
-            _result != async::result::OK)
+            _result != async::dat::result::OK)
         {
           TNCT_LOG_ERR(m_logger,
-                       format::fmt("error publishing error ",
+                       format::bus::fmt("error publishing error ",
                                    dat::error::MAX_ROWS_SMALLER_THAN_ROWS));
         }
         return;
@@ -284,9 +284,9 @@ private:
         if (const auto _result =
                 m_dispatcher.template publish<evt::internal::grid_create_error>(
                     dat::error::WORD_TOO_LONG, _entry.value()->get_word());
-            _result != async::result::OK)
+            _result != async::dat::result::OK)
         {
-          TNCT_LOG_ERR(m_logger, format::fmt("error publishing error ",
+          TNCT_LOG_ERR(m_logger, format::bus::fmt("error publishing error ",
                                              dat::error::WORD_TOO_LONG));
         }
         return;
@@ -303,7 +303,7 @@ private:
       while ((_current_num_rows <= p_max_num_rows) && (!m_stop))
       {
 
-        TNCT_LOG_DEB(m_logger, format::fmt("Trying grid ", _current_num_rows,
+        TNCT_LOG_DEB(m_logger, format::bus::fmt("Trying grid ", _current_num_rows,
                                            'x', _current_num_cols));
 
         auto _start = std::chrono::high_resolution_clock::now();
@@ -319,7 +319,7 @@ private:
 
           std::chrono::duration<double> _diff = _end - _start;
 
-          TNCT_LOG_DEB(m_logger, format::fmt("grid ", _current_num_rows, 'x',
+          TNCT_LOG_DEB(m_logger, format::bus::fmt("grid ", _current_num_rows, 'x',
                                              _current_num_cols, " solved in ",
                                              _diff.count(), " seconds"));
 
@@ -330,11 +330,11 @@ private:
                           std::chrono::duration_cast<std::chrono::seconds>(
                               std::chrono::duration<double>(_diff)),
                           _max_permutations)};
-              _result != async::result::OK)
+              _result != async::dat::result::OK)
           {
             TNCT_LOG_ERR(
                 m_logger,
-                format::fmt("Error publishing internal::grid_create_solved: ",
+                format::bus::fmt("Error publishing internal::grid_create_solved: ",
                             _result));
           }
 
@@ -348,7 +348,7 @@ private:
           break;
         }
 
-        TNCT_LOG_DEB(m_logger, format::fmt("Not solved for ", _current_num_rows,
+        TNCT_LOG_DEB(m_logger, format::bus::fmt("Not solved for ", _current_num_rows,
                                            'x', _current_num_cols));
 
         ++_current_num_rows;
@@ -363,11 +363,11 @@ private:
               m_dispatcher
                   .template publish<evt::internal::grid_create_unsolved>(
                       _current_num_rows, _current_num_cols)};
-          _result != async::result::OK)
+          _result != async::dat::result::OK)
       {
         TNCT_LOG_ERR(
             m_logger,
-            format::fmt("Error publishing internal::grid_create_unsolved: ",
+            format::bus::fmt("Error publishing internal::grid_create_unsolved: ",
                         _result));
       }
       m_dispatcher.clear();
@@ -377,15 +377,15 @@ private:
       if (const auto _result{
               m_dispatcher.template publish<evt::internal::grid_create_error>(
                   _error)};
-          _result != async::result::OK)
+          _result != async::dat::result::OK)
       {
         TNCT_LOG_ERR(m_logger,
-                     format::fmt("could not publish the  error ", _error))
+                     format::bus::fmt("could not publish the  error ", _error))
       }
     }
     catch (std::exception &_ex)
     {
-      TNCT_LOG_ERR(m_logger, format::fmt("error '", _ex.what(), '\''));
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("error '", _ex.what(), '\''));
     }
     catch (...)
     {

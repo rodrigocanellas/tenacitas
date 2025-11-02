@@ -6,9 +6,9 @@
 #ifndef TNCT_ASYNC_CPT_HAS_ADD_HANDLING_METHOD_H
 #define TNCT_ASYNC_CPT_HAS_ADD_HANDLING_METHOD_H
 
-#include "tnct/async/handling_name.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
+#include "tnct/async/dat/handling_name.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/cpt/is_event.h"
 #include "tnct/async/cpt/is_handler.h"
 #include "tnct/container/cpt/queue.h"
@@ -25,9 +25,9 @@ concept has_add_handling_method =
     async::cpt::is_event<t_event>
     && container::cpt::queue<t_queue, t_event>
     && async::cpt::is_handler<t_handler, t_event>
-    && requires(t &d, async::handling_name &&p_handling_name,
+    && requires(t &d, async::dat::handling_name &&p_handling_name,
                 t_queue &&p_queue, t_handler &&p_handler,
-                async::handling_priority &&p_handling_priority,
+                async::dat::handling_priority &&p_handling_priority,
                 std::size_t                     p_num_handlers) {
          {
            d.template add_handling<t_event, std::remove_cvref_t<t_queue>,
@@ -35,7 +35,7 @@ concept has_add_handling_method =
                p_handling_name, std::move(p_queue),
                std::move(p_handler), p_handling_priority,
                p_num_handlers)
-         } -> std::same_as<async::result>;
+         } -> std::same_as<async::dat::result>;
        };
 
 } // namespace tnct::async::cpt

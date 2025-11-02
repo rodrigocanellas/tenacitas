@@ -8,7 +8,7 @@
 
 #include <concepts>
 
-#include "tnct/async/result.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/cpt/is_event.h"
 
 namespace tnct::async::cpt
@@ -32,7 +32,7 @@ concept has_publish_method =
           {
             p_t.template publish<event_type<t_event>>(
                 std::declval<const_lvalue_event_type<t_event>>())
-          } -> std::same_as<async::result>;
+          } -> std::same_as<async::dat::result>;
         } ||
 
         // variadic parameters
@@ -40,7 +40,7 @@ concept has_publish_method =
           {
             p_t.template publish<event_type<t_event>>(
                 std::forward<t_params>(p_params)...)
-          } -> std::same_as<async::result>;
+          } -> std::same_as<async::dat::result>;
         }
 
     );

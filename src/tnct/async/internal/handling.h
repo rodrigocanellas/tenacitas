@@ -16,11 +16,11 @@
 
 #include "tnct/async/cpt/is_event.h"
 #include "tnct/async/cpt/is_handler.h"
-#include "tnct/async/handling_name.h"
+#include "tnct/async/dat/handling_name.h"
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling_id.h"
 #include "tnct/container/cpt/queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -45,7 +45,7 @@ public:
 
   [[nodiscard]] virtual handling_id get_id() const = 0;
 
-  [[nodiscard]] virtual handling_name get_name() const = 0;
+  [[nodiscard]] virtual dat::handling_name get_name() const = 0;
 
   [[nodiscard]] virtual constexpr size_t get_num_events() const = 0;
 
@@ -67,7 +67,7 @@ public:
   using queue   = t_queue;
   using handler = t_handler;
 
-  handling_concrete(const handling_name &p_handling_name, t_logger &p_logger,
+  handling_concrete(const dat::handling_name &p_handling_name, t_logger &p_logger,
                     handler &&p_handler, queue &&p_queue,
                     size_t p_num_handlers = 1)
       : m_logger(p_logger), m_handling_name(p_handling_name),
@@ -75,7 +75,7 @@ public:
         m_handler(p_handler), m_queue(std::move(p_queue)),
         m_handler_id(internal::get_handler_id<t_event, t_handler>())
   {
-    TNCT_LOG_TRA(m_logger, format::fmt("m_handling_id = ", m_handling_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("m_handling_id = ", m_handling_id,
                                        ", m_handling_name = ", m_handling_name,
                                        ", m_handler_id = ", m_handler_id,
                                        ", p_num_handlers = ", p_num_handlers));
@@ -118,7 +118,7 @@ public:
   void add_event(const event &p_event) override
   {
 
-    TNCT_LOG_TRA(m_logger, format::fmt("event = ", p_event));
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("event = ", p_event));
 
     m_queue.push(p_event);
 
@@ -178,7 +178,7 @@ public:
     return m_handling_handlers.size();
   }
 
-  [[nodiscard]] handling_name get_name() const override
+  [[nodiscard]]dat::handling_name get_name() const override
   {
     return m_handling_name;
   }
@@ -248,7 +248,7 @@ private:
   //         return;
   //     }
 
-  //     TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
+  //     TNCT_LOG_TRA(m_logger, trace(format::bus::fmt("adding ", p_num_handlers,
   //                                              " event handlers")));
 
   //     std::lock_guard<std::mutex> _lock(m_add_subscriber_mutex);
@@ -264,7 +264,7 @@ private:
   //                                                     1};
 
   //         TNCT_LOG_TRA(m_logger,
-  //                      format::fmt("_new_handler_pos ", _new_handler_pos));
+  //                      format::bus::fmt("_new_handler_pos ", _new_handler_pos));
 
   //         m_loops.push_back(std::thread([this, _new_handler_pos]() -> void {
   //             handler_loop(_new_handler_pos);
@@ -279,7 +279,7 @@ private:
       return;
     }
 
-    TNCT_LOG_TRA(m_logger, trace(format::fmt("adding ", p_num_handlers,
+    TNCT_LOG_TRA(m_logger, trace(format::bus::fmt("adding ", p_num_handlers,
                                              " event handlers")));
 
     // std::size_t _total_num_handlers{m_handling_handlers.size()};
@@ -307,7 +307,7 @@ private:
 
     TNCT_LOG_TRA(
         m_logger,
-        format::fmt("p_handling_handler_pos = ", p_handling_handler_pos, " ",
+        format::bus::fmt("p_handling_handler_pos = ", p_handling_handler_pos, " ",
                     trace("starting subscriber's loop", _loop_id)));
 
     // auto _subscriber_id{&m_handling_handlers[p_handling_handler_pos]};
@@ -367,7 +367,7 @@ private:
 
       TNCT_LOG_TRA(
           m_logger,
-          format::fmt("p_handling_handler_pos = ", p_handling_handler_pos,
+          format::bus::fmt("p_handling_handler_pos = ", p_handling_handler_pos,
                       ", handler address = ",
                       &m_handling_handlers[p_handling_handler_pos], " ",
                       trace("about to call subscriber", _loop_id)));
@@ -417,7 +417,7 @@ private:
 private:
   logger &m_logger;
 
-  handling_name m_handling_name;
+ dat::handling_name m_handling_name;
 
   handling_id m_handling_id;
 
@@ -428,7 +428,7 @@ private:
   // size_t m_handler_id{0};
   internal::handler_id m_handler_id;
 
-  // Indicates if the dispatcher should continue to run
+  // Indicates if the bus::dispatcher should continue to run
   std::atomic_bool m_stopped{false};
 
   // Amount of queued data

@@ -6,13 +6,13 @@
 #include <nlohmann/json.hpp>
 
 #include "tnct/crosswords/app/server/connection.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using tnct::crosswords::app::server::connection;
 using logger = tnct::log::cerr;
-using tnct::format::fmt;
+using tnct::format::bus::fmt;
 
 using connection_ptr = std::unique_ptr<connection>;
 using connections    = std::vector<connection_ptr>;

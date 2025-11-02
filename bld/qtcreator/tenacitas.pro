@@ -6,7 +6,6 @@ SUBDIRS = \
     generic \
     container \
     async \
-    concepts \
     log \
     translator \
     parser \

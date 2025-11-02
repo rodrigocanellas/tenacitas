@@ -6,7 +6,7 @@
 #include <optional>
 #include <string>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -29,7 +29,7 @@ struct from_memory
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(format::fmt("translations = ", _translator));
+    _log.tst(format::bus::fmt("translations = ", _translator));
 
     return (_translator.size() == 4);
   }
@@ -60,7 +60,7 @@ struct from_existing_file
       return false;
     }
 
-    _log.tst(format::fmt("translations = ", _translator));
+    _log.tst(format::bus::fmt("translations = ", _translator));
 
     return true;
   }
@@ -96,11 +96,11 @@ struct translate_non_existing_word
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(format::fmt("translations = ", _translator));
+    _log.tst(format::bus::fmt("translations = ", _translator));
 
     std::string _word = _translator.get(8);
 
-    _log.tst(format::fmt("word = '", _word, "'"));
+    _log.tst(format::bus::fmt("word = '", _word, "'"));
 
     return _word.empty();
   }
@@ -119,11 +119,11 @@ struct translate_an_existing_word
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
-    _log.tst(format::fmt("translations = ", _translator));
+    _log.tst(format::bus::fmt("translations = ", _translator));
 
     std::string _word = _translator.get(9);
 
-    _log.tst(format::fmt("word = '", _word, "'"));
+    _log.tst(format::bus::fmt("word = '", _word, "'"));
 
     return _word == "word 9";
   }

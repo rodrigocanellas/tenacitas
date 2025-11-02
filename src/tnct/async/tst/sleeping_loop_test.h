@@ -14,8 +14,8 @@
 #include <sstream>
 #include <thread>
 
-#include "tnct/async/sleeping_loop.h"
-#include "tnct/format/fmt.h"
+#include "tnct/async/bus/sleeping_loop.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -86,12 +86,12 @@ struct sleeping_loop_001
 
     if (_op.counter != m_amount)
     {
-      _logger.err(format::fmt("counter should be ", m_amount, ", but it is ",
+      _logger.err(format::bus::fmt("counter should be ", m_amount, ", but it is ",
                               _op.counter));
       return false;
     }
 
-    _logger.tst(format::fmt("counter should be ", m_amount,
+    _logger.tst(format::bus::fmt("counter should be ", m_amount,
                             ", and it really is ", _op.counter));
 
     return true;
@@ -111,7 +111,7 @@ private:
       if (counter < m_amount)
       {
         ++counter;
-        m_logger.deb(format::fmt("counter = ", counter));
+        m_logger.deb(format::bus::fmt("counter = ", counter));
         std::this_thread::sleep_for(m_sleep);
       }
       else

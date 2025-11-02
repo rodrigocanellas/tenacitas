@@ -12,7 +12,7 @@
 #include <nlohmann/json.hpp>
 
 #include "tnct/crosswords/dat/index.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -26,7 +26,7 @@ using logger = tnct::log::cerr;
 using nlohmann::json;
 using std::chrono::seconds;
 using grid_index = tnct::crosswords::dat::index;
-using tnct::format::fmt;
+using tnct::format::bus::fmt;
 
 void syntax(std::string_view p_pgm)
 {

@@ -14,14 +14,14 @@
 #include "tnct/async/exp/dispatcher_000/event_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_type_id.h"
-#include "tnct/async/handling_name.h"
+#include "tnct/async/dat/handling_name.h"
 
 namespace tnct::async::exp
 {
 
 struct results
 {
-  void increment(event_id p_event_id, async::handling_name p_handling_name,
+  void increment(event_id p_event_id, async::dat::handling_name p_handling_name,
                  handler_type_id p_handler_type_id, handler_id p_handler_id)
   {
     const key     _key{p_event_id, p_handling_name, p_handler_type_id,
@@ -56,7 +56,7 @@ struct results
 
       while ((_ite != _end) && (_event_prior == get_event_id(_ite)))
       {
-        async::handling_name _handling_prior{get_handling_name(_ite)};
+        async::dat::handling_name _handling_prior{get_handling_name(_ite)};
 
         while ((_ite != _end) && (_event_prior == get_event_id(_ite))
                && (_handling_prior == get_handling_name(_ite)))
@@ -102,7 +102,7 @@ struct results
   }
 
 private:
-  using key   = std::tuple<event_id, async::handling_name, handler_type_id,
+  using key   = std::tuple<event_id, async::dat::handling_name, handler_type_id,
                          handler_id>;
   using value = size_t;
   using map   = std::map<key, value>;
@@ -121,7 +121,7 @@ private:
     size_t               total{0};
     handlers_types_total handlers_types;
   };
-  using handlings_totals = std::map<async::handling_name, handling_total>;
+  using handlings_totals = std::map<async::dat::handling_name, handling_total>;
 
   struct event_total
   {
@@ -132,7 +132,7 @@ private:
 
 private:
   void increment(events_totals &p_events_totals, event_id p_event_id,
-                 const async::handling_name &p_handling_name,
+                 const async::dat::handling_name &p_handling_name,
                  handler_type_id p_handler_type_id, handler_id p_handler_id,
                  size_t p_value) const
   {
@@ -179,7 +179,7 @@ private:
     return std::get<0>(p_ite->first);
   }
 
-  async::handling_name get_handling_name(map::const_iterator p_ite) const
+  async::dat::handling_name get_handling_name(map::const_iterator p_ite) const
   {
     return std::get<1>(p_ite->first);
   }
@@ -225,7 +225,7 @@ private:
     return p_ite->second.handlings;
   }
 
-  async::handling_name
+  async::dat::handling_name
   get_handling_name(handlings_totals::const_iterator p_ite) const
   {
     return p_ite->first;

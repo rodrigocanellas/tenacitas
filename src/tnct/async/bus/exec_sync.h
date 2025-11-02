@@ -51,7 +51,7 @@ inline std::conditional_t<
     // the 'execute' wrapper will return 'bool', which will be 'true' if the
     // 'p_function' executes in less 'p_max_time', or 'false' otherwise
     bool,
-    // else it will result a 'std::optional' with the return type of
+    // else it will dat::result a 'std::optional' with the return type of
     // 't_function', which will contain a value of that type, if the
     // 'p_function' executes in less 'p_max_time', or empty otherwise
     std::optional<

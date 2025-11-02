@@ -3,15 +3,17 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_ASYNC_RESULT_H
-#define TNCT_ASYNC_RESULT_H
+#ifndef TNCT_ASYNC_DAT_RESULT_H
+#define TNCT_ASYNC_DAT_RESULT_H
 
 #include <cstdint>
 #include <iostream>
 
-namespace tnct::async {
+namespace tnct::async::dat
+{
 
-enum class result : std::uint8_t {
+enum class result : std::uint8_t
+{
   OK = 0,
   HANDLING_FOUND,
   HANDLING_NOT_FOUND,
@@ -24,8 +26,10 @@ enum class result : std::uint8_t {
 
 };
 
-static inline std::ostream &operator<<(std::ostream &p_out, result p_result) {
-  switch (p_result) {
+static inline std::ostream &operator<<(std::ostream &p_out, result p_result)
+{
+  switch (p_result)
+  {
   case result::OK:
     p_out << "ok";
     break;
@@ -57,6 +61,6 @@ static inline std::ostream &operator<<(std::ostream &p_out, result p_result) {
   return p_out;
 }
 
-} // namespace tnct::async
+} // namespace tnct::async::dat
 
 #endif

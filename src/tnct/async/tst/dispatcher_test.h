@@ -9,13 +9,12 @@
 #include <iostream>
 #include <string>
 
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/cpt/is_dispatcher.h"
-#include "tnct/async/dispatcher.h"
-#include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -56,12 +55,12 @@ struct event_2
   float f;
 };
 
-using queue_1 = container::circular_queue<logger, event_1, 10>;
+using queue_1 = container::dat::circular_queue<logger, event_1, 10>;
 
-using queue_2 = container::circular_queue<logger, event_2, 5>;
+using queue_2 = container::dat::circular_queue<logger, event_2, 5>;
 
 // using handling = async::handling<logger, event_1, queue, handler>;
-using dispatcher = async::dispatcher<logger, event_1, event_2>;
+using dispatcher = async::bus::dispatcher<logger, event_1, event_2>;
 
 struct dispatcher_000
 {
@@ -81,11 +80,11 @@ struct dispatcher_000
 
     auto _result{_dispatcher.add_handling<event_1, queue_1, decltype(_handler)>(
         "handling-000", queue_1{_logger}, std::move(_handler),
-        async::handling_priority::medium, 0)};
+        async::dat::handling_priority::medium, 0)};
 
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+      TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
       return false;
     }
 
@@ -107,16 +106,16 @@ struct dispatcher_001
 
     dispatcher _dispatcher{_logger};
 
-    async::handling_name _handling_name{"handling-001"};
+    async::dat::handling_name _handling_name{"handling-001"};
 
     auto _handler = [](event_1 &&) mutable {};
 
     auto _result{_dispatcher.add_handling<event_1>(
         _handling_name, queue_1{_logger}, std::move(_handler))};
 
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+      TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
       return false;
     }
 
@@ -127,14 +126,14 @@ struct dispatcher_001
     {
       TNCT_LOG_ERR(
           _logger,
-          format::fmt(
+          format::bus::fmt(
               "not possible to get the amount of handlers for handling ",
               _handling_name));
     }
 
     auto _amount_handlers{_amount_handlers_maybe.value()};
     TNCT_LOG_TST(_logger,
-                 format::fmt("amount of handlers = ", _amount_handlers));
+                 format::bus::fmt("amount of handlers = ", _amount_handlers));
 
     return _amount_handlers == 1;
   }
@@ -154,21 +153,21 @@ struct dispatcher_002
 
     dispatcher _dispatcher{_logger};
 
-    async::handling_name _handling_name{"handling-002"};
+    async::dat::handling_name _handling_name{"handling-002"};
 
     auto _handler = [](event_1 &&) mutable {};
 
     auto _result{_dispatcher.add_handling<event_1>(
         _handling_name, queue_1{_logger}, std::move(_handler),
-        async::handling_priority::medium, 4)};
+        async::dat::handling_priority::medium, 4)};
 
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+      TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
       return false;
     }
 
-    TNCT_LOG_TST(_logger, format::fmt("handling id = ", _handling_name));
+    TNCT_LOG_TST(_logger, format::bus::fmt("handling id = ", _handling_name));
 
     auto _amount_handlers_maybe{
         _dispatcher.get_amount_handlers<event_1>(_handling_name)};
@@ -177,19 +176,19 @@ struct dispatcher_002
     {
       TNCT_LOG_ERR(
           _logger,
-          format::fmt(
+          format::bus::fmt(
               "not possible to get the amount of handlers for handling ",
               _handling_name));
     }
 
     auto _amount_handlers{_amount_handlers_maybe.value()};
     TNCT_LOG_TST(_logger,
-                 format::fmt("amount of handlers = ", _amount_handlers));
+                 format::bus::fmt("amount of handlers = ", _amount_handlers));
 
     if (_amount_handlers != 4)
     {
       TNCT_LOG_ERR(_logger,
-                   format::fmt("amount of handlers should be 1, but it is ",
+                   format::bus::fmt("amount of handlers should be 1, but it is ",
                                _amount_handlers));
       return false;
     }
@@ -217,11 +216,11 @@ struct dispatcher_003
       auto _handler_1 = [](event_1 &&) mutable {};
       auto _result{_dispatcher.add_handling<event_1>(
           "handling-003-1", queue_1{_logger}, std::move(_handler_1),
-          async::handling_priority::medium, 0)};
+          async::dat::handling_priority::medium, 0)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
         return false;
       }
 
@@ -229,11 +228,11 @@ struct dispatcher_003
       auto _handler_2 = [](event_1 &&) mutable {};
       _result         = _dispatcher.add_handling<event_1>(
           "handling-003-2", queue_1{_logger}, std::move(_handler_2),
-          async::handling_priority::medium, 0);
+          async::dat::handling_priority::medium, 0);
 
-      if (_result != async::result::ERROR_HANDLER_ALREADY_IN_USE)
+      if (_result != async::dat::result::ERROR_HANDLER_ALREADY_IN_USE)
       {
-        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
         return false;
       }
 
@@ -265,30 +264,30 @@ struct dispatcher_007
 
       event_1 _event;
 
-      TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
+      TNCT_LOG_TST(_logger, format::bus::fmt("event was ", _event));
 
       auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
 
       auto _result{_dispatcher.add_handling<event_1>(
           "handling-007", queue_1{_logger}, std::move(_handler_1),
-          async::handling_priority::medium, 1)};
+          async::dat::handling_priority::medium, 1)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
         return false;
       }
 
       _result = _dispatcher.publish(event_1{53});
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(_logger, format::fmt(_result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt(_result));
         return false;
       }
 
       std::this_thread::sleep_for(100ms);
 
-      TNCT_LOG_TST(_logger, format::fmt("now event is ", _event));
+      TNCT_LOG_TST(_logger, format::bus::fmt("now event is ", _event));
     }
     catch (...)
     {
@@ -315,31 +314,31 @@ struct dispatcher_008
 
       event_1 _event;
 
-      TNCT_LOG_TST(_logger, format::fmt("event was ", _event));
+      TNCT_LOG_TST(_logger, format::bus::fmt("event was ", _event));
 
       auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
 
       auto _result{_dispatcher.add_handling<event_1>(
           "handling-008", queue_1{_logger}, std::move(_handler_1),
-          async::handling_priority::medium, 1)};
+          async::dat::handling_priority::medium, 1)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(_logger, format::fmt("result = ", _result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt("dat::result = ", _result));
         return false;
       }
 
       _result =
           _dispatcher.publish<event_1>(static_cast<decltype(event_1::i)>(53));
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(_logger, format::fmt(_result));
+        TNCT_LOG_ERR(_logger, format::bus::fmt(_result));
         return false;
       }
 
       std::this_thread::sleep_for(100ms);
 
-      TNCT_LOG_TST(_logger, format::fmt("now event is ", _event));
+      TNCT_LOG_TST(_logger, format::bus::fmt("now event is ", _event));
     }
     catch (...)
     {
@@ -372,14 +371,14 @@ struct dispatcher_009
   static std::string desc()
   {
     return "A method depends on a async::cpt::dispatcher with 3 "
-           "events, and the concrete async::dispatcher is defined with "
+           "events, and the concrete async::bud::dispatcher is defined with "
            "those 3 and 1 more";
   }
 
   bool operator()(const program::options &)
   {
     using dispatcher =
-        async::dispatcher<logger, event_a, event_b, event_c, event_d>;
+        async::bus::dispatcher<logger, event_a, event_b, event_c, event_d>;
 
     logger _logger;
 

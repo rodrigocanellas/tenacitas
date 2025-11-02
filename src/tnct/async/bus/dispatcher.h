@@ -15,13 +15,13 @@
 
 #include "tnct/async/cpt/is_event.h"
 #include "tnct/async/cpt/is_handler.h"
-#include "tnct/async/handling_name.h"
-#include "tnct/async/handling_priority.h"
+#include "tnct/async/dat/handling_name.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/internal/handler_id.h"
 #include "tnct/async/internal/handling.h"
-#include "tnct/async/result.h"
 #include "tnct/container/cpt/queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/tuple/contains_type.h"
@@ -30,7 +30,7 @@
 #include "tnct/tuple/transform.h"
 #include "tnct/tuple/traverse.h"
 
-namespace tnct::async
+namespace tnct::async::bus
 {
 
 /** \brief Class that allows creation of queues for an event, creation of
@@ -57,7 +57,7 @@ handling -[#blue]->  event
 queue *-- "*" event
 handling "1" *-- "*" handler
 handling  *--  handling_name
-handling *-up- handling_priority
+handling *-up- dat::handling_priority
 dispatcher *-- "*" handling
 handling *-- queue
 publisher o-left- dispatcher
@@ -80,7 +80,7 @@ satisfies the requirements defined by \p container::cpt::queue.
 A \p handling can have multiples instances of the \p hander type, in case each
 \p event instance can be handled independently from any other \p event.
 
-It is possible to define a \p handling_priority for a \p handling, so that
+It is possible to define a \p dat::handling_priority for a \p handling, so that
 handlings that have higher priority will have the event copied to its queue
 before a handling with lower priority.
 
@@ -121,7 +121,7 @@ public:
   void operator delete[](void *) = delete;
 
   template <async::cpt::is_event t_event>
-  [[nodiscard]] result publish(const t_event &p_event) noexcept
+  [[nodiscard]] dat::result publish(const t_event &p_event) noexcept
   {
 
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -138,13 +138,13 @@ public:
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_PUBLISHNG;
+      return dat::result::ERROR_PUBLISHNG;
     }
-    return result::OK;
+    return dat::result::OK;
   }
 
   template <async::cpt::is_event t_event, typename... t_event_params>
-  [[nodiscard]] result publish(t_event_params &&...p_params) noexcept
+  [[nodiscard]] dat::result publish(t_event_params &&...p_params) noexcept
   {
 
     check_if_event_is_in_events_tupĺe<t_event>();
@@ -163,18 +163,19 @@ public:
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_PUBLISHNG;
+      return dat::result::ERROR_PUBLISHNG;
     }
-    return result::OK;
+    return dat::result::OK;
   }
 
   template <async::cpt::is_event            t_event,
             container::cpt::queue<t_event>  t_handling_queue,
             async::cpt::is_handler<t_event> t_handler>
-  result add_handling(const handling_name &p_id, t_handling_queue &&p_queue,
-                      t_handler       &&p_handler,
-                      handling_priority p_priority = handling_priority::medium,
-                      std::size_t       p_num_handler = 1)
+  dat::result add_handling(
+      const dat::handling_name &p_id, t_handling_queue &&p_queue,
+      t_handler            &&p_handler,
+      dat::handling_priority p_priority    = dat::handling_priority::medium,
+      std::size_t            p_num_handler = 1)
   {
     return add_handling<t_event, t_handler, t_handling_queue>(
         p_id, std::move(p_handler), std::move(p_queue), p_num_handler,
@@ -202,33 +203,33 @@ public:
 
   /// \brief Clears the events queue of a handling of an is_event
   template <async::cpt::is_event t_event>
-  result clear(std::string_view p_handling_id)
+  dat::result clear(std::string_view p_handling_id)
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
     {
-      TNCT_LOG_TRA(m_logger, format::fmt("t_event = ", typeid(t_event).name()));
+      TNCT_LOG_TRA(m_logger, format::bus::fmt("t_event = ", typeid(t_event).name()));
       auto _clear{[](handling<t_event> &p_handling) { p_handling.clear(); }};
 
       if (!find_handling<t_event>(p_handling_id, _clear))
       {
         TNCT_LOG_ERR(m_logger,
-                     format::fmt("Could not find handling ", p_handling_id,
+                     format::bus::fmt("Could not find handling ", p_handling_id,
                                  " in event ", typeid(t_event).name()));
-        return result::HANDLING_NOT_FOUND;
+        return dat::result::HANDLING_NOT_FOUND;
       }
     }
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_CLEARING;
+      return dat::result::ERROR_CLEARING;
     }
 
-    return result::OK;
+    return dat::result::OK;
   }
 
   /// \brief Clears the events queue of all handlings of all events
-  result clear()
+  dat::result clear()
   {
     try
     {
@@ -243,9 +244,9 @@ public:
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_CLEARING;
+      return dat::result::ERROR_CLEARING;
     }
-    return result::OK;
+    return dat::result::OK;
   }
 
   template <async::cpt::is_event t_event>
@@ -258,7 +259,7 @@ public:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] std::optional<size_t>
-  get_amount_handlers(const handling_name &p_handling_name) const noexcept
+  get_amount_handlers(const dat::handling_name &p_handling_name) const noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
@@ -280,7 +281,7 @@ public:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] std::optional<size_t>
-  get_num_events(const handling_name &p_handling_name) const noexcept
+  get_num_events(const dat::handling_name &p_handling_name) const noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
@@ -302,7 +303,7 @@ public:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] std::optional<size_t>
-  get_events_capacity(const handling_name &p_handling_name) const noexcept
+  get_events_capacity(const dat::handling_name &p_handling_name) const noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
@@ -333,7 +334,8 @@ private:
   using handling_const_ptr = std::unique_ptr<const handling<t_event>>;
 
   template <async::cpt::is_event t_event>
-  using handlings = std::multimap<handling_priority, handling_ptr<t_event>>;
+  using handlings =
+      std::multimap<dat::handling_priority, handling_ptr<t_event>>;
 
   template <async::cpt::is_event t_event>
   using handlings_ite = typename handlings<t_event>::iterator;
@@ -346,7 +348,7 @@ private:
 
 private:
   // \brief Stops all the handling functions of all handlings of all events
-  result stop() noexcept
+  dat::result stop() noexcept
   {
     try
     {
@@ -361,13 +363,13 @@ private:
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_STOPPING;
+      return dat::result::ERROR_STOPPING;
     }
-    return result::OK;
+    return dat::result::OK;
   }
 
   template <async::cpt::is_event t_event>
-  result stop() noexcept
+  dat::result stop() noexcept
   {
     check_if_event_is_in_events_tupĺe<t_event>();
     try
@@ -382,31 +384,31 @@ private:
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
-      return result::ERROR_STOPPING;
+      return dat::result::ERROR_STOPPING;
     }
-    return result::OK;
+    return dat::result::OK;
   }
 
   // template <async::cpt::event t_event>
-  // result stop(handling_id p_handling_id) noexcept {
+  // dat::result stop(handling_id p_handling_id) noexcept {
   //   event_is_in_events_tupĺe<t_event>();
   //   try {
-  //     TNCT_LOG_TRA(m_logger, format::fmt("t_event = ",
+  //     TNCT_LOG_TRA(m_logger, format::bus::fmt("t_event = ",
   //     typeid(t_event).name())); auto _stopper{[](handling<t_event>
   //     &p_handling) { p_handling.stop(); }};
 
   //     if (!find_handling<t_event>(p_handling_id, _stopper)) {
   //       TNCT_LOG_ERR(m_logger,
-  //                    format::fmt("Could not find handling ", p_handling_id,
+  //                    format::bus::fmt("Could not find handling ", p_handling_id,
   //                                " in event ", typeid(t_event).name()));
-  //       return result::HANDLING_NOT_FOUND;
+  //       return dat::result::HANDLING_NOT_FOUND;
   //     }
 
   //   } catch (std::exception &_ex) {
   //     TNCT_LOG_ERR(m_logger, _ex.what());
-  //     return result::ERROR_STOPPING;
+  //     return dat::result::ERROR_STOPPING;
   //   }
-  //   return result::OK;
+  //   return dat::result::OK;
   // }
 
   template <async::cpt::is_event            t_event,
@@ -417,7 +419,7 @@ private:
     const internal::handler_id _handler_id{
         internal::get_handler_id<t_event, t_handler>()};
 
-    TNCT_LOG_TRA(m_logger, format::fmt("handling function id = ", _handler_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("handling function id = ", _handler_id,
                                        " for event ", typeid(t_event).name()));
 
     const handlings<t_event> &_handlings{get_handlings<t_event>()};
@@ -427,7 +429,7 @@ private:
     {
       if (_ite->second->get_handler_id() == _handler_id)
       {
-        TNCT_LOG_ERR(m_logger, format::fmt("handling function is already being "
+        TNCT_LOG_ERR(m_logger, format::bus::fmt("handling function is already being "
                                            "used in a handling for event '",
                                            typeid(t_event).name(), '\''));
 
@@ -460,7 +462,7 @@ private:
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] bool
-  find_handling(const handling_name                     &p_handling_name,
+  find_handling(const dat::handling_name                &p_handling_name,
                 std::function<void(handling<t_event> &)> p_exec)
   {
     handlings<t_event> &_handlings{get_handlings<t_event>()};
@@ -479,14 +481,14 @@ private:
     }
 
     TNCT_LOG_WAR(m_logger,
-                 format::fmt("Could not find handling ", p_handling_name));
+                 format::bus::fmt("Could not find handling ", p_handling_name));
     return false;
   }
 
   template <async::cpt::is_event t_event>
   [[nodiscard]] handlings_ite<t_event>
-  find_handling(handlings<t_event>  &p_handlings,
-                const handling_name &p_handling_name)
+  find_handling(handlings<t_event>       &p_handlings,
+                const dat::handling_name &p_handling_name)
   {
 
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
@@ -511,7 +513,7 @@ private:
                   const auto _handling_id{p_value.second->get_id()};
                   TNCT_LOG_TRA(
                       m_logger,
-                      format::fmt("p_value.second->get_id() = ", _handling_id));
+                      format::bus::fmt("p_value.second->get_id() = ", _handling_id));
                   return _handling_id == _handling_id_to_find;
                 }};
 
@@ -523,7 +525,7 @@ private:
     }
 
     TNCT_LOG_WAR(m_logger,
-                 format::fmt("Could not find handling id ", p_handling_name));
+                 format::bus::fmt("Could not find handling id ", p_handling_name));
     return false;
   }
 
@@ -537,17 +539,18 @@ private:
   template <async::cpt::is_event            t_event,
             async::cpt::is_handler<t_event> t_handler,
             container::cpt::queue<t_event>  t_queue>
-  result add_handling(
-      const handling_name &p_handling_id, t_handler &&p_handler,
-      t_queue &&p_queue, size_t p_num_handlers,
-      handling_priority p_handling_priority = handling_priority::medium)
+  dat::result add_handling(const dat::handling_name &p_handling_id,
+                           t_handler &&p_handler, t_queue &&p_queue,
+                           size_t                 p_num_handlers,
+                           dat::handling_priority p_handling_priority =
+                               dat::handling_priority::medium)
   {
 
     check_if_event_is_in_events_tupĺe<t_event>();
 
     if (is_handler_already_being_used<t_event, t_handler>())
     {
-      return result::ERROR_HANDLER_ALREADY_IN_USE;
+      return dat::result::ERROR_HANDLER_ALREADY_IN_USE;
     }
 
     using handling_concrete =
@@ -564,14 +567,14 @@ private:
       get_handlings<t_event>().insert(
           {p_handling_priority, std::move(_handling_ptr)});
 
-      return result::OK;
+      return dat::result::OK;
     }
     catch (std::exception &_ex)
     {
       TNCT_LOG_ERR(m_logger, _ex.what());
     }
 
-    return result::ERROR_UNKNOWN;
+    return dat::result::ERROR_UNKNOWN;
   }
 
 private:
@@ -582,6 +585,6 @@ private:
   std::mutex m_mutex;
 };
 
-} // namespace tnct::async
+} // namespace tnct::async::bus
 
 #endif

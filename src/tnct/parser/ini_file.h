@@ -14,7 +14,7 @@
 #include <string>
 #include <string_view>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -44,7 +44,7 @@ struct ini_file
 
       if (!_file.is_open())
       {
-        m_logger.err(format::fmt("could not open '", p_filename, '\''));
+        m_logger.err(format::bus::fmt("could not open '", p_filename, '\''));
         return std::nullopt;
       }
 
@@ -60,14 +60,14 @@ struct ini_file
       for (std::string _line; std::getline(_file, _line);)
       {
         ++_line_number;
-        m_logger.tra(format::fmt("line # ", _line_number, " = '", _line, '\''));
+        m_logger.tra(format::bus::fmt("line # ", _line_number, " = '", _line, '\''));
         std::smatch _matches;
 
         std::regex_search(_line, _matches, _section_regex);
 
         if (_line[0] == '#')
         {
-          m_logger.tra(format::fmt("line # ", _line_number, " is a comment"));
+          m_logger.tra(format::bus::fmt("line # ", _line_number, " is a comment"));
           continue;
         }
 
@@ -75,7 +75,7 @@ struct ini_file
         {
           if (!_section.empty())
           {
-            m_logger.tra(format::fmt("sections not empty: '", _section, '\''));
+            m_logger.tra(format::bus::fmt("sections not empty: '", _section, '\''));
             _sections.insert({std::move(_section), std::move(_properties)});
             _section    = section(_matches[1]);
             _properties = properties();
@@ -83,9 +83,9 @@ struct ini_file
           else
           {
             // first section
-            m_logger.tra(format::fmt("first section"));
+            m_logger.tra(format::bus::fmt("first section"));
             _section = _matches[1];
-            m_logger.tra(format::fmt("sections now with: '", _section, '\''));
+            m_logger.tra(format::bus::fmt("sections now with: '", _section, '\''));
           }
         }
         else
@@ -97,7 +97,7 @@ struct ini_file
           }
           else
           {
-            m_logger.tra(format::fmt("line # ", _line_number, " '", _line,
+            m_logger.tra(format::bus::fmt("line # ", _line_number, " '", _line,
                                      "' does not contain a section or value"));
           }
         }
@@ -109,7 +109,7 @@ struct ini_file
     }
     catch (std::exception &_ex)
     {
-      m_logger.err(format::fmt("ERROR reading INI file '", p_filename, "': '",
+      m_logger.err(format::bus::fmt("ERROR reading INI file '", p_filename, "': '",
                                _ex.what(), '\''));
       return std::nullopt;
     }

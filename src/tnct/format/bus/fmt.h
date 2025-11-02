@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_FMT_H
-#define TNCT_FORMAT_FMT_H
+#ifndef TNCT_FORMAT_BUS_FMT_H
+#define TNCT_FORMAT_BUS_FMT_H
 
 #include <sstream>
 
@@ -15,7 +15,7 @@
 #include "tnct/time/output.h"
 #include "tnct/tuple/output.h"
 
-namespace tnct::format
+namespace tnct::format::bus
 {
 
 /// \brief Formats the params into a string
@@ -27,6 +27,6 @@ static inline std::string fmt(t_params &&...p_params)
   return _stream.str();
 }
 
-} // namespace tnct::format
+} // namespace tnct::format::bus
 
 #endif

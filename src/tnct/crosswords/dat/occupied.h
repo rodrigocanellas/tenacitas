@@ -6,7 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/container/matrix.h"
+#include "tnct/container/dat/matrix.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/dat/word.h"
 
@@ -14,7 +14,7 @@ namespace tnct::crosswords::dat
 {
 
 /// \brief Defines which coordinates are occupied
-using occupied = tnct::container::matrix<crosswords::dat::index,
+using occupied = tnct::container::dat::matrix<crosswords::dat::index,
                                          crosswords::dat::word::value_type>;
 
 } // namespace tnct::crosswords::dat

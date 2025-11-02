@@ -297,6 +297,29 @@ body {
   color: #374151;
 }
 
+/* File format help button */
+.file-help-btn {
+  background: rgba(79, 70, 229, 0.1);
+  border: 2px solid rgba(79, 70, 229, 0.3);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4f46e5;
+  transition: all 0.2s ease;
+}
+
+.file-help-btn:hover {
+  background: rgba(79, 70, 229, 0.2);
+  border-color: rgba(79, 70, 229, 0.5);
+  transform: scale(1.1);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -413,6 +436,8 @@ body {
   font-family: 'Courier New', monospace;
   font-size: 0.9rem;
   border-left: 3px solid #4f46e5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .messages-list li:last-child {
@@ -636,10 +661,11 @@ canvas {
       <div style="margin-bottom: 2rem;">
         <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
         <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
           <button id="loadButton" class="btn btn-primary">
             <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
           </button>
+          <span class="file-help-btn" data-i18n-title="file.format_help" title="">?</span>
           <button id="saveButton" class="btn btn-secondary">
             <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
           </button>
@@ -865,7 +891,7 @@ var translations = {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Crosswords creator',
     'about.button': 'About',
-    'about.title': 'About o tnct.crosswords',
+    'about.title': 'About the tnct.crosswords',
     "about.how_to_use": "How to use:",
     "about.description": "'tnct.crosswords' is an application that allows anyone to create a crossword game! Just enter the words and explanations, and configure some parameters for game creation.",
     "about.save_info": "You can save the set of words and clues by clicking the 'Save as .cross' button. The file is plain text (no formatting) with entries like:",
@@ -888,6 +914,7 @@ var translations = {
     'file.title': 'Load Crossword File',
     'file.description': 'Select a .cross file containing your word entries and explanations.',
     'file.choose': 'Choose File',
+    'file.format_help': 'Text file with one pair "word|explanation" per line',
     'file.save': 'Save as .cross',
     'editor.title': 'Word Entry Editor',
     'editor.add': 'Add Word',
@@ -941,7 +968,8 @@ var translations = {
     'server.combinations_tried': ' combinations tried',
     'file.loading': 'Loading file...',
     'file.saved': 'Saved {0} entries to crossword.cross',
-    'editor.cleared': 'All word entries cleared'
+    'editor.cleared': 'All word entries cleared',
+    'letters_count': '({0} letters)'
   },
   pt: {
     'app.title': 'tnct.crosswords',
@@ -970,6 +998,7 @@ var translations = {
     'file.title': 'Carregar Ficheiro de Palavras Cruzadas',
     'file.description': 'Seleccione um ficheiro .cross contendo as suas entradas de palavras e explicações.',
     'file.choose': 'Escolher Ficheiro',
+    'file.format_help': 'Ficheiro de texto com um par "palavra|explicação" por linha',
     'file.save': 'Guardar como .cross',
     'editor.title': 'Editor de Entradas de Palavras',
     'editor.add': 'Adicionar Palavra',
@@ -1023,7 +1052,8 @@ var translations = {
     'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'A carregar ficheiro...',
     'file.saved': 'Guardadas {0} entradas em crossword.cross',
-    'editor.cleared': 'Todas as entradas de palavras foram limpas'
+    'editor.cleared': 'Todas as entradas de palavras foram limpas',
+    'letters_count': '({0} letras)'
   },
   'pt-br': {
     'app.title': 'tnct.crosswords',
@@ -1052,6 +1082,7 @@ var translations = {
     'file.title': 'Carregar Arquivo de Palavras Cruzadas',
     'file.description': 'Selecione um arquivo .cross contendo suas entradas de palavras e explicações.',
     'file.choose': 'Escolher Arquivo',
+    'file.format_help': 'Arquivo texto com um par "palavra|explicação" por linha',
     'file.save': 'Salvar como .cross',
     'editor.title': 'Editor de Entradas de Palavras',
     'editor.add': 'Adicionar Palavra',
@@ -1105,13 +1136,14 @@ var translations = {
     'server.combinations_tried': ' combinações tentadas',
     'file.loading': 'Carregando arquivo...',
     'file.saved': 'Salvas {0} entradas em crossword.cross',
-    'editor.cleared': 'Todas as entradas de palavras foram limpas'
+    'editor.cleared': 'Todas as entradas de palavras foram limpas',
+    'letters_count': '({0} letras)'
   },
   es: {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Creador de Crucigramas',
     'about.button': 'Acerca de',
-    'about.title': 'Acerca tnct.crosswords',
+    'about.title': 'Acerca de tnct.crosswords',
     "about.how_to_use": "Cómo usar:",
     "about.description": "'tnct.crosswords' es una aplicación que permite a cualquiera crear un crucigrama. Solo hay que escribir las palabras y sus explicaciones, y configurar algunos parámetros para la creación.",
     "about.save_info": "Puede guardar el conjunto de palabras y explicaciones haciendo clic en 'Guardar como .cross'. El archivo es texto plano (sin formato) con entradas como:",
@@ -1134,6 +1166,7 @@ var translations = {
     'file.title': 'Cargar Archivo de Crucigramas',
     'file.description': 'Seleccione un archivo .cross que contenga sus entradas de palabras y explicaciones.',
     'file.choose': 'Elegir Archivo',
+    'file.format_help': 'Archivo de texto con un par "palabra|explicación" por línea',
     'file.save': 'Guardar como .cross',
     'editor.title': 'Editor de Entradas de Palabras',
     'editor.add': 'Añadir Palabra',
@@ -1187,13 +1220,14 @@ var translations = {
     'server.combinations_tried': ' combinaciones probadas',
     'file.loading': 'Cargando archivo...',
     'file.saved': 'Guardadas {0} entradas en crossword.cross',
-    'editor.cleared': 'Todas las entradas de palabras han sido borradas'
+    'editor.cleared': 'Todas las entradas de palabras han sido borradas',
+    'letters_count': '({0} letras)'
   },
   it: {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Creatore di Cruciverba',
     'about.button': 'Informazioni',
-    'about.title': 'Informazioni sul tnct.crosswords',
+    'about.title': 'Informazioni su tnct.crosswords',
     "about.how_to_use": "Come usare:",
     "about.description": "'tnct.crosswords' è un'applicazione che permette a chiunque di creare un cruciverba! Basta inserire le parole e le spiegazioni, e configurare alcuni parametri per la creazione.",
     "about.save_info": "È possibile salvare l'elenco di parole e definizioni cliccando sul pulsante 'Salva come .cross'. Il file è semplice testo (senza formattazione) con voci come:",
@@ -1216,6 +1250,7 @@ var translations = {
     'file.title': 'Carica File Cruciverba',
     'file.description': 'Seleziona un file .cross contenente le tue voci di parole e spiegazioni.',
     'file.choose': 'Scegli File',
+    'file.format_help': 'File di testo con una coppia "parola|spiegazione" per riga',
     'file.save': 'Salva come .cross',
     'editor.title': 'Editor delle Voci delle Parole',
     'editor.add': 'Aggiungi Parola',
@@ -1269,13 +1304,14 @@ var translations = {
     'server.combinations_tried': ' combinazioni provate',
     'file.loading': 'Caricamento file...',
     'file.saved': 'Salvate {0} voci in crossword.cross',
-    'editor.cleared': 'Tutte le voci delle parole sono state cancellate'
+    'editor.cleared': 'Tutte le voci delle parole sono state cancellate',
+    'letters_count': '({0} lettere)'
   },
   fr: {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Créateur de Mots Croisés',
     'about.button': 'À propos',
-    'about.title': 'À propos du tnct.crosswords',
+    'about.title': 'À propos de tnct.crosswords',
     "about.how_to_use": "Comment utiliser :",
     "about.description": "'tnct.crosswords' est une application qui permet à tout le monde de créer un jeu de mots croisés ! Il suffit de saisir les mots et leurs explications, puis de configurer quelques paramètres de génération.",
     "about.save_info": "Vous pouvez sauvegarder vos mots et définitions en cliquant sur le bouton 'Sauvegarder comme .cross'. Le fichier est un simple texte (sans formatage) avec des entrées comme :",
@@ -1298,6 +1334,7 @@ var translations = {
     'file.title': 'Charger un Fichier de Mots Croisés',
     'file.description': 'Sélectionnez un fichier .cross contenant vos entrées de mots et explications.',
     'file.choose': 'Choisir un Fichier',
+    'file.format_help': 'Fichier texte avec une paire "mot|explication" par ligne',
     'file.save': 'Sauvegarder comme .cross',
     'editor.title': 'Éditeur d\'Entrées de Mots',
     'editor.add': 'Ajouter un Mot',
@@ -1351,13 +1388,15 @@ var translations = {
     'server.combinations_tried': ' combinaisons testées',
     'file.loading': 'Chargement du fichier...',
     'file.saved': 'Sauvegardées {0} entrées dans crossword.cross',
-    'editor.cleared': 'Toutes les entrées de mots ont été effacées'
+    'editor.cleared': 'Toutes les entrées de mots ont été effacées',
+    'letters_count': '({0} lettres)',
+    'letters_count': '({0} Buchstaben)'
   },
   de: {
     'app.title': 'tnct.crosswords',
     'app.subtitle': 'Kreuzworträtsel-Ersteller',
     'about.button': 'Über',
-    'about.title': 'Über den tnct.crosswords',
+    'about.title': 'Über tnct.crosswords',
     "about.how_to_use": "So verwenden Sie es:",
     "about.description": "'tnct.crosswords' ist eine Anwendung, mit der jeder ein Kreuzworträtsel erstellen kann! Einfach Wörter und Erklärungen eingeben und einige Parameter für die Erstellung festlegen.",
     "about.save_info": "Sie können die Wortliste speichern, indem Sie auf 'Als .cross speichern' klicken. Die Datei ist reiner Text (ohne Formatierung) mit Einträgen wie:",
@@ -1380,6 +1419,7 @@ var translations = {
     'file.title': 'Kreuzworträtsel-Datei Laden',
     'file.description': 'Wählen Sie eine .cross-Datei mit Ihren Worteinträgen und Erklärungen.',
     'file.choose': 'Datei Wählen',
+    'file.format_help': 'Textdatei mit einem Paar "wort|erklärung" pro Zeile',
     'file.save': 'Als .cross Speichern',
     'editor.title': 'Wort-Eingabe-Editor',
     'editor.add': 'Wort Hinzufügen',
@@ -1505,7 +1545,18 @@ function updateUI() {
       element.placeholder = translation;
     }
   }
-  
+
+    // Tratar títulos especiais (tooltips)
+    var elementsWithTitle = document.querySelectorAll('[data-i18n-title]');
+    for (var i = 0; i < elementsWithTitle.length; i++) {
+      var element = elementsWithTitle[i];
+      var key = element.getAttribute('data-i18n-title');
+      var translation = translate(key);
+      if (translation) {
+        element.title = translation;
+      }
+    }  
+
   // Update config placeholders
   var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
                          currentLanguage === 'pt-br' ? 'ex.' :
@@ -1671,8 +1722,16 @@ function handleWebSocketMessage(event) {
             // First '#' - add with space
             lastMessage.textContent += "#";
           } else {
-            // Subsequent '#' - add without space
-            lastMessage.textContent += "#";
+              // Check if we need to break to a new line (after every 80 characters)
+              var currentText = lastMessage.textContent;
+              var lastLineBreak = currentText.lastIndexOf('\n');
+              var currentLineLength = lastLineBreak === -1 ? currentText.length : currentText.length - lastLineBreak - 1;
+              
+              if (currentLineLength >= 80) {
+                lastMessage.textContent += "\n#";
+              } else {
+                lastMessage.textContent += "#";
+              }
           }
           return; // Don't create new message
         }
@@ -1969,19 +2028,22 @@ function renderSolutionTable(layouts) {
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
   
-  for (var i = 0; i < layouts.length; i++) {
-    var layout = layouts[i];
-    var row = document.createElement("tr");
-    row.innerHTML = 
-      '<td class="idCol">' + (layout.id || "") + '</td>' +
-      '<td>' + (layout.explanation || "") + '</td>';
-    
-    if (layout.orientation === "H") {
-      horizTbody.appendChild(row);
-    } else {
-      vertTbody.appendChild(row);
+    for (var i = 0; i < layouts.length; i++) {
+      var layout = layouts[i];
+      var letterCount = layout.word ? layout.word.length : 0;
+      var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
+      
+      var row = document.createElement("tr");
+      row.innerHTML = 
+        '<td class="idCol">' + (layout.id || "") + '</td>' +
+        '<td>' + explanationWithCount + '</td>';
+      
+      if (layout.orientation === "H") {
+        horizTbody.appendChild(row);
+      } else {
+        vertTbody.appendChild(row);
+      }
     }
-  }
 }
 
 function renderSolutionGrid(msg) {
@@ -2124,19 +2186,22 @@ function renderClues(layouts) {
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
   
-  for (var i = 0; i < layouts.length; i++) {
-    var layout = layouts[i];
-    var row = document.createElement("tr");
-    row.innerHTML = 
-      '<td class="idCol">' + (layout.id || "") + '</td>' +
-      '<td>' + (layout.explanation || "") + '</td>';
-    
-    if (layout.orientation === "H") {
-      horizTbody.appendChild(row);
-    } else {
-      vertTbody.appendChild(row);
+    for (var i = 0; i < layouts.length; i++) {
+      var layout = layouts[i];
+      var letterCount = layout.word ? layout.word.length : 0;
+      var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
+      
+      var row = document.createElement("tr");
+      row.innerHTML = 
+        '<td class="idCol">' + (layout.id || "") + '</td>' +
+        '<td>' + explanationWithCount + '</td>';
+      
+      if (layout.orientation === "H") {
+        horizTbody.appendChild(row);
+      } else {
+        vertTbody.appendChild(row);
+      }
     }
-  }
 }
 
 // Input validation

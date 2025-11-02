@@ -10,7 +10,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "tnct/async/dispatcher.h"
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/exp/dispatcher_000/configuration.h"
 #include "tnct/async/exp/dispatcher_000/event.h"
 #include "tnct/async/exp/dispatcher_000/event_handled.h"
@@ -18,8 +18,8 @@
 #include "tnct/async/exp/dispatcher_000/logger.h"
 #include "tnct/async/exp/dispatcher_000/publisher.h"
 #include "tnct/async/exp/dispatcher_000/results.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
 
 using namespace std::chrono_literals;
 using namespace tnct;
@@ -64,7 +64,7 @@ struct pgm
         return 0;
       }
 
-      TNCT_LOG_TST(_logger, format::fmt("\n", _configuration));
+      TNCT_LOG_TST(_logger, format::bus::fmt("\n", _configuration));
 
       dispatcher _dispatcher(_logger);
 
@@ -74,8 +74,8 @@ struct pgm
           _configuration.amount_events_to_publish};
       const size_t _total_to_be_handled{
           define_total_to_be_handled(_configuration)};
-      TNCT_LOG_TST(_logger, format::fmt("# of events to be handled: ",
-                                             _total_to_be_handled));
+      TNCT_LOG_TST(_logger, format::bus::fmt("# of events to be handled: ",
+                                        _total_to_be_handled));
       size_t       _total_handled{0};
       const size_t _percentage_to_display{
           percentage_to_display(_total_to_be_handled)};
@@ -99,7 +99,7 @@ struct pgm
       _dispatcher.add_handling<event_handled>(
           "event-handled", queue_event_handled{_logger},
           std::move(_event_handled_handler),
-          async::handling_priority::medium, 1);
+          async::dat::handling_priority::medium, 1);
 
       publisher _publisher{_dispatcher, _logger,
                            _configuration.interval_for_events_publishing,
@@ -120,8 +120,7 @@ struct pgm
 
       const std::chrono::duration<double> _diff = _end - _start;
 
-      TNCT_LOG_TST(_logger,
-                   format::fmt("time = ", _diff.count(), " seconds"));
+      TNCT_LOG_TST(_logger, format::bus::fmt("time = ", _diff.count(), " seconds"));
 
       std::cout << _results.report() << std::endl;
     }
@@ -136,14 +135,14 @@ struct pgm
 private:
   using logger = async::exp::logger;
 
-  using dispatcher = async::dispatcher<logger, event_a, event_handled>;
+  using dispatcher = async::bus::dispatcher<logger, event_a, event_handled>;
 
   using queue_event_handled =
-      container::circular_queue<logger, event_handled, 5000>;
+      container::dat::circular_queue<logger, event_handled, 5000>;
 
   using publisher = async::exp::publisher<'a', dispatcher>;
 
-  using queue_event_a = container::circular_queue<logger, event_a, 5000>;
+  using queue_event_a = container::dat::circular_queue<logger, event_a, 5000>;
 
   static constexpr size_t num_handlings{5};
 
@@ -181,8 +180,8 @@ private:
                           p_event.handler_type_id, p_event.handler_id);
       if ((m_total_handled % m_percentage_to_display) == 0)
       {
-        TNCT_LOG_TST(m_logger, format::fmt("handled ", m_total_handled,
-                                                '/', m_total_to_be_handled));
+        TNCT_LOG_TST(m_logger, format::bus::fmt("handled ", m_total_handled, '/',
+                                           m_total_to_be_handled));
       }
       if (m_total_handled >= m_total_to_be_handled)
       {
@@ -208,7 +207,7 @@ private:
           "event-a-0", queue_event_a{p_logger, "event-a-0"},
           handler_0{p_logger, p_dispatcher, "handling-0",
                     p_configuration.handlings_cfg[0].sleep_to_simulate_work},
-          async::handling_priority::medium,
+          async::dat::handling_priority::medium,
           p_configuration.handlings_cfg[0].amount_handlers);
     }
 
@@ -218,7 +217,7 @@ private:
           "event-a-1", queue_event_a{p_logger, "event-a-1"},
           handler_1{p_logger, p_dispatcher, "handling-1",
                     p_configuration.handlings_cfg[1].sleep_to_simulate_work},
-          async::handling_priority::medium,
+          async::dat::handling_priority::medium,
           p_configuration.handlings_cfg[1].amount_handlers);
     }
 
@@ -228,7 +227,7 @@ private:
           "event-a-2", queue_event_a{p_logger, "event-a-2"},
           handler_2{p_logger, p_dispatcher, "handling-2",
                     p_configuration.handlings_cfg[2].sleep_to_simulate_work},
-          async::handling_priority::medium,
+          async::dat::handling_priority::medium,
           p_configuration.handlings_cfg[2].amount_handlers);
     }
 
@@ -238,7 +237,7 @@ private:
           "event-a-3", queue_event_a{p_logger, "event-a-3"},
           handler_3{p_logger, p_dispatcher, "handling-3",
                     p_configuration.handlings_cfg[3].sleep_to_simulate_work},
-          async::handling_priority::medium,
+          async::dat::handling_priority::medium,
           p_configuration.handlings_cfg[3].amount_handlers);
     }
 
@@ -248,7 +247,7 @@ private:
           "event-a-4", queue_event_a{p_logger, "event-a-4"},
           handler_4{p_logger, p_dispatcher, "handling-4",
                     p_configuration.handlings_cfg[4].sleep_to_simulate_work},
-          async::handling_priority::medium,
+          async::dat::handling_priority::medium,
           p_configuration.handlings_cfg[4].amount_handlers);
     }
   }

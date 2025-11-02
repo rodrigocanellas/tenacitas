@@ -9,9 +9,9 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/format/fmt.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/format/bus/fmt.h"
 
 #include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/log/cpt/logger.h"
@@ -35,12 +35,12 @@ struct closer
       : m_logger(p_logger), m_dispatcher(p_dispatcher)
   {
     auto _result(m_dispatcher.template subscribe<closer, program::exit>(
-        "exit", *this, async::handling_priority::highest, 1 /*number_handlers*/,
+        "exit", *this, async::dat::handling_priority::highest, 1 /*number_handlers*/,
         5 /*queue_size*/));
 
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      m_logger.err(format::fmt(_result));
+      m_logger.err(format::bus::fmt(_result));
     }
   }
 

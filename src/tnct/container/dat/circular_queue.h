@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_CIRCULAR_QUEUE_H
-#define TNCT_CONTAINER_CIRCULAR_QUEUE_H
+#ifndef TNCT_CONTAINER_DAT_CIRCULAR_QUEUE_H
+#define TNCT_CONTAINER_DAT_CIRCULAR_QUEUE_H
 
 #include <cstddef>
 #include <mutex>
@@ -12,12 +12,12 @@
 #include <string_view>
 #include <vector>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/ostream/cpt/has_output_operator.h"
 
-namespace tnct::container
+namespace tnct::container::dat
 {
 
 /// \brief Implements a circular queue which size is increased if it becomes
@@ -51,7 +51,7 @@ public:
         m_vector(m_initial_size, t_data()), m_head(0), m_tail(0)
   {
 
-    TNCT_LOG_TRA(this->m_logger, format::fmt("creating - ", brief_report()));
+    TNCT_LOG_TRA(this->m_logger, format::bus::fmt("creating - ", brief_report()));
   }
 
   ~circular_queue()
@@ -144,7 +144,7 @@ public:
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("push - entering ", brief_report()));
+                 format::bus::fmt("push - entering ", brief_report()));
 
     if (full())
     {
@@ -164,14 +164,14 @@ public:
     ++m_occupied;
 
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("push - leaving: ", brief_report()));
+                 format::bus::fmt("push - leaving: ", brief_report()));
   }
 
   void push(const t_data &p_data)
   {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, format::fmt("push - entering with data = ",
+    TNCT_LOG_TRA(this->m_logger, format::bus::fmt("push - entering with data = ",
                                              p_data, ": ", brief_report()));
 
     if (full())
@@ -192,7 +192,7 @@ public:
     ++m_occupied;
 
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("push - leaving: ", brief_report()));
+                 format::bus::fmt("push - leaving: ", brief_report()));
   }
 
   std::optional<t_data> pop()
@@ -200,7 +200,7 @@ public:
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("pop - entering: ", brief_report()));
+                 format::bus::fmt("pop - entering: ", brief_report()));
 
     if (empty())
     {
@@ -218,7 +218,7 @@ public:
     --m_occupied;
 
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("pop - leaving: ", brief_report()));
+                 format::bus::fmt("pop - leaving: ", brief_report()));
 
     return {_data};
   }
@@ -271,7 +271,7 @@ protected:
   void enlarge()
   {
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("enlarging - entering ", full_report()));
+                 format::bus::fmt("enlarging - entering ", full_report()));
 
     vector _aux(m_vector.size() + m_incremental_size, t_data());
 
@@ -302,9 +302,9 @@ protected:
 
     m_vector = std::move(_aux);
     TNCT_LOG_TRA(this->m_logger,
-                 format::fmt("enlarging - leaving ", full_report()));
+                 format::bus::fmt("enlarging - leaving ", full_report()));
 
-    TNCT_LOG_DEB(this->m_logger, format::fmt("enlarged - ", brief_report()));
+    TNCT_LOG_DEB(this->m_logger, format::bus::fmt("enlarged - ", brief_report()));
   }
 
 private:
@@ -321,6 +321,6 @@ private:
   std::mutex m_mutex;
 };
 
-} // namespace tnct::container
+} // namespace tnct::container::dat
 
 #endif

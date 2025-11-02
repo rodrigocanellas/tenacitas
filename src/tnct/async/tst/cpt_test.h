@@ -8,16 +8,16 @@
 
 #include <string>
 
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/cpt/has_add_handling_method.h"
 #include "tnct/async/cpt/has_publish_method.h"
 #include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/async/cpt/is_event.h"
 #include "tnct/async/cpt/is_handler.h"
-#include "tnct/async/dispatcher.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/options.h"
@@ -342,7 +342,7 @@ struct cpt_dispatcher_000
 
   static std::string desc()
   {
-    return "Basic traitrs::dispatcher test";
+    return "Basic traits dispatcher test";
   }
 
   bool operator()(const program::options &)
@@ -421,7 +421,7 @@ struct cpt_has_add_handling_method_000
 
     logger _logger;
 
-    using dispatcher = async::dispatcher<logger, event_a>;
+    using dispatcher = async::bus::dispatcher<logger, event_a>;
 
     dispatcher _dispatcher{_logger};
 
@@ -445,7 +445,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(async::cpt::has_add_handling_method<t_dispatcher, event_a,
@@ -471,14 +471,14 @@ private:
     void create_handling_1(logger &p_logger)
     {
 
-      async::result _result{m_dispatcher.template add_handling<event_a>(
+      async::dat::result _result{m_dispatcher.template add_handling<event_a>(
           "handling 1", queue_a{p_logger},
           [this](event_a &&evt) { handler_1(std::move(evt)); },
-          async::handling_priority::medium, 2)};
+          async::dat::handling_priority::medium, 2)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(p_logger, format::fmt(_result));
+        TNCT_LOG_ERR(p_logger, format::bus::fmt(_result));
       }
       else
       {
@@ -489,14 +489,14 @@ private:
     void create_handling_2(logger &p_logger)
     {
 
-      async::result _result{m_dispatcher.template add_handling<event_a>(
+      async::dat::result _result{m_dispatcher.template add_handling<event_a>(
           "handling 2", queue_a{p_logger},
           [this](event_a &&evt) { handler_2(std::move(evt)); },
-          async::handling_priority::medium, 4)};
+          async::dat::handling_priority::medium, 4)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(p_logger, format::fmt(_result));
+        TNCT_LOG_ERR(p_logger, format::bus::fmt(_result));
       }
       else
       {
@@ -549,7 +549,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(!async::cpt::has_add_handling_method<t_dispatcher, event_a,
@@ -602,9 +602,9 @@ private:
   {
 
     template <async::cpt::is_event t_event>
-    async::result publish(const t_event &)
+    async::dat::result publish(const t_event &)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -645,9 +645,9 @@ private:
   struct publisher
   {
     template <async::cpt::is_event t_event>
-    async::result publish(t_event &&)
+    async::dat::result publish(t_event &&)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -689,9 +689,9 @@ private:
   {
 
     template <async::cpt::is_event t_event, typename... t_params>
-    async::result publish(t_params &&...)
+    async::dat::result publish(t_params &&...)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -1011,12 +1011,12 @@ private:
 
 //   static std::string desc()
 //   {
-//     return {"A 'enum' compatible with 'result'"};
+//     return {"A 'enum' compatible with 'dat::result'"};
 //   }
 
 //   bool operator()(const program::options &)
 //   {
-//     static_assert(async::cpt::result<result_like>, "This compiles");
+//     static_assert(async::cpt::dat::result<result_like>, "This compiles");
 //     return true;
 //   }
 // };

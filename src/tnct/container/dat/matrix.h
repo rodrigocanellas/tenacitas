@@ -3,13 +3,13 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_MATRIX_H
-#define TNCT_CONTAINER_MATRIX_H
+#ifndef TNCT_CONTAINER_DAT_MATRIX_H
+#define TNCT_CONTAINER_DAT_MATRIX_H
 
 #include <cstring>
 #include <memory>
 
-namespace tnct::container
+namespace tnct::container::dat
 {
 
 template <std::integral t_int, typename t_data>
@@ -140,6 +140,6 @@ private:
   t_data *m_vec{nullptr};
 };
 
-} // namespace tnct::container
+} // namespace tnct::container::dat
 
 #endif

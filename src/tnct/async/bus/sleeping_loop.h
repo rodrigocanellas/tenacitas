@@ -12,7 +12,7 @@
 #include <string>
 #include <string_view>
 
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 
 #include "tnct/time/cpt/chrono_convertible.h"
 #include "tnct/log/cpt/logger.h"
@@ -46,7 +46,7 @@ struct sleeping_loop
         m_interval(std::chrono::duration_cast<decltype(m_interval)>(p_interval))
   {
 
-    TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
                                        " - creating with function ",
                                        &m_function, " and interval of ",
                                        m_interval.count(), " nanosecs"));
@@ -61,33 +61,33 @@ struct sleeping_loop
   ~sleeping_loop()
   {
     TNCT_LOG_TRA(m_logger,
-                 format::fmt("sleeping loop ", m_id, " - destructor"));
+                 format::bus::fmt("sleeping loop ", m_id, " - destructor"));
 
     stop();
     if (m_thread.get_id() == std::thread::id())
     {
       TNCT_LOG_TRA(m_logger,
-                   format::fmt("sleeping loop ", m_id,
+                   format::bus::fmt("sleeping loop ", m_id,
                                " - not joining because m_thread.get_id() == "
                                "std::thread::id()"));
 
       return;
     }
     TNCT_LOG_TRA(m_logger,
-                 format::fmt("sleeping loop ", m_id,
+                 format::bus::fmt("sleeping loop ", m_id,
                              " - m_thread.get_id() != std::thread::id()"));
 
     if (!m_thread.joinable())
     {
       TNCT_LOG_TRA(
           m_logger,
-          format::fmt("sleeping loop ", m_id,
+          format::bus::fmt("sleeping loop ", m_id,
                       " - not joining because m_thread is not joinable"));
 
       return;
     }
     TNCT_LOG_TRA(m_logger,
-                 format::fmt("sleeping loop ", m_id, " - m_thread.joinable()"));
+                 format::bus::fmt("sleeping loop ", m_id, " - m_thread.joinable()"));
 
     {
       std::lock_guard<std::mutex> _lock(m_mutex_join);
@@ -101,7 +101,7 @@ struct sleeping_loop
         m_function(std::move(p_loop.m_function)), m_interval(p_loop.m_interval)
   {
     TNCT_LOG_TRA(m_logger,
-                 format::fmt("sleeping loop ", m_id, " move constructor from ",
+                 format::bus::fmt("sleeping loop ", m_id, " move constructor from ",
                              &p_loop, " to ", &(*this)));
     bool _stopped(p_loop.is_stopped());
 
@@ -125,14 +125,14 @@ struct sleeping_loop
     if (!m_stopped)
     {
       TNCT_LOG_TRA(m_logger,
-                   format::fmt("sleeping loop ", m_id,
+                   format::bus::fmt("sleeping loop ", m_id,
                                " - not starting because it is not stopped"));
       return;
     }
     m_stopped = false;
 
     TNCT_LOG_TRA(m_logger,
-                 format::fmt("sleeping loop ", m_id,
+                 format::bus::fmt("sleeping loop ", m_id,
                              " - starting loop thread in ", &(*this)));
 
     m_thread = std::thread([this]() { loop(); });
@@ -144,18 +144,18 @@ struct sleeping_loop
     if (m_stopped)
     {
       TNCT_LOG_TRA(m_logger,
-                   format::fmt("sleeping loop ", m_id,
+                   format::bus::fmt("sleeping loop ", m_id,
                                " - not stopping because it is stopped"));
 
       return;
     }
-    TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
                                        " - stopping in ", &(*this)));
 
     m_stopped = true;
     m_cond.notify_one();
 
-    TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
                                        " - leaving stop in ", &(*this)));
   }
 
@@ -175,7 +175,7 @@ private:
   // void move(sleeping_loop &&p_loop) {
   //   bool _stopped = p_loop.is_stopped();
 
-  //   TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - moving ",
+  //   TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id, " - moving ",
   //                                       p_loop.m_id, " which was",
   //                                       (_stopped ? " " : " not "),
   //                                       "stopped"));
@@ -187,7 +187,7 @@ private:
   //   m_stopped = true;
 
   //   if (!_stopped) {
-  //     TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+  //     TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
   //                                         " - starting it because ",
   //                                         p_loop.m_id, " was running"));
 
@@ -195,7 +195,7 @@ private:
   //   }
 
   //   else {
-  //     TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+  //     TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
   //                                         " - NOT starting it because ",
   //                                         p_loop.m_id, " was NOT running"));
   //   }
@@ -208,28 +208,28 @@ private:
     {
       if (m_stopped)
       {
-        TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - stop"));
+        TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id, " - stop"));
 
         break;
       }
 
       TNCT_LOG_TRA(m_logger,
-                   format::fmt("sleeping loop ", m_id, " - calling function ",
+                   format::bus::fmt("sleeping loop ", m_id, " - calling function ",
                                &m_function, " in ", &(*this)));
 
       m_function();
 
-      TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - ",
+      TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id, " - ",
                                          &m_function, " called"));
 
       if (m_stopped)
       {
-        TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - stop"));
+        TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id, " - stop"));
 
         break;
       }
       TNCT_LOG_TRA(m_logger,
-                   format::fmt("sleeping loop ", m_id, " - waiting for ",
+                   format::bus::fmt("sleeping loop ", m_id, " - waiting for ",
                                m_interval.count(),
                                " microsecs to elaps, or a stop order"));
 
@@ -240,16 +240,16 @@ private:
         {
 
           TNCT_LOG_TRA(m_logger,
-                       format::fmt("sleeping loop ", m_id,
+                       format::bus::fmt("sleeping loop ", m_id,
                                    " - ordered to stop in ", &(*this)));
 
           break;
         }
       }
-      TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id, " - ",
+      TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id, " - ",
                                          m_interval.count(), " ms elapsed"));
     }
-    TNCT_LOG_TRA(m_logger, format::fmt("sleeping loop ", m_id,
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("sleeping loop ", m_id,
                                        " - leaving loop in ", &(*this)));
   }
 

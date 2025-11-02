@@ -42,7 +42,7 @@ struct test_000
       if (_sections.value().empty())
       {
         m_logger.err(
-            format::fmt("no sections found in '", _ini_file_name, '\''));
+            format::bus::fmt("no sections found in '", _ini_file_name, '\''));
         return false;
       }
 

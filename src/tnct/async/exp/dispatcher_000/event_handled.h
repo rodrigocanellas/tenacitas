@@ -13,7 +13,7 @@
 #include "tnct/async/exp/dispatcher_000/event_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_type_id.h"
-#include "tnct/async/handling_name.h"
+#include "tnct/async/dat/handling_name.h"
 
 namespace tnct::async::exp
 {
@@ -24,7 +24,7 @@ struct event_handled
   event_handled(const event_handled &) = default;
   event_handled(event_handled &&)      = default;
 
-  explicit event_handled(const async::handling_name &p_handling_id,
+  explicit event_handled(const async::dat::handling_name &p_handling_id,
                          event_id p_event_id, handler_type_id p_handler_type_id,
                          handler_id p_handler_id)
       : handling_id(p_handling_id), event_id(p_event_id),
@@ -44,7 +44,7 @@ struct event_handled
     return p_out;
   }
 
-  async::handling_name        handling_id;
+  async::dat::handling_name        handling_id;
   async::exp::event_id        event_id{' '};
   async::exp::handler_type_id handler_type_id{
       std::numeric_limits<uint16_t>::max()};

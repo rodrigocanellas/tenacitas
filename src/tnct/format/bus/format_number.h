@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_FORMAT_FORMAT_NUMBER_H
-#define TNCT_FORMAT_FORMAT_NUMBER_H
+#ifndef TNCT_FORMAT_BUS_FORMAT_NUMBER_H
+#define TNCT_FORMAT_BUS_FORMAT_NUMBER_H
 
 #include <cstdint>
 #include <iomanip>
@@ -12,10 +12,11 @@
 #include <sstream>
 #include <string>
 
-#include "tnct/format/align.h"
-#include "tnct/format/max_str_length.h"
+#include "tnct/format/bus/max_str_length.h"
+#include "tnct/format/dat/align.h"
 
-namespace tnct::format {
+namespace tnct::format::bus
+{
 
 /// \brief Formats a number with the maximum characters necessary to represent
 /// the number to string, filled with \p p_fill and aligned with \p p_align
@@ -32,11 +33,13 @@ namespace tnct::format {
 template <typename t_num_type>
 requires(std::integral<t_num_type> || std::floating_point<t_num_type>)
 
-    inline std::string format_max_number(t_num_type p_num, char p_fill = '0',
-                                         align p_align = align::right) {
+inline std::string format_max_number(t_num_type p_num, char p_fill = '0',
+                                     dat::align p_align = dat::align::right)
+{
   std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left) << std::fixed
-          << std::setfill(p_fill) << std::setw(max_str_length<t_num_type>())
+  _stream << (p_align == dat::align::right ? std::right : std::left)
+          << std::fixed << std::setfill(p_fill)
+          << std::setw(max_str_length<t_num_type>())
           << (std::is_same_v<t_num_type, uint8_t>
                   ? static_cast<uint16_t>(p_num)
                   : (std::is_same_v<int8_t, t_num_type>
@@ -48,12 +51,13 @@ requires(std::integral<t_num_type> || std::floating_point<t_num_type>)
 template <typename t_num_type>
 requires(std::integral<t_num_type> || std::floating_point<t_num_type>)
 
-    inline std::string
-    format_fix_number(t_num_type p_num, uint8_t p_width, char p_fill = '0',
-                      align p_align = align::right) {
+inline std::string format_fix_number(t_num_type p_num, uint8_t p_width,
+                                     char       p_fill  = '0',
+                                     dat::align p_align = dat::align::right)
+{
   std::stringstream _stream;
-  _stream << (p_align == align::right ? std::right : std::left) << std::fixed
-          << std::setfill(p_fill) << std::setw(p_width)
+  _stream << (p_align == dat::align::right ? std::right : std::left)
+          << std::fixed << std::setfill(p_fill) << std::setw(p_width)
           << (std::is_same_v<t_num_type, uint8_t>
                   ? static_cast<uint16_t>(p_num)
                   : (std::is_same_v<int8_t, t_num_type>
@@ -62,6 +66,6 @@ requires(std::integral<t_num_type> || std::floating_point<t_num_type>)
   return _stream.str();
 }
 
-} // namespace tnct::format
+} // namespace tnct::format::bus
 
 #endif
