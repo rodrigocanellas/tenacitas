@@ -11,8 +11,8 @@
 
 #include "tnct/container/dat/matrix.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
-#include "tnct/program/options.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -25,7 +25,7 @@ struct matrix_000
     return "simple square container::dat::matrix creation and element access";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr                         _log;
     container::dat::matrix<uint16_t, char> _matrix(3, 3, 'z');
@@ -50,7 +50,7 @@ struct matrix_001
     return "create square container::dat::matrix, modify and element access";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr                         _log;
     container::dat::matrix<uint16_t, char> _matrix(3, 3, 'z');
@@ -89,7 +89,7 @@ struct matrix_002
            "access";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr                            _log;
     container::dat::matrix<uint16_t, int16_t> _matrix(3, 4, -1);
@@ -137,7 +137,7 @@ struct matrix_003
     return "test filling horizontally";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr                         _log;
     container::dat::matrix<uint16_t, char> _m(11, 8, '-');
@@ -164,7 +164,7 @@ struct matrix_004
     return "test filling vertically";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr                         _log;
     container::dat::matrix<uint16_t, char> _m(11, 8, '-');

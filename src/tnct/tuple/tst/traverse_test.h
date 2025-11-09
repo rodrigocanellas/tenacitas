@@ -9,9 +9,9 @@
 #include <iostream>
 #include <tuple>
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/tuple/cpt/is_tuple.h"
-#include "tnct/tuple/traverse.h"
+#include "tnct/tuple/bus/traverse.h"
 
 using namespace tnct;
 
@@ -25,7 +25,7 @@ struct traverse_000
     return "Checks and prints the types 'typeid' in a tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char, std::string, float>;
 
@@ -76,7 +76,7 @@ struct traverse_000
       return true;
     };
 
-    tuple::traverse<my_tuple>(_visit); // traverse<my_tuple>(_visit);
+    tuple::bus::traverse<my_tuple>(_visit); // traverse<my_tuple>(_visit);
 
     return _ret;
   }

@@ -397,10 +397,10 @@ private:
   {
     if (p_entries.get_num_entries() > 20)
     {
-      return math::factorial<std::uint64_t>(20).value();
+      return math::bus::factorial<std::uint64_t>(20).value();
     }
 
-    return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+    return math::bus::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
   }
 
 private:

@@ -14,10 +14,10 @@
 #include "tnct/async/dat/result.h"
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
@@ -69,7 +69,7 @@ struct dispatcher_000
     return "Adding a handling and getting its id";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     logger _logger;
     _logger.set_deb();
@@ -99,7 +99,7 @@ struct dispatcher_001
     return "Checks the number of handlers in a handling";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     logger _logger;
     _logger.set_deb();
@@ -146,7 +146,7 @@ struct dispatcher_002
     return "Checks the number of handlers";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     logger _logger;
     _logger.set_deb();
@@ -204,7 +204,7 @@ struct dispatcher_003
     return "Trying to associate a handler to two handlings";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     logger _logger;
     try
@@ -255,7 +255,7 @@ struct dispatcher_007
            "attribute";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {
@@ -305,7 +305,7 @@ struct dispatcher_008
            "modified value of the event attribute";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {
@@ -375,7 +375,7 @@ struct dispatcher_009
            "those 3 and 1 more";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using dispatcher =
         async::bus::dispatcher<logger, event_a, event_b, event_c, event_d>;

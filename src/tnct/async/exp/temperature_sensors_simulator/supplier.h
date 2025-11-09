@@ -6,7 +6,7 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/bus/dispatcher.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 namespace tnct::async::exp::temperature_sensors_simulator {

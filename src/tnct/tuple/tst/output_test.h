@@ -13,7 +13,7 @@
 #include <tuple>
 
 #include "tnct/pair/output.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/tuple/output.h"
 
 using namespace tnct;
@@ -28,7 +28,7 @@ struct tuple_output_000
     return "Simple tuple output test";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     auto _tuple{std::make_tuple('c', 3.14, -8)};
 
@@ -44,7 +44,7 @@ struct tuple_output_001
     return "Printing a tuple with a tuple inside";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     auto _tuple{std::make_tuple(
         'c', 3.14,
@@ -63,7 +63,7 @@ struct tuple_output_002
     return "Printing a tuple with a tuple and a pair  inside";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     auto _tuple{std::make_tuple(
         'c', 3.14,

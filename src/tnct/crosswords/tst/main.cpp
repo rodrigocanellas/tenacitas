@@ -16,7 +16,7 @@
 #include "tnct/crosswords/tst/assembler_test.h"
 #include "tnct/crosswords/tst/dat_test.h"
 #include "tnct/crosswords/tst/organizer_test.h"
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 using namespace tnct;
 
@@ -2401,7 +2401,7 @@ int main(int argc, char **argv)
 
   //  log::dat::set_file_writer("crosswords");
 
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, crosswords::tst::dat_000);
   run_test(_tester, crosswords::tst::dat_001);

@@ -9,7 +9,7 @@
 #include <string>
 
 #include "tnct/generic/dat/id.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 namespace tnct::generic::tst
 {
@@ -21,7 +21,7 @@ struct id_001
     return "id _i {4}, which does not compile";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     // THIS FAILS TO COMPILE BECAUSE '4' IS AUTOMATICALLY DEDUCED TO 'int',
@@ -39,7 +39,7 @@ struct id_002
     return "id _i {-4}, which does not compile";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     // THIS FAILS TO COMPILE BECAUSE '-4' IS AUTOMATICALLY DEDUCED TO 'int',
@@ -58,7 +58,7 @@ struct id_003
     return "Simply prints a id";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using id_0 = generic::dat::id<int>;
     id_0 _i;
@@ -76,7 +76,7 @@ struct id_004
     return "Test that id objects are not the same";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using id_0 = generic::dat::id<int>;
     id_0 _i;
@@ -95,7 +95,7 @@ struct id_005
     return "Fails to compile when trying to compare id<0> and id<1>";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using id_0 = generic::dat::id<int>;
     using id_1 = generic::dat::id<std::string>;

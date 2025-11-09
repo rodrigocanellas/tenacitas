@@ -14,7 +14,7 @@
 #include <map>
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using namespace tnct;

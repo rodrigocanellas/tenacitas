@@ -6,4 +6,4 @@ SUBDIRS = tst
 
 
 HEADERS += \
-        $$BASE_DIR/tnct/tester/test.h
+        $$BASE_DIR/tnct/tester/bus/test.h

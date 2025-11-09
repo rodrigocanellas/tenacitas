@@ -13,15 +13,15 @@
 
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 namespace beast     = boost::beast;
 namespace websocket = beast::websocket;
 namespace net       = boost::asio;
 using tcp           = net::ip::tcp;
-using tnct::program::options;
+using tnct::program::bus::options;
 using logger = tnct::log::cerr;
 using nlohmann::json;
 using std::chrono::seconds;

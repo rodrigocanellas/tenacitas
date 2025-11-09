@@ -11,7 +11,7 @@
 #include "tnct/async/dat/result.h"
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using logger = tnct::log::cerr;

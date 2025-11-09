@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 #include "tnct/string/tst/cpt_test.h"
 #include "tnct/string/tst/fixed_size_string_test.h"
@@ -12,7 +12,7 @@ using namespace tnct;
 
 int main(int argc, char **argv)
 {
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, string::tst::fixed_size_string_000);
   run_test(_tester, string::tst::fixed_size_string_001);

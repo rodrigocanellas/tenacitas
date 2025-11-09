@@ -9,14 +9,14 @@
 #include <iostream>
 #include <string>
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 namespace tnct::tester::tst
 {
 
 struct tester_ok
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     return true;
   }
@@ -29,7 +29,7 @@ struct tester_ok
 
 struct tester_fail
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     return true;
   }
@@ -41,7 +41,7 @@ struct tester_fail
 
 struct tester_error
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {

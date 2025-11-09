@@ -16,9 +16,9 @@
 
 #include "tnct/async/bus/sleeping_loop.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace std::chrono_literals;
 using namespace tnct;
@@ -35,7 +35,7 @@ struct sleeping_loop_000
     return "'async::sleeping_loop' creation test";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
     logger _logger;
@@ -63,7 +63,7 @@ struct sleeping_loop_001
     return _stream.str();
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
 
@@ -143,7 +143,7 @@ struct sleeping_loop_002
     return "Tests move constructor";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
 

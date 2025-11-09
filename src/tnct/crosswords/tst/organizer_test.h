@@ -15,9 +15,9 @@
 #include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -31,7 +31,7 @@ struct organizer_test_000
     return "Organizes a simple grid";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using logger     = log::cerr;
     using dispatcher = tnct::async::bus::dispatcher<
@@ -77,7 +77,7 @@ struct organizer_test_001
     return "Fails to organize a grid for 'mouth' and 'never'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger     = log::cerr;
@@ -129,7 +129,7 @@ struct organizer_test_002
     return "Organizes grid that will require the first word to be repositioned";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger = log::cerr;

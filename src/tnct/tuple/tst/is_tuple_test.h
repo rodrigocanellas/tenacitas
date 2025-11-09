@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 
 namespace tnct::tuple::tst
@@ -21,7 +21,7 @@ struct is_tuple_000
            "'tuple::cpt::is_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(
@@ -39,7 +39,7 @@ struct is_tuple_001
     return "Checking if 'int' is not compatible with 'tuple::cpt::is_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!tuple::cpt::is_tuple<int>,
                   "'int' shuld be not compatible with 'tuple::cpt::is_tuple");
@@ -56,7 +56,7 @@ struct is_tuple_002
            "'tuple::cpt::is_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!tuple::cpt::is_tuple<std::vector<double>>,
                   "'std::vector<double>' shuld be not compatible with "

@@ -12,7 +12,7 @@
 
 #include "tnct/io/cpt/reader.h"
 #include "tnct/io/cpt/writer.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -37,7 +37,7 @@ struct cpt_reader_000
     return "Should satisfy Checking 'cpt::reader'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(io::cpt::reader<cpt_reader_000, error>,
                   "cpt_reader_000 should satisfy 'cpt::reader'");
@@ -57,7 +57,7 @@ struct cpt_reader_001
     return "Should satisfy Checking 'cpt::reader'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(io::cpt::reader<cpt_reader_001, error>,
                   "cpt_reader_001 should satisfy 'cpt::reader'");
@@ -78,7 +78,7 @@ struct cpt_reader_002
     return "Should not satisfy Checking 'cpt::reader'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!io::cpt::reader<cpt_reader_002, error>,
                   "cpt_reader_002 should not satisfy 'cpt::reader'");
@@ -99,7 +99,7 @@ struct cpt_reader_003
     return "Should not satisfy Checking 'cpt::reader'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!io::cpt::reader<cpt_reader_003, error>,
                   "cpt_reader_003 should not satisfy 'cpt::reader'");
@@ -120,7 +120,7 @@ struct cpt_reader_004
     return "Should not satisfy Checking 'cpt::reader'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!io::cpt::reader<cpt_reader_004, error>,
                   "cpt_reader_004 should not satisfy 'cpt::reader'");
@@ -141,7 +141,7 @@ struct cpt_writer_000
     return "Should satisfy 'cpt::writer";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(io::cpt::writer<cpt_writer_000, error>,
@@ -163,7 +163,7 @@ struct cpt_writer_001
     return "Should not satisfy 'cpt::writer";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(!io::cpt::writer<cpt_writer_001, error>,
@@ -185,7 +185,7 @@ struct cpt_writer_002
     return "Should not satisfy 'cpt::writer";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(!io::cpt::writer<cpt_writer_002, error>,
@@ -207,7 +207,7 @@ struct cpt_writer_003
     return "Should not satisfy 'cpt::writer";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(!io::cpt::writer<cpt_writer_003, error>,

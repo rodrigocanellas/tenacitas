@@ -12,7 +12,7 @@
 #include "tnct/async/bus/exec_sync.h"
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"

@@ -8,8 +8,8 @@
 
 #include <iostream>
 
-#include "tnct/program/options.h"
-#include "tnct/string/fixed_size_string.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/string/bus/fixed_size_string.h"
 
 using namespace tnct;
 
@@ -23,10 +23,10 @@ struct fixed_size_string_000
     return "Comparing 2 fixed_size_string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    string::fixed_size_string<10> _str1{"hello!!"};
-    string::fixed_size_string<10> _str2{"hello!!"};
+    string::bus::fixed_size_string<10> _str1{"hello!!"};
+    string::bus::fixed_size_string<10> _str2{"hello!!"};
 
     std::cerr << "str 1 = " << _str1 << ", str2 = " << _str2 << std::endl;
 
@@ -42,9 +42,9 @@ struct fixed_size_string_001
            "fixed_size_string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    string::fixed_size_string<10> _str1;
+    string::bus::fixed_size_string<10> _str1;
 
     std::cerr << "str 1 = " << _str1 << std::endl;
 
@@ -60,9 +60,9 @@ struct fixed_size_string_002
            "fixed_size_string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    string::fixed_size_string<10> _str1{"a"};
+    string::bus::fixed_size_string<10> _str1{"a"};
 
     std::cerr << "str 1 = " << _str1 << std::endl;
 
@@ -78,10 +78,10 @@ struct fixed_size_string_003
            "'const char *' size greater than defined ";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     // this code generates a compile time error
-    // string::fixed_size_string<10> _str1{"0123456789A"};
+    // string::bus::fixed_size_string<10> _str1{"0123456789A"};
 
     return true;
   }
@@ -94,14 +94,14 @@ struct fixed_size_string_004
     return "Creating from a std::string with size less than maximum";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const std::string             _s{"012345"};
-    string::fixed_size_string<10> _str1{_s};
+    string::bus::fixed_size_string<10> _str1{_s};
 
     std::cerr << "str 1 = " << _str1 << std::endl;
 
-    string::fixed_size_string<10> _str2{"012345"};
+    string::bus::fixed_size_string<10> _str2{"012345"};
     return _str1 == _str2;
   }
 };
@@ -113,12 +113,12 @@ struct fixed_size_string_005
     return "Creating from a std::string with size greather than maximum";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {
       const std::string             _s{"0123456789A"};
-      string::fixed_size_string<10> _str1{_s};
+      string::bus::fixed_size_string<10> _str1{_s};
 
       std::cerr << "str 1 = " << _str1 << std::endl;
 

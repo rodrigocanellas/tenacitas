@@ -9,23 +9,25 @@
 // #include <utility>
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/log/cout.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/log/file.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
-#include "tnct/tester/test.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/log/bus/cout.h"
+#include "tnct/log/bus/file.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tester/bus/test.h"
 
 using namespace std::chrono_literals;
 
 using namespace tnct;
 
-struct basic_log {
-  static std::string desc() { return "basic log"; }
+struct basic_log
+{
+  static std::string desc()
+  {
+    return "basic log";
+  }
 
-  bool operator()(const program::options &) {
+  bool operator()(const program::bus::options &)
+  {
     log::cout _logger;
 
     _logger.set_tra();
@@ -36,220 +38,256 @@ struct basic_log {
   }
 };
 
-struct cerr_log {
+struct cerr_log
+{
 
-  bool operator()(const program::options &) {
+  bool operator()(const program::bus::options &)
+  {
 
-    try {
+    try
+    {
       log::cerr _logger;
       _logger.set_tra();
 
-      _logger.tst(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple('z', 3.13, "hi"), ',',
-                              std::make_pair(-938, "h"), ',', 3min, ',', 8s,
-                              ',', 20ms, ',', 300us, ',', -9, ',', 28));
+      _logger.tst(format::bus::fmt(
+          "hello!", ',', 309, ',', 'W', ',', std::make_tuple('z', 3.13, "hi"),
+          ',', std::make_pair(-938, "h"), ',', 3min, ',', 8s, ',', 20ms, ',',
+          300us, ',', -9, ',', 28));
 
       _logger.tra(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.deb(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.inf(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.war(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.err(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.fat(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       return true;
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
                 << std::endl;
     }
     return false;
   }
 
-  static std::string desc() { return "Simple 'cerr' log usage"; }
+  static std::string desc()
+  {
+    return "Simple 'cerr' log usage";
+  }
 };
 
-struct cout_log {
-  bool operator()(const program::options &) {
-    try {
+struct cout_log
+{
+  bool operator()(const program::bus::options &)
+  {
+    try
+    {
       log::cout _logger;
       _logger.set_tra();
       _logger.tst(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.tra(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.deb(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.inf(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.war(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.err(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.fat(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
 
       return true;
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
                 << std::endl;
     }
     return false;
   }
 
-  static std::string desc() { return "Simple 'cout' log usage"; }
+  static std::string desc()
+  {
+    return "Simple 'cout' log usage";
+  }
 };
 
-struct file_log {
-  bool operator()(const program::options &) {
-    try {
+struct file_log
+{
+  bool operator()(const program::bus::options &)
+  {
+    try
+    {
       log::file _logger(log::file_logger_writer("./file_log_how_to"));
       _logger.set_tra();
       _logger.tst(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.tra(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.deb(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.inf(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.war(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.err(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       _logger.fat(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                              std::make_tuple<char, float>('z', 3.13), ',',
-                              std::make_pair<int, std::string>(-938, "h"), ',',
-                              3min, ',', 8s, ',', 20ms, ',', 300us, ',', -9,
-                              ',', 28));
+                                   std::make_tuple<char, float>('z', 3.13), ',',
+                                   std::make_pair<int, std::string>(-938, "h"),
+                                   ',', 3min, ',', 8s, ',', 20ms, ',', 300us,
+                                   ',', -9, ',', 28));
       return true;
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
                 << std::endl;
     }
     return false;
   }
 
-  static std::string desc() { return "Simple 'file' log usage"; }
+  static std::string desc()
+  {
+    return "Simple 'file' log usage";
+  }
 };
 
-struct file_log_multiple_files {
-  bool operator()(const program::options &) {
-    try {
+struct file_log_multiple_files
+{
+  bool operator()(const program::bus::options &)
+  {
+    try
+    {
       log::file _logger(
           log::file_logger_writer("./file_log_more_than_one_file", 10 * 1024));
       _logger.set_tra();
-      for (uint16_t _i = 0; _i < 100; ++_i) {
-        _logger.tst(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.tra(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.deb(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.inf(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.war(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.err(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
-        _logger.fat(format::bus::fmt("hello!", ',', 309, ',', 'W', ',',
-                                std::make_tuple<char, float>('z', 3.13), ',',
-                                std::make_pair<int, std::string>(-938, "h"),
-                                ',', 3min, ',', 8s, ',', 20ms, ',', 300us, ',',
-                                -9, ',', 28, ',', _i));
+      for (uint16_t _i = 0; _i < 100; ++_i)
+      {
+        _logger.tst(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.tra(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.deb(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.inf(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.war(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.err(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
+        _logger.fat(format::bus::fmt(
+            "hello!", ',', 309, ',', 'W', ',',
+            std::make_tuple<char, float>('z', 3.13), ',',
+            std::make_pair<int, std::string>(-938, "h"), ',', 3min, ',', 8s,
+            ',', 20ms, ',', 300us, ',', -9, ',', 28, ',', _i));
       }
       return true;
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
                 << std::endl;
     }
     return false;
   }
 
-  static std::string desc() { return "File log to more than one file"; }
+  static std::string desc()
+  {
+    return "File log to more than one file";
+  }
 };
 
-struct cout_log_no_fmt {
-  bool operator()(const program::options &) {
-    try {
+struct cout_log_no_fmt
+{
+  bool operator()(const program::bus::options &)
+  {
+    try
+    {
       log::cout _logger;
       _logger.set_tra();
       _logger.tst("a simple string");
@@ -261,22 +299,30 @@ struct cout_log_no_fmt {
       _logger.fat("a simple string");
 
       return true;
-    } catch (std::exception &_ex) {
+    }
+    catch (std::exception &_ex)
+    {
       std::cerr << "ERRO cerr_log_creation: '" << _ex.what() << "'"
                 << std::endl;
     }
     return false;
   }
 
-  static std::string desc() {
+  static std::string desc()
+  {
     return "Simple 'cout' log usage with a simple string as content";
   }
 };
 
-struct log_000 {
-  static std::string desc() { return "Change and restore the log level"; }
+struct log_000
+{
+  static std::string desc()
+  {
+    return "Change and restore the log level";
+  }
 
-  bool operator()(const program::options &) {
+  bool operator()(const program::bus::options &)
+  {
     log::cerr _cerr;
 
     _cerr.set_inf();
@@ -297,9 +343,10 @@ struct log_000 {
   }
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, cerr_log);
   run_test(_tester, cout_log);

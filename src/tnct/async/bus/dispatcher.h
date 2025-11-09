@@ -18,17 +18,17 @@
 #include "tnct/async/dat/handling_name.h"
 #include "tnct/async/dat/handling_priority.h"
 #include "tnct/async/dat/result.h"
-#include "tnct/async/internal/handler_id.h"
-#include "tnct/async/internal/handling.h"
+#include "tnct/async/internal/bus/handling.h"
+#include "tnct/async/internal/dat/handler_id.h"
 #include "tnct/container/cpt/queue.h"
 #include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/tuple/contains_type.h"
+#include "tnct/tuple/bus/contains_type.h"
+#include "tnct/tuple/bus/get_type_index.h"
+#include "tnct/tuple/bus/transform.h"
+#include "tnct/tuple/bus/traverse.h"
 #include "tnct/tuple/cpt/is_tuple.h"
-#include "tnct/tuple/get_type_index.h"
-#include "tnct/tuple/transform.h"
-#include "tnct/tuple/traverse.h"
 
 namespace tnct::async::bus
 {
@@ -240,7 +240,7 @@ public:
                     return true;
                   }};
 
-      tuple::traverse<events, decltype(_visit)>(_visit);
+      tuple::bus::traverse<events, decltype(_visit)>(_visit);
     }
     catch (std::exception &_ex)
     {
@@ -326,7 +326,7 @@ public:
 
 private:
   template <async::cpt::is_event t_event>
-  using handling = internal::handling<t_event>;
+  using handling = internal::bus::handling<t_event>;
 
   template <async::cpt::is_event t_event>
   using handling_ptr = std::unique_ptr<handling<t_event>>;
@@ -345,7 +345,7 @@ private:
   using handlings_const_ite = typename handlings<t_event>::const_iterator;
 
   using events_handlings =
-      typename tuple::tuple_transform<events, handlings>::type;
+      typename tuple::bus::tuple_transform<events, handlings>::type;
 
 private:
   // \brief Stops all the handling functions of all handlings of all events
@@ -359,7 +359,7 @@ private:
                     return true;
                   }};
 
-      tuple::traverse<events>(_visit);
+      tuple::bus::traverse<events>(_visit);
     }
     catch (std::exception &_ex)
     {
@@ -418,8 +418,8 @@ private:
   [[nodiscard]] bool is_handler_already_being_used() const
   {
 
-    const internal::handler_id _handler_id{
-        internal::get_handler_id<t_event, t_handler>()};
+    const internal::dat::handler_id _handler_id{
+        internal::dat::get_handler_id<t_event, t_handler>()};
 
     TNCT_LOG_TRA(m_logger,
                  format::bus::fmt("handling function id = ", _handler_id,
@@ -447,7 +447,7 @@ private:
   template <async::cpt::is_event t_event>
   [[nodiscard]] static constexpr std::size_t get_handlings_index()
   {
-    constexpr auto _idx{tuple::get_type_index<events, t_event>()};
+    constexpr auto _idx{tuple::bus::get_type_index<events, t_event>()};
     static_assert(_idx, "event not found in the tuple of events");
     return _idx.value();
   }
@@ -474,7 +474,7 @@ private:
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
                 {
                   return p_value.second->get_id()
-                         == internal::get_handling_id(p_handling_name);
+                         == internal::dat::get_handling_id(p_handling_name);
                 }};
 
     auto _ite{std::find_if(_handlings.begin(), _handlings.end(), _match)};
@@ -498,7 +498,7 @@ private:
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
                 {
                   return p_value.second->get_id()
-                         == internal::get_handling_id(p_handling_name);
+                         == internal::dat::get_handling_id(p_handling_name);
                 }};
 
     return {std::find_if(p_handlings.begin(), p_handlings.end(), _match)};
@@ -511,7 +511,8 @@ private:
   {
     const handlings<t_event> &_handlings{get_handlings<t_event>()};
 
-    const auto _handling_id_to_find{internal::get_handling_id(p_handling_name)};
+    const auto _handling_id_to_find{
+        internal::dat::get_handling_id(p_handling_name)};
     auto _match{[&](const typename handlings<t_event>::value_type &p_value)
                 {
                   const auto _handling_id{p_value.second->get_id()};
@@ -536,7 +537,7 @@ private:
   template <async::cpt::is_event t_event>
   static constexpr void check_if_event_is_in_events_tupĺe()
   {
-    static_assert(tuple::contains_type<events, t_event>(),
+    static_assert(tuple::bus::contains_type<events, t_event>(),
                   "event is not in the 't_events...' of the dispatcher");
   }
 
@@ -558,7 +559,7 @@ private:
     }
 
     using handling_concrete =
-        internal::handling_concrete<t_logger, t_event, t_queue, t_handler>;
+        internal::bus::handling_concrete<t_logger, t_event, t_queue, t_handler>;
 
     try
     {

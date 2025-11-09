@@ -4,7 +4,7 @@
 #include <QApplication>
 #include <QString>
 
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using namespace tnct;

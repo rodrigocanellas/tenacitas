@@ -14,9 +14,9 @@ HEADERS += \
         $$PRJ_DIR/dat/handling_priority.h \
         $$PRJ_DIR/dat/handling_name.h \
         $$PRJ_DIR/dat/result.h \
-        $$PRJ_DIR/internal/handling.h \
-        $$PRJ_DIR/internal/handler_id.h \
-        $$PRJ_DIR/internal/handling_id.h \
+        $$PRJ_DIR/internal/bus/handling.h \
+        $$PRJ_DIR/internal/dat/handler_id.h \
+        $$PRJ_DIR/internal/dat/handling_id.h \
         $$PRJ_DIR/cpt/is_dispatcher.h  \
         $$PRJ_DIR/cpt/is_event.h  \
         $$PRJ_DIR/cpt/is_handler.h  \

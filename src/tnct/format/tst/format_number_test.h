@@ -9,7 +9,7 @@
 #include <string>
 
 #include "tnct/format/bus/format_number.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 namespace tnct::format::tst
 {
@@ -21,7 +21,7 @@ struct format_number_000
     return "format a uint16_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<uint16_t>(34)));
     std::cerr << "str = " << _str << std::endl;
@@ -36,7 +36,7 @@ struct format_number_001
     return "format a int16_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<int16_t>(-34), ' '));
 
@@ -51,7 +51,7 @@ struct format_number_002
     return "format a uint8_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<uint8_t>(34)));
 
@@ -67,7 +67,7 @@ struct format_number_003
     return "format a int8_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<int8_t>(-4), ' '));
 
@@ -83,7 +83,7 @@ struct format_number_004
     return "format a float number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const std::string _str(
         format::bus::format_max_number(static_cast<float>(3.14), ' '));
@@ -99,7 +99,7 @@ struct format_number_005
     return "format a double number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const std::string _str(
         format::bus::format_max_number(static_cast<double>(3.14), ' '));
@@ -115,7 +115,7 @@ struct format_number_006
     return "compiler error trying to format a string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     // const std::string
     // _str(format::bus::format_number<std::string>("-3"),'0');
@@ -130,7 +130,7 @@ struct format_number_007
     return "compiler error trying to format a class";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     // abc _abc;
     // const std::string _str(format::bus::format_number<abc>(_abc),'0');
@@ -150,7 +150,7 @@ struct format_number_008
     return "compiler error trying to format a enum of uint16_t";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     // abc _abc (abc::A);
     // const std::string _str(format::bus::format_number<abc>(_abc),'0');
@@ -174,7 +174,7 @@ struct format_number_009
     return "format a uint32_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<uint32_t>(34)));
     std::cerr << "str = " << _str << std::endl;
@@ -189,7 +189,7 @@ struct format_number_010
     return "format a int32_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<int32_t>(-34), ' '));
     std::cerr << "str = '" << _str << '\'' << std::endl;
@@ -204,7 +204,7 @@ struct format_number_011
     return "format a uint64_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<uint64_t>(34)));
     std::cerr << "str = '" << _str << '\'' << std::endl;
@@ -219,7 +219,7 @@ struct format_number_012
     return "format a int64_t number";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_max_number(static_cast<int64_t>(-34), ' '));
     std::cerr << "str = '" << _str << '\'' << std::endl;
@@ -234,7 +234,7 @@ struct format_number_014
     return "format of 34 as uint64_t number in a 6 chars long string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_fix_number(static_cast<uint64_t>(34), 6));
     std::cerr << "str = '" << _str << '\'' << std::endl;
@@ -249,7 +249,7 @@ struct format_number_015
     return "format of 73290 as uint32_t number in a 4 chars long string";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     const auto _str(format::bus::format_fix_number(static_cast<uint32_t>(73290), 4));
     std::cerr << "str = '" << _str << '\'' << std::endl;

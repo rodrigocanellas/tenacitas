@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "tnct/format/tst/format_number_test.h"
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 using namespace tnct;
 
@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 {
   try
   {
-    tester::test _test(argc, argv);
+    tester::bus::test _test(argc, argv);
     run_test(_test, format::tst::format_number_000);
     run_test(_test, format::tst::format_number_001);
     run_test(_test, format::tst::format_number_002);

@@ -7,12 +7,11 @@
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
-#include "tnct/tester/test.h"
-#include "tnct/translator/translator_from_file.h"
-#include "tnct/translator/translator_in_memory.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tester/bus/test.h"
+#include "tnct/translator/bus/translator_from_file.h"
+#include "tnct/translator/bus/translator_in_memory.h"
 
 using namespace tnct;
 
@@ -23,9 +22,9 @@ namespace tnct::translator::tst
 
 struct from_memory
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    logger                                _log;
+    logger                           _log;
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
@@ -42,7 +41,7 @@ struct from_memory
 
 struct from_existing_file
 {
-  bool operator()(const program::options &p_options)
+  bool operator()(const program::bus::options &p_options)
   {
     logger                     _log;
     std::optional<std::string> _maybe{p_options.get_single_param("file-name")};
@@ -74,9 +73,9 @@ struct from_existing_file
 
 struct from_non_existing_file
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    logger                                        _log;
+    logger                                   _log;
     translator::translator_from_file<logger> _translator(_log);
 
     return !_translator.load("file.dict");
@@ -90,9 +89,9 @@ struct from_non_existing_file
 
 struct translate_non_existing_word
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    logger                                _log;
+    logger                           _log;
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
@@ -113,9 +112,9 @@ struct translate_non_existing_word
 
 struct translate_an_existing_word
 {
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    logger                                _log;
+    logger                           _log;
     translator::translator_in_memory _translator(
         {{0, "word 0"}, {1, "word 1"}, {9, "word 9"}, {6, "word 6"}});
 
@@ -138,7 +137,7 @@ struct translate_an_existing_word
 int main(int argc, char **argv)
 {
 
-  tester::test<> _test(argc, argv);
+  tester::bus::test<> _test(argc, argv);
 
   run_test(_test, translator::tst::from_memory);
   run_test(_test, translator::tst::from_existing_file);

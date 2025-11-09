@@ -20,7 +20,8 @@ SUBDIRS = \
     pair \
     crosswords \
     math \
-    network \
     numerate \
-    io
+
+    # network \
+    # io
 

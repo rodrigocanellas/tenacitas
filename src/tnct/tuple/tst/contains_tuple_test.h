@@ -6,7 +6,7 @@
 #ifndef TNCT_TUPLE_TST_CONTAINS_TUPLE_TEST_H
 #define TNCT_TUPLE_TST_CONTAINS_TUPLE_TEST_H
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/tuple/cpt/contains_tuple.h"
 
 namespace tnct::tuple::tst
@@ -20,7 +20,7 @@ struct contains_tuple_000
            "char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<char>;
@@ -41,7 +41,7 @@ struct contains_tuple_001
            "'std::tuple<char>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<char>;
@@ -62,7 +62,7 @@ struct contains_tuple_002
            "'std::tuple<int, char, float>' does not compile";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<double>;
@@ -83,7 +83,7 @@ struct contains_tuple_003
            "char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<int>;
@@ -102,7 +102,7 @@ struct contains_tuple_004
            "char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<float>;
@@ -123,7 +123,7 @@ struct contains_tuple_005
            "char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<int, char, float>;
@@ -144,7 +144,7 @@ struct contains_tuple_006
            "'std::tuple<int, char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<float, int, char>;
@@ -166,7 +166,7 @@ struct contains_tuple_007
            "char, float>'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using tuple_1 = std::tuple<int, char, float>;
     using tuple_2 = std::tuple<int, char>;

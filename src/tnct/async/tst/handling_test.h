@@ -10,13 +10,13 @@
 
 #include "tnct/async/bus/sleeping_loop.h"
 #include "tnct/async/dat/handling_name.h"
-#include "tnct/async/internal/handling.h"
-#include "tnct/async/internal/handling_id.h"
+#include "tnct/async/internal/bus/handling.h"
+#include "tnct/async/internal/dat/handling_id.h"
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 using namespace std::chrono_literals;
@@ -76,13 +76,13 @@ struct handling_000 : public handling_test
            "number of events in the queue, which must be 1";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     // using handler = handler_t<event>;
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     try
     {
@@ -114,11 +114,11 @@ struct handling_001 : public handling_test
            "stopped, which must be false";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     handling _handling("handling-001", m_logger, handler{}, queue{m_logger});
 
@@ -137,11 +137,11 @@ struct handling_005 : public handling_test
            "must be 5";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     handling _handling("handling-005", m_logger, handler{}, queue{m_logger});
 
@@ -150,7 +150,7 @@ struct handling_005 : public handling_test
     m_logger.tst(format::bus::fmt("id = ", _handling_id));
 
     return _handling_id
-           == async::internal::get_handling_id(
+           == async::internal::dat::get_handling_id(
                async::dat::handling_name{"handling-005"});
   }
 };
@@ -164,11 +164,11 @@ struct handling_006 : public handling_test
            "'handling, checks again for the number of events that must be 0";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     try
     {
@@ -181,8 +181,8 @@ struct handling_006 : public handling_test
 
       if (_num_events != 1)
       {
-        m_logger.tst(
-            format::bus::fmt("# events before should be, but it is ", _num_events));
+        m_logger.tst(format::bus::fmt("# events before should be, but it is ",
+                                      _num_events));
         return false;
       }
 
@@ -209,10 +209,10 @@ struct handling_007 : public handling_test
            "handlers, which must be 2";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     handling _handling("handling-007", m_logger, handler{}, queue{m_logger}, 2);
 
@@ -232,11 +232,11 @@ struct handling_008 : public handling_test
            "which must be false";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     handling _handling("handling-008", m_logger, handler{}, queue{m_logger}, 2);
 
@@ -255,11 +255,11 @@ struct handling_009 : public handling_test
            "stopped, which must be true";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     handling _handling("handling-009", m_logger, handler{}, queue{m_logger}, 2);
 
@@ -284,11 +284,11 @@ struct handling_010 : public handling_test
            "checks for the number of events, which must be 2";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
     try
     {
       handling _handling("handling-010", m_logger, handler{}, queue{m_logger},
@@ -322,11 +322,11 @@ struct handling_011 : public handling_test
            "and checks for the number of events, which must be 0";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using handling =
-        async::internal::handling_concrete<logger, ev1, queue, handler>;
+        async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
     try
     {
@@ -368,14 +368,14 @@ struct handling_014 : public handling_test
            + std::to_string(m_num_events);
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {
       m_logger.set_deb();
 
       using handling =
-          async::internal::handling_concrete<logger, ev1, queue, handler>;
+          async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
       handling _handling("handling-014", m_logger, handler{this},
                          queue{m_logger}, m_amount_handlers);
@@ -386,24 +386,24 @@ struct handling_014 : public handling_test
       }
 
       TNCT_LOG_TST(m_logger, format::bus::fmt("number of events = ",
-                                         _handling.get_num_events()));
+                                              _handling.get_num_events()));
 
       {
         std::unique_lock<std::mutex> _lock(m_mutex_wait);
-        m_logger.tst(format::bus::fmt("thread main ", std::this_thread::get_id(),
-                                 " starts to wait"));
+        m_logger.tst(format::bus::fmt(
+            "thread main ", std::this_thread::get_id(), " starts to wait"));
         m_cond_wait.wait(_lock, [&]()
                          { return m_current_num_events == m_num_events; });
       }
 
       TNCT_LOG_TST(m_logger,
                    format::bus::fmt("thread main ", std::this_thread::get_id(),
-                               ", done waiting"));
+                                    ", done waiting"));
 
       for (const auto &_value : m_events_by_handler)
       {
         m_logger.tst(format::bus::fmt("thread ", _value.first,
-                                 " # events = ", _value.second));
+                                      " # events = ", _value.second));
       }
 
       return (m_current_num_events == m_num_events)
@@ -446,9 +446,9 @@ private:
           ++m_owner->m_events_by_handler[std::this_thread ::get_id()];
         }
       }
-      m_owner->m_logger.tst(format::bus::fmt("handler ",
-                                        std ::this_thread ::get_id(),
-                                        " handling event ", p_event.value));
+      m_owner->m_logger.tst(
+          format::bus::fmt("handler ", std ::this_thread ::get_id(),
+                           " handling event ", p_event.value));
       m_owner->m_cond_wait.notify_all();
 
       // m_owner->m_logger.tst(format::bus::fmt("thread ", std ::this_thread
@@ -500,14 +500,14 @@ struct handling_015 : public handling_test
            + std::to_string(m_num_events);
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     try
     {
       m_logger.set_deb();
 
       using handling =
-          async::internal::handling_concrete<logger, ev1, queue, handler>;
+          async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
       handling _handling("handling-015", m_logger, handler{this},
                          queue{m_logger}, 1);
@@ -590,7 +590,7 @@ struct handling_016 : public handling_test
            + std::to_string(m_num_events);
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     // m_logger.set_tra();
 
@@ -602,7 +602,7 @@ struct handling_016 : public handling_test
       std::mutex _mutex;
 
       using handling =
-          async::internal::handling_concrete<logger, ev1, queue, handler>;
+          async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
       handling _handling("handling-016", m_logger, handler{this},
                          queue{m_logger}, 10);
@@ -614,8 +614,8 @@ struct handling_016 : public handling_test
             if (_added != m_num_events)
             {
               ev1 _ev(_added);
-              m_logger.tst(
-                  format::bus::fmt("adding event # ", ++_added, ": '", _ev, '\''));
+              m_logger.tst(format::bus::fmt("adding event # ", ++_added, ": '",
+                                            _ev, '\''));
               _handling.add_event(std::move(_ev));
             }
           },
@@ -632,7 +632,7 @@ struct handling_016 : public handling_test
               if (m_handled == m_num_events)
               {
                 m_logger.tst(format::bus::fmt(m_handled, " = ", m_num_events,
-                                         ", stopping event generation"));
+                                              ", stopping event generation"));
                 _sleeping_loop.stop();
                 return true;
               }
@@ -641,7 +641,7 @@ struct handling_016 : public handling_test
                 if (!_sleeping_loop.is_stopped())
                 {
                   m_logger.tst(format::bus::fmt(_added, " = ", m_num_events,
-                                           " stopping event generation"));
+                                                " stopping event generation"));
                   _sleeping_loop.stop();
                 }
               }
@@ -653,7 +653,7 @@ struct handling_016 : public handling_test
       }
 
       m_logger.tst(format::bus::fmt("# events added = ", _added,
-                               ", # events handled = ", m_handled));
+                                    ", # events handled = ", m_handled));
 
       return (m_handled == m_num_events) && (_added == m_num_events);
     }

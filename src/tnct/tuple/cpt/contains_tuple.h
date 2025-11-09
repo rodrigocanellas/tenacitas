@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-#include "tnct/tuple/internal/contains_tuple_helper.h"
+#include "tnct/tuple/internal/bus/contains_tuple_helper.h"
 
 namespace tnct::tuple::cpt
 {
@@ -18,7 +18,8 @@ template <typename t_container_tuple, typename t_contained_tuple>
 concept contains_tuple =
     (std::tuple_size_v<t_container_tuple> > 0)
     && (std::tuple_size_v<t_contained_tuple> >= 0)
-    && internal::contains_tuple_helper<t_container_tuple, t_contained_tuple>();
+    && internal::bus::contains_tuple_helper<t_container_tuple,
+                                            t_contained_tuple>();
 
 } // namespace tnct::tuple::cpt
 

@@ -18,7 +18,7 @@
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/container/dat/matrix.h"
 #include "tnct/format/bus/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 

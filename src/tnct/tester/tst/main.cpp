@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 #include "tnct/tester/tst/tester_test.h"
 
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 {
   try
   {
-    tester::test _test(argc, argv);
+    tester::bus::test _test(argc, argv);
     run_test(_test, tester::tst::tester_ok);
     run_test(_test, tester::tst::tester_fail);
     run_test(_test, tester::tst::tester_error);
