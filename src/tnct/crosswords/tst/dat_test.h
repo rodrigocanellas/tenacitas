@@ -12,11 +12,11 @@
 #include "tnct/crosswords/dat/entries.h"
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/dat/permutation.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 namespace tnct::crosswords::tst
 {
@@ -41,7 +41,7 @@ struct dat_000
     return "organizing 'entries' with one entry in a 'grid' not big enough";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr _logger;
     _logger.set_deb();
@@ -77,7 +77,7 @@ struct dat_001
     return "organizing 'entries' with one entry in a 'grid' big enough";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr _logger;
     _logger.set_deb();

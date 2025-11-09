@@ -6,7 +6,6 @@ SUBDIRS = \
     generic \
     container \
     async \
-    concepts \
     log \
     translator \
     parser \
@@ -20,5 +19,9 @@ SUBDIRS = \
     memory \
     pair \
     crosswords \
-    math
+    math \
+    numerate \
+
+    # network \
+    # io
 

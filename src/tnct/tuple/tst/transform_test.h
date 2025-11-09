@@ -12,8 +12,8 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "tnct/program/options.h"
-#include "tnct/tuple/transform.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tuple/bus/transform.h"
 
 using namespace tnct;
 
@@ -28,12 +28,12 @@ struct transform_000
            "std::tuple<int, char>> works";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char>;
 
     using my_transformed_tuple =
-        tuple::tuple_transform_t<std::shared_ptr, my_tuple>;
+        tuple::bus::tuple_transform_t<std::shared_ptr, my_tuple>;
 
     if constexpr (!std::is_same_v<std::tuple_element_t<0, my_transformed_tuple>,
                                   std::shared_ptr<int>>)
@@ -69,12 +69,12 @@ struct transform_001
            "is not 'std::shared_ptr<char>' ";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char>;
 
     using my_transformed_tuple =
-        tuple::tuple_transform_t<std::shared_ptr, my_tuple>;
+        tuple::bus::tuple_transform_t<std::shared_ptr, my_tuple>;
 
     if constexpr (std::is_same_v<std::tuple_element_t<0, my_transformed_tuple>,
                                  std::shared_ptr<char>>)

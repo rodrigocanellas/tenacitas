@@ -6,7 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/async/dispatcher.h"
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/crosswords/bus/internal/assembler.h"
 #include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
 #include "tnct/crosswords/evt/internal/grid_create_solved.h"
@@ -14,10 +14,10 @@
 #include "tnct/crosswords/evt/internal/grid_create_stop.h"
 #include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace std::chrono_literals;
 
@@ -28,10 +28,10 @@ std::uint64_t number_of_permutations(const dat::entries &p_entries)
 {
   if (p_entries.get_num_entries() > 20)
   {
-    return math::factorial<std::uint64_t>(20).value();
+    return math::bus::factorial<std::uint64_t>(20).value();
   }
 
-  return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+  return math::bus::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
 }
 
 struct assembler_test_000
@@ -41,11 +41,11 @@ struct assembler_test_000
     return "Fail to solve grid with one word";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger     = log::cerr;
-    using dispatcher = tnct::async::dispatcher<
+    using dispatcher = tnct::async::bus::dispatcher<
         logger, evt::internal::grid_permutations_tried,
         evt::internal::grid_create_solved, evt::internal::grid_create_start,
         evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -66,14 +66,14 @@ struct assembler_test_000
                              number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
-    TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));
+    TNCT_LOG_TST(_logger, format::bus::fmt("time: ", diff.count()));
     if (!_grid)
     {
       TNCT_LOG_TST(_logger, "Could not solve, as expected");
       return true;
     }
     TNCT_LOG_ERR(_logger,
-                 format::fmt("solved", *_grid, ", but it should have not"));
+                 format::bus::fmt("solved", *_grid, ", but it should have not"));
     return false;
   }
 };
@@ -85,10 +85,10 @@ struct assembler_test_001
     return "Solve grid with two words";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using logger     = log::cerr;
-    using dispatcher = tnct::async::dispatcher<
+    using dispatcher = tnct::async::bus::dispatcher<
         logger, evt::internal::grid_permutations_tried,
         evt::internal::grid_create_solved, evt::internal::grid_create_start,
         evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -111,10 +111,10 @@ struct assembler_test_001
                              number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
-    TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));
+    TNCT_LOG_TST(_logger, format::bus::fmt("time: ", diff.count()));
     if (_grid)
     {
-      TNCT_LOG_TST(_logger, format::fmt("SOLVED!", *_grid));
+      TNCT_LOG_TST(_logger, format::bus::fmt("SOLVED!", *_grid));
       return true;
     }
     TNCT_LOG_ERR(_logger, "not solved");
@@ -129,11 +129,11 @@ struct assembler_test_002
     return "Trying to solve a grid with 18 words";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger     = log::cerr;
-    using dispatcher = tnct::async::dispatcher<
+    using dispatcher = tnct::async::bus::dispatcher<
         logger, evt::internal::grid_permutations_tried,
         evt::internal::grid_create_solved, evt::internal::grid_create_start,
         evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -164,11 +164,11 @@ struct assembler_test_002
                              number_of_permutations(_entries))};
     auto _end{std::chrono::high_resolution_clock::now()};
     std::chrono::duration<double> diff = _end - _start;
-    TNCT_LOG_TST(_logger, format::fmt("time: ", diff.count()));
+    TNCT_LOG_TST(_logger, format::bus::fmt("time: ", diff.count()));
     if (_grid)
     {
       TNCT_LOG_TST(_logger,
-                   format::fmt("SOLVED!!! permutation ",
+                   format::bus::fmt("SOLVED!!! permutation ",
                                _grid->get_permutation_number(), *_grid));
       return true;
     }

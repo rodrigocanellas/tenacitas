@@ -8,4 +8,4 @@ SUBDIRS = tst
 PRJ_DIR=$$BASE_DIR/tnct/math
 
 HEADERS += \
-        $$PRJ_DIR/factorial.h
+        $$PRJ_DIR/bus/factorial.h

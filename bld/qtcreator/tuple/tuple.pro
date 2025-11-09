@@ -11,12 +11,11 @@ HEADERS += \
     $$PRJ_DIR/cpt/contains_tuple.h \
     $$PRJ_DIR/cpt/visit.h \
     $$PRJ_DIR/cpt/size_greather_or_equal.h \
-    $$PRJ_DIR/transform.h  \
-    $$PRJ_DIR/traverse.h \
-    $$PRJ_DIR/contains_type.h \
-    $$PRJ_DIR/get_type_index.h \
+    $$PRJ_DIR/bus/transform.h  \
+    $$PRJ_DIR/bus/traverse.h \
+    $$PRJ_DIR/bus/contains_type.h \
+    $$PRJ_DIR/bus/get_type_index.h \
     $$PRJ_DIR/output.h \
-    $$PRJ_DIR/internal/is_tuple_helper.h \
-    $$PRJ_DIR/internal/contains_tuple_helper.h
-
+    $$PRJ_DIR/internal/bus/is_tuple_helper.h \
+    $$PRJ_DIR/internal/bus/contains_tuple_helper.h
 

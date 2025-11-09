@@ -15,10 +15,10 @@
 #include "tnct/async/exp/temperature_sensors_simulator/evt/remove_sensor.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/set_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/per/sensor.h"
-#include "tnct/async/result.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/cpt/has_add_handling_method.h"
 #include "tnct/async/cpt/is_dispatcher.h"
-#include "tnct/container/circular_queue.h"
+#include "tnct/container/dat/circular_queue.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -47,21 +47,21 @@ struct sensors
       : m_logger(p_logger), m_dispatcher(p_dispatcher)
   {
 
-    if (define_add_sensor_handling() != async::result::OK)
+    if (define_add_sensor_handling() != async::dat::result::OK)
     {
       constexpr const char *_msg{"error creating handling for 'add_sensor'"};
       TNCT_LOG_ERR(m_logger, _msg);
       throw std::runtime_error(_msg);
     }
 
-    if (define_remove_sensor_handling() != async::result::OK)
+    if (define_remove_sensor_handling() != async::dat::result::OK)
     {
       constexpr const char *_msg{"error creating handling for 'remove_sensor'"};
       TNCT_LOG_ERR(m_logger, _msg);
       throw std::runtime_error(_msg);
     }
 
-    if (define_set_temperature_handling() != async::result::OK)
+    if (define_set_temperature_handling() != async::dat::result::OK)
     {
       constexpr const char *_msg{
           "error creating handling for 'set_temperature'"};
@@ -121,9 +121,9 @@ private:
                         { return p_sensor->get_id() == p_sensor_id; });
   }
 
-  async::result define_add_sensor_handling()
+  async::dat::result define_add_sensor_handling()
   {
-    using queue = container::circular_queue<t_logger, evt::add_sensor, 10>;
+    using queue = container::dat::circular_queue<t_logger, evt::add_sensor, 10>;
 
     auto _handler = [this](evt::add_sensor &&p_evt) mutable
     { this->on_add_sensor(std::move(p_evt)); };
@@ -134,13 +134,13 @@ private:
 
     return m_dispatcher.template add_handling<evt::add_sensor>(
         "add-sensor", queue{m_logger}, std::move(_handler),
-        async::handling_priority::medium, 1);
+        async::dat::handling_priority::medium, 1);
   }
 
-  async::result define_remove_sensor_handling()
+  async::dat::result define_remove_sensor_handling()
   {
     using queue =
-        container::circular_queue<t_logger, evt::remove_sensor, 10>;
+        container::dat::circular_queue<t_logger, evt::remove_sensor, 10>;
 
     auto _handler = [this](evt::remove_sensor &&p_evt)
     { this->on_remove_sensor(std::move(p_evt)); };
@@ -150,13 +150,13 @@ private:
 
     return m_dispatcher.template add_handling<evt::remove_sensor>(
         "remove-sensor", queue{m_logger}, std::move(_handler),
-        async::handling_priority::medium, 1);
+        async::dat::handling_priority::medium, 1);
   }
 
-  async::result define_set_temperature_handling()
+  async::dat::result define_set_temperature_handling()
   {
     using queue =
-        container::circular_queue<t_logger, evt::set_temperature, 10>;
+        container::dat::circular_queue<t_logger, evt::set_temperature, 10>;
 
     auto _handler = [this](evt::set_temperature &&p_evt)
     { this->on_set_temperature(std::move(p_evt)); };
@@ -167,7 +167,7 @@ private:
 
     return m_dispatcher.template add_handling<evt::set_temperature>(
         "set-temperature", queue{m_logger}, std::move(_handler),
-        async::handling_priority::medium, 1);
+        async::dat::handling_priority::medium, 1);
   }
 
 private:

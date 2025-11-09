@@ -10,11 +10,11 @@
 #include <optional>
 #include <string>
 
-#include "tnct/container/circular_queue.h"
+#include "tnct/container/dat/circular_queue.h"
 #include "tnct/container/cpt/queue.h"
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -27,13 +27,13 @@ struct cpt_test_000
 {
   static std::string desc()
   {
-    return "Checking if 'container::circular_queue' complies to "
+    return "Checking if 'container::dat::circular_queue' complies to "
            "'container::cpt::queue'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
-    using my_queue = container::circular_queue<logger, std::uint16_t, 100>;
+    using my_queue = container::dat::circular_queue<logger, std::uint16_t, 100>;
 
     static_assert(container::cpt::queue<my_queue, std::uint16_t>,
                   "'my_queue' should be compliant to 'container::cpt::queue'");
@@ -48,7 +48,7 @@ struct cpt_test_001
     return "Checking an invalid 'container::cpt::queue'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!container::cpt::queue<invalid_queue<char>, char>,
                   "'invalid_queue' should not ne compatible with "
@@ -84,7 +84,7 @@ struct cpt_test_002
     return "Checking a valid container::cpt::queue";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(container::cpt::queue<valid_queue<char>, char>,
                   "'valid_queue' should not ne compatible with "

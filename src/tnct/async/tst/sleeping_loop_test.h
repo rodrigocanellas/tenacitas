@@ -14,11 +14,11 @@
 #include <sstream>
 #include <thread>
 
-#include "tnct/async/sleeping_loop.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/async/bus/sleeping_loop.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace std::chrono_literals;
 using namespace tnct;
@@ -35,7 +35,7 @@ struct sleeping_loop_000
     return "'async::sleeping_loop' creation test";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
     logger _logger;
@@ -63,7 +63,7 @@ struct sleeping_loop_001
     return _stream.str();
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
 
@@ -86,12 +86,12 @@ struct sleeping_loop_001
 
     if (_op.counter != m_amount)
     {
-      _logger.err(format::fmt("counter should be ", m_amount, ", but it is ",
+      _logger.err(format::bus::fmt("counter should be ", m_amount, ", but it is ",
                               _op.counter));
       return false;
     }
 
-    _logger.tst(format::fmt("counter should be ", m_amount,
+    _logger.tst(format::bus::fmt("counter should be ", m_amount,
                             ", and it really is ", _op.counter));
 
     return true;
@@ -111,7 +111,7 @@ private:
       if (counter < m_amount)
       {
         ++counter;
-        m_logger.deb(format::fmt("counter = ", counter));
+        m_logger.deb(format::bus::fmt("counter = ", counter));
         std::this_thread::sleep_for(m_sleep);
       }
       else
@@ -143,7 +143,7 @@ struct sleeping_loop_002
     return "Tests move constructor";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using loop = async::sleeping_loop<logger>;
 

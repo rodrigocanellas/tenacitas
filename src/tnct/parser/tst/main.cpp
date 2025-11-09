@@ -3,11 +3,10 @@
 #include <sstream>
 #include <string>
 
-#include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/parser/ini_file.h"
-#include "tnct/program/options.h"
-#include "tnct/tester/test.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/parser/bus/ini_file.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tester/bus/test.h"
 
 namespace tnct::parser::tst
 {
@@ -19,7 +18,7 @@ struct test_000
     return "";
   }
 
-  bool operator()(const program::options &p_options)
+  bool operator()(const program::bus::options &p_options)
   {
 
     try
@@ -32,7 +31,7 @@ struct test_000
         return false;
       }
 
-      using ini_file = parser::ini_file<logger>;
+      using ini_file = parser::bus::ini_file<logger>;
 
       ini_file _ini_file(m_logger);
 
@@ -42,7 +41,7 @@ struct test_000
       if (_sections.value().empty())
       {
         m_logger.err(
-            format::fmt("no sections found in '", _ini_file_name, '\''));
+            format::bus::fmt("no sections found in '", _ini_file_name, '\''));
         return false;
       }
 
@@ -89,6 +88,6 @@ using namespace tnct;
 int main(int argc, char **argv)
 {
 
-  tester::test _test(argc, argv, {"ini"});
+  tester::bus::test _test(argc, argv, {"ini"});
   run_test(_test, parser::tst::test_000);
 }

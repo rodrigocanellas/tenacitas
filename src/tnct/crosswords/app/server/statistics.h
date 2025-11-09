@@ -6,12 +6,12 @@
 #include <fstream>
 #include <iostream>
 
-#include "tnct/async/dispatcher.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/async/bus/dispatcher.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using logger = tnct::log::cerr;
@@ -48,7 +48,7 @@ struct statistics
   void grid_creation()
   {
     if (auto _result{m_dispatcher.template publish<start_grid_creation>()};
-        _result != async::result::OK)
+        _result != async::dat::result::OK)
     {
       TNCT_LOG_ERR(m_logger, "error publishing start_grid_creation'");
       return;
@@ -56,18 +56,18 @@ struct statistics
   }
 
 private:
-  using dispatcher = async::dispatcher<logger, start_grid_creation>;
+  using dispatcher = async::bus::dispatcher<logger, start_grid_creation>;
 
 private:
   void configure_handlings()
   {
-    using queue = container::circular_queue<logger, start_grid_creation, 30>;
+    using queue = container::dat::circular_queue<logger, start_grid_creation, 30>;
 
     auto _handler{[this](start_grid_creation &&) { on_grid_creation(); }};
 
     m_dispatcher.template add_handling<start_grid_creation>(
         "start_grid_creation", queue{m_logger}, std::move(_handler),
-        async::handling_priority::high);
+        async::dat::handling_priority::high);
   }
 
   void on_grid_creation()
@@ -102,7 +102,7 @@ private:
     }
     catch (std::exception &_ex)
     {
-      TNCT_LOG_ERR(m_logger, format::fmt("ERROR: ", _ex.what()));
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("ERROR: ", _ex.what()));
     }
   }
 

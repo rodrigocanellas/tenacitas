@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 #include "tnct/container/tst/circular_queue_test.h"
 #include "tnct/container/tst/cpt_test.h"
@@ -14,7 +14,7 @@ using namespace tnct;
 int main(int argc, char **argv)
 {
 
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
   run_test(_tester, container::tst::circular_queue_001);
   run_test(_tester, container::tst::circular_queue_003);
   run_test(_tester, container::tst::circular_queue_test);

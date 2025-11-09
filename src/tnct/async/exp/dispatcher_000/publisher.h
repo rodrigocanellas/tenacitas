@@ -12,8 +12,8 @@
 
 #include "tnct/async/exp/dispatcher_000/event.h"
 #include "tnct/async/exp/dispatcher_000/logger.h"
-#include "tnct/async/result.h"
-#include "tnct/async/sleeping_loop.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/async/bus/sleeping_loop.h"
 #include "tnct/async/cpt/is_dispatcher.h"
 
 namespace tnct::async::exp {
@@ -47,7 +47,7 @@ struct publisher {
 
   void start() {
     TNCT_LOG_TST(m_logger,
-                 format::fmt('\'', m_event, "', publisher '", m_id,
+                 format::bus::fmt('\'', m_event, "', publisher '", m_id,
                                   "': starting publisher with ", m_total_events,
                                   " to be published"));
     m_slepping_loop.start();
@@ -59,7 +59,7 @@ private:
   void sleeping_function() {
     if (m_num_events >= m_total_events) {
       TNCT_LOG_TST(m_logger,
-                   format::fmt('\'', m_event, "', publisher '", m_id,
+                   format::bus::fmt('\'', m_event, "', publisher '", m_id,
                                     "': total of ", m_num_events, " of ",
                                     m_total_events,
                                     " published, stopping publisher"));
@@ -67,12 +67,12 @@ private:
       return;
     }
     auto _result{m_dispatcher.template publish<event>()};
-    if (_result != async::result::OK) {
-      TNCT_LOG_ERR(m_logger, format::fmt("error: ", _result));
+    if (_result != async::dat::result::OK) {
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("error: ", _result));
       return;
     }
     ++m_num_events;
-    // TNCT_LOG_TST(m_logger, format::fmt('\'', m_event, "', publisher '",
+    // TNCT_LOG_TST(m_logger, format::bus::fmt('\'', m_event, "', publisher '",
     // m_id,
     //                                    "': publishing event # ",
     //                                    m_num_events,

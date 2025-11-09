@@ -13,12 +13,11 @@
 #include <string>
 #include <utility>
 
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
-#include "tnct/log/cpt/macros.h"
-#include "tnct/parser/ini_file.h"
-#include "tnct/program/options.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/parser/bus/ini_file.h"
+#include "tnct/program/bus/options.h"
 
 namespace tnct::container::tst
 {
@@ -31,15 +30,15 @@ struct circular_queue_001
            + " strings of 4k in a queue with " + std::to_string(m_initial_size)
            + " initial size";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr _logger;
     _logger.set_inf();
     try
     {
 
-      container::circular_queue<log::cerr, std::string, m_initial_size> queue(
-          _logger);
+      container::dat::circular_queue<log::cerr, std::string, m_initial_size>
+                  queue(_logger);
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < m_amount; ++i)
@@ -53,12 +52,12 @@ struct circular_queue_001
         std::optional<std::string> maybe{queue.pop()};
         if (!maybe)
         {
-          _logger.err(format::fmt("error getting data # ", j));
+          _logger.err(format::bus::fmt("error getting data # ", j));
           return false;
         }
-        _logger.tst(format::fmt("capacity = ", queue.capacity(),
-                                ", occupied = ", queue.occupied(), ", data # ",
-                                j++));
+        _logger.tst(format::bus::fmt("capacity = ", queue.capacity(),
+                                     ", occupied = ", queue.occupied(),
+                                     ", data # ", j++));
       }
     }
     catch (std::exception &ex)
@@ -87,9 +86,9 @@ struct circular_queue_003
     return "Move constructor";
   }
 
-  bool operator()(program::options &)
+  bool operator()(program::bus::options &)
   {
-    using queue = container::circular_queue<log::cerr, int32_t, 30>;
+    using queue = container::dat::circular_queue<log::cerr, int32_t, 30>;
     log::cerr _logger;
     queue     _queue_1(_logger);
 
@@ -110,7 +109,7 @@ struct circular_queue_test
            "passing '--run' with no parameter";
   }
 
-  bool operator()(program::options &p_options)
+  bool operator()(program::bus::options &p_options)
   {
     bool      _success(true);
     log::cerr _logger;
@@ -150,15 +149,15 @@ struct circular_queue_test
       auto _maybe_sections(_ini_file.read(_ini_file_name));
       if (!_maybe_sections)
       {
-        _logger.tst(format::fmt("Failed to read sections from ini file ",
-                                _ini_file_name));
+        _logger.tst(format::bus::fmt("Failed to read sections from ini file ",
+                                     _ini_file_name));
         return false;
       }
       auto _sections(std::move(_maybe_sections.value()));
       if (_sections.size() == 0)
       {
-        _logger.tst(
-            format::fmt("No sections read from ini file ", _ini_file_name));
+        _logger.tst(format::bus::fmt("No sections read from ini file ",
+                                     _ini_file_name));
         return false;
       }
 
@@ -168,7 +167,7 @@ struct circular_queue_test
 
       for (const auto &_value_section : _sections)
       {
-        _logger.tst(format::fmt("############ -> ", _value_section.first));
+        _logger.tst(format::bus::fmt("############ -> ", _value_section.first));
 
         if (!_run_all_tests
             && (std::find_if(_tests_to_run.begin(), _tests_to_run.end(),
@@ -176,8 +175,8 @@ struct circular_queue_test
                              { return p_test_name == _value_section.first; })
                 == _tests_to_run.end()))
         {
-          _logger.tst(format::fmt("Test ", _value_section.first,
-                                  " is not in the parameter 'run' list"));
+          _logger.tst(format::bus::fmt("Test ", _value_section.first,
+                                       " is not in the parameter 'run' list"));
         }
         else
         {
@@ -187,22 +186,22 @@ struct circular_queue_test
           {
             if (!run(_value_section.first, _steps, _logger))
             {
-              _logger.tst(format::fmt(_value_section.first, " FAIL"));
+              _logger.tst(format::bus::fmt(_value_section.first, " FAIL"));
               _success = false;
             }
             else
             {
-              _logger.tst(format::fmt(_value_section.first, " SUCCESS"));
+              _logger.tst(format::bus::fmt(_value_section.first, " SUCCESS"));
             }
           }
           else
           {
-            _logger.err(
-                format::fmt("error parsing section ", _value_section.first));
+            _logger.err(format::bus::fmt("error parsing section ",
+                                         _value_section.first));
             _success = false;
           }
         }
-        _logger.tst(format::fmt("############ <- ", _value_section.first));
+        _logger.tst(format::bus::fmt("############ <- ", _value_section.first));
       }
     }
     catch (std::exception *_ex)
@@ -216,7 +215,7 @@ struct circular_queue_test
 private:
   using logger = log::cerr;
 
-  using ini_file = parser::ini_file<logger>;
+  using ini_file = parser::bus::ini_file<logger>;
 
   template <typename t_content>
   struct step_type
@@ -276,8 +275,9 @@ private:
       auto _num_matches(_match.size());
       if (_num_matches != 9)
       {
-        m_logger.tst(format::fmt("# matches in step ", p_step,
-                                 " should be 9, but it is ", _num_matches));
+        m_logger.tst(format::bus::fmt("# matches in step ", p_step,
+                                      " should be 9, but it is ",
+                                      _num_matches));
         return false;
       }
       act    = (_match[1].str() == "push" ? action::push : action::pop);
@@ -311,9 +311,9 @@ private:
 
       if (contents.size() != capacity_expected)
       {
-        m_logger.err(format::fmt("capacity expected = ", capacity_expected,
-                                 ", but ", contents.size(),
-                                 " items were found"));
+        m_logger.err(format::bus::fmt("capacity expected = ", capacity_expected,
+                                      ", but ", contents.size(),
+                                      " items were found"));
         return false;
       }
 
@@ -333,7 +333,7 @@ private:
     logger &m_logger;
   };
 
-  using queue = container::circular_queue<logger, int32_t, 8>;
+  using queue = container::dat::circular_queue<logger, int32_t, 8>;
 
   using step = step_type<queue::data>;
 
@@ -367,23 +367,23 @@ private:
       }
       if (_step.repor == step::report::brief)
       {
-        p_logger.tst(
-            format::fmt("step ", ++_step_counter, ": ", _queue.brief_report()));
+        p_logger.tst(format::bus::fmt("step ", ++_step_counter, ": ",
+                                      _queue.brief_report()));
       }
       else if (_step.repor == step::report::full)
       {
-        p_logger.tst(
-            format::fmt("step ", ++_step_counter, ": ", _queue.full_report()));
+        p_logger.tst(format::bus::fmt("step ", ++_step_counter, ": ",
+                                      _queue.full_report()));
       }
       else
       {
-        p_logger.tst(format::fmt("step ", ++_step_counter));
+        p_logger.tst(format::bus::fmt("step ", ++_step_counter));
       }
       if ((_queue.occupied() != _step.occupied_expected)
           || (_queue.head() != _step.head_expected)
           || (_queue.tail() != _step.tail_expected))
       {
-        p_logger.err(format::fmt(
+        p_logger.err(format::bus::fmt(
             "queue - occupied: expected ", _step.occupied_expected, ", got ",
             _queue.occupied(), ", head: expected ", _step.head_expected,
             ", got ", _queue.head(), ", tail: expected ", _step.tail_expected,
@@ -395,8 +395,8 @@ private:
       {
         if (_step.contents[_i] != _queue[_i])
         {
-          p_logger.err(format::fmt("content is ", _queue[_i], ", but ",
-                                   _step.contents[_i], " was expected"));
+          p_logger.err(format::bus::fmt("content is ", _queue[_i], ", but ",
+                                        _step.contents[_i], " was expected"));
           return false;
         }
       }
@@ -426,7 +426,7 @@ private:
           }
           else
           {
-            p_logger.tst(format::fmt("error parsing step '", _key, '\''));
+            p_logger.tst(format::bus::fmt("error parsing step '", _key, '\''));
             return false;
           }
         }

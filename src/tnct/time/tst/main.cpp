@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 #include "tnct/time/tst/chrono_output_test.h"
 
@@ -11,7 +11,7 @@ using namespace tnct;
 
 int main(int argc, char **argv)
 {
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, time::tst::time_output_000);
   run_test(_tester, time::tst::time_output_001);

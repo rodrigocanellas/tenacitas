@@ -10,7 +10,7 @@
 #include <utility>
 
 #include "tnct/pair/output.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -24,7 +24,7 @@ struct pair_output_000
     return "Simple pair output";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     std::pair<int, char> _pair{-8, 'H'};
 
@@ -41,7 +41,7 @@ struct pair_output_001
     return "Prints a pair with a pair inside";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     auto _pair{std::make_pair(-8, std::make_pair(0.3331, -99))};
 

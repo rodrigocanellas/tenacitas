@@ -8,9 +8,9 @@
 #include "tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h"
 #include "tnct/async/exp/temperature_sensors_simulator/dat/temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
-#include "tnct/async/result.h"
-#include "tnct/async/sleeping_loop.h"
-#include "tnct/format/fmt.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/async/bus/sleeping_loop.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -49,9 +49,9 @@ struct sensor
               }
               auto _result(m_dispatcher.template publish<evt::new_temperature>(
                   m_sensor_id, m_current));
-              if (_result != async::result::OK)
+              if (_result != async::dat::result::OK)
               {
-                m_logger.err(format::fmt(_result));
+                m_logger.err(format::bus::fmt(_result));
               }
             },
             p_interval)

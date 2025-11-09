@@ -10,7 +10,7 @@
 #include <tuple>
 
 #include "tnct/tuple/cpt/is_tuple.h"
-#include "tnct/tuple/traverse.h"
+#include "tnct/tuple/bus/traverse.h"
 
 template <typename t_char, typename t_traits, typename... t_types>
 std::basic_ostream<t_char, t_traits> &
@@ -33,7 +33,7 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out,
     return true;
   };
 
-  tnct::tuple::traverse<tuple, decltype(_visit)>(p_tuple, _visit);
+  tnct::tuple::bus::traverse<tuple, decltype(_visit)>(p_tuple, _visit);
 
   p_out << '}';
 
@@ -58,7 +58,7 @@ operator<<(std::basic_ostream<t_char, t_traits> &p_out, const t_tuple &p_tuple)
     return true;
   };
 
-  tnct::tuple::traverse<t_tuple, decltype(_visit)>(p_tuple, _visit);
+  tnct::tuple::bus::traverse<t_tuple, decltype(_visit)>(p_tuple, _visit);
 
   p_out << '}';
 

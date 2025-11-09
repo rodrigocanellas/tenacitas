@@ -8,7 +8,7 @@
 // #include <string>
 // #include <vector>
 
-// #include <tnct/crosswords/asy/dispatcher.h>
+// #include <tnct/crosswords/asy/bus::dispatcher.h>
 // #include <tnct/crosswords/dat/grid_creator.h>
 // #include <tnct/crosswords/dat/internal/assembler.h>
 // #include <tnct/crosswords/mod/grid.h>
@@ -16,7 +16,7 @@
 #include "tnct/crosswords/tst/assembler_test.h"
 #include "tnct/crosswords/tst/dat_test.h"
 #include "tnct/crosswords/tst/organizer_test.h"
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 
 using namespace tnct;
 
@@ -514,7 +514,7 @@ using namespace tnct;
 //    auto _grid{std::make_shared<crosswords::dat::grid>(
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 //    if (_organize(_grid)) {
 //      TNCT_LOG_TST(*_grid);
@@ -542,7 +542,7 @@ using namespace tnct;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -572,7 +572,7 @@ using namespace tnct;
 //    auto _grid{std::make_shared<crosswords::dat::grid>(
 //        _permutation, crosswords::dat::index{5}, crosswords::dat::index{8})};
 
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (_organize(_grid)) {
@@ -657,7 +657,7 @@ using namespace tnct;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -742,7 +742,7 @@ using namespace tnct;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -921,7 +921,7 @@ using namespace tnct;
 //        _permutation, crosswords::dat::index{11},
 //        crosswords::dat::index{11})};
 
-//    auto _dispatcher{crosswords::evt::dispatcher::create()};
+//    auto _dispatcher{crosswords::evt::bus::dispatcher::create()};
 //    crosswords::dat::internal::organizer _organize;
 
 //    if (!_organize(_grid)) {
@@ -946,7 +946,7 @@ using namespace tnct;
 
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"}};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -972,7 +972,7 @@ using namespace tnct;
 
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"}};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -998,7 +998,7 @@ using namespace tnct;
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"},
 //                                      {"exumar", "expl exumar"}};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1024,7 +1024,7 @@ using namespace tnct;
 //    crosswords::dat::entries _entries{{"viravira", "expl viravira"},
 //                                      {"exumar", "expl exumar"}};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1108,7 +1108,7 @@ using namespace tnct;
 //    badalar
 //     * farelos viravira afunilar sibliar renovar lesante sideral salutar*/
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1189,7 +1189,7 @@ using namespace tnct;
 //            {"crepom", "expl crepom"},     {"debute", "expl debute"}/*,
 //        {"usina", "expl usina"}*/};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1270,7 +1270,7 @@ using namespace tnct;
 //        {"crepom", "expl crepom"},     {"debute", "expl debute"},
 //        {"usina", "expl usina"}};
 
-//    crosswords::dat::assembler _solver(crosswords::evt::dispatcher::create());
+//    crosswords::dat::assembler _solver(crosswords::evt::bus::dispatcher::create());
 
 //    auto _start{std::chrono::high_resolution_clock::now()};
 //    std::shared_ptr<crosswords::dat::grid> _grid{_solver.start(
@@ -1296,7 +1296,7 @@ using namespace tnct;
 //   }
 
 //  test_030()
-//      : m_dispatcher(crosswords::evt::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::bus::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
 //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
@@ -1339,8 +1339,8 @@ using namespace tnct;
 //  }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1351,7 +1351,7 @@ using namespace tnct;
 //   }
 
 //  test_031()
-//      : m_dispatcher(crosswords::evt::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::bus::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
 //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
@@ -1397,8 +1397,8 @@ using namespace tnct;
 //  }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1409,7 +1409,7 @@ using namespace tnct;
 //   }
 
 //  test_032()
-//      : m_dispatcher(crosswords::evt::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::bus::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 
 //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
@@ -1456,8 +1456,8 @@ using namespace tnct;
 //  }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1469,7 +1469,7 @@ using namespace tnct;
 //   }
 
 //  test_033()
-//      : m_dispatcher(crosswords::evt::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::bus::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 //    //    m_dispatcher->subscribe<crosswords::evt::grid_create_new_attempt>(
 //    //        [this](auto p_event) -> void {
@@ -1530,8 +1530,8 @@ using namespace tnct;
 //  }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::assembler m_solver{m_dispatcher};
 // };
 
@@ -1543,7 +1543,7 @@ using namespace tnct;
 //   }
 
 //  test_034()
-//      : m_dispatcher(crosswords::evt::dispatcher::create()),
+//      : m_dispatcher(crosswords::evt::bus::dispatcher::create()),
 //        m_solver(m_dispatcher) {
 //    m_entries = crosswords::dat::entries{
 //        {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -1672,8 +1672,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::entries m_entries;
 //   crosswords::dat::internal::assembler m_solver{m_dispatcher};
 // };
@@ -1711,8 +1711,8 @@ using namespace tnct;
 //         {"idade", "expl idade"},       {"lados", "expl lados"},
 //         {"regis", "expl regis"}};
 
-//     crosswords::evt::dispatcher::ptr _dispatcher{
-//         crosswords::evt::dispatcher::create()};
+//     crosswords::evt::bus::dispatcher::ptr _dispatcher{
+//         crosswords::evt::bus::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
 //     _dispatcher->subscribe<test_035, crosswords::evt::internal::grid_create_solved>(
@@ -1811,8 +1811,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{
 //       {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -1881,8 +1881,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"afunilar", "expl afunilar"},
 //                                      {"ovo", "expl ovo"}};
@@ -1939,8 +1939,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{
 //       {"afunilar", "expl afunilar"}, {"viravira", "expl viravira"},
@@ -2009,8 +2009,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"precoce", "expl precoce"},
 //                                      {"piar", "expl piar"},
@@ -2125,8 +2125,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"esdrúxulo", "expl esdrúxulo"},
 //                                      {"baú", "expl baú"}};
@@ -2182,8 +2182,8 @@ using namespace tnct;
 //   }
 
 // private:
-//   crosswords::evt::dispatcher::ptr m_dispatcher{
-//       crosswords::evt::dispatcher::create()};
+//   crosswords::evt::bus::dispatcher::ptr m_dispatcher{
+//       crosswords::evt::bus::dispatcher::create()};
 //   crosswords::dat::grid_creator m_grid_creator{m_dispatcher};
 //   crosswords::dat::entries m_entries{{"door", "expl door"},
 //                                      {"day", "expl day"}};
@@ -2195,7 +2195,7 @@ using namespace tnct;
 //     using namespace crosswords;
 //     dat::entries _original{{"door", "expl door"}, {"day", "expl day"}};
 
-//     dat::internal::organizer _organizer(evt::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::bus::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2243,7 +2243,7 @@ using namespace tnct;
 //     dat::entries _original{{"esdrúxulo", "expl esdrúxulo"},
 //                            {"baú", "expl baú"}};
 
-//     dat::internal::organizer _organizer(evt::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::bus::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2289,7 +2289,7 @@ using namespace tnct;
 
 //     dat::entries _original{{"alho", "expl alho"}, {"coelho", "expl coelho"}};
 
-//     dat::internal::organizer _organizer(evt::dispatcher::create());
+//     dat::internal::organizer _organizer(evt::bus::dispatcher::create());
 
 //     auto _compare_entries = [](const dat::entry &p_e1, const dat::entry
 //     &p_e2) {
@@ -2348,8 +2348,8 @@ using namespace tnct;
 //     crosswords::dat::entries _entries{{"abc", "expl abc"}, {"cde", "expl
 //     cde"}};
 
-//     crosswords::evt::dispatcher::ptr _dispatcher{
-//         crosswords::evt::dispatcher::create()};
+//     crosswords::evt::bus::dispatcher::ptr _dispatcher{
+//         crosswords::evt::bus::dispatcher::create()};
 //     crosswords::dat::grid_creator _grid_creator{_dispatcher};
 
 //     _dispatcher->subscribe<test_045, crosswords::evt::internal::grid_create_solved>(
@@ -2401,7 +2401,7 @@ int main(int argc, char **argv)
 
   //  log::dat::set_file_writer("crosswords");
 
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, crosswords::tst::dat_000);
   run_test(_tester, crosswords::tst::dat_001);

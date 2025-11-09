@@ -3,7 +3,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/tester/test.h"
+#include "tnct/tester/bus/test.h"
 #include "tnct/tuple/tst/contains_tuple_test.h"
 #include "tnct/tuple/tst/contains_type_test.h"
 #include "tnct/tuple/tst/get_type_index_test.h"
@@ -18,7 +18,7 @@ using namespace tnct;
 int main(int argc, char **argv)
 {
 
-  tester::test _tester(argc, argv);
+  tester::bus::test _tester(argc, argv);
 
   run_test(_tester, tuple::tst::contains_tuple_000);
   run_test(_tester, tuple::tst::contains_tuple_001);

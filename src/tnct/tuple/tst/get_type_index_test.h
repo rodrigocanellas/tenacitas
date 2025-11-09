@@ -9,8 +9,8 @@
 #include <cstdint>
 #include <tuple>
 
-#include "tnct/program/options.h"
-#include "tnct/tuple/get_type_index.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tuple/bus/get_type_index.h"
 
 using namespace tnct;
 
@@ -24,11 +24,11 @@ struct get_type_index_000
     return "Tries to find existing simple types in a std::tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{tuple::get_type_index<my_tuple, int>()};
+    auto _idx{tuple::bus::get_type_index<my_tuple, int>()};
     if (!_idx)
     {
       std::cerr << "ERROR! idx should be 0, but the 'int' was not found "
@@ -43,7 +43,7 @@ struct get_type_index_000
     }
     std::cerr << "idx is " << _index << ", as expected" << std::endl;
 
-    _idx = tuple::get_type_index<my_tuple, char>();
+    _idx = tuple::bus::get_type_index<my_tuple, char>();
     if (!_idx)
     {
       std::cerr << "ERROR! idx should be 1, but the 'char' was not found "
@@ -58,7 +58,7 @@ struct get_type_index_000
     }
     std::cerr << "idx is " << _index << ", as expected" << std::endl;
 
-    _idx = tuple::get_type_index<my_tuple, float>();
+    _idx = tuple::bus::get_type_index<my_tuple, float>();
     if (!_idx)
     {
       std::cerr << "ERROR! idx should be 2, but it 'char' was not found "
@@ -84,11 +84,11 @@ struct get_type_index_001
     return "Tries to find a non existing type in a std::tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _idx{tuple::get_type_index<my_tuple, std::string>()};
+    auto _idx{tuple::bus::get_type_index<my_tuple, std::string>()};
     if (_idx)
     {
       std::cerr << "'std::string' should not be found, but it is "
@@ -107,11 +107,11 @@ struct get_type_index_002
     return "Tries to find a type in a std::tuple<>";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<>;
 
-    auto _idx{tuple::get_type_index<my_tuple, std::string>()};
+    auto _idx{tuple::bus::get_type_index<my_tuple, std::string>()};
     if (_idx)
     {
       std::cerr << "'std::string' should not be found, but is is "
@@ -130,7 +130,7 @@ struct get_type_index_003
     return "Finds a non POD in a tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using my_tuple = std::tuple<abc, xyz>;
@@ -144,7 +144,7 @@ struct get_type_index_003
 
     };
 
-    const auto optional{tuple::get_type_index<my_tuple>(_check)};
+    const auto optional{tuple::bus::get_type_index<my_tuple>(_check)};
 
     return (optional.has_value() && (optional == 0));
   }
@@ -168,7 +168,7 @@ struct get_type_index_004
     return "Fails to find a non POD in tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using my_tuple = std::tuple<abc, xyz>;
@@ -182,7 +182,7 @@ struct get_type_index_004
 
     };
 
-    const auto optional{tuple::get_type_index<my_tuple>(_check)};
+    const auto optional{tuple::bus::get_type_index<my_tuple>(_check)};
 
     return (!optional.has_value());
   }

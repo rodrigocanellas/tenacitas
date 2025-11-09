@@ -6,7 +6,7 @@
 #ifndef TNCT_ASYNC_EXP_DISPATCHER_000_LOGGER_H
 #define TNCT_ASYNC_EXP_DISPATCHER_000_LOGGER_H
 
-#include "tnct/log/cerr.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 namespace tnct::async::exp {

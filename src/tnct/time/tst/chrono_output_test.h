@@ -10,7 +10,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/time/output.h"
 
 using namespace tnct;
@@ -25,7 +25,7 @@ struct time_output_000
     return "Output nanoseconds";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     std::ostringstream _stream;
 
@@ -45,7 +45,7 @@ struct time_output_001
     return "Output microseconds";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -66,7 +66,7 @@ struct time_output_002
     return "Output milliseconds";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -87,7 +87,7 @@ struct time_output_003
     return "Output seconds";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -108,7 +108,7 @@ struct time_output_004
     return "Output minutes";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -129,7 +129,7 @@ struct time_output_005
     return "Output hours";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -150,7 +150,7 @@ struct time_output_006
     return "Output days";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -171,7 +171,7 @@ struct time_output_007
     return "Output months";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;
@@ -192,7 +192,7 @@ struct time_output_008
     return "Output years";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     std::ostringstream _stream;

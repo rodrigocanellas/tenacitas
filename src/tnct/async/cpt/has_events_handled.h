@@ -7,7 +7,7 @@
 #define TNCT_ASYNC_CPT_HAS_EVENTS_HANDLED_H
 
 #include "tnct/async/cpt/is_event.h"
-#include "tnct/tuple/contains_type.h"
+#include "tnct/tuple/bus/contains_type.h"
 
 namespace tnct::async::cpt
 {
@@ -21,7 +21,7 @@ concept has_events_handled =
 
     async::cpt::is_event<t_event> &&
 
-    tuple::contains_type<typename t::events_handled, t_event>;
+    tuple::bus::contains_type<typename t::events_handled, t_event>;
 
 } // namespace tnct::async::cpt
 

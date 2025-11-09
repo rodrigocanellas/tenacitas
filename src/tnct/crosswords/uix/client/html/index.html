@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crossword Client</title>
-<style>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Crossword Client</title><style>
 .modal {
   display: none; /* Hidden by default */
   position: fixed;
@@ -19,13 +12,9 @@
   justify-content: center;
   align-items: center;
 }
-
 .modal.show {
   display: flex; /* Show as flex when .show class is added */
 }
-
-
-
 .modal-content {
   background-color: #fff;
   margin: 5% auto;
@@ -34,15 +23,12 @@
   width: 80%;
   max-width: 800px;
 }
-
-
 /* Modern CSS Reset and Base Styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
@@ -51,7 +37,6 @@ body {
   min-height: 100vh;
   padding: 20px;
 }
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -60,7 +45,6 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   overflow: hidden;
 }
-
 /* Language Selector */
 .language-selector {
   position: absolute;
@@ -71,7 +55,6 @@ body {
   z-index: 10;
   flex-wrap: wrap;
 }
-
 .lang-btn {
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -82,19 +65,16 @@ body {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
-
 .lang-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }
-
 .lang-btn.active {
   background: rgba(255, 255, 255, 0.4);
   border-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
 /* About Button in Header */
 .about-button-header {
   position: absolute;
@@ -102,7 +82,6 @@ body {
   left: 1rem;
   z-index: 10;
 }
-
 .about-btn {
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -114,13 +93,11 @@ body {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 }
-
 .about-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
 }
-
 .header {
   position: relative;
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -129,22 +106,18 @@ body {
   text-align: center;
   overflow: visible;
 }
-
 .header h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
-
 .header p {
   opacity: 0.9;
   font-size: 1.1rem;
 }
-
 .content {
   padding: 2rem;
 }
-
 .section {
   background: #f8fafc;
   border-radius: 8px;
@@ -152,7 +125,6 @@ body {
   margin-bottom: 2rem;
   border: 1px solid #e2e8f0;
 }
-
 .section h2 {
   color: #1e293b;
   font-size: 1.5rem;
@@ -161,37 +133,31 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
-
 .section h3 {
   color: #475569;
   font-size: 1.25rem;
   margin-bottom: 1rem;
 }
-
 /* File Operations Section - Green theme */
 .file-section {
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
   border: 1px solid #059669;
 }
-
 /* Configuration Section - Gray theme */
 .config-section {
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   border: 1px solid #64748b;
 }
-
 /* Results Sections - Orange theme */
 .results-section {
   background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
   border: 1px solid #ea580c;
 }
-
 /* Game Section - Blue theme */
 .game-section {
   background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
   border: 1px solid #2563eb;
 }
-
 /* Configuration Section */
 .config-grid {
   display: grid;
@@ -199,12 +165,10 @@ body {
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
-
 .input-group {
   display: flex;
   flex-direction: column;
 }
-
 .input-group label {
   font-weight: 600;
   color: #374151;
@@ -214,7 +178,6 @@ body {
   align-items: center;
   gap: 0.5rem;
 }
-
 .help-icon {
   cursor: help;
   color: #6b7280;
@@ -224,12 +187,10 @@ body {
   background: #f3f4f6;
   border: 1px solid #d1d5db;
 }
-
 .help-icon:hover {
   background: #e5e7eb;
   color: #374151;
 }
-
 .input-group input {
   padding: 0.75rem;
   border: 2px solid #d1d5db;
@@ -237,17 +198,14 @@ body {
   font-size: 1rem;
   transition: all 0.2s ease;
 }
-
 .input-group input:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
-
 .input-group input:invalid {
   border-color: #ef4444;
 }
-
 /* Custom styles for config inputs */
 .config-input {
   padding: 0.75rem;
@@ -256,17 +214,14 @@ body {
   font-size: 1rem;
   transition: all 0.2s ease;
 }
-
 .config-input:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
-
 .config-input:invalid {
   border-color: #ef4444;
 }
-
 .config-label {
   font-weight: 600;
   color: #374151;
@@ -275,7 +230,6 @@ body {
   height: 1.2rem;
   display: block;
 }
-
 .help-tooltip {
   cursor: help;
   color: #6b7280;
@@ -291,12 +245,10 @@ body {
   font-weight: bold;
   flex-shrink: 0;
 }
-
 .help-tooltip:hover {
   background: #e5e7eb;
   color: #374151;
 }
-
 /* File format help button */
 .file-help-btn {
   background: rgba(79, 70, 229, 0.1);
@@ -313,13 +265,11 @@ body {
   color: #4f46e5;
   transition: all 0.2s ease;
 }
-
 .file-help-btn:hover {
   background: rgba(79, 70, 229, 0.2);
   border-color: rgba(79, 70, 229, 0.5);
   transform: scale(1.1);
 }
-
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -334,48 +284,38 @@ body {
   transition: all 0.2s ease;
   text-decoration: none;
 }
-
 .btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
 .btn-primary {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
 }
-
 .btn-primary:hover {
   background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
 }
-
 .btn-success {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: white;
 }
-
 .btn-success:hover {
   background: linear-gradient(135deg, #047857 0%, #065f46 100%);
 }
-
 .btn-secondary {
   background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
   color: white;
 }
-
 .btn-secondary:hover {
   background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
 }
-
 .btn-print {
   background: linear-gradient(135deg, #7c2d12 0%, #92400e 100%);
   color: white;
 }
-
 .btn-print:hover {
   background: linear-gradient(135deg, #92400e 0%, #a16207 100%);
 }
-
 /* Status Messages */
 .status-message {
   padding: 1rem;
@@ -383,19 +323,16 @@ body {
   margin-top: 1rem;
   font-weight: 500;
 }
-
 .status-success {
   background: #dcfce7;
   color: #166534;
   border: 1px solid #bbf7d0;
 }
-
 .status-error {
   background: #fef2f2;
   color: #dc2626;
   border: 1px solid #fecaca;
 }
-
 /* Messages Section */
 .messages-container {
   background: #1f2937;
@@ -404,7 +341,6 @@ body {
   max-height: 500px;
   overflow-y: auto;
 }
-
 /* Eye toggle icon */
 .eye-toggle {
   cursor: pointer;
@@ -417,16 +353,13 @@ body {
   font-family: monospace;
   font-weight: bold;
 }
-
 .eye-toggle:hover {
   background: rgba(0,0,0,0.1);
   color: #374151;
 }
-
 .messages-list {
   list-style: none;
 }
-
 .messages-list li {
   background: #374151;
   color: #f3f4f6;
@@ -439,31 +372,26 @@ body {
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-
 .messages-list li:last-child {
   margin-bottom: 0;
 }
-
 .messages-empty {
   color: #9ca3af;
   font-style: italic;
   text-align: center;
   padding: 2rem;
 }
-
 /* Tables */
 .table-container {
   overflow-x: auto;
   border-radius: 6px;
   border: 1px solid #e5e7eb;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
   background: white;
 }
-
 th {
   background: #f9fafb;
   color: #374151;
@@ -472,22 +400,18 @@ th {
   text-align: left;
   border-bottom: 2px solid #e5e7eb;
 }
-
 td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f3f4f6;
 }
-
 tr:hover {
   background: #f8fafc;
 }
-
 th.idCol, td.idCol {
   text-align: right;
-  font-family: 'Courier New', monospace;
+  /*font-family-removed:*/ 'Courier New', monospace;
   font-weight: 600;
 }
-
 /* Canvas */
 .canvas-container {
   text-align: center;
@@ -497,7 +421,6 @@ th.idCol, td.idCol {
   border: 1px solid #e5e7eb;
   margin-bottom: 1rem;
 }
-
 canvas {
   border: 2px solid #d1d5db;
   border-radius: 4px;
@@ -505,7 +428,6 @@ canvas {
   max-width: 100%;
   height: auto;
 }
-
 /* Clues Layout */
 .clues-container {
   display: grid;
@@ -513,42 +435,34 @@ canvas {
   gap: 2rem;
   margin-top: 1rem;
 }
-
 @media (max-width: 768px) {
   .clues-container {
     grid-template-columns: 1fr;
   }
-  
   .config-grid {
     grid-template-columns: 1fr;
   }
-  
   /* Responsive config grid for the new inline layout */
   .config-params-grid {
     grid-template-columns: 1fr !important;
   }
-  
   .header h1 {
     font-size: 2rem;
   }
-  
   .content {
     padding: 1rem;
   }
-  
   .language-selector {
     position: static;
     justify-content: center;
     margin-bottom: 1rem;
   }
-  
   .about-button-header {
     position: static;
     text-align: center;
     margin-bottom: 1rem;
   }
 }
-
 /* Section Headers with Actions */
 .section-header {
   display: flex;
@@ -558,33 +472,27 @@ canvas {
   flex-wrap: wrap;
   gap: 1rem;
 }
-
 .section-header h2,
 .section-header h3 {
   margin: 0;
 }
-
 /* Hidden elements */
 .hidden {
   display: none !important;
 }
-
 /* Icons (using Unicode symbols) */
 .icon {
   font-size: 1.2em;
   margin-right: 0.25rem;
 }
-
 /* Loading animation */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
-
 .loading {
   animation: pulse 2s infinite;
 }
-
 /* Word Entry Table Styles */
 .word-entry-row input {
   width: 100%;
@@ -594,23 +502,19 @@ canvas {
   font-size: 0.9rem;
   background: white;
 }
-
 .word-entry-row input:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
 }
-
 .word-entry-row .word-input {
   font-family: 'Courier New', monospace;
   font-weight: 600;
   text-transform: uppercase;
 }
-
 .word-entry-row .explanation-input {
   font-family: inherit;
 }
-
 .remove-row-btn {
   background: #ef4444;
   color: white;
@@ -621,248 +525,25 @@ canvas {
   font-size: 0.8rem;
   transition: background-color 0.2s;
 }
-
 .remove-row-btn:hover {
   background: #dc2626;
 }
-</style>
-</head>
-<body>
-
-
-<div class="container">
-  <div class="header">
-    <!-- About Button in Top Left -->
-    <div class="about-button-header">
-      <button class="about-btn" onclick="openAboutModal()">
-        ℹ️ <span data-i18n="about.button">Sobre</span>
-      </button>
-    </div>
-    
-    <!-- Language Selector -->
-    <div class="language-selector">
-      <button class="lang-btn active" data-lang="en" title="English">🇬🇧</button>
-      <button class="lang-btn" data-lang="pt" title="Português">🇵🇹</button>
-      <button class="lang-btn" data-lang="pt-br" title="Português Brasil">🇧🇷</button>
-      <button class="lang-btn" data-lang="es" title="Español">🇪🇸</button>
-      <button class="lang-btn" data-lang="it" title="Italiano">🇮🇹</button>
-      <button class="lang-btn" data-lang="fr" title="Français">🇫🇷</button>
-      <button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button>
-    </div>
-    
-    <h1><span class="icon">#️⃣</span><span data-i18n="app.title">Crossword Client</span></h1>
-    <p data-i18n="app.subtitle">Professional crossword puzzle generator and solver</p>
-  </div>
-
-  <div class="content">
-    <!-- File Operations & Word Entry Editor Section -->
-    <div class="section file-section">
-      <!-- File Loading Subsection -->
-      <div style="margin-bottom: 2rem;">
-        <h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2>
-        <p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-          <button id="loadButton" class="btn btn-primary">
-            <span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span>
-          </button>
-          <span class="file-help-btn" data-i18n-title="file.format_help" title="">?</span>
-          <button id="saveButton" class="btn btn-secondary">
-            <span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span>
-          </button>
-        </div>
-        <input type="file" id="fileInput" accept=".cross" class="hidden" />
-        <div id="fileStatus" class="status-message hidden"></div>
-      </div>
-
-      <!-- Word Entry Editor Subsection -->
-      <div>
-        <div class="section-header">
-          <h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button id="addRowButton" class="btn btn-success">
-              <span class="icon">➕</span><span data-i18n="editor.add">Add Word</span>
-            </button>
-            <button id="clearAllButton" class="btn btn-secondary">
-              <span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span>
-            </button>
-          </div>
-        </div>
-        <div class="table-container">
-          <table id="wordEntryTable">
-            <thead>
-              <tr>
-                <th style="width: 30%;" data-i18n="editor.word">Word</th>
-                <th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th>
-                <th style="width: 10%;" data-i18n="editor.actions">Actions</th>
-              </tr>
-            </thead>
-            <tbody id="wordEntryTableBody">
-              <!-- Rows will be added dynamically -->
-            </tbody>
-          </table>
-        </div>
-        <div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
-          0 <span data-i18n="editor.entries">entries</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Configuration & Server Messages Section -->
-    <div class="section config-section">
-      <!-- Grid Configuration Subsection -->
-      <div style="margin-bottom: 2rem;">
-        <h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2>
-        
-        <!-- Title Input - Separate Row -->
-        <div style="margin-bottom: 1.5rem;">
-          <div class="input-group">
-            <label for="titleInput" data-i18n="config.title_label">Título</label>
-            <input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder">
-          </div>
-        </div>
-        
-        <!-- Grid Configuration Parameters - Fixed Layout with help icon next to input -->
-        <div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
-          <div style="display: flex; flex-direction: column;">
-            <label class="config-label" data-i18n="config.rows">Number of Rows</label>
-            <input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input">
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            <label class="config-label" data-i18n="config.cols">Number of Columns</label>
-            <input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input">
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            <label class="config-label" data-i18n="config.maxrows">Maximum Rows</label>
-            <input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input">
-          </div>
-          <div style="display: flex; flex-direction: column;">
-            <label class="config-label" data-i18n="config.interval">Interval (seconds)</label>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;">
-              <span class="help-tooltip" data-i18n="config.interval_help" title="">?</span>
-            </div>
-          </div>
-        </div>
-        
-        <button id="submitButton" class="btn btn-success">
-          <span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span>
-        </button>
-        <div id="statusMessage" class="status-message hidden"></div>
-      </div>
-
-      <!-- Server Messages Subsection -->
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2>
-          <span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span>
-        </div>
-        <div id="messagesContent" class="messages-container">
-          <ul id="messages" class="messages-list">
-            <li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Solution Section -->
-    <div class="section results-section">
-      <div class="section-header">
-        <h2><span class="icon">✅</span><span data-i18n="solution.title">Solution</span></h2>
-        <button id="printSolutionButton" class="btn btn-print">
-          <span class="icon">🖨️</span><span data-i18n="solution.print">Print Solution</span>
-        </button>
-      </div>
-      
-      <div class="canvas-container">
-        <canvas id="solutionCanvas" class="hidden"></canvas>
-        <div id="solutionCanvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div>
-      </div>
-      
-      <div class="clues-container">
-        <div>
-          <h3><span class="icon">➡️</span><span data-i18n="solution.horizontal">Horizontal Words</span></h3>
-          <div class="table-container">
-            <table id="horizontalSolution">
-              <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <h3><span class="icon">⬇️</span><span data-i18n="solution.vertical">Vertical Words</span></h3>
-          <div class="table-container">
-            <table id="verticalSolution">
-              <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Game Section -->
-    <div class="section game-section">
-      <div class="section-header">
-        <h2><span class="icon">🎮</span><span data-i18n="game.title">Game</span></h2>
-        <button id="printButton" class="btn btn-print">
-          <span class="icon">🖨️</span><span data-i18n="game.print">Print Game</span>
-        </button>
-      </div>
-
-      <div class="canvas-container">
-        <canvas id="gridCanvas" class="hidden"></canvas>
-        <div id="canvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div>
-      </div>
-
-      <div class="clues-container">
-        <div>
-          <h3><span class="icon">➡️</span><span data-i18n="game.horizontal">Horizontal Clues</span></h3>
-          <div class="table-container">
-            <table id="horizontalClues">
-              <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div>
-          <h3><span class="icon">⬇️</span><span data-i18n="game.vertical">Vertical Clues</span></h3>
-          <div class="table-container">
-            <table id="verticalClues">
-              <thead>
-                <tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-console.log('JavaScript started loading...');
-
+/* ChatGPT override */
+th.idCol { font-family: inherit !important; }
+</style></head><body><div class="container"><div class="header"><div class="about-button-header"><button class="about-btn" onclick="openAboutModal()">
+        ℹ️ <span data-i18n="about.button">Sobre</span></button></div><div class="language-selector"><button class="lang-btn active" data-lang="en" title="English">🇬🇧</button><button class="lang-btn" data-lang="pt" title="Português">🇵🇹</button><button class="lang-btn" data-lang="pt-br" title="Português Brasil">🇧🇷</button><button class="lang-btn" data-lang="es" title="Español">🇪🇸</button><button class="lang-btn" data-lang="it" title="Italiano">🇮🇹</button><button class="lang-btn" data-lang="fr" title="Français">🇫🇷</button><button class="lang-btn" data-lang="de" title="Deutsch">🇩🇪</button></div><h1><span class="icon">#️⃣</span><span data-i18n="app.title">Crossword Client</span></h1><p data-i18n="app.subtitle">Professional crossword puzzle generator and solver</p></div><div class="content"><div class="section file-section"><div style="margin-bottom: 2rem;"><h2><span class="icon">📁</span><span data-i18n="file.title">Load Crossword File</span></h2><p style="margin-bottom: 1rem; color: #1e40af;" data-i18n="file.description">Select a .cross file containing your word entries and explanations.</p><div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;"><button id="loadButton" class="btn btn-primary"><span class="icon">⬆️</span><span data-i18n="file.choose">Choose File</span></button><span class="file-help-btn" data-i18n-title="file.format_help" title="">?</span><button id="saveButton" class="btn btn-secondary"><span class="icon">💾</span><span data-i18n="file.save">Save as .cross</span></button></div><input type="file" id="fileInput" accept=".cross" class="hidden" /><div id="fileStatus" class="status-message hidden"></div></div><div><div class="section-header"><h2><span class="icon">✏️</span><span data-i18n="editor.title">Word Entry Editor</span></h2><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;"><button id="addRowButton" class="btn btn-success"><span class="icon">➕</span><span data-i18n="editor.add">Add Word</span></button><div class="select-all-container"><input type="checkbox" id="selectAllCheckbox" checked><label for="selectAllCheckbox" data-i18n="editor.select_all">Select All</label></div><span class="icon">🗑️</span><span data-i18n="editor.clear">Clear All</span></button></div></div><div class="table-container"><table id="wordEntryTable"><thead><tr><th style="width: 30%;" data-i18n="editor.word">Word</th><th style="width: 60%;" data-i18n="editor.clue">Explanation/Clue</th><th style="width: 10%;"></th></tr></thead><tbody id="wordEntryTableBody"></tbody></table></div><div id="entryCount" style="margin-top: 0.5rem; color: #6b7280; font-size: 0.9rem;">
+          0 <span data-i18n="editor.entries">entries</span></div></div></div><div class="section config-section"><div style="margin-bottom: 2rem;"><h2><span class="icon">⚙️</span><span data-i18n="config.title">Grid Configuration</span></h2><div style="margin-bottom: 1.5rem;"><div class="input-group"><label for="titleInput" data-i18n="config.title_label">Título</label><input type="text" id="titleInput" maxlength="100" data-i18n-placeholder="config.title_placeholder"></div></div><div class="config-params-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;"><div style="display: flex; flex-direction: column;"><label class="config-label" data-i18n="config.rows">Number of Rows</label><input type="number" id="rowsInput" min="1" placeholder="e.g., 15" class="config-input"></div><div style="display: flex; flex-direction: column;"><label class="config-label" data-i18n="config.cols">Number of Columns</label><input type="number" id="colsInput" min="1" placeholder="e.g., 15" class="config-input"></div><div style="display: flex; flex-direction: column;"><label class="config-label" data-i18n="config.maxrows">Maximum Rows</label><input type="number" id="maxRowsInput" min="1" placeholder="e.g., 20" class="config-input"></div><div style="display: flex; flex-direction: column;"><label class="config-label" data-i18n="config.interval">Interval (seconds)</label><div style="display: flex; align-items: center; gap: 0.5rem;"><input type="number" id="intervalInput" min="1" placeholder="e.g., 5" class="config-input" style="flex: 1;"><span class="help-tooltip" data-i18n="config.interval_help" title="">?</span></div></div></div><button id="submitButton" class="btn btn-success"><span class="icon">🚀</span><span data-i18n="config.generate">Generate Crossword</span></button><div id="statusMessage" class="status-message hidden"></div></div><div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><h2><span class="icon">💬</span><span data-i18n="messages.title">Server Messages</span></h2><span id="messagesToggle" class="eye-toggle" onclick="toggleMessages()" data-i18n="messages.hide" title="Hide messages">●</span></div><div id="messagesContent" class="messages-container"><ul id="messages" class="messages-list"><li class="messages-empty" data-i18n="messages.waiting">Waiting for server connection...</li></ul></div></div></div><div class="section results-section"><div class="section-header"><h2><span class="icon">✅</span><span data-i18n="solution.title">Solution</span></h2><button id="printSolutionButton" class="btn btn-print"><span class="icon">🖨️</span><span data-i18n="solution.print">Print Solution</span></button></div><div class="canvas-container"><canvas id="solutionCanvas" class="hidden"></canvas><div id="solutionCanvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div></div><div class="clues-container"><div><h3><span class="icon">➡️</span><span data-i18n="solution.horizontal">Horizontal Words</span></h3><div class="table-container"><table id="horizontalSolution"><thead><tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr></thead><tbody></tbody></table></div></div><div><h3><span class="icon">⬇️</span><span data-i18n="solution.vertical">Vertical Words</span></h3><div class="table-container"><table id="verticalSolution"><thead><tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr></thead><tbody></tbody></table></div></div></div></div><div class="section game-section"><div class="section-header"><h2><span class="icon">🎮</span><span data-i18n="game.title">Game</span></h2><button id="printButton" class="btn btn-print"><span class="icon">🖨️</span><span data-i18n="game.print">Print Game</span></button></div><div class="canvas-container"><canvas id="gridCanvas" class="hidden"></canvas><div id="canvasPlaceholder" class="messages-empty" data-i18n="game.placeholder">Grid will appear here after generation</div></div><div class="clues-container"><div><h3><span class="icon">➡️</span><span data-i18n="game.horizontal">Horizontal Clues</span></h3><div class="table-container"><table id="horizontalClues"><thead><tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr></thead><tbody></tbody></table></div></div><div><h3><span class="icon">⬇️</span><span data-i18n="game.vertical">Vertical Clues</span></h3><div class="table-container"><table id="verticalClues"><thead><tr><th class="idCol">ID</th><th data-i18n="game.clue">Clue</th></tr></thead><tbody></tbody></table></div></div></div></div></div></div><script>
 // Global function for About modal - MUST BE FIRST
 function openAboutModal() {
   document.getElementById('aboutModal').classList.add('show');
 }
-
 function closeAboutModal() {
   document.getElementById('aboutModal').classList.remove('show');
 }
-
-// Toggle Messages Section  
+// Toggle Messages Section
 function toggleMessages() {
   var content = document.getElementById('messagesContent');
   var toggle = document.getElementById('messagesToggle');
-  
   if (messagesVisible) {
     content.style.display = 'none';
     toggle.textContent = '○'; // Open circle (closed state - click to open/show)
@@ -875,7 +556,6 @@ function toggleMessages() {
     messagesVisible = true;
   }
 }
-
 // Global variables
 var currentLanguage = 'en';
 var ws;
@@ -884,7 +564,6 @@ var rows = 0, cols = 0, max_rows = 0, interval = 0;
 var messagesVisible = true; // Track messages visibility
 var lastLoadedFileInfo = null; // Track last loaded file info for translation updates
 var num_permutations = 0; // Track number of permutations tried
-
 // Translations object with French and German added
 var translations = {
   en: {
@@ -1027,7 +706,7 @@ var translations = {
     'game.placeholder': 'A grelha aparecerá aqui após a geração',
     'game.horizontal': 'Pistas Horizontais',
     'game.vertical': 'Pistas Verticais',
-    'game.clue': 'Pista',    
+    'game.clue': 'Pista',
     'config.title_label': 'Título',
     'config.title_placeholder': 'Digite o título do jogo...',
     'messages.show': 'Mostrar mensagens',
@@ -1476,15 +1155,21 @@ var translations = {
     'editor.cleared': 'Alle Worteinträge wurden gelöscht'
   }
 };
-
-console.log('Translations loaded:', Object.keys(translations));
-
+// Added by ChatGPT: translations for Select All
+try {
+  translations['en']['editor.select_all'] = translations['en']['editor.select_all'] || 'Select All';
+  translations['pt']['editor.select_all'] = translations['pt']['editor.select_all'] || 'Selecionar Tudo';
+  translations['pt-br']['editor.select_all'] = translations['pt-br']['editor.select_all'] || 'Selecionar Tudo';
+  translations['es']['editor.select_all'] = translations['es']['editor.select_all'] || 'Seleccionar todo';
+  translations['it']['editor.select_all'] = translations['it']['editor.select_all'] || 'Seleziona tutto';
+  translations['fr']['editor.select_all'] = translations['fr']['editor.select_all'] || 'Tout sélectionner';
+  translations['de']['editor.select_all'] = translations['de']['editor.select_all'] || 'Alle auswählen';
+} catch(e) { console.warn('select_all i18n setup failed', e); }
 // Translation function
 function translate(key) {
   var result = translations[currentLanguage] && translations[currentLanguage][key];
   return result || key;
 }
-
 // Translation function with parameters
 function translateWithParams(key, ...params) {
   var template = translate(key);
@@ -1493,21 +1178,14 @@ function translateWithParams(key, ...params) {
   }
   return template;
 }
-
 // Update UI function
 function updateUI() {
-  console.log('Updating UI to language:', currentLanguage);
-  
   var elements = document.querySelectorAll('[data-i18n]');
-  console.log('Found elements with data-i18n:', elements.length);
-
-    for (var i = 0; i < elements.length; i++) {
+  for (var i = 0; i < elements.length; i++) {
       var element = elements[i];
       var key = element.getAttribute('data-i18n');
       var translation = translate(key);
-      
       if (!translation) continue;
-
       if (element.classList.contains("help-tooltip")) {
         // mantém o "?" visível e põe a tradução no tooltip
         element.setAttribute("title", translation);
@@ -1520,21 +1198,16 @@ function updateUI() {
       } else {
         element.textContent = translation;
       }
-
-      console.log('Translated "' + key + '" to "' + translation + '"');
-    }
-
+      }
   // Update placeholders
   var wordInputs = document.querySelectorAll('.word-input');
   for (var i = 0; i < wordInputs.length; i++) {
     wordInputs[i].placeholder = translate('editor.word_placeholder');
   }
-  
   var explanationInputs = document.querySelectorAll('.explanation-input');
   for (var i = 0; i < explanationInputs.length; i++) {
     explanationInputs[i].placeholder = translate('editor.clue_placeholder');
   }
-  
   // Tratar placeholders especiais
   var elementsWithPlaceholder = document.querySelectorAll('[data-i18n-placeholder]');
   for (var i = 0; i < elementsWithPlaceholder.length; i++) {
@@ -1545,7 +1218,6 @@ function updateUI() {
       element.placeholder = translation;
     }
   }
-
     // Tratar títulos especiais (tooltips)
     var elementsWithTitle = document.querySelectorAll('[data-i18n-title]');
     for (var i = 0; i < elementsWithTitle.length; i++) {
@@ -1555,21 +1227,18 @@ function updateUI() {
       if (translation) {
         element.title = translation;
       }
-    }  
-
+    }
   // Update config placeholders
-  var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' : 
+  var placeholderPrefix = currentLanguage === 'pt' ? 'ex.' :
                          currentLanguage === 'pt-br' ? 'ex.' :
                          currentLanguage === 'es' ? 'ej.' :
                          currentLanguage === 'it' ? 'es.' :
                          currentLanguage === 'fr' ? 'ex.' :
                          currentLanguage === 'de' ? 'z.B.' : 'e.g.';
-  
   document.getElementById('rowsInput').placeholder = placeholderPrefix + ', 15';
   document.getElementById('colsInput').placeholder = placeholderPrefix + ', 15';
   document.getElementById('maxRowsInput').placeholder = placeholderPrefix + ', 20';
   document.getElementById('intervalInput').placeholder = placeholderPrefix + ', 5';
-  
   // Update eye toggle tooltip based on current state
   var toggleEl = document.getElementById('messagesToggle');
   if (toggleEl) {
@@ -1579,7 +1248,6 @@ function updateUI() {
       toggleEl.title = translate('messages.show');
     }
   }
-  
   // Update file status message if there was a recent file load
   if (lastLoadedFileInfo) {
     var statusEl = document.getElementById("fileStatus");
@@ -1589,53 +1257,38 @@ function updateUI() {
       statusEl.textContent = newText;
     }
   }
-  
   updateEntryCount();
 }
-
 // Switch language function
 function switchLanguage(lang) {
-  console.log('Switching language to:', lang);
-  
   if (!translations[lang]) {
     console.error('Language not found:', lang);
     return;
   }
-  
   currentLanguage = lang;
-  
   // Update active button
   var buttons = document.querySelectorAll('.lang-btn');
   for (var i = 0; i < buttons.length; i++) {
     buttons[i].classList.remove('active');
   }
-  
   var activeBtn = document.querySelector('[data-lang="' + lang + '"]');
   if (activeBtn) {
     activeBtn.classList.add('active');
-    console.log('Set active button for:', lang);
-  }
-  
+    }
   updateUI();
-  
   // Save to localStorage
   try {
     localStorage.setItem('crossword-language', lang);
-    console.log('Saved language to localStorage:', lang);
-  } catch (e) {
-    console.log('LocalStorage not available');
-  }
+    } catch (e) {
+    }
 }
-
 // Decide automaticamente qual URL usar
 function getWebSocketURL() {
   let host = window.location.hostname;
-
   if (!host || host === "") {
     // Se estiver rodando como file:/// (abrindo direto do disco)
     host = "localhost";
   }
-
   if (host === "localhost") {
     // Ambiente de desenvolvimento local
     return "ws://localhost:9002";
@@ -1644,45 +1297,34 @@ function getWebSocketURL() {
     return "wss://" + host + "/ws/";
   }
 }
-
 // WebSocket functions
 function connectWebSocket() {
   try {
-
     ws = new WebSocket(getWebSocketURL());
-    
     ws.onopen = function() {
-      console.log("WebSocket connected");
       updateMessages(translate("server.connected"), "success");
     };
-    
     ws.onerror = function(e) {
       console.error("WebSocket error", e);
       updateMessages(translate("server.connect_failed"), "error");
     };
-    
     ws.onclose = function() {
-      console.log("WebSocket disconnected");
       updateMessages(translate("server.disconnected"), "warning");
     };
-    
     ws.onmessage = handleWebSocketMessage;
   } catch (error) {
     console.error("WebSocket connection failed:", error);
     updateMessages(translate("server.websocket_failed"), "error");
   }
 }
-
 function handleWebSocketMessage(event) {
   try {
     var msg = JSON.parse(event.data);
-    
     if (msg.response === "solved") {
       renderSolutionTable(msg.layouts);
       renderSolutionGrid(msg);
       renderGrid(msg);
       renderClues(msg.layouts);
-      
       // Add solved message with statistics
       if (msg.total_time && msg.at_permutation && msg.max_permutations) {
         var atPermutation = parseInt(msg.at_permutation.toString().replace(/"/g, ""));
@@ -1694,7 +1336,6 @@ function handleWebSocketMessage(event) {
     } else {
       var text = "";
       var type = "info";
-      
       if (msg.response === "configuration") {
         // Show total combinations tried before starting new configuration
         var messagesList = document.getElementById("messages");
@@ -1702,17 +1343,14 @@ function handleWebSocketMessage(event) {
         if (lastMessage && !lastMessage.classList.contains("messages-empty") && lastMessage.textContent.indexOf('#') !== -1) {
           lastMessage.textContent += " " + num_permutations.toLocaleString() + translate('server.combinations_tried');
         }
-        
         // Reset permutations counter for new configuration
         num_permutations = 0;
-        
         var r = parseInt(msg.rows && msg.rows.replace(/"/g, "")) || 0;
         var c = parseInt(msg.cols && msg.cols.replace(/"/g, "")) || 0;
         text = translateWithParams("server.trying", r, c) + " ";
       } else if (msg.response === "tries") {
         // Increment permutations counter
         num_permutations += 20000;
-        
         // Find the last message and append '#' to it
         var messagesList = document.getElementById("messages");
         var lastMessage = messagesList.lastElementChild;
@@ -1726,7 +1364,6 @@ function handleWebSocketMessage(event) {
               var currentText = lastMessage.textContent;
               var lastLineBreak = currentText.lastIndexOf('\n');
               var currentLineLength = lastLineBreak === -1 ? currentText.length : currentText.length - lastLineBreak - 1;
-              
               if (currentLineLength >= 80) {
                 lastMessage.textContent += "\n#";
               } else {
@@ -1763,7 +1400,6 @@ function handleWebSocketMessage(event) {
       } else {
         text = JSON.stringify(msg, null, 2);
       }
-      
       if (text) {
         updateMessages(text, type);
       }
@@ -1773,21 +1409,16 @@ function handleWebSocketMessage(event) {
     updateMessages(translate("server.invalid_message"), "warning");
   }
 }
-
 function updateMessages(text, type) {
   var messagesList = document.getElementById("messages");
   var emptyMessage = messagesList.querySelector(".messages-empty");
-  
   if (emptyMessage) {
     emptyMessage.remove();
   }
-  
   var li = document.createElement("li");
   li.textContent = text;
   li.className = "message-" + type;
-  
   messagesList.appendChild(li);
-  
   // Force scroll to bottom with a small delay to ensure rendering
   setTimeout(function() {
     var messagesContainer = document.querySelector('.messages-container');
@@ -1795,12 +1426,10 @@ function updateMessages(text, type) {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   }, 10);
-  
   while (messagesList.children.length > 50) {
     messagesList.removeChild(messagesList.firstChild);
   }
 }
-
 function clearMessages() {
   var messagesList = document.getElementById("messages");
   messagesList.innerHTML = '';
@@ -1810,14 +1439,12 @@ function clearMessages() {
   emptyLi.textContent = translate("messages.waiting");
   messagesList.appendChild(emptyLi);
 }
-
 function clearSolution() {
   // Clear solution tables
   var horizSolution = document.getElementById("horizontalSolution").querySelector("tbody");
   var vertSolution = document.getElementById("verticalSolution").querySelector("tbody");
   horizSolution.innerHTML = "";
   vertSolution.innerHTML = "";
-  
   // Clear and hide solution canvas
   var solutionCanvas = document.getElementById("solutionCanvas");
   var solutionPlaceholder = document.getElementById("solutionCanvasPlaceholder");
@@ -1830,14 +1457,12 @@ function clearSolution() {
     solutionPlaceholder.style.display = "block";
   }
 }
-
 function clearGame() {
   // Clear game tables
   var horizClues = document.getElementById("horizontalClues").querySelector("tbody");
   var vertClues = document.getElementById("verticalClues").querySelector("tbody");
   horizClues.innerHTML = "";
   vertClues.innerHTML = "";
-  
   // Clear and hide game canvas
   var gameCanvas = document.getElementById("gridCanvas");
   var gamePlaceholder = document.getElementById("canvasPlaceholder");
@@ -1850,17 +1475,14 @@ function clearGame() {
     gamePlaceholder.style.display = "block";
   }
 }
-
 // Word entry functions
 function addWordEntryRow(word, explanation) {
   word = word || '';
   explanation = explanation || '';
-  
   var tbody = document.getElementById("wordEntryTableBody");
   var row = document.createElement("tr");
   row.className = "word-entry-row";
-  
-  row.innerHTML = 
+  row.innerHTML =
     '<td>' +
       '<input type="text" class="word-input" placeholder="' + translate('editor.word_placeholder') + '" value="' + word + '" ' +
              'oninput="this.value = this.value.toUpperCase().replace(/[^A-Z]/g, \'\')" maxlength="20">' +
@@ -1868,67 +1490,52 @@ function addWordEntryRow(word, explanation) {
     '<td>' +
       '<input type="text" class="explanation-input" placeholder="' + translate('editor.clue_placeholder') + '" value="' + explanation + '" maxlength="200">' +
     '</td>' +
-    '<td style="text-align: center;">' +
-      '<button class="remove-row-btn" onclick="removeWordEntryRow(this)" title="Remove this entry">' +
-        '✘' +
-      '</button>' +
+    '<td style="text-align:center;">' +
+      '<input type="checkbox" class="include-word" checked>' +
     '</td>';
-  
   tbody.appendChild(row);
   updateEntryCount();
-  
   if (!word) {
     var wordInput = row.querySelector('.word-input');
-    wordInput.focus();
+    if (wordInput) wordInput.focus();
   }
 }
-
 function removeWordEntryRow(button) {
   var row = button.closest('tr');
   row.remove();
   updateEntryCount();
 }
-
 function getEntriesFromTable() {
   var rows = document.querySelectorAll("#wordEntryTableBody .word-entry-row");
   var tableEntries = [];
-  
   for (var i = 0; i < rows.length; i++) {
     var row = rows[i];
     var word = row.querySelector('.word-input').value.trim();
     var explanation = row.querySelector('.explanation-input').value.trim();
-    
-    if (word && explanation) {
+    if (word && explanation && (row.querySelector('.include-word') ? row.querySelector('.include-word').checked : true)) {
       tableEntries.push({ word: word, explanation: explanation });
     }
   }
-  
   return tableEntries;
 }
-
 function updateEntryCount() {
   var validEntries = getEntriesFromTable();
   var countEl = document.getElementById("entryCount");
   countEl.innerHTML = validEntries.length + ' <span data-i18n="editor.entries">' + translate('editor.entries') + '</span>';
   entries = validEntries;
 }
-
 // Grid rendering functions
 function renderGrid(msg) {
   var canvas = document.getElementById("gridCanvas");
   var ctx = canvas.getContext("2d");
-
   var nRows = parseInt(msg.rows.replace(/"/g, ""));
   var nCols = parseInt(msg.cols.replace(/"/g, ""));
-
   var activeCells = new Set();
-  
   for (var i = 0; i < msg.layouts.length; i++) {
     var layout = msg.layouts[i];
     var startRow = parseInt(layout.row);
     var startCol = parseInt(layout.col);
     var wordLength = layout.word.length;
-    
     if (layout.orientation === "H") {
       for (var j = 0; j < wordLength; j++) {
         activeCells.add(startRow + "," + (startCol + j));
@@ -1939,9 +1546,7 @@ function renderGrid(msg) {
       }
     }
   }
-
   var minRow = nRows, maxRow = -1, minCol = nCols, maxCol = -1;
-  
   activeCells.forEach(function(cellKey) {
     var parts = cellKey.split(',');
     var row = parseInt(parts[0]);
@@ -1951,58 +1556,43 @@ function renderGrid(msg) {
     minCol = Math.min(minCol, col);
     maxCol = Math.max(maxCol, col);
   });
-
   var effectiveRows = maxRow - minRow + 1;
   var effectiveCols = maxCol - minCol + 1;
-
   var maxCanvasSize = 700;
   var cellSize = Math.min(
     Math.floor(maxCanvasSize / effectiveCols),
     Math.floor(maxCanvasSize / effectiveRows),
     50
   );
-  
   var padding = 20;
   canvas.width = cellSize * effectiveCols + padding * 2;
   canvas.height = cellSize * effectiveRows + padding * 2;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   activeCells.forEach(function(cellKey) {
     var parts = cellKey.split(',');
     var absoluteRow = parseInt(parts[0]);
     var absoluteCol = parseInt(parts[1]);
-    
     var relativeRow = absoluteRow - minRow;
     var relativeCol = absoluteCol - minCol;
-    
     var x = relativeCol * cellSize + padding;
     var y = relativeRow * cellSize + padding;
-    
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x, y, cellSize, cellSize);
-    
     ctx.strokeStyle = "#2d3748";
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, cellSize, cellSize);
   });
-
   ctx.fillStyle = "#2d3748";
   ctx.font = "bold " + Math.max(cellSize / 6, 8) + "px Arial";
-  
   for (var i = 0; i < msg.layouts.length; i++) {
     var layout = msg.layouts[i];
     var absoluteRow = parseInt(layout.row);
     var absoluteCol = parseInt(layout.col);
-    
     var relativeRow = absoluteRow - minRow;
     var relativeCol = absoluteCol - minCol;
-    
     var x = relativeCol * cellSize + padding;
     var y = relativeRow * cellSize + padding;
-    
     var numberX, numberY;
-    
     if (layout.orientation === "H") {
       numberX = x + cellSize - 3;
       numberY = y + 3;
@@ -2012,32 +1602,25 @@ function renderGrid(msg) {
       numberY = y + 3;
       ctx.textAlign = "left";
     }
-    
     ctx.textBaseline = "top";
     ctx.fillText(layout.id || "", numberX, numberY);
   }
-
   canvas.classList.remove("hidden");
   document.getElementById("canvasPlaceholder").style.display = "none";
 }
-
 function renderSolutionTable(layouts) {
   var horizTbody = document.getElementById("horizontalSolution").querySelector("tbody");
   var vertTbody = document.getElementById("verticalSolution").querySelector("tbody");
-  
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
-  
     for (var i = 0; i < layouts.length; i++) {
       var layout = layouts[i];
       var letterCount = layout.word ? layout.word.length : 0;
       var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
-      
       var row = document.createElement("tr");
-      row.innerHTML = 
+      row.innerHTML =
         '<td class="idCol">' + (layout.id || "") + '</td>' +
         '<td>' + explanationWithCount + '</td>';
-      
       if (layout.orientation === "H") {
         horizTbody.appendChild(row);
       } else {
@@ -2045,14 +1628,11 @@ function renderSolutionTable(layouts) {
       }
     }
 }
-
 function renderSolutionGrid(msg) {
   var canvas = document.getElementById("solutionCanvas");
   var ctx = canvas.getContext("2d");
-
   var nRows = parseInt(msg.rows.replace(/"/g, ""));
   var nCols = parseInt(msg.cols.replace(/"/g, ""));
-
   // Create grid with letters
   var grid = [];
   for (var i = 0; i < nRows; i++) {
@@ -2061,16 +1641,13 @@ function renderSolutionGrid(msg) {
       grid[i][j] = '';
     }
   }
-
   var activeCells = new Set();
-  
   // Fill grid with words
   for (var i = 0; i < msg.layouts.length; i++) {
     var layout = msg.layouts[i];
     var startRow = parseInt(layout.row);
     var startCol = parseInt(layout.col);
     var word = layout.word;
-    
     if (layout.orientation === "H") {
       for (var j = 0; j < word.length; j++) {
         grid[startRow][startCol + j] = word[j];
@@ -2083,10 +1660,8 @@ function renderSolutionGrid(msg) {
       }
     }
   }
-
   // Find bounds
   var minRow = nRows, maxRow = -1, minCol = nCols, maxCol = -1;
-  
   activeCells.forEach(function(cellKey) {
     var parts = cellKey.split(',');
     var row = parseInt(parts[0]);
@@ -2096,43 +1671,33 @@ function renderSolutionGrid(msg) {
     minCol = Math.min(minCol, col);
     maxCol = Math.max(maxCol, col);
   });
-
   var effectiveRows = maxRow - minRow + 1;
   var effectiveCols = maxCol - minCol + 1;
-
   var maxCanvasSize = 700;
   var cellSize = Math.min(
     Math.floor(maxCanvasSize / effectiveCols),
     Math.floor(maxCanvasSize / effectiveRows),
     50
   );
-  
   var padding = 20;
   canvas.width = cellSize * effectiveCols + padding * 2;
   canvas.height = cellSize * effectiveRows + padding * 2;
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   // Draw cells and letters
   activeCells.forEach(function(cellKey) {
     var parts = cellKey.split(',');
     var absoluteRow = parseInt(parts[0]);
     var absoluteCol = parseInt(parts[1]);
-    
     var relativeRow = absoluteRow - minRow;
     var relativeCol = absoluteCol - minCol;
-    
     var x = relativeCol * cellSize + padding;
     var y = relativeRow * cellSize + padding;
-    
     // Draw cell
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(x, y, cellSize, cellSize);
-    
     ctx.strokeStyle = "#2d3748";
     ctx.lineWidth = 2;
     ctx.strokeRect(x, y, cellSize, cellSize);
-    
     // Draw letter
     var letter = grid[absoluteRow][absoluteCol];
     if (letter) {
@@ -2143,24 +1708,18 @@ function renderSolutionGrid(msg) {
       ctx.fillText(letter, x + cellSize/2, y + cellSize/2);
     }
   });
-
   // Draw numbers
   ctx.fillStyle = "#2d3748";
   ctx.font = "bold " + Math.max(cellSize / 6, 8) + "px Arial";
-  
   for (var i = 0; i < msg.layouts.length; i++) {
     var layout = msg.layouts[i];
     var absoluteRow = parseInt(layout.row);
     var absoluteCol = parseInt(layout.col);
-    
     var relativeRow = absoluteRow - minRow;
     var relativeCol = absoluteCol - minCol;
-    
     var x = relativeCol * cellSize + padding;
     var y = relativeRow * cellSize + padding;
-    
     var numberX, numberY;
-    
     if (layout.orientation === "H") {
       numberX = x + cellSize - 3;
       numberY = y + 3;
@@ -2170,32 +1729,25 @@ function renderSolutionGrid(msg) {
       numberY = y + 3;
       ctx.textAlign = "left";
     }
-    
     ctx.textBaseline = "top";
     ctx.fillText(layout.id || "", numberX, numberY);
   }
-
   canvas.classList.remove("hidden");
   document.getElementById("solutionCanvasPlaceholder").style.display = "none";
 }
-
 function renderClues(layouts) {
   var horizTbody = document.getElementById("horizontalClues").querySelector("tbody");
   var vertTbody = document.getElementById("verticalClues").querySelector("tbody");
-  
   horizTbody.innerHTML = "";
   vertTbody.innerHTML = "";
-  
     for (var i = 0; i < layouts.length; i++) {
       var layout = layouts[i];
       var letterCount = layout.word ? layout.word.length : 0;
       var explanationWithCount = (layout.explanation || "") + " " + translateWithParams("letters_count", letterCount);
-      
       var row = document.createElement("tr");
-      row.innerHTML = 
+      row.innerHTML =
         '<td class="idCol">' + (layout.id || "") + '</td>' +
         '<td>' + explanationWithCount + '</td>';
-      
       if (layout.orientation === "H") {
         horizTbody.appendChild(row);
       } else {
@@ -2203,12 +1755,10 @@ function renderClues(layouts) {
       }
     }
 }
-
 // Input validation
 function validateAndAssign(e, assignFunc) {
   var value = e.target.value.trim();
   var num = parseInt(value, 10);
-
   if (!value || isNaN(num) || num <= 0) {
     e.target.style.borderColor = "#ef4444";
     assignFunc(0);
@@ -2217,85 +1767,56 @@ function validateAndAssign(e, assignFunc) {
     assignFunc(num);
   }
 }
-
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM Content Loaded - Starting initialization');
-  
   // Load saved language
   var savedLang = 'en';
   try {
     savedLang = localStorage.getItem('crossword-language') || 'en';
-    console.log('Loaded saved language:', savedLang);
-  } catch (e) {
-    console.log('LocalStorage not available');
-  }
-  
+    } catch (e) {
+    }
   // Set up language buttons
-  console.log('Setting up language buttons...');
   var langButtons = document.querySelectorAll('.lang-btn');
-  console.log('Found language buttons:', langButtons.length);
-  
   for (var i = 0; i < langButtons.length; i++) {
     var btn = langButtons[i];
     var lang = btn.getAttribute('data-lang');
-    console.log('Setting up button for:', lang);
-    
     // Use closure to capture lang value
     (function(language) {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('Language button clicked:', language);
         switchLanguage(language);
       });
     })(lang);
   }
-  
   // Initialize language
-  console.log('Initializing language system...');
   switchLanguage(savedLang);
-  
   // Connect WebSocket
-  console.log('Connecting to WebSocket...');
   connectWebSocket();
-  
   // Add initial word entry rows
-  console.log('Adding initial word entry rows...');
   addWordEntryRow();
   addWordEntryRow();
   addWordEntryRow();
-  
   // Set up other event listeners
-  console.log('Setting up other event listeners...');
-  
   // File operations
   document.getElementById("loadButton").onclick = function() {
     document.getElementById("fileInput").click();
   };
-  
   document.getElementById("fileInput").addEventListener("change", function(e) {
     var file = e.target.files[0];
     var statusEl = document.getElementById("fileStatus");
-    
     if (!file) return;
-    
     // Clear messages and solution when loading new file
     clearMessages();
     clearSolution();
     clearGame();
-    
-    console.log('Loading file:', file.name);
     statusEl.className = "status-message loading";
     statusEl.textContent = translate("file.loading");
     statusEl.classList.remove("hidden");
-    
     var reader = new FileReader();
     reader.onload = function(ev) {
       try {
-        console.log('File content loaded, parsing...');
         var lines = ev.target.result.split("\n");
         var newEntries = [];
-        
         for (var i = 0; i < lines.length; i++) {
           var line = lines[i].trim();
           if (line && line.includes("|")) {
@@ -2308,34 +1829,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
         }
-        
-        console.log('Parsed entries:', newEntries.length);
         entries = newEntries;
-        
         // Store file info for language updates
         lastLoadedFileInfo = {
           count: newEntries.length,
           filename: file.name
         };
-        
         statusEl.className = "status-message status-success";
         statusEl.textContent = translateWithParams('file.loaded_success', newEntries.length);
         updateMessages(translateWithParams('file.loaded_from', newEntries.length, file.name), "success");
-        
         // Clear existing table and populate with loaded data
         document.getElementById("wordEntryTableBody").innerHTML = "";
         for (var j = 0; j < newEntries.length; j++) {
           addWordEntryRow(newEntries[j].word, newEntries[j].explanation);
         }
-        
         // Add a few empty rows for easy editing
         if (newEntries.length > 0) {
           addWordEntryRow();
           addWordEntryRow();
         }
-        
         updateEntryCount();
-        
       } catch (error) {
         console.error('Error parsing file:', error);
         lastLoadedFileInfo = null; // Clear file info on error
@@ -2344,31 +1857,24 @@ document.addEventListener('DOMContentLoaded', function() {
         updateMessages("Failed to load file", "error");
       }
     };
-    
     reader.onerror = function() {
       console.error('FileReader error');
       statusEl.className = "status-message status-error";
       statusEl.textContent = "Failed to read file.";
     };
-    
     reader.readAsText(file);
   });
-  
   document.getElementById("saveButton").onclick = function() {
     var currentEntries = getEntriesFromTable();
-    
     if (currentEntries.length === 0) {
       alert("No word entries to save. Please add some words first.");
       return;
     }
-    
     var content = currentEntries
       .map(function(entry) { return entry.word + "|" + entry.explanation; })
       .join('\n');
-    
     var blob = new Blob([content], { type: 'text/plain' });
     var url = window.URL.createObjectURL(blob);
-    
     var a = document.createElement('a');
     a.href = url;
     a.download = 'crossword.cross';
@@ -2376,54 +1882,26 @@ document.addEventListener('DOMContentLoaded', function() {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
-    
     updateMessages(translateWithParams("file.saved", currentEntries.length), "success");
   };
-  
   // Add/Clear buttons
   document.getElementById("addRowButton").onclick = function() {
     addWordEntryRow();
   };
-  
-  document.getElementById("clearAllButton").onclick = function() {
-    var confirmMessage = "Are you sure you want to clear all word entries? This action cannot be undone.";
-    
-    // Get translated confirmation message if available
-    if (currentLanguage === 'pt') {
-      confirmMessage = "Tem a certeza que quer limpar todas as entradas? Esta acção não pode ser desfeita.";
-    } else if (currentLanguage === 'pt-br') {
-      confirmMessage = "Tem certeza que quer limpar todas as entradas? Esta ação não pode ser desfeita.";
-    } else if (currentLanguage === 'es') {
-      confirmMessage = "¿Está seguro de que desea borrar todas las entradas? Esta acción no se puede deshacer.";
-    } else if (currentLanguage === 'it') {
-      confirmMessage = "Sei sicuro di voler cancellare tutte le voci? Questa azione non può essere annullata.";
-    } else if (currentLanguage === 'fr') {
-      confirmMessage = "Êtes-vous sûr de vouloir effacer toutes les entrées ? Cette action ne peut pas être annulée.";
-    } else if (currentLanguage === 'de') {
-      confirmMessage = "Sind Sie sicher, dass Sie alle Einträge löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.";
-    }
-    
-    if (confirm(confirmMessage)) {
-      document.getElementById("wordEntryTableBody").innerHTML = "";
-      entries = [];
-      lastLoadedFileInfo = null; // Clear file info when clearing entries
-      
-      // Hide the file status message
-      var statusEl = document.getElementById("fileStatus");
-      if (statusEl) {
-        statusEl.classList.add("hidden");
+  // Select All checkbox behavior
+  (function(){
+    try{
+      var selectAll = document.getElementById('selectAllCheckbox');
+      var tbody = document.getElementById('wordEntryTableBody');
+      if (selectAll && tbody) {
+        selectAll.addEventListener('change', function(e){
+          var checked = e.target.checked;
+          var boxes = tbody.querySelectorAll('.include-word');
+          for (var i=0;i<boxes.length;i++){ boxes[i].checked = checked; }
+        });
       }
-      
-      // Clear messages and solution
-      clearMessages();
-      clearSolution();
-      clearGame();
-      
-      updateEntryCount();
-      updateMessages(translate("editor.cleared"), "info");
-    }
-  };
-  
+    }catch(e){ console.warn('SelectAll setup error', e); }
+  })()
   // Input validation for configuration
   var inputs = [
     { id: "rowsInput", setter: function(v) { rows = v; } },
@@ -2431,43 +1909,35 @@ document.addEventListener('DOMContentLoaded', function() {
     { id: "maxRowsInput", setter: function(v) { max_rows = v; } },
     { id: "intervalInput", setter: function(v) { interval = v; } }
   ];
-
   for (var i = 0; i < inputs.length; i++) {
     var input = document.getElementById(inputs[i].id);
     var setter = inputs[i].setter;
-    
     (function(inputEl, setterFunc) {
       inputEl.addEventListener("input", function(e) {
         validateAndAssign(e, setterFunc);
       });
     })(input, setter);
   }
-  
   // Submit button
   document.getElementById("submitButton").onclick = function() {
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       alert("WebSocket not connected. Please check if your server is running.");
       return;
     }
-    
     if (!rows || !cols || !max_rows || !interval) {
       alert("All configuration fields must be filled with positive numbers.");
       return;
     }
-    
     entries = getEntriesFromTable();
-    
     if (entries.length === 0) {
       alert("Please add some word entries first.");
       return;
     }
-    
     // Clear messages before starting generation
     clearMessages();
     clearSolution();
     clearGame();
     updateMessages(translate("server.generating"), "info");
-
     var request = {
       request: "create",
       rows: rows,
@@ -2476,26 +1946,20 @@ document.addEventListener('DOMContentLoaded', function() {
       interval: interval,
       entries: entries
     };
-    
     ws.send(JSON.stringify(request));
   };
-  
   // Print buttons
   document.getElementById("printButton").onclick = function() {
-    console.log('Print Game button clicked');
     var canvas = document.getElementById("gridCanvas");
     if (canvas.classList.contains("hidden")) {
       alert("No crossword puzzle to print. Please generate a crossword first.");
       return;
     }
-    
     // Obter o título do input ou usar o padrão
     var gameTitle = document.getElementById("titleInput").value.trim() || translate('game.title');
-    
     var imgData = canvas.toDataURL("image/png");
     var horizTable = document.getElementById("horizontalClues").outerHTML;
     var vertTable = document.getElementById("verticalClues").outerHTML;
-    
     var printWindow = window.open("", "_blank");
     printWindow.document.write(
       '<html>' +
@@ -2529,24 +1993,19 @@ document.addEventListener('DOMContentLoaded', function() {
       printWindow.close();
     };
   };
-
   document.getElementById("printSolutionButton").onclick = function() {
-    console.log('Print Solution button clicked');
     var horizSolution = document.getElementById("horizontalSolution");
     var vertSolution = document.getElementById("verticalSolution");
     var solutionCanvas = document.getElementById("solutionCanvas");
-    
-    if (horizSolution.querySelector("tbody").children.length === 0 && 
+    if (horizSolution.querySelector("tbody").children.length === 0 &&
         vertSolution.querySelector("tbody").children.length === 0) {
       alert("No solution to print. Please generate a crossword first.");
       return;
     }
-    
     var canvasImg = "";
     if (solutionCanvas && !solutionCanvas.classList.contains("hidden")) {
       canvasImg = '<img src="' + solutionCanvas.toDataURL("image/png") + '" alt="Solution Grid" style="max-width: 100%; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />';
     }
-    
     var printWindow = window.open("", "_blank");
     printWindow.document.write(
       '<html>' +
@@ -2579,52 +2038,7 @@ document.addEventListener('DOMContentLoaded', function() {
       printWindow.close();
     };
   };
-  
   // Initialize eye toggle tooltip
   document.getElementById('messagesToggle').title = translate('messages.hide');
-  
-  console.log('Initialization complete!');
-});
-
-console.log('JavaScript loading complete!');
-</script>
-
-<!-- About Modal -->
-<div id="aboutModal" class="modal">
-  <div style="background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); position: relative;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;">
-      <h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;" data-i18n="about.title"></h2>
-      <button onclick="closeAboutModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; color: #6b7280;">✕</button>
-    </div>
-    <div style="font-size: 1rem; line-height: 1.7; color: #374151;">
-      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📖 <span data-i18n="about.how_to_use"></span></h3>
-      <p style="margin-bottom: 1rem;" data-i18n="about.description"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.save_info"></p>
-      <p style="font-family: monospace; background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin: 1rem 0;" data-i18n="about.file_line_format"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.format_example"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.grid_config"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.example"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.solution"></p>
-      <p style="margin-bottom: 1rem;" data-i18n="about.game"></p>
-      
-      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">🚀 <span data-i18n="about.future"></span></h3>
-      <p style="margin-bottom: 1rem;" data-i18n="about.future_desc"></p>
-      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature1"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature2"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature3"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature4"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.feature5"></li>
-      </ul>
-      
-      <h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📋 <span data-i18n="about.terms"></span></h3>
-      <ul style="margin: 1rem 0; padding-left: 1.5rem;">
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.term1"></li>
-        <li style="margin-bottom: 0.5rem;" data-i18n="about.term2"></li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-</body>
-</html>
+  });
+</script><div id="aboutModal" class="modal"><div style="background: white; border-radius: 12px; padding: 2rem; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); position: relative;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #e2e8f0;"><h2 style="font-size: 1.8rem; font-weight: 700; color: #1e293b; margin: 0;" data-i18n="about.title"></h2><button onclick="closeAboutModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; color: #6b7280;">✕</button></div><div style="font-size: 1rem; line-height: 1.7; color: #374151;"><h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📖 <span data-i18n="about.how_to_use"></span></h3><p style="margin-bottom: 1rem;" data-i18n="about.description"></p><p style="margin-bottom: 1rem;" data-i18n="about.save_info"></p><p style="font-family: monospace; background: #f3f4f6; padding: 0.5rem; border-radius: 4px; margin: 1rem 0;" data-i18n="about.file_line_format"></p><p style="margin-bottom: 1rem;" data-i18n="about.format_example"></p><p style="margin-bottom: 1rem;" data-i18n="about.grid_config"></p><p style="margin-bottom: 1rem;" data-i18n="about.example"></p><p style="margin-bottom: 1rem;" data-i18n="about.solution"></p><p style="margin-bottom: 1rem;" data-i18n="about.game"></p><h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">🚀 <span data-i18n="about.future"></span></h3><p style="margin-bottom: 1rem;" data-i18n="about.future_desc"></p><ul style="margin: 1rem 0; padding-left: 1.5rem;"><li style="margin-bottom: 0.5rem;" data-i18n="about.feature1"></li><li style="margin-bottom: 0.5rem;" data-i18n="about.feature2"></li><li style="margin-bottom: 0.5rem;" data-i18n="about.feature3"></li><li style="margin-bottom: 0.5rem;" data-i18n="about.feature4"></li><li style="margin-bottom: 0.5rem;" data-i18n="about.feature5"></li></ul><h3 style="color: #1e293b; font-size: 1.3rem; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem;">📋 <span data-i18n="about.terms"></span></h3><ul style="margin: 1rem 0; padding-left: 1.5rem;"><li style="margin-bottom: 0.5rem;" data-i18n="about.term1"></li><li style="margin-bottom: 0.5rem;" data-i18n="about.term2"></li></ul></div></div></div></body></html>

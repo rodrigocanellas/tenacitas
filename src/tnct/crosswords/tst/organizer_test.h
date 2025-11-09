@@ -6,7 +6,7 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include "tnct/async/dispatcher.h"
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/crosswords/bus/internal/organizer.h"
 #include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
 #include "tnct/crosswords/evt/internal/grid_create_solved.h"
@@ -14,10 +14,10 @@
 #include "tnct/crosswords/evt/internal/grid_create_stop.h"
 #include "tnct/crosswords/evt/internal/grid_create_unsolved.h"
 #include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -31,10 +31,10 @@ struct organizer_test_000
     return "Organizes a simple grid";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using logger     = log::cerr;
-    using dispatcher = tnct::async::dispatcher<
+    using dispatcher = tnct::async::bus::dispatcher<
         logger, evt::internal::grid_permutations_tried,
         evt::internal::grid_create_solved, evt::internal::grid_create_start,
         evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -63,7 +63,7 @@ struct organizer_test_000
     organizer _organizer{_logger, _dispatcher};
     if (_organizer(_grid))
     {
-      TNCT_LOG_TST(_logger, format::fmt(*_grid));
+      TNCT_LOG_TST(_logger, format::bus::fmt(*_grid));
       return true;
     }
     return false;
@@ -77,11 +77,11 @@ struct organizer_test_001
     return "Fails to organize a grid for 'mouth' and 'never'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger     = log::cerr;
-    using dispatcher = tnct::async::dispatcher<
+    using dispatcher = tnct::async::bus::dispatcher<
         logger, evt::internal::grid_permutations_tried,
         evt::internal::grid_create_solved, evt::internal::grid_create_start,
         evt::internal::grid_create_stop, evt::internal::grid_create_unsolved,
@@ -98,7 +98,7 @@ struct organizer_test_001
     auto _entries{std::make_shared<entries>(
         entries{{"mouth", "expl 1"}, {"never", "expl 3"}})};
 
-    // TNCT_LOG_TST(_logger, format::fmt(*_entries));
+    // TNCT_LOG_TST(_logger, format::bus::fmt(*_entries));
 
     crosswords::dat::permutation _permutation;
     _permutation.push_back(_entries->begin());
@@ -117,7 +117,7 @@ struct organizer_test_001
     }
     TNCT_LOG_ERR(
         _logger,
-        format::fmt("Grid organized, but it should not have been", *_grid));
+        format::bus::fmt("Grid organized, but it should not have been", *_grid));
     return false;
   }
 };
@@ -129,7 +129,7 @@ struct organizer_test_002
     return "Organizes grid that will require the first word to be repositioned";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     using logger = log::cerr;
@@ -139,8 +139,8 @@ struct organizer_test_002
     using crosswords::evt::internal::grid_create_unsolved;
 
     using dispatcher =
-        async::dispatcher<logger, grid_create_solved, grid_create_stop,
-                          grid_create_unsolved>;
+        async::bus::dispatcher<logger, grid_create_solved, grid_create_stop,
+                               grid_create_unsolved>;
 
     using organizer = crosswords::bus::internal::organizer<logger, dispatcher>;
     using crosswords::dat::entries;
@@ -167,7 +167,7 @@ struct organizer_test_002
 
     if (_organize(_grid))
     {
-      TNCT_LOG_TST(_logger, format::fmt(*_grid));
+      TNCT_LOG_TST(_logger, format::bus::fmt(*_grid));
 
       grid::const_layout_ite _first  = _grid->begin();
       grid::const_layout_ite _second = std::next(_grid->begin());

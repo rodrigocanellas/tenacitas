@@ -13,10 +13,10 @@
 #include "tnct/async/exp/dispatcher_000/event_id.h"
 #include "tnct/async/exp/dispatcher_000/handler_type_id.h"
 #include "tnct/async/exp/dispatcher_000/logger.h"
-#include "tnct/async/handling_name.h"
-#include "tnct/async/result.h"
+#include "tnct/async/dat/handling_name.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/async/cpt/has_publish_method.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
@@ -33,13 +33,13 @@ struct handler
   using events_handled = std::tuple<event>;
 
   handler(logger &p_logger, t_dispatcher &p_dispatcher,
-          async::handling_name p_handling_name,
+          async::dat::handling_name p_handling_name,
           std::chrono::milliseconds p_sleep_to_simulate_work)
       : m_logger(p_logger), m_dispatcher(p_dispatcher),
         m_handling_name(p_handling_name),
         m_sleep_to_simulate_work(p_sleep_to_simulate_work)
   {
-    TNCT_LOG_TST(m_logger, format::fmt(
+    TNCT_LOG_TST(m_logger, format::bus::fmt(
                                "handler ", p_handling_name,
                                ", sleep = ", m_sleep_to_simulate_work.count()))
   }
@@ -52,15 +52,15 @@ struct handler
     auto _result{m_dispatcher.template publish<event_handled>(
         m_handling_name, t_event_id, t_type_id, std::this_thread::get_id())};
 
-    if (_result != async::result::OK)
+    if (_result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(m_logger, format::fmt("error: ", _result));
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("error: ", _result));
       return;
     }
 
     ++m_num_events;
     // TNCT_LOG_TST(m_logger,
-    //              format::fmt("handling ", m_handling_id, ", handler type
+    //              format::bus::fmt("handling ", m_handling_id, ", handler type
     //              #",
     //                          type_id, ", handler #",
     //                          std::this_thread::get_id(),
@@ -87,7 +87,7 @@ private:
 private:
   logger                   &m_logger;
   t_dispatcher             &m_dispatcher;
-  async::handling_name m_handling_name;
+  async::dat::handling_name m_handling_name;
   std::chrono::milliseconds m_sleep_to_simulate_work;
 
   uint32_t m_num_events{0};

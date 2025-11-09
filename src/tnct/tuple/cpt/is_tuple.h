@@ -6,13 +6,13 @@
 #ifndef TNCT_TUPLE_CPT_IS_TUPLE_H
 #define TNCT_TUPLE_CPT_IS_TUPLE_H
 
-#include "tnct/tuple/internal/is_tuple_helper.h"
+#include "tnct/tuple/internal/bus/is_tuple_helper.h"
 
 namespace tnct::tuple::cpt
 {
 
 template <typename t_tuple>
-concept is_tuple = internal::is_tuple_helper_v<t_tuple>;
+concept is_tuple = internal::bus::is_tuple_helper_v<t_tuple>;
 
 } // namespace tnct::tuple::cpt
 #endif

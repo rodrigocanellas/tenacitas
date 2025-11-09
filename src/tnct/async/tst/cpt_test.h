@@ -8,19 +8,19 @@
 
 #include <string>
 
+#include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/cpt/has_add_handling_method.h"
 #include "tnct/async/cpt/has_publish_method.h"
 #include "tnct/async/cpt/is_dispatcher.h"
 #include "tnct/async/cpt/is_event.h"
 #include "tnct/async/cpt/is_handler.h"
-#include "tnct/async/dispatcher.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/container/dat/circular_queue.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 
 using namespace tnct;
 
@@ -35,7 +35,7 @@ struct cpt_event_000
            "compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_event<event_a>,
@@ -59,7 +59,7 @@ struct cpt_event_001
            "compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_event<event_a>,
@@ -84,7 +84,7 @@ struct cpt_event_002
            "compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_event<event_a>,
@@ -110,7 +110,7 @@ struct cpt_event_003
            "not compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_event<event_a>,
@@ -146,7 +146,7 @@ struct cpt_event_004
     return "Verifies that an 'enum' not compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_event<event_004_event_a>,
@@ -164,7 +164,7 @@ struct cpt_event_005
            "that implements output operator is compatible with 'event";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(async::cpt::is_event<event_a>,
                   "'event_a' is compatible with async::cpt::event<event_a>");
@@ -198,7 +198,7 @@ struct cpt_add_handler_000
            "'async::cpt::handler' because it does not "
            "implement call operator that receives a 'event' rvalue";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_handler<cpt_add_handler_000, add_handler_tests_event>,
@@ -217,7 +217,7 @@ struct cpt_add_handler_001
            "'async::cpt::handler' because it implements a "
            "call operator that receives a 'event' rvalue, but it returns bool";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_handler<cpt_add_handler_001, add_handler_tests_event>,
@@ -243,7 +243,7 @@ struct cpt_add_handler_002
            "implements a call operator that receives a constant 'event' lvalue "
            "reference";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_handler<cpt_add_handler_002, add_handler_tests_event>,
@@ -272,7 +272,7 @@ struct cpt_add_handler_003
            "implements a call operator that receives a constant 'event' "
            "lvalue ";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_handler<cpt_add_handler_003, add_handler_tests_event>,
@@ -297,7 +297,7 @@ struct cpt_add_handler_004
            "implements a call operator that receives a 'event' lvalue "
            "reference ";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         !async::cpt::is_handler<cpt_add_handler_004, add_handler_tests_event>,
@@ -318,7 +318,7 @@ struct cpt_add_handler_005
   {
     return "A struct compatible with 'async::cpt::handler' ";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(
         async::cpt::is_handler<cpt_add_handler_005, add_handler_tests_event>,
@@ -342,10 +342,10 @@ struct cpt_dispatcher_000
 
   static std::string desc()
   {
-    return "Basic traitrs::dispatcher test";
+    return "Basic traits dispatcher test";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     log::cerr _logger;
 
@@ -416,12 +416,12 @@ struct cpt_has_add_handling_method_000
     return "Checks for async::cpt::has_add_handling_method";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     logger _logger;
 
-    using dispatcher = async::dispatcher<logger, event_a>;
+    using dispatcher = async::bus::dispatcher<logger, event_a>;
 
     dispatcher _dispatcher{_logger};
 
@@ -445,7 +445,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(async::cpt::has_add_handling_method<t_dispatcher, event_a,
@@ -471,14 +471,14 @@ private:
     void create_handling_1(logger &p_logger)
     {
 
-      async::result _result{m_dispatcher.template add_handling<event_a>(
+      async::dat::result _result{m_dispatcher.template add_handling<event_a>(
           "handling 1", queue_a{p_logger},
           [this](event_a &&evt) { handler_1(std::move(evt)); },
-          async::handling_priority::medium, 2)};
+          async::dat::handling_priority::medium, 2)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(p_logger, format::fmt(_result));
+        TNCT_LOG_ERR(p_logger, format::bus::fmt(_result));
       }
       else
       {
@@ -489,14 +489,14 @@ private:
     void create_handling_2(logger &p_logger)
     {
 
-      async::result _result{m_dispatcher.template add_handling<event_a>(
+      async::dat::result _result{m_dispatcher.template add_handling<event_a>(
           "handling 2", queue_a{p_logger},
           [this](event_a &&evt) { handler_2(std::move(evt)); },
-          async::handling_priority::medium, 4)};
+          async::dat::handling_priority::medium, 4)};
 
-      if (_result != async::result::OK)
+      if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(p_logger, format::fmt(_result));
+        TNCT_LOG_ERR(p_logger, format::bus::fmt(_result));
       }
       else
       {
@@ -516,7 +516,7 @@ struct cpt_has_add_handling_method_001
     return "Checks for async::cpt::has_add_handling_method";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     logger _logger;
@@ -549,7 +549,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(!async::cpt::has_add_handling_method<t_dispatcher, event_a,
@@ -580,7 +580,7 @@ struct cpt_has_publish_method_000
     return "A valid has_publish_method";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(async::cpt::has_publish_method<publisher, event_a>,
@@ -602,9 +602,9 @@ private:
   {
 
     template <async::cpt::is_event t_event>
-    async::result publish(const t_event &)
+    async::dat::result publish(const t_event &)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -616,7 +616,7 @@ struct cpt_has_publish_method_001
     return "A invalid has_publish_method";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(!async::cpt::has_publish_method<publisher, event_b>,
@@ -645,9 +645,9 @@ private:
   struct publisher
   {
     template <async::cpt::is_event t_event>
-    async::result publish(t_event &&)
+    async::dat::result publish(t_event &&)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -659,7 +659,7 @@ struct cpt_has_publish_method_002
     return "A valid has_publish_method";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(async::cpt::has_publish_method<publisher, event_a, event_b>,
@@ -689,9 +689,9 @@ private:
   {
 
     template <async::cpt::is_event t_event, typename... t_params>
-    async::result publish(t_params &&...)
+    async::dat::result publish(t_params &&...)
     {
-      return async::result::OK;
+      return async::dat::result::OK;
     }
   };
 };
@@ -703,7 +703,7 @@ struct cpt_handler_001
     return "A lambda function that is not "
            "async::cpt::is_handler conformance";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     auto _handle = []() {};
 
@@ -731,7 +731,7 @@ struct cpt_handler_002
     return "A 'handle' class that is async::cpt::is_handler "
            "conformance";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(async::cpt::is_handler<handle, event>,
@@ -765,7 +765,7 @@ struct cpt_handler_003
     return "A 'handle' class that is not conformant to "
            "async::cpt::is_handler ";
   }
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
 
     static_assert(!async::cpt::is_handler<handle, event>,
@@ -800,7 +800,7 @@ struct cpt_handler_004
            "async::cpt::is_handler";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!async::cpt::is_handler<handle, event>,
                   "'handle' class is not conformant to "
@@ -833,7 +833,7 @@ struct cpt_handler_005
            "async::cpt::is_handler";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     static_assert(!async::cpt::is_handler<handle, event>,
                   "'handle' class is not conformant to "
@@ -870,7 +870,7 @@ private:
 //            "because it does not have output operator";
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
 //     static_assert(
 //         !async::cpt::event<event>,
@@ -895,7 +895,7 @@ private:
 //            "because its default constructor is deleted";
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
 //     static_assert(
 //         !async::cpt::event<event>,
@@ -921,7 +921,7 @@ private:
 //            "because its copy constructor is deleted";
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
 //     static_assert(
 //         !async::cpt::event<event>,
@@ -947,7 +947,7 @@ private:
 //            "because its move constructor is deleted";
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
 //     static_assert(
 //         !async::cpt::event<event>,
@@ -971,7 +971,7 @@ private:
 //     return "A 'event' class is conformant to 'async::cpt::event'";
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
 //     static_assert(
 //         async::cpt::event<event>,
@@ -1011,12 +1011,12 @@ private:
 
 //   static std::string desc()
 //   {
-//     return {"A 'enum' compatible with 'result'"};
+//     return {"A 'enum' compatible with 'dat::result'"};
 //   }
 
-//   bool operator()(const program::options &)
+//   bool operator()(const program::bus::options &)
 //   {
-//     static_assert(async::cpt::result<result_like>, "This compiles");
+//     static_assert(async::cpt::dat::result<result_like>, "This compiles");
 //     return true;
 //   }
 // };

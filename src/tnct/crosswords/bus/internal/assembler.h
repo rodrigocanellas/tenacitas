@@ -14,19 +14,19 @@
 #include <sys/sysinfo.h>
 
 #include "tnct/async/cpt/is_dispatcher.h"
-#include "tnct/async/dispatcher.h"
-#include "tnct/async/handling_priority.h"
-#include "tnct/async/result.h"
-#include "tnct/container/circular_queue.h"
+#include "tnct/async/bus/dispatcher.h"
+#include "tnct/async/dat/handling_priority.h"
+#include "tnct/async/dat/result.h"
+#include "tnct/container/dat/circular_queue.h"
 #include "tnct/crosswords/bus/internal/organizer.h"
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/evt/internal/grid_attempt_configuration.h"
 #include "tnct/crosswords/evt/internal/grid_permutations_tried.h"
 #include "tnct/crosswords/evt/internal/grid_to_organize.h"
-#include "tnct/format/fmt.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/math/factorial.h"
+#include "tnct/math/bus/factorial.h"
 #include "tnct/time/cpt/chrono_convertible.h"
 
 using namespace std::chrono_literals;
@@ -85,7 +85,7 @@ struct assembler
     sort_entries(*_entries);
 
     TNCT_LOG_DEB(m_logger,
-                 format::fmt("# permutations = ", p_max_permutations));
+                 format::bus::fmt("# permutations = ", p_max_permutations));
 
     m_wait_for = std::chrono::duration_cast<std::chrono::seconds>(p_wait_for);
 
@@ -99,17 +99,17 @@ struct assembler
                 .template publish<evt::internal::grid_attempt_configuration>(
                     p_num_rows, p_num_cols, _max_memory_to_use,
                     _initial_free_memory, p_max_permutations)};
-        _result != async::result::OK)
+        _result != async::dat::result::OK)
     {
       TNCT_LOG_ERR(
           m_logger,
-          format::fmt("Error publishing 'internal::grid_attempt_configuration'",
+          format::bus::fmt("Error publishing 'internal::grid_attempt_configuration'",
                       _result));
       return std::shared_ptr<dat::grid>();
     }
 
     TNCT_LOG_DEB(m_logger,
-                 format::fmt("amount of free memory = ", _initial_free_memory,
+                 format::bus::fmt("amount of free memory = ", _initial_free_memory,
                              ", max memory to use = ", _max_memory_to_use));
 
     // first permutation
@@ -124,7 +124,7 @@ struct assembler
 
     const auto _initial = std::chrono::high_resolution_clock::now();
 
-    TNCT_LOG_DEB(m_logger, format::fmt("initial = ",
+    TNCT_LOG_DEB(m_logger, format::bus::fmt("initial = ",
                                        _initial.time_since_epoch().count()));
 
     std::size_t _slept{0};
@@ -150,16 +150,16 @@ struct assembler
 
       if (std::remainder(_permutation_counter, 20000) == 0)
       {
-        TNCT_LOG_DEB(m_logger, format::fmt("permutation counter = ",
+        TNCT_LOG_DEB(m_logger, format::bus::fmt("permutation counter = ",
                                            _permutation_counter));
 
         if (auto _result{m_dispatcher.template publish<
                 evt::internal::grid_permutations_tried>(_permutation_counter)};
-            _result != async::result::OK)
+            _result != async::dat::result::OK)
         {
           TNCT_LOG_ERR(
               m_logger,
-              format::fmt(
+              format::bus::fmt(
                   "Error publishing 'internal::grid_permutations_tried'",
                   _result));
         }
@@ -173,11 +173,11 @@ struct assembler
       if (auto _result{
               m_internal_dispatcher
                   .template publish<evt::internal::grid_to_organize>(_grid)};
-          _result != async::result::OK)
+          _result != async::dat::result::OK)
       {
         TNCT_LOG_ERR(
             m_logger,
-            format::fmt("Error publishing 'grid_to_organize'", _result));
+            format::bus::fmt("Error publishing 'grid_to_organize'", _result));
       }
 
       if (should_break(_initial, _permutation_counter, p_max_permutations))
@@ -216,7 +216,7 @@ struct assembler
 
     TNCT_LOG_DEB(
         m_logger,
-        format::fmt("left the loop, solved = ", (m_solved ? "Y" : "N"),
+        format::bus::fmt("left the loop, solved = ", (m_solved ? "Y" : "N"),
                     ", timeout = ", (m_timeout ? "Y" : "N"),
                     ", stop = ", (m_stop ? "Y" : "N"), ", waiting more ",
                     (m_wait_for
@@ -259,7 +259,7 @@ struct assembler
 
 private:
   using internal_dispatcher =
-      async::dispatcher<t_logger, crosswords::evt::internal::grid_to_organize>;
+      async::bus::dispatcher<t_logger, crosswords::evt::internal::grid_to_organize>;
 
 private:
   std::uint64_t number_of_permutations(const dat::entries &p_entries) const
@@ -267,10 +267,10 @@ private:
 
     if (p_entries.get_num_entries() > 20)
     {
-      return math::factorial<std::uint64_t>(20).value();
+      return math::bus::factorial<std::uint64_t>(20).value();
     }
 
-    return math::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+    return math::bus::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
   }
 
   bool should_wait(std::size_t p_max_memory_to_use)
@@ -295,7 +295,7 @@ private:
       if (!_maybe_num_events.has_value())
       {
         TNCT_LOG_ERR(m_logger,
-                     format::fmt("Error retrieving the number of "
+                     format::bus::fmt("Error retrieving the number of "
                                  "events for evt::internal::grid_to_organize"));
         return false;
       }
@@ -303,7 +303,7 @@ private:
       if (!_maybe_events_capacity.has_value())
       {
         TNCT_LOG_ERR(m_logger,
-                     format::fmt("Error retrieving the events capacity for "
+                     format::bus::fmt("Error retrieving the events capacity for "
                                  "evt::internal::grid_to_organize"));
         return false;
       }
@@ -313,7 +313,7 @@ private:
 
       if (_num_events < _events_capacity)
       {
-        TNCT_LOG_DEB(m_logger, format::fmt(_num_events, "/", _events_capacity,
+        TNCT_LOG_DEB(m_logger, format::bus::fmt(_num_events, "/", _events_capacity,
                                            " - DONT WAIT"));
         return false;
       }
@@ -327,13 +327,13 @@ private:
       if (std::remainder(_counter++, 50000) == 0)
       {
         TNCT_LOG_DEB(m_logger,
-                     format::fmt("current free mem = ", _current_free_mem));
+                     format::bus::fmt("current free mem = ", _current_free_mem));
       }
 #endif
       m_max_mem_occupied = true;
 
       TNCT_LOG_DEB(m_logger,
-                   format::fmt("allowed memory occupied at = ",
+                   format::bus::fmt("allowed memory occupied at = ",
                                std::chrono::high_resolution_clock::now()
                                    .time_since_epoch()
                                    .count()));
@@ -366,22 +366,22 @@ private:
                  "configuring queue for event evt::internal::grid_create_stop");
 
     using grid_create_stop_queue =
-        container::circular_queue<t_logger, evt::internal::grid_create_stop,
+        container::dat::circular_queue<t_logger, evt::internal::grid_create_stop,
                                   100>;
     m_dispatcher.template add_handling<evt::internal::grid_create_stop>(
         "grid-create-stop", grid_create_stop_queue{m_logger},
         [&](evt::internal::grid_create_stop &&) -> void { m_stop = true; },
-        async::handling_priority::highest);
+        async::dat::handling_priority::highest);
 
     using grid_to_organize_queue =
-        container::circular_queue<t_logger, evt::internal::grid_to_organize,
+        container::dat::circular_queue<t_logger, evt::internal::grid_to_organize,
                                   10000>;
     m_internal_dispatcher
         .template add_handling<evt::internal::grid_to_organize>(
             m_grid_to_organize, grid_to_organize_queue{m_logger},
             [&](evt::internal::grid_to_organize &&p_event) -> void
             { on_new_grid_to_organize(std::move(p_event)); },
-            async::handling_priority::highest, p_hw_num_threads);
+            async::dat::handling_priority::highest, p_hw_num_threads);
 
     TNCT_LOG_DEB(
         m_logger,
@@ -446,14 +446,14 @@ private:
     }
     //    internal::organizer _organizer{m_dispatcher};
 
-    TNCT_LOG_TRA(m_logger, format::fmt("calling organizer for permutation ",
+    TNCT_LOG_TRA(m_logger, format::bus::fmt("calling organizer for permutation ",
                                        p_event.grid->get_permutation_number()));
 
     if (m_organizer(p_event.grid))
     {
 
       TNCT_LOG_DEB(m_logger,
-                   format::fmt("grid was organized at permutation ",
+                   format::bus::fmt("grid was organized at permutation ",
                                p_event.grid->get_permutation_number()));
 
       // m_dispatcher. template clear<evt::internal::grid_to_organize>();
@@ -493,7 +493,7 @@ private:
   std::chrono::seconds m_wait_for;
 
   std::shared_ptr<dat::grid> m_solved;
-  async::handling_name       m_grid_to_organize{"grid-to-organize"};
+  async::dat::handling_name       m_grid_to_organize{"grid-to-organize"};
   size_t                     m_organizers_fails{0};
 
   std::mutex              m_mutex_finish;

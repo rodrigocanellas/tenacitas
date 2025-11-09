@@ -15,8 +15,8 @@
 #include "tnct/crosswords/dat/grid.h"
 #include "tnct/crosswords/dat/index.h"
 #include "tnct/crosswords/dat/layout.h"
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 
 using nlohmann::json;
@@ -24,7 +24,7 @@ using nlohmann::json;
 using std::chrono::seconds;
 
 using logger = tnct::log::cerr;
-using tnct::format::fmt;
+using tnct::format::bus::fmt;
 using grid_creator = tnct::crosswords::bus::grid_creator<logger>;
 using grid_index   = tnct::crosswords::dat::index;
 using grid_layout  = tnct::crosswords::dat::layout;

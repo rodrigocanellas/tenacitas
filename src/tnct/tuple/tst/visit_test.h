@@ -9,7 +9,7 @@
 #include <string>
 #include <tuple>
 
-#include "tnct/program/options.h"
+#include "tnct/program/bus/options.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/cpt/visit.h"
 
@@ -24,7 +24,7 @@ struct visit_000
            "'visit_value_in_constant_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 
@@ -47,7 +47,7 @@ struct visit_001
            "'visit_value_in_mutable_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 
@@ -71,7 +71,7 @@ struct visit_002
            "'visit_type_in_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 
@@ -93,7 +93,7 @@ struct visit_003
            "'visit_value_in_constant_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 
@@ -116,7 +116,7 @@ struct visit_004
            "'visit_value_in_mutable_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 
@@ -140,7 +140,7 @@ struct visit_005
            "'visit_type_in_tuple'";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<char, float>;
 

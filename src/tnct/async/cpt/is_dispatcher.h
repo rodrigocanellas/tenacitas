@@ -6,8 +6,6 @@
 #ifndef TNCT_ASYNC_CPT_IS_DISPATCHER_H
 #define TNCT_ASYNC_CPT_IS_DISPATCHER_H
 
-// #include <tuple>
-
 #include "tnct/async/cpt/tuple_contains_only_events.h"
 #include "tnct/memory/cpt/has_new_operator.h"
 #include "tnct/tuple/cpt/contains_tuple.h"
@@ -38,10 +36,9 @@ concept is_dispatcher =
     && async::cpt::tuple_contains_only_events<std::tuple<t_events...>>
 
     && tuple::cpt::size_greather_or_equal<typename t::events,
-                                                  std::tuple<t_events...>>
-
-    && tuple::cpt::contains_tuple<typename t::events,
                                           std::tuple<t_events...>>
+
+    && tuple::cpt::contains_tuple<typename t::events, std::tuple<t_events...>>
 
     ;
 

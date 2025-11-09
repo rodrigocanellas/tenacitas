@@ -8,8 +8,8 @@
 
 #include <tuple>
 
-#include "tnct/program/options.h"
-#include "tnct/tuple/contains_type.h"
+#include "tnct/program/bus/options.h"
+#include "tnct/tuple/bus/contains_type.h"
 
 using namespace tnct;
 
@@ -23,11 +23,11 @@ struct contains_type_000
     return "Tries to find existing simple types in a std::tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _found{tuple::contains_type<my_tuple, int>()};
+    auto _found{tuple::bus::contains_type<my_tuple, int>()};
     if (!_found)
     {
       std::cerr << "ERROR! 'int' was not found, but it should have been "
@@ -36,7 +36,7 @@ struct contains_type_000
     }
     std::cerr << "'int' found, as expected" << std::endl;
 
-    _found = tuple::contains_type<my_tuple, char>();
+    _found = tuple::bus::contains_type<my_tuple, char>();
     if (!_found)
     {
       std::cerr << "ERROR! 'char' was not found, but it should have been "
@@ -45,7 +45,7 @@ struct contains_type_000
     }
     std::cerr << "'char' found, as expected" << std::endl;
 
-    _found = tuple::contains_type<my_tuple, float>();
+    _found = tuple::bus::contains_type<my_tuple, float>();
     if (!_found)
     {
       std::cerr << "ERROR! 'flaot' was not found, but it should have been "
@@ -64,11 +64,11 @@ struct contains_type_001
     return "Tries to find a non existing type in a std::tuple";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<int, char, float>;
 
-    auto _found{tuple::contains_type<my_tuple, std::string>()};
+    auto _found{tuple::bus::contains_type<my_tuple, std::string>()};
     if (_found)
     {
       std::cerr << "'std::string' should not be found, but is was" << std::endl;
@@ -86,11 +86,11 @@ struct contains_type_002
     return "Tries to find a type in a std::tuple<>";
   }
 
-  bool operator()(const program::options &)
+  bool operator()(const program::bus::options &)
   {
     using my_tuple = std::tuple<>;
 
-    auto _found{tuple::contains_type<my_tuple, std::string>()};
+    auto _found{tuple::bus::contains_type<my_tuple, std::string>()};
     if (_found)
     {
       std::cerr << "'std::string' should not be found, but is was" << std::endl;

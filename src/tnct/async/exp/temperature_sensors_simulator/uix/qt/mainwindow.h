@@ -5,7 +5,7 @@
 
 #include "tnct/async/exp/temperature_sensors_simulator/evt/new_temperature.h"
 #include "tnct/async/exp/temperature_sensors_simulator/supplier.h"
-#include "tnct/container/circular_queue.h"
+#include "tnct/container/dat/circular_queue.h"
 
 using namespace tnct;
 using namespace tnct::async::exp::temperature_sensors_simulator;
@@ -50,7 +50,7 @@ private:
   };
 
   using queue_new_temperature =
-      container::circular_queue<logger, evt::new_temperature, 10>;
+      container::dat::circular_queue<logger, evt::new_temperature, 10>;
 
 private:
   void on_new_temperature(evt::new_temperature &&);

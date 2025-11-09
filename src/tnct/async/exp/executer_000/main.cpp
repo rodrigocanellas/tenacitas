@@ -9,10 +9,10 @@
 #include <functional>
 #include <iostream>
 
-#include "tnct/async/exec_sync.h"
+#include "tnct/async/bus/exec_sync.h"
 
-#include "tnct/format/fmt.h"
-#include "tnct/log/cerr.h"
+#include "tnct/format/bus/fmt.h"
+#include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
@@ -80,7 +80,7 @@ void executer_004() {
   log::cerr _log;
   auto _function = [&](std::function<bool()>, int p_i, std::string &&p_str,
                        const char *p_char) -> void {
-    TNCT_LOG_DEB(_log, format::fmt(p_i, ',', p_str, ',', p_char));
+    TNCT_LOG_DEB(_log, format::bus::fmt(p_i, ',', p_str, ',', p_char));
   };
 
   std::string _str{"hello"};
