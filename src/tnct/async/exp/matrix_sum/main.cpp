@@ -11,7 +11,6 @@
 #include <mutex>
 #include <optional>
 #include <string_view>
-#include <vector>
 
 #include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/dat/result.h"
@@ -19,7 +18,6 @@
 #include "tnct/container/dat/matrix.h"
 #include "tnct/format/bus/fmt.h"
 #include "tnct/log/bus/cerr.h"
-#include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
 using namespace tnct;
@@ -49,15 +47,20 @@ std::optional<std::size_t> get_matriz_size(logger          &p_logger,
   return std::nullopt;
 }
 
-matrix fill_matrix(std::size_t p_matrix_size)
+std::optional<matrix> fill_matrix(std::size_t p_matrix_size)
 {
-  matrix::data _data{1};
-  matrix       _matrix{p_matrix_size, p_matrix_size, matrix::data{0}};
-  for (matrix::index _r = 0; _r < _matrix.get_num_rows(); ++_r)
+  matrix::data          _data{1};
+  std::optional<matrix> _matrix{
+      matrix::create(p_matrix_size, p_matrix_size, matrix::data{0})};
+  if (!_matrix)
   {
-    for (matrix::index _c = 0; _c < _matrix.get_num_cols(); ++_c)
+    return std::nullopt;
+  }
+  for (matrix::index _r = 0; _r < _matrix->get_num_rows(); ++_r)
+  {
+    for (matrix::index _c = 0; _c < _matrix->get_num_cols(); ++_c)
     {
-      _matrix(_r, _c) = _data++;
+      (*_matrix)(_r, _c) = _data++;
     }
   }
   return _matrix;
@@ -89,7 +92,7 @@ void sync_sum_matrix_wrapper(const matrix &p_matrix, logger &p_logger)
   const std::chrono::duration<double> _diff = _end - _start;
 
   TNCT_LOG_TST(p_logger, format::bus::fmt("SYNC time = ", _diff.count(),
-                                     " seconds, sum: ", _sum));
+                                          " seconds, sum: ", _sum));
 }
 
 namespace evt
@@ -152,8 +155,8 @@ struct async_sum_matrix
       auto _result{m_internal_dispatcher.publish<sum_line>(_r)};
       if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(m_logger,
-                     format::bus::fmt("error publishing 'sum_line': ", _result));
+        TNCT_LOG_ERR(m_logger, format::bus::fmt("error publishing 'sum_line': ",
+                                                _result));
         return _result;
       }
     }
@@ -213,7 +216,8 @@ private:
 
   void define_handlers()
   {
-    using sum_line_queue = container::dat::circular_queue<logger, sum_line, 200>;
+    using sum_line_queue =
+        container::dat::circular_queue<logger, sum_line, 200>;
     m_internal_dispatcher.add_handling<sum_line>(
         "sum-line", sum_line_queue{m_logger},
         line_summer{m_internal_dispatcher, m_logger, m_matrix},
@@ -247,8 +251,9 @@ private:
           m_internal_dispatcher.publish<line_summed>(p_sum_line.m_row, _sum)};
       if (_result != async::dat::result::OK)
       {
-        TNCT_LOG_ERR(m_logger,
-                     format::bus::fmt("error publishing 'line_summed': ", _result));
+        TNCT_LOG_ERR(
+            m_logger,
+            format::bus::fmt("error publishing 'line_summed': ", _result));
       }
     }
 
@@ -346,7 +351,7 @@ void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger)
   const std::chrono::duration<double> _diff = _end - _start;
 
   TNCT_LOG_TST(p_logger, format::bus::fmt("ASYNC time = ", _diff.count(),
-                                     " seconds, sum: ", _sum));
+                                          " seconds, sum: ", _sum));
 }
 // clang-format off
 //rodrigo@wayne:~/development/prd/linux-release-64/exp$ ./tnct.async.exp.matrix_sum 60260
@@ -369,9 +374,12 @@ int main(int argc, char **argv) {
     return -2;
   }
 
-  matrix _matrix{fill_matrix(_matriz_size)};
+  std::optional<  matrix >_matrix{fill_matrix(_matriz_size)};
+  if (!_matrix){
+    TNCT_LOG_ERR(_logger, "Coult not create matrix");return 1;
+  }
 
-  sync_sum_matrix_wrapper(_matrix, _logger);
+  sync_sum_matrix_wrapper(*_matrix, _logger);
 
-  async_sum_matrix_wrapper(_matrix, _logger);
+  async_sum_matrix_wrapper(*_matrix, _logger);
 }

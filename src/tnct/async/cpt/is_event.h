@@ -15,7 +15,7 @@ namespace tnct::async::cpt
 
 template <typename t>
 concept is_event =
-    std::default_initializable<t> && std::copyable<t> && std::movable<t>
+    /*std::default_initializable<t> && */ std::copyable<t> // && std::movable<t>
     && ostream::cpt::has_output_operator<t> && std::is_class_v<t>;
 
 }

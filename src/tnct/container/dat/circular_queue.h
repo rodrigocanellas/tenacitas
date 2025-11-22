@@ -31,7 +31,6 @@ template <log::cpt::logger t_logger, typename t_data,
           std::size_t      t_initial_size,
           std::size_t      t_incremental_size = t_initial_size / 2>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-         && std::is_default_constructible_v<t_data>
          && ostream::cpt::has_output_operator<t_data>
 class circular_queue final
 {
@@ -48,10 +47,11 @@ public:
                                                           ? t_initial_size
                                                           : t_initial_size / 2)
                                                    : t_incremental_size),
-        m_vector(m_initial_size, t_data()), m_head(0), m_tail(0)
+        m_vector(m_initial_size, std::optional<t_data>()), m_head(0), m_tail(0)
   {
 
-    TNCT_LOG_TRA(this->m_logger, format::bus::fmt("creating - ", brief_report()));
+    TNCT_LOG_TRA(this->m_logger,
+                 format::bus::fmt("creating - ", brief_report()));
   }
 
   ~circular_queue()
@@ -122,9 +122,9 @@ public:
 
       for (decltype(_last) _idx = 0; _idx < (_last - 1); ++_idx)
       {
-        _out << "queue[" << _idx << "] = " << m_vector[_idx] << '\n';
+        _out << "queue[" << _idx << "] = " << *m_vector[_idx] << '\n';
       }
-      _out << "queue[" << _last << "] = " << m_vector[_last];
+      _out << "queue[" << _last << "] = " << *m_vector[_last];
     }
     return _out.str();
   }
@@ -151,7 +151,7 @@ public:
       enlarge();
     }
 
-    m_vector[m_head] = std::move(p_data);
+    m_vector[m_head] = std::optional<t_data>(p_data);
 
     if (m_head == (m_vector.size() - 1))
     {
@@ -171,15 +171,16 @@ public:
   {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
-    TNCT_LOG_TRA(this->m_logger, format::bus::fmt("push - entering with data = ",
-                                             p_data, ": ", brief_report()));
+    TNCT_LOG_TRA(this->m_logger,
+                 format::bus::fmt("push - entering with data = ", p_data, ": ",
+                                  brief_report()));
 
     if (full())
     {
       enlarge();
     }
 
-    m_vector[m_head] = p_data;
+    m_vector[m_head] = std::optional<t_data>(p_data);
 
     if (m_head == (m_vector.size() - 1))
     {
@@ -207,7 +208,7 @@ public:
       return std::nullopt;
     }
 
-    t_data _data(m_vector[m_tail]);
+    std::optional<t_data> _data(m_vector[m_tail]);
     ++m_tail;
 
     if (m_tail == m_vector.size())
@@ -220,7 +221,7 @@ public:
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("pop - leaving: ", brief_report()));
 
-    return {_data};
+    return _data;
   }
 
   constexpr bool full() const
@@ -265,7 +266,7 @@ public:
   }
 
 private:
-  using vector = std::vector<t_data>;
+  using vector = std::vector<std::optional<t_data>>;
 
 protected:
   void enlarge()
@@ -273,7 +274,7 @@ protected:
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("enlarging - entering ", full_report()));
 
-    vector _aux(m_vector.size() + m_incremental_size, t_data());
+    vector _aux(m_vector.size() + m_incremental_size, std::optional<t_data>());
 
     auto _head(m_head);
     if (m_head == 0)
@@ -304,7 +305,8 @@ protected:
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("enlarging - leaving ", full_report()));
 
-    TNCT_LOG_DEB(this->m_logger, format::bus::fmt("enlarged - ", brief_report()));
+    TNCT_LOG_TRA(this->m_logger,
+                 format::bus::fmt("enlarged - ", brief_report()));
   }
 
 private:
