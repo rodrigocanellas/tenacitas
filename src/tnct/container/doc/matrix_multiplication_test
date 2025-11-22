@@ -1,0 +1,43 @@
+rodrigo@wayne:~/development/prd/linux-release-64/tst$ ./tnct.container.tst --exec { container::tst::multiply_matrix_002 }
+
+############ -> container::tst::multiply_matrix_002 - Multiply 2 big matrixes synchronously
+TST|2025-11-18 11:49:07,038258|140561926887232|multiply_matrix_test.h             |00234|=============== Execution # 0
+DEB|2025-11-18 11:49:07,042566|140561926887232|multiply_matrix.h                  |00097|multipy_sequentially starting
+DEB|2025-11-18 11:49:07,046633|140561926887232|multiply_matrix.h                  |00117|multipy_sequentially ending
+TST|2025-11-18 11:49:07,046822|140561926887232|multiply_matrix_test.h             |00246|Average time: 0.00826685s
+container::tst::multiply_matrix_002 SUCCESS
+############ <- container::tst::multiply_matrix_002
+rodrigo@wayne:~/development/prd/linux-release-64/tst$ ./tnct.container.tst --exec { container::tst::multiply_matrix_003 }
+
+############ -> container::tst::multiply_matrix_003 - Multiply 2 big matrixes asynchronously
+TST|2025-11-18 11:49:08,517779|140012093744960|multiply_matrix_test.h             |00234|=============== Execution # 0
+DEB|2025-11-18 11:49:08,517895|140012093744960|multiply_matrix.h                  |00128|multiply_asynchronously starting
+DEB|2025-11-18 11:49:08,522500|140012093744960|multiply_matrix_async.h            |00078|num cells new matrix = 1000000, num threads = 24, chunk size = 42, num total chunks = 24
+DEB|2025-11-18 11:49:08,523189|140012093744960|multiply_matrix_async.h            |00113|############# WAITING
+DEB|2025-11-18 11:49:08,523559|140012093744960|multiply_matrix_async.h            |00120|############# DONE WAITING
+DEB|2025-11-18 11:49:08,523564|140012093744960|multiply_matrix.h                  |00134|multiply_asynchronously ending
+TST|2025-11-18 11:49:08,524254|140012093744960|multiply_matrix_test.h             |00246|Average time: 0.00612036s
+container::tst::multiply_matrix_003 SUCCESS
+############ <- container::tst::multiply_matrix_003
+rodrigo@wayne:~/development/prd/linux-release-64/tst$ ./tnct.container.tst --exec { container::tst::multiply_matrix_002 }
+
+############ -> container::tst::multiply_matrix_002 - Multiply 2 big matrixes synchronously
+TST|2025-11-18 11:49:29,336225|140201861830464|multiply_matrix_test.h             |00234|=============== Execution # 0
+DEB|2025-11-18 11:49:29,586723|140201861830464|multiply_matrix.h                  |00097|multipy_sequentially starting
+DEB|2025-11-18 11:49:29,977090|140201861830464|multiply_matrix.h                  |00117|multipy_sequentially ending
+TST|2025-11-18 11:49:29,991227|140201861830464|multiply_matrix_test.h             |00246|Average time: 0.640747s
+container::tst::multiply_matrix_002 SUCCESS
+############ <- container::tst::multiply_matrix_002
+rodrigo@wayne:~/development/prd/linux-release-64/tst$ ./tnct.container.tst --exec { container::tst::multiply_matrix_003 }
+
+############ -> container::tst::multiply_matrix_003 - Multiply 2 big matrixes asynchronously
+TST|2025-11-18 11:49:33,584138|140427014178624|multiply_matrix_test.h             |00234|=============== Execution # 0
+DEB|2025-11-18 11:49:33,584266|140427014178624|multiply_matrix.h                  |00128|multiply_asynchronously starting
+DEB|2025-11-18 11:49:33,835338|140427014178624|multiply_matrix_async.h            |00078|num cells new matrix = 100000000, num threads = 24, chunk size = 417, num total chunks = 24
+DEB|2025-11-18 11:49:33,835392|140427014178624|multiply_matrix_async.h            |00113|############# WAITING
+DEB|2025-11-18 11:49:33,919655|140427014178624|multiply_matrix_async.h            |00120|############# DONE WAITING
+DEB|2025-11-18 11:49:33,919670|140427014178624|multiply_matrix.h                  |00134|multiply_asynchronously ending
+TST|2025-11-18 11:49:33,934631|140427014178624|multiply_matrix_test.h             |00246|Average time: 0.336272s
+container::tst::multiply_matrix_003 SUCCESS
+############ <- container::tst::multiply_matrix_003
+

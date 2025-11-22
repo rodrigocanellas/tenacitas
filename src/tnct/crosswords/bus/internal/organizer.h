@@ -222,7 +222,7 @@ private:
   {
     bool operator()(bool &p_stop, dat::grid &p_grid)
     {
-      if (m_occupied.get_num_rows() == 0)
+      if (m_occupied->get_num_rows() == 0)
       {
         //      const auto _longest{dat::get_size(p_grid.begin()->get_word())};
         //      auto _num_rows{p_grid.get_num_rows()};
@@ -233,8 +233,12 @@ private:
         //      if (_num_cols > _longest) {
         //        _num_cols -= _longest;
         //      }
-        m_occupied = dat::occupied(p_grid.get_num_rows(), p_grid.get_num_cols(),
-                                   dat::max_char);
+        m_occupied = dat::occupied::create(
+            p_grid.get_num_rows(), p_grid.get_num_cols(), dat::max_char);
+        if (!m_occupied)
+        {
+          return false;
+        }
       }
       if (p_stop)
       {
@@ -264,9 +268,9 @@ private:
     bool horizontal(bool &p_stop, dat::grid &p_grid)
     {
 
-      const dat::index _num_rows{m_occupied.get_num_rows()};
+      const dat::index _num_rows{m_occupied->get_num_rows()};
 
-      const dat::index _num_cols{m_occupied.get_num_cols()};
+      const dat::index _num_cols{m_occupied->get_num_cols()};
 
       auto _layout = p_grid.begin();
 
@@ -285,11 +289,11 @@ private:
             break;
           }
 
-          if (m_occupied(_row, _col) == dat::max_char)
+          if ((*m_occupied)(_row, _col) == dat::max_char)
           {
             p_grid.set(_layout, _row, _col, dat::orientation::hori);
-            m_occupied(_row, _col) = '#';
-            _set                   = true;
+            (*m_occupied)(_row, _col) = '#';
+            _set                      = true;
           }
         }
       }
@@ -304,9 +308,9 @@ private:
     bool vertical(bool &p_stop, dat::grid &p_grid)
     {
 
-      const dat::index _num_rows{m_occupied.get_num_rows()};
+      const dat::index _num_rows{m_occupied->get_num_rows()};
 
-      const dat::index _num_cols{m_occupied.get_num_cols()};
+      const dat::index _num_cols{m_occupied->get_num_cols()};
 
       auto _layout = p_grid.begin();
 
@@ -325,11 +329,11 @@ private:
             break;
           }
 
-          if (m_occupied(_row, _col) == dat::max_char)
+          if ((*m_occupied)(_row, _col) == dat::max_char)
           {
             p_grid.set(_layout, _row, _col, dat::orientation::vert);
-            m_occupied(_row, _col) = '#';
-            _set                   = true;
+            (*m_occupied)(_row, _col) = '#';
+            _set                      = true;
           }
         }
       }
@@ -338,9 +342,9 @@ private:
     }
 
   private:
-    bool          m_all_horizontal_tried{false};
-    bool          m_vertical{false};
-    dat::occupied m_occupied;
+    bool                         m_all_horizontal_tried{false};
+    bool                         m_vertical{false};
+    std::optional<dat::occupied> m_occupied;
   };
 
   dat::coordinates find_intersections(bool            &p_stop,

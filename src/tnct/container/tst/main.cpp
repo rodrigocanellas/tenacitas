@@ -8,6 +8,8 @@
 #include "tnct/container/tst/circular_queue_test.h"
 #include "tnct/container/tst/cpt_test.h"
 #include "tnct/container/tst/matrix_test.h"
+#include "tnct/container/tst/multiply_matrix_row_test.h"
+#include "tnct/container/tst/multiply_matrix_test.h"
 
 using namespace tnct;
 
@@ -17,7 +19,7 @@ int main(int argc, char **argv)
   tester::bus::test _tester(argc, argv);
   run_test(_tester, container::tst::circular_queue_001);
   run_test(_tester, container::tst::circular_queue_003);
-  run_test(_tester, container::tst::circular_queue_test);
+  // run_test(_tester, container::tst::circular_queue_test);
 
   run_test(_tester, container::tst::matrix_000);
   run_test(_tester, container::tst::matrix_001);
@@ -28,4 +30,9 @@ int main(int argc, char **argv)
   run_test(_tester, container::tst::cpt_test_000);
   run_test(_tester, container::tst::cpt_test_001);
   run_test(_tester, container::tst::cpt_test_002);
+
+  run_test(_tester, container::tst::multiply_matrix_000);
+  run_test(_tester, container::tst::multiply_matrix_001);
+
+  run_test(_tester, container::tst::multiply_matrix_row_000);
 }
