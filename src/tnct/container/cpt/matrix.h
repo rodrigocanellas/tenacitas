@@ -31,12 +31,6 @@ concept matrix =
 
     std::same_as<typename t::index, t_index> &&
 
-    requires(t p_t, t_index p_num_rows, t_index p_num_cols, t_data p_initial) {
-      {
-        t::create(p_num_rows, p_num_cols, p_initial)
-      } -> std::same_as<std::optional<t>>;
-    } &&
-
     requires(t p_t, t_index p_row, t_index p_col) {
       {
         p_t(p_row, p_col)

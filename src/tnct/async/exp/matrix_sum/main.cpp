@@ -216,17 +216,28 @@ private:
 
   void define_handlers()
   {
-    using sum_line_queue =
-        container::dat::circular_queue<logger, sum_line, 200>;
+    using sum_line_queue = container::dat::circular_queue<logger, sum_line>;
+    auto _sum_line_queue{sum_line_queue::create(m_logger, 200, 100)};
+    if (!_sum_line_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Could not create 'sum_line_queue' queue");
+      return;
+    }
     m_internal_dispatcher.add_handling<sum_line>(
-        "sum-line", sum_line_queue{m_logger},
+        "sum-line", std::move(*_sum_line_queue),
         line_summer{m_internal_dispatcher, m_logger, m_matrix},
         async::dat::handling_priority::medium, 8);
 
     using line_summed_queue =
-        container::dat::circular_queue<logger, line_summed, 10>;
+        container::dat::circular_queue<logger, line_summed>;
+    auto _line_summed_queue{line_summed_queue::create(m_logger, 10, 5)};
+    if (!_line_summed_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Could not create 'line_summed_queue' queue");
+      return;
+    }
     m_internal_dispatcher.add_handling<line_summed>(
-        "line-summed", line_summed_queue{m_logger},
+        "line-summed", std::move(*_line_summed_queue),
         matrix_summer{m_dispatcher, m_logger, m_matrix.get_num_rows()},
         async::dat::handling_priority::medium, 1);
   }
@@ -326,7 +337,13 @@ void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger)
   std::size_t             _sum{std::numeric_limits<std::size_t>::max()};
 
   using matrix_summed_queue =
-      container::dat::circular_queue<logger, evt::matrix_summed, 1>;
+      container::dat::circular_queue<logger, evt::matrix_summed>;
+  auto _matrix_summed_queue{matrix_summed_queue::create(p_logger, 1, 1)};
+  if (!_matrix_summed_queue)
+  {
+    TNCT_LOG_ERR(p_logger, "Error creating 'matrix_summed_queue' queue");
+    return;
+  }
   auto _end_of_pgm = [&](evt::matrix_summed &&p_event)
   {
     _sum = p_event.m_sum;
@@ -334,7 +351,7 @@ void async_sum_matrix_wrapper(matrix &p_matrix, logger &p_logger)
   };
 
   _dispatcher.add_handling<evt::matrix_summed>(
-      "matrix-summed", matrix_summed_queue{p_logger}, std::move(_end_of_pgm),
+      "matrix-summed", std::move(*_matrix_summed_queue), std::move(_end_of_pgm),
       async::dat::handling_priority::medium, 1);
 
   async_sum_matrix _async_sum_matrix(_dispatcher, p_logger, p_matrix);

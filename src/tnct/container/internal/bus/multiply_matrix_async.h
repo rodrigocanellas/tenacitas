@@ -43,9 +43,16 @@ struct multiply_matrix_async
 
     {
       using queue =
-          container::dat::circular_queue<logger, multiply_matrix_cell, 10000>;
+          container::dat::circular_queue<logger, multiply_matrix_cell>;
+
+      auto _queue{queue::create(p_logger, 1000, 1000)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(p_logger, format::bus::fmt("Could not create queue"));
+        return;
+      }
       m_dispatcher.template add_handling<multiply_matrix_cell>(
-          "multiply_matrix_cell", queue{m_logger},
+          "multiply_matrix_cell", std::move(*_queue),
           std::bind_front(&multiply_matrix_async::handle_multiply_matrix_cell,
                           this),
           async::dat::handling_priority::highest, m_num_threads);

@@ -6,17 +6,14 @@
 #ifndef TNCT_CONTAINER_TST_CIRCULAR_QUEUE_TEST_H
 #define TNCT_CONTAINER_TST_CIRCULAR_QUEUE_TEST_H
 
-#include <algorithm>
 #include <cstdint>
 #include <optional>
-#include <regex>
 #include <string>
 #include <utility>
 
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/format/bus/fmt.h"
 #include "tnct/log/bus/cerr.h"
-#include "tnct/parser/bus/ini_file.h"
 #include "tnct/program/bus/options.h"
 
 namespace tnct::container::tst
@@ -37,26 +34,34 @@ struct circular_queue_001
     try
     {
 
-      container::dat::circular_queue<log::cerr, std::string, m_initial_size>
-                  queue(_logger);
+      using queue = container::dat::circular_queue<log::cerr, std::string>;
+
+      std::optional<queue> _queue{
+          queue::create(_logger, m_initial_size, m_initial_size / 2)};
+
+      if (_queue)
+      {
+        return false;
+      }
+
       std::string data(4 * 1024, 'z');
 
       for (uint32_t i = 0; i < m_amount; ++i)
       {
-        queue.push(data);
+        _queue->push(data);
       }
 
       uint32_t j{0};
-      while (!queue.empty())
+      while (!_queue->empty())
       {
-        std::optional<std::string> maybe{queue.pop()};
+        std::optional<std::string> maybe{_queue->pop()};
         if (!maybe)
         {
           _logger.err(format::bus::fmt("error getting data # ", j));
           return false;
         }
-        _logger.tst(format::bus::fmt("capacity = ", queue.capacity(),
-                                     ", occupied = ", queue.occupied(),
+        _logger.tst(format::bus::fmt("capacity = ", _queue->capacity(),
+                                     ", occupied = ", _queue->occupied(),
                                      ", data # ", j++));
       }
     }
@@ -88,11 +93,11 @@ struct circular_queue_003
 
   bool operator()(program::bus::options &)
   {
-    using queue = container::dat::circular_queue<log::cerr, int32_t, 30>;
-    log::cerr _logger;
-    queue     _queue_1(_logger);
+    using queue = container::dat::circular_queue<log::cerr, int32_t>;
+    log::cerr            _logger;
+    std::optional<queue> _queue_1(queue::create(_logger, 100, 50));
 
-    queue _queue_2(std::move(_queue_1));
+    queue _queue_2(std::move(*_queue_1));
 
     return true;
   }
@@ -104,9 +109,9 @@ struct circular_queue_003
 //   static std::string desc()
 //   {
 //     return "Running tests configured in a ini file passed on parameter "
-//            "'--test-cfg'. You can choose a specific test define in the .ini "
-//            "file by passing its name to '--run' parameter, or just run all "
-//            "passing '--run' with no parameter";
+//            "'--test-cfg'. You can choose a specific test define in the .ini
+//            " "file by passing its name to '--run' parameter, or just run
+//            all " "passing '--run' with no parameter";
 //   }
 
 //   bool operator()(program::bus::options &p_options)
@@ -175,7 +180,8 @@ struct circular_queue_003
 //         if (!_run_all_tests
 //             && (std::find_if(_tests_to_run.begin(), _tests_to_run.end(),
 //                              [&](const std::string &p_test_name)
-//                              { return p_test_name == _value_section.first; })
+//                              { return p_test_name == _value_section.first;
+//                              })
 //                 == _tests_to_run.end()))
 //         {
 //           _logger.tst(format::bus::fmt("Test ", _value_section.first,
@@ -392,8 +398,8 @@ struct circular_queue_003
 //           || (_queue.tail() != _step.tail_expected))
 //       {
 //         p_logger.err(format::bus::fmt(
-//             "queue - occupied: expected ", _step.occupied_expected, ", got ",
-//             _queue.occupied(), ", head: expected ", _step.head_expected,
+//             "queue - occupied: expected ", _step.occupied_expected, ", got
+//             ", _queue.occupied(), ", head: expected ", _step.head_expected,
 //             ", got ", _queue.head(), ", tail: expected ",
 //             _step.tail_expected,
 //             ", got ", _queue.tail()));
@@ -404,7 +410,8 @@ struct circular_queue_003
 //       {
 //         if (_step.contents[_i] != _queue[_i])
 //         {
-//           p_logger.err(format::bus::fmt("content is ", _queue[_i], ", but ",
+//           p_logger.err(format::bus::fmt("content is ", _queue[_i], ", but
+//           ",
 //                                         _step.contents[_i], " was
 //                                         expected"));
 //           return false;

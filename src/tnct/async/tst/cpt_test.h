@@ -445,7 +445,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(async::cpt::has_add_handling_method<t_dispatcher, event_a,
@@ -471,8 +471,15 @@ private:
     void create_handling_1(logger &p_logger)
     {
 
+      auto _queue_a{queue_a::create(p_logger, 100)};
+      if (!_queue_a)
+      {
+        TNCT_LOG_ERR(p_logger, "error creating queue");
+        return;
+      }
+
       async::dat::result _result{m_dispatcher.template add_handling<event_a>(
-          "handling 1", queue_a{p_logger},
+          "handling 1", std::move(*_queue_a),
           [this](event_a &&evt) { handler_1(std::move(evt)); },
           async::dat::handling_priority::medium, 2)};
 
@@ -489,8 +496,15 @@ private:
     void create_handling_2(logger &p_logger)
     {
 
+      auto _queue_a{queue_a::create(p_logger, 100)};
+      if (!_queue_a)
+      {
+        TNCT_LOG_ERR(p_logger, "error creating queue");
+        return;
+      }
+
       async::dat::result _result{m_dispatcher.template add_handling<event_a>(
-          "handling 2", queue_a{p_logger},
+          "handling 2", std::move(*_queue_a),
           [this](event_a &&evt) { handler_2(std::move(evt)); },
           async::dat::handling_priority::medium, 4)};
 
@@ -549,7 +563,7 @@ private:
   struct abc
   {
 
-    using queue_a   = container::dat::circular_queue<logger, event_a, 100>;
+    using queue_a   = container::dat::circular_queue<logger, event_a>;
     using handler_a = std::function<void(event_a &&)>;
 
     static_assert(!async::cpt::has_add_handling_method<t_dispatcher, event_a,

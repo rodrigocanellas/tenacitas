@@ -53,7 +53,7 @@ protected:
 
   using event = ev1;
 
-  using queue = container::dat::circular_queue<logger, event, 20>;
+  using queue = container::dat::circular_queue<logger, event>;
 
   using sleeping_loop = async::sleeping_loop<logger>;
 
@@ -88,7 +88,15 @@ struct handling_000 : public handling_test
     {
       m_logger.set_deb();
 
-      handling _handling("handling-000", m_logger, handler{}, queue{m_logger});
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
+      handling _handling("handling-000", m_logger, handler{},
+                         std::move(*_queue));
 
       _handling.add_event(ev1());
 
@@ -120,7 +128,14 @@ struct handling_001 : public handling_test
     using handling =
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
-    handling _handling("handling-001", m_logger, handler{}, queue{m_logger});
+    auto _queue{queue::create(m_logger, 100)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "error creating queue");
+      return false;
+    }
+
+    handling _handling("handling-001", m_logger, handler{}, std::move(*_queue));
 
     const auto _is_stopped(_handling.is_stopped());
 
@@ -143,7 +158,14 @@ struct handling_005 : public handling_test
     using handling =
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
-    handling _handling("handling-005", m_logger, handler{}, queue{m_logger});
+    auto _queue{queue::create(m_logger, 100)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "error creating queue");
+      return false;
+    }
+
+    handling _handling("handling-005", m_logger, handler{}, std::move(*_queue));
 
     auto _handling_id{_handling.get_id()};
 
@@ -172,8 +194,15 @@ struct handling_006 : public handling_test
 
     try
     {
-      handling _handling("handling-006", m_logger, handler{}, queue{m_logger},
-                         0);
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
+      handling _handling("handling-006", m_logger, handler{},
+                         std::move(*_queue), 0);
 
       _handling.add_event(ev1());
 
@@ -214,7 +243,15 @@ struct handling_007 : public handling_test
     using handling =
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
-    handling _handling("handling-007", m_logger, handler{}, queue{m_logger}, 2);
+    auto _queue{queue::create(m_logger, 100)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "error creating queue");
+      return false;
+    }
+
+    handling _handling("handling-007", m_logger, handler{}, std::move(*_queue),
+                       2);
 
     auto _num_handlers(_handling.get_amount_handlers());
 
@@ -235,10 +272,18 @@ struct handling_008 : public handling_test
   bool operator()(const program::bus::options &)
   {
 
+    auto _queue{queue::create(m_logger, 100)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "error creating queue");
+      return false;
+    }
+
     using handling =
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
-    handling _handling("handling-008", m_logger, handler{}, queue{m_logger}, 2);
+    handling _handling("handling-008", m_logger, handler{}, std::move(*_queue),
+                       2);
 
     auto _is_stopped(_handling.is_stopped());
 
@@ -261,7 +306,15 @@ struct handling_009 : public handling_test
     using handling =
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
-    handling _handling("handling-009", m_logger, handler{}, queue{m_logger}, 2);
+    auto _queue{queue::create(m_logger, 100)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "error creating queue");
+      return false;
+    }
+
+    handling _handling("handling-009", m_logger, handler{}, std::move(*_queue),
+                       2);
 
     auto _is_stopped(_handling.is_stopped());
 
@@ -291,8 +344,15 @@ struct handling_010 : public handling_test
         async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
     try
     {
-      handling _handling("handling-010", m_logger, handler{}, queue{m_logger},
-                         2);
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
+      handling _handling("handling-010", m_logger, handler{},
+                         std::move(*_queue), 2);
 
       _handling.stop();
 
@@ -330,8 +390,15 @@ struct handling_011 : public handling_test
 
     try
     {
-      handling _handling("handling-011", m_logger, handler{}, queue{m_logger},
-                         2);
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
+      handling _handling("handling-011", m_logger, handler{},
+                         std::move(*_queue), 2);
 
       _handling.add_event(ev1());
 
@@ -377,8 +444,15 @@ struct handling_014 : public handling_test
       using handling =
           async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
       handling _handling("handling-014", m_logger, handler{this},
-                         queue{m_logger}, m_amount_handlers);
+                         std::move(*_queue), m_amount_handlers);
 
       for (num_events _i = 0; _i < m_num_events; ++_i)
       {
@@ -509,8 +583,15 @@ struct handling_015 : public handling_test
       using handling =
           async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
       handling _handling("handling-015", m_logger, handler{this},
-                         queue{m_logger}, 1);
+                         std::move(*_queue), 1);
       // _handling.increment_handlers(1U);
 
       num_events _i = 0;
@@ -604,8 +685,15 @@ struct handling_016 : public handling_test
       using handling =
           async::internal::bus::handling_concrete<logger, ev1, queue, handler>;
 
+      auto _queue{queue::create(m_logger, 100)};
+      if (!_queue)
+      {
+        TNCT_LOG_ERR(m_logger, "error creating queue");
+        return false;
+      }
+
       handling _handling("handling-016", m_logger, handler{this},
-                         queue{m_logger}, 10);
+                         std::move(*_queue), 10);
 
       sleeping_loop _sleeping_loop(
           m_logger,
@@ -688,5 +776,6 @@ private:
   std::condition_variable   m_cond;
   uint16_t                  m_handled{0};
 };
+
 } // namespace tnct::async::tst
 #endif

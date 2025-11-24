@@ -9,7 +9,6 @@
 #include <concepts>
 #include <cstddef>
 #include <optional>
-#include <utility>
 
 #include "tnct/ostream/cpt/has_output_operator.h"
 
@@ -19,32 +18,32 @@ namespace tnct::container::cpt
 template <typename t, typename t_data>
 concept queue =
 
-    std::copy_constructible<typename t::data> &&
+    std::same_as<typename t::data, t_data> &&
 
-    std::move_constructible<typename t::data> &&
+    std::copyable<t_data> &&
 
-    std::assignable_from<typename t::data &, typename t::data> &&
+    ostream::cpt::has_output_operator<t_data> &&
 
-    ostream::cpt::has_output_operator<typename t::data> &&
+    std::copyable<t> &&
 
-    std::copy_constructible<t> &&
+    std::same_as<typename t::data, t_data> &&
 
-    std::move_constructible<t> &&
+    requires(t p_t, t_data &&p_data) {
+      {
+        p_t.push(std::move(p_data))
+      } -> std::same_as<void>;
+    } &&
+
+    requires(t p_t, const t_data &p_data) {
+      {
+        p_t.push(p_data)
+      } -> std::same_as<void>;
+    } &&
 
     requires(t p_t) {
-      typename t::data;
-
-      {
-        p_t.push(std::declval<typename t::data>())
-      } -> std::same_as<void>;
-
-      {
-        p_t.push(std::declval<const typename t::data &>())
-      } -> std::same_as<void>;
-
       {
         p_t.pop()
-      } -> std::same_as<std::optional<typename t::data>>;
+      } -> std::same_as<std::optional<t_data>>;
 
       {
         p_t.full()

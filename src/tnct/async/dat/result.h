@@ -22,7 +22,8 @@ enum class result : std::uint8_t
   ERROR_CLEARING,
   ERROR_ADDING_HANDLER,
   ERROR_STOPPING,
-  ERROR_HANDLER_ALREADY_IN_USE
+  ERROR_HANDLER_ALREADY_IN_USE,
+  ERROR_CREATING_QUEUE
 
 };
 
@@ -57,7 +58,11 @@ static inline std::ostream &operator<<(std::ostream &p_out, result p_result)
   case result::ERROR_HANDLER_ALREADY_IN_USE:
     p_out << "handler already in use";
     break;
+  case result::ERROR_CREATING_QUEUE:
+    p_out << "error creating queue";
+    break;
   }
+
   return p_out;
 }
 
