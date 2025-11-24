@@ -7,6 +7,7 @@
 #define TNCT_CONTAINER_TST_MULTIPLY_MATRIX_TEST_H
 
 #include <cstdint>
+#include <optional>
 #include <random>
 #include <string>
 

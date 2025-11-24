@@ -19,15 +19,21 @@ MainWindow::MainWindow(logger &p_logger, dispatcher &p_dispatcher,
 
   m_logger.set_inf();
 
+  auto _queue_new_temperature{queue_new_temperature::create(m_logger, 10)};
+  if (!_queue_new_temperature)
+  {
+    throw std::runtime_error("Error creating queue for 'new-temperature'");
+  }
+
   auto _result(m_dispatcher.template add_handling<evt::new_temperature>(
-      "new-temperature", queue_new_temperature{m_logger},
+      "new-temperature", std::move(*_queue_new_temperature),
       handler_new_temperature{this},
 
       async::dat::handling_priority::high, 1));
 
   if (_result != async::dat::result::OK)
   {
-    TNCT_LOG_ERR(m_logger, "error creating handling for 'new_temperature");
+    TNCT_LOG_ERR(m_logger, "error creating handling for 'new-temperature");
     return;
   }
 }

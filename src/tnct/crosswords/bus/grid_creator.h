@@ -71,9 +71,10 @@ struct grid_creator
                 p_max_num_rows);
         _result != async::dat::result::OK)
     {
-      TNCT_LOG_ERR(m_logger, format::bus::fmt("Error ", _result,
-                                         " publishing 'grid_create_start' for ",
-                                         p_entries));
+      TNCT_LOG_ERR(
+          m_logger,
+          format::bus::fmt("Error ", _result,
+                           " publishing 'grid_create_start' for ", p_entries));
       return false;
     }
     return true;
@@ -86,7 +87,7 @@ struct grid_creator
         _result != async::dat::result::OK)
     {
       TNCT_LOG_ERR(m_logger, format::bus::fmt("Error ", _result,
-                                         " publishing 'grid_create_stop"));
+                                              " publishing 'grid_create_stop"));
     }
   }
 
@@ -104,10 +105,18 @@ struct grid_creator
     using evt::internal::grid_attempt_configuration;
 
     using queue =
-        container::dat::circular_queue<t_logger, grid_attempt_configuration, 5>;
+        container::dat::circular_queue<t_logger, grid_attempt_configuration>;
+
+    auto _queue{queue::create(m_logger, 300)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger,
+                   "Error creating queue for 'grid-attempt-configuration'");
+      return;
+    }
 
     m_dispatcher.template add_handling<grid_attempt_configuration>(
-        "grid-attempt-configuration", queue{m_logger},
+        "grid-attempt-configuration", std::move(*_queue),
         [p_callback](grid_attempt_configuration &&p_event)
         {
           p_callback(p_event.num_rows, p_event.num_cols,
@@ -124,10 +133,17 @@ struct grid_creator
     using evt::internal::grid_permutations_tried;
 
     using queue =
-        container::dat::circular_queue<t_logger, grid_permutations_tried, 500>;
+        container::dat::circular_queue<t_logger, grid_permutations_tried>;
+    auto _queue{queue::create(m_logger, 500)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger,
+                   "Error creating queue for 'grid-permutations-tried'");
+      return;
+    }
 
     m_dispatcher.template add_handling<grid_permutations_tried>(
-        "grid-permutations-tried", queue{m_logger},
+        "grid-permutations-tried", std::move(*_queue),
         [p_callback](grid_permutations_tried &&p_event)
         { p_callback(p_event.permutations); });
   }
@@ -136,10 +152,16 @@ struct grid_creator
   {
     using evt::internal::grid_create_error;
 
-    using queue = container::dat::circular_queue<t_logger, grid_create_error, 5>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_error>;
+    auto _queue{queue::create(m_logger, 5)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'grid-create-error'");
+      return;
+    }
 
     m_dispatcher.template add_handling<grid_create_error>(
-        "grid-create-error", queue{m_logger},
+        "grid-create-error", std::move(*_queue),
         [p_callback](grid_create_error &&p_event)
         { p_callback(p_event.error, p_event.description); });
   }
@@ -156,9 +178,17 @@ private:
   void on_start()
   {
     using evt::internal::grid_create_start;
-    using queue = container::dat::circular_queue<t_logger, grid_create_start, 1000>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_start>;
+
+    auto _queue{queue::create(m_logger, 1000)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'grid-create-error'");
+      return;
+    }
+
     m_dispatcher.template add_handling<grid_create_start>(
-        "grid-create-start", queue{m_logger},
+        "grid-create-start", std::move(*_queue),
         [&](grid_create_start &&p_event)
         {
           TNCT_LOG_DEB(m_logger,
@@ -172,9 +202,17 @@ private:
   void on_stop()
   {
     using evt::internal::grid_create_stop;
-    using queue = container::dat::circular_queue<t_logger, grid_create_stop, 10>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_stop>;
+
+    auto _queue{queue::create(m_logger, 10)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'grid-create-stop'");
+      return;
+    }
+
     m_dispatcher.template add_handling<grid_create_stop>(
-        "grid-create-stop", queue{m_logger},
+        "grid-create-stop", std::move(*_queue),
         [&](grid_create_stop &&) { m_stop = true; });
   }
 
@@ -189,9 +227,17 @@ private:
 
     using evt::internal::grid_create_solved;
 
-    using queue = container::dat::circular_queue<t_logger, grid_create_solved, 5>;
+    using queue = container::dat::circular_queue<t_logger, grid_create_solved>;
+
+    auto _queue{queue::create(m_logger, 5)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'grid-create-stop'");
+      return;
+    }
+
     m_dispatcher.template add_handling<grid_create_solved>(
-        "grid-create-solved", queue{m_logger},
+        "grid-create-solved", std::move(*_queue),
         [p_callback](grid_create_solved &&p_event)
         { p_callback(p_event.grid, p_event.time, p_event.max_permutations); },
         async::dat::handling_priority::highest);
@@ -205,10 +251,18 @@ private:
   {
     using evt::internal::grid_create_unsolved;
 
-    using queue = container::dat::circular_queue<t_logger, grid_create_unsolved, 5>;
+    using queue =
+        container::dat::circular_queue<t_logger, grid_create_unsolved>;
+
+    auto _queue{queue::create(m_logger, 5)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'grid-create-unsolved'");
+      return;
+    }
 
     m_dispatcher.template add_handling<grid_create_unsolved>(
-        "grid-create-unsolved", queue{m_logger},
+        "grid-create-unsolved", std::move(*_queue),
         [p_callback](grid_create_unsolved &&p_event)
         { p_callback(p_event.num_rows, p_event.num_cols); });
   }
@@ -257,8 +311,9 @@ private:
                     dat::error::INVALID_INTERVAL);
             _result != async::dat::result::OK)
         {
-          TNCT_LOG_ERR(m_logger, format::bus::fmt("error publishing error ",
-                                             dat::error::INVALID_INTERVAL));
+          TNCT_LOG_ERR(m_logger,
+                       format::bus::fmt("error publishing error ",
+                                        dat::error::INVALID_INTERVAL));
         }
         return;
       }
@@ -270,9 +325,9 @@ private:
                     dat::error::MAX_ROWS_SMALLER_THAN_ROWS);
             _result != async::dat::result::OK)
         {
-          TNCT_LOG_ERR(m_logger,
-                       format::bus::fmt("error publishing error ",
-                                   dat::error::MAX_ROWS_SMALLER_THAN_ROWS));
+          TNCT_LOG_ERR(m_logger, format::bus::fmt(
+                                     "error publishing error ",
+                                     dat::error::MAX_ROWS_SMALLER_THAN_ROWS));
         }
         return;
       }
@@ -287,7 +342,7 @@ private:
             _result != async::dat::result::OK)
         {
           TNCT_LOG_ERR(m_logger, format::bus::fmt("error publishing error ",
-                                             dat::error::WORD_TOO_LONG));
+                                                  dat::error::WORD_TOO_LONG));
         }
         return;
       }
@@ -303,8 +358,9 @@ private:
       while ((_current_num_rows <= p_max_num_rows) && (!m_stop))
       {
 
-        TNCT_LOG_DEB(m_logger, format::bus::fmt("Trying grid ", _current_num_rows,
-                                           'x', _current_num_cols));
+        TNCT_LOG_DEB(m_logger,
+                     format::bus::fmt("Trying grid ", _current_num_rows, 'x',
+                                      _current_num_cols));
 
         auto _start = std::chrono::high_resolution_clock::now();
 
@@ -319,9 +375,10 @@ private:
 
           std::chrono::duration<double> _diff = _end - _start;
 
-          TNCT_LOG_DEB(m_logger, format::bus::fmt("grid ", _current_num_rows, 'x',
-                                             _current_num_cols, " solved in ",
-                                             _diff.count(), " seconds"));
+          TNCT_LOG_DEB(m_logger,
+                       format::bus::fmt("grid ", _current_num_rows, 'x',
+                                        _current_num_cols, " solved in ",
+                                        _diff.count(), " seconds"));
 
           if (const auto _result{
                   m_dispatcher
@@ -332,10 +389,10 @@ private:
                           _max_permutations)};
               _result != async::dat::result::OK)
           {
-            TNCT_LOG_ERR(
-                m_logger,
-                format::bus::fmt("Error publishing internal::grid_create_solved: ",
-                            _result));
+            TNCT_LOG_ERR(m_logger,
+                         format::bus::fmt(
+                             "Error publishing internal::grid_create_solved: ",
+                             _result));
           }
 
           TNCT_LOG_DEB(m_logger, "evt::internal::grid_create_solved published");
@@ -348,8 +405,9 @@ private:
           break;
         }
 
-        TNCT_LOG_DEB(m_logger, format::bus::fmt("Not solved for ", _current_num_rows,
-                                           'x', _current_num_cols));
+        TNCT_LOG_DEB(m_logger,
+                     format::bus::fmt("Not solved for ", _current_num_rows, 'x',
+                                      _current_num_cols));
 
         ++_current_num_rows;
         ++_current_num_cols;
@@ -367,8 +425,8 @@ private:
       {
         TNCT_LOG_ERR(
             m_logger,
-            format::bus::fmt("Error publishing internal::grid_create_unsolved: ",
-                        _result));
+            format::bus::fmt(
+                "Error publishing internal::grid_create_unsolved: ", _result));
       }
       m_dispatcher.clear();
     }
@@ -400,7 +458,8 @@ private:
       return math::bus::factorial<std::uint64_t>(20).value();
     }
 
-    return math::bus::factorial<std::uint64_t>(p_entries.get_num_entries()).value();
+    return math::bus::factorial<std::uint64_t>(p_entries.get_num_entries())
+        .value();
   }
 
 private:

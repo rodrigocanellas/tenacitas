@@ -61,12 +61,18 @@ private:
 private:
   void configure_handlings()
   {
-    using queue = container::dat::circular_queue<logger, start_grid_creation, 30>;
+    using queue = container::dat::circular_queue<logger, start_grid_creation>;
+    auto _queue{queue ::create(m_logger, 30)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, "Error creating queue for 'start_grid_creation'");
+      return;
+    }
 
     auto _handler{[this](start_grid_creation &&) { on_grid_creation(); }};
 
     m_dispatcher.template add_handling<start_grid_creation>(
-        "start_grid_creation", queue{m_logger}, std::move(_handler),
+        "start_grid_creation", std::move(*_queue), std::move(_handler),
         async::dat::handling_priority::high);
   }
 

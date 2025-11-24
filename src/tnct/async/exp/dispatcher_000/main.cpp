@@ -75,7 +75,7 @@ struct pgm
       const size_t _total_to_be_handled{
           define_total_to_be_handled(_configuration)};
       TNCT_LOG_TST(_logger, format::bus::fmt("# of events to be handled: ",
-                                        _total_to_be_handled));
+                                             _total_to_be_handled));
       size_t       _total_handled{0};
       const size_t _percentage_to_display{
           percentage_to_display(_total_to_be_handled)};
@@ -96,8 +96,13 @@ struct pgm
 
       // async::handling_id _event_handled_id{"event-handled"};
 
+      auto _queue_event_handled{queue_event_handled::create(_logger, 200)};
+      if (!_queue_event_handled)
+      {
+        return 1;
+      }
       _dispatcher.add_handling<event_handled>(
-          "event-handled", queue_event_handled{_logger},
+          "event-handled", std::move(*_queue_event_handled),
           std::move(_event_handled_handler),
           async::dat::handling_priority::medium, 1);
 
@@ -120,7 +125,8 @@ struct pgm
 
       const std::chrono::duration<double> _diff = _end - _start;
 
-      TNCT_LOG_TST(_logger, format::bus::fmt("time = ", _diff.count(), " seconds"));
+      TNCT_LOG_TST(_logger,
+                   format::bus::fmt("time = ", _diff.count(), " seconds"));
 
       std::cout << _results.report() << std::endl;
     }
@@ -138,11 +144,11 @@ private:
   using dispatcher = async::bus::dispatcher<logger, event_a, event_handled>;
 
   using queue_event_handled =
-      container::dat::circular_queue<logger, event_handled, 5000>;
+      container::dat::circular_queue<logger, event_handled>;
 
   using publisher = async::exp::publisher<'a', dispatcher>;
 
-  using queue_event_a = container::dat::circular_queue<logger, event_a, 5000>;
+  using queue_event_a = container::dat::circular_queue<logger, event_a>;
 
   static constexpr size_t num_handlings{5};
 
@@ -180,8 +186,8 @@ private:
                           p_event.handler_type_id, p_event.handler_id);
       if ((m_total_handled % m_percentage_to_display) == 0)
       {
-        TNCT_LOG_TST(m_logger, format::bus::fmt("handled ", m_total_handled, '/',
-                                           m_total_to_be_handled));
+        TNCT_LOG_TST(m_logger, format::bus::fmt("handled ", m_total_handled,
+                                                '/', m_total_to_be_handled));
       }
       if (m_total_handled >= m_total_to_be_handled)
       {
@@ -203,8 +209,15 @@ private:
   {
     if (p_configuration.handlings_cfg[0].use)
     {
+      auto _queue_event_a{queue_event_a::create(p_logger, 5000)};
+      if (!_queue_event_a)
+      {
+        TNCT_LOG_ERR(p_logger, "Error creating queue for 'handling-0'");
+        return;
+      }
+
       p_dispatcher.add_handling<event_a>(
-          "event-a-0", queue_event_a{p_logger, "event-a-0"},
+          "event-a-0", std::move(*_queue_event_a),
           handler_0{p_logger, p_dispatcher, "handling-0",
                     p_configuration.handlings_cfg[0].sleep_to_simulate_work},
           async::dat::handling_priority::medium,
@@ -213,8 +226,14 @@ private:
 
     if (p_configuration.handlings_cfg[1].use)
     {
+      auto _queue_event_a{queue_event_a::create(p_logger, 5000)};
+      if (!_queue_event_a)
+      {
+        TNCT_LOG_ERR(p_logger, "Error creating queue for 'handling-1'");
+        return;
+      }
       p_dispatcher.add_handling<event_a>(
-          "event-a-1", queue_event_a{p_logger, "event-a-1"},
+          "event-a-1", std::move(*_queue_event_a),
           handler_1{p_logger, p_dispatcher, "handling-1",
                     p_configuration.handlings_cfg[1].sleep_to_simulate_work},
           async::dat::handling_priority::medium,
@@ -223,8 +242,16 @@ private:
 
     if (p_configuration.handlings_cfg[2].use)
     {
+      auto _queue_event_a{queue_event_a::create(p_logger, 200)};
+
+      if (!_queue_event_a)
+      {
+        TNCT_LOG_ERR(p_logger, "Error creating queue for 'handling-2'");
+        return;
+      }
+
       p_dispatcher.add_handling<event_a>(
-          "event-a-2", queue_event_a{p_logger, "event-a-2"},
+          "event-a-2", std::move(*_queue_event_a),
           handler_2{p_logger, p_dispatcher, "handling-2",
                     p_configuration.handlings_cfg[2].sleep_to_simulate_work},
           async::dat::handling_priority::medium,
@@ -233,8 +260,15 @@ private:
 
     if (p_configuration.handlings_cfg[3].use)
     {
+      auto _queue_event_a{queue_event_a::create(p_logger, 1000)};
+      if (!_queue_event_a)
+      {
+        TNCT_LOG_ERR(p_logger, "Error creating queue for 'handling-3'");
+        return;
+      }
+
       p_dispatcher.add_handling<event_a>(
-          "event-a-3", queue_event_a{p_logger, "event-a-3"},
+          "event-a-3", std::move(*_queue_event_a),
           handler_3{p_logger, p_dispatcher, "handling-3",
                     p_configuration.handlings_cfg[3].sleep_to_simulate_work},
           async::dat::handling_priority::medium,
@@ -243,8 +277,15 @@ private:
 
     if (p_configuration.handlings_cfg[4].use)
     {
+      auto _queue_event_a{queue_event_a::create(p_logger, 200)};
+      if (!_queue_event_a)
+      {
+        TNCT_LOG_ERR(p_logger, "Error creating queue for 'handling-4'");
+        return;
+      }
+
       p_dispatcher.add_handling<event_a>(
-          "event-a-4", queue_event_a{p_logger, "event-a-4"},
+          "event-a-4", std::move(*_queue_event_a),
           handler_4{p_logger, p_dispatcher, "handling-4",
                     p_configuration.handlings_cfg[4].sleep_to_simulate_work},
           async::dat::handling_priority::medium,

@@ -27,9 +27,7 @@ namespace tnct::container::dat
 /// the queue by reusing nodes which data have been read
 ///
 /// \tparam t_data defines the types of the data contained in the queue
-template <log::cpt::logger t_logger, typename t_data,
-          std::size_t      t_initial_size,
-          std::size_t      t_incremental_size = t_initial_size / 2>
+template <log::cpt::logger t_logger, typename t_data>
 requires std::move_constructible<t_data> && std::copy_constructible<t_data>
          && ostream::cpt::has_output_operator<t_data>
 class circular_queue final
@@ -41,17 +39,37 @@ public:
 public:
   circular_queue() = delete;
 
-  circular_queue(t_logger &p_logger, std::string_view p_desc = "")
-      : m_logger(p_logger), m_desc(p_desc), m_initial_size(t_initial_size),
-        m_incremental_size(t_incremental_size == 0 ? ((t_initial_size / 2) == 0
-                                                          ? t_initial_size
-                                                          : t_initial_size / 2)
-                                                   : t_incremental_size),
-        m_vector(m_initial_size, std::optional<t_data>()), m_head(0), m_tail(0)
-  {
+  static constexpr std::size_t default_initial_size{100};
+  static constexpr std::size_t default_incremental_size{default_initial_size
+                                                         / 2};
 
-    TNCT_LOG_TRA(this->m_logger,
-                 format::bus::fmt("creating - ", brief_report()));
+  static std::optional<circular_queue>
+  create(t_logger &p_logger, std::size_t p_initial_size = default_initial_size,
+         std::size_t      p_incremental_size = default_incremental_size,
+         std::string_view p_desc             = "NO DESC")
+  {
+    try
+    {
+      if (p_initial_size == 0)
+      {
+        return std::nullopt;
+      }
+
+      const auto _incremental_size{(p_incremental_size == 0
+                                        ? (p_initial_size / 2) + 1
+                                        : p_incremental_size)};
+      return circular_queue(p_logger, p_desc, p_initial_size,
+                            _incremental_size);
+    }
+    catch (...)
+    {
+      TNCT_LOG_ERR(
+          p_logger,
+          format::bus::fmt("Error creating 'circular_queue' named '", p_desc,
+                           "', with initial size =  ", p_initial_size,
+                           ", and incremental size = ", p_initial_size / 2));
+    }
+    return std::nullopt;
   }
 
   ~circular_queue()
@@ -59,7 +77,8 @@ public:
   }
 
   circular_queue(const circular_queue &p_queue)
-      : m_logger(p_queue.m_logger), m_initial_size(p_queue.m_initial_size),
+      : m_logger(p_queue.m_logger), m_desc(p_queue.m_desc),
+        m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(p_queue.m_vector), m_head(p_queue.m_head),
         m_tail(p_queue.m_tail), m_occupied(p_queue.m_occupied)
@@ -67,7 +86,8 @@ public:
   }
 
   circular_queue(circular_queue &&p_queue)
-      : m_logger(p_queue.m_logger), m_initial_size(p_queue.m_initial_size),
+      : m_logger(p_queue.m_logger), m_desc(std::move(p_queue.m_desc)),
+        m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(std::move(p_queue.m_vector)),
         m_head(std::move(p_queue.m_head)), m_tail(std::move(p_queue.m_tail)),
@@ -86,6 +106,7 @@ public:
       m_head             = p_queue.m_head;
       m_tail             = p_queue.m_tail;
       m_occupied         = p_queue.m_occupied;
+      m_desc             = p_queue.m_desc;
     }
     return *this;
   }
@@ -101,6 +122,7 @@ public:
       m_head             = p_queue.m_head;
       m_tail             = p_queue.m_tail;
       m_occupied         = p_queue.m_occupied;
+      m_desc             = std::move(p_queue.m_desc);
     }
     return *this;
   }
@@ -268,7 +290,18 @@ public:
 private:
   using vector = std::vector<std::optional<t_data>>;
 
-protected:
+private:
+  circular_queue(t_logger &p_logger, std::string_view p_desc,
+                 std::size_t p_initial_size, std::size_t p_incremental_size)
+      : m_logger(p_logger), m_desc(p_desc), m_initial_size(p_initial_size),
+        m_incremental_size(p_incremental_size),
+        m_vector(m_initial_size, std::optional<t_data>()), m_head(0), m_tail(0)
+  {
+
+    TNCT_LOG_TRA(this->m_logger,
+                 format::bus::fmt("creating - ", brief_report()));
+  }
+
   void enlarge()
   {
     TNCT_LOG_TRA(this->m_logger,

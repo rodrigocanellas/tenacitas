@@ -55,9 +55,9 @@ struct event_2
   float f;
 };
 
-using queue_1 = container::dat::circular_queue<logger, event_1, 10>;
+using queue_1 = container::dat::circular_queue<logger, event_1>;
 
-using queue_2 = container::dat::circular_queue<logger, event_2, 5>;
+using queue_2 = container::dat::circular_queue<logger, event_2>;
 
 // using handling = async::handling<logger, event_1, queue, handler>;
 using dispatcher = async::bus::dispatcher<logger, event_1, event_2>;
@@ -78,8 +78,15 @@ struct dispatcher_000
 
     auto _handler = [](event_1 &&) mutable {};
 
+    auto _queue_1{queue_1::create(_logger, 10)};
+    if (!_queue_1)
+    {
+      TNCT_LOG_ERR(_logger, "error creating queue");
+      return false;
+    }
+
     auto _result{_dispatcher.add_handling<event_1, queue_1, decltype(_handler)>(
-        "handling-000", queue_1{_logger}, std::move(_handler),
+        "handling-000", std::move(*_queue_1), std::move(_handler),
         async::dat::handling_priority::medium, 0)};
 
     if (_result != async::dat::result::OK)
@@ -110,8 +117,15 @@ struct dispatcher_001
 
     auto _handler = [](event_1 &&) mutable {};
 
+    auto _queue_1{queue_1::create(_logger, 10)};
+    if (!_queue_1)
+    {
+      TNCT_LOG_ERR(_logger, "error creating queue");
+      return false;
+    }
+
     auto _result{_dispatcher.add_handling<event_1>(
-        _handling_name, queue_1{_logger}, std::move(_handler))};
+        _handling_name, std::move(*_queue_1), std::move(_handler))};
 
     if (_result != async::dat::result::OK)
     {
@@ -157,8 +171,16 @@ struct dispatcher_002
 
     auto _handler = [](event_1 &&) mutable {};
 
+    auto _queue_1{queue_1::create(_logger, 10)};
+    if (!_queue_1)
+    {
+      TNCT_LOG_ERR(_logger, format::bus::fmt("error creating queue for ",
+                                             _handling_name));
+      return false;
+    }
+
     auto _result{_dispatcher.add_handling<event_1>(
-        _handling_name, queue_1{_logger}, std::move(_handler),
+        _handling_name, std::move(*_queue_1), std::move(_handler),
         async::dat::handling_priority::medium, 4)};
 
     if (_result != async::dat::result::OK)
@@ -187,9 +209,9 @@ struct dispatcher_002
 
     if (_amount_handlers != 4)
     {
-      TNCT_LOG_ERR(_logger,
-                   format::bus::fmt("amount of handlers should be 1, but it is ",
-                               _amount_handlers));
+      TNCT_LOG_ERR(_logger, format::bus::fmt(
+                                "amount of handlers should be 1, but it is ",
+                                _amount_handlers));
       return false;
     }
 
@@ -214,8 +236,16 @@ struct dispatcher_003
       dispatcher _dispatcher{_logger};
 
       auto _handler_1 = [](event_1 &&) mutable {};
+
+      auto _queue_1a{queue_1::create(_logger, 10, 5)};
+      if (!_queue_1a)
+      {
+        TNCT_LOG_ERR(_logger, "error creating queue");
+        return false;
+      }
+
       auto _result{_dispatcher.add_handling<event_1>(
-          "handling-003-1", queue_1{_logger}, std::move(_handler_1),
+          "handling-003-1", std::move(*_queue_1a), std::move(_handler_1),
           async::dat::handling_priority::medium, 0)};
 
       if (_result != async::dat::result::OK)
@@ -226,8 +256,16 @@ struct dispatcher_003
 
       TNCT_LOG_TST(_logger, "passed 1st subscribe");
       auto _handler_2 = [](event_1 &&) mutable {};
-      _result         = _dispatcher.add_handling<event_1>(
-          "handling-003-2", queue_1{_logger}, std::move(_handler_2),
+
+      auto _queue_1b{queue_1::create(_logger, 10, 5)};
+      if (!_queue_1b)
+      {
+        TNCT_LOG_ERR(_logger, "error creating queue");
+        return false;
+      }
+
+      _result = _dispatcher.add_handling<event_1>(
+          "handling-003-2", std::move(*_queue_1b), std::move(_handler_2),
           async::dat::handling_priority::medium, 0);
 
       if (_result != async::dat::result::ERROR_HANDLER_ALREADY_IN_USE)
@@ -268,8 +306,15 @@ struct dispatcher_007
 
       auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
 
+      auto _queue_1a{queue_1::create(_logger, 10, 5)};
+      if (!_queue_1a)
+      {
+        TNCT_LOG_ERR(_logger, "error creating queue");
+        return false;
+      }
+
       auto _result{_dispatcher.add_handling<event_1>(
-          "handling-007", queue_1{_logger}, std::move(_handler_1),
+          "handling-007", std::move(*_queue_1a), std::move(_handler_1),
           async::dat::handling_priority::medium, 1)};
 
       if (_result != async::dat::result::OK)
@@ -318,8 +363,15 @@ struct dispatcher_008
 
       auto _handler_1 = [&](event_1 &&p_event) mutable { _event = p_event; };
 
+      auto _queue_1{queue_1::create(_logger, 10, 5)};
+      if (!_queue_1)
+      {
+        TNCT_LOG_ERR(_logger, "error creating queue");
+        return false;
+      }
+
       auto _result{_dispatcher.add_handling<event_1>(
-          "handling-008", queue_1{_logger}, std::move(_handler_1),
+          "handling-008", std::move(*_queue_1), std::move(_handler_1),
           async::dat::handling_priority::medium, 1)};
 
       if (_result != async::dat::result::OK)

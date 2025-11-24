@@ -9,7 +9,9 @@
 #include <vector>
 
 #include "tnct/async/cpt/is_dispatcher.h"
+#include "tnct/async/cpt/is_event.h"
 #include "tnct/async/dat/handling_name.h"
+#include "tnct/async/dat/result.h"
 #include "tnct/container/dat/circular_queue.h"
 #include "tnct/crosswords/dat/coordinates.h"
 #include "tnct/crosswords/dat/grid.h"
@@ -139,38 +141,95 @@ struct organizer
 private:
   void configure_handlings()
   {
+    if (!cfg_handling<crosswords::evt::internal::grid_create_solved>(
+            m_grid_create_solved))
+    {
+      return;
+    }
 
-    using crosswords::evt::internal::grid_create_solved;
-    using crosswords::evt::internal::grid_create_stop;
-    using crosswords::evt::internal::grid_create_unsolved;
+    if (!cfg_handling<crosswords::evt::internal::grid_create_stop>(
+            m_grid_create_stop))
+    {
+      return;
+    }
 
-    using grid_create_stop_queue =
-        container::dat::circular_queue<t_logger, grid_create_stop, 10>;
+    if (!cfg_handling<crosswords::evt::internal::grid_create_unsolved>(
+            m_grid_create_unsolved))
+    {
+      return;
+    }
 
-    using grid_create_stop_solved =
-        container::dat::circular_queue<t_logger, grid_create_solved, 10>;
+    // using crosswords::evt::internal::grid_create_solved;
+    // using crosswords::evt::internal::grid_create_stop;
+    // using crosswords::evt::internal::grid_create_unsolved;
 
-    using grid_create_unsolved_queue =
-        container::dat::circular_queue<t_logger, grid_create_unsolved, 10>;
+    // using grid_create_stop_queue =
+    //     container::dat::circular_queue<t_logger, grid_create_stop>;
 
-    // using grid_create_timeout_queue =
-    //     container::dat::circular_queue<t_logger, grid_create_timeout, 10>;
+    // using grid_create_stop_solved =
+    //     container::dat::circular_queue<t_logger, grid_create_solved>;
 
-    m_dispatcher.template add_handling<grid_create_stop>(
-        m_grid_create_stop, grid_create_stop_queue{m_logger},
-        [&](grid_create_stop &&) { m_stop = true; });
+    // using grid_create_unsolved_queue =
+    //     container::dat::circular_queue<t_logger, grid_create_unsolved>;
 
-    m_dispatcher.template add_handling<grid_create_solved>(
-        m_grid_create_solved, grid_create_stop_solved{m_logger},
-        [&](grid_create_solved &&) { m_stop = true; });
+    // // using grid_create_timeout_queue =
+    // //     container::dat::circular_queue<t_logger, grid_create_timeout, 10>;
 
-    m_dispatcher.template add_handling<grid_create_unsolved>(
-        m_grid_create_unsolved, grid_create_unsolved_queue{m_logger},
-        [&](grid_create_unsolved &&) { m_stop = true; });
+    // auto _grid_create_stop_queue{grid_create_stop_queue::create(m_logger,
+    // 10)}; if (!_grid_create_stop_queue)
+    // {
+    //   TNCT_LOG_ERR(m_logger, format::bus::fmt("Error creating queue for ",
+    //                                           m_grid_create_stop));
+    //   return;
+    // }
+    // m_dispatcher.template add_handling<grid_create_stop>(
+    //     m_grid_create_stop, grid_create_stop_queue{m_logger},
+    //     [&](grid_create_stop &&) { m_stop = true; });
 
-    // m_dispatcher.template add_handling<grid_create_timeout>(
-    //     m_grid_create_timeout, grid_create_timeout_queue{m_logger},
-    //     [&](grid_create_timeout &&) { m_stop = true; });
+    // auto _grid_create_stop_solved{
+    //     grid_create_stop_solved::create(m_logger, 10)};
+    // if (!_grid_create_stop_solved)
+    // {
+    //   TNCT_LOG_ERR(m_logger, format::bus::fmt("Error creating queue for ",
+    //                                           m_grid_create_solved));
+    //   return;
+    // }
+    // m_dispatcher.template add_handling<grid_create_solved>(
+    //     m_grid_create_solved, grid_create_stop_solved{m_logger},
+    //     [&](grid_create_solved &&) { m_stop = true; });
+
+    // m_dispatcher.template add_handling<grid_create_unsolved>(
+    //     m_grid_create_unsolved, grid_create_unsolved_queue{m_logger},
+    //     [&](grid_create_unsolved &&) { m_stop = true; });
+
+    // // m_dispatcher.template add_handling<grid_create_timeout>(
+    // //     m_grid_create_timeout, grid_create_timeout_queue{m_logger},
+    // //     [&](grid_create_timeout &&) { m_stop = true; });
+  }
+
+  template <async::cpt::is_event t_event>
+  bool cfg_handling(std::string_view p_handling_name)
+  {
+    using queue = container::dat::circular_queue<t_logger, t_event>;
+    auto _queue{queue::create(m_logger, 10)};
+    if (!_queue)
+    {
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("Error creating queue for '",
+                                              p_handling_name, '\''));
+      return false;
+    }
+
+    const auto _result{m_dispatcher.template add_handling<t_event>(
+        p_handling_name, std::move(*_queue),
+        [&](t_event &&) { m_stop = true; })};
+
+    if (_result != async::dat::result::OK)
+    {
+      TNCT_LOG_ERR(m_logger, format::bus::fmt("Error adding handling '",
+                                              p_handling_name, '\''));
+      return false;
+    }
+    return true;
   }
 
   bool all_words_fit(const dat::grid &p_grid)

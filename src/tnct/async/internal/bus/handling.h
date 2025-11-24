@@ -87,8 +87,8 @@ public:
 
   handling_concrete(handling_concrete &&p_handling)
       : m_logger(p_handling.m_logger), m_handling_id(p_handling.m_handling_id),
-        m_handler(std::move(p_handling.m_handler)),
-        m_queue(p_handling.m_logger), m_handler_id(p_handling.m_handler_id)
+        m_handler(std::move(p_handling.m_handler)), m_queue(p_handling.m_queue),
+        m_handler_id(p_handling.m_handler_id)
   {
     const bool _right_handling_was_stopped{p_handling.is_stopped()};
     p_handling.stop();

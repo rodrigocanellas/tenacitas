@@ -50,7 +50,7 @@ private:
   };
 
   using queue_new_temperature =
-      container::dat::circular_queue<logger, evt::new_temperature, 10>;
+      container::dat::circular_queue<logger, evt::new_temperature>;
 
 private:
   void on_new_temperature(evt::new_temperature &&);
