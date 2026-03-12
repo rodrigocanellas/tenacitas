@@ -10,6 +10,7 @@ HEADERS += \
         $$BASE_DIR/tnct/container/cpt/queue.h \
         $$BASE_DIR/tnct/container/cpt/matrix.h \
         $$BASE_DIR/tnct/container/dat/circular_queue.h \
+        $$BASE_DIR/tnct/container/dat/circular_buffer.h \
         $$BASE_DIR/tnct/container/dat/circular_queue_with_notifier.h \
         $$BASE_DIR/tnct/container/dat/matrix.h \
         $$BASE_DIR/tnct/container/bus/multiply_matrix.h \
