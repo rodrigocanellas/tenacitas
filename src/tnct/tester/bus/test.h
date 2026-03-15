@@ -39,9 +39,8 @@ namespace tnct::tester::bus
 /// #include <iostream>
 /// #include <string>
 ///
-/// #include "tester/test.h"
+/// #include "tnct/tester/bus/test.h"
 ///
-/// using namespace tenacitas::src;
 ///
 /// struct test_ok {
 ///   bool operator()(const program::bus::options &) { return true; }
@@ -69,7 +68,7 @@ namespace tnct::tester::bus
 ///
 ///  int main(int argc, char **argv) {
 ///  try {
-///    test::tester _tester(argc, argv);
+///    tester::bus::test _test(argc, argv);
 ///
 ///    run_test(_tester, test_ok);
 ///    run_test(_tester, test_fail);
