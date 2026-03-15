@@ -10,5 +10,7 @@ PRJ_DIR=$$BASE_DIR/tnct/math/tst
 
 SOURCES = $$PRJ_DIR/main.cpp
 
-HEADERS=$$PRJ_DIR/sum.h
-
+HEADERS=$$PRJ_DIR/sum.h \
+        $$PRJ_DIR/sub.h \
+        $$PRJ_DIR/mul.h \
+        $$PRJ_DIR/moving_average.h

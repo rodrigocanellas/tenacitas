@@ -16,7 +16,7 @@ using namespace tnct;
 namespace tnct::math::test
 {
 
-struct test_000
+struct test_sum_000
 {
   bool operator()(const program::bus::options &)
   {
@@ -29,7 +29,7 @@ struct test_000
   }
 };
 
-struct test_001
+struct test_sum_001
 {
   bool operator()(const program::bus::options &)
   {
@@ -42,7 +42,7 @@ struct test_001
   }
 };
 
-struct test_002
+struct test_sum_002
 {
   bool operator()(const program::bus::options &)
   {
@@ -55,7 +55,7 @@ struct test_002
   }
 };
 
-struct test_003
+struct test_sum_003
 {
   bool operator()(const program::bus::options &)
   {
@@ -69,7 +69,7 @@ struct test_003
   }
 };
 
-struct test_004
+struct test_sum_004
 {
   bool operator()(const program::bus::options &)
   {
@@ -83,7 +83,7 @@ struct test_004
   }
 };
 
-struct test_005
+struct test_sum_005
 {
   bool operator()(const program::bus::options &)
   {
@@ -96,7 +96,7 @@ struct test_005
   }
 };
 
-struct test_006
+struct test_sum_006
 {
   bool operator()(const program::bus::options &)
   {
@@ -109,7 +109,7 @@ struct test_006
   }
 };
 
-struct test_007
+struct test_sum_007
 {
   bool operator()(const program::bus::options &)
   {
@@ -122,7 +122,7 @@ struct test_007
   }
 };
 
-struct test_008
+struct test_sum_008
 {
   bool operator()(const program::bus::options &)
   {
@@ -135,7 +135,7 @@ struct test_008
   }
 };
 
-struct test_009
+struct test_sum_009
 {
   bool operator()(const program::bus::options &)
   {
@@ -148,7 +148,7 @@ struct test_009
   }
 };
 
-struct test_010
+struct test_sum_010
 {
   bool operator()(const program::bus::options &)
   {
@@ -161,7 +161,7 @@ struct test_010
   }
 };
 
-struct test_011
+struct test_sum_011
 {
   bool operator()(const program::bus::options &)
   {
@@ -174,7 +174,7 @@ struct test_011
   }
 };
 
-struct test_012
+struct test_sum_012
 {
   bool operator()(const program::bus::options &)
   {
@@ -187,7 +187,7 @@ struct test_012
   }
 };
 
-struct test_013
+struct test_sum_013
 {
   bool operator()(const program::bus::options &)
   {
@@ -200,7 +200,7 @@ struct test_013
   }
 };
 
-struct test_014
+struct test_sum_014
 {
   bool operator()(const program::bus::options &)
   {
@@ -213,7 +213,7 @@ struct test_014
   }
 };
 
-struct test_015
+struct test_sum_015
 {
   bool operator()(const program::bus::options &)
   {
@@ -227,7 +227,7 @@ struct test_015
   }
 };
 
-struct test_016
+struct test_sum_016
 {
   bool operator()(const program::bus::options &)
   {
@@ -242,7 +242,7 @@ struct test_016
   }
 };
 
-struct test_017
+struct test_sum_017
 {
   bool operator()(const program::bus::options &)
   {
@@ -257,7 +257,7 @@ struct test_017
   }
 };
 
-struct test_018
+struct test_sum_018
 {
   bool operator()(const program::bus::options &)
   {
@@ -271,7 +271,7 @@ struct test_018
   }
 };
 
-struct test_019
+struct test_sum_019
 {
   bool operator()(const program::bus::options &)
   {
@@ -286,7 +286,7 @@ struct test_019
   }
 };
 
-struct test_020
+struct test_sum_020
 {
   bool operator()(const program::bus::options &)
   {
@@ -302,7 +302,7 @@ struct test_020
   }
 };
 
-struct test_021
+struct test_sum_021
 {
   bool operator()(const program::bus::options &)
   {
@@ -318,7 +318,7 @@ struct test_021
   }
 };
 
-struct test_022
+struct test_sum_022
 {
   bool operator()(const program::bus::options &)
   {
@@ -334,7 +334,7 @@ struct test_022
   }
 };
 
-struct test_023
+struct test_sum_023
 {
   bool operator()(const program::bus::options &)
   {
@@ -350,7 +350,7 @@ struct test_023
   }
 };
 
-struct test_024
+struct test_sum_024
 {
   bool operator()(const program::bus::options &)
   {
@@ -366,7 +366,7 @@ struct test_024
   }
 };
 
-struct test_025
+struct test_sum_025
 {
   bool operator()(const program::bus::options &)
   {
@@ -382,7 +382,7 @@ struct test_025
   }
 };
 
-struct test_026
+struct test_sum_026
 {
   bool operator()(const program::bus::options &)
   {
@@ -398,7 +398,7 @@ struct test_026
   }
 };
 
-struct test_027
+struct test_sum_027
 {
   bool operator()(const program::bus::options &)
   {
@@ -414,7 +414,7 @@ struct test_027
   }
 };
 
-struct test_028
+struct test_sum_028
 {
   bool operator()(const program::bus::options &)
   {
@@ -430,7 +430,7 @@ struct test_028
   }
 };
 
-struct test_029
+struct test_sum_029
 {
   bool operator()(const program::bus::options &)
   {
@@ -446,7 +446,7 @@ struct test_029
   }
 };
 
-struct test_030
+struct test_sum_030
 {
   bool operator()(const program::bus::options &)
   {
@@ -462,7 +462,7 @@ struct test_030
   }
 };
 
-struct test_031
+struct test_sum_031
 {
   bool operator()(const program::bus::options &)
   {
@@ -478,7 +478,7 @@ struct test_031
   }
 };
 
-struct test_032
+struct test_sum_032
 {
   bool operator()(const program::bus::options &)
   {
@@ -494,7 +494,7 @@ struct test_032
   }
 };
 
-struct test_033
+struct test_sum_033
 {
   bool operator()(const program::bus::options &)
   {
@@ -508,7 +508,7 @@ struct test_033
   }
 };
 
-struct test_034
+struct test_sum_034
 {
   bool operator()(const program::bus::options &)
   {
@@ -522,7 +522,7 @@ struct test_034
   }
 };
 
-struct test_035
+struct test_sum_035
 {
   bool operator()(const program::bus::options &)
   {
@@ -536,7 +536,7 @@ struct test_035
   }
 };
 
-struct test_036
+struct test_sum_036
 {
   bool operator()(const program::bus::options &)
   {
@@ -550,7 +550,7 @@ struct test_036
   }
 };
 
-struct test_037
+struct test_sum_037
 {
   bool operator()(const program::bus::options &)
   {
@@ -564,7 +564,7 @@ struct test_037
   }
 };
 
-struct test_038
+struct test_sum_038
 {
   bool operator()(const program::bus::options &)
   {
@@ -578,7 +578,7 @@ struct test_038
   }
 };
 
-struct test_039
+struct test_sum_039
 {
   bool operator()(const program::bus::options &)
   {
@@ -592,7 +592,7 @@ struct test_039
   }
 };
 
-struct test_040
+struct test_sum_040
 {
   bool operator()(const program::bus::options &)
   {
@@ -607,7 +607,7 @@ struct test_040
   }
 };
 
-struct test_041
+struct test_sum_041
 {
   bool operator()(const program::bus::options &)
   {
@@ -623,7 +623,7 @@ struct test_041
   }
 };
 
-struct test_042
+struct test_sum_042
 {
   bool operator()(const program::bus::options &)
   {
@@ -636,7 +636,7 @@ struct test_042
   }
 };
 
-struct test_043
+struct test_sum_043
 {
 
   bool operator()(const program::bus::options &)

@@ -12,59 +12,11 @@
 #include <optional>
 #include <type_traits>
 
+#include "tnct/math/bus/internal/fits.h"
 #include "tnct/math/bus/revert.h"
-
-#include <iostream>
 
 namespace tnct::math::bus::internal
 {
-
-template <std::signed_integral t_result, std::signed_integral t_number>
-[[nodiscard]] constexpr bool fits(t_number p_number)
-{
-  using common_type = std::common_type_t<t_result, t_number>;
-
-  const common_type _number{static_cast<common_type>(p_number)};
-
-  return (_number
-          >= static_cast<common_type>(std::numeric_limits<t_result>::min()))
-         && (_number
-             <= static_cast<common_type>(std::numeric_limits<t_result>::max()));
-}
-
-template <std::unsigned_integral t_result, std::unsigned_integral t_number>
-[[nodiscard]] constexpr bool fits(t_number p_number)
-{
-  using common_type = std::common_type_t<t_result, t_number>;
-
-  return static_cast<common_type>(p_number)
-         <= static_cast<common_type>(std::numeric_limits<t_result>::max());
-}
-
-template <std::unsigned_integral t_result, std::signed_integral t_number>
-[[nodiscard]] constexpr bool fits(t_number p_number)
-{
-  if (p_number < 0)
-  {
-    return false;
-  }
-
-  using unsigned_number = std::make_unsigned_t<t_number>;
-  using common_type     = std::common_type_t<t_result, unsigned_number>;
-
-  return static_cast<common_type>(static_cast<unsigned_number>(p_number))
-         <= static_cast<common_type>(std::numeric_limits<t_result>::max());
-}
-
-template <std::signed_integral t_result, std::unsigned_integral t_number>
-[[nodiscard]] constexpr bool fits(t_number p_number)
-{
-  using common_type =
-      std::common_type_t<t_number, std::make_unsigned_t<t_result>>;
-
-  return static_cast<common_type>(p_number)
-         <= static_cast<common_type>(std::numeric_limits<t_result>::max());
-}
 
 template <std::signed_integral t_number>
 [[nodiscard]] constexpr std::optional<t_number> sum_same(t_number p_first,
@@ -93,7 +45,7 @@ template <std::signed_integral t_number>
   {
     return std::nullopt;
   }
-  return {p_first + p_second};
+  return {static_cast<t_number>(p_first + p_second)};
 }
 
 template <std::unsigned_integral t_number>
@@ -139,10 +91,11 @@ template <std::signed_integral t_result, std::signed_integral t_first,
 [[nodiscard]] constexpr std::optional<t_result>
 sum_different_operands_signed_result(t_first p_first, t_second p_second)
 {
+  using unsigned_common =
+      std::common_type_t<std::make_unsigned_t<t_first>, t_second>;
+
   if (p_first >= 0)
   {
-    using unsigned_common =
-        std::common_type_t<std::make_unsigned_t<t_first>, t_second>;
     const unsigned_common _first{static_cast<unsigned_common>(p_first)};
     const unsigned_common _second{static_cast<unsigned_common>(p_second)};
     const auto            _maybe{
@@ -154,8 +107,7 @@ sum_different_operands_signed_result(t_first p_first, t_second p_second)
   }
   else
   {
-    using unsigned_common =
-        std::common_type_t<std::make_unsigned_t<t_first>, t_second>;
+
     const unsigned_common _first{static_cast<unsigned_common>(revert(p_first))};
     const unsigned_common _second{static_cast<unsigned_common>(p_second)};
 
