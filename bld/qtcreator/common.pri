@@ -31,7 +31,7 @@ win32:os=win32
 BASE_DIR=$$PWD/../../src
 
 
-products_dir=$$BASE_DIR/../../prd/$$os-$$cfg-$$arch
+products_dir=$$(HOME)/prd/$$os-$$cfg-$$arch
 third_dir=$$BASE_DIR/3rd
 libs_dir=$$products_dir/lib
 bins_dir=$$products_dir/app
