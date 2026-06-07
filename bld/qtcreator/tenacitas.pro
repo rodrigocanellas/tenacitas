@@ -21,8 +21,8 @@ SUBDIRS = \
     crosswords \
     math \
     numerate \
-    interpreter \
-    supplier
+    supplier \
+    interpreter
 
     # network \
     # io
