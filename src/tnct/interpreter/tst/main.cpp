@@ -1,0 +1,71 @@
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
+
+// #include "scanner_test.h"
+// #include "grammar_test.h"
+// #include "parser_test.h"
+#include "tnct/interpreter/tst/standard_scanners_test.h"
+#include "tnct/tester/bus/test.h"
+
+using namespace tnct;
+
+int main(int argc, char **argv) {
+  tester::bus::test _tester(argc, argv);
+
+  run_test(_tester, tnct::interpreter::tst::standard_scanners_000);
+  run_test(_tester, tnct::interpreter::tst::standard_scanners_001);
+  run_test(_tester, tnct::interpreter::tst::standard_scanners_002);
+  run_test(_tester, tnct::interpreter::tst::standard_scanners_003);
+}
+
+// int main ( int argc, char ** argv ) {
+
+//     if ( argc != 2 ) {
+//         std::cout << "Syntax : " << argv [0] << " <file-name> \n"
+//                   << "Where <file-name> is the name of the file that "
+//                   << "contains the text to be lexicaly analysed"
+//                   << std::endl;
+//     }
+//     else {
+// 	try {
+// 	    test_scanner l_test_scanner;
+// 	    if ( !l_test_scanner.exec ( ) ) {
+// 		std::cout << "ERROR on 'test_lexical' " ;
+// 	    }
+// 	    else {
+// 		std::cout << "SUCCESS for 'test_lexical' ";
+// 	    }
+// 	    std::cout << std::endl << std::endl;
+
+// 	    test_grammar_1 l_test_grammar_1;
+// 	    if ( !l_test_grammar_1.exec (  ) ) {
+// 		std::cout << "ERROR on 'test_grammar_1' " ;
+// 	    }
+// 	    else {
+// 		std::cout << "SUCCESS for 'test_grammar_1' ";
+// 	    }
+// 	    std::cout << std::endl << std::endl;
+
+//             test_parser_1 l_test_parser_1;
+// 	    if ( !l_test_parser_1.exec ( argv[1] ) ) {
+// 		std::cout << "ERROR on 'test_parser_1' " ;
+// 	    }
+// 	    else {
+// 		std::cout << "SUCCESS for 'test_parser_1' ";
+// 	    }
+// 	    std::cout << std::endl << std::endl;
+// 	}
+// 	catch ( interpreter::fault & e ) {
+// 	    cout << "Error: " << e.what ( ) << endl;
+// 	}
+// 	catch ( tenacitas::number::fault & e ) {
+// 	    cout << "FAULT: " << e.what ( ) ;
+// 	}
+
+//         std::cout << std::endl;
+//     }
+
+//     return 0;
+// }

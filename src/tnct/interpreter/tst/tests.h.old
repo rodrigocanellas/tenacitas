@@ -1,0 +1,90 @@
+
+
+
+#include <tenacitas.basic/basic.h>
+
+#include "interpreter.h"
+#include "grammars_tests.h"
+
+#include <sstream>
+
+using namespace std;
+
+using namespace tenacitas::basic;
+using namespace tenacitas::interpreter;
+
+
+void print_ex(tenacitas::interpreter::exception &e,
+              ptr<print_tester_log> prt_tester_log);
+
+
+* Tests the parser for \p g_infixed_arithmetic grammar with the text '3'
+class t000000 : public tester {
+
+ public:
+  t000000 ();
+  ~t000000();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+  
+
+};
+
+* Tests the parser for \p g_infixed_arithmetic grammar with the text '- 9'
+class t000001 : public tester {
+
+ public:
+  t000001 ();
+  ~t000001();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+
+* Tests the parser for \p g_infixed_arithmetic grammar with the text '15 - 9'
+class t000002 : public tester {
+
+ public:
+  t000002 ();
+  ~t000002();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+
+
+* Tests the parser for g_infixed_arithmetic grammar with the text '15 * 9'
+class t000003 : public tester {
+
+ public:
+  t000003 ();
+  ~t000003();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+
+
+* Tests the parser for g_infixed_arithmetic grammar with the text '15 + (9 * 4)'
+class t000004 : public tester {
+
+ public:
+  t000004 ();
+  ~t000004();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+
+* Tests the parser for g_infixed_arithmetic grammar with the text '- 15'
+class t000005 : public tester {
+
+ public:
+  t000005 ();
+  ~t000005();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+
+* Tests the parser for \p g_infixed_arithmetic grammar with the 
+* text '15 * 9', and a \p routine associated to the \p term production
+class t000006 : public tester {
+ protected:
+  class r_term;
+  class r_factor;
+ public:
+  t000006 ();
+  ~t000006 ();
+  constant exec (ptr<print_tester_log> prt_tester_log);
+};
+

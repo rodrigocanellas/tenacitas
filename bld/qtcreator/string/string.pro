@@ -8,7 +8,7 @@ SUBDIRS = tst
 PRJ_DIR=$$BASE_DIR/tnct/string
 
 HEADERS += \
-    $$PRJ_DIR/bus/fixed_size_string.h \
-    $$PRJ_DIR/cpt/fixed_size_string.h
+    $$PRJ_DIR/dat/*.h \
+    $$PRJ_DIR/cpt/*.h
 
 

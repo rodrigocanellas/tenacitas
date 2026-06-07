@@ -1,0 +1,18 @@
+palavraA palavraB
+palavraC      
+palavraD
+abcd 12345
+12345
+abcd 12345
+
+=              
+
+xyz wsa 112 0987
+Z ==
+3
+abc
+def
+= ==
+abc
+def 123,45 984 escondido
+

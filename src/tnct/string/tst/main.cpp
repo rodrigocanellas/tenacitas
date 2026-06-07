@@ -10,8 +10,7 @@
 
 using namespace tnct;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   tester::bus::test _tester(argc, argv);
 
   run_test(_tester, string::tst::fixed_size_string_000);
@@ -20,6 +19,8 @@ int main(int argc, char **argv)
   run_test(_tester, string::tst::fixed_size_string_003);
   run_test(_tester, string::tst::fixed_size_string_004);
   run_test(_tester, string::tst::fixed_size_string_005);
+  run_test(_tester, string::tst::fixed_size_string_006);
+  run_test(_tester, string::tst::fixed_size_string_007);
 
   run_test(_tester, string::tst::cpt_fixed_size_string_000);
   run_test(_tester, string::tst::cpt_fixed_size_string_001);

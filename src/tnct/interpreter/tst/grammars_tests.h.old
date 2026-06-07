@@ -1,0 +1,168 @@
+
+#include <tenacitas.basic/basic.h>
+
+#include "interpreter.h"
+
+#include <sstream>
+
+using namespace std;
+
+using namespace tenacitas::basic;
+using namespace tenacitas::interpreter;
+
+
+
+
+* Type to recognize a sequence of letters and/or digits, 
+* begining with a letter
+class pgm_lang_id_type : public type {
+ public:
+  pgm_lang_id_type();
+  ~pgm_lang_id_type();
+  bool recognize (ptr<const symbol_id> symb_id) const;
+};
+
+
+
+* Type that recognizes a integer number, without thousand separator
+class integer_type : public type {
+ public:
+  integer_type();
+  ~integer_type();
+  bool recognize (ptr<const symbol_id> symb_id) const;
+};
+
+
+* Type that recognizes a real number, with customizable decimal separator
+class real_type : public type {
+ public:
+  real_type(char decimal_separator = '.');
+  ~real_type();
+  bool recognize (ptr<const symbol_id> symb_id) const;
+ private:
+  char decimal_separator_;
+};
+
+
+* Implements a infixed arithmetic expression grammar
+*
+* The grammar can be expressed in this syntax graph
+*
+*                        0            2                     3            2
+* infixed_arithmetic := '+' --suc--> term ----------suc--> '+' --suc--> term
+*                        |                           |
+*                        |      1            2       |      4            2
+*                       alt--> '-' --suc--> term    alt--> '-' --suc--> term
+*                        |                           |
+*                        |        2                  +--> anything
+*                       alt --> term          
+*                                         
+*
+*
+*           0              1             0
+* term := factor --suc--> '*' --suc--> factor
+*                          |
+*                          |      2            0
+*                         alt--> '/' --suc--> factor
+*                                 |
+*                                 |       3              0
+*                                alt--> 'mod' --suc--> factor
+*                                 |
+*                                 |
+*                                alt--> anything
+*
+*             0 
+* factor := integer
+*            |
+*            |      1
+*           alt--> real
+*                   |
+*                   |        2              3                4
+*                   alt--> '(' --suc--> ARITHM_EXP --suc--> ')'
+*
+class g_infixed_arithmetic : public grammar {
+ public:
+  g_infixed_arithmetic(char decimal_separator = '.');
+  ~g_infixed_arithmetic();
+};
+
+
+* Implements the following Grammar:
+*
+*            0               1               7
+*  EXP := infixed_arithmetic --suc--> '==' --suc--> infixed_arithmetic
+*                            |
+*                            |       2             7
+*                            alt--> '<' --suc--> infixed_arithmetic
+*                            |
+*                            |       3             7
+*                            alt--> '>' --suc--> infixed_arithmetic
+*                            |
+*                            |       4               7
+*                            alt--> '!=' --suc--> infixed_arithmetic
+*                            |
+*                            |       5               7
+*                            alt--> '>=' --suc--> infixed_arithmetic
+*                            |
+*                            |       6               7
+*                            alt--> '<=' --suc--> infixed_arithmetic
+*                            |
+*                            |
+*                            alt--> anything
+*
+* 
+*              0            2                     3            2
+* infixed_arithmetic := '+' --suc--> term ----------suc--> '+' --suc--> term
+*              |                           |
+*              |      1            2       |      4            2
+*             alt--> '-' --suc--> term    alt--> '-' --suc--> term
+*                     |                    |
+*                     |        2           |      5             2
+*                    alt --> term         alt--> '||' --suc--> term
+*                                          |
+*                                          |      
+*                                         alt--> anything
+*
+*
+*           0              1             0
+* term := factor --suc--> '*' --suc--> factor
+*                          |
+*                          |      2            0
+*                         alt--> '/' --suc--> factor
+*                          |
+*                          |       3              0
+*                         alt--> 'mod' --suc--> factor
+*                          |
+*                          |      4              0
+*                         alt--> '&&' --suc--> factor
+*                          |
+*                          |
+*                         alt--> anything
+*
+*            0
+* factor := pgm_lang_id_type
+*            |
+*            |       1
+*           alt--> integer
+*            |
+*            |      2
+*           alt--> real
+*            |
+*            |      3            4            5
+*           alt--> '(' --suc--> EXP --suc--> ')'
+*            |
+*            |     6           0
+*           alt--> ! --suc--> word
+*
+/* class expression : public grammar { */
+/*  public: */
+/*   expression(); */
+/*   ~expression(); */
+/* }; */
+
+
+
+/*
+ *            0                  1            2
+ *  ATRIB := pgm_lang_id_type --suc-> '=' --suc--> EXP
+ */
