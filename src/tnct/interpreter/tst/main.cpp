@@ -7,6 +7,7 @@
 // #include "grammar_test.h"
 // #include "parser_test.h"
 #include "tnct/interpreter/tst/standard_scanners_test.h"
+#include "tnct/interpreter/tst/tokens_test.h"
 #include "tnct/tester/bus/test.h"
 
 using namespace tnct;
@@ -18,6 +19,8 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::standard_scanners_001);
   run_test(_tester, tnct::interpreter::tst::standard_scanners_002);
   run_test(_tester, tnct::interpreter::tst::standard_scanners_003);
+
+  run_test(_tester, tnct::interpreter::tst::tokens_000);
 }
 
 // int main ( int argc, char ** argv ) {

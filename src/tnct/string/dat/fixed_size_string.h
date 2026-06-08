@@ -37,12 +37,23 @@ public:
     std::copy_n(p_value, std::strlen(p_value), m_value.begin());
   }
 
+  constexpr fixed_size_string(const_iterator p_begin, const_iterator p_end) {
+    if (static_cast<decltype(t_size)>(std::distance(p_begin, p_end)) >
+        t_size + 1) {
+      throw std::runtime_error(
+          "string too large when creating a fixed_size_string!");
+    }
+
+    std::copy_n(p_begin, std::distance(p_begin, p_end), m_value.begin());
+  }
+
   // with help from ChatGPT
   fixed_size_string(std::string_view p_value) {
     // reset();
     if (p_value.size() > t_size) {
       // Triggers a compile-time error
-      throw std::runtime_error("string too large!");
+      throw std::runtime_error(
+          "string too large when creating a fixed_size_string!");
     }
     std::copy_n(p_value.begin(), p_value.size(), m_value.begin());
   }
@@ -99,9 +110,35 @@ public:
     return !(m_value == p_fixed_size_string.m_value);
   }
 
-  const_iterator begin() const { return m_value.begin(); }
+  constexpr const_iterator begin() const { return m_value.begin(); }
 
-  const_iterator end() const { return m_value.end(); }
+  constexpr const_iterator end() const { return m_value.end(); }
+
+  constexpr bool equals(const_iterator p_begin, const_iterator p_end) const {
+    const auto _distance{
+        static_cast<decltype(t_size)>(std::distance(p_begin, p_end))};
+    if (_distance >= (t_size + 1)) {
+      return false;
+    }
+
+    if (empty() || (p_begin == p_end)) {
+      return false;
+    }
+
+    const_iterator _ite{p_begin};
+
+    for (decltype(t_size) _i = 0; _i < t_size; ++_i) {
+      if ((m_value[_i] == '\0') || (_ite == p_end)) {
+        break;
+      }
+      if (*_ite != m_value[_i]) {
+        return false;
+      }
+      ++_ite;
+    }
+
+    return true;
+  }
 
   friend std::ostream &
   operator<<(std::ostream &p_out,
