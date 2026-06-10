@@ -16,7 +16,7 @@
 namespace tnct::string::dat {
 
 template <std::size_t t_size> struct fixed_size_string {
-  static constexpr decltype(t_size) size = t_size;
+  // static constexpr decltype(t_size) size = t_size;
 
 private:
   using array = std::array<char, t_size + 1>;
@@ -80,39 +80,79 @@ public:
 
   constexpr bool
   operator==(const fixed_size_string &p_fixed_size_string) const {
-    for (decltype(t_size) _i = 0; _i < t_size; ++_i) {
-
-      if ((m_value[_i] != '\0') &&
-          (p_fixed_size_string.m_value[_i] != m_value[_i])) {
+    const auto _size{size()};
+    if (p_fixed_size_string.size() != _size) {
+      return false;
+    }
+    for (decltype(t_size) _i = 0; _i < _size; ++_i) {
+      if ((p_fixed_size_string.m_value[_i] != m_value[_i])) {
         return false;
       }
     }
     return true;
   }
 
-  constexpr bool operator<(const fixed_size_string &p_fixed_size_string) const {
-    for (decltype(t_size) _i = 0; _i < t_size; ++_i) {
+  constexpr bool
+  operator!=(const fixed_size_string &p_fixed_size_string) const {
+    return !(*this == p_fixed_size_string);
+  }
 
-      if ((m_value[_i] != '\0') &&
-          (p_fixed_size_string.m_value[_i] >= m_value[_i])) {
+  constexpr bool operator<(const fixed_size_string &p_fixed_size_string) const {
+
+    static int _k{0};
+
+    std::cout << __FILE__ << ':' << __LINE__ << " _k = " << _k++ << std::endl;
+
+    decltype(t_size) _size{size()};
+    if (_size > p_fixed_size_string.size()) {
+      _size = p_fixed_size_string.size();
+    }
+
+    std::cout << __FILE__ << ':' << __LINE__ << " *this " << *this
+              << ", p_fixed_size_string " << p_fixed_size_string
+              << ", size() = " << size()
+              << ", p_fixed_size_string.size() = " << p_fixed_size_string.size()
+              << ", _size = " << _size << std::endl;
+
+    for (decltype(t_size) _i = 0; _i < _size; ++_i) {
+      std::cout << __FILE__ << ':' << __LINE__
+                << " 'p_fixed_size_string.m_value[_i]' "
+                << p_fixed_size_string.m_value[_i] << ", 'm_value[_i]' "
+                << m_value[_i] << std::endl;
+      if ((static_cast<std::size_t>(m_value[_i]) >
+           static_cast<std::size_t>(p_fixed_size_string.m_value[_i]))) {
+        std::cout << __FILE__ << ':' << __LINE__ << " returning false"
+                  << std::endl;
         return false;
       }
     }
+
+    if (size() > p_fixed_size_string.size()) {
+      std::cout << __FILE__ << ':' << __LINE__ << " returning false\n";
+      return false;
+    }
+    std::cout << __FILE__ << ':' << __LINE__ << " returning true\n";
     return true;
   }
 
   constexpr bool empty() const { return m_value[0] == '\0'; }
 
-  constexpr operator std::string() const { return std::string{m_value.data()}; }
-
-  constexpr bool
-  operator!=(const fixed_size_string &p_fixed_size_string) const {
-    return !(m_value == p_fixed_size_string.m_value);
+  constexpr decltype(t_size) size() const {
+    return std::distance(this->begin(), this->end());
   }
+
+  constexpr operator std::string() const { return std::string{m_value.data()}; }
 
   constexpr const_iterator begin() const { return m_value.begin(); }
 
-  constexpr const_iterator end() const { return m_value.end(); }
+  constexpr const_iterator end() const {
+    const_iterator _ite{m_value.begin()};
+    while (*_ite != '\0') {
+      ++_ite;
+    }
+    //    return std::find(m_value.begin(), m_value.end(), '\0');
+    return _ite;
+  }
 
   constexpr bool equals(const_iterator p_begin, const_iterator p_end) const {
     const auto _distance{
@@ -125,12 +165,15 @@ public:
       return false;
     }
 
+    const auto _size{size()};
+
+    if (_distance != _size) {
+      return false;
+    }
+
     const_iterator _ite{p_begin};
 
-    for (decltype(t_size) _i = 0; _i < t_size; ++_i) {
-      if ((m_value[_i] == '\0') || (_ite == p_end)) {
-        break;
-      }
+    for (decltype(t_size) _i = 0; _i < _size; ++_i) {
       if (*_ite != m_value[_i]) {
         return false;
       }

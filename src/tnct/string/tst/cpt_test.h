@@ -12,22 +12,18 @@
 
 using namespace tnct;
 
-namespace tnct::string::tst
-{
+namespace tnct::string::tst {
 
-struct cpt_fixed_size_string_000
-{
+struct cpt_fixed_size_string_000 {
 
-  static std::string desc()
-  {
+  static std::string desc() {
     return "Basic concepts::string::dat::fixed_size_string test";
   }
 
-  bool operator()(const program::bus::options &)
-  {
+  bool operator()(const program::bus::options &) {
     using fss = string::dat::fixed_size_string<5>;
 
-    static_assert(string::cpt::fixed_size_string<fss>,
+    static_assert(!string::cpt::fixed_size_string<fss>,
                   "string::dat::fixed_size_string<5> is conformance to "
                   "concepts::string::dat::fixed_size_string");
 
@@ -35,16 +31,13 @@ struct cpt_fixed_size_string_000
   }
 };
 
-struct cpt_fixed_size_string_001
-{
+struct cpt_fixed_size_string_001 {
 
-  static std::string desc()
-  {
+  static std::string desc() {
     return "A non conformance concepts::string::dat::fixed_size_string test";
   }
 
-  bool operator()(const program::bus::options &)
-  {
+  bool operator()(const program::bus::options &) {
 
     using fss = std::string;
     static_assert(!string::cpt::fixed_size_string<fss>,

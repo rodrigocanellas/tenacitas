@@ -24,7 +24,7 @@ public:
   using const_iterator =
       typename string::dat::fixed_size_string<t_size>::const_iterator;
 
-  explicit lexema_t(std::string_view p_string)
+  lexema_t(std::string_view p_string)
       : string::dat::fixed_size_string<t_size>(p_string) {}
 
   explicit lexema_t(const_iterator p_begin, const_iterator p_end)
@@ -43,6 +43,9 @@ public:
 };
 template <std::size_t t_size>
 const lexema_t<t_size> lexema_t<t_size>::end_of_text{"!!eot!!"};
+
+template <std::size_t t_size>
+using lexema_reference = std::reference_wrapper<const lexema_t<t_size>>;
 
 } // namespace tnct::interpreter::dat
 #endif
