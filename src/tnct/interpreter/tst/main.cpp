@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::terminals_001);
   run_test(_tester, tnct::interpreter::tst::terminals_002);
   run_test(_tester, tnct::interpreter::tst::terminals_003);
+  run_test(_tester, tnct::interpreter::tst::terminals_004);
 }
 
 // int main ( int argc, char ** argv ) {

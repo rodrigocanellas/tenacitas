@@ -83,6 +83,8 @@ public:
         // "==" are terminals the string is "== b", then the first "=" will be
         // recognized, but the actual token is "=="
         _res = _aux;
+      } else if ((_res) && (!_res->lexema.get().empty())) {
+        return {{--_ite, {std::move(*_res)}}};
       }
 
       // any of these conditions makes us stop

@@ -28,8 +28,11 @@ using terminals = dat::terminals_t<lexema_size>;
 using token = dat::token_t<lexema_size>;
 using recognition = typename dat::terminals_t<lexema_size>::recognition;
 
+constexpr dat::type _unary_operator = 1;
+constexpr dat::type _assignment_operator = 2;
+constexpr dat::type _reserved_word = 3;
+constexpr dat::type _expression_delimeter = 4;
 constexpr dat::type _comparision_operator = 5;
-constexpr dat::type _assignmen_operator = 2;
 
 std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
@@ -203,7 +206,7 @@ struct terminals_003 {
                     },
                     {
                         "=",
-                        _assignmen_operator,
+                        _assignment_operator,
                     }});
 
     const std::string _text{"< = == ="};
@@ -232,6 +235,91 @@ struct terminals_003 {
     _ite = *_maybe;
 
     _maybe = scan(_ite, _text.end(), lexema{"="}, _terminals, _logger);
+    if (!_maybe) {
+      return false;
+    }
+    _ite = *_maybe;
+
+    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
+    if (_res) {
+      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
+                                " was found, but none should have been"));
+      return false;
+    }
+
+    return true;
+  }
+};
+
+struct terminals_004 {
+  static std::string desc() { return "Recognizes 'if!()'"; }
+
+  bool operator()(const program::bus::options &) {
+
+    constexpr std::size_t lexema_size{10};
+
+    using lexema = dat::lexema_t<lexema_size>;
+    using terminals = dat::terminals_t<lexema_size>;
+
+    log::cerr _logger;
+
+    terminals _terminals;
+
+    _terminals.add({{
+                        "if",
+                        _reserved_word,
+                    },
+                    {
+                        "(",
+                        _expression_delimeter,
+                    },
+                    {
+                        ")",
+                        _expression_delimeter,
+                    },
+                    {
+                        "==",
+                        _comparision_operator,
+                    },
+                    {
+                        "<",
+                        _comparision_operator,
+                    },
+                    {
+                        "=",
+                        _assignment_operator,
+                    },
+                    {
+                        "!",
+                        _unary_operator,
+                    }});
+
+    const std::string _text{"if!()"};
+
+    std::string::const_iterator _ite{_text.begin()};
+
+    TNCT_LOG_INF(_logger, fmt("terminals: ", _terminals));
+
+    std::optional<std::string::const_iterator> _maybe{
+        scan(_ite, _text.end(), lexema{"if"}, _terminals, _logger)};
+    if (!_maybe) {
+      return false;
+    }
+    _ite = *_maybe;
+
+    _maybe = scan(_ite, _text.end(), lexema{"!"}, _terminals, _logger);
+    if (!_maybe) {
+      return false;
+    }
+    _ite = *_maybe;
+
+    _maybe = scan(_ite, _text.end(), lexema{"("}, _terminals, _logger);
+    if (!_maybe) {
+      return false;
+    }
+    _ite = *_maybe;
+
+    _maybe = scan(_ite, _text.end(), lexema{")"}, _terminals, _logger);
     if (!_maybe) {
       return false;
     }

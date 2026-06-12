@@ -9,7 +9,7 @@ namespace tnct::interpreter::dat {
 template <std::size_t t_lexema_size> struct token_t {
 
   lexema_reference<t_lexema_size> lexema;
-  dat::type type;
+  dat::type type{dat::unknow_type};
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const token_t<t_lexema_size> &p_token) {
