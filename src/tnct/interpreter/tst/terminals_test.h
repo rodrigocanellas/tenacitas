@@ -6,7 +6,6 @@
 #ifndef TNCT_INTERPRETER_TST_terminals_TEST_H
 #define TNCT_INTERPRETER_TST_terminals_TEST_H
 
-#include <iterator>
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
@@ -27,7 +26,8 @@ constexpr std::size_t lexema_size{10};
 using lexema = dat::lexema_t<lexema_size>;
 using terminals = dat::terminals_t<lexema_size>;
 using token = dat::token_t<lexema_size>;
-using recognition = typename terminals::recognition;
+using recognition = typename dat::terminals_t<lexema_size>::recognition;
+
 constexpr dat::type _comparision_operator = 5;
 constexpr dat::type _assignmen_operator = 2;
 
@@ -35,9 +35,7 @@ std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
      lexema &&p_expected, const terminals &p_terminals, log::cerr &p_logger) {
 
-  std::string::const_iterator _ite{p_begin};
-
-  recognition _res{p_terminals.recognize(_ite, p_end)};
+  std::optional<recognition> _res{p_terminals.recognize(p_begin, p_end)};
 
   if (!_res) {
     TNCT_LOG_ERR(p_logger,
@@ -45,16 +43,16 @@ scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
     return std::nullopt;
   }
 
-  if (_res->lexema.get() != p_expected) {
+  if (_res->token.lexema.get() != p_expected) {
     TNCT_LOG_ERR(p_logger,
-                 fmt(_res->lexema.get(), " was found, but it should have been ",
-                     p_expected));
+                 fmt(_res->token.lexema.get(),
+                     " was found, but it should have been ", p_expected));
     return std::nullopt;
   }
 
-  TNCT_LOG_INF(p_logger, fmt(_res->lexema.get(), " was found"));
-  std::advance(_ite, _res->lexema.get().size() + 1);
-  return {_ite};
+  TNCT_LOG_INF(p_logger, fmt(_res->token.lexema.get(), " was found"));
+
+  return {_res->ite};
 }
 
 struct terminals_000 {
@@ -73,22 +71,21 @@ struct terminals_000 {
 
     const std::string _text{"="};
 
-    std::cout << "terminals:\n" << _terminals << std::endl;
-
-    recognition _res{_terminals.recognize(_text.begin(), _text.end())};
+    std::optional<recognition> _res{
+        _terminals.recognize(_text.begin(), _text.end())};
 
     if (!_res) {
       TNCT_LOG_ERR(_logger, "not token was found, but it should have been");
       return false;
     }
 
-    if (_res->lexema.get() != lexema{"="}) {
-      TNCT_LOG_ERR(_logger, fmt(_res->lexema.get(),
+    if (_res->token.lexema.get() != lexema{"="}) {
+      TNCT_LOG_ERR(_logger, fmt(_res->token.lexema.get(),
                                 " was found, but it should have been '<'"));
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt(_res->lexema.get(), " was found"));
+    TNCT_LOG_INF(_logger, fmt(_res->token.lexema.get(), " was found"));
     return true;
   }
 };
@@ -119,7 +116,8 @@ struct terminals_001 {
 
     const std::string _text;
 
-    recognition _res{_terminals.recognize(_text.begin(), _text.end())};
+    std::optional<recognition> _res{
+        _terminals.recognize(_text.begin(), _text.end())};
 
     if (_res) {
       TNCT_LOG_ERR(_logger, "'a token was recognized, but it shold not have");
@@ -153,9 +151,6 @@ struct terminals_002 {
                         _comparision_operator,
                     }});
 
-    std::cout << __FILE__ << ':' << __LINE__ << " terminals: \n"
-              << _terminals << std::endl;
-
     const std::string _text{"= =="};
 
     std::string::const_iterator _ite{_text.begin()};
@@ -173,9 +168,9 @@ struct terminals_002 {
     }
     _ite = *_maybe;
 
-    recognition _res{_terminals.recognize(_ite, _text.end())};
+    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
                                 " was found, but none should have been"));
       return false;
     }
@@ -242,9 +237,9 @@ struct terminals_003 {
     }
     _ite = *_maybe;
 
-    recognition _res{_terminals.recognize(_ite, _text.end())};
+    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
                                 " was found, but none should have been"));
       return false;
     }
