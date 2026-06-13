@@ -5,13 +5,10 @@
 #include <optional>
 #include <string>
 
-#include "tnct/interpreter/dat/type.h"
+#include "tnct/interpreter/dat/non_terminal_recognition.h"
 #include "tnct/memory/cpt/has_new_operator.h"
 
 namespace tnct::interpreter::cpt {
-
-using recognizer_return =
-    std::optional<std::pair<dat::type, std::string::const_iterator>>;
 
 template <typename t>
 concept recognizer =
@@ -28,7 +25,9 @@ concept recognizer =
 
     requires(t p_t, std::string::const_iterator p_begin,
              std::string::const_iterator p_end) {
-      { p_t(p_begin, p_end) } -> std::same_as<recognizer_return>;
+      {
+        p_t(p_begin, p_end)
+      } -> std::same_as<std::optional<dat::non_terminal_recognition>>;
     };
 
 } // namespace tnct::interpreter::cpt

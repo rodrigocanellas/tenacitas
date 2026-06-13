@@ -6,6 +6,7 @@
 #include <optional>
 #include <string>
 
+#include "tnct/interpreter/dat/non_terminal_recognition.h"
 #include "tnct/interpreter/dat/type.h"
 
 namespace tnct::interpreter::bus {
@@ -32,7 +33,7 @@ public:
 
   word_recognizer &operator=(word_recognizer &&) = delete;
 
-  std::optional<std::pair<dat::type, std::string::const_iterator>>
+  std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
              std::string::const_iterator p_end) const {
     std::string::const_iterator _ite{p_begin};
@@ -47,7 +48,10 @@ public:
       ++_ite;
     }
 
-    return {{m_type, _ite}};
+    dat::non_terminal _nt{{p_begin, _ite}, m_type};
+
+    return {dat::non_terminal_recognition{.end{_ite},
+                                          .non_terminal{std::move(_nt)}}};
   }
 
 private:
@@ -82,7 +86,7 @@ public:
 
   real_number_recognizer &operator=(real_number_recognizer &&) = delete;
 
-  std::optional<std::pair<dat::type, std::string::const_iterator>>
+  std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
              std::string::const_iterator p_end) const {
 
@@ -144,7 +148,9 @@ public:
   }
   end_: {
     if (_recognized) {
-      return {{m_type, _ite}};
+      return {dat::non_terminal_recognition{
+          .end = _ite,
+          .non_terminal = {.value = {p_begin, _ite}, .type = m_type}}};
     }
     return std::nullopt;
   }
@@ -184,7 +190,7 @@ public:
   decimal_integer_number_recognizer &
   operator=(decimal_integer_number_recognizer &&) = delete;
 
-  std::optional<std::pair<dat::type, std::string::const_iterator>>
+  std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
              std::string::const_iterator p_end) const {
 
@@ -201,7 +207,9 @@ public:
       ++_ite;
     }
 
-    return {{m_type, _ite}};
+    return {dat::non_terminal_recognition{
+        .end = _ite,
+        .non_terminal = {.value = {p_begin, _ite}, .type = m_type}}};
   }
 
 private:

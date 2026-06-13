@@ -35,14 +35,15 @@ struct standard_recognizers_000 {
     const std::string _text{"abcdefgh"};
     bus::word_recognizer _word_recognizer{word_type};
 
-    cpt::recognizer_return _res{_word_recognizer(_text.begin(), _text.end())};
+    std::optional<dat::non_terminal_recognition> _res{
+        _word_recognizer(_text.begin(), _text.end())};
 
     if (!_res) {
       TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
       return false;
     }
 
-    const std::string _scanned{_text.begin(), _res->second};
+    const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _text) {
       TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
                               ", but it should have been ", _text));
@@ -64,7 +65,8 @@ struct standard_recognizers_001 {
     const std::string _text;
     bus::word_recognizer _word_recognizer{word_type};
 
-    cpt::recognizer_return _res{_word_recognizer(_text.begin(), _text.end())};
+    std::optional<dat::non_terminal_recognition> _res{
+        _word_recognizer(_text.begin(), _text.end())};
 
     if (_res) {
       TNCT_LOG_ERR(_cerr, "word recognized, but it should not have");
@@ -85,7 +87,8 @@ struct standard_recognizers_002 {
     const std::string _text{"abc4efg"};
     bus::word_recognizer _word_recognizer{word_type};
 
-    cpt::recognizer_return _res{_word_recognizer(_text.begin(), _text.end())};
+    std::optional<dat::non_terminal_recognition> _res{
+        _word_recognizer(_text.begin(), _text.end())};
 
     if (!_res) {
       TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
@@ -93,7 +96,7 @@ struct standard_recognizers_002 {
     }
 
     const std::string _expected{"abc"};
-    const std::string _scanned{_text.begin(), _res->second};
+    const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _expected) {
       TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
                               ", but it should have been ", _expected));
@@ -119,7 +122,8 @@ struct standard_recognizers_003 {
     bus::word_recognizer _word_recognizer{word_type};
 
     std::string::const_iterator _begin{std::next(_text.begin(), 4)};
-    cpt::recognizer_return _res{_word_recognizer(_begin, _text.end())};
+    std::optional<dat::non_terminal_recognition> _res{
+        _word_recognizer(_begin, _text.end())};
 
     if (!_res) {
       TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
@@ -127,7 +131,7 @@ struct standard_recognizers_003 {
     }
 
     const std::string _expected{"efg"};
-    const std::string _scanned{_begin, _res->second};
+    const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _expected) {
       TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
                               ", but it should have been ", _expected));
@@ -156,19 +160,19 @@ struct standard_recognizers_004 {
 
     std::string::const_iterator _ite{_text.begin()};
 
-    cpt::recognizer_return _scanned{
+    std::optional<dat::non_terminal_recognition> _scanned{
         scan(_ite, _text.end(), _word_recognizer, "abc")};
     if (!_scanned) {
       return false;
     }
 
-    _scanned = scan(_scanned->second, _text.end(),
+    _scanned = scan(_scanned->end, _text.end(),
                     _decimal_integer_number_recognizer, "4");
     if (!_scanned) {
       return false;
     }
 
-    _scanned = scan(_scanned->second, _text.end(), _word_recognizer, "efg");
+    _scanned = scan(_scanned->end, _text.end(), _word_recognizer, "efg");
     if (!_scanned) {
       return false;
     }
@@ -177,20 +181,21 @@ struct standard_recognizers_004 {
 
 private:
   template <cpt::recognizer t_recognizer>
-  cpt::recognizer_return
+  std::optional<dat::non_terminal_recognition>
   scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
        t_recognizer &p_recognizer, std::string &&p_expected) {
 
     std::string::const_iterator _ite{p_begin};
 
-    cpt::recognizer_return _res{p_recognizer(_ite, p_end)};
+    std::optional<dat::non_terminal_recognition> _res{
+        p_recognizer(_ite, p_end)};
 
     if (!_res) {
       TNCT_LOG_ERR(m_logger, fmt(p_expected, " not recognized, but it should"));
       return std::nullopt;
     }
 
-    const std::string _scanned{_ite, _res->second};
+    const std::string _scanned{_res->non_terminal.value};
 
     if (_scanned != p_expected) {
       TNCT_LOG_ERR(m_logger, fmt("word scanned is ", _scanned,

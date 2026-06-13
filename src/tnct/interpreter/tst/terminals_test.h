@@ -9,8 +9,8 @@
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
+#include "tnct/interpreter/dat/terminal.h"
 #include "tnct/interpreter/dat/terminals.h"
-#include "tnct/interpreter/dat/token.h"
 #include "tnct/interpreter/dat/type.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -22,11 +22,11 @@ using tnct::format::bus::fmt;
 namespace tnct::interpreter::tst {
 
 constexpr std::size_t lexema_size{10};
-
-using lexema = dat::lexema_t<lexema_size>;
 using terminals = dat::terminals_t<lexema_size>;
-using token = dat::token_t<lexema_size>;
-using recognition = typename dat::terminals_t<lexema_size>::recognition;
+using lexema = typename terminals::lexema;
+
+using terminal = typename terminals::terminal;
+using terminal_recognition = typename terminals::terminal_recognition;
 
 constexpr dat::type _unary_operator = 1;
 constexpr dat::type _assignment_operator = 2;
@@ -38,24 +38,25 @@ std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
      lexema &&p_expected, const terminals &p_terminals, log::cerr &p_logger) {
 
-  std::optional<recognition> _res{p_terminals.recognize(p_begin, p_end)};
+  std::optional<terminal_recognition> _res{
+      p_terminals.recognize(p_begin, p_end)};
 
   if (!_res) {
     TNCT_LOG_ERR(p_logger,
-                 fmt("no token found, but ", p_expected, " was expected"));
+                 fmt("no terminal found, but ", p_expected, " was expected"));
     return std::nullopt;
   }
 
-  if (_res->token.lexema.get() != p_expected) {
+  if (_res->terminal.lexema.get() != p_expected) {
     TNCT_LOG_ERR(p_logger,
-                 fmt(_res->token.lexema.get(),
+                 fmt(_res->terminal.lexema.get(),
                      " was found, but it should have been ", p_expected));
     return std::nullopt;
   }
 
-  TNCT_LOG_INF(p_logger, fmt(_res->token.lexema.get(), " was found"));
+  TNCT_LOG_INF(p_logger, fmt(_res->terminal.lexema.get(), " was found"));
 
-  return {_res->ite};
+  return {_res->end};
 }
 
 struct terminals_000 {
@@ -74,21 +75,21 @@ struct terminals_000 {
 
     const std::string _text{"="};
 
-    std::optional<recognition> _res{
+    std::optional<terminal_recognition> _res{
         _terminals.recognize(_text.begin(), _text.end())};
 
     if (!_res) {
-      TNCT_LOG_ERR(_logger, "not token was found, but it should have been");
+      TNCT_LOG_ERR(_logger, "not terminal was found, but it should have been");
       return false;
     }
 
-    if (_res->token.lexema.get() != lexema{"="}) {
-      TNCT_LOG_ERR(_logger, fmt(_res->token.lexema.get(),
+    if (_res->terminal.lexema.get() != lexema{"="}) {
+      TNCT_LOG_ERR(_logger, fmt(_res->terminal.lexema.get(),
                                 " was found, but it should have been '<'"));
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt(_res->token.lexema.get(), " was found"));
+    TNCT_LOG_INF(_logger, fmt(_res->terminal.lexema.get(), " was found"));
     return true;
   }
 };
@@ -119,11 +120,12 @@ struct terminals_001 {
 
     const std::string _text;
 
-    std::optional<recognition> _res{
+    std::optional<terminal_recognition> _res{
         _terminals.recognize(_text.begin(), _text.end())};
 
     if (_res) {
-      TNCT_LOG_ERR(_logger, "'a token was recognized, but it shold not have");
+      TNCT_LOG_ERR(_logger,
+                   "'a terminal was recognized, but it shold not have");
       return false;
     }
 
@@ -171,9 +173,10 @@ struct terminals_002 {
     }
     _ite = *_maybe;
 
-    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
                                 " was found, but none should have been"));
       return false;
     }
@@ -240,9 +243,10 @@ struct terminals_003 {
     }
     _ite = *_maybe;
 
-    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
                                 " was found, but none should have been"));
       return false;
     }
@@ -325,9 +329,10 @@ struct terminals_004 {
     }
     _ite = *_maybe;
 
-    std::optional<recognition> _res{_terminals.recognize(_ite, _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->token.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
                                 " was found, but none should have been"));
       return false;
     }

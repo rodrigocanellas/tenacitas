@@ -15,7 +15,7 @@
 #include "tnct/interpreter/dat/fault.h"
 #include "tnct/interpreter/dat/line_number.h"
 #include "tnct/interpreter/dat/symbol.h"
-#include "tnct/interpreter/dat/token.h"
+#include "tnct/interpreter/dat/terminal.h"
 #include "tnct/interpreter/dat/tokens.h"
 #include "tnct/interpreter/dat/type.h"
 
@@ -29,7 +29,7 @@ namespace tnct::interpreter::bus {
 template <std::size_t t_lexema_size> class scanner final {
 
 public:
-  using token = dat::token_t<t_lexema_size>;
+  using token = dat::terminal_t<t_lexema_size>;
   using tokens = dat::terminals_t<t_lexema_size>;
   using symbol = dat::symbol_t<t_lexema_size>;
 
