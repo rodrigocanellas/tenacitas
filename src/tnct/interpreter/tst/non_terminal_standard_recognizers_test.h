@@ -11,8 +11,8 @@
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/interpreter/bus/standard_recognizers.h"
-#include "tnct/interpreter/cpt/recognizer.h"
+#include "tnct/interpreter/bus/non_terminal_standard_recognizers.h"
+#include "tnct/interpreter/cpt/non_terminal_recognizer.h"
 #include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -22,7 +22,7 @@ using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
 
-struct standard_recognizers_000 {
+struct non_terminal_standard_recognizers_000 {
   static std::string desc() { return "Test correct scan"; }
 
   bool operator()(const program::bus::options &) {
@@ -52,7 +52,7 @@ struct standard_recognizers_000 {
   }
 };
 
-struct standard_recognizers_001 {
+struct non_terminal_standard_recognizers_001 {
   static std::string desc() { return "Empty text"; }
 
   bool operator()(const program::bus::options &) {
@@ -74,7 +74,7 @@ struct standard_recognizers_001 {
   }
 };
 
-struct standard_recognizers_002 {
+struct non_terminal_standard_recognizers_002 {
   static std::string desc() {
     return "Recognizing a word in a text with a number";
   }
@@ -108,7 +108,7 @@ struct standard_recognizers_002 {
   }
 };
 
-struct standard_recognizers_003 {
+struct non_terminal_standard_recognizers_003 {
   static std::string desc() {
     return "Scanning not from the beginnig of the text";
   }
@@ -143,7 +143,7 @@ struct standard_recognizers_003 {
   }
 };
 
-struct standard_recognizers_004 {
+struct non_terminal_standard_recognizers_004 {
   static std::string desc() {
     return "Scanning all non-tokens in a text without spaces";
   }
@@ -179,7 +179,7 @@ struct standard_recognizers_004 {
   }
 
 private:
-  template <cpt::recognizer t_recognizer>
+  template <cpt::non_terminal_recognizer t_recognizer>
   std::optional<dat::non_terminal_recognition>
   scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
        t_recognizer &p_recognizer, std::string &&p_expected) {
@@ -209,7 +209,7 @@ private:
   log::cerr m_logger;
 };
 
-struct standard_recognizers_005 {
+struct non_terminal_standard_recognizers_005 {
   static std::string desc() {
     return "real_number_recognizer recognizes only digits-separator-digits";
   }
@@ -243,7 +243,7 @@ struct standard_recognizers_005 {
   }
 };
 
-struct standard_recognizers_006 {
+struct non_terminal_standard_recognizers_006 {
   static std::string desc() {
     return "real_number_recognizer rejects incomplete real numbers";
   }
@@ -263,7 +263,7 @@ struct standard_recognizers_006 {
   }
 };
 
-struct standard_recognizers_007 {
+struct non_terminal_standard_recognizers_007 {
   static std::string desc() {
     return "decimal_integer_number_recognizer stops before first non-digit";
   }
@@ -281,7 +281,7 @@ struct standard_recognizers_007 {
   }
 };
 
-struct standard_recognizers_008 {
+struct non_terminal_standard_recognizers_008 {
   static std::string desc() {
     return "word_recognizer rejects text that does not start with a letter";
   }

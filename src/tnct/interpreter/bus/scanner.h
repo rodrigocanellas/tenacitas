@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <string>
 
-#include "tnct/interpreter/bus/recognizer.h"
-#include "tnct/interpreter/bus/recognizers.h"
+#include "tnct/interpreter/bus/non_terminal_recognizer.h"
+#include "tnct/interpreter/bus/non_terminal_recognizers.h"
 #include "tnct/interpreter/dat/column_number.h"
 #include "tnct/interpreter/dat/lexema.h"
 #include "tnct/interpreter/dat/line_number.h"
@@ -74,16 +74,16 @@ public:
     m_terminals.import(p_terminals);
   }
 
-  void add_recognizers(std::initializer_list<recognizer> p_recognizers) {
+  void add_recognizers(std::initializer_list<non_terminal_recognizer> p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
               std::back_inserter(m_recognizers));
   }
 
-  void add_recognizer(recognizer &&p_recognizer) {
+  void add_recognizer(non_terminal_recognizer &&p_recognizer) {
     m_recognizers.push_back(std::move(p_recognizer));
   }
 
-  void import_recognizers(const recognizers &p_recognizers) {
+  void import_recognizers(const non_terminal_recognizers &p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
               std::back_inserter(m_recognizers));
   }
@@ -131,7 +131,7 @@ private:
 
 private:
   std::optional<symbol> recognize_non_terminal() {
-    for (bus::recognizer &_recognizer : m_recognizers) {
+    for (bus::non_terminal_recognizer &_recognizer : m_recognizers) {
       std::optional<dat::non_terminal_recognition> _res{
           _recognizer(m_walker, m_end)};
 
@@ -208,7 +208,7 @@ private:
 
   terminals m_terminals;
 
-  bus::recognizers m_recognizers;
+  bus::non_terminal_recognizers m_recognizers;
 
   dat::line_number m_curr_line{1};
 

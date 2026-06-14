@@ -1,6 +1,6 @@
 
-#ifndef TNCT_INTERPRETER_CPT_RECOGNIZER_H
-#define TNCT_INTERPRETER_CPT_RECOGNIZER_H
+#ifndef TNCT_INTERPRETER_CPT_NON_TERMINAL_RECOGNIZER_H
+#define TNCT_INTERPRETER_CPT_NON_TERMINAL_RECOGNIZER_H
 
 #include <optional>
 #include <string>
@@ -11,7 +11,7 @@
 namespace tnct::interpreter::cpt {
 
 template <typename t>
-concept recognizer =
+concept non_terminal_recognizer =
 
     std::copyable<t> &&
 

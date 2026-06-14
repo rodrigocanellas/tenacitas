@@ -6,8 +6,8 @@
 // #include "recognizer_test.h"
 // #include "grammar_test.h"
 // #include "parser_test.h"
+#include "tnct/interpreter/tst/non_terminal_standard_recognizers_test.h"
 #include "tnct/interpreter/tst/scanner_test.h"
-#include "tnct/interpreter/tst/standard_recognizers_test.h"
 #include "tnct/interpreter/tst/terminals_test.h"
 #include "tnct/tester/bus/test.h"
 
@@ -16,15 +16,15 @@ using namespace tnct;
 int main(int argc, char **argv) {
   tester::bus::test _tester(argc, argv);
 
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_000);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_001);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_002);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_003);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_004);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_005);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_006);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_007);
-  run_test(_tester, tnct::interpreter::tst::standard_recognizers_008);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_000);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_001);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_002);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_003);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_004);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_005);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_006);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_007);
+  run_test(_tester, tnct::interpreter::tst::non_terminal_standard_recognizers_008);
 
   run_test(_tester, tnct::interpreter::tst::terminals_000);
   run_test(_tester, tnct::interpreter::tst::terminals_001);

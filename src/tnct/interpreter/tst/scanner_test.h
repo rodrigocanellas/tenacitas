@@ -7,7 +7,7 @@
 #define TNCT_INTERPRETER_TST_SCANNER_H
 
 #include "tnct/format/bus/fmt.h"
-#include "tnct/interpreter/bus/standard_recognizers.h"
+#include "tnct/interpreter/bus/non_terminal_standard_recognizers.h"
 #include "tnct/interpreter/dat/symbol.h"
 #include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"

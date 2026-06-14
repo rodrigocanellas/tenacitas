@@ -53,6 +53,8 @@ public:
 
   type get_type() const { return m_type; };
 
+  void set_type(type p_type) { m_type = p_type; };
+
   bool operator==(const symbol_t &p_symbol) const {
     if (m_type != p_symbol.m_type) {
       return false;
