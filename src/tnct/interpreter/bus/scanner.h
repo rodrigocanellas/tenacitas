@@ -63,7 +63,7 @@ public:
   void
   add_terminals(std::initializer_list<std::pair<std::string_view, dat::type>>
                     p_terminals) {
-    m_terminals.add(p_terminals);
+    m_terminals.import(p_terminals);
   }
 
   void add_terminal(std::string_view p_string, dat::type p_type) {
@@ -71,7 +71,7 @@ public:
   }
 
   void import_terminals(const terminals &&p_terminals) {
-    m_terminals.add(p_terminals);
+    m_terminals.import(p_terminals);
   }
 
   void set_recognizers(std::initializer_list<recognizer> p_recognizers) {
@@ -150,7 +150,8 @@ private:
         m_terminals.recognize(m_walker, m_end)};
 
     if (_res && _res->terminal.type != dat::unknow_type) {
-      return symbol{_res->terminal.lexema, _res->terminal.type};
+      m_walker = _res->end;
+      return symbol{_res->terminal.lexema_ref, _res->terminal.type};
     }
 
     return std::nullopt;

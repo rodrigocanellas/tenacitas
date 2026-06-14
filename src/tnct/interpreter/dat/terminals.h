@@ -43,19 +43,19 @@ public:
   terminals_t &operator=(const terminals_t &) = delete;
   terminals_t &operator=(terminals_t &&) = default;
 
-  /// Adds a group of lexema objects that should be recognized directly from the
-  /// input text and their common associated type
-  void add(std::initializer_list<std::pair<std::string_view, dat::type>>
-               &&p_terminals) {
-    import(p_terminals.begin(), p_terminals.end());
-  }
-
   void add(std::string_view p_string, dat::type p_type) {
 
     m_container.push_back({lexema{p_string}, p_type});
   }
 
   void import(const terminals_t &p_terminals) {
+    import(p_terminals.begin(), p_terminals.end());
+  }
+
+  /// Adds a group of lexema objects that should be recognized directly from the
+  /// input text and their common associated type
+  void import(std::initializer_list<std::pair<std::string_view, dat::type>>
+                  p_terminals) {
     import(p_terminals.begin(), p_terminals.end());
   }
 
@@ -87,7 +87,7 @@ public:
         // "==" are terminals the string is "== b", then the first "=" will be
         // recognized, but the actual token is "=="
         _res = _aux;
-      } else if ((_res) && (!_res->lexema.get().empty())) {
+      } else if ((_res) && (!_res->lexema_ref.get().empty())) {
         return {{--_ite, {std::move(*_res)}}};
       }
 
@@ -139,7 +139,7 @@ private:
     //     {terminal{lexema_reference<t_lexema_size>{_ite->first},
     //               dat::type{_ite->second}}}};
 
-    return {terminal{.lexema = {_ite->first}, .type = {_ite->second}}};
+    return {terminal{.lexema_ref = {_ite->first}, .type = {_ite->second}}};
   }
 
   template <typename t_iterator>

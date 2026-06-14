@@ -33,14 +33,14 @@ scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
     return std::nullopt;
   }
 
-  if (_res->terminal.lexema.get() != p_expected) {
+  if (_res->terminal.lexema_ref.get() != p_expected) {
     TNCT_LOG_ERR(p_logger,
-                 fmt(_res->terminal.lexema.get(),
+                 fmt(_res->terminal.lexema_ref.get(),
                      " was found, but it should have been ", p_expected));
     return std::nullopt;
   }
 
-  TNCT_LOG_INF(p_logger, fmt(_res->terminal.lexema.get(), " was found"));
+  TNCT_LOG_INF(p_logger, fmt(_res->terminal.lexema_ref.get(), " was found"));
 
   return {_res->end};
 }
@@ -54,9 +54,9 @@ struct terminals_000 {
 
     terminals _terminals;
 
-    _terminals.add({{
+    _terminals.import({{
         "=",
-        _comparision_operator,
+        comparision_operator,
     }});
 
     const std::string _text{"="};
@@ -69,13 +69,13 @@ struct terminals_000 {
       return false;
     }
 
-    if (_res->terminal.lexema.get() != lexema{"="}) {
-      TNCT_LOG_ERR(_logger, fmt(_res->terminal.lexema.get(),
+    if (_res->terminal.lexema_ref.get() != lexema{"="}) {
+      TNCT_LOG_ERR(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but it should have been '<'"));
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt(_res->terminal.lexema.get(), " was found"));
+    TNCT_LOG_INF(_logger, fmt(_res->terminal.lexema_ref.get(), " was found"));
     return true;
   }
 };
@@ -93,14 +93,14 @@ struct terminals_001 {
 
     terminals _terminals;
 
-    _terminals.add({{
+    _terminals.import({{
                         "==",
-                        _comparision_operator,
+                        comparision_operator,
 
                     },
                     {
                         "<",
-                        _comparision_operator,
+                        comparision_operator,
 
                     }});
 
@@ -133,13 +133,13 @@ struct terminals_002 {
 
     terminals _terminals;
 
-    _terminals.add({{
+    _terminals.import({{
                         "==",
-                        _comparision_operator,
+                        comparision_operator,
                     },
                     {
                         "=",
-                        _comparision_operator,
+                        comparision_operator,
                     }});
 
     const std::string _text{"= =="};
@@ -162,7 +162,7 @@ struct terminals_002 {
     std::optional<terminal_recognition> _res{
         _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
       return false;
     }
@@ -185,17 +185,17 @@ struct terminals_003 {
 
     terminals _terminals;
 
-    _terminals.add({{
+    _terminals.import({{
                         "==",
-                        _comparision_operator,
+                        comparision_operator,
                     },
                     {
                         "<",
-                        _comparision_operator,
+                        comparision_operator,
                     },
                     {
                         "=",
-                        _assignment_operator,
+                        assignment_operator,
                     }});
 
     const std::string _text{"< = == ="};
@@ -232,7 +232,7 @@ struct terminals_003 {
     std::optional<terminal_recognition> _res{
         _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
       return false;
     }
@@ -255,33 +255,33 @@ struct terminals_004 {
 
     terminals _terminals;
 
-    _terminals.add({{
+    _terminals.import({{
                         "if",
-                        _reserved_word,
+                        reserved_word,
                     },
                     {
                         "(",
-                        _expression_delimeter,
+                        expression_delimeter,
                     },
                     {
                         ")",
-                        _expression_delimeter,
+                        expression_delimeter,
                     },
                     {
                         "==",
-                        _comparision_operator,
+                        comparision_operator,
                     },
                     {
                         "<",
-                        _comparision_operator,
+                        comparision_operator,
                     },
                     {
                         "=",
-                        _assignment_operator,
+                        assignment_operator,
                     },
                     {
                         "!",
-                        _unary_operator,
+                        unary_operator,
                     }});
 
     const std::string _text{"if!()"};
@@ -318,7 +318,7 @@ struct terminals_004 {
     std::optional<terminal_recognition> _res{
         _terminals.recognize(_ite, _text.end())};
     if (_res) {
-      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema.get(),
+      TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
       return false;
     }

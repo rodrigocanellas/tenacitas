@@ -31,11 +31,11 @@ using scanner = bus::scanner<lexema_size>;
 constexpr dat::type word_type = 1;
 constexpr dat::type integer_type = 2;
 constexpr dat::type real_type = 3;
-constexpr dat::type _unary_operator = 4;
-constexpr dat::type _assignment_operator = 5;
-constexpr dat::type _reserved_word = 6;
-constexpr dat::type _expression_delimeter = 7;
-constexpr dat::type _comparision_operator = 8;
+constexpr dat::type unary_operator = 4;
+constexpr dat::type assignment_operator = 5;
+constexpr dat::type reserved_word = 6;
+constexpr dat::type expression_delimeter = 7;
+constexpr dat::type comparision_operator = 8;
 
 } // namespace tnct::interpreter::tst
 

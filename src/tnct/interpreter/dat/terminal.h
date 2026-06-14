@@ -8,14 +8,14 @@ namespace tnct::interpreter::dat {
 
 template <std::size_t t_lexema_size> struct terminal_t {
 
-  lexema_reference_t<t_lexema_size> lexema;
+  lexema_reference_t<t_lexema_size> lexema_ref;
   dat::type type{dat::unknow_type};
 };
 
 template <std::size_t t_lexema_size>
 std::ostream &operator<<(std::ostream &p_out,
                          const terminal_t<t_lexema_size> &p_token) {
-  p_out << '[' << p_token.type << ',' << p_token.lexema.get() << ']';
+  p_out << '[' << p_token.type << ',' << p_token.lexema_ref.get() << ']';
   return p_out;
 }
 

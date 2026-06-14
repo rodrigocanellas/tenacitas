@@ -35,6 +35,11 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::scanner_004);
   run_test(_tester, tnct::interpreter::tst::scanner_005);
   run_test(_tester, tnct::interpreter::tst::scanner_006);
+  run_test(_tester, tnct::interpreter::tst::scanner_007);
+  run_test(_tester, tnct::interpreter::tst::scanner_008);
+  run_test(_tester, tnct::interpreter::tst::scanner_009);
+  run_test(_tester, tnct::interpreter::tst::scanner_010);
+  run_test(_tester, tnct::interpreter::tst::scanner_011);
 }
 
 // int main ( int argc, char ** argv ) {

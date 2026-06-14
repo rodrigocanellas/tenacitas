@@ -18,6 +18,42 @@ using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
 
+std::optional<symbol> scan_terminal(scanner &p_scanner, log::cerr &p_logger,
+                                    lexema &&p_expected, dat::type p_type) {
+
+  std::optional<symbol> _symbol{p_scanner.get_symbol()};
+
+  if (!_symbol) {
+    TNCT_LOG_ERR(p_logger, "no symbol found, but a word was expected");
+    return std::nullopt;
+  }
+
+  if (!_symbol->is_terminal()) {
+    TNCT_LOG_ERR(p_logger, "expected a terminal, but got a non terminal");
+    return std::nullopt;
+  }
+
+  const lexema _scanned{_symbol->get_lexema()->get()};
+
+  if (_scanned != p_expected) {
+    TNCT_LOG_ERR(p_logger,
+                 fmt("it was expected ", p_expected, ", but got ", _scanned));
+    return std::nullopt;
+  }
+
+  if (_symbol->get_type() != p_type) {
+    TNCT_LOG_ERR(p_logger, fmt("expected type ", p_type, ", but got ",
+                               _symbol->get_type()));
+    return std::nullopt;
+  }
+
+  TNCT_LOG_INF(p_logger, fmt("word scanned is ", _scanned,
+                             " as it should, and type scanned is ",
+                             _symbol->get_type(), " as it should"));
+
+  return _symbol;
+}
+
 std::optional<symbol> scan_eot(scanner &p_scanner, log::cerr &p_logger) {
   std::optional<symbol> _symbol{p_scanner.get_symbol()};
 
@@ -34,7 +70,7 @@ std::optional<symbol> scan_eot(scanner &p_scanner, log::cerr &p_logger) {
   const lexema _scanned{_symbol->get_lexema()->get()};
 
   if (_scanned != lexema::end_of_text) {
-    TNCT_LOG_ERR(p_logger, fmt("it was expeced ", lexema::end_of_text,
+    TNCT_LOG_ERR(p_logger, fmt("it was expected ", lexema::end_of_text,
                                ", but got ", _scanned));
     return std::nullopt;
   }
@@ -46,6 +82,42 @@ std::optional<symbol> scan_eot(scanner &p_scanner, log::cerr &p_logger) {
   }
 
   TNCT_LOG_INF(p_logger, "eot found as expected");
+
+  return _symbol;
+}
+
+std::optional<symbol> scan_non_terminal(scanner &p_scanner, log::cerr &p_logger,
+                                        std::string &&p_expected,
+                                        dat::type p_type) {
+  std::optional<symbol> _symbol{p_scanner.get_symbol()};
+
+  if (!_symbol) {
+    TNCT_LOG_ERR(p_logger, "no symbol found, but a word was expected");
+    return std::nullopt;
+  }
+
+  if (_symbol->is_terminal()) {
+    TNCT_LOG_ERR(p_logger, "expected a non terminal, but got a terminal");
+    return std::nullopt;
+  }
+
+  const std::string _scanned{_symbol->get_value()->get()};
+
+  if (_scanned != p_expected) {
+    TNCT_LOG_ERR(p_logger,
+                 fmt("it was expected ", p_expected, ", but got ", _scanned));
+    return std::nullopt;
+  }
+
+  if (_symbol->get_type() != p_type) {
+    TNCT_LOG_ERR(p_logger, fmt("expected type ", p_type, ", but got ",
+                               _symbol->get_type()));
+    return std::nullopt;
+  }
+
+  TNCT_LOG_INF(p_logger, fmt("word scanned is ", _scanned,
+                             " as it should, and type scanned is ",
+                             _symbol->get_type(), " as it should"));
 
   return _symbol;
 }
@@ -100,7 +172,7 @@ struct scanner_001 {
     log::cerr _logger;
     scanner _scanner;
 
-    _scanner.add_terminal("<", _comparision_operator);
+    _scanner.add_terminal("<", comparision_operator);
 
     const std::string _text{"<"};
 
@@ -281,7 +353,7 @@ struct scanner_005 {
 
     if (_scanned != _expected) {
       TNCT_LOG_ERR(_logger,
-                   fmt("it was expeced ", _expected, ", but got ", _scanned));
+                   fmt("it was expected ", _expected, ", but got ", _scanned));
       return false;
     }
 
@@ -294,11 +366,11 @@ struct scanner_005 {
 struct scanner_006 {
   static std::string desc() {
     return "Scanning all non-tokens in a text without spaces";
-    ;
   }
 
   bool operator()(const program::bus::options &) {
 
+    log::cerr _logger;
     scanner _scanner;
 
     const std::string _text{"abc4efg"};
@@ -308,68 +380,227 @@ struct scanner_006 {
     _scanner.add_recognizer(
         bus::decimal_integer_number_recognizer{integer_type});
 
-    std::optional<symbol> _symbol{scan(_scanner, "abc", word_type)};
+    std::optional<symbol> _symbol{
+        scan_non_terminal(_scanner, _logger, "abc", word_type)};
 
     if (!_symbol) {
       return false;
     }
 
-    _symbol = scan(_scanner, "4", integer_type);
+    _symbol = scan_non_terminal(_scanner, _logger, "4", integer_type);
     if (!_symbol) {
       return false;
     }
 
-    _symbol = scan(_scanner, "efg", word_type);
+    _symbol = scan_non_terminal(_scanner, _logger, "efg", word_type);
     if (!_symbol) {
       return false;
     }
 
-    _symbol = scan_eot(_scanner, m_logger);
+    _symbol = scan_eot(_scanner, _logger);
     if (!_symbol) {
       return false;
     }
 
     return true;
   }
-
-private:
-  std::optional<symbol> scan(scanner &p_scanner, std::string &&p_expected,
-                             dat::type p_type) {
-    std::optional<symbol> _symbol{p_scanner.get_symbol()};
-
-    if (!_symbol) {
-      TNCT_LOG_ERR(m_logger, "no symbol found, but a word was expected");
-      return std::nullopt;
-    }
-
-    if (_symbol->is_terminal()) {
-      TNCT_LOG_ERR(m_logger, "expected a non terminal, but got a terminal");
-      return std::nullopt;
-    }
-
-    const std::string _scanned{_symbol->get_value()->get()};
-
-    if (_scanned != p_expected) {
-      TNCT_LOG_ERR(m_logger,
-                   fmt("it was expeced ", p_expected, ", but got ", _scanned));
-      return std::nullopt;
-    }
-
-    if (_symbol->get_type() != p_type) {
-      TNCT_LOG_ERR(m_logger, fmt("expected type ", p_type, ", but got ",
-                                 _symbol->get_type()));
-      return std::nullopt;
-    }
-
-    TNCT_LOG_INF(m_logger, fmt("word scanned is ", _scanned,
-                               " as it should, and type scanned is ",
-                               _symbol->get_type(), " as it should"));
-
-    return _symbol;
-  }
-
-  log::cerr m_logger;
 };
 
+struct scanner_007 {
+  static std::string desc() {
+    return "Scanning all non-tokens in a text witht spaces";
+  }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+    scanner _scanner;
+
+    const std::string _text{"abc 4 efg"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    _scanner.add_recognizer(bus::word_recognizer{word_type});
+    _scanner.add_recognizer(
+        bus::decimal_integer_number_recognizer{integer_type});
+
+    std::optional<symbol> _symbol{
+        scan_non_terminal(_scanner, _logger, "abc", word_type)};
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol = scan_non_terminal(_scanner, _logger, "4", integer_type);
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol = scan_non_terminal(_scanner, _logger, "efg", word_type);
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol = scan_eot(_scanner, _logger);
+    if (!_symbol) {
+      return false;
+    }
+
+    return true;
+  }
+};
+
+struct scanner_008 {
+  static std::string desc() { return "Scans '<'"; }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+    scanner _scanner;
+
+    _scanner.add_terminal("<", comparision_operator);
+
+    const std::string _text{"<"};
+
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<symbol> _symbol{
+        scan_terminal(_scanner, _logger, lexema{"<"}, comparision_operator)};
+
+    return _symbol.has_value();
+  }
+};
+
+struct scanner_009 {
+  static std::string desc() { return "Recognizes '= =='"; }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+    scanner _scanner;
+
+    _scanner.add_terminal("=", comparision_operator);
+    _scanner.add_terminal("==", comparision_operator);
+
+    const std::string _text{"= =="};
+
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<symbol> _symbol{
+        scan_terminal(_scanner, _logger, lexema{"="}, comparision_operator)};
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol =
+        scan_terminal(_scanner, _logger, lexema{"=="}, comparision_operator);
+
+    return _symbol.has_value();
+  }
+};
+
+struct scanner_010 {
+  static std::string desc() { return "Recognizes '< = == ='"; }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+    scanner _scanner;
+
+    _scanner.add_terminal("=", comparision_operator);
+    _scanner.add_terminal("==", comparision_operator);
+    _scanner.add_terminal("<", comparision_operator);
+
+    const std::string _text{"< = == ="};
+
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<symbol> _symbol{
+        scan_terminal(_scanner, _logger, lexema{"<"}, comparision_operator)};
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol =
+        scan_terminal(_scanner, _logger, lexema{"="}, comparision_operator);
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol =
+        scan_terminal(_scanner, _logger, lexema{"=="}, comparision_operator);
+
+    if (!_symbol) {
+      return false;
+    }
+
+    return scan_terminal(_scanner, _logger, lexema{"="}, comparision_operator)
+        .has_value();
+  }
+};
+
+struct scanner_011 {
+  static std::string desc() { return "Recognizes 'if!()'"; }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+    scanner _scanner;
+
+    _scanner.add_terminals({{
+                                "if",
+                                reserved_word,
+                            },
+                            {
+                                "(",
+                                expression_delimeter,
+                            },
+                            {
+                                ")",
+                                expression_delimeter,
+                            },
+                            {
+                                "==",
+                                comparision_operator,
+                            },
+                            {
+                                "<",
+                                comparision_operator,
+                            },
+                            {
+                                "=",
+                                assignment_operator,
+                            },
+                            {
+                                "!",
+                                unary_operator,
+                            }});
+
+    const std::string _text{"if!()"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<symbol> _symbol{
+        scan_terminal(_scanner, _logger, lexema{"if"}, reserved_word)};
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol = scan_terminal(_scanner, _logger, lexema{"!"}, unary_operator);
+
+    if (!_symbol) {
+      return false;
+    }
+
+    _symbol =
+        scan_terminal(_scanner, _logger, lexema{"("}, expression_delimeter);
+
+    if (!_symbol) {
+      return false;
+    }
+
+    return scan_terminal(_scanner, _logger, lexema{")"}, expression_delimeter)
+        .has_value();
+
+    return true;
+  }
+};
 } // namespace tnct::interpreter::tst
 #endif
