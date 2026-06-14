@@ -13,15 +13,11 @@ namespace tnct::interpreter::cpt {
 template <typename t>
 concept recognizer =
 
-    not std::copy_constructible<t> &&
+    // std::copyable<t> &&
 
-    not std::copyable<t> &&
+    // std::movable<t> &&
 
-    std::move_constructible<t> &&
-
-    not std::movable<t> &&
-
-    not memory::cpt::has_new_operator_v<t> &&
+    // not memory::cpt::has_new_operator_v<t> &&
 
     requires(t p_t, std::string::const_iterator p_begin,
              std::string::const_iterator p_end) {

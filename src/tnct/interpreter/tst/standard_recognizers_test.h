@@ -13,6 +13,7 @@
 #include "tnct/format/bus/fmt.h"
 #include "tnct/interpreter/bus/standard_recognizers.h"
 #include "tnct/interpreter/cpt/recognizer.h"
+#include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/bus/options.h"
@@ -21,16 +22,12 @@ using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
 
-constexpr dat::type word_type = 1;
-constexpr dat::type integer_type = 2;
-constexpr dat::type real_type = 2;
-
 struct standard_recognizers_000 {
   static std::string desc() { return "Test correct scan"; }
 
   bool operator()(const program::bus::options &) {
 
-    log::cerr _cerr;
+    log::cerr _logger;
 
     const std::string _text{"abcdefgh"};
     bus::word_recognizer _word_recognizer{word_type};
@@ -39,18 +36,18 @@ struct standard_recognizers_000 {
         _word_recognizer(_text.begin(), _text.end())};
 
     if (!_res) {
-      TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
+      TNCT_LOG_ERR(_logger, "word not recognized, but it should");
       return false;
     }
 
     const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _text) {
-      TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
-                              ", but it should have been ", _text));
+      TNCT_LOG_ERR(_logger, fmt("word scanned is ", _scanned,
+                                ", but it should have been ", _text));
       return false;
     }
 
-    TNCT_LOG_INF(_cerr, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
     return true;
   }
 };
@@ -60,7 +57,7 @@ struct standard_recognizers_001 {
 
   bool operator()(const program::bus::options &) {
 
-    log::cerr _cerr;
+    log::cerr _logger;
 
     const std::string _text;
     bus::word_recognizer _word_recognizer{word_type};
@@ -69,7 +66,7 @@ struct standard_recognizers_001 {
         _word_recognizer(_text.begin(), _text.end())};
 
     if (_res) {
-      TNCT_LOG_ERR(_cerr, "word recognized, but it should not have");
+      TNCT_LOG_ERR(_logger, "word recognized, but it should not have");
       return false;
     }
 
@@ -78,11 +75,13 @@ struct standard_recognizers_001 {
 };
 
 struct standard_recognizers_002 {
-  static std::string desc() { return "Text with a number"; }
+  static std::string desc() {
+    return "Recognizing a word in a text with a number";
+  }
 
   bool operator()(const program::bus::options &) {
 
-    log::cerr _cerr;
+    log::cerr _logger;
 
     const std::string _text{"abc4efg"};
     bus::word_recognizer _word_recognizer{word_type};
@@ -91,19 +90,19 @@ struct standard_recognizers_002 {
         _word_recognizer(_text.begin(), _text.end())};
 
     if (!_res) {
-      TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
+      TNCT_LOG_ERR(_logger, "word not recognized, but it should");
       return false;
     }
 
     const std::string _expected{"abc"};
     const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _expected) {
-      TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
-                              ", but it should have been ", _expected));
+      TNCT_LOG_ERR(_logger, fmt("word scanned is ", _scanned,
+                                ", but it should have been ", _expected));
       return false;
     }
 
-    TNCT_LOG_INF(_cerr, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
 
     return true;
   }
@@ -116,7 +115,7 @@ struct standard_recognizers_003 {
 
   bool operator()(const program::bus::options &) {
 
-    log::cerr _cerr;
+    log::cerr _logger;
 
     const std::string _text{"abc4efg"};
     bus::word_recognizer _word_recognizer{word_type};
@@ -126,19 +125,19 @@ struct standard_recognizers_003 {
         _word_recognizer(_begin, _text.end())};
 
     if (!_res) {
-      TNCT_LOG_ERR(_cerr, "word not recognized, but it should");
+      TNCT_LOG_ERR(_logger, "word not recognized, but it should");
       return false;
     }
 
     const std::string _expected{"efg"};
     const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _expected) {
-      TNCT_LOG_ERR(_cerr, fmt("word scanned is ", _scanned,
-                              ", but it should have been ", _expected));
+      TNCT_LOG_ERR(_logger, fmt("word scanned is ", _scanned,
+                                ", but it should have been ", _expected));
       return false;
     }
 
-    TNCT_LOG_INF(_cerr, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
 
     return true;
   }

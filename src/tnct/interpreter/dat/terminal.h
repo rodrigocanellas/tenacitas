@@ -8,7 +8,7 @@ namespace tnct::interpreter::dat {
 
 template <std::size_t t_lexema_size> struct terminal_t {
 
-  lexema_reference<t_lexema_size> lexema;
+  lexema_reference_t<t_lexema_size> lexema;
   dat::type type{dat::unknow_type};
 };
 

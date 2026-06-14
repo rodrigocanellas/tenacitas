@@ -3,36 +3,22 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_INTERPRETER_TST_terminals_TEST_H
-#define TNCT_INTERPRETER_TST_terminals_TEST_H
+#ifndef TNCT_INTERPRETER_TST_TERMINALS_H
+#define TNCT_INTERPRETER_TST_TERMINALS_H
 
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
 #include "tnct/interpreter/dat/terminal.h"
 #include "tnct/interpreter/dat/terminals.h"
-#include "tnct/interpreter/dat/type.h"
+#include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/bus/options.h"
-// #include "tnct/tuple/output.h"
 
 using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
-
-constexpr std::size_t lexema_size{10};
-using terminals = dat::terminals_t<lexema_size>;
-using lexema = typename terminals::lexema;
-
-using terminal = typename terminals::terminal;
-using terminal_recognition = typename terminals::terminal_recognition;
-
-constexpr dat::type _unary_operator = 1;
-constexpr dat::type _assignment_operator = 2;
-constexpr dat::type _reserved_word = 3;
-constexpr dat::type _expression_delimeter = 4;
-constexpr dat::type _comparision_operator = 5;
 
 std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,

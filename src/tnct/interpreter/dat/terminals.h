@@ -50,8 +50,13 @@ public:
     import(p_terminals.begin(), p_terminals.end());
   }
 
-  void add(dat::type p_type, std::string_view p_string) {
-    m_container.emplace(p_string, p_type);
+  void add(std::string_view p_string, dat::type p_type) {
+
+    m_container.push_back({lexema{p_string}, p_type});
+  }
+
+  void import(const terminals_t &p_terminals) {
+    import(p_terminals.begin(), p_terminals.end());
   }
 
   std::optional<terminal_recognition>
@@ -100,10 +105,6 @@ public:
     return std::nullopt;
   }
 
-  void import(const terminals_t &p_terminals) {
-    import(p_terminals.begin(), p_terminals.end());
-  }
-
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const terminals_t &p_terminals) {
     for (const typename container::value_type &_value_type :
@@ -143,7 +144,6 @@ private:
 
   template <typename t_iterator>
   void import(t_iterator p_begin, t_iterator p_end) {
-
     for (t_iterator _ite = p_begin; _ite != p_end; ++_ite) {
       if (std::find_if(m_container.begin(), m_container.end(),
                        [&](const typename container::value_type &p_value) {

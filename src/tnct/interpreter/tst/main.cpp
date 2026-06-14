@@ -6,6 +6,7 @@
 // #include "recognizer_test.h"
 // #include "grammar_test.h"
 // #include "parser_test.h"
+#include "tnct/interpreter/tst/scanner_test.h"
 #include "tnct/interpreter/tst/standard_recognizers_test.h"
 #include "tnct/interpreter/tst/terminals_test.h"
 #include "tnct/tester/bus/test.h"
@@ -26,6 +27,14 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::terminals_002);
   run_test(_tester, tnct::interpreter::tst::terminals_003);
   run_test(_tester, tnct::interpreter::tst::terminals_004);
+
+  run_test(_tester, tnct::interpreter::tst::scanner_000);
+  run_test(_tester, tnct::interpreter::tst::scanner_001);
+  run_test(_tester, tnct::interpreter::tst::scanner_002);
+  run_test(_tester, tnct::interpreter::tst::scanner_003);
+  run_test(_tester, tnct::interpreter::tst::scanner_004);
+  run_test(_tester, tnct::interpreter::tst::scanner_005);
+  run_test(_tester, tnct::interpreter::tst::scanner_006);
 }
 
 // int main ( int argc, char ** argv ) {
@@ -38,7 +47,7 @@ int main(int argc, char **argv) {
 //     }
 //     else {
 // 	try {
-// 	    test_recognizer l_test_recognizer;
+// 	    test_recognizer l_test_recongnizer;
 // 	    if ( !l_test_recognizer.exec ( ) ) {
 // 		std::cout << "ERROR on 'test_lexical' " ;
 // 	    }

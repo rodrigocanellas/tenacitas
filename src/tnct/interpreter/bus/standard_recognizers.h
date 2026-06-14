@@ -21,21 +21,22 @@ class word_recognizer final {
 public:
   explicit word_recognizer(dat::type p_type) : m_type(p_type) {}
 
-  word_recognizer() = delete;
-  word_recognizer(const word_recognizer &) = delete;
+  word_recognizer() = default;
+  word_recognizer(const word_recognizer &) = default;
   word_recognizer(word_recognizer &&) = default;
 
   ~word_recognizer() = default;
 
   void *operator new(std::size_t) = delete;
+  void *operator new[](std::size_t) = delete;
 
-  word_recognizer &operator=(const word_recognizer &) = delete;
+  word_recognizer &operator=(const word_recognizer &) = default;
 
-  word_recognizer &operator=(word_recognizer &&) = delete;
+  word_recognizer &operator=(word_recognizer &&) = default;
 
   std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
-             std::string::const_iterator p_end) const {
+             std::string::const_iterator p_end) {
     std::string::const_iterator _ite{p_begin};
 
     auto stop = [&]() { return (_ite == p_end) || !isalpha(*_ite); };
@@ -74,21 +75,22 @@ public:
                                   char p_decimal_separator = '.')
       : m_type(p_type), m_dec_sep(p_decimal_separator) {}
 
-  real_number_recognizer() = delete;
-  real_number_recognizer(const real_number_recognizer &) = delete;
+  real_number_recognizer() = default;
+  real_number_recognizer(const real_number_recognizer &) = default;
   real_number_recognizer(real_number_recognizer &&) = default;
 
   ~real_number_recognizer() = default;
 
   void *operator new(std::size_t) = delete;
+  void *operator new[](std::size_t) = delete;
 
-  real_number_recognizer &operator=(const real_number_recognizer &) = delete;
+  real_number_recognizer &operator=(const real_number_recognizer &) = default;
 
-  real_number_recognizer &operator=(real_number_recognizer &&) = delete;
+  real_number_recognizer &operator=(real_number_recognizer &&) = default;
 
   std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
-             std::string::const_iterator p_end) const {
+             std::string::const_iterator p_end) {
 
     std::string::const_iterator _ite{p_begin};
 
@@ -174,25 +176,26 @@ public:
   explicit decimal_integer_number_recognizer(dat::type p_type)
       : m_type(p_type) {}
 
-  decimal_integer_number_recognizer() = delete;
+  decimal_integer_number_recognizer() = default;
   decimal_integer_number_recognizer(const decimal_integer_number_recognizer &) =
-      delete;
+      default;
   decimal_integer_number_recognizer(decimal_integer_number_recognizer &&) =
       default;
 
   ~decimal_integer_number_recognizer() = default;
 
   void *operator new(std::size_t) = delete;
+  void *operator new[](std::size_t) = delete;
 
   decimal_integer_number_recognizer &
-  operator=(const decimal_integer_number_recognizer &) = delete;
+  operator=(const decimal_integer_number_recognizer &) = default;
 
   decimal_integer_number_recognizer &
-  operator=(decimal_integer_number_recognizer &&) = delete;
+  operator=(decimal_integer_number_recognizer &&) = default;
 
   std::optional<dat::non_terminal_recognition>
   operator()(std::string::const_iterator p_begin,
-             std::string::const_iterator p_end) const {
+             std::string::const_iterator p_end) {
 
     std::string::const_iterator _ite{p_begin};
 
