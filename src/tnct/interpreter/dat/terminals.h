@@ -49,7 +49,7 @@ public:
   }
 
   void import(const terminals_t &p_terminals) {
-    import(p_terminals.begin(), p_terminals.end());
+    import(p_terminals.m_container.begin(), p_terminals.m_container.end());
   }
 
   /// Adds a group of lexema objects that should be recognized directly from the
@@ -64,12 +64,13 @@ public:
             std::string::const_iterator p_end_of_text) const {
     std::string::const_iterator _begin = p_begin;
 
-    if ((_begin == p_end_of_text) || (*_begin == '\0') || (*_begin == '\n')) {
-      return std::nullopt;
+    while ((_begin != p_end_of_text) && (*_begin != '\0') &&
+           ((*_begin == ' ') || (*_begin == '\n'))) {
+      ++_begin;
     }
 
-    while (*_begin == ' ') {
-      ++_begin;
+    if ((_begin == p_end_of_text) || (*_begin == '\0')) {
+      return std::nullopt;
     }
 
     std::string::const_iterator _ite = std::next(_begin);

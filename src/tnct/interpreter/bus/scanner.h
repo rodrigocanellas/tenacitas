@@ -70,11 +70,11 @@ public:
     m_terminals.add(p_string, p_type);
   }
 
-  void import_terminals(const terminals &&p_terminals) {
+  void import_terminals(const terminals &p_terminals) {
     m_terminals.import(p_terminals);
   }
 
-  void set_recognizers(std::initializer_list<recognizer> p_recognizers) {
+  void add_recognizers(std::initializer_list<recognizer> p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
               std::back_inserter(m_recognizers));
   }
@@ -115,12 +115,12 @@ public:
 
     std::optional<symbol> _symbol{recognize_terminal()};
     if (_symbol) {
-      return {std::move(_symbol)};
+      return _symbol;
     }
 
     _symbol = recognize_non_terminal();
     if (_symbol) {
-      return {std::move(_symbol)};
+      return _symbol;
     }
 
     return std::nullopt;
@@ -136,7 +136,7 @@ private:
           _recognizer(m_walker, m_end)};
 
       if (_res && (_res->non_terminal.type != dat::unknow_type)) {
-        m_walker = _res->end;
+        advance_to(_res->end);
         return symbol(std::move(_res->non_terminal.value),
                       _res->non_terminal.type);
       }
@@ -150,36 +150,52 @@ private:
         m_terminals.recognize(m_walker, m_end)};
 
     if (_res && _res->terminal.type != dat::unknow_type) {
-      m_walker = _res->end;
+      advance_to(_res->end);
       return symbol{_res->terminal.lexema_ref, _res->terminal.type};
     }
 
     return std::nullopt;
   }
 
+  bool should_ignore(char p_char) const {
+    return (p_char == ' ') || (std::find(m_to_ignore.begin(), m_to_ignore.end(),
+                                         p_char) != m_to_ignore.end());
+  }
+
   /// Advances the text indexers in order to ignore all the chars defined in
   /// the
   /// @p m_to_ignore
   void skip() {
-    while (true) {
-
-      if (is_eot() ||
-
-          ((std::find(m_to_ignore.begin(), m_to_ignore.end(), *m_walker) ==
-            m_to_ignore.end()) &&
-           (*m_walker != ' '))) {
-        break;
-      }
-
-      if (*m_walker == '\n') {
-        ++m_curr_line;
-        m_curr_col = 1;
-      }
-
-      ++m_curr_col;
-
-      ++m_walker;
+    while (!is_eot() && should_ignore()) {
+      advance_one();
     }
+  }
+
+  bool should_ignore() const {
+    return (*m_walker == ' ') ||
+           (std::find(m_to_ignore.begin(), m_to_ignore.end(), *m_walker) !=
+            m_to_ignore.end());
+  }
+
+  void advance_to(std::string::const_iterator p_new_walker) {
+    while ((m_walker != p_new_walker) && !is_eot()) {
+      advance_one();
+    }
+  }
+
+  void advance_one() {
+    if (is_eot()) {
+      return;
+    }
+
+    if (*m_walker == '\n') {
+      ++m_curr_line;
+      m_curr_col = 1;
+    } else {
+      ++m_curr_col;
+    }
+
+    ++m_walker;
   }
 
   /** @brief Informs if all the input text was analysed */
@@ -203,10 +219,6 @@ private:
   std::string::const_iterator m_end{m_fake_text.end()};
 
   std::string::const_iterator m_walker{m_end};
-
-  dat::line_number m_line_last_symbol;
-
-  dat::column_number m_col_last_symbol;
 };
 
 template <std::size_t t_lexema_size>

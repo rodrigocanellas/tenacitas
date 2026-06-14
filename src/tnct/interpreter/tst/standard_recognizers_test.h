@@ -209,5 +209,90 @@ private:
   log::cerr m_logger;
 };
 
+struct standard_recognizers_005 {
+  static std::string desc() {
+    return "real_number_recognizer recognizes only digits-separator-digits";
+  }
+
+  bool operator()(const program::bus::options &) {
+    log::cerr _logger;
+
+    bus::real_number_recognizer _recognizer{real_type};
+
+    const std::string _valid{"123.45abc"};
+    std::optional<dat::non_terminal_recognition> _res{
+        _recognizer(_valid.begin(), _valid.end())};
+
+    if (!_res) {
+      TNCT_LOG_ERR(_logger, "real number not recognized");
+      return false;
+    }
+
+    if (_res->non_terminal.value != "123.45") {
+      TNCT_LOG_ERR(_logger,
+                   fmt("expected 123.45, got ", _res->non_terminal.value));
+      return false;
+    }
+
+    if (_res->non_terminal.type != real_type) {
+      TNCT_LOG_ERR(_logger, "unexpected real number type");
+      return false;
+    }
+
+    return true;
+  }
+};
+
+struct standard_recognizers_006 {
+  static std::string desc() {
+    return "real_number_recognizer rejects incomplete real numbers";
+  }
+
+  bool operator()(const program::bus::options &) {
+    constexpr dat::type _real_type{100};
+    bus::real_number_recognizer _recognizer{_real_type};
+
+    for (const std::string &_text : {std::string{"123"}, std::string{".123"},
+                                     std::string{"123."}, std::string{"."}}) {
+      if (_recognizer(_text.begin(), _text.end())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+};
+
+struct standard_recognizers_007 {
+  static std::string desc() {
+    return "decimal_integer_number_recognizer stops before first non-digit";
+  }
+
+  bool operator()(const program::bus::options &) {
+    constexpr dat::type _integer_type{101};
+    const std::string _text{"123abc"};
+    bus::decimal_integer_number_recognizer _recognizer{_integer_type};
+
+    std::optional<dat::non_terminal_recognition> _res{
+        _recognizer(_text.begin(), _text.end())};
+
+    return _res && (_res->non_terminal.value == "123") &&
+           (_res->end == std::next(_text.begin(), 3));
+  }
+};
+
+struct standard_recognizers_008 {
+  static std::string desc() {
+    return "word_recognizer rejects text that does not start with a letter";
+  }
+
+  bool operator()(const program::bus::options &) {
+    constexpr dat::type _word_type{102};
+    const std::string _text{"_abc"};
+    bus::word_recognizer _recognizer{_word_type};
+    return !_recognizer(_text.begin(), _text.end());
+  }
+};
+
 } // namespace tnct::interpreter::tst
 #endif

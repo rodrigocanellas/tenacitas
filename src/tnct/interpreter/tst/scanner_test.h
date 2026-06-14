@@ -602,5 +602,85 @@ struct scanner_011 {
     return true;
   }
 };
+
+struct scanner_012 {
+  static std::string desc() {
+    return "scanner returns end_of_text for input containing only ignored "
+           "chars";
+  }
+
+  bool operator()(const program::bus::options &) {
+    bus::scanner<10> _scanner;
+    const std::string _text{" \n\t\r"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+
+    return _symbol && (_symbol->get_type() == dat::end_of_text);
+  }
+};
+
+// =========================
+struct scanner_013 {
+  static std::string desc() {
+    return "scanner updates column after recognizing a non-terminal";
+  }
+
+  bool operator()(const program::bus::options &) {
+
+    scanner _scanner;
+    _scanner.add_recognizer(bus::word_recognizer{word_type});
+
+    const std::string _text{"abc"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<symbol> _symbol{_scanner.get_symbol()};
+
+    return _symbol && (_symbol->get_type() == word_type) &&
+           (_scanner.get_current_line() == 1) &&
+           (_scanner.get_current_column() == 4);
+  }
+};
+
+struct scanner_014 {
+  static std::string desc() {
+    return "scanner updates line and column when skipping newline";
+  }
+
+  bool operator()(const program::bus::options &) {
+    constexpr dat::type _word_type{200};
+    bus::scanner<10> _scanner;
+    _scanner.add_recognizer(bus::word_recognizer{_word_type});
+
+    const std::string _text{"\nabc"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+
+    return _symbol && (_symbol->get_type() == _word_type) &&
+           (_scanner.get_current_line() == 2) &&
+           (_scanner.get_current_column() == 4);
+  }
+};
+
+struct scanner_015 {
+  static std::string desc() {
+    return "scanner does not advance when a symbol is not recognized";
+  }
+
+  bool operator()(const program::bus::options &) {
+    bus::scanner<10> _scanner;
+    _scanner.add_terminal("=", dat::type{1});
+
+    const std::string _text{"@"};
+    _scanner.set_text_to_scan(_text.begin(), _text.end());
+
+    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+
+    return !_symbol && (_scanner.get_current_line() == 1) &&
+           (_scanner.get_current_column() == 1);
+  }
+};
+
 } // namespace tnct::interpreter::tst
 #endif

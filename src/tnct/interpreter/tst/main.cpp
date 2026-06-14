@@ -21,12 +21,20 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::standard_recognizers_002);
   run_test(_tester, tnct::interpreter::tst::standard_recognizers_003);
   run_test(_tester, tnct::interpreter::tst::standard_recognizers_004);
+  run_test(_tester, tnct::interpreter::tst::standard_recognizers_005);
+  run_test(_tester, tnct::interpreter::tst::standard_recognizers_006);
+  run_test(_tester, tnct::interpreter::tst::standard_recognizers_007);
+  run_test(_tester, tnct::interpreter::tst::standard_recognizers_008);
 
   run_test(_tester, tnct::interpreter::tst::terminals_000);
   run_test(_tester, tnct::interpreter::tst::terminals_001);
   run_test(_tester, tnct::interpreter::tst::terminals_002);
   run_test(_tester, tnct::interpreter::tst::terminals_003);
   run_test(_tester, tnct::interpreter::tst::terminals_004);
+  run_test(_tester, tnct::interpreter::tst::terminals_005);
+  run_test(_tester, tnct::interpreter::tst::terminals_006);
+  run_test(_tester, tnct::interpreter::tst::terminals_007);
+  run_test(_tester, tnct::interpreter::tst::terminals_008);
 
   run_test(_tester, tnct::interpreter::tst::scanner_000);
   run_test(_tester, tnct::interpreter::tst::scanner_001);
@@ -40,6 +48,10 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::scanner_009);
   run_test(_tester, tnct::interpreter::tst::scanner_010);
   run_test(_tester, tnct::interpreter::tst::scanner_011);
+  run_test(_tester, tnct::interpreter::tst::scanner_012);
+  run_test(_tester, tnct::interpreter::tst::scanner_013);
+  run_test(_tester, tnct::interpreter::tst::scanner_014);
+  run_test(_tester, tnct::interpreter::tst::scanner_015);
 }
 
 // int main ( int argc, char ** argv ) {

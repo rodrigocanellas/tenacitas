@@ -94,15 +94,15 @@ struct terminals_001 {
     terminals _terminals;
 
     _terminals.import({{
-                        "==",
-                        comparision_operator,
+                           "==",
+                           comparision_operator,
 
-                    },
-                    {
-                        "<",
-                        comparision_operator,
+                       },
+                       {
+                           "<",
+                           comparision_operator,
 
-                    }});
+                       }});
 
     const std::string _text;
 
@@ -134,13 +134,13 @@ struct terminals_002 {
     terminals _terminals;
 
     _terminals.import({{
-                        "==",
-                        comparision_operator,
-                    },
-                    {
-                        "=",
-                        comparision_operator,
-                    }});
+                           "==",
+                           comparision_operator,
+                       },
+                       {
+                           "=",
+                           comparision_operator,
+                       }});
 
     const std::string _text{"= =="};
 
@@ -186,17 +186,17 @@ struct terminals_003 {
     terminals _terminals;
 
     _terminals.import({{
-                        "==",
-                        comparision_operator,
-                    },
-                    {
-                        "<",
-                        comparision_operator,
-                    },
-                    {
-                        "=",
-                        assignment_operator,
-                    }});
+                           "==",
+                           comparision_operator,
+                       },
+                       {
+                           "<",
+                           comparision_operator,
+                       },
+                       {
+                           "=",
+                           assignment_operator,
+                       }});
 
     const std::string _text{"< = == ="};
 
@@ -256,33 +256,33 @@ struct terminals_004 {
     terminals _terminals;
 
     _terminals.import({{
-                        "if",
-                        reserved_word,
-                    },
-                    {
-                        "(",
-                        expression_delimeter,
-                    },
-                    {
-                        ")",
-                        expression_delimeter,
-                    },
-                    {
-                        "==",
-                        comparision_operator,
-                    },
-                    {
-                        "<",
-                        comparision_operator,
-                    },
-                    {
-                        "=",
-                        assignment_operator,
-                    },
-                    {
-                        "!",
-                        unary_operator,
-                    }});
+                           "if",
+                           reserved_word,
+                       },
+                       {
+                           "(",
+                           expression_delimeter,
+                       },
+                       {
+                           ")",
+                           expression_delimeter,
+                       },
+                       {
+                           "==",
+                           comparision_operator,
+                       },
+                       {
+                           "<",
+                           comparision_operator,
+                       },
+                       {
+                           "=",
+                           assignment_operator,
+                       },
+                       {
+                           "!",
+                           unary_operator,
+                       }});
 
     const std::string _text{"if!()"};
 
@@ -324,6 +324,84 @@ struct terminals_004 {
     }
 
     return true;
+  }
+};
+
+struct terminals_005 {
+  static std::string desc() {
+    return "terminals_t returns nullopt for a text containing only spaces";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using terminals = dat::terminals_t<10>;
+    terminals _terminals;
+    _terminals.add("=", dat::type{1});
+
+    const std::string _text{"   "};
+    return !_terminals.recognize(_text.begin(), _text.end());
+  }
+};
+
+struct terminals_006 {
+  static std::string desc() {
+    return "terminals_t recognizes the longest terminal";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using terminals = dat::terminals_t<10>;
+    terminals _terminals;
+    _terminals.add("=", dat::type{1});
+    _terminals.add("==", dat::type{2});
+
+    const std::string _text{"== x"};
+    std::optional<terminals::terminal_recognition> _res{
+        _terminals.recognize(_text.begin(), _text.end())};
+
+    return _res &&
+           (_res->terminal.lexema_ref.get() == terminals::lexema{"=="}) &&
+           (_res->terminal.type == dat::type{2}) &&
+           (_res->end == std::next(_text.begin(), 2));
+  }
+};
+
+struct terminals_007 {
+  static std::string desc() {
+    return "terminals_t can import terminals from another terminals_t";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using terminals = dat::terminals_t<10>;
+    terminals _source;
+    _source.add("(", dat::type{1});
+    _source.add(")", dat::type{1});
+
+    terminals _target;
+    _target.import(_source);
+
+    const std::string _text{"("};
+    std::optional<terminals::terminal_recognition> _res{
+        _target.recognize(_text.begin(), _text.end())};
+
+    return _res && (_res->terminal.lexema_ref.get() == terminals::lexema{"("});
+  }
+};
+
+struct terminals_008 {
+  static std::string desc() {
+    return "terminals_t::add ignores duplicate lexemas";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using terminals = dat::terminals_t<10>;
+    terminals _terminals;
+    _terminals.add("=", dat::type{1});
+    _terminals.add("=", dat::type{2});
+
+    const std::string _text{"="};
+    std::optional<terminals::terminal_recognition> _res{
+        _terminals.recognize(_text.begin(), _text.end())};
+
+    return _res && (_res->terminal.type == dat::type{1});
   }
 };
 
