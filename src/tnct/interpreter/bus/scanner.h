@@ -6,11 +6,14 @@
 
 #include "tnct/interpreter/bus/non_terminal_recognizer.h"
 #include "tnct/interpreter/bus/non_terminal_recognizers.h"
+#include "tnct/interpreter/bus/terminal_recognizer.h"
 #include "tnct/interpreter/dat/column_number.h"
 #include "tnct/interpreter/dat/lexema.h"
 #include "tnct/interpreter/dat/line_number.h"
+#include "tnct/interpreter/dat/non_terminal_recognition.h"
 #include "tnct/interpreter/dat/symbol.h"
 #include "tnct/interpreter/dat/terminal.h"
+#include "tnct/interpreter/dat/terminal_recognition.h"
 #include "tnct/interpreter/dat/terminals.h"
 #include "tnct/interpreter/dat/type.h"
 
@@ -21,7 +24,7 @@ namespace tnct::interpreter::bus {
 ///
 ///  This design tries to give a great flexibility to @p scanner, since  it can
 ///  adapt to any set of symbols to be recognized.
-template <std::size_t t_lexema_size> class scanner final {
+template <std::size_t t_lexema_size> class scanner_t final {
 
 public:
   using lexema = dat::lexema_t<t_lexema_size>;
@@ -29,20 +32,22 @@ public:
   using terminal = dat::terminal_t<t_lexema_size>;
   using terminals = dat::terminals_t<t_lexema_size>;
   using symbol = dat::symbol_t<t_lexema_size>;
+  using terminal_recognizer = bus::terminal_recognizer_t<t_lexema_size>;
 
   ///
   /// @param [in] p_to_ignore is a string containing chars to be ignored while
   /// analysing the text
-  scanner(std::initializer_list<char> p_to_ignore = {'\r', '\t', '\n'})
-      : m_to_ignore(std::move(p_to_ignore)) {}
+  scanner_t(std::initializer_list<char> p_to_ignore = {'\r', '\t', '\n'})
+      : m_to_ignore(std::move(p_to_ignore)),
+        m_terminal_recognizer{m_terminals} {}
 
-  scanner(const scanner &) = delete;
-  scanner(scanner &&) = delete;
+  scanner_t(const scanner_t &) = delete;
+  scanner_t(scanner_t &&) = delete;
 
-  ~scanner() = default;
+  ~scanner_t() = default;
 
-  scanner &operator=(const scanner &) = delete;
-  scanner &operator=(scanner &&) = delete;
+  scanner_t &operator=(const scanner_t &) = delete;
+  scanner_t &operator=(scanner_t &&) = delete;
 
   void *operator new(std::size_t) = delete;
   void *operator new[](std::size_t) = delete;
@@ -74,7 +79,8 @@ public:
     m_terminals.import(p_terminals);
   }
 
-  void add_recognizers(std::initializer_list<non_terminal_recognizer> p_recognizers) {
+  void add_recognizers(
+      std::initializer_list<non_terminal_recognizer> p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
               std::back_inserter(m_recognizers));
   }
@@ -147,7 +153,7 @@ private:
   std::optional<symbol> recognize_terminal() {
 
     std::optional<terminal_recognition> _res{
-        m_terminals.recognize(m_walker, m_end)};
+        m_terminal_recognizer(m_walker, m_end)};
 
     if (_res && _res->terminal.type != dat::unknow_type) {
       advance_to(_res->end);
@@ -208,6 +214,8 @@ private:
 
   terminals m_terminals;
 
+  terminal_recognizer m_terminal_recognizer;
+
   bus::non_terminal_recognizers m_recognizers;
 
   dat::line_number m_curr_line{1};
@@ -222,7 +230,7 @@ private:
 };
 
 template <std::size_t t_lexema_size>
-const std::string scanner<t_lexema_size>::m_fake_text{""};
+const std::string scanner_t<t_lexema_size>::m_fake_text{""};
 
 } // namespace tnct::interpreter::bus
 

@@ -8,6 +8,7 @@
 
 #include "tnct/format/bus/fmt.h"
 #include "tnct/interpreter/bus/non_terminal_standard_recognizers.h"
+#include "tnct/interpreter/bus/scanner.h"
 #include "tnct/interpreter/dat/symbol.h"
 #include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"
@@ -17,6 +18,8 @@
 using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
+
+using scanner = bus::scanner_t<lexema_size>;
 
 std::optional<symbol> scan_terminal(scanner &p_scanner, log::cerr &p_logger,
                                     lexema &&p_expected, dat::type p_type) {
@@ -610,17 +613,16 @@ struct scanner_012 {
   }
 
   bool operator()(const program::bus::options &) {
-    bus::scanner<10> _scanner;
+    scanner _scanner;
     const std::string _text{" \n\t\r"};
     _scanner.set_text_to_scan(_text.begin(), _text.end());
 
-    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+    std::optional<symbol> _symbol{_scanner.get_symbol()};
 
     return _symbol && (_symbol->get_type() == dat::end_of_text);
   }
 };
 
-// =========================
 struct scanner_013 {
   static std::string desc() {
     return "scanner updates column after recognizing a non-terminal";
@@ -649,13 +651,13 @@ struct scanner_014 {
 
   bool operator()(const program::bus::options &) {
     constexpr dat::type _word_type{200};
-    bus::scanner<10> _scanner;
+    scanner _scanner;
     _scanner.add_recognizer(bus::word_recognizer{_word_type});
 
     const std::string _text{"\nabc"};
     _scanner.set_text_to_scan(_text.begin(), _text.end());
 
-    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+    std::optional<symbol> _symbol{_scanner.get_symbol()};
 
     return _symbol && (_symbol->get_type() == _word_type) &&
            (_scanner.get_current_line() == 2) &&
@@ -669,13 +671,13 @@ struct scanner_015 {
   }
 
   bool operator()(const program::bus::options &) {
-    bus::scanner<10> _scanner;
+    scanner _scanner;
     _scanner.add_terminal("=", dat::type{1});
 
     const std::string _text{"@"};
     _scanner.set_text_to_scan(_text.begin(), _text.end());
 
-    std::optional<bus::scanner<10>::symbol> _symbol{_scanner.get_symbol()};
+    std::optional<symbol> _symbol{_scanner.get_symbol()};
 
     return !_symbol && (_scanner.get_current_line() == 1) &&
            (_scanner.get_current_column() == 1);

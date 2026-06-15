@@ -9,6 +9,7 @@
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
+#include "tnct/interpreter/bus/terminal_recognizer.h"
 #include "tnct/interpreter/dat/terminal.h"
 #include "tnct/interpreter/dat/terminals.h"
 #include "tnct/interpreter/tst/common.h"
@@ -20,12 +21,15 @@ using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
 
+using terminal_recognizer = bus::terminal_recognizer_t<lexema_size>;
+
 std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
-     lexema &&p_expected, const terminals &p_terminals, log::cerr &p_logger) {
+     lexema &&p_expected, terminal_recognizer &p_terminal_recognizer,
+     log::cerr &p_logger) {
 
   std::optional<terminal_recognition> _res{
-      p_terminals.recognize(p_begin, p_end)};
+      p_terminal_recognizer(p_begin, p_end)};
 
   if (!_res) {
     TNCT_LOG_ERR(p_logger,
@@ -53,6 +57,7 @@ struct terminals_000 {
     log::cerr _logger;
 
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
 
     _terminals.import({{
         "=",
@@ -62,7 +67,7 @@ struct terminals_000 {
     const std::string _text{"="};
 
     std::optional<terminal_recognition> _res{
-        _terminals.recognize(_text.begin(), _text.end())};
+        _terminal_recognizer(_text.begin(), _text.end())};
 
     if (!_res) {
       TNCT_LOG_ERR(_logger, "not terminal was found, but it should have been");
@@ -92,6 +97,7 @@ struct terminals_001 {
     log::cerr _logger;
 
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
 
     _terminals.import({{
                            "==",
@@ -107,7 +113,7 @@ struct terminals_001 {
     const std::string _text;
 
     std::optional<terminal_recognition> _res{
-        _terminals.recognize(_text.begin(), _text.end())};
+        _terminal_recognizer(_text.begin(), _text.end())};
 
     if (_res) {
       TNCT_LOG_ERR(_logger,
@@ -132,6 +138,7 @@ struct terminals_002 {
     log::cerr _logger;
 
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
 
     _terminals.import({{
                            "==",
@@ -147,20 +154,21 @@ struct terminals_002 {
     std::string::const_iterator _ite{_text.begin()};
 
     std::optional<std::string::const_iterator> _maybe{
-        scan(_ite, _text.end(), lexema{"="}, _terminals, _logger)};
+        scan(_ite, _text.end(), lexema{"="}, _terminal_recognizer, _logger)};
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"=="}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"=="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
     std::optional<terminal_recognition> _res{
-        _terminals.recognize(_ite, _text.end())};
+        _terminal_recognizer(_ite, _text.end())};
     if (_res) {
       TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
@@ -184,6 +192,7 @@ struct terminals_003 {
     log::cerr _logger;
 
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
 
     _terminals.import({{
                            "==",
@@ -205,32 +214,35 @@ struct terminals_003 {
     TNCT_LOG_INF(_logger, fmt("terminals: ", _terminals));
 
     std::optional<std::string::const_iterator> _maybe{
-        scan(_ite, _text.end(), lexema{"<"}, _terminals, _logger)};
+        scan(_ite, _text.end(), lexema{"<"}, _terminal_recognizer, _logger)};
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"="}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"=="}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"=="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"="}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
     std::optional<terminal_recognition> _res{
-        _terminals.recognize(_ite, _text.end())};
+        _terminal_recognizer(_ite, _text.end())};
     if (_res) {
       TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
@@ -254,6 +266,7 @@ struct terminals_004 {
     log::cerr _logger;
 
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
 
     _terminals.import({{
                            "if",
@@ -291,32 +304,35 @@ struct terminals_004 {
     TNCT_LOG_INF(_logger, fmt("terminals: ", _terminals));
 
     std::optional<std::string::const_iterator> _maybe{
-        scan(_ite, _text.end(), lexema{"if"}, _terminals, _logger)};
+        scan(_ite, _text.end(), lexema{"if"}, _terminal_recognizer, _logger)};
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"!"}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"!"}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{"("}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{"("}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
-    _maybe = scan(_ite, _text.end(), lexema{")"}, _terminals, _logger);
+    _maybe =
+        scan(_ite, _text.end(), lexema{")"}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
 
     std::optional<terminal_recognition> _res{
-        _terminals.recognize(_ite, _text.end())};
+        _terminal_recognizer(_ite, _text.end())};
     if (_res) {
       TNCT_LOG_DEB(_logger, fmt(_res->terminal.lexema_ref.get(),
                                 " was found, but none should have been"));
@@ -335,10 +351,12 @@ struct terminals_005 {
   bool operator()(const program::bus::options &) {
     using terminals = dat::terminals_t<10>;
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
+
     _terminals.add("=", dat::type{1});
 
     const std::string _text{"   "};
-    return !_terminals.recognize(_text.begin(), _text.end());
+    return !_terminal_recognizer(_text.begin(), _text.end());
   }
 };
 
@@ -350,12 +368,14 @@ struct terminals_006 {
   bool operator()(const program::bus::options &) {
     using terminals = dat::terminals_t<10>;
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
+
     _terminals.add("=", dat::type{1});
     _terminals.add("==", dat::type{2});
 
     const std::string _text{"== x"};
-    std::optional<terminals::terminal_recognition> _res{
-        _terminals.recognize(_text.begin(), _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminal_recognizer(_text.begin(), _text.end())};
 
     return _res &&
            (_res->terminal.lexema_ref.get() == terminals::lexema{"=="}) &&
@@ -372,15 +392,17 @@ struct terminals_007 {
   bool operator()(const program::bus::options &) {
     using terminals = dat::terminals_t<10>;
     terminals _source;
+
     _source.add("(", dat::type{1});
     _source.add(")", dat::type{1});
 
     terminals _target;
     _target.import(_source);
+    terminal_recognizer _terminal_recognizer(_target);
 
     const std::string _text{"("};
-    std::optional<terminals::terminal_recognition> _res{
-        _target.recognize(_text.begin(), _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminal_recognizer(_text.begin(), _text.end())};
 
     return _res && (_res->terminal.lexema_ref.get() == terminals::lexema{"("});
   }
@@ -392,14 +414,16 @@ struct terminals_008 {
   }
 
   bool operator()(const program::bus::options &) {
-    using terminals = dat::terminals_t<10>;
+
     terminals _terminals;
+    terminal_recognizer _terminal_recognizer(_terminals);
+
     _terminals.add("=", dat::type{1});
     _terminals.add("=", dat::type{2});
 
     const std::string _text{"="};
-    std::optional<terminals::terminal_recognition> _res{
-        _terminals.recognize(_text.begin(), _text.end())};
+    std::optional<terminal_recognition> _res{
+        _terminal_recognizer(_text.begin(), _text.end())};
 
     return _res && (_res->terminal.type == dat::type{1});
   }
