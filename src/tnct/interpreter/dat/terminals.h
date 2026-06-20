@@ -42,7 +42,9 @@ public:
 
   void add(std::string_view p_string, dat::type p_type) {
 
-    m_container.push_back({lexema{p_string}, p_type});
+    if (found(p_string.begin(), p_string.end()) == m_container.end()) {
+      m_container.push_back({lexema{p_string}, p_type});
+    }
   }
 
   void import(const terminals_t &p_terminals) {
@@ -58,27 +60,17 @@ public:
 
   /// Tries to retrieve the type associated to a lexema and a reference to the
   /// lexema
-  std::optional<terminal>
-  is_defined(typename lexema::const_iterator p_begin,
-             typename lexema::const_iterator p_end) const {
+  std::optional<terminal> find(typename lexema::const_iterator p_begin,
+                               typename lexema::const_iterator p_end) const {
     if (static_cast<decltype(t_lexema_size)>(std::distance(p_begin, p_end)) >
         t_lexema_size) {
       return std::nullopt;
     }
 
-    auto _cmp{[&](const typename container::value_type &p_token) {
-      const bool _res{p_token.first.equals(p_begin, p_end)};
-      return _res;
-    }};
-
-    const auto _ite{std::find_if(m_container.begin(), m_container.end(), _cmp)};
-
+    const_iterator _ite{found(p_begin, p_end)};
     if (_ite == m_container.end()) {
       return std::nullopt;
     }
-    // return std::optional<terminal>{
-    //     {terminal{lexema_reference<t_lexema_size>{_ite->first},
-    //               dat::type{_ite->second}}}};
 
     return {terminal{.lexema_ref = {_ite->first}, .type = {_ite->second}}};
   }
@@ -93,19 +85,28 @@ public:
   }
 
 private:
+  using container = std::vector<std::pair<lexema, dat::type>>;
+  using iterator = typename container::iterator;
+  using const_iterator = typename container::const_iterator;
+
   template <typename t_iterator>
   void import(t_iterator p_begin, t_iterator p_end) {
     for (t_iterator _ite = p_begin; _ite != p_end; ++_ite) {
-      if (std::find_if(m_container.begin(), m_container.end(),
-                       [&](const typename container::value_type &p_value) {
-                         return (lexema{_ite->first} == p_value.first);
-                       }) == m_container.end()) {
+      if (found(_ite->first.begin(), _ite->first.end()) == m_container.end()) {
         m_container.push_back({lexema{_ite->first}, _ite->second});
       }
     }
   }
 
-  using container = std::vector<std::pair<lexema, dat::type>>;
+  const_iterator found(const char *p_begin, const char *p_end) const {
+
+    auto _cmp{[&](const typename container::value_type &p_token) {
+      const bool _res{p_token.first.equals(p_begin, p_end)};
+      return _res;
+    }};
+
+    return {std::find_if(m_container.begin(), m_container.end(), _cmp)};
+  }
 
   container m_container;
 };

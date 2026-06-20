@@ -27,19 +27,23 @@ namespace tnct::interpreter::bus {
 template <std::size_t t_lexema_size> class scanner_t final {
 
 public:
-  using lexema = dat::lexema_t<t_lexema_size>;
-  using lexema_reference = dat::lexema_reference_t<t_lexema_size>;
-  using terminal = dat::terminal_t<t_lexema_size>;
-  using terminals = dat::terminals_t<t_lexema_size>;
   using symbol = dat::symbol_t<t_lexema_size>;
   using terminal_recognizer = bus::terminal_recognizer_t<t_lexema_size>;
+  using is_delimeter = typename terminal_recognizer::is_delimeter;
+  using terminals = dat::terminals_t<t_lexema_size>;
 
-  ///
-  /// @param [in] p_to_ignore is a string containing chars to be ignored while
-  /// analysing the text
-  scanner_t(std::initializer_list<char> p_to_ignore = {'\r', '\t', '\n'})
-      : m_to_ignore(std::move(p_to_ignore)),
-        m_terminal_recognizer{m_terminals} {}
+  scanner_t(is_delimeter p_is_delimeter =
+                [](std::string::const_iterator p_ite,
+                   std::string::const_iterator p_end) {
+                  if ((p_ite == p_end) || (*p_ite == '\0') || (*p_ite == ' ') ||
+                      (*p_ite == '\n') || (*p_ite == '\t') ||
+                      (*p_ite == '\r')) {
+                    return true;
+                  }
+                  return false;
+                })
+      : m_is_delimeter{p_is_delimeter},
+        m_terminal_recognizer{m_terminals, m_is_delimeter} {}
 
   scanner_t(const scanner_t &) = delete;
   scanner_t(scanner_t &&) = delete;
@@ -82,16 +86,16 @@ public:
   void add_recognizers(
       std::initializer_list<non_terminal_recognizer> p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
-              std::back_inserter(m_recognizers));
+              std::back_inserter(m_non_terminal_recognizers));
   }
 
   void add_recognizer(non_terminal_recognizer &&p_recognizer) {
-    m_recognizers.push_back(std::move(p_recognizer));
+    m_non_terminal_recognizers.push_back(std::move(p_recognizer));
   }
 
   void import_recognizers(const non_terminal_recognizers &p_recognizers) {
     std::copy(p_recognizers.begin(), p_recognizers.end(),
-              std::back_inserter(m_recognizers));
+              std::back_inserter(m_non_terminal_recognizers));
   }
 
   /// Returns the next tnct::interpreter::dat::symbol object
@@ -134,10 +138,14 @@ public:
 
 private:
   using terminal_recognition = dat::terminal_recognition_t<t_lexema_size>;
+  using lexema = dat::lexema_t<t_lexema_size>;
+  using lexema_reference = dat::lexema_reference_t<t_lexema_size>;
+  using terminal = dat::terminal_t<t_lexema_size>;
 
 private:
   std::optional<symbol> recognize_non_terminal() {
-    for (bus::non_terminal_recognizer &_recognizer : m_recognizers) {
+    for (bus::non_terminal_recognizer &_recognizer :
+         m_non_terminal_recognizers) {
       std::optional<dat::non_terminal_recognition> _res{
           _recognizer(m_walker, m_end)};
 
@@ -163,24 +171,10 @@ private:
     return std::nullopt;
   }
 
-  bool should_ignore(char p_char) const {
-    return (p_char == ' ') || (std::find(m_to_ignore.begin(), m_to_ignore.end(),
-                                         p_char) != m_to_ignore.end());
-  }
-
-  /// Advances the text indexers in order to ignore all the chars defined in
-  /// the
-  /// @p m_to_ignore
   void skip() {
-    while (!is_eot() && should_ignore()) {
+    while (!is_eot() && m_is_delimeter(m_walker, m_end)) {
       advance_one();
     }
-  }
-
-  bool should_ignore() const {
-    return (*m_walker == ' ') ||
-           (std::find(m_to_ignore.begin(), m_to_ignore.end(), *m_walker) !=
-            m_to_ignore.end());
   }
 
   void advance_to(std::string::const_iterator p_new_walker) {
@@ -207,16 +201,16 @@ private:
   /** @brief Informs if all the input text was analysed */
   bool is_eot() const { return ((m_walker == m_end) || (*m_walker == '\0')); }
 
+private:
   static const std::string m_fake_text;
 
-  /// A string containing chars to be ignored while analysing the text
-  std::vector<char> m_to_ignore;
+  is_delimeter m_is_delimeter;
 
   terminals m_terminals;
 
   terminal_recognizer m_terminal_recognizer;
 
-  bus::non_terminal_recognizers m_recognizers;
+  bus::non_terminal_recognizers m_non_terminal_recognizers;
 
   dat::line_number m_curr_line{1};
 

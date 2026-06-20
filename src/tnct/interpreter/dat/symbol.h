@@ -38,7 +38,13 @@ public:
   symbol_t &operator=(const symbol_t &p_symbol) = default;
   symbol_t &operator=(symbol_t &&p_symbol) = default;
 
+  bool is_defined() const {
+    return m_lexema_reference.has_value() || m_string.has_value();
+  }
+
   bool is_terminal() const { return m_lexema_reference.has_value(); }
+
+  bool is_non_terminal() const { return m_string.has_value(); }
 
   std::optional<lexema_reference> get_lexema() const {
     return (m_lexema_reference ? m_lexema_reference : std::nullopt);
@@ -71,15 +77,17 @@ public:
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   const symbol_t &p_symbol) {
-    std::optional<const lexema &> _lexema{p_symbol.get_lexema()};
-
-    p_out << '(';
-    if (_lexema) {
-      p_out << *_lexema;
+    if (!p_symbol.is_defined()) {
+      p_out << "()";
     } else {
-      p_out << "NO-LEXEMA";
+      p_out << '(';
+      if (p_symbol.is_terminal()) {
+        p_out << p_symbol.get_lexema();
+      } else {
+        p_out << p_symbol.get_value();
+      }
+      p_out << ',' << p_symbol.get_type() << ')';
     }
-    p_out << ',' << p_symbol.get_type() << ')';
     return p_out;
   }
 

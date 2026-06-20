@@ -21,8 +21,6 @@ using tnct::format::bus::fmt;
 
 namespace tnct::interpreter::tst {
 
-using terminal_recognizer = bus::terminal_recognizer_t<lexema_size>;
-
 std::optional<std::string::const_iterator>
 scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
      lexema &&p_expected, terminal_recognizer &p_terminal_recognizer,
@@ -44,7 +42,9 @@ scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
     return std::nullopt;
   }
 
-  TNCT_LOG_INF(p_logger, fmt(_res->terminal.lexema_ref.get(), " was found"));
+  TNCT_LOG_INF(p_logger,
+               fmt(_res->terminal.lexema_ref.get(),
+                   " and it is equal to the one expected: ", p_expected));
 
   return {_res->end};
 }
@@ -90,10 +90,6 @@ struct terminals_001 {
 
   bool operator()(const program::bus::options &) {
 
-    constexpr std::size_t lexema_size{10};
-
-    using terminals = dat::terminals_t<lexema_size>;
-
     log::cerr _logger;
 
     terminals _terminals;
@@ -130,11 +126,6 @@ struct terminals_002 {
 
   bool operator()(const program::bus::options &) {
 
-    constexpr std::size_t lexema_size{10};
-
-    using lexema = dat::lexema_t<lexema_size>;
-    using terminals = dat::terminals_t<lexema_size>;
-
     log::cerr _logger;
 
     terminals _terminals;
@@ -160,12 +151,17 @@ struct terminals_002 {
     }
     _ite = *_maybe;
 
+    // to skip the ' ' between '=' and '=='
+    ++_ite;
+
     _maybe =
         scan(_ite, _text.end(), lexema{"=="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
+
+    // end of text reached
 
     std::optional<terminal_recognition> _res{
         _terminal_recognizer(_ite, _text.end())};
@@ -183,11 +179,6 @@ struct terminals_003 {
   static std::string desc() { return "Recognizes '< = == ='"; }
 
   bool operator()(const program::bus::options &) {
-
-    constexpr std::size_t lexema_size{10};
-
-    using lexema = dat::lexema_t<lexema_size>;
-    using terminals = dat::terminals_t<lexema_size>;
 
     log::cerr _logger;
 
@@ -208,10 +199,9 @@ struct terminals_003 {
                        }});
 
     const std::string _text{"< = == ="};
+    TNCT_LOG_INF(_logger, fmt("terminals: ", _terminals));
 
     std::string::const_iterator _ite{_text.begin()};
-
-    TNCT_LOG_INF(_logger, fmt("terminals: ", _terminals));
 
     std::optional<std::string::const_iterator> _maybe{
         scan(_ite, _text.end(), lexema{"<"}, _terminal_recognizer, _logger)};
@@ -220,12 +210,18 @@ struct terminals_003 {
     }
     _ite = *_maybe;
 
+    // to skip the ' '
+    ++_ite;
+
     _maybe =
         scan(_ite, _text.end(), lexema{"="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
+
+    // to skip the ' '
+    ++_ite;
 
     _maybe =
         scan(_ite, _text.end(), lexema{"=="}, _terminal_recognizer, _logger);
@@ -234,12 +230,17 @@ struct terminals_003 {
     }
     _ite = *_maybe;
 
+    // to skip the ' '
+    ++_ite;
+
     _maybe =
         scan(_ite, _text.end(), lexema{"="}, _terminal_recognizer, _logger);
     if (!_maybe) {
       return false;
     }
     _ite = *_maybe;
+
+    // end of text reached
 
     std::optional<terminal_recognition> _res{
         _terminal_recognizer(_ite, _text.end())};
@@ -257,11 +258,6 @@ struct terminals_004 {
   static std::string desc() { return "Recognizes 'if!()'"; }
 
   bool operator()(const program::bus::options &) {
-
-    constexpr std::size_t lexema_size{10};
-
-    using lexema = dat::lexema_t<lexema_size>;
-    using terminals = dat::terminals_t<lexema_size>;
 
     log::cerr _logger;
 
@@ -331,6 +327,8 @@ struct terminals_004 {
     }
     _ite = *_maybe;
 
+    // end of text reached
+
     std::optional<terminal_recognition> _res{
         _terminal_recognizer(_ite, _text.end())};
     if (_res) {
@@ -349,13 +347,12 @@ struct terminals_005 {
   }
 
   bool operator()(const program::bus::options &) {
-    using terminals = dat::terminals_t<10>;
     terminals _terminals;
     terminal_recognizer _terminal_recognizer(_terminals);
 
-    _terminals.add("=", dat::type{1});
+    _terminals.add("=", assignment_operator);
 
-    const std::string _text{"   "};
+    const std::string _text{" "};
     return !_terminal_recognizer(_text.begin(), _text.end());
   }
 };
@@ -366,12 +363,11 @@ struct terminals_006 {
   }
 
   bool operator()(const program::bus::options &) {
-    using terminals = dat::terminals_t<10>;
     terminals _terminals;
     terminal_recognizer _terminal_recognizer(_terminals);
 
-    _terminals.add("=", dat::type{1});
-    _terminals.add("==", dat::type{2});
+    _terminals.add("=", assignment_operator);
+    _terminals.add("==", comparision_operator);
 
     const std::string _text{"== x"};
     std::optional<terminal_recognition> _res{
@@ -379,7 +375,7 @@ struct terminals_006 {
 
     return _res &&
            (_res->terminal.lexema_ref.get() == terminals::lexema{"=="}) &&
-           (_res->terminal.type == dat::type{2}) &&
+           (_res->terminal.type == comparision_operator) &&
            (_res->end == std::next(_text.begin(), 2));
   }
 };
@@ -390,11 +386,11 @@ struct terminals_007 {
   }
 
   bool operator()(const program::bus::options &) {
-    using terminals = dat::terminals_t<10>;
+
     terminals _source;
 
-    _source.add("(", dat::type{1});
-    _source.add(")", dat::type{1});
+    _source.add("(", expression_delimeter);
+    _source.add(")", expression_delimeter);
 
     terminals _target;
     _target.import(_source);
@@ -418,14 +414,14 @@ struct terminals_008 {
     terminals _terminals;
     terminal_recognizer _terminal_recognizer(_terminals);
 
-    _terminals.add("=", dat::type{1});
-    _terminals.add("=", dat::type{2});
+    _terminals.add("=", assignment_operator);
+    _terminals.add("=", expression_delimeter);
 
     const std::string _text{"="};
     std::optional<terminal_recognition> _res{
         _terminal_recognizer(_text.begin(), _text.end())};
 
-    return _res && (_res->terminal.type == dat::type{1});
+    return _res && (_res->terminal.type == assignment_operator);
   }
 };
 

@@ -8,6 +8,7 @@
 
 #include <cstddef>
 
+#include "tnct/interpreter/bus/terminal_recognizer.h"
 #include "tnct/interpreter/dat/lexema.h"
 #include "tnct/interpreter/dat/symbol.h"
 #include "tnct/interpreter/dat/terminal.h"
@@ -25,6 +26,7 @@ using lexema_reference = dat::lexema_reference_t<lexema_size>;
 using symbol = dat::symbol_t<lexema_size>;
 using terminal_recognition = dat::terminal_recognition_t<lexema_size>;
 using terminals = dat::terminals_t<lexema_size>;
+using terminal_recognizer = bus::terminal_recognizer_t<lexema_size>;
 
 constexpr dat::type word_type = 1;
 constexpr dat::type integer_type = 2;

@@ -3,16 +3,16 @@
 
 /// \author Rodrigo Caellas - rodrigo.caellas at gmail.com
 
-#ifndef TNCT_INTERPRETER_TST_STANTDARD_recognizerS_TEST_H
-#define TNCT_INTERPRETER_TST_STANTDARD_recognizerS_TEST_H
+#ifndef TNCT_INTERPRETER_TST_STANTDARD_RECOGNIZERS_TEST_H
+#define TNCT_INTERPRETER_TST_STANTDARD_RECOGNIZERS_TEST_H
 
 #include <iterator>
 #include <optional>
 #include <string>
 
 #include "tnct/format/bus/fmt.h"
+#include "tnct/interpreter/bus/non_terminal_recognizer.h"
 #include "tnct/interpreter/bus/non_terminal_standard_recognizers.h"
-#include "tnct/interpreter/cpt/non_terminal_recognizer.h"
 #include "tnct/interpreter/tst/common.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -47,7 +47,7 @@ struct non_terminal_standard_recognizers_000 {
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_TST(_logger, fmt("word scanned is ", _scanned, " as it should"));
     return true;
   }
 };
@@ -94,7 +94,7 @@ struct non_terminal_standard_recognizers_002 {
       return false;
     }
 
-    const std::string _expected{"abc"};
+    const std::string _expected{"abc4efg"};
     const std::string _scanned{_res->non_terminal.value};
     if (_scanned != _expected) {
       TNCT_LOG_ERR(_logger, fmt("word scanned is ", _scanned,
@@ -102,7 +102,7 @@ struct non_terminal_standard_recognizers_002 {
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_TST(_logger, fmt("word scanned is ", _scanned, " as it should"));
 
     return true;
   }
@@ -137,7 +137,7 @@ struct non_terminal_standard_recognizers_003 {
       return false;
     }
 
-    TNCT_LOG_INF(_logger, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_TST(_logger, fmt("word scanned is ", _scanned, " as it should"));
 
     return true;
   }
@@ -150,8 +150,8 @@ struct non_terminal_standard_recognizers_004 {
 
   bool operator()(const program::bus::options &) {
 
-    const std::string _text{"abc4efg"};
-    TNCT_LOG_INF(m_logger, fmt("text is '", _text, "'"));
+    const std::string _text{"abc efg"};
+    TNCT_LOG_TST(m_logger, fmt("text is '", _text, "'"));
 
     bus::word_recognizer _word_recognizer{word_type};
     bus::decimal_integer_number_recognizer _decimal_integer_number_recognizer{
@@ -164,25 +164,31 @@ struct non_terminal_standard_recognizers_004 {
     if (!_scanned) {
       return false;
     }
+    _ite = ++_scanned->end;
 
-    _scanned = scan(_scanned->end, _text.end(),
-                    _decimal_integer_number_recognizer, "4");
+    _scanned = scan(_scanned->end, _text.end(), _word_recognizer, "efg");
     if (!_scanned) {
       return false;
     }
 
-    _scanned = scan(_scanned->end, _text.end(), _word_recognizer, "efg");
-    if (!_scanned) {
+    // end of text reached
+
+    _ite = ++_scanned->end;
+
+    _scanned = _word_recognizer(_ite, _text.end());
+    if (_scanned) {
+      TNCT_LOG_TST(m_logger, fmt(_scanned->non_terminal.value,
+                                 " was found, but none should have been"));
       return false;
     }
     return true;
   }
 
 private:
-  template <cpt::non_terminal_recognizer t_recognizer>
+  //  template <cpt::non_terminal_recognizer t_recognizer>
   std::optional<dat::non_terminal_recognition>
   scan(std::string::const_iterator p_begin, std::string::const_iterator p_end,
-       t_recognizer &p_recognizer, std::string &&p_expected) {
+       bus::non_terminal_recognizer p_recognizer, std::string &&p_expected) {
 
     std::string::const_iterator _ite{p_begin};
 
@@ -201,7 +207,7 @@ private:
                                  ", but it should have been ", p_expected));
       return std::nullopt;
     }
-    TNCT_LOG_INF(m_logger, fmt("word scanned is ", _scanned, " as it should"));
+    TNCT_LOG_TST(m_logger, fmt("word scanned is ", _scanned, " as it should"));
 
     return _res;
   }

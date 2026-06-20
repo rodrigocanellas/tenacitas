@@ -53,7 +53,7 @@ public:
       return std::nullopt;
     }
 
-    while (!stop()) {
+    while (!stop() || is_digit(*_ite)) {
       ++_ite;
     }
 
