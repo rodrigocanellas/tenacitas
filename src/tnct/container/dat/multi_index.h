@@ -29,32 +29,34 @@ concept less_than_comparable = requires(const T &a, const T &b) {
 namespace tnct::container::dat {
 
 /// Allows the creation of multiple indexes to a container
-template <typename t_object, typename... t_key>
-  requires(std::is_move_constructible_v<t_object> &&
-           tnct::ostream::cpt::has_output_operator<t_object> &&
-           std::equality_comparable<t_object> &&
-           cpt::less_than_comparable<t_object> &&
-           (std::is_move_constructible_v<t_key>, ...) &&
+template <typename t_container, typename... t_key>
+  requires((std::is_move_constructible_v<t_key>, ...) &&
            (cpt::less_than_comparable<t_key>, ...) &&
            (std::equality_comparable<t_key>, ...))
 
-class multi_index_t {
+class multi_index_t final {
 
 public:
+  using container = t_container;
+  using object = typename container::value_type;
+  using iterator = typename container::iterator;
+  using objects_const_iterator = typename container::const_iterator;
   using keys = std::tuple<t_key...>;
-  using object = t_object;
-  using objects = std::set<object>;
-  using iterator = typename objects::iterator;
-  using objects_const_iterator = typename objects::const_iterator;
 
-  multi_index_t(std::function<t_key(const object &)> &&...p_key_getters)
-      : m_keys_getters{std::forward<std::function<t_key(const object &)>>(
+  multi_index_t() = delete;
+
+  ~multi_index_t() = default;
+
+  multi_index_t(std::function<std::optional<iterator>(object &&)> p_inserter,
+                std::function<t_key(const object &)> &&...p_key_getters)
+      : m_inserter{p_inserter},
+        m_keys_getters{std::forward<std::function<t_key(const object &)>>(
             p_key_getters)...} {}
 
   void add(object &&p_object) {
-    std::pair<iterator, bool> _res{m_objects.insert(std::move(p_object))};
+    std::optional<iterator> _res{m_inserter(std::move(p_object))};
 
-    if (_res.second == false) {
+    if (!_res) {
       return;
     }
 
@@ -63,7 +65,9 @@ public:
 
       map &_map{std::get<t_index>(p_tuple)};
 
-      _map.emplace(std::get<t_index>(m_keys_getters)(*_res.first), _res.first);
+      auto _key{std::get<t_index>(m_keys_getters)(*(_res.value()))};
+      iterator _ite{_res.value()};
+      _map.emplace(std::move(_key), std::move(_ite));
 
       return true;
     };
@@ -97,10 +101,6 @@ public:
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   multi_index_t &p_multi_index) {
-    p_out << "objects:\n\t";
-    for (const auto &_object : p_multi_index.m_objects) {
-      p_out << _object << " ";
-    }
     p_out << "\nindexes:\n";
 
     auto _visitor = [&]<typename t_tuple, size_t t_index>(t_tuple &p_tuple) {
@@ -127,8 +127,8 @@ private:
   using keys_getters = std::tuple<std::function<t_key(const object &)>...>;
 
 private:
+  std::function<std::optional<iterator>(object &&)> m_inserter;
   keys_getters m_keys_getters;
-  objects m_objects;
   indexes m_indexes;
 };
 

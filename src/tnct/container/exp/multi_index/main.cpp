@@ -59,14 +59,29 @@ private:
   std::string m_s{"hi"};
 };
 
+using xpto_container = std::set<xpto>;
+
 using xpto_indexes =
-    tnct::container::dat::multi_index_t<xpto, int, float,
+    tnct::container::dat::multi_index_t<xpto_container, int, float,
                                         std::pair<float, std::string>>;
 using xpto_indexes_iterator = typename xpto_indexes::iterator;
 
 int main() {
 
+  xpto_container _xpto_container;
+
+  auto _xpto_inserter{
+      [&](xpto &&p_xpto) -> std::optional<xpto_container::iterator> {
+        std::pair<xpto_container::iterator, bool> _res{
+            _xpto_container.insert(std::move(p_xpto))};
+        if (!_res.second) {
+          return std::nullopt;
+        }
+        return {_res.first};
+      }};
+
   xpto_indexes _xpto_indexes{
+      std::move(_xpto_inserter),
       [](const xpto &p_xpto) -> int { return p_xpto.get_i(); },
       [](const xpto &p_xpto) -> float { return p_xpto.get_f(); },
       [](const xpto &p_xpto) -> std::pair<float, std::string> {
