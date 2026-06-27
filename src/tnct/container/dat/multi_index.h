@@ -11,11 +11,9 @@
 #include <map>
 #include <optional>
 #include <ostream>
-#include <set>
 #include <tuple>
 #include <utility>
 
-#include "tnct/ostream/cpt/has_output_operator.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
 
@@ -42,12 +40,14 @@ public:
   using iterator = typename container::iterator;
   using objects_const_iterator = typename container::const_iterator;
   using keys = std::tuple<t_key...>;
+  using object_inserter = std::function<std::optional<iterator>(object &&)>;
+  using object_eraser = std::function<void(objects_const_iterator)>;
 
   multi_index_t() = delete;
 
   ~multi_index_t() = default;
 
-  multi_index_t(std::function<std::optional<iterator>(object &&)> p_inserter,
+  multi_index_t(object_inserter p_inserter,
                 std::function<t_key(const object &)> &&...p_key_getters)
       : m_inserter{p_inserter},
         m_keys_getters{std::forward<std::function<t_key(const object &)>>(
@@ -99,6 +99,11 @@ public:
     return _res;
   }
 
+  template <std::size_t t_key_index>
+  void erase(const std::tuple_element_t<t_key_index, keys> &p_key) {
+    std::vector<iterator> _to_erase{get(p_key)};
+  }
+
   friend std::ostream &operator<<(std::ostream &p_out,
                                   multi_index_t &p_multi_index) {
     p_out << "\nindexes:\n";
@@ -127,7 +132,7 @@ private:
   using keys_getters = std::tuple<std::function<t_key(const object &)>...>;
 
 private:
-  std::function<std::optional<iterator>(object &&)> m_inserter;
+  object_inserter m_inserter;
   keys_getters m_keys_getters;
   indexes m_indexes;
 };

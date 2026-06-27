@@ -4,6 +4,7 @@
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
 #include <iostream>
+#include <set>
 
 #include "tnct/container/dat/multi_index.h"
 
