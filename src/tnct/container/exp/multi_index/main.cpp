@@ -60,29 +60,15 @@ private:
   std::string m_s{"hi"};
 };
 
-using xpto_container = std::set<xpto>;
-
 using xpto_indexes =
-    tnct::container::dat::multi_index_t<xpto_container, int, float,
+    tnct::container::dat::multi_index_t<xpto, int, float,
                                         std::pair<float, std::string>>;
-using xpto_indexes_iterator = typename xpto_indexes::iterator;
+
+using xpto_const_ref = std::reference_wrapper<const xpto>;
 
 int main() {
 
-  xpto_container _xpto_container;
-
-  auto _xpto_inserter{
-      [&](xpto &&p_xpto) -> std::optional<xpto_container::iterator> {
-        std::pair<xpto_container::iterator, bool> _res{
-            _xpto_container.insert(std::move(p_xpto))};
-        if (!_res.second) {
-          return std::nullopt;
-        }
-        return {_res.first};
-      }};
-
   xpto_indexes _xpto_indexes{
-      std::move(_xpto_inserter),
       [](const xpto &p_xpto) -> int { return p_xpto.get_i(); },
       [](const xpto &p_xpto) -> float { return p_xpto.get_f(); },
       [](const xpto &p_xpto) -> std::pair<float, std::string> {
@@ -97,18 +83,23 @@ int main() {
   std::cout << _xpto_indexes << std::endl;
 
   std::cout << "\nSearch 1\n";
-  std::vector<xpto_indexes_iterator> _iterators{_xpto_indexes.get<0>(138)};
+  std::vector<xpto_const_ref> _objects{_xpto_indexes.get<0>(138)};
 
-  std::for_each(_iterators.begin(), _iterators.end(),
-                [](const xpto_indexes_iterator &p_ite) {
-                  std::cout << "object = " << *p_ite << '\n';
+  std::for_each(_objects.begin(), _objects.end(),
+                [](const xpto_const_ref &p_obj) {
+                  std::cout << "object = " << p_obj << '\n';
                 });
 
   std::cout << "\nSearch 2\n";
-  _iterators = _xpto_indexes.get<2>({-4.21, "bye"});
+  _objects = _xpto_indexes.get<2>({-4.21, "bye"});
 
-  std::for_each(_iterators.begin(), _iterators.end(),
-                [](const xpto_indexes_iterator &p_ite) {
-                  std::cout << "object = " << *p_ite << '\n';
+  std::for_each(_objects.begin(), _objects.end(),
+                [](const xpto_const_ref &p_obj) {
+                  std::cout << "object = " << p_obj << '\n';
                 });
+
+  std::cout << "\nErase from index 1 key 0.72\n";
+  _xpto_indexes.erase<1>(float{0.72});
+
+  std::cout << _xpto_indexes << std::endl;
 }
