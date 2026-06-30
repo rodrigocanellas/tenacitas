@@ -15,30 +15,22 @@
 #include <tuple>
 #include <utility>
 
+#include "tnct/generic/cpt/less_than_comparable.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
+#include "tnct/tuple/cpt/index_within_tuple.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/output.h"
-
-/// \TODO this should be placed somewhere else
-namespace tnct::container::cpt {
-template <typename T>
-concept less_than_comparable = requires(const T &a, const T &b) {
-  { a < b } -> std::convertible_to<bool>;
-};
-
-template <tuple::cpt::is_tuple t_tuple, std::size_t t_index>
-
-static constexpr bool index_with_tuple(std::tuple_size_v<t_tuple> > t_index);
-
-} // namespace tnct::container::cpt
 
 namespace tnct::container::dat {
 
 /// Allows the creation of multiple indexes to a container
 template <tuple::cpt::is_tuple t_object, std::size_t... t_keys_pos>
   requires(std::is_unsigned_v<decltype(t_keys_pos)>, ...) &&
-          (cpt::index_with_tuple<t_object, t_keys_pos>, ...)
+          (tuple::cpt::index_within_tuple<t_object, t_keys_pos>, ...) &&
+          (generic::cpt::less_than_comparable<
+               std::tuple_element_t<t_keys_pos, t_object>>,
+           ...)
 class multi_index_t final {
 
 public:
