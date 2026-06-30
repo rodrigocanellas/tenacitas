@@ -3,103 +3,112 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
+#include <cstdint>
 #include <iostream>
-#include <set>
 
 #include "tnct/container/dat/multi_index.h"
 
-struct xpto {
-  xpto() = default;
-  xpto(const xpto &) = default;
-  xpto(xpto &&) = default;
-  xpto(int p_i, float p_f, std::string_view p_s)
-      : m_i(p_i), m_f(p_f), m_s(p_s) {}
+// struct xpto {
+//   xpto() = default;
+//   xpto(const xpto &) = default;
+//   xpto(xpto &&) = default;
+//   xpto(int p_i, float p_f, std::string_view p_s)
+//       : m_i(p_i), m_f(p_f), m_s(p_s) {}
 
-  int get_i() const { return m_i; }
-  float get_f() const { return m_f; }
-  std::string get_s() const { return m_s; }
+//   int get_i() const { return m_i; }
+//   float get_f() const { return m_f; }
+//   std::string get_s() const { return m_s; }
 
-  xpto &operator=(const xpto &) = default;
-  xpto &operator=(xpto &&) = default;
+//   xpto &operator=(const xpto &) = default;
+//   xpto &operator=(xpto &&) = default;
 
-  friend std::ostream &operator<<(std::ostream &p_out, const xpto &p_xpto) {
-    p_out << "{i = " << p_xpto.get_i() << ", " << "f = " << p_xpto.get_f()
-          << ", s = " << p_xpto.m_s << "}";
-    return p_out;
-  }
+//   friend std::ostream &operator<<(std::ostream &p_out, const xpto &p_xpto) {
+//     p_out << "{i = " << p_xpto.get_i() << ", " << "f = " << p_xpto.get_f()
+//           << ", s = " << p_xpto.m_s << "}";
+//     return p_out;
+//   }
 
-  constexpr bool operator<(const xpto &p_xpto) const {
-    if (m_i < p_xpto.m_i) {
-      return true;
-    }
-    if (m_i > p_xpto.m_i) {
-      return false;
-    }
-    if (m_f < p_xpto.m_f) {
-      return true;
-    }
-    if (m_f > p_xpto.m_f) {
-      return true;
-    }
-    if (m_s < p_xpto.m_s) {
-      return true;
-    }
-    return false;
-  }
+//   constexpr bool operator<(const xpto &p_xpto) const {
+//     if (m_i < p_xpto.m_i) {
+//       return true;
+//     }
+//     if (m_i > p_xpto.m_i) {
+//       return false;
+//     }
+//     if (m_f < p_xpto.m_f) {
+//       return true;
+//     }
+//     if (m_f > p_xpto.m_f) {
+//       return true;
+//     }
+//     if (m_s < p_xpto.m_s) {
+//       return true;
+//     }
+//     return false;
+//   }
 
-  constexpr bool operator==(const xpto &p_xpto) const {
-    return (m_i == p_xpto.m_i) && (m_f == p_xpto.m_f) && (m_s == p_xpto.m_s);
-  }
-  constexpr bool operator!=(const xpto &p_xpto) const {
-    return !(*this == p_xpto);
-  }
+//   constexpr bool operator==(const xpto &p_xpto) const {
+//     return (m_i == p_xpto.m_i) && (m_f == p_xpto.m_f) && (m_s == p_xpto.m_s);
+//   }
+//   constexpr bool operator!=(const xpto &p_xpto) const {
+//     return !(*this == p_xpto);
+//   }
 
-private:
-  int m_i{-9};
-  float m_f{3.14};
-  std::string m_s{"hi"};
-};
+// private:
+//   int m_i{-9};
+//   float m_f{3.14};
+//   std::string m_s{"hi"};
+// };
 
-using xpto_indexes =
-    tnct::container::dat::multi_index_t<xpto, int, float,
-                                        std::pair<float, std::string>>;
+using xpto = std::tuple<std::int16_t, float, std::string>;
 
-using xpto_const_ref = std::reference_wrapper<const xpto>;
+using xpto_indexes = tnct::container::dat::multi_index_t<xpto, 0, 1>;
+
+using xpto_const_ref = typename xpto_indexes::object_const_ref;
+
+using xpto_ref = typename xpto_indexes::object_ref;
 
 int main() {
 
-  xpto_indexes _xpto_indexes{
-      [](const xpto &p_xpto) -> int { return p_xpto.get_i(); },
-      [](const xpto &p_xpto) -> float { return p_xpto.get_f(); },
-      [](const xpto &p_xpto) -> std::pair<float, std::string> {
-        return {p_xpto.get_f(), p_xpto.get_s()};
-      }};
+  xpto_indexes _xpto_indexes;
 
-  _xpto_indexes.add(xpto{});
+  _xpto_indexes.add(xpto{-9, 3.14, "hi"});
   _xpto_indexes.add(xpto{138, 0.72, "hello"});
   _xpto_indexes.add(xpto{138, -4.21, "bye"});
-  _xpto_indexes.add(xpto{-2, -4.21, "bye"});
+  _xpto_indexes.add(xpto{-2, -7.85, "see u"});
 
   std::cout << _xpto_indexes << std::endl;
 
   std::cout << "\nSearch 1\n";
-  std::vector<xpto_const_ref> _objects{_xpto_indexes.get<0>(138)};
+  std::vector<xpto_ref> _objects{_xpto_indexes.get<0>(138)};
 
   std::for_each(_objects.begin(), _objects.end(),
                 [](const xpto_const_ref &p_obj) {
-                  std::cout << "object = " << p_obj << '\n';
+                  std::cout << "object = " << p_obj.get().value() << '\n';
                 });
 
   std::cout << "\nSearch 2\n";
-  _objects = _xpto_indexes.get<2>({-4.21, "bye"});
+  _objects = _xpto_indexes.get<1>(-4.21);
 
   std::for_each(_objects.begin(), _objects.end(),
                 [](const xpto_const_ref &p_obj) {
-                  std::cout << "object = " << p_obj << '\n';
+                  std::cout << "object = " << p_obj.get().value() << '\n';
                 });
 
-  std::cout << "\nErase from index 1 key 0.72\n";
-  _xpto_indexes.erase<1>(float{0.72});
+  std::cout << "\nErase from index 1 key 3.14\n";
+  _xpto_indexes.erase<1>(float{3.14});
 
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout << "\nFind from index 0 where key is -2 and update field 1 from   "
+               "-7.85 to 0.38\n";
+  _objects = _xpto_indexes.get<0>(-2);
+  if (_objects.size() != 1) {
+    std::cout << "ERROR: found " << _objects.size() << std::endl;
+    return -1;
+  }
+
+  xpto_ref _ref{_objects[0]};
+  _xpto_indexes.update<1>(_ref, 0.38);
   std::cout << _xpto_indexes << std::endl;
 }
