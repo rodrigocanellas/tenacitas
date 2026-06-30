@@ -158,7 +158,7 @@ public:
                                   multi_index_t &p_multi_index) {
 
     {
-      std::cout << "############\nobjects:\n";
+      std::cout << "\nobjects:\n";
       std::for_each(p_multi_index.m_table.begin(), p_multi_index.m_table.end(),
                     [&](const object &p_object) {
                       if (p_object.has_value()) {
@@ -170,7 +170,7 @@ public:
       std::cout << '\n';
     }
     {
-      p_out << "############\nindexes:\n";
+      p_out << "\nindexes:\n";
       auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_key_pos>(
                           t_tuple &p_indexes) {
         const multi_index_t::index<t_key_pos> &_index{
