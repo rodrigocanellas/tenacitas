@@ -5,8 +5,10 @@
 
 #include <cstdint>
 #include <iostream>
+#include <map>
 
 #include "tnct/container/dat/multi_index.h"
+#include "tnct/tuple/cpt/is_tuple.h"
 
 // struct xpto {
 //   xpto() = default;
@@ -60,9 +62,26 @@
 //   std::string m_s{"hi"};
 // };
 
+template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
+struct map_index_definition {
+  static constexpr std::size_t key_pos = t_key_pos;
+  using index_id = tnct::container::cpt::std_map_id;
+  using object = t_object;
+};
+
+template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
+struct multimap_index_definition {
+  static constexpr std::size_t key_pos = t_key_pos;
+  using index_id = tnct::container::cpt::std_multimap_id;
+  using object = t_object;
+};
+
 using xpto = std::tuple<std::int16_t, float, std::string>;
 
-using xpto_indexes = tnct::container::dat::multi_index_t<xpto, 0, 1>;
+using xpto_indexes =
+    tnct::container::dat::multi_index_t<xpto,
+                                        multimap_index_definition<xpto, 0>,
+                                        multimap_index_definition<xpto, 1>>;
 
 using xpto_const_ref = typename xpto_indexes::object_const_ref;
 
