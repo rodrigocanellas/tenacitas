@@ -15,22 +15,19 @@
 #include <tuple>
 #include <utility>
 
-#include "tnct/generic/cpt/less_than_comparable.h"
+#include "tnct/container/cpt/index_definition.h"
+#include "tnct/container/cpt/index_traits.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
-#include "tnct/tuple/cpt/index_within_tuple.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/output.h"
 
 namespace tnct::container::dat {
 
 /// Allows the creation of multiple indexes to a container
-template <tuple::cpt::is_tuple t_object, std::size_t... t_keys_pos>
-  requires(std::is_unsigned_v<decltype(t_keys_pos)>, ...) &&
-          (tuple::cpt::index_within_tuple<t_object, t_keys_pos>, ...) &&
-          (generic::cpt::less_than_comparable<
-               std::tuple_element_t<t_keys_pos, t_object>>,
-           ...)
+template <tuple::cpt::is_tuple t_object,
+          cpt::index_definition<t_object>... t_indexes_definitions>
+
 class multi_index_t final {
 
 public:
@@ -38,7 +35,8 @@ public:
 
   using object_const_ref = std::reference_wrapper<const object>;
   using object_ref = std::reference_wrapper<object>;
-  using keys_pos = std::tuple<decltype(t_keys_pos)...>;
+
+  using keys_pos = std::tuple<decltype(t_indexes_definitions::key_pos)...>;
 
   template <std::size_t t_key_pos>
   using key_t = std::tuple_element_t<t_key_pos, t_object>;
@@ -57,14 +55,11 @@ public:
 
     object_ref _object_ref{*std::prev(m_table.end())};
 
-    // table_iterator _table_ite{std::prev(m_table.end())};
-
     auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_key_pos>() {
       index<t_key_pos> &_index{std::get<t_key_pos>(m_indexes)};
 
       const key_t<t_key_pos> &_key{std::get<t_key_pos>(p_object.value())};
 
-      // _index.emplace(_field, _table_ite);
       _index.emplace(_key, _object_ref);
 
       return true;
@@ -190,12 +185,17 @@ public:
 private:
   using table = std::list<object>;
 
-  using table_iterator = typename table::iterator;
-  using table_const_iterator = typename table::const_iterator;
+  using indexes_definitions = std::tuple<t_indexes_definitions...>;
 
-  /// An index for a key
   template <std::size_t t_key_pos>
-  using index = typename std::multimap<key_t<t_key_pos>, object_ref>;
+  using index_definition = std::tuple_element_t<t_key_pos, indexes_definitions>;
+
+  template <std::size_t t_key_pos>
+  using index =
+      cpt::index_traits<typename index_definition<t_key_pos>::index_id,
+                        key_t<t_key_pos>, object_ref>::type;
+
+  using indexes = std::tuple<index<t_indexes_definitions::key_pos>...>;
 
   ///
   template <std::size_t t_key_pos>
@@ -203,9 +203,6 @@ private:
 
   template <std::size_t t_key_pos>
   using index_iterator = typename index<t_key_pos>::iterator;
-
-  /// All indexes for all the keys
-  using indexes = std::tuple<index<t_keys_pos>...>;
 
 private:
   template <std::size_t t_field_pos> constexpr bool is_field_index() const {
