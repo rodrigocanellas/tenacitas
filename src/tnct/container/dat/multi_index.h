@@ -9,7 +9,6 @@
 #include <functional>
 #include <iostream>
 #include <list>
-#include <map>
 #include <optional>
 #include <ostream>
 #include <tuple>
@@ -24,7 +23,24 @@
 
 namespace tnct::container::dat {
 
-/// Allows the creation of multiple indexes to a container
+/// Allows the creation of multiple indexes to a container of (std::optional)
+/// objects
+///
+/// \tparam t_object is a std::tuple with the data record to be indexed
+/// \tparam t_indexes_definitions defines the characteristics of each index used
+///
+/// \details Each entry in the container is actually a std::optional<t_object>,
+/// so it is up to the user to check if the reference to the
+/// std::optional<t_object> that is retrieved is actually valid
+///
+/// std::optional<t_object> was used for two reasons:
+/// 1 - the objects are not actually deleted, they are marked as std::nullopt to
+/// optimize memory usage as well as to improve performance
+/// 2 - in a multithread environment, say your code has a reference to the
+/// std::optional<t_object> A, if another thread also has a reference, your code
+/// can check if A is not std::nullopt
+///
+/// \example tnct/container/exp/multi_index/main.cpp
 template <tuple::cpt::is_tuple t_object,
           cpt::index_definition<t_object>... t_indexes_definitions>
 
@@ -35,8 +51,6 @@ public:
 
   using object_const_ref = std::reference_wrapper<const object>;
   using object_ref = std::reference_wrapper<object>;
-
-  using keys_pos = std::tuple<decltype(t_indexes_definitions::key_pos)...>;
 
   template <std::size_t t_key_pos>
   using key_t = std::tuple_element_t<t_key_pos, t_object>;
@@ -183,7 +197,11 @@ public:
   }
 
 private:
+  /// \todo this will be replaced with something like
+  /// std::list<std::array<object,N>>
   using table = std::list<object>;
+
+  using keys_pos = std::tuple<decltype(t_indexes_definitions::key_pos)...>;
 
   using indexes_definitions = std::tuple<t_indexes_definitions...>;
 
@@ -196,10 +214,6 @@ private:
                         key_t<t_key_pos>, object_ref>::type;
 
   using indexes = std::tuple<index<t_indexes_definitions::key_pos>...>;
-
-  ///
-  template <std::size_t t_key_pos>
-  using index_const_iterator = typename index<t_key_pos>::const_iterator;
 
   template <std::size_t t_key_pos>
   using index_iterator = typename index<t_key_pos>::iterator;
@@ -224,9 +238,7 @@ private:
 
 private:
   table m_table;
-  // keys_getters m_keys_getters;
   indexes m_indexes;
-  // objects_indexes m_objects_indexes;
 };
 
 } // namespace tnct::container::dat
