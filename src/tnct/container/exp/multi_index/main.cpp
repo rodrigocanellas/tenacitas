@@ -5,75 +5,20 @@
 
 #include <cstdint>
 #include <iostream>
-#include <map>
 
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/tuple/cpt/is_tuple.h"
-
-// struct xpto {
-//   xpto() = default;
-//   xpto(const xpto &) = default;
-//   xpto(xpto &&) = default;
-//   xpto(int p_i, float p_f, std::string_view p_s)
-//       : m_i(p_i), m_f(p_f), m_s(p_s) {}
-
-//   int get_i() const { return m_i; }
-//   float get_f() const { return m_f; }
-//   std::string get_s() const { return m_s; }
-
-//   xpto &operator=(const xpto &) = default;
-//   xpto &operator=(xpto &&) = default;
-
-//   friend std::ostream &operator<<(std::ostream &p_out, const xpto &p_xpto) {
-//     p_out << "{i = " << p_xpto.get_i() << ", " << "f = " << p_xpto.get_f()
-//           << ", s = " << p_xpto.m_s << "}";
-//     return p_out;
-//   }
-
-//   constexpr bool operator<(const xpto &p_xpto) const {
-//     if (m_i < p_xpto.m_i) {
-//       return true;
-//     }
-//     if (m_i > p_xpto.m_i) {
-//       return false;
-//     }
-//     if (m_f < p_xpto.m_f) {
-//       return true;
-//     }
-//     if (m_f > p_xpto.m_f) {
-//       return true;
-//     }
-//     if (m_s < p_xpto.m_s) {
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   constexpr bool operator==(const xpto &p_xpto) const {
-//     return (m_i == p_xpto.m_i) && (m_f == p_xpto.m_f) && (m_s == p_xpto.m_s);
-//   }
-//   constexpr bool operator!=(const xpto &p_xpto) const {
-//     return !(*this == p_xpto);
-//   }
-
-// private:
-//   int m_i{-9};
-//   float m_f{3.14};
-//   std::string m_s{"hi"};
-// };
 
 template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
 struct map_index_definition {
   static constexpr std::size_t key_pos = t_key_pos;
   using index_id = tnct::container::cpt::std_map_id;
-  using object = t_object;
 };
 
 template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
 struct multimap_index_definition {
   static constexpr std::size_t key_pos = t_key_pos;
   using index_id = tnct::container::cpt::std_multimap_id;
-  using object = t_object;
 };
 
 using xpto = std::tuple<std::int16_t, float, std::string>;
