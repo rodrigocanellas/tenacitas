@@ -10,8 +10,6 @@
 #include <iterator>
 #include <utility>
 
-#include <tnct/tuple/cpt/is_tuple.h>
-
 namespace tnct::container::cpt {
 
 template <typename t_result, typename t_iterator>
@@ -42,12 +40,15 @@ concept index =
     &&
 
     requires(t p_t, const t p_const_t, t_key p_key, t_object &&p_ref,
-             typename t::const_iterator p_const_ite) {
+             typename t::const_iterator p_const_ite,
+             typename t::value_type &&p_value) {
       { *p_t.begin() } -> std::same_as<typename t::value_type &>;
 
       { *p_const_t.begin() } -> std::same_as<const typename t::value_type &>;
 
-      { p_t.emplace(p_key, p_ref) } -> emplace_result<typename t::iterator>;
+      // { p_t.emplace(p_key, p_ref) } -> emplace_result<typename t::iterator>;
+
+      { p_t.insert(p_value) } -> std::same_as<typename t::iterator>;
 
       {
         p_t.equal_range(p_key)
