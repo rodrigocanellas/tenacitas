@@ -6,9 +6,8 @@
 #ifndef TNCT_CONTAINER_CPT_INDEX_DEFINITION_H
 #define TNCT_CONTAINER_CPT_INDEX_DEFINITION_H
 
-// #include "tnct/container/cpt/index.h"
-// #include "tnct/container/trt/index_type.h"
-// #include "tnct/container/trt/object_indexed.h"
+#include "tnct/container/cpt/index.h"
+#include "tnct/container/trt/index_type.h"
 #include <tnct/tuple/cpt/is_tuple.h>
 
 namespace tnct::container::cpt {
@@ -28,11 +27,9 @@ concept index_definition = requires {
 
   requires(std::same_as<t_object, typename t::object_type>);
 
-  // requires(
-  //     index<trt::index_type_t<typename t::index_id, typename t::key_type,
-  //                             typename trt::object_indexed<t_object>::ref>,
-  //           typename t::key_type, typename
-  //           trt::object_indexed<t_object>::ref>);
+  requires(index<trt::index_type_t<typename t::index_id, typename t::key_type,
+                                   typename t::object_type>,
+                 typename t::key_type, typename t::object_type>);
 
   requires(std::is_invocable_r_v<typename t::key_type, typename t::key_getter,
                                  const t_object &>);
