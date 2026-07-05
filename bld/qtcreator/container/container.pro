@@ -8,6 +8,7 @@ SUBDIRS = tst \
 
 HEADERS += \
         $$BASE_DIR/tnct/container/cpt/*.h \
+        $$BASE_DIR/tnct/container/trt/*.h \
         $$BASE_DIR/tnct/container/dat/*.h \
         $$BASE_DIR/tnct/container/bus/*.h \
         $$BASE_DIR/tnct/container/internal/bus/*.h \

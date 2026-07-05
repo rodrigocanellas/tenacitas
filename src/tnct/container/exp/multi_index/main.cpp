@@ -3,37 +3,76 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#include <cstdint>
 #include <iostream>
 
+#include "tnct/container/dat/index_definition.h"
 #include "tnct/container/dat/multi_index.h"
-#include "tnct/tuple/cpt/is_tuple.h"
+#include "tnct/container/trt/index_type.h"
 
-template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
-struct map_index_definition {
-  static constexpr std::size_t key_pos = t_key_pos;
-  using index_id = tnct::container::cpt::std_map_id;
+struct xpto {
+  xpto() = default;
+  xpto(const xpto &) = default;
+  xpto(xpto &&) = default;
+  xpto(int p_i, float p_f, std::string_view p_s)
+      : m_i(p_i), m_f(p_f), m_s(p_s) {}
+
+  int get_i() const { return m_i; }
+  float get_f() const { return m_f; }
+  std::string get_s() const { return m_s; }
+
+  void set_f(float p_f) { m_f = p_f; }
+
+  xpto &operator=(const xpto &) = default;
+  xpto &operator=(xpto &&) = default;
+
+  friend std::ostream &operator<<(std::ostream &p_out, const xpto &p_xpto) {
+    p_out << "{i = " << p_xpto.get_i() << ", " << "f = " << p_xpto.get_f()
+          << ", s = " << p_xpto.m_s << "}";
+    return p_out;
+  }
+
+  constexpr bool operator==(const xpto &p_xpto) const {
+    return (m_i == p_xpto.m_i) && (m_f == p_xpto.m_f) && (m_s == p_xpto.m_s);
+  }
+  constexpr bool operator!=(const xpto &p_xpto) const {
+    return !(*this == p_xpto);
+  }
+
+  constexpr bool operator<(const xpto &p_xpto) const {
+    if (m_i < p_xpto.m_i) {
+      return true;
+    }
+    if (m_i > p_xpto.m_i) {
+      return false;
+    }
+    return (m_f < p_xpto.m_f);
+  }
+
+private:
+  int m_i{-9};
+  float m_f{3.14};
+  std::string m_s{"hi"};
 };
 
-template <tnct::tuple::cpt::is_tuple t_object, std::size_t t_key_pos>
-struct multimap_index_definition {
-  static constexpr std::size_t key_pos = t_key_pos;
-  using index_id = tnct::container::cpt::std_multimap_id;
-};
+using tnct::container::dat::index_definition;
+using tnct::container::trt::std_multimap_id;
 
-using xpto = std::tuple<std::int16_t, float, std::string>;
+using xpto_indexes = tnct::container::dat::multi_index_t<
+    xpto,
+    index_definition<std_multimap_id, xpto, int,
+                     decltype([](const xpto &p_xpto) -> int {
+                       return p_xpto.get_i();
+                     })>,
+    index_definition<std_multimap_id, xpto, float,
+                     decltype([](const xpto &p_xpto) -> float {
+                       return p_xpto.get_f();
+                     })>>;
 
-using xpto_indexes =
-    tnct::container::dat::multi_index_t<xpto,
-                                        multimap_index_definition<xpto, 0>,
-                                        multimap_index_definition<xpto, 1>>;
+using record_ref = xpto_indexes::record_ref;
 
-using xpto_const_ref = typename xpto_indexes::object_const_ref;
-
-using xpto_ref = typename xpto_indexes::object_ref;
+// using xpto_ref = typename xpto_indexes::ref;
 
 int main() {
-
   xpto_indexes _xpto_indexes;
 
   std::cout << "\n###### Adding\n";
@@ -45,20 +84,22 @@ int main() {
   std::cout << _xpto_indexes << std::endl;
 
   std::cout << "\n###### Searching in index 0 key 138\n";
-  std::vector<xpto_ref> _objects{_xpto_indexes.get<0>(138)};
+  std::vector<record_ref> _records{_xpto_indexes.get<0>(138)};
 
-  std::for_each(_objects.begin(), _objects.end(),
-                [](const xpto_const_ref &p_obj) {
-                  std::cout << "object = " << p_obj.get().value() << '\n';
-                });
+  std::for_each(
+      _records.begin(), _records.end(), [](const record_ref &p_record) {
+        std::cout << "object = " << p_record.get().get_optional().value()
+                  << '\n';
+      });
 
   std::cout << "\n###### Searching in index 1 key -4.21\n";
-  _objects = _xpto_indexes.get<1>(-4.21);
+  _records = _xpto_indexes.get<1>(-4.21);
 
-  std::for_each(_objects.begin(), _objects.end(),
-                [](const xpto_const_ref &p_obj) {
-                  std::cout << "object = " << p_obj.get().value() << '\n';
-                });
+  std::for_each(
+      _records.begin(), _records.end(), [](const record_ref &p_record) {
+        std::cout << "object = " << p_record.get().get_optional().value()
+                  << '\n';
+      });
 
   std::cout << "\n###### Deleting from index 1 key 3.14\n";
   _xpto_indexes.erase<1>(float{3.14});
@@ -67,13 +108,13 @@ int main() {
 
   std::cout << "\n###### Find from index 0 where key is -2 and update field 1 "
                "from -7.85 to 0.38\n";
-  _objects = _xpto_indexes.get<0>(-2);
-  if (_objects.size() != 1) {
-    std::cout << "ERROR: found " << _objects.size() << std::endl;
+  _records = _xpto_indexes.get<0>(-2);
+  if (_records.size() != 1) {
+    std::cout << "ERROR: found " << _records.size() << std::endl;
     return -1;
   }
 
-  xpto_ref _ref{_objects[0]};
-  _xpto_indexes.update<1>(_ref, 0.38);
+  record_ref _ref{_records[0]};
+  _xpto_indexes.update(_ref, [](xpto &p_xpto) { p_xpto.set_f(0.38); });
   std::cout << _xpto_indexes << std::endl;
 }

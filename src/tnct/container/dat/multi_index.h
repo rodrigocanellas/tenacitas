@@ -15,9 +15,11 @@
 #include <utility>
 
 #include "tnct/container/cpt/index_definition.h"
-#include "tnct/container/cpt/index_traits.h"
+#include "tnct/container/trt/index_type.h"
+#include "tnct/container/trt/object_indexed.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
+#include "tnct/tuple/cpt/index_within_tuple.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/output.h"
 
@@ -41,19 +43,102 @@ namespace tnct::container::dat {
 /// can check if A is not std::nullopt
 ///
 /// \example tnct/container/exp/multi_index/main.cpp
-template <tuple::cpt::is_tuple t_object,
+template <typename t_object,
           cpt::index_definition<t_object>... t_indexes_definitions>
+  requires(
+      (sizeof...(t_indexes_definitions) > 0) &&
+      (std::is_same_v<typename t_indexes_definitions::object_type, t_object> &&
+       ...))
 
 class multi_index_t final {
 
 public:
-  using object = std::optional<t_object>;
+  using object = trt::object_indexed<t_object>::type;
 
-  using object_const_ref = std::reference_wrapper<const object>;
-  using object_ref = std::reference_wrapper<object>;
+  using optional = trt::object_indexed<t_object>::optional;
 
-  template <std::size_t t_key_pos>
-  using key_t = std::tuple_element_t<t_key_pos, t_object>;
+  struct record;
+
+  using record_ref = std::reference_wrapper<record>;
+
+private:
+  using indexes =
+      std::tuple<trt::index_type_t<typename t_indexes_definitions::index_id,
+                                   typename t_indexes_definitions::key_type,
+                                   record_ref>...>;
+  template <std::size_t t_index_pos>
+  using index_t = std::tuple_element_t<t_index_pos, indexes>;
+
+  template <std::size_t t_index_pos>
+  using key_t = typename index_t<t_index_pos>::key_type;
+
+  template <std::size_t t_index_pos>
+  using index_iterator_t = typename index_t<t_index_pos>::iterator;
+
+  template <std::size_t t_index_pos>
+  using index_const_iterator_t = typename index_t<t_index_pos>::const_iterator;
+
+public:
+  using index_iterators = std::tuple<typename trt::index_type_t<
+      typename t_indexes_definitions::index_id,
+      typename t_indexes_definitions::key_type, record_ref>::iterator...>;
+
+  struct record final {
+    friend class multi_index_t;
+
+    record() = delete;
+
+    record(object &&p_object) : m_optional{std::move(p_object)} {}
+
+    record(const record &) = default;
+    record(record &) = default;
+    record &operator=(const record &) = default;
+    record &operator=(record &) = default;
+    void *operator new(std::size_t) = delete;
+    void *operator new[](std::size_t) = delete;
+
+    const optional &get_optional() const { return m_optional; }
+
+    constexpr bool operator<(const record &p_record) const {
+      return (m_optional.has_value()
+                  ? m_optional.value() < p_record.m_optional.value()
+                  : false);
+    }
+
+    friend std::ostream &operator<<(std::ostream &p_out,
+                                    const record &p_record) {
+
+      if (!p_record.m_optional.has_value()) {
+        return p_out;
+      }
+
+      auto _visit = [&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index>(
+                        const t_tuple &p_tuple) {
+        p_out << std::get<t_index>(p_tuple)->first << ' ';
+        return true;
+      };
+
+      p_out << "[ " << p_record.m_optional.value() << " ( ";
+
+      tuple::bus::traverse<index_iterators, decltype(_visit)>(
+          p_record.m_index_iterators, _visit);
+
+      p_out << ")]";
+      return p_out;
+    }
+
+  private:
+    void set_indexes(index_iterators &&p_index_iterators) {
+      m_index_iterators = std::move(p_index_iterators);
+    }
+
+    optional &get_internal_optional() { return m_optional; }
+
+    index_iterators &get_index_iterators() { return m_index_iterators; }
+
+    optional m_optional;
+    index_iterators m_index_iterators;
+  };
 
   multi_index_t() = default;
   multi_index_t(const multi_index_t &) = delete;
@@ -67,92 +152,103 @@ public:
   void add(object &&p_object) {
     m_table.push_back({std::move(p_object)});
 
-    object_ref _object_ref{*std::prev(m_table.end())};
+    record_ref _record_ref{*std::prev(m_table.end())};
 
-    auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_key_pos>() {
-      index<t_key_pos> &_index{std::get<t_key_pos>(m_indexes)};
+    index_iterators _index_iterators;
 
-      const key_t<t_key_pos> &_key{std::get<t_key_pos>(p_object.value())};
+    auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index_pos>() {
+      index_t<t_index_pos> &_index{std::get<t_index_pos>(m_indexes)};
+      const key_t<t_index_pos> _key{key_getter_t<t_index_pos>()(
+          _record_ref.get().get_optional().value())};
+      index_iterator_t<t_index_pos> _ite{_index.insert({_key, _record_ref})};
 
-      _index.emplace(_key, _object_ref);
+      std::get<t_index_pos>(_index_iterators) = _ite;
 
       return true;
     }};
 
-    tuple::bus::traverse<keys_pos, decltype(_visitor)>(_visitor);
+    tuple::bus::traverse<indexes, decltype(_visitor)>(_visitor);
+
+    _record_ref.get().set_indexes(std::move(_index_iterators));
   }
 
-  template <std::size_t t_key_pos>
-  std::vector<object_ref> get(const key_t<t_key_pos> &p_key) {
+  template <std::size_t t_index_pos>
+    requires(tuple::cpt::index_within_tuple<indexes, t_index_pos>)
+  std::vector<record_ref> get(const key_t<t_index_pos> &p_key) {
 
-    index<t_key_pos> &_index{std::get<t_key_pos>(m_indexes)};
+    using index = index_t<t_index_pos>;
+    using index_iterator = index_iterator_t<t_index_pos>;
 
-    std::pair<index_iterator<t_key_pos>, index_iterator<t_key_pos>> _range{
-        _index.equal_range(p_key)};
+    index &_index{std::get<t_index_pos>(m_indexes)};
 
-    std::vector<object_ref> _res;
+    std::pair<index_iterator, index_iterator> _range{_index.equal_range(p_key)};
 
-    for (index_iterator<t_key_pos> _ite{_range.first}; _ite != _range.second;
-         ++_ite) {
-      if (_ite->second.get().has_value())
+    std::vector<record_ref> _res;
+
+    for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
+      if (_ite->second.get().get_optional().has_value())
         _res.push_back(_ite->second.get());
     }
 
     std::sort(_res.begin(), _res.end(),
-              [&](const object_ref &p_1, const object_ref &p_2) {
+              [&](const record_ref &p_1, const record_ref &p_2) {
                 return p_1.get() < p_2.get();
               });
 
     return _res;
   }
 
-  template <std::size_t t_key_pos> void erase(const key_t<t_key_pos> &p_key) {
-    index<t_key_pos> &_index{std::get<t_key_pos>(m_indexes)};
+  template <std::size_t t_index_pos>
+    requires(tuple::cpt::index_within_tuple<indexes, t_index_pos>)
+  void erase(const key_t<t_index_pos> &p_key) {
 
-    std::pair<index_iterator<t_key_pos>, index_iterator<t_key_pos>> _range{
-        _index.equal_range(p_key)};
+    using index = index_t<t_index_pos>;
 
-    for (index_iterator<t_key_pos> _ite{_range.first}; _ite != _range.second;
-         ++_ite) {
-      _ite->second.get() = std::nullopt;
+    index &_index{std::get<t_index_pos>(m_indexes)};
+    using index_iterator = index_iterator_t<t_index_pos>;
+
+    std::pair<index_iterator, index_iterator> _range{_index.equal_range(p_key)};
+
+    for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
+      _ite->second.get().get_internal_optional().reset();
     }
   }
 
-  template <std::size_t t_field_pos>
-  void update(object_ref &p_object,
-              const std::tuple_element_t<t_field_pos, t_object> &p_value) {
-
-    if (!p_object.get().has_value()) {
+  void update(record_ref p_record_ref, std::function<void(object &)> p_update) {
+    if (!p_record_ref.get().get_optional().has_value()) {
       return;
     }
 
-    using field = std::tuple_element_t<t_field_pos, t_object>;
+    optional &_optional{p_record_ref.get().get_internal_optional()};
 
-    bool _is_field_index{is_field_index<t_field_pos>()};
+    t_object _copy{_optional.value()};
+    p_update(_copy);
 
-    const field _old_value{std::get<t_field_pos>(p_object.get().value())};
+    auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>(
+                    t_tuple &p_index_iterators) {
+      using index = std::tuple_element_t<t_pos, indexes>;
+      using index_iterator = std::tuple_element_t<t_pos, index_iterators>;
+      using key_getter = key_getter_t<t_pos>;
+      using key = key_t<t_pos>;
 
-    std::get<t_field_pos>(p_object.get().value()) = p_value;
+      key_getter _key_getter;
 
-    if (_is_field_index) {
-      index<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
-
-      auto _cmp{[&](const typename index<t_field_pos>::value_type
-                        &p_index_value_type) {
-        if (p_index_value_type.first == _old_value) {
-          return true;
-        }
-        return false;
-      }};
-
-      index_iterator<t_field_pos> _ite{
-          std::find_if(_index.begin(), _index.end(), _cmp)};
-
-      if (_ite != _index.end()) {
-        _index.erase(_ite);
-        _index.emplace(p_value, p_object);
+      if (const key _key{_key_getter(_optional.value())};
+          _key != _key_getter(_copy)) {
+        index_iterator _index_iterator{std::get<t_pos>(p_index_iterators)};
+        index &_index{std::get<t_pos>(m_indexes)};
+        p_update(_optional.value());
+        _index.erase(_index_iterator);
+        index_iterator _new{
+            _index.insert({_key_getter(_optional.value()), p_record_ref})};
+        std::get<t_pos>(p_index_iterators) = _new;
       }
-    }
+
+      return true;
+    }};
+
+    tuple::bus::traverse<index_iterators, decltype(_visit)>(
+        p_record_ref.get().get_index_iterators(), _visit);
   }
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -161,27 +257,29 @@ public:
     {
       std::cout << "\nobjects:\n";
       std::for_each(p_multi_index.m_table.begin(), p_multi_index.m_table.end(),
-                    [&](const object &p_object) {
-                      if (p_object.has_value()) {
-                        std::cout << p_object.value() << " ";
+                    [&](const record &p_record) {
+                      if (p_record.get_optional().has_value()) {
+                        p_out << p_record << " ";
                       } else {
-                        std::cout << "DELETED ";
+                        std::cout << "DELETED";
                       }
+                      p_out << '\n';
                     });
       std::cout << '\n';
     }
     {
       p_out << "\nindexes:\n";
-      auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_key_pos>(
+      auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_index_pos>(
                           t_tuple &p_indexes) {
-        const multi_index_t::index<t_key_pos> &_index{
-            std::get<t_key_pos>(p_indexes)};
+        const multi_index_t::index_t<t_index_pos> &_index{
+            std::get<t_index_pos>(p_indexes)};
 
-        std::cout << "index " << t_key_pos << " - ";
+        std::cout << "index " << t_index_pos << " - ";
         for (const auto &_value : _index) {
-          if (_value.second.get().has_value()) {
+          if (_value.second.get().get_optional().has_value()) {
             p_out << "\t{k = " << _value.first
-                  << ", obj = " << _value.second.get().value() << "}";
+                  << ", obj = " << _value.second.get().get_optional().value()
+                  << "}";
           } else {
             p_out << "\t{k = " << _value.first << ", obj = DELETED}";
           }
@@ -199,42 +297,14 @@ public:
 private:
   /// \todo this will be replaced with something like
   /// std::list<std::array<object,N>>
-  using table = std::list<object>;
-
-  using keys_pos = std::tuple<decltype(t_indexes_definitions::key_pos)...>;
+  using table = std::list<record>;
 
   using indexes_definitions = std::tuple<t_indexes_definitions...>;
 
-  template <std::size_t t_key_pos>
-  using index_definition = std::tuple_element_t<t_key_pos, indexes_definitions>;
-
-  template <std::size_t t_key_pos>
-  using index =
-      cpt::index_traits<typename index_definition<t_key_pos>::index_id,
-                        key_t<t_key_pos>, object_ref>::type;
-
-  using indexes = std::tuple<index<t_indexes_definitions::key_pos>...>;
-
-  template <std::size_t t_key_pos>
-  using index_iterator = typename index<t_key_pos>::iterator;
-
-private:
-  template <std::size_t t_field_pos> constexpr bool is_field_index() const {
-
-    bool _is_field_index{false};
-
-    auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index>() {
-      if (t_index == t_field_pos) {
-        _is_field_index = true;
-        return false;
-      }
-      return true;
-    }};
-
-    tuple::bus::traverse<keys_pos, decltype(_visitor)>(_visitor);
-
-    return _is_field_index;
-  }
+  template <std::size_t t_index_pos>
+  using key_getter_t =
+      typename std::tuple_element_t<t_index_pos,
+                                    indexes_definitions>::key_getter;
 
 private:
   table m_table;
