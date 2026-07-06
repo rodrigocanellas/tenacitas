@@ -143,30 +143,60 @@ public:
   multi_index_t &operator=(multi_index_t &&) = delete;
 
   void add(t_object &&p_object) {
-    m_table.push_back({std::move(p_object)});
+
+    m_table.push_back(std::move(p_object));
 
     record_ref _record_ref{*std::prev(m_table.end())};
 
     typename record::index_iterators _index_iterators;
 
+    bool _error{false};
     auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_field_pos>() {
       if constexpr (is_index<t_field_pos>()) {
-        index_t<t_field_pos> &_index{std::get<t_field_pos>(m_indexes)};
+        using index = index_t<t_field_pos>;
+        using index_iterator = index_iterator_t<t_field_pos>;
+        using field = field_t<t_field_pos>;
+        using field_getter = field_getter_t<t_field_pos>;
 
-        const field_t<t_field_pos> _field{field_getter_t<t_field_pos>()(
-            _record_ref.get().get_optional().value())};
+        index &_index{std::get<t_field_pos>(m_indexes)};
 
-        index_iterator_t<t_field_pos> _ite{
-            _index.insert(_index.begin(), {_field, _record_ref})};
+        const field _field{
+            field_getter{}(_record_ref.get().get_optional().value())};
 
-        std::get<t_field_pos>(_index_iterators) = _ite;
+        index_iterator _ite{_index.find(_field)};
+        if ((_ite == _index.end())) {
+          std::pair<index_iterator, bool> _res{
+              _index.emplace(_field, _record_ref)};
+          if (_res.second) {
+            std::get<t_field_pos>(_index_iterators) = _res.first;
+          } else {
+            _error = true;
+            return false;
+          }
+        } else if (!_ite->second.get().get_optional().has_value()) {
+          _ite->second = _record_ref;
+          std::get<t_field_pos>(_index_iterators) = _ite;
+        } else if (_ite->second.get().get_optional().value() != p_object) {
+          std::pair<index_iterator, bool> _res{
+              _index.emplace(_field, _record_ref)};
+          if (_res.second) {
+            std::get<t_field_pos>(_index_iterators) = _res.first;
+          } else {
+            _error = true;
+            return false;
+          }
+        }
       }
       return true;
     }};
 
     tuple::bus::traverse<indexes, decltype(_visitor)>(_visitor);
 
-    _record_ref.get().set_indexes(std::move(_index_iterators));
+    if (!_error) {
+      _record_ref.get().set_indexes(std::move(_index_iterators));
+    } else {
+      m_table.erase(std::prev(m_table.end()));
+    }
   }
 
   template <std::size_t t_field_pos>
@@ -299,6 +329,20 @@ private:
   }
 
   template <std::size_t t_field_pos>
+  std::optional<index_iterator_t<t_field_pos>>
+  exists(const field_t<t_field_pos> &p_key) {
+    using index_iterator = index_iterator_t<t_field_pos>;
+    using index = index_t<t_field_pos>;
+
+    index &_index{std::get<t_field_pos>(m_indexes)};
+
+    if (index_iterator _ite{_index.find(p_key)}; _ite == _index.end()) {
+      return {_ite};
+    }
+    return std::nullopt;
+  }
+
+  template <std::size_t t_field_pos>
   void update_index(record_ref p_record_ref,
                     const field_t<t_field_pos> &p_field) {
     optional &_optional{p_record_ref.get().get_internal_optional()};
@@ -325,10 +369,11 @@ private:
           index &_index{std::get<t_pos>(m_indexes)};
           _field_setter(_optional.value(), p_field);
           _index.erase(_index_iterator);
-          index_iterator _new{
-              _index.insert(_index.begin(),
-                            {_field_getter(_optional.value()), p_record_ref})};
-          std::get<t_pos>(p_index_iterators) = _new;
+          std::pair<index_iterator, bool> _res{
+              _index.emplace(_field_getter(_optional.value()), p_record_ref)};
+          if (_res.second) {
+            std::get<t_pos>(p_index_iterators) = _res.first;
+          }
         }
       }
 
