@@ -176,7 +176,8 @@ public:
         } else if (!_ite->second.get().get_optional().has_value()) {
           _ite->second = _record_ref;
           std::get<t_field_pos>(_index_iterators) = _ite;
-        } else if (_ite->second.get().get_optional().value() != p_object) {
+        } else if (_ite->second.get().get_optional().value() !=
+                   _record_ref.get().get_optional().value()) {
           std::pair<index_iterator, bool> _res{
               _index.emplace(_field, _record_ref)};
           if (_res.second) {
