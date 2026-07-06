@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#include "tnct/container/dat/index_definition.h"
 #include "tnct/container/dat/multi_index.h"
-#include "tnct/container/trt/index_type.h"
+#include "tnct/container/trt/field_definition.h"
+#include "tnct/container/trt/index_traits.h"
 
 struct xpto {
   xpto() = default;
@@ -17,10 +17,13 @@ struct xpto {
       : m_i(p_i), m_f(p_f), m_s(p_s) {}
 
   int get_i() const { return m_i; }
-  float get_f() const { return m_f; }
-  std::string get_s() const { return m_s; }
+  void set_i(int p_i) { m_i = p_i; }
 
+  float get_f() const { return m_f; }
   void set_f(float p_f) { m_f = p_f; }
+
+  std::string get_s() const { return m_s; }
+  void set_s(std::string_view p_s) { m_s = p_s; }
 
   xpto &operator=(const xpto &) = default;
   xpto &operator=(xpto &&) = default;
@@ -54,19 +57,37 @@ private:
   std::string m_s{"hi"};
 };
 
-using tnct::container::dat::index_definition;
+using tnct::container::trt::field_definition;
 using tnct::container::trt::std_multimap_id;
 
 using xpto_indexes = tnct::container::dat::multi_index_t<
     xpto,
-    index_definition<std_multimap_id, xpto, int,
-                     decltype([](const xpto &p_xpto) -> int {
+
+    field_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
                        return p_xpto.get_i();
-                     })>,
-    index_definition<std_multimap_id, xpto, float,
-                     decltype([](const xpto &p_xpto) -> float {
+                     }),
+                     decltype([](xpto &p_xpto, int p_i) -> void {
+                       p_xpto.set_i(p_i);
+                     }),
+                     std_multimap_id>,
+
+    field_definition<xpto, float, decltype([](const xpto &p_xpto) -> float {
                        return p_xpto.get_f();
-                     })>>;
+                     }),
+                     decltype([](xpto &p_xpto, float p_f) -> void {
+                       p_xpto.set_f(p_f);
+                     }),
+                     std_multimap_id>,
+
+    field_definition<xpto, std::string,
+                     decltype([](const xpto &p_xpto) -> std::string {
+                       return p_xpto.get_s();
+                     }),
+                     decltype([](xpto &p_xpto, std::string p_s) -> void {
+                       p_xpto.set_s(p_s);
+                     })>
+
+    >;
 
 using record_ref = xpto_indexes::record_ref;
 
@@ -85,7 +106,6 @@ int main() {
 
   std::cout << "\n###### Searching in index 0 key 138\n";
   std::vector<record_ref> _records{_xpto_indexes.get<0>(138)};
-
   std::for_each(
       _records.begin(), _records.end(), [](const record_ref &p_record) {
         std::cout << "object = " << p_record.get().get_optional().value()
@@ -94,7 +114,14 @@ int main() {
 
   std::cout << "\n###### Searching in index 1 key -4.21\n";
   _records = _xpto_indexes.get<1>(-4.21);
+  std::for_each(
+      _records.begin(), _records.end(), [](const record_ref &p_record) {
+        std::cout << "object = " << p_record.get().get_optional().value()
+                  << '\n';
+      });
 
+  std::cout << "\n###### Searching in non index field 2 field 'see u'\n";
+  _records = _xpto_indexes.get<2>("see u");
   std::for_each(
       _records.begin(), _records.end(), [](const record_ref &p_record) {
         std::cout << "object = " << p_record.get().get_optional().value()
@@ -103,6 +130,11 @@ int main() {
 
   std::cout << "\n###### Deleting from index 1 key 3.14\n";
   _xpto_indexes.erase<1>(float{3.14});
+
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout << "\n###### Deleting from non index field 2 field 'bye'\n";
+  _xpto_indexes.erase<2>("bye");
 
   std::cout << _xpto_indexes << std::endl;
 
@@ -115,6 +147,20 @@ int main() {
   }
 
   record_ref _ref{_records[0]};
-  _xpto_indexes.update(_ref, [](xpto &p_xpto) { p_xpto.set_f(0.38); });
+  _xpto_indexes.update<1>(_ref, 0.38);
+
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout << "\n###### Find from index 1 where key is 0.72 and update field "
+               "2 from 'hello' to 'hi!!'\n";
+  _records = _xpto_indexes.get<1>(0.72);
+  if (_records.size() != 1) {
+    std::cout << "ERROR: found " << _records.size() << std::endl;
+    return -1;
+  }
+
+  _ref = _records[0];
+  _xpto_indexes.update<2>(_ref, "hi!!");
+
   std::cout << _xpto_indexes << std::endl;
 }
