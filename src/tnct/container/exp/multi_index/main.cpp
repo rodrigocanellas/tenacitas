@@ -58,6 +58,7 @@ private:
 };
 
 using tnct::container::trt::field_definition;
+using tnct::container::trt::std_map_id;
 using tnct::container::trt::std_multimap_id;
 
 using xpto_indexes = tnct::container::dat::multi_index_t<
@@ -69,7 +70,7 @@ using xpto_indexes = tnct::container::dat::multi_index_t<
                      decltype([](xpto &p_xpto, int p_i) -> void {
                        p_xpto.set_i(p_i);
                      }),
-                     std_multimap_id>,
+                     std_map_id>,
 
     field_definition<xpto, float, decltype([](const xpto &p_xpto) -> float {
                        return p_xpto.get_f();
@@ -161,6 +162,27 @@ int main() {
 
   _ref = _records[0];
   _xpto_indexes.update<2>(_ref, "hi!!");
+
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout
+      << "\n###### Using std_map_id in field 0, erase key 138 and then tries "
+         "insert the same object again. The slot in index should be reused\n";
+  _xpto_indexes.erase<0>(138);
+
+  std::cout << _xpto_indexes << std::endl;
+  _xpto_indexes.add(xpto{138, 0.72, "hello"});
+
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout
+      << "\n###### Using std_map_id in field 0, erase key 138 and then tries "
+         "insert another object with the same key. The slot in index should be "
+         "reused\n";
+  _xpto_indexes.erase<0>(138);
+
+  std::cout << _xpto_indexes << std::endl;
+  _xpto_indexes.add(xpto{138, -4.21, "bye"});
 
   std::cout << _xpto_indexes << std::endl;
 }
