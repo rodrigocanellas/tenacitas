@@ -148,7 +148,7 @@ public:
 
     record_ref _record_ref{*std::prev(m_table.end())};
 
-    typename record::index_iterators _index_iterators;
+    typename record::index_iterators _index_iterators{create_index_iterators()};
 
     bool _error{false};
     auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_field_pos>() {
@@ -196,6 +196,7 @@ public:
     if (!_error) {
       _record_ref.get().set_indexes(std::move(_index_iterators));
     } else {
+      erase(_index_iterators);
       m_table.erase(std::prev(m_table.end()));
     }
   }
@@ -445,6 +446,49 @@ private:
       }
     }
     return std::move(_res);
+  }
+
+  void erase(typename record::index_iterators &p_index_iterators) {
+
+    auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
+      if constexpr (is_index<t_pos>()) {
+
+        using index = index_t<t_pos>;
+        using index_iterator = index_iterator_t<t_pos>;
+
+        index &_index{std::get<t_pos>(m_indexes)};
+        index_iterator _index_iterator{std::get<t_pos>(p_index_iterators)};
+
+        if (_index_iterator != _index.end()) {
+          _index.erase(_index_iterator);
+        }
+      }
+      return true;
+    }};
+
+    tuple::bus::traverse<typename record::index_iterators, decltype(_visit)>(
+        _visit);
+  }
+
+  typename record::index_iterators create_index_iterators() {
+
+    typename record::index_iterators _index_iterators;
+
+    auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
+      if constexpr (is_index<t_pos>()) {
+        using index = index_t<t_pos>;
+
+        index &_index{std::get<t_pos>(m_indexes)};
+        std::get<t_pos>(_index_iterators) = _index.end();
+      }
+
+      return true;
+    }};
+
+    tuple::bus::traverse<typename record::index_iterators, decltype(_visit)>(
+        _visit);
+
+    return _index_iterators;
   }
 
 private:
