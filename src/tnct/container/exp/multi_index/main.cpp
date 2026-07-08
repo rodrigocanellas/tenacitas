@@ -102,6 +102,7 @@ int main() {
   _xpto_indexes.add(xpto{138, 0.72, "hello"});
   _xpto_indexes.add(xpto{138, -4.21, "bye"});
   _xpto_indexes.add(xpto{-2, -7.85, "see u"});
+  _xpto_indexes.add(xpto{31, 9.012, "ouch"});
 
   std::cout << _xpto_indexes << std::endl;
 
@@ -113,7 +114,9 @@ int main() {
                   << '\n';
       });
 
-  std::cout << "\n###### Searching in index 1 key -4.21\n";
+  std::cout << "\n###### Searching in index 1 key -4.21 that will not be found "
+               "because 'xpto{138, -4.21, \"bye\"'} was not added because "
+               "'xpto{138, 0.72, \"hello\"});' was added first  \n";
   _records = _xpto_indexes.get<1>(-4.21);
   std::for_each(
       _records.begin(), _records.end(), [](const record_ref &p_record) {
@@ -131,12 +134,10 @@ int main() {
 
   std::cout << "\n###### Deleting from index 1 key 3.14\n";
   _xpto_indexes.erase<1>(float{3.14});
-
   std::cout << _xpto_indexes << std::endl;
 
-  std::cout << "\n###### Deleting from non index field 2 field 'bye'\n";
-  _xpto_indexes.erase<2>("bye");
-
+  std::cout << "\n###### Deleting from non index field 2 field 'ouch'\n";
+  _xpto_indexes.erase<2>("ouch");
   std::cout << _xpto_indexes << std::endl;
 
   std::cout << "\n###### Find from index 0 where key is -2 and update field 1 "
@@ -162,27 +163,6 @@ int main() {
 
   _ref = _records[0];
   _xpto_indexes.update<2>(_ref, "hi!!");
-
-  std::cout << _xpto_indexes << std::endl;
-
-  std::cout
-      << "\n###### Using std_map_id in field 0, erase key 138 and then tries "
-         "insert the same object again. The slot in index should be reused\n";
-  _xpto_indexes.erase<0>(138);
-
-  std::cout << _xpto_indexes << std::endl;
-  _xpto_indexes.add(xpto{138, 0.72, "hello"});
-
-  std::cout << _xpto_indexes << std::endl;
-
-  std::cout
-      << "\n###### Using std_map_id in field 0, erase key 138 and then tries "
-         "insert another object with the same key. The slot in index should be "
-         "reused\n";
-  _xpto_indexes.erase<0>(138);
-
-  std::cout << _xpto_indexes << std::endl;
-  _xpto_indexes.add(xpto{138, -4.21, "bye"});
 
   std::cout << _xpto_indexes << std::endl;
 }
