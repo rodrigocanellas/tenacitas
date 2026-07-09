@@ -8,6 +8,8 @@
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
+#include "tnct/log/bus/cerr.h"
+#include "tnct/log/cpt/macros.h"
 
 struct xpto {
   xpto() = default;
@@ -62,8 +64,7 @@ using tnct::container::trt::std_map_id;
 using tnct::container::trt::std_multimap_id;
 
 using xpto_indexes = tnct::container::dat::multi_index_t<
-    xpto,
-
+    xpto, tnct::log::cerr,
     field_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
                        return p_xpto.get_i();
                      }),
@@ -95,7 +96,8 @@ using record_ref = xpto_indexes::record_ref;
 // using xpto_ref = typename xpto_indexes::ref;
 
 int main() {
-  xpto_indexes _xpto_indexes;
+  tnct::log::cerr _logger;
+  xpto_indexes _xpto_indexes{_logger};
 
   std::cout << "\n###### Adding\n";
   _xpto_indexes.add(xpto{-9, 3.14, "hi"});
@@ -164,5 +166,10 @@ int main() {
   _ref = _records[0];
   _xpto_indexes.update<2>(_ref, "hi!!");
 
+  std::cout << _xpto_indexes << std::endl;
+
+  std::cout
+      << "\n###### Adding a new object to verify reuse of slots in the table\n";
+  _xpto_indexes.add({11, 4.59, "reuse it!"});
   std::cout << _xpto_indexes << std::endl;
 }
