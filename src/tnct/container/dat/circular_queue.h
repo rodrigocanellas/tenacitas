@@ -17,8 +17,7 @@
 #include "tnct/log/cpt/macros.h"
 #include "tnct/ostream/cpt/has_output_operator.h"
 
-namespace tnct::container::dat
-{
+namespace tnct::container::dat {
 
 /// \brief Implements a circular queue which size is increased if it becomes
 /// full
@@ -28,30 +27,26 @@ namespace tnct::container::dat
 ///
 /// \tparam t_data defines the types of the data contained in the queue
 template <log::cpt::logger t_logger, typename t_data>
-requires std::move_constructible<t_data> && std::copy_constructible<t_data>
-         && ostream::cpt::has_output_operator<t_data>
-class circular_queue final
-{
+  requires std::move_constructible<t_data> && std::copy_constructible<t_data> &&
+           ostream::cpt::has_output_operator<t_data>
+class circular_queue final {
 public:
-  using data   = t_data;
+  using data = t_data;
   using logger = t_logger;
 
 public:
   circular_queue() = delete;
 
   static constexpr std::size_t default_initial_size{100};
-  static constexpr std::size_t default_incremental_size{default_initial_size
-                                                         / 2};
+  static constexpr std::size_t default_incremental_size{default_initial_size /
+                                                        2};
 
   static std::optional<circular_queue>
   create(t_logger &p_logger, std::size_t p_initial_size = default_initial_size,
-         std::size_t      p_incremental_size = default_incremental_size,
-         std::string_view p_desc             = "NO DESC")
-  {
-    try
-    {
-      if (p_initial_size == 0)
-      {
+         std::size_t p_incremental_size = default_incremental_size,
+         std::string_view p_desc = "NO DESC") {
+    try {
+      if (p_initial_size == 0) {
         return std::nullopt;
       }
 
@@ -60,9 +55,7 @@ public:
                                         : p_incremental_size)};
       return circular_queue(p_logger, p_desc, p_initial_size,
                             _incremental_size);
-    }
-    catch (...)
-    {
+    } catch (...) {
       TNCT_LOG_ERR(
           p_logger,
           format::bus::fmt("Error creating 'circular_queue' named '", p_desc,
@@ -72,18 +65,14 @@ public:
     return std::nullopt;
   }
 
-  ~circular_queue()
-  {
-  }
+  ~circular_queue() {}
 
   circular_queue(const circular_queue &p_queue)
       : m_logger(p_queue.m_logger), m_desc(p_queue.m_desc),
         m_initial_size(p_queue.m_initial_size),
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(p_queue.m_vector), m_head(p_queue.m_head),
-        m_tail(p_queue.m_tail), m_occupied(p_queue.m_occupied)
-  {
-  }
+        m_tail(p_queue.m_tail), m_occupied(p_queue.m_occupied) {}
 
   circular_queue(circular_queue &&p_queue)
       : m_logger(p_queue.m_logger), m_desc(std::move(p_queue.m_desc)),
@@ -91,68 +80,61 @@ public:
         m_incremental_size(p_queue.m_incremental_size),
         m_vector(std::move(p_queue.m_vector)),
         m_head(std::move(p_queue.m_head)), m_tail(std::move(p_queue.m_tail)),
-        m_occupied(p_queue.m_occupied)
-  {
-  }
+        m_occupied(p_queue.m_occupied) {}
 
-  circular_queue &operator=(const circular_queue &p_queue)
-  {
-    if (this != &p_queue)
-    {
+  circular_queue &operator=(const circular_queue &p_queue) {
+    if (this != &p_queue) {
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_initial_size     = p_queue.m_initial_size;
+      m_initial_size = p_queue.m_initial_size;
       m_incremental_size = p_queue.m_incremental_size;
-      m_vector           = p_queue.m_vector;
-      m_head             = p_queue.m_head;
-      m_tail             = p_queue.m_tail;
-      m_occupied         = p_queue.m_occupied;
-      m_desc             = p_queue.m_desc;
+      m_vector = p_queue.m_vector;
+      m_head = p_queue.m_head;
+      m_tail = p_queue.m_tail;
+      m_occupied = p_queue.m_occupied;
+      m_desc = p_queue.m_desc;
     }
     return *this;
   }
 
-  circular_queue &operator=(circular_queue &&p_queue)
-  {
-    if (this != &p_queue)
-    {
+  circular_queue &operator=(circular_queue &&p_queue) {
+    if (this != &p_queue) {
       std::lock_guard<std::mutex> _lock(m_mutex);
-      m_initial_size     = p_queue.m_initial_size;
+      m_initial_size = p_queue.m_initial_size;
       m_incremental_size = p_queue.m_incremental_size;
-      m_vector           = std::move(p_queue.m_vector);
-      m_head             = p_queue.m_head;
-      m_tail             = p_queue.m_tail;
-      m_occupied         = p_queue.m_occupied;
-      m_desc             = std::move(p_queue.m_desc);
+      m_vector = std::move(p_queue.m_vector);
+      m_head = p_queue.m_head;
+      m_tail = p_queue.m_tail;
+      m_occupied = p_queue.m_occupied;
+      m_desc = std::move(p_queue.m_desc);
     }
     return *this;
   }
 
-  std::string full_report()
-  {
+  std::string full_report() {
     std::stringstream _out;
 
-    if (occupied() != 0)
-    {
+    if (occupied() != 0) {
       _out << '\n';
     }
     _out << brief_report();
-    if (occupied() != 0)
-    {
+    if (occupied() != 0) {
       _out << '\n';
 
       auto _last(m_vector.size() - 1);
 
-      for (decltype(_last) _idx = 0; _idx < (_last - 1); ++_idx)
-      {
-        _out << "queue[" << _idx << "] = " << *m_vector[_idx] << '\n';
+      for (decltype(_last) _idx = 0; _idx < (_last - 1); ++_idx) {
+        if (m_vector[_idx].has_value()) {
+          _out << "queue[" << _idx << "] = " << *m_vector[_idx] << '\n';
+        }
       }
-      _out << "queue[" << _last << "] = " << *m_vector[_last];
+      if (m_vector[_last].has_value()) {
+        _out << "queue[" << _last << "] = " << *m_vector[_last];
+      }
     }
     return _out.str();
   }
 
-  std::string brief_report()
-  {
+  std::string brief_report() {
     std::stringstream _out;
     _out << "desc = '" << m_desc << "', head = " << m_head
          << ", tail = " << m_tail << ", occupied = " << occupied()
@@ -161,26 +143,21 @@ public:
     return _out.str();
   }
 
-  void push(t_data &&p_data)
-  {
+  void push(t_data &&p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("push - entering ", brief_report()));
 
-    if (full())
-    {
+    if (full()) {
       enlarge();
     }
 
     m_vector[m_head] = std::optional<t_data>(p_data);
 
-    if (m_head == (m_vector.size() - 1))
-    {
+    if (m_head == (m_vector.size() - 1)) {
       m_head = 0;
-    }
-    else
-    {
+    } else {
       ++m_head;
     }
     ++m_occupied;
@@ -189,27 +166,22 @@ public:
                  format::bus::fmt("push - leaving: ", brief_report()));
   }
 
-  void push(const t_data &p_data)
-  {
+  void push(const t_data &p_data) {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("push - entering with data = ", p_data, ": ",
                                   brief_report()));
 
-    if (full())
-    {
+    if (full()) {
       enlarge();
     }
 
     m_vector[m_head] = std::optional<t_data>(p_data);
 
-    if (m_head == (m_vector.size() - 1))
-    {
+    if (m_head == (m_vector.size() - 1)) {
       m_head = 0;
-    }
-    else
-    {
+    } else {
       ++m_head;
     }
     ++m_occupied;
@@ -218,23 +190,20 @@ public:
                  format::bus::fmt("push - leaving: ", brief_report()));
   }
 
-  std::optional<t_data> pop()
-  {
+  std::optional<t_data> pop() {
     std::lock_guard<std::mutex> _lock(m_mutex);
 
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("pop - entering: ", brief_report()));
 
-    if (empty())
-    {
+    if (empty()) {
       return std::nullopt;
     }
 
     std::optional<t_data> _data(m_vector[m_tail]);
     ++m_tail;
 
-    if (m_tail == m_vector.size())
-    {
+    if (m_tail == m_vector.size()) {
       m_tail = 0;
     }
 
@@ -246,44 +215,24 @@ public:
     return _data;
   }
 
-  constexpr bool full() const
-  {
-    return m_occupied == m_vector.size();
-  }
+  constexpr bool full() const { return m_occupied == m_vector.size(); }
 
-  constexpr bool empty() const
-  {
-    return m_occupied == 0;
-  }
+  constexpr bool empty() const { return m_occupied == 0; }
 
-  constexpr size_t capacity() const
-  {
-    return m_vector.size();
-  }
+  constexpr size_t capacity() const { return m_vector.size(); }
 
-  constexpr size_t occupied() const
-  {
-    return m_occupied;
-  }
+  constexpr size_t occupied() const { return m_occupied; }
 
-  void clear()
-  {
+  void clear() {
     std::lock_guard<std::mutex> _lock(m_mutex);
     m_head = m_tail = 0;
-    m_occupied      = 0;
+    m_occupied = 0;
   }
 
-  constexpr size_t head() const
-  {
-    return m_head;
-  }
-  constexpr size_t tail() const
-  {
-    return m_tail;
-  }
+  constexpr size_t head() const { return m_head; }
+  constexpr size_t tail() const { return m_tail; }
 
-  constexpr t_data operator[](size_t p_index) const
-  {
+  constexpr t_data operator[](size_t p_index) const {
     return m_vector[p_index];
   }
 
@@ -295,23 +244,21 @@ private:
                  std::size_t p_initial_size, std::size_t p_incremental_size)
       : m_logger(p_logger), m_desc(p_desc), m_initial_size(p_initial_size),
         m_incremental_size(p_incremental_size),
-        m_vector(m_initial_size, std::optional<t_data>()), m_head(0), m_tail(0)
-  {
+        m_vector(m_initial_size, std::optional<t_data>()), m_head(0),
+        m_tail(0) {
 
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("creating - ", brief_report()));
   }
 
-  void enlarge()
-  {
+  void enlarge() {
     TNCT_LOG_TRA(this->m_logger,
                  format::bus::fmt("enlarging - entering ", full_report()));
 
     vector _aux(m_vector.size() + m_incremental_size, std::optional<t_data>());
 
     auto _head(m_head);
-    if (m_head == 0)
-    {
+    if (m_head == 0) {
       _head = m_vector.size();
     }
 
@@ -324,13 +271,11 @@ private:
 
     // m_tail += m_incremental_size;
 
-    if (m_head == 0)
-    {
+    if (m_head == 0) {
       m_head = m_vector.size();
     }
 
-    if (m_tail != 0)
-    {
+    if (m_tail != 0) {
       m_tail += m_incremental_size;
     }
 
@@ -343,7 +288,7 @@ private:
   }
 
 private:
-  logger     &m_logger;
+  logger &m_logger;
   std::string m_desc;
 
   size_t m_initial_size{0};

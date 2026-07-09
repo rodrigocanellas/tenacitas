@@ -16,7 +16,9 @@
 #include <utility>
 
 #include "tnct/container/cpt/field_definition.h"
+#include "tnct/container/dat/circular_queue.h"
 #include "tnct/container/trt/index_traits.h"
+#include "tnct/log/cpt/logger.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
 #include "tnct/tuple/cpt/index_within_tuple.h"
@@ -44,7 +46,7 @@ namespace tnct::container::dat {
 /// can check if A has not become std::nullopt by another thread
 ///
 /// \example tnct/container/exp/multi_index/main.cpp
-template <typename t_object,
+template <typename t_object, log::cpt::logger t_logger,
           cpt::field_definition<t_object>... t_fields_definitions>
   requires(
       (sizeof...(t_fields_definitions) > 0) &&
@@ -57,6 +59,8 @@ public:
   struct record;
 
   using optional = std::optional<t_object>;
+
+  using logger = t_logger;
 
   using record_ref = std::reference_wrapper<record>;
 
@@ -169,7 +173,15 @@ public:
     index_iterators m_index_iterators;
   };
 
-  multi_index_t() = default;
+  multi_index_t(std::reference_wrapper<logger> p_logger)
+      : m_logger{p_logger},
+        m_available_records_slots{
+            available_records_slots::create(m_logger.get())} {
+    if (!m_available_records_slots.has_value()) {
+      throw std::runtime_error("error creating available_records_slots");
+    }
+  }
+
   multi_index_t(const multi_index_t &) = delete;
   multi_index_t(multi_index_t &&) = delete;
 
@@ -180,9 +192,20 @@ public:
 
   std::optional<record_ref> add(t_object &&p_object) {
 
-    m_table.push_back({std::move(p_object), m_indexes});
+    auto create_record{[&]() -> record_ref {
+      if (!m_available_records_slots.value().empty()) {
+        std::optional<record_ref> _optional_record_ref{
+            m_available_records_slots.value().pop()};
+        _optional_record_ref.value().get().get_internal_optional() =
+            std::move(p_object);
+        return _optional_record_ref.value();
+      } else {
+        m_table.push_back({std::move(p_object), m_indexes});
+        return record_ref{*std::prev(m_table.end())};
+      }
+    }};
 
-    record_ref _record_ref{*std::prev(m_table.end())};
+    record_ref _record_ref{create_record()};
 
     bool _error{false};
     auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_field_pos>() {
@@ -316,6 +339,7 @@ private:
   /// \todo this will be replaced with something like
   /// std::list<std::array<object,N>>
   using table = std::list<record>;
+  using table_iterator = typename table::iterator;
 
   template <std::size_t t_field_pos>
   using field_getter_t =
@@ -326,6 +350,8 @@ private:
   using field_setter_t =
       typename std::tuple_element_t<t_field_pos,
                                     fields_definitions>::field_setter;
+
+  using available_records_slots = circular_queue<logger, record_ref>;
 
 private:
   template <std::size_t t_field_pos> static constexpr bool is_index() {
@@ -402,9 +428,11 @@ private:
 
       if (std::next(_range.first) == _range.second) {
         erase_record(_range.first->second);
+        m_available_records_slots.value().push(_range.first->second);
       } else {
         for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
           erase_record(_ite->second);
+          m_available_records_slots.value().push(_ite->second);
         }
       }
     }
@@ -418,6 +446,7 @@ private:
           _optional.has_value() &&
           (p_field == field_getter{}(_optional.value()))) {
         erase_record(_record);
+        m_available_records_slots.value().push(_record);
       }
     }
   }
@@ -481,6 +510,8 @@ private:
   }
 
 private:
+  std::reference_wrapper<logger> m_logger;
+  std::optional<available_records_slots> m_available_records_slots;
   table m_table;
   indexes m_indexes;
 };
