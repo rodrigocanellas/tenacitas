@@ -172,4 +172,9 @@ int main() {
       << "\n###### Adding a new object to verify reuse of slots in the table\n";
   _xpto_indexes.add({11, 4.59, "reuse it!"});
   std::cout << _xpto_indexes << std::endl;
+
+  std::cout << "\n###### Deleting just inserted object to verify that it "
+               "behaves like an object inserted without table slot reuse\n";
+  _xpto_indexes.erase<0>(11);
+  std::cout << _xpto_indexes << std::endl;
 }
