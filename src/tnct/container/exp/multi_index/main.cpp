@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "tnct/container/dat/multi_index.h"
+#include "tnct/container/trt/are_fields_definitions_compatible.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
 
@@ -57,46 +58,47 @@ private:
   std::string m_s{"hi"};
 };
 
+using tnct::container::trt::attribute_definition;
 using tnct::container::trt::calculated_index_definition;
-using tnct::container::trt::field_definition;
 using tnct::container::trt::index_definition;
 using tnct::container::trt::std_map_id;
 using tnct::container::trt::std_multimap_id;
 
-using xpto_indexes = tnct::container::dat::multi_index_t<
-    xpto,
-    index_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
-                       return p_xpto.get_i();
-                     }),
-                     decltype([](xpto &p_xpto, int p_i) -> void {
-                       p_xpto.set_i(p_i);
-                     }),
-                     std_map_id>,
+using field_0 = index_definition<
+    xpto, int,
+    decltype([](const xpto &p_xpto) -> int { return p_xpto.get_i(); }),
+    decltype([](xpto &p_xpto, int p_i) -> void { p_xpto.set_i(p_i); }),
+    std_map_id>;
 
-    index_definition<xpto, float, decltype([](const xpto &p_xpto) -> float {
-                       return p_xpto.get_f();
-                     }),
-                     decltype([](xpto &p_xpto, float p_f) -> void {
-                       p_xpto.set_f(p_f);
-                     }),
-                     std_multimap_id>,
+static_assert(tnct::container::cpt::field_definition<field_0>);
 
-    field_definition<xpto, std::string,
-                     decltype([](const xpto &p_xpto) -> std::string {
-                       return p_xpto.get_s();
-                     }),
-                     decltype([](xpto &p_xpto, std::string p_s) -> void {
-                       p_xpto.set_s(p_s);
-                     })>,
+using field_1 = index_definition<
+    xpto, float,
+    decltype([](const xpto &p_xpto) -> float { return p_xpto.get_f(); }),
+    decltype([](xpto &p_xpto, float p_f) -> void { p_xpto.set_f(p_f); }),
+    std_multimap_id>;
+static_assert(tnct::container::cpt::field_definition<field_1>);
 
+using field_2 = attribute_definition<
+    xpto, std::string,
+    decltype([](const xpto &p_xpto) -> std::string { return p_xpto.get_s(); }),
+    decltype([](xpto &p_xpto, std::string p_s) -> void { p_xpto.set_s(p_s); })>;
+static_assert(tnct::container::cpt::field_definition<field_2>);
+
+using field_3 =
     calculated_index_definition<xpto, float,
                                 decltype([](const xpto &p_xpto) -> float {
                                   return static_cast<float>(p_xpto.get_f() *
                                                             p_xpto.get_i());
                                 }),
-                                std_multimap_id>
+                                std_multimap_id>;
+static_assert(tnct::container::cpt::field_definition<field_3>);
 
-    >;
+static_assert(
+    tnct::container::trt::are_fields_definition_compatible_v<field_0, field_1>);
+
+using xpto_indexes =
+    tnct::container::dat::multi_index_t<field_0, field_1, field_2, field_3>;
 
 using record_ref = xpto_indexes::record_ref;
 
