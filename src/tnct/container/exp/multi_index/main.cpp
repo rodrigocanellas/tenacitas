@@ -8,8 +8,6 @@
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
-#include "tnct/log/bus/cerr.h"
-#include "tnct/log/cpt/macros.h"
 
 struct xpto {
   xpto() = default;
@@ -66,7 +64,7 @@ using tnct::container::trt::std_map_id;
 using tnct::container::trt::std_multimap_id;
 
 using xpto_indexes = tnct::container::dat::multi_index_t<
-    xpto, tnct::log::cerr,
+    xpto,
     index_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
                        return p_xpto.get_i();
                      }),
@@ -105,8 +103,8 @@ using record_ref = xpto_indexes::record_ref;
 // using xpto_ref = typename xpto_indexes::ref;
 
 int main() {
-  tnct::log::cerr _logger;
-  xpto_indexes _xpto_indexes{_logger};
+
+  xpto_indexes _xpto_indexes;
 
   std::cout << "\n###### Adding\n";
   _xpto_indexes.add(xpto{-9, 3.14, "hi"});

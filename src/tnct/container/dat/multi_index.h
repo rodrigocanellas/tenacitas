@@ -46,7 +46,7 @@ namespace tnct::container::dat {
 /// can check if A has not become std::nullopt by another thread
 ///
 /// \example tnct/container/exp/multi_index/main.cpp
-template <typename t_object, log::cpt::logger t_logger,
+template <typename t_object,
           cpt::field_definition<t_object>... t_fields_definitions>
   requires(
       (sizeof...(t_fields_definitions) > 0) &&
@@ -59,8 +59,6 @@ public:
   struct record;
 
   using optional = std::optional<t_object>;
-
-  using logger = t_logger;
 
   using record_ref = std::reference_wrapper<record>;
 
@@ -173,7 +171,7 @@ public:
     index_iterators m_index_iterators;
   };
 
-  multi_index_t(std::reference_wrapper<logger> p_logger) : m_logger{p_logger} {}
+  multi_index_t() = default;
 
   multi_index_t(const multi_index_t &) = delete;
   multi_index_t(multi_index_t &&) = delete;
@@ -509,7 +507,6 @@ private:
   }
 
 private:
-  std::reference_wrapper<logger> m_logger;
   table m_table;
   indexes m_indexes;
   std::mutex m_mutex;
