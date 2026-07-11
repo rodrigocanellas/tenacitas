@@ -3,10 +3,9 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_DAT_INDEX_DEFINITION_H
-#define TNCT_CONTAINER_DAT_INDEX_DEFINITION_H
+#ifndef TNCT_CONTAINER_DAT_FIELD_DEFINITION_H
+#define TNCT_CONTAINER_DAT_FIELD_DEFINITION_H
 
-#include "tnct/container/cpt/index.h"
 #include "tnct/container/trt/index_traits.h"
 
 namespace tnct::container::trt {
@@ -17,7 +16,7 @@ template <typename t_object_type, typename t_field_type,
                                  const t_object_type &> &&
            std::is_invocable_r_v<void, t_field_setter, t_object_type &,
                                  t_field_type>)
-struct field_definition {
+struct attribute_definition {
   using object_type = t_object_type;
   using field_type = t_field_type;
   using field_getter = t_field_getter;

@@ -17,8 +17,8 @@
 #include <utility>
 
 #include "tnct/container/cpt/field_definition.h"
+#include "tnct/container/trt/are_fields_definitions_compatible.h"
 #include "tnct/container/trt/index_traits.h"
-#include "tnct/log/cpt/logger.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
 #include "tnct/tuple/cpt/index_within_tuple.h"
@@ -46,23 +46,22 @@ namespace tnct::container::dat {
 /// can check if A has not become std::nullopt by another thread
 ///
 /// \example tnct/container/exp/multi_index/main.cpp
-template <typename t_object,
-          cpt::field_definition<t_object>... t_fields_definitions>
-  requires(
-      (sizeof...(t_fields_definitions) > 0) &&
-      (std::is_same_v<typename t_fields_definitions::object_type, t_object> &&
-       ...))
+template <cpt::field_definition... t_fields_definitions>
+  requires(trt::are_fields_definition_compatible_v<t_fields_definitions...>)
 
 class multi_index_t final {
 
 public:
+  using fields_definitions = std::tuple<t_fields_definitions...>;
+
   struct record;
 
-  using optional = std::optional<t_object>;
+  using object =
+      typename std::tuple_element_t<0, fields_definitions>::object_type;
+
+  using optional = std::optional<object>;
 
   using record_ref = std::reference_wrapper<record>;
-
-  using fields_definitions = std::tuple<t_fields_definitions...>;
 
   template <std::size_t t_field_pos>
   using field_t = typename std::tuple_element_t<t_field_pos,
@@ -131,7 +130,7 @@ public:
     }
 
   private:
-    record(t_object &&p_object, std::reference_wrapper<indexes> p_indexes)
+    record(object &&p_object, std::reference_wrapper<indexes> p_indexes)
         : m_optional{std::move(p_object)}, m_indexes(p_indexes) {
       reset_index_iterators();
     }
@@ -181,7 +180,7 @@ public:
   multi_index_t &operator=(const multi_index_t &) = delete;
   multi_index_t &operator=(multi_index_t &&) = delete;
 
-  std::optional<record_ref> add(t_object &&p_object) {
+  std::optional<record_ref> add(object &&p_object) {
 
     std::lock_guard<std::mutex> _lock{m_mutex};
 
@@ -353,20 +352,6 @@ private:
   static constexpr bool is_calculated_index() {
     return is_index<t_field_pos> &&
            std::tuple_element_t<t_field_pos, fields_definitions>::is_calculated;
-  }
-
-  template <std::size_t t_field_pos>
-  std::optional<index_iterator_t<t_field_pos>>
-  exists(const field_t<t_field_pos> &p_key) {
-    using index_iterator = index_iterator_t<t_field_pos>;
-    using index = index_t<t_field_pos>;
-
-    index &_index{std::get<t_field_pos>(m_indexes)};
-
-    if (index_iterator _ite{_index.find(p_key)}; _ite == _index.end()) {
-      return {_ite};
-    }
-    return std::nullopt;
   }
 
   template <std::size_t t_field_pos>
