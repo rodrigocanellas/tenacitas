@@ -6,7 +6,6 @@
 #include <iostream>
 
 #include "tnct/container/dat/multi_index.h"
-#include "tnct/container/trt/are_fields_definitions_compatible.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
 
@@ -70,20 +69,16 @@ using field_0 = index_definition<
     decltype([](xpto &p_xpto, int p_i) -> void { p_xpto.set_i(p_i); }),
     std_map_id>;
 
-static_assert(tnct::container::cpt::field_definition<field_0>);
-
 using field_1 = index_definition<
     xpto, float,
     decltype([](const xpto &p_xpto) -> float { return p_xpto.get_f(); }),
     decltype([](xpto &p_xpto, float p_f) -> void { p_xpto.set_f(p_f); }),
     std_multimap_id>;
-static_assert(tnct::container::cpt::field_definition<field_1>);
 
 using field_2 = attribute_definition<
     xpto, std::string,
     decltype([](const xpto &p_xpto) -> std::string { return p_xpto.get_s(); }),
     decltype([](xpto &p_xpto, std::string p_s) -> void { p_xpto.set_s(p_s); })>;
-static_assert(tnct::container::cpt::field_definition<field_2>);
 
 using field_3 =
     calculated_index_definition<xpto, float,
@@ -92,10 +87,6 @@ using field_3 =
                                                             p_xpto.get_i());
                                 }),
                                 std_multimap_id>;
-static_assert(tnct::container::cpt::field_definition<field_3>);
-
-static_assert(
-    tnct::container::trt::are_fields_definition_compatible_v<field_0, field_1>);
 
 using xpto_indexes =
     tnct::container::dat::multi_index_t<field_0, field_1, field_2, field_3>;

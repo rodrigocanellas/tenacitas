@@ -39,7 +39,7 @@ static constexpr bool field_compatibility_helper() {
 }
 
 template <cpt::field_definition... t_fields_definitions>
-struct are_fields_definition_compatible {
+struct fields_definition_are_compatible {
   static constexpr bool value =
       (sizeof...(t_fields_definitions) == 1) ||
       ((sizeof...(t_fields_definitions) > 0) &&
@@ -47,8 +47,8 @@ struct are_fields_definition_compatible {
 };
 
 template <cpt::field_definition... t_fields_definitions>
-static constexpr bool are_fields_definition_compatible_v =
-    are_fields_definition_compatible<t_fields_definitions...>::value;
+static constexpr bool fields_definition_are_compatible_v =
+    fields_definition_are_compatible<t_fields_definitions...>::value;
 
 } // namespace tnct::container::trt
 
