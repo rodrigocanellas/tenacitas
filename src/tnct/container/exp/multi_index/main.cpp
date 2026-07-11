@@ -59,13 +59,15 @@ private:
   std::string m_s{"hi"};
 };
 
+using tnct::container::trt::calculated_index_definition;
 using tnct::container::trt::field_definition;
+using tnct::container::trt::index_definition;
 using tnct::container::trt::std_map_id;
 using tnct::container::trt::std_multimap_id;
 
 using xpto_indexes = tnct::container::dat::multi_index_t<
     xpto, tnct::log::cerr,
-    field_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
+    index_definition<xpto, int, decltype([](const xpto &p_xpto) -> int {
                        return p_xpto.get_i();
                      }),
                      decltype([](xpto &p_xpto, int p_i) -> void {
@@ -73,7 +75,7 @@ using xpto_indexes = tnct::container::dat::multi_index_t<
                      }),
                      std_map_id>,
 
-    field_definition<xpto, float, decltype([](const xpto &p_xpto) -> float {
+    index_definition<xpto, float, decltype([](const xpto &p_xpto) -> float {
                        return p_xpto.get_f();
                      }),
                      decltype([](xpto &p_xpto, float p_f) -> void {
@@ -87,7 +89,14 @@ using xpto_indexes = tnct::container::dat::multi_index_t<
                      }),
                      decltype([](xpto &p_xpto, std::string p_s) -> void {
                        p_xpto.set_s(p_s);
-                     })>
+                     })>,
+
+    calculated_index_definition<xpto, float,
+                                decltype([](const xpto &p_xpto) -> float {
+                                  return static_cast<float>(p_xpto.get_f() *
+                                                            p_xpto.get_i());
+                                }),
+                                std_multimap_id>
 
     >;
 
@@ -142,8 +151,10 @@ int main() {
   _xpto_indexes.erase<2>("ouch");
   std::cout << _xpto_indexes << std::endl;
 
-  std::cout << "\n###### Find from index 0 where key is -2 and update field 1 "
-               "from -7.85 to 0.38\n";
+  const xpto _expected{-2, -73.45f, "see u"};
+  std::cout << "\n###### Find from index 0 where key is -2, update field 1 "
+               "from -7.85 to -73.45 and confirm that the xpto indexed 2 is "
+            << _expected << "\n";
   _records = _xpto_indexes.get<0>(-2);
   if (_records.size() != 1) {
     std::cout << "ERROR: found " << _records.size() << std::endl;
@@ -151,7 +162,18 @@ int main() {
   }
 
   record_ref _ref{_records[0]};
-  _xpto_indexes.update<1>(_ref, 0.38);
+  _xpto_indexes.update<1>(_ref, -73.45);
+
+  _records = _xpto_indexes.get<3>(146.9);
+  if (_records.size() != 1) {
+    std::cout << "ERROR: found " << _records.size() << std::endl;
+    return -1;
+  }
+
+  if (_records[0].get().get_optional().value() != _expected) {
+    std::cout << "ERROR: xpto should be " << _expected << ", but it is "
+              << _records[0].get().get_optional().value() << '\n';
+  }
 
   std::cout << _xpto_indexes << std::endl;
 
@@ -166,15 +188,5 @@ int main() {
   _ref = _records[0];
   _xpto_indexes.update<2>(_ref, "hi!!");
 
-  std::cout << _xpto_indexes << std::endl;
-
-  std::cout
-      << "\n###### Adding a new object to verify reuse of slots in the table\n";
-  _xpto_indexes.add({11, 4.59, "reuse it!"});
-  std::cout << _xpto_indexes << std::endl;
-
-  std::cout << "\n###### Deleting just inserted object to verify that it "
-               "behaves like an object inserted without table slot reuse\n";
-  _xpto_indexes.erase<0>(11);
   std::cout << _xpto_indexes << std::endl;
 }
