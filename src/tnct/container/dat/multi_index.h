@@ -10,13 +10,13 @@
 #include <iostream>
 #include <iterator>
 #include <list>
+#include <mutex>
 #include <optional>
 #include <ostream>
 #include <tuple>
 #include <utility>
 
 #include "tnct/container/cpt/field_definition.h"
-#include "tnct/container/dat/circular_queue.h"
 #include "tnct/container/trt/index_traits.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/pair/output.h"
@@ -173,14 +173,7 @@ public:
     index_iterators m_index_iterators;
   };
 
-  multi_index_t(std::reference_wrapper<logger> p_logger)
-      : m_logger{p_logger},
-        m_available_records_slots{
-            available_records_slots::create(m_logger.get())} {
-    if (!m_available_records_slots.has_value()) {
-      throw std::runtime_error("error creating available_records_slots");
-    }
-  }
+  multi_index_t(std::reference_wrapper<logger> p_logger) : m_logger{p_logger} {}
 
   multi_index_t(const multi_index_t &) = delete;
   multi_index_t(multi_index_t &&) = delete;
@@ -192,20 +185,11 @@ public:
 
   std::optional<record_ref> add(t_object &&p_object) {
 
-    auto create_record{[&]() -> record_ref {
-      if (!m_available_records_slots.value().empty()) {
-        std::optional<record_ref> _optional_record_ref{
-            m_available_records_slots.value().pop()};
-        _optional_record_ref.value().get().get_internal_optional() =
-            std::move(p_object);
-        return _optional_record_ref.value();
-      } else {
-        m_table.push_back({std::move(p_object), m_indexes});
-        return record_ref{*std::prev(m_table.end())};
-      }
-    }};
+    std::lock_guard<std::mutex> _lock{m_mutex};
 
-    record_ref _record_ref{create_record()};
+    m_table.push_back({std::move(p_object), m_indexes});
+
+    record_ref _record_ref{*std::prev(m_table.end())};
 
     bool _error{false};
     auto _visitor{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_field_pos>() {
@@ -247,6 +231,7 @@ public:
   template <std::size_t t_field_pos>
     requires(tuple::cpt::index_within_tuple<fields_definitions, t_field_pos>)
   std::vector<record_ref> get(const field_t<t_field_pos> &p_field) {
+
     std::vector<record_ref> _res;
     if constexpr (is_index<t_field_pos>()) {
       _res = get_by_index<t_field_pos>(p_field);
@@ -260,13 +245,13 @@ public:
                 });
     }
 
-    return std::move(_res);
+    return _res;
   }
 
   template <std::size_t t_field_pos>
     requires(tuple::cpt::index_within_tuple<fields_definitions, t_field_pos>)
   void erase(const field_t<t_field_pos> &p_field) {
-
+    std::lock_guard<std::mutex> _lock{m_mutex};
     if constexpr (is_index<t_field_pos>()) {
       erase_by_index<t_field_pos>(p_field);
     } else {
@@ -282,12 +267,16 @@ public:
       return;
     }
 
+    std::lock_guard<std::mutex> _lock{m_mutex};
+
     if constexpr (is_index<t_field_pos>()) {
       update_index<t_field_pos>(p_record_ref, p_field);
     } else {
       field_setter_t<t_field_pos>{}(
           p_record_ref.get().get_internal_optional().value(), p_field);
     }
+
+    update_calculated_indexes(p_record_ref);
   }
 
   friend std::ostream &operator<<(std::ostream &p_out,
@@ -351,8 +340,6 @@ private:
       typename std::tuple_element_t<t_field_pos,
                                     fields_definitions>::field_setter;
 
-  using available_records_slots = circular_queue<logger, record_ref>;
-
 private:
   template <std::size_t t_field_pos> static constexpr bool is_index() {
     return !std::is_same_v<std::tuple_element_t<t_field_pos, indexes>,
@@ -362,6 +349,12 @@ private:
   template <std::size_t t_field_pos> static constexpr bool is_iterator() {
     return !std::is_same_v<std::tuple_element_t<t_field_pos, index_iterators>,
                            trt::no_iterator_type>;
+  }
+
+  template <std::size_t t_field_pos>
+  static constexpr bool is_calculated_index() {
+    return is_index<t_field_pos> &&
+           std::tuple_element_t<t_field_pos, fields_definitions>::is_calculated;
   }
 
   template <std::size_t t_field_pos>
@@ -381,38 +374,47 @@ private:
   template <std::size_t t_field_pos>
   bool update_index(record_ref p_record_ref,
                     const field_t<t_field_pos> &p_field) {
+
     auto &_record = p_record_ref.get();
-
-    if (!_record.get_optional().has_value()) {
-      return false;
-    }
-
-    auto &_object = _record.get_internal_optional().value();
-
-    const field_t<t_field_pos> _old_field{
-        field_getter_t<t_field_pos>{}(_object)};
-
-    if (_old_field == p_field) {
-      return true;
-    }
-
-    auto &_index = std::get<t_field_pos>(m_indexes);
-
-    auto [_new_ite, _inserted] = _index.emplace(p_field, p_record_ref);
-
-    if (!_inserted) {
-      return false;
-    }
 
     auto &_iterators = _record.get_index_iterators();
 
-    _index.erase(std::get<t_field_pos>(_iterators));
+    auto &_index = std::get<t_field_pos>(m_indexes);
 
-    std::get<t_field_pos>(_iterators) = _new_ite;
+    if (std::get<t_field_pos>(_iterators)->first != p_field) {
+      auto &_object = _record.get_internal_optional().value();
 
-    field_setter_t<t_field_pos>{}(_object, p_field);
+      _index.erase(std::get<t_field_pos>(_iterators));
+
+      auto [_new_ite, _inserted] = _index.emplace(p_field, p_record_ref);
+
+      if (!_inserted) {
+        return false;
+      }
+
+      std::get<t_field_pos>(_iterators) = _new_ite;
+
+      field_setter_t<t_field_pos>{}(_object, p_field);
+    }
 
     return true;
+  }
+
+  void update_calculated_indexes(record_ref p_record_ref) {
+
+    auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
+      if constexpr (is_calculated_index<t_pos>()) {
+        using field_getter = field_getter_t<t_pos>;
+        field_getter _field_getter;
+        update_index<t_pos>(
+            p_record_ref.get(),
+            _field_getter(p_record_ref.get().get_internal_optional().value()));
+      }
+      return true;
+    }
+
+    };
+    tuple::bus::traverse<indexes, decltype(_visit)>(_visit);
   }
 
   template <std::size_t t_field_pos>
@@ -428,11 +430,9 @@ private:
 
       if (std::next(_range.first) == _range.second) {
         erase_record(_range.first->second);
-        m_available_records_slots.value().push(_range.first->second);
       } else {
         for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
           erase_record(_ite->second);
-          m_available_records_slots.value().push(_ite->second);
         }
       }
     }
@@ -446,7 +446,6 @@ private:
           _optional.has_value() &&
           (p_field == field_getter{}(_optional.value()))) {
         erase_record(_record);
-        m_available_records_slots.value().push(_record);
       }
     }
   }
@@ -467,7 +466,7 @@ private:
       if (_ite->second.get().get_optional().has_value())
         _res.push_back(record_ref{_ite->second.get()});
     }
-    return std::move(_res);
+    return _res;
   }
 
   template <std::size_t t_field_pos>
@@ -480,7 +479,7 @@ private:
         _res.push_back(record_ref{_record});
       }
     }
-    return std::move(_res);
+    return _res;
   }
 
   void erase_indexes(index_iterators &p_index_iterators) {
@@ -511,9 +510,9 @@ private:
 
 private:
   std::reference_wrapper<logger> m_logger;
-  std::optional<available_records_slots> m_available_records_slots;
   table m_table;
   indexes m_indexes;
+  std::mutex m_mutex;
 };
 
 } // namespace tnct::container::dat

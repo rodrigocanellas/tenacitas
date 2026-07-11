@@ -12,8 +12,7 @@
 namespace tnct::container::trt {
 
 template <typename t_object_type, typename t_field_type,
-          typename t_field_getter, typename t_field_setter,
-          typename t_index_id = trt::no_index_id>
+          typename t_field_getter, typename t_field_setter>
   requires(std::is_invocable_r_v<t_field_type, t_field_getter,
                                  const t_object_type &> &&
            std::is_invocable_r_v<void, t_field_setter, t_object_type &,
@@ -23,7 +22,36 @@ struct field_definition {
   using field_type = t_field_type;
   using field_getter = t_field_getter;
   using field_setter = t_field_setter;
+  using index_id = trt::no_index_id;
+  static constexpr bool is_calculated{false};
+};
+
+template <typename t_object_type, typename t_field_type,
+          typename t_field_getter, typename t_field_setter, typename t_index_id>
+  requires(std::is_invocable_r_v<t_field_type, t_field_getter,
+                                 const t_object_type &> &&
+           std::is_invocable_r_v<void, t_field_setter, t_object_type &,
+                                 t_field_type>)
+struct index_definition {
+  using object_type = t_object_type;
+  using field_type = t_field_type;
+  using field_getter = t_field_getter;
+  using field_setter = t_field_setter;
   using index_id = t_index_id;
+  static constexpr bool is_calculated{false};
+};
+
+template <typename t_object_type, typename t_field_type,
+          typename t_field_getter, typename t_index_id>
+  requires(std::is_invocable_r_v<t_field_type, t_field_getter,
+                                 const t_object_type &>)
+struct calculated_index_definition {
+  using object_type = t_object_type;
+  using field_type = t_field_type;
+  using field_getter = t_field_getter;
+  using field_setter = decltype([](t_object_type &, field_type) {});
+  using index_id = t_index_id;
+  static constexpr bool is_calculated{true};
 };
 
 /* &&

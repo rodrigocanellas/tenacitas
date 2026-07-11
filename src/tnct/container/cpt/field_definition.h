@@ -40,6 +40,8 @@ concept field_definition = requires {
 
   typename t::index_id;
 
+  requires std::same_as<std::remove_cv_t<decltype(t::is_calculated)>, bool>;
+
   requires(std::same_as<t_object, typename t::object_type>);
 
   requires(std::is_move_constructible_v<typename t::object_type>);
