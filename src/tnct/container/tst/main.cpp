@@ -8,13 +8,13 @@
 #include "tnct/container/tst/circular_queue_test.h"
 #include "tnct/container/tst/cpt_test.h"
 #include "tnct/container/tst/matrix_test.h"
+#include "tnct/container/tst/multi_index_test.h"
 #include "tnct/container/tst/multiply_matrix_row_test.h"
 #include "tnct/container/tst/multiply_matrix_test.h"
 
 using namespace tnct;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
   tester::bus::test _tester(argc, argv);
   run_test(_tester, container::tst::circular_queue_001);
@@ -35,4 +35,14 @@ int main(int argc, char **argv)
   run_test(_tester, container::tst::multiply_matrix_001);
 
   run_test(_tester, container::tst::multiply_matrix_row_000);
+
+  run_test(_tester, container::tst::multi_index_001);
+  run_test(_tester, container::tst::multi_index_002);
+  run_test(_tester, container::tst::multi_index_003);
+  run_test(_tester, container::tst::multi_index_004);
+  run_test(_tester, container::tst::multi_index_005);
+  run_test(_tester, container::tst::multi_index_006);
+  run_test(_tester, container::tst::multi_index_007);
+  run_test(_tester, container::tst::multi_index_008);
+  run_test(_tester, container::tst::multi_index_009);
 }
