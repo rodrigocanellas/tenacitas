@@ -17,13 +17,16 @@
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
+#include "tnct/format/bus/fmt.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
 #include "tnct/program/bus/options.h"
 
+using tnct::format::bus::fmt;
+
 namespace tnct::container::tst {
 
-namespace multi_index_test_detail {
+namespace std_multimap_index_id {
 
 struct object {
   object() = default;
@@ -73,14 +76,14 @@ private:
 using tnct::container::trt::attribute_definition;
 using tnct::container::trt::calculated_index_definition;
 using tnct::container::trt::index_definition;
-using tnct::container::trt::std_map_id;
-using tnct::container::trt::std_multimap_id;
+using tnct::container::trt::std_map_index_id;
+using tnct::container::trt::std_multimap_index_id;
 
 using id_field = index_definition<
     object, int,
     decltype([](const object &p_object) -> int { return p_object.get_id(); }),
     decltype([](object &p_object, int p_id) -> void { p_object.set_id(p_id); }),
-    std_map_id>;
+    std_map_index_id>;
 
 using score_field =
     index_definition<object, float,
@@ -90,7 +93,7 @@ using score_field =
                      decltype([](object &p_object, float p_score) -> void {
                        p_object.set_score(p_score);
                      }),
-                     std_multimap_id>;
+                     std_multimap_index_id>;
 
 using name_field = attribute_definition<
     object, std::string, decltype([](const object &p_object) -> std::string {
@@ -99,6 +102,18 @@ using name_field = attribute_definition<
     decltype([](object &p_object, std::string p_name) -> void {
       p_object.set_name(std::move(p_name));
     })>;
+
+using id_name_calculated_field = calculated_index_definition<
+    object, std::string, decltype([](const object &p_object) -> std::string {
+      return std::to_string(p_object.get_id()) + ":" + p_object.get_name();
+    }),
+    std_multimap_index_id>;
+
+using name_calculated_field = calculated_index_definition<
+    object, std::string, decltype([](const object &p_object) -> std::string {
+      return p_object.get_name();
+    }),
+    std_multimap_index_id>;
 
 using logger = tnct::log::cerr;
 using index = tnct::container::dat::multi_index_t<logger, id_field, score_field,
@@ -133,7 +148,44 @@ inline bool one_live_by_id(index &p_index, int p_id, float p_score,
   return (records.size() == 1) && has_object(records, p_id, p_score, p_name);
 }
 
-} // namespace multi_index_test_detail
+template <typename t_record_ref>
+inline bool has_object_in(const std::vector<t_record_ref> &p_records, int p_id,
+                          float p_score, std::string_view p_name) {
+  for (const t_record_ref &r : p_records) {
+    if (!r.get().get_optional().has_value()) {
+      continue;
+    }
+
+    const object &obj{r.get().get_optional().value()};
+
+    if ((obj.get_id() == p_id) && (obj.get_score() == p_score) &&
+        (obj.get_name() == p_name)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+using rollback_index =
+    tnct::container::dat::multi_index_t<logger, score_field, id_field,
+                                        name_field>;
+
+using rollback_record_ref = typename rollback_index::record_ref;
+
+using calculated_index =
+    tnct::container::dat::multi_index_t<logger, id_field, score_field,
+                                        name_field, id_name_calculated_field>;
+
+using calculated_record_ref = typename calculated_index::record_ref;
+
+using calculated_name_index =
+    tnct::container::dat::multi_index_t<logger, id_field, score_field,
+                                        name_field, name_calculated_field>;
+
+using calculated_name_record_ref = typename calculated_name_index::record_ref;
+
+} // namespace std_multimap_index_id
 
 struct multi_index_001 {
   static std::string desc() {
@@ -142,7 +194,7 @@ struct multi_index_001 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -185,7 +237,7 @@ struct multi_index_002 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -225,7 +277,7 @@ struct multi_index_003 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -275,7 +327,7 @@ struct multi_index_004 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -309,7 +361,7 @@ struct multi_index_005 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -349,7 +401,7 @@ struct multi_index_006 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -379,7 +431,7 @@ struct multi_index_007 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
+    using namespace std_multimap_index_id;
 
     logger _logger;
     index idx{_logger};
@@ -388,21 +440,175 @@ struct multi_index_007 {
     auto r2 = idx.add(object{2, 20.0F, "same"});
     auto r3 = idx.add(object{3, 30.0F, "other"});
 
-    if (!r1 || !r2 || !r3) {
+    if (!r1) {
+      TNCT_LOG_ERR(_logger, fmt("r1 should have been added, but it was not "));
+      return false;
+    }
+
+    if (!r2) {
+      TNCT_LOG_ERR(_logger, fmt("r2 should have been added, but it was not "));
+      return false;
+    }
+
+    if (!r3) {
+      TNCT_LOG_ERR(_logger, fmt("r3 should have been added, but it was not "));
       return false;
     }
 
     idx.erase<2>(std::string{"same"});
 
     if (r1.value().get().get_optional().has_value()) {
+      TNCT_LOG_ERR(_logger, fmt("there should not be r1, but there is ",
+                                r1.value().get().get_optional().value()));
       return false;
     }
 
     if (r2.value().get().get_optional().has_value()) {
+      TNCT_LOG_ERR(_logger, fmt("there should not be r2, but there is ",
+                                r2.value().get().get_optional().value()));
       return false;
     }
 
     if (!r3.value().get().get_optional().has_value()) {
+      TNCT_LOG_ERR(_logger, fmt("there should be r3, but there is not"));
+      return false;
+    }
+
+    if (!idx.get<0>(1).empty()) {
+      TNCT_LOG_ERR(_logger, fmt("idx.get<0>(1) should return, but it did not"));
+      return false;
+    }
+
+    if (!idx.get<0>(2).empty()) {
+      TNCT_LOG_ERR(_logger, fmt("idx.get<0>(2) should return, but it did not"));
+      return false;
+    }
+
+    if (!idx.get<1>(10.0F).empty()) {
+      TNCT_LOG_ERR(_logger,
+                   fmt("idx.get<1>(10.0F) should return, but it did not"));
+      return false;
+    }
+
+    if (!idx.get<1>(20.0F).empty()) {
+      TNCT_LOG_ERR(_logger,
+                   fmt("idx.get<1>(20.0F) should return, but it did not"));
+      return false;
+    }
+
+    if (!one_live_by_id(idx, 3, 30.0F, "other")) {
+      TNCT_LOG_ERR(
+          _logger,
+          fmt("There should be one {3, 30.0F, \"other\"}, but there is not"));
+      return false;
+    }
+
+    return true;
+  }
+};
+
+struct multi_index_008 {
+  static std::string desc() {
+    return "multi_index: add rollback removes indexes already inserted before "
+           "a later unique index fails";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    rollback_index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+    auto r2 = idx.add(object{2, 20.0F, "two"});
+
+    if (!r1 || !r2) {
+      return false;
+    }
+
+    // In rollback_index, field 0 is score/multimap and field 1 is id/map.
+    // Therefore this insertion first succeeds in score, then fails in id.
+    auto dup = idx.add(object{1, 99.0F, "duplicated-id"});
+
+    if (dup.has_value()) {
+      return false;
+    }
+
+    if (!idx.get<0>(99.0F).empty()) {
+      return false;
+    }
+
+    std::vector<rollback_record_ref> id_1_records{idx.get<1>(1)};
+    std::vector<rollback_record_ref> id_2_records{idx.get<1>(2)};
+
+    if ((id_1_records.size() != 1) ||
+        !has_object_in(id_1_records, 1, 10.0F, "one")) {
+      return false;
+    }
+
+    if ((id_2_records.size() != 1) ||
+        !has_object_in(id_2_records, 2, 20.0F, "two")) {
+      return false;
+    }
+
+    return (idx.get<0>(10.0F).size() == 1) && (idx.get<0>(20.0F).size() == 1);
+  }
+};
+
+struct multi_index_009 {
+  static std::string desc() {
+    return "multi_index: erase with non-existing indexed key is a no-op";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+    auto r2 = idx.add(object{2, 20.0F, "two"});
+
+    if (!r1 || !r2) {
+      return false;
+    }
+
+    idx.erase<0>(999);
+
+    if (!r1.value().get().get_optional().has_value()) {
+      return false;
+    }
+
+    if (!r2.value().get().get_optional().has_value()) {
+      return false;
+    }
+
+    return one_live_by_id(idx, 1, 10.0F, "one") &&
+           one_live_by_id(idx, 2, 20.0F, "two");
+  }
+};
+
+struct multi_index_010 {
+  static std::string desc() {
+    return "multi_index: erasing the same indexed key twice is safe";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+
+    if (!r1) {
+      return false;
+    }
+
+    idx.erase<0>(1);
+    idx.erase<0>(1);
+
+    if (r1.value().get().get_optional().has_value()) {
       return false;
     }
 
@@ -410,19 +616,238 @@ struct multi_index_007 {
       return false;
     }
 
-    if (!idx.get<0>(2).empty()) {
-      return false;
-    }
-
     if (!idx.get<1>(10.0F).empty()) {
       return false;
     }
 
-    if (!idx.get<1>(20.0F).empty()) {
+    auto r2 = idx.add(object{1, 30.0F, "one-again"});
+
+    return r2.has_value() && one_live_by_id(idx, 1, 30.0F, "one-again");
+  }
+};
+
+struct multi_index_011 {
+  static std::string desc() {
+    return "multi_index: update on deleted record returns false and does not "
+           "reinsert it";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+
+    if (!r1) {
       return false;
     }
 
-    return one_live_by_id(idx, 3, 30.0F, "other");
+    idx.erase<0>(1);
+
+    const bool updated{idx.update<0>(r1.value(), 2)};
+
+    if (updated) {
+      return false;
+    }
+
+    if (r1.value().get().get_optional().has_value()) {
+      return false;
+    }
+
+    return idx.get<0>(1).empty() && idx.get<0>(2).empty() &&
+           idx.get<1>(10.0F).empty();
+  }
+};
+
+struct multi_index_012 {
+  static std::string desc() {
+    return "multi_index: update non-indexed field changes field lookup without "
+           "changing indexes";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+
+    if (!r1) {
+      return false;
+    }
+
+    const bool updated{idx.update<2>(r1.value(), std::string{"uno"})};
+
+    if (!updated) {
+      return false;
+    }
+
+    if (!idx.get<2>(std::string{"one"}).empty()) {
+      return false;
+    }
+
+    std::vector<record_ref> name_records{idx.get<2>(std::string{"uno"})};
+
+    if ((name_records.size() != 1) ||
+        !has_object_in(name_records, 1, 10.0F, "uno")) {
+      return false;
+    }
+
+    return one_live_by_id(idx, 1, 10.0F, "uno") &&
+           (idx.get<1>(10.0F).size() == 1);
+  }
+};
+
+struct multi_index_013 {
+  static std::string desc() {
+    return "multi_index: update one record among duplicated multimap keys";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    index idx{_logger};
+
+    auto r1 = idx.add(object{1, 7.0F, "one"});
+    auto r2 = idx.add(object{2, 7.0F, "two"});
+
+    if (!r1 || !r2) {
+      return false;
+    }
+
+    const bool updated{idx.update<1>(r1.value(), 8.0F)};
+
+    if (!updated) {
+      return false;
+    }
+
+    std::vector<record_ref> score_7_records{idx.get<1>(7.0F)};
+    std::vector<record_ref> score_8_records{idx.get<1>(8.0F)};
+
+    if ((score_7_records.size() != 1) ||
+        !has_object_in(score_7_records, 2, 7.0F, "two")) {
+      return false;
+    }
+
+    if ((score_8_records.size() != 1) ||
+        !has_object_in(score_8_records, 1, 8.0F, "one")) {
+      return false;
+    }
+
+    return one_live_by_id(idx, 1, 8.0F, "one") &&
+           one_live_by_id(idx, 2, 7.0F, "two");
+  }
+};
+
+struct multi_index_014 {
+  static std::string desc() {
+    return "multi_index: calculated index is updated after non-indexed field "
+           "update";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    calculated_index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+
+    if (!r1) {
+      return false;
+    }
+
+    if (idx.get<3>(std::string{"1:one"}).size() != 1) {
+      return false;
+    }
+
+    const bool updated{idx.update<2>(r1.value(), std::string{"uno"})};
+
+    if (!updated) {
+      return false;
+    }
+
+    if (!idx.get<3>(std::string{"1:one"}).empty()) {
+      return false;
+    }
+
+    std::vector<calculated_record_ref> records{
+        idx.get<3>(std::string{"1:uno"})};
+
+    return (records.size() == 1) && has_object_in(records, 1, 10.0F, "uno");
+  }
+};
+
+struct multi_index_015 {
+  static std::string desc() {
+    return "multi_index: failed calculated index update leaves record and "
+           "indexes unchanged";
+  }
+
+  bool operator()(const program::bus::options &) {
+    using namespace std_multimap_index_id;
+
+    logger _logger;
+    calculated_name_index idx{_logger};
+
+    auto r1 = idx.add(object{1, 10.0F, "one"});
+
+    auto r2 = idx.add(object{2, 20.0F, "two"});
+    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
+
+    if (!r1) {
+      TNCT_LOG_ERR(_logger, fmt("r1 should have been added, but it was not "));
+      return false;
+    }
+
+    if (!r2) {
+      TNCT_LOG_ERR(_logger, fmt("r2 should have been added, but it was not "));
+      return false;
+    }
+
+    const bool updated{idx.update<2>(r2.value(), std::string{"one"})};
+    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
+
+    if (!updated) {
+      TNCT_LOG_ERR(_logger, fmt("it should not have updated, but it dit"));
+      return false;
+    }
+
+    const object &obj_2{r2.value().get().get_optional().value()};
+
+    if ((obj_2.get_id() != 2) || (obj_2.get_score() != 20.0F) ||
+        (obj_2.get_name() != "two")) {
+      TNCT_LOG_ERR(_logger,
+                   fmt("object should be {2,20.0,\"two\"}, but it is ", obj_2));
+      return false;
+    }
+
+    std::vector<calculated_name_record_ref> name_one_records{
+        idx.get<3>(std::string{"one"})};
+
+    std::vector<calculated_name_record_ref> name_two_records{
+        idx.get<3>(std::string{"two"})};
+
+    const bool _has_object_in_1{
+        has_object_in(name_one_records, 1, 10.0F, "one")};
+
+    const bool _has_object_in_2{
+        has_object_in(name_two_records, 2, 20.0F, "two")};
+
+    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
+
+    TNCT_LOG_TST(_logger,
+                 fmt("name_one_records.size() = ", name_one_records.size(),
+                     ", _has_object_in = ", _has_object_in_1,
+                     ", name_two_records.size() = ", name_two_records.size(),
+                     ", _has_object_in_2 = ", _has_object_in_2));
+
+    return (name_one_records.size() == 1) && _has_object_in_1 &&
+           (name_two_records.size() == 1) && _has_object_in_2;
   }
 };
 

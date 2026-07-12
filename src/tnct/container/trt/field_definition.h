@@ -42,8 +42,11 @@ struct index_definition {
 
 template <typename t_object_type, typename t_field_type,
           typename t_field_getter, typename t_index_id>
-  requires(std::is_invocable_r_v<t_field_type, t_field_getter,
-                                 const t_object_type &>)
+  requires(
+      std::is_invocable_r_v<t_field_type, t_field_getter,
+                            const t_object_type &> &&
+      (trt::index_traits<t_index_id, t_field_type, t_object_type>::unique ==
+       false))
 struct calculated_index_definition {
   using object_type = t_object_type;
   using field_type = t_field_type;

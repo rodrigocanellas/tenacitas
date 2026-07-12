@@ -61,20 +61,20 @@ private:
 using tnct::container::trt::attribute_definition;
 using tnct::container::trt::calculated_index_definition;
 using tnct::container::trt::index_definition;
-using tnct::container::trt::std_map_id;
-using tnct::container::trt::std_multimap_id;
+using tnct::container::trt::std_map_index_id;
+using tnct::container::trt::std_multimap_index_id;
 
 using field_0 = index_definition<
     xpto, int,
     decltype([](const xpto &p_xpto) -> int { return p_xpto.get_i(); }),
     decltype([](xpto &p_xpto, int p_i) -> void { p_xpto.set_i(p_i); }),
-    std_map_id>;
+    std_map_index_id>;
 
 using field_1 = index_definition<
     xpto, float,
     decltype([](const xpto &p_xpto) -> float { return p_xpto.get_f(); }),
     decltype([](xpto &p_xpto, float p_f) -> void { p_xpto.set_f(p_f); }),
-    std_multimap_id>;
+    std_multimap_index_id>;
 
 using field_2 = attribute_definition<
     xpto, std::string,
@@ -87,7 +87,7 @@ using field_3 =
                                   return static_cast<float>(p_xpto.get_f() *
                                                             p_xpto.get_i());
                                 }),
-                                std_multimap_id>;
+                                std_multimap_index_id>;
 
 using logger = tnct::log::cerr;
 using xpto_indexes =
