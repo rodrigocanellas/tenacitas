@@ -20,9 +20,9 @@
 #include "tnct/container/internal/trt/multi_index_types.h"
 #include "tnct/container/trt/fields_definitions_are_compatible.h"
 #include "tnct/container/trt/index_traits.h"
+#include "tnct/log/cpt/logger.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
-#include "tnct/tuple/cpt/index_within_tuple.h"
 #include "tnct/tuple/cpt/is_tuple.h"
 #include "tnct/tuple/output.h"
 
@@ -47,11 +47,14 @@ namespace tnct::container::dat {
 /// can check if A has not become std::nullopt by another thread
 ///
 /// \example tnct/container/exp/multi_index/main.cpp
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_loggerr,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 class multi_index_t final {
 
 public:
+  using logger = t_loggerr;
+
   using fields_definitions = std::tuple<t_fields_definitions...>;
 
   struct record;
@@ -153,7 +156,7 @@ public:
     index_iterators m_index_iterators;
   };
 
-  multi_index_t() = default;
+  multi_index_t(std::reference_wrapper<logger> p_logger) : m_logger(p_logger) {}
 
   multi_index_t(const multi_index_t &) = delete;
   multi_index_t(multi_index_t &&) = delete;
@@ -172,7 +175,7 @@ public:
   void erase(const field_t<t_field_pos> &p_field);
 
   template <std::size_t t_field_pos>
-  void update(record_ref p_record_ref, const field_t<t_field_pos> &p_field);
+  bool update(record_ref p_record_ref, const field_t<t_field_pos> &p_field);
 
   friend std::ostream &operator<<(std::ostream &p_out,
                                   multi_index_t &p_multi_index) {
@@ -271,7 +274,7 @@ private:
   bool update_index(record_ref p_record_ref,
                     const field_t<t_field_pos> &p_field);
 
-  void update_calculated_indexes(record_ref p_record_ref);
+  bool update_calculated_indexes(record_ref p_record_ref);
 
   template <std::size_t t_field_pos>
   void erase_by_index(const field_t<t_field_pos> &p_field);
@@ -290,16 +293,20 @@ private:
   void erase_record(record_ref p_record_ref);
 
 private:
+  std::reference_wrapper<logger> m_logger;
   table m_table;
   indexes m_indexes;
   std::mutex m_mutex;
 };
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-std::optional<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::add(
-    typename multi_index_t<t_fields_definitions...>::object &&p_object) {
+std::optional<
+    typename multi_index_t<t_logger, t_fields_definitions...>::record_ref>
+multi_index_t<t_logger, t_fields_definitions...>::add(
+    typename multi_index_t<t_logger, t_fields_definitions...>::object
+        &&p_object) {
 
   std::lock_guard<std::mutex> _lock{m_mutex};
 
@@ -342,13 +349,16 @@ multi_index_t<t_fields_definitions...>::add(
   return {_record_ref};
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::get(
-    const typename multi_index_t<t_fields_definitions...>::template field_t<
-        t_field_pos> &p_field) {
+std::vector<
+    typename multi_index_t<t_logger, t_fields_definitions...>::record_ref>
+multi_index_t<t_logger, t_fields_definitions...>::
+
+    get(const field_t<t_field_pos> &p_field) {
+
   std::vector<record_ref> _res;
   if constexpr (is_index<t_field_pos>()) {
     _res = get_by_index<t_field_pos>(p_field);
@@ -365,11 +375,13 @@ multi_index_t<t_fields_definitions...>::get(
   return _res;
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::erase(
-    const field_t<t_field_pos> &p_field) {
+void multi_index_t<t_logger, t_fields_definitions...>::
+
+    erase(const field_t<t_field_pos> &p_field) {
   std::lock_guard<std::mutex> _lock{m_mutex};
   if constexpr (is_index<t_field_pos>()) {
     erase_by_index<t_field_pos>(p_field);
@@ -378,52 +390,57 @@ void multi_index_t<t_fields_definitions...>::erase(
   }
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::update(
-    record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
+bool multi_index_t<t_logger, t_fields_definitions...>::
+
+    update(record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
 
   if (!p_record_ref.get().get_optional().has_value()) {
-    return;
+    return false;
   }
 
   std::lock_guard<std::mutex> _lock{m_mutex};
 
+  bool _ok{true};
   if constexpr (is_index<t_field_pos>()) {
-    update_index<t_field_pos>(p_record_ref, p_field);
+    _ok = update_index<t_field_pos>(p_record_ref, p_field);
   } else {
     field_setter_t<t_field_pos>{}(
         p_record_ref.get().get_internal_optional().value(), p_field);
   }
 
-  update_calculated_indexes(p_record_ref);
+  return (!_ok ? _ok : update_calculated_indexes(p_record_ref));
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-bool multi_index_t<t_fields_definitions...>::update_index(
-    record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
+bool multi_index_t<t_logger, t_fields_definitions...>::
 
-  auto &_record = p_record_ref.get();
+    update_index(record_ref p_record_ref, const field_t<t_field_pos> &p_field) {
 
-  auto &_iterators = _record.get_index_iterators();
+  record &_record = p_record_ref.get();
 
-  auto &_index = std::get<t_field_pos>(m_indexes);
+  index_iterators &_index_iterators = _record.get_index_iterators();
 
-  if (std::get<t_field_pos>(_iterators)->first != p_field) {
-    auto &_object = _record.get_internal_optional().value();
+  index_t<t_field_pos> &_index = std::get<t_field_pos>(m_indexes);
 
-    _index.erase(std::get<t_field_pos>(_iterators));
-
+  if (std::get<t_field_pos>(_index_iterators)->first != p_field) {
     auto [_new_ite, _inserted] = _index.emplace(p_field, p_record_ref);
 
     if (!_inserted) {
       return false;
     }
 
-    std::get<t_field_pos>(_iterators) = _new_ite;
+    object &_object = _record.get_internal_optional().value();
+
+    _index.erase(std::get<t_field_pos>(_index_iterators));
+
+    std::get<t_field_pos>(_index_iterators) = _new_ite;
 
     field_setter_t<t_field_pos>{}(_object, p_field);
   }
@@ -431,30 +448,41 @@ bool multi_index_t<t_fields_definitions...>::update_index(
   return true;
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::update_calculated_indexes(
-    record_ref p_record_ref) {
+bool multi_index_t<t_logger, t_fields_definitions...>::
+
+    update_calculated_indexes(record_ref p_record_ref) {
+  bool _ok{true};
   auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
     if constexpr (is_calculated_index<t_pos>()) {
       using field_getter = field_getter_t<t_pos>;
       field_getter _field_getter;
-      update_index<t_pos>(
-          p_record_ref.get(),
-          _field_getter(p_record_ref.get().get_internal_optional().value()));
+      if (!update_index<t_pos>(
+              p_record_ref.get(),
+              _field_getter(
+                  p_record_ref.get().get_internal_optional().value()))) {
+        _ok = false;
+        return false;
+      }
     }
     return true;
   }
 
   };
   tuple::bus::traverse<indexes, decltype(_visit)>(_visit);
+
+  return _ok;
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::erase_by_index(
-    const field_t<t_field_pos> &p_field) {
+void multi_index_t<t_logger, t_fields_definitions...>::
+
+    erase_by_index(const field_t<t_field_pos> &p_field) {
   if constexpr (is_index<t_field_pos>()) {
     using index = index_t<t_field_pos>;
 
@@ -481,11 +509,13 @@ void multi_index_t<t_fields_definitions...>::erase_by_index(
   }
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-void multi_index_t<t_fields_definitions...>::erase_by_field(
-    const field_t<t_field_pos> &p_field) {
+void multi_index_t<t_logger, t_fields_definitions...>::
+
+    erase_by_field(const field_t<t_field_pos> &p_field) {
   using field_getter = field_getter_t<t_field_pos>;
   for (record &_record : m_table) {
     if (optional & _optional{_record.get_internal_optional()};
@@ -496,19 +526,23 @@ void multi_index_t<t_fields_definitions...>::erase_by_field(
   }
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::erase_record(
-    record_ref p_record_ref) {
+void multi_index_t<t_logger, t_fields_definitions...>::
+
+    erase_record(record_ref p_record_ref) {
   erase_indexes(p_record_ref.get().get_index_iterators());
   p_record_ref.get().reset_index_iterators();
   p_record_ref.get().get_internal_optional().reset();
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::erase_indexes(
-    index_iterators &p_index_iterators) {
+void multi_index_t<t_logger, t_fields_definitions...>::
+
+    erase_indexes(index_iterators &p_index_iterators) {
   auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
     if constexpr (is_index<t_pos>()) {
 
@@ -528,12 +562,15 @@ void multi_index_t<t_fields_definitions...>::erase_indexes(
   tuple::bus::traverse<index_iterators, decltype(_visit)>(_visit);
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::get_by_field(
-    const field_t<t_field_pos> &p_field) {
+std::vector<
+    typename multi_index_t<t_logger, t_fields_definitions...>::record_ref>
+multi_index_t<t_logger, t_fields_definitions...>::
+
+    get_by_field(const field_t<t_field_pos> &p_field) {
   std::vector<record_ref> _res;
   for (record &_record : m_table) {
     if (const optional & _optional{_record.get_optional()};
@@ -545,12 +582,15 @@ multi_index_t<t_fields_definitions...>::get_by_field(
   return _res;
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 template <std::size_t t_field_pos>
-std::vector<typename multi_index_t<t_fields_definitions...>::record_ref>
-multi_index_t<t_fields_definitions...>::get_by_index(
-    const field_t<t_field_pos> &p_field) {
+std::vector<
+    typename multi_index_t<t_logger, t_fields_definitions...>::record_ref>
+multi_index_t<t_logger, t_fields_definitions...>::
+
+    get_by_index(const field_t<t_field_pos> &p_field) {
   using index = index_t<t_field_pos>;
   using index_iterator = index_iterator_t<t_field_pos>;
 
@@ -567,20 +607,24 @@ multi_index_t<t_fields_definitions...>::get_by_index(
   return _res;
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-multi_index_t<t_fields_definitions...>::record::record(
-    typename multi_index_t<t_fields_definitions...>::object &&p_object,
+multi_index_t<t_logger, t_fields_definitions...>::record::record(
+    typename multi_index_t<t_logger, t_fields_definitions...>::object
+        &&p_object,
     std::reference_wrapper<
-        typename multi_index_t<t_fields_definitions...>::indexes>
+        typename multi_index_t<t_logger, t_fields_definitions...>::indexes>
         p_indexes)
     : m_optional{std::move(p_object)}, m_indexes(p_indexes) {
   reset_index_iterators();
 }
 
-template <cpt::field_definition... t_fields_definitions>
+template <log::cpt::logger t_logger,
+          cpt::field_definition... t_fields_definitions>
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
-void multi_index_t<t_fields_definitions...>::record::reset_index_iterators() {
+void multi_index_t<t_logger,
+                   t_fields_definitions...>::record::reset_index_iterators() {
   auto _visit{[&]<tuple::cpt::is_tuple t_tuple, std::size_t t_pos>() {
     if constexpr (is_index<t_pos>()) {
       using index = index_t<t_pos>;
