@@ -191,7 +191,6 @@ public:
                       }
                       p_out << '\n';
                     });
-      std::cout << '\n';
     }
     {
       p_out << "\nindexes:\n";
@@ -304,9 +303,10 @@ template <log::cpt::logger t_logger,
   requires(trt::fields_definition_are_compatible_v<t_fields_definitions...>)
 std::optional<
     typename multi_index_t<t_logger, t_fields_definitions...>::record_ref>
-multi_index_t<t_logger, t_fields_definitions...>::add(
-    typename multi_index_t<t_logger, t_fields_definitions...>::object
-        &&p_object) {
+multi_index_t<t_logger, t_fields_definitions...>::
+
+    add(typename multi_index_t<t_logger, t_fields_definitions...>::object
+            &&p_object) {
 
   std::lock_guard<std::mutex> _lock{m_mutex};
 
@@ -492,18 +492,17 @@ void multi_index_t<t_logger, t_fields_definitions...>::
     std::pair<index_iterator, index_iterator> _range{
         _index.equal_range(p_field)};
 
-    if (std::next(_range.first) == _range.second) {
-      erase_record(_range.first->second);
-    } else {
-      index_iterator _ite{_range.first};
-      while (true) {
-        index_iterator _aux = _ite;
-        ++_ite;
-        erase_record(_aux->second);
+    if (_range.first == _range.second) {
+      return;
+    }
+    index_iterator _ite{_range.first};
+    while (true) {
+      index_iterator _aux = _ite;
+      ++_ite;
+      erase_record(_aux->second);
 
-        if (_ite == _range.second) {
-          break;
-        }
+      if (_ite == _range.second) {
+        break;
       }
     }
   }

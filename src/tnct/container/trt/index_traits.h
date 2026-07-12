@@ -10,20 +10,18 @@
 
 namespace tnct::container::trt {
 
-class std_map_id {};
-class std_multimap_id {};
-
+class std_map_index_id {};
+class std_multimap_index_id {};
 struct no_index_id {};
-struct no_index_type {};
-struct no_iterator_type {};
 
 template <typename t_index_id, typename t_key, typename t_value>
 struct index_traits;
 
 template <typename t_key, typename t_value>
-struct index_traits<std_map_id, t_key, t_value> {
+struct index_traits<std_map_index_id, t_key, t_value> {
   using index = std::map<t_key, t_value>;
   using iterator = index::iterator;
+  static constexpr bool unique = true;
 };
 
 template <typename t_key, typename t_ref> class std_multimap_index {
@@ -71,15 +69,20 @@ private:
 };
 
 template <typename t_key, typename t_value>
-struct index_traits<std_multimap_id, t_key, t_value> {
+struct index_traits<std_multimap_index_id, t_key, t_value> {
   using index = std_multimap_index<t_key, t_value>;
   using iterator = index::iterator;
+  static constexpr bool unique = false;
 };
+
+struct no_index_type {};
+struct no_iterator_type {};
 
 template <typename t_key, typename t_value>
 struct index_traits<no_index_id, t_key, t_value> {
   using index = no_index_type;
   using iterator = no_iterator_type;
+  static constexpr bool unique = false;
 };
 
 } // namespace tnct::container::trt

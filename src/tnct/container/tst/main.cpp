@@ -43,4 +43,12 @@ int main(int argc, char **argv) {
   run_test(_tester, container::tst::multi_index_005);
   run_test(_tester, container::tst::multi_index_006);
   run_test(_tester, container::tst::multi_index_007);
+  run_test(_tester, container::tst::multi_index_008);
+  run_test(_tester, container::tst::multi_index_009);
+  run_test(_tester, container::tst::multi_index_010);
+  run_test(_tester, container::tst::multi_index_011);
+  run_test(_tester, container::tst::multi_index_012);
+  run_test(_tester, container::tst::multi_index_013);
+  run_test(_tester, container::tst::multi_index_014);
+  run_test(_tester, container::tst::multi_index_015);
 }
