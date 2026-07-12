@@ -467,8 +467,15 @@ void multi_index_t<t_fields_definitions...>::erase_by_index(
     if (std::next(_range.first) == _range.second) {
       erase_record(_range.first->second);
     } else {
-      for (index_iterator _ite{_range.first}; _ite != _range.second; ++_ite) {
-        erase_record(_ite->second);
+      index_iterator _ite{_range.first};
+      while (true) {
+        index_iterator _aux = _ite;
+        ++_ite;
+        erase_record(_aux->second);
+
+        if (_ite == _range.second) {
+          break;
+        }
       }
     }
   }
