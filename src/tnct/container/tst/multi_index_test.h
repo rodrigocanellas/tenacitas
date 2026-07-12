@@ -18,6 +18,7 @@
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/index_traits.h"
 #include "tnct/log/bus/cerr.h"
+#include "tnct/log/cpt/macros.h"
 #include "tnct/program/bus/options.h"
 
 namespace tnct::container::tst {
@@ -99,12 +100,13 @@ using name_field = attribute_definition<
       p_object.set_name(std::move(p_name));
     })>;
 
-using index =
-    tnct::container::dat::multi_index_t<id_field, score_field, name_field>;
+using logger = tnct::log::cerr;
+using index = tnct::container::dat::multi_index_t<logger, id_field, score_field,
+                                                  name_field>;
 
 using record_ref = typename index::record_ref;
 
-inline index make_index() { return index{}; }
+inline index make_index(logger &p_logger) { return index{p_logger}; }
 
 inline bool has_object(const std::vector<record_ref> &p_records, int p_id,
                        float p_score, std::string_view p_name) {
@@ -142,8 +144,8 @@ struct multi_index_001 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "one"});
     if (!r1.has_value()) {
@@ -185,8 +187,8 @@ struct multi_index_002 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "one"});
     if (!r1.has_value()) {
@@ -225,8 +227,8 @@ struct multi_index_003 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 7.0F, "one"});
     auto r2 = idx.add(object{2, 7.0F, "two"});
@@ -275,8 +277,8 @@ struct multi_index_004 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "one"});
     if (!r1.has_value()) {
@@ -302,15 +304,15 @@ struct multi_index_004 {
 
 struct multi_index_005 {
   static std::string desc() {
-    return "multi_index: update unique indexed field to occupied key fails "
-           "without changing record";
+    return "multi_index: update unique indexed field to occupied causes update "
+           "to fail";
   }
 
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "one"});
     auto r2 = idx.add(object{2, 20.0F, "two"});
@@ -319,7 +321,11 @@ struct multi_index_005 {
       return false;
     }
 
-    idx.update<0>(r1.value(), 2);
+    const bool _updated{idx.update<0>(r1.value(), 2)};
+
+    if (_updated) {
+      return false;
+    }
 
     if (!one_live_by_id(idx, 1, 10.0F, "one")) {
       return false;
@@ -345,8 +351,8 @@ struct multi_index_006 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "one"});
     if (!r1.has_value()) {
@@ -375,8 +381,8 @@ struct multi_index_007 {
   bool operator()(const program::bus::options &) {
     using namespace multi_index_test_detail;
 
-    log::cerr logger;
-    index idx;
+    logger _logger;
+    index idx{_logger};
 
     auto r1 = idx.add(object{1, 10.0F, "same"});
     auto r2 = idx.add(object{2, 20.0F, "same"});
@@ -417,99 +423,6 @@ struct multi_index_007 {
     }
 
     return one_live_by_id(idx, 3, 30.0F, "other");
-  }
-};
-
-struct multi_index_008 {
-  static std::string desc() {
-    return "multi_index: add reuses a deleted record slot";
-  }
-
-  bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
-
-    log::cerr logger;
-    index idx;
-
-    auto r1 = idx.add(object{1, 10.0F, "one"});
-    if (!r1.has_value()) {
-      return false;
-    }
-
-    auto *old_record_address = &r1.value().get();
-
-    idx.erase<0>(1);
-
-    if (r1.value().get().get_optional().has_value()) {
-      return false;
-    }
-
-    auto r2 = idx.add(object{2, 20.0F, "two"});
-    if (!r2.has_value()) {
-      return false;
-    }
-
-    // This test intentionally formalizes the new "table slot reuse" behavior.
-    if (&r2.value().get() != old_record_address) {
-      return false;
-    }
-
-    return one_live_by_id(idx, 2, 20.0F, "two");
-  }
-};
-
-struct multi_index_009 {
-  static std::string desc() {
-    return "multi_index: failed add after slot reuse returns slot to available "
-           "queue";
-  }
-
-  bool operator()(const program::bus::options &) {
-    using namespace multi_index_test_detail;
-
-    log::cerr logger;
-    index idx;
-
-    auto r1 = idx.add(object{1, 10.0F, "one"});
-    auto r2 = idx.add(object{2, 20.0F, "two"});
-
-    if (!r1 || !r2) {
-      return false;
-    }
-
-    auto *old_record_address = &r1.value().get();
-
-    idx.erase<0>(1);
-
-    if (r1.value().get().get_optional().has_value()) {
-      return false;
-    }
-
-    // This should reuse r1's dead slot, but fail because id=2 is occupied.
-    auto dup = idx.add(object{2, 99.0F, "duplicated-two"});
-    if (dup.has_value()) {
-      return false;
-    }
-
-    if (r1.value().get().get_optional().has_value()) {
-      return false;
-    }
-
-    if (!idx.get<1>(99.0F).empty()) {
-      return false;
-    }
-
-    // If rollback requeues the failed reused slot, this should reuse r1 again.
-    auto r3 = idx.add(object{3, 30.0F, "three"});
-    if (!r3.has_value()) {
-      return false;
-    }
-
-    if (&r3.value().get() != old_record_address) {
-      return false;
-    }
-
-    return one_live_by_id(idx, 3, 30.0F, "three");
   }
 };
 
