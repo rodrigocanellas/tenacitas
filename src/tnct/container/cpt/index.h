@@ -11,18 +11,15 @@
 
 namespace tnct::container::cpt {
 
-template <typename t, typename t_key, typename t_mapped>
-concept index = requires(t p_index, const t p_const_index, const t_key &p_key,
-                         t_mapped p_mapped,
-                         typename t::const_iterator p_const_ite) {
+template <typename t>
+concept index = requires(
+    t p_index, const t p_const_index, const typename t::key_type &p_key,
+    typename t::mapped_type p_mapped, typename t::const_iterator p_const_ite) {
   typename t::key_type;
   typename t::mapped_type;
   typename t::value_type;
   typename t::iterator;
   typename t::const_iterator;
-
-  requires std::same_as<typename t::key_type, t_key>;
-  requires std::same_as<typename t::mapped_type, t_mapped>;
 
   requires std::same_as<typename t::value_type,
                         std::pair<const std::remove_cvref_t<typename t::key>,

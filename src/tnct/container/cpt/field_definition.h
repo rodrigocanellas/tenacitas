@@ -21,7 +21,7 @@ concept field_definition = requires {
 
   typename t::field_setter;
 
-  typename t::index_id;
+  typename t::index_traits_id;
 
   requires std::same_as<std::remove_cv_t<decltype(t::is_calculated)>, bool>;
 
