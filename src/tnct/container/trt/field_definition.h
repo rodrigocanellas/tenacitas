@@ -58,14 +58,6 @@ struct calculated_index_definition {
   static constexpr bool is_calculated{true};
 };
 
-/* &&
-            std::enable_if<
-                !std::is_same_v<t_index_traits_id, trt::no_map_id>,
-                 cpt::index<
-
-trt::index_type_t<t_index_traits_id, t_field_type, t_object_type>,
-t_field_type, t_object_type*/
-
 } // namespace tnct::container::trt
 
 #endif
