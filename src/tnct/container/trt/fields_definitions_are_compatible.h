@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_CONTAINER_TRT_ARE_FIELDS_DEFINITION_COMPATIBLE_H
-#define TNCT_CONTAINER_TRT_ARE_FIELDS_DEFINITION_COMPATIBLE_H
+#ifndef TNCT_CONTAINER_TRT_ARE_FIELDS_DEFINITIONS_COMPATIBLE_H
+#define TNCT_CONTAINER_TRT_ARE_FIELDS_DEFINITIONS_COMPATIBLE_H
 
 #include <tuple>
 
@@ -39,7 +39,7 @@ static constexpr bool field_compatibility_helper() {
 }
 
 template <cpt::field_definition... t_fields_definitions>
-struct fields_definition_are_compatible {
+struct fields_definitions_are_compatible {
   static constexpr bool value =
       (sizeof...(t_fields_definitions) == 1) ||
       ((sizeof...(t_fields_definitions) > 0) &&
@@ -47,8 +47,8 @@ struct fields_definition_are_compatible {
 };
 
 template <cpt::field_definition... t_fields_definitions>
-static constexpr bool fields_definition_are_compatible_v =
-    fields_definition_are_compatible<t_fields_definitions...>::value;
+static constexpr bool fields_definitions_are_compatible_v =
+    fields_definitions_are_compatible<t_fields_definitions...>::value;
 
 } // namespace tnct::container::trt
 
