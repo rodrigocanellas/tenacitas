@@ -16,7 +16,8 @@
 
 #include "tnct/container/dat/multi_index.h"
 #include "tnct/container/trt/field_definition.h"
-#include "tnct/container/trt/index_traits.h"
+#include "tnct/container/trt/std_map_index_trait.h"
+#include "tnct/container/trt/std_multimap_index_trait.h"
 #include "tnct/format/bus/fmt.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/macros.h"
@@ -26,7 +27,7 @@ using tnct::format::bus::fmt;
 
 namespace tnct::container::tst {
 
-namespace std_multimap_index_id {
+namespace std_multimap_index_trait_id {
 
 struct object {
   object() = default;
@@ -76,14 +77,14 @@ private:
 using tnct::container::trt::attribute_definition;
 using tnct::container::trt::calculated_index_definition;
 using tnct::container::trt::index_definition;
-using tnct::container::trt::std_map_index_id;
-using tnct::container::trt::std_multimap_index_id;
+using tnct::container::trt::std_map_index_trait_id;
+using tnct::container::trt::std_multimap_index_trait_id;
 
 using id_field = index_definition<
     object, int,
     decltype([](const object &p_object) -> int { return p_object.get_id(); }),
     decltype([](object &p_object, int p_id) -> void { p_object.set_id(p_id); }),
-    std_map_index_id>;
+    std_map_index_trait_id>;
 
 using score_field =
     index_definition<object, float,
@@ -93,7 +94,7 @@ using score_field =
                      decltype([](object &p_object, float p_score) -> void {
                        p_object.set_score(p_score);
                      }),
-                     std_multimap_index_id>;
+                     std_multimap_index_trait_id>;
 
 using name_field = attribute_definition<
     object, std::string, decltype([](const object &p_object) -> std::string {
@@ -107,13 +108,13 @@ using id_name_calculated_field = calculated_index_definition<
     object, std::string, decltype([](const object &p_object) -> std::string {
       return std::to_string(p_object.get_id()) + ":" + p_object.get_name();
     }),
-    std_multimap_index_id>;
+    std_multimap_index_trait_id>;
 
 using name_calculated_field = calculated_index_definition<
     object, std::string, decltype([](const object &p_object) -> std::string {
       return p_object.get_name();
     }),
-    std_multimap_index_id>;
+    std_multimap_index_trait_id>;
 
 using logger = tnct::log::cerr;
 using index = tnct::container::dat::multi_index_t<logger, id_field, score_field,
@@ -185,7 +186,7 @@ using calculated_name_index =
 
 using calculated_name_record_ref = typename calculated_name_index::record_ref;
 
-} // namespace std_multimap_index_id
+} // namespace std_multimap_index_trait_id
 
 struct multi_index_001 {
   static std::string desc() {
@@ -194,7 +195,7 @@ struct multi_index_001 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -237,7 +238,7 @@ struct multi_index_002 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -277,7 +278,7 @@ struct multi_index_003 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -327,7 +328,7 @@ struct multi_index_004 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -361,7 +362,7 @@ struct multi_index_005 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -401,7 +402,7 @@ struct multi_index_006 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -431,7 +432,7 @@ struct multi_index_007 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -514,7 +515,7 @@ struct multi_index_008 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     rollback_index idx{_logger};
@@ -561,7 +562,7 @@ struct multi_index_009 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -594,7 +595,7 @@ struct multi_index_010 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -633,7 +634,7 @@ struct multi_index_011 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -668,7 +669,7 @@ struct multi_index_012 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -707,7 +708,7 @@ struct multi_index_013 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     index idx{_logger};
@@ -750,7 +751,7 @@ struct multi_index_014 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     calculated_index idx{_logger};
@@ -789,7 +790,7 @@ struct multi_index_015 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_id;
+    using namespace std_multimap_index_trait_id;
 
     logger _logger;
     calculated_name_index idx{_logger};
@@ -797,7 +798,6 @@ struct multi_index_015 {
     auto r1 = idx.add(object{1, 10.0F, "one"});
 
     auto r2 = idx.add(object{2, 20.0F, "two"});
-    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
 
     if (!r1) {
       TNCT_LOG_ERR(_logger, fmt("r1 should have been added, but it was not "));
@@ -810,7 +810,6 @@ struct multi_index_015 {
     }
 
     const bool updated{idx.update<2>(r2.value(), std::string{"one"})};
-    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
 
     if (!updated) {
       TNCT_LOG_ERR(_logger, fmt("it should not have updated, but it dit"));
@@ -820,9 +819,9 @@ struct multi_index_015 {
     const object &obj_2{r2.value().get().get_optional().value()};
 
     if ((obj_2.get_id() != 2) || (obj_2.get_score() != 20.0F) ||
-        (obj_2.get_name() != "two")) {
+        (obj_2.get_name() != "one")) {
       TNCT_LOG_ERR(_logger,
-                   fmt("object should be {2,20.0,\"two\"}, but it is ", obj_2));
+                   fmt("object should be {2,20.0,\"one\"}, but it is ", obj_2));
       return false;
     }
 
@@ -838,16 +837,14 @@ struct multi_index_015 {
     const bool _has_object_in_2{
         has_object_in(name_two_records, 2, 20.0F, "two")};
 
-    std::cerr << "================== " << __LINE__ << '\n' << idx << '\n';
-
     TNCT_LOG_TST(_logger,
                  fmt("name_one_records.size() = ", name_one_records.size(),
                      ", _has_object_in = ", _has_object_in_1,
                      ", name_two_records.size() = ", name_two_records.size(),
                      ", _has_object_in_2 = ", _has_object_in_2));
 
-    return (name_one_records.size() == 1) && _has_object_in_1 &&
-           (name_two_records.size() == 1) && _has_object_in_2;
+    return (name_one_records.size() == 2) && _has_object_in_1 &&
+           (name_two_records.size() == 0) && !_has_object_in_2;
   }
 };
 

@@ -19,7 +19,7 @@
 #include "tnct/container/cpt/field_definition.h"
 #include "tnct/container/internal/trt/multi_index_types.h"
 #include "tnct/container/trt/fields_definitions_are_compatible.h"
-#include "tnct/container/trt/index_traits.h"
+#include "tnct/container/trt/no_index_trait.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/pair/output.h"
 #include "tnct/tuple/bus/traverse.h"
@@ -31,13 +31,17 @@ namespace tnct::container::dat {
 /// Allows the creation of multiple indexes to a container of (std::optional)
 /// objects
 ///
-/// \tparam t_object is some 'struct' or 'class'
-/// \tparam t_fields_definitions defines the characteristics of each filed in
-/// t_object, and if it will be used as an index
+/// \tparam t_fields_definitions defines the characteristics of each field in
+/// t_object
 ///
 /// \details Each entry in the container is actually a std::optional<t_object>,
 /// so it is up to the user to check if the reference to the
 /// std::optional<t_object> that is retrieved is actually valid
+///
+/// \details one can use the tnct::container::trt::attribute_definition,
+/// tnct::container::trt::index_definition and
+/// tnct::container::trt::calculated_index_definition to dedine the fields used
+/// in \p multi_index_t
 ///
 /// std::optional<t_object> was used for two reasons:
 /// 1 - the objects are not actually deleted, they are marked as std::nullopt to
