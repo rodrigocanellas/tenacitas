@@ -11,7 +11,7 @@
 #include <cmath>
 #include <condition_variable>
 #include <memory>
-#include <sys/sysinfo.h>
+#include <sys/sysinfo.h"
 
 #include "tnct/async/bus/dispatcher.h"
 #include "tnct/async/cpt/is_dispatcher.h"

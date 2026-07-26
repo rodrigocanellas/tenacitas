@@ -1,0 +1,44 @@
+<map id="crosswords/dat/occupied.h" name="crosswords/dat/occupied.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="417,5,611,31"/>
+<area shape="rect" id="Node000002" href="$da/d15/grid_8h.html" title=" " alt="" coords="433,79,595,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="517,44,517,79,511,79,511,44"/>
+<area shape="rect" id="Node000003" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="212,504,395,544"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="420,109,354,128,322,141,292,157,266,177,245,200,232,227,227,259,227,349,234,394,250,437,271,474,290,502,286,505,266,477,245,439,229,395,222,350,222,258,227,226,241,197,262,173,289,153,320,136,353,123,419,104"/>
+<area shape="rect" id="Node000006" href="$d4/d67/connection_8h.html" title=" " alt="" coords="458,504,626,544"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="609,99,723,118,771,132,804,150,824,175,834,199,835,259,835,350,830,384,815,414,792,440,763,461,730,478,695,492,627,512,625,507,694,487,728,473,760,456,788,436,810,411,825,382,830,349,830,259,828,200,820,177,800,154,769,137,721,123,608,104"/>
+<area shape="rect" id="Node000008" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="325,416,476,456"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="421,106,374,124,353,137,335,154,297,206,285,231,278,256,277,281,280,308,289,336,303,367,326,394,355,414,352,418,322,398,298,369,284,338,275,309,271,281,273,255,280,229,292,203,331,150,350,133,372,119,419,101"/>
+<area shape="rect" id="Node000009" href="$d4/dec/assembler_8h.html" title=" " alt="" coords="313,328,489,368"/>
+<area shape="poly" id="edge10_Node000002_Node000009" title=" " alt="" coords="421,109,383,126,367,138,354,153,343,175,340,198,341,222,347,246,367,291,389,326,384,329,362,294,342,248,336,223,334,198,338,173,349,151,363,134,380,121,419,104"/>
+<area shape="rect" id="Node000012" href="$d7/d39/organizer_8h.html" title=" " alt="" coords="438,240,614,280"/>
+<area shape="poly" id="edge14_Node000002_Node000012" title=" " alt="" coords="535,114,546,131,554,151,557,175,554,200,539,241,534,239,548,199,551,175,549,153,541,134,530,116"/>
+<area shape="rect" id="Node000014" href="$d6/d49/grid__create__solved_8h.html" title=" " alt="" coords="615,152,789,192"/>
+<area shape="poly" id="edge18_Node000002_Node000014" title=" " alt="" coords="555,107,658,149,656,154,553,112"/>
+<area shape="rect" id="Node000015" href="$d7/da1/grid__to__organize_8h.html" title=" " alt="" coords="364,152,539,192"/>
+<area shape="poly" id="edge23_Node000002_Node000015" title=" " alt="" coords="498,116,469,154,464,150,494,113"/>
+<area shape="rect" id="Node000016" href="$db/d71/dat__test_8h.html" title=" " alt="" coords="870,240,1011,280"/>
+<area shape="poly" id="edge25_Node000002_Node000016" title=" " alt="" coords="608,99,747,119,809,133,853,150,879,169,901,193,933,238,928,241,897,196,875,173,850,154,807,138,746,124,608,105"/>
+<area shape="rect" id="Node000004" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="229,592,407,632"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="312,557,317,591,312,592,306,558"/>
+<area shape="rect" id="Node000005" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="5,592,204,632"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="248,552,149,594,147,590,246,547"/>
+<area shape="rect" id="Node000007" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="458,592,626,632"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="545,558,545,592,539,592,539,558"/>
+<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="371,467,327,506,323,502,367,463"/>
+<area shape="poly" id="edge9_Node000008_Node000006" title=" " alt="" coords="445,461,512,502,510,506,442,465"/>
+<area shape="poly" id="edge11_Node000009_Node000008" title=" " alt="" coords="403,382,403,416,398,416,398,382"/>
+<area shape="rect" id="Node000010" href="$d2/d7b/assembler__test_8h.html" title=" " alt="" coords="528,416,716,456"/>
+<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="463,370,575,413,573,418,461,375"/>
+<area shape="rect" id="Node000011" href="$d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="664,511,844,537"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="664,461,738,509,735,513,661,466"/>
+<area shape="poly" id="edge15_Node000012_Node000009" title=" " alt="" coords="488,290,430,330,427,326,485,286"/>
+<area shape="rect" id="Node000013" href="$d6/d78/organizer__test_8h.html" title=" " alt="" coords="563,328,745,368"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="567,286,627,326,624,330,564,290"/>
+<area shape="poly" id="edge17_Node000013_Node000011" title=" " alt="" coords="695,375,714,393,731,415,743,440,750,467,756,511,751,512,745,468,738,442,726,417,710,396,691,378"/>
+<area shape="poly" id="edge19_Node000014_Node000008" title=" " alt="" coords="687,206,661,244,628,282,608,298,591,308,553,330,502,370,432,418,429,414,499,366,550,326,589,303,605,294,624,278,657,240,682,203"/>
+<area shape="poly" id="edge21_Node000014_Node000010" title=" " alt="" coords="727,202,748,238,766,281,772,326,768,348,759,369,746,385,731,399,696,418,693,414,728,394,742,382,754,367,763,347,766,326,760,282,743,240,722,205"/>
+<area shape="poly" id="edge20_Node000014_Node000012" title=" " alt="" coords="652,200,566,242,563,238,650,196"/>
+<area shape="poly" id="edge22_Node000014_Node000013" title=" " alt="" coords="696,206,662,329,657,327,691,205"/>
+<area shape="poly" id="edge24_Node000015_Node000009" title=" " alt="" coords="441,206,429,241,407,329,402,327,423,239,436,204"/>
+<area shape="poly" id="edge26_Node000016_Node000011" title=" " alt="" coords="934,294,905,373,882,417,853,458,816,491,779,514,776,509,813,486,849,454,877,414,900,371,929,293"/>
+</map>

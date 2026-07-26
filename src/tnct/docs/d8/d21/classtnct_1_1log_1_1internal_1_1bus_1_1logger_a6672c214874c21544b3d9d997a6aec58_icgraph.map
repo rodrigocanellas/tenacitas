@@ -1,0 +1,35 @@
+<map id="tnct::log::internal::bus::logger::set_deb" name="tnct::log::internal::bus::logger::set_deb">
+<area shape="rect" id="Node000001" title=" " alt="" coords="248,471,409,511"/>
+<area shape="rect" id="Node000002" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="75,5,130,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="326,458,322,374,316,321,306,263,290,204,267,146,237,92,198,45,183,34,166,27,130,21,131,15,167,22,186,30,202,41,241,89,272,144,295,202,311,262,322,320,328,374,331,457"/>
+<area shape="rect" id="Node000003" href="$d0/d51/structtnct_1_1async_1_1tst_1_1dispatcher__000.html#ae99a721b327327f2798085f2fb68118a" title=" " alt="" coords="5,55,200,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="323,458,315,386,296,293,279,243,258,195,231,149,198,109,183,98,186,93,202,105,236,146,263,192,284,241,301,291,321,385,329,457"/>
+<area shape="rect" id="Node000004" href="$d1/d47/structtnct_1_1async_1_1tst_1_1dispatcher__001.html#ad70c95b132178abc1d849baada34145f" title=" " alt="" coords="5,119,200,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="321,458,309,398,287,321,271,281,251,242,227,205,198,173,182,162,185,157,202,169,231,202,256,239,276,279,292,319,315,397,326,457"/>
+<area shape="rect" id="Node000005" href="$dc/d1d/structtnct_1_1async_1_1tst_1_1dispatcher__002.html#a0548c7498c2fef98edea7de1fe3d30d0" title=" " alt="" coords="5,183,200,223"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="317,459,302,410,278,350,244,289,223,262,198,237,181,226,184,221,202,233,227,258,248,287,283,348,307,408,322,457"/>
+<area shape="rect" id="Node000006" href="$d9/db0/structtnct_1_1async_1_1tst_1_1dispatcher__003.html#a4fbce24bc32123a9433bbaa73c9bb245" title=" " alt="" coords="5,247,200,287"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="311,460,293,423,268,380,237,338,198,301,179,290,182,285,202,297,241,334,273,377,298,420,316,457"/>
+<area shape="rect" id="Node000007" href="$dd/dc5/structtnct_1_1async_1_1tst_1_1handling__000.html#a7c217c96e32be401a5fd42ecf5d6e241" title=" " alt="" coords="11,311,194,351"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="302,462,257,413,229,387,199,366,175,354,178,349,201,361,232,383,261,409,306,459"/>
+<area shape="rect" id="Node000008" href="$d3/d31/structtnct_1_1async_1_1tst_1_1handling__014.html#a8ce8524f7484050ec43f1eadae954138" title=" " alt="" coords="11,375,194,415"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="277,467,199,430,168,418,169,413,201,425,279,462"/>
+<area shape="rect" id="Node000009" href="$de/d66/structtnct_1_1async_1_1tst_1_1handling__015.html#a29c5639596777781c46c0a79d0233fbd" title=" " alt="" coords="11,439,194,479"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="234,481,194,475,195,470,235,475"/>
+<area shape="rect" id="Node000010" href="$dd/d22/structtnct_1_1async_1_1tst_1_1sleeping__loop__001.html#a4986349448b88459d3360b594542f02e" title=" " alt="" coords="12,503,193,543"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="235,507,194,513,193,508,234,502"/>
+<area shape="rect" id="Node000011" href="$da/d17/structtnct_1_1container_1_1tst_1_1multiply__matrix__000.html#a47941fa9b7801b8062c967db869e2682" title=" " alt="" coords="20,568,185,623"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="278,520,201,558,172,570,170,566,199,553,276,515"/>
+<area shape="rect" id="Node000012" href="$d2/dbe/structtnct_1_1container_1_1tst_1_1multiply__matrix__001.html#a4a14a8cfa9fc57ffff55082aeb1dd1f3" title=" " alt="" coords="20,647,185,701"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="308,524,263,580,234,610,202,636,181,649,178,644,198,632,230,606,259,577,304,521"/>
+<area shape="rect" id="Node000013" href="$dc/dd2/structtnct_1_1crosswords_1_1tst_1_1dat__000.html#a090ac811fed85ef62e891c6beeee9391" title=" " alt="" coords="25,726,180,766"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="319,526,302,568,277,619,244,670,202,715,181,728,178,724,198,711,240,667,273,616,297,566,314,524"/>
+<area shape="rect" id="Node000014" href="$df/d0b/structtnct_1_1crosswords_1_1tst_1_1dat__001.html#afe9167c201bfba27c2bbaeacc3b564f2" title=" " alt="" coords="25,790,180,830"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="324,526,311,581,287,649,252,719,229,751,202,780,182,794,179,789,198,776,225,748,247,716,283,647,306,579,319,524"/>
+<area shape="rect" id="Node000015" href="$d0/db4/structtnct_1_1crosswords_1_1tst_1_1organizer__test__000.html#a375b31e5ff83784d0c0a39bd93efac8f" title=" " alt="" coords="25,855,180,909"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="327,526,316,591,294,676,278,721,257,765,232,806,202,844,182,860,179,855,198,840,228,803,253,762,273,719,289,674,311,590,321,525"/>
+<area shape="rect" id="Node000016" href="$d6/de6/structtnct_1_1crosswords_1_1tst_1_1organizer__test__002.html#a15c458bc0f89fdadd5b48d72073cda74" title=" " alt="" coords="25,933,180,988"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="329,525,323,604,304,709,288,766,266,822,238,875,202,923,182,939,178,935,198,919,233,872,261,820,283,764,299,708,318,604,324,525"/>
+<area shape="rect" id="Node000017" href="$df/d04/structlog__000.html#af8c88c64c1d8d1705012fd204c63ee81" title=" " alt="" coords="29,1012,176,1037"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="326,525,311,633,285,775,268,847,249,912,227,965,202,1001,178,1017,175,1013,198,997,222,962,244,910,263,845,280,774,306,632,321,525"/>
+</map>

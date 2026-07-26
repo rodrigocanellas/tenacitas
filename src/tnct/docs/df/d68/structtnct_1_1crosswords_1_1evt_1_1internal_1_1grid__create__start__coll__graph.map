@@ -1,0 +1,7 @@
+<map id="tnct::crosswords::evt::internal::grid_create_start" name="tnct::crosswords::evt::internal::grid_create_start">
+<area shape="rect" id="Node000001" title=" " alt="" coords="54,108,253,148"/>
+<area shape="rect" id="Node000002" href="$dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html" title="A set of entry." alt="" coords="5,5,163,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,55,143,106,138,109,103,58"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="187,13,261,38"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="210,51,169,109,164,106,206,48"/>
+</map>

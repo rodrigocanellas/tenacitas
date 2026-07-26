@@ -12,9 +12,9 @@ PRJ_DIR=$$BASE_DIR/tnct/crosswords
 SOURCES += \
     $$PRJ_DIR/app/desktop/author/qt/main.cpp \
     $$PRJ_DIR/app/desktop/author/qt/mainwindow.cpp
+
 HEADERS += \
-    $$PRJ_DIR/app/desktop/author/qt/mainwindow.h \
-    $$PRJ_DIR/app/desktop/author/qt/printer.h
+    $$PRJ_DIR/app/desktop/author/qt/*.h
 
 
 FORMS += \

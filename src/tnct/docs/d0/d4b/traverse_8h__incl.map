@@ -1,0 +1,20 @@
+<map id="tuple/bus/traverse.h" name="tuple/bus/traverse.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="148,5,300,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="279,152,350,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,28,287,48,302,61,314,77,323,108,322,138,317,138,318,109,309,80,298,65,284,52,252,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="26,313,80,339"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="186,33,143,50,96,75,52,109,33,130,18,153,11,172,9,191,13,232,26,270,41,300,36,303,21,272,8,233,3,191,6,171,13,151,29,127,48,105,93,71,141,45,184,28"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="195,313,287,339"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="259,28,298,47,335,77,349,95,357,111,365,152,366,176,361,200,352,223,338,244,305,280,272,307,268,303,301,276,334,240,347,220,356,198,361,176,360,152,352,113,344,98,331,81,295,52,257,33"/>
+<area shape="rect" id="Node000005" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="28,152,203,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="198,33,166,52,138,80,125,109,120,139,114,138,120,108,134,77,163,48,196,28"/>
+<area shape="rect" id="Node000007" href="$d2/d0b/visit_8h.html" title=" " alt="" coords="148,79,300,104"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="226,31,226,65,221,65,221,31"/>
+<area shape="rect" id="Node000006" href="$d1/d7e/is__tuple__helper_8h.html" title=" " alt="" coords="34,225,197,265"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="118,178,118,212,113,212,113,178"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="103,267,73,304,69,301,99,264"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="148,263,213,304,210,308,145,268"/>
+<area shape="poly" id="edge9_Node000007_Node000002" title=" " alt="" coords="240,102,290,141,287,145,237,106"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="227,104,242,300,237,300,222,105"/>
+<area shape="poly" id="edge11_Node000007_Node000005" title=" " alt="" coords="208,106,146,147,143,142,205,102"/>
+</map>

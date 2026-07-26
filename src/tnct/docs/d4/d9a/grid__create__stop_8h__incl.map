@@ -1,0 +1,7 @@
+<map id="crosswords/evt/internal/grid_create_stop.h" name="crosswords/evt/internal/grid_create_stop.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="9,5,183,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,85,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,47,63,83,58,80,81,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="109,93,184,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="111,44,134,80,129,83,106,47"/>
+</map>

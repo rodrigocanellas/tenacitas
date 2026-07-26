@@ -1,0 +1,5 @@
+<map id="tenacitas::lib::ipc::bus::messenger_t::messenger_t" name="tenacitas::lib::ipc::bus::messenger_t::messenger_t">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,159,60"/>
+<area shape="rect" id="Node000002" href="$d3/de2/structtenacitas_1_1lib_1_1ipc_1_1bus_1_1messenger__t.html#ad2c7476c5c83a5d0d394065c530d589c" title="The class responsible for p_passive_connector must use a tenacitas::lib::async::alg::dispatcher::publ..." alt="" coords="207,5,360,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="159,30,193,30,193,35,159,35"/>
+</map>

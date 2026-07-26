@@ -16,7 +16,8 @@ template <typename t_supplier>
 concept supplier = requires {
   requires(!std::copyable<std::remove_cvref_t<t_supplier>>);
   requires(!std::movable<std::remove_cvref_t<t_supplier>>);
-  requires(!tnct::memory::cpt::has_new_operator_v<t_supplier>);
+  requires(
+      !tnct::memory::cpt::has_new_operator_v<std::remove_cvref_t<t_supplier>>);
 };
 } // namespace tnct::supplier::cpt::internal
 #endif

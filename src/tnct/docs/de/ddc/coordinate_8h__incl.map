@@ -1,0 +1,9 @@
+<map id="crosswords/dat/coordinate.h" name="crosswords/dat/coordinate.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,211,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="14,86,74,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,33,64,77,60,74,96,29"/>
+<area shape="rect" id="Node000003" href="$d4/d1b/crosswords_2dat_2index_8h.html" title=" " alt="" coords="99,79,248,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,29,151,66,147,70,116,33"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="140,167,207,192"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="176,119,176,153,171,153,171,119"/>
+</map>

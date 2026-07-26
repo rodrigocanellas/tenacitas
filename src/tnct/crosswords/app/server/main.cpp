@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 
-#include <ixwebsocket/IXWebSocketServer.h>
+#include <ixwebsocket/IXWebSocketServer.h"
 #include <nlohmann/json.hpp>
 
 #include "tnct/crosswords/app/server/connection.h"

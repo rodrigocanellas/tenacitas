@@ -6,5 +6,6 @@ PRJ_DIR=$$BASE_DIR/tnct/supplier
 
 
 SUBDIRS = exp \
-          cpt
+          cpt \
+          tst
 

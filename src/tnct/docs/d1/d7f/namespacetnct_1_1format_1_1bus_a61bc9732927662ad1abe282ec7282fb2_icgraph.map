@@ -1,0 +1,23 @@
+<map id="tnct::format::bus::format_max_number" name="tnct::format::bus::format_max_number">
+<area shape="rect" id="Node000001" title="Formats a number with the maximum characters necessary to represent the number to string,..." alt="" coords="280,293,439,333"/>
+<area shape="rect" id="Node000002" href="$df/d50/structtnct_1_1format_1_1tst_1_1format__number__000.html#a7422d0c8d11812799bae393c458da477" title=" " alt="" coords="5,5,232,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="348,281,334,231,311,171,276,111,255,83,230,59,213,48,216,43,234,55,259,80,281,108,315,169,339,230,353,279"/>
+<area shape="rect" id="Node000003" href="$d6/d1e/structtnct_1_1format_1_1tst_1_1format__number__001.html#ae0159278b14daa20bb62c24c21cbf0d7" title=" " alt="" coords="5,69,232,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="343,281,325,244,300,202,269,159,230,123,211,112,213,107,234,119,273,156,305,199,330,242,347,279"/>
+<area shape="rect" id="Node000004" href="$d0/d09/structtnct_1_1format_1_1tst_1_1format__number__002.html#a05f249b3757b2341554f8d052ca92b62" title=" " alt="" coords="5,133,232,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="333,284,289,234,261,209,231,188,206,176,209,171,233,183,264,205,293,231,337,281"/>
+<area shape="rect" id="Node000005" href="$d7/deb/structtnct_1_1format_1_1tst_1_1format__number__003.html#a3bce9bfff5edc04b8503ac4da4bfe431" title=" " alt="" coords="5,197,232,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="310,289,231,252,197,240,199,235,233,247,312,284"/>
+<area shape="rect" id="Node000006" href="$d5/d3f/structtnct_1_1format_1_1tst_1_1format__number__004.html#a7976a38626633413d99d9a9497f209b2" title=" " alt="" coords="5,261,232,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="266,304,232,299,232,294,266,298"/>
+<area shape="rect" id="Node000007" href="$d0/d49/structtnct_1_1format_1_1tst_1_1format__number__005.html#aa1a980039b3f5d528b3f3d1eeb1860f7" title=" " alt="" coords="5,325,232,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="266,328,232,333,232,328,266,323"/>
+<area shape="rect" id="Node000008" href="$d2/d52/structtnct_1_1format_1_1tst_1_1format__number__009.html#ae8ec2060345e72f49a5d534f8567aec1" title=" " alt="" coords="5,389,232,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="312,342,233,380,199,392,197,387,231,375,310,338"/>
+<area shape="rect" id="Node000009" href="$d3/d32/structtnct_1_1format_1_1tst_1_1format__number__010.html#a20e3c46660025b5e2c7cc9f4e8ff9145" title=" " alt="" coords="5,453,232,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="337,346,293,396,264,422,233,444,209,456,206,451,231,439,261,418,289,392,333,342"/>
+<area shape="rect" id="Node000010" href="$d4/d1e/structtnct_1_1format_1_1tst_1_1format__number__011.html#ac8347a49dbc97b32ea2a4ba4b507d09d" title=" " alt="" coords="5,517,232,557"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="347,348,330,385,305,428,273,471,234,507,213,519,211,515,230,503,269,467,300,425,325,382,343,345"/>
+<area shape="rect" id="Node000011" href="$d8/db5/structtnct_1_1format_1_1tst_1_1format__number__012.html#a588bc015c8953d8f1a17439b2bc8baae" title=" " alt="" coords="5,581,232,621"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="353,347,339,397,315,458,281,519,259,547,234,571,216,583,213,579,230,567,255,543,276,516,311,455,334,395,348,346"/>
+</map>

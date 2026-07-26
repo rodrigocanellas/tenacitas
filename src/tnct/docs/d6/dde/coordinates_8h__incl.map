@@ -1,0 +1,13 @@
+<map id="crosswords/dat/coordinates.h" name="crosswords/dat/coordinates.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,217,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="15,86,77,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="104,33,67,77,62,73,100,29"/>
+<area shape="rect" id="Node000003" href="$dc/dd0/coordinate_8h.html" title=" " alt="" coords="102,79,251,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="123,29,154,66,150,70,119,33"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="83,174,143,199"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="165,121,132,164,128,161,160,117"/>
+<area shape="rect" id="Node000005" href="$d4/d1b/crosswords_2dat_2index_8h.html" title=" " alt="" coords="167,167,317,207"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="193,117,222,154,217,157,189,121"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="209,255,275,280"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="245,207,245,241,239,241,239,207"/>
+</map>
