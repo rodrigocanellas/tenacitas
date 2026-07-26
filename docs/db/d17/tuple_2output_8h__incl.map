@@ -1,11 +1,26 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/tuple/output.h" name="/home/rodrigo/development/tenacitas/src/tnct/tuple/output.h">
-<area shape="rect" id="node1" title=" " alt="" coords="53,5,256,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,109,85,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="161,184,215,211"/>
-<area shape="rect" id="node4" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="166,259,341,285"/>
-<area shape="rect" id="node7" href="$d0/deb/traverse_8h.html" title=" " alt="" coords="251,109,405,136"/>
-<area shape="rect" id="node5" href="$d1/d7e/is__tuple__helper_8h.html" title=" " alt="" coords="193,333,332,375"/>
-<area shape="rect" id="node6" title=" " alt="" coords="333,423,425,449"/>
-<area shape="rect" id="node8" title=" " alt="" coords="419,259,490,285"/>
-<area shape="rect" id="node9" href="$d2/d0b/visit_8h.html" title=" " alt="" coords="291,184,443,211"/>
+<map id="src/tnct/tuple/output.h" name="src/tnct/tuple/output.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="239,5,405,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="63,79,143,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="288,33,153,77,151,72,286,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="352,387,407,412"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="342,29,371,50,403,81,429,119,436,140,439,163,439,239,435,278,424,316,396,376,391,374,419,314,430,277,434,239,434,163,431,142,424,121,399,84,368,54,339,33"/>
+<area shape="rect" id="Node000004" href="$d9/d1a/is__tuple_8h.html" title=" " alt="" coords="167,225,341,251"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="336,30,358,62,365,83,363,105,347,139,325,170,280,218,276,214,321,167,342,136,358,103,360,84,354,65,331,33"/>
+<area shape="rect" id="Node000007" href="$d0/deb/traverse_8h.html" title=" " alt="" coords="167,79,349,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="313,33,279,70,275,67,309,29"/>
+<area shape="rect" id="Node000005" href="$d1/d7e/is__tuple__helper_8h.html" title=" " alt="" coords="173,299,335,339"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="257,251,257,285,251,285,251,251"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="286,337,351,377,348,382,283,341"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="83,387,175,412"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="225,341,160,382,157,377,222,337"/>
+<area shape="poly" id="edge9_Node000007_Node000003" title=" " alt="" coords="271,103,314,152,337,187,356,224,369,264,376,304,382,373,377,373,371,305,364,265,351,226,333,190,310,156,267,106"/>
+<area shape="poly" id="edge11_Node000007_Node000004" title=" " alt="" coords="260,105,257,212,252,212,255,104"/>
+<area shape="poly" id="edge10_Node000007_Node000006" title=" " alt="" coords="169,107,110,124,82,137,55,154,37,170,26,185,11,226,8,249,12,271,21,293,34,313,67,349,101,377,97,381,63,353,30,316,16,295,7,273,3,249,6,225,21,182,33,166,52,150,79,133,108,119,168,101"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="20,225,91,251"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="168,105,118,123,95,137,76,154,67,167,62,181,57,212,52,211,56,180,62,164,72,150,92,132,116,118,166,100"/>
+<area shape="rect" id="Node000009" href="$d2/d0b/visit_8h.html" title=" " alt="" coords="86,152,238,177"/>
+<area shape="poly" id="edge12_Node000007_Node000009" title=" " alt="" coords="244,106,190,146,187,141,241,102"/>
+<area shape="poly" id="edge15_Node000009_Node000004" title=" " alt="" coords="178,175,230,215,227,219,175,179"/>
+<area shape="poly" id="edge14_Node000009_Node000006" title=" " alt="" coords="163,178,135,374,129,373,158,177"/>
+<area shape="poly" id="edge13_Node000009_Node000008" title=" " alt="" coords="146,180,85,220,82,215,143,175"/>
 </map>

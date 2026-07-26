@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['align_1425',['align',['../dd/dd1/namespacetnct_1_1format.html#ae0782c01a939e6142323a4303b63da52',1,'tnct::format']]]
+  ['align_0',['align',['../da/ddc/namespacetnct_1_1format_1_1dat.html#a50679e50980ec5910ee4400b362a1734',1,'tnct::format::dat']]]
 ];

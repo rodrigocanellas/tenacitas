@@ -1,5 +1,7 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/log/no_logger.h" name="/home/rodrigo/development/tenacitas/src/tnct/log/no_logger.h">
-<area shape="rect" id="node1" title=" " alt="" coords="33,5,235,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,109,129,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="153,109,251,136"/>
+<map id="src/tnct/log/bus/no_logger.h" name="src/tnct/log/bus/no_logger.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="63,5,205,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,129,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,47,88,84,84,81,116,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="153,93,251,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="152,44,185,81,181,84,148,47"/>
 </map>

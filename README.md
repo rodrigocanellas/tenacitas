@@ -9,13 +9,15 @@ It is made up of the following `namespace`s:
 
 **async** - tries to make it easier to implement common asynchronous tasks, such as execute a function in a certain period of time (`sleeping_loop`), and a publisher/subscriber mechanism (`dispatcher`), mixed with a event queue, that allows to define multiple handlings for an event, each with multiple concurrent handlers, without searching for the event in any kind of container.
 
-**container** - a simple `matrix` and a `circular_queue` that expands as necessary.
+**container** - a simple `matrix` and a `circular_queue` that expands as necessary and a promising `multi_index`.
 
 **log** - another log class
 
 **parser** - a `.ini` parser is the first class of this namespace
 
 **program** - classes related to a program, like `options`, a `exit` event and a `closer` classes , used with `async::dispatcher` allows asynchronous console programs.
+
+**tuple** - algorithms to make it eaiser to manipulte `std::tuple`, like traversing
 
 **traits** - type traits and some very simple meta programming
 
@@ -30,7 +32,7 @@ As `tenacitas` is a header only "library", there is no need to build it, all you
 The examples and tests are, for now, the best source of documentation. If you want to build them, you can use `QtCreator`(I am using version 13.0.1) and open the `tenacitas/builder/qtcreator/tenacitas.pro` file, or create a project file you like the most.
 
 # dependencies
-`tenacitas` does not depend on any other software
+`tnct::crosswords` depends on https://github.com/machinezone/IXWebSocket and https://github.com/nlohmann/json, all the other namespaces have no dependencies.
 
 # contributions
 I would be most pleased to read you comments and suggestions, as long as they are presented in a polite way.

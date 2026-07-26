@@ -1,11 +1,24 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/permutation.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/permutation.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="19,206,99,233"/>
-<area shape="rect" id="node3" title=" " alt="" coords="124,206,187,233"/>
-<area shape="rect" id="node4" href="$d8/dbe/entries_8h.html" title=" " alt="" coords="150,109,299,151"/>
-<area shape="rect" id="node5" href="$d1/dc6/entry_8h.html" title=" " alt="" coords="262,199,411,240"/>
-<area shape="rect" id="node6" href="$d9/d5f/explanation_8h.html" title=" " alt="" coords="349,288,498,329"/>
-<area shape="rect" id="node8" href="$d7/d2f/word_8h.html" title=" " alt="" coords="175,288,325,329"/>
-<area shape="rect" id="node7" title=" " alt="" coords="349,377,407,404"/>
-<area shape="rect" id="node9" title=" " alt="" coords="221,377,279,404"/>
+<map id="src/tnct/crosswords/dat/permutation.h" name="src/tnct/crosswords/dat/permutation.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="25,5,172,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,189,85,214"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,46,56,176,50,174,90,45"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="110,189,173,214"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="106,45,127,133,137,174,132,176,121,134,100,46"/>
+<area shape="rect" id="Node000004" href="$d8/dbe/entries_8h.html" title=" " alt="" coords="136,93,285,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="125,43,176,83,173,87,122,48"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="176,136,80,185,78,180,173,131"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="197,135,161,179,157,176,193,132"/>
+<area shape="rect" id="Node000005" href="$d1/dc6/entry_8h.html" title=" " alt="" coords="248,181,397,221"/>
+<area shape="poly" id="edge6_Node000004_Node000005" title=" " alt="" coords="237,131,288,171,285,175,234,136"/>
+<area shape="rect" id="Node000006" href="$d9/d5f/explanation_8h.html" title=" " alt="" coords="335,269,484,309"/>
+<area shape="poly" id="edge12_Node000004_Node000006" title=" " alt="" coords="286,116,320,124,354,136,386,154,412,180,420,198,424,218,421,256,416,256,419,218,415,200,407,183,383,158,352,141,319,129,285,122"/>
+<area shape="rect" id="Node000008" href="$d7/d2f/word_8h.html" title=" " alt="" coords="161,269,311,309"/>
+<area shape="poly" id="edge13_Node000004_Node000008" title=" " alt="" coords="216,133,234,255,229,256,211,134"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="344,220,382,258,379,261,340,224"/>
+<area shape="poly" id="edge9_Node000005_Node000008" title=" " alt="" coords="305,224,267,261,263,258,302,220"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="335,357,393,383"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="401,311,380,347,375,344,396,308"/>
+<area shape="poly" id="edge11_Node000008_Node000007" title=" " alt="" coords="268,307,335,348,332,352,266,312"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="207,357,265,383"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="239,310,239,343,233,343,233,310"/>
 </map>

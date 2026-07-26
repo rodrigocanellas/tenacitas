@@ -1,11 +1,21 @@
 var searchData=
 [
-  ['cerr_1370',['cerr',['../df/dce/namespacetnct_1_1log.html#a74484ef1d63bad04ea7e09336399af2a',1,'tnct::log']]],
-  ['collection_1371',['collection',['../dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html#a9a228fe913484d021657d3bb5259fca8',1,'tnct::crosswords::dat::entries']]],
-  ['const_5fentry_5fite_1372',['const_entry_ite',['../dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html#ab38b9649fb9b53ad616c1517330eee63',1,'tnct::crosswords::dat::entries']]],
-  ['const_5flayout_5fite_1373',['const_layout_ite',['../d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a93d8ec6743b2635a694a7677e798ad7e',1,'tnct::crosswords::dat::grid']]],
-  ['const_5flvalue_5fevent_5ftype_1374',['const_lvalue_event_type',['../de/d98/namespacetnct_1_1async_1_1cpt.html#a11a373786d4ec55225b4e3b8b48592d0',1,'tnct::async::cpt']]],
-  ['coordinate_1375',['coordinate',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#ae5608155726f6b13b5cf572bf40abf82',1,'tnct::crosswords::dat']]],
-  ['coordinates_1376',['coordinates',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#add0690d57f7ca2ac1dfe15ea24f2f802',1,'tnct::crosswords::dat']]],
-  ['cout_1377',['cout',['../df/dce/namespacetnct_1_1log.html#a89d4fa34f6568ef51035ee95c44a6488',1,'tnct::log']]]
+  ['calculated_5findex_0',['calculated_index',['../db/d12/namespacetnct_1_1container_1_1tst_1_1std__multimap__index__trait__id.html#a6ef44153d1bb03bf216269e0d5995dcc',1,'tnct::container::tst::std_multimap_index_trait_id']]],
+  ['calculated_5fname_5findex_1',['calculated_name_index',['../db/d12/namespacetnct_1_1container_1_1tst_1_1std__multimap__index__trait__id.html#ad01e75a1cda7ecc5c47206c7dd689802',1,'tnct::container::tst::std_multimap_index_trait_id']]],
+  ['calculated_5fname_5frecord_5fref_2',['calculated_name_record_ref',['../db/d12/namespacetnct_1_1container_1_1tst_1_1std__multimap__index__trait__id.html#a9fcbca0515741e6d230bd002e3158a71',1,'tnct::container::tst::std_multimap_index_trait_id']]],
+  ['calculated_5frecord_5fref_3',['calculated_record_ref',['../db/d12/namespacetnct_1_1container_1_1tst_1_1std__multimap__index__trait__id.html#a6bf7b8351330c0c2a9ce63e35c53cf1f',1,'tnct::container::tst::std_multimap_index_trait_id']]],
+  ['cerr_4',['cerr',['../df/dce/namespacetnct_1_1log.html#a387cbb09229b864f3cb319ab47ac9c92',1,'tnct::log']]],
+  ['class_5ftype_5',['class_type',['../d7/d92/structtnct_1_1generic_1_1cpt_1_1meta__class.html#a2d6260d453f12795b72d17d3af684720',1,'tnct::generic::cpt::meta_class']]],
+  ['collection_6',['collection',['../d5/d0b/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_1_1sensors.html#a838131ff4a1af6e68d9b8ddb1185bd93',1,'tnct::async::exp::temperature_sensors_simulator::per::sensors::collection'],['../dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html#a9a228fe913484d021657d3bb5259fca8',1,'tnct::crosswords::dat::entries::collection']]],
+  ['connection_5fptr_7',['connection_ptr',['../db/d27/crosswords_2app_2server_2main_8cpp.html#af5723cd38ed4ae8f525ce0cdcb21a6b3',1,'main.cpp']]],
+  ['connections_8',['connections',['../db/d27/crosswords_2app_2server_2main_8cpp.html#a5e4a7a52f903d5057d16cf5707e73b0f',1,'main.cpp']]],
+  ['const_5fentry_5fite_9',['const_entry_ite',['../dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html#ab38b9649fb9b53ad616c1517330eee63',1,'tnct::crosswords::dat::entries']]],
+  ['const_5fiterator_10',['const_iterator',['../d8/d23/classtnct_1_1container_1_1trt_1_1std__multimap__index.html#a86d0b30c5a4d866e6697c6fe545f43ee',1,'tnct::container::trt::std_multimap_index::const_iterator'],['../d5/d0b/structtnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1per_1_1sensors.html#a680f7720a878791cc1a64ae097ae126a',1,'tnct::async::exp::temperature_sensors_simulator::per::sensors::const_iterator']]],
+  ['const_5flayout_5fite_11',['const_layout_ite',['../d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a93d8ec6743b2635a694a7677e798ad7e',1,'tnct::crosswords::dat::grid']]],
+  ['const_5flvalue_5fevent_5ftype_12',['const_lvalue_event_type',['../de/d98/namespacetnct_1_1async_1_1cpt.html#a11a373786d4ec55225b4e3b8b48592d0',1,'tnct::async::cpt']]],
+  ['const_5fopt_5fref_13',['const_opt_ref',['../de/d03/structtnct_1_1container_1_1internal_1_1evt_1_1multiply__matrix__cell.html#a3a1fccb38ec31a5a59876e175ee666e7',1,'tnct::container::internal::evt::multiply_matrix_cell']]],
+  ['coordinate_14',['coordinate',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#ae5608155726f6b13b5cf572bf40abf82',1,'tnct::crosswords::dat']]],
+  ['coordinates_15',['coordinates',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#add0690d57f7ca2ac1dfe15ea24f2f802',1,'tnct::crosswords::dat']]],
+  ['cout_16',['cout',['../df/dce/namespacetnct_1_1log.html#a3881cea9d51a0b7ae9d4720c0f5150ea',1,'tnct::log']]],
+  ['creator_17',['creator',['../d9/d78/namespacetnct_1_1generic_1_1bus.html#a480f6ab3d0393cb789a3be1190e6406a',1,'tnct::generic::bus']]]
 ];

@@ -1,13 +1,35 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h">
-<area shape="rect" id="node1" title=" " alt="" coords="651,5,854,76"/>
-<area shape="rect" id="node2" href="$dd/d6a/add__sensor_8h.html" title=" " alt="" coords="525,124,730,195"/>
-<area shape="rect" id="node7" href="$d5/d24/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="874,480,1119,551"/>
-<area shape="rect" id="node8" href="$d7/d4a/new__temperature_8h.html" title=" " alt="" coords="755,124,1001,195"/>
-<area shape="rect" id="node9" href="$d5/d2e/sensor_8h.html" title=" " alt="" coords="849,243,1051,313"/>
-<area shape="rect" id="node10" href="$d9/d14/remove__sensor_8h.html" title=" " alt="" coords="5,124,236,195"/>
-<area shape="rect" id="node11" href="$d6/d33/set__temperature_8h.html" title=" " alt="" coords="261,124,501,195"/>
-<area shape="rect" id="node3" href="$d1/d9f/sensors_8h.html" title=" " alt="" coords="557,361,759,432"/>
-<area shape="rect" id="node5" href="$d3/dde/supplier_8h.html" title=" " alt="" coords="418,243,621,313"/>
-<area shape="rect" id="node4" href="$df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="557,480,759,551"/>
-<area shape="rect" id="node6" href="$d4/da0/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8h.html" title=" " alt="" coords="784,361,1015,432"/>
+<map id="src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h" name="src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="595,5,789,60"/>
+<area shape="rect" id="Node000002" href="$dd/d6a/add__sensor_8h.html" title=" " alt="" coords="464,115,669,170"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="652,72,599,117,596,113,649,67"/>
+<area shape="rect" id="Node000007" href="$d5/d24/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="797,431,1043,485"/>
+<area shape="poly" id="edge22_Node000001_Node000007" title=" " alt="" coords="803,48,907,72,950,88,978,106,993,124,1003,144,1015,187,1015,233,1006,279,992,325,974,367,939,432,934,429,969,364,987,323,1001,278,1009,232,1009,188,998,146,988,127,974,110,947,93,905,77,802,53"/>
+<area shape="rect" id="Node000008" href="$d7/d4a/new__temperature_8h.html" title=" " alt="" coords="694,115,941,170"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="735,67,788,113,785,117,732,72"/>
+<area shape="rect" id="Node000009" href="$d5/d2e/sensor_8h.html" title=" " alt="" coords="815,225,990,280"/>
+<area shape="poly" id="edge21_Node000001_Node000009" title=" " alt="" coords="804,49,895,73,932,88,955,106,963,121,966,137,961,169,946,200,928,227,923,224,941,198,956,168,961,137,958,123,951,110,929,93,894,78,802,54"/>
+<area shape="rect" id="Node000010" href="$d9/d14/remove__sensor_8h.html" title=" " alt="" coords="5,108,176,177"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="581,47,396,71,292,89,189,111,177,114,176,108,187,105,291,83,395,66,580,42"/>
+<area shape="rect" id="Node000011" href="$d6/d33/set__temperature_8h.html" title=" " alt="" coords="200,115,440,170"/>
+<area shape="poly" id="edge18_Node000001_Node000011" title=" " alt="" coords="589,66,411,118,410,113,588,61"/>
+<area shape="rect" id="Node000003" href="$d1/d9f/sensors_8h.html" title=" " alt="" coords="475,328,658,383"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="569,184,569,327,564,327,564,184"/>
+<area shape="rect" id="Node000005" href="$d7/d57/async_2exp_2temperature__sensors__simulator_2supplier_8h.html" title=" " alt="" coords="363,225,527,280"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="528,181,477,227,473,223,525,177"/>
+<area shape="rect" id="Node000004" href="$df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="469,431,665,485"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="569,396,569,431,564,431,564,396"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="446,293,450,338,456,360,466,381,488,407,516,428,513,433,485,411,462,384,451,362,445,339,441,294"/>
+<area shape="rect" id="Node000006" href="$d4/da0/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8h.html" title=" " alt="" coords="682,328,913,383"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="542,279,706,325,704,330,540,284"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="726,390,628,433,626,428,724,386"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="842,389,890,429,886,433,838,394"/>
+<area shape="poly" id="edge12_Node000008_Node000003" title=" " alt="" coords="777,181,600,330,596,326,774,177"/>
+<area shape="poly" id="edge13_Node000008_Node000005" title=" " alt="" coords="714,176,528,230,527,225,713,171"/>
+<area shape="poly" id="edge14_Node000008_Node000006" title=" " alt="" coords="813,184,807,226,801,328,795,328,801,225,807,183"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="849,180,884,223,880,227,845,183"/>
+<area shape="poly" id="edge11_Node000009_Node000003" title=" " alt="" coords="803,286,655,330,653,325,801,281"/>
+<area shape="poly" id="edge16_Node000010_Node000003" title=" " alt="" coords="152,183,231,231,321,278,399,307,476,330,474,335,398,312,319,282,228,236,149,187"/>
+<area shape="poly" id="edge17_Node000010_Node000005" title=" " alt="" coords="190,175,364,226,363,231,188,180"/>
+<area shape="poly" id="edge19_Node000011_Node000003" title=" " alt="" coords="322,183,329,233,338,257,353,278,379,301,410,319,442,332,476,341,474,346,441,337,407,324,376,306,349,282,334,259,324,234,316,184"/>
+<area shape="poly" id="edge20_Node000011_Node000005" title=" " alt="" coords="363,177,416,223,413,227,360,182"/>
 </map>

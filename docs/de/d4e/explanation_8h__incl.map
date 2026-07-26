@@ -1,4 +1,5 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/explanation.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/explanation.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="83,109,142,136"/>
+<map id="src/tnct/crosswords/dat/explanation.h" name="src/tnct/crosswords/dat/explanation.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,152,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="49,93,108,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,46,81,79,76,79,76,46"/>
 </map>

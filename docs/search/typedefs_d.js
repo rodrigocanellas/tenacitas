@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['section_1414',['section',['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#a9a291637a147c31dd438c36b83ce3c02',1,'tnct::parser::ini_file']]],
-  ['sections_1415',['sections',['../dd/d7f/structtnct_1_1parser_1_1ini__file.html#ad41f4dd8ddedf4d02f3c46ed6a94a07a',1,'tnct::parser::ini_file']]],
-  ['sensor_5fid_1416',['sensor_id',['../dd/d2f/namespacetnct_1_1async_1_1exp_1_1temperature__sensors__simulator_1_1dat.html#a6a9678dbe1e880fd1032ba3bf79e01d3',1,'tnct::async::exp::temperature_sensors_simulator::dat']]],
-  ['size_1417',['size',['../dc/d44/structtnct_1_1crosswords_1_1dat_1_1entries.html#a565ce75ecf8e196dc7355d1ac6785a5e',1,'tnct::crosswords::dat::entries']]],
-  ['sleeping_5floop_1418',['sleeping_loop',['../d0/dda/structtnct_1_1async_1_1tst_1_1handling__test.html#a566a7ded7c0ccc2d642909d93d58fe2a',1,'tnct::async::tst::handling_test']]]
+  ['queue_0',['queue',['../dc/d3d/classtnct_1_1async_1_1internal_1_1bus_1_1handling__concrete.html#aae29960748cb77573b73557305aca045',1,'tnct::async::internal::bus::handling_concrete::queue'],['../d0/dda/structtnct_1_1async_1_1tst_1_1handling__test.html#a79a0919d3f0baaff61210f3d747f4dfa',1,'tnct::async::tst::handling_test::queue']]],
+  ['queue_5f1_1',['queue_1',['../d7/db2/namespacetnct_1_1async_1_1tst.html#aeded01dfa957ce748633ee1779648415',1,'tnct::async::tst']]],
+  ['queue_5f2_2',['queue_2',['../d7/db2/namespacetnct_1_1async_1_1tst.html#a09b4a46a8a20a27f3c681a966cadc1a7',1,'tnct::async::tst']]]
 ];

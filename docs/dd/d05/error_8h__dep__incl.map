@@ -1,0 +1,19 @@
+<map id="src/tnct/crosswords/dat/error.h" name="src/tnct/crosswords/dat/error.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="74,5,221,45"/>
+<area shape="rect" id="Node000002" href="$d4/d67/connection_8h.html" title=" " alt="" coords="5,291,188,331"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,59,103,292,97,291,139,59"/>
+<area shape="rect" id="Node000004" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="167,196,314,236"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="152,58,159,102,175,147,194,173,217,194,213,198,190,176,170,149,153,103,146,59"/>
+<area shape="rect" id="Node000008" href="$d5/dba/grid__create__error_8h.html" title=" " alt="" coords="185,93,363,148"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="186,51,240,91,237,95,183,56"/>
+<area shape="rect" id="Node000003" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="17,394,176,434"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="99,345,99,394,94,394,94,345"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="201,246,127,294,124,289,198,241"/>
+<area shape="rect" id="Node000005" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="213,284,365,339"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="259,247,278,283,273,285,254,249"/>
+<area shape="rect" id="Node000006" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="206,387,358,441"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="289,353,286,387,281,386,283,352"/>
+<area shape="rect" id="Node000007" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="382,387,534,441"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="346,344,415,384,412,389,343,348"/>
+<area shape="poly" id="edge9_Node000008_Node000004" title=" " alt="" coords="262,162,250,197,245,195,257,160"/>
+</map>

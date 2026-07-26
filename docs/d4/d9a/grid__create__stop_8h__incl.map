@@ -1,4 +1,7 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/evt/grid_create_stop.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/evt/grid_create_stop.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="73,109,153,136"/>
+<map id="src/tnct/crosswords/evt/internal/grid_create_stop.h" name="src/tnct/crosswords/evt/internal/grid_create_stop.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="7,5,185,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,85,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,61,62,97,57,95,78,59"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="109,108,184,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="114,59,135,95,130,97,109,61"/>
 </map>

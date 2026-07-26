@@ -1,0 +1,16 @@
+<map id="src/tnct/format/bus" name="src/tnct/format/bus">
+<area shape="rect" id="node1" href="dir_cb3dc434f022342b76a0f4595c2f4cec.html" title="dat" alt="" coords="27,125,69,151"/>
+<area shape="rect" id="node2" href="dir_e071d2f3ea95d6642fd054c8a4c70de3.html" title="bus" alt="" coords="27,52,72,77"/>
+<area shape="poly" id="edge3" href="dir_000009_000043.html" alt="" coords="52,78,51,112,46,112,46,78"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000009_000043.html" title="1" alt="" coords="52,100,62,115"/>
+<area shape="rect" id="node3" href="dir_8a1dd7ad9509b9310146c87cfa02c521.html" title="tuple" alt="" coords="94,125,149,151"/>
+<area shape="poly" id="edge1" href="dir_000009_000110.html" alt="" coords="63,76,102,114,98,118,59,80"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000009_000110.html" title="1" alt="" coords="98,99,107,114"/>
+<area shape="rect" id="node4" href="dir_a5ebf2cda77754fa366a66f13d51e569.html" title="pair" alt="" coords="173,125,219,151"/>
+<area shape="poly" id="edge2" href="dir_000009_000076.html" alt="" coords="73,75,161,117,159,122,71,79"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000009_000076.html" title="1" alt="" coords="155,102,164,117"/>
+<area shape="rect" id="node5" href="dir_f05459a0c7e7d7d13710bd457cee71d7.html" title="time" alt="" coords="243,125,295,151"/>
+<area shape="poly" id="edge4" href="dir_000009_000089.html" alt="" coords="73,71,231,122,229,127,71,76"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000009_000089.html" title="1" alt="" coords="224,107,233,122"/>
+<area shape="rect" id="clust1" href="dir_b40440698e5a6ddde6d1360f9f8dc00f.html" title="format" alt="" coords="16,16,83,161"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="tnct::crosswords::evt::internal::grid_create_solved" name="tnct::crosswords::evt::internal::grid_create_solved">
+<area shape="rect" id="Node000001" title="Published when a grid was assembled." alt="" coords="5,93,167,148"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="49,5,123,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="89,45,89,93,83,93,83,45"/>
+</map>
