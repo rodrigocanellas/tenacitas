@@ -1,0 +1,19 @@
+<map id="cout_log_no_fmt::operator()" name="cout_log_no_fmt::operator()">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,237,208,262"/>
+<area shape="rect" id="Node000002" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#aab0e05cd1445594d07f82455bfa188f9" title="Logs message with deb severity Each parameter must implement the output operator. The log message wil..." alt="" coords="266,5,401,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,235,164,152,206,101,254,55,262,50,265,54,258,59,210,105,169,155,117,238"/>
+<area shape="rect" id="Node000003" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#a9ea7bcf8eabd1a8fa7b0434adee1a4a4" title="Logs message with err severity Each parameter must implement the output operator. level::err messages..." alt="" coords="267,69,400,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,235,174,181,213,148,255,119,265,113,267,118,257,124,216,153,178,185,122,238"/>
+<area shape="rect" id="Node000004" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#a5db79c011e3b72c826a3bbb1818f1b28" title="Logs message with fat severity Each parameter must implement the output operator. level::fat messages..." alt="" coords="267,133,400,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="136,234,255,183,271,176,273,181,257,188,139,239"/>
+<area shape="rect" id="Node000005" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#aae4d172574e2be0e88547c24c659b87d" title="Logs message with inf severity Each parameter must implement the output operator. The log message wil..." alt="" coords="267,197,400,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="197,234,253,226,253,231,198,239"/>
+<area shape="rect" id="Node000006" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#aa25da664a246c8e8fdb1c63e6646b4b8" title=" " alt="" coords="256,261,411,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="198,259,243,266,242,271,197,265"/>
+<area shape="rect" id="Node000007" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#aa07c435433b846a7b3a53c331d59d46b" title="Logs message with tra severity Each parameter must implement the output operator. The log message wil..." alt="" coords="267,325,400,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="139,260,257,311,273,318,271,322,255,316,136,265"/>
+<area shape="rect" id="Node000008" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#a96994da34a14ad13e714fd7d3018d61b" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="267,389,400,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="122,260,178,314,216,346,257,375,267,381,265,385,255,380,213,350,174,318,118,264"/>
+<area shape="rect" id="Node000009" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#ad85da47b8407d371a5915f7f375214a6" title="Logs message with war severity Each parameter must implement the output operator. The log message wil..." alt="" coords="266,453,401,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="117,261,169,343,210,394,258,439,265,444,262,449,254,443,206,398,164,346,113,264"/>
+</map>

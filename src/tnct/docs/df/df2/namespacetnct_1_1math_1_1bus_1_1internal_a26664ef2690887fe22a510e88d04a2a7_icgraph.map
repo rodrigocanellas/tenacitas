@@ -1,0 +1,21 @@
+<map id="tnct::math::bus::internal::mul_same" name="tnct::math::bus::internal::mul_same">
+<area shape="rect" id="Node000001" title=" " alt="" coords="232,261,411,301"/>
+<area shape="rect" id="Node000002" href="$df/df2/namespacetnct_1_1math_1_1bus_1_1internal.html#a12f9e6a0780aeb97d4c149ce1d9fe8d9" title=" " alt="" coords="5,5,184,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="306,249,287,207,261,156,226,104,182,59,164,48,167,43,186,55,230,101,265,153,292,204,311,247"/>
+<area shape="rect" id="Node000003" href="$db/d1c/structtnct_1_1math_1_1test_1_1test__mul__000.html#adc9659d8c78e69712150bdff79194cc7" title=" " alt="" coords="15,69,174,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="298,251,250,187,218,153,182,124,161,112,164,107,186,119,222,149,254,183,302,248"/>
+<area shape="rect" id="Node000004" href="$da/d12/structtnct_1_1math_1_1test_1_1test__mul__001.html#a7453ce31069102c453d3b40a65cefa84" title=" " alt="" coords="15,133,174,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="284,255,237,221,183,188,157,176,159,171,185,183,240,216,287,251"/>
+<area shape="rect" id="Node000005" href="$d7/d11/structtnct_1_1math_1_1test_1_1test__mul__002.html#aead3e48dfa2d9afa4031a51c1ef8cd90" title=" " alt="" coords="15,197,174,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="236,260,165,240,167,235,237,255"/>
+<area shape="rect" id="Node000006" href="$d2/dd4/structtnct_1_1math_1_1test_1_1test__mul__003.html#afe1e7d0ae1a40715e1336bd6bd96e9ee" title=" " alt="" coords="15,261,174,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="218,284,174,284,174,279,218,279"/>
+<area shape="rect" id="Node000007" href="$d3/dc2/structtnct_1_1math_1_1test_1_1test__mul__004.html#a6676e1125e79ffd5bb341f29a4905b1f" title=" " alt="" coords="15,325,174,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="237,308,167,328,165,323,236,303"/>
+<area shape="rect" id="Node000008" href="$d7/d47/structtnct_1_1math_1_1test_1_1test__mul__005.html#a8400a2b057e60f7c148f4c1486b8ec50" title=" " alt="" coords="15,389,174,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="287,312,240,346,185,380,159,392,157,387,183,375,237,342,284,308"/>
+<area shape="rect" id="Node000009" href="$d7/d2b/structtnct_1_1math_1_1test_1_1test__mul__017.html#a0ce88b25424d00157bf87fd4c62679a1" title=" " alt="" coords="15,453,174,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="302,315,254,379,222,414,186,444,164,456,161,451,182,439,218,410,250,376,298,312"/>
+<area shape="rect" id="Node000010" href="$d7/d88/structtnct_1_1math_1_1test_1_1test__mul__018.html#a382e8a0c20776e73d703178c4329977a" title=" " alt="" coords="15,517,174,557"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="311,315,292,358,265,410,230,462,186,507,167,519,164,515,182,503,226,459,261,407,287,356,306,313"/>
+</map>

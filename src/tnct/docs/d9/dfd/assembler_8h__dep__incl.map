@@ -1,0 +1,19 @@
+<map id="crosswords/bus/internal/assembler.h" name="crosswords/bus/internal/assembler.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="520,5,696,45"/>
+<area shape="rect" id="Node000002" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="437,93,587,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="578,57,535,95,531,91,575,53"/>
+<area shape="rect" id="Node000008" href="$d2/d7b/assembler__test_8h.html" title=" " alt="" coords="614,93,802,133"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="642,52,688,91,684,95,639,56"/>
+<area shape="rect" id="Node000003" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="217,181,399,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="456,141,354,184,352,179,454,136"/>
+<area shape="rect" id="Node000006" href="$d4/d67/connection_8h.html" title=" " alt="" coords="428,181,596,221"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="515,147,515,181,509,181,509,147"/>
+<area shape="rect" id="Node000004" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="5,269,184,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="250,229,142,272,140,267,248,224"/>
+<area shape="rect" id="Node000005" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="209,269,407,309"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="311,235,311,269,305,269,305,235"/>
+<area shape="rect" id="Node000007" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="432,269,600,309"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="516,235,518,269,512,269,511,235"/>
+<area shape="rect" id="Node000009" href="$d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="621,189,801,214"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="712,147,713,188,708,188,706,147"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="tnct::async::tst::handling_005::operator()" name="tnct::async::tst::handling_005::operator()">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,188,109"/>
+<area shape="rect" id="Node000002" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a15905093446937257c9ebcf18267dd3c" title=" " alt="" coords="236,5,411,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,67,238,47,239,52,169,72"/>
+<area shape="rect" id="Node000004" href="$d5/d1f/namespacetnct_1_1async_1_1internal_1_1dat.html#aa59d3131b695a1ace83c95d8b77ed4ca" title=" " alt="" coords="242,69,405,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="188,87,228,87,228,92,188,92"/>
+<area shape="rect" id="Node000005" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#a96994da34a14ad13e714fd7d3018d61b" title="Logs message with tst severity Each parameter must implement the output operator. The log message wil..." alt="" coords="257,133,390,173"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="169,107,244,128,243,133,168,112"/>
+<area shape="rect" id="Node000003" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#ae67f2103c7a77b596c93d38e81c30d99" title=" " alt="" coords="459,5,687,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="411,23,445,23,445,28,411,28"/>
+</map>

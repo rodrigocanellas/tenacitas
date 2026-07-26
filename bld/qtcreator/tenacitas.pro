@@ -21,6 +21,7 @@ SUBDIRS = \
     crosswords \
     math \
     numerate \
+    supplier
 
     # network \
     # io

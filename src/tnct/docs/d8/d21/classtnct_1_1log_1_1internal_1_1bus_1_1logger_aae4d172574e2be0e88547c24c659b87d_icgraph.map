@@ -1,0 +1,15 @@
+<map id="tnct::log::internal::bus::logger::inf" name="tnct::log::internal::bus::logger::inf">
+<area shape="rect" id="Node000001" title="Logs message with inf severity Each parameter must implement the output operator. The log message wil..." alt="" coords="256,126,389,166"/>
+<area shape="rect" id="Node000002" href="$d8/dd1/structcerr__log.html#a752b542763999f4f08354e3bfa750750" title=" " alt="" coords="33,5,180,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="294,118,255,79,207,44,179,33,181,28,209,40,259,75,298,114"/>
+<area shape="rect" id="Node000003" href="$dc/d8d/structcout__log.html#a5f45276523a3e815ae0528d7a15d6773" title=" " alt="" coords="31,55,182,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="271,122,207,94,169,83,171,77,209,89,274,117"/>
+<area shape="rect" id="Node000004" href="$d0/d6d/structfile__log.html#a87476f672c652598bedbfece11b81b76" title=" " alt="" coords="35,104,178,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="242,138,178,129,179,124,242,132"/>
+<area shape="rect" id="Node000005" href="$db/dc5/structfile__log__multiple__files.html#a3ecc4bb24803186b4a5ab58c37588aac" title=" " alt="" coords="25,154,189,194"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="242,159,189,166,189,161,242,154"/>
+<area shape="rect" id="Node000006" href="$d7/d39/structcout__log__no__fmt.html#a18111ed339787083e247a7f4cd1ac3a4" title=" " alt="" coords="5,219,208,244"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="278,175,209,208,169,221,167,216,207,204,275,171"/>
+<area shape="rect" id="Node000007" href="$df/d04/structlog__000.html#af8c88c64c1d8d1705012fd204c63ee81" title=" " alt="" coords="33,268,180,293"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="299,178,260,220,236,240,209,258,179,270,177,265,207,253,233,236,256,216,296,175"/>
+</map>

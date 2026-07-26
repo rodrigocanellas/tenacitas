@@ -1,0 +1,13 @@
+<map id="log/internal/bus" name="log/internal/bus">
+<area shape="rect" id="node1" href="dir_3bc09168201e280be98eb6d5eeefb07d.html" title="bus" alt="" coords="73,52,119,77"/>
+<area shape="rect" id="node2" href="dir_4efeef8460faf057936c1b02a7592902.html" title="bus" alt="" coords="5,125,51,151"/>
+<area shape="poly" id="edge1" href="dir_000012_000011.html" alt="" coords="87,80,51,117,47,113,83,76"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000012_000011.html" title="1" alt="" coords="53,111,62,125"/>
+<area shape="rect" id="node3" href="dir_a01467c855a6610f0e99ac1ebf058fa4.html" title="dat" alt="" coords="75,125,117,151"/>
+<area shape="poly" id="edge2" href="dir_000012_000045.html" alt="" coords="99,78,99,112,93,112,93,78"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000012_000045.html" title="1" alt="" coords="100,100,109,114"/>
+<area shape="rect" id="node4" href="dir_a90c0e5ad5ad116dcaee5d4362de3b6a.html" title="cpt" alt="" coords="141,125,184,151"/>
+<area shape="poly" id="edge3" href="dir_000012_000027.html" alt="" coords="109,76,144,113,141,117,105,79"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000012_000027.html" title="1" alt="" coords="141,99,150,114"/>
+<area shape="rect" id="clust1" href="dir_8d53cbc04535e80fa0d5e268c0c6d5e8.html" title="internal" alt="" coords="60,16,132,88"/>
+</map>

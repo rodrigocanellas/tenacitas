@@ -1,0 +1,19 @@
+<map id="crosswords/dat/error.h" name="crosswords/dat/error.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="57,5,223,31"/>
+<area shape="rect" id="Node000002" href="$d4/d67/connection_8h.html" title=" " alt="" coords="5,255,173,295"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="138,45,96,255,90,254,132,44"/>
+<area shape="rect" id="Node000004" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="158,167,309,207"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="145,44,153,80,168,117,187,143,210,165,206,169,183,147,163,120,148,82,140,45"/>
+<area shape="rect" id="Node000008" href="$d5/dba/grid__create__error_8h.html" title=" " alt="" coords="178,79,353,119"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="171,36,237,76,234,81,168,40"/>
+<area shape="rect" id="Node000003" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="5,343,173,383"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="92,309,92,342,87,342,87,309"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="191,216,122,257,120,252,189,211"/>
+<area shape="rect" id="Node000005" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="198,255,381,295"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="255,217,279,253,275,256,251,220"/>
+<area shape="rect" id="Node000006" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="199,343,377,383"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="291,309,291,342,286,342,286,309"/>
+<area shape="rect" id="Node000007" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="402,343,601,383"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="349,297,456,340,454,345,347,302"/>
+<area shape="poly" id="edge9_Node000008_Node000004" title=" " alt="" coords="256,132,243,167,238,166,251,131"/>
+</map>

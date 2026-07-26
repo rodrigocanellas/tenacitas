@@ -1,0 +1,22 @@
+<map id="crosswords/app/server" name="crosswords/app/server">
+<area shape="rect" id="node1" href="dir_ad756d9f1d1ad7e858b81611ceb6306b.html" title="server" alt="" coords="210,52,273,77"/>
+<area shape="rect" id="node2" href="dir_1d95baf5ed368343b6bf38ffea41a320.html" title="dat" alt="" coords="5,125,48,151"/>
+<area shape="poly" id="edge1" href="dir_000082_000042.html" alt="" coords="211,79,62,128,60,123,209,74"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000082_000042.html" title="5" alt="" coords="63,124,73,139"/>
+<area shape="rect" id="node3" href="dir_32d7f900dfedca4f8c20cbc93b9303f2.html" title="container" alt="" coords="72,125,155,151"/>
+<area shape="poly" id="edge2" href="dir_000082_000022.html" alt="" coords="222,80,148,121,145,116,219,75"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000082_000022.html" title="1" alt="" coords="150,116,159,131"/>
+<area shape="rect" id="node4" href="dir_3bc9a6e33275e5bb71b95cdd8f300471.html" title="bus" alt="" coords="179,125,224,151"/>
+<area shape="poly" id="edge3" href="dir_000082_000008.html" alt="" coords="237,79,217,115,212,112,232,76"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000082_000008.html" title="1" alt="" coords="219,106,229,121"/>
+<area shape="rect" id="node5" href="dir_4ebe53fbe4496e9b16238525da078a5e.html" title="format" alt="" coords="248,125,315,151"/>
+<area shape="poly" id="edge4" href="dir_000082_000058.html" alt="" coords="250,76,270,112,266,115,246,79"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000082_000058.html" title="3" alt="" coords="269,98,278,113"/>
+<area shape="rect" id="node6" href="dir_9381a7bbd03577d6d8720c7f35c94ffa.html" title="log" alt="" coords="339,125,381,151"/>
+<area shape="poly" id="edge5" href="dir_000082_000068.html" alt="" coords="262,75,330,116,327,120,259,80"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000082_000068.html" title="6" alt="" coords="325,101,334,116"/>
+<area shape="rect" id="node7" href="dir_ddc98e6e1a9e0f6adcacab8ac7c1f855.html" title="async" alt="" coords="406,125,466,151"/>
+<area shape="poly" id="edge6" href="dir_000082_000001.html" alt="" coords="274,75,394,118,392,123,272,80"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000082_000001.html" title="3" alt="" coords="387,104,396,119"/>
+<area shape="rect" id="clust1" href="dir_adb095cb29b3282e6366d396666d5b9c.html" title="app" alt="" coords="199,16,284,88"/>
+</map>
