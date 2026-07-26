@@ -1,0 +1,21 @@
+<map id="tnct::container::dat::circular_queue_with_notifier::occupied" name="tnct::container::dat::circular_queue_with_notifier::occupied">
+<area shape="rect" id="Node000001" title=" " alt="" coords="856,237,1016,292"/>
+<area shape="rect" id="Node000002" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a9b9b4acf7fd43c80a84ef838d8e78b29" title=" " alt="" coords="648,168,808,223"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="842,236,807,224,809,219,844,231"/>
+<area shape="rect" id="Node000007" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a2ffc5280fbb962512fb8895bccd72958" title=" " alt="" coords="431,305,591,360"/>
+<area shape="poly" id="edge11_Node000001_Node000007" title=" " alt="" coords="843,282,591,323,591,317,842,277"/>
+<area shape="rect" id="Node000003" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a56255208da6fb26e27ccd4494471445f" title=" " alt="" coords="421,161,600,230"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="634,198,600,198,600,193,634,193"/>
+<area shape="rect" id="Node000004" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a8c4f912c54d3c1d32ff1bb49b4b3eb11" title=" " alt="" coords="213,79,373,133"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="699,158,656,110,629,88,599,71,570,62,539,56,477,56,417,66,364,81,363,76,416,61,477,51,540,51,571,56,601,66,632,83,660,106,703,155"/>
+<area shape="rect" id="Node000005" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a10b44f2b193807b330fbe6df5bc72bf2" title=" " alt="" coords="5,47,165,101"/>
+<area shape="poly" id="edge9_Node000002_Node000005" title=" " alt="" coords="705,157,687,127,662,96,633,66,599,44,544,24,487,13,428,8,369,10,312,16,258,26,166,49,165,44,257,20,311,11,369,5,428,3,487,7,546,19,601,40,636,62,666,92,691,124,710,155"/>
+<area shape="rect" id="Node000006" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#a1460cc445fb96cad05628f87f38dcb53" title=" " alt="" coords="5,191,165,245"/>
+<area shape="poly" id="edge10_Node000002_Node000006" title=" " alt="" coords="653,230,601,245,542,253,482,257,364,256,255,247,165,235,166,230,255,242,364,251,482,251,542,247,599,239,652,225"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="681,233,601,288,568,307,565,303,599,284,678,229"/>
+<area shape="rect" id="Node000008" href="$db/db3/classtnct_1_1container_1_1dat_1_1circular__queue__with__notifier.html#ab4475758f82af90f757fffcd6bcd6f40" title=" " alt="" coords="431,81,591,136"/>
+<area shape="poly" id="edge8_Node000002_Node000008" title=" " alt="" coords="645,165,579,138,581,133,647,160"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="199,94,165,89,166,84,200,89"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="231,142,138,193,136,188,229,137"/>
+<area shape="poly" id="edge7_Node000007_Node000004" title=" " alt="" coords="471,297,419,244,318,135,322,132,423,240,475,293"/>
+</map>

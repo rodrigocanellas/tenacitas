@@ -1,0 +1,16 @@
+<map id="src/tnct/async/internal/dat/handler_id.h" name="src/tnct/async/internal/dat/handler_id.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="36,5,203,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,81,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,47,66,85,62,81,99,44"/>
+<area shape="rect" id="Node000003" href="$da/dde/is__event_8h.html" title=" " alt="" coords="94,167,278,192"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="125,45,133,80,147,118,170,154,165,157,142,120,128,81,120,46"/>
+<area shape="rect" id="Node000007" href="$d0/d66/is__handler_8h.html" title=" " alt="" coords="157,93,351,119"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="153,43,224,84,221,89,150,48"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="67,247,159,273"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="177,194,135,239,131,235,173,190"/>
+<area shape="rect" id="Node000005" href="$d8/da7/has__output__operator_8h.html" title=" " alt="" coords="183,240,339,280"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="199,190,235,228,231,232,195,194"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="223,328,299,353"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="263,280,263,314,258,314,258,280"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="245,121,209,158,205,155,241,117"/>
+</map>

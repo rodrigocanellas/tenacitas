@@ -1,11 +1,26 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/coordinates.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/coordinates.h">
-<area shape="rect" id="node1" title=" " alt="" coords="501,5,716,61"/>
-<area shape="rect" id="node2" href="$d7/d39/organizer_8h.html" title=" " alt="" coords="501,109,716,165"/>
-<area shape="rect" id="node3" href="$d4/dec/assembler_8h.html" title=" " alt="" coords="383,213,597,269"/>
-<area shape="rect" id="node9" href="$d6/d78/organizer__test_8h.html" title=" " alt="" coords="621,213,836,269"/>
-<area shape="rect" id="node4" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="237,317,452,373"/>
-<area shape="rect" id="node7" href="$d2/d7b/assembler__test_8h.html" title=" " alt="" coords="476,317,691,373"/>
-<area shape="rect" id="node5" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="5,421,239,477"/>
-<area shape="rect" id="node6" href="$d1/d46/crosswords_2uix_2qt_2author__desktop_2main_8cpp.html" title=" " alt="" coords="263,421,495,477"/>
-<area shape="rect" id="node8" href="$d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="588,421,803,477"/>
+<map id="src/tnct/crosswords/dat/coordinates.h" name="src/tnct/crosswords/dat/coordinates.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="540,5,687,45"/>
+<area shape="rect" id="Node000002" href="$d7/d39/organizer_8h.html" title=" " alt="" coords="524,93,703,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="616,59,616,93,611,93,611,59"/>
+<area shape="rect" id="Node000003" href="$d4/dec/assembler_8h.html" title=" " alt="" coords="424,181,611,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="583,145,540,183,537,179,580,141"/>
+<area shape="rect" id="Node000012" href="$d6/d78/organizer__test_8h.html" title=" " alt="" coords="635,181,787,221"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="647,140,691,179,687,183,643,144"/>
+<area shape="rect" id="Node000004" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="343,269,489,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="486,232,440,271,437,267,483,228"/>
+<area shape="rect" id="Node000010" href="$d2/d7b/assembler__test_8h.html" title=" " alt="" coords="514,269,673,309"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="545,230,579,267,575,271,541,234"/>
+<area shape="rect" id="Node000005" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="175,357,327,412"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="372,319,299,360,296,355,369,314"/>
+<area shape="rect" id="Node000008" href="$d4/d67/connection_8h.html" title=" " alt="" coords="351,365,534,405"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="428,322,440,364,435,365,423,323"/>
+<area shape="rect" id="Node000006" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="5,460,157,515"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="196,421,127,462,124,457,193,417"/>
+<area shape="rect" id="Node000007" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="181,460,333,515"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="256,426,258,460,253,460,251,426"/>
+<area shape="rect" id="Node000009" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="363,467,522,507"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="445,419,445,467,440,467,440,419"/>
+<area shape="rect" id="Node000011" href="$d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="611,365,757,405"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="623,317,668,363,664,366,619,321"/>
+<area shape="poly" id="edge12_Node000012_Node000011" title=" " alt="" coords="709,235,689,365,684,364,703,234"/>
 </map>

@@ -1,9 +1,15 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/async/exec_sync.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/exec_sync.h">
-<area shape="rect" id="node1" title=" " alt="" coords="166,5,369,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,117,148,143"/>
-<area shape="rect" id="node3" title=" " alt="" coords="172,117,259,143"/>
-<area shape="rect" id="node4" title=" " alt="" coords="283,117,358,143"/>
-<area shape="rect" id="node5" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="383,109,536,151"/>
-<area shape="rect" id="node6" title=" " alt="" coords="374,199,441,225"/>
-<area shape="rect" id="node7" title=" " alt="" coords="465,199,557,225"/>
+<map id="src/tnct/async/bus/exec_sync.h" name="src/tnct/async/bus/exec_sync.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="198,5,337,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,101,148,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,48,116,98,113,93,224,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="172,101,259,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="258,47,232,90,227,87,254,44"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="283,101,358,126"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="281,44,308,87,304,90,277,47"/>
+<area shape="rect" id="Node000005" href="$d9/d3a/chrono__convertible_8h.html" title=" " alt="" coords="383,93,536,133"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="311,43,406,85,404,90,308,48"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="374,181,441,207"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="449,135,425,171,420,168,445,132"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="465,181,557,207"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="474,132,498,168,494,171,470,135"/>
 </map>

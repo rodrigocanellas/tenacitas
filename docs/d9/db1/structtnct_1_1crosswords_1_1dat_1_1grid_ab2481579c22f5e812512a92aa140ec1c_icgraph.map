@@ -1,5 +1,7 @@
 <map id="tnct::crosswords::dat::grid::begin" name="tnct::crosswords::dat::grid::begin">
-<area shape="rect" id="node1" title=" " alt="" coords="216,39,373,80"/>
-<area shape="rect" id="node2" href="$d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#aa9a468d519f42b1895d148b0c55eae7d" title=" " alt="" coords="8,5,165,47"/>
-<area shape="rect" id="node3" href="$d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a8acd0d071491f592381310a4239dada5" title=" " alt="" coords="5,71,168,112"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="216,37,373,77"/>
+<area shape="rect" id="Node000002" href="$d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a60edf90020959a951ba4a1cc27b95209" title=" " alt="" coords="8,5,165,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="202,46,165,40,166,35,203,41"/>
+<area shape="rect" id="Node000003" href="$d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a8acd0d071491f592381310a4239dada5" title=" " alt="" coords="5,69,168,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="203,74,169,79,168,74,202,69"/>
 </map>

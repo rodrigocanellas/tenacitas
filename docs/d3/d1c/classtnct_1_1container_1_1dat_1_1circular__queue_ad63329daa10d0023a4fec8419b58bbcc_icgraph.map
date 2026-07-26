@@ -1,0 +1,14 @@
+<map id="tnct::container::dat::circular_queue::occupied" name="tnct::container::dat::circular_queue::occupied">
+<area shape="rect" id="Node000001" title=" " alt="" coords="428,53,619,93"/>
+<area shape="rect" id="Node000002" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a03348c1378ae8076a6075325d6c1aeb5" title=" " alt="" coords="217,77,380,132"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="415,91,381,96,380,90,414,86"/>
+<area shape="rect" id="Node000003" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a7a363f1de1b7ba9630443eed06919c1a" title=" " alt="" coords="10,5,165,60"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="414,65,165,42,165,37,415,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="204,75,164,61,166,56,206,70"/>
+<area shape="rect" id="Node000004" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#ae4e06f36dcc16b07847aa6cd52fc6367" title=" " alt="" coords="9,85,166,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="204,107,166,107,166,102,204,102"/>
+<area shape="rect" id="Node000005" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a3f6b8e097885078501bad942d18e6c11" title=" " alt="" coords="5,149,169,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="205,136,155,151,153,146,204,131"/>
+<area shape="rect" id="Node000006" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a55f8e80e8ea764e0fec33e6618d4b29e" title=" " alt="" coords="5,213,169,253"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="257,143,216,174,171,203,146,215,144,210,168,198,213,169,254,139"/>
+</map>

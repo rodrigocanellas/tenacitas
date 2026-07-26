@@ -1,5 +1,7 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/word.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/word.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="42,109,101,136"/>
-<area shape="rect" id="node3" title=" " alt="" coords="125,109,183,136"/>
+<map id="src/tnct/crosswords/dat/word.h" name="src/tnct/crosswords/dat/word.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,152,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="8,93,67,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,47,52,82,48,80,66,44"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="91,93,149,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="91,44,110,80,105,82,86,47"/>
 </map>

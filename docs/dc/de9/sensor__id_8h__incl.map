@@ -1,4 +1,5 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h" name="/home/rodrigo/development/tenacitas/src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,208,76"/>
-<area shape="rect" id="node2" title=" " alt="" coords="73,124,140,151"/>
+<map id="src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h" name="src/tnct/async/exp/temperature_sensors_simulator/dat/sensor_id.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,200,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="69,108,136,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,60,105,94,100,94,100,60"/>
 </map>

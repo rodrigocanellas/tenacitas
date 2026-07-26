@@ -1,0 +1,9 @@
+<map id="tnct::program::bus::options::get_single_param" name="tnct::program::bus::options::get_single_param">
+<area shape="rect" id="Node000001" title="Retrieves a single parameter, if possible." alt="" coords="204,55,407,95"/>
+<area shape="rect" id="Node000002" href="$d7/d04/crosswords_2app_2client_2main_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627" title=" " alt="" coords="53,5,108,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,54,107,27,109,22,214,49"/>
+<area shape="rect" id="Node000003" href="$d6/dd4/structtnct_1_1parser_1_1tst_1_1test__000.html#aadad1b39f8f17267ff12718b6cd2c1cf" title=" " alt="" coords="5,55,156,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="190,78,156,78,156,73,190,73"/>
+<area shape="rect" id="Node000004" href="$df/dd0/structtnct_1_1translator_1_1tst_1_1from__existing__file.html#a20db48bb9af15d8859697c6274e6daf6" title=" " alt="" coords="7,120,154,175"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="230,102,155,126,153,121,229,97"/>
+</map>

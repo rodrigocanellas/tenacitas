@@ -1,8 +1,13 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/coordinates.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/coordinates.h">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="16,117,79,143"/>
-<area shape="rect" id="node3" href="$dc/dd0/coordinate_8h.html" title=" " alt="" coords="103,109,253,151"/>
-<area shape="rect" id="node4" title=" " alt="" coords="84,206,144,233"/>
-<area shape="rect" id="node5" href="$d1/db5/index_8h.html" title=" " alt="" coords="169,199,318,240"/>
-<area shape="rect" id="node6" title=" " alt="" coords="210,288,277,315"/>
+<map id="src/tnct/crosswords/dat/coordinates.h" name="src/tnct/crosswords/dat/coordinates.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="29,5,175,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,101,68,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,47,56,91,52,88,85,44"/>
+<area shape="rect" id="Node000003" href="$dc/dd0/coordinate_8h.html" title=" " alt="" coords="93,93,242,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="119,44,147,81,143,84,114,47"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="73,189,133,214"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="155,135,122,179,118,176,151,132"/>
+<area shape="rect" id="Node000005" href="$d4/d1b/crosswords_2dat_2index_8h.html" title=" " alt="" coords="158,181,307,221"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="184,132,212,169,208,172,180,135"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="199,269,266,295"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="235,222,235,255,230,255,230,222"/>
 </map>

@@ -1,0 +1,15 @@
+<map id="src/tnct/crosswords/evt/internal/grid_create_error.h" name="src/tnct/crosswords/evt/internal/grid_create_error.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="257,5,436,60"/>
+<area shape="rect" id="Node000002" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="273,108,420,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="349,74,349,108,344,108,344,74"/>
+<area shape="rect" id="Node000003" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="175,196,327,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="319,159,280,198,276,194,316,155"/>
+<area shape="rect" id="Node000006" href="$d4/d67/connection_8h.html" title=" " alt="" coords="351,203,534,243"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="378,155,425,201,421,205,374,159"/>
+<area shape="rect" id="Node000004" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="5,299,157,353"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="196,260,127,301,124,296,193,256"/>
+<area shape="rect" id="Node000005" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="181,299,333,353"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="256,264,258,298,253,299,251,265"/>
+<area shape="rect" id="Node000007" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="363,306,522,346"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="445,257,445,306,440,306,440,257"/>
+</map>

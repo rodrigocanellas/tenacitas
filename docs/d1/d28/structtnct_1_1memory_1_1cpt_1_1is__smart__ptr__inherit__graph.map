@@ -1,4 +1,5 @@
 <map id="tnct::memory::cpt::is_smart_ptr&lt; T &gt;" name="tnct::memory::cpt::is_smart_ptr&lt; T &gt;">
-<area shape="rect" id="node1" title="Determines if a type is a shared or unique pointer." alt="" coords="10,109,155,151"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,5,160,61"/>
+<area shape="rect" id="Node000001" title="Determines if a type is a shared or unique pointer." alt="" coords="10,108,155,148"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,160,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,74,85,108,80,108,80,74"/>
 </map>

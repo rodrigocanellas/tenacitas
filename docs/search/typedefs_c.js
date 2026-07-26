@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['queue_1411',['queue',['../d6/d78/classtnct_1_1async_1_1internal_1_1handling__concrete.html#ac8982987c8fbcfd836d45faa763d3463',1,'tnct::async::internal::handling_concrete::queue()'],['../d0/dda/structtnct_1_1async_1_1tst_1_1handling__test.html#a064073eef4726fd5903ac7f5972a5e20',1,'tnct::async::tst::handling_test::queue()']]],
-  ['queue_5f1_1412',['queue_1',['../d7/db2/namespacetnct_1_1async_1_1tst.html#a7b6962ab4e9e8455bba72b9f2bd88fe7',1,'tnct::async::tst']]],
-  ['queue_5f2_1413',['queue_2',['../d7/db2/namespacetnct_1_1async_1_1tst.html#a061eb69ce893b2d7d2848ddf95f801f4',1,'tnct::async::tst']]]
+  ['permutation_0',['permutation',['../d9/d4f/namespacetnct_1_1crosswords_1_1dat.html#a993176675c5e4bd66f9f03192136b3cf',1,'tnct::crosswords::dat']]],
+  ['properties_1',['properties',['../d8/df3/structtnct_1_1parser_1_1bus_1_1ini__file.html#a8bf3d280bb620bf3b8c8660654ccfb85',1,'tnct::parser::bus::ini_file']]],
+  ['publishers_2',['publishers',['../d6/da8/namespacetnct_1_1async_1_1exp.html#a8aacda0b153e489fa052f49fe42693df',1,'tnct::async::exp']]]
 ];

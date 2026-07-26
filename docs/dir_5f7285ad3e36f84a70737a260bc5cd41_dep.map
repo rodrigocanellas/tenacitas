@@ -1,0 +1,13 @@
+<map id="src/tnct/log/bus" name="src/tnct/log/bus">
+<area shape="rect" id="node1" href="dir_3b517d3d27d068ec5f794012f0da7754.html" title="dat" alt="" coords="27,125,69,151"/>
+<area shape="rect" id="node2" href="dir_8f1ae980209ad07bda09b9a272a58dab.html" title="internal" alt="" coords="93,125,165,151"/>
+<area shape="rect" id="node3" href="dir_5f7285ad3e36f84a70737a260bc5cd41.html" title="bus" alt="" coords="107,52,152,77"/>
+<area shape="poly" id="edge1" href="dir_000011_000045.html" alt="" coords="118,79,73,118,70,114,115,75"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000011_000045.html" title="1" alt="" coords="76,112,85,127"/>
+<area shape="poly" id="edge2" href="dir_000011_000064.html" alt="" coords="132,78,132,112,127,112,127,78"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000011_000064.html" title="3" alt="" coords="133,100,142,114"/>
+<area shape="rect" id="node4" href="dir_b40440698e5a6ddde6d1360f9f8dc00f.html" title="format" alt="" coords="189,125,256,151"/>
+<area shape="poly" id="edge3" href="dir_000011_000058.html" alt="" coords="146,75,198,115,195,119,143,79"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000011_000058.html" title="1" alt="" coords="193,100,203,115"/>
+<area shape="rect" id="clust1" href="dir_cd3d90c27c281d20bf53dfcebed30fdb.html" title="log" alt="" coords="16,16,176,161"/>
+</map>

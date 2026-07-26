@@ -1,4 +1,9 @@
 <map id="MainWindow::MainWindow" name="MainWindow::MainWindow">
-<area shape="rect" id="node1" title=" " alt="" coords="5,13,203,39"/>
-<area shape="rect" id="node2" href="$d3/d63/classtnct_1_1log_1_1internal_1_1logger.html#a2f9b8f17624921b68a2eeef43443f631" title=" " alt="" coords="251,5,384,47"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,45,203,70"/>
+<area shape="rect" id="Node000002" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a15905093446937257c9ebcf18267dd3c" title=" " alt="" coords="251,5,425,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,42,237,36,237,42,198,47"/>
+<area shape="rect" id="Node000004" href="$d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#a1c77ce1b787e40ff1f230eb49720ddab" title=" " alt="" coords="261,69,415,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="198,67,247,74,247,80,197,73"/>
+<area shape="rect" id="Node000003" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#ae67f2103c7a77b596c93d38e81c30d99" title=" " alt="" coords="473,5,701,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="426,23,460,23,460,28,426,28"/>
 </map>

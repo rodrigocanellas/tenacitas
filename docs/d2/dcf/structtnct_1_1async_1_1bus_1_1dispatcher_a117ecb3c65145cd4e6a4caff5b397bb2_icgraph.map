@@ -1,0 +1,9 @@
+<map id="tnct::async::bus::dispatcher::publish" name="tnct::async::bus::dispatcher::publish">
+<area shape="rect" id="Node000001" title=" " alt="" coords="272,55,472,95"/>
+<area shape="rect" id="Node000002" href="$da/d48/structasync__sum__matrix.html#a90fed83b515580a49971c674312fa3e8" title=" " alt="" coords="5,5,224,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="268,55,172,33,173,28,269,50"/>
+<area shape="rect" id="Node000003" href="$d5/dda/structtnct_1_1async_1_1tst_1_1dispatcher__007.html#aa7d4cfccd13ce3b682cb51261b49740d" title=" " alt="" coords="17,55,212,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="258,78,212,78,212,73,258,73"/>
+<area shape="rect" id="Node000004" href="$d8/d44/structtnct_1_1async_1_1tst_1_1dispatcher__008.html#ab5b505b3419387fcc64f5372126fbb02" title=" " alt="" coords="17,119,212,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="278,101,196,122,195,117,277,96"/>
+</map>

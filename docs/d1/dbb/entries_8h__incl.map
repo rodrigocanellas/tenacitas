@@ -1,10 +1,20 @@
-<map id="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/entries.h" name="/home/rodrigo/development/tenacitas/src/tnct/crosswords/dat/entries.h">
-<area shape="rect" id="node1" title=" " alt="" coords="103,5,318,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,117,85,143"/>
-<area shape="rect" id="node3" title=" " alt="" coords="110,117,173,143"/>
-<area shape="rect" id="node4" href="$d1/dc6/entry_8h.html" title=" " alt="" coords="248,109,397,151"/>
-<area shape="rect" id="node5" href="$d9/d5f/explanation_8h.html" title=" " alt="" coords="161,199,311,240"/>
-<area shape="rect" id="node7" href="$d7/d2f/word_8h.html" title=" " alt="" coords="335,199,484,240"/>
-<area shape="rect" id="node6" title=" " alt="" coords="252,288,311,315"/>
-<area shape="rect" id="node8" title=" " alt="" coords="380,288,439,315"/>
+<map id="src/tnct/crosswords/dat/entries.h" name="src/tnct/crosswords/dat/entries.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="137,5,284,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,101,85,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,48,80,97,78,92,173,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="110,101,173,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,47,161,91,157,88,193,44"/>
+<area shape="rect" id="Node000004" href="$d1/dc6/entry_8h.html" title=" " alt="" coords="248,93,397,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="237,43,288,83,285,87,234,48"/>
+<area shape="rect" id="Node000005" href="$d9/d5f/explanation_8h.html" title=" " alt="" coords="161,181,311,221"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="216,45,234,167,229,168,211,46"/>
+<area shape="rect" id="Node000007" href="$d7/d2f/word_8h.html" title=" " alt="" coords="335,181,484,221"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="285,28,319,35,354,47,386,66,412,92,420,110,424,130,421,168,416,168,419,130,415,112,407,95,382,70,352,52,318,40,284,33"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="305,136,267,173,263,170,302,132"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="344,132,382,170,379,173,340,136"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="252,269,311,295"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="249,220,270,256,265,259,245,223"/>
+<area shape="poly" id="edge8_Node000007_Node000006" title=" " alt="" coords="380,224,313,264,310,260,377,219"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="380,269,439,295"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="412,222,412,255,407,255,407,222"/>
 </map>
