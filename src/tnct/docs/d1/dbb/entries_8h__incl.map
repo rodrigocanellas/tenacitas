@@ -1,0 +1,20 @@
+<map id="crosswords/dat/entries.h" name="crosswords/dat/entries.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="120,5,301,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,86,85,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="188,33,83,83,81,78,185,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="110,86,173,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="202,33,163,77,159,74,198,29"/>
+<area shape="rect" id="Node000004" href="$d1/dc6/entry_8h.html" title=" " alt="" coords="248,79,397,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="229,29,286,69,283,73,226,33"/>
+<area shape="rect" id="Node000005" href="$d9/d5f/explanation_8h.html" title=" " alt="" coords="161,167,311,207"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="215,30,234,152,228,153,210,31"/>
+<area shape="rect" id="Node000007" href="$d7/d2f/word_8h.html" title=" " alt="" coords="335,167,484,207"/>
+<area shape="poly" id="edge10_Node000001_Node000007" title=" " alt="" coords="302,21,332,27,362,38,389,55,411,77,421,95,424,115,421,153,416,153,419,115,416,97,407,80,386,59,360,43,331,32,301,26"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="305,121,267,159,263,155,302,117"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="344,117,382,155,379,159,340,121"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="252,255,311,280"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="249,206,270,241,265,244,245,208"/>
+<area shape="poly" id="edge8_Node000007_Node000006" title=" " alt="" coords="380,209,313,250,310,245,377,205"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="380,255,439,280"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="412,207,412,241,407,241,407,207"/>
+</map>

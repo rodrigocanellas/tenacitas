@@ -1,0 +1,9 @@
+<map id="crosswords/evt/internal/grid_permutations_tried.h" name="crosswords/evt/internal/grid_permutations_tried.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="43,5,238,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,76,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,48,68,87,65,82,115,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="101,93,181,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="143,46,143,79,138,79,138,46"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="205,93,279,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="167,43,217,82,214,87,164,48"/>
+</map>

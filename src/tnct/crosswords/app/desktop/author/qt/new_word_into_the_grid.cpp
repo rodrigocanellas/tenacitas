@@ -1,7 +1,7 @@
 #include "new_word_into_the_grid.h"
 #include "ui_new_word_into_the_grid.h"
 
-#include <tenacitas.crosswords/asy/new_word_into_the_grid.h>
+#include <tenacitas.crosswords/asy/new_word_into_the_grid.h"
 
 NewWordIntoTheGrid::NewWordIntoTheGrid(
     crosswords::mod::dispatcher::ptr p_dispatcher, QWidget *parent)

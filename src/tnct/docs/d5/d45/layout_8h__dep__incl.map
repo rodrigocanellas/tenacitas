@@ -1,0 +1,45 @@
+<map id="crosswords/dat/layout.h" name="crosswords/dat/layout.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="125,5,302,31"/>
+<area shape="rect" id="Node000002" href="$d4/d67/connection_8h.html" title=" " alt="" coords="5,504,173,544"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="180,40,147,62,113,92,87,129,80,149,77,171,77,349,82,436,89,504,84,504,76,436,72,349,72,171,75,148,83,126,109,89,143,58,177,35"/>
+<area shape="rect" id="Node000004" href="$da/d15/grid_8h.html" title=" " alt="" coords="285,79,446,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="251,34,342,76,339,81,249,39"/>
+<area shape="rect" id="Node000003" href="$db/d27/crosswords_2app_2server_2main_8cpp.html" title=" " alt="" coords="5,592,173,632"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="92,558,92,592,87,592,87,558"/>
+<area shape="poly" id="edge7_Node000004_Node000002" title=" " alt="" coords="301,110,244,130,188,161,164,181,145,203,132,229,128,259,128,349,125,393,117,437,99,504,93,503,112,436,120,393,123,349,123,258,127,228,140,201,160,177,185,157,242,126,300,105"/>
+<area shape="rect" id="Node000005" href="$df/dc5/crosswords_2app_2desktop_2author_2qt_2mainwindow_8h.html" title=" " alt="" coords="198,504,381,544"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="322,112,292,130,267,154,245,188,230,218,220,247,214,276,210,338,204,416,200,437,204,455,225,482,252,502,249,506,221,485,199,457,195,437,199,416,205,338,209,275,215,246,225,216,240,185,263,150,289,125,319,108"/>
+<area shape="rect" id="Node000008" href="$d7/d3c/grid__creator_8h.html" title=" " alt="" coords="214,416,365,456"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="317,112,289,129,268,153,253,187,247,224,246,261,249,299,266,366,283,415,278,417,260,368,244,299,240,262,241,223,248,186,263,151,286,125,315,107"/>
+<area shape="rect" id="Node000009" href="$d4/dec/assembler_8h.html" title=" " alt="" coords="571,328,747,368"/>
+<area shape="poly" id="edge11_Node000004_Node000009" title=" " alt="" coords="410,107,456,127,508,156,560,193,606,238,635,285,654,327,649,329,631,287,602,242,557,197,505,161,453,132,408,112"/>
+<area shape="rect" id="Node000012" href="$d7/d39/organizer_8h.html" title=" " alt="" coords="416,240,592,280"/>
+<area shape="poly" id="edge15_Node000004_Node000012" title=" " alt="" coords="409,108,439,126,466,150,481,172,491,196,503,239,498,241,486,198,476,175,462,154,436,130,406,112"/>
+<area shape="rect" id="Node000014" href="$d6/d49/grid__create__solved_8h.html" title=" " alt="" coords="278,152,453,192"/>
+<area shape="poly" id="edge19_Node000004_Node000014" title=" " alt="" coords="368,118,368,152,363,152,363,118"/>
+<area shape="rect" id="Node000015" href="$d7/da1/grid__to__organize_8h.html" title=" " alt="" coords="593,152,767,192"/>
+<area shape="poly" id="edge24_Node000004_Node000015" title=" " alt="" coords="425,105,605,149,604,155,424,110"/>
+<area shape="rect" id="Node000016" href="$db/d71/dat__test_8h.html" title=" " alt="" coords="729,240,871,280"/>
+<area shape="poly" id="edge26_Node000004_Node000016" title=" " alt="" coords="460,91,549,96,644,106,727,123,759,135,782,150,796,171,803,195,805,240,800,240,798,196,791,173,778,154,757,140,726,128,643,111,549,101,460,96"/>
+<area shape="rect" id="Node000006" href="$d7/dc1/crosswords_2app_2desktop_2author_2qt_2main_8cpp.html" title=" " alt="" coords="199,592,377,632"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="291,558,291,592,286,592,286,558"/>
+<area shape="rect" id="Node000007" href="$da/d77/crosswords_2app_2desktop_2author_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="402,592,601,632"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="349,547,456,590,454,594,347,552"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="234,464,134,506,132,502,232,459"/>
+<area shape="poly" id="edge9_Node000008_Node000005" title=" " alt="" coords="292,470,292,504,287,504,287,470"/>
+<area shape="poly" id="edge12_Node000009_Node000008" title=" " alt="" coords="565,374,366,420,365,415,564,369"/>
+<area shape="rect" id="Node000010" href="$d2/d7b/assembler__test_8h.html" title=" " alt="" coords="534,416,722,456"/>
+<area shape="poly" id="edge13_Node000009_Node000010" title=" " alt="" coords="650,382,637,417,632,415,645,380"/>
+<area shape="rect" id="Node000011" href="$d6/db6/crosswords_2tst_2main_8cpp.html" title=" " alt="" coords="538,511,718,537"/>
+<area shape="poly" id="edge14_Node000010_Node000011" title=" " alt="" coords="631,470,631,511,625,511,625,470"/>
+<area shape="poly" id="edge16_Node000012_Node000009" title=" " alt="" coords="551,284,626,326,624,330,549,289"/>
+<area shape="rect" id="Node000013" href="$d6/d78/organizer__test_8h.html" title=" " alt="" coords="315,328,496,368"/>
+<area shape="poly" id="edge17_Node000012_Node000013" title=" " alt="" coords="474,291,429,330,425,326,470,287"/>
+<area shape="poly" id="edge18_Node000013_Node000011" title=" " alt="" coords="435,376,476,414,523,454,568,485,609,509,606,513,565,489,520,458,472,418,431,380"/>
+<area shape="poly" id="edge20_Node000014_Node000008" title=" " alt="" coords="352,206,328,262,305,329,297,376,293,416,288,416,291,375,300,327,323,260,347,204"/>
+<area shape="poly" id="edge22_Node000014_Node000010" title=" " alt="" coords="373,205,384,243,394,262,406,278,430,297,454,305,480,312,509,326,557,365,610,414,606,418,554,369,507,330,478,317,452,310,428,302,402,282,389,264,379,245,368,206"/>
+<area shape="poly" id="edge21_Node000014_Node000012" title=" " alt="" coords="409,197,475,238,472,242,406,201"/>
+<area shape="poly" id="edge23_Node000014_Node000013" title=" " alt="" coords="361,206,358,242,363,279,374,305,390,326,386,329,370,307,357,281,352,242,355,206"/>
+<area shape="poly" id="edge25_Node000015_Node000009" title=" " alt="" coords="679,206,664,328,658,327,673,205"/>
+<area shape="poly" id="edge27_Node000016_Node000011" title=" " alt="" coords="799,294,780,373,762,417,737,458,719,476,699,492,658,514,656,509,696,487,715,472,733,454,757,415,775,371,793,293"/>
+</map>

@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['id_0',['id',['../df/df3/structtnct_1_1generic_1_1dat_1_1id.html#a8d9e8aa1679a00beffd07d26650591ab',1,'tnct::generic::dat::id::id(const id &amp;)=default'],['../df/df3/structtnct_1_1generic_1_1dat_1_1id.html#af30b8493ce6986a3bad554ca75c48fed',1,'tnct::generic::dat::id::id(id &amp;&amp;)=default'],['../df/df3/structtnct_1_1generic_1_1dat_1_1id.html#a2b396bc26487be19eef778affa8d15cf',1,'tnct::generic::dat::id::id()']]],
+  ['increment_1',['increment',['../de/d7e/structtnct_1_1async_1_1exp_1_1results.html#aecccefa65c1a7f288edc66795212c359',1,'tnct::async::exp::results']]],
+  ['inf_2',['inf',['../d7/dd3/structtnct_1_1log_1_1no__logger.html#aca6096914c08c1c31cecbb604cf7e715',1,'tnct::log::no_logger::inf()'],['../d8/d21/classtnct_1_1log_1_1internal_1_1bus_1_1logger.html#aae4d172574e2be0e88547c24c659b87d',1,'tnct::log::internal::bus::logger::inf()']]],
+  ['ini_5ffile_3',['ini_file',['../d8/df3/structtnct_1_1parser_1_1bus_1_1ini__file.html#a971f98e722abbf8b0c18209288f7e182',1,'tnct::parser::bus::ini_file']]],
+  ['is_5ffirst_4',['is_first',['../d7/db8/class_content.html#add101c6ec5eb5b3d34fa507f1e959f6e',1,'Content::is_first()'],['../d7/d6d/class_first_letter.html#a0c465c79472c927c2d30eafa24084ebe',1,'FirstLetter::is_first()']]],
+  ['is_5ffirst_5fletter_5',['is_first_letter',['../d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#ab0d5e77514e379d1346d595ef6b4b5b6',1,'tnct::crosswords::dat::grid']]],
+  ['is_5foccupied_6',['is_occupied',['../d9/db1/structtnct_1_1crosswords_1_1dat_1_1grid.html#a25c5165387cfa1be1ecc4448dd2ca97b',1,'tnct::crosswords::dat::grid']]],
+  ['is_5fpositioned_7',['is_positioned',['../d9/d51/structtnct_1_1crosswords_1_1dat_1_1layout.html#ad846f1057e39a42b1754a5303ce04e0b',1,'tnct::crosswords::dat::layout']]],
+  ['is_5fstopped_8',['is_stopped',['../da/dcd/structtnct_1_1async_1_1sleeping__loop.html#a11827a673103a66414e8453b404ef443',1,'tnct::async::sleeping_loop::is_stopped()'],['../df/d7e/classtnct_1_1async_1_1internal_1_1bus_1_1handling.html#a94b43a2f36217f17b20b986837a2a06f',1,'tnct::async::internal::bus::handling::is_stopped()'],['../dc/d3d/classtnct_1_1async_1_1internal_1_1bus_1_1handling__concrete.html#a1acec611ff04d6fe4bb9e0a59daa4d3c',1,'tnct::async::internal::bus::handling_concrete::is_stopped()']]],
+  ['is_5funused_9',['is_unused',['../d7/db8/class_content.html#a810783614fd9cc35affb6813339cd983',1,'Content::is_unused()'],['../d1/dba/class_letter.html#a0befa4efd1fdc8940a9b9ea9a6e38155',1,'Letter::is_unused()'],['../d7/d6d/class_first_letter.html#a412673820438b402662f475abbb4752b',1,'FirstLetter::is_unused()'],['../d4/dc9/class_unusedt_letter.html#a91a1e8db0faa9a6013b468b6105dee82',1,'UnusedtLetter::is_unused()']]],
+  ['is_5fworking_10',['is_working',['../d0/d86/structtnct_1_1crosswords_1_1app_1_1server_1_1connection.html#a1a6abdc1145a0ab047e0d50c1cdc324d',1,'tnct::crosswords::app::server::connection']]]
+];

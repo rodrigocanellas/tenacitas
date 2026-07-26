@@ -1,0 +1,35 @@
+<map id="async/exp/temperature_sensors_simulator/dat/sensor_id.h" name="async/exp/temperature_sensors_simulator/dat/sensor_id.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="499,5,672,60"/>
+<area shape="rect" id="Node000002" href="$dd/d6a/add__sensor_8h.html" title=" " alt="" coords="400,108,573,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="552,72,514,110,511,106,548,68"/>
+<area shape="rect" id="Node000007" href="$d5/d24/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8cpp.html" title=" " alt="" coords="720,416,893,471"/>
+<area shape="poly" id="edge22_Node000001_Node000007" title=" " alt="" coords="686,49,749,71,780,87,808,106,834,129,850,151,861,177,871,210,876,239,876,268,865,326,845,377,825,417,820,415,841,375,860,324,870,268,870,239,865,211,856,179,845,154,830,133,805,110,777,91,747,76,684,54"/>
+<area shape="rect" id="Node000008" href="$d7/d4a/new__temperature_8h.html" title=" " alt="" coords="597,108,771,163"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="623,68,660,106,656,110,619,72"/>
+<area shape="rect" id="Node000009" href="$d5/d2e/sensor_8h.html" title=" " alt="" coords="683,211,856,265"/>
+<area shape="poly" id="edge21_Node000001_Node000009" title=" " alt="" coords="686,45,714,54,741,67,765,84,785,107,795,132,797,160,792,188,784,211,779,210,787,186,791,160,790,133,780,109,761,88,738,72,712,59,684,50"/>
+<area shape="rect" id="Node000010" href="$d9/d14/remove__sensor_8h.html" title=" " alt="" coords="5,108,179,163"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="485,53,346,79,191,111,180,113,178,108,190,105,345,74,484,48"/>
+<area shape="rect" id="Node000011" href="$d6/d33/set__temperature_8h.html" title=" " alt="" coords="203,108,376,163"/>
+<area shape="poly" id="edge18_Node000001_Node000011" title=" " alt="" coords="496,67,367,110,366,105,494,62"/>
+<area shape="rect" id="Node000003" href="$d1/d9f/sensors_8h.html" title=" " alt="" coords="436,313,609,368"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="509,174,521,210,528,265,527,313,522,313,522,265,516,211,504,176"/>
+<area shape="rect" id="Node000005" href="$d7/d57/async_2exp_2temperature__sensors__simulator_2supplier_8h.html" title=" " alt="" coords="291,218,506,258"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="457,175,418,219,414,216,453,171"/>
+<area shape="rect" id="Node000004" href="$df/d9b/async_2exp_2temperature__sensors__simulator_2uix_2qt_2main_8cpp.html" title=" " alt="" coords="436,416,609,471"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="525,382,525,416,520,416,520,382"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="401,272,408,319,415,344,426,367,448,393,475,414,472,418,445,396,422,369,410,346,402,320,396,272"/>
+<area shape="rect" id="Node000006" href="$d4/da0/async_2exp_2temperature__sensors__simulator_2uix_2qt_2mainwindow_8h.html" title=" " alt="" coords="633,313,807,368"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="473,260,637,311,635,316,471,265"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="658,376,575,418,573,414,656,372"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="754,377,786,414,782,418,749,380"/>
+<area shape="poly" id="edge12_Node000008_Node000003" title=" " alt="" coords="657,175,546,314,542,311,653,172"/>
+<area shape="poly" id="edge13_Node000008_Node000005" title=" " alt="" coords="598,170,453,220,451,215,596,165"/>
+<area shape="poly" id="edge14_Node000008_Node000006" title=" " alt="" coords="675,176,668,220,669,242,673,265,684,290,699,312,695,315,680,292,668,266,664,243,663,219,669,176"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="717,172,749,209,745,212,713,175"/>
+<area shape="poly" id="edge11_Node000009_Node000003" title=" " alt="" coords="693,273,588,316,586,311,691,268"/>
+<area shape="poly" id="edge16_Node000010_Node000003" title=" " alt="" coords="131,170,191,218,263,263,350,298,436,321,435,326,349,303,260,268,188,222,128,174"/>
+<area shape="poly" id="edge17_Node000010_Node000005" title=" " alt="" coords="185,164,342,215,340,220,184,169"/>
+<area shape="poly" id="edge19_Node000011_Node000003" title=" " alt="" coords="276,176,268,222,271,244,281,264,312,294,351,315,394,328,436,335,435,340,393,333,349,320,309,298,277,267,266,245,263,221,271,175"/>
+<area shape="poly" id="edge20_Node000011_Node000005" title=" " alt="" coords="330,170,380,216,376,220,326,174"/>
+</map>

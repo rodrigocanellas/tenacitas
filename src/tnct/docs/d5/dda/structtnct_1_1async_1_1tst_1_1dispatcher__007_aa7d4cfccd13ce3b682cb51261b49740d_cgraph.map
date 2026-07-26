@@ -1,0 +1,11 @@
+<map id="tnct::async::tst::dispatcher_007::operator()" name="tnct::async::tst::dispatcher_007::operator()">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,200,109"/>
+<area shape="rect" id="Node000002" href="$d2/dcf/structtnct_1_1async_1_1bus_1_1dispatcher.html#a2cb88771f9f414500c96657138aa2837" title=" " alt="" coords="248,5,448,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,67,257,46,258,51,181,72"/>
+<area shape="rect" id="Node000003" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#a15905093446937257c9ebcf18267dd3c" title=" " alt="" coords="261,69,435,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="200,87,247,87,247,92,200,92"/>
+<area shape="rect" id="Node000005" href="$d2/dcf/structtnct_1_1async_1_1bus_1_1dispatcher.html#a117ecb3c65145cd4e6a4caff5b397bb2" title=" " alt="" coords="248,133,448,173"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="181,107,258,127,257,132,179,112"/>
+<area shape="rect" id="Node000004" href="$d3/d1c/classtnct_1_1container_1_1dat_1_1circular__queue.html#ae67f2103c7a77b596c93d38e81c30d99" title=" " alt="" coords="496,69,724,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="436,87,482,87,482,92,436,92"/>
+</map>

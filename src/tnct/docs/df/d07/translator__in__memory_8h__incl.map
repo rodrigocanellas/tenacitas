@@ -1,0 +1,15 @@
+<map id="translator/bus/translator_in_memory.h" name="translator/bus/translator_in_memory.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="16,5,195,45"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,181,72,207"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="100,47,51,170,46,168,95,45"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="96,181,155,207"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="110,45,125,168,120,168,105,46"/>
+<area shape="rect" id="Node000004" href="$d6/dfd/dictionary_8h.html" title=" " alt="" coords="143,93,281,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="131,44,180,83,176,87,127,48"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="172,136,78,178,76,173,169,131"/>
+<area shape="poly" id="edge7_Node000004_Node000003" title=" " alt="" coords="193,136,150,174,147,170,189,132"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="179,181,259,207"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="216,133,219,167,214,168,211,134"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="283,181,333,207"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="237,131,285,170,282,175,234,136"/>
+</map>

@@ -3,8 +3,8 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_SUPPLIER_CPT_SHARED_PTR_SUPPLIER_H
-#define TNCT_SUPPLIER_CPT_SHARED_PTR_SUPPLIER_H
+#ifndef TNCT_SUPPLIER_CPT_CONST_SHARED_PTR_SUPPLIER_H
+#define TNCT_SUPPLIER_CPT_CONST_SHARED_PTR_SUPPLIER_H
 
 #include <concepts>
 #include <memory>
@@ -15,7 +15,7 @@
 namespace tnct::supplier::cpt {
 
 template <typename t_supplier, typename t_object, typename... t_parameters>
-concept shared_ptr_supplier = requires {
+concept const_shared_ptr_supplier = requires {
   requires(tnct::supplier::cpt::internal::supplier<
               std::remove_cvref_t<t_supplier>>)
 

@@ -5,7 +5,7 @@
 #include <memory>
 #include <sstream>
 
-#include <ixwebsocket/IXWebSocketServer.h>
+#include <ixwebsocket/IXWebSocketServer.h"
 #include <nlohmann/json.hpp>
 
 #include "tnct/crosswords/app/server/statistics.h"
