@@ -9,8 +9,8 @@
 #include <concepts>
 #include <optional>
 
+#include "tnct/generic/cpt/meta_class.h"
 #include "tnct/supplier/cpt/internal/supplier.h"
-#include "tnct/supplier/cpt/meta_class.h"
 
 namespace tnct::supplier::cpt {
 
@@ -23,7 +23,7 @@ concept const_reference_supplier = requires {
 
               requires(const std::remove_cvref_t<t_supplier> &p_supplier) {
                 {
-                  p_supplier.get(meta_class<t_object>{},
+                  p_supplier.get(generic::cpt::meta_class<t_object>{},
                                  std::declval<t_parameters>()...)
                 } -> std::same_as<
                       std::optional<std::reference_wrapper<const t_object>>>;

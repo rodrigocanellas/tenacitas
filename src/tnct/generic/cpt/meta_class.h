@@ -3,14 +3,14 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-#ifndef TNCT_SUPPLIER_CPT_META_CLASS_H
-#define TNCT_SUPPLIER_CPT_META_CLASS_H
+#ifndef TNCT_GENERIC_CPT_META_CLASS_H
+#define TNCT_GENERIC_CPT_META_CLASS_H
 
-namespace tnct::supplier::cpt {
+namespace tnct::generic::cpt {
 
 template <typename t_class> struct meta_class {
   using class_type = t_class;
 };
 
-} // namespace tnct::supplier::cpt
+} // namespace tnct::generic::cpt
 #endif
