@@ -2,10 +2,10 @@
 #include <optional>
 
 #include "tnct/format/bus/fmt.h"
+#include "tnct/generic/cpt/meta_class.h"
 #include "tnct/log/bus/cerr.h"
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
-#include "tnct/supplier/cpt/meta_class.h"
 #include "tnct/supplier/cpt/object_supplier.h"
 #include "tnct/supplier/cpt/reference_supplier.h"
 #include "tnct/time/cpt/chrono_convertible.h"
@@ -18,12 +18,22 @@ public:
   using logger = tnct::log::cerr;
   using time = std::chrono::seconds;
 
+  supplier() = default;
+
+  supplier(const supplier &) = delete;
+  supplier(supplier &&) = delete;
+
+  supplier &operator=(const supplier &) = delete;
+  supplier &operator=(supplier &&) = delete;
+
+  void *operator new(std::size_t) = delete;
+
   std::optional<std::reference_wrapper<logger>>
-  get(tnct::supplier::cpt::meta_class<logger>) {
+  get(tnct::generic::cpt::meta_class<logger>) {
     return std::optional<std::reference_wrapper<logger>>{m_logger};
   }
 
-  std::optional<time> get(tnct::supplier::cpt::meta_class<time>) {
+  std::optional<time> get(tnct::generic::cpt::meta_class<time>) {
     return std::optional<time>{time{}};
   }
 
@@ -48,9 +58,8 @@ public:
   using time_type = typename supplier_type::time;
 
   xpto(supplier_type &p_supplier)
-      : m_logger{p_supplier.get(
-            tnct::supplier::cpt::meta_class<logger_type>{})},
-        m_time{p_supplier.get(tnct::supplier::cpt::meta_class<time_type>{})} {}
+      : m_logger{p_supplier.get(tnct::generic::cpt::meta_class<logger_type>{})},
+        m_time{p_supplier.get(tnct::generic::cpt::meta_class<time_type>{})} {}
 
   void now() {
     TNCT_LOG_INF(m_logger.value().get(),
