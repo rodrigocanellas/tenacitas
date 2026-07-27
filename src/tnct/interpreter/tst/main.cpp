@@ -3,19 +3,12 @@
 
 /// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
 
-<<<<<<< HEAD
 // #include "recognizer_test.h"
 // #include "grammar_test.h"
 // #include "parser_test.h"
 #include "tnct/interpreter/tst/non_terminal_standard_recognizers_test.h"
 #include "tnct/interpreter/tst/scanner_test.h"
 #include "tnct/interpreter/tst/terminals_test.h"
-=======
-// #include "scanner_test.h"
-// #include "grammar_test.h"
-// #include "parser_test.h"
-#include "tnct/interpreter/tst/standard_scanners_test.h"
->>>>>>> eb7334ef (begining)
 #include "tnct/tester/bus/test.h"
 
 using namespace tnct;
@@ -23,7 +16,6 @@ using namespace tnct;
 int main(int argc, char **argv) {
   tester::bus::test _tester(argc, argv);
 
-<<<<<<< HEAD
   run_test(_tester,
            tnct::interpreter::tst::non_terminal_standard_recognizers_000);
   run_test(_tester,
@@ -69,12 +61,6 @@ int main(int argc, char **argv) {
   run_test(_tester, tnct::interpreter::tst::scanner_013);
   run_test(_tester, tnct::interpreter::tst::scanner_014);
   run_test(_tester, tnct::interpreter::tst::scanner_015);
-=======
-  run_test(_tester, tnct::interpreter::tst::standard_scanners_000);
-  run_test(_tester, tnct::interpreter::tst::standard_scanners_001);
-  run_test(_tester, tnct::interpreter::tst::standard_scanners_002);
-  run_test(_tester, tnct::interpreter::tst::standard_scanners_003);
->>>>>>> eb7334ef (begining)
 }
 
 // int main ( int argc, char ** argv ) {
@@ -87,13 +73,8 @@ int main(int argc, char **argv) {
 //     }
 //     else {
 // 	try {
-<<<<<<< HEAD
 // 	    test_recognizer l_test_recongnizer;
 // 	    if ( !l_test_recognizer.exec ( ) ) {
-=======
-// 	    test_scanner l_test_scanner;
-// 	    if ( !l_test_scanner.exec ( ) ) {
->>>>>>> eb7334ef (begining)
 // 		std::cout << "ERROR on 'test_lexical' " ;
 // 	    }
 // 	    else {

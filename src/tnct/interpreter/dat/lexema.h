@@ -1,3 +1,8 @@
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
+
 #ifndef TNCT_INTERPRETER_DAT_LEXEMA_H
 #define TNCT_INTERPRETER_DAT_LEXEMA_H
 
@@ -11,10 +16,6 @@ namespace tnct::interpreter::dat {
 ///
 /// @tparam t_size is the maximum size of a lexema
 ///
-
-// template <std::size_t t_size>
-// using lexema_t = string::dat::fixed_size_string<t_size> ;
-
 template <std::size_t t_size>
 struct lexema_t : public string::dat::fixed_size_string<t_size> {
   static_assert(t_size >= 7, "size of lexema must be at least 7");

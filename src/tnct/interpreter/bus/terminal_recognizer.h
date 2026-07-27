@@ -1,3 +1,8 @@
+/// \copyright This file is under GPL 3 license. Please read the \p LICENSE file
+/// at the root of \p tenacitas directory
+
+/// \author Rodrigo Canellas - rodrigo.canellas at gmail.com
+
 #ifndef TNCT_INTERPRETER_BUS_TERMINAL_RECOGNIZER_H
 #define TNCT_INTERPRETER_BUS_TERMINAL_RECOGNIZER_H
 
@@ -5,6 +10,7 @@
 #include <functional>
 #include <iterator>
 
+#include "tnct/interpreter/bus/is_delimeter.h"
 #include "tnct/interpreter/dat/lexema.h"
 #include "tnct/interpreter/dat/terminal.h"
 #include "tnct/interpreter/dat/terminal_recognition.h"
@@ -19,9 +25,6 @@ public:
   using terminal = dat::terminal_t<t_lexema_size>;
   using terminals = dat::terminals_t<t_lexema_size>;
   using terminal_recognition = dat::terminal_recognition_t<t_lexema_size>;
-
-  using is_delimeter = std::function<bool(std::string::const_iterator p_ite,
-                                          std::string::const_iterator p_end)>;
 
   terminal_recognizer_t(
       const terminals &p_terminals,
@@ -59,13 +62,10 @@ public:
       _aux = m_terminals.get().find(p_begin.base(), _ite.base());
 
       if (_aux) {
-        // so far the string between _begin and _ite is being recognized,
-        // but we can not decide on the first terminal_recognition. For
-        // example, if
-        // "=" and
-        // "==" are terminals the string is "== b", then the first "=" will
-        // be recognized, but the actual token is "=="
-        _res = _aux;
+        // so far the string between _begin and _ite is being recognized, but we
+        // can not decide on the first terminal_recognition. For example, if "="
+        // and "==" are terminals the string is "== b", then the first "=" will
+        // be recognized, but the actual token is "=="         _res = _aux;
       } else if ((_res) && (!_res->lexema_ref.get().empty())) {
         return {{--_ite, {std::move(*_res)}}};
       }
