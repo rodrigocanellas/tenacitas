@@ -115,7 +115,7 @@ public:
 
       auto _visit = [&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index>(
                         const t_tuple &p_tuple) {
-        if constexpr (multi_index_t::is_iterator<t_index>()) {
+        if constexpr (record::template is_iterator<t_index>()) {
           p_out << std::get<t_index>(p_tuple).value()->first << ' ';
         }
         return true;
@@ -157,6 +157,13 @@ public:
     index_iterators &get_index_iterators() { return m_index_iterators; }
 
     void reset_index_iterators();
+
+    template <std::size_t t_field_pos> static constexpr bool is_iterator() {
+      return !std::is_same_v<
+          typename std::tuple_element_t<
+              t_field_pos, typename record::index_iterators>::value_type,
+          trt::no_iterator_type>;
+    }
 
   private:
     optional m_optional;
@@ -292,13 +299,6 @@ private:
   template <std::size_t t_field_pos> static constexpr bool is_index() {
     return !std::is_same_v<std::tuple_element_t<t_field_pos, indexes>,
                            trt::no_index_type>;
-  }
-
-  template <std::size_t t_field_pos> static constexpr bool is_iterator() {
-    return !std::is_same_v<
-        typename std::tuple_element_t<
-            t_field_pos, typename record::index_iterators>::value_type,
-        trt::no_iterator_type>;
   }
 
   template <std::size_t t_field_pos>
