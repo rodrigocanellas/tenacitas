@@ -1,0 +1,35 @@
+
+
+#include <tenacitas.basic/basic.h>
+
+#include "interpreter.h"
+
+#include "sstream"
+
+using namespace std;
+using namespace tenacitas::basic;
+using namespace tenacitas::interpreter;
+
+#include "tests.h"
+
+int main (int argc, char **argv) {
+
+  ptr<translator_from_file> trans 
+    (new translator_from_file("/usr/local/etc/tenacitas.translations"));
+
+  ptr<print_tester_log> ptl(new print_tester_log(trans));
+
+  testers t (ptl);
+
+  t.add(new t000000());
+  t.add(new t000001());
+  t.add(new t000002());
+  t.add(new t000003());
+  t.add(new t000004());
+  t.add(new t000005());
+  t.add(new t000006());
+
+  t.run(argc, argv);
+
+  return 0;
+}

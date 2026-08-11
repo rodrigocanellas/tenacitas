@@ -158,13 +158,6 @@ public:
 
     void reset_index_iterators();
 
-    template <std::size_t t_field_pos> static constexpr bool is_iterator() {
-      return !std::is_same_v<
-          typename std::tuple_element_t<
-              t_field_pos, typename record::index_iterators>::value_type,
-          trt::no_iterator_type>;
-    }
-
   private:
     optional m_optional;
     index_iterators m_index_iterators;
@@ -301,9 +294,16 @@ private:
                            trt::no_index_type>;
   }
 
+  template <std::size_t t_field_pos> static constexpr bool is_iterator() {
+    return !std::is_same_v<
+        typename std::tuple_element_t<
+            t_field_pos, typename record::index_iterators>::value_type,
+        trt::no_iterator_type>;
+  }
+
   template <std::size_t t_field_pos>
   static constexpr bool is_calculated_index() {
-    return is_index<t_field_pos>() &&
+    return is_index<t_field_pos> &&
            std::tuple_element_t<t_field_pos, fields_definitions>::is_calculated;
   }
 

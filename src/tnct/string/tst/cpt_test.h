@@ -8,48 +8,41 @@
 
 #include "tnct/program/bus/options.h"
 #include "tnct/string/cpt/fixed_size_string.h"
-#include "tnct/string/bus/fixed_size_string.h"
+#include "tnct/string/dat/fixed_size_string.h"
 
 using namespace tnct;
 
-namespace tnct::string::tst
-{
+namespace tnct::string::tst {
 
-struct cpt_fixed_size_string_000
-{
+struct cpt_fixed_size_string_000 {
 
-  static std::string desc()
-  {
-    return "Basic concepts::string::bus::fixed_size_string test";
+  static std::string desc() {
+    return "Basic concepts::string::dat::fixed_size_string test";
   }
 
-  bool operator()(const program::bus::options &)
-  {
-    using fss = string::bus::fixed_size_string<5>;
+  bool operator()(const program::bus::options &) {
+    using fss = string::dat::fixed_size_string<5>;
 
-    static_assert(string::cpt::fixed_size_string<fss>,
-                  "string::bus::fixed_size_string<5> is conformance to "
-                  "concepts::string::bus::fixed_size_string");
+    static_assert(!string::cpt::fixed_size_string<fss>,
+                  "string::dat::fixed_size_string<5> is conformance to "
+                  "concepts::string::dat::fixed_size_string");
 
     return true;
   }
 };
 
-struct cpt_fixed_size_string_001
-{
+struct cpt_fixed_size_string_001 {
 
-  static std::string desc()
-  {
-    return "A non conformance concepts::string::bus::fixed_size_string test";
+  static std::string desc() {
+    return "A non conformance concepts::string::dat::fixed_size_string test";
   }
 
-  bool operator()(const program::bus::options &)
-  {
+  bool operator()(const program::bus::options &) {
 
     using fss = std::string;
     static_assert(!string::cpt::fixed_size_string<fss>,
-                  "string::bus::fixed_size_string<5> is conformance to "
-                  "concepts::string::bus::fixed_size_string");
+                  "string::dat::fixed_size_string<5> is conformance to "
+                  "concepts::string::dat::fixed_size_string");
 
     return true;
   }

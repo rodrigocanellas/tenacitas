@@ -21,33 +21,29 @@
 #include "tnct/log/cpt/logger.h"
 #include "tnct/log/cpt/macros.h"
 
-namespace tnct::container::internal::bus
-{
+namespace tnct::container::internal::bus {
 
 template <std::unsigned_integral t_index, typename t_data,
-          log::cpt::logger       t_logger>
-requires(std::copyable<t_data>
-         && (std::integral<t_data> || std::floating_point<t_data>))
-struct multiply_matrix_async
-{
-  using index  = t_index;
-  using data   = t_data;
-  using matrix = dat::matrix<index, data>;
+          log::cpt::logger t_logger>
+  requires(std::copyable<t_data> &&
+           (std::integral<t_data> || std::floating_point<t_data>))
+struct multiply_matrix_async {
+  using index = t_index;
+  using data = t_data;
+  using matrix = tnct::container::dat::matrix<index, data>;
   using logger = t_logger;
 
   multiply_matrix_async(logger &p_logger)
       : m_logger(p_logger), m_dispatcher(p_logger),
         m_num_threads{
-            static_cast<std::size_t>(std::thread::hardware_concurrency())}
-  {
+            static_cast<std::size_t>(std::thread::hardware_concurrency())} {
 
     {
       using queue =
           container::dat::circular_queue<logger, multiply_matrix_cell>;
 
       auto _queue{queue::create(p_logger, 1000, 1000)};
-      if (!_queue)
-      {
+      if (!_queue) {
         TNCT_LOG_ERR(p_logger, format::bus::fmt("Could not create queue"));
         return;
       }
@@ -60,35 +56,31 @@ struct multiply_matrix_async
   }
 
   std::optional<matrix> operator()(const matrix &p_matrix_a,
-                                   const matrix &p_matrix_b)
-  {
+                                   const matrix &p_matrix_b) {
 
     std::optional<matrix> _opt_matrix_c{
         create_matrix_for_multiply(p_matrix_a, p_matrix_b)};
-    if (!_opt_matrix_c)
-    {
+    if (!_opt_matrix_c) {
       TNCT_LOG_ERR(m_logger, "Error creating resulting matrix");
       return std::nullopt;
     }
 
     std::reference_wrapper<const matrix> _ref_matrix_a{p_matrix_a};
     std::reference_wrapper<const matrix> _ref_matrix_b{p_matrix_b};
-    std::reference_wrapper<matrix>       _ref_matrix_c{*_opt_matrix_c};
+    std::reference_wrapper<matrix> _ref_matrix_c{*_opt_matrix_c};
 
     const index _num_rows_a{p_matrix_a.get_num_rows()};
     const index _chunk_size =
         ceil(static_cast<float>(_num_rows_a) / m_num_threads);
 
-    for (index _i = 0; _i < m_num_threads; _i++)
-    {
+    for (index _i = 0; _i < m_num_threads; _i++) {
       index _start_row_c = std::min(_i * _chunk_size, _num_rows_a);
-      index _end_row_c   = std::min((_i + 1) * _chunk_size, _num_rows_a);
+      index _end_row_c = std::min((_i + 1) * _chunk_size, _num_rows_a);
 
       const auto _result = m_dispatcher.template publish<multiply_matrix_cell>(
           _ref_matrix_a, _ref_matrix_b, _ref_matrix_c, _start_row_c,
           _end_row_c);
-      if (_result != async::dat::result::OK)
-      {
+      if (_result != async::dat::result::OK) {
         TNCT_LOG_ERR(
             m_logger,
             format::bus::fmt("Error publishing multiply_matrix_cell for row ",
@@ -101,9 +93,9 @@ struct multiply_matrix_async
     // TNCT_LOG_DEB(m_logger, "############# WAITING");
     {
       std::unique_lock<std::mutex> _lock{m_mutex};
-      m_cond.wait(_lock,
-                  [&]() -> bool
-                  { return (m_num_rows_processed == _num_rows_a); });
+      m_cond.wait(_lock, [&]() -> bool {
+        return (m_num_rows_processed == _num_rows_a);
+      });
     }
     // TNCT_LOG_DEB(m_logger, "############# DONE WAITING");
     return std::move(_opt_matrix_c);
@@ -114,23 +106,19 @@ private:
   using dispatcher = async::bus::dispatcher<t_logger, multiply_matrix_cell>;
 
 private:
-  void handle_multiply_matrix_cell(multiply_matrix_cell &&p_event)
-  {
+  void handle_multiply_matrix_cell(multiply_matrix_cell &&p_event) {
     // TNCT_LOG_DEB(m_logger, format::bus::fmt("event = ", p_event));
     const matrix &_matrix_a{p_event.m_matrix_a.get()};
     const matrix &_matrix_b{p_event.m_matrix_b.get()};
-    matrix       &_matrix_c{p_event.m_matrix_c.get()};
-    const index   _row_start{p_event.m_row_begin};
-    const index   _row_end{p_event.m_row_end};
+    matrix &_matrix_c{p_event.m_matrix_c.get()};
+    const index _row_start{p_event.m_row_begin};
+    const index _row_end{p_event.m_row_end};
 
-    for (index _r = _row_start; _r < _row_end; ++_r)
-    {
-      for (index _c = 0; _c < _matrix_b.get_num_cols(); ++_c)
-      {
+    for (index _r = _row_start; _r < _row_end; ++_r) {
+      for (index _c = 0; _c < _matrix_b.get_num_cols(); ++_c) {
         _matrix_c(_r, _c) = static_cast<data>(0);
 
-        for (index _k = 0; _k < _matrix_a.get_num_cols(); _k++)
-        {
+        for (index _k = 0; _k < _matrix_a.get_num_cols(); _k++) {
           _matrix_c(_r, _c) += _matrix_a(_r, _k) * _matrix_b(_k, _c);
         }
       }
@@ -143,12 +131,12 @@ private:
   }
 
 private:
-  logger                 &m_logger;
-  dispatcher              m_dispatcher;
-  std::size_t             m_num_threads;
-  std::atomic_size_t      m_num_rows_processed{0};
+  logger &m_logger;
+  dispatcher m_dispatcher;
+  std::size_t m_num_threads;
+  std::atomic_size_t m_num_rows_processed{0};
   std::condition_variable m_cond;
-  std::mutex              m_mutex;
+  std::mutex m_mutex;
 };
 
 } // namespace tnct::container::internal::bus

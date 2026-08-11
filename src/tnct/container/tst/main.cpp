@@ -5,6 +5,7 @@
 
 #include "tnct/tester/bus/test.h"
 
+#include "tnct/container/tst/chunked_container_test.h"
 #include "tnct/container/tst/circular_queue_test.h"
 #include "tnct/container/tst/cpt_test.h"
 #include "tnct/container/tst/matrix_test.h"
@@ -51,4 +52,33 @@ int main(int argc, char **argv) {
   run_test(_tester, container::tst::multi_index_013);
   run_test(_tester, container::tst::multi_index_014);
   run_test(_tester, container::tst::multi_index_015);
+
+  run_test(_tester, container::tst::chunked_container_001);
+  run_test(_tester, container::tst::chunked_container_002);
+  run_test(_tester, container::tst::chunked_container_003);
+  run_test(_tester, container::tst::chunked_container_004);
+  run_test(_tester, container::tst::chunked_container_005);
+  run_test(_tester, container::tst::chunked_container_006);
+  run_test(_tester, container::tst::chunked_container_007);
+  run_test(_tester, container::tst::chunked_container_008);
+  run_test(_tester, container::tst::chunked_container_009);
+  run_test(_tester, container::tst::chunked_container_010);
+  run_test(_tester, container::tst::chunked_container_011);
+  run_test(_tester, container::tst::chunked_container_012);
+  run_test(_tester, container::tst::chunked_container_013);
+  run_test(_tester, container::tst::chunked_container_014);
+  run_test(_tester, container::tst::chunked_container_015);
+  run_test(_tester, container::tst::chunked_container_016);
+  run_test(_tester, container::tst::chunked_container_017);
+  run_test(_tester, container::tst::chunked_container_018);
+  run_test(_tester, container::tst::chunked_container_019);
+  run_test(_tester, container::tst::chunked_container_020);
+  run_test(_tester, container::tst::chunked_container_021);
+  run_test(_tester, container::tst::chunked_container_022);
+  run_test(_tester, container::tst::chunked_container_023);
+  run_test(_tester, container::tst::chunked_container_024);
+  run_test(_tester, container::tst::chunked_container_025);
+  run_test(_tester, container::tst::chunked_container_026);
+  run_test(_tester, container::tst::chunked_container_027);
+  run_test(_tester, container::tst::chunked_container_028);
 }

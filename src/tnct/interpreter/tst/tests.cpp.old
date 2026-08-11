@@ -1,0 +1,363 @@
+#include "tests.h"
+
+
+void print_ex(tenacitas::interpreter::exception &e,
+              ptr<print_tester_log> prt_tester_log) {
+
+
+  ostringstream s;
+
+  s << "class '" << e.class_name << "', ";
+  s << "method '" << e.method_name << "', ";
+  s << "error " << e.error_code << ", ";
+  ptr<translator> trans = prt_tester_log-> get_translator();
+  string translation = trans->translate(e.class_name, e.error_code);
+  s << "error text '" << translation << "', ";
+  s << "symbol read '" << e.symbol_read << "', ";
+  s << "line " << e.line << ", ";
+  s << "column " << e.column << "\n";
+
+
+  prt_tester_log->print(s.str());
+}
+
+
+// **************************************
+// t000000
+
+t000000::
+t000000 () :
+  tester("t000000", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '3'") {}
+
+t000000::
+~t000000() {}
+
+constant 
+t000000::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("3");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+// **************************************
+// t000001
+
+t000001::
+t000001 () :
+  tester("t000001", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '- 9'") {}
+
+t000001::
+~t000001() {}
+
+constant 
+t000001::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("- 9");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+// **************************************
+// t000002
+
+t000002::
+t000002 () :
+  tester("t000002", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '15 - 9'") {}
+
+t000002::
+~t000002() {}
+
+constant 
+t000002::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("15 - 9");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+// **************************************
+// t000003
+
+t000003::
+t000003 () :
+  tester("t000003", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '15 * 9'") {}
+
+t000003::
+~t000003() {}
+
+constant 
+t000003::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("15 * 9");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+// **************************************
+// t000004
+
+t000004::
+t000004 () :
+  tester("t000004", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '15 + ( 9 * 4 )") {}
+
+t000004::
+~t000004() {}
+
+constant 
+t000004::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("15 + ( 9 * 4 )");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+// **************************************
+// t000005
+
+t000005::
+t000005 () :
+  tester("t000005", 
+         "Tests the parser for g_infixed_arithmetic grammar "
+         "with the text '- 15") {}
+
+t000005::
+~t000005() {}
+
+constant 
+t000005::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    string input ("- 15");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+
+
+// **************************************
+// t000006
+
+t000006::
+t000006 () :
+  tester("t000006", 
+         "Tests the parser for g_infixed_arithmetic grammar with the "
+         "text '15 - 9', and a routine associated to the  term "
+         "and the factor production") {}
+
+t000006::
+~t000006() {}
+
+class t000006::r_term : public routine {
+
+public:
+
+  r_term() :
+    routine(routine_id("r_term")) {}
+
+  
+  ptr<symbol> exec(symbols::iterator first,
+                   symbols::iterator last) const {
+
+    cerr << "r_term: begin report\n";
+    for (symbols::iterator i = first;
+         i != last;
+         ++i) {
+      cerr << (*i)->get_id() << "\n";
+    }
+    cerr << "r_term: end report:\n";
+
+    return (ptr<symbol>());
+  }
+};
+
+class t000006::r_factor : public routine {
+
+public:
+
+  r_factor() :
+    routine(routine_id("r_factor")) {}
+
+  
+  ptr<symbol> exec(symbols::iterator first,
+                   symbols::iterator last) const {
+
+    cerr << "++++++++++++++++++++++++++" << endl;
+    cerr << "r_factor: begin report\n";
+    for (symbols::iterator i = first;
+         i != last;
+         ++i) {
+      cerr << (*i)->get_id() << "\n";
+    }
+
+    // we know the only possible values are '15' or '9'
+    ptr<symbol> rc;
+    cerr << "(last -1) - first = " << distance(last,first) << endl;
+
+    switch (distance(last,first)) {
+    case 2:
+      // we know this is '15'
+      rc = *first;
+      break;
+    case 4:
+      // we know the arithmetic is '15 - 9'
+      rc = new symbol (symbol_id("135"), type_id("reserved_symbol_type"));
+      break;
+    default:
+      rc = new symbol (symbol_id("HELP"), type_id("reserved_symbol_type"));
+    }
+
+    cerr << "r_factor: end report\n";
+    return rc;
+  }
+};
+
+constant 
+t000006::
+exec (ptr<print_tester_log> prt_tester_log) {
+  constant rc = result::success;
+
+
+  try {
+
+    parser<g_infixed_arithmetic> p;
+
+    ptr<r_factor> f (new r_factor());
+    p.add_routine (f);
+
+    ptr<r_term> t (new r_term());
+    p.add_routine (t);
+
+    p.set_routine(production_id("infixed_arithmetic"), 
+                  item_id(2),
+                  routine_id("r_term"));
+
+    p.set_routine(production_id("term"), 
+                  item_id(0),
+                  routine_id("r_factor"));
+    
+    string input ("15 * 9");
+
+    p.run(input);
+  }
+  catch (tenacitas::interpreter::exception e) {
+    rc = e.error_code;
+    print_ex(e, prt_tester_log);
+  }
+  catch (tenacitas::basic::exception e) {
+    rc = e.error_code;
+    prt_tester_log->print(e);
+  }
+  return rc;
+}
+

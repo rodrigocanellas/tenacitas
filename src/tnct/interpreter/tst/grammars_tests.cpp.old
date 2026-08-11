@@ -1,0 +1,293 @@
+#include "grammars_tests.h"
+
+// ********************************************
+/// pgm_lang_id_type
+
+pgm_lang_id_type::
+pgm_lang_id_type() 
+  : type(type_id("pgm_lang_id_type")) {}
+
+pgm_lang_id_type::
+~pgm_lang_id_type() {}
+
+
+bool
+pgm_lang_id_type::
+recognize (ptr<const symbol_id> symb_id) const {
+  bool rc = true;
+
+  symbol_id::id_type v = symb_id->value();
+
+  if (!isalpha(*(v.begin()))) {
+    rc = false;
+  }
+  else {
+    for (symbol_id::id_type::iterator i = ++(v.begin()); i != v.end(); ++i) {
+      if ( (!isdigit((int)(*i))) || (!isalpha(*i)) ) {
+        rc = false;
+        break;
+      }
+    }
+  }
+  return rc;
+}
+
+
+// ********************************************
+/// integer_type
+
+integer_type::
+integer_type() : type(type_id("integer_type")) {}
+
+bool
+integer_type::
+recognize (ptr<const symbol_id> symb_id) const {
+
+  bool rc = true;
+
+  symbol_id::id_type v = symb_id->value();
+
+  for (symbol_id::id_type::iterator i = v.begin();
+       i != v.end();
+       ++i) {
+    if (!isdigit((int)(*i))) {
+      rc = false;
+      break;
+    }
+  }
+  return rc;
+}
+
+integer_type::
+~integer_type() {}
+
+
+// ********************************************
+/// unsigned_real_type
+
+real_type::
+real_type(char decimal_separator) :
+  type(type_id("real_type")), 
+  decimal_separator_(decimal_separator) {}
+
+
+real_type::
+~real_type() {}
+
+bool
+real_type::
+recognize (ptr<const symbol_id> symb_id) const {
+
+  bool rc = true;
+
+  symbol_id::id_type v = symb_id->value();
+
+  bool decimal_counter = false;
+
+  for (symbol_id::id_type::iterator i = v.begin(); i != v.end();  ++i) {
+
+    if ((*i) == decimal_separator_) {
+
+      if (decimal_counter) {
+        // second decimal separator
+        rc = false;
+        break;
+      }
+      else {
+        decimal_counter = true;
+      }
+
+    }
+    else {
+
+      if (!isdigit((int)(*i))) {
+        rc = false;
+        break;
+      }
+
+    }
+
+  }
+  // a number without decimal separator is not a real number, but a integer number
+  if ( (rc) && (!decimal_counter) )
+    rc = false;
+  return rc;
+}
+
+
+// ********************************************
+/// g_arithmetic_expression
+
+g_infixed_arithmetic::
+g_infixed_arithmetic(char decimal_separator) :
+  grammar(grammar_id("g_arithmetic_expression")) {
+
+  /// 
+  ///                        0            2                     3            2
+  /// infixed_arithmetic := '+' --suc--> term ----------suc--> '+' --suc--> term
+  ///                        |                           |
+  ///                        |      1            2       |      4            2
+  ///                       alt--> '-' --suc--> term    alt--> '-' --suc--> term
+  ///                        |                    |
+  ///                        |        2           +--> anything
+  ///                       alt --> term          
+  ///                                         
+  ///
+  ///
+  ///           0              1             0
+  /// term := factor --suc--> '*' --suc--> factor
+  ///                          |
+  ///                          |      2            0
+  ///                         alt--> '/' --suc--> factor
+  ///                                 |
+  ///                                 |       3              0
+  ///                                alt--> 'mod' --suc--> factor
+  ///                                 |
+  ///                                 |
+  ///                                alt--> anything
+  ///
+  ///             0 
+  /// factor := integer
+  ///            |
+  ///            |      1
+  ///           alt--> real
+  ///                   |
+  ///                   |        2              3                4
+  ///                   alt--> '(' --suc--> ARITHM_EXP --suc--> ')'
+  ///
+  add_type (new real_type(decimal_separator));
+  add_type (new integer_type());
+
+  symbol_id plus("+");
+  add_symbol_id(plus);
+
+  symbol_id minus("-");
+  add_symbol_id(minus);
+
+  symbol_id divide("/");
+  add_symbol_id(divide);
+
+  symbol_id multiply("*");
+  add_symbol_id(multiply);
+
+  symbol_id modulus("%");
+  add_symbol_id(modulus);
+
+  symbol_id open_par("(");
+  add_symbol_id(open_par);
+
+  symbol_id close_par(")");
+  add_symbol_id(close_par);
+
+  production_id infixed_arithmetic("infixed_arithmetic");
+  add_production(infixed_arithmetic);
+
+  production_id term("term");
+  add_production(term);
+
+  production_id factor("factor");
+  add_production(factor);
+
+  ///                        0            2                     3            2
+  /// infixed_arithmetic := '+' --suc--> term ----------suc--> '+' --suc--> term
+  ///                        |                           |
+  ///                        |      1            2       |      4            2
+  ///                       alt--> '-' --suc--> term    alt--> '-' --suc--> term
+  ///                        |                    |
+  ///                        |        2           +--> anything
+  ///                       alt --> term          
+
+  add_item(infixed_arithmetic, 0);
+  add_item(infixed_arithmetic, 1);
+  add_item(infixed_arithmetic, 2);
+  add_item(infixed_arithmetic, 3);
+  add_item(infixed_arithmetic, 4);
+
+  set_symbol_id(infixed_arithmetic, 0, plus);
+  set_symbol_id(infixed_arithmetic, 1, minus);
+  set_production(infixed_arithmetic, 2, term);
+  set_symbol_id(infixed_arithmetic, 3, plus);
+  set_symbol_id(infixed_arithmetic, 4, minus);
+
+  set_suc(infixed_arithmetic, 0, 2);
+  set_alt(infixed_arithmetic, 0, 1);
+
+  set_suc(infixed_arithmetic, 1, 2);
+  set_alt(infixed_arithmetic, 1, 2);
+
+  set_suc(infixed_arithmetic, 2, 3);  
+
+  set_suc(infixed_arithmetic, 3, 2);  
+  set_alt(infixed_arithmetic, 3, 4);  
+
+  set_suc(infixed_arithmetic, 4, 2);  
+  accepts_anything(infixed_arithmetic, 4);
+
+
+  ///           0              1             0
+  /// term := factor --suc--> '*' --suc--> factor
+  ///                          |
+  ///                          |      2            0
+  ///                         alt--> '/' --suc--> factor
+  ///                                 |
+  ///                                 |       3              0
+  ///                                alt--> 'mod' --suc--> factor
+  ///                                 |
+  ///                                 |
+  ///                                alt--> anything
+
+  add_item(term, 0);
+  add_item(term, 1);
+  add_item(term, 2);
+  add_item(term, 3);
+
+  set_production(term, 0, factor);
+  set_symbol_id(term, 1, multiply);
+  set_symbol_id(term, 2, divide);
+  set_symbol_id(term, 3, modulus);
+
+  set_suc(term, 0, 1);
+
+  set_suc(term, 1, 0);
+  set_alt(term, 1, 2);
+
+  set_suc(term, 2, 0);
+  set_alt(term, 2, 3);
+
+  set_suc(term, 3, 0);
+  accepts_anything(term, 3);
+
+
+  ///             0 
+  /// factor := integer
+  ///            |
+  ///            |      1
+  ///           alt--> real
+  ///                   |
+  ///                   |        2              3                4
+  ///                   alt--> '(' --suc--> ARITHM_EXP --suc--> ')'
+
+  add_item(factor, 0);
+  add_item(factor, 1);
+  add_item(factor, 2);
+  add_item(factor, 3);
+  add_item(factor, 4);
+
+  set_type(factor, 0, type_id("integer_type"));
+  set_type(factor, 1, type_id("real_type"));
+  set_symbol_id(factor, 2, open_par);
+  set_production(factor, 3, infixed_arithmetic);
+  set_symbol_id(factor, 4, close_par);
+
+  set_alt(factor, 0, 1);
+
+  set_alt(factor, 1, 2);
+
+  set_suc(factor, 2, 3);
+
+  set_suc(factor, 3, 4);
+  
+}
+
+g_infixed_arithmetic::
+~g_infixed_arithmetic() {}

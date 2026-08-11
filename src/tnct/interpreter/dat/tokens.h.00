@@ -1,0 +1,100 @@
+#ifndef TNCT_INTERPRETER_DAT_TOKENS_H
+#define TNCT_INTERPRETER_DAT_TOKENS_H
+
+#include <algorithm>
+#include <set>
+
+#include "tnct/interpreter/dat/lexema.h"
+#include "tnct/interpreter/dat/lexemas.h"
+#include "tnct/interpreter/dat/token.h"
+#include "tnct/interpreter/dat/type.h"
+
+namespace tnct::interpreter::dat {
+
+/// This class associates many groups of tnct::interpreter::dat::lexema object
+/// to a single tnct::interpreter::dat::type
+///
+/// For example: the tnct::interpreter::dat::lexema list "== != < > <= >=" could
+/// be associated to the tnct::interpreter::dat::type "relational_operator".
+///
+/// For example: the tnct::interpreter::dat::lexema list "const while do" are
+/// associated to the tnct::interpreter::dat::type "reserverd_word".
+///
+/// These tnct::interpreter::dat::lexema shall be recognized
+/// directly from the input text, i.e., they are defined exclusively by
+/// their strings.
+///
+/// @tparam t_lexema_size is the maximum size of a lexema string
+template <std::size_t t_lexema_size> class tokens_t {
+
+public:
+  using lexema = lexema_t<t_lexema_size>;
+  using lexemas = lexemas_t<t_lexema_size>;
+  using lexema_const_iterator = lexema_const_iterator_t<t_lexema_size>;
+  using token = token_t<t_lexema_size>;
+
+  tokens_t() = default;
+  tokens_t(const tokens_t &) = delete;
+  tokens_t(tokens_t &&) = default;
+  ~tokens_t();
+
+  tokens_t &operator=(const tokens_t &) = delete;
+  tokens_t &operator=(tokens_t &&) = default;
+
+  /// Adds a group of lexema objects that should be recognized directly from the
+  /// input text and their common associated type
+  void add(std::initializer_list<token> p_tokens) {
+    import(p_tokens.begin(), p_tokens.end());
+  }
+
+  /// Tries to retrieve the type associated to a lexema and a reference to the
+  /// lexema
+  std::optional<std::pair<type, lexema_const_iterator>>
+  is_defined(std::string_view p_string) const {
+    if (p_string.size() > t_lexema_size) {
+      return std::nullopt;
+    }
+
+    lexema _lexema{p_string};
+
+    auto criteria = [&](const lexema &p_current) {
+      return p_current == _lexema;
+    };
+
+    for (const token &_token : m_container) {
+      lexema_const_iterator _lexema_const_iterator{
+          std::find_if(_token.second.begin(), _token.second.end(), criteria)};
+      if (_lexema_const_iterator != _token.second.end()) {
+        return {_token.first, _lexema_const_iterator};
+      }
+    }
+    return std::nullopt;
+  }
+
+  void import(const tokens_t &p_tokens) {
+    import(p_tokens.begin(), p_tokens.end());
+  }
+
+private:
+  template <typename t_iterator>
+  void import(t_iterator p_begin, t_iterator p_end) {
+    for (t_iterator _ite = p_begin; _ite != p_end; ++_ite) {
+      m_container.emplace(_ite->first, std::move(_ite->second));
+    }
+  }
+
+  struct compare_token {
+    bool operator()(token left, token right) const {
+      return left.first < right.first;
+    }
+  };
+
+  using container = std::set<token, compare_token>;
+  using const_iterator = typename container::const_iterator;
+
+  container m_container;
+};
+
+} // namespace tnct::interpreter::dat
+
+#endif
