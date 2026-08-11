@@ -303,7 +303,7 @@ private:
 
   template <std::size_t t_field_pos>
   static constexpr bool is_calculated_index() {
-    return is_index<t_field_pos> &&
+    return is_index<t_field_pos>() &&
            std::tuple_element_t<t_field_pos, fields_definitions>::is_calculated;
   }
 
