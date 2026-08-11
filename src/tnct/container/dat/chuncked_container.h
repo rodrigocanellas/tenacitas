@@ -40,6 +40,8 @@ struct chunked_container final {
 
   friend class tnct::container::internal::dat::chunked_container_iterator<
       chunked_container, element>;
+  friend class tnct::container::internal::dat::chunked_container_iterator<
+      chunked_container, const element>;
 
   using iterator = tnct::container::internal::dat::chunked_container_iterator<
       chunked_container, element>;
