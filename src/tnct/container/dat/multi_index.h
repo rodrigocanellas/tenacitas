@@ -115,7 +115,7 @@ public:
 
       auto _visit = [&]<tuple::cpt::is_tuple t_tuple, std::size_t t_index>(
                         const t_tuple &p_tuple) {
-        if constexpr (multi_index_t::is_iterator<t_index>()) {
+        if constexpr (record::template is_iterator<t_index>()) {
           p_out << std::get<t_index>(p_tuple).value()->first << ' ';
         }
         return true;

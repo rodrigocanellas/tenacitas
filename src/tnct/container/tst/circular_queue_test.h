@@ -16,47 +16,38 @@
 #include "tnct/log/bus/cerr.h"
 #include "tnct/program/bus/options.h"
 
-namespace tnct::container::tst
-{
+namespace tnct::container::tst {
 
-struct circular_queue_001
-{
-  static std::string desc()
-  {
-    return "Adds " + std::to_string(m_amount)
-           + " strings of 4k in a queue with " + std::to_string(m_initial_size)
-           + " initial size";
+struct circular_queue_001 {
+  static std::string desc() {
+    return "Adds " + std::to_string(m_amount) +
+           " strings of 4k in a queue with " + std::to_string(m_initial_size) +
+           " initial size";
   }
-  bool operator()(const program::bus::options &)
-  {
+  bool operator()(const program::bus::options &) {
     log::cerr _logger;
     _logger.set_inf();
-    try
-    {
+    try {
 
       using queue = container::dat::circular_queue<log::cerr, std::string>;
 
       std::optional<queue> _queue{
           queue::create(_logger, m_initial_size, m_initial_size / 2)};
 
-      if (_queue)
-      {
+      if (!_queue) {
         return false;
       }
 
       std::string data(4 * 1024, 'z');
 
-      for (uint32_t i = 0; i < m_amount; ++i)
-      {
+      for (uint32_t i = 0; i < m_amount; ++i) {
         _queue->push(data);
       }
 
       uint32_t j{0};
-      while (!_queue->empty())
-      {
+      while (!_queue->empty()) {
         std::optional<std::string> maybe{_queue->pop()};
-        if (!maybe)
-        {
+        if (!maybe) {
           _logger.err(format::bus::fmt("error getting data # ", j));
           return false;
         }
@@ -64,14 +55,10 @@ struct circular_queue_001
                                      ", occupied = ", _queue->occupied(),
                                      ", data # ", j++));
       }
-    }
-    catch (std::exception &ex)
-    {
+    } catch (std::exception &ex) {
       _logger.err(ex.what());
       return false;
-    }
-    catch (...)
-    {
+    } catch (...) {
       _logger.err("unknown error");
       return false;
     }
@@ -81,20 +68,15 @@ struct circular_queue_001
 
 private:
   static constexpr uint32_t m_amount{1000000};
-  static constexpr size_t   m_initial_size{static_cast<size_t>(m_amount / 10)};
+  static constexpr size_t m_initial_size{static_cast<size_t>(m_amount / 10)};
 };
 
-struct circular_queue_003
-{
-  static std::string desc()
-  {
-    return "Move constructor";
-  }
+struct circular_queue_003 {
+  static std::string desc() { return "Move constructor"; }
 
-  bool operator()(program::bus::options &)
-  {
+  bool operator()(program::bus::options &) {
     using queue = container::dat::circular_queue<log::cerr, int32_t>;
-    log::cerr            _logger;
+    log::cerr _logger;
     std::optional<queue> _queue_1(queue::create(_logger, 100, 50));
 
     queue _queue_2(std::move(*_queue_1));
