@@ -22,16 +22,30 @@ namespace tnct::container::cpt {
 
 namespace internal {
 
-template <typename t_tuple>
+template <typename t_multi_index>
 concept only_fields_definitions =
 
-    tuple::cpt::is_tuple<t_tuple> &&
+    tuple::cpt::is_tuple<typename t_multi_index::fields_definitions> &&
 
     []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
-      return (container::cpt::field_definition<
-                  std::tuple_element_t<t_idx, t_tuple>> &&
+      return (container::cpt::field_definition<std::tuple_element_t<
+                  t_idx, typename t_multi_index::fields_definitions>> &&
               ...);
-    }(std::make_index_sequence<std::tuple_size_v<t_tuple>>());
+    }(std::make_index_sequence<
+        std::tuple_size_v<typename t_multi_index::fields_definitions>>());
+
+template <typename t_multi_index>
+concept field_types_match =
+    []<std::size_t... t_idx>(std::index_sequence<t_idx...>) {
+      return (std::same_as<
+                  typename std::tuple_element_t<
+                      t_idx,
+
+                      typename t_multi_index::fields_definitions>::field_type,
+                  typename t_multi_index::template field_t<t_idx>> &&
+              ...);
+    }(std::make_index_sequence<
+        std::tuple_size_v<typename t_multi_index::fields_definitions>>());
 
 template <typename t_multi_index, std::size_t t_field_pos>
 concept has_get_method = requires(
@@ -98,7 +112,9 @@ concept multi_index = requires(t p_t, const typename t::record &p_record,
 
   typename t::record_ref;
 
-  requires internal::only_fields_definitions<typename t::fields_definitions>;
+  requires internal::only_fields_definitions<t>;
+
+  requires internal::field_types_match<t>;
 
   requires std::same_as<typename t::object,
                         typename std::tuple_element_t<

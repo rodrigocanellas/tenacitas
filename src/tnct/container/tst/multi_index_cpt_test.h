@@ -246,7 +246,7 @@ struct multi_index_cpt_006 {
   bool operator()(const program::bus::options &) {
 
     static_assert(container::cpt::internal::only_fields_definitions<
-                  internal::xpto_indexes::fields_definitions>);
+                  internal::xpto_indexes>);
 
     return true;
   }
@@ -264,6 +264,197 @@ struct multi_index_cpt_007 {
   }
 };
 
+struct multi_index_cpt_008 {
+
+  static std::string desc() { return "get has wrong return type"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(!container::cpt::internal::has_get_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_get_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using record_ref = float;
+    using fields_definitions = std::tuple<char>;
+
+    template <std::size_t t_field_pos> bool get(const field_t<t_field_pos> &) {
+      return true;
+    }
+  };
+};
+
+struct multi_index_cpt_009 {
+
+  static std::string desc() { return "does not have all get methods"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(container::cpt::internal::has_get_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_get_method<abc, 1>);
+
+    static_assert(!container::cpt::internal::has_get_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using record_ref = float;
+    using fields_definitions = std::tuple<char, std::string>;
+
+    template <std::size_t t_field_pos>
+      requires(t_field_pos == 0)
+    std::vector<record_ref> get(const field_t<t_field_pos> &) {
+      return {};
+    }
+  };
+};
+
+struct multi_index_cpt_010 {
+
+  static std::string desc() { return "erase has wrong return type"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(!container::cpt::internal::has_erase_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_erase_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using fields_definitions = std::tuple<char>;
+
+    template <std::size_t t_field_pos>
+    bool erase(const field_t<t_field_pos> &) {
+      return true;
+    }
+  };
+};
+
+struct multi_index_cpt_011 {
+
+  static std::string desc() { return "does not have all erase methods"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(container::cpt::internal::has_erase_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_erase_method<abc, 1>);
+    static_assert(!container::cpt::internal::has_erase_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using fields_definitions = std::tuple<char, std::string>;
+
+    template <std::size_t t_field_pos>
+      requires(t_field_pos == 0)
+    void erase(const field_t<t_field_pos> &) {}
+  };
+};
+
+struct multi_index_cpt_012 {
+
+  static std::string desc() { return "update has wrong return type"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(!container::cpt::internal::has_update_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_update_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using record_ref = float;
+    using fields_definitions = std::tuple<char>;
+
+    template <std::size_t t_field_pos>
+    int update(record_ref, const field_t<t_field_pos> &) {
+      return 0;
+    }
+  };
+};
+
+struct multi_index_cpt_013 {
+
+  static std::string desc() { return "does not have all update methods"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(container::cpt::internal::has_update_method<abc, 0>);
+    static_assert(!container::cpt::internal::has_update_method<abc, 1>);
+    static_assert(!container::cpt::internal::has_update_methods<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    template <std::size_t t_field_pos> using field_t = int;
+
+    using record_ref = float;
+    using fields_definitions = std::tuple<char, std::string>;
+
+    template <std::size_t t_field_pos>
+      requires(t_field_pos == 0)
+    bool update(record_ref, const field_t<t_field_pos> &) {
+      return true;
+    }
+  };
+};
+
+struct multi_index_cpt_014 {
+
+  static std::string desc() { return "field types match field definitions"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(
+        container::cpt::internal::field_types_match<internal::xpto_indexes>);
+
+    static_assert(!container::cpt::internal::field_types_match<abc>);
+
+    return true;
+  }
+
+private:
+  struct abc {
+    using fields_definitions = std::tuple<internal::field_0>;
+
+    template <std::size_t t_field_pos> using field_t = float;
+  };
+};
+
+struct multi_index_cpt_015 {
+
+  static std::string desc() { return "int is not a multi index"; }
+
+  bool operator()(const program::bus::options &) {
+
+    static_assert(!container::cpt::multi_index<int>);
+
+    return true;
+  }
+};
 } // namespace tnct::container::tst
 
 #endif
