@@ -37,6 +37,7 @@ struct chunked_container final {
   using element = std::optional<type>;
   using ref = std::reference_wrapper<element>;
   using const_ref = std::reference_wrapper<const element>;
+  static constexpr std::size_t chunck_size = t_chunk_size;
 
   friend class tnct::container::internal::dat::chunked_container_iterator<
       chunked_container, element>;

@@ -27,7 +27,7 @@ using tnct::format::bus::fmt;
 
 namespace tnct::container::tst {
 
-namespace std_multimap_index_trait_id {
+namespace internal {
 
 struct object {
   object() = default;
@@ -195,7 +195,7 @@ struct multi_index_001 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -238,7 +238,7 @@ struct multi_index_002 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -278,7 +278,7 @@ struct multi_index_003 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -328,7 +328,7 @@ struct multi_index_004 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -362,7 +362,7 @@ struct multi_index_005 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -402,7 +402,7 @@ struct multi_index_006 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -432,7 +432,7 @@ struct multi_index_007 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -515,7 +515,7 @@ struct multi_index_008 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     rollback_index idx{_logger};
@@ -562,7 +562,7 @@ struct multi_index_009 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -595,7 +595,7 @@ struct multi_index_010 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -634,7 +634,7 @@ struct multi_index_011 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -669,7 +669,7 @@ struct multi_index_012 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -708,7 +708,7 @@ struct multi_index_013 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     index idx{_logger};
@@ -751,7 +751,7 @@ struct multi_index_014 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     calculated_index idx{_logger};
@@ -790,7 +790,7 @@ struct multi_index_015 {
   }
 
   bool operator()(const program::bus::options &) {
-    using namespace std_multimap_index_trait_id;
+    using namespace internal;
 
     logger _logger;
     calculated_name_index idx{_logger};

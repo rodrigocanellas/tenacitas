@@ -22,7 +22,8 @@ SUBDIRS = \
     math \
     numerate \
     supplier \
-    interpreter
+    interpreter \
+    query
 
     # network \
     # io

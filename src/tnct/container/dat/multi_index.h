@@ -182,6 +182,9 @@ public:
   multi_index_t &operator=(const multi_index_t &) = delete;
   multi_index_t &operator=(multi_index_t &&) = delete;
 
+  void *operator new(std::size_t) = delete;
+  void operator delete(void *) = delete;
+
   /// Adds a \p object and returns a std::optional reference with (or not) a
   /// reference to the record
   std::optional<record_ref> add(object &&p_object);
@@ -228,7 +231,7 @@ public:
   bool update(record_ref p_record_ref, const field_t<t_field_pos> &p_field);
 
   friend std::ostream &operator<<(std::ostream &p_out,
-                                  multi_index_t &p_multi_index) {
+                                  const multi_index_t &p_multi_index) {
 
     {
       std::cout << "\nobjects:\n";
@@ -245,7 +248,7 @@ public:
     {
       p_out << "\nindexes:\n";
       auto _visitor = [&]<tuple::cpt::is_tuple t_tuple, size_t t_index_pos>(
-                          t_tuple &p_indexes) {
+                          const t_tuple &p_indexes) {
         if constexpr (is_index<t_index_pos>()) {
           const multi_index_t::index_t<t_index_pos> &_index{
               std::get<t_index_pos>(p_indexes)};
