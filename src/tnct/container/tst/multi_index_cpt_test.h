@@ -109,7 +109,7 @@ using field_3 = calculated_index_definition<
 
 using logger = tnct::log::cerr;
 using xpto_indexes =
-    tnct::container::dat::multi_index_t<logger, field_0, field_1, field_2,
+    tnct::container::dat::ref<logger, field_0, field_1, field_2,
                                         field_3>;
 } // namespace internal
 

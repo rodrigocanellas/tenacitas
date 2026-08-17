@@ -28,8 +28,7 @@ namespace tnct::container::dat {
 /// \tparam t_type type that will be stored in the container
 /// \tparam t_chunk_size number of t_class objects in each chunk
 template <typename t_type, std::size_t t_chunk_size>
-  requires(std::is_copy_constructible_v<std::remove_cvref_t<t_type>> &&
-           std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
+  requires(std::is_move_constructible_v<std::remove_cvref_t<t_type>> &&
            t_chunk_size > 0)
 
 struct chunked_container final {

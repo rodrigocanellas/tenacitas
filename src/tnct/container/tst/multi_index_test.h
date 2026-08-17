@@ -117,7 +117,7 @@ using name_calculated_field = calculated_index_definition<
     std_multimap_index_trait_id>;
 
 using logger = tnct::log::cerr;
-using index = tnct::container::dat::multi_index_t<logger, id_field, score_field,
+using index = tnct::container::dat::ref<logger, id_field, score_field,
                                                   name_field>;
 
 using record_ref = typename index::record_ref;
@@ -169,19 +169,19 @@ inline bool has_object_in(const std::vector<t_record_ref> &p_records, int p_id,
 }
 
 using rollback_index =
-    tnct::container::dat::multi_index_t<logger, score_field, id_field,
+    tnct::container::dat::ref<logger, score_field, id_field,
                                         name_field>;
 
 using rollback_record_ref = typename rollback_index::record_ref;
 
 using calculated_index =
-    tnct::container::dat::multi_index_t<logger, id_field, score_field,
+    tnct::container::dat::ref<logger, id_field, score_field,
                                         name_field, id_name_calculated_field>;
 
 using calculated_record_ref = typename calculated_index::record_ref;
 
 using calculated_name_index =
-    tnct::container::dat::multi_index_t<logger, id_field, score_field,
+    tnct::container::dat::ref<logger, id_field, score_field,
                                         name_field, name_calculated_field>;
 
 using calculated_name_record_ref = typename calculated_name_index::record_ref;
