@@ -9,7 +9,6 @@
 #include "tnct/container/trt/field_definition.h"
 #include "tnct/container/trt/std_map_index_trait.h"
 #include "tnct/container/trt/std_multimap_index_trait.h"
-#include "tnct/log/bus/cerr.h"
 
 struct xpto {
   xpto() = default;
@@ -90,17 +89,14 @@ using field_3 =
                                 }),
                                 std_multimap_index_trait_id>;
 
-using logger = tnct::log::cerr;
 using xpto_indexes =
-    tnct::container::dat::multi_index_t<logger, field_0, field_1, field_2,
-                                        field_3>;
+    tnct::container::dat::multi_index_t<field_0, field_1, field_2, field_3>;
 
 using record_ref = xpto_indexes::record_ref;
 
 int main() {
 
-  logger _logger;
-  xpto_indexes _xpto_indexes{_logger};
+  xpto_indexes _xpto_indexes;
 
   std::cout << "\n###### Adding\n";
   _xpto_indexes.add(xpto{-9, 3.14, "hi"});
